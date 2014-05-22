@@ -29,10 +29,9 @@ from wirecloud.platform.models import IWidget
 def get_iwidgets_description(included_iwidgets):
     description = "Wirecloud Mashup composed of: "
 
-    for iwidget in included_iwidgets:
-        description += iwidget.widget.resource.display_name + ', '
+    description = ', '.join([iwidget.widget.resource.get_processed_info()['display_name'] for iwidget in included_iwidgets])
 
-    return description[:-2]
+    return description
 
 
 def get_workspace_description(workspace):

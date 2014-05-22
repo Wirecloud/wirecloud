@@ -97,33 +97,6 @@
     },
     {
         "pk": 1,
-        "model": "platform.userprefoption",
-        "fields": {
-            "variableDef": 1,
-            "name": "Default",
-            "value": "default"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "platform.userprefoption",
-        "fields": {
-            "variableDef": 1,
-            "name": "value1",
-            "value": "1"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "platform.userprefoption",
-        "fields": {
-            "variableDef": 1,
-            "name": "value2",
-            "value": "2"
-        }
-    },
-    {
-        "pk": 1,
         "model": "auth.group",
         "fields": {
             "name": "normusers"

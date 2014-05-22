@@ -96,7 +96,10 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
     if not resource.is_available_for(user):
         raise CatalogueResource.DoesNotExist
 
-    iwidget_name = iwidget.get('name', resource.display_name)
+    iwidget_name = iwidget.get('name', None)
+    if iwidget_name is None:
+        iwidget_name = iwidget.get_processed_info()['title']
+
     width = iwidget.get('width', 0)
     height = iwidget.get('height', 0)
     top = iwidget.get('top', 0)

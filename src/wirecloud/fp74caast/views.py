@@ -208,7 +208,7 @@ def deploy_tenant_ac(request):
         return build_error_response(request, 400, unicode(e.msg))
 
     # Create a workspace if the resource is a mashup
-    if resource.resource_type() == 'mashup' and not Workspace.objects.filter(creator=user, name=resource.display_name).exists():
+    if resource.resource_type() == 'mashup' and not Workspace.objects.filter(creator=user, name=resource.short_name).exists():
         buildWorkspaceFromTemplate(resource.get_template(), user, True)
 
     return HttpResponse(status=204)

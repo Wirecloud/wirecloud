@@ -119,22 +119,14 @@
             "short_name": "Test Widget",
             "version": "1.0.0",
             "creator": 2,
-            "display_name": "__MSG_displayName__",
             "type": 0,
             "public": true,
             "creation_date": "2011-05-13T12:24:03+01:00",
             "groups": [],
-            "license": null,
             "template_uri": "Wirecloud_Test_1.0.wgt",
             "popularity": "0",
-            "description": "This widget is used to test some of the features of the Wirecloud platform",
-            "author": "aarranz",
             "json_description": "{\"vendor\": \"Test\", \"description\": \"This widget is used to test some of the features of the Wirecloud platform\", \"code_content_type\": \"text/html\", \"translations\": {}, \"smartphoneimage\": \"images/catalogue_iphone.png\", \"requirements\": [], \"properties\": [], \"name\": \"Test Widget\", \"code_cacheable\": true, \"title\": \"Test\", \"preferences\": [{\"default\": \"default\", \"description\": \"list preference\", \"name\": \"list\", \"label\": \"list\", \"type\": \"list\", \"options\": [{\"value\": \"default\", \"label\": \"Default\"}, {\"value\": \"1\", \"label\": \"value1\"}, {\"value\": \"2\", \"label\": \"value2\"}], \"secure\": false}, {\"default\": \"initial text\", \"description\": \"text preference\", \"name\": \"text\", \"label\": \"text\", \"type\": \"text\", \"secure\": false}, {\"default\": \"false\", \"description\": \"boolean preference\", \"name\": \"boolean\", \"label\": \"boolean\", \"type\": \"boolean\", \"secure\": false}, {\"default\": \"default\", \"description\": \"password preference\", \"name\": \"password\", \"label\": \"password\", \"type\": \"password\", \"secure\": false}], \"authors\": \"aarranz\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test-data\", \"actionlabel\": \"\", \"name\": \"inputendpoint\", \"label\": \"Input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test-data\", \"description\": \"\", \"type\": \"text\", \"name\": \"outputendpoint\", \"label\": \"Output\"}]}, \"code_url\": \"test.html\", \"image\": \"images/catalogue.png\", \"version\": \"1.0.0\", \"context\": [], \"widget_height\": \"24\", \"email\": \"aarranz@conwet.com\", \"type\": \"widget\", \"widget_width\": \"6\", \"doc\": \"http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb\"}",
-            "wiki_page_uri": "http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb",
-            "image_uri": "images/catalogue.png",
             "fromWGT": true,
-            "iphone_image_uri": "images/catalogue_iphone.png",
-            "mail": "aarranz@conwet.com",
             "users": []
         }
     },
@@ -263,76 +255,4 @@
             "iwidget": "2"
         }
     },
-    {
-        "model": "commons.Translation",
-        "pk": "1",
-        "fields": {
-            "table": "platform.VariableDef",
-            "element_id": "1",
-            "text_id": "password_pref_label",
-            "value": "Password Pref",
-            "language": "en",
-            "default": true
-        }
-    },
-    {
-        "model": "commons.Translation",
-        "pk": "2",
-        "fields": {
-            "table": "platform.VariableDef",
-            "element_id": "1",
-            "text_id": "password_pref_label",
-            "value": "Contraseña",
-            "language": "es",
-            "default": false
-        }
-    },
-    {
-        "model": "commons.Translation",
-        "pk": "3",
-        "fields": {
-            "table": "catalogue.CatalogueResource",
-            "element_id": "1",
-            "text_id": "displayName",
-            "value": "Test Widget",
-            "language": "en",
-            "default": true
-        }
-    },
-    {
-        "model": "commons.Translation",
-        "pk": "4",
-        "fields": {
-            "table": "catalogue.CatalogueResource",
-            "element_id": "1",
-            "text_id": "displayName",
-            "value": "Widget de prueba",
-            "language": "es",
-            "default": false
-        }
-    },
-    {
-        "model": "commons.Translation",
-        "pk": "5",
-        "fields": {
-            "table": "platform.VariableDef",
-            "element_id": "3",
-            "text_id": "slot_label",
-            "value": "Slot Action Label",
-            "language": "en",
-            "default": true
-        }
-    },
-    {
-        "model": "commons.Translation",
-        "pk": "6",
-        "fields": {
-            "table": "platform.VariableDef",
-            "element_id": "3",
-            "text_id": "slot_label",
-            "value": "Etiqueta de acción del slot",
-            "language": "es",
-            "default": false
-        }
-    }
 ]
