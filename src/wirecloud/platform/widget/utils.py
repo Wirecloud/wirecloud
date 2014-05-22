@@ -29,7 +29,7 @@ from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
-from wirecloud.platform.models import Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
+from wirecloud.platform.models import Widget, UserWorkspace, VariableDef, Workspace, XHTML
 from wirecloud.platform.plugins import get_active_features, get_widget_api_extensions
 
 

@@ -150,21 +150,6 @@ class VariableDef(TransModel):
 
 
 @python_2_unicode_compatible
-class UserPrefOption(TransModel):
-
-    value = models.CharField(_('Value'), max_length=50)
-    name = models.CharField(_('Name'), max_length=50)
-    variableDef = models.ForeignKey(VariableDef)
-
-    def __str__(self):
-        return self.variableDef.widget.uri + " " + self.name
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_userprefoption'
-
-
-@python_2_unicode_compatible
 class VariableDefAttr(models.Model):
 
     value = models.CharField(_('Value'), max_length=30)
