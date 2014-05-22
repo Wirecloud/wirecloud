@@ -27,7 +27,6 @@ from django.db.models.signals import post_save
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.models import TransModel
 from wirecloud.commons.utils.wgt import WgtFile
 
 
@@ -118,7 +117,7 @@ class Widget(models.Model):
 
 
 @python_2_unicode_compatible
-class VariableDef(TransModel):
+class VariableDef(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
     TYPES = (
