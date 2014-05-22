@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,20 +19,13 @@
 
 from django.contrib import admin
 
-from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
-
-
-class ResourceEndpointsInline(admin.TabularInline):
-
-    model = WidgetWiring
-    extra = 0
+from wirecloud.catalogue.models import CatalogueResource
 
 
 class CatalogueResourceAdmin(admin.ModelAdmin):
 
     search_fields = ('vendor', 'short_name', 'version', 'author')
     list_display = ('vendor', 'short_name', 'version', 'resource_type')
-    inlines = (ResourceEndpointsInline,)
     verbose_name_plural = 'Resources'
 
 admin.site.register(CatalogueResource, CatalogueResourceAdmin)

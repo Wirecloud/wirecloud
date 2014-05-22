@@ -24,7 +24,7 @@ from urlparse import urljoin
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from wirecloud.catalogue.models import WidgetWiring, CatalogueResource
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import TemplateParser

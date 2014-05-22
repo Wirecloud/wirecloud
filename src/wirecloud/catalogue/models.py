@@ -103,9 +103,6 @@ class CatalogueResource(models.Model):
 
         from wirecloud.catalogue.utils import wgt_deployer
 
-        # Delete the related wiring information for that resource
-        WidgetWiring.objects.filter(idResource=self.id).delete()
-
         if hasattr(self, 'widget'):
             from wirecloud.platform.models import Widget
             try:
@@ -138,14 +135,3 @@ class CatalogueResource(models.Model):
 
     def __str__(self):
         return self.local_uri_part
-
-
-@python_2_unicode_compatible
-class WidgetWiring(models.Model):
-
-    friendcode = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
-    wiring = models.CharField(_('Wiring'), max_length=5)
-    idResource = models.ForeignKey(CatalogueResource)
-
-    def __str__(self):
-        return self.friendcode

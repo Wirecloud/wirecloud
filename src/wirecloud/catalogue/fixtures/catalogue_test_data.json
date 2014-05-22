@@ -95,51 +95,5 @@
             "json_description": "{\"vendor\": \"Wirecloud\", \"name\": \"test\", \"version\": \"0.1\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"license\": \"\", \"license_url\": \"\", \"code_url\": \"js/main.js\"}"
 
         }
-    },
-    {
-        "model": "catalogue.WidgetWiring",
-        "pk": 1,
-        "fields": {
-            "friendcode": "friendcode1",
-            "wiring": "out",
-            "idResource": 1
-        }
-    },
-    {
-        "model": "catalogue.WidgetWiring",
-        "pk": 2,
-        "fields": {
-            "friendcode": "friendcode2",
-            "wiring": "in",
-            "idResource": 1
-        }
-    },
-    {
-        "model": "catalogue.WidgetWiring",
-        "pk": 3,
-        "fields": {
-            "friendcode": "friendcode1",
-            "wiring": "out",
-            "idResource": 2
-        }
-    },
-    {
-        "model": "catalogue.WidgetWiring",
-        "pk": 4,
-        "fields": {
-            "friendcode": "friendcode2",
-            "wiring": "in",
-            "idResource": 2
-        }
-    },
-    {
-        "model": "catalogue.WidgetWiring",
-        "pk": 5,
-        "fields": {
-            "friendcode": "friendcode2",
-            "wiring": "out",
-            "idResource": 2
-        }
     }
-
 ]
