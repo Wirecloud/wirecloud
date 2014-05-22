@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -25,7 +25,6 @@ from django.db.models import Q
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
-from wirecloud.commons.models import Translation
 from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.commons.utils.template import TemplateParser
@@ -86,10 +85,6 @@ def create_widget_from_template(template, user, request=None, base=None):
 
     widget.save()
 
-    variable_definitions = {}
-    user_options = {}
-
-    order = 0
     for preference in widget_info['preferences']:
         vDef = VariableDef.objects.create(
             name=preference['name'],
@@ -101,19 +96,7 @@ def create_widget_from_template(template, user, request=None, base=None):
             widget=widget,
             secure=preference['secure']
         )
-        variable_definitions[vDef.name] = vDef
-        user_options[vDef.name] = {}
-        for option_index, option in enumerate(preference.get('options', ())):
-            upo = UserPrefOption.objects.create(
-                value=option['value'],
-                name=option['label'],
-                variableDef=vDef
-            )
-            user_options[vDef.name][option_index] = upo
 
-        order += 1
-
-    order = 0
     for prop in widget_info['properties']:
         vDef = VariableDef.objects.create(
             name=prop['name'],
@@ -123,34 +106,6 @@ def create_widget_from_template(template, user, request=None, base=None):
             widget=widget,
             secure=prop['secure'],
         )
-        variable_definitions[vDef.name] = vDef
-        order += 1
-
-    for lang in widget_info['translations']:
-        translation = widget_info['translations'][lang]
-        for index in translation:
-            value = translation[index]
-            usages = widget_info['translation_index_usage'][index]
-            for use in usages:
-                if use['type'] == 'vdef':
-                    vDef = variable_definitions[use['variable']]
-                    table = vDef._get_table_id()
-                    element_id = vDef.id
-                elif use['type'] == 'upo':
-                    upo = user_options[use['variable']][use['option']]
-                    table = upo._get_table_id()
-                    element_id = upo.id
-                else:
-                    continue
-
-                Translation.objects.create(
-                    text_id=index,
-                    element_id=element_id,
-                    table=table,
-                    language=lang,
-                    value=value,
-                    default=widget_info['default_lang'] == lang
-                )
 
     return widget
 
