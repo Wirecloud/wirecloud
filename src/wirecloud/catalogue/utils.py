@@ -74,7 +74,7 @@ def extract_resource_media_from_package(template, package, base_path):
     return overrides
 
 
-def add_widget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=False):
+def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=False):
 
     close_wgt = False
     if wgt_file is None:

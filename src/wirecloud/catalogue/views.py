@@ -42,7 +42,7 @@ from wirecloud.catalogue.catalogue_utils import get_event_filter, get_slot_filte
 from wirecloud.catalogue.catalogue_utils import group_resources
 from wirecloud.catalogue.utils import get_resource_data
 import wirecloud.catalogue.utils as catalogue_utils
-from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
+from wirecloud.catalogue.utils import add_packaged_resource, add_resource_from_template, delete_resource
 from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
@@ -81,14 +81,14 @@ class ResourceCollection(Resource):
             if 'file' in request.FILES:
 
                 request_file = request.FILES['file']
-                resource = add_widget_from_wgt(request_file, request.user)
+                resource = add_packaged_resource(request_file, request.user)
 
             elif 'template_uri' in request.POST:
 
                 template_uri = request.POST['template_uri']
                 downloaded_file = download_http_content(template_uri, user=request.user)
                 if request.POST.get('packaged', 'false').lower() == 'true':
-                    resource = add_widget_from_wgt(StringIO(downloaded_file), request.user)
+                    resource = add_packaged_resource(StringIO(downloaded_file), request.user)
                 else:
                     resource = add_resource_from_template(template_uri, downloaded_file, request.user)
 

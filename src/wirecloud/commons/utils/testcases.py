@@ -466,13 +466,13 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         # deploy resource files
         operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
         operator_wgt = WgtFile(operator_wgt_file)
-        catalogue.add_widget_from_wgt(operator_wgt_file, None, wgt_file=operator_wgt, deploy_only=True)
+        catalogue.add_packaged_resource(operator_wgt_file, None, wgt_file=operator_wgt, deploy_only=True)
         showcase.wgt_deployer.deploy(operator_wgt)
         operator_wgt_file.close()
 
         widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
         widget_wgt = WgtFile(widget_wgt_file)
-        catalogue.add_widget_from_wgt(widget_wgt_file, None, wgt_file=widget_wgt, deploy_only=True)
+        catalogue.add_packaged_resource(widget_wgt_file, None, wgt_file=widget_wgt, deploy_only=True)
         showcase.wgt_deployer.deploy(widget_wgt)
         widget_wgt_file.close()
 
@@ -566,13 +566,13 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
         # deploy resource files
         operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
         operator_wgt = WgtFile(operator_wgt_file)
-        catalogue.add_widget_from_wgt(operator_wgt_file, None, wgt_file=operator_wgt, deploy_only=True)
+        catalogue.add_packaged_resource(operator_wgt_file, None, wgt_file=operator_wgt, deploy_only=True)
         showcase.wgt_deployer.deploy(operator_wgt)
         operator_wgt_file.close()
 
         widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
         widget_wgt = WgtFile(widget_wgt_file)
-        catalogue.add_widget_from_wgt(widget_wgt_file, None, wgt_file=widget_wgt, deploy_only=True)
+        catalogue.add_packaged_resource(widget_wgt_file, None, wgt_file=widget_wgt, deploy_only=True)
         showcase.wgt_deployer.deploy(widget_wgt)
         widget_wgt_file.close()
 

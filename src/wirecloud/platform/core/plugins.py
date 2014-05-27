@@ -84,6 +84,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',
     'js/StyledElements/MenuItem.js',
+    'js/StyledElements/Separator.js',
     'js/StyledElements/SubMenuItem.js',
     'js/StyledElements/PopupButton.js',
     'js/StyledElements/StaticPaginatedSource.js',

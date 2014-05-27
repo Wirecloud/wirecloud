@@ -600,11 +600,11 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         cls.widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
         cls.widget_wgt = WgtFile(cls.widget_wgt_file)
-        catalogue.add_widget_from_wgt(cls.widget_wgt_file, None, wgt_file=cls.widget_wgt, deploy_only=True)
+        catalogue.add_packaged_resource(cls.widget_wgt_file, None, wgt_file=cls.widget_wgt, deploy_only=True)
 
         cls.operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
         cls.operator_wgt = WgtFile(cls.operator_wgt_file)
-        catalogue.add_widget_from_wgt(cls.operator_wgt_file, None, wgt_file=cls.operator_wgt, deploy_only=True)
+        catalogue.add_packaged_resource(cls.operator_wgt_file, None, wgt_file=cls.operator_wgt, deploy_only=True)
 
     @classmethod
     def tearDownClass(cls):

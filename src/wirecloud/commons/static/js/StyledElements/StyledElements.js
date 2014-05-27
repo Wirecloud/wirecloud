@@ -1099,22 +1099,3 @@ StyledElements.DynamicMenuItems = function() {
 StyledElements.DynamicMenuItems.prototype.build = function() {
     return [];
 }
-
-/**
- * @experimental
- *
- */
-StyledElements.Separator = function Separator () {
-    StyledElements.StyledElement.call(this, []);
-
-    this.wrapperElement = document.createElement("hr");
-};
-StyledElements.Separator.prototype = new StyledElements.StyledElement();
-
-StyledElements.Separator.prototype.destroy = function destroy () {
-    if (Wirecloud.Utils.XML.isElement(this.wrapperElement.parentNode)) {
-        Wirecloud.Utils.removeFromParent(this.wrapperElement);
-    }
-
-    StyledElements.StyledElement.prototype.destroy.call(this);
-};

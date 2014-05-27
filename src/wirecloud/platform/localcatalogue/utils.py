@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,7 +22,7 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 
-from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
+from wirecloud.catalogue.utils import add_packaged_resource, add_resource_from_template
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.platform.localcatalogue.signals import resource_installed
 from wirecloud.platform.markets.utils import get_market_managers
@@ -54,7 +54,7 @@ def install_resource(file_contents, templateURL, executor_user, packaged):
         resource = resources[0]
     else:
         if packaged:
-            resource = add_widget_from_wgt(file_contents, executor_user, wgt_file=wgt_file)
+            resource = add_packaged_resource(file_contents, executor_user, wgt_file=wgt_file)
         else:
             resource = add_resource_from_template(templateURL, template_contents, executor_user)
 

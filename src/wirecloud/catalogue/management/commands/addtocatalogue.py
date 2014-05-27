@@ -26,7 +26,7 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import delete_resource
-from wirecloud.catalogue.views import add_widget_from_wgt
+from wirecloud.catalogue.views import add_packaged_resource
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 
@@ -65,7 +65,7 @@ class Command(BaseCommand):
                 template_contents = wgt_file.get_template()
                 template = TemplateParser(template_contents)
                 try:
-                    add_widget_from_wgt(f, user, wgt_file=wgt_file, template=template, deploy_only=options['deploy_only'])
+                    add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=options['deploy_only'])
                 except IntegrityError:
                     if not options['reinstall']:
                         raise
@@ -75,7 +75,7 @@ class Command(BaseCommand):
                             version=template.get_resource_version()
                         )
                         delete_resource(old_resource, user)
-                        add_widget_from_wgt(f, user, wgt_file=wgt_file, template=template)
+                        add_packaged_resource(f, user, wgt_file=wgt_file, template=template)
 
                 wgt_file.close()
                 f.close()
