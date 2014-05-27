@@ -1089,13 +1089,3 @@ StyledElements.Alternative.prototype.isVisible = function (newStatus) {
 StyledElements.Alternative.prototype.getId = function() {
     return this.altId;
 }
-
-/**
- *
- */
-StyledElements.DynamicMenuItems = function() {
-}
-
-StyledElements.DynamicMenuItems.prototype.build = function() {
-    return [];
-}
