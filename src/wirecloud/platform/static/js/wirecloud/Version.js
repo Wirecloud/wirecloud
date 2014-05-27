@@ -77,5 +77,9 @@
         }
     };
 
+    Version.prototype.toString = function toString() {
+        return this.text;
+    };
+
     Wirecloud.Version = Version;
 })();
