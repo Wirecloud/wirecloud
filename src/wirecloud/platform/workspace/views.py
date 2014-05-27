@@ -535,11 +535,13 @@ class WorkspacePublisherEntry(Resource):
 
         content_type = get_content_type(request)[0]
         image_file = None
+        smartphoneimage_file = None
         if content_type == 'application/json':
             received_json = request.body
         else:
             received_json = request.POST['json']
             image_file = request.FILES.get('image', None)
+            smartphoneimage_file = request.FILES.get('smartphoneimage', None)
 
         try:
             options = json.loads(received_json)
@@ -564,6 +566,9 @@ class WorkspacePublisherEntry(Resource):
         if image_file is not None:
             image_filename = 'images/catalogue' + os.path.splitext(image_file.name)[1]
             options['image'] = image_filename
+        if smartphoneimage_file is not None:
+            smartphoneimage_filename = 'images/smartphone' + os.path.splitext(smartphoneimage_file.name)[1]
+            options['smartphoneimage'] = smartphoneimage_filename
         description = build_rdf_template_from_workspace(options, workspace, request.user)
 
         f = StringIO()
@@ -571,6 +576,8 @@ class WorkspacePublisherEntry(Resource):
         zf.writestr('config.xml', bytes(description.serialize(format='pretty-xml')))
         if image_file is not None:
             zf.writestr(image_filename, image_file.read())
+        if smartphoneimage_file is not None:
+            zf.writestr(smartphoneimage_filename, smartphoneimage_file.read())
         zf.close()
         wgt_file = WgtFile(f)
 
