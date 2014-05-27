@@ -29,8 +29,7 @@ from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase, TestCase, Client
 
 import wirecloud.catalogue.utils
-from wirecloud.catalogue.utils import add_resource_from_template
-from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
+from wirecloud.catalogue.utils import add_resource_from_template, get_resource_data
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.testcases import LocalFileSystemServer, WirecloudTestCase

@@ -22,8 +22,8 @@ import json
 from django.http import HttpResponse
 from django.db.models import Q
 
-from wirecloud.catalogue.get_json_catalogue_data import get_resource_group_data
 from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue.utils import get_resource_group_data
 
 
 def group_resources(resources):

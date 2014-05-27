@@ -40,7 +40,7 @@ from wirecloud.catalogue.catalogue_utils import filter_resources_by_scope
 from wirecloud.catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_filter
 from wirecloud.catalogue.catalogue_utils import get_event_filter, get_slot_filter, get_paginatedlist
 from wirecloud.catalogue.catalogue_utils import group_resources
-from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
+from wirecloud.catalogue.utils import get_resource_data
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
 from wirecloud.commons.utils.downloader import download_http_content
