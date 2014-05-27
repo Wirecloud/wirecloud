@@ -101,11 +101,8 @@ class TemplateParser(object):
 
         return urlparse.urljoin(base, url)
 
-    def get_resource_processed_info(self, base=None, lang=None):
+    def get_resource_processed_info(self, base=None, lang=None, process_urls=True):
         info = deepcopy(self.get_resource_info())
-
-        if base is None:
-            base = self.base
 
         if lang is None:
             from django.utils import translation
@@ -151,6 +148,12 @@ class TemplateParser(object):
 
         if info['title'] == '':
             info['title'] = info['name']
+
+        if process_urls is False:
+            return info
+
+        if base is None:
+            base = self.base
 
         # process url fields
         for field in BASIC_URL_FIELDS:
