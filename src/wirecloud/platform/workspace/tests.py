@@ -24,23 +24,21 @@ from tempfile import mkdtemp
 from shutil import rmtree
 import json
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import Client
-from django.utils import unittest
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.iwidget.utils import SaveIWidget
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, Workspace
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_xml_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 import wirecloud.platform.workspace.utils
-from wirecloud.platform.workspace.utils import sync_base_workspaces
 from wirecloud.platform.workspace.views import createEmptyWorkspace
 
 

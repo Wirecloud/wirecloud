@@ -26,12 +26,10 @@ import json
 
 from django.conf import settings
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext as _
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.db import save_alternative
-from wirecloud.commons.utils.template import TemplateParser
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, Workspace
+from wirecloud.platform.models import Tab, UserWorkspace, Variable, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
 
 
