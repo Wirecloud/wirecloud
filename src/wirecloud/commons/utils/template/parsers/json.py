@@ -85,7 +85,7 @@ class JSONTemplateParser(object):
 
     def _init(self):
 
-        self._check_string_fields(('title', 'description', 'email', 'authors', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl'))
+        self._check_string_fields(('title', 'description', 'email', 'authors', 'doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl'))
         if self._info['type'] == 'widget':
 
             self._check_string_fields(('code_url',), required=True)
