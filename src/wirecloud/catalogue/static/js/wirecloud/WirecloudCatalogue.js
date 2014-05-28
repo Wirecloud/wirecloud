@@ -75,6 +75,7 @@
             options.url += '/';
         }
 
+        this.CHANGELOG_URL_TEMPLATE = new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/changelog');
         this.view_all_template = new Wirecloud.Utils.Template(options.url + 'catalogue/resources/%(starting_page)s/%(resources_per_page)s');
         this.simple_search_template = new Wirecloud.Utils.Template(options.url + 'catalogue/search/and/%(starting_page)s/%(resources_per_page)s');
 

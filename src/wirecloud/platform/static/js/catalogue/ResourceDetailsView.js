@@ -68,6 +68,18 @@
                     var main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
                     main_description.appendChild(this.main_details_painter.paint(resource));
 
+                    if (resource.changelog) {
+                        var changelog = details.createTab({'name': gettext('Change Log'), 'closable': false});
+                        changelog.addEventListener('show', function () {
+                            Wirecloud.io.makeRequest(this.mainview.catalogue.CHANGELOG_URL_TEMPLATE.evaluate(resource), {
+                                method: 'GET',
+                                onSuccess: function (response) {
+                                    changelog.wrapperElement.innerHTML = response.responseText;
+                                }.bind(this)
+                            });
+                        }.bind(this));
+                    }
+
                     return details;
                 }.bind(this)
             };

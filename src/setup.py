@@ -109,6 +109,7 @@ setup(
         'django_relatives',
         'user-agents',
         'regex',
+        'markdown',
     ),
     tests_require=('django-nose'),
     classifiers=(

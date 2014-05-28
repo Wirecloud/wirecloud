@@ -210,6 +210,7 @@ def get_resource_data(resource, user, request=None):
         'email': resource_info['email'],
         'image': resource_info['image'],
         'doc': resource_info['doc'],
+        'changelog': resource_info['changelog'],
         'uriTemplate': template_uri,
         'license': resource_info['license'],
         'licenseurl': resource_info['licenseurl'],

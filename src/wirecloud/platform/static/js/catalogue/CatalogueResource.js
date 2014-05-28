@@ -88,6 +88,9 @@
             'doc': {
                 get: function () { return currentVersion.doc; }
             },
+            'changelog': {
+                get: function () { return currentVersion.changelog; }
+            },
             'title': {
                 get: function () { return currentVersion.title; }
             },
