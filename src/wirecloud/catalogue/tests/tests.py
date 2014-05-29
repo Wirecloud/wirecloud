@@ -103,7 +103,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
     @classmethod
     def setUpClass(cls):
         super(CatalogueSearchTestCase, cls).setUpClass()
-        cls.base_url = reverse('wirecloud_catalogue.whoosh_search')
+        cls.base_url = reverse('wirecloud_catalogue.resource_collection')
 
     def setUp(self):
         super(CatalogueSearchTestCase, self).setUp()

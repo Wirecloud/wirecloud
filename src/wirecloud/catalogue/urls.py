@@ -37,22 +37,6 @@ urlpatterns = patterns('wirecloud.catalogue.views',
         ResourceCollection(permitted_methods=('GET', 'POST',)),
         name='wirecloud_catalogue.resource_collection'),
 
-    # Whoosh search
-    url(r'^/resources/search$',
-        ResourceCollectionSearch(permitted_methods=('GET',)),
-        name="wirecloud_catalogue.whoosh_search"),
-
-    # Search Resources
-    url(r'^/resources/(?P<pag>\d+)/(?P<offset>\d+)$',
-        ResourceCollection(permitted_methods=('GET',)),
-        name="wirecloud_catalogue.resource_list"),
-    url(r'^/search/(?P<criteria>\w+)/(?P<pag>\d+)/(?P<offset>\d+)$',
-        ResourceCollectionBySimpleSearch(permitted_methods=('GET',)),
-        name="wirecloud_catalogue.simple_search"),
-    url(r'^/globalsearch/(?P<pag>\d+)/(?P<offset>\d+)$',
-        ResourceCollectionByGlobalSearch(permitted_methods=('GET',)),
-        name="wirecloud_catalogue.global_search"),
-
     #version check
     url(r'^/versions',
         ResourceVersionCollection(permitted_methods=('POST',)),

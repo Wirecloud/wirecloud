@@ -74,10 +74,7 @@
         } else if (options.url[options.url.length - 1] !== '/') {
             options.url += '/';
         }
-
         this.CHANGELOG_URL_TEMPLATE = new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/changelog');
-        this.view_all_template = new Wirecloud.Utils.Template(options.url + 'catalogue/resources/%(starting_page)s/%(resources_per_page)s');
-        this.simple_search_template = new Wirecloud.Utils.Template(options.url + 'catalogue/search/and/%(starting_page)s/%(resources_per_page)s');
 
         Object.defineProperty(this, 'RESOURCE_ENTRY', {
             value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s')
@@ -96,11 +93,16 @@
     WirecloudCatalogue.prototype.search = function search(onSuccess, onError, options) {
         var params, url, context;
 
-        params = {
-            'search_criteria': options.search_criteria,
-            'search_boolean': options.search_boolean,
-            'scope': options.scope
-        };
+        params = {};
+
+        if (options.search_criteria !== '') {
+            params.keyword = options.search_criteria;
+        }
+
+        if (options.scope !== 'all') {
+            params.scope = options.scope;
+        }
+
         if (options.order_by !== '') {
             params.orderby = options.order_by;
         }
@@ -111,12 +113,7 @@
             'onError': onError
         };
 
-        if (options.search_criteria.trim() === '') {
-            url = this.view_all_template.evaluate({'starting_page': options.starting_page, 'resources_per_page': options.resources_per_page});
-        } else {
-            url = this.simple_search_template.evaluate({'starting_page': options.starting_page, 'resources_per_page': options.resources_per_page});
-        }
-        Wirecloud.io.makeRequest(url, {
+        Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
             parameters: params,

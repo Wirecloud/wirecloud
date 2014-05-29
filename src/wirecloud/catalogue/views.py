@@ -25,7 +25,6 @@ from urllib import url2pathname
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils.decorators import method_decorator
@@ -37,11 +36,6 @@ import markdown
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.models import search
 from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
-from wirecloud.catalogue.catalogue_utils import get_resource_response, filter_resources_by_user
-from wirecloud.catalogue.catalogue_utils import filter_resources_by_scope
-from wirecloud.catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_filter
-from wirecloud.catalogue.catalogue_utils import get_event_filter, get_slot_filter, get_paginatedlist
-from wirecloud.catalogue.catalogue_utils import group_resources
 from wirecloud.catalogue.utils import get_resource_data
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import add_packaged_resource, add_resource_from_template, delete_resource
@@ -110,22 +104,20 @@ class ResourceCollection(Resource):
         return HttpResponse(resource.json_description, content_type='application/json; charset=UTF-8')
 
     @no_cache
-    def read(self, request, pag=0, offset=0):
+    def read(self, request):
 
-        format = request.GET.get('format', 'default')
-        orderby = request.GET.get('orderby', '-creation_date')
-        scope = request.GET.get('scope', 'all')
+        user = request.user
+        querytext = request.GET.get('q', '')
 
-        # Get all resource in the catalogue
-        resources = filter_resources_by_scope(CatalogueResource.objects.all(), scope)
-        resources = resources.order_by(orderby)
-        resources = group_resources(resources)
-        resources = filter_resources_by_user(request.user, resources)
-        items = len(resources)
+        filters = {
+            'scope': request.GET.get('scope', None),
+            'pagenum': int(request.GET.get('pagenum', '1')),
+            'orderby': request.GET.get('orderby', '-creation_date'),
+        }
 
-        resources = get_paginatedlist(resources, int(pag), int(offset))
+        response_json = search(querytext, user, **filters)
 
-        return get_resource_response(resources, format, items, request.user, request)
+        return HttpResponse(json.dumps(response_json), content_type='application/json')
 
 
 class ResourceEntry(Resource):
@@ -155,119 +147,6 @@ class ResourceEntry(Resource):
 
         return HttpResponse(json.dumps(response_json),
                             content_type='application/json; charset=UTF-8')
-
-
-class ResourceCollectionSearch(Resource):
-
-    @no_cache
-    def read(self, request):
-
-        user = request.user
-        querytext = request.GET.get('q', '')
-
-        filters = {
-            'scope': request.GET.get('scope', None),
-            'pagenum': int(request.GET.get('pagenum', '1')),
-            'orderby': request.GET.get('orderby', '-creation_date'),
-        }
-
-        response_json = search(querytext, user, **filters)
-
-        return HttpResponse(json.dumps(response_json), content_type='application/json')
-
-
-class ResourceCollectionBySimpleSearch(Resource):
-
-    @no_cache
-    def read(self, request, criteria, pag=0, offset=0):
-
-        orderby = request.GET.get('orderby', '-creation_date')
-        format = request.GET.get('format', 'default')
-        scope = request.GET.get('scope', 'all')
-
-        if criteria == 'connectEventSlot':
-            search_criteria = request.GET.getlist('search_criteria')
-        else:
-            search_criteria = request.GET.get('search_criteria')
-
-        resources = CatalogueResource.objects.none()
-
-        if criteria == 'and':
-            filters = get_and_filter(search_criteria, request.user)
-        elif criteria == 'or' or criteria == 'simple_or':
-            filters = get_or_filter(search_criteria, request.user)
-        elif criteria == 'not':
-            filters = get_not_filter(search_criteria, request.user)
-        elif criteria == 'event':
-            filters = get_event_filter(search_criteria)
-        elif criteria == 'slot':
-            filters = get_slot_filter(search_criteria)
-        elif criteria == 'connectSlot':
-            # get all resource compatible with the given events
-            search_criteria = search_criteria.split()
-            for e in search_criteria:
-                resources = CatalogueResource.objects.filter(
-                    Q(widgetwiring__friendcode=e),
-                    Q(widgetwiring__wiring='out'))
-
-        elif criteria == 'connectEvent':
-            # get all resource compatible with the given slots
-            search_criteria = search_criteria.split()
-            filters = Q()
-            for e in search_criteria:
-                filters = filters | Q(widgetwiring__friendcode=e)
-            filters = filters & Q(widgetwiring__wiring='out')
-
-        resources = CatalogueResource.objects.filter(filters)
-        resources = filter_resources_by_scope(resources, scope)
-        resources = resources.order_by(orderby)
-        resources = group_resources(resources)
-        resources = filter_resources_by_user(request.user, resources)
-
-        items = len(resources)
-        resources = get_paginatedlist(resources, pag, offset)
-
-        return get_resource_response(resources, format, items, request.user, request)
-
-
-class ResourceCollectionByGlobalSearch(Resource):
-
-    @no_cache
-    def read(self, request, pag=0, offset=0):
-
-        orderby = request.GET.get('orderby', '-creation_date')
-        format = request.GET.get('format', 'default')
-        scope = request.GET.get('scope', 'all')
-        search_criteria = request.GET.getlist('search_criteria')
-        search_boolean = request.GET.get('search_boolean')
-
-        if search_boolean == 'AND':
-            join_filters = lambda x, y: x & y
-        else:
-            join_filters = lambda x, y: x | y
-
-        filters = Q()
-        if search_criteria[0] != "":
-            filters = get_and_filter(search_criteria[0], request.user)
-        if search_criteria[1] != "":
-            filters = join_filters(filters, get_or_filter(search_criteria[1], request.user))
-        if search_criteria[2] != "":
-            filters = join_filters(filters, get_not_filter(search_criteria[2], request.user))
-        if search_criteria[4] != "":
-            filters = join_filters(filters, get_event_filter(search_criteria[4]))
-        if search_criteria[5] != "":
-            filters = join_filters(filters, get_slot_filter(search_criteria[5]))
-
-        resources = CatalogueResource.objects.filter(filters)
-        resources = filter_resources_by_scope(resources, scope).distinct()
-        resources = resources.order_by(orderby)
-        resources = group_resources(resources)
-        resources = filter_resources_by_user(request.user, resources)
-        items = len(resources)
-
-        resources = get_paginatedlist(resources, pag, offset)
-
-        return get_resource_response(resources, format, items, request.user, request)
 
 
 class ResourceVersionCollection(Resource):
