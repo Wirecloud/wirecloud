@@ -177,9 +177,9 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result.status_code, 400)
 
 
-class CatalogueAPITestCase(TestCase):
+class CatalogueAPITestCase(WirecloudTestCase):
 
-    fixtures = ['catalogue_test_data']
+    fixtures = ('selenium_test_data', 'catalogue_search_data')
 
     @classmethod
     def setUpClass(cls):
@@ -196,100 +196,6 @@ class CatalogueAPITestCase(TestCase):
 
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
         self.client = Client()
-
-    def test_basic_listing(self):
-
-        self.client.login(username='test', password='test')
-
-        base_url = reverse('wirecloud_catalogue.resource_list', kwargs={'pag': '1', 'offset': '10'})
-
-        # List widgets in alphabetical order (short_name)
-        result = self.client.get(base_url + '?orderby=short_name&search_boolean=AND&scope=widget')
-
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 5)
-        self.assertTrue(len(result_json['resources'][0]) > 0)
-        self.assertEqual(result_json['resources'][0]['name'], 'awidget')
-
-        # List widgets in reverse alphabetical order (short_name)
-        result = self.client.get(base_url + '?orderby=-short_name&search_boolean=AND&scope=widget')
-
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 5)
-        self.assertTrue(len(result_json['resources'][0]) > 0)
-        self.assertEqual(result_json['resources'][0]['name'], 'zwidget')
-
-    def test_simple_search(self):
-
-        self.client.login(username='test', password='test')
-
-        # Search widgets using "widget1" as keyword
-        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'criteria': 'simple_or', 'pag': '1', 'offset': '10'})
-        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_boolean=AND&scope=widget')
-
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 1)
-
-        # Search widgets providing "friendcode2" events
-        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'criteria': 'event', 'pag': '1', 'offset': '10'})
-        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=friendcode2&search_boolean=AND&scope=widget')
-
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 1)
-        self.assertEqual(len(result_json['resources'][0]['versions']), 1)
-        widget_data = result_json['resources'][0]
-        self.assertEqual(widget_data['name'], 'widget1')
-        self.assertEqual(widget_data['versions'][0]['version'], '1.10')
-
-        # Search widgets consuming "friendcode2" events
-        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'criteria': 'slot', 'pag': '1', 'offset': '10'})
-        result = self.client.get(base_url + '?orderby=short_name&search_criteria=friendcode2&search_boolean=AND&scope=widget')
-
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 1)
-        self.assertEqual(len(result_json['resources'][0]['versions']), 2)
-        widget_data = result_json['resources'][0]
-        self.assertEqual(widget_data['name'], 'widget1')
-
-    def test_global_search(self):
-
-        self.client.login(username='test', password='test')
-
-        base_url = reverse('wirecloud_catalogue.global_search', kwargs={'pag': '1', 'offset': '10'})
-
-        # Search widgets using "widget1" as keyword
-        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_boolean=AND&scope=widget')
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 1)
-
-        # Search by keyworkd "widget1" and by event "friendcode2"
-        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=widget')
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 1)
-        self.assertEqual(len(result_json['resources'][0]['versions']), 1)
-        widget_data = result_json['resources'][0]
-        self.assertEqual(widget_data['name'], 'widget1')
-        self.assertEqual(widget_data['versions'][0]['version'], '1.10')
-
-        # Search by keyworkd "widget2" and by event "friendcode2"
-        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget2&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=widget')
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 0)
-
-        # Search by keyworkd "widget1" or by event "friendcode2"
-        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=OR&scope=widget')
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 1)
-        self.assertEqual(len(result_json['resources'][0]['versions']), 2)
 
     def test_last_version_query(self):
 
