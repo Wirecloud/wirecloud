@@ -167,6 +167,15 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         result_json = json.loads(result.content)
         self.assertEqual(result_json['pagelen'], 2)
 
+    def test_search_by_not_supported_scope(self):
+        self.client.login(username='admin', password='admin')
+
+        result = self.client.get(self.base_url + '?scope=endpoint')
+        self.assertEqual(result.status_code, 400)
+
+        result = self.client.get(self.base_url + '?scope=widget+operator')
+        self.assertEqual(result.status_code, 400)
+
 
 class CatalogueAPITestCase(TestCase):
 

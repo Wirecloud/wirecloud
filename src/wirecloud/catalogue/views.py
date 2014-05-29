@@ -115,6 +115,9 @@ class ResourceCollection(Resource):
             'orderby': request.GET.get('orderby', '-creation_date'),
         }
 
+        if filters['scope'] and not filters['scope'] in ['mashup', 'operator', 'widget']:
+            return build_error_response(request, 400, _('Scope not supported'))
+
         response_json = search(querytext, user, **filters)
 
         return HttpResponse(json.dumps(response_json), content_type='application/json')
