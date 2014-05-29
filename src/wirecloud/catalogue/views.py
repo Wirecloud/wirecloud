@@ -35,8 +35,7 @@ import markdown
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.models import search
-from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
-from wirecloud.catalogue.utils import get_resource_data
+from wirecloud.catalogue.utils import get_latest_resource_version, get_resource_data
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import add_packaged_resource, add_resource_from_template, delete_resource
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file

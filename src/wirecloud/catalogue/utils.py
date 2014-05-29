@@ -233,3 +233,21 @@ def get_resource_group_data(resource_group, user, request=None):
         data['versions'].append(current_resource_data)
 
     return data
+
+
+def get_latest_resource_version(name, vendor):
+
+    resource_versions = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
+    if resource_versions.count() > 0:
+        # convert from ["1.9", "1.10", "1.9.1"] to [[1,9], [1,10], [1,9,1]] to
+        # allow comparing integers
+        versions = [map(int, r.version.split(".")) for r in resource_versions]
+
+        index = 0
+        for k in range(len(versions)):
+            if max(versions[index], versions[k]) == versions[k]:
+                index = k
+
+        return resource_versions[index]
+
+    return None
