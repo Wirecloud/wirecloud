@@ -29,7 +29,7 @@ from wirecloud.platform.models import IWidget
 def get_iwidgets_description(included_iwidgets):
     description = "Wirecloud Mashup composed of: "
 
-    description = ', '.join([iwidget.widget.resource.get_processed_info()['display_name'] for iwidget in included_iwidgets])
+    description = ', '.join([iwidget.widget.resource.get_processed_info()['title'] for iwidget in included_iwidgets])
 
     return description
 

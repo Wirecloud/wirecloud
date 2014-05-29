@@ -98,7 +98,7 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
 
     iwidget_name = iwidget.get('name', None)
     if iwidget_name is None:
-        iwidget_name = iwidget.get_processed_info()['title']
+        iwidget_name = resource.get_processed_info()['title']
 
     width = iwidget.get('width', 0)
     height = iwidget.get('height', 0)
