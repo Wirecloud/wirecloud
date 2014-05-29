@@ -95,6 +95,79 @@ class AddWidgetTestCase(WirecloudTestCase):
         self.assertEqual(data['description'], u'Descripción del Widget de pruebas')
 
 
+class CatalogueSearchTestCase(WirecloudTestCase):
+
+    fixtures = ('selenium_test_data', 'catalogue_search_data')
+    tags = ('whoosh',)
+
+    @classmethod
+    def setUpClass(cls):
+        super(CatalogueSearchTestCase, cls).setUpClass()
+        cls.base_url = reverse('wirecloud_catalogue.whoosh_search')
+
+    def setUp(self):
+        super(CatalogueSearchTestCase, self).setUp()
+
+        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+        self.client = Client()
+
+    def test_basic_search_with_staff_user(self):
+        self.client.login(username='admin', password='admin')
+
+        result = self.client.get(self.base_url)
+        self.assertEqual(result.status_code, 200)
+        result_json = json.loads(result.content)
+        self.assertEqual(result_json['pagelen'], 6)
+
+    def test_basic_search_with_not_staff_user(self):
+        self.client.login(username='test', password='test')
+
+        result = self.client.get(self.base_url)
+        self.assertEqual(result.status_code, 200)
+        result_json = json.loads(result.content)
+        self.assertEqual(result_json['pagelen'], 4)
+
+    def test_basic_search_by_querytext(self):
+        self.client.login(username='admin', password='admin')
+
+        result = self.client.get(self.base_url + '?q=mashable')
+        self.assertEqual(result.status_code, 200)
+        result_json = json.loads(result.content)
+        self.assertEqual(result_json['pagelen'], 2)
+
+    def test_basic_search_by_scope(self):
+        self.client.login(username='admin', password='admin')
+
+        result = self.client.get(self.base_url + '?scope=widget')
+        self.assertEqual(result.status_code, 200)
+        result_json = json.loads(result.content)
+        widgets = [i['type'] for i in result_json['resources']].count('widget')
+        self.assertEqual(result_json['pagelen'], widgets)
+
+    def test_basic_search_order_by(self):
+        self.client.login(username='admin', password='admin')
+
+        result = self.client.get(self.base_url)
+        self.assertEqual(result.status_code, 200)
+        result_json = json.loads(result.content)
+        self.assertEqual(result_json['pagelen'], 6)
+
+        result = self.client.get(self.base_url + '?orderby=creation_date')
+        self.assertEqual(result.status_code, 200)
+        result2_json = json.loads(result.content)
+        self.assertEqual(result2_json['pagelen'], 6)
+
+        self.assertEqual(result2_json['resources'][0], result_json['resources'][-1])
+
+    def test_search_by_keywords(self):
+        self.client.login(username='admin', password='admin')
+
+        result = self.client.get(self.base_url + '?q=mashable')
+        self.assertEqual(result.status_code, 200)
+        result_json = json.loads(result.content)
+        self.assertEqual(result_json['pagelen'], 2)
+
+
 class CatalogueAPITestCase(TestCase):
 
     fixtures = ['catalogue_test_data']

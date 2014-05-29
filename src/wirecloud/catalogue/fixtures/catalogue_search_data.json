@@ -1,0 +1,40 @@
+[
+    {
+        "pk": 101,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Vendor1",
+            "short_name": "MyWidget",
+            "json_description": "{\"vendor\": \"Vendor1\", \"description\": \"This widget is used for the catalogue search tests. This description contains the phrase term mashable application component.\", \"name\": \"MyWidget\", \"title\": \"Incredible Views\", \"version\": \"1.0\", \"email\": \"tests@example.com\", \"type\": \"widget\", \"code_url\": \"index.html\"}",
+            "creator": 1,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "1.0",
+            "fromWGT": true,
+            "type": 0,
+            "public": false,
+            "users": [1]
+        }
+    },
+    {
+        "pk": 102,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Vendor1",
+            "short_name": "MyWidget2",
+            "json_description": "{\"vendor\": \"Vendor2\", \"description\": \"This widget is used for the catalogue search tests. This description contains the phrase term mashable application component.\", \"name\": \"MyWidget2\", \"title\": \"Incredible Browser\", \"version\": \"1.0\", \"email\": \"tests@example.com\", \"type\": \"widget\", \"code_url\": \"index.html\"}",
+            "creator": 1,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "1.0",
+            "fromWGT": true,
+            "type": 0,
+            "public": true,
+            "users": [1]
+        }
+    }
+]

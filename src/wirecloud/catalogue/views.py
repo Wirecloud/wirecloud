@@ -35,6 +35,7 @@ from django.views.static import serve
 import markdown
 
 from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue.models import search
 from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
 from wirecloud.catalogue.catalogue_utils import get_resource_response, filter_resources_by_user
 from wirecloud.catalogue.catalogue_utils import filter_resources_by_scope
@@ -154,6 +155,25 @@ class ResourceEntry(Resource):
 
         return HttpResponse(json.dumps(response_json),
                             content_type='application/json; charset=UTF-8')
+
+
+class ResourceCollectionSearch(Resource):
+
+    @no_cache
+    def read(self, request):
+
+        user = request.user
+        querytext = request.GET.get('q', '')
+
+        filters = {
+            'scope': request.GET.get('scope', None),
+            'pagenum': int(request.GET.get('pagenum', '1')),
+            'orderby': request.GET.get('orderby', '-creation_date'),
+        }
+
+        response_json = search(querytext, user, **filters)
+
+        return HttpResponse(json.dumps(response_json), content_type='application/json')
 
 
 class ResourceCollectionBySimpleSearch(Resource):

@@ -17,14 +17,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
+import os
 import random
 from urlparse import urlparse
 
+from django.conf import settings
 from django.core.cache import cache
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+from whoosh import index
+from whoosh import fields
+from whoosh import query
+from whoosh import sorting
+from whoosh.qparser import MultifieldParser
+from whoosh.qparser import QueryParser
 
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
@@ -135,3 +146,109 @@ class CatalogueResource(models.Model):
 
     def __str__(self):
         return self.local_uri_part
+
+
+class CatalogueResourceSchema(fields.SchemaClass):
+
+    pk = fields.ID(stored=True, unique=True)
+    name = fields.TEXT
+    title = fields.TEXT(stored=True, spelling=True)
+    vendor = fields.TEXT(stored=True, spelling=True)
+    type = fields.TEXT(stored=True)
+    description = fields.TEXT(stored=True)
+    image = fields.TEXT(stored=True)
+    creation_date = fields.DATETIME
+    public = fields.BOOLEAN
+    users = fields.KEYWORD(commas=True)
+    groups = fields.KEYWORD(commas=True)
+
+
+def open_index(indexname, dirname=None):
+
+    if dirname is None:
+        dirname = settings.WIRECLOUD_INDEX_DIR
+
+    if not os.path.exists(dirname):
+        os.mkdir(dirname)
+
+    if not index.exists_in(dirname, indexname=indexname):
+        return index.create_in(dirname, CatalogueResourceSchema(), indexname=indexname)
+
+    return index.open_dir(dirname, indexname=indexname)
+
+
+def search(querytext, user, scope=None, pagenum=1, orderby='creation_date'):
+
+    ix = open_index('catalogue_resources')
+    qp = MultifieldParser(['name', 'title', 'vendor', 'description'], ix.schema)
+
+    querytext = unicode(querytext or '*')
+
+    user_q = qp.parse(querytext)
+
+    """
+    results.pagenum, results.pagecount, results.offset, results.pagelen
+    corrected = searcher.correct_query(user_q, keywords)
+    if corrected.query != user_q:
+        print("Did you mean:", corrected.string)
+    """
+
+    allow_q = []
+
+    if not user.is_staff:
+        allow_q.append(
+            query.Or([query.Term('public', 't'), query.Term('users', user.username)])
+        )
+        # [query.Term("group", group) for group in user.groups]
+
+    if scope:
+        allow_q.append(query.Term('type', scope))
+
+    if allow_q:
+        allow_q.append(user_q)
+        user_q = query.And(allow_q)
+
+    order_facet = sorting.FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
+
+    result = {}
+
+    with ix.searcher() as searcher:
+        hits = searcher.search_page(user_q, pagenum, pagelen=10, sortedby=[order_facet,])
+        result['pagecount'] = hits.pagecount
+        result['pagelen'] = hits.pagelen
+        result['pagenum'] = hits.pagenum
+        result['pageoffset'] = hits.offset
+        result['resources'] = [hit.fields() for hit in hits]
+
+    return result
+
+
+def add_document(sender, instance, created, raw, **kwargs):
+
+    resource = instance
+    resource_info = resource.get_processed_info()
+
+    data = {
+        'pk': unicode(resource.pk),
+        'name': unicode(resource.short_name),
+        'title': resource_info['title'],
+        'type': resource_info['type'],
+        'vendor': unicode(resource.vendor),
+        'description': resource_info['description'],
+        'creation_date': resource.creation_date.utcnow(),
+        'image': resource_info['image'],
+        'public': resource.public,
+        'users': ', '.join(resource.users.all().values_list('username', flat=True)),
+        'groups': ', '.join(resource.groups.all().values_list('name', flat=True)),
+    }
+
+    ix = open_index('catalogue_resources')
+
+    try:
+        with ix.writer() as writer:
+            writer.update_document(**data)
+    except:
+        with ix.writer() as writer:
+            writer.add_document(**data)
+
+post_save.connect(add_document, sender=CatalogueResource)

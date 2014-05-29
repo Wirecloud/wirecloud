@@ -19,8 +19,7 @@
 
 from django.conf.urls import patterns, url
 
-from wirecloud.catalogue.views import ResourceCollection, ResourceCollectionByGlobalSearch
-from wirecloud.catalogue.views import ResourceCollectionBySimpleSearch, ResourceVersionCollection
+from wirecloud.catalogue.views import ResourceCollection, ResourceVersionCollection
 from wirecloud.catalogue.views import ResourceEntry, ResourceChangelogEntry
 
 urlpatterns = patterns('wirecloud.catalogue.views',
@@ -37,6 +36,11 @@ urlpatterns = patterns('wirecloud.catalogue.views',
     url(r'^/resources$',
         ResourceCollection(permitted_methods=('GET', 'POST',)),
         name='wirecloud_catalogue.resource_collection'),
+
+    # Whoosh search
+    url(r'^/resources/search$',
+        ResourceCollectionSearch(permitted_methods=('GET',)),
+        name="wirecloud_catalogue.whoosh_search"),
 
     # Search Resources
     url(r'^/resources/(?P<pag>\d+)/(?P<offset>\d+)$',

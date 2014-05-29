@@ -325,6 +325,8 @@ class WirecloudTestCase(TransactionTestCase):
         cls.tmp_dir = mkdtemp()
         showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
 
+        cls.old_index_dir = settings.WIRECLOUD_INDEX_DIR
+        settings.WIRECLOUD_INDEX_DIR = mkdtemp()
         restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
         restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
 
@@ -348,6 +350,10 @@ class WirecloudTestCase(TransactionTestCase):
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
+        # Restore old index dir
+        cleartree(settings.WIRECLOUD_INDEX_DIR)
+        settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
+
         # Clear cache
         from django.core.cache import cache
         cache.clear()
@@ -358,6 +364,8 @@ class WirecloudTestCase(TransactionTestCase):
         super(WirecloudTestCase, cls).tearDownClass()
 
     def setUp(self):
+
+        from django.conf import settings
 
         # deployers
         restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)

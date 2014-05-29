@@ -6,11 +6,11 @@ from wirecloud.commons.utils.conf import load_default_wirecloud_conf
 from wirecloud.commons.utils.urlresolvers import reverse_lazy
 
 DEBUG = True
+BASEDIR = path.dirname(path.abspath(__file__))
 load_default_wirecloud_conf(locals())
 
 USE_XSENDFILE = False
 
-BASEDIR = path.dirname(path.abspath(__file__))
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),

@@ -110,6 +110,7 @@ setup(
         'user-agents',
         'regex',
         'markdown',
+        'whoosh',
     ),
     tests_require=('django-nose'),
     classifiers=(
