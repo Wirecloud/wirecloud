@@ -177,7 +177,7 @@ def open_index(indexname, dirname=None):
     return index.open_dir(dirname, indexname=indexname)
 
 
-def search(querytext, user, scope=None, pagenum=1, orderby='creation_date'):
+def search(querytext, user, scope=None, pagenum=1, orderby='creation_date', staff=False):
 
     ix = open_index('catalogue_resources')
     qp = MultifieldParser(['name', 'title', 'vendor', 'description'], ix.schema)
@@ -195,7 +195,7 @@ def search(querytext, user, scope=None, pagenum=1, orderby='creation_date'):
 
     allow_q = []
 
-    if not user.is_staff:
+    if not (staff and user.is_staff):
         allow_q.append(
             query.Or([query.Term('public', 't'), query.Term('users', user.username)])
         )

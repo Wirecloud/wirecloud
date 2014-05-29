@@ -117,6 +117,11 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         result = self.client.get(self.base_url)
         self.assertEqual(result.status_code, 200)
         result_json = json.loads(result.content)
+        self.assertEqual(result_json['pagelen'], 4)
+
+        result = self.client.get(self.base_url + '?staff=True')
+        self.assertEqual(result.status_code, 200)
+        result_json = json.loads(result.content)
         self.assertEqual(result_json['pagelen'], 6)
 
     def test_basic_search_with_not_staff_user(self):
@@ -133,7 +138,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         result = self.client.get(self.base_url + '?q=mashable')
         self.assertEqual(result.status_code, 200)
         result_json = json.loads(result.content)
-        self.assertEqual(result_json['pagelen'], 2)
+        self.assertEqual(result_json['pagelen'], 1)
 
     def test_basic_search_by_scope(self):
         self.client.login(username='admin', password='admin')
@@ -145,19 +150,23 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['pagelen'], widgets)
 
     def test_basic_search_order_by(self):
+
         self.client.login(username='admin', password='admin')
 
         result = self.client.get(self.base_url)
         self.assertEqual(result.status_code, 200)
         result_json = json.loads(result.content)
-        self.assertEqual(result_json['pagelen'], 6)
+        self.assertEqual(result_json['pagelen'], 4)
 
         result = self.client.get(self.base_url + '?orderby=creation_date')
         self.assertEqual(result.status_code, 200)
         result2_json = json.loads(result.content)
-        self.assertEqual(result2_json['pagelen'], 6)
+        self.assertEqual(result2_json['pagelen'], 4)
 
         self.assertEqual(result2_json['resources'][0], result_json['resources'][-1])
+
+        result = self.client.get(self.base_url + '?orderby=title')
+        self.assertEqual(result.status_code, 400)
 
     def test_search_by_keywords(self):
         self.client.login(username='admin', password='admin')
@@ -165,7 +174,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         result = self.client.get(self.base_url + '?q=mashable')
         self.assertEqual(result.status_code, 200)
         result_json = json.loads(result.content)
-        self.assertEqual(result_json['pagelen'], 2)
+        self.assertEqual(result_json['pagelen'], 1)
 
     def test_search_by_not_supported_scope(self):
         self.client.login(username='admin', password='admin')

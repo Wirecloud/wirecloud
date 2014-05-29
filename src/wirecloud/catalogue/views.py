@@ -112,7 +112,11 @@ class ResourceCollection(Resource):
             'scope': request.GET.get('scope', None),
             'pagenum': int(request.GET.get('pagenum', '1')),
             'orderby': request.GET.get('orderby', '-creation_date'),
+            'staff': request.GET.get('staff', 'false').lower() == 'true',
         }
+
+        if not filters['orderby'].replace('-', '', 1) in ['creation_date', 'name', 'vendor']:
+            return build_error_response(request, 400, _('Orderby not supported'))
 
         if filters['scope'] and not filters['scope'] in ['mashup', 'operator', 'widget']:
             return build_error_response(request, 400, _('Scope not supported'))
