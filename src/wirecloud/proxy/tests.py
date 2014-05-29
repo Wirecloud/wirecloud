@@ -311,7 +311,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
                             HTTP_REFERER='http://localhost',
-                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), 'username=test_username&password=test_password')
@@ -322,7 +322,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
                             HTTP_REFERER='http://localhost',
-                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), 'username=|username|&password=|password|')
@@ -335,7 +335,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
                             HTTP_REFERER='http://localhost',
-                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), 'username=test_username&password=test_password')
@@ -348,7 +348,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
                             HTTP_REFERER='http://localhost',
-                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), 'username=a=, z&password=a%3D%2C%20z')
@@ -360,7 +360,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
                             HTTP_REFERER='http://localhost',
-                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 422)
 
@@ -380,7 +380,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         user_ref = '1/username'
         secure_data_header = 'action=data, substr=|password|, var_ref=' + pass_ref
         secure_data_header += '&action=data, substr=|username|, var_ref=' + user_ref
-        client.cookies['X-EzWeb-Secure-Data'] = secure_data_header
+        client.cookies['X-WireCloud-Secure-Data'] = secure_data_header
         response = client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
@@ -391,7 +391,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         self.assertEqual(self.read_response(response), 'username=test_username&password=test_password')
 
         secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
-        client.cookies['X-EzWeb-Secure-Data'] = secure_data_header
+        client.cookies['X-WireCloud-Secure-Data'] = secure_data_header
         response = client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
@@ -403,7 +403,7 @@ class ProxySecureDataTests(ProxyTestsBase):
 
         # Secure data header with empty parameters
         secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
-        client.cookies['X-EzWeb-Secure-Data'] = secure_data_header
+        client.cookies['X-WireCloud-Secure-Data'] = secure_data_header
         response = client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',

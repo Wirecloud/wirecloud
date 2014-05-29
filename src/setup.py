@@ -111,6 +111,7 @@ setup(
         'regex',
         'markdown',
         'whoosh',
+        'pycrypto',
     ),
     tests_require=('django-nose'),
     classifiers=(

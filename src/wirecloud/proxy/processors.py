@@ -141,6 +141,6 @@ class SecureDataProcessor(object):
         # Process secure data cookie
         cookie_parser = request['cookies']
 
-        if cookie_parser is not None and 'X-Wirecloud-Secure-Data' in cookie_parser:
-            process_secure_data(cookie_parser['X-Wirecloud-Secure-Data'].value, request, ignore_errors=True)
-            del cookie_parser['X-Wirecloud-Secure-Data']
+        if cookie_parser is not None and 'X-WireCloud-Secure-Data' in cookie_parser:
+            process_secure_data(cookie_parser['X-WireCloud-Secure-Data'].value, request, ignore_errors=True)
+            del cookie_parser['X-WireCloud-Secure-Data']
