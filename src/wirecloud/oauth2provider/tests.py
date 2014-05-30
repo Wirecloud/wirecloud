@@ -41,6 +41,34 @@ class Oauth2TestCase(TestCase):
     def setUp(self):
         self.user_client.login(username='normuser', password='admin')
 
+    def _check_token(self, token):
+
+        # Make an authenticated request
+        url = reverse('wirecloud.resource_collection')
+
+        return  self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer ' + token)
+
+    def check_token_is_valid(self, token):
+
+        response = self._check_token(token)
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        return response
+
+    def check_token_is_invalid(self, token):
+
+        response = self._check_token(token)
+        self.assertEqual(response.status_code, 401)
+
+        response_data = json.loads(response.content)
+        self.assertIn('WWW-Authenticate', response)
+        self.assertTrue(isinstance(response_data, dict))
+
+        return response
+
     def test_authorization_code_grant_flow(self):
 
         # Authorization request
@@ -82,34 +110,33 @@ class Oauth2TestCase(TestCase):
         self.assertEqual(token_type, 'Bearer')
 
         # Make an authenticated request
-        url = reverse('wirecloud.resource_collection')
+        self.check_token_is_valid(token)
 
-        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer ' + token)
-        self.assertEqual(response.status_code, 200)
-
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
     test_authorization_code_grant_flow.tags = ('oauth2', 'fiware-ut-9')
 
     def test_authorization_bad_token(self):
-        url = reverse('wirecloud.resource_collection')
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer invalid_token')
-        self.assertEqual(response.status_code, 401)
-
-        response_data = json.loads(response.content)
-        self.assertIn('WWW-Authenticate', response)
-        self.assertTrue(isinstance(response_data, dict))
+        self.check_token_is_invalid('invalid_token')
 
     def test_authorization_expired_token(self):
-        url = reverse('wirecloud.resource_collection')
+        self.check_token_is_invalid('expired_token')
 
-        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer expired_token')
-        self.assertEqual(response.status_code, 401)
+    def test_client_secret_invalidates_authorization_tokens(self):
 
-        response_data = json.loads(response.content)
-        self.assertIn('WWW-Authenticate', response)
-        self.assertTrue(isinstance(response_data, dict))
+        from wirecloud.oauth2provider.models import Application
+
+        application = Application.objects.get(pk="3faf0fb4c2fe76c1c3bb7d09c21b97c2")
+
+        self.check_token_is_valid('eternal_token1')
+        self.check_token_is_valid('eternal_token2')
+        self.check_token_is_valid('eternal_token3')
+
+        application.secret = 'new_secret'
+        application.save()
+
+        self.check_token_is_invalid('eternal_token1')
+        self.check_token_is_invalid('eternal_token2')
+        # eternal_token3 is not owned by app 3faf0fb4c2fe76c1c3bb7d09c21b97c2
+        self.check_token_is_valid('eternal_token3')
 
     @unittest.skip('wip test')
     def test_implicit_grant_flow(self):

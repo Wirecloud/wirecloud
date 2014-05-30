@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,6 +19,8 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import ugettext as _
 
 
@@ -65,3 +67,9 @@ class Token(models.Model):
 
     def __unicode__(self):
         return unicode(self.token)
+
+
+@receiver(post_save, sender=Application)
+def invalidate_tokens_on_change(sender, instance, created, raw, **kwargs):
+    if created is False:
+        instance.token_set.all().update(creation_timestamp='0')

@@ -8,6 +8,14 @@
             "redirect_uri": "https://customapp.com/oauth/redirect"
         }
     }, {
+        "pk": "7fafcfb4c2fe76c1c3cb7d09c21b97c2",
+        "model": "oauth2provider.application",
+        "fields": {
+            "name": "Test Application 2",
+            "client_secret": "secret2",
+            "redirect_uri": "https://customapp2.com/oauth2/redirect"
+        }
+    }, {
         "pk": 1,
         "model": "oauth2provider.token",
         "fields": {
@@ -17,6 +25,42 @@
             "token_type": "Bearer",
             "refresh_token": "refresh_token",
             "creation_timestamp": 0,
+            "expires_in": 3600
+        }
+    }, {
+        "pk": 2,
+        "model": "oauth2provider.token",
+        "fields": {
+            "token": "eternal_token1",
+            "client": "3faf0fb4c2fe76c1c3bb7d09c21b97c2",
+            "user": 2,
+            "token_type": "Bearer",
+            "refresh_token": "refresh_token",
+            "creation_timestamp": 99999999999999,
+            "expires_in": 3600
+        }
+    }, {
+        "pk": 3,
+        "model": "oauth2provider.token",
+        "fields": {
+            "token": "eternal_token2",
+            "client": "3faf0fb4c2fe76c1c3bb7d09c21b97c2",
+            "user": 2,
+            "token_type": "Bearer",
+            "refresh_token": "refresh_token",
+            "creation_timestamp": 99999999999999,
+            "expires_in": 3600
+        }
+    }, {
+        "pk": 3,
+        "model": "oauth2provider.token",
+        "fields": {
+            "token": "eternal_token3",
+            "client": "7fafcfb4c2fe76c1c3cb7d09c21b97c2",
+            "user": 2,
+            "token_type": "Bearer",
+            "refresh_token": "refresh_token",
+            "creation_timestamp": 99999999999999,
             "expires_in": 3600
         }
     }
