@@ -28,6 +28,7 @@ from django.core.cache import cache
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import smart_str
+from django.utils.http import urlunquote
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET
 from django.views.static import serve
@@ -103,6 +104,9 @@ class WidgetCodeEntry(Resource):
         force_base = False
         base_url = xhtml.url
         if not base_url.startswith(('http://', 'https://')):
+            # Newer versions of Django urlencode urls created using reverse
+            # Fix double encoding
+            base_url = urlunquote(base_url)
             base_url = get_absolute_reverse_url('wirecloud.showcase_media', args=(base_url.split('/', 4)), request=request)
             force_base = True
 
