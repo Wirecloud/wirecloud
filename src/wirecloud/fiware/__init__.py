@@ -25,7 +25,7 @@ DEFAULT_FIWARE_PORTALS = (
     {'name': 'Store', 'url': 'https://store.lab.fi-ware.org', "logout_path": "/logout"},
     {'name': 'Mashup', 'url': 'https://mashup.lab.fi-ware.org', "logout_path": "/logout", "active": True},
     {'name': 'Account', 'url': 'https://account.lab.fi-ware.org', "logout_path": "/users/sign_out"},
-    {'name': 'Help&Info', 'url': 'https://lab.fi-ware.org'},
+    {'name': 'Help&Info', 'url': 'http://help.lab.fi-ware.org'},
 )
 
 DEFAULT_FIWARE_HOME = 'https://lab.fi-ware.org';
