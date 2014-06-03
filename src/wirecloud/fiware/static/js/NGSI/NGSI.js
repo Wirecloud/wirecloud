@@ -35,7 +35,7 @@
  *
  */
 
-/*global ActiveXObject, MashupPlatform*/
+/*global ActiveXObject, EventSource*/
 
 (function () {
 
@@ -254,13 +254,13 @@
             contentType: 'application/xml',
             requestHeaders: this.request_headers,
             postBody: NGSI.XML.serialize(payload),
-            onSuccess: function (transport) {
+            onSuccess: function (response) {
                 if (typeof callbacks.onSuccess === 'function') {
                     var doc, data;
-                    if (transport.responseXML == null) {
-                        doc = NGSI.XML.parseFromString(transport.responseText, 'application/xml');
+                    if (response.responseXML == null) {
+                        doc = NGSI.XML.parseFromString(response.responseText, 'application/xml');
                     } else {
-                        doc = transport.responseXML;
+                        doc = response.responseXML;
                     }
                     try {
                         data = parse_func(doc, callbacks);
@@ -274,12 +274,19 @@
                     callbacks.onSuccess(data);
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var error;
+
                 if (typeof callbacks.onFailure === 'function') {
-                    callbacks.onFailure();
+                    if (response.status_code === 0) {
+                        error = new NGSI.ConnectionError();
+                    } else {
+                        error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status_code);
+                    }
+                    callbacks.onFailure(error);
                 }
             },
-            onComplete: function (transport) {
+            onComplete: function (response) {
                 if (typeof callbacks.onComplete === 'function') {
                     callbacks.onComplete();
                 }
@@ -847,7 +854,7 @@
             process_error_code(doc.documentElement);
         } catch (e) {
             if (e.code === 404) {
-                return {};
+                return options.flat ? {} : [];
             } else {
                 throw e;
             }
@@ -1051,7 +1058,7 @@
     };
 
     NGSI.ProxyConnection.prototype.request_callback = function request_callback(callback, onSuccess, onFailure) {
-        if (typeof callback === 'funtion') {
+        if (typeof callback === 'function') {
             onSuccess(callback);
             return;
         }
@@ -1183,45 +1190,43 @@
         }
     };
 
-    NGSI.Connection.prototype.createRegistration = function createRegistration(e, attr, duration, providingApplication, callbacks) {
-        if (!Array.isArray(e) || e.length === 0) {
-            throw new TypeError();
+    NGSI.Connection.prototype.createRegistration = function createRegistration(entities, attributes, duration, providingApplication, callbacks) {
+        if (!Array.isArray(entities) || entities.length === 0) {
+            throw new TypeError('entities parameter must be a non-empty array');
         }
 
-        if (!Array.isArray(attr)) {
-            throw new TypeError();
+        if (attributes != null && !Array.isArray(attributes)) {
+            throw new TypeError('attributes parameter must be an array or null');
+        } else if (attributes == null) {
+            attributes = [];
         }
 
         if (callbacks == null) {
             callbacks = {};
         }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
-        }
 
-        var payload = ngsi_build_register_context_request(e, attr, duration, providingApplication);
+        var payload = ngsi_build_register_context_request(entities, attributes, duration, providingApplication);
         var url = this.url + NGSI.endpoints.REGISTER_CONTEXT;
 
         makeXMLRequest.call(this, url, payload, parse_register_context_response, callbacks);
     };
 
-    NGSI.Connection.prototype.updateRegistration = function updateRegistration(regId, e, attr, duration, providingApplication, callbacks) {
-        if (!Array.isArray(e) || e.length === 0) {
-            throw new TypeError();
+    NGSI.Connection.prototype.updateRegistration = function updateRegistration(regId, entities, attributes, duration, providingApplication, callbacks) {
+        if (!Array.isArray(entities) || entities.length === 0) {
+            throw new TypeError('entities parameter must be a non-empty array');
         }
 
-        if (!Array.isArray(attr)) {
-            throw new TypeError();
+        if (attributes != null && !Array.isArray(attributes)) {
+            throw new TypeError('attributes parameter must be an array or null');
+        } else if (attributes == null) {
+            attributes = [];
         }
 
         if (callbacks == null) {
             callbacks = {};
         }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
-        }
 
-        var payload = ngsi_build_register_context_request(e, attr, duration, providingApplication, regId);
+        var payload = ngsi_build_register_context_request(entities, attributes, duration, providingApplication, regId);
         var url = this.url + NGSI.endpoints.REGISTER_CONTEXT;
 
         makeXMLRequest.call(this, url, payload, parse_register_context_response, callbacks);
@@ -1231,108 +1236,106 @@
         this.updateRegistration(regId, [{id: 'canceled registration'}], [], 'PT0H', 'http://canceled.registration.com', callbacks);
     };
 
-    NGSI.Connection.prototype.discoverAvailability = function discoverAvailability(e, attr, callbacks) {
+    NGSI.Connection.prototype.discoverAvailability = function discoverAvailability(entities, attributeNames, callbacks) {
 
-        if (!Array.isArray(e) || e.length === 0) {
-            throw new TypeError();
+        if (!Array.isArray(entities) || entities.length === 0) {
+            throw new TypeError('entities parameter must be a non-empty array');
         }
 
-        if (attr != null && !Array.isArray(attr)) {
-            throw new TypeError();
-        } else if (attr == null) {
-            attr = [];
+        if (attributeNames != null && !Array.isArray(attributeNames)) {
+            throw new TypeError('attributeNames parameter must be an array or null');
+        } else if (attributeNames == null) {
+            attributeNames = [];
         }
 
         if (callbacks == null) {
             callbacks = {};
         }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
-        }
 
-        var payload = ngsi_build_discover_context_availability_request(e, attr);
+        var payload = ngsi_build_discover_context_availability_request(entities, attributeNames);
         var url = this.url + NGSI.endpoints.DISCOVER_CONTEXT_AVAILABILITY;
 
         makeXMLRequest.call(this, url, payload, parse_discover_context_availability_response, callbacks);
     };
 
-    NGSI.Connection.prototype.createAvailabilitySubscription = function createAvailabilitySubscription(e, attr, duration, restriction, callbacks) {
+    NGSI.Connection.prototype.createAvailabilitySubscription = function createAvailabilitySubscription(entities, attributeNames, duration, restriction, options) {
 
-        if (!Array.isArray(e) || e.length === 0) {
-            throw new TypeError();
+        if (!Array.isArray(entities) || entities.length === 0) {
+            throw new TypeError('entities parameter must be a non-empty array');
         }
 
-        if (attr != null && !Array.isArray(attr)) {
-            throw new TypeError();
+        if (attributeNames != null && !Array.isArray(attributeNames)) {
+            throw new TypeError('attributeNames parameter must be an array or null');
         }
 
-        if (callbacks == null || typeof callbacks !== 'object') {
-            throw new TypeError();
+        if (options == null) {
+            throw new TypeError('Missing options parameter');
         }
-        if (typeof callbacks.onNotify != 'string' && typeof callbacks.onNotify != 'function') {
+        if (typeof options.onNotify != 'string' && typeof options.onNotify != 'function') {
             throw new TypeError('Invalid onNotify callback');
         }
-        if (typeof callbacks.onNotify === 'function' && this.ngsi_proxy == null) {
+        if (typeof options.onNotify === 'function' && this.ngsi_proxy == null) {
             throw new Error('A ngsi-proxy is needed for using local onNotify callbacks');
         }
 
         var url = this.url + NGSI.endpoints.SUBSCRIBE_CONTEXT_AVAILABILITY;
-        if (typeof callbacks.onNotify === 'function' && this.ngsi_proxy != null) {
+        if (typeof options.onNotify === 'function' && this.ngsi_proxy != null) {
 
             var onNotify = function onNotify(payload) {
                 var doc = NGSI.XML.parseFromString(payload, 'application/xml');
-                var data = parse_notify_context_availability_request(doc, callbacks);
-                callbacks.onNotify(data);
+                var data = parse_notify_context_availability_request(doc, options);
+                options.onNotify(data);
             };
 
             this.ngsi_proxy.request_callback(onNotify, function (proxy_callback) {
-                var payload = ngsi_build_subscribe_update_context_availability_request('subscribeContextAvailabilityRequest', e, attr, duration, restriction, null, proxy_callback.url);
+                var payload = ngsi_build_subscribe_update_context_availability_request('subscribeContextAvailabilityRequest', entities, attributeNames, duration, restriction, null, proxy_callback.url);
 
-                var oldOnFailure = callbacks.onFailure;
-                callbacks.onFailure = function () {
+                var oldOnFailure = options.onFailure;
+                options.onFailure = function () {
                     this.ngsi_proxy.close_callback(proxy_callback.callback_id);
                     if (typeof oldOnFailure === 'function') {
                         oldOnFailure();
                     }
                 }.bind(this);
 
-                var oldOnSuccess = callbacks.onSuccess;
-                callbacks.onSuccess = function (data) {
+                var oldOnSuccess = options.onSuccess;
+                options.onSuccess = function (data) {
                     this.ngsi_proxy.associate_subscription_id_to_callback(proxy_callback.callback_id, data.subscriptionId);
                     if (typeof oldOnSuccess === 'function') {
                         oldOnSuccess(data);
                     }
                 }.bind(this);
 
-                makeXMLRequest.call(this, url, payload, parse_subscribe_update_context_availability_response, callbacks);
+                makeXMLRequest.call(this, url, payload, parse_subscribe_update_context_availability_response, options);
             }.bind(this), function () {
-                if (typeof callbacks.onFailure === 'function') {
-                    callbacks.onFailure();
+                if (typeof options.onFailure === 'function') {
+                    options.onFailure();
                 }
             });
         } else {
-            var payload = ngsi_build_subscribe_update_context_availability_request('subscribeContextAvailabilityRequest', e, attr, duration, restriction, null, callbacks.onNotify);
-            makeXMLRequest.call(this, url, payload, parse_subscribe_update_context_availability_response, callbacks);
+            var payload = ngsi_build_subscribe_update_context_availability_request('subscribeContextAvailabilityRequest', entities, attributeNames, duration, restriction, null, options.onNotify);
+            makeXMLRequest.call(this, url, payload, parse_subscribe_update_context_availability_response, options);
         }
     };
 
-    NGSI.Connection.prototype.updateAvailabilitySubscription = function updateAvailabilitySubscription(subId, e, attr, duration, restriction, callbacks) {
-        if (!Array.isArray(e) || e.length === 0) {
-            throw new TypeError();
+    NGSI.Connection.prototype.updateAvailabilitySubscription = function updateAvailabilitySubscription(subId, entities, attributeNames, duration, restriction, callbacks) {
+        if (subId == null) {
+            throw new TypeError('subId parameter cannot be null');
         }
 
-        if (attr != null && !Array.isArray(attr)) {
-            throw new TypeError();
+        if (!Array.isArray(entities) || entities.length === 0) {
+            throw new TypeError('entities parameter must be a non-empty array');
+        }
+
+        if (attributeNames != null && !Array.isArray(attributeNames)) {
+            throw new TypeError('attributeNames parameter must be an array or null');
         }
 
         if (callbacks == null) {
             callbacks = {};
         }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
-        }
 
-        var payload = ngsi_build_subscribe_update_context_availability_request('updateContextAvailabilitySubscriptionRequest', e, attr, duration, restriction, subId);
+        var payload = ngsi_build_subscribe_update_context_availability_request('updateContextAvailabilitySubscriptionRequest', entities, attributeNames, duration, restriction, subId);
         var url = this.url + NGSI.endpoints.UPDATE_CONTEXT_AVAILABILITY_SUBSCRIPTION;
 
         makeXMLRequest.call(this, url, payload, parse_subscribe_update_context_availability_response, callbacks);
@@ -1340,14 +1343,11 @@
 
     NGSI.Connection.prototype.cancelAvailabilitySubscription = function cancelAvailabilitySubscription(subId, callbacks) {
         if (subId == null) {
-            throw new TypeError();
+            throw new TypeError('subId parameter cannot be null');
         }
 
         if (callbacks == null) {
             callbacks = {};
-        }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
         }
 
         var payload = ngsi_build_unsubscribe_context_availability_request(subId);
@@ -1356,13 +1356,13 @@
         makeXMLRequest.call(this, url, payload, parse_unsubscribe_context_availability_response, callbacks);
     };
 
-    NGSI.Connection.prototype.query = function query(e, attrNames, callbacks) {
-        if (!Array.isArray(e) || e.length === 0) {
-            throw new TypeError();
+    NGSI.Connection.prototype.query = function query(entities, attrNames, callbacks) {
+        if (!Array.isArray(entities) || entities.length === 0) {
+            throw new TypeError('entities parameter must be a non-empty array');
         }
 
         if (attrNames != null && !Array.isArray(attrNames)) {
-            throw new TypeError();
+            throw new TypeError('attrNames must be null or an array');
         } else if (attrNames == null) {
             attrNames = [];
         }
@@ -1370,11 +1370,8 @@
         if (callbacks == null) {
             callbacks = {};
         }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
-        }
 
-        var payload = ngsi_build_query_context_request(e, attrNames);
+        var payload = ngsi_build_query_context_request(entities, attrNames);
         var url = this.url + NGSI.endpoints.QUERY_CONTEXT;
 
         makeXMLRequest.call(this, url, payload, parse_query_context_response, callbacks);
@@ -1382,14 +1379,11 @@
 
     NGSI.Connection.prototype.updateAttributes = function updateAttributes(update, callbacks) {
         if (!Array.isArray(update) || update.length === 0) {
-            throw new TypeError();
+            throw new TypeError('update parameter must be a non-empty array');
         }
 
         if (callbacks == null) {
             callbacks = {};
-        }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
         }
 
         var payload = ngsi_build_update_context_request('UPDATE', update);
@@ -1400,14 +1394,11 @@
 
     NGSI.Connection.prototype.addAttributes = function addAttributes(toAdd, callbacks) {
         if (!Array.isArray(toAdd) || toAdd.length === 0) {
-            throw new TypeError();
+            throw new TypeError('toAdd parameter must be a non-empty array');
         }
 
         if (callbacks == null) {
             callbacks = {};
-        }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
         }
 
         var payload = ngsi_build_update_context_request('APPEND', toAdd);
@@ -1418,14 +1409,11 @@
 
     NGSI.Connection.prototype.deleteAttributes = function deleteAttributes(toDelete, callbacks) {
         if (!Array.isArray(toDelete) || toDelete.length === 0) {
-            throw new TypeError();
+            throw new TypeError('toDelete parameter must be a non-empty array');
         }
 
         if (callbacks == null) {
             callbacks = {};
-        }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
         }
 
         var payload = ngsi_build_update_context_request('DELETE', toDelete);
@@ -1434,105 +1422,103 @@
         makeXMLRequest.call(this, url, payload, parse_update_context_response, callbacks);
     };
 
-    NGSI.Connection.prototype.createSubscription = function createSubscription(e, attr, duration, throttling, cond, callbacks) {
-        if (!Array.isArray(e) || e.length === 0) {
-            throw new TypeError();
+    NGSI.Connection.prototype.createSubscription = function createSubscription(entities, attributeNames, duration, throttling, cond, options) {
+        if (!Array.isArray(entities) || entities.length === 0) {
+            throw new TypeError('entities parameter must be a non-empty array');
         }
 
-        if (callbacks == null || typeof callbacks !== 'object') {
-            throw new TypeError();
+        if (attributeNames != null && !Array.isArray(attributeNames)) {
+            throw new TypeError('attributeNames parameter must be an array or null');
         }
-        if (typeof callbacks.onNotify != 'string' && typeof callbacks.onNotify != 'function') {
+
+        if (options == null) {
+            throw new TypeError('Missing options parameter');
+        }
+        if (typeof options.onNotify != 'string' && typeof options.onNotify != 'function') {
             throw new TypeError('Invalid onNotify callback');
         }
-        if (typeof callbacks.onNotify === 'function' && this.ngsi_proxy == null) {
+        if (typeof options.onNotify === 'function' && this.ngsi_proxy == null) {
             throw new Error('A ngsi-proxy is needed for using local onNotify callbacks');
         }
 
         var url = this.url + NGSI.endpoints.SUBSCRIBE_CONTEXT;
-        if (typeof callbacks.onNotify === 'function' && this.ngsi_proxy != null) {
+        if (typeof options.onNotify === 'function' && this.ngsi_proxy != null) {
 
             var onNotify = function onNotify(payload) {
                 var doc = NGSI.XML.parseFromString(payload, 'application/xml');
-                var data = NGSI.parseNotifyContextRequest(doc, callbacks);
-                callbacks.onNotify(data);
+                var data = NGSI.parseNotifyContextRequest(doc, options);
+                options.onNotify(data);
             };
 
             this.ngsi_proxy.request_callback(onNotify, function (proxy_callback) {
-                var payload = ngsi_build_subscribe_update_context_request(null, e, attr, duration, throttling, cond, proxy_callback.url);
+                var payload = ngsi_build_subscribe_update_context_request(null, entities, attributeNames, duration, throttling, cond, proxy_callback.url);
 
-                var oldOnFailure = callbacks.onFailure;
-                callbacks.onFailure = function () {
+                var oldOnFailure = options.onFailure;
+                options.onFailure = function () {
                     this.ngsi_proxy.close_callback(proxy_callback.callback_id);
                     if (typeof oldOnFailure === 'function') {
                         oldOnFailure();
                     }
                 }.bind(this);
 
-                var oldOnSuccess = callbacks.onSuccess;
-                callbacks.onSuccess = function (data) {
+                var oldOnSuccess = options.onSuccess;
+                options.onSuccess = function (data) {
                     this.ngsi_proxy.associate_subscription_id_to_callback(proxy_callback.callback_id, data.subscriptionId);
                     if (typeof oldOnSuccess === 'function') {
                         oldOnSuccess(data);
                     }
                 }.bind(this);
 
-                makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, callbacks);
+                makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, options);
             }.bind(this), function () {
-                if (typeof callbacks.onFailure === 'function') {
-                    callbacks.onFailure();
+                if (typeof options.onFailure === 'function') {
+                    options.onFailure();
                 }
             });
         } else {
-            var payload = ngsi_build_subscribe_update_context_request(null, e, attr, duration, throttling, cond, callbacks.onNotify);
-            makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, callbacks);
+            var payload = ngsi_build_subscribe_update_context_request(null, entities, attributeNames, duration, throttling, cond, options.onNotify);
+            makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, options);
         }
     };
 
-    NGSI.Connection.prototype.updateSubscription = function updateSubscription(subId, duration, throttling, cond, callbacks) {
+    NGSI.Connection.prototype.updateSubscription = function updateSubscription(subId, duration, throttling, cond, options) {
         if (subId == null) {
-            throw new TypeError();
+            throw new TypeError('subId parameter cannot be null');
         }
 
-        if (callbacks == null) {
-            callbacks = {};
-        }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
+        if (options == null) {
+            options = {};
         }
 
         var payload = ngsi_build_subscribe_update_context_request(subId, null, null, duration, throttling, cond);
         var url = this.url + NGSI.endpoints.UPDATE_CONTEXT_SUBSCRIPTION;
 
-        makeXMLRequest.call(this, url, payload, parse_update_context_subscription_response, callbacks);
+        makeXMLRequest.call(this, url, payload, parse_update_context_subscription_response, options);
     };
 
-    NGSI.Connection.prototype.cancelSubscription = function cancelSubscription(subId, callbacks) {
+    NGSI.Connection.prototype.cancelSubscription = function cancelSubscription(subId, options) {
         if (subId == null) {
-            throw new TypeError();
+            throw new TypeError('subId parameter cannot be null');
         }
 
-        if (callbacks == null) {
-            callbacks = {};
-        }
-        if (typeof callbacks !== 'object') {
-            throw new TypeError();
+        if (options == null) {
+            options = {};
         }
 
         if (this.ngsi_proxy) {
-            var old_success_callback = callbacks.onSuccess;
-            callbacks.onSuccess = function (data) {
+            var old_success_callback = options.onSuccess;
+            options.onSuccess = function (data) {
                 var onSuccess = old_success_callback;
                 if (onSuccess != null) {
                     onSuccess = onSuccess.bind(null, data);
                 }
-                this.ngsi_proxy.close_callback_by_subscriptionId(data.subscriptionId, onSuccess, callbacks.onFailure);
+                this.ngsi_proxy.close_callback_by_subscriptionId(data.subscriptionId, onSuccess, options.onFailure);
             }.bind(this);
         }
         var payload = ngsi_build_unsubscribe_context_request(subId);
         var url = this.url + NGSI.endpoints.UNSUBSCRIBE_CONTEXT;
 
-        makeXMLRequest.call(this, url, payload, parse_unsubscribe_context_response, callbacks);
+        makeXMLRequest.call(this, url, payload, parse_unsubscribe_context_response, options);
     };
 
     if (typeof window !== 'undefined') {
