@@ -93,8 +93,8 @@ class ResourceCollection(Resource):
             downloaded_file = request.FILES['file']
             try:
                 file_contents = WgtFile(downloaded_file)
-            except:
-                return build_error_response(request, 400, _('Bad resource file'))
+            except zipfile.BadZipfile:
+                return build_error_response(request, 400, _('The uploaded file is not a zip file'))
 
         elif content_type == 'application/octet-stream':
 
@@ -102,8 +102,9 @@ class ResourceCollection(Resource):
             downloaded_file = StringIO(request.body)
             try:
                 file_contents = WgtFile(downloaded_file)
-            except:
-                return build_error_response(request, 400, _('Bad resource file'))
+            except zipfile.BadZipfile:
+                return build_error_response(request, 400, _('The uploaded file is not a zip file'))
+
         else:
 
             market_endpoint = None
@@ -147,7 +148,7 @@ class ResourceCollection(Resource):
                 try:
                     downloaded_file = download_http_content(templateURL)
                 except:
-                    return build_error_response(request, 409, _('Content cannot be downloaded'))
+                    return build_error_response(request, 409, _('Content cannot be downloaded from the marketplace'))
 
             if packaged:
 
@@ -155,9 +156,9 @@ class ResourceCollection(Resource):
                     downloaded_file = StringIO(downloaded_file)
                     file_contents = WgtFile(downloaded_file)
 
-                except zipfile.BadZipfile as e:
+                except zipfile.BadZipfile:
 
-                    return build_error_response(request, 400, unicode(e))
+                    return build_error_response(request, 400, _('The file downloaded from the marketplace is not a zip file'))
 
             else:
                 file_contents = downloaded_file
