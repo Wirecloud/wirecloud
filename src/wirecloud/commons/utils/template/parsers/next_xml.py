@@ -113,7 +113,10 @@ class ApplicationMashupTemplateParser(object):
 
     def _init(self):
 
-        XMLSCHEMA.assertValid(self._doc)
+        try:
+            XMLSCHEMA.assertValid(self._doc)
+        except Exception as e:
+            raise TemplateParseException('%s' % e)
 
         self._resource_description = self._xpath(RESOURCE_DESCRIPTION_XPATH, self._doc)[0]
         self._parse_basic_info()
