@@ -181,7 +181,8 @@ class ResourceCollection(Resource):
             else:
                 msg = "Error parsing resource descriptor from the providen URL: %s" % e
 
-            return build_error_response(request, 400, msg)
+            details = "%s" % e
+            return build_error_response(request, 400, msg, details=details)
 
         except InvalidContents as e:
 
