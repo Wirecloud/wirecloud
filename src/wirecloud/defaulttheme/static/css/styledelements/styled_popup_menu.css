@@ -14,8 +14,22 @@
 
 .popup_menu > .menu_item {
     margin: 0.4ex 0;
-    padding: 0.3ex 0.7ex;
+    padding: 0.3ex 10px;
     cursor: pointer;
+}
+
+.popup_menu > .submenu:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #ccc;
+    margin-top: 3px;
+    margin-right: -5px;
 }
 
 .popup_menu > .menu_item.hovered {

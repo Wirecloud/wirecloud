@@ -31,10 +31,28 @@
     white-space: nowrap;
 }
 
+.popup_menu > .submenu:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #ccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+
 .popup_menu > .menu_item.hovered {
     color: white;
     text-decoration: none;
     background-color: rgb(0, 136, 204);
+}
+
+.popup_menu > .submenu.hovered:after {
+    border-left-color: white;
 }
 
 .popup_menu > hr {
