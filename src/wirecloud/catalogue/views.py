@@ -106,12 +106,13 @@ class ResourceCollection(Resource):
     def read(self, request):
 
         user = request.user
-        querytext = request.GET.get('q', '')
+        querytext = unicode(request.GET.get('q', ''))
 
         filters = {
-            'scope': request.GET.get('scope', None),
             'pagenum': int(request.GET.get('pagenum', '1')),
+            'pagelen': int(request.GET.get('pagelen', '10')),
             'orderby': request.GET.get('orderby', '-creation_date'),
+            'scope': request.GET.get('scope', None),
             'staff': request.GET.get('staff', 'false').lower() == 'true',
         }
 
@@ -120,6 +121,9 @@ class ResourceCollection(Resource):
 
         if filters['scope'] and not filters['scope'] in ['mashup', 'operator', 'widget']:
             return build_error_response(request, 400, _('Scope not supported'))
+
+        if filters['staff'] and not user.is_staff:
+            return build_error_response(request, 403, _('Forbidden'))
 
         response_json = search(querytext, user, **filters)
 

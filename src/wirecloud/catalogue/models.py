@@ -26,16 +26,20 @@ from urlparse import urlparse
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import m2m_changed, post_save
 from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+
 from whoosh import index
 from whoosh import fields
-from whoosh import query
 from whoosh import sorting
 from whoosh.qparser import MultifieldParser
 from whoosh.qparser import QueryParser
+from whoosh.query import And
+from whoosh.query import Every
+from whoosh.query import Or
+from whoosh.query import Term
 
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
@@ -151,16 +155,88 @@ class CatalogueResource(models.Model):
 class CatalogueResourceSchema(fields.SchemaClass):
 
     pk = fields.ID(stored=True, unique=True)
-    name = fields.TEXT
-    title = fields.TEXT(stored=True, spelling=True)
+    name = fields.TEXT(stored=True)
     vendor = fields.TEXT(stored=True, spelling=True)
+    version = fields.TEXT(stored=True)
     type = fields.TEXT(stored=True)
-    description = fields.TEXT(stored=True)
-    image = fields.TEXT(stored=True)
     creation_date = fields.DATETIME
+    title = fields.TEXT(stored=True, spelling=True)
+    image = fields.TEXT(stored=True)
+    description = fields.TEXT(stored=True)
     public = fields.BOOLEAN
-    users = fields.KEYWORD(commas=True)
+    users = fields.KEYWORD(stored=True, commas=True)
     groups = fields.KEYWORD(commas=True)
+
+
+def add_document(sender, instance, created, raw, **kwargs):
+
+    resource = instance
+    resource_info = resource.get_processed_info()
+
+    data = {
+        'pk': unicode(resource.pk),
+        'name': unicode(resource.short_name),
+        'vendor': unicode(resource.vendor),
+        'version': resource_info['version'],
+        'type': resource_info['type'],
+        'creation_date': resource.creation_date.utcnow(),
+        'public': resource.public,
+        'title': resource_info['title'],
+        'description': resource_info['description'],
+        'image': resource_info['image'],
+        'users': ', '.join(resource.users.all().values_list('username', flat=True)),
+        'groups': ', '.join(resource.groups.all().values_list('name', flat=True)),
+    }
+
+    ix = open_index('catalogue_resources')
+
+    try:
+        with ix.writer() as writer:
+            writer.update_document(**data)
+    except:
+        with ix.writer() as writer:
+            writer.add_document(**data)
+
+def update_users(sender, instance, action, reverse, model, pk_set, using, **kwargs):
+
+    if reverse or action.startswith('pre_') or (pk_set is not None and len(pk_set) == 0):
+        return
+
+    add_document(sender, instance, False, False)
+
+post_save.connect(add_document, sender=CatalogueResource)
+m2m_changed.connect(update_users, sender=CatalogueResource.users.through)
+
+def groupby_name_and_vendor(results):
+
+    storedfields_list = [hit.fields() for hit in results]
+    items_not_looking = [i for i in xrange(len(storedfields_list))]
+    new_results = []
+
+    while items_not_looking != []:
+
+        first_document = storedfields_list[items_not_looking.pop(0)].copy()
+        others = []
+
+        for i in items_not_looking[:]:
+
+            current_document = storedfields_list[i].copy()
+
+            if (first_document['name'] == current_document['name'] and
+                first_document['vendor'] == current_document['vendor']):
+
+                if version_greater(first_document['version'], current_document['version']):
+                    others.append(current_document)
+                else:
+                    others.append(first_document)
+                    first_document = current_document.copy()
+
+                items_not_looking.remove(i)
+
+        first_document['others'] = others[:]
+        new_results.append(first_document)
+
+    return new_results
 
 
 def open_index(indexname, dirname=None):
@@ -177,78 +253,104 @@ def open_index(indexname, dirname=None):
     return index.open_dir(dirname, indexname=indexname)
 
 
-def search(querytext, user, scope=None, pagenum=1, orderby='creation_date', staff=False):
+def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creation_date', staff=False):
 
     ix = open_index('catalogue_resources')
     qp = MultifieldParser(['name', 'title', 'vendor', 'description'], ix.schema)
 
-    querytext = unicode(querytext or '*')
+    allow_q = Every()
+    user_q = querytext and qp.parse(querytext) or None
 
-    user_q = qp.parse(querytext)
+    if not staff:
+        allow_q = And([allow_q, Or([Term('public', 't'), Term('users', user.username.lower())] +
+            [Term('groups', group.name.lower()) for group in user.groups.all()])])
+
+    if scope:
+        allow_q = And([allow_q, Term('type', scope)])
+
+    order_f = sorting.FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
 
     """
-    results.pagenum, results.pagecount, results.offset, results.pagelen
     corrected = searcher.correct_query(user_q, keywords)
     if corrected.query != user_q:
         print("Did you mean:", corrected.string)
     """
 
-    allow_q = []
-
-    if not (staff and user.is_staff):
-        allow_q.append(
-            query.Or([query.Term('public', 't'), query.Term('users', user.username)])
-        )
-        # [query.Term("group", group) for group in user.groups]
-
-    if scope:
-        allow_q.append(query.Term('type', scope))
-
-    if allow_q:
-        allow_q.append(user_q)
-        user_q = query.And(allow_q)
-
-    order_facet = sorting.FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
-
-    result = {}
+    search_result = {}
 
     with ix.searcher() as searcher:
-        hits = searcher.search_page(user_q, pagenum, pagelen=10, sortedby=[order_facet,])
-        result['pagecount'] = hits.pagecount
-        result['pagelen'] = hits.pagelen
-        result['pagenum'] = hits.pagenum
-        result['pageoffset'] = hits.offset
-        result['resources'] = [hit.fields() for hit in hits]
+        # TODO: name-vendor groups do not work with limit
 
-    return result
+        allow_hits = searcher.search(allow_q, limit=(pagenum+1) * pagelen, sortedby=[order_f,])
+        results = groupby_name_and_vendor(allow_hits)
+
+        if user_q:
+
+            if not staff:
+                user_q = And([user_q, Or([Term('public', 't'), Term('users', user.username.lower())] +
+                    [Term('groups', group.name.lower()) for group in user.groups.all()])])
+
+            if scope:
+                user_q = And([user_q, Term('type', scope)])
+
+            user_hits = searcher.search(user_q, limit=(pagenum+1) * pagelen, sortedby=[order_f,])
+            query_results = groupby_name_and_vendor(user_hits)
+            results = upgrade_results(query_results, results)
+
+        search_result = search_page(shorten_response(results), pagenum, pagelen)
+
+    return search_result
 
 
-def add_document(sender, instance, created, raw, **kwargs):
+def shorten_response(results):
 
-    resource = instance
-    resource_info = resource.get_processed_info()
+    for hit in results:
+        hit['others'] = [other['version'] for other in hit['others']]
 
-    data = {
-        'pk': unicode(resource.pk),
-        'name': unicode(resource.short_name),
-        'title': resource_info['title'],
-        'type': resource_info['type'],
-        'vendor': unicode(resource.vendor),
-        'description': resource_info['description'],
-        'creation_date': resource.creation_date.utcnow(),
-        'image': resource_info['image'],
-        'public': resource.public,
-        'users': ', '.join(resource.users.all().values_list('username', flat=True)),
-        'groups': ', '.join(resource.groups.all().values_list('name', flat=True)),
-    }
+    return results
 
-    ix = open_index('catalogue_resources')
 
-    try:
-        with ix.writer() as writer:
-            writer.update_document(**data)
-    except:
-        with ix.writer() as writer:
-            writer.add_document(**data)
+def search_page(results, pagenum, pagelen):
 
-post_save.connect(add_document, sender=CatalogueResource)
+    results_page = {}
+
+    results_page['total'] = len(results)
+    results_page['pagecount'] = results_page['total'] // pagelen + 1
+
+    if pagenum > results_page['pagecount']:
+        pagenum = results_page['pagecount']
+
+    results_page['pagenum'] = pagenum
+    offset = (pagenum - 1) * pagelen
+
+    if (offset + pagelen) > results_page['total']:
+        pagelen = results_page['total'] - offset
+
+    results_page['offset'] = offset
+    results_page['pagelen'] = pagelen
+    results_page['results'] = results[offset:(offset + pagelen)]
+
+    return results_page
+
+
+def upgrade_results(main_results, allow_results):
+
+    for hit in main_results:
+
+        for allow_hit in allow_results:
+
+            if (hit['name'] == allow_hit['name'] and hit['vendor'] == allow_hit['vendor']):
+
+                versions = [hit['version']] + [other['version'] for other in hit['others']]
+                current_hit = allow_hit.copy()
+                del current_hit['others']
+
+                others = [current_hit] + allow_hit['others']
+                hit['others'] += [other for other in others if not other['version'] in versions]
+
+    return main_results
+
+
+def version_greater(version1, version2):
+    # TODO: the version can include letters too.
+    return version1 > version2

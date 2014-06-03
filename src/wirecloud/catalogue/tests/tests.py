@@ -97,93 +97,124 @@ class AddWidgetTestCase(WirecloudTestCase):
 
 class CatalogueSearchTestCase(WirecloudTestCase):
 
-    fixtures = ('selenium_test_data', 'catalogue_search_data')
+    fixtures = ('catalogue_search_data',)
     tags = ('whoosh',)
 
     @classmethod
     def setUpClass(cls):
+
         super(CatalogueSearchTestCase, cls).setUpClass()
         cls.base_url = reverse('wirecloud_catalogue.resource_collection')
 
     def setUp(self):
-        super(CatalogueSearchTestCase, self).setUp()
 
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+        super(CatalogueSearchTestCase, self).setUp()
         self.client = Client()
 
-    def test_basic_search_with_staff_user(self):
-        self.client.login(username='admin', password='admin')
-
-        result = self.client.get(self.base_url)
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(result_json['pagelen'], 4)
-
-        result = self.client.get(self.base_url + '?staff=True')
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(result_json['pagelen'], 6)
-
-    def test_basic_search_with_not_staff_user(self):
-        self.client.login(username='test', password='test')
-
-        result = self.client.get(self.base_url)
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(result_json['pagelen'], 4)
-
-    def test_basic_search_by_querytext(self):
-        self.client.login(username='admin', password='admin')
-
-        result = self.client.get(self.base_url + '?q=mashable')
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        self.assertEqual(result_json['pagelen'], 1)
-
     def test_basic_search_by_scope(self):
-        self.client.login(username='admin', password='admin')
 
-        result = self.client.get(self.base_url + '?scope=widget')
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
-        widgets = [i['type'] for i in result_json['resources']].count('widget')
+        self.client.login(username='emptyuser', password='admin')
+
+        response = self.client.get(self.base_url + '?scope=widget')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content)
+        widgets = [i['type'] for i in result_json['results']].count('widget')
         self.assertEqual(result_json['pagelen'], widgets)
-
-    def test_basic_search_order_by(self):
+        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
+        self.assertEqual(n, 4)
+        self.client.logout()
 
         self.client.login(username='admin', password='admin')
 
-        result = self.client.get(self.base_url)
-        self.assertEqual(result.status_code, 200)
+        response = self.client.get(self.base_url + '?scope=widget&staff=True')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content)
+        widgets = [i['type'] for i in result_json['results']].count('widget')
+        self.assertEqual(result_json['pagelen'], widgets)
+        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
+        self.assertEqual(n, 5)
+
+    def test_basic_search_with_args_not_supported(self):
+
+        self.client.login(username='emptyuser', password='admin')
+
+        response = self.client.get(self.base_url+'?staff=True')
+        self.assertEqual(response.status_code, 403)
+
+        response = self.client.get(self.base_url+'?scope=application')
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.get(self.base_url+'?orderby=type')
+        self.assertEqual(response.status_code, 400)
+
+    def test_basic_search_with_orderby(self):
+
+        self.client.login(username='emptyuser', password='admin')
+
+        response = self.client.get(self.base_url+'?orderby=-creation_date')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content)
+        self.assertEqual(result_json['pagelen'], 6)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+
+        response = self.client.get(self.base_url+'?orderby=creation_date')
+        self.assertEqual(response.status_code, 200)
+        result2_json = json.loads(response.content)
+        self.assertEqual(result2_json['pagelen'], 6)
+        self.assertEqual(result2_json['pagelen'], len(result2_json['results']))
+        self.assertEqual(result2_json['results'][0], result_json['results'][-1])
+
+    def test_basic_search_with_querytext(self):
+
+        self.client.login(username='myuser', password='admin')
+
+        result = self.client.get(self.base_url+'?q=term+mashable')
         result_json = json.loads(result.content)
-        self.assertEqual(result_json['pagelen'], 4)
-
-        result = self.client.get(self.base_url + '?orderby=creation_date')
         self.assertEqual(result.status_code, 200)
-        result2_json = json.loads(result.content)
-        self.assertEqual(result2_json['pagelen'], 4)
-
-        self.assertEqual(result2_json['resources'][0], result_json['resources'][-1])
-
-        result = self.client.get(self.base_url + '?orderby=title')
-        self.assertEqual(result.status_code, 400)
-
-    def test_search_by_keywords(self):
-        self.client.login(username='admin', password='admin')
-
-        result = self.client.get(self.base_url + '?q=mashable')
-        self.assertEqual(result.status_code, 200)
-        result_json = json.loads(result.content)
         self.assertEqual(result_json['pagelen'], 1)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['results'][0]['version'], "1.5")
+        self.assertEqual(len(result_json['results'][0]['others']), 2)
 
-    def test_search_by_not_supported_scope(self):
+        result = self.client.get(self.base_url+'?q=mashable+application')
+        result_json = json.loads(result.content)
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagelen'], 1)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['results'][0]['version'], "2.5")
+        self.assertEqual(len(result_json['results'][0]['others']), 2)
+
+        result = self.client.get(self.base_url+'?q=mashable')
+        result_json = json.loads(result.content)
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagelen'], 2)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['results'][0]['version'], "1.5")
+        self.assertEqual(len(result_json['results'][0]['others']), 0)
+        self.assertEqual(result_json['results'][1]['version'], "2.5")
+        self.assertEqual(len(result_json['results'][1]['others']), 2)
+
+    def test_basic_search_with_staff(self):
+
         self.client.login(username='admin', password='admin')
 
-        result = self.client.get(self.base_url + '?scope=endpoint')
-        self.assertEqual(result.status_code, 400)
+        response = self.client.get(self.base_url)
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content)
+        self.assertEqual(result_json['pagenum'], 1)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['total'], 7)
+        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
+        self.assertEqual(n, 11)
 
-        result = self.client.get(self.base_url + '?scope=widget+operator')
-        self.assertEqual(result.status_code, 400)
+        response = self.client.get(self.base_url+'?staff=True')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content)
+        self.assertEqual(result_json['pagenum'], 1)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['total'], 9)
+        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
+        self.assertEqual(n, 15)
 
 
 class CatalogueAPITestCase(WirecloudTestCase):
