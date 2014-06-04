@@ -25,16 +25,10 @@
 
     "use strict";
 
-    var MAC_MIMETYPES = ['application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'];
-
     var CURRENCY_SYMBOL = {
         'EUR': '€',
         'GBP': '£',
         'USD': '$'
-    };
-
-    var is_mac_mimetype = function is_mac_mimetype(mimetype) {
-        return MAC_MIMETYPES.indexOf(mimetype) !== -1;
     };
 
     var install = function install(url, catalogue_view, store, monitor) {
@@ -88,27 +82,29 @@
     };
 
     var onUninstallClick = function onUninstallClick(offering, catalogue_view) {
-        var layoutManager, local_catalogue_view, monitor, i, count;
+        var layoutManager, local_catalogue_view, monitor, i, count, callbacks;
 
         layoutManager = LayoutManagerFactory.getInstance();
         local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
         monitor = layoutManager._startComplexTask(gettext("Uninstalling offering resources"), 1);
 
         count = offering.resources.length;
+        callbacks = {
+            onSuccess: function () {
+                local_catalogue_view.viewsByName.search.mark_outdated();
+                catalogue_view.viewsByName.search.mark_outdated();
+            },
+            onComplete: function () {
+                if (--count === 0) {
+                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                    catalogue_view.refresh_if_needed();
+                }
+            }
+        };
+
         for (i = 0; i < offering.resources.length; i++) {
             if ('type' in offering.resources[i]) {
-                local_catalogue_view.catalogue.uninstallResource(offering.resources[i], {
-                    onSuccess: function () {
-                        local_catalogue_view.viewsByName.search.mark_outdated();
-                        catalogue_view.viewsByName.search.mark_outdated();
-                    },
-                    onComplete: function () {
-                        if (--count === 0) {
-                            LayoutManagerFactory.getInstance()._notifyPlatformReady();
-                            catalogue_view.refresh_if_needed();
-                        }
-                    }
-                });
+                local_catalogue_view.catalogue.uninstallResource(offering.resources[i], callbacks);
             } else {
                 count -= 1;
             }
@@ -228,7 +224,7 @@
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
 
                 if (!this.catalogue_view.catalogue.is_purchased(this.offering) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
-                    if (offering.pricing.length == 0 || !('priceComponents' in offering.pricing[0])) {
+                    if (offering.pricing.length === 0 || !('priceComponents' in offering.pricing[0])) {
                         button = new StyledElements.StyledButton({
                             'class': 'mainbutton btn-success',
                             'text': gettext('Free')
