@@ -25,13 +25,26 @@
 
     "use strict";
 
-    var IWidgetResizeHandle = function IWidgetResizeHandle(iWidget, resizeLeftSide) {
+    var IWidgetResizeHandle = function IWidgetResizeHandle(iWidget, options) {
+        if (options == null) {
+            options = {};
+        }
+        options.resizeLeftSide = !!options.resizeLeftSide;
+        options.resizeTopSide = !!options.resizeTopSide;
+        options.fixHeight = !!options.fixHeight;
+        options.fixWidth = !!options.fixWidth;
+        options.iWidget = iWidget;
+
+        if (options.fixWidth && options.fixHeight) {
+            throw new Exception('fixWidth and fixHeight cannot be true at the same time');
+        }
+
         StyledElements.StyledElement.call(this, []);
 
         this.wrapperElement = document.createElement('div');
 
         Wirecloud.ui.ResizeHandle.call(this, iWidget.element, this.wrapperElement,
-                                {iWidget: iWidget, resizeLeftSide: resizeLeftSide},
+                                options,
                                 IWidgetResizeHandle.prototype.startFunc,
                                 IWidgetResizeHandle.prototype.updateFunc,
                                 IWidgetResizeHandle.prototype.finishFunc,
@@ -64,14 +77,23 @@
         if (iWidget.layout.isInside(x, y)) {
             var position = iWidget.layout.getCellAt(x, y);
             var currentPosition = iWidget.getPosition();
-            var width;
+            var width, height;
 
-            if (data.resizeLeftSide) {
-                width = currentPosition.x + iWidget.getWidth() - position.x;
+            if (!data.fixWidth) {
+                if (data.resizeLeftSide) {
+                    width = currentPosition.x + iWidget.getWidth() - position.x;
+                } else {
+                    width = position.x - currentPosition.x + 1;
+                }
             } else {
-                width = position.x - currentPosition.x + 1;
+                width = iWidget.getWidth();
             }
-            var height = position.y - currentPosition.y + 1;
+
+            if (!data.fixHeight) {
+                height = position.y - currentPosition.y + 1;
+            } else {
+                height = iWidget.getHeight();
+            }
 
             // Minimum width
             if (width < data.minWidth) {

@@ -89,19 +89,19 @@
                 return element;
             },
             'bottomresizehandle': function () {
-                var handle = new IWidgetResizeHandle(view, true);
+                var handle = new IWidgetResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
                 tmp.bottomresizehandle = handle;
                 handle.addClassName("bottomResizeHandle");
                 return handle;
             },
             'leftresizehandle': function () {
-                var handle = new IWidgetResizeHandle(view, true);
+                var handle = new IWidgetResizeHandle(view, {resizeLeftSide: true});
                 tmp.leftresizehandle = handle;
                 handle.addClassName("leftResizeHandle");
                 return handle;
             },
             'rightresizehandle': function () {
-                var handle = new IWidgetResizeHandle(view, false);
+                var handle = new IWidgetResizeHandle(view, {resizeLeftSide: false});
                 tmp.rightresizehandle = handle;
                 handle.addClassName("rightResizeHandle");
                 return handle;
@@ -117,6 +117,9 @@
             }.bind(iwidget)
         });
 
+        if ('bottomresizehandle' in tmp) {
+            tmp.bottomresizehandle.setResizableElement(ui_fragment.elements[1]);
+        }
         if ('leftresizehandle' in tmp) {
             tmp.leftresizehandle.setResizableElement(ui_fragment.elements[1]);
         }
