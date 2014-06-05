@@ -32,26 +32,13 @@
         var layoutManager, local_catalogue_view, market_id, url;
 
         button.disable();
-        url = resource.url;
 
         local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
         layoutManager.logSubTask(gettext('Uploading resource'));
 
-        if (catalogue.market_user !== 'public') {
-            market_id = catalogue.market_user + '/' + catalogue.market_name;
-        } else {
-            market_id = catalogue.market_name;
-        }
-
-        local_catalogue_view.catalogue.addResourceFromURL(url, {
-            packaged: true,
-            forceCreate: true,
-            market_info: {
-                name: market_id,
-                store: store
-            },
+        resource.install({
             onSuccess: function () {
                 LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
                 LayoutManagerFactory.getInstance().logStep('');

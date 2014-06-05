@@ -31,54 +31,21 @@
         'USD': '$'
     };
 
-    var install = function install(url, catalogue_view, store, monitor) {
-        var layoutManager, local_catalogue_view, market_id;
-
-        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
-        layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager.logSubTask(gettext('Uploading resource'));
-
-        if (catalogue_view.catalogue.market_user !== 'public') {
-            market_id = catalogue_view.catalogue.market_user + '/' + catalogue_view.catalogue.market_name;
-        } else {
-            market_id = catalogue_view.catalogue.market_name;
-        }
-
-        local_catalogue_view.catalogue.addResourceFromURL(url, {
-            packaged: true,
-            forceCreate: true,
-            market_info: {
-                name: market_id,
-                store: store
-            },
-            onSuccess: function () {
-                LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
-                LayoutManagerFactory.getInstance().logStep('');
-
-                local_catalogue_view.viewsByName.search.mark_outdated();
-                catalogue_view.refresh_search_results();
-            },
-            onFailure: function (msg) {
-                Wirecloud.GlobalLogManager.log(msg);
-                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-            },
-            onComplete: function () {
-                LayoutManagerFactory.getInstance()._notifyPlatformReady();
-            }
-        });
-    };
-
     var onInstallClick = function onInstallClick(offering, catalogue_view) {
-        var layoutManager, monitor, i;
+        var layoutManager, monitor;
 
         layoutManager = LayoutManagerFactory.getInstance();
         monitor = layoutManager._startComplexTask(gettext("Importing offering resources into local repository"), 3);
 
-        for (i = 0; i < offering.resources.length; i++) {
-            if ('type' in offering.resources[i]) {
-                install(offering.resources[i].url, catalogue_view, offering.store);
+        offering.install({
+            monitor: monitor,
+            onComplete: function () {
+                var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+                local_catalogue_view.viewsByName.search.mark_outdated();
+                catalogue_view.refresh_search_results();
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
             }
-        }
+        });
     };
 
     var onUninstallClick = function onUninstallClick(offering, catalogue_view) {

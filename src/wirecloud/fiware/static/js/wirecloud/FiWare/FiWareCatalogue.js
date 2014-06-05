@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) CoNWeT Lab., 2012-20124 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -18,7 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*global gettext, LayoutManagerFactory, Wirecloud */
+/*global gettext, Wirecloud */
 
 (function () {
 

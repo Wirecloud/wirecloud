@@ -19,7 +19,7 @@
  *
  */
 
-/*global Wirecloud*/
+/*global interpolate, Wirecloud*/
 
 (function () {
 
@@ -32,7 +32,34 @@
         return MAC_MIMETYPES.indexOf(mimetype) !== -1;
     };
 
-    function FiWareCatalogueResource(resourceJSON_) {
+    var installResource = function installResource(resource, options) {
+        var market_id;
+
+        if (options == null) {
+            options = {};
+        }
+
+        if (this.catalogue.market_user !== 'public') {
+            market_id = this.catalogue.market_user + '/' + this.catalogue.market_name;
+        } else {
+            market_id = this.catalogue.market_name;
+        }
+
+        Wirecloud.LocalCatalogue.addResourceFromURL(resource.url, {
+            packaged: true,
+            forceCreate: true,
+            monitor: options.monitor,
+            market_info: {
+                name: market_id,
+                store: this.store
+            },
+            onSuccess: options.onSuccess,
+            onFailure: options.onFailure,
+            onComplete: options.onComplete
+        });
+    };
+
+    function FiWareCatalogueResource(resourceJSON_, catalogue) {
 
         //////////////////////////
         // GETTERS
@@ -68,6 +95,7 @@
         }
 
         Object.defineProperties(this, {
+            'catalogue': {value: catalogue},
             'marketName': {value: resourceJSON_.marketName},
             'owner': {value: resourceJSON_.vendor},
             'name': {value: resourceJSON_.name},
@@ -97,6 +125,7 @@
                         resource.name = parts[1];
                         resource.uri = resource.id;
                         resource.type = MAC_TYPES[MAC_MIMETYPES.indexOf(resource.content_type)];
+                        resource.install = installResource.bind(this, resource);
                     } catch (error) {
                         delete resource.version;
                         delete resource.vendor;
@@ -107,6 +136,44 @@
             }
         }
     }
+
+    FiWareCatalogueResource.prototype.install = function install(options) {
+        var i, subtask, onComplete = null, onSuccess, count = this.resources.length;
+
+        if (options == null) {
+            options = {};
+        }
+
+        if (typeof options.onComplete === 'function') {
+            onComplete = function () {
+                if (--count === 0) {
+                    try {
+                        options.onComplete(options);
+                    } catch (e) {}
+                }
+            };
+        }
+
+        for (i = 0; i < this.resources.length; i++) {
+            if ('type' in this.resources[i]) {
+                if (options.monitor) {
+                    subtask = options.monitor.nextSubtask(interpolate('Installing "%(resource_name)s" from the offering', {resource_name: this.resources[i].name}, true));
+                }
+
+                if (typeof options.onResourceSuccess === 'function') {
+                    onSuccess = options.onResourceSuccess.bind(null, this.resources[i]);
+                }
+
+                this.resources[i].install({
+                    monitor: subtask,
+                    onSuccess: onSuccess,
+                    onComplete: onComplete
+                });
+            } else {
+                count -= 1;
+            }
+        }
+    };
 
     window.FiWareCatalogueResource = FiWareCatalogueResource;
 
