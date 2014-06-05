@@ -59,7 +59,7 @@
         });
     };
 
-    function FiWareCatalogueResource(resourceJSON_, catalogue) {
+    var Offering = function Offering(resourceJSON_, catalogue) {
 
         //////////////////////////
         // GETTERS
@@ -135,9 +135,9 @@
                 }
             }
         }
-    }
+    };
 
-    FiWareCatalogueResource.prototype.install = function install(options) {
+    Offering.prototype.install = function install(options) {
         var i, subtask, onComplete = null, onSuccess, count = this.resources.length;
 
         if (options == null) {
@@ -175,6 +175,6 @@
         }
     };
 
-    window.FiWareCatalogueResource = FiWareCatalogueResource;
+    Wirecloud.FiWare.Offering = Offering;
 
 })();

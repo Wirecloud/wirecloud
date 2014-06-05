@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, Wirecloud, FiWareCatalogueResource*/
+/*global StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, Wirecloud*/
 
 (function () {
 
@@ -157,7 +157,7 @@
             offerings = [];
 
             for (i = 0; i < raw_data.resources.length; i += 1) {
-                offerings.push(new FiWareCatalogueResource(raw_data.resources[i], this.catalogue));
+                offerings.push(new Wirecloud.FiWare.Offering(raw_data.resources[i], this.catalogue));
             }
 
             data = {

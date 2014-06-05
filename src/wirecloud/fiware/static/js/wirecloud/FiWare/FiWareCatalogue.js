@@ -90,7 +90,7 @@
             onSuccess: function (response) {
                 var offering;
                 if (typeof options.onSuccess === 'function') {
-                    offering = new FiWareCatalogueResource(JSON.parse(response.responseText), this);
+                    offering = new Wirecloud.FiWare.Offering(JSON.parse(response.responseText), this);
                     try {
                         options.onSuccess(offering);
                     } catch (e) {}
