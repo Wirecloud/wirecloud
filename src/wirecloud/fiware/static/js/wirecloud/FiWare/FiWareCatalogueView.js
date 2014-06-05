@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, Wirecloud, FiWareCatalogueResource*/
+/*global StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, Wirecloud*/
 
 (function () {
 
@@ -156,7 +156,7 @@
             resources = [];
 
             for (i = 0; i < raw_data.resources.length; i += 1) {
-                resources.push(new FiWareCatalogueResource(raw_data.resources[i], this.catalogue));
+                resources.push(new Wirecloud.FiWare.Offering(raw_data.resources[i], this.catalogue));
             }
 
             data = {
