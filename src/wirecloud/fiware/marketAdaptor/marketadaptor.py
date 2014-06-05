@@ -240,6 +240,21 @@ class MarketAdaptor(object):
 
         return result
 
+    def get_offering_info(self, store, id, options):
+
+        url = urljoin(self._marketplace_uri, "offering/store/%(store)s/offering/%(offering_id)s" % {"store": urlquote(store), "offering_id": urlquote(id)})
+        try:
+            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
+        except HTTPError as e:
+            raise HTTPError(e.url, e.code, e.msg, None, None)
+
+        parsed_body = etree.fromstring(response.content)
+        url = parsed_body.xpath(URL_XPATH)[0].text
+
+        parsed_usdl = parse_usdl_from_url(url)
+
+        return self._parse_offering(id, url, parsed_usdl, store, options)
+
     def get_store(self, name):
         if name not in self._stores:
             self.get_store_info(name)

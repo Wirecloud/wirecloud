@@ -78,6 +78,33 @@
         });
     };
 
+    FiWareCatalogue.prototype.get_offering_info = function get_offering_info(store, offering_name, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        var url = Wirecloud.URLs.FIWARE_OFFERING_ENTRY.evaluate({market_user: this.market_user, market_name: this.market_name, store: store, offering_id: offering_name});
+        Wirecloud.io.makeRequest(url, {
+            method: 'GET',
+            requestHeaders: {'Accept': 'application/json'},
+            onSuccess: function (response) {
+                var offering;
+                if (typeof options.onSuccess === 'function') {
+                    offering = new FiWareCatalogueResource(JSON.parse(response.responseText), this);
+                    try {
+                        options.onSuccess(offering);
+                    } catch (e) {}
+                }
+            }.bind(this),
+            onFailure: function (response) {
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting resource: %(errorMsg)s."), response);
+                try {
+                    options.onFailure(msg);
+                } catch (e) {}
+            }
+        });
+    };
+
     FiWareCatalogue.prototype.is_purchased = function is_purchased(offering) {
         return offering.state === 'purchased' || offering.state === 'rated';
     };
