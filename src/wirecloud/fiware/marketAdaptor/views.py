@@ -100,6 +100,21 @@ class ServiceSearchCollection(Resource):
         return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
 
 
+class ServiceEntry(Resource):
+
+    def read(self, request, market_user, market_name, store, offering_id):
+
+        adaptor = get_market_adaptor(market_user, market_name)
+        user_data = get_market_user_data(request.user, market_user, market_name)
+
+        try:
+            offering_info = adaptor.get_offering_info(store, offering_id, user_data)[0]
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(json.dumps(offering_info), content_type='application/json; charset=UTF-8')
+
+
 class AllStoresServiceCollection(Resource):
 
     def read(self, request, market_user, market_name):

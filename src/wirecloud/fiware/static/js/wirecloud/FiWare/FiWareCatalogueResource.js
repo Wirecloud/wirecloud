@@ -68,6 +68,7 @@
         }
 
         Object.defineProperties(this, {
+            'marketName': {value: resourceJSON_.marketName},
             'owner': {value: resourceJSON_.vendor},
             'name': {value: resourceJSON_.name},
             'version': {value: resourceJSON_.version},

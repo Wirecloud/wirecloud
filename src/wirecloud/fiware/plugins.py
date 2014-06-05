@@ -212,6 +212,7 @@ class FiWarePlugin(WirecloudPlugin):
     def get_ajax_endpoints(self, views):
         return (
             {'id': 'FIWARE_RESOURCES_COLLECTION', 'url': build_url_template('wirecloud.fiware.market_resource_collection', ['market_user', 'market_name'])},
+            {'id': 'FIWARE_OFFERING_ENTRY', 'url': build_url_template('wirecloud.fiware.market_offering_entry', ['market_user', 'market_name', 'store', 'offering_id'])},
             {'id': 'FIWARE_FULL_SEARCH', 'url': build_url_template('wirecloud.fiware.market_full_search', ['market_user', 'market_name', 'search_string'])},
             {'id': 'FIWARE_STORE_RESOURCES_COLLECTION', 'url': build_url_template('wirecloud.fiware.store_resource_collection', ['market_user', 'market_name', 'store'])},
             {'id': 'FIWARE_STORE_SEARCH', 'url': build_url_template('wirecloud.fiware.store_search', ['market_user', 'market_name', 'store', 'search_string'])},
