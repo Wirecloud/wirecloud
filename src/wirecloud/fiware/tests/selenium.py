@@ -253,6 +253,8 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/search/offerings/fulltext/test', {'content': response_text})
         self.network._servers['http']['store2.example.com'].add_response('POST', '/api/contracting/form', {'content': str('{"url": "' + self.live_server_url + '"}')})
+        response_text = read_response_file('responses', 'marketplace', 'store2_weatherwidget_offering.xml')
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offering/WeatherWidget', {'content': response_text})
 
         self.login(username='user_with_markets')
 
@@ -270,7 +272,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         free_offering = self.search_in_catalogue_results('Weather widget')
         button = free_offering.find_element_by_css_selector('.mainbutton')
-        self.assertEqual(button.text, 'Install')
+        self.assertEqual(button.text, 'Uninstall')
 
     def test_install_store_offering(self):
 

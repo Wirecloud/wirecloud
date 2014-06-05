@@ -18,7 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*global gettext, LayoutManagerFactory, Wirecloud */
+/*global gettext, Wirecloud */
 
 (function () {
 

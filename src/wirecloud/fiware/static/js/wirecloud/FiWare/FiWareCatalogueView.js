@@ -19,7 +19,7 @@
  *
  */
 
-/*global OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, Wirecloud, FiWareCatalogueResource*/
+/*global StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, Wirecloud, FiWareCatalogueResource*/
 
 (function () {
 
@@ -49,6 +49,27 @@
         }
 
         this.storeSelect.addEntries(entries);
+    };
+
+    var onBuySuccess = function onBuySuccess(offering) {
+        this.viewsByName.search.mark_outdated();
+        this.catalogue.get_offering_info(offering.store, offering.marketName, {
+            onSuccess: function (refreshed_offering) {
+                refreshed_offering.install({
+                    onResourceSuccess: function (resource) {
+                        var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+                        local_catalogue_view.viewsByName.search.mark_outdated();
+                    },
+                    onFailure: function (msg) {
+                        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+                    },
+                    onComplete: function () {
+                        this.refresh_search_results();
+                    }.bind(this)
+                });
+            }.bind(this),
+            onFailure: this.refresh_search_results.bind(this)
+        });
     };
 
     var FiWareCatalogueView = function (id, options) {
@@ -136,7 +157,7 @@
             offerings = [];
 
             for (i = 0; i < raw_data.resources.length; i += 1) {
-                offerings.push(new FiWareCatalogueResource(raw_data.resources[i]));
+                offerings.push(new FiWareCatalogueResource(raw_data.resources[i], this.catalogue));
             }
 
             data = {
@@ -230,16 +251,16 @@
         }.bind(this);
     };
 
-    FiWareCatalogueView.prototype.ui_commands.buy = function (resource) {
+    FiWareCatalogueView.prototype.ui_commands.buy = function (offering) {
         return function () {
-            this.catalogue.start_purchase(resource, {
+            this.catalogue.start_purchase(offering, {
                 onSuccess: function (data) {
                     var dialog = new Wirecloud.ui.ExternalProcessWindowMenu(
-                        interpolate(gettext('Buying %(offering)s'), {offering: resource.getDisplayName()}, true),
+                        interpolate(gettext('Buying %(offering)s'), {offering: offering.getDisplayName()}, true),
                         data.url,
                         gettext('The buying process will continue in a separate window. This window will be controled by the store where the offering is hosted. After finishing the buying process, the control will return to Wirecloud.'),
                         {
-                            onSuccess: this.refresh_search_results.bind(this)
+                            onSuccess: onBuySuccess.bind(this, offering)
                         }
                     );
                     dialog.show();
