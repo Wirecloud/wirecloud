@@ -28,25 +28,16 @@
     var WirecloudCatalogue, _onSearchSuccess, _onSearchError, deleteSuccessCallback, deleteErrorCallback;
 
     _onSearchSuccess = function _onSearchSuccess(transport) {
-        var i, data, raw_data, resources, resource;
+        var i, data, raw_data;
 
         raw_data = JSON.parse(transport.responseText);
-        if (raw_data.resources) {
-            resources = [];
+        data = {
+            'resources': raw_data.results,
+            'current_page': parseInt(raw_data.pagenum, 10),
+            'total_count': parseInt(raw_data.total, 10)
+        };
 
-            for (i = 0; i < raw_data.resources.length; i += 1) {
-                resource = new CatalogueResource(raw_data.resources[i]);
-                resources.push(resource);
-            }
-
-            data = {
-                'resources': resources,
-                'current_page': this.options.starting_page,
-                'total_count': parseInt(raw_data.items, 10)
-            };
-
-            this.onSuccess(data, data);
-        }
+        this.onSuccess(data, data);
     };
 
     _onSearchError = function _onSearchError() {
@@ -96,7 +87,7 @@
         params = {};
 
         if (options.search_criteria !== '') {
-            params.keyword = options.search_criteria;
+            params.q = options.search_criteria;
         }
 
         if (options.scope !== 'all') {
