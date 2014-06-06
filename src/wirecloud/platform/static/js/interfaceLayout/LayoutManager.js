@@ -55,7 +55,7 @@ var LayoutManagerFactory = function () {
         }.bind(this));
         this.viewsByName = {
             'initial': this.alternatives.createAlternative(),
-            'workspace': this.alternatives.createAlternative({'alternative_constructor': WorkspaceView}),
+            'workspace': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WorkspaceView}),
             'wiring': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WiringEditor}),
             'marketplace': this.alternatives.createAlternative({'alternative_constructor': MarketplaceView})
         };

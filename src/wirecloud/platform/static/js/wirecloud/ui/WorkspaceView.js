@@ -82,6 +82,6 @@
         StyledElements.Alternative.destroy();
     };
 
-    window.WorkspaceView = WorkspaceView;
+    Wirecloud.ui.WorkspaceView = WorkspaceView;
 
 })();
