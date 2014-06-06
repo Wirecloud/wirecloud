@@ -29,6 +29,7 @@ from wirecloud.platform.plugins import build_url_template, get_active_features_i
 
 
 WORKSPACE_CSS = (
+    'css/workspace/wallet.css',
     'css/workspace/dragboard_cursor.css',
     'css/workspace/iwidget.css',
     'css/workspace/empty_workspace_message.css',
@@ -405,6 +406,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "catalogue_resource_template": "wirecloud/catalogue/resource.html",
                 "catalogue_main_resource_details_template": "wirecloud/catalogue/main_resource_details.html",
                 "catalogue_resource_details_template": "wirecloud/catalogue/resource_details.html",
+                "wallet": "wirecloud/workspace/wallet/wallet.html",
+                "wallet_widget": "wirecloud/workspace/wallet/widget.html",
                 "wirecloud_catalogue_publish_interface": "wirecloud/catalogue/developers.html",
             }
         else:

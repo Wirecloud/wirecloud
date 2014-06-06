@@ -187,6 +187,19 @@
         }
     };
 
+    WirecloudHeader.prototype._paintToolbar = function _paintToolbar(newView) {
+        var buttons, i;
+
+        if (newView == null || !('getToolbarButtons' in newView)) {
+            return;
+        }
+
+        buttons = newView.getToolbarButtons();
+        for (i=0; i < buttons.length; i++) {
+            buttons[i].insertInto(this.breadcrum);
+        }
+    };
+
     WirecloudHeader.prototype._notifyViewChange = function _notifyViewChange(newView) {
         var menuitems, triangle, startx;
 
@@ -218,6 +231,7 @@
 
     WirecloudHeader.prototype.refresh = function refresh() {
         this._paintBreadcrum(this.currentView);
+        this._paintToolbar(this.currentView);
     };
 
     Wirecloud.ui.WirecloudHeader = WirecloudHeader;
