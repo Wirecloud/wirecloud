@@ -60,7 +60,7 @@
         builder = new StyledElements.GUIBuilder();
         this.source = new StyledElements.PaginatedSource({
             'pageSize': 30,
-            'order_by': '-popularity',
+            'order_by': '-creation_date',
             'keywords': '',
             'scope': 'all',
             'requestFunc': this._search.bind(this),
@@ -128,9 +128,8 @@
                 var select = new StyledElements.StyledSelect({
                     'initialValue': '-popularity',
                     'initialEntries': [
-                        {'label': gettext('Popularity'), 'value': '-popularity'},
                         {'label': gettext('Creation date'), 'value': '-creation_date'},
-                        {'label': gettext('Short name'), 'value': 'short_name'},
+                        {'label': gettext('Title'), 'value': 'name'},
                         {'label': gettext('Vendor'), 'value': 'vendor'}
                     ]
                 });
