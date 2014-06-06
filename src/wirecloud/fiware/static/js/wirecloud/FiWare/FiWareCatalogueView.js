@@ -112,7 +112,7 @@
         };
         this.viewsByName.search.init();
 
-        this.catalogue = new Wirecloud.FiWare.FiWareCatalogue(this.desc);
+        this.catalogue = new Wirecloud.FiWare.Marketplace(this.desc);
         this.number_of_stores = 0;
         this.refresh_store_info();
         this.addEventListener('show', function () {

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) CoNWeT Lab., 2012-20124 Universidad Politécnica de Madrid
+ *     Copyright (c) CoNWeT Lab., 2012-2014 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -24,7 +24,7 @@
 
     "use strict";
 
-    var FiWareCatalogue, _onSearchSuccess, _onSearchError;
+    var Marketplace, _onSearchSuccess, _onSearchError;
 
     _onSearchSuccess = function _onSearchSuccess(transport) {
         var raw_data = JSON.parse(transport.responseText);
@@ -35,7 +35,7 @@
         this.onError();
     };
 
-    FiWareCatalogue = function FiWareCatalogue(options) {
+    Marketplace = function Marketplace(options) {
         if (options.user != null) {
             this.market_user = options.user;
         } else {
@@ -45,7 +45,7 @@
         Object.defineProperty(this, 'permissions', {'value': options.permissions});
     };
 
-    FiWareCatalogue.prototype.isAllow = function isAllow(action) {
+    Marketplace.prototype.isAllow = function isAllow(action) {
         if (action in this.permissions) {
             return this.permissions[action];
         } else {
@@ -53,7 +53,7 @@
         }
     };
 
-    FiWareCatalogue.prototype.search = function search(onSuccess, onError, options) {
+    Marketplace.prototype.search = function search(onSuccess, onError, options) {
         var url, context;
 
         if (options.search_criteria === '' && options.store === 'All stores') {
@@ -79,7 +79,7 @@
         });
     };
 
-    FiWareCatalogue.prototype.get_offering_info = function get_offering_info(store, offering_name, options) {
+    Marketplace.prototype.get_offering_info = function get_offering_info(store, offering_name, options) {
         if (options == null) {
             options = {};
         }
@@ -106,11 +106,11 @@
         });
     };
 
-    FiWareCatalogue.prototype.is_purchased = function is_purchased(offering) {
+    Marketplace.prototype.is_purchased = function is_purchased(offering) {
         return offering.state === 'purchased' || offering.state === 'rated';
     };
 
-    FiWareCatalogue.prototype.start_purchase = function start_purchase(resource, options) {
+    Marketplace.prototype.start_purchase = function start_purchase(resource, options) {
 
         if (options == null) {
             options = {};
@@ -134,7 +134,7 @@
         );
     };
 
-    FiWareCatalogue.prototype.getStores = function getStores(onSuccess, onError) {
+    Marketplace.prototype.getStores = function getStores(onSuccess, onError) {
         var context, url = Wirecloud.URLs.FIWARE_STORE_COLLECTION.evaluate({market_user: this.market_user, market_name: this.market_name});
 
         context = {
@@ -150,5 +150,5 @@
         });
     };
 
-    Wirecloud.FiWare.FiWareCatalogue = FiWareCatalogue;
+    Wirecloud.FiWare.Marketplace = Marketplace;
 })();
