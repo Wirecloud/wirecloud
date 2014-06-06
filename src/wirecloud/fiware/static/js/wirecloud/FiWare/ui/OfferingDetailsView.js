@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var ResourceDetailsView = function ResourceDetailsView(id, options) {
+    var OfferingDetailsView = function OfferingDetailsView(id, options) {
         var extra_context;
 
         this.mainview = options.catalogue;
@@ -78,9 +78,9 @@
         this.main_details_painter = new Wirecloud.FiWare.ui.OfferingPainter(this.mainview, Wirecloud.currentTheme.templates['fiware_main_details_template'], this);
         this.resource_details_painter = new Wirecloud.FiWare.ui.OfferingPainter(this.mainview, Wirecloud.currentTheme.templates['fiware_catalogue_resource_details_template'], this, extra_context);
     };
-    ResourceDetailsView.prototype = new StyledElements.Alternative();
+    OfferingDetailsView.prototype = new StyledElements.Alternative();
 
-    ResourceDetailsView.prototype.paint = function paint(resource) {
+    OfferingDetailsView.prototype.paint = function paint(resource) {
         this.clear();
         this.appendChild(this.resource_details_painter.paint(resource));
     };
@@ -89,5 +89,5 @@
         Wirecloud.FiWare.ui = {};
     }
 
-    Wirecloud.FiWare.ui.ResourceDetailsView = ResourceDetailsView;
+    Wirecloud.FiWare.ui.OfferingDetailsView = OfferingDetailsView;
 })();

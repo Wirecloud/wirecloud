@@ -108,7 +108,7 @@
         this.viewsByName = {
             'initial': this.alternatives.createAlternative(),
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: search_view_options}),
-            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.FiWare.ui.ResourceDetailsView, containerOptions: {catalogue: this}})
+            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.FiWare.ui.OfferingDetailsView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();
 
