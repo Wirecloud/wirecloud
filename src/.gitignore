@@ -1,5 +1,5 @@
-index
-static
-catalogue
-deployment
+/index/
+/static/
+/catalogue/
+/deployment/
 *.pyc
