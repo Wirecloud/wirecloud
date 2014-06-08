@@ -484,6 +484,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         showcase.wgt_deployer.deploy(widget_wgt)
         widget_wgt_file.close()
 
+        cls.old_index_dir = settings.WIRECLOUD_INDEX_DIR
+        settings.WIRECLOUD_INDEX_DIR = mkdtemp()
         restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
         restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
 
@@ -508,6 +510,10 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         showcase.wgt_deployer = cls.old_deployer
         shutil.rmtree(cls.localcatalogue_tmp_dir_backup, ignore_errors=True)
         shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+
+        # Restore old index dir
+        cleartree(settings.WIRECLOUD_INDEX_DIR)
+        settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
 
         settings.LANGUAGES = cls.old_LANGUAGES
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
