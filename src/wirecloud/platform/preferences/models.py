@@ -21,6 +21,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
 from django.db import models
+from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import check_for_language, gettext_lazy as _
 
@@ -94,11 +95,9 @@ def update_session_lang(request, user):
         del request.session['django_language']
 
 
+@receiver(user_logged_in)
 def setup_language_from_preferences(sender, **kwargs):
     user = kwargs['user']
     request = kwargs['request']
 
     update_session_lang(request, user)
-
-
-user_logged_in.connect(setup_language_from_preferences)

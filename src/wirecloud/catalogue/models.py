@@ -24,10 +24,11 @@ import random
 from urlparse import urlparse
 
 from django.conf import settings
+from django.contrib.auth.models import User, Group
 from django.core.cache import cache
 from django.db import models
 from django.db.models.signals import m2m_changed, post_save
-from django.contrib.auth.models import User, Group
+from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -168,6 +169,7 @@ class CatalogueResourceSchema(fields.SchemaClass):
     groups = fields.KEYWORD(commas=True)
 
 
+@receiver(post_save, sender=CatalogueResource)
 def add_document(sender, instance, created, raw, **kwargs):
 
     resource = instance
@@ -197,6 +199,8 @@ def add_document(sender, instance, created, raw, **kwargs):
         with ix.writer() as writer:
             writer.add_document(**data)
 
+
+@receiver(m2m_changed, sender=CatalogueResource.users.through)
 def update_users(sender, instance, action, reverse, model, pk_set, using, **kwargs):
 
     if reverse or action.startswith('pre_') or (pk_set is not None and len(pk_set) == 0):
@@ -204,8 +208,6 @@ def update_users(sender, instance, action, reverse, model, pk_set, using, **kwar
 
     add_document(sender, instance, False, False)
 
-post_save.connect(add_document, sender=CatalogueResource)
-m2m_changed.connect(update_users, sender=CatalogueResource.users.through)
 
 def groupby_name_and_vendor(results):
 

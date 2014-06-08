@@ -22,8 +22,9 @@ import random
 
 from django.core.cache import cache
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -148,6 +149,7 @@ class VariableDef(models.Model):
         db_table = 'wirecloud_variabledef'
 
 
+@receiver(post_save, sender=CatalogueResource)
 def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs):
 
     from wirecloud.catalogue import utils as catalogue
@@ -167,5 +169,3 @@ def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs)
                 resource.widget = create_widget_from_wgt(wgt_file, resource.creator)
             else:
                 resource.widget = create_widget_from_template(resource.template_uri, resource.creator)
-
-post_save.connect(create_widget_on_resource_creation, sender=CatalogueResource)
