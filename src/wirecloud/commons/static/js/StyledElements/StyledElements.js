@@ -1043,49 +1043,4 @@ var CommandQueue = function (context, initFunc, stepFunc) {
             doInit();
         }
     }
-}
-
-/**
- * Este compontente representa al contenedor para una alternativa usable por el
- * componente StyledAlternatives.
- */
-StyledElements.Alternative = function(id, options) {
-    var defaultOptions;
-
-    if (arguments.length == 0) {
-        return;
-    }
-
-    defaultOptions = {
-        useFullHeight: true
-    };
-    options = Wirecloud.Utils.merge(defaultOptions, options);
-
-    this.altId = id;
-
-    /* call to the parent constructor */
-    StyledElements.Container.call(this, options, ['show', 'hide']);
-
-    this.wrapperElement.classList.add("hidden"); // TODO
-}
-StyledElements.Alternative.prototype = new StyledElements.Container({extending: true});
-
-StyledElements.Alternative.prototype.setVisible = function (newStatus) {
-    if (newStatus) {
-        this.wrapperElement.classList.remove("hidden");
-        this.repaint(false);
-        this.events['show'].dispatch(this);
-    } else {
-        this.wrapperElement.classList.add("hidden");
-        this.repaint(false);
-        this.events['hide'].dispatch(this);
-    }
-}
-
-StyledElements.Alternative.prototype.isVisible = function (newStatus) {
-    return !this.wrapperElement.classList.contains("hidden");
 };
-
-StyledElements.Alternative.prototype.getId = function() {
-    return this.altId;
-}

@@ -98,6 +98,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Select.js',
     'js/StyledElements/ToggleButton.js',
     'js/StyledElements/StyledNotebook.js',
+    'js/StyledElements/Alternative.js',
     'js/StyledElements/Alternatives.js',
     'js/StyledElements/HorizontalLayout.js',
     'js/StyledElements/BorderLayout.js',
