@@ -139,6 +139,15 @@ class CatalogueResource(models.Model):
         except ValueError:
             pass
 
+        # Remove document from search indexes
+        ix = open_index('catalogue_resources')
+
+        try:
+            with ix.writer() as writer:
+                writer.delete_document('pk', old_id)
+        except:
+            pass  # ignore errors
+
     def resource_type(self):
         return self.RESOURCE_TYPES[self.type]
 
