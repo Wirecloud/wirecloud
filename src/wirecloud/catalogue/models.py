@@ -186,8 +186,8 @@ def add_document(sender, instance, created, raw, **kwargs):
 
     data = {
         'pk': unicode(resource.pk),
-        'name': unicode(resource.short_name),
-        'vendor': unicode(resource.vendor),
+        'name': unicode(resource.short_name.replace('-', '_')),
+        'vendor': unicode(resource.vendor.replace('-', '_')),
         'version': resource_info['version'],
         'type': resource_info['type'],
         'creation_date': resource.creation_date.utcnow(),
@@ -218,36 +218,21 @@ def update_users(sender, instance, action, reverse, model, pk_set, using, **kwar
     add_document(sender, instance, False, False)
 
 
-def groupby_name_and_vendor(results):
+def add_other_versions(searcher, hits, user, staff):
 
-    storedfields_list = [hit.fields() for hit in results]
-    items_not_looking = [i for i in xrange(len(storedfields_list))]
-    new_results = []
+    results = [hit.fields() for hit in hits]
+    allow_q = []
 
-    while items_not_looking != []:
+    if not staff:
+        allow_q = [Or([Term('public', 't'), Term('users', user.username.lower())] +
+            [Term('groups', group.name.lower()) for group in user.groups.all()])]
 
-        first_document = storedfields_list[items_not_looking.pop(0)].copy()
-        others = []
+    for r in results:
+        user_q = And([Term('name', r['name'].lower()), Term('vendor', r['vendor'].lower())] + allow_q)
+        version_results = [h.fields()['version'] for h in searcher.search(user_q)]
+        r['others'] = [v for v in version_results if v != r['version']]
 
-        for i in items_not_looking[:]:
-
-            current_document = storedfields_list[i].copy()
-
-            if (first_document['name'] == current_document['name'] and
-                first_document['vendor'] == current_document['vendor']):
-
-                if version_greater(first_document['version'], current_document['version']):
-                    others.append(current_document)
-                else:
-                    others.append(first_document)
-                    first_document = current_document.copy()
-
-                items_not_looking.remove(i)
-
-        first_document['others'] = others[:]
-        new_results.append(first_document)
-
-    return new_results
+    return results
 
 
 def open_index(indexname, dirname=None):
@@ -269,17 +254,18 @@ def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creatio
     ix = open_index('catalogue_resources')
     qp = MultifieldParser(['name', 'title', 'vendor', 'description'], ix.schema)
 
-    allow_q = Every()
-    user_q = querytext and qp.parse(querytext) or None
+    user_q = querytext != '' and qp.parse(querytext) or Every()
 
     if not staff:
-        allow_q = And([allow_q, Or([Term('public', 't'), Term('users', user.username.lower())] +
+        user_q = And([user_q, Or([Term('public', 't'), Term('users', user.username.lower())] +
             [Term('groups', group.name.lower()) for group in user.groups.all()])])
 
     if scope:
-        allow_q = And([allow_q, Term('type', scope)])
+        user_q = And([user_q, Term('type', scope)])
 
-    order_f = sorting.FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
+    name_vendor_f = sorting.MultiFacet(['name', 'vendor'])
+    orderby_f = sorting.FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
+    version_f = sorting.FieldFacet('version', reverse=True)
 
     """
     corrected = searcher.correct_query(user_q, keywords)
@@ -290,35 +276,12 @@ def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creatio
     search_result = {}
 
     with ix.searcher() as searcher:
-        # TODO: name-vendor groups do not work with limit
-
-        allow_hits = searcher.search(allow_q, limit=(pagenum+1) * pagelen, sortedby=[order_f,])
-        results = groupby_name_and_vendor(allow_hits)
-
-        if user_q:
-
-            if not staff:
-                user_q = And([user_q, Or([Term('public', 't'), Term('users', user.username.lower())] +
-                    [Term('groups', group.name.lower()) for group in user.groups.all()])])
-
-            if scope:
-                user_q = And([user_q, Term('type', scope)])
-
-            user_hits = searcher.search(user_q, limit=(pagenum+1) * pagelen, sortedby=[order_f,])
-            query_results = groupby_name_and_vendor(user_hits)
-            results = upgrade_results(query_results, results)
-
-        search_result = search_page(shorten_response(results), pagenum, pagelen)
+        hits = searcher.search(user_q, limit=(pagenum * pagelen),
+            sortedby=[orderby_f], collapse=name_vendor_f, collapse_limit=1, collapse_order=version_f)
+        results = add_other_versions(searcher, hits, user, staff)
+        search_result = search_page(results, pagenum, pagelen)
 
     return search_result
-
-
-def shorten_response(results):
-
-    for hit in results:
-        hit['others'] = [other['version'] for other in hit['others']]
-
-    return results
 
 
 def search_page(results, pagenum, pagelen):
@@ -342,26 +305,3 @@ def search_page(results, pagenum, pagelen):
     results_page['results'] = results[offset:(offset + pagelen)]
 
     return results_page
-
-
-def upgrade_results(main_results, allow_results):
-
-    for hit in main_results:
-
-        for allow_hit in allow_results:
-
-            if (hit['name'] == allow_hit['name'] and hit['vendor'] == allow_hit['vendor']):
-
-                versions = [hit['version']] + [other['version'] for other in hit['others']]
-                current_hit = allow_hit.copy()
-                del current_hit['others']
-
-                others = [current_hit] + allow_hit['others']
-                hit['others'] += [other for other in others if not other['version'] in versions]
-
-    return main_results
-
-
-def version_greater(version1, version2):
-    # TODO: the version can include letters too.
-    return version1 > version2

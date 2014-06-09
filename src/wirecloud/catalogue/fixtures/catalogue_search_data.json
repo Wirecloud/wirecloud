@@ -335,5 +335,43 @@
             "public": false,
             "users": [80]
         }
+    },
+    {
+        "pk": 116,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "popularity": "0",
+            "vendor": "Wirecloud",
+            "short_name": "Book-Reader",
+            "json_description": "{\"name\": \"Book-Reader\", \"vendor\": \"Wirecloud\", \"version\": \"1.5\", \"type\": \"widget\", \"title\": \"The Best Incredible Test\", \"description\": \"This widget contains keywords regex mashable application component.\", \"code_url\": \"test.html\"}",
+            "creator": 1,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "1.5",
+            "fromWGT": true,
+            "type": 0,
+            "public": true,
+            "users": []
+        }
+    },
+    {
+        "pk": 117,
+        "model": "catalogue.catalogueresource",
+        "fields": {
+            "groups": [],
+            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "popularity": "0",
+            "vendor": "CoNWeT-Lab",
+            "short_name": "Live_Sports",
+            "json_description": "{\"name\": \"Live_Sports\", \"vendor\": \"CoNWeT-Lab\", \"version\": \"1.0\", \"type\": \"widget\", \"title\": \"Clock Now\", \"description\": \"This widget contains keywords like free button bluetooth.\", \"code_url\": \"test.html\"}",
+            "creator": 1,
+            "creation_date": "2011-05-13T11:24:03Z",
+            "version": "1.0",
+            "fromWGT": true,
+            "type": 0,
+            "public": true,
+            "users": [80]
+        }
     }
 ]
