@@ -180,9 +180,10 @@ class CatalogueResourceSchema(fields.SchemaClass):
     title = fields.TEXT(stored=True, spelling=True)
     image = fields.STORED
     smartphoneimage = fields.STORED
-    description = fields.TEXT(stored=True)
+    description = fields.TEXT(stored=True, spelling=True)
+    wiring = fields.TEXT(spelling=True)
     public = fields.BOOLEAN
-    users = fields.KEYWORD(stored=True, commas=True)
+    users = fields.KEYWORD(commas=True)
     groups = fields.KEYWORD(commas=True)
 
 
@@ -191,6 +192,13 @@ def add_document(sender, instance, created, raw, **kwargs):
 
     resource = instance
     resource_info = resource.get_processed_info(process_urls=False)
+    endpoint_descriptions = ''
+
+    for endpoint in resource_info['wiring']['inputs']:
+        endpoint_descriptions += endpoint['description'] + ' '
+
+    for endpoint in resource_info['wiring']['outputs']:
+        endpoint_descriptions += endpoint['description'] + ' '
 
     data = {
         'pk': unicode(resource.pk),
@@ -203,6 +211,7 @@ def add_document(sender, instance, created, raw, **kwargs):
         'public': resource.public,
         'title': resource_info['title'],
         'description': resource_info['description'],
+        'wiring': endpoint_descriptions,
         'image': resource_info['image'],
         'smartphoneimage': resource_info['smartphoneimage'],
         'users': ', '.join(resource.users.all().values_list('username', flat=True)),
@@ -262,7 +271,8 @@ def open_index(indexname, dirname=None):
 def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creation_date', staff=False):
 
     ix = open_index('catalogue_resources')
-    qp = MultifieldParser(['name', 'title', 'vendor', 'description'], ix.schema)
+    filenames = ['name', 'title', 'vendor', 'description', 'wiring']
+    qp = MultifieldParser(filenames, ix.schema)
 
     user_q = querytext != '' and qp.parse(querytext) or Every()
 

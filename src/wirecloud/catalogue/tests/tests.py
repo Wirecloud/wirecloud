@@ -228,6 +228,14 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][1]['version'], "1.5")
         self.assertEqual(len(result_json['results'][1]['others']), 0)
 
+        result = self.client.get(self.base_url+'?q=output+digit')
+        result_json = json.loads(result.content)
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagelen'], 1)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['results'][0]['version'], "1.5")
+        self.assertEqual(len(result_json['results'][0]['others']), 2)
+
     def test_basic_search_with_staff(self):
 
         self.client.login(username='admin', password='admin')
