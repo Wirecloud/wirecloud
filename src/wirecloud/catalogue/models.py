@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 
 import os
 import random
-from urlparse import urlparse
+from urlparse import urlparse, urljoin
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group
@@ -96,16 +96,7 @@ class CatalogueResource(models.Model):
 
     def get_template(self, request=None):
 
-        if urlparse(self.template_uri).scheme == '':
-            template_uri = get_absolute_reverse_url('wirecloud.showcase_media', kwargs={
-                'vendor': self.vendor,
-                'name': self.short_name,
-                'version': self.version,
-                'file_path': self.template_uri
-            }, request=request)
-        else:
-            template_uri = self.template_uri
-
+        template_uri = get_template_url(self.vendor, self.short_name, self.version, self.template_uri, request=request)
         parser = TemplateParser(self.json_description, base=template_uri)
         return parser
 
@@ -162,16 +153,33 @@ class CatalogueResource(models.Model):
         return self.local_uri_part
 
 
+def get_template_url(vendor, name, version, url, request=None):
+
+    if urlparse(url).scheme == '':
+        template_url = get_absolute_reverse_url('wirecloud.showcase_media', kwargs={
+            'vendor': vendor,
+            'name': name,
+            'version': version,
+            'file_path': url
+        }, request=request)
+    else:
+        template_url = url
+
+    return template_url
+
+
 class CatalogueResourceSchema(fields.SchemaClass):
 
     pk = fields.ID(stored=True, unique=True)
     name = fields.TEXT(stored=True)
     vendor = fields.TEXT(stored=True, spelling=True)
     version = fields.TEXT(stored=True)
+    template_uri = fields.STORED
     type = fields.TEXT(stored=True)
     creation_date = fields.DATETIME
     title = fields.TEXT(stored=True, spelling=True)
-    image = fields.TEXT(stored=True)
+    image = fields.STORED
+    smartphoneimage = fields.STORED
     description = fields.TEXT(stored=True)
     public = fields.BOOLEAN
     users = fields.KEYWORD(stored=True, commas=True)
@@ -182,19 +190,21 @@ class CatalogueResourceSchema(fields.SchemaClass):
 def add_document(sender, instance, created, raw, **kwargs):
 
     resource = instance
-    resource_info = resource.get_processed_info()
+    resource_info = resource.get_processed_info(process_urls=False)
 
     data = {
         'pk': unicode(resource.pk),
-        'name': unicode(resource.short_name.replace('-', '_')),
         'vendor': unicode(resource.vendor.replace('-', '_')),
+        'name': unicode(resource.short_name.replace('-', '_')),
         'version': resource_info['version'],
+        'template_uri': resource.template_uri,
         'type': resource_info['type'],
         'creation_date': resource.creation_date.utcnow(),
         'public': resource.public,
         'title': resource_info['title'],
         'description': resource_info['description'],
         'image': resource_info['image'],
+        'smartphoneimage': resource_info['smartphoneimage'],
         'users': ', '.join(resource.users.all().values_list('username', flat=True)),
         'groups': ', '.join(resource.groups.all().values_list('name', flat=True)),
     }
@@ -279,6 +289,7 @@ def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creatio
         hits = searcher.search(user_q, limit=(pagenum * pagelen),
             sortedby=[orderby_f], collapse=name_vendor_f, collapse_limit=1, collapse_order=version_f)
         results = add_other_versions(searcher, hits, user, staff)
+        fix_urls(results)
         search_result = search_page(results, pagenum, pagelen)
 
     return search_result
@@ -305,3 +316,14 @@ def search_page(results, pagenum, pagelen):
     results_page['results'] = results[offset:(offset + pagelen)]
 
     return results_page
+
+
+def fix_urls(results):
+
+    for hit in results:
+
+        base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'])
+        hit['image'] = urljoin(base_url, hit['image'])
+        hit['smartphoneimage'] = urljoin(base_url, hit['smartphoneimage'])
+
+    return results
