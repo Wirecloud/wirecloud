@@ -98,7 +98,7 @@ class AddWidgetTestCase(WirecloudTestCase):
 class CatalogueSearchTestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_search_data',)
-    tags = ('whoosh',)
+    tags = ('catalogue',)
 
     @classmethod
     def setUpClass(cls):
