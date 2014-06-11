@@ -201,9 +201,9 @@ def add_document(sender, instance, created, raw, **kwargs):
         endpoint_descriptions += endpoint['description'] + ' '
 
     data = {
-        'pk': unicode(resource.pk),
-        'vendor': unicode(resource.vendor.replace('-', '_')),
-        'name': unicode(resource.short_name.replace('-', '_')),
+        'pk': '%s' % resource.pk,
+        'vendor': '%s' % resource.vendor,
+        'name': '%s' % resource.short_name,
         'version': resource_info['version'],
         'template_uri': resource.template_uri,
         'type': resource_info['type'],
