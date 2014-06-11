@@ -40,8 +40,8 @@
         this.onSuccess(data.resources, data);
     };
 
-    _onSearchFailure = function _onSearchFailure() {
-        this.onError();
+    _onSearchFailure = function _onSearchFailure(reponse) {
+        this.onFailure();
     };
 
     deleteSuccessCallback = function deleteSuccessCallback() {
@@ -83,7 +83,11 @@
     };
 
     WirecloudCatalogue.prototype.search = function search(options) {
-        var params, url, context;
+        var params, url;
+
+        if (options == null) {
+            throw new TypeError();
+        }
 
         params = {};
 
@@ -99,18 +103,12 @@
             params.orderby = options.order_by;
         }
 
-        context = {
-            'options': options,
-            'onSuccess': options.onSuccess,
-            'onError': options.onFailure
-        };
-
         Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
             parameters: params,
-            onSuccess: _onSearchSuccess.bind(context),
-            onFailure: _onSearchFailure.bind(context)
+            onSuccess: _onSearchSuccess.bind(options),
+            onFailure: _onSearchFailure.bind(options)
         });
     };
 

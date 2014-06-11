@@ -65,13 +65,12 @@
             'scope': 'all',
             'requestFunc': this._search.bind(this),
             'processFunc': function (elements) {
-                var i, resource;
+                var i;
 
                 this.resource_list.clear();
 
                 for (i = 0; i < elements.length; i += 1) {
-                    resource = elements[i];
-                    this.resource_list.appendChild(this.resource_painter.paint(resource));
+                    this.resource_list.appendChild(this.resource_painter.paint(elements[i]));
                 }
             }.bind(this)
         });

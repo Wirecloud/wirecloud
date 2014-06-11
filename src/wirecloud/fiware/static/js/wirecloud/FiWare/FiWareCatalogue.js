@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -24,15 +24,15 @@
 
     "use strict";
 
-    var FiWareCatalogue, _onSearchSuccess, _onSearchError;
+    var FiWareCatalogue, _onSearchSuccess, _onSearchFailure;
 
     _onSearchSuccess = function _onSearchSuccess(transport) {
         var raw_data = JSON.parse(transport.responseText);
         this.onSuccess(raw_data);
     };
 
-    _onSearchError = function _onSearchError(transport) {
-        this.onError();
+    _onSearchFailure = function _onSearchFailure(transport) {
+        this.onFailure();
     };
 
     FiWareCatalogue = function FiWareCatalogue(options) {
@@ -53,8 +53,12 @@
         }
     };
 
-    FiWareCatalogue.prototype.search = function search(onSuccess, onError, options) {
-        var url, context;
+    FiWareCatalogue.prototype.search = function search(options) {
+        var url;
+
+        if (options == null) {
+            throw new TypeError();
+        }
 
         if (options.search_criteria === '' && options.store === 'All stores') {
             url = Wirecloud.URLs.FIWARE_RESOURCES_COLLECTION.evaluate({market_user: this.market_user, market_name: this.market_name});
@@ -66,16 +70,11 @@
             url = Wirecloud.URLs.FIWARE_STORE_SEARCH.evaluate({market_user: this.market_user, market_name: this.market_name, store: options.store, search_string: options.search_criteria});
         }
 
-        context = {
-            'onSuccess': onSuccess,
-            'onError': onError
-        };
-
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
-            onSuccess: _onSearchSuccess.bind(context),
-            onFailure: _onSearchError.bind(context)
+            onSuccess: _onSearchSuccess.bind(options),
+            onFailure: _onSearchFailure.bind(options)
         });
     };
 
@@ -112,14 +111,14 @@
 
         context = {
             onSuccess: onSuccess,
-            onError: onError
+            onFailure: onError
         };
 
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: _onSearchSuccess.bind(context),
-            onFailure: _onSearchError.bind(context)
+            onFailure: _onSearchFailure.bind(context)
         });
     };
 

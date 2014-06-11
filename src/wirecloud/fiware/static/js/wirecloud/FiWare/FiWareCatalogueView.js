@@ -123,30 +123,30 @@
         };
     };
 
-    FiWareCatalogueView.prototype.search = function search(onSuccess, onFailure, options) {
-        this.catalogue.search(this._onSearch.bind(this, onSuccess), onFailure, options);
+    FiWareCatalogueView.prototype.search = function search(options) {
+        options.onSuccess = this._onSearch.bind(this, options.onSuccess);
+        this.catalogue.search(options);
     };
 
     FiWareCatalogueView.prototype._onSearch = function (callback, raw_data) {
-        var i, data, resources, resource;
+        var i, data, offerings;
 
         if (raw_data.resources) {
 
-            resources = [];
+            offerings = [];
 
             for (i = 0; i < raw_data.resources.length; i += 1) {
-                resource = new FiWareCatalogueResource(raw_data.resources[i]);
-                resources.push(resource);
+                offerings.push(new FiWareCatalogueResource(raw_data.resources[i]));
             }
 
             data = {
-                'resources': resources,
-                'query_results_number': resources.length,
+                'resources': offerings,
+                'query_results_number': offerings.length,
                 'resources_per_page': 10,
                 'current_page': 1
             };
 
-            callback(data, data);
+            callback(offerings, data);
         }
     };
 
