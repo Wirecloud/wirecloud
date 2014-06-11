@@ -248,10 +248,10 @@ def add_other_versions(searcher, hits, user, staff):
         allow_q = [Or([Term('public', 't'), Term('users', user.username.lower())] +
             [Term('groups', group.name.lower()) for group in user.groups.all()])]
 
-    for r in results:
-        user_q = And([Term('name', r['name'].lower()), Term('vendor', r['vendor'].lower())] + allow_q)
+    for result in results:
+        user_q = And([Term('vendor_name', '%s/%s' % (result['vendor'], result['name']))] + allow_q)
         version_results = [h.fields()['version'] for h in searcher.search(user_q)]
-        r['others'] = [v for v in version_results if v != r['version']]
+        result['others'] = [v for v in version_results if v != result['version']]
 
     return results
 
