@@ -96,7 +96,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         self.wait_element_visible_by_css_selector('.window_menu .btn-primary > div').click()
 
         wstore_window = self.driver.window_handles[1]
-        self.driver.switch_to_window(wstore_window)
+        self.driver.switch_to.window(wstore_window)
 
         username_input = self.wait_element_visible_by_id('id_username')
         self.fill_form_input(username_input, 'wcitester')
@@ -115,7 +115,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         self.wait_element_visible_by_id('back')
         time.sleep(0.5)
         self.driver.find_element_by_id('back').click()
-        self.driver.switch_to_window(wirecloud_window)
+        self.driver.switch_to.window(wirecloud_window)
 
         time.sleep(0.5)
         self.wait_catalogue_ready()

@@ -686,7 +686,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Swicth to Wirecloud's iframe
         iframe = self.driver.find_element_by_id('iframe')
-        self.driver.switch_to_frame(iframe)
+        self.driver.switch_to.frame(iframe)
         self.wait_wirecloud_ready()
         self.check_public_workspace(frame_id='iframe')
     test_embedded_view.tags = ('fiware-ut-18',)
@@ -721,7 +721,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Work around selenium not being able to go to the parent frame
         if frame_id is not None:
-            self.driver.switch_to_frame(self.driver.find_element_by_id(frame_id))
+            self.driver.switch_to.frame(self.driver.find_element_by_id(frame_id))
 
         with target_iwidget:
             try:
@@ -779,7 +779,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Workaround webkit problem with xhtml and retreiving element with focus
         if self.driver.capabilities['browserName'] == 'chrome':
             return
-        focused_element = self.driver.switch_to_active_element().find_element_by_tag_name('span')
+        focused_element = self.driver.switch_to.active_element.find_element_by_tag_name('span')
         self.assertEqual(element, focused_element)
 
     def test_gui_tutorials(self):

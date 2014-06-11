@@ -120,14 +120,14 @@ class IWidgetTester(object):
     def __enter__(self):
         self.content_element = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%d).content;' % self.id)
 
-        self.testcase.driver.switch_to_frame(self.content_element)
+        self.testcase.driver.switch_to.frame(self.content_element)
         return None
 
     def __exit__(self, type, value, traceback):
-        self.testcase.driver.switch_to_frame(None)
+        self.testcase.driver.switch_to.frame(None)
 
         # TODO work around webdriver bugs
-        self.testcase.driver.switch_to_default_content()
+        self.testcase.driver.switch_to.default_content()
 
     @property
     def name(self):
@@ -138,9 +138,9 @@ class IWidgetTester(object):
         driver = self.testcase.driver
 
         old_frame = driver.execute_script("return window.frameElement")
-        driver.switch_to_default_content()
+        driver.switch_to.default_content()
         error_count = driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%s).internal_iwidget.logManager.errorCount' % self.id)
-        driver.switch_to_frame(old_frame)
+        driver.switch_to.frame(old_frame)
 
         return error_count
 
@@ -149,12 +149,12 @@ class IWidgetTester(object):
         driver = self.testcase.driver
 
         old_frame = driver.execute_script("return window.frameElement")
-        driver.switch_to_default_content()
+        driver.switch_to.default_content()
         log_entries = driver.execute_script('''
             var iwidget = Wirecloud.activeWorkspace.getIWidget(%s).internal_iwidget;
             return iwidget.logManager.entries.map(function (entry) { return {date: entry.date.getTime(), level: entry.level, msg: entry.msg}; });
         ''' % self.id)
-        driver.switch_to_frame(old_frame)
+        driver.switch_to.frame(old_frame)
 
         return log_entries
 
