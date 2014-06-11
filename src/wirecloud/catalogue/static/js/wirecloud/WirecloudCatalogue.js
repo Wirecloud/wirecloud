@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var WirecloudCatalogue, _onSearchSuccess, _onSearchError, deleteSuccessCallback, deleteErrorCallback;
+    var WirecloudCatalogue, _onSearchSuccess, _onSearchFailure, deleteSuccessCallback, deleteErrorCallback;
 
     _onSearchSuccess = function _onSearchSuccess(transport) {
         var i, data, raw_data;
@@ -37,10 +37,10 @@
             'total_count': parseInt(raw_data.total, 10)
         };
 
-        this.onSuccess(data, data);
+        this.onSuccess(data.resources, data);
     };
 
-    _onSearchError = function _onSearchError() {
+    _onSearchFailure = function _onSearchFailure() {
         this.onError();
     };
 
@@ -81,27 +81,27 @@
         }
     };
 
-    WirecloudCatalogue.prototype.search = function search(onSuccess, onError, options) {
+    WirecloudCatalogue.prototype.search = function search(options) {
         var params, url, context;
 
         params = {};
 
-        if (options.search_criteria !== '') {
+        if (options.search_criteria != null && options.search_criteria !== '') {
             params.q = options.search_criteria;
         }
 
-        if (options.scope !== 'all') {
+        if (options.scope != null && options.scope !== 'all') {
             params.scope = options.scope;
         }
 
-        if (options.order_by !== '') {
+        if (options.order_by != null && options.order_by !== '') {
             params.orderby = options.order_by;
         }
 
         context = {
             'options': options,
-            'onSuccess': onSuccess,
-            'onError': onError
+            'onSuccess': options.onSuccess,
+            'onError': options.onFailure
         };
 
         Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
@@ -109,7 +109,7 @@
             requestHeaders: {'Accept': 'application/json'},
             parameters: params,
             onSuccess: _onSearchSuccess.bind(context),
-            onFailure: _onSearchError.bind(context)
+            onFailure: _onSearchFailure.bind(context)
         });
     };
 

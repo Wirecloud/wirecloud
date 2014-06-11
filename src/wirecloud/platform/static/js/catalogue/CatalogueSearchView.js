@@ -69,8 +69,8 @@
 
                 this.resource_list.clear();
 
-                for (i = 0; i < elements.resources.length; i += 1) {
-                    resource = elements.resources[i];
+                for (i = 0; i < elements.length; i += 1) {
+                    resource = elements[i];
                     this.resource_list.appendChild(this.resource_painter.paint(resource));
                 }
             }.bind(this)
@@ -218,14 +218,16 @@
             'search_boolean': 'AND',
             'scope': options.scope,
             'starting_page': page,
-            'resources_per_page': options.pageSize
+            'resources_per_page': options.pageSize,
+            'onSuccess': onSuccess,
+            'onFailure': onError
         };
         if (typeof this.catalogue.getCurrentSearchContext === 'function') {
             options = Wirecloud.Utils.merge(options, this.catalogue.getCurrentSearchContext());
         }
 
         this._last_search = Date.now();
-        this.catalogue.search(onSuccess, onError, options);
+        this.catalogue.search(options);
     };
 
     CatalogueSearchView.prototype._keywordTimeoutHandler = function _keywordTimeoutHandler() {

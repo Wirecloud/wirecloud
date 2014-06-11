@@ -27,6 +27,51 @@
 
     var builder = new StyledElements.GUIBuilder();
 
+    var _search = function _search(keywords) {
+        Wirecloud.LocalCatalogue.search({
+            scope: 'widget',
+            search_criteria: keywords,
+            onSuccess: function (widgets) {
+                var i;
+                var resource_painter = new Wirecloud.ui.ResourcePainter(LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local, Wirecloud.currentTheme.templates['wallet_widget']);
+
+                this._list.innerHTML = '';
+                for (i = 0; i < widgets.length; i += 1) {
+                    resource_painter.paint(widgets[i]).insertInto(this._list);
+                }
+            }.bind(this)
+        });
+    };
+
+    var _keywordTimeoutHandler = function _keywordTimeoutHandler(input) {
+        this._search_timeout = null;
+        _search.call(this, input.getValue());
+    };
+
+    var _onSearchInput = function _onSearchInput(input) {
+
+        // Cancel current timeout
+        if (this._search_timeout !== null) {
+            clearTimeout(this._search_timeout);
+        }
+
+        this._search_timeout = setTimeout(_keywordTimeoutHandler.bind(this, input), 700);
+    };
+
+    var _onSearchInputKeyPress = function _onSearchInputKeyPress(input, event) {
+
+        if (event.keyCode === 13) { // enter
+
+            // Cancel current timeout
+            if (this._search_timeout !== null) {
+                clearTimeout(this._search_timeout);
+            }
+
+            // Inmediate search
+            _keywordTimeoutHandler.call(this, input);
+        }
+    };
+
     var WorkspaceView = function WorkspaceView(id, options) {
         options.id = 'workspace';
         StyledElements.Alternative.call(this, id, options);
@@ -84,19 +129,8 @@
     };
 
     WorkspaceView.prototype.openWidgetWallet = function openWidgetWallet() {
-        var i, resources, widgets, resource_painter = new Wirecloud.ui.ResourcePainter(LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local, Wirecloud.currentTheme.templates['wallet_widget']);
-        var list = document.createElement('div');
-        list.className = 'widget_wallet_list';
-
-        resources = Wirecloud.LocalCatalogue.getAvailableResourcesByType('widget');
-        widgets = [];
-        for (i in resources) {
-            widgets.push(resources[i]);
-        }
-
-        for (i = 0; i < widgets.length; i += 1) {
-            resource_painter.paint(widgets[i]).insertInto(list);
-        }
+        this._list = document.createElement('div');
+        this._list.className = 'widget_wallet_list';
 
         this.wallet = builder.parse(Wirecloud.currentTheme.templates['wallet'], {
             addmore: function () {
@@ -111,12 +145,15 @@
             },
             searchinput: function () {
                 var input = new StyledElements.StyledTextField({'placeholder': 'Keywords...'});
+                input.inputElement.addEventListener('keypress', _onSearchInputKeyPress.bind(this, input));
+                input.addEventListener('change', _onSearchInput.bind(this));
                 return input;
-            },
-            list: list
+            }.bind(this),
+            list: this._list
         }).elements[1];
         LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.wallet);
 
+        _search.call(this, '');
         setTimeout(function () {
             this.wallet.classList.add('in');
         }.bind(this), 0);
