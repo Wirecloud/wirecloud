@@ -440,6 +440,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         from django.conf import settings
 
+        cls.old_index_dir = settings.WIRECLOUD_INDEX_DIR
+        settings.WIRECLOUD_INDEX_DIR = mkdtemp()
+
         WirecloudRemoteTestCase.setUpClass.im_func(cls)
 
         cls.old_LANGUAGES = settings.LANGUAGES
@@ -484,8 +487,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         showcase.wgt_deployer.deploy(widget_wgt)
         widget_wgt_file.close()
 
-        cls.old_index_dir = settings.WIRECLOUD_INDEX_DIR
-        settings.WIRECLOUD_INDEX_DIR = mkdtemp()
         restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
         restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
 

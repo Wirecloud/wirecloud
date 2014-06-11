@@ -261,7 +261,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
 class CatalogueAPITestCase(WirecloudTestCase):
 
-    fixtures = ('selenium_test_data', 'catalogue_search_data')
+    fixtures = ('catalogue_test_data',)
 
     @classmethod
     def setUpClass(cls):
