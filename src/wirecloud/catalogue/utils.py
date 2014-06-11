@@ -217,15 +217,15 @@ def get_resource_data(resource, user, request=None):
     }
 
 
-def get_resource_group_data(resource_group, user, request=None):
+def get_resource_group_data(resources, user, request=None):
 
     data = {
-        'vendor': resource_group['vendor'],
-        'name': resource_group['short_name'],
-        'type': resource_group['type'],
+        'vendor': resources[0].vendor,
+        'name': resources[0].short_name,
+        'type': resources[0].resource_type(),
         'versions': [],
     }
-    for resource in resource_group['variants']:
+    for resource in resources:
         current_resource_data = get_resource_data(resource, user, request)
         del current_resource_data['vendor']
         del current_resource_data['name']

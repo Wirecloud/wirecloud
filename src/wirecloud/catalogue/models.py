@@ -323,6 +323,7 @@ def fix_urls(results):
     for hit in results:
 
         base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'])
+        hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
         hit['image'] = urljoin(base_url, hit['image'])
         hit['smartphoneimage'] = urljoin(base_url, hit['smartphoneimage'])
 

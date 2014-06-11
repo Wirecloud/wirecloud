@@ -308,6 +308,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/ui/Draggable.js',
             'js/wirecloud/ui/Theme.js',
             'js/wirecloud/WirecloudCatalogue.js',
+            'js/wirecloud/WirecloudCatalogue/ResourceDetails.js',
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/WorkspaceCatalogue.js',
             'js/wirecloud/wiring/Endpoint.js',

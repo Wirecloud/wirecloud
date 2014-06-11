@@ -25,6 +25,7 @@ from urllib import url2pathname
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils.decorators import method_decorator
@@ -35,8 +36,8 @@ import markdown
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.models import search
-from wirecloud.catalogue.utils import get_latest_resource_version, get_resource_data
 import wirecloud.catalogue.utils as catalogue_utils
+from wirecloud.catalogue.utils import get_latest_resource_version, get_resource_data, get_resource_group_data
 from wirecloud.catalogue.utils import add_packaged_resource, add_resource_from_template, delete_resource
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.baseviews import Resource
@@ -132,10 +133,15 @@ class ResourceCollection(Resource):
 
 class ResourceEntry(Resource):
 
-    #@method_decorator(login_required)
-    def read(self, request, vendor, name, version):
-        resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
-        return HttpResponse(json.dumps(get_resource_data(resource, request.user, request)), content_type='application/json; charset=UTF-8')
+    def read(self, request, vendor, name, version=None):
+        if version is not None:
+            resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
+            data = get_resource_data(resource, request.user, request)
+        else:
+            resources = get_list_or_404(CatalogueResource, Q(vendor=vendor) & Q(short_name=name) & (Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all())))
+            data = get_resource_group_data(resources, request.user, request)
+
+        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
     @commit_on_http_success

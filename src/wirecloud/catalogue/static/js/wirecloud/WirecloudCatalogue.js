@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, gettext, Wirecloud*/
+/*global gettext, Wirecloud*/
 
 (function () {
 
@@ -65,12 +65,13 @@
         } else if (options.url[options.url.length - 1] !== '/') {
             options.url += '/';
         }
-        this.CHANGELOG_URL_TEMPLATE = new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/changelog');
 
-        Object.defineProperty(this, 'RESOURCE_ENTRY', {
-            value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s')
+        Object.defineProperties(this, {
+            'RESOURCE_CHANGELOG_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/changelog')},
+            'RESOURCE_COLLECTION': {value: options.url + 'catalogue/resources'},
+            'RESOURCE_DETAILS_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s')},
+            'RESOURCE_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s')},
         });
-        Object.defineProperty(this, 'RESOURCE_COLLECTION', {value: options.url + 'catalogue/resources'});
     };
 
     WirecloudCatalogue.prototype.isAllow = function isAllow(action) {
@@ -110,6 +111,20 @@
             parameters: params,
             onSuccess: _onSearchSuccess.bind(context),
             onFailure: _onSearchFailure.bind(context)
+        });
+    };
+
+    WirecloudCatalogue.prototype.getResourceDetails = function getResourceDetails(vendor, name, options) {
+
+        var url = this.RESOURCE_DETAILS_ENTRY.evaluate({vendor: vendor, name: name});
+        Wirecloud.io.makeRequest(url, {
+            method: 'GET',
+            onSuccess: function (response) {
+                var resource_details = new Wirecloud.WirecloudCatalogue.ResourceDetails(JSON.parse(response.responseText));
+                try {
+                    options.onSuccess(resource_details);
+                } catch (e) {}
+            }
         });
     };
 

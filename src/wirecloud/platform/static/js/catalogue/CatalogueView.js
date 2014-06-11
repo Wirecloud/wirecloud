@@ -211,9 +211,13 @@
 
     CatalogueView.prototype.ui_commands.showDetails = function showDetails(resource) {
         return function (e) {
-            this.viewsByName.details.paint(resource);
-            this.alternatives.showAlternative(this.viewsByName.details);
-            this.viewsByName.details.repaint();
+            this.catalogue.getResourceDetails(resource.vendor, resource.name, {
+                onSuccess: function (resource_details) {
+                    this.viewsByName.details.paint(resource_details);
+                    this.alternatives.showAlternative(this.viewsByName.details);
+                    this.viewsByName.details.repaint();
+                }.bind(this)
+            });
         }.bind(this);
     };
 

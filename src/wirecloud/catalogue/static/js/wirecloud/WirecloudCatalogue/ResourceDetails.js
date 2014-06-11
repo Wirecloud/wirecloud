@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var CatalogueResource = function CatalogueResource(data) {
+    var ResourceDetails = function ResourceDetails(data) {
 
         ///////////////////////
         // PRIVATE VARIABLES
@@ -152,6 +152,6 @@
         Object.freeze(this);
     };
 
-    window.CatalogueResource = CatalogueResource;
+    Wirecloud.WirecloudCatalogue.ResourceDetails = ResourceDetails;
 
 })();
