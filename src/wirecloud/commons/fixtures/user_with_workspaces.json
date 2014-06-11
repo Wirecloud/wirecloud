@@ -224,22 +224,6 @@
         }
     },
     {
-        "pk": 5,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 1,
-            "vardef": 5
-        }
-    },
-    {
-        "pk": 6,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 1,
-            "vardef": 6
-        }
-    },
-    {
         "pk": 7,
         "model": "platform.variable",
         "fields": {
@@ -273,22 +257,6 @@
             "iwidget": 2,
             "vardef": 4,
             "value": "default"
-        }
-    },
-    {
-        "pk": 11,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 2,
-            "vardef": 5
-        }
-    },
-    {
-        "pk": 12,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 2,
-            "vardef": 6
         }
     },
     {
