@@ -135,7 +135,7 @@ class CatalogueResource(models.Model):
 
         try:
             with ix.writer() as writer:
-                writer.delete_document('pk', old_id)
+                writer.delete_by_term('pk', '%s' % old_id)
         except:
             pass  # ignore errors
 
