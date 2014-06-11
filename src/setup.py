@@ -110,7 +110,7 @@ setup(
         'user-agents',
         'regex',
         'markdown',
-        'whoosh',
+        'whoosh>=2.5.6',
         'pycrypto',
     ),
     tests_require=('django-nose'),
