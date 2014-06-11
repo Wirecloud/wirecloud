@@ -171,6 +171,7 @@ def get_template_url(vendor, name, version, url, request=None):
 class CatalogueResourceSchema(fields.SchemaClass):
 
     pk = fields.ID(stored=True, unique=True)
+    vendor_name = fields.ID
     name = fields.TEXT(stored=True)
     vendor = fields.TEXT(stored=True, spelling=True)
     version = fields.TEXT(stored=True)
@@ -202,6 +203,7 @@ def add_document(sender, instance, created, raw, **kwargs):
 
     data = {
         'pk': '%s' % resource.pk,
+        'vendor_name': '%s/%s' % (resource.vendor, resource.short_name),
         'vendor': '%s' % resource.vendor,
         'name': '%s' % resource.short_name,
         'version': resource_info['version'],
@@ -283,7 +285,7 @@ def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creatio
     if scope:
         user_q = And([user_q, Term('type', scope)])
 
-    name_vendor_f = sorting.MultiFacet(['name', 'vendor'])
+    name_vendor_f = sorting.FieldFacet('vendor_name')
     orderby_f = sorting.FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
     version_f = sorting.FieldFacet('version', reverse=True)
 
