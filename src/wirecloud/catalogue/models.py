@@ -230,6 +230,7 @@ def add_document(sender, instance, created, raw, **kwargs):
             writer.add_document(**data)
 
 
+@receiver(m2m_changed, sender=CatalogueResource.groups.through)
 @receiver(m2m_changed, sender=CatalogueResource.users.through)
 def update_users(sender, instance, action, reverse, model, pk_set, using, **kwargs):
 
