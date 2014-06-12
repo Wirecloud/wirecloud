@@ -264,22 +264,6 @@ var init = function init() {
     insertExample("Notebook", code);
 
 
-
-    /*
-     * HPaned example
-     */
-
-    code = "\
-    var hpaned = new StyledElements.StyledHPaned();\n\
-    hpaned.getLeftPanel().appendChild(document.createTextNode('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.'));\n\
-    hpaned.getRightPanel().appendChild(document.createTextNode('Contenido 2.\\n Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.'));\n\
-    container.appendChild(hpaned);\n\
-    ";
-
-    insertExample("HPaned", code);
-
-
-
     /*
      * Alternatives example
      */
