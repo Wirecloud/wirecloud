@@ -296,22 +296,6 @@
         }
     },
     {
-        "pk": 17,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 3,
-            "vardef": 5
-        }
-    },
-    {
-        "pk": 18,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 3,
-            "vardef": 6
-        }
-    },
-    {
         "pk": 19,
         "model": "platform.variable",
         "fields": {
@@ -345,22 +329,6 @@
             "iwidget": 4,
             "vardef": 4,
             "value": "default"
-        }
-    },
-    {
-        "pk": 23,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 4,
-            "vardef": 5
-        }
-    },
-    {
-        "pk": 24,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 4,
-            "vardef": 6
         }
     },
     {
@@ -400,22 +368,6 @@
         }
     },
     {
-        "pk": 29,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 5,
-            "vardef": 5
-        }
-    },
-    {
-        "pk": 30,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 5,
-            "vardef": 6
-        }
-    },
-    {
         "pk": 31,
         "model": "platform.variable",
         "fields": {
@@ -449,22 +401,6 @@
             "iwidget": 6,
             "vardef": 4,
             "value": "default"
-        }
-    },
-    {
-        "pk": 35,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 6,
-            "vardef": 5
-        }
-    },
-    {
-        "pk": 36,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 6,
-            "vardef": 6
         }
     },
     {
