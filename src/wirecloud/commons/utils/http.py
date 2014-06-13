@@ -209,7 +209,7 @@ def get_current_domain(request=None):
     from django.conf import settings
     from django.contrib.sites.models import get_current_site
 
-    if hasattr(settings, 'FORCE_DOMAIN'):
+    if getattr(settings, 'FORCE_DOMAIN', None) is not None:
         return settings.FORCE_DOMAIN
     else:
         try:
@@ -225,7 +225,7 @@ def get_current_domain(request=None):
 def get_current_scheme(request=None):
     from django.conf import settings
 
-    if hasattr(settings, 'FORCE_PROTO'):
+    if getattr(settings, 'FORCE_PROTO', None) is not None:
         return settings.FORCE_PROTO
     elif (request is not None) and request.is_secure():
         return 'https'
