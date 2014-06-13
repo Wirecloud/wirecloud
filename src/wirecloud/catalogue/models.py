@@ -271,7 +271,7 @@ def open_index(indexname, dirname=None):
     return index.open_dir(dirname, indexname=indexname)
 
 
-def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creation_date', staff=False):
+def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creation_date', staff=False, request=None):
 
     ix = open_index('catalogue_resources')
     filenames = ['name', 'title', 'vendor', 'description', 'wiring']
@@ -302,7 +302,7 @@ def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creatio
         hits = searcher.search(user_q, limit=(pagenum * pagelen),
             sortedby=[orderby_f], collapse=name_vendor_f, collapse_limit=1, collapse_order=version_f)
         results = add_other_versions(searcher, hits, user, staff)
-        fix_urls(results)
+        fix_urls(results, request)
         search_result = search_page(results, pagenum, pagelen)
 
     return search_result
@@ -331,11 +331,11 @@ def search_page(results, pagenum, pagelen):
     return results_page
 
 
-def fix_urls(results):
+def fix_urls(results, request=None):
 
     for hit in results:
 
-        base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'])
+        base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'], request=request)
         hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
         hit['image'] = urljoin(base_url, hit['image'])
         hit['smartphoneimage'] = urljoin(base_url, hit['smartphoneimage'])

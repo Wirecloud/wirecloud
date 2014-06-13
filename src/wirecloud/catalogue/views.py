@@ -126,7 +126,7 @@ class ResourceCollection(Resource):
         if filters['staff'] and not user.is_staff:
             return build_error_response(request, 403, _('Forbidden'))
 
-        response_json = search(querytext, user, **filters)
+        response_json = search(querytext, user, request=request, **filters)
 
         return HttpResponse(json.dumps(response_json), content_type='application/json')
 

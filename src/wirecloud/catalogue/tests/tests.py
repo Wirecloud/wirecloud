@@ -27,6 +27,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase, TestCase, Client
+from django.test.utils import override_settings
 
 import wirecloud.catalogue.utils
 from wirecloud.catalogue.utils import add_resource_from_template, get_resource_data
@@ -258,6 +259,17 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 14)
 
+    @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None)
+    def test_search_absolute_urls(self):
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.get(self.base_url + '?q=mashable', HTTP_HOST="wirecloud.example.com")
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content)
+        for result in result_json['results']:
+            self.assertTrue(result['image'].startswith('http://wirecloud.example.com/'))
+            self.assertTrue(result['smartphoneimage'].startswith('http://wirecloud.example.com/'))
 
 class CatalogueAPITestCase(WirecloudTestCase):
 
