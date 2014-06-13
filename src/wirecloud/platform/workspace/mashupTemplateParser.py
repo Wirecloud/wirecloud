@@ -44,7 +44,7 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=No
     if new_name is not None:
         name = new_name
     else:
-        name = template.get_resource_name()
+        name = template.get_resource_processed_info(process_urls=False)['title']
 
     # Workspace creation
     workspace = Workspace(name=name, creator=user)
