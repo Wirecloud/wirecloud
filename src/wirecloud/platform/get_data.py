@@ -471,9 +471,6 @@ def get_variable_data(variable, workspace, cache_manager=None, user=None):
         'name': variable.vardef.name,
     }
 
-    if variable.vardef.aspect != 'PREF' and variable.vardef.aspect != 'PROP':
-        return data_ret
-
     if cache_manager is None:
         cache_manager = VariableValueCacheManager(workspace, user)
 
