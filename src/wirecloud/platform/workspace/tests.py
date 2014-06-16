@@ -116,18 +116,18 @@ class WorkspaceCacheTestCase(CacheTestCase):
         workspace_info = get_global_workspace_data(self.workspace, self.user)
         self.assertEqual(self.initial_info.timestamp, workspace_info.timestamp)
 
-    def test_variable_updating_invalidates_cache(self):
+    def test_updating_preferences_invalidates_cache(self):
 
         client = Client()
-        put_data = [
-            {'id': 1, 'value': 'new_password'},
-            {'id': 2, 'value': 'new_username'},
-            {'id': 4, 'value': 'new_data'},
-        ]
+        put_data = {
+            'password': 'new_password',
+            'username': 'new_username',
+        }
 
         put_data = json.dumps(put_data, ensure_ascii=False).encode('utf-8')
         client.login(username='test', password='test')
-        result = client.post(reverse('wirecloud.variable_collection', kwargs={'workspace_id': 1}), put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 1, 'tab_id': 1, 'iwidget_id': 1})
+        result = client.post(url, put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(result.status_code, 204)
 
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
@@ -135,6 +135,26 @@ class WorkspaceCacheTestCase(CacheTestCase):
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'new_username')
+        self.assertEqual(variables['prop']['value'], 'test_data')
+
+    def test_updating_properties_invalidates_cache(self):
+
+        client = Client()
+        put_data = {
+            'prop': 'new_data',
+        }
+
+        put_data = json.dumps(put_data, ensure_ascii=False).encode('utf-8')
+        client.login(username='test', password='test')
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 1, 'tab_id': 1, 'iwidget_id': 1})
+        result = client.post(url, put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(result.status_code, 204)
+
+        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
+        variables = data['tabs'][0]['iwidgets'][0]['variables']
+        self.assertEqual(variables['password']['value'], '')
+        self.assertEqual(variables['password']['secure'], True)
+        self.assertEqual(variables['username']['value'], 'test_username')
         self.assertEqual(variables['prop']['value'], 'new_data')
 
     def test_widget_instantiation_invalidates_cache(self):
