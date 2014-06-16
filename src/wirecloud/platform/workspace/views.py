@@ -42,7 +42,7 @@ from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
-from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
+from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab
 from wirecloud.platform.markets.utils import get_market_managers
 
 
@@ -415,25 +415,6 @@ class TabEntry(Resource):
             # set a new visible tab (first tab by default)
             activeTab = tabs[0]
             setVisibleTab(request.user, workspace_id, activeTab)
-
-        return HttpResponse(status=204)
-
-
-class WorkspaceVariableCollection(Resource):
-
-    @authentication_required
-    @supported_request_mime_types(('application/json',))
-    @commit_on_http_success
-    def create(self, request, workspace_id):
-
-        try:
-            iwidgetVariables = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        for igVar in iwidgetVariables:
-            set_variable_value(igVar['id'], igVar['value'])
 
         return HttpResponse(status=204)
 

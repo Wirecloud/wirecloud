@@ -130,9 +130,10 @@
         this.propertyList = [];
         this.properties = {};
         if (options.variables != null) {
+            this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
             for (i = 0; i < properties.length; i++) {
                 iwidget_prop_info = options.variables[properties[i].name];
-                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], iwidget_prop_info.id, iwidget_prop_info.readonly, iwidget_prop_info.value);
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, iwidget_prop_info.id, iwidget_prop_info.readonly, iwidget_prop_info.value);
                 this.properties[properties[i].name] = this.propertyList[i];
             }
         }
@@ -285,6 +286,9 @@
             'mashup': [],
             'platform': []
         };
+
+        // Commit any property change
+        this.propertyCommiter.commit();
 
         // Remove preferences callback
         this.prefCallback = null;

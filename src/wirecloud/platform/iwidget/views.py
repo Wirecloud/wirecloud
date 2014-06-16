@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -174,6 +174,36 @@ class IWidgetPreferences(Resource):
             variable = Variable.objects.select_related('vardef').get(
                 vardef__name=var_name,
                 vardef__aspect='PREF',
+                iwidget__id=iwidget_id
+            )
+            variable.set_variable_value(new_values[var_name])
+            variable.save()
+
+        return HttpResponse(status=204)
+
+
+class IWidgetProperties(Resource):
+
+    @authentication_required
+    @supported_request_mime_types(('application/json',))
+    @commit_on_http_success
+    def create(self, request, workspace_id, tab_id, iwidget_id):
+
+        workspace = Workspace.objects.get(id=workspace_id)
+        if not request.user.is_superuser and workspace.creator != request.user:
+            msg = _('You have not enough permission for updating the properties of the iwidget')
+            return build_error_response(request, 403, msg)
+
+        try:
+            new_values = json.loads(request.body)
+        except ValueError as e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
+
+        for var_name in new_values:
+            variable = Variable.objects.select_related('vardef').get(
+                vardef__name=var_name,
+                vardef__aspect='PROP',
                 iwidget__id=iwidget_id
             )
             variable.set_variable_value(new_values[var_name])

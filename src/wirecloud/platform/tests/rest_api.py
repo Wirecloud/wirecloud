@@ -1215,6 +1215,72 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
         check_post_bad_request_syntax(self, url)
 
+    def _todo_create_property(self):
+
+        # TODO
+        from wirecloud.platform.models import VariableDef
+        vardef = VariableDef.objects.create(widget_id=1, name="prop", aspect="PROP", type="T", secure=False, default_value="")
+        Variable.objects.create(vardef=vardef, iwidget_id=2, value="default")
+        # end TODO
+
+    def test_iwidget_properties_entry_post_requires_authentication(self):
+
+        self._todo_create_property()
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Make the request
+        data = {
+            'prop': 'new value',
+        }
+
+        def iwidget_preference_not_created(self):
+            # IWidget properties should not be updated
+            variable = Variable.objects.get(
+                vardef__name='prop',
+                iwidget__id=2
+            )
+            self.assertNotEqual(variable.value, 'new value')
+
+        check_post_requires_authentication(self, url, json.dumps(data), iwidget_preference_not_created)
+
+    def test_iwidget_properties_entry_post_requires_permission(self):
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+        data = {
+            'prop': 'new value',
+        }
+        check_post_requires_permission(self, url, json.dumps(data))
+
+    def test_iwidget_properties_entry_post(self):
+
+        self._todo_create_property()
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'prop': 'new value',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content, '')
+
+        # IWidget properties should be updated
+        variable = Variable.objects.get(
+            vardef__name='prop',
+            iwidget__id=2
+        )
+        self.assertEqual(variable.value, 'new value')
+
+    def test_iwidget_properties_entry_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+        check_post_bad_request_syntax(self, url)
+
     def test_iwidget_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
@@ -1912,45 +1978,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_entry_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
-        check_post_bad_request_syntax(self, url)
-
-    def test_workspace_variable_collection_post_requires_authentication(self):
-
-        url = reverse('wirecloud.variable_collection', kwargs={'workspace_id': 2})
-
-        data = [
-            {'id': 2, 'value': 'new_value'}
-        ]
-        check_post_requires_authentication(self, url, json.dumps(data))
-
-    def test_workspace_variable_collection_post(self):
-
-        # TODO change the value of a property
-
-        url = reverse('wirecloud.variable_collection', kwargs={'workspace_id': 2})
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        # Make the request
-        data = [
-            {'id': 2, 'value': 'new_value'}
-        ]
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
-
-        # Check the new value
-        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertEqual(response_data['tabs'][0]['iwidgets'][0]['variables']['text']['value'], 'new_value')
-
-    def test_workspace_variable_collection_post_bad_request_syntax(self):
-
-        url = reverse('wirecloud.variable_collection', kwargs={'workspace_id': 2})
         check_post_bad_request_syntax(self, url)
 
     def test_workspace_merge_service_post_requires_authentication(self):

@@ -113,8 +113,6 @@ function Workspace(workspaceState, resources) {
                 }
             }
 
-            this.varManager = new VarManager(this);
-
             this.contextManager = new Wirecloud.ContextManager(this, this.workspaceState.context);
             this.wiring = new Wirecloud.Wiring(this);
             iwidgets = this.getIWidgets();
@@ -300,10 +298,6 @@ function Workspace(workspaceState, resources) {
         }
     };
 
-    Workspace.prototype.sendBufferedVars = function (async) {
-        if (this.varManager) this.varManager.sendBufferedVars(async);
-    }
-
     Workspace.prototype.getHeader = function(){
         return this.headerHTML;
     }
@@ -382,10 +376,6 @@ function Workspace(workspaceState, resources) {
 
     Workspace.prototype.getName = function () {
         return this.workspaceState.name;
-    }
-
-    Workspace.prototype.getVarManager = function () {
-        return this.varManager;
     }
 
     Workspace.prototype.initGUI = function initGUI() {
@@ -584,8 +574,6 @@ function Workspace(workspaceState, resources) {
 
         this.loaded = false;
 
-        this.sendBufferedVars(false);
-
         // After that, tab info is managed
         for (var key in this.tabInstances) {
             this.unloadTab(key);
@@ -600,8 +588,6 @@ function Workspace(workspaceState, resources) {
             this.preferences.destroy();
             this.preferences = null;
         }
-
-        this.varManager = null;
 
         if (this.wiring !== null) {
             this.wiring.destroy();
@@ -753,11 +739,9 @@ function Workspace(workspaceState, resources) {
     Object.defineProperty(this, 'owned', {value: workspaceState.owned});
     Object.defineProperty(this, '_iwidget_removed', {value: iwidget_removed.bind(this)});
     this.workspaceState = workspaceState;
-    this.varManager = null;
     this.tabInstances = {};
     this.highlightTimeouts = {};
     this.wiring = null;
-    this.varManager = null;
     this.contextManager = null;
     this.loaded = false;
     this.valid = false;

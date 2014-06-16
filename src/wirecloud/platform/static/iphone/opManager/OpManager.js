@@ -60,10 +60,6 @@ var OpManagerFactory = (function () {
             console.log(msg);
         };
 
-        OpManager.prototype.sendBufferedVars = function () {
-            Wirecloud.activeWorkspace.sendBufferedVars();
-        };
-
         //Operations on workspaces
 
         OpManager.prototype.workspaceExists = function (newName) {
@@ -138,7 +134,6 @@ var OpManagerFactory = (function () {
             alternatives.repaint();
             in_alternative.repaint();
         });
-        this.iwidgetViewAlternative.addEventListener('hide', this.sendBufferedVars.bind(this));
 
         this.alternatives.insertInto(document.body);
     }

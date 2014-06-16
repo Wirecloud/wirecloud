@@ -86,6 +86,10 @@ urlpatterns = patterns('wirecloud.platform.views',
         iwidget_views.IWidgetPreferences(permitted_methods=('POST',)),
         name='wirecloud.iwidget_preferences'
     ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/properties$',
+        iwidget_views.IWidgetProperties(permitted_methods=('POST',)),
+        name='wirecloud.iwidget_properties'
+    ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/version/?$',
         iwidget_views.IWidgetVersion(permitted_methods=('PUT',)),
         name='wirecloud.iwidget_version_entry'
@@ -153,11 +157,6 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\w+)/?$',
         workspace_views.TabEntry(permitted_methods=('PUT', 'DELETE',)),
         name='wirecloud.tab_entry'
-    ),
-
-    url(r'^api/workspace/(?P<workspace_id>\d+)/variables/?$',
-        workspace_views.WorkspaceVariableCollection(permitted_methods=('POST',)),
-        name='wirecloud.variable_collection'
     ),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/resources$',

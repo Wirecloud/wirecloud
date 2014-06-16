@@ -25,10 +25,11 @@
 
     "use strict";
 
-    var PersistentVariable = function PersistentVariable(def, id, readonly, currentValue) {
+    var PersistentVariable = function PersistentVariable(def, commiter, id, readonly, currentValue) {
         Object.defineProperty(this, 'meta', {value: def});
         Object.defineProperty(this, 'id', {value: id});
         Object.defineProperty(this, 'readnOnly', {value: readonly});
+        Object.defineProperty(this, 'commiter', {value: commiter});
         this.value = currentValue;
     };
 
@@ -37,16 +38,12 @@
     };
 
     PersistentVariable.prototype.set = function set(new_value) {
-        var varManager = Wirecloud.activeWorkspace.varManager;
-
-        this.value = new_value;
-        varManager.markVariablesAsModified([this]);
-        if (this.meta.secure === true) {
-            varManager.forceCommit();
-            this.value = '';
+        if (this.readOnly) {
+            throw new Error('Read only properties cannot be modified');
         }
 
-        varManager.commitModifiedVariables();
+        this.value = new_value;
+        this.commiter.add(this.meta.name, this.value);
     };
 
     Wirecloud.PersistentVariable = PersistentVariable;

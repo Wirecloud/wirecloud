@@ -95,9 +95,8 @@
     PublishWorkspaceWindowMenu.prototype._parseTab = function _parseTab(tab) {
 
         var i, j, iwidget, iwidgets, iwidget_params, pref_params,
-            prop_params, varManager, var_elements, fields;
+            prop_params, var_elements, fields;
 
-        varManager = tab.workspace.getVarManager();
         iwidgets = tab.getDragboard().getIWidgets();
         fields = [];
 

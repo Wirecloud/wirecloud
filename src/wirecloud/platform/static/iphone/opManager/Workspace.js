@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global interpolate, VarManager, Wiring, OpManagerFactory, gettext, alert, last_logged_user, document, window, Concept, StyledElements, Tab, Wirecloud */
+/*global interpolate, Wiring, OpManagerFactory, gettext, alert, last_logged_user, document, window, Concept, StyledElements, Tab, Wirecloud */
 "use strict";
 
  /*
@@ -91,7 +91,6 @@ function Workspace(workspaceState, resources) {
             this.alternatives = null;
         }
         this.tabInstances = [];
-        this.varManager = null;
         if (this.wiring != null) {
             this.wiring.destroy();
             this.wiring = null;
@@ -109,21 +108,8 @@ function Workspace(workspaceState, resources) {
         this.visibleTab = null;
     };
 
-    Workspace.prototype.removeIWidgetData = function (iWidgetId) {
-        this.varManager.removeInstance(iWidgetId);
-        this.wiring.removeInstance(iWidgetId);
-    };
-
-    Workspace.prototype.sendBufferedVars = function () {
-        this.varManager.sendBufferedVars();
-    };
-
     Workspace.prototype.getName = function () {
         return this.workspaceState.name;
-    };
-
-    Workspace.prototype.getVarManager = function () {
-        return this.varManager;
     };
 
     Workspace.prototype.getActiveDragboard = function () {
@@ -177,8 +163,6 @@ function Workspace(workspaceState, resources) {
         }
         //set the visible tab. It will be displayed as current tab afterwards
         this.visibleTab = this.tabInstances[this.visibleTabIndex];
-
-        this.varManager = new VarManager(this);
 
         this.contextManager = new Wirecloud.ContextManager(this, this.workspaceState.context);
         this.wiring = new Wirecloud.Wiring(this);
@@ -306,7 +290,6 @@ function Workspace(workspaceState, resources) {
     this.workspaceState = workspaceState;
     this.tabInstances = [];
     this.wiring = null;
-    this.varManager = null;
     this.visibleTab = null;
     this.visibleTabIndex = 0;
     this.alternatives = null;
