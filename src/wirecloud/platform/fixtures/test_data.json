@@ -189,27 +189,11 @@
     },
     {
         "model": "platform.Variable",
-        "pk": "3",
-        "fields": {
-            "vardef": "3",
-            "iwidget": "1"
-        }
-    },
-    {
-        "model": "platform.Variable",
         "pk": "4",
         "fields": {
             "vardef": "4",
             "iwidget": "1",
             "value": "test_data"
-        }
-    },
-    {
-        "model": "platform.Variable",
-        "pk": "5",
-        "fields": {
-            "vardef": "5",
-            "iwidget": "1"
         }
     },
     {
@@ -232,27 +216,11 @@
     },
     {
         "model": "platform.Variable",
-        "pk": "8",
-        "fields": {
-            "vardef": "3",
-            "iwidget": "2"
-        }
-    },
-    {
-        "model": "platform.Variable",
         "pk": "9",
         "fields": {
             "vardef": "4",
             "iwidget": "2",
             "value": "test_data"
-        }
-    },
-    {
-        "model": "platform.Variable",
-        "pk": "10",
-        "fields": {
-            "vardef": "5",
-            "iwidget": "2"
         }
     }
 ]
