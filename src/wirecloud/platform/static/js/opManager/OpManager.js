@@ -187,10 +187,6 @@ var OpManagerFactory = function () {
             window.location = Wirecloud.URLs.LOGOUT_VIEW;
         }
 
-        OpManager.prototype.checkForWidgetUpdates = function () {
-            Wirecloud.activeWorkspace.checkForWidgetUpdates();
-        }
-
         //Operations on workspaces
 
         OpManager.prototype.workspaceExists = function (newName) {

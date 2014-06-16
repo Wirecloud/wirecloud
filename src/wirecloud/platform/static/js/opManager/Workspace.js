@@ -289,15 +289,6 @@ function Workspace(workspaceState, resources) {
         this.getVisibleTab().getDragboard().addInstance(widget, options);
     };
 
-    Workspace.prototype.checkForWidgetUpdates = function() {
-        var i, iwidgets;
-
-        iwidgets = this.getIWidgets();
-        for (i = 0; i < iwidgets.length; i += 1) {
-            iwidgets[i]._updateVersionButton();
-        }
-    };
-
     Workspace.prototype.getHeader = function(){
         return this.headerHTML;
     }
