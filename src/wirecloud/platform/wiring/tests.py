@@ -98,18 +98,6 @@ class WiringTestCase(TransactionTestCase):
         self.assertEqual(response.status_code, 204)
     test_save_basic_wiring_connection.tags = ('wiring', 'fiware-ut-6')
 
-    def test_wiring_modification_fails_with_incorrect_user(self):
-        client = Client()
-        client.login(username='test2', password='test')
-
-        data = json.dumps({
-            'operators': [],
-            'connections': [],
-        })
-        response = client.put(self.wiring_url, data, content_type='application/json')
-        self.assertEqual(response.status_code, 403)
-    test_wiring_modification_fails_with_incorrect_user.tags = ('wiring', 'fiware-ut-6')
-
     def test_basic_wiring_operations_with_read_only_connections(self):
         workspace = Workspace.objects.get(id=1)
         workspace.wiringStatus = json.dumps({
