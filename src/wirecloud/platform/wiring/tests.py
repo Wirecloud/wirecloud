@@ -59,15 +59,13 @@ class WiringTestCase(TransactionTestCase):
         super(WiringTestCase, self).setUp()
 
         self.user = User.objects.get(username='test')
-
-        self.workspace_id = 1
-        workspace = Workspace.objects.get(id=self.workspace_id)
-
-        workspace.wiringStatus = json.dumps({
+        self.empty_wiring = {
             'operators': [],
             'connections': [],
-        })
-        workspace.save()
+        }
+
+        self.workspace_id = 1
+        Workspace.objects.filter(id=self.workspace_id).update(wiringStatus=json.dumps(self.empty_wiring, ensure_ascii=False))
         transaction.commit()
 
         self.wiring_url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': self.workspace_id})
@@ -242,6 +240,37 @@ class WiringTestCase(TransactionTestCase):
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEqual(response.status_code, 403)
+
+    def test_iwidget_removed(self):
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace.wiringStatus = json.dumps({
+            'operators': [],
+            'connections': [
+                {
+                    'source': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'event',
+                    },
+                    'target': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'slot',
+                    },
+                },
+            ],
+        })
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': self.workspace_id, 'tab_id': 1, 'iwidget_id': 1})
+        client.delete(url)
+
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace_wiring = json.loads(workspace.wiringStatus)
+        self.assertEqual(workspace_wiring, self.empty_wiring)
 
 
 class OperatorCodeEntryTestCase(WirecloudTestCase):
