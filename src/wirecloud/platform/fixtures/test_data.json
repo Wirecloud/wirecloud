@@ -9,12 +9,12 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2011-03-17 17:21:19",
+            "last_login": "2011-03-17T17:21:19Z",
             "groups": [],
             "user_permissions": [],
             "password": "sha1$b85c0$28136cb118976e070a47e85bd67e7b9171ec4604",
             "email": "",
-            "date_joined": "2011-03-17 17:21:19"
+            "date_joined": "2011-03-17T17:21:19Z"
         }
     },
     {
@@ -27,12 +27,12 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2011-03-17 17:21:19",
+            "last_login": "2011-03-17T17:21:19Z",
             "groups": [],
             "user_permissions": [],
             "password": "sha1$b85c0$28136cb118976e070a47e85bd67e7b9171ec4604",
             "email": "",
-            "date_joined": "2011-03-17 17:21:19"
+            "date_joined": "2011-03-17T17:21:19Z"
         }
     },
     {
