@@ -170,14 +170,18 @@ class IWidgetPreferences(Resource):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        for var_name in new_values:
-            variable = Variable.objects.select_related('vardef').get(
-                vardef__name=var_name,
-                vardef__aspect='PREF',
-                iwidget__id=iwidget_id
-            )
-            variable.set_variable_value(new_values[var_name])
-            variable.save()
+        try:
+            for var_name in new_values:
+                variable = Variable.objects.select_related('vardef').get(
+                    vardef__name=var_name,
+                    vardef__aspect='PREF',
+                    iwidget__id=iwidget_id
+                )
+                variable.set_variable_value(new_values[var_name])
+                variable.save()
+        except Variable.DoesNotExist:
+            msg = _('Invalid preference: "%s"') % var_name
+            return build_error_response(request, 422, msg)
 
         return HttpResponse(status=204)
 
@@ -200,14 +204,18 @@ class IWidgetProperties(Resource):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        for var_name in new_values:
-            variable = Variable.objects.select_related('vardef').get(
-                vardef__name=var_name,
-                vardef__aspect='PROP',
-                iwidget__id=iwidget_id
-            )
-            variable.set_variable_value(new_values[var_name])
-            variable.save()
+        try:
+            for var_name in new_values:
+                variable = Variable.objects.select_related('vardef').get(
+                    vardef__name=var_name,
+                    vardef__aspect='PROP',
+                    iwidget__id=iwidget_id
+                )
+                variable.set_variable_value(new_values[var_name])
+                variable.save()
+        except Variable.DoesNotExist:
+            msg = _('Invalid property: "%s"') % var_name
+            return build_error_response(request, 422, msg)
 
         return HttpResponse(status=204)
 

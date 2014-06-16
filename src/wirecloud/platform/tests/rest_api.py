@@ -1215,6 +1215,22 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
         check_post_bad_request_syntax(self, url)
 
+    def test_iwidget_preferences_entry_post_nonexistent_property(self):
+
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'nonexistent': 'new value',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
     def _todo_create_property(self):
 
         # TODO
@@ -1280,6 +1296,22 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
         check_post_bad_request_syntax(self, url)
+
+    def test_iwidget_properties_entry_post_nonexistent_property(self):
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'nonexistent': 'new value',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
 
     def test_iwidget_entry_delete_requires_authentication(self):
 
