@@ -46,7 +46,7 @@ class ConvertCommand(BaseCommand):
         if len(args) < 1 or len(args) > 2:
             raise CommandError('Wrong number of arguments')
 
-        if options['dest_format'] not in ('json', 'rdf', 'xml'):
+        if options['dest_format'] not in ('json', 'rdf', 'xml', 'old_xml'):
             raise CommandError('Invalid dest format: %s' % options['dest_format'])
 
         template_file = open(args[0], "rb")
