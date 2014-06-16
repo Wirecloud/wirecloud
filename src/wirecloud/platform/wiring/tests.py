@@ -60,8 +60,8 @@ class WiringTestCase(TransactionTestCase):
 
         self.user = User.objects.get(username='test')
 
-        workspace = Workspace.objects.get(id=1)
-        self.workspace_id = workspace.pk
+        self.workspace_id = 1
+        workspace = Workspace.objects.get(id=self.workspace_id)
 
         workspace.wiringStatus = json.dumps({
             'operators': [],
@@ -76,7 +76,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = json.dumps({
+        new_wiring = {
             'operators': [],
             'connections': [
                 {
@@ -92,14 +92,17 @@ class WiringTestCase(TransactionTestCase):
                     },
                 },
             ],
-        })
-        response = client.put(self.wiring_url, data, content_type='application/json')
+        }
+        response = client.put(self.wiring_url, json.dumps(new_wiring), content_type='application/json')
 
         self.assertEqual(response.status_code, 204)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace_wiring = json.loads(workspace.wiringStatus)
+        self.assertEqual(workspace_wiring, new_wiring)
     test_save_basic_wiring_connection.tags = ('wiring', 'fiware-ut-6')
 
     def test_basic_wiring_operations_with_read_only_connections(self):
-        workspace = Workspace.objects.get(id=1)
+        workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [
@@ -123,7 +126,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = json.dumps({
+        new_wiring = {
             'operators': [],
             'connections': [
                 {
@@ -152,14 +155,17 @@ class WiringTestCase(TransactionTestCase):
                     },
                 },
             ],
-        })
-        response = client.put(self.wiring_url, data, content_type='application/json')
+        }
+        response = client.put(self.wiring_url, json.dumps(new_wiring, ensure_ascii=False), content_type='application/json')
 
         self.assertEqual(response.status_code, 204)
+        workspace = Workspace.objects.get(id=self.workspace_id)
+        workspace_wiring = json.loads(workspace.wiringStatus)
+        self.assertEqual(workspace_wiring, new_wiring)
 
     def test_read_only_connections_cannot_be_deleted(self):
 
-        workspace = Workspace.objects.get(id=1)
+        workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [
@@ -192,7 +198,7 @@ class WiringTestCase(TransactionTestCase):
 
     def test_read_only_connections_cannot_be_modified(self):
 
-        workspace = Workspace.objects.get(id=1)
+        workspace = Workspace.objects.get(id=self.workspace_id)
         workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [
