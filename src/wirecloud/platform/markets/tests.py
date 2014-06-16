@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,7 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from wirecloud.commons.utils.testcases import WirecloudSeleniumTestCase, WirecloudTestCase
+import os
+
+from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudSeleniumTestCase
 
 
 __test__ = False
@@ -25,10 +27,26 @@ __test__ = False
 
 class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
 
+    servers = {
+        'http': {
+            'wcatalogue.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'wcatalogue'))),
+        },
+    }
+    tags = ('markets',)
+
+    def check_resource_buttons(self, resources, button_text=None):
+        for resource_name in resources:
+            resource = self.search_in_catalogue_results(resource_name)
+            self.assertIsNotNone(resource)
+            button = resource.find_element_by_css_selector('.mainbutton')
+            self.assertEqual(button.text, button_text)
+
     def test_add_marketplace(self):
 
         self.login()
-        self.add_marketplace('remote', 'http://localhost:8080', 'wirecloud')
+        self.add_marketplace('remote', 'http://wcatalogue.example.com', 'wirecloud')
+        self.check_resource_buttons(('New Widget', 'New Operator', 'New Mashup'), 'Install')
+        self.check_resource_buttons(('Test', 'TestOperator', 'Test Mashup'), 'Uninstall')
 
         self.login('normuser', 'admin')
         popup_menu = self.open_marketplace_menu()
@@ -37,11 +55,14 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_add_public_marketplace(self):
 
         self.login()
-        self.add_marketplace('remote', 'http://localhost:8080', 'wirecloud', public=True)
+        self.add_marketplace('remote', 'http://wcatalogue.example.com', 'wirecloud', public=True)
+        self.check_resource_buttons(('New Widget', 'New Operator', 'New Mashup'), 'Install')
+        self.check_resource_buttons(('Test', 'TestOperator', 'Test Mashup'), 'Uninstall')
 
         self.login('normuser', 'admin')
-        popup_menu = self.open_marketplace_menu()
-        popup_menu.check(must_be=('remote',))
+        self.change_marketplace('remote')
+        self.check_resource_buttons(('New Widget', 'New Operator', 'New Mashup'), 'Install')
+        self.check_resource_buttons(('Test', 'TestOperator', 'Test Mashup'), 'Uninstall')
 
     def test_add_duplicated_marketplace(self):
 

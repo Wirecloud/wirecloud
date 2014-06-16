@@ -1,0 +1,87 @@
+{
+    "pagenum": 1,
+    "pagecount": 2,
+    "results": [
+        {
+            "vendor": "Wirecloud",
+            "description": "This widget is used to test some of the features of the Wirecloud platform",
+            "title": "New Widget",
+            "image": "/showcase/media/Wirecloud/Test/1.0/images/catalogue.png",
+            "uri": "Wirecloud/Test/1.0",
+            "smartphoneimage": "/showcase/media/Wirecloud/Test/1.0/images/catalogue_iphone.png",
+            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "version": "1.0",
+            "others": [],
+            "type": "widget",
+            "name": "new-widget"
+        },
+        {
+            "vendor": "Wirecloud",
+            "description": "It sends a message written into the box",
+            "title": "New Operator",
+            "image": "/showcase/media/Wirecloud/Test/1.0/images/catalogue.png",
+            "uri": "CoNWeT/input-box/1.0",
+            "smartphoneimage": "/showcase/media/Wirecloud/Test/1.0/images/catalogue_iphone.png",
+            "template_uri": "CoNWeT_input-box_1.0.wgt",
+            "version": "1.0",
+            "others": [],
+            "type": "operator",
+            "name": "new-operator"
+        },
+        {
+            "vendor": "Wirecloud",
+            "description": "It sends a message written into the box",
+            "title": "New Mashup",
+            "image": "/showcase/media/Wirecloud/Test/1.0/images/catalogue.png",
+            "uri": "CoNWeT/input-box/1.0",
+            "smartphoneimage": "/showcase/media/Wirecloud/Test/1.0/images/catalogue_iphone.png",
+            "template_uri": "CoNWeT_input-box_1.0.wgt",
+            "version": "1.0",
+            "others": [],
+            "type": "mashup",
+            "name": "new-mashup"
+        },
+        {
+            "vendor": "Wirecloud",
+            "description": "This widget is used to test some of the features of the Wirecloud platform",
+            "title": "Test",
+            "image": "/showcase/media/Wirecloud/Test/1.0/images/catalogue.png",
+            "uri": "Wirecloud/Test/1.0",
+            "smartphoneimage": "/showcase/media/Wirecloud/Test/1.0/images/catalogue_iphone.png",
+            "template_uri": "Wirecloud_Test_1.0.wgt",
+            "version": "1.0",
+            "others": [],
+            "type": "widget",
+            "name": "Test"
+        },
+        {
+            "vendor": "Wirecloud",
+            "description": "It sends a message written into the box",
+            "title": "TestOperator",
+            "image": "/showcase/media/Wirecloud/Test/1.0/images/catalogue.png",
+            "uri": "CoNWeT/input-box/1.0",
+            "smartphoneimage": "/showcase/media/Wirecloud/Test/1.0/images/catalogue_iphone.png",
+            "template_uri": "CoNWeT_input-box_1.0.wgt",
+            "version": "1.0",
+            "others": [],
+            "type": "operator",
+            "name": "TestOperator"
+        },
+        {
+            "vendor": "Wirecloud",
+            "description": "It sends a message written into the box",
+            "title": "Test Mashup",
+            "image": "/showcase/media/Wirecloud/Test/1.0/images/catalogue.png",
+            "uri": "CoNWeT/input-box/1.0",
+            "smartphoneimage": "/showcase/media/Wirecloud/Test/1.0/images/catalogue_iphone.png",
+            "template_uri": "CoNWeT_input-box_1.0.wgt",
+            "version": "1.0",
+            "others": [],
+            "type": "mashup",
+            "name": "test-mashup"
+        }
+    ],
+    "offset": 0,
+    "pagelen": 10,
+    "total": 10
+}
