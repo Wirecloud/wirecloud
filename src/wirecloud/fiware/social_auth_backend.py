@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -21,7 +21,7 @@
 FI-WARE IdM OAuth2 support.
 
 This contribution adds support for FI-WARE IdM OAuth2 service. The settings
-FIWARE_APP_ID and FIWARE_API_SECRET must be defined with the values
+FIWARE_APP_ID and FIWARE_APP_SECRET must be defined with the values
 given by FI-WARE IdM application registration process.
 
 Extended permissions are supported by defining FIWARE_EXTENDED_PERMISSIONS
