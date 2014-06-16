@@ -56,11 +56,6 @@ var OpManagerFactory = (function () {
         // ****************
         // PUBLIC METHODS
         // ****************
-        OpManager.prototype.logIWidgetError = function (iwidget, msg, type) {
-            console.log(msg);
-        };
-
-        //Operations on workspaces
 
         OpManager.prototype.workspaceExists = function (newName) {
             var workspaceId;

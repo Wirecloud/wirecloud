@@ -191,18 +191,6 @@ var OpManagerFactory = function () {
             Wirecloud.activeWorkspace.checkForWidgetUpdates();
         }
 
-        OpManager.prototype.logIWidgetError = function(iWidgetId, msg, level) {
-            var iWidget = Wirecloud.activeWorkspace.getIWidget(iWidgetId);
-            if (iWidget == null) {
-                var msg2 = gettext("Some pice of code tried to notify an error in the iWidget %(iWidgetId)s when it did not exist or it was not loaded yet. This is an error in Wirecloud Platform, please notify it.\nError Message: %(errorMsg)s");
-                msg2 = interpolate(msg2, {iWidgetId: iWidgetId, errorMsg: msg}, true);
-                Wirecloud.GlobalLogManager.log(msg2);
-                return;
-            }
-
-            iWidget.log(msg, level);
-        }
-
         //Operations on workspaces
 
         OpManager.prototype.workspaceExists = function (newName) {
