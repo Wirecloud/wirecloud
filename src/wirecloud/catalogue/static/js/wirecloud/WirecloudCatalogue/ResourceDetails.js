@@ -52,7 +52,7 @@
                 return currentVersion.permissions.uninstall;
             case 'delete':
             case 'delete-all':
-                return Wirecloud.contextManager.get('issuperuser');
+                return currentVersion.permissions.delete;
             }
         };
 

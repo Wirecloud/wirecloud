@@ -202,6 +202,7 @@ def get_resource_data(resource, user, request=None):
         'date': creation_timestamp,
         'uploader': uploader,
         'permissions': {
+            'delete': user.is_superuser,
             'uninstall': resource.public is False and resource.users.filter(pk=user.pk).exists(),
         },
         'authors': resource_info['authors'],
