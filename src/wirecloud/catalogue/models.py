@@ -19,9 +19,12 @@
 
 from __future__ import unicode_literals
 
+
 import os
 import random
+import regex, string
 from urlparse import urlparse, urljoin
+from types import StringType
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group
@@ -34,13 +37,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from whoosh import index
 from whoosh import fields
-from whoosh import sorting
 from whoosh.qparser import MultifieldParser
-from whoosh.qparser import QueryParser
-from whoosh.query import And
-from whoosh.query import Every
-from whoosh.query import Or
-from whoosh.query import Term
+from whoosh.query import And, Every, Or, Prefix, Term
+from whoosh.sorting import FieldFacet, FunctionFacet, MultiFacet
 
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
@@ -168,6 +167,63 @@ def get_template_url(vendor, name, version, url, request=None):
     return template_url
 
 
+class Version(object):
+
+    version_re = regex.compile(r'^([1-9]\d*|0)((?:\.(?:[1-9]\d*|0))*)(?:(a|b|rc)([1-9]\d*))?$')
+
+    def __init__(self, vstring, reverse=False):
+
+        match = self.version_re.match(vstring)
+
+        if not match:
+            raise ValueError, "invalid version number '%s'" % vstring
+
+        (major, patch, prerelease, prerelease_num) = match.group(1, 2, 3, 4)
+
+        if patch:
+            self.version = tuple(map(string.atoi, [major] + patch[1:].split('.')))
+        else:
+            self.version = (string.atoi(major),)
+
+        if prerelease:
+            self.prerelease = (prerelease, string.atoi(prerelease_num))
+        else:
+            self.prerelease = None
+
+        self.reverse = reverse
+
+    def __cmp__(self, other):
+
+        if isinstance(other, StringType):
+            other = Version(other)
+
+        if not isinstance(other, Version):
+            raise ValueError, "invalid version number '%s'" % vstring
+
+        maxlen = max(len(self.version), len(other.version))
+        compare = cmp(self.version + (0,)*(maxlen - len(self.version)), other.version + (0,)*(maxlen - len(other.version)))
+
+        if compare == 0:
+
+            # case 1: neither has prerelease; they're equal
+            if not self.prerelease and not other.prerelease:
+                compare = 0
+
+            # case 2: self has prerelease, other doesn't; other is greater
+            elif self.prerelease and not other.prerelease:
+                compare = -1
+
+            # case 3: self doesn't have prerelease, other does: self is greater
+            elif not self.prerelease and other.prerelease:
+                compare = 1
+
+            # case 4: both have prerelease: must compare them!
+            elif self.prerelease and other.prerelease:
+                compare = cmp(self.prerelease, other.prerelease)
+
+        return compare if not self.reverse else (compare * -1)
+
+
 class CatalogueResourceSchema(fields.SchemaClass):
 
     pk = fields.ID(stored=True, unique=True)
@@ -275,30 +331,30 @@ def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creatio
 
     ix = open_index('catalogue_resources')
     filenames = ['name', 'title', 'vendor', 'description', 'wiring']
-    qp = MultifieldParser(filenames, ix.schema)
-
-    user_q = querytext != '' and qp.parse(querytext) or Every()
-
-    if not staff:
-        user_q = And([user_q, Or([Term('public', 't'), Term('users', user.username.lower())] +
-            [Term('groups', group.name.lower()) for group in user.groups.all()])])
-
-    if scope:
-        user_q = And([user_q, Term('type', scope)])
-
-    name_vendor_f = sorting.FieldFacet('vendor_name')
-    orderby_f = sorting.FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
-    version_f = sorting.FieldFacet('version', reverse=True)
-
-    """
-    corrected = searcher.correct_query(user_q, keywords)
-    if corrected.query != user_q:
-        print("Did you mean:", corrected.string)
-    """
-
+    mfp = MultifieldParser(filenames, ix.schema)
     search_result = {}
 
     with ix.searcher() as searcher:
+        user_q = querytext and mfp.parse(querytext) or Every()
+
+        if querytext:
+            correction_q = mfp.parse(querytext)
+            corrected = searcher.correct_query(correction_q, querytext)
+
+            if corrected.query != correction_q:
+                print 'Did you mean:', corrected.string
+
+        if not staff:
+            user_q = And([user_q, Or([Term('public', 't'), Term('users', user.username.lower())] +
+                [Term('groups', group.name.lower()) for group in user.groups.all()])])
+
+        if scope:
+            user_q = And([user_q, Term('type', scope)])
+
+        name_vendor_f = FieldFacet('vendor_name')
+        orderby_f = FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
+        version_f = FunctionFacet(order_by_version)
+
         hits = searcher.search(user_q, limit=(pagenum * pagelen),
             sortedby=[orderby_f], collapse=name_vendor_f, collapse_limit=1, collapse_order=version_f)
         results = add_other_versions(searcher, hits, user, staff)
@@ -329,6 +385,11 @@ def search_page(results, pagenum, pagelen):
     results_page['results'] = results[offset:(offset + pagelen)]
 
     return results_page
+
+
+def order_by_version(searcher, docnum):
+
+    return Version(searcher.stored_fields(docnum)['version'], reverse=True)
 
 
 def fix_urls(results, request=None):

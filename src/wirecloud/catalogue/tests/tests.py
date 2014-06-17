@@ -31,7 +31,7 @@ from django.test.utils import override_settings
 
 import wirecloud.catalogue.utils
 from wirecloud.catalogue.utils import add_resource_from_template, get_resource_data
-from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue.models import CatalogueResource, Version
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.testcases import LocalFileSystemServer, WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer
@@ -226,7 +226,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
-        self.assertEqual(result_json['results'][1]['version'], "1.5")
+        self.assertEqual(result_json['results'][1]['version'], "1.5.5")
         self.assertEqual(len(result_json['results'][1]['others']), 0)
 
         result = self.client.get(self.base_url+'?q=output+digit')
@@ -270,6 +270,27 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         for result in result_json['results']:
             self.assertTrue(result['image'].startswith('http://wirecloud.example.com/'))
             self.assertTrue(result['smartphoneimage'].startswith('http://wirecloud.example.com/'))
+
+    def test_version_order(self):
+
+        self.assertLess(Version('1.0'), Version('1.11a1'))
+        self.assertLess(Version('1.11a1'), Version('1.11a2'))
+        self.assertLess(Version('1.11a2'), Version('1.11b1'))
+        self.assertLess(Version('1.11b1'), Version('1.11rc1'))
+        self.assertLess(Version('1.11rc1'), Version('1.11'))
+        self.assertLess(Version('1.11'), Version('1.11.5.1'))
+        self.assertLess(Version('1.11.5.1'), Version('1.11.5.4'))
+        self.assertLess(Version('1.11.5.4'), Version('1.100'))
+
+        self.assertGreater(Version('1.0', reverse=True), Version('1.11a1', reverse=True))
+        self.assertGreater(Version('1.11b1', reverse=True), Version('1.11rc1', reverse=True))
+
+        self.assertEqual(Version('1.0'), Version('1.0.0'))
+        self.assertEqual(Version('1.0', reverse=True), Version('1.0.0', reverse=True))
+
+        self.assertRaises(ValueError, Version, '-0')
+        self.assertRaises(ValueError, Version, '0.a')
+
 
 class CatalogueAPITestCase(WirecloudTestCase):
 
