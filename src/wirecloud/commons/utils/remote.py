@@ -232,6 +232,71 @@ class IWidgetTester(object):
         ))
 
 
+class IWidgetWalletResourceTester(object):
+
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
+
+    def instantiate(self):
+        return self.testcase.instantiate(self.element)
+
+
+class IWidgetWalletTester(object):
+
+    def __init__(self, testcase):
+
+        self.testcase = testcase
+        self.element = None
+
+    def __enter__(self):
+
+        self.testcase.change_main_view('workspace')
+        self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .icon-plus').click()
+        self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
+        return self
+
+    def __exit__(self, type, value, traceback):
+
+        self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .icon-plus').click()
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: len(driver.find_elements_by_css_selector('#workspace .widget_wallet')) == 0)
+        self.element = None
+
+    def wait_ready(self, timeout=10):
+
+        list_element = self.element.find_element_by_css_selector('.widget_wallet_list')
+        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in list_element.get_attribute('class'))
+
+    def search_in_results(self, widget_name):
+
+        self.wait_ready()
+
+        resources = self.element.find_elements_by_css_selector('.widget_wallet_list > .resource')
+        for resource in resources:
+            resource_name = resource.find_element_by_css_selector('.resource_name')
+            if resource_name.text == widget_name:
+                return IWidgetWalletResourceTester(self.testcase, resource)
+
+        return None
+
+    def search(self, keywords):
+
+        self.testcase.change_main_view('workspace')
+
+        search_input = self.element.find_element_by_css_selector('.styled_text_field div input')
+        self.testcase.fill_form_input(search_input, keywords)
+        self.testcase.driver.execute_script('''
+            var evt = document.createEvent("KeyboardEvent");
+            if (evt.initKeyEvent != null) {
+                evt.initKeyEvent ("keypress", true, true, window, false, false, false, false, 13, 0);
+            } else {
+                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
+                evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
+            }
+            arguments[0].dispatchEvent(evt);
+        ''', search_input)
+
+
 class IOperatorTester(object):
 
     def __init__(self, testcase, ioperator_id, element):
@@ -315,7 +380,7 @@ class RemoteTestCase(object):
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
 
-class WirecloudRemoteTestCase(RemoteTestCase):
+class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -925,6 +990,25 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             self.search_resource(resource_name)
             resource = self.search_in_catalogue_results(resource_name)
             self.assertIsNone(resource)
+
+
+class WirecloudRemoteTestCase(WirecloudBaseRemoteTestCase):
+
+    def setUp(self):
+
+        self.widget_wallet = IWidgetWalletTester(self)
+
+    def add_widget_to_mashup(self, widget_name, new_name=None):
+
+        with self.widget_wallet as wallet:
+            wallet.search(widget_name)
+            resource = wallet.search_in_results(widget_name)
+            iwidget = resource.instantiate()
+
+            if new_name is not None:
+                iwidget.rename(new_name)
+
+        return iwidget
 
 
 class MobileWirecloudRemoteTestCase(RemoteTestCase):

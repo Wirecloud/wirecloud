@@ -534,7 +534,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         except:
             pass
 
-        super(WirecloudSeleniumTestCase, self).setUp()
+        LiveServerTestCase.setUp.im_func(self)
+        WirecloudRemoteTestCase.setUp.im_func(self)
 
 
 class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteTestCase):

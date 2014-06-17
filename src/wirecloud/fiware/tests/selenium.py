@@ -101,7 +101,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login()
 
         resource = self.add_packaged_resource_to_catalogue('Wirecloud_ngsi-test-widget_1.0.1.wgt', 'Wirecloud NGSI API test widget')
-        iwidget = self.instantiate(resource)
+        iwidget = self.add_widget_to_mashup('Wirecloud NGSI API test widget')
 
         with iwidget:
             api_element = self.driver.find_element_by_id('api_available')
@@ -113,7 +113,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login()
 
         resource = self.add_packaged_resource_to_catalogue('Wirecloud_objectstorage-test-widget_1.0.wgt', 'Wirecloud Object Storage API test widget')
-        iwidget = self.instantiate(resource)
+        iwidget = self.add_widget_to_mashup('Wirecloud Object Storage API test widget')
 
         with iwidget:
             api_element = self.driver.find_element_by_id('api_available')

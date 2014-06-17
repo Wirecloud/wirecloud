@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -41,8 +41,8 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         self.delete_resource('Test')
-        resource = self.add_packaged_resource_to_catalogue('Wirecloud_Test_1.0.wgt', 'Test', shared=True)
-        self.instantiate(resource)
+        self.add_packaged_resource_to_catalogue('Wirecloud_Test_1.0.wgt', 'Test', shared=True)
+        self.add_widget_to_mashup('Test')
 
     def test_add_widget_to_catalogue_xml(self):
 
@@ -78,8 +78,8 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        resource = self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
-        self.instantiate(resource)
+        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
+        self.add_widget_to_mashup('Test_Selenium')
 
     def test_add_and_delete_widget_rdf(self):
 
