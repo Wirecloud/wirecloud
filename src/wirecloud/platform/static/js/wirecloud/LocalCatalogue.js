@@ -318,7 +318,7 @@
     };
 
     LocalCatalogue.resourceExists = function resourceExists(resource) {
-        var id = [resource.vendor, resource.name, resource.version.text].join('/');
+        var id = [resource.vendor, resource.name, resource.version].join('/');
         return this.resourceExistsId(id);
     };
 

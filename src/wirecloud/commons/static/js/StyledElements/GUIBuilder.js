@@ -29,7 +29,7 @@
     NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/StyledElements';
     TEMPLATE_NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/Template';
 
-    processTComponent = function processTComponent(element, tcomponents) {
+    processTComponent = function processTComponent(element, tcomponents, context) {
         var options, parsed_options, tcomponent, new_component;
 
         tcomponent = tcomponents[element.localName];
@@ -41,7 +41,7 @@
                 } catch (e) {}
             }
 
-            new_component = tcomponent(parsed_options, tcomponents);
+            new_component = tcomponent(parsed_options, tcomponents, context);
         } else {
             new_component = tcomponent;
         }
@@ -57,7 +57,7 @@
         return new_component;
     };
 
-    processTree = function processTree(builder, element, tcomponents) {
+    processTree = function processTree(builder, element, tcomponents, context) {
         var i, child, component, new_component;
 
         for (i = 0; i < element.childNodes.length; i += 1) {
@@ -67,11 +67,11 @@
             }
 
             if (child.namespaceURI === NAMESPACE) {
-                component = builder.build(child, tcomponents);
+                component = builder.build(child, tcomponents, context);
                 component.insertInto(element, child);
                 element.removeChild(child);
             } else if (child.namespaceURI === TEMPLATE_NAMESPACE) {
-                new_component = processTComponent(child, tcomponents);
+                new_component = processTComponent(child, tcomponents, context);
                 if (new_component instanceof StyledElements.StyledElement) {
                     new_component.insertInto(element, child);
                 } else {
@@ -79,12 +79,12 @@
                 }
                 element.removeChild(child);
             }  else {
-                processTree(builder, child, tcomponents);
+                processTree(builder, child, tcomponents, context);
             }
         }
     };
 
-    processRoot = function processRoot(builder, element, tcomponents) {
+    processRoot = function processRoot(builder, element, tcomponents, context) {
         var i, children, child, component;
 
         children = Array.prototype.slice.call(element.childNodes, 0);
@@ -96,12 +96,12 @@
             }
 
             if (child.namespaceURI === NAMESPACE) {
-                component = builder.build(child, tcomponents);
+                component = builder.build(child, tcomponents, context);
                 children[i] = component;
             } else if (child.namespaceURI === TEMPLATE_NAMESPACE) {
-                children[i] = processTComponent(child, tcomponents);
+                children[i] = processTComponent(child, tcomponents, context);
             } else {
-                processTree(builder, child, tcomponents);
+                processTree(builder, child, tcomponents, context);
             }
         }
 
@@ -171,7 +171,7 @@
         };
     };
 
-    GUIBuilder.prototype.parse = function parse(document, tcomponents) {
+    GUIBuilder.prototype.parse = function parse(document, tcomponents, context) {
         if (typeof document === 'string') {
             document = Wirecloud.Utils.XML.parseFromString(document, 'application/xml');
         }
@@ -180,7 +180,7 @@
             throw new TypeError('document is not a Document or cannot be parsed into a Document');
         }
 
-        return processRoot(this, document.documentElement, tcomponents);
+        return processRoot(this, document.documentElement, tcomponents, context);
     };
 
     StyledElements.GUIBuilder = GUIBuilder;

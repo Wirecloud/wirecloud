@@ -33,11 +33,27 @@
             search_criteria: keywords,
             onSuccess: function (widgets) {
                 var i;
-                var resource_painter = new Wirecloud.ui.ResourcePainter(LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local, Wirecloud.currentTheme.templates['wallet_widget']);
+
+                if (this.resource_painter == null) {
+                    this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates['wallet_widget'], null, {
+                        'mainbutton': function (options, context, resource) {
+                            var button = new StyledElements.StyledButton({
+                                'class': 'instantiate_button',
+                                'text': gettext('Add to workspace')
+                            });
+                            button.addEventListener('click', function () {
+                                var local_widget = Wirecloud.LocalCatalogue.getResource(resource.vendor, resource.name, resource.version);
+                                Wirecloud.activeWorkspace.addInstance(local_widget);
+                            });
+                            button.addClassName('mainbutton btn-primary');
+                            return button;
+                        }
+                    });
+                }
 
                 this._list.innerHTML = '';
                 for (i = 0; i < widgets.length; i += 1) {
-                    resource_painter.paint(widgets[i]).insertInto(this._list);
+                    this.resource_painter.paint(widgets[i]).insertInto(this._list);
                 }
             }.bind(this)
         });
@@ -132,6 +148,8 @@
         this._list = document.createElement('div');
         this._list.className = 'widget_wallet_list';
 
+        var input;
+
         this.wallet = builder.parse(Wirecloud.currentTheme.templates['wallet'], {
             addmore: function () {
                 var div = document.createElement('div');
@@ -144,7 +162,7 @@
                 return div;
             },
             searchinput: function () {
-                var input = new StyledElements.StyledTextField({'placeholder': 'Keywords...'});
+                input = new StyledElements.StyledTextField({'placeholder': 'Keywords...'});
                 input.inputElement.addEventListener('keypress', _onSearchInputKeyPress.bind(this, input));
                 input.addEventListener('change', _onSearchInput.bind(this));
                 return input;
@@ -155,6 +173,7 @@
 
         _search.call(this, '');
         setTimeout(function () {
+            input.focus();
             this.wallet.classList.add('in');
         }.bind(this), 0);
     };

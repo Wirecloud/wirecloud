@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,13 +19,15 @@
  *
  */
 
-/*global CatalogueResource, CatalogueSearchView, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, StyledElements*/
+/*global CatalogueSearchView, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, StyledElements*/
 
 (function () {
 
     "use strict";
 
     var CatalogueView = function CatalogueView(id, options) {
+        var resource_extra_context;
+
         options.class = 'catalogue';
         StyledElements.Alternative.call(this, id, options);
 
@@ -43,9 +45,35 @@
         this.alternatives = new StyledElements.StyledAlternatives();
         this.appendChild(this.alternatives);
 
+        if (this.catalogue !== Wirecloud.LocalCatalogue) {
+            resource_extra_context = {
+                'mainbutton': function (options, context, resource) {
+                    var button, local_catalogue_view;
+
+                    local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+                    if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
+                        button = new StyledElements.StyledButton({
+                            'class': 'btn-danger',
+                            'text': gettext('Uninstall')
+                        });
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue));
+                    } else {
+                        button = new StyledElements.StyledButton({
+                            'class': 'btn-success',
+                            'text': gettext('Install')
+                        });
+
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', resource, this.catalogue));
+                    }
+                    button.addClassName('mainbutton');
+                    return button;
+                }.bind(this)
+            };
+        }
+
         this.viewsByName = {
             'initial': this.alternatives.createAlternative(),
-            'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter}}),
+            'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter, resource_extra_context: resource_extra_context}}),
             'developer': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.PublishView, containerOptions: {catalogue: this.catalogue, mainview: this}}),
             'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.ResourceDetailsView, containerOptions: {catalogue: this}})
         };

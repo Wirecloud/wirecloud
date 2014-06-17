@@ -19,7 +19,7 @@
  *
  */
 
-/*global document, LayoutManagerFactory, gettext, interpolate, StyledElements, Wirecloud */
+/*global LayoutManagerFactory, gettext, interpolate, StyledElements, Wirecloud */
 
 (function () {
 
@@ -146,76 +146,6 @@
                 return button;
             },
             'rating': this.get_popularity_html.bind(this, resource.rating),
-            'mainbutton': function () {
-                var button, local_catalogue_view;
-
-                local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
-
-                if (!this.catalogue_view.catalogue.is_purchased(this.resource) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.resource.type) !== -1) {
-                    button = new StyledElements.StyledButton({
-                        'class': 'mainbutton btn-success',
-                        'text': gettext('Buy')
-                    });
-                    button.addEventListener('click', this.catalogue_view.createUserCommand('buy', this.resource));
-                    return button;
-                }
-
-                if (this.resource.type === 'operator') {
-
-                    if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {
-                        button = new StyledElements.StyledButton({
-                            'class': 'btn-danger',
-                            'text': gettext('Uninstall')
-                        });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
-                    } else {
-
-                        button = new StyledElements.StyledButton({
-                            'text': gettext('Install')
-                        });
-
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.resource, this.catalogue_view));
-                    }
-                } else if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue) {
-                    switch (this.resource.type) {
-                    case 'mashup':
-                    case 'widget':
-                        button = new StyledElements.StyledButton({
-                            'class': 'instantiate_button',
-                            'text': gettext('Add to workspace')
-                        });
-                        button.addEventListener('click', this.catalogue_view.createUserCommand('instantiate', this.resource));
-                        break;
-                    default:
-                        button = new StyledElements.StyledButton({text: gettext('Download')});
-                        button.addEventListener('click', function (resource) {
-                            window.open(resource.description_url, '_blank');
-                        }.bind(null, this.resource));
-                    }
-                } else {
-                    if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {
-                        button = new StyledElements.StyledButton({
-                            'class': 'btn-danger',
-                            'text': gettext('Uninstall')
-                        });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
-                    } else if (['widget', 'operator', 'mashup'].indexOf(this.resource.type) != -1) {
-                        button = new StyledElements.StyledButton({
-                            'text': gettext('Install')
-                        });
-
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.resource, this.catalogue_view));
-                    } else {
-                        button = new StyledElements.StyledButton({
-                            'text': gettext('Details')
-                        });
-
-                        button.addEventListener('click', this.catalogue_view.createUserCommand('showDetails', this.resource));
-                    }
-                }
-                button.addClassName('mainbutton btn-primary');
-                return button;
-            }.bind({catalogue_view: this.catalogue_view, resource: resource}),
             'image': function () {
                 var image = document.createElement('img');
                 image.onerror = function (event) {
@@ -241,16 +171,18 @@
             }
         });
 
-        resource_element = this.builder.parse(this.structure_template, context);
+        resource_element = this.builder.parse(this.structure_template, context, resource);
 
         // TODO "Show details"
-        for (i = 0; i < resource_element.elements.length; i += 1) {
-            if (!Wirecloud.Utils.XML.isElement(resource_element.elements[i])) {
-                continue;
-            }
-            this.create_simple_command(resource_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', resource));
-            if (resource_element.elements[i].classList.contains('click_for_details')) {
-                resource_element.elements[i].addEventListener('click', this.catalogue_view.createUserCommand('showDetails', resource));
+        if (this.catalogue_view) {
+            for (i = 0; i < resource_element.elements.length; i += 1) {
+                if (!Wirecloud.Utils.XML.isElement(resource_element.elements[i])) {
+                    continue;
+                }
+                this.create_simple_command(resource_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', resource));
+                if (resource_element.elements[i].classList.contains('click_for_details')) {
+                    resource_element.elements[i].addEventListener('click', this.catalogue_view.createUserCommand('showDetails', resource));
+                }
             }
         }
 

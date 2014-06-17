@@ -838,6 +838,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
                 self.fail('Error: marketplace was not added')
 
             self.assertEqual(self.get_current_marketplace_name(), name)
+            self.wait_catalogue_ready()
 
     def change_marketplace(self, market, timeout=30):
 

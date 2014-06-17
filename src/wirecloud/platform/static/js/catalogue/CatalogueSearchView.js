@@ -184,9 +184,11 @@
         } else {
             resource_template = 'catalogue_resource_template';
         }
+
         this.resource_painter = new options.resource_painter(this.catalogue,
             Wirecloud.currentTheme.templates[resource_template],
-            this.resource_list
+            this.resource_list,
+            options.resource_extra_context
         );
 
         this.addEventListener('show', this.refresh_if_needed.bind(this));
