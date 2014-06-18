@@ -803,11 +803,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readOnly'], True)
 
-    def test_complex_workspaces(self):
-        template3 = self.read_template('wt3.xml')
-
-        workspace, _junk = buildWorkspaceFromTemplate(template3, self.user)
-        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+    def check_complex_workspace_data(self, data):
 
         self.assertEqual(len(data['tabs']), 4)
         self.assertEqual(data['tabs'][0]['name'], 'Tab')
@@ -821,11 +817,29 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         wiring_status = data['wiring']
         self.assertEqual(len(wiring_status['operators']), 1)
+        self.assertEqual(wiring_status['operators']['1']['preferences']['pref_with_val']['readonly'], False)
+        self.assertEqual(wiring_status['operators']['1']['preferences']['pref_with_val']['hidden'], False)
+        self.assertEqual(wiring_status['operators']['1']['preferences']['pref_with_val']['value'], 'value1')
+        self.assertEqual(wiring_status['operators']['1']['preferences']['readonly_pref']['readonly'], True)
+        self.assertEqual(wiring_status['operators']['1']['preferences']['readonly_pref']['hidden'], False)
+        self.assertEqual(wiring_status['operators']['1']['preferences']['readonly_pref']['value'], 'value2')
+        self.assertEqual(wiring_status['operators']['1']['preferences']['hidden_pref']['readonly'], True)
+        self.assertEqual(wiring_status['operators']['1']['preferences']['hidden_pref']['hidden'], True)
+        self.assertEqual(wiring_status['operators']['1']['preferences']['hidden_pref']['value'], 'value3')
+
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['source']['type'], 'iwidget')
         self.assertEqual(wiring_status['connections'][0]['source']['endpoint'], 'event')
         self.assertEqual(wiring_status['connections'][0]['target']['type'], 'iwidget')
         self.assertEqual(wiring_status['connections'][0]['target']['endpoint'], 'slot')
+
+    def test_complex_workspaces(self):
+        template3 = self.read_template('wt3.xml')
+
+        workspace, _junk = buildWorkspaceFromTemplate(template3, self.user)
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+
+        self.check_complex_workspace_data(data)
 
     def test_complex_workspaces_rdf(self):
         template = self.read_template('wt3.rdf')
@@ -833,22 +847,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
-        self.assertEqual(len(data['tabs']), 4)
-        self.assertEqual(data['tabs'][0]['name'], u'Tab')
-        self.assertEqual(len(data['tabs'][0]['iwidgets']), 1)
-        self.assertEqual(data['tabs'][1]['name'], u'Tab 2')
-        self.assertEqual(len(data['tabs'][1]['iwidgets']), 1)
-        self.assertEqual(data['tabs'][2]['name'], u'Tab 3')
-        self.assertEqual(len(data['tabs'][2]['iwidgets']), 0)
-        self.assertEqual(data['tabs'][3]['name'], u'Tab 4')
-        self.assertEqual(len(data['tabs'][3]['iwidgets']), 0)
-
-        wiring = data['wiring']
-        self.assertEqual(len(wiring['connections']), 1)
-        self.assertEqual(wiring['connections'][0]['source']['type'], 'iwidget')
-        self.assertEqual(wiring['connections'][0]['source']['endpoint'], 'event')
-        self.assertEqual(wiring['connections'][0]['target']['type'], 'iwidget')
-        self.assertEqual(wiring['connections'][0]['target']['endpoint'], 'slot')
+        self.check_complex_workspace_data(data)
 
     def test_workspace_with_params(self):
         template = self.read_template('wt5.xml')

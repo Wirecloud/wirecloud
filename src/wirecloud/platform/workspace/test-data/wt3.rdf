@@ -149,39 +149,69 @@
         </wire-m:hasTab>
 
         <wire-m:hasMashupWiring>
+
             <wire:PlatformWiring rdf:ID="wiring">
-                <wire:hasEvent>
-                    <wire:Event rdf:ID="event_1">
+
+                <wire-m:hasiOperator>
+                    <wire-m:iOperator rdf:nodeID="N08ee5d3d358b47d5a603ed8c1fca0147">
+                        <dcterms:title>Wirecloud/TestOperator/1.0</dcterms:title>
+                        <wire-m:iOperatorId>1</wire-m:iOperatorId>
+                        <wire-m:hasiOperatorPreference>
+                            <wire-m:iOperatorPreference rdf:nodeID="N5e3017c026d04ed6bba6887c9e4350c5">
+                                <dcterms:title>pref_with_val</dcterms:title>
+                                <wire:value>value1</wire:value>
+                            </wire-m:iOperatorPreference>
+                        </wire-m:hasiOperatorPreference>
+                        <wire-m:hasiOperatorPreference>
+                            <wire-m:iOperatorPreference rdf:nodeID="N4060b855eb2f4869b7d031e83fdf8fe1">
+                                <dcterms:title>readonly_pref</dcterms:title>
+                                <wire-m:readonly>true</wire-m:readonly>
+                                <wire:value>value2</wire:value>
+                            </wire-m:iOperatorPreference>
+                        </wire-m:hasiOperatorPreference>
+                        <wire-m:hasiOperatorPreference>
+                            <wire-m:iOperatorPreference rdf:nodeID="Nb79253e9262445f691b0bf0ace41a9ac">
+                                <dcterms:title>hidden_pref</dcterms:title>
+                                <wire-m:readonly>true</wire-m:readonly>
+                                <wire-m:hidden>true</wire-m:hidden>
+                                <wire:value>value3</wire:value>
+                            </wire-m:iOperatorPreference>
+                        </wire-m:hasiOperatorPreference>
+                    </wire-m:iOperator>
+                </wire-m:hasiOperator>
+
+                <wire:hasOutputEndpoint>
+                    <wire:OutputEndpoint rdf:ID="event_1">
                         <dcterms:title>event</dcterms:title>
                         <wire:type>text</wire:type>
                         <rdfs:label>event</rdfs:label>
                         <wire:eventFriendcode>event</wire:eventFriendcode>
-                    </wire:Event>
-                </wire:hasEvent>
-                <wire:hasSlot>
-                    <wire:Slot rdf:ID="slot_1">
+                    </wire:OutputEndpoint>
+                </wire:hasOutputEndpoint>
+                <wire:hasInputEndpoint>
+                    <wire:InputEndpoint rdf:ID="slot_1">
                         <dcterms:title>slot</dcterms:title>
                         <wire:type>text</wire:type>
                         <rdfs:label>slot</rdfs:label>
                         <wire:slotFriendcode>slot</wire:slotFriendcode>
-                    </wire:Slot>
-                </wire:hasSlot>
-                <wire:hasEvent>
-                    <wire:Event rdf:ID="event_2">
+                    </wire:InputEndpoint>
+                </wire:hasInputEndpoint>
+                <wire:hasOutputEndpoint>
+                    <wire:OutputEndpoint rdf:ID="event_2">
                         <dcterms:title>event</dcterms:title>
                         <wire:type>text</wire:type>
                         <rdfs:label>event</rdfs:label>
                         <wire:eventFriendcode>event</wire:eventFriendcode>
-                    </wire:Event>
-                </wire:hasEvent>
-                <wire:hasSlot>
-                    <wire:Slot rdf:ID="slot_2">
+                    </wire:OutputEndpoint>
+                </wire:hasOutputEndpoint>
+                <wire:hasInputEndpoint>
+                    <wire:InputEndpoint rdf:ID="slot_2">
                         <dcterms:title>slot</dcterms:title>
                         <wire:type>text</wire:type>
                         <rdfs:label>slot</rdfs:label>
                         <wire:slotFriendcode>slot</wire:slotFriendcode>
-                    </wire:Slot>
-                </wire:hasSlot>
+                    </wire:InputEndpoint>
+                </wire:hasInputEndpoint>
                 <wire-m:hasConnection>
                     <wire-m:Connection>
                         <wire-m:hasSource>

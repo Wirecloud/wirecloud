@@ -36,7 +36,11 @@
     <Slot label="slot" type="text" friendcode="slot" name="slot"/>
     <Event label="event" type="text" friendcode="event" name="event"/>
     <Slot label="slot" type="text" friendcode="slot" name="slot"/>
-    <Operator id="1" name="Wirecloud/TestOperator/1.0" />
+    <Operator id="1" name="Wirecloud/TestOperator/1.0">
+        <Preference name="pref_with_val" value="value1"/>
+        <Preference name="readonly_pref" readonly="true" value="value2"/>
+        <Preference name="hidden_pref" readonly="true" hidden="true" value="value3"/>
+    </Operator>
     <Connection>
         <Source type="iwidget" endpoint="event" id="1"/>
         <Target type="iwidget" endpoint="slot" id="2"/>
