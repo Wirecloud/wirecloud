@@ -19,7 +19,6 @@
 
 from __future__ import unicode_literals
 
-
 import os
 import random
 import regex, string
@@ -296,6 +295,17 @@ def update_users(sender, instance, action, reverse, model, pk_set, using, **kwar
     add_document(sender, instance, False, False)
 
 
+def add_absolute_urls(results, request=None):
+
+    for hit in results:
+        base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'], request=request)
+        hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
+        hit['image'] = urljoin(base_url, hit['image'])
+        hit['smartphoneimage'] = urljoin(base_url, hit['smartphoneimage'])
+
+    return results
+
+
 def add_other_versions(searcher, hits, user, staff):
 
     results = [hit.fields() for hit in hits]
@@ -327,7 +337,7 @@ def open_index(indexname, dirname=None):
     return index.open_dir(dirname, indexname=indexname)
 
 
-def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creation_date', staff=False, request=None):
+def search(querytext, request, scope=None, pagenum=1, pagelen=10, orderby='-creation_date', staff=False):
 
     ix = open_index('catalogue_resources')
     filenames = ['name', 'title', 'vendor', 'description', 'wiring']
@@ -345,8 +355,8 @@ def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creatio
                 print 'Did you mean:', corrected.string
 
         if not staff:
-            user_q = And([user_q, Or([Term('public', 't'), Term('users', user.username.lower())] +
-                [Term('groups', group.name.lower()) for group in user.groups.all()])])
+            user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username.lower())] +
+                [Term('groups', group.name.lower()) for group in request.user.groups.all()])])
 
         if scope:
             user_q = And([user_q, Term('type', scope)])
@@ -357,8 +367,9 @@ def search(querytext, user, scope=None, pagenum=1, pagelen=10, orderby='-creatio
 
         hits = searcher.search(user_q, limit=(pagenum * pagelen),
             sortedby=[orderby_f], collapse=name_vendor_f, collapse_limit=1, collapse_order=version_f)
-        results = add_other_versions(searcher, hits, user, staff)
-        fix_urls(results, request)
+
+        results = add_other_versions(searcher, hits, request.user, staff)
+        results = add_absolute_urls(results, request)
         search_result = search_page(results, pagenum, pagelen)
 
     return search_result
@@ -387,18 +398,21 @@ def search_page(results, pagenum, pagelen):
     return results_page
 
 
+def suggest(request, prefix='', number=30):
+
+    reader = open_index('catalogue_resources').reader()
+    filenames = ['title', 'vendor', 'description']
+    result_suggestion = {}
+    frequent_terms = []
+
+    for fn in filenames:
+        frequent_terms += [t for f, t in reader.most_frequent_terms(fn, number, prefix)]
+
+    result_suggestion['terms'] = list(set(frequent_terms))
+
+    return result_suggestion
+
+
 def order_by_version(searcher, docnum):
 
     return Version(searcher.stored_fields(docnum)['version'], reverse=True)
-
-
-def fix_urls(results, request=None):
-
-    for hit in results:
-
-        base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'], request=request)
-        hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
-        hit['image'] = urljoin(base_url, hit['image'])
-        hit['smartphoneimage'] = urljoin(base_url, hit['smartphoneimage'])
-
-    return results

@@ -292,6 +292,48 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertRaises(ValueError, Version, '0.a')
 
 
+class CatalogueSuggestionTestCase(WirecloudTestCase):
+
+    fixtures = ('catalogue_search_data',)
+    tags = ('catalogue-suggestion',)
+
+    @classmethod
+    def setUpClass(cls):
+
+        super(CatalogueSuggestionTestCase, cls).setUpClass()
+        cls.base_url = reverse('wirecloud_catalogue.resource_suggestion')
+
+    def setUp(self):
+
+        super(CatalogueSuggestionTestCase, self).setUp()
+        self.client = Client()
+
+    def test_basic_search_with_staff(self):
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.get(self.base_url)
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content)
+        self.assertEqual(len(result_json['terms']), 50)
+
+        response = self.client.get(self.base_url + '?top=20')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content)
+        self.assertEqual(len(result_json['terms']), 40)
+
+        response = self.client.get(self.base_url + '?p=double+prefix')
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.get(self.base_url + '?top=fail')
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.get(self.base_url + '?p=wire')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content)
+        self.assertEqual(len(result_json['terms']), 8)
+
+
 class CatalogueAPITestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_test_data',)

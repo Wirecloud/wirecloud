@@ -21,6 +21,7 @@ from django.conf.urls import patterns, url
 
 from wirecloud.catalogue.views import ResourceCollection, ResourceVersionCollection
 from wirecloud.catalogue.views import ResourceEntry, ResourceChangelogEntry
+from wirecloud.catalogue.views import ResourceSuggestion
 
 urlpatterns = patterns('wirecloud.catalogue.views',
     # Resources
@@ -39,6 +40,9 @@ urlpatterns = patterns('wirecloud.catalogue.views',
     url(r'^/resources$',
         ResourceCollection(permitted_methods=('GET', 'POST',)),
         name='wirecloud_catalogue.resource_collection'),
+    url(r'^/resources/suggest$',
+        ResourceSuggestion(permitted_methods=('GET',)),
+        name='wirecloud_catalogue.resource_suggestion'),
 
     #version check
     url(r'^/versions',

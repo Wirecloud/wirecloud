@@ -35,7 +35,7 @@ from django.views.static import serve
 import markdown
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.catalogue.models import search
+from wirecloud.catalogue.models import search, suggest
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import get_latest_resource_version, get_resource_data, get_resource_group_data
 from wirecloud.catalogue.utils import add_packaged_resource, add_resource_from_template, delete_resource
@@ -106,7 +106,6 @@ class ResourceCollection(Resource):
     @no_cache
     def read(self, request):
 
-        user = request.user
         querytext = unicode(request.GET.get('q', ''))
 
         filters = {
@@ -123,10 +122,10 @@ class ResourceCollection(Resource):
         if filters['scope'] and not filters['scope'] in ['mashup', 'operator', 'widget']:
             return build_error_response(request, 400, _('Scope not supported'))
 
-        if filters['staff'] and not user.is_staff:
+        if filters['staff'] and not request.user.is_staff:
             return build_error_response(request, 403, _('Forbidden'))
 
-        response_json = search(querytext, user, request=request, **filters)
+        response_json = search(querytext, request, **filters)
 
         return HttpResponse(json.dumps(response_json), content_type='application/json')
 
@@ -163,6 +162,25 @@ class ResourceEntry(Resource):
 
         return HttpResponse(json.dumps(response_json),
                             content_type='application/json; charset=UTF-8')
+
+
+class ResourceSuggestion(Resource):
+
+    def read(self, request):
+
+        prefix = unicode(request.GET.get('p', ''))
+        number = request.GET.get('top', '30')
+
+        if prefix.find(' ') != -1:
+            return build_error_response(request, 400, _('Invalid prefix text'))
+
+        if not number.isdigit():
+            return build_error_response(request, 400, _('Invalid top number'))
+
+        number = int(number)
+        response_json = suggest(request, prefix, number)
+
+        return HttpResponse(json.dumps(response_json), content_type='application/json')
 
 
 class ResourceVersionCollection(Resource):

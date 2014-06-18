@@ -1,4 +1,4 @@
-from wirecloud.catalogue.tests.tests import AddWidgetTestCase, CatalogueAPITestCase, PublishTestCase, WGTDeploymentTestCase, CatalogueSearchTestCase  # pyflakes:ignore
+from wirecloud.catalogue.tests.tests import AddWidgetTestCase, CatalogueAPITestCase, PublishTestCase, WGTDeploymentTestCase, CatalogueSearchTestCase, CatalogueSuggestionTestCase  # pyflakes:ignore
 
 from wirecloud.commons.utils.testcases import build_selenium_test_cases
 
