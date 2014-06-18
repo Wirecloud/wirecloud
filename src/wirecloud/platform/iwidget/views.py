@@ -177,6 +177,11 @@ class IWidgetPreferences(Resource):
                     vardef__aspect='PREF',
                     iwidget__id=iwidget_id
                 )
+
+                if variable.vardef.readonly is True:
+                    msg = _('"%s" preference is read only.') % var_name
+                    return build_error_response(request, 403, msg)
+
                 variable.set_variable_value(new_values[var_name])
                 variable.save()
         except Variable.DoesNotExist:

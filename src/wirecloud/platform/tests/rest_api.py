@@ -1215,7 +1215,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
         check_post_bad_request_syntax(self, url)
 
-    def test_iwidget_preferences_entry_post_nonexistent_property(self):
+    def test_iwidget_preferences_entry_post_nonexistent_preference(self):
 
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
 
@@ -1228,6 +1228,26 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_iwidget_preferences_entry_post_readonly_preference(self):
+
+        vardef = Variable.objects.get(vardef__name='text', iwidget__id=2).vardef
+        vardef.readonly = True
+        vardef.save()
+
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'text': 'new value',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
