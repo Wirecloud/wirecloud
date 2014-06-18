@@ -40,6 +40,14 @@ def get_workspace_description(workspace):
     return get_iwidgets_description(included_iwidgets)
 
 
+def get_current_operator_pref_value(operator, preference):
+
+    if preference['name'] in operator['preferences']:
+        return operator['preferences'][preference['name']]['value']
+    else:
+        return preference['default']
+
+
 def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets):
 
     widget = iwidget.widget
@@ -76,10 +84,17 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
         status = 'normal'
         if pref.name in iwidget_params:
             iwidget_param_desc = iwidget_params[pref.name]
-            if iwidget_param_desc['source'] == 'default':
+            source = iwidget_param_desc['source']
+            if source == 'default':
                 # Do not issue a Preference element for this preference
                 continue
-            value = iwidget_param_desc['value']
+            elif source == 'current':
+                value = get_variable_value_from_varname(workspace.creator, iwidget, pref.name)
+            elif source == 'custom':
+                value = iwidget_param_desc['value']
+            else:
+                raise Exception('Invalid preference value source: %s' % source)
+
             status = iwidget_param_desc['status']
         else:
             value = get_variable_value_from_varname(workspace.creator, iwidget, pref.name)
@@ -135,6 +150,7 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
             'minimized': str(iwidget.position.minimized),
         },
     }
+
 
 def build_json_template_from_workspace(options, workspace, user):
     options['type'] = 'mashup'
@@ -216,15 +232,20 @@ def build_json_template_from_workspace(options, workspace, user):
             status = 'normal'
             if preference['name'] in operator_params:
                 ioperator_param_desc = operator_params[preference['name']]
-                if ioperator_param_desc['source'] == 'default':
+                source = ioperator_param_desc['source']
+                if source == 'default':
                     # Do not issue a Preference element for this preference
                     continue
-                value = ioperator_param_desc['value']
+                elif source == 'current':
+                    value = get_current_operator_pref_value(operator, preference)
+                elif source == 'custom':
+                    value = ioperator_param_desc['value']
+                else:
+                    raise Exception('Invalid preference value source: %s' % source)
+
                 status = ioperator_param_desc['status']
-            elif preference['name'] in operator['preferences']:
-                value = operator['preferences'][preference['name']]['value']
             else:
-                value = preference['default']
+                value = get_current_operator_pref_value(operator, preference)
 
             operator_data['preferences'][preference['name']] = {
                 'readonly': status != 'normal',
