@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013-2014 CoNWeT Lab - Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of ngsijs.
  *
@@ -958,29 +958,27 @@
 
         this.makeRequest(this.url + NGSI.proxy_endpoints.EVENTSOURCE_COLLECTION, {
             method: 'POST',
-            context: this,
             onSuccess: function (response) {
                 this.source_url = response.getHeader('Location');
                 connect_to_eventsource.call(this);
-            },
+            }.bind(this),
             onFailure: function () {
                 this.connected = false;
                 this.connecting = false;
-            }
+            }.bind(this)
         });
     };
 
     var connect_to_eventsource = function connect_to_eventsource() {
         var source, closeTimeout;
-
-        source = new EventSource(this.source_url);
-        source.addEventListener('init', function wait_load(e) {
+        var _wait_event_source_init = null;
+        var wait_event_source_init = function wait_event_source_init(e) {
             var data, i;
 
             data = JSON.parse(e.data);
 
             clearTimeout(closeTimeout);
-            source.removeEventListener('init', wait_load, true);
+            source.removeEventListener('init', _wait_event_source_init, true);
             this.connected = true;
             this.connecting = false;
             this.connection_id = data.id;
@@ -1002,7 +1000,11 @@
                 data = JSON.parse(e.data);
                 this.callbacks[data.callback_id].method(data.payload);
             }.bind(this), true);
-        }.bind(this), true);
+        };
+
+        _wait_event_source_init = wait_event_source_init.bind(this);
+        source = new EventSource(this.source_url);
+        source.addEventListener('init', _wait_event_source_init, true);
 
         closeTimeout = setTimeout(function () {
             var i;
@@ -1058,9 +1060,8 @@
     };
 
     NGSI.ProxyConnection.prototype.request_callback = function request_callback(callback, onSuccess, onFailure) {
-        if (typeof callback === 'function') {
-            onSuccess(callback);
-            return;
+        if (typeof callback !== 'function') {
+            throw new TypeError('callback parameter must be a function');
         }
 
         var wrappedOnSuccess = function () {
