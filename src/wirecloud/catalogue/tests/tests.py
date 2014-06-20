@@ -99,7 +99,7 @@ class AddWidgetTestCase(WirecloudTestCase):
 class CatalogueSearchTestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_search_data',)
-    tags = ('catalogue',)
+    tags = ('catalogue', 'catalogue-search')
 
     @classmethod
     def setUpClass(cls):
@@ -216,18 +216,18 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 2)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['results'][0]['version'], "1.5")
-        self.assertEqual(len(result_json['results'][0]['others']), 0)
+        self.assertEqual(result_json['results'][0]['version'], "1.0")
+        self.assertEqual(len(result_json['results'][0]['others']), 1)
 
         result = self.client.get(self.base_url+'?q=mashable')
         result_json = json.loads(result.content)
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 3)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['results'][0]['version'], "1.5")
+        self.assertEqual(result_json['results'][0]['version'], "1.5.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
-        self.assertEqual(result_json['results'][1]['version'], "1.5.5")
-        self.assertEqual(len(result_json['results'][1]['others']), 0)
+        self.assertEqual(result_json['results'][1]['version'], "1.0")
+        self.assertEqual(len(result_json['results'][1]['others']), 1)
 
         result = self.client.get(self.base_url+'?q=output+digit')
         result_json = json.loads(result.content)
@@ -264,7 +264,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='admin', password='admin')
 
-        response = self.client.get(self.base_url + '?q=mashable', HTTP_HOST="wirecloud.example.com")
+        response = self.client.get(self.base_url + '?q=mashable+application+component', HTTP_HOST="wirecloud.example.com")
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content)
         for result in result_json['results']:
@@ -291,11 +291,29 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertRaises(ValueError, Version, '-0')
         self.assertRaises(ValueError, Version, '0.a')
 
+    def test_basic_search_with_query_correction(self):
+
+        self.client.login(username='myuser', password='admin')
+
+        result = self.client.get(self.base_url+'?q=wercloud')
+        result_json = json.loads(result.content)
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagelen'], 4)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['results'][0]['version'], "1.5")
+        self.assertEqual(len(result_json['results'][0]['others']), 0)
+
+        result = self.client.get(self.base_url+'?q=mashble&correct_q=False')
+        result_json = json.loads(result.content)
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagelen'], 0)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+
 
 class CatalogueSuggestionTestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_search_data',)
-    tags = ('catalogue-suggestion',)
+    tags = ('catalogue', 'catalogue-suggestion')
 
     @classmethod
     def setUpClass(cls):
@@ -308,7 +326,7 @@ class CatalogueSuggestionTestCase(WirecloudTestCase):
         super(CatalogueSuggestionTestCase, self).setUp()
         self.client = Client()
 
-    def test_basic_search_with_staff(self):
+    def test_basic_suggestion(self):
 
         self.client.login(username='admin', password='admin')
 

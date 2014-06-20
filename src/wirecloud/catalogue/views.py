@@ -109,6 +109,7 @@ class ResourceCollection(Resource):
         querytext = unicode(request.GET.get('q', ''))
 
         filters = {
+            'correct_q': request.GET.get('correct_q', 'true').lower() != 'false',
             'pagenum': int(request.GET.get('pagenum', '1')),
             'pagelen': int(request.GET.get('pagelen', '10')),
             'orderby': request.GET.get('orderby', '-creation_date'),

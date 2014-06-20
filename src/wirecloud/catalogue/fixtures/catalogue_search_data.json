@@ -155,7 +155,7 @@
             "popularity": "0",
             "vendor": "Wirecloud",
             "short_name": "test-mashup",
-            "json_description": "{\"name\": \"test-mashup\", \"vendor\": \"Wirecloud\", \"version\": \"1.0\", \"type\": \"mashup\", \"title\": \"WireCloud Test Mashup\", \"description\": \"This mashup contains keywords like power toogles.\"}",
+            "json_description": "{\"name\": \"test-mashup\", \"vendor\": \"Wirecloud\", \"version\": \"1.0\", \"type\": \"mashup\", \"title\": \"WireCloud Test Mashup\", \"description\": \"This mashup contains keywords like power toogles mashable application.\"}",
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",

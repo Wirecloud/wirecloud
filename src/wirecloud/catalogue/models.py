@@ -36,7 +36,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from whoosh import index
 from whoosh import fields
-from whoosh.qparser import MultifieldParser
+from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.query import And, Every, Or, Prefix, Term
 from whoosh.sorting import FieldFacet, FunctionFacet, MultiFacet
 
@@ -241,6 +241,7 @@ class CatalogueResourceSchema(fields.SchemaClass):
     public = fields.BOOLEAN
     users = fields.KEYWORD(commas=True)
     groups = fields.KEYWORD(commas=True)
+    content = fields.TEXT(spelling=True)
 
 
 @receiver(post_save, sender=CatalogueResource)
@@ -255,6 +256,9 @@ def add_document(sender, instance, created, raw, **kwargs):
 
     for endpoint in resource_info['wiring']['outputs']:
         endpoint_descriptions += endpoint['description'] + ' '
+
+    content = (resource_info['description'] + ' ' + resource_info['title'] + ' ' +
+               resource.short_name + ' ' + resource.vendor + ' ' + endpoint_descriptions)
 
     data = {
         'pk': '%s' % resource.pk,
@@ -273,6 +277,7 @@ def add_document(sender, instance, created, raw, **kwargs):
         'smartphoneimage': resource_info['smartphoneimage'],
         'users': ', '.join(resource.users.all().values_list('username', flat=True)),
         'groups': ', '.join(resource.groups.all().values_list('name', flat=True)),
+        'content': content,
     }
 
     ix = open_index('catalogue_resources')
@@ -337,22 +342,25 @@ def open_index(indexname, dirname=None):
     return index.open_dir(dirname, indexname=indexname)
 
 
-def search(querytext, request, scope=None, pagenum=1, pagelen=10, orderby='-creation_date', staff=False):
+def search(querytext, request, pagenum=1, pagelen=10, staff=False, scope=None,
+           orderby='-creation_date', correct_q=True):
 
     ix = open_index('catalogue_resources')
     filenames = ['name', 'title', 'vendor', 'description', 'wiring']
-    mfp = MultifieldParser(filenames, ix.schema)
+    mfp = QueryParser('content', ix.schema)
     search_result = {}
 
     with ix.searcher() as searcher:
-        user_q = querytext and mfp.parse(querytext) or Every()
 
-        if querytext:
+        if correct_q and querytext != '':
             correction_q = mfp.parse(querytext)
             corrected = searcher.correct_query(correction_q, querytext)
 
             if corrected.query != correction_q:
-                print 'Did you mean:', corrected.string
+                querytext = corrected.string
+                search_result['corrected_q'] = querytext
+
+        user_q = querytext and mfp.parse(querytext) or Every()
 
         if not staff:
             user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username.lower())] +
@@ -370,32 +378,31 @@ def search(querytext, request, scope=None, pagenum=1, pagelen=10, orderby='-crea
 
         results = add_other_versions(searcher, hits, request.user, staff)
         results = add_absolute_urls(results, request)
-        search_result = search_page(results, pagenum, pagelen)
+
+        search_page(search_result, results, pagenum, pagelen)
 
     return search_result
 
 
-def search_page(results, pagenum, pagelen):
+def search_page(search_result, results, pagenum, pagelen):
 
-    results_page = {}
+    search_result['total'] = len(results)
+    search_result['pagecount'] = search_result['total'] // pagelen + 1
 
-    results_page['total'] = len(results)
-    results_page['pagecount'] = results_page['total'] // pagelen + 1
+    if pagenum > search_result['pagecount']:
+        pagenum = search_result['pagecount']
 
-    if pagenum > results_page['pagecount']:
-        pagenum = results_page['pagecount']
-
-    results_page['pagenum'] = pagenum
+    search_result['pagenum'] = pagenum
     offset = (pagenum - 1) * pagelen
 
-    if (offset + pagelen) > results_page['total']:
-        pagelen = results_page['total'] - offset
+    if (offset + pagelen) > search_result['total']:
+        pagelen = search_result['total'] - offset
 
-    results_page['offset'] = offset
-    results_page['pagelen'] = pagelen
-    results_page['results'] = results[offset:(offset + pagelen)]
+    search_result['offset'] = offset
+    search_result['pagelen'] = pagelen
+    search_result['results'] = results[offset:(offset + pagelen)]
 
-    return results_page
+    return search_result
 
 
 def suggest(request, prefix='', number=30):
