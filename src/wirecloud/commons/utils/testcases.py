@@ -20,7 +20,7 @@
 
 import codecs
 import Cookie
-from cStringIO import StringIO
+from io import BytesIO
 import mimetypes
 import os
 import requests
@@ -197,7 +197,7 @@ class StreamContent(object):
     def __init__(self, content):
 
         if not hasattr(content, '__iter__'):
-            self._content = StringIO(content)
+            self._content = BytesIO(content)
         else:
             self._content = content
 
@@ -224,7 +224,7 @@ class FakeNetwork(object):
         parsed_url = urlparse(url)
 
         if 'data' not in kwargs or kwargs['data'] is None:
-            kwargs['data'] = StringIO('')
+            kwargs['data'] = BytesIO('')
 
         if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
             raise URLError('not valid')
