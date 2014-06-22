@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from cStringIO import StringIO
+from io import BytesIO
 
 from django.utils.translation import ugettext as _
 
@@ -45,7 +45,7 @@ class IDMTokenProcessor(object):
 
         if 'x-fi-ware-oauth-token-body-pattern' in request['headers']:
             pattern = request['headers']['x-fi-ware-oauth-token-body-pattern']
-            request['data'] = StringIO(request['data'].read().replace(pattern, token))
+            request['data'] = BytesIO(bytes(request['data'].read().replace(pattern, token)))
             del request['headers']['x-fi-ware-oauth-token-body-pattern']
 
         del request['headers']['x-fi-ware-oauth-token']
