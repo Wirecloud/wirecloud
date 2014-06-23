@@ -120,6 +120,22 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(api_element.text, 'Yes')
     test_objectstorage_available_to_widgets.tags = ('fiware', 'fiware-plugin', 'fiware-ut-12')
 
+    @uses_extra_resources(('Wirecloud_objectstorage-test-widget_1.0.wgt',))
+    def test_objectstorage_reports_failures(self):
+
+        self.login()
+
+        with self.add_widget_to_mashup('Wirecloud Object Storage API test widget'):
+            api_element = self.driver.find_element_by_id('api_available')
+            self.assertEqual(api_element.text, 'Yes')
+            self.driver.find_element_by_css_selector('.btn-primary > div').click()
+            WebDriverWait(self.driver, 10).until(lambda driver: driver.find_element_by_css_selector('.btn-primary:not(.disabled)'))
+
+            tenant_id_step = self.driver.find_element_by_id('tenantId')
+            self.assertEqual(tenant_id_step.text, 'Fail')
+            alert = self.driver.find_element_by_css_selector('.alert-error')
+            self.assertEqual(alert.text, 'Failure!')
+
     def test_marketplace_keyword_search(self):
 
         response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')

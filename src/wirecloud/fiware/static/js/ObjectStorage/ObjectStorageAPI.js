@@ -53,6 +53,8 @@
 
     var process_failure = function process_failure(response) {
         switch (response.status) {
+        case 503:
+            return this.ERROR.SERVICE_UNAVAILABLE;
         case 401:
             return this.ERROR.UNAUTHORIZED;
         case 0:
@@ -86,7 +88,9 @@
     KeystoneAPI.prototype.ERROR = {
         UNKNOWN: 0,
         CONNECTION_REFUSED: 1,
-        UNAUTHORIZED: 2
+        UNAUTHORIZED: 2,
+        NOT_FOUND: 3,
+        SERVICE_UNAVAILABLE: 4
     };
 
     KeystoneAPI.prototype.getTenants = function getTenants(options) {
@@ -115,10 +119,10 @@
                 var reason;
 
                 if (typeof options.onFailure === 'function') {
-                    reason = process_failure(response);
+                    reason = process_failure.call(this, response);
                     options.onFailure(reason);
                 }
-            },
+            }.bind(this),
             onComplete: function (transport) {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();
@@ -185,10 +189,10 @@
                 var reason;
 
                 if (typeof options.onFailure === 'function') {
-                    reason = process_failure(response);
+                    reason = process_failure.call(this, response);
                     options.onFailure(reason);
                 }
-            },
+            }.bind(this),
             onComplete: function (transport) {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();
@@ -217,7 +221,9 @@
     ObjectStorageAPI.prototype.ERROR = {
         UNKNOWN: 0,
         CONNECTION_REFUSED: 1,
-        UNAUTHORIZED: 2
+        UNAUTHORIZED: 2,
+        NOT_FOUND: 3,
+        SERVICE_UNAVAILABLE: 4
     };
 
     ObjectStorageAPI.prototype.getContainerList = function getContainerList(options) {
@@ -245,10 +251,10 @@
                 var reason;
 
                 if (typeof options.onFailure === 'function') {
-                    reason = process_failure(response);
+                    reason = process_failure.call(this, response);
                     options.onFailure(reason);
                 }
-            },
+            }.bind(this),
             onComplete: function (transport) {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();
@@ -282,10 +288,10 @@
                 var reason;
 
                 if (typeof options.onFailure === 'function') {
-                    reason = process_failure(response);
+                    reason = process_failure.call(this, response);
                     options.onFailure(reason);
                 }
-            },
+            }.bind(this),
             onComplete: function (transport) {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();
@@ -318,10 +324,10 @@
                 var reason;
 
                 if (typeof options.onFailure === 'function') {
-                    reason = process_failure(response);
+                    reason = process_failure.call(this, response);
                     options.onFailure(reason);
                 }
-            },
+            }.bind(this),
             onComplete: function (transport) {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();
@@ -354,10 +360,10 @@
                 var reason;
 
                 if (typeof options.onFailure === 'function') {
-                    reason = process_failure(response);
+                    reason = process_failure.call(this, response);
                     options.onFailure(reason);
                 }
-            },
+            }.bind(this),
             onComplete: function (transport) {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();
@@ -395,10 +401,10 @@
                 var reason;
 
                 if (typeof options.onFailure === 'function') {
-                    reason = process_failure(response);
+                    reason = process_failure.call(this, response);
                     options.onFailure(reason);
                 }
-            },
+            }.bind(this),
             onComplete: function (transport) {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();
@@ -446,10 +452,10 @@
                 var reason;
 
                 if (typeof options.onFailure === 'function') {
-                    reason = process_failure(response);
+                    reason = process_failure.call(this, response);
                     options.onFailure(reason);
                 }
-            },
+            }.bind(this),
             onComplete: function (transport) {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();
@@ -482,10 +488,10 @@
                 var reason;
 
                 if (typeof options.onFailure === 'function') {
-                    reason = process_failure(response);
+                    reason = process_failure.call(this, response);
                     options.onFailure(reason);
                 }
-            },
+            }.bind(this),
             onComplete: function (transport) {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();
