@@ -26,6 +26,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET, require_POST
+from six import string_types
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.downloader import download_http_content
@@ -67,7 +68,7 @@ def add_tenant(request):
     if id_4CaaSt is None:
         return build_error_response(request, 400, _('Missing 4CaaStID'))
 
-    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+    if not isinstance(id_4CaaSt, string_types) or id_4CaaSt.strip() == '':
         return build_error_response(request, 400, _('Invalid 4CaaStID'))
 
     username = parse_username(id_4CaaSt)
@@ -107,7 +108,7 @@ def remove_tenant(request):
     if id_4CaaSt is None:
         return build_error_response(request, 400, _('Missing 4CaaStID'))
 
-    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+    if not isinstance(id_4CaaSt, string_types) or id_4CaaSt.strip() == '':
         return build_error_response(request, 400, _('Invalid 4CaaStID'))
 
     username = parse_username(id_4CaaSt)
@@ -144,7 +145,7 @@ def _parse_ac_request(request):
     if id_4CaaSt is None:
         return build_error_response(request, 400, _('Missing 4CaaStID'))
 
-    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+    if not isinstance(id_4CaaSt, string_types) or id_4CaaSt.strip() == '':
         return build_error_response(request, 400, _('Invalid 4CaaStID'))
 
     try:
@@ -263,7 +264,7 @@ def add_saas_tenant(request, creator, workspace):
     if id_4CaaSt is None:
         return build_error_response(request, 400, _('Missing 4CaaStID'))
 
-    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+    if not isinstance(id_4CaaSt, string_types) or id_4CaaSt.strip() == '':
         return build_error_response(request, 400, _('Invalid 4CaaStID'))
 
     username = parse_username(id_4CaaSt)
@@ -298,7 +299,7 @@ def remove_saas_tenant(request, creator, workspace):
     if id_4CaaSt is None:
         return build_error_response(request, 400, _('Missing 4CaaStID'))
 
-    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+    if not isinstance(id_4CaaSt, string_types) or id_4CaaSt.strip() == '':
         return build_error_response(request, 400, _('Invalid 4CaaStID'))
 
     username = parse_username(id_4CaaSt)

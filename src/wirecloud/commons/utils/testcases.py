@@ -19,7 +19,7 @@
 
 
 import codecs
-from six.moves.http.cookies import SimpleCookie
+from six.moves.http_cookies import SimpleCookie
 from io import BytesIO
 import mimetypes
 import os
@@ -38,6 +38,7 @@ from django.test import TransactionTestCase
 from django.test.client import Client
 from django.utils import translation
 from django.utils.importlib import import_module
+from six import string_types
 
 from wirecloud.platform.localcatalogue.utils import install_resource
 from wirecloud.platform.widget import utils as showcase
@@ -424,7 +425,7 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
 
             return test_func(self, *args, **kwargs)
 
-        wrapper.func_name = test_func.func_name
+        wrapper.__name__ = test_func.__name__
         return wrapper
 
     return wrap
@@ -668,7 +669,7 @@ def wirecloud_selenium_test_case(classes, namespace=None, browsers=None):
         for browser_name in browsers:
             browser = browsers[browser_name]
 
-            if isinstance(class_name, basestring):
+            if isinstance(class_name, string_types):
                 module_name, klass_name = class_name.rsplit('.', 1)
                 tests_class_name = browser_name + klass_name
                 module = import_module(module_name)

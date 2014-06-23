@@ -17,11 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import Cookie
+from six.moves.http_cookies import SimpleCookie
 import re
 import requests
-from six.moves.urllib.parse import urlparse
 import socket
+from six.moves.urllib.parse import urlparse
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -59,7 +59,7 @@ class Proxy():
             "url": url,
             "data": None,
             "headers": {},
-            "cookies": Cookie.SimpleCookie(),
+            "cookies": SimpleCookie(),
             "user": request.user,
             "original-request": request,
         }
@@ -91,7 +91,7 @@ class Proxy():
 
             elif header_name == 'cookie' or header_name == 'http_cookie':
 
-                cookie_parser = Cookie.SimpleCookie(str(header[1]))
+                cookie_parser = SimpleCookie(str(header[1]))
 
                 del cookie_parser[settings.SESSION_COOKIE_NAME]
 

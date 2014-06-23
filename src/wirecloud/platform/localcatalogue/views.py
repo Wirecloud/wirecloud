@@ -18,8 +18,8 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import errno
+from io import BytesIO
 import json
-from cStringIO import StringIO
 import os
 import zipfile
 
@@ -99,7 +99,7 @@ class ResourceCollection(Resource):
         elif content_type == 'application/octet-stream':
 
             packaged = True
-            downloaded_file = StringIO(request.body)
+            downloaded_file = BytesIO(request.body)
             try:
                 file_contents = WgtFile(downloaded_file)
             except zipfile.BadZipfile:
@@ -153,7 +153,7 @@ class ResourceCollection(Resource):
             if packaged:
 
                 try:
-                    downloaded_file = StringIO(downloaded_file)
+                    downloaded_file = BytesIO(downloaded_file)
                     file_contents = WgtFile(downloaded_file)
 
                 except zipfile.BadZipfile:

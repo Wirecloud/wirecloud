@@ -23,6 +23,7 @@ import json
 
 from django.utils import six
 from django.utils.translation import ugettext as _
+from six import string_types
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
@@ -33,7 +34,7 @@ class JSONTemplateParser(object):
     def __init__(self, template, base=None):
 
         self.base = base
-        if isinstance(template, basestring):
+        if isinstance(template, string_types):
             self._info = json.loads(template)
         elif isinstance(template, dict):
             self._info = template

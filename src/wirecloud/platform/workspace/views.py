@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from io import BytesIO
 import json
-from cStringIO import StringIO
 import os
 import zipfile
 
@@ -26,6 +26,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+from six import string_types
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
@@ -76,7 +77,7 @@ def setActiveWorkspace(user, workspace):
 
 def normalize_boolean_param(name, value):
 
-    if isinstance(value, basestring):
+    if isinstance(value, string_types):
         value = value.strip().lower()
         if value not in ('true', 'false'):
             raise ValueError(_('Invalid %(parameter)s value') % name)
@@ -239,7 +240,7 @@ class WorkspaceEntry(Resource):
         if 'active' in ts:
 
             active = ts.get('active', False)
-            if isinstance(active, basestring):
+            if isinstance(active, string_types):
                 active = ts['active'].lower() == 'true'
 
             if active:
@@ -363,7 +364,7 @@ class TabEntry(Resource):
 
         if 'visible' in data:
             visible = data['visible']
-            if isinstance(visible, basestring):
+            if isinstance(visible, string_types):
                 visible = visible.strip().lower()
                 if visible not in ('true', 'false'):
                     return build_error_response(request, 422, _('Invalid visible value'))
@@ -487,7 +488,7 @@ class MashupMergeService(Service):
 
         try:
             check_mashup_dependencies(template, request.user)
-        except MissingDependencies, e:
+        except MissingDependencies as e:
             details = {
                 'missingDependencies': e.missing_dependencies,
             }
@@ -552,7 +553,7 @@ class WorkspacePublisherEntry(Resource):
             options['smartphoneimage'] = smartphoneimage_filename
         description = build_rdf_template_from_workspace(options, workspace, request.user)
 
-        f = StringIO()
+        f = BytesIO()
         zf = zipfile.ZipFile(f, 'w')
         zf.writestr('config.xml', bytes(description.serialize(format='pretty-xml')))
         if image_file is not None:
@@ -565,7 +566,7 @@ class WorkspacePublisherEntry(Resource):
         market_managers = get_market_managers(request.user)
         try:
             market_managers['local'].publish(None, wgt_file, request.user, options, request)
-        except Exception, e:
+        except Exception as e:
             return build_error_response(request, 502, unicode(e))
 
         return HttpResponse(status=201)

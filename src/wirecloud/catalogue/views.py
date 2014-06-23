@@ -17,10 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from io import BytesIO
 import os
-from cStringIO import StringIO
 import json
-from urllib import url2pathname
+from six.moves.urllib.request import url2pathname
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -84,7 +84,7 @@ class ResourceCollection(Resource):
                 template_uri = request.POST['template_uri']
                 downloaded_file = download_http_content(template_uri, user=request.user)
                 if request.POST.get('packaged', 'false').lower() == 'true':
-                    resource = add_packaged_resource(StringIO(downloaded_file), request.user)
+                    resource = add_packaged_resource(BytesIO(downloaded_file), request.user)
                 else:
                     resource = add_resource_from_template(template_uri, downloaded_file, request.user)
 
@@ -106,7 +106,7 @@ class ResourceCollection(Resource):
     @no_cache
     def read(self, request):
 
-        querytext = unicode(request.GET.get('q', ''))
+        querytext = request.GET.get('q', '')
 
         filters = {
             'correct_q': request.GET.get('correct_q', 'true').lower() != 'false',
@@ -169,7 +169,7 @@ class ResourceSuggestion(Resource):
 
     def read(self, request):
 
-        prefix = unicode(request.GET.get('p', ''))
+        prefix = request.GET.get('p', '')
         number = request.GET.get('top', '30')
 
         if prefix.find(' ') != -1:

@@ -25,6 +25,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 from lxml import etree
+from six import string_types
 
 from wirecloud.commons.utils import mimeparser
 
@@ -48,7 +49,7 @@ def get_xml_error_response(request, mimetype, status_code, context):
         for key in context['details']:
             element = etree.Element(key)
 
-            if isinstance(context['details'][key], basestring):
+            if isinstance(context['details'][key], string_types):
                 element.text = context['details'][key]
             elif hasattr(context['details'][key], '__iter__'):
                 for value in context['details'][key]:
@@ -79,7 +80,7 @@ def get_json_error_response(request, mimetype, status_code, context):
 
 
 def get_plain_text_error_response(request, mimetype, status_code, context):
-    return unicode(context['error_msg'])
+    return "%s" % context['error_msg']
 
 
 ERROR_FORMATTERS = {
@@ -96,7 +97,7 @@ def build_response(request, status_code, context, formatters, headers):
     if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
         content_type = 'application/json; charset=utf-8'
     else:
-        formatter_keys = formatters.keys()
+        formatter_keys = list(formatters.keys())
         formatter_keys.remove('')
         content_type = mimeparser.best_match(formatter_keys, request.META.get('HTTP_ACCEPT', '*/*'))
 

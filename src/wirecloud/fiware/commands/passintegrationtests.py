@@ -23,6 +23,7 @@ import time
 from six.moves.urllib.parse import urljoin
 
 from django.utils import unittest
+from six import string_types
 
 from wirecloud.commons.utils.commands import BaseCommand
 from wirecloud.commons.utils.remote import WirecloudRemoteTestCase
@@ -45,7 +46,7 @@ def build_selenium_test_cases(classes, namespace):
         for browser_name in browsers:
             browser = browsers[browser_name]
 
-            if isinstance(class_name, basestring):
+            if isinstance(class_name, string_types):
                 module_name, klass_name = class_name.rsplit('.', 1)
                 tests_class_name = browser_name + klass_name
                 module = import_module(module_name)

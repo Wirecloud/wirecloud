@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 
 import os
 import random
-import regex, string
+import regex
 from six import string_types
 from six.moves.urllib.parse import urlparse, urljoin
 
@@ -166,6 +166,10 @@ def get_template_url(vendor, name, version, url, request=None):
     return template_url
 
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
+
 class Version(object):
 
     version_re = regex.compile(r'^([1-9]\d*|0)((?:\.(?:[1-9]\d*|0))*)(?:(a|b|rc)([1-9]\d*))?$')
@@ -180,12 +184,12 @@ class Version(object):
         (major, patch, prerelease, prerelease_num) = match.group(1, 2, 3, 4)
 
         if patch:
-            self.version = tuple(map(string.atoi, [major] + patch[1:].split('.')))
+            self.version = tuple(map(int, [major] + patch[1:].split('.')))
         else:
-            self.version = (string.atoi(major),)
+            self.version = (int(major),)
 
         if prerelease:
-            self.prerelease = (prerelease, string.atoi(prerelease_num))
+            self.prerelease = (prerelease, int(prerelease_num))
         else:
             self.prerelease = None
 
@@ -221,6 +225,16 @@ class Version(object):
                 compare = cmp(self.prerelease, other.prerelease)
 
         return compare if not self.reverse else (compare * -1)
+
+    def __eq__(self, other):
+        return self.__cmp__(other) == 0
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
 
 
 class CatalogueResourceSchema(fields.SchemaClass):

@@ -20,6 +20,7 @@
 import json
 
 from south.v2 import DataMigration
+from six import string_types
 
 
 class Migration(DataMigration):
@@ -36,7 +37,7 @@ class Migration(DataMigration):
             for operator_id, operator in wiring_status['operators'].iteritems():
                 if 'preferences' in operator:
                     for preference_name, preference in operator['preferences'].iteritems():
-                        if isinstance(preference, basestring):
+                        if isinstance(preference, string_types):
                             operator['preferences'][preference_name] = {
                                 'readonly': False,
                                 'hidden': False,

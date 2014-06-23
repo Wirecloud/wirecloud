@@ -20,6 +20,8 @@
 from copy import deepcopy
 from six.moves.urllib.parse import urljoin
 
+from six import string_types
+
 from wirecloud.commons.utils.template.base import TemplateParseException
 from wirecloud.commons.utils.template.parsers.json import JSONTemplateParser
 from wirecloud.commons.utils.template.parsers.next_xml import ApplicationMashupTemplateParser
@@ -135,13 +137,13 @@ class TemplateParser(object):
                     elif use['type'] in ('vdef', 'inputendpoint', 'outputendpoint'):
                         variable = variables[use['variable']]
                         for field in variable:
-                            if isinstance(variable[field], basestring):
+                            if isinstance(variable[field], string_types):
                                 variable[field] = variable[field].replace('__MSG_' + index + '__', value)
                     elif use['type'] == 'upo':
                         variable = variables[use['variable']]
                         for option in variable['options']:
                             for field in option:
-                                if isinstance(option[field], basestring):
+                                if isinstance(option[field], string_types):
                                     option[field] = option[field].replace('__MSG_' + index + '__', value)
         del info['translations']
         del info['translation_index_usage']
