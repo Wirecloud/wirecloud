@@ -52,6 +52,23 @@
         }
     },
     {
+        "pk": 83,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "",
+            "last_name": "",
+            "email": "myuser2@c.com",
+            "username": "MyUser",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "groups": [],
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
+        }
+    },
+    {
         "pk": 101,
         "model": "catalogue.catalogueresource",
         "fields": {
@@ -219,7 +236,7 @@
             "fromWGT": false,
             "type": 1,
             "public": false,
-            "users": []
+            "users": [83]
         }
     },
     {

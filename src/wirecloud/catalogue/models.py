@@ -363,8 +363,8 @@ def search(querytext, request, pagenum=1, pagelen=10, staff=False, scope=None,
         user_q = querytext and mfp.parse(querytext) or Every()
 
         if not staff:
-            user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username.lower())] +
-                [Term('groups', group.name.lower()) for group in request.user.groups.all()])])
+            user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username)] +
+                [Term('groups', group.name) for group in request.user.groups.all()])])
 
         if scope:
             user_q = And([user_q, Term('type', scope)])
