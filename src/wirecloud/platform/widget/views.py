@@ -20,8 +20,8 @@
 import json
 import time
 import os
-from urllib import url2pathname
-from urlparse import urljoin
+from six.moves.urllib.parse import urljoin
+from six.moves.urllib.request import url2pathname
 
 from django.conf import settings
 from django.core.cache import cache

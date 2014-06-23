@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from io import BytesIO
 from lxml import etree
-from cStringIO import StringIO
 
 from django.conf import settings
 from django.db.models import Q
@@ -115,7 +115,7 @@ def create_widget_from_wgt(wgt, user, deploy_only=False):
     if isinstance(wgt, WgtFile):
         wgt_file = wgt
     else:
-        wgt_file = WgtFile(StringIO(download_http_content(wgt)))
+        wgt_file = WgtFile(BytesIO(download_http_content(wgt)))
 
     template = wgt_deployer.deploy(wgt_file)
     if not deploy_only:
@@ -154,7 +154,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
     else:
         return widget_code
 
-    xmltree = etree.parse(StringIO(widget_code), parser)
+    xmltree = etree.parse(BytesIO(widget_code), parser)
 
     prefix = xmltree.getroot().prefix
     xmlns = None

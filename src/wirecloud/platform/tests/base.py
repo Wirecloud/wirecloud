@@ -17,9 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-
+from io import BytesIO
 from lxml import etree
-from cStringIO import StringIO
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -69,7 +68,7 @@ class BasicViewsAPI(WirecloudTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/xhtml+xml')
 
         parser = etree.XMLParser(encoding='utf-8')
-        etree.parse(StringIO(response.content), parser)
+        etree.parse(BytesIO(response.content), parser)
 
     def test_workspace_view_handles_not_found(self):
 
@@ -83,7 +82,7 @@ class BasicViewsAPI(WirecloudTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
 
         parser = etree.XMLParser(encoding='utf-8')
-        etree.parse(StringIO(response.content), parser)
+        etree.parse(BytesIO(response.content), parser)
 
     def test_workspace_view_handles_bad_view_value(self):
 

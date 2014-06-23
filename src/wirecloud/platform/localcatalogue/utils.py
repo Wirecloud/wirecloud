@@ -16,7 +16,7 @@
 
 # You should have received a copy of the GNU Affero General Public License
 
-from cStringIO import StringIO
+from io import BytesIO
 
 from django.db import IntegrityError
 from django.db.models import Q
@@ -34,7 +34,7 @@ def install_resource(file_contents, templateURL, executor_user, packaged):
 
     if packaged:
         if isinstance(file_contents, basestring):
-            file_contents = StringIO(file_contents)
+            file_contents = BytesIO(file_contents)
             wgt_file = WgtFile(file_contents)
         elif isinstance(file_contents, WgtFile):
             wgt_file = file_contents

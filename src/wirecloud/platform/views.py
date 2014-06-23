@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-from urlparse import urlparse, urlunparse, parse_qs
+from six.moves.urllib.parse import urlparse, urlunparse, parse_qs
 
 from django.contrib.auth.views import redirect_to_login
 from django.core.urlresolvers import reverse

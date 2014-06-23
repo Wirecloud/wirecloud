@@ -22,8 +22,8 @@ from __future__ import unicode_literals
 import os
 import random
 import regex, string
-from urlparse import urlparse, urljoin
-from types import StringType
+from six import string_types
+from six.moves.urllib.parse import urlparse, urljoin
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group
@@ -175,7 +175,7 @@ class Version(object):
         match = self.version_re.match(vstring)
 
         if not match:
-            raise ValueError, "invalid version number '%s'" % vstring
+            raise ValueError("invalid version number '%s'" % vstring)
 
         (major, patch, prerelease, prerelease_num) = match.group(1, 2, 3, 4)
 
@@ -193,11 +193,11 @@ class Version(object):
 
     def __cmp__(self, other):
 
-        if isinstance(other, StringType):
+        if isinstance(other, string_types):
             other = Version(other)
 
         if not isinstance(other, Version):
-            raise ValueError, "invalid version number '%s'" % vstring
+            raise ValueError("invalid version number '%s'" % vstring)
 
         maxlen = max(len(self.version), len(other.version))
         compare = cmp(self.version + (0,)*(maxlen - len(self.version)), other.version + (0,)*(maxlen - len(other.version)))

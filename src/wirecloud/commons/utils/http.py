@@ -19,7 +19,7 @@
 
 import json
 import socket
-from urlparse import urljoin
+from six.moves.urllib.parse import urljoin
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse

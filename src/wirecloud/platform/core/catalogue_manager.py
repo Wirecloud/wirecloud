@@ -20,7 +20,7 @@
 import json
 import os
 import requests
-from urlparse import urljoin
+from six.moves.urllib.parse import urljoin
 
 from django.utils.encoding import iri_to_uri
 

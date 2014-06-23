@@ -21,16 +21,16 @@ import sys
 
 from django.utils.functional import Promise
 try:
-    from django.utils.encoding import force_unicode
+    from django.utils.encoding import force_text
 except:
-    from django.utils.encoding import force_text as force_unicode
+    from django.utils.encoding import force_unicode as force_text
 from json import JSONEncoder
 
 
 class LazyEncoder(JSONEncoder):
     def default(self, o):
         if isinstance(o, Promise):
-            return force_unicode(o)
+            return force_text(o)
         else:
             return super(LazyEncoder, self).default(o)
 

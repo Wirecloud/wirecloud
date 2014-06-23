@@ -19,8 +19,8 @@
 
 
 import codecs
-import Cookie
 from cStringIO import StringIO
+from six.moves.http.cookies import SimpleCookie
 import mimetypes
 import os
 import requests
@@ -28,8 +28,8 @@ import shutil
 import stat
 import sys
 from tempfile import mkdtemp
-from urllib2 import URLError, HTTPError
-from urlparse import urlparse
+from six.moves.urllib.error import URLError, HTTPError
+from six.moves.urllib.parse import urlparse
 
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
@@ -244,7 +244,7 @@ class FakeNetwork(object):
             res.headers.update(res_info['headers'])
 
             if 'Set-Cookie' in res_info['headers']:
-                cookies = Cookie.SimpleCookie()
+                cookies = SimpleCookie()
                 for entry in res_info['headers']['Set-Cookie'].split(','):
                     cookies.load(entry)
                 res.cookies.update(cookies)

@@ -19,9 +19,9 @@
 
 
 import os
+from six.moves.urllib.parse import urljoin
+from six.moves.urllib.request import pathname2url
 import time
-import urlparse
-import urllib
 
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -678,7 +678,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         mashup_url = self.live_server_url + '/user_with_workspaces/Public Workspace?mode=embedded'
         iframe_test_path = os.path.join(self.shared_test_data_dir, 'iframe_test.html')
-        iframe_test_url = urlparse.urljoin('file:', urllib.pathname2url(iframe_test_path))
+        iframe_test_url = urljoin('file:', pathname2url(iframe_test_path))
         self.driver.get(iframe_test_url)
 
         # Load Wirecloud using the iframe element

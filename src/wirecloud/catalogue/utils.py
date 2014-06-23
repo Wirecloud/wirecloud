@@ -19,8 +19,8 @@
 
 import json
 import os
+from six.moves.urllib.parse import urljoin, urlparse
 import time
-from urlparse import urljoin, urlparse
 
 from django.conf import settings
 from django.utils.translation import ugettext as _

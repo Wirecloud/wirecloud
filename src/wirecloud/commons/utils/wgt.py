@@ -21,7 +21,7 @@ import os
 import zipfile
 from lxml import etree
 from shutil import rmtree
-from urllib import pathname2url
+from six.moves.urllib.request import pathname2url
 
 from wirecloud.commons.utils.template import TemplateParser
 
@@ -97,7 +97,7 @@ class WgtFile(object):
     def extract(self, path):
 
         if not os.path.exists(path) or not os.path.isdir(path):
-            os.mkdir(path, 0777)
+            os.mkdir(path, 0o777)
 
         for name in self._zip.namelist():
             listnames = name.split("/")[:-1]

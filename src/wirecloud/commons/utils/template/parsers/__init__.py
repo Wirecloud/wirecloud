@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from copy import deepcopy
-import urlparse
+from six.moves.urllib.parse import urljoin
 
 from wirecloud.commons.utils.template.base import TemplateParseException
 from wirecloud.commons.utils.template.parsers.json import JSONTemplateParser
@@ -36,7 +36,7 @@ BASIC_URL_FIELDS = ['doc', 'image', 'smartphoneimage']
 def absolutize_url_field(value, base_url):
     value = value.strip()
     if value != '':
-        value = urlparse.urljoin(base_url, value)
+        value = urljoin(base_url, value)
 
     return value
 
@@ -99,7 +99,7 @@ class TemplateParser(object):
         if base is None:
             base = self.base
 
-        return urlparse.urljoin(base, url)
+        return urljoin(base, url)
 
     def get_resource_processed_info(self, base=None, lang=None, process_urls=True):
         info = deepcopy(self.get_resource_info())

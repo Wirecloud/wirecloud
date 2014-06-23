@@ -1,7 +1,7 @@
 import string
 import urllib
-import urlparse
 import random
+from six.moves.urllib.parse import parse_qsl, urlparse, urlunparse
 
 UNICODE_ASCII_CHARACTERS = (string.ascii_letters.decode('ascii') +
     string.digits.decode('ascii'))
@@ -21,16 +21,16 @@ def build_url(base, additional_params=None):
     :type additional_params: dict
     :rtype: str
     """
-    url = urlparse.urlparse(base)
+    url = urlparse(base)
     query_params = {}
-    query_params.update(urlparse.parse_qsl(url.query, True))
+    query_params.update(parse_qsl(url.query, True))
     if additional_params is not None:
         query_params.update(additional_params)
         for k, v in additional_params.iteritems():
             if v is None:
                 query_params.pop(k)
 
-    return urlparse.urlunparse((url.scheme,
+    return urlunparse((url.scheme,
                                 url.netloc,
                                 url.path,
                                 url.params,

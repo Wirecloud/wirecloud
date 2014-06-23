@@ -32,8 +32,7 @@ field, check OAuthBackend class for details on how to extend it.
 """
 
 import json
-from urllib import urlencode
-from urlparse import urljoin
+from six.moves.urllib.parse import urlencode, urljoin, urlparse
 
 from django.conf import settings
 

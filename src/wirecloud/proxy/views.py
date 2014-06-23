@@ -20,8 +20,8 @@
 import Cookie
 import re
 import requests
+from six.moves.urllib.parse import urlparse
 import socket
-import urlparse
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -65,7 +65,7 @@ class Proxy():
         }
 
         # Request creation
-        proto, host, cgi, param, query = urlparse.urlparse(url)[:5]
+        proto, host, cgi, param, query = urlparse(url)[:5]
 
         # Extract headers from META
         if 'HTTP_TRANSFER_ENCODING' in request.META:
@@ -187,7 +187,7 @@ def proxy_request(request, protocol, domain, path):
     # TODO improve proxy security
 
     try:
-        if request.get_host() != urlparse.urlparse(request.META["HTTP_REFERER"])[1]:
+        if request.get_host() != urlparse(request.META["HTTP_REFERER"])[1]:
             raise Exception()
 
         if settings.SESSION_COOKIE_NAME not in request.COOKIES:

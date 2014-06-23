@@ -20,7 +20,7 @@
 
 import json
 import requests
-from urlparse import urljoin
+from six.moves.urllib.parse import urljoin
 
 from django.conf import settings
 

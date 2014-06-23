@@ -23,9 +23,10 @@ import json
 from django.conf.urls import patterns
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import get_ns_resolver, get_resolver, get_script_prefix, NoReverseMatch
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.importlib import import_module
 from django.utils.regex_helper import normalize
+from six import string_types
 
 from wirecloud.commons.utils.encoding import LazyEncoderXHTML
 
@@ -92,7 +93,7 @@ def get_plugins():
         add_plugin('wirecloud.platform.WirecloudCorePlugin', WirecloudCorePlugin())
 
         for entry in modules:
-            if isinstance(entry, basestring):
+            if isinstance(entry, string_types):
                 i = entry.rfind('.')
                 module, attr = entry[:i], entry[i + 1:]
                 try:
@@ -371,7 +372,7 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None, current_a
             if set(kwargs + defaults.keys()) != set(params + defaults.keys() + prefix_args):
                 continue
 
-            unicode_kwargs = dict([(k, u'%(' + force_unicode(k) + u')s') for k in kwargs])
+            unicode_kwargs = dict([(k, u'%(' + force_text(k) + u')s') for k in kwargs])
             unicode_kwargs.update(defaults)
             return (prefix_norm + result) % unicode_kwargs
 

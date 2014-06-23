@@ -19,8 +19,8 @@
 
 import requests
 from requests.auth import HTTPBasicAuth
-from urllib2 import URLError, HTTPError
-from urlparse import urljoin, urlparse
+from six.moves.urllib.error import URLError, HTTPError
+from six.moves.urllib.parse import urljoin, urlparse
 from lxml import etree
 
 from django.core.cache import cache
