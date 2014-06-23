@@ -141,9 +141,7 @@
         };
 
         postBody = {
-            "auth": {
-                "tenantId": options.tenant_id
-            }
+            "auth": {}
         };
 
         if (typeof options === 'string') {
