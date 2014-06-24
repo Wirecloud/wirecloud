@@ -109,7 +109,7 @@ def process_secure_data(text, request, ignore_errors=False):
                 elif encoding == 'base64':
                     value = value.encode('base64')[:-1]
 
-                request['data'] = BytesIO(request['data'].read().replace(substr, value))
+                request['data'] = BytesIO(request['data'].read().replace(substr, bytes(value)))
 
             elif action == 'basic_auth':
                 user_ref = options.get('user_ref', '')
