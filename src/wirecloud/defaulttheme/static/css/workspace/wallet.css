@@ -60,3 +60,15 @@
 .widget_wallet_addmore > .styled_button {
     margin: 6px;
 }
+
+.widget_wallet_list > .resource .mainbutton {
+    position: absolute;
+    margin: 0px;
+    top: 0px;
+    right: 0px;
+}
+
+.widget_wallet_list > .resource .mainbutton > div {
+    border-top-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}

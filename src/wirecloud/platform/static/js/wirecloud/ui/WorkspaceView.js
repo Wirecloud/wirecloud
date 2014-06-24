@@ -39,7 +39,8 @@
                         'mainbutton': function (options, context, resource) {
                             var button = new StyledElements.StyledButton({
                                 'class': 'instantiate_button',
-                                'text': gettext('Add to workspace')
+                                'iconClass': 'icon-plus',
+                                'title': 'Add to workspace'
                             });
                             button.addEventListener('click', function () {
                                 var local_widget = Wirecloud.LocalCatalogue.getResource(resource.vendor, resource.name, resource.version);
