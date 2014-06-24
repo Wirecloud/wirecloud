@@ -155,7 +155,7 @@
             addmore: function () {
                 var div = document.createElement('div');
                 div.className = 'widget_wallet_addmore';
-                var button = new StyledElements.StyledButton({text: 'Obtain more...', "class": "btn-success"});
+                var button = new StyledElements.StyledButton({text: gettext('Get more widgets'), "class": "btn-success"});
                 button.addEventListener('click', function () {
                     LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
                 });
