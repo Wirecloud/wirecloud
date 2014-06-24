@@ -32,6 +32,7 @@
             'iconHeight': 24,
             'iconWidth': 24,
             'icon': null,
+            'iconClass': null,
             'usedInForm': false
         };
         options = Wirecloud.Utils.merge(defaultOptions, options);
@@ -73,10 +74,14 @@
             button.appendChild(this.icon);
         }
 
-
-        if (options.text != null) {
+        if (options.text != null || options.iconClass != null) {
             this.label = document.createElement('span');
-            this.label.appendChild(document.createTextNode(options.text));
+            if (options.text != null) {
+                this.label.appendChild(document.createTextNode(options.text));
+            }
+            if (options.iconClass != null) {
+                this.label.classList.add(options.iconClass);
+            }
             button.appendChild(this.label);
         }
 
