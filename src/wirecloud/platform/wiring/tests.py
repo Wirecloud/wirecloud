@@ -27,7 +27,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.test import TransactionTestCase, Client
+from django.test import Client
 from django.utils import unittest
 import selenium
 from selenium.common.exceptions import NoSuchElementException
@@ -49,7 +49,7 @@ def selenium_supports_draganddrop(driver):
     return driver.capabilities['browserName'] != 'firefox' or SELENIUM_VERSION >= (2, 37, 2) or driver.profile.native_events_enabled
 
 
-class WiringTestCase(TransactionTestCase):
+class WiringTestCase(WirecloudTestCase):
 
     fixtures = ('test_data',)
     tags = ('wiring',)

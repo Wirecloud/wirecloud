@@ -26,7 +26,7 @@ from tempfile import mkdtemp
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TransactionTestCase, TestCase, Client
+from django.test import TestCase, Client
 from django.test.utils import override_settings
 
 import wirecloud.catalogue.utils
@@ -444,23 +444,14 @@ class PublishTestCase(WirecloudTestCase):
         self.assertRaises(TemplateParseException, add_resource_from_template, template_uri, template, self.user)
 
 
-class WGTDeploymentTestCase(TransactionTestCase):
+class WGTDeploymentTestCase(WirecloudTestCase):
+
+    tags = ('current',)
 
     def setUp(self):
         super(WGTDeploymentTestCase, self).setUp()
 
-        self.old_CATALOGUE_MEDIA_ROOT = settings.CATALOGUE_MEDIA_ROOT
-        settings.CATALOGUE_MEDIA_ROOT = mkdtemp()
-        self.old_deployer = wirecloud.catalogue.utils.wgt_deployer
-        wirecloud.catalogue.utils.wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
         self.resource_collection_url = reverse('wirecloud_catalogue.resource_collection')
-
-    def tearDown(self):
-        rmtree(settings.CATALOGUE_MEDIA_ROOT, ignore_errors=True)
-        settings.CATALOGUE_MEDIA_ROOT = self.old_CATALOGUE_MEDIA_ROOT
-        wirecloud.catalogue.utils.wgt_deployer = self.old_deployer
-
-        super(WGTDeploymentTestCase, self).tearDown()
 
     def test_wgt_uploading_requires_login(self):
         c = Client()
