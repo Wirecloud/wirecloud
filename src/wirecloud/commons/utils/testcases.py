@@ -38,7 +38,7 @@ from django.test import TransactionTestCase
 from django.test.client import Client
 from django.utils import translation
 from django.utils.importlib import import_module
-from six import string_types
+from six import string_types, text_type
 
 from wirecloud.platform.localcatalogue.utils import install_resource
 from wirecloud.platform.widget import utils as showcase
@@ -197,14 +197,10 @@ class StreamContent(object):
 
     def __init__(self, content):
 
-        if not hasattr(content, '__iter__'):
-            self._content = BytesIO(content)
-        else:
-            self._content = content
+        if isinstance(content, text_type):
+            content = content.encode('utf8')
 
-    def read(self, *args, **kwargs):
-
-        return self._content.read(*args, **kwargs)
+        self._content = BytesIO(content)
 
     def stream(self, *args, **kwargs):
 
@@ -225,7 +221,7 @@ class FakeNetwork(object):
         parsed_url = urlparse(url)
 
         if 'data' not in kwargs or kwargs['data'] is None:
-            kwargs['data'] = BytesIO('')
+            kwargs['data'] = BytesIO(b'')
 
         if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
             raise URLError('not valid')
