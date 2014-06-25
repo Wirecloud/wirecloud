@@ -36,6 +36,8 @@ class JSONTemplateParser(object):
         self.base = base
         if isinstance(template, text_type):
             self._info = json.loads(template)
+        elif isinstance(template, bytes):
+            self._info = json.loads(template.decode('utf8'))
         elif isinstance(template, dict):
             self._info = template
         else:
