@@ -449,8 +449,6 @@ class PublishTestCase(WirecloudTestCase):
 
 class WGTDeploymentTestCase(WirecloudTestCase):
 
-    tags = ('current',)
-
     def setUp(self):
         super(WGTDeploymentTestCase, self).setUp()
 
