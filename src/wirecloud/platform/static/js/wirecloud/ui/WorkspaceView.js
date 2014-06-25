@@ -31,8 +31,8 @@
         Wirecloud.LocalCatalogue.search({
             scope: 'widget',
             search_criteria: keywords,
-            onSuccess: function (widgets) {
-                var i;
+            onSuccess: function (widgets, search_info) {
+                var i, msg;
 
                 if (this.resource_painter == null) {
                     this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates['wallet_widget'], null, {
@@ -53,8 +53,20 @@
                 }
 
                 this._list.innerHTML = '';
-                for (i = 0; i < widgets.length; i += 1) {
-                    this.resource_painter.paint(widgets[i]).insertInto(this._list);
+                if (search_info.total_count !== 0) {
+                    for (i = 0; i < widgets.length; i += 1) {
+                        this.resource_painter.paint(widgets[i]).insertInto(this._list);
+                    }
+                } else {
+                    msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p>" +
+                        "<p>Suggestions:</p>" +
+                        "<ul>" +
+                        "<li>Make sure all words are spelled correctly.</li>" +
+                        "<li>Try different keywords.</li>" +
+                        "<li>Try more general keywords.</li>" +
+                        "</ul>");
+                    msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(keywords.trim())}, true);
+                    this.resource_painter.paintError(new StyledElements.Fragment(msg)).insertInto(this._list);
                 }
             }.bind(this)
         });

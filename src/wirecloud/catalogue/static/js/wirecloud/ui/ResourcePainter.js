@@ -42,14 +42,15 @@
         }
     };
 
-    ResourcePainter.prototype.setError = function setError(message) {
-        this.container.clear();
-
-        var contents = this.builder.parse(this.error_template, {
+    ResourcePainter.prototype.paintError = function paintError(message) {
+        return this.builder.parse(this.error_template, {
             'message': message
         });
+    };
 
-        this.container.appendChild(contents);
+    ResourcePainter.prototype.setError = function setError(message) {
+        this.container.clear();
+        this.container.appendChild(this.paintError(message));
     };
 
     ResourcePainter.prototype.paint = function paint(resource) {
