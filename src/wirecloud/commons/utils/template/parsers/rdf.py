@@ -23,6 +23,7 @@ import rdflib
 
 from django.utils.translation import ugettext as _
 from lxml import etree
+from six import text_type
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
 from wirecloud.commons.utils.http import parse_mime_type
@@ -62,9 +63,9 @@ class RDFTemplateParser(object):
                 self._graph = rdflib.Graph()
                 self._graph.parse(data=template, format='n3')
             except:
-                if isinstance(template, str):
+                if isinstance(template, bytes):
                     doc = etree.fromstring(template)
-                elif isinstance(template, unicode):
+                elif isinstance(template, text_type):
                     # Work around: ValueError: Unicode strings with encoding
                     # declaration are not supported.
                     doc = etree.fromstring(template.encode('utf-8'))

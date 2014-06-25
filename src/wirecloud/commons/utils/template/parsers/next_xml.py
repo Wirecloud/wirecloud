@@ -24,6 +24,7 @@ from lxml import etree
 import os
 
 from django.utils.translation import ugettext as _
+from six import text_type
 
 from wirecloud.commons.utils.template.base import TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
@@ -91,9 +92,9 @@ class ApplicationMashupTemplateParser(object):
         self._info = {}
         self._translation_indexes = {}
 
-        if isinstance(template, str):
+        if isinstance(template, bytes):
             self._doc = etree.fromstring(template)
-        elif isinstance(template, unicode):
+        elif isinstance(template, text_type):
             # Work around: ValueError: Unicode strings with encoding
             # declaration are not supported.
             self._doc = etree.fromstring(template.encode('utf-8'))
