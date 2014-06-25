@@ -193,7 +193,7 @@ def proxy_request(request, protocol, domain, path):
         if settings.SESSION_COOKIE_NAME not in request.COOKIES:
             raise Exception()
     except:
-        return build_error_response(request, 403, _(u"Invalid request"))
+        return build_error_response(request, 403, _("Invalid request"))
 
     url = protocol + '://' + domain + path
     if len(request.GET) > 0:

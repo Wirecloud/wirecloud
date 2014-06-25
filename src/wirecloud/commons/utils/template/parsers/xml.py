@@ -496,7 +496,7 @@ class WirecloudTemplateParser(object):
         if typeText in mapping:
             return mapping[typeText]
         else:
-            raise TemplateParseException(_(u"ERROR: unkown TEXT TYPE ") + typeText)
+            raise TemplateParseException(_("ERROR: unkown TEXT TYPE ") + typeText)
 
     def get_contents(self):
         return etree.tostring(self._doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)

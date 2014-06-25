@@ -184,7 +184,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         simple_price_offering = self.search_in_catalogue_results('Test Operator')
         button = simple_price_offering.find_element_by_css_selector('.mainbutton')
-        self.assertEqual(button.text, u'10 €')
+        self.assertEqual(button.text, '10 €')
 
         complex_price_offering = self.search_in_catalogue_results('Smart City Lights application')
         button = complex_price_offering.find_element_by_css_selector('.mainbutton')

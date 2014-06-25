@@ -314,17 +314,17 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
     def check_basic_rdf_workspace_template_info(self, graph, mashup_uri):
 
-        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup')
-        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', 'Test Mashup')
+        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', '1')
 
         vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
-        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', 'Wirecloud Test Suite')
 
         addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
-        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
+        self.assertRDFElement(graph, addr, self.VCARD, 'email', 'a@b.com')
 
         authors = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
-        self.assertRDFElement(graph, authors, self.FOAF, 'name', u'test')
+        self.assertRDFElement(graph, authors, self.FOAF, 'name', 'test')
 
     def check_workspace_rdf_wiring(self, graph, mashup_uri):
         wiring = graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']).next()
@@ -334,18 +334,18 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             self.assertRDFCount(graph, ioperator, self.WIRE_M, 'hasiOperatorPreference', 3)
             pref_with_val_found = readonly_pref_found = hidden_pref_found = False
             for preference in graph.objects(ioperator, self.WIRE_M['hasiOperatorPreference']):
-                self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', u'false', optional=True)
-                self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', u'false', optional=True)
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                if unicode(name) == u'pref_with_val':
+                if unicode(name) == 'pref_with_val':
                     pref_with_val_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'value1')
-                elif unicode(name) == u'readonly_pref':
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value1')
+                elif unicode(name) == 'readonly_pref':
                     readonly_pref_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'value2')
-                elif unicode(name) == u'hidden_pref':
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value2')
+                elif unicode(name) == 'hidden_pref':
                     hidden_pref_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'value3')
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value3')
                 else:
                     self.fail()
 
@@ -455,11 +455,11 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
     def test_build_rdf_template_from_workspace(self):
 
         options = {
-            'vendor': u'Wirecloud Test Suite',
-            'name': u'Test Mashup',
-            'version': u'1',
-            'authors': u'test',
-            'email': u'a@b.com',
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'authors': 'test',
+            'email': 'a@b.com',
         }
         # Basic info
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
@@ -469,7 +469,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
 
         tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
-        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'Tab')
+        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', 'Tab')
 
         wiring = graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']).next()
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasConnection', 0)
@@ -478,11 +478,11 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         # Workspace with iwidgets
         options = {
-            'vendor': u'Wirecloud Test Suite',
-            'name': u'Test Mashup',
-            'version': u'1',
-            'authors': u'test',
-            'email': u'a@b.com',
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'authors': 'test',
+            'email': 'a@b.com',
             'readOnlyWidgets': False,
         }
         graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
@@ -492,22 +492,22 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
 
         tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
-        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
+        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', 'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
             self.assertRDFElement(graph, iwidget, self.WIRE_M, 'readonly', 'false', optional=True)
             self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
             username_found = password_found = False
             for preference in graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference']):
-                self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', u'false', optional=True)
-                self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', u'false', optional=True)
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                if unicode(name) == u'username':
+                if unicode(name) == 'username':
                     username_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_username')
-                elif unicode(name) == u'password':
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_username')
+                elif unicode(name) == 'password':
                     password_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_password')
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
                 else:
                     self.fail()
 
@@ -519,11 +519,11 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         # Workspace with iwidgets
         options = {
-            'vendor': u'Wirecloud Test Suite',
-            'name': u'Test Mashup',
-            'version': u'1',
-            'authors': u'test',
-            'email': u'a@b.com',
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'authors': 'test',
+            'email': 'a@b.com',
             'readOnlyWidgets': True,
         }
         graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
@@ -533,22 +533,22 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
 
         tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
-        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
+        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', 'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
             self.assertRDFElement(graph, iwidget, self.WIRE_M, 'readonly', 'true')
             self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
             username_found = password_found = False
             for preference in graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference']):
-                self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', u'false', optional=True)
-                self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', u'false', optional=True)
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                if unicode(name) == u'username':
+                if unicode(name) == 'username':
                     username_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_username')
-                elif unicode(name) == u'password':
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_username')
+                elif unicode(name) == 'password':
                     password_found = True
-                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_password')
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
                 else:
                     self.fail()
 
@@ -577,16 +577,16 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             if name == 'Test Widget':
 
                 for preference in preferences:
-                    self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', u'true')
+                    self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                     name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                    if unicode(name) == u'username':
+                    if unicode(name) == 'username':
                         username_found = True
-                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', u'false', optional=True)
-                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'default')
-                    elif unicode(name) == u'password':
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', 'default')
+                    elif unicode(name) == 'password':
                         password_found = True
-                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', u'true')
-                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'initial text')
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'true')
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', 'initial text')
                     else:
                         self.fail()
 
@@ -594,12 +594,12 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
                 for preference in preferences:
                     name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                    if unicode(name) == u'username':
+                    if unicode(name) == 'username':
                         username_found = True
-                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_username')
-                    elif unicode(name) == u'password':
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_username')
+                    elif unicode(name) == 'password':
                         password_found = True
-                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_password')
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
                     else:
                         self.fail()
 
@@ -608,28 +608,28 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
     def test_build_rdf_template_from_workspace_utf8_char(self):
         options = {
-            'vendor': u'Wirecloud Test Suite',
-            'name': u'Test Mashup with ñ',
-            'version': u'1',
-            'authors': u'author with é',
-            'email': u'a@b.com',
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup with ñ',
+            'version': '1',
+            'authors': 'author with é',
+            'email': 'a@b.com',
             'readOnlyWidgets': True,
         }
 
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
 
-        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup with ñ')
-        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', 'Test Mashup with ñ')
+        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', '1')
 
         vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
-        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', 'Wirecloud Test Suite')
 
         addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
-        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
+        self.assertRDFElement(graph, addr, self.VCARD, 'email', 'a@b.com')
 
         authors = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
-        self.assertRDFElement(graph, authors, self.FOAF, 'name', u'author with é')
+        self.assertRDFElement(graph, authors, self.FOAF, 'name', 'author with é')
 
 
 class ParameterizedWorkspaceParseTestCase(CacheTestCase):
@@ -730,7 +730,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
     def check_workspace_with_params(self, workspace):
 
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
-        self.assertEqual(workspace_data['extra_prefs'], {'param': {'type': 'text', 'inheritable': False, 'label': u'Parameter'}})
+        self.assertEqual(workspace_data['extra_prefs'], {'param': {'type': 'text', 'inheritable': False, 'label': 'Parameter'}})
 
         update_workspace_preferences(workspace, {'param': {'value': 'world'}});
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
@@ -805,7 +805,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         for t in data['tabs']:
-            self.assertEqual(t['name'][0:7], u'Pestaña')
+            self.assertEqual(t['name'][0:7], 'Pestaña')
 
     def test_read_only_widgets(self):
         template = self.read_template('wt6.xml')

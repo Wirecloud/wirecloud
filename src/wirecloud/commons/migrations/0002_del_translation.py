@@ -17,7 +17,7 @@ class Migration(SchemaMigration):
             ('default', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('table', self.gf('django.db.models.fields.CharField')(max_length=250)),
             ('element_id', self.gf('django.db.models.fields.IntegerField')()),
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('value', self.gf('django.db.models.fields.TextField')(blank=True)),
         ))
         db.send_create_signal('commons', ['Translation'])

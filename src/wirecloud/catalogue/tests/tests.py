@@ -92,8 +92,8 @@ class AddWidgetTestCase(WirecloudTestCase):
         self.changeLanguage('es')
         data = get_resource_data(widget, self.user)
 
-        self.assertEqual(data['title'], u'Widget de pruebas')
-        self.assertEqual(data['description'], u'Descripción del Widget de pruebas')
+        self.assertEqual(data['title'], 'Widget de pruebas')
+        self.assertEqual(data['description'], 'Descripción del Widget de pruebas')
 
 
 class CatalogueSearchTestCase(WirecloudTestCase):

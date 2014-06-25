@@ -88,7 +88,7 @@ class Migration(SchemaMigration):
             'position': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'Position'", 'to': "orm['platform.Position']"}),
             'readOnly': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'refused_version': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
-            'tab': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['platform.Tab']"}),
+            'tab': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['platform.Tab']"}),
             'widget': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['platform.Widget']"})
         },
         'platform.market': {
@@ -124,30 +124,30 @@ class Migration(SchemaMigration):
             'posZ': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'width': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'})
         },
-        u'platform.tab': {
-            'Meta': {'unique_together': "((u'name', u'workspace'),)", 'object_name': 'Tab', 'db_table': "u'wirecloud_tab'"},
+        'platform.tab': {
+            'Meta': {'unique_together': "(('name', 'workspace'),)", 'object_name': 'Tab', 'db_table': "'wirecloud_tab'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'position': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'visible': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'workspace': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['platform.Workspace']"})
+            'workspace': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['platform.Workspace']"})
         },
         'platform.tabpreference': {
             'Meta': {'object_name': 'TabPreference', 'db_table': "'wirecloud_tabpreference'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'inherit': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
-            'tab': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['platform.Tab']"}),
+            'tab': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['platform.Tab']"}),
             'value': ('django.db.models.fields.CharField', [], {'max_length': '250'})
         },
-        u'platform.userworkspace': {
-            'Meta': {'object_name': 'UserWorkspace', 'db_table': "u'wirecloud_userworkspace'"},
+        'platform.userworkspace': {
+            'Meta': {'object_name': 'UserWorkspace', 'db_table': "'wirecloud_userworkspace'"},
             'active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'manager': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'reason_ref': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'workspace': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['platform.Workspace']"})
+            'workspace': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['platform.Workspace']"})
         },
         'platform.variable': {
             'Meta': {'object_name': 'Variable', 'db_table': "'wirecloud_variable'"},
@@ -176,15 +176,15 @@ class Migration(SchemaMigration):
             'width': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
             'xhtml': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['platform.XHTML']"})
         },
-        u'platform.workspace': {
-            'Meta': {'unique_together': "((u'creator', u'name'),)", 'object_name': 'Workspace', 'db_table': "u'wirecloud_workspace'"},
-            'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'creator'", 'to': "orm['auth.User']"}),
+        'platform.workspace': {
+            'Meta': {'unique_together': "(('creator', 'name'),)", 'object_name': 'Workspace', 'db_table': "'wirecloud_workspace'"},
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'creator'", 'to': "orm['auth.User']"}),
             'forcedValues': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'public': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'targetOrganizations': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
-            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'through': u"orm['platform.UserWorkspace']", 'symmetrical': 'False'}),
+            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'through': "orm['platform.UserWorkspace']", 'symmetrical': 'False'}),
             'wiringStatus': ('django.db.models.fields.TextField', [], {'blank': 'True'})
         },
         'platform.workspacepreference': {
@@ -193,7 +193,7 @@ class Migration(SchemaMigration):
             'inherit': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'value': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
-            'workspace': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['platform.Workspace']"})
+            'workspace': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['platform.Workspace']"})
         },
         'platform.xhtml': {
             'Meta': {'object_name': 'XHTML', 'db_table': "'wirecloud_xhtml'"},

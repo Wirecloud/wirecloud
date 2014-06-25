@@ -7,49 +7,49 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting model 'WidgetWiring'
-        db.delete_table(u'catalogue_widgetwiring')
+        db.delete_table('catalogue_widgetwiring')
 
         # Deleting field 'CatalogueResource.iphone_image_uri'
-        db.delete_column(u'catalogue_catalogueresource', 'iphone_image_uri')
+        db.delete_column('catalogue_catalogueresource', 'iphone_image_uri')
 
         # Deleting field 'CatalogueResource.display_name'
-        db.delete_column(u'catalogue_catalogueresource', 'display_name')
+        db.delete_column('catalogue_catalogueresource', 'display_name')
 
         # Deleting field 'CatalogueResource.author'
-        db.delete_column(u'catalogue_catalogueresource', 'author')
+        db.delete_column('catalogue_catalogueresource', 'author')
 
         # Deleting field 'CatalogueResource.mail'
-        db.delete_column(u'catalogue_catalogueresource', 'mail')
+        db.delete_column('catalogue_catalogueresource', 'mail')
 
         # Deleting field 'CatalogueResource.description'
-        db.delete_column(u'catalogue_catalogueresource', 'description')
+        db.delete_column('catalogue_catalogueresource', 'description')
 
         # Deleting field 'CatalogueResource.wiki_page_uri'
-        db.delete_column(u'catalogue_catalogueresource', 'wiki_page_uri')
+        db.delete_column('catalogue_catalogueresource', 'wiki_page_uri')
 
         # Deleting field 'CatalogueResource.license'
-        db.delete_column(u'catalogue_catalogueresource', 'license')
+        db.delete_column('catalogue_catalogueresource', 'license')
 
         # Deleting field 'CatalogueResource.image_uri'
-        db.delete_column(u'catalogue_catalogueresource', 'image_uri')
+        db.delete_column('catalogue_catalogueresource', 'image_uri')
 
     def backwards(self, orm):
         # Adding model 'WidgetWiring'
-        db.create_table(u'catalogue_widgetwiring', (
+        db.create_table('catalogue_widgetwiring', (
             ('wiring', self.gf('django.db.models.fields.CharField')(max_length=5)),
             ('idResource', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.CatalogueResource'])),
             ('friendcode', self.gf('django.db.models.fields.CharField')(max_length=30, null=True, blank=True)),
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
         ))
-        db.send_create_signal(u'catalogue', ['WidgetWiring'])
+        db.send_create_signal('catalogue', ['WidgetWiring'])
 
         # Adding field 'CatalogueResource.iphone_image_uri'
-        db.add_column(u'catalogue_catalogueresource', 'iphone_image_uri',
+        db.add_column('catalogue_catalogueresource', 'iphone_image_uri',
                       self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
                       keep_default=False)
 
         # Adding field 'CatalogueResource.display_name'
-        db.add_column(u'catalogue_catalogueresource', 'display_name',
+        db.add_column('catalogue_catalogueresource', 'display_name',
                       self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True),
                       keep_default=False)
 
@@ -58,7 +58,7 @@ class Migration(SchemaMigration):
         raise RuntimeError("Cannot reverse this migration. 'CatalogueResource.author' and its values cannot be restored.")
         
         # The following code is provided here to aid in writing a correct migration        # Adding field 'CatalogueResource.author'
-        db.add_column(u'catalogue_catalogueresource', 'author',
+        db.add_column('catalogue_catalogueresource', 'author',
                       self.gf('django.db.models.fields.CharField')(max_length=250),
                       keep_default=False)
 
@@ -67,7 +67,7 @@ class Migration(SchemaMigration):
         raise RuntimeError("Cannot reverse this migration. 'CatalogueResource.mail' and its values cannot be restored.")
         
         # The following code is provided here to aid in writing a correct migration        # Adding field 'CatalogueResource.mail'
-        db.add_column(u'catalogue_catalogueresource', 'mail',
+        db.add_column('catalogue_catalogueresource', 'mail',
                       self.gf('django.db.models.fields.CharField')(max_length=100),
                       keep_default=False)
 
@@ -76,22 +76,22 @@ class Migration(SchemaMigration):
         raise RuntimeError("Cannot reverse this migration. 'CatalogueResource.description' and its values cannot be restored.")
         
         # The following code is provided here to aid in writing a correct migration        # Adding field 'CatalogueResource.description'
-        db.add_column(u'catalogue_catalogueresource', 'description',
+        db.add_column('catalogue_catalogueresource', 'description',
                       self.gf('django.db.models.fields.TextField')(),
                       keep_default=False)
 
         # Adding field 'CatalogueResource.wiki_page_uri'
-        db.add_column(u'catalogue_catalogueresource', 'wiki_page_uri',
+        db.add_column('catalogue_catalogueresource', 'wiki_page_uri',
                       self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
                       keep_default=False)
 
         # Adding field 'CatalogueResource.license'
-        db.add_column(u'catalogue_catalogueresource', 'license',
+        db.add_column('catalogue_catalogueresource', 'license',
                       self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True),
                       keep_default=False)
 
         # Adding field 'CatalogueResource.image_uri'
-        db.add_column(u'catalogue_catalogueresource', 'image_uri',
+        db.add_column('catalogue_catalogueresource', 'image_uri',
                       self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
                       keep_default=False)
 

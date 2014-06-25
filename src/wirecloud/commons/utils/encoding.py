@@ -44,7 +44,7 @@ if sys.version_info >= (2, 7):
             if self.ensure_ascii:
                 return ''.join(chunks)
             else:
-                return u''.join(chunks)
+                return ''.join(chunks)
 
         def iterencode(self, o, _one_shot=False):
             chunks = super(LazyEncoderXHTML, self).iterencode(o, _one_shot)
@@ -62,7 +62,7 @@ else:
             if self.ensure_ascii:
                 return ''.join(chunks)
             else:
-                return u''.join(chunks)
+                return ''.join(chunks)
 
         def iterencode(self, o):
             chunks = super(LazyEncoderXHTML, self).iterencode(o)

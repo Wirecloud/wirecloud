@@ -247,7 +247,7 @@ class ProxyTests(ProxyTestsBase):
         self.assertEqual(self.read_response(response), 'data')
 
         # We need to append the path because the reverse method encodes the url
-        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': u'/'}) + 'cañon'
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/'}) + 'cañon'
         response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), 'data')

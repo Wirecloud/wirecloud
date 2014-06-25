@@ -372,7 +372,7 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None, current_a
             if set(kwargs + defaults.keys()) != set(params + defaults.keys() + prefix_args):
                 continue
 
-            unicode_kwargs = dict([(k, u'%(' + force_text(k) + u')s') for k in kwargs])
+            unicode_kwargs = dict([(k, '%(' + force_text(k) + ')s') for k in kwargs])
             unicode_kwargs.update(defaults)
             return (prefix_norm + result) % unicode_kwargs
 
