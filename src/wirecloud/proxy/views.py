@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from six.moves.http_cookies import SimpleCookie
 import re
 import requests
@@ -93,10 +95,10 @@ class Proxy():
 
                 cookie_parser = SimpleCookie(str(header[1]))
 
-                del cookie_parser[settings.SESSION_COOKIE_NAME]
+                del cookie_parser[str(settings.SESSION_COOKIE_NAME)]
 
-                if settings.CSRF_COOKIE_NAME in cookie_parser:
-                    del cookie_parser[settings.CSRF_COOKIE_NAME]
+                if str(settings.CSRF_COOKIE_NAME) in cookie_parser:
+                    del cookie_parser[str(settings.CSRF_COOKIE_NAME)]
 
                 request_data['cookies'].update(cookie_parser)
 

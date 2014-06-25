@@ -243,7 +243,7 @@ class FakeNetwork(object):
             if 'Set-Cookie' in res_info['headers']:
                 cookies = SimpleCookie()
                 for entry in res_info['headers']['Set-Cookie'].split(','):
-                    cookies.load(entry)
+                    cookies.load(str(entry))
                 res.cookies.update(cookies)
 
         res.raw = StreamContent(res_info.get('content', ''))

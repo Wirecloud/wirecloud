@@ -95,8 +95,8 @@ class ProxyTests(ProxyTestsBase):
         engine = import_module(settings.SESSION_ENGINE)
         cookie = engine.SessionStore()
         cookie.save()  # we need to make load() work, or the cookie is worthless
-        client.cookies[settings.SESSION_COOKIE_NAME] = cookie.session_key
-        client.cookies[settings.CSRF_COOKIE_NAME] = 'TODO'
+        client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
+        client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
 
         # Missing header
         response = client.get(self.basic_url, HTTP_HOST='localhost')
@@ -126,8 +126,8 @@ class ProxyTests(ProxyTestsBase):
         engine = import_module(settings.SESSION_ENGINE)
         cookie = engine.SessionStore()
         cookie.save()  # we need to make load() work, or the cookie is worthless
-        client.cookies[settings.SESSION_COOKIE_NAME] = cookie.session_key
-        client.cookies[settings.CSRF_COOKIE_NAME] = 'TODO'
+        client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
+        client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
 
         self.check_basic_requests(client)
 
@@ -258,7 +258,7 @@ class ProxyTests(ProxyTestsBase):
 
         client = Client()
         client.login(username='test', password='test')
-        client.cookies['test'] = 'test'
+        client.cookies[str('test')] = 'test'
 
         def cookie_response(method, url, *args, **kwargs):
             if 'Cookie' in kwargs['headers']:
@@ -272,19 +272,19 @@ class ProxyTests(ProxyTestsBase):
         self.assertEqual(self.read_response(response), 'test=test')
 
         self.assertTrue('newcookie1' in response.cookies)
-        self.assertEqual(response.cookies['newcookie1'].value, 'test')
+        self.assertEqual(response.cookies[str('newcookie1')].value, 'test')
         cookie_path = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/'})
-        self.assertEqual(response.cookies['newcookie1']['path'], cookie_path)
+        self.assertEqual(response.cookies[str('newcookie1')]['path'], cookie_path)
 
         self.assertTrue('newcookie2' in response.cookies)
-        self.assertEqual(response.cookies['newcookie2'].value, 'val1')
+        self.assertEqual(response.cookies[str('newcookie2')].value, 'val1')
         cookie_path = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/abc/d'})
-        self.assertEqual(response.cookies['newcookie2']['path'], cookie_path)
+        self.assertEqual(response.cookies[str('newcookie2')]['path'], cookie_path)
 
         self.assertTrue('newcookie3' in response.cookies)
-        self.assertEqual(response.cookies['newcookie3'].value, 'c')
+        self.assertEqual(response.cookies[str('newcookie3')].value, 'c')
         cookie_path = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
-        self.assertEqual(response.cookies['newcookie3']['path'], cookie_path)
+        self.assertEqual(response.cookies[str('newcookie3')]['path'], cookie_path)
 
 
 @unittest.skipIf(not HAS_AES, 'python-crypto not found')
@@ -301,7 +301,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         client.login(username='test', password='test')
 
         def echo_response(method, url, *args, **kwargs):
-            return {'status_code': 200, 'content': kwargs['data']}
+            return {'status_code': 200, 'content': kwargs['data'].read()}
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
         pass_ref = '1/password'
@@ -375,14 +375,14 @@ class ProxySecureDataTests(ProxyTestsBase):
         client.login(username='test', password='test')
 
         def echo_response(method, url, *args, **kwargs):
-            return {'status_code': 200, 'content': kwargs['data']}
+            return {'status_code': 200, 'content': kwargs['data'].read()}
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
         pass_ref = '1/password'
         user_ref = '1/username'
         secure_data_header = 'action=data, substr=|password|, var_ref=' + pass_ref
         secure_data_header += '&action=data, substr=|username|, var_ref=' + user_ref
-        client.cookies['X-WireCloud-Secure-Data'] = secure_data_header
+        client.cookies[str('X-WireCloud-Secure-Data')] = secure_data_header
         response = client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
@@ -393,7 +393,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         self.assertEqual(self.read_response(response), 'username=test_username&password=test_password')
 
         secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
-        client.cookies['X-WireCloud-Secure-Data'] = secure_data_header
+        client.cookies[str('X-WireCloud-Secure-Data')] = secure_data_header
         response = client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
@@ -405,7 +405,7 @@ class ProxySecureDataTests(ProxyTestsBase):
 
         # Secure data header with empty parameters
         secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
-        client.cookies['X-WireCloud-Secure-Data'] = secure_data_header
+        client.cookies[str('X-WireCloud-Secure-Data')] = secure_data_header
         response = client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',

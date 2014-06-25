@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from io import BytesIO
 import re
 import urllib2
@@ -26,6 +28,11 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.platform.get_data import get_variable_value_from_varname
 from wirecloud.proxy.utils import ValidationError
+
+
+WIRECLOUD_SECURE_DATA_COOKIE = str('X-WireCloud-Secure-Data')
+WIRECLOUD_SECURE_DATA_HEADER = 'x-wirecloud-secure-data'
+VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 
 
 class FixServletBugsProcessor(object):
@@ -40,9 +47,6 @@ class FixServletBugsProcessor(object):
         # Remote user header
         if not request['user'].is_anonymous():
             request['headers']['Remote-User'] = request['user'].username
-
-
-VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 
 
 def get_variable_value_by_ref(ref, user):
@@ -63,7 +67,7 @@ def check_empty_params(**kargs):
             missing_params.append(param_name)
 
     if len(missing_params) > 0:
-        msg = _('X-Wirecloud-Secure-Data: The following required parameters are missing: %(params)s')
+        msg = _('X-WireCloud-Secure-Data: The following required parameters are missing: %(params)s')
         raise ValidationError(msg % {'params': ', '.join(missing_params)})
 
 
@@ -75,7 +79,7 @@ def check_invalid_refs(**kargs):
             invalid_params.append(param_name)
 
     if len(invalid_params) > 0:
-        msg = _('X-Wirecloud-Secure-Data: The following required parameters are invalid: %(params)s')
+        msg = _('X-WireCloud-Secure-Data: The following required parameters are invalid: %(params)s')
         raise ValidationError(msg % {'params': ', '.join(invalid_params)})
 
 
@@ -104,12 +108,15 @@ def process_secure_data(text, request, ignore_errors=False):
                 check_invalid_refs(var_ref=value)
 
                 encoding = options.get('encoding', 'none')
+                substr = substr.encode('utf8')
                 if encoding == 'url':
-                    value = urlquote(value)
+                    value = urlquote(value).encode('utf8')
                 elif encoding == 'base64':
                     value = value.encode('base64')[:-1]
+                else:
+                    value = value.encode('utf8')
 
-                request['data'] = BytesIO(request['data'].read().replace(substr, bytes(value)))
+                request['data'] = BytesIO(request['data'].read().replace(substr, value))
 
             elif action == 'basic_auth':
                 user_ref = options.get('user_ref', '')
@@ -131,16 +138,15 @@ class SecureDataProcessor(object):
 
     def process_request(self, request):
 
-        # Process secure data from the X-Wirecloud-Secure-Data header
-        if 'x-wirecloud-secure-data' in request['headers']:
-            secure_data_value = request['headers']['x-wirecloud-secure-data']
+        # Process secure data from the X-WireCloud-Secure-Data header
+        if WIRECLOUD_SECURE_DATA_HEADER in request['headers']:
+            secure_data_value = request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
             process_secure_data(secure_data_value, request, ignore_errors=False)
-
-            del request['headers']['x-wirecloud-secure-data']
+            del request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
 
         # Process secure data cookie
         cookie_parser = request['cookies']
 
-        if cookie_parser is not None and 'X-WireCloud-Secure-Data' in cookie_parser:
-            process_secure_data(cookie_parser['X-WireCloud-Secure-Data'].value, request, ignore_errors=True)
-            del cookie_parser['X-WireCloud-Secure-Data']
+        if cookie_parser is not None and WIRECLOUD_SECURE_DATA_COOKIE in cookie_parser:
+            process_secure_data(cookie_parser[WIRECLOUD_SECURE_DATA_COOKIE].value, request, ignore_errors=True)
+            del cookie_parser[WIRECLOUD_SECURE_DATA_COOKIE]
