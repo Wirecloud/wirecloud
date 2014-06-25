@@ -20,6 +20,7 @@
 import json
 
 from django.utils.translation import ugettext as _
+import six
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.db import save_alternative
@@ -88,7 +89,7 @@ def check_mashup_dependencies(template, user):
             except CatalogueResource.DoesNotExist:
                 missing_dependencies.add('/'.join((resource.get('vendor'), resource.get('name'), resource.get('version'))))
 
-    for id_, op in workspace_info['wiring']['operators'].iteritems():
+    for id_, op in six.iteritems(workspace_info['wiring']['operators']):
         (vendor, name, version) = op['name'].split('/')
         try:
             resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
@@ -226,7 +227,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
     }
 
     # Process operators info
-    for operator_id, operator in workspace_info['wiring']['operators'].iteritems():
+    for operator_id, operator in six.iteritems(workspace_info['wiring']['operators']):
         max_id += 1
         new_id = unicode(max_id)
         ioperator_id_mapping[operator_id] = new_id
@@ -237,7 +238,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         }
 
         ioperator_forced_values = {}
-        for pref_id, pref in operator['preferences'].iteritems():
+        for pref_id, pref in six.iteritems(operator['preferences']):
             if pref.get('readonly', False):
                 ioperator_forced_values[pref_id] = {'value': pref.get('value'), 'hidden': pref.get('hidden', False)}
 
@@ -277,11 +278,11 @@ def fillWorkspaceUsingTemplate(workspace, template):
     if 'views' in workspace_info['wiring']:
         for wiring_view in workspace_info['wiring']['views']:
             iwidgets_views = {}
-            for key, widget in wiring_view['iwidgets'].iteritems():
+            for key, widget in six.iteritems(wiring_view['iwidgets']):
                 iwidgets_views[iwidget_id_mapping[key].id] = widget
 
             operators_views = {}
-            for key, operator in wiring_view['operators'].iteritems():
+            for key, operator in six.iteritems(wiring_view['operators']):
                 operators_views[ioperator_id_mapping[key]] = operator
 
             wiring_status['views'].append({

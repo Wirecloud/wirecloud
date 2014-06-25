@@ -20,6 +20,7 @@
 import time
 
 from django.http import HttpResponse
+import six
 
 from wirecloud.oauth2provider.pyoauth2 import AuthorizationProvider
 from wirecloud.oauth2provider.models import Application, Code, Token
@@ -30,7 +31,7 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
     def _make_response(self, body='', headers=None, status_code=200):
 
         response = HttpResponse(body, status=status_code)
-        for k, v in headers.iteritems():
+        for k, v in six.iteritems(headers):
             response[k] = v
 
         return response

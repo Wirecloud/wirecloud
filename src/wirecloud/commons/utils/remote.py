@@ -27,6 +27,7 @@ from django.utils.importlib import import_module
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
+import six
 
 
 def marketplace_loaded(driver):
@@ -676,7 +677,7 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
             save_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Save']")
             window_menu = self.driver.find_element_by_css_selector('.window_menu.workspace_preferences')
 
-            for parameter_name, parameter_value in parameters.iteritems():
+            for parameter_name, parameter_value in six.iteritems(parameters):
                 param_input = window_menu.find_element_by_css_selector('input[name="' + parameter_name + '"]')
                 self.fill_form_input(param_input, parameter_value)
 

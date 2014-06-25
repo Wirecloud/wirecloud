@@ -35,6 +35,7 @@ import re
 
 from django.core.cache import cache
 from django.utils.translation import ugettext as _
+import six
 
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.encoding import LazyEncoder
@@ -401,8 +402,8 @@ def _get_global_workspace_data(workspaceDAO, user):
         tab['iwidgets'] = iwidget_data
 
     data_ret['wiring'] = json.loads(workspaceDAO.wiringStatus)
-    for forced_operator_id, forced_preferences in forced_values['ioperator'].iteritems():
-        for forced_pref_name, forced_preference in forced_preferences.iteritems():
+    for forced_operator_id, forced_preferences in six.iteritems(forced_values['ioperator']):
+        for forced_pref_name, forced_preference in six.iteritems(forced_preferences):
             data_ret['wiring']['operators'][forced_operator_id]['preferences'][forced_pref_name]['value'] = forced_preference['value']
 
     return json.dumps(data_ret, cls=LazyEncoder)

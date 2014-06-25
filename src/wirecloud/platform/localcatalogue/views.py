@@ -31,6 +31,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
+import six
 
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
@@ -290,7 +291,7 @@ class WorkspaceResourceCollection(Resource):
                 resources.add(iwidget.widget.resource)
 
         wiring_status = json.loads(workspace.wiringStatus)
-        for operator_id, operator in wiring_status['operators'].iteritems():
+        for operator_id, operator in six.iteritems(wiring_status['operators']):
             vendor, name, version = operator['name'].split('/')
             try:
                 resources.add(CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version))

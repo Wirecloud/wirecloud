@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 
 from django.utils.http import urlquote
 import rdflib
+import six
 
 from wirecloud.commons.utils.translation import replace_trans_index
 
@@ -51,12 +52,12 @@ DOAP = rdflib.Namespace('http://usefulinc.com/ns/doap#')
 def add_translated_nodes(graph, parent_node, namespace, element_name, value, usage, template_info):
 
     used_translation_vars = []
-    for translation_var_name, translation_var_usage in template_info['translation_index_usage'].iteritems():
+    for translation_var_name, translation_var_usage in six.iteritems(template_info['translation_index_usage']):
         if usage in translation_var_usage:
             used_translation_vars.append(translation_var_name)
 
     if len(used_translation_vars) > 0:
-        for lang, catalogue in template_info['translations'].iteritems():
+        for lang, catalogue in six.iteritems(template_info['translations']):
             msg = value
             for translation_var_name in used_translation_vars:
                 msg = replace_trans_index(translation_var_name, catalogue[translation_var_name], msg)
@@ -74,7 +75,7 @@ def write_wiring_views_graph(graph, wiring, template_info):
         graph.add((wiring, WIRE_M['hasWiringView'], wiring_view))
         graph.add((wiring_view, RDFS['label'], rdflib.Literal(view['label'])))
 
-        for key, widget in view['iwidgets'].iteritems():
+        for key, widget in six.iteritems(view['iwidgets']):
             widget_view = rdflib.BNode()
             graph.add((widget_view, rdflib.RDF.type, WIRE_M['View']))
             graph.add((widget_view, WIRE['type'], rdflib.Literal('widget')))
@@ -99,7 +100,7 @@ def write_wiring_views_graph(graph, wiring, template_info):
                 graph.add((target_element, RDFS['label'], rdflib.Literal(target)))
                 graph.add((target_element, WIRE['index'], rdflib.Literal(str(index))))
 
-        for key, operator in view['operators'].iteritems():
+        for key, operator in six.iteritems(view['operators']):
             operator_view = rdflib.BNode()
             graph.add((operator_view, rdflib.RDF.type, WIRE_M['View']))
             graph.add((operator_view, WIRE['type'], rdflib.Literal('operator')))
@@ -189,7 +190,7 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
             graph.add((rend, WIRE_M['minimized'], rdflib.Literal(str(iwidget['rendering']['minimized']))))
 
             # iWidget preferences
-            for pref_name, pref in iwidget.get('preferences', {}).iteritems():
+            for pref_name, pref in six.iteritems(iwidget.get('preferences', {})):
                 element = rdflib.BNode()
                 graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetPreference']))
                 graph.add((resource, WIRE_M['hasiWidgetPreference'], element))
@@ -200,7 +201,7 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
                 if pref.get('hidden', False):
                     graph.add((element, WIRE_M['hidden'], rdflib.Literal('true')))
 
-            for prop_name, prop in iwidget.get('properties', ()).iteritems():
+            for prop_name, prop in six.iteritems(iwidget.get('properties', ())):
                 element = rdflib.BNode()
                 graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetProperty']))
                 graph.add((resource, WIRE_M['hasiWidgetProperty'], element))
@@ -212,14 +213,14 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
 
 def write_mashup_wiring_graph(graph, wiring, template_info):
 
-    for id_, operator in template_info['wiring']['operators'].iteritems():
+    for id_, operator in six.iteritems(template_info['wiring']['operators']):
         op = rdflib.BNode()
         graph.add((op, rdflib.RDF.type, WIRE_M['iOperator']))
         graph.add((wiring, WIRE_M['hasiOperator'], op))
         graph.add((op, DCTERMS['title'], rdflib.Literal(operator['name'])))
         graph.add((op, WIRE_M['iOperatorId'], rdflib.Literal(str(id_))))
 
-        for pref_name, pref in operator['preferences'].iteritems():
+        for pref_name, pref in six.iteritems(operator['preferences']):
             element = rdflib.BNode()
             graph.add((element, rdflib.RDF.type, WIRE_M['iOperatorPreference']))
             graph.add((op, WIRE_M['hasiOperatorPreference'], element))
@@ -371,7 +372,7 @@ def build_rdf_graph(template_info):
 
     if template_info['type'] == 'mashup':
         # Mashup preferences
-        for pref_name, pref_value in template_info['preferences'].iteritems():
+        for pref_name, pref_value in six.iteritems(template_info['preferences']):
             pref = rdflib.BNode()
             graph.add((pref, rdflib.RDF.type, WIRE_M['MashupPreference']))
             graph.add((resource_uri, WIRE_M['hasMashupPreference'], pref))

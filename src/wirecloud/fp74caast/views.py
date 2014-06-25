@@ -26,6 +26,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET, require_POST
+import six
 from six import string_types
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -161,7 +162,7 @@ def _parse_ac_request(request):
     template_info = template.get_resource_info()
     template_info['name'] += '@' + id_4CaaSt
 
-    for pref_name, pref_value in data.get('preferences', {}).iteritems():
+    for pref_name, pref_value in six.iteritems(data.get('preferences', {})):
         for widget_pref_index, widget_pref in enumerate(template_info['preferences']):
             if widget_pref['name'] == pref_name:
                 template_info['preferences'][widget_pref_index]['readonly'] = True

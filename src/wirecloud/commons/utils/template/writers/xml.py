@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from lxml import etree
+import six
 
 
 def write_mashup_tree(resources, options):
@@ -30,7 +31,7 @@ def write_mashup_tree(resources, options):
     for tab_index, tab in enumerate(options['tabs']):
         tabElement = etree.SubElement(resources, 'Tab', name=tab['name'], id=str(tab_index))
 
-        for preference_name, preference_value in tab['preferences'].iteritems():
+        for preference_name, preference_value in six.iteritems(tab['preferences']):
             etree.SubElement(tabElement, 'Preference', name=preference_name, value=preference_value)
 
         for iwidget in tab['resources']:
@@ -44,7 +45,7 @@ def write_mashup_tree(resources, options):
                 width=str(iwidget['rendering']['height']), minimized=str(iwidget['rendering']['minimized']),
                 fulldragboard=str(iwidget['rendering']['fulldragboard']), layout=str(iwidget['rendering']['layout']))
 
-            for pref_name, pref in iwidget['preferences'].iteritems():
+            for pref_name, pref in six.iteritems(iwidget['preferences']):
                 element = etree.SubElement(resource, 'Preference', name=pref_name, value=pref['value'])
 
                 if pref.get('readonly', False):
@@ -53,7 +54,7 @@ def write_mashup_tree(resources, options):
                 if pref.get('hidden', False):
                     element.set('hidden', 'true')
 
-            for prop_name, prop in iwidget.get('properties', {}).iteritems():
+            for prop_name, prop in six.iteritems(iwidget.get('properties', {})):
                 element = etree.SubElement(resource, 'Property', name=prop_name, value=prop['value'])
 
                 if prop.get('readonly', False):
@@ -62,10 +63,10 @@ def write_mashup_tree(resources, options):
 
 def write_mashup_wiring_tree(wiring, options):
 
-    for op_id, operator in options['wiring']['operators'].iteritems():
+    for op_id, operator in six.iteritems(options['wiring']['operators']):
         operator_element = etree.SubElement(wiring, 'Operator', id=op_id, name=operator['name'])
 
-        for pref_name, pref in operator['preferences'].iteritems():
+        for pref_name, pref in six.iteritems(operator['preferences']):
             element = etree.SubElement(operator_element, 'Preference', name=pref_name, value=pref['value'])
 
             if pref.get('readonly', False):
@@ -109,7 +110,7 @@ def build_xml_document(options):
 
     if options['type'] == 'mashup':
         resources = etree.SubElement(desc, 'IncludedResources')
-        for pref_name, pref_value in options['preferences'].iteritems():
+        for pref_name, pref_value in six.iteritems(options['preferences']):
             etree.SubElement(resources, 'Preference', name=pref_name, value=pref_value)
     else:
 
@@ -191,10 +192,10 @@ def build_xml_document(options):
 
         translations_element = etree.SubElement(template, 'Translations', default=options['default_lang'])
 
-        for lang, catalogue in options['translations'].iteritems():
+        for lang, catalogue in six.iteritems(options['translations']):
             catalogue_element = etree.SubElement(translations_element, 'Translation', lang=lang)
 
-            for msg_name, msg in catalogue.iteritems():
+            for msg_name, msg in six.iteritems(catalogue):
                 msg_element = etree.SubElement(catalogue_element, 'msg', name=msg_name)
                 msg_element.text = msg
 

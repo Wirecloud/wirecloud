@@ -19,6 +19,8 @@
 
 import json
 
+import six
+
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.template.writers import rdf
 from wirecloud.commons.utils.template.writers import xml
@@ -217,7 +219,7 @@ def build_json_template_from_workspace(options, workspace, user):
         }
 
     options['wiring']['operators'] = {}
-    for id_, operator in wiring_status['operators'].iteritems():
+    for id_, operator in six.iteritems(wiring_status['operators']):
         operator_data = {
             'name': operator['name'],
             'preferences': {},
