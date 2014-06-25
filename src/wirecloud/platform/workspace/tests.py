@@ -319,17 +319,17 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', 'Test Mashup')
         self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', '1')
 
-        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
+        vendor = next(graph.objects(mashup_uri, self.USDL['hasProvider']))
         self.assertRDFElement(graph, vendor, self.FOAF, 'name', 'Wirecloud Test Suite')
 
-        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
+        addr = next(graph.objects(mashup_uri, self.VCARD['addr']))
         self.assertRDFElement(graph, addr, self.VCARD, 'email', 'a@b.com')
 
-        authors = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        authors = next(graph.objects(mashup_uri, self.DCTERMS['creator']))
         self.assertRDFElement(graph, authors, self.FOAF, 'name', 'test')
 
     def check_workspace_rdf_wiring(self, graph, mashup_uri):
-        wiring = graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']).next()
+        wiring = next(graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']))
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasConnection', 0)
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasiOperator', 1)
         for ioperator in graph.objects(wiring, self.WIRE_M['hasiOperator']):
@@ -465,15 +465,15 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         }
         # Basic info
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
-        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+        mashup_uri = next(graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']))
         self.check_basic_rdf_workspace_template_info(graph, mashup_uri)
 
         self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
 
-        tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
+        tab = next(graph.objects(mashup_uri, self.WIRE_M['hasTab']))
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', 'Tab')
 
-        wiring = graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']).next()
+        wiring = next(graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']))
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasConnection', 0)
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasiOperator', 0)
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasWiringView', 0)
@@ -488,12 +488,12 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'readOnlyWidgets': False,
         }
         graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
-        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+        mashup_uri = next(graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']))
         self.check_basic_rdf_workspace_template_info(graph, mashup_uri)
 
         self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
 
-        tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
+        tab = next(graph.objects(mashup_uri, self.WIRE_M['hasTab']))
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', 'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
@@ -529,12 +529,12 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'readOnlyWidgets': True,
         }
         graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
-        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+        mashup_uri = next(graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']))
         self.check_basic_rdf_workspace_template_info(graph, mashup_uri)
 
         self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
 
-        tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
+        tab = next(graph.objects(mashup_uri, self.WIRE_M['hasTab']))
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', 'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
@@ -562,10 +562,10 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         # Workspace with iwidgets
         graph = build_rdf_template_from_workspace(self.forced_value_options, self.workspace_with_iwidgets, self.user)
-        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+        mashup_uri = next(graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']))
         self.check_basic_rdf_workspace_template_info(graph, mashup_uri)
 
-        tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
+        tab = next(graph.objects(mashup_uri, self.WIRE_M['hasTab']))
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
 
@@ -619,18 +619,18 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         }
 
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
-        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+        mashup_uri = next(graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']))
 
         self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', 'Test Mashup with ñ')
         self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', '1')
 
-        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
+        vendor = next(graph.objects(mashup_uri, self.USDL['hasProvider']))
         self.assertRDFElement(graph, vendor, self.FOAF, 'name', 'Wirecloud Test Suite')
 
-        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
+        addr = next(graph.objects(mashup_uri, self.VCARD['addr']))
         self.assertRDFElement(graph, addr, self.VCARD, 'email', 'a@b.com')
 
-        authors = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        authors = next(graph.objects(mashup_uri, self.DCTERMS['creator']))
         self.assertRDFElement(graph, authors, self.FOAF, 'name', 'author with é')
 
 

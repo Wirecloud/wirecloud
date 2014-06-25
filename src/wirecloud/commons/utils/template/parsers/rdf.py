@@ -186,11 +186,11 @@ class RDFTemplateParser(object):
 
         # ------------------------------------------
         if self._info['type'] == 'widget':
-            self._rootURI = self._graph.subjects(RDF['type'], WIRE['Widget']).next()
+            self._rootURI = next(self._graph.subjects(RDF['type'], WIRE['Widget']))
         elif self._info['type'] == 'mashup':
-            self._rootURI = self._graph.subjects(RDF['type'], WIRE_M['Mashup']).next()
+            self._rootURI = next(self._graph.subjects(RDF['type'], WIRE_M['Mashup']))
         elif self._info['type'] == 'operator':
-            self._rootURI = self._graph.subjects(RDF['type'], WIRE['Operator']).next()
+            self._rootURI = next(self._graph.subjects(RDF['type'], WIRE['Operator']))
 
         vendor = self._get_field(USDL, 'hasProvider', self._rootURI, id_=True)
         self._info['vendor'] = self._get_field(FOAF, 'name', vendor)
@@ -234,7 +234,7 @@ class RDFTemplateParser(object):
         self._info['requirements'] = []
 
         for wrequirement in self._graph.objects(self._rootURI, WIRE['hasRequirement']):
-            if self._graph.objects(wrequirement, RDF['type']).next() == WIRE['Feature']:
+            if next(self._graph.objects(wrequirement, RDF['type'])) == WIRE['Feature']:
                 self._info['requirements'].append({
                     'type': 'feature',
                     'name': self._get_field(RDFS, 'label', wrequirement, required=True),
