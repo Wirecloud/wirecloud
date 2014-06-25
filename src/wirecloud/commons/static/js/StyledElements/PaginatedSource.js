@@ -29,7 +29,7 @@
 
     onSuccessCallback = function onSuccessCallback(elements, options) {
         if (typeof this.pOptions.processFunc === 'function') {
-            this.pOptions.processFunc(elements);
+            this.pOptions.processFunc(elements, options);
         }
         this.currentPage = parseInt(options.current_page, 10);
         this.currentElements = elements;

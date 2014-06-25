@@ -33,13 +33,24 @@
         this.builder = new StyledElements.GUIBuilder();
         this.catalogue_view = catalogue_view;
         this.structure_template = resource_template;
-        this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-block alert-error"><t:message/></div></s:styledgui>';
+        this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-error"><t:message/></div></s:styledgui>';
+        this.info_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-info"><t:message/></div></s:styledgui>';
         this.container = container;
         if (extra_context != null && (typeof extra_context === 'object' || typeof extra_context === 'function')) {
             this.extra_context = extra_context;
         } else {
             this.extra_context = {};
         }
+    };
+
+    ResourcePainter.prototype.paintInfo = function paintError(message, context) {
+        if (context != null) {
+            message = this.builder.parse(this.builder.DEFAULT_OPENING + message + this.builder.DEFAULT_CLOSING, context);
+        }
+
+        return this.builder.parse(this.info_template, {
+            'message': message
+        });
     };
 
     ResourcePainter.prototype.paintError = function paintError(message) {

@@ -54,6 +54,13 @@
 
                 this._list.innerHTML = '';
                 if (search_info.total_count !== 0) {
+                    if ('corrected_query' in search_info) {
+                        msg = gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
+                        this.resource_painter.paintInfo(msg, {
+                            corrected_query: search_info.corrected_query
+                        }).insertInto(this._list);
+                    }
+
                     for (i = 0; i < widgets.length; i += 1) {
                         this.resource_painter.paint(widgets[i]).insertInto(this._list);
                     }

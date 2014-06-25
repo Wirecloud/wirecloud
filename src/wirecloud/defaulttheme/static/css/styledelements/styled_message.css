@@ -44,12 +44,12 @@
     padding-bottom: 14px;
 }
 
-.alert-block > p,
-.alert-block > ul {
+.alert > p,
+.alert > ul {
     margin-bottom: 0;
 }
 
-.alert-block p + p {
+.alert > p + p {
     margin-top: 5px;
 }
 

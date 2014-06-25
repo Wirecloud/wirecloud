@@ -64,10 +64,18 @@
             'keywords': '',
             'scope': 'all',
             'requestFunc': this._search.bind(this),
-            'processFunc': function (elements) {
-                var i;
+            'processFunc': function (elements, search_info) {
+                var i, msg;
 
                 this.resource_list.clear();
+
+                if ('corrected_query' in search_info) {
+                    msg = gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
+
+                    this.resource_list.appendChild(this.resource_painter.paintInfo(msg, {
+                        corrected_query: search_info.corrected_query
+                    }));
+                }
 
                 for (i = 0; i < elements.length; i += 1) {
                     this.resource_list.appendChild(this.resource_painter.paint(elements[i]));
@@ -118,7 +126,7 @@
                 var button = new StyledElements.StyledButton({text: gettext('View All')});
                 button.addEventListener('click', function () {
                     this.simple_search_input.setValue('');
-                    this.source.changeOptions({'keywords': ''});
+                    this.source.changeOptions({'correct_query': true, 'keywords': ''});
                 }.bind(this));
                 this.view_allbutton = button;
                 return button;
@@ -214,9 +222,9 @@
 
     CatalogueSearchView.prototype._search = function _search(page, options, onSuccess, onError) {
         options = {
+            'correct_query': options.correct_query,
             'order_by': options.order_by,
             'search_criteria': options.keywords,
-            'search_boolean': 'AND',
             'scope': options.scope,
             'starting_page': page,
             'resources_per_page': options.pageSize,
@@ -233,7 +241,7 @@
 
     CatalogueSearchView.prototype._keywordTimeoutHandler = function _keywordTimeoutHandler() {
         this.timeout = null;
-        this.source.changeOptions({'keywords': this.simple_search_input.getValue()});
+        this.source.changeOptions({'correct_query': true, 'keywords': this.simple_search_input.getValue()});
     };
 
     CatalogueSearchView.prototype._onSearchInput = function _onSearchInput(event) {

@@ -171,6 +171,9 @@
         };
     };
 
+    GUIBuilder.prototype.DEFAULT_OPENING = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">';
+    GUIBuilder.prototype.DEFAULT_CLOSING = '</s:styledgui>';
+
     GUIBuilder.prototype.parse = function parse(document, tcomponents, context) {
         if (typeof document === 'string') {
             document = Wirecloud.Utils.XML.parseFromString(document, 'application/xml');

@@ -44,6 +44,10 @@
     overflow-y: auto;
 }
 
+.widget_wallet_list > .alert {
+    margin: 6px;
+}
+
 .widget_wallet_list > .resource {
     background: white;
 }
