@@ -101,7 +101,17 @@ class BaseCommand(object):
         parser = self.create_parser(argv[0], argv[1])
         options, args = parser.parse_args(argv[2:])
         handle_default_options(options)
-        self.execute(*args, **options.__dict__)
+        options = options.__dict__
+        show_traceback = options.get('traceback', False)
+
+        try:
+            self.execute(*args, **options)
+        except Exception as e:
+            if show_traceback:
+                traceback.print_exc()
+            else:
+                self.stderr.write(smart_str(self.style.ERROR('Error: %s\n' % e)))
+            sys.exit(1)
 
     def execute(self, *args, **options):
         """
@@ -109,20 +119,11 @@ class BaseCommand(object):
         ``CommandError``, intercept it and print it sensibly to
         stderr.
         """
-        show_traceback = options.get('traceback', False)
-
-        try:
-            self.stdout = options.get('stdout', sys.stdout)
-            self.stderr = options.get('stderr', sys.stderr)
-            output = self.handle(*args, **options)
-            if output:
-                self.stdout.write(output)
-        except CommandError as e:
-            if show_traceback:
-                traceback.print_exc()
-            else:
-                self.stderr.write(smart_str(self.style.ERROR('Error: %s\n' % e)))
-            sys.exit(1)
+        self.stdout = options.get('stdout', sys.stdout)
+        self.stderr = options.get('stderr', sys.stderr)
+        output = self.handle(*args, **options)
+        if output:
+            self.stdout.write(output)
 
     def handle(self, *args, **options):
         """
