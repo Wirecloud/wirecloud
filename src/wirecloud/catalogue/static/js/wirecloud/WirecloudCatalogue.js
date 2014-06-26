@@ -115,7 +115,8 @@
             requestHeaders: {'Accept': 'application/json'},
             parameters: params,
             onSuccess: _onSearchSuccess.bind(options),
-            onFailure: _onSearchFailure.bind(options)
+            onFailure: _onSearchFailure.bind(options),
+            onComplete: options.onComplete
         });
     };
 

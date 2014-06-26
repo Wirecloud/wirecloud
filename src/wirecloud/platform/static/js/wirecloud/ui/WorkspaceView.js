@@ -28,6 +28,7 @@
     var builder = new StyledElements.GUIBuilder();
 
     var _search = function _search(keywords) {
+        this._list.classList.add('disabled');
         Wirecloud.LocalCatalogue.search({
             scope: 'widget',
             search_criteria: keywords,
@@ -75,6 +76,9 @@
                     msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(keywords.trim())}, true);
                     this.resource_painter.paintError(new StyledElements.Fragment(msg)).insertInto(this._list);
                 }
+            }.bind(this),
+            onComplete: function () {
+                this._list.classList.remove('disabled');
             }.bind(this)
         });
     };
