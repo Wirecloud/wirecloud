@@ -45,7 +45,7 @@ class IDMTokenProcessor(object):
 
         if 'x-fi-ware-oauth-token-body-pattern' in request['headers']:
             pattern = request['headers']['x-fi-ware-oauth-token-body-pattern']
-            request['data'] = BytesIO(bytes(request['data'].read().replace(pattern, token)))
+            request['data'] = BytesIO(request['data'].read().replace(pattern.encode('utf8'), token.encode('utf8')))
             del request['headers']['x-fi-ware-oauth-token-body-pattern']
 
         del request['headers']['x-fi-ware-oauth-token']
