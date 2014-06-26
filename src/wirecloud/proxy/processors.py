@@ -19,9 +19,10 @@
 
 from __future__ import unicode_literals
 
+import base64
 from io import BytesIO
 import re
-import urllib2
+from six.moves.urllib.parse import unquote
 
 from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
@@ -95,8 +96,8 @@ def process_secure_data(text, request, ignore_errors=False):
             options = {}
             for pair in params:
                 tokens = pair.split('=')
-                option_name = urllib2.unquote(tokens[0].strip())
-                options[option_name] = urllib2.unquote(tokens[1].strip())
+                option_name = unquote(tokens[0].strip())
+                options[option_name] = unquote(tokens[1].strip())
 
             action = options.get('action', 'data')
             if action == 'data':
@@ -112,7 +113,7 @@ def process_secure_data(text, request, ignore_errors=False):
                 if encoding == 'url':
                     value = urlquote(value).encode('utf8')
                 elif encoding == 'base64':
-                    value = value.encode('base64')[:-1]
+                    value = base64.b64encode(value.encode('utf8'))[:-1]
                 else:
                     value = value.encode('utf8')
 
@@ -127,7 +128,8 @@ def process_secure_data(text, request, ignore_errors=False):
                 password_value = get_variable_value_by_ref(password_ref, request['user'])
                 check_invalid_refs(user_ref=user_value, password_ref=password_value)
 
-                request['headers']['Authorization'] = 'Basic ' + (user_value + ':' + password_value).encode('base64')[:-1]
+                token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))[:-1]
+                request['headers']['Authorization'] = 'Basic ' + token.decode('ascii')
         except:
             # TODO logging?
             if not ignore_errors:

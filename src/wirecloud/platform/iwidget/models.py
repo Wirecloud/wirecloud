@@ -22,6 +22,7 @@ import json
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
+from six import text_type
 
 from wirecloud.platform.wiring.utils import remove_related_iwidget_connections
 
@@ -103,7 +104,7 @@ class Variable(models.Model):
 
     def set_variable_value(self, value):
 
-        new_value = unicode(value)
+        new_value = text_type(value)
         if self.vardef.secure:
             from wirecloud.platform.workspace.utils import encrypt_value
             new_value = encrypt_value(new_value)

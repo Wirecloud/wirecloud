@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import base64
 try:
     from Crypto.Cipher import AES
     HAS_AES = True
@@ -76,9 +77,9 @@ def encrypt_value(value):
         return value
 
     cipher = AES.new(settings.SECRET_KEY[:32])
-    json_value = json.dumps(value, ensure_ascii=False)
-    padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * ' '
-    return cipher.encrypt(padded_value).encode('base64')
+    json_value = json.dumps(value, ensure_ascii=False).encode('utf8')
+    padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * b' '
+    return base64.b64encode(cipher.encrypt(padded_value))
 
 
 def decrypt_value(value):
@@ -87,8 +88,8 @@ def decrypt_value(value):
 
     cipher = AES.new(settings.SECRET_KEY[:32])
     try:
-        value = cipher.decrypt(value.decode('base64'))
-        return json.loads(value)
+        value = cipher.decrypt(base64.b64decode(value))
+        return json.loads(value.decode('utf8'))
     except:
         return ''
 

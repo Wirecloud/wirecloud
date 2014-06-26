@@ -244,7 +244,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'mode': 'unknown',
             'theme': settings.THEME_ACTIVE,
             'version': wirecloud.platform.__version__,
-            'version_hash': sha1(json.dumps(get_active_features_info(), sort_keys=True)).hexdigest(),
+            'version_hash': sha1(json.dumps(get_active_features_info(), ensure_ascii=False, sort_keys=True).encode('utf8')).hexdigest(),
         }
 
     def get_workspace_context_definitions(self):
