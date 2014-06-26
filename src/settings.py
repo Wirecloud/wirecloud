@@ -22,7 +22,6 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',      # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': path.join(BASEDIR, 'wirecloud.db'),  # Or path to database file if using sqlite3.
-        'TEST_NAME': path.join(BASEDIR, 'test_wirecloud.db'),
         'USER': '',                                  # Not used with sqlite3.
         'PASSWORD': '',                              # Not used with sqlite3.
         'HOST': '',                                  # Set to empty string for localhost. Not used with sqlite3.
@@ -76,7 +75,9 @@ ROOT_URLCONF = 'urls'
 INSTALLED_APPS += (
     'wirecloud.oauth2provider',
     'wirecloud.fiware',
+    'django_nose',
 )
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 SESSION_COOKIE_AGE = 5184000  # 2 months
 
@@ -109,11 +110,3 @@ CACHES = {
 }
 
 FORCE_SCRIPT_NAME = ""
-
-NOT_PROXY_FOR = ['localhost', '127.0.0.1']
-
-# External settings configuration
-try:
-    from local_settings import *  # pyflakes:ignore
-except ImportError:
-    pass
