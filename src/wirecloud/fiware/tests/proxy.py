@@ -73,7 +73,7 @@ class ProxyTestCase(WirecloudTestCase):
     def test_fiware_idm_processor_body(self):
 
         def echo_response(method, url, *args, **kwargs):
-            return {'content': kwargs['data']}
+            return {'content': kwargs['data'].read()}
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
