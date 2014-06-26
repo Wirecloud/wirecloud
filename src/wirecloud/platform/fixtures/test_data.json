@@ -140,13 +140,13 @@
             "vendor": "Wirecloud",
             "short_name": "TestOperator",
             "json_description": "{\"default_lang\": \"en\", \"vendor\": \"Wirecloud\", \"description\": \"Test operator description\", \"code_content_type\": \"text/javascript\", \"translations\": {}, \"smartphoneimage\": \"\", \"translation_index_usage\": {}, \"title\": \"TestOperator\", \"properties\": [], \"js_files\": [\"js/main.js\"], \"requirements\": [], \"preferences\": [{\"default\": \"\", \"name\": \"pref_with_val\", \"label\": \"Prefix\", \"type\": \"text\", \"description\": \"\"},{\"default\": \"false\", \"name\": \"readonly_pref\", \"label\": \"Throw exceptions\", \"type\": \"text\", \"description\": \"Raise exception on event arrival\"},{\"default\": \"false\", \"name\": \"hidden_pref\", \"label\": \"Run logging tests\", \"type\": \"boolean\", \"description\": \"Run logging support tests on change to true\"}], \"authors\": \"admin\", \"wiring\": {\"inputs\": [{\"friendcode\": \"test_friend_code\", \"actionlabel\": \"\", \"name\": \"input\", \"label\": \"input\", \"type\": \"text\", \"description\": \"\"}], \"outputs\": [{\"friendcode\": \"test_friend_code\", \"description\": \"\", \"type\": \"text\", \"name\": \"output\", \"label\": \"output\"}]}, \"name\": \"TestOperator\", \"image\": \"images/catalogue.png\", \"version\": \"1.0\", \"context\": [], \"widget_height\": \"\", \"email\": \"test@example.com\", \"type\": \"operator\", \"widget_width\": \"\", \"doc\": \"doc/index.html\"}",
-            "creator": 1,
+            "creator": 2,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",
             "fromWGT": true,
             "type": 2,
             "public": false,
-            "users": [1, 2, 4]
+            "users": [2]
         }
     },
     {
