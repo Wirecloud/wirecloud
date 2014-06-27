@@ -39,7 +39,7 @@
                     this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates['wallet_widget'], null, {
                         'mainbutton': function (options, context, resource) {
                             var button = new StyledElements.StyledButton({
-                                'class': 'instantiate_button',
+                                'class': 'mainbutton btn-primary',
                                 'iconClass': 'icon-plus',
                                 'title': 'Add to workspace'
                             });
@@ -47,7 +47,6 @@
                                 var local_widget = Wirecloud.LocalCatalogue.getResource(resource.vendor, resource.name, resource.version);
                                 Wirecloud.activeWorkspace.addInstance(local_widget);
                             });
-                            button.addClassName('mainbutton btn-primary');
                             return button;
                         }
                     });

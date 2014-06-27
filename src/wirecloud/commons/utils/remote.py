@@ -265,6 +265,8 @@ class IWidgetWalletTester(object):
 
     def wait_ready(self, timeout=10):
 
+        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'in' in self.element.get_attribute('class'))
+
         list_element = self.element.find_element_by_css_selector('.widget_wallet_list')
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in list_element.get_attribute('class'))
 
@@ -606,7 +608,7 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
         old_iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
 
-        self.scroll_and_click(resource.find_element_by_css_selector('.instantiate_button div'))
+        self.scroll_and_click(resource.find_element_by_css_selector('.mainbutton div'))
 
         tmp = {
             'new_iwidget': None,
