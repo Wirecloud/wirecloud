@@ -239,13 +239,19 @@
 
     CatalogueView.prototype.ui_commands.showDetails = function showDetails(resource) {
         return function (e) {
-            this.catalogue.getResourceDetails(resource.vendor, resource.name, {
-                onSuccess: function (resource_details) {
-                    this.viewsByName.details.paint(resource_details);
-                    this.alternatives.showAlternative(this.viewsByName.details);
-                    this.viewsByName.details.repaint();
-                }.bind(this)
-            });
+            var onSuccess = function (resource_details) {
+                this.viewsByName.details.paint(resource_details);
+                this.alternatives.showAlternative(this.viewsByName.details);
+                this.viewsByName.details.repaint();
+            };
+
+            if (resource instanceof Wirecloud.WirecloudCatalogue.ResourceDetails) {
+                onSuccess.call(this, resource);
+            } else {
+                this.catalogue.getResourceDetails(resource.vendor, resource.name, {
+                    onSuccess: onSuccess.bind(this)
+                });
+            }
         }.bind(this);
     };
 
