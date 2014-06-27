@@ -37,7 +37,7 @@ def write_json_description(template_info):
 
     template_info = copy.copy(template_info)
 
-    remove_empty_fields(('title', 'description', 'authors', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl'), template_info)
+    remove_empty_fields(('title', 'description', 'authors', 'homepage', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl'), template_info)
 
     del template_info['translation_index_usage']
     return json.dumps(template_info, sort_keys=True, indent=4)

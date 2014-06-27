@@ -215,6 +215,7 @@ def get_resource_data(resource, user, request=None):
         'description': resource_info['description'],
         'email': resource_info['email'],
         'image': resource_info['image'],
+        'homepage': resource_info['homepage'],
         'doc': resource_info['doc'],
         'changelog': resource_info['changelog'],
         'uriTemplate': template_uri,

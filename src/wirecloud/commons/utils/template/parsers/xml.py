@@ -39,6 +39,7 @@ ORGANIZATION_XPATH = 't:Organization'
 IMAGE_URI_XPATH = 't:ImageURI'
 IPHONE_IMAGE_URI_XPATH = 't:iPhoneImageURI'
 MAIL_XPATH = 't:Mail'
+HOMEPAGE_URI_XPATH = 't:Homepage'
 DOC_URI_XPATH = 't:WikiURI'
 LICENCE_XPATH = 't:License'
 LICENCE_URL_XPATH = 't:LicenseURL'
@@ -186,6 +187,7 @@ class WirecloudTemplateParser(object):
         self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)
         self._info['image'] = self._get_field(IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['smartphoneimage'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
+        self._info['homepage'] = self._get_field(HOMEPAGE_URI_XPATH, self._resource_description, required=False)
         self._info['doc'] = self._get_field(DOC_URI_XPATH, self._resource_description, required=False)
         self._info['license'] = self._get_field(LICENCE_XPATH, self._resource_description, required=False)
         self._info['licenseurl'] = self._get_field(LICENCE_URL_XPATH, self._resource_description, required=False)

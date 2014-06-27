@@ -98,6 +98,7 @@ def build_xml_document(options):
     etree.SubElement(desc, 'Description').text = options.get('description')
     etree.SubElement(desc, 'ImageURI').text = options.get('image', '')
     etree.SubElement(desc, 'iPhoneImageURI').text = options.get('smartphoneimage', '')
+    etree.SubElement(desc, 'Homepage').text = options.get('homepage', '')
     etree.SubElement(desc, 'WikiURI').text = options.get('doc', '')
     etree.SubElement(desc, 'License').text = options.get('license', '')
     etree.SubElement(desc, 'LicenseURL').text = options.get('licenseurl', '')

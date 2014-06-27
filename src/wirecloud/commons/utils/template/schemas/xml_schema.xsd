@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Wirecloud Widget Template -->
+<!-- WireCloud Mashable Application Component Descriptions -->
 <!-- Version: 1.0 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1"
@@ -29,6 +29,12 @@
     <xs:simpleType name="VersionType">
         <xs:restriction base="xs:string">
             <xs:pattern value="([1-9]\d*\.|0\.)*([1-9]\d*|0)((a|b|rc)[1-9]\d*)?"></xs:pattern>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AbsoluteURL">
+        <xs:restriction base="xs:anyURI">
+            <xs:pattern value="\c+:.+"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -79,6 +85,13 @@
                     <xs:documentation>
                         Image to be used in iPhone and other
                         smartphones.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="homepage" minOccurs="0" maxOccurs="1" type="macd:AbsoluteURL">
+                <xs:annotation>
+                    <xs:documentation>
+                        The url to the project homepage.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>

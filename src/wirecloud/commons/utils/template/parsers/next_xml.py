@@ -44,6 +44,7 @@ AUTHOR_XPATH = 't:authors'
 IMAGE_URI_XPATH = 't:image'
 IPHONE_IMAGE_URI_XPATH = 't:smartphoneimage'
 MAIL_XPATH = 't:email'
+HOMEPAGE_XPATH = 't:homepage'
 DOC_URI_XPATH = 't:doc'
 LICENCE_XPATH = 't:license'
 LICENCE_URL_XPATH = 't:licenseurl'
@@ -184,6 +185,7 @@ class ApplicationMashupTemplateParser(object):
         self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)
         self._info['image'] = self._get_field(IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['smartphoneimage'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
+        self._info['homepage'] = self._get_field(HOMEPAGE_XPATH, self._resource_description, required=False)
         self._info['doc'] = self._get_field(DOC_URI_XPATH, self._resource_description, required=False)
         self._info['license'] = self._get_field(LICENCE_XPATH, self._resource_description, required=False)
         self._info['licenseurl'] = self._get_field(LICENCE_URL_XPATH, self._resource_description, required=False)

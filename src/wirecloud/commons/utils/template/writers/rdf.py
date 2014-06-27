@@ -298,6 +298,10 @@ def build_rdf_graph(template_info):
 
     graph.add((resource_uri, WIRE['hasChangeLog'], rdflib.URIRef(template_info.get('changelog', ''))))
 
+    homepage = template_info.get('homepage')
+    if homepage not in (None, ''):
+        graph.add((resource_uri, FOAF['homepage'], rdflib.URIRef(homepage)))
+
     if template_info.get('doc'):
         graph.add((resource_uri, FOAF['page'], rdflib.URIRef(template_info.get('doc'))))
 
