@@ -23,10 +23,12 @@ from six.moves.urllib.parse import urljoin, urlparse
 import time
 
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import get_language, ugettext as _
+import markdown
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
+from wirecloud.commons.utils.downloader import download_local_file
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import TemplateParser
@@ -70,6 +72,11 @@ def extract_resource_media_from_package(template, package, base_path):
                 overrides['doc'] = ''
         elif resource_info['doc'].startswith(('//', '/')):
             overrides['doc'] = template.get_absolute_url(resource_info['doc'])
+
+    longdescription_url = resource_info['longdescription']
+    if longdescription_url != '' and not longdescription_url.startswith(('http://', 'https://', '//', '/')):
+        longdescription_path = os.path.normpath(longdescription_url)
+        package.extract_localized_files(longdescription_path, os.path.join(base_path, os.path.dirname(longdescription_path)))
 
     changelog_url = resource_info['changelog']
     if changelog_url != '' and not changelog_url.startswith(('http://', 'https://', '//', '/')):
@@ -197,6 +204,22 @@ def get_resource_data(resource, user, request=None):
     cdate = resource.creation_date
     creation_timestamp = time.mktime(cdate.timetuple()) * 1e3 + cdate.microsecond / 1e3
 
+    longdescription = resource_info['longdescription']
+    if longdescription != '':
+        longdescription_path = os.path.join(wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version), longdescription)
+
+        (filename_root, filename_ext) = os.path.splitext(longdescription_path)
+        localized_longdescription_path = filename_root + '.' + get_language() + filename_ext
+
+        try:
+            description_code = download_local_file(localized_longdescription_path)
+        except:
+            description_code = download_local_file(longdescription_path)
+
+        longdescription = markdown.markdown(description_code, output_format='xhtml5')
+    else:
+        longdescription = resource_info['description']
+
     return {
         'id': resource.pk,
         'vendor': resource.vendor,
@@ -213,6 +236,7 @@ def get_resource_data(resource, user, request=None):
         'authors': resource_info['authors'],
         'title': resource_info['title'],
         'description': resource_info['description'],
+        'longdescription': longdescription,
         'email': resource_info['email'],
         'image': resource_info['image'],
         'homepage': resource_info['homepage'],

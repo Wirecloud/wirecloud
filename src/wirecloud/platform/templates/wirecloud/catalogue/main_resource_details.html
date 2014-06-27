@@ -1,7 +1,7 @@
 {% load i18n %}<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
 
     <h3>{% trans 'Description' %}</h3>
-    <div class="desc padding_left"><t:description/></div>
+    <t:longdescription/>
 
     <h3>{% trans 'Tags' %}</h3>
     <div class="tag_cloud"><t:tags>{"max": 3}</t:tags></div>

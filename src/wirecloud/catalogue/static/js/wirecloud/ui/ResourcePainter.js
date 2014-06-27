@@ -87,6 +87,9 @@
             'version': resource.version.text,
             'authors': resource.authors,
             'description': resource.description,
+            'longdescription': function () {
+                return new StyledElements.Fragment(resource.longdescription);
+            },
             'type': function () {
                 var label = document.createElement('div');
                 label.textContent = resource.type;
