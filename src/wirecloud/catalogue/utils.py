@@ -71,6 +71,11 @@ def extract_resource_media_from_package(template, package, base_path):
         elif resource_info['doc'].startswith(('//', '/')):
             overrides['doc'] = template.get_absolute_url(resource_info['doc'])
 
+    changelog_url = resource_info['changelog']
+    if changelog_url != '' and not changelog_url.startswith(('http://', 'https://', '//', '/')):
+        changelog_path = os.path.normpath(changelog_url)
+        package.extract_localized_files(changelog_path, os.path.join(base_path, os.path.dirname(changelog_path)))
+
     return overrides
 
 

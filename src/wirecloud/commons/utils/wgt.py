@@ -18,11 +18,12 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import zipfile
-from lxml import etree
+import re
 from shutil import rmtree
 from six.moves.urllib.request import pathname2url
+import zipfile
 
+from lxml import etree
 from wirecloud.commons.utils.template import TemplateParser
 
 
@@ -59,6 +60,14 @@ class WgtFile(object):
         f = open(output_path, 'wb')
         f.write(contents)
         f.close()
+
+    def extract_localized_files(self, file_name, output_dir):
+
+        (file_root, ext) = os.path.splitext(file_name)
+        search_re = re.compile(re.escape(file_root) + '(?:.\w\w(?:-\w\w)?)?' + re.escape(ext))
+        for name in self._zip.namelist():
+            if search_re.match(name):
+                self.extract_file(name, os.path.join(output_dir, os.path.basename(name)))
 
     def extract_dir(self, dir_name, output_path):
 
