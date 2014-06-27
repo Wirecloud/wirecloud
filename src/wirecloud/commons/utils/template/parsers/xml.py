@@ -34,6 +34,7 @@ VENDOR_XPATH = 't:Vendor'
 VERSION_XPATH = 't:Version'
 DISPLAY_NAME_XPATH = 't:DisplayName'
 DESCRIPTION_XPATH = 't:Description'
+LONG_DESCRIPTION_XPATH = 't:LongDescription'
 AUTHOR_XPATH = 't:Author'
 ORGANIZATION_XPATH = 't:Organization'
 IMAGE_URI_XPATH = 't:ImageURI'
@@ -182,6 +183,7 @@ class WirecloudTemplateParser(object):
 
         self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._resource_description, required=False)
         self._add_translation_index(self._info['description'], type='resource', field='description')
+        self._info['longdescription'] = self._get_field(LONG_DESCRIPTION_XPATH, self._resource_description, required=False)
 
         self._info['authors'] = self._get_field(AUTHOR_XPATH, self._resource_description, required=False)
         self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)

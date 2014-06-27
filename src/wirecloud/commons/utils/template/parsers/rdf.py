@@ -119,6 +119,11 @@ class RDFTemplateParser(object):
         base_value = None
 
         for field_element in self._graph.objects(subject, namespace[element]):
+
+            if not isinstance(field_element, rdflib.Literal):
+                msg = _('invalid content for field: %(field)s')
+                raise TemplateParseException(msg % {'field': element})
+
             if field_element.language:
                 translated = True
 
@@ -214,7 +219,14 @@ class RDFTemplateParser(object):
             self._info['licenseurl'] = ''
             self._info['license'] = ''
 
-        self._info['description'] = self._get_translation_field(DCTERMS, 'description', self._rootURI, 'description', type='resource', field='description')
+        longdescription = self._get_field(DCTERMS, 'description', self._rootURI, id_=True, required=False)
+        if longdescription != '' and isinstance(longdescription, rdflib.Literal):
+            # Old and deprecated behaviour
+            self._info['description'] = self._get_translation_field(DCTERMS, 'description', self._rootURI, 'description', type='resource', field='description')
+            self._info['longdescription'] = ''
+        else:
+            self._info['longdescription'] = '%s' % longdescription
+            self._info['description'] = self._get_translation_field(DCTERMS, 'abstract', self._rootURI, 'description', type='resource', field='description')
 
         authors = self._get_field(DCTERMS, 'creator', self._rootURI, required=False, id_=True)
         self._info['authors'] = self._get_field(FOAF, 'name', authors, required=False)

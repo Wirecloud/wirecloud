@@ -40,6 +40,7 @@ WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/macdescription/1'
 RESOURCE_DESCRIPTION_XPATH = 't:details'
 DISPLAY_NAME_XPATH = 't:title'
 DESCRIPTION_XPATH = 't:description'
+LONG_DESCRIPTION_XPATH = 't:longdescription'
 AUTHOR_XPATH = 't:authors'
 IMAGE_URI_XPATH = 't:image'
 IPHONE_IMAGE_URI_XPATH = 't:smartphoneimage'
@@ -180,6 +181,7 @@ class ApplicationMashupTemplateParser(object):
 
         self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._resource_description, required=False)
         self._add_translation_index(self._info['description'], type='resource', field='description')
+        self._info['longdescription'] = self._get_field(LONG_DESCRIPTION_XPATH, self._resource_description, required=False)
 
         self._info['authors'] = self._get_field(AUTHOR_XPATH, self._resource_description, required=False)
         self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)

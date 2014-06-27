@@ -68,7 +68,14 @@
             <xs:element name="description" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
                 <xs:annotation>
                     <xs:documentation>
-                        A brief textual description of the widget.
+                        A brief textual description of the mashable application component.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="longdescription" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+                <xs:annotation>
+                    <xs:documentation>
+                        A detailed  description of the mashable application component (using Markdown syntax by default).
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>

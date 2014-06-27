@@ -95,6 +95,7 @@ def build_xml_document(options):
     etree.SubElement(desc, 'DisplayName').text = options.get('title')
     etree.SubElement(desc, 'Author').text = options.get('authors')
     etree.SubElement(desc, 'Mail').text = options.get('email')
+    etree.SubElement(desc, 'LongDescription').text = options.get('longdescription')
     etree.SubElement(desc, 'Description').text = options.get('description')
     etree.SubElement(desc, 'ImageURI').text = options.get('image', '')
     etree.SubElement(desc, 'iPhoneImageURI').text = options.get('smartphoneimage', '')

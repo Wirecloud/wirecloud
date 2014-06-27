@@ -287,7 +287,11 @@ def build_rdf_graph(template_info):
     graph.add((provider, FOAF['name'], rdflib.Literal(template_info.get('vendor'))))
     graph.add((resource_uri, USDL['versionInfo'], rdflib.Literal(template_info.get('version'))))
     graph.add((resource_uri, DCTERMS['title'], rdflib.Literal(template_info.get('name'))))
-    add_translated_nodes(graph, resource_uri, DCTERMS, 'description', template_info.get('description'), {'type': 'resource', 'field': 'description'}, template_info)
+    add_translated_nodes(graph, resource_uri, DCTERMS, 'abstract', template_info.get('description'), {'type': 'resource', 'field': 'description'}, template_info)
+
+    longdescription = template_info.get('longdescription', None)
+    if longdescription not in (None, ''):
+        graph.add((resource_uri, DCTERMS['description'], rdflib.URIRef(longdescription)))
 
     authors = rdflib.BNode()
     graph.add((authors, rdflib.RDF.type, FOAF['Person']))

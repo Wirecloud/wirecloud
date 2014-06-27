@@ -139,7 +139,7 @@ def build_xml_document(options):
     template.set('version', options.get('version'))
 
     desc = etree.SubElement(template, 'details')
-    addElements(options, desc, ('title', 'authors', 'email', 'image', 'smartphoneimage', 'description', 'homepage', 'doc', 'license', 'licenseurl', 'changelog'))
+    addElements(options, desc, ('title', 'authors', 'email', 'image', 'smartphoneimage', 'description', 'longdescription', 'homepage', 'doc', 'license', 'licenseurl', 'changelog'))
 
     if len(options['requirements']) > 0:
         requirements = etree.SubElement(template, 'requirements')
