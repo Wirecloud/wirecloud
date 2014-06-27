@@ -131,9 +131,13 @@
                     'class': 'icon-home',
                     'title': gettext('Home page')
                 });
-                button.addEventListener('click', function () {
-                    window.open(resource.doc, '_blank');
-                });
+                if (resource.homepage != null && resource.homepage != '') {
+                    button.addEventListener('click', function () {
+                        window.open(resource.homepage, '_blank');
+                    });
+                } else {
+                    button.disable();
+                }
 
                 return button;
             },

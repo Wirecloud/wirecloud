@@ -85,6 +85,9 @@
             'description': {
                 get: function () { return currentVersion.description; }
             },
+            'homepage': {
+                get: function () { return currentVersion.homepage; }
+            },
             'doc': {
                 get: function () { return currentVersion.doc; }
             },
