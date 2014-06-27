@@ -35,11 +35,8 @@ VERSIONS = {
 
 def download_local_file(path):
 
-    f = codecs.open(path, 'rb')
-    contents = f.read()
-    f.close()
-
-    return contents
+    with codecs.open(path, 'rb') as f:
+        return f.read()
 
 
 def download_http_content(url, user=None):
