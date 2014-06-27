@@ -71,7 +71,7 @@
                     if (resource.changelog) {
                         var changelog = details.createTab({'name': gettext('Change Log'), 'closable': false});
                         changelog.addEventListener('show', function () {
-                            Wirecloud.io.makeRequest(this.mainview.catalogue.RESOURCE_DETAILS_ENTRY.evaluate(resource), {
+                            Wirecloud.io.makeRequest(this.mainview.catalogue.RESOURCE_CHANGELOG_ENTRY.evaluate(resource), {
                                 method: 'GET',
                                 onSuccess: function (response) {
                                     changelog.wrapperElement.innerHTML = response.responseText;
