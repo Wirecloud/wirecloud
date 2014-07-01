@@ -333,6 +333,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/opManager/Workspace.js',
                 'js/wirecloud/ui/WorkspaceListItems.js',
                 'js/opManager/WorkspaceItems.js',
+                'js/wirecloud/ui/MACWallet.js',
                 'js/wirecloud/ui/WorkspaceView.js',
                 'js/opManager/TabMenuItems.js',
                 'js/opManager/Tab.js',

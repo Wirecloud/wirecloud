@@ -25,92 +25,6 @@
 
     "use strict";
 
-    var builder = new StyledElements.GUIBuilder();
-
-    var _search = function _search(keywords) {
-        this._list.classList.add('disabled');
-        Wirecloud.LocalCatalogue.search({
-            scope: 'widget',
-            search_criteria: keywords,
-            onSuccess: function (widgets, search_info) {
-                var i, msg;
-
-                if (this.resource_painter == null) {
-                    this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates['wallet_widget'], null, {
-                        'mainbutton': function (options, context, resource) {
-                            var button = new StyledElements.StyledButton({
-                                'class': 'mainbutton btn-primary',
-                                'iconClass': 'icon-plus',
-                                'title': 'Add to workspace'
-                            });
-                            button.addEventListener('click', function () {
-                                var local_widget = Wirecloud.LocalCatalogue.getResource(resource.vendor, resource.name, resource.version);
-                                Wirecloud.activeWorkspace.addInstance(local_widget);
-                            });
-                            return button;
-                        }
-                    });
-                }
-
-                this._list.innerHTML = '';
-                if (search_info.total_count !== 0) {
-                    if ('corrected_query' in search_info) {
-                        msg = gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
-                        this.resource_painter.paintInfo(msg, {
-                            corrected_query: search_info.corrected_query
-                        }).insertInto(this._list);
-                    }
-
-                    for (i = 0; i < widgets.length; i += 1) {
-                        this.resource_painter.paint(widgets[i]).insertInto(this._list);
-                    }
-                } else {
-                    msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p>" +
-                        "<p>Suggestions:</p>" +
-                        "<ul>" +
-                        "<li>Make sure all words are spelled correctly.</li>" +
-                        "<li>Try different keywords.</li>" +
-                        "<li>Try more general keywords.</li>" +
-                        "</ul>");
-                    msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(keywords.trim())}, true);
-                    this.resource_painter.paintError(new StyledElements.Fragment(msg)).insertInto(this._list);
-                }
-            }.bind(this),
-            onComplete: function () {
-                this._list.classList.remove('disabled');
-            }.bind(this)
-        });
-    };
-
-    var _keywordTimeoutHandler = function _keywordTimeoutHandler(input) {
-        this._search_timeout = null;
-        _search.call(this, input.getValue());
-    };
-
-    var _onSearchInput = function _onSearchInput(input) {
-
-        // Cancel current timeout
-        if (this._search_timeout !== null) {
-            clearTimeout(this._search_timeout);
-        }
-
-        this._search_timeout = setTimeout(_keywordTimeoutHandler.bind(this, input), 700);
-    };
-
-    var _onSearchInputKeyPress = function _onSearchInputKeyPress(input, event) {
-
-        if (event.keyCode === 13) { // enter
-
-            // Cancel current timeout
-            if (this._search_timeout !== null) {
-                clearTimeout(this._search_timeout);
-            }
-
-            // Inmediate search
-            _keywordTimeoutHandler.call(this, input);
-        }
-    };
-
     var WorkspaceView = function WorkspaceView(id, options) {
         options.id = 'workspace';
         StyledElements.Alternative.call(this, id, options);
@@ -122,9 +36,10 @@
         this.wsMenu.appendSeparator();
         this.wsMenu.append(new WorkspaceItems(this));
 
-        this.walletButton = new StyledElements.StyledButton({'class': 'icon-plus', plain: true});
+        this.widgetWallet = new Wirecloud.ui.MACWallet('widget');
+        this.walletButton = new StyledElements.StyledButton({'iconClass': 'icon-plus'});
         this.walletButton.addEventListener('click', function () {
-            this.toggleWidgetWallet();
+            this.widgetWallet.show();
         }.bind(this));
     };
     WorkspaceView.prototype = new StyledElements.Alternative();
@@ -165,58 +80,6 @@
 
     WorkspaceView.prototype.getToolbarButtons = function getToolbarButtons() {
         return [this.walletButton];
-    };
-
-    WorkspaceView.prototype.openWidgetWallet = function openWidgetWallet() {
-        this._list = document.createElement('div');
-        this._list.className = 'widget_wallet_list';
-
-        var input;
-
-        this.wallet = builder.parse(Wirecloud.currentTheme.templates['wallet'], {
-            addmore: function () {
-                var div = document.createElement('div');
-                div.className = 'widget_wallet_addmore';
-                var button = new StyledElements.StyledButton({text: gettext('Get more widgets'), "class": "btn-success"});
-                button.addEventListener('click', function () {
-                    LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
-                });
-                button.insertInto(div);
-                return div;
-            },
-            searchinput: function () {
-                input = new StyledElements.StyledTextField({'placeholder': 'Keywords...'});
-                input.inputElement.addEventListener('keypress', _onSearchInputKeyPress.bind(this, input));
-                input.addEventListener('change', _onSearchInput.bind(this));
-                return input;
-            }.bind(this),
-            list: this._list
-        }).elements[1];
-        LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.wallet);
-
-        _search.call(this, '');
-        setTimeout(function () {
-            input.focus();
-            this.wallet.classList.add('in');
-        }.bind(this), 0);
-    };
-
-    WorkspaceView.prototype.hideWidgetWallet = function hideWidgetWallet() {
-        if (this.wallet != null) {
-            this.wallet.addEventListener('transitionend', function () {
-                this.wallet.parentNode.removeChild(this.wallet);
-                this.wallet = null;
-            }.bind(this));
-            this.wallet.classList.remove('in');
-        }
-    };
-
-    WorkspaceView.prototype.toggleWidgetWallet = function toggleWidgetWallet() {
-        if (this.wallet != null) {
-            this.hideWidgetWallet();
-        } else {
-            this.openWidgetWallet();
-        }
     };
 
     WorkspaceView.prototype.destroy = function destroy() {
