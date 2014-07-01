@@ -1,6 +1,6 @@
 .widget_wallet {
     position: absolute;
-    margin: 10px;
+    margin: 10px 5px;
     top: 0;
     left: 0;
     width: 0;
@@ -24,13 +24,23 @@
     width: 328px;
 }
 
-.widget_wallet > .styled_text_field {
+.widget_wallet_header {
     display: block;
     width: auto;
     margin: 6px;
+    white-space: nowrap;
 }
 
-.widget_wallet > .styled_text_field > div {
+.widget_wallet_header > .styled_button {
+    margin: 0 5px;
+}
+
+.widget_wallet_header > .styled_text_field {
+    margin: 0px;
+    width: 293px;
+}
+
+.widget_wallet_header > .styled_text_field > div {
     margin: 0;
 }
 
