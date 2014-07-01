@@ -97,6 +97,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/PasswordField.js',
     'js/StyledElements/Select.js',
     'js/StyledElements/ToggleButton.js',
+    'js/StyledElements/Tab.js',
     'js/StyledElements/StyledNotebook.js',
     'js/StyledElements/Alternative.js',
     'js/StyledElements/Alternatives.js',
