@@ -68,7 +68,7 @@
         /* call to the parent constructor */
         StyledElements.Container.call(this, options.containerOptions, ['show', 'hide', 'close']);
 
-        this.wrapperElement.classList.add("tab");
+        this.wrapperElement.classList.add("se-notebook-tab-content");
         this.wrapperElement.classList.add("hidden");
 
         this.tabElement.addEventListener("click",
