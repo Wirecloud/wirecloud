@@ -115,15 +115,35 @@
 
 /* Grouped buttons */
 
+.btn-group {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.btn-group > .styled_button {
+    margin: 0px;
+}
+
+.btn-group > .styled_button:not(:first-child) {
+    margin-left: -1px;
+}
+
 .input-prepend > .west_container > .styled_button {
     margin: 0 -1px 0 0;
 }
 
-.input-prepend > .west_container > .styled_button > div, .input-prepend > .west_container > .styled_button > button {
+.input-prepend > .west_container > .styled_button > div,
+.input-prepend > .west_container > .styled_button > button,
+.btn-group > .styled_button > div,
+.btn-group > .styled_button > button {
     border-radius: 0px;
 }
 
-.input-prepend > .west_container > .styled_button:first-child > div, .input-prepend > .west_container > .styled_button:first-child > button {
+.input-prepend > .west_container > .styled_button:first-child > div,
+.input-prepend > .west_container > .styled_button:first-child > button,
+.btn-group > .styled_button:first-child > div,
+.btn-group > .styled_button:first-child > button {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
@@ -132,11 +152,15 @@
     margin: 0 0 0 -1px;
 }
 
-.input-append > .east_container > .styled_button > div, .input-append > .east_container > .styled_button > button {
+.input-append > .east_container > .styled_button > div,
+.input-append > .east_container > .styled_button > button {
     border-radius: 0px;
 }
 
-.input-append > .east_container > .styled_button:last-child > div, .input-append > .east_container > .styled_button:last-child > button {
+.input-append > .east_container > .styled_button:last-child > div,
+.input-append > .east_container > .styled_button:last-child > button,
+.btn-group > .styled_button:last-child > div,
+.btn-group > .styled_button:last-child > button {
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
 }
