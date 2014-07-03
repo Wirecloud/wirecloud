@@ -38,11 +38,13 @@
 }
 
 .styled_form td > .styled_text_field,
-.styled_form td > .styled_text_area,
-.styled_form td > .horizontal_layout.styled_file_field
-{
+.styled_form td > .styled_text_area {
     width: 100%;
     box-sizing: border-box;
+}
+
+.styled_form td > .horizontal_layout.styled_file_field {
+    width: auto;
 }
 
 .styled_form td > .styled_text_field,
