@@ -1,4 +1,4 @@
-.workspace div > .wrapper > .tab > div.emptyWorkspaceInfoBox {
+.emptyWorkspaceInfoBox {
     max-width: 582px;
     border-radius: 7px;
     padding: 18px;
@@ -6,6 +6,6 @@
     border: 2px dashed rgba(62, 128, 173, 0.5);
 }
 
-.workspace div > .wrapper > .tab > .emptyWorkspaceInfoBox > .alert {
+.emptyWorkspaceInfoBox > .alert {
     margin: 0;
 }

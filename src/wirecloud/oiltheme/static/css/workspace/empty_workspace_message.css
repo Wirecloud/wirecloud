@@ -1,4 +1,4 @@
-.workspace > div > .wrapper > .tab > .emptyWorkspaceInfoBox {
+.emptyWorkspaceInfoBox {
     max-width: 582px;
     border-radius: 7px;
     padding: 18px;
@@ -6,15 +6,15 @@
     border: 2px dashed rgba(62, 128, 173, 0.5);
 }
 
-.workspace > div > .wrapper > .tab > .emptyWorkspaceInfoBox > .alert {
+.emptyWorkspaceInfoBox > .alert {
     margin: 0;
 }
 
-.workspace > div > .wrapper > .tab > .emptyWorkspaceInfoBox > .alert a {
+.emptyWorkspaceInfoBox > .alert a {
     font-weight: bold;
     color: #3A87AD;
 }
 
-.workspace > div > .wrapper > .tab > .emptyWorkspaceInfoBox > .alert a:hover {
+.emptyWorkspaceInfoBox > .alert a:hover {
     color: #60C1CF;
 }
