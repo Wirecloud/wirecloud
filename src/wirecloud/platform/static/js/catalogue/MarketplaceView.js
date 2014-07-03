@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -98,7 +98,6 @@
         }
     };
 
-
     MarketplaceView = function MarketplaceView(id, options) {
         options.id = 'marketplace';
         StyledElements.Alternative.call(this, id, options);
@@ -162,7 +161,7 @@
         return data;
     };
 
-    MarketplaceView.prototype.getBreadcrum = function () {
+    MarketplaceView.prototype.getBreadcrum = function getBreadcrum() {
         var label, breadcrum, user;
 
         user = null;
@@ -184,10 +183,13 @@
 
         breadcrum.push({
             'label': label,
-            'menu': this.marketMenu
         });
 
         return breadcrum;
+    };
+
+    MarketplaceView.prototype.getToolbarMenu = function getToolbarMenu() {
+        return this.marketMenu;
     };
 
     MarketplaceView.prototype.waitMarketListReady = function waitMarketListReady(callback) {

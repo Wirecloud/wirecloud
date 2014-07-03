@@ -86,11 +86,18 @@ label {
     margin-bottom: 0.5ex;
 }
 
-.breadcrum_wrapper img {
-    margin: 0 1ex 0 0;
+.wirecloud_app_bar {
+    margin: -5px 0 5px 0;
+    white-space: nowrap;
+}
+
+.wirecloud_header_nav {
+    margin: 0 0 0 5px;
+}
+
+.wirecloud_app_bar img {
     vertical-align: bottom;
-    padding: 0 1ex 1ex;
-    vertical-align: -1.3ex;
+    margin: 0 1ex;
 }
 
 #wrapper {
@@ -123,13 +130,13 @@ label {
     vertical-align: top;
 }
 
-#wirecloud_header .styled_button {
+#wirecloud_header .user_menu_wrapper > .styled_button {
     margin: 0;
     vertical-align: baseline;
     height: 20px;
 }
 
-#wirecloud_header .styled_button > div {
+#wirecloud_header .user_menu_wrapper > .styled_button > div {
     color: #FFF;
     font-size: 12px;
     margin: 0;
@@ -144,7 +151,7 @@ label {
     box-shadow: none;
 }
 
-#wirecloud_header .styled_button.open > div {
+#wirecloud_header .user_menu_wrapper > .styled_button.open > div {
     background: white;
     border-color: #BEBEBE;
     color: #41768D;
@@ -182,40 +189,29 @@ label {
     height: 0;
 }
 
-#wirecloud_header > .menu_wrapper > .menu > .selected > .mark {
-    height: 2ex;
+.wirecloud_toolbar {
+    overflow: visible;
+    margin: 0 5px;
 }
 
-#wirecloud_header > .menu_wrapper > .menu > .workspace {
-    background: #47A06B;
+.wirecloud_toolbar .styled_button > div {
+    width: 21px;
+    text-align: center;
 }
 
-#wirecloud_header > .menu_wrapper > .menu > .wiring {
-    background: #DFA462;
+.wirecloud_toolbar .styled_button .badge {
+    position: absolute;
 }
 
-#wirecloud_header > .menu_wrapper > .menu > .wiring.error:before {
-    content: "\f071";
-    vertical-align: baseline;
-    font-family: FontAwesome;
-    font-weight: normal;
-    font-style: normal;
-    text-decoration: inherit;
-    -webkit-font-smoothing: antialiased;
-    margin-right: 3px;
-}
-
-#wirecloud_header > .menu_wrapper > .menu > .marketplace {
-    background: #DF7A62;
-}
-
-#wirecloud_header > .submenu {
-    display: none;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
-}
-
-#wirecloud_breadcrum > span {
-    padding: 0px 1ex;
+#wirecloud_breadcrum {
+    padding: 0 5px;
+    height: 42px;
+    line-height: 42px;
+    text-align: center;
+    margin: 0 0 0 -1px;
+    font-weight: bold;
+    width: 400px;
+    transition: width 0.30s ease-in;
 }
 
 #wirecloud_breadcrum > .first_level {
@@ -228,6 +224,20 @@ label {
 
 #wirecloud_breadcrum > .third_level {
     color: #E8A150;
+}
+
+@media (min-width: 1024px) {
+    #wirecloud_breadcrum {
+        width: 500px;
+        font-size: 18px;
+    }
+}
+
+@media (min-width: 1280px) {
+    #wirecloud_breadcrum {
+        width: 600px;
+        font-size: 20px;
+    }
 }
 
 /* Loading window */

@@ -25,23 +25,24 @@
 
     "use strict";
 
-    var onMenuClick = function onMenuClick(view_name) {
-        LayoutManagerFactory.getInstance().changeCurrentView(view_name);
-    };
-
     var WirecloudHeader = function WirecloudHeader() {
         var menu_wrapper;
 
         this.wrapperElement = document.getElementById('wirecloud_header');
+        this.app_bar = this.wrapperElement.querySelector('.wirecloud_app_bar');
         this.breadcrum = document.getElementById('wirecloud_breadcrum');
 
-        this.currentView = null;
-        this.currentMenu = null;
-        this._popup_buttons = [];
+        this.backButton = new StyledElements.StyledButton({'class': 'btn-large', 'iconClass': 'icon-caret-left'});
+        this.backButton.addEventListener('click', function () {
+            history.back();
+        });
+        this.backButton.insertInto(this.breadcrum.parentNode, this.breadcrum);
 
-        this.submenu = document.createElement('div');
-        this.submenu.className = 'submenu';
-        this.wrapperElement.insertBefore(this.submenu, this.wrapperElement.firstChild);
+        this.menuButton = new StyledElements.PopupButton({'class': 'btn-large', 'iconClass': 'icon-reorder'});
+        this.menuButton.insertInto(this.breadcrum.parentNode);
+        this.toolbar = document.createElement('div');
+        this.toolbar.className = 'btn-group wirecloud_toolbar';
+        this.app_bar.appendChild(this.toolbar);
 
         menu_wrapper = document.createElement('div');
         menu_wrapper.className = 'menu_wrapper';
@@ -50,34 +51,7 @@
         menu_wrapper.appendChild(this.menu);
         this.wrapperElement.insertBefore(menu_wrapper, this.wrapperElement.firstChild);
 
-        this._initMenuBar();
-    };
-
-    WirecloudHeader.prototype._initMenuBar = function _initMenuBar() {
-        var menu_order, menu, mark, menu_element, i, view_name;
-
-        this.menues = {
-            'workspace': {label: gettext('Editor')},
-            'wiring': {label: gettext('Wiring')},
-            'marketplace': {label: gettext('Marketplace')}
-        };
-        menu_order = ['workspace', 'wiring', 'marketplace'];
-
-        for (i = 0; i < menu_order.length; i += 1) {
-            menu = this.menues[menu_order[i]];
-            view_name = menu_order[i];
-
-            menu_element = document.createElement('span');
-            menu_element.textContent = menu.label;
-            menu_element.className = view_name;
-            menu_element.addEventListener('click', onMenuClick.bind(null, view_name), true);
-
-            mark = document.createElement('div');
-            mark.className = 'mark';
-            menu_element.appendChild(mark);
-            this.menu.appendChild(menu_element);
-            menu.html_element = menu_element;
-        }
+        this.currentView = null;
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
@@ -125,23 +99,23 @@
         }
     };
 
-    WirecloudHeader.prototype._clearOldBreadcrum = function _clearOldBreadcrum() {
-        var i;
+    var paint_breadcrum_entry = function paint_breadcrum_entry(i, breadcrum_entry) {
+        var breadcrum_part, breadcrum_levels = ['first_level', 'second_level', 'third_level'];
 
-        this.breadcrum.innerHTML = '';
-        for (i = 0; i < this._popup_buttons.length; i += 1) {
-            this._popup_buttons[i].destroy();
+        breadcrum_part = document.createElement('span');
+        breadcrum_part.textContent = breadcrum_entry.label;
+        breadcrum_part.className = breadcrum_levels[i];
+        if ('class' in breadcrum_entry) {
+            breadcrum_part.classList.add(breadcrum_entry['class']);
         }
 
-        this._popup_buttons = [];
+        this.breadcrum.appendChild(breadcrum_part);
     };
 
     WirecloudHeader.prototype._paintBreadcrum = function _paintBreadcrum(newView) {
-        var i, breadcrum_part, breadcrum, breadcrum_entry, breadcrum_levels, button;
+        var i, breadcrum, breadcrum_entry;
 
-        breadcrum_levels = ['first_level', 'second_level', 'third_level'];
-
-        this._clearOldBreadcrum();
+        this.breadcrum.innerHTML = '';
 
         if (newView != null && 'getBreadcrum' in newView) {
             breadcrum = newView.getBreadcrum();
@@ -152,86 +126,60 @@
         if (breadcrum.length === 0) {
             return;
         }
-        breadcrum_entry = breadcrum[0];
-        breadcrum_part = document.createElement('span');
-        breadcrum_part.textContent = breadcrum_entry.label;
-        breadcrum_part.className = breadcrum_levels[0];
-        if ('class' in breadcrum_entry) {
-            breadcrum_part.classList.add(breadcrum_entry['class']);
-        }
-        this.breadcrum.appendChild(breadcrum_part);
 
+        paint_breadcrum_entry.call(this, 0, breadcrum[0]);
 
         for (i = 1; i < breadcrum.length; i += 1) {
             this.breadcrum.appendChild(document.createTextNode('/'));
 
-            breadcrum_entry = breadcrum[i];
-
-            breadcrum_part = document.createElement('span');
-            breadcrum_part.textContent = breadcrum_entry.label;
-            breadcrum_part.className = breadcrum_levels[i];
-            if ('class' in breadcrum_entry) {
-                breadcrum_part.classList.add(breadcrum_entry['class']);
-            }
-
-            if (breadcrum_entry.menu != null) {
-                button = new StyledElements.PopupButton({
-                    'plain': true,
-                    'class': 'icon-menu',
-                    'menu': breadcrum_entry.menu
-                });
-                button.insertInto(breadcrum_part);
-                this._popup_buttons.push(button);
-            }
-            this.breadcrum.appendChild(breadcrum_part);
+            paint_breadcrum_entry.call(this, i, breadcrum[i]);
         }
     };
 
     WirecloudHeader.prototype._paintToolbar = function _paintToolbar(newView) {
         var buttons, i;
 
+        this.toolbar.innerHTML = "";
+
         if (newView == null || !('getToolbarButtons' in newView)) {
             return;
         }
 
+        var btn_group = document.createElement('div');
+        btn_group.className = 'btn-group';
+        this.breadcrum.appendChild(btn_group);
         buttons = newView.getToolbarButtons();
-        for (i=0; i < buttons.length; i++) {
-            buttons[i].insertInto(this.breadcrum);
+        for (i = 0; i < buttons.length; i++) {
+            buttons[i].addClassName('btn-large');
+            buttons[i].addClassName('btn-primary');
+            buttons[i].insertInto(this.toolbar);
         }
     };
 
-    WirecloudHeader.prototype._notifyViewChange = function _notifyViewChange(newView) {
-        var menuitems, triangle, startx;
+    WirecloudHeader.prototype._replaceMenu = function _replaceMenu(newView) {
+        var menu;
 
-        if (this.currentMenu !== null) {
-            this.currentMenu.html_element.classList.remove('selected');
-            this.submenu.className = 'submenu';
+        if (newView != null && ('getToolbarMenu' in newView)) {
+            menu = newView.getToolbarMenu();
         }
 
+        this.menuButton.replacePopupMenu(menu);
+        this.menuButton.setDisabled(menu == null);
+    };
+
+    WirecloudHeader.prototype._notifyViewChange = function _notifyViewChange(newView) {
         this.currentView = newView;
-        this.currentMenu = this.menues[newView.view_name];
-        this.currentMenu.html_element.classList.add('selected');
 
         this.refresh();
     };
 
     WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {
-        workspace.wiring.addEventListener('load', function () {
-            this.menues.wiring.html_element.classList.remove('error');
-        }.bind(this));
-
-        workspace.wiring.addEventListener('unloaded', function () {
-            this.menues.wiring.html_element.classList.remove('error');
-        }.bind(this));
-
-        workspace.wiring.addEventListener('error', function () {
-            this.menues.wiring.html_element.classList.add('error');
-        }.bind(this));
     };
 
     WirecloudHeader.prototype.refresh = function refresh() {
         this._paintBreadcrum(this.currentView);
         this._paintToolbar(this.currentView);
+        this._replaceMenu(this.currentView);
     };
 
     Wirecloud.ui.WirecloudHeader = WirecloudHeader;

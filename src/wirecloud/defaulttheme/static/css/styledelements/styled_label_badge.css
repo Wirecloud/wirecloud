@@ -23,6 +23,11 @@
     border-radius: 9px;
 }
 
+.label.hidden,
+.badge.hidden {
+    display: none;
+}
+
 .label-important,
 .badge-important {
   background-color: #b94a48;

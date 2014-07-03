@@ -53,20 +53,15 @@
     };
 
     WorkspaceView.prototype.getBreadcrum = function getBreadcrum() {
-        var workspace_name, entries, current_state, menu, context;
+        var workspace_name, entries, current_state;
 
         current_state = Wirecloud.HistoryManager.getCurrentState();
         if ('workspace_creator' in current_state) {
-            context = Wirecloud.contextManager;
-            if (context && context.get('username') !== 'anonymous') {
-                menu = this.wsMenu;
-            }
             entries = [
                 {
                     'label': current_state.workspace_creator
                 }, {
                     'label': current_state.workspace_name,
-                    'menu': menu
                 }
             ];
         } else {
@@ -76,6 +71,18 @@
         }
 
         return entries;
+    };
+
+    WorkspaceView.prototype.getToolbarMenu = function getToolbarMenu() {
+        var context, current_state, menu;
+        current_state = Wirecloud.HistoryManager.getCurrentState();
+        if ('workspace_creator' in current_state) {
+            context = Wirecloud.contextManager;
+            if (context && context.get('username') !== 'anonymous') {
+                return this.wsMenu;
+            }
+        }
+        return null;
     };
 
     WorkspaceView.prototype.getToolbarButtons = function getToolbarButtons() {

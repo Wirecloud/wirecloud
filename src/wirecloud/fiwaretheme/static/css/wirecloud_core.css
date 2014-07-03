@@ -123,11 +123,14 @@ label {
     margin-bottom: 5px;
 }
 
+.wirecloud_header_nav {
+    margin: 0 0 0 5px;
+}
+
 #wirecloud_header {
-    font-family: "Courier New", courier;
     font-size: 14pt;
     font-weight: bold;
-    margin-bottom: 0.5ex;
+    margin-bottom: 5px;
 }
 
 .logo_wrapper {
@@ -166,25 +169,45 @@ label {
     text-shadow: 1px 0px 1px rgba(255,255,255,0.1);
 }
 
-.breadcrum_wrapper {
-    text-align: right;
+.wirecloud_toolbar {
+    overflow: visible;
+    margin: 0 5px;
+}
+
+.wirecloud_toolbar .styled_button > div {
+    width: 21px;
+    text-align: center;
+}
+
+.wirecloud_toolbar .styled_button .badge {
+    position: absolute;
 }
 
 .breadcrum {
-    font-family: "Open Sans";
-    background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(237, 237, 237, 0.85) 50%, rgba(237, 237, 237, 1) 100%);
-    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255, 255, 255, 0)), color-stop(50%,rgba(237, 237, 237, 0.85)), color-stop(100%,rgba(237, 237, 237, 1)));
-    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
-    background: -o-linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
-    background: -ms-linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
-    background: linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
-    font-size: 30px;
-    width: 75%;
-    text-align: left;
+    height: 35px;
+    font-size: 16px;
+    line-height: 35px;
+    text-align: center;
     font-weight: normal;
-    color: #666;
-    padding: 11px;
+    padding: 0;
     display: inline-block;
+    margin: 0 0 0 -1px;
+    width: 500px;
+    transition: width 0.30s ease-in;
+}
+
+@media (min-width: 1024px) {
+    .breadcrum {
+        width: 700px;
+        font-size: 18px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .breadcrum {
+        width: 800px;
+        font-size: 20px;
+    }
 }
 
 #wrapper {
@@ -217,7 +240,7 @@ label {
     vertical-align: top;
 }
 
-#wirecloud_header .styled_button > div:before {
+.user_menu_wrapper .styled_button > div:before {
     font-family: FontAwesome;
     font-weight: normal;
     font-style: normal;
@@ -227,7 +250,7 @@ label {
     margin-right: 1ex;
 }
 
-#wirecloud_header .styled_button > div:after {
+.user_menu_wrapper .styled_button > div:after {
     font-family: FontAwesome;
     font-weight: normal;
     font-style: normal;
@@ -237,7 +260,7 @@ label {
     margin-left: 1ex;
 }
 
-#wirecloud_header .styled_button.open > span {
+.user_menu_wrapper .styled_button.open > span {
     background: rgb(81, 163, 81);
     -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -300,7 +323,7 @@ label {
 }
 
 #wirecloud_breadcrum > span {
-    padding: 0px 1ex;
+    padding: 0 5px;
 }
 
 /* Loading window */

@@ -147,7 +147,7 @@ header.navbar {
     -webkit-box-shadow: 0px 1px 8px rgba(50,51,51,0.15);
     -moz-box-shadow: 0px 1px 8px rgba(50,51,51,0.15);
     box-shadow: 0px 1px 8px rgba(50,51,51,0.15);
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 header.navbar {
@@ -314,29 +314,65 @@ footer {
 
 /* END OIL Header */
 
+.wirecloud_app_bar {
+    margin: 0 0 5px 0;
+    white-space: nowrap;
+}
+
+.wirecloud_header_nav {
+    margin: 0 0 0 5px;
+}
+
 #wirecloud_header > .breadcrum_wrapper {
     font-family: "Courier New", courier;
     font-size: 14pt;
     font-weight: bold;
     margin-bottom: 0.5ex;
-    text-align: right;
+    line-height: 41px;
+    position: relative;
+}
+
+.wirecloud_toolbar {
+    overflow: visible;
+    margin: 0 5px;
+}
+
+.wirecloud_toolbar .styled_button > div {
+    width: 21px;
+    text-align: center;
+}
+
+.wirecloud_toolbar .styled_button .badge {
+    position: absolute;
 }
 
 .breadcrum {
+    height: auto;
     font-family: "Open Sans";
-    background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(237, 237, 237, 0.85) 50%, rgba(237, 237, 237, 1) 100%);
-    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255, 255, 255, 0)), color-stop(50%,rgba(237, 237, 237, 0.85)), color-stop(100%,rgba(237, 237, 237, 1)));
-    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
-    background: -o-linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
-    background: -ms-linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
-    background: linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
-    font-size: 30px;
-    width: 75%;
-    text-align: left;
+    height: 35px;
+    font-size: 16px;
+    line-height: 33px;
+    text-align: center;
     font-weight: normal;
-    color: #666;
-    padding: 11px;
+    padding: 0;
     display: inline-block;
+    margin: 0 0 0 -1px;
+    width: 500px;
+    transition: width 0.30s ease-in;
+}
+
+@media (min-width: 1024px) {
+    .breadcrum {
+        width: 700px;
+        font-size: 18px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .breadcrum {
+        width: 800px;
+        font-size: 20px;
+    }
 }
 
 #wrapper {
@@ -366,33 +402,6 @@ footer {
     display: inline-block;
     padding: 0 0 0 1ex;
     vertical-align: top;
-}
-
-#wirecloud_header .styled_button > div:before {
-    font-family: FontAwesome;
-    font-weight: normal;
-    font-style: normal;
-    display: inline-block;
-    text-decoration: inherit;
-    content: "\f007";
-    margin-right: 1ex;
-}
-
-#wirecloud_header .styled_button > div:after {
-    font-family: FontAwesome;
-    font-weight: normal;
-    font-style: normal;
-    display: inline-block;
-    text-decoration: inherit;
-    content: "\f0d7";
-    margin-left: 1ex;
-}
-
-#wirecloud_header .styled_button.open > span {
-    background: rgb(81, 163, 81);
-    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 #wirecloud_header > .menu_wrapper > .menu > span {
@@ -451,8 +460,12 @@ footer {
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
 }
 
+#wirecloud_breadcrum {
+    vertical-align: middle;
+}
+
 #wirecloud_breadcrum > span {
-    padding: 0px 1ex;
+    padding: 0 5px;
 }
 
 /* Loading window */
