@@ -64,6 +64,14 @@
         return this.popup_menu;
     };
 
+    PopupButton.prototype.replacePopupMenu = function replacePopupMenu(new_popup_menu) {
+        if (this._owned_popup_menu) {
+            this.popup_menu.destroy();
+            this._owned_popup_menu = false;
+        }
+        this.popup_menu = new_popup_menu;
+    };
+
     PopupButton.prototype.destroy = function destroy() {
         StyledElements.StyledButton.prototype.destroy.call(this);
 
