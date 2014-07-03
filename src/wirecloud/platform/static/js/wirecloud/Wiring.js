@@ -86,6 +86,7 @@
         }
 
         this.events.unloaded.dispatch();
+        this.logManager.newCycle();
 
         this.status = null;
     };
@@ -158,6 +159,7 @@
         this.workspace = workspace;
         this.connectablesByWidget = {};
         this.ioperators = {};
+        Object.defineProperty(this, 'logManager', {value: new Wirecloud.wiring.LogManager(this)});
 
         this._iwidget_unload_listener = iwidget_unload_listener.bind(this);
         this._iwidget_added_listener = iwidget_added_listener.bind(this);
@@ -166,7 +168,7 @@
         this.workspace.addEventListener('iwidgetadded', this._iwidget_added_listener);
         this.workspace.addEventListener('iwidgetremoved', this._iwidget_removed_listener);
 
-        StyledElements.ObjectWithEvents.call(this, ['error', 'load', 'loaded', 'unload', 'unloaded']);
+        StyledElements.ObjectWithEvents.call(this, ['load', 'loaded', 'unload', 'unloaded']);
     };
     Wiring.prototype = new StyledElements.ObjectWithEvents();
 
@@ -206,12 +208,12 @@
                     } catch (e) {
                         msg = gettext('Error instantiating the %(operator)s operator');
                         msg = interpolate(msg, {operator: operator_info.name}, true);
-                        this.events.error.dispatch(msg);
+                        this.logManager.log(msg);
                     }
                 } else {
                     msg = gettext('%(operator)s operator is not available for this account');
                     msg = interpolate(msg, {operator: operator_info.name}, true);
-                    this.events.error.dispatch(msg);
+                    this.logManager.log(msg);
                 }
             }
         }
@@ -231,7 +233,7 @@
                     source: JSON.stringify(connection.source),
                     target: JSON.stringify(connection.target)
                 }, true);
-                this.events.error.dispatch(msg);
+                this.logManager.log(msg);
             }
         }
 

@@ -314,6 +314,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/WirecloudCatalogue/ResourceDetails.js',
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/WorkspaceCatalogue.js',
+            'js/wirecloud/wiring/LogManager.js',
             'js/wirecloud/wiring/Endpoint.js',
             'js/wirecloud/wiring/EndpointError.js',
             'js/wirecloud/wiring/SourceEndpoint.js',
