@@ -33,11 +33,6 @@
 
         extra_context = function (resource) {
             return {
-                'back_button': function () {
-                    var button = new StyledElements.StyledButton({text: gettext('Close details')});
-                    button.addEventListener('click', this.mainview.home.bind(this.mainview));
-                    return button;
-                }.bind(this),
                 'details': function (options, context) {
                     var details, painter, i, entries, versions;
 
@@ -60,10 +55,6 @@
                         resource.changeVersion(select.getValue());
                         this.mainview.createUserCommand('showDetails', resource)();
                     }.bind(this));
-
-                    var button = new StyledElements.StyledButton({text: gettext('Close details')});
-                    button.addEventListener('click', this.mainview.home.bind(this.mainview));
-                    details.addButton(button);
 
                     var main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
                     main_description.appendChild(this.main_details_painter.paint(resource));

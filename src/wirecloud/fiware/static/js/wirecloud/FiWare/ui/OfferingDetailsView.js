@@ -33,21 +33,12 @@
 
         extra_context = function (resource) {
             return {
-                'back_button': function () {
-                    var button = new StyledElements.StyledButton({text: gettext('Close details')});
-                    button.addEventListener('click', this.mainview.home.bind(this.mainview));
-                    return button;
-                }.bind(this),
                 'details': function (options, context) {
-                    var details, painter, button, main_description,
+                    var details, painter, main_description,
                         legal_description, pricing_description,
                         sla_description, offering_resource_description;
  
                     details = new StyledElements.StyledNotebook();
-
-                    button = new StyledElements.StyledButton({text: gettext('Close details')});
-                    button.addEventListener('click', this.mainview.home.bind(this.mainview));
-                    details.addButton(button);
 
                     main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
                     main_description.appendChild(this.main_details_painter.paint(resource));
