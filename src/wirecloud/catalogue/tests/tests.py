@@ -312,16 +312,19 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         result = self.client.get(self.base_url+'?q=wercloud')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['corrected_q'], 'wirecloud')
         self.assertEqual(result_json['pagelen'], 4)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
-        result = self.client.get(self.base_url+'?q=mashble&correct_q=False')
+        result = self.client.get(self.base_url+'?q=mashble')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(result_json['pagelen'], 0)
+        self.assertEqual(result_json['corrected_q'], 'mashable')
+        self.assertEqual(result_json['pagelen'], 3)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['results'][0]['version'], "1.5.5")
 
 
 class CatalogueSuggestionTestCase(WirecloudTestCase):

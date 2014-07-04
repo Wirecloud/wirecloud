@@ -357,24 +357,23 @@ def open_index(indexname, dirname=None):
 
 
 def search(querytext, request, pagenum=1, pagelen=10, staff=False, scope=None,
-           orderby='-creation_date', correct_q=True):
+           orderby='-creation_date'):
 
     ix = open_index('catalogue_resources')
-    filenames = ['name', 'title', 'vendor', 'description', 'wiring']
-    mfp = QueryParser('content', ix.schema)
+    query_p = QueryParser('content', ix.schema)
     search_result = {}
 
     with ix.searcher() as searcher:
 
-        if correct_q and querytext != '':
-            correction_q = mfp.parse(querytext)
+        if querytext != '':
+            correction_q = query_p.parse(querytext)
             corrected = searcher.correct_query(correction_q, querytext)
 
             if corrected.query != correction_q:
                 querytext = corrected.string
                 search_result['corrected_q'] = querytext
 
-        user_q = querytext and mfp.parse(querytext) or Every()
+        user_q = querytext and query_p.parse(querytext) or Every()
 
         if not staff:
             user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username)] +
