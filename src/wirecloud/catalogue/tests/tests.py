@@ -326,6 +326,35 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['results'][0]['version'], "1.5.5")
 
+    def test_advanced_search_for_prefixes_and_suffixes(self):
+
+        self.client.login(username='myuser', password='admin')
+
+        result = self.client.get(self.base_url+'?q=wire')
+        result_json = json.loads(result.content.decode('utf-8'))
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagelen'], 4)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['results'][0]['vendor'], "Wirecloud")
+        self.assertEqual(result_json['results'][0]['version'], "1.5")
+        self.assertEqual(len(result_json['results'][0]['others']), 0)
+
+        result = self.client.get(self.base_url+'?q=shu')
+        result_json = json.loads(result.content.decode('utf-8'))
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagelen'], 3)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['results'][0]['title'], "Mashup Sky Weather")
+        self.assertEqual(result_json['results'][0]['version'], "3.0")
+        self.assertEqual(len(result_json['results'][0]['others']), 0)
+
+        result = self.client.get(self.base_url+'?q=weather+inter')
+        result_json = json.loads(result.content.decode('utf-8'))
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagelen'], 1)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['results'][0]['version'], "1.5.5")
+        self.assertEqual(len(result_json['results'][0]['others']), 0)
 
 class CatalogueSuggestionTestCase(WirecloudTestCase):
 

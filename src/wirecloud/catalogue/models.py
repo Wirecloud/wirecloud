@@ -255,7 +255,8 @@ class CatalogueResourceSchema(fields.SchemaClass):
     public = fields.BOOLEAN
     users = fields.KEYWORD(commas=True)
     groups = fields.KEYWORD(commas=True)
-    content = fields.TEXT(spelling=True)
+    #content = fields.TEXT(spelling=True)
+    content = fields.NGRAMWORDS()
 
 
 @receiver(post_save, sender=CatalogueResource)
@@ -342,6 +343,27 @@ def add_other_versions(searcher, hits, user, staff):
     return results
 
 
+def build_search_kwargs(user_q, request, scope, staff, orderby):
+
+    if not staff:
+        user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username)] +
+            [Term('groups', group.name) for group in request.user.groups.all()])])
+
+    if scope:
+        user_q = And([user_q, Term('type', scope)])
+
+    orderby_f = FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
+
+    search_kwargs = {
+        'sortedby': [orderby_f],
+        'collapse': FieldFacet('vendor_name'),
+        'collapse_limit': 1,
+        'collapse_order': FunctionFacet(order_by_version)
+    }
+
+    return (user_q, search_kwargs)
+
+
 def open_index(indexname, dirname=None):
 
     if dirname is None:
@@ -360,34 +382,30 @@ def search(querytext, request, pagenum=1, pagelen=10, staff=False, scope=None,
            orderby='-creation_date'):
 
     ix = open_index('catalogue_resources')
-    query_p = QueryParser('content', ix.schema)
     search_result = {}
+
+    fieldnames = ['description', 'vendor', 'title', 'wiring']
+    query_p = QueryParser('content', ix.schema)
+    multif_p = MultifieldParser(fieldnames, ix.schema)
 
     with ix.searcher() as searcher:
 
-        if querytext != '':
-            correction_q = query_p.parse(querytext)
+        user_q = querytext and query_p.parse(querytext) or Every()
+        user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
+        hits = searcher.search(user_q, limit=(pagenum * pagelen), **search_kwargs)
+
+        if querytext and hits.is_empty():
+
+            correction_q = multif_p.parse(querytext)
             corrected = searcher.correct_query(correction_q, querytext)
 
             if corrected.query != correction_q:
                 querytext = corrected.string
                 search_result['corrected_q'] = querytext
 
-        user_q = querytext and query_p.parse(querytext) or Every()
-
-        if not staff:
-            user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username)] +
-                [Term('groups', group.name) for group in request.user.groups.all()])])
-
-        if scope:
-            user_q = And([user_q, Term('type', scope)])
-
-        name_vendor_f = FieldFacet('vendor_name')
-        orderby_f = FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
-        version_f = FunctionFacet(order_by_version)
-
-        hits = searcher.search(user_q, limit=(pagenum * pagelen),
-            sortedby=[orderby_f], collapse=name_vendor_f, collapse_limit=1, collapse_order=version_f)
+                user_q = query_p.parse(querytext)
+                user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
+                hits = searcher.search(user_q, limit=(pagenum * pagelen), **search_kwargs)
 
         results = add_other_versions(searcher, hits, request.user, staff)
         results = add_absolute_urls(results, request)
