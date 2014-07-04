@@ -39,7 +39,15 @@
         this.widgetWallet = new Wirecloud.ui.MACWallet('widget');
         this.walletButton = new StyledElements.StyledButton({'iconClass': 'icon-plus'});
         this.walletButton.addEventListener('click', function () {
+            this.mashupWallet.hide();
             this.widgetWallet.show();
+        }.bind(this));
+
+        this.mashupWallet = new Wirecloud.ui.MACWallet('mashup');
+        this.mergeButton = new StyledElements.StyledButton({'iconClass': 'icon-random'});
+        this.mergeButton.addEventListener('click', function () {
+            this.widgetWallet.hide();
+            this.mashupWallet.show();
         }.bind(this));
     };
     WorkspaceView.prototype = new StyledElements.Alternative();
@@ -86,7 +94,7 @@
     };
 
     WorkspaceView.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.walletButton];
+        return [this.walletButton, this.mergeButton];
     };
 
     WorkspaceView.prototype.destroy = function destroy() {

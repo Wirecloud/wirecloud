@@ -80,26 +80,38 @@ var OpManagerFactory = function () {
         // PUBLIC METHODS
         // ****************
 
-        OpManager.prototype.mergeMashupResource = function(resource) {
+        OpManager.prototype.mergeMashupResource = function(resource, options) {
 
             var mergeOk = function(transport) {
                 LayoutManagerFactory.getInstance().logStep('');
                 Wirecloud.changeActiveWorkspace(Wirecloud.activeWorkspace);
+            };
+
+            var onMergeFailure = function onMergeFailure(response, e) {
+                var msg, details;
+
+                msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error merging the mashup: %(errorMsg)s."), response, e);
+
+                if (typeof options.onFailure === 'function') {
+                    try {
+                        if (response.status === 422) {
+                            details = JSON.parse(response.responseText).details;
+                        }
+                    } catch (e) {}
+
+                    try {
+                        options.onFailure(msg, details);
+                    } catch (e) {}
+                }
+            };
+
+            if (options == null) {
+                options = {};
             }
-            var mergeError = function(transport, e) {
-                var layoutManager, msg;
 
-                msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
-
-                layoutManager = LayoutManagerFactory.getInstance();
-                layoutManager.logStep('');
-                layoutManager._notifyPlatformReady();
-
-                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+            if (options.monitor) {
+                options.monitor.logSubTask(gettext("Merging mashup"));
             }
-
-            LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
-            LayoutManagerFactory.getInstance().logSubTask(gettext("Merging with current workspace"));
 
             var active_ws_id = Wirecloud.activeWorkspace.id;
             var mergeURL = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: active_ws_id});
@@ -110,8 +122,7 @@ var OpManagerFactory = function () {
                 requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify({'mashup': resource.uri}),
                 onSuccess: mergeOk.bind(this),
-                onFailure: mergeError.bind(this),
-                onException: mergeError.bind(this)
+                onFailure: onMergeFailure,
             });
         };
 
@@ -133,7 +144,6 @@ var OpManagerFactory = function () {
                     workspace = JSON.parse(response.responseText);
                     this.workspaceInstances[workspace.id] = workspace;
                     this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
-
                 }
 
                 if (typeof options.onSuccess === 'function') {
