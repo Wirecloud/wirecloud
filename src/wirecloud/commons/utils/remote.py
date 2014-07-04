@@ -253,13 +253,13 @@ class IWidgetWalletTester(object):
     def __enter__(self):
 
         self.testcase.change_main_view('workspace')
-        self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .icon-plus').click()
+        self.testcase.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-plus').click()
         self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
         return self
 
     def __exit__(self, type, value, traceback):
 
-        self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .icon-plus').click()
+        self.testcase.driver.find_element_by_css_selector('.widget_wallet .icon-remove').click()
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: len(driver.find_elements_by_css_selector('#workspace .widget_wallet')) == 0)
         self.element = None
 
@@ -1000,6 +1000,9 @@ class WirecloudRemoteTestCase(WirecloudBaseRemoteTestCase):
     def setUp(self):
 
         self.widget_wallet = IWidgetWalletTester(self)
+
+    def change_main_view(self, view_name):
+        pass
 
     def add_widget_to_mashup(self, widget_name, new_name=None):
 
