@@ -55,6 +55,11 @@
             LayoutManagerFactory.getInstance().changeCurrentView('wiring');
         });
 
+        this.marketButton = new StyledElements.StyledButton({'iconClass': 'icon-shopping-cart'});
+        this.marketButton.addEventListener('click', function () {
+            LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
+        });
+
         // Init wiring error badge
         this.wiringErrorBadge = document.createElement('span');
         this.wiringErrorBadge.className = 'badge badge-important';
@@ -119,7 +124,7 @@
     };
 
     WorkspaceView.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.walletButton, this.mergeButton, this.wiringButton];
+        return [this.walletButton, this.mergeButton, this.wiringButton, this.marketButton];
     };
 
     WorkspaceView.prototype.destroy = function destroy() {
