@@ -49,6 +49,31 @@
             this.widgetWallet.hide();
             this.mashupWallet.show();
         }.bind(this));
+
+        this.wiringButton = new StyledElements.StyledButton({'iconClass': 'icon-puzzle-piece'});
+        this.wiringButton.addEventListener('click', function () {
+            LayoutManagerFactory.getInstance().changeCurrentView('wiring');
+        });
+
+        // Init wiring error badge
+        this.wiringErrorBadge = document.createElement('span');
+        this.wiringErrorBadge.className = 'badge badge-important';
+        this.wiringButton.buttonElement.appendChild(this.wiringErrorBadge);
+        Wirecloud.events.activeworkspacechanged.addEventListener(function (workspace) {
+            this._updateWiringErrors = function () {
+                this.wiringErrorBadge.innerHTML = workspace.wiring.logManager.errorCount;
+                if (workspace.wiring.logManager.errorCount !== 0) {
+                    this.wiringErrorBadge.classList.remove('hidden');
+                } else {
+                    this.wiringErrorBadge.classList.add('hidden');
+                }
+            }.bind(this);
+
+            workspace.wiring.addEventListener('load', this._updateWiringErrors);
+            workspace.wiring.addEventListener('unloaded', this._updateWiringErrors);
+            workspace.wiring.logManager.addEventListener('newentry', this._updateWiringErrors);
+            this._updateWiringErrors();
+        }.bind(this));
     };
     WorkspaceView.prototype = new StyledElements.Alternative();
 
@@ -94,7 +119,7 @@
     };
 
     WorkspaceView.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.walletButton, this.mergeButton];
+        return [this.walletButton, this.mergeButton, this.wiringButton];
     };
 
     WorkspaceView.prototype.destroy = function destroy() {

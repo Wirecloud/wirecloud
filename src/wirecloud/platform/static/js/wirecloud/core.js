@@ -31,6 +31,13 @@
         }
     };
 
+    Object.defineProperty(Wirecloud, 'events', {
+        value: {
+            'activeworkspacechanged': new StyledElements.Event()
+        }
+    });
+    Object.freeze(Wirecloud.events);
+
     /**
      * Loads the Wirecloud Platform.
      */
@@ -258,6 +265,8 @@
 
                         LayoutManagerFactory.getInstance()._notifyPlatformReady();
                         LayoutManagerFactory.getInstance().header.refresh(); // FIXME
+
+                        this.events.activeworkspacechanged.dispatch(this.activeWorkspace);
 
                         if (typeof options.onSuccess === "function") {
                             try {

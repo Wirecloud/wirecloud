@@ -73,7 +73,6 @@ TUTORIAL_FILES = (
 )
 
 STYLED_ELEMENTS_FILES = (
-    'js/StyledElements/Event.js',
     'js/StyledElements/ObjectWithEvents.js',
     'js/StyledElements/StyledElements.js',
     'js/StyledElements/Addon.js',
@@ -272,6 +271,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/BaseRequirements.js',
             'js/common/ComputedStyle.js',
             'js/wirecloud/constants.js',
+            'js/StyledElements/Event.js',
             'js/wirecloud/core.js',
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
