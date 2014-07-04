@@ -42,6 +42,16 @@
        url("../fonts/opensans-bold-webfont.svg#OpenSansRegular") format("svg");
 }
 
+@font-face {
+  font-family: 'NeoTech';
+  font-style: normal;
+  font-weight: normal;
+  src: local("Neo Tech"), local("NeoTech"),
+       url("../fonts/neotech-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/neotech-regular-webfont.woff") format("woff"),
+       url("../fonts/neotech-regular-webfont.ttf") format("truetype");
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -138,17 +148,17 @@ label {
     font-family: Comfortaa;
 }
 
-.logo_wrapper > div:first-child > img {
-    margin: 0;
+.logo_wrapper > img {
+    margin: -2px 5px 5px 5px;
     vertical-align: bottom;
     padding: 0;
     vertical-align: -1.3ex;
-    height: 78px;
-    width: 98px;
+    height: 60px;
     display: inline-block;
 }
 
-.logo_wrapper > div:first-child > div {
+.logo_wrapper > div {
+    margin-top: 8px;
     display: inline-block;
     vertical-align: top;
 }
@@ -158,15 +168,23 @@ label {
 }
 
 .fiware_title {
-    color: #000;
-    font-size: 30px;
+    color: rgb(96, 193, 207);
+    font-size: 23px;
+    line-height: 23px;
+    text-shadow: 0 1px 0 rgb(255, 255, 255);
+    font-family: "NeoTech";
+    font-weight: 200;
+}
+
+.fiware_title > span {
+    color: rgb(0, 45, 103);
 }
 
 .fiware_subtitle {
     line-height: normal;
     font-size: 20px;
-    color: #3E80AD;
-    text-shadow: 1px 0px 1px rgba(255,255,255,0.1);
+    color: rgb(62, 128, 173);
+    text-shadow: 1px 0px 1px rgba(255, 255, 255, 0.1);
 }
 
 .wirecloud_toolbar {
