@@ -23,7 +23,6 @@ import codecs
 import json
 import os
 from shutil import rmtree
-from tempfile import mkdtemp
 
 from django.conf import settings
 from django.contrib.auth.models import User

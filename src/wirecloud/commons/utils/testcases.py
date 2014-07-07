@@ -348,7 +348,7 @@ class WirecloudTestCase(TransactionTestCase):
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
         # Restore old index dir
-        cleartree(settings.WIRECLOUD_INDEX_DIR)
+        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
         settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
 
         # Clear cache
@@ -510,7 +510,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         shutil.rmtree(cls.tmp_dir, ignore_errors=True)
 
         # Restore old index dir
-        cleartree(settings.WIRECLOUD_INDEX_DIR)
+        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR)
         settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
 
         settings.LANGUAGES = cls.old_LANGUAGES
