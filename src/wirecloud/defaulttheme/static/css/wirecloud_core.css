@@ -97,7 +97,7 @@ label {
 
 .wirecloud_app_bar img {
     vertical-align: bottom;
-    margin: 0 1ex;
+    margin: 0 5px;
 }
 
 #wrapper {
@@ -210,7 +210,7 @@ label {
     text-align: center;
     margin: 0 0 0 -1px;
     font-weight: bold;
-    width: 400px;
+    width: 320px;
     transition: width 0.30s ease-in;
 }
 
