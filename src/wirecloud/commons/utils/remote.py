@@ -269,6 +269,7 @@ class IWidgetWalletTester(object):
 
         list_element = self.element.find_element_by_css_selector('.widget_wallet_list')
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in list_element.get_attribute('class'))
+        time.sleep(0.1)
 
     def search_in_results(self, widget_name):
 
@@ -438,11 +439,6 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
         time.sleep(0.1)  # work around some problems
 
-    def wait_catalogue_ready(self, timeout=30):
-        catalogue_element = self.get_current_catalogue_base_element()
-        search_view = catalogue_element.find_element_by_class_name('search_interface')
-        WebDriverWait(self.driver, timeout).until(lambda driver: 'disabled' not in search_view.get_attribute('class'))
-
     def login(self, username='admin', password='admin', next=None):
 
         url = self.live_server_url + '/login'
@@ -514,7 +510,7 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
                 self.fail('Error: resource was not added')
 
             self.search_resource(widget_name)
-            widget = self.search_in_catalogue_results(widget_name)
+            widget = self.search_in_results(widget_name)
             self.assertIsNotNone(widget)
             return widget
 
@@ -547,42 +543,9 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
                 self.fail('Error: resource was not added')
 
             self.search_resource(resource_name)
-            resource = self.search_in_catalogue_results(resource_name)
+            resource = self.search_in_results(resource_name)
             self.assertIsNotNone(resource)
             return resource
-
-    def search_resource(self, keyword):
-        self.change_main_view('marketplace')
-        self.wait_catalogue_ready()
-        catalogue_base_element = self.get_current_catalogue_base_element()
-
-        search_input = catalogue_base_element.find_element_by_css_selector('.simple_search_text')
-        self.fill_form_input(search_input, keyword)
-        self.driver.execute_script('''
-            var evt = document.createEvent("KeyboardEvent");
-            if (evt.initKeyEvent != null) {
-                evt.initKeyEvent ("keypress", true, true, window, false, false, false, false, 13, 0);
-            } else {
-                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
-                evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
-            }
-            arguments[0].dispatchEvent(evt);
-        ''', search_input)
-
-        self.wait_catalogue_ready()
-
-    def search_in_catalogue_results(self, widget_name):
-
-        self.wait_catalogue_ready()
-        catalogue_base_element = self.get_current_catalogue_base_element()
-
-        resources = catalogue_base_element.find_elements_by_css_selector('.resource_list .resource')
-        for resource in resources:
-            resource_name = resource.find_element_by_css_selector('.resource_name')
-            if resource_name.text == widget_name:
-                return resource
-
-        return None
 
     def get_current_wiring_editor_ioperators(self):
 
@@ -633,25 +596,11 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
         time.sleep(0.1)
         return tmp['new_iwidget']
 
-    def add_widget_to_mashup(self, widget_name, new_name=None):
-
-        self.change_main_view('marketplace')
-        self.change_marketplace('local')
-
-        self.search_resource(widget_name)
-        resource = self.search_in_catalogue_results(widget_name)
-        iwidget = self.instantiate(resource)
-
-        if new_name is not None:
-            iwidget.rename(new_name)
-
-        return iwidget
-
     def create_workspace_from_catalogue(self, mashup_name, expect_missing_dependencies=None, install_dependencies=False, parameters=None):
 
         self.change_main_view('marketplace')
         self.search_resource(mashup_name)
-        resource = self.search_in_catalogue_results(mashup_name)
+        resource = self.search_in_results(mashup_name)
 
         resource.find_element_by_css_selector('.instantiate_button div').click()
 
@@ -693,7 +642,7 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
         self.change_main_view('marketplace')
         self.search_resource(mashup_name)
-        resource = self.search_in_catalogue_results(mashup_name)
+        resource = self.search_in_results(mashup_name)
 
         resource.find_element_by_css_selector('.instantiate_button div').click()
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Current Workspace']").click()
@@ -938,61 +887,111 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
             self.assertNotEqual(self.get_current_marketplace_name(), market)
 
+
+class MarketplaceViewTester(object):
+
+    def __init__(self, testcase):
+
+        self.testcase = testcase
+
+    def __enter__(self):
+        self.testcase.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-shopping-cart").click()
+        WebDriverWait(self.testcase.driver, 10).until(marketplace_loaded)
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+
+    def wait_catalogue_ready(self, timeout=20):
+        catalogue_element = self.testcase.get_current_catalogue_base_element()
+        search_view = catalogue_element.find_element_by_class_name('search_interface')
+        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in search_view.get_attribute('class'))
+
+        return catalogue_element
+
+    def search(self, keyword):
+        catalogue_base_element = self.wait_catalogue_ready()
+
+        search_input = catalogue_base_element.find_element_by_css_selector('.simple_search_text')
+        self.testcase.fill_form_input(search_input, keyword)
+        self.testcase.driver.execute_script('''
+            var evt = document.createEvent("KeyboardEvent");
+            if (evt.initKeyEvent != null) {
+                evt.initKeyEvent ("keypress", true, true, window, false, false, false, false, 13, 0);
+            } else {
+                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
+                evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
+            }
+            arguments[0].dispatchEvent(evt);
+        ''', search_input)
+
+        self.wait_catalogue_ready()
+
+    def search_in_results(self, resource_name):
+
+        catalogue_base_element = self.wait_catalogue_ready()
+
+        resources = catalogue_base_element.find_elements_by_css_selector('.resource_list .resource')
+        for resource in resources:
+            c_resource_name = resource.find_element_by_css_selector('.resource_name').text
+            if c_resource_name == resource_name:
+                return resource
+
+        return None
+
     def delete_resource(self, resource_name, timeout=30):
-        self.change_main_view('marketplace')
-        catalogue_base_element = self.get_current_catalogue_base_element()
+        catalogue_base_element = self.testcase.get_current_catalogue_base_element()
 
-        self.search_resource(resource_name)
-        resource = self.search_in_catalogue_results(resource_name)
-        self.scroll_and_click(resource)
+        self.search(resource_name)
+        resource = self.search_in_results(resource_name)
+        self.testcase.scroll_and_click(resource)
 
-        WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
+        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
         time.sleep(0.1)
 
         found = False
-        for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
+        for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
             if operation.text == 'Delete':
                 found = True
                 operation.find_element_by_css_selector('div').click()
                 break
-        self.assertTrue(found)
+        self.testcase.assertTrue(found)
 
-        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
-        self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
-        self.wait_wirecloud_ready()
+        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
+        self.testcase.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
+        self.testcase.wait_wirecloud_ready()
 
-        self.search_resource(resource_name)
-        resource = self.search_in_catalogue_results(resource_name)
-        self.assertIsNone(resource)
+        self.search(resource_name)
+        resource = self.search_in_results(resource_name)
+        self.testcase.assertIsNone(resource)
 
     def uninstall_resource(self, resource_name, timeout=30, expect_error=False):
-        self.change_main_view('marketplace')
-        catalogue_base_element = self.get_current_catalogue_base_element()
+        catalogue_base_element = self.wait_catalogue_ready()
 
-        self.search_resource(resource_name)
-        resource = self.search_in_catalogue_results(resource_name)
-        self.scroll_and_click(resource)
+        self.search(resource_name)
+        resource = self.search_in_results(resource_name)
+        self.testcase.scroll_and_click(resource)
 
-        WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
+        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
         time.sleep(0.1)
 
         uninstall_button = None
-        for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
+        for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
             if operation.text == 'Uninstall':
                 uninstall_button = operation.find_element_by_css_selector('div')
                 break
 
         if expect_error:
-            self.assertIsNone(uninstall_button)
+            self.testcase.assertIsNone(uninstall_button)
         else:
-            self.assertIsNotNone(uninstall_button)
+            self.testcase.assertIsNotNone(uninstall_button)
             uninstall_button.click()
 
-            self.wait_wirecloud_ready()
+            self.testcase.wait_wirecloud_ready()
 
-            self.search_resource(resource_name)
-            resource = self.search_in_catalogue_results(resource_name)
-            self.assertIsNone(resource)
+            self.search(resource_name)
+            resource = self.search_in_results(resource_name)
+            self.testcase.assertIsNone(resource)
 
 
 class WirecloudRemoteTestCase(WirecloudBaseRemoteTestCase):
@@ -1000,6 +999,7 @@ class WirecloudRemoteTestCase(WirecloudBaseRemoteTestCase):
     def setUp(self):
 
         self.widget_wallet = IWidgetWalletTester(self)
+        self.marketplace_view = MarketplaceViewTester(self)
 
     def change_main_view(self, view_name):
         pass
