@@ -180,7 +180,7 @@
         this._paintBreadcrum(this.currentView);
         this._paintToolbar(this.currentView);
         this._replaceMenu(this.currentView);
-        this.backButton.setDisabled(!('goUp' in this.currentView));
+        this.backButton.setDisabled(this.currentView == null || !('goUp' in this.currentView));
     };
 
     Wirecloud.ui.WirecloudHeader = WirecloudHeader;
