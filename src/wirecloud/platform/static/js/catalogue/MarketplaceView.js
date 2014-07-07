@@ -174,6 +174,13 @@
         }
     };
 
+    MarketplaceView.prototype.goUp = function goUp() {
+        var change = this.alternatives.getCurrentAlternative().goUp();
+        if (!change) {
+            LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+        }
+    };
+
     MarketplaceView.prototype.getBreadcrum = function getBreadcrum() {
         var label, breadcrum, user;
 

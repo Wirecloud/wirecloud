@@ -109,6 +109,14 @@
         this.changeCurrentView(state.subview);
     };
 
+    CatalogueView.prototype.goUp = function goUp() {
+        if (this.alternatives.getCurrentAlternative() === this.viewsByName.search) {
+            return false;
+        }
+        this.changeCurrentView('search');
+        return true;
+    };
+
     CatalogueView.prototype.search = function search(onSuccess, onError, options) {
         return this.catalogue.search(onSuccess, onError, options);
     };

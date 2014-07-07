@@ -148,6 +148,10 @@ if (!Wirecloud.ui) {
         return data;
     };
 
+    WiringEditor.prototype.goUp = function goUp() {
+        LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+    };
+
     /*************************************************************************
      * Private methods
      *************************************************************************/

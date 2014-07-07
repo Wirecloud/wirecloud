@@ -33,8 +33,8 @@
 
         this.backButton = new StyledElements.StyledButton({'class': 'btn-large', 'iconClass': 'icon-caret-left'});
         this.backButton.addEventListener('click', function () {
-            history.back();
-        });
+            this.currentView.goUp();
+        }.bind(this));
         this.backButton.insertInto(this.breadcrum.parentNode, this.breadcrum);
 
         this.menuButton = new StyledElements.PopupButton({'class': 'btn-large', 'iconClass': 'icon-reorder'});
@@ -215,6 +215,7 @@
         this._paintToolbar(this.currentView);
         this._paintBreadcrum(this.currentView);
         this._replaceMenu(this.currentView);
+        this.backButton.setDisabled(!('goUp' in this.currentView));
     };
 
     Wirecloud.ui.WirecloudHeader = WirecloudHeader;
