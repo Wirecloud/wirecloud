@@ -41,6 +41,10 @@ def marketplace_loaded(driver):
     return False
 
 
+def wiring_loaded(driver):
+    return 'disabled' not in driver.find_element_by_css_selector('.wiring_editor').get_attribute('class')
+
+
 class PopupMenuTester(object):
 
     def __init__(self, testcase, element):
@@ -253,8 +257,7 @@ class IWidgetWalletTester(object):
 
     def __enter__(self):
 
-        self.testcase.change_main_view('workspace')
-        self.testcase.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-plus').click()
+        self.testcase.wait_element_visible_by_css_selector('.wirecloud_toolbar .icon-plus').click()
         self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
         return self
 
@@ -482,75 +485,6 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
         popup_menu_element = self.wait_element_visible_by_css_selector('.popup_menu')
         tester = PopupMenuTester(self, popup_menu_element)
         tester.check(must_be, must_be_absent, must_be_disabled)
-
-    def add_packaged_resource_to_catalogue(self, wgt_file, widget_name, shared=False, expect_error=False):
-
-        if shared:
-            wgt_path = os.path.join(self.shared_test_data_dir, wgt_file)
-        else:
-            wgt_path = os.path.join(self.test_data_dir, wgt_file)
-        wgt_path = os.path.abspath(wgt_path)
-
-        self.change_main_view('marketplace')
-        catalogue_base_element = self.get_current_catalogue_base_element()
-
-        self.perform_market_action('Upload')
-
-        self.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element).send_keys(wgt_path)
-        catalogue_base_element.find_element_by_css_selector('.upload_wgt_button div').click()
-        self.wait_wirecloud_ready()
-
-        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
-        if expect_error:
-            if window_menus == 1:
-                self.fail('Error: resource shouldn\'t be added')
-
-            xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error adding packaged resource: " + expect_error + "']"
-            self.driver.find_element_by_xpath(xpath)
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-            return None
-        else:
-            if window_menus != 1:
-                self.fail('Error: resource was not added')
-
-            self.search_resource(widget_name)
-            widget = self.search_in_results(widget_name)
-            self.assertIsNotNone(widget)
-            return widget
-
-    def add_template_to_catalogue(self, template_url, resource_name, expect_error=False):
-
-        self.change_main_view('marketplace')
-        catalogue_base_element = self.get_current_catalogue_base_element()
-
-        self.perform_market_action('Upload')
-        WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
-        time.sleep(0.1)
-
-        template_input = catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri')
-        self.fill_form_input(template_input, template_url)
-        catalogue_base_element.find_element_by_css_selector('.submit_link div').click()
-        self.wait_wirecloud_ready()
-
-        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
-        if expect_error:
-            if window_menus == 1:
-                self.fail('Error: resource shouldn\'t be added')
-
-            xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error adding resource from URL: " + expect_error + "']"
-            self.driver.find_element_by_xpath(xpath)
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-            return None
-        else:
-            if window_menus != 1:
-                self.fail('Error: resource was not added')
-
-            self.search_resource(resource_name)
-            resource = self.search_in_results(resource_name)
-            self.assertIsNotNone(resource)
-            return resource
 
     def get_current_wiring_editor_ioperators(self):
 
@@ -798,20 +732,6 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
         except:
             return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
 
-    def open_marketplace_menu(self):
-        self.change_main_view('marketplace')
-        try:
-            self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        except:
-            self.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level > .icon-menu').click()
-
-        popup_menu_element = self.wait_element_visible_by_css_selector('.popup_menu')
-
-        return PopupMenuTester(self, popup_menu_element)
-
-    def perform_market_action(self, action):
-        self.open_marketplace_menu().click_entry(action)
-
     def perform_workspace_action(self, action):
         self.change_main_view('workspace')
         popup_button = self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu')
@@ -900,7 +820,7 @@ class MarketplaceViewTester(object):
         self.testcase = testcase
 
     def __enter__(self):
-        self.testcase.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-shopping-cart").click()
+        self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-shopping-cart").click()
         WebDriverWait(self.testcase.driver, 10).until(marketplace_loaded)
         return self
 
@@ -913,6 +833,12 @@ class MarketplaceViewTester(object):
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in search_view.get_attribute('class'))
 
         return catalogue_element
+
+    def open_menu(self):
+        self.testcase.driver.find_element_by_css_selector('.wirecloud_header_nav .icon-reorder').click()
+        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
+
+        return PopupMenuTester(self, popup_menu_element)
 
     def search(self, keyword):
         catalogue_base_element = self.wait_catalogue_ready()
@@ -943,6 +869,41 @@ class MarketplaceViewTester(object):
                 return resource
 
         return None
+
+    def upload_resource(self, wgt_file, resource_name, shared=False, expect_error=False):
+
+        if shared:
+            wgt_path = os.path.join(self.testcase.shared_test_data_dir, wgt_file)
+        else:
+            wgt_path = os.path.join(self.testcase.test_data_dir, wgt_file)
+        wgt_path = os.path.abspath(wgt_path)
+
+        catalogue_base_element = self.wait_catalogue_ready()
+
+        self.open_menu().click_entry('Upload')
+
+        self.testcase.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element).send_keys(wgt_path)
+        catalogue_base_element.find_element_by_css_selector('.upload_wgt_button div').click()
+        self.testcase.wait_wirecloud_ready()
+
+        window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
+        if expect_error:
+            if window_menus == 1:
+                self.testcase.fail('Error: resource shouldn\'t be added')
+
+            xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error adding packaged resource: " + expect_error + "']"
+            self.testcase.driver.find_element_by_xpath(xpath)
+            self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+            return None
+        else:
+            if window_menus != 1:
+                self.testcase.fail('Error: resource was not added')
+
+            self.search(resource_name)
+            resource = self.search_in_results(resource_name)
+            self.testcase.assertIsNotNone(resource)
+            return resource
 
     def delete_resource(self, resource_name, timeout=30):
         catalogue_base_element = self.testcase.get_current_catalogue_base_element()
@@ -999,12 +960,28 @@ class MarketplaceViewTester(object):
             self.testcase.assertIsNone(resource)
 
 
+class WiringViewTester(object):
+
+    def __init__(self, testcase):
+
+        self.testcase = testcase
+
+    def __enter__(self):
+        self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece").click()
+        WebDriverWait(self.testcase.driver, 10).until(wiring_loaded)
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+
+
 class WirecloudRemoteTestCase(WirecloudBaseRemoteTestCase):
 
     def setUp(self):
 
         self.widget_wallet = IWidgetWalletTester(self)
         self.marketplace_view = MarketplaceViewTester(self)
+        self.wiring_view = WiringViewTester(self)
 
     def change_main_view(self, view_name):
         pass

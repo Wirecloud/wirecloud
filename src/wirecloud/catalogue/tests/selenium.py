@@ -24,80 +24,67 @@ __test__ = False
 
 class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
-    def test_add_widget_to_catalog_wgt(self):
+    tags = ('catalogue', 'catalogue-selenium')
+
+    def test_upload_packaged_widget(self):
 
         self.login()
 
-        self.add_packaged_resource_to_catalogue('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
+        with self.marketplace_view as marketplace:
+            marketplace.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
 
-    def test_add_packaged_mashup(self):
-
-        self.login()
-
-        self.add_packaged_resource_to_catalogue('Wirecloud_PackagedTestMashup_1.0.zip', 'PackagedTestMashup', shared=True)
-
-    def test_reinstall_widget_to_catalog_wgt(self):
+    def test_upload_packaged_mashup(self):
 
         self.login()
 
-        self.delete_resource('Test')
-        self.add_packaged_resource_to_catalogue('Wirecloud_Test_1.0.wgt', 'Test', shared=True)
+        with self.marketplace_view as marketplace:
+            marketplace.upload_resource('Wirecloud_PackagedTestMashup_1.0.zip', 'PackagedTestMashup', shared=True)
+
+    def test_reinstall_packaged_widget(self):
+
+        self.login()
+
+        with self.marketplace_view as marketplace:
+            marketplace.delete_resource('Test')
+            marketplace.upload_resource('Wirecloud_Test_1.0.wgt', 'Test', shared=True)
+
         self.add_widget_to_mashup('Test')
 
-    def test_add_widget_to_catalogue_xml(self):
+    def test_upload_duplicated_widget(self):
 
         self.login()
 
-        self.add_template_to_catalogue('http://localhost:8001/test/test.xml', 'Test_Selenium')
+        with self.marketplace_view as marketplace:
+            marketplace.upload_resource('Wirecloud_Test_1.0.wgt', 'Test', shared=True, expect_error='Resource already exists.')
 
-    def test_add_widget_to_catalogue_rdf(self):
-
-        self.login()
-
-        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
-
-    def test_add_invalid_widget_to_catalogue_rdf(self):
+    def test_upload_and_instantiate_widget(self):
 
         self.login()
 
-        self.add_template_to_catalogue('http://localhost:8001/test/invalidTest.rdf', 'Test_Selenium', expect_error='Error parsing resource descriptor from the providen URL: missing required field: versionInfo.')
+        with self.marketplace_view as marketplace:
+            marketplace.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
 
-    def test_add_widget_twice(self):
-
-        self.login()
-
-        self.add_template_to_catalogue('http://localhost:8001/test/test_duplicated.rdf', 'Test', expect_error='Resource already exists.')
-
-    def test_upload_duplicated_packaged_widget(self):
-
-        self.login()
-
-        self.add_packaged_resource_to_catalogue('Wirecloud_Test_1.0.wgt', 'Test', shared=True, expect_error='Resource already exists.')
-
-    def test_add_and_instantiate_widget_rdf(self):
-
-        self.login()
-
-        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
         self.add_widget_to_mashup('Test_Selenium')
 
-    def test_add_and_delete_widget_rdf(self):
+    def test_upload_and_delete_widget(self):
 
         self.login()
 
-        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
-        self.delete_resource('Test_Selenium')
+        with self.marketplace_view as marketplace:
+            marketplace.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
+            marketplace.delete_resource('Test_Selenium')
 
     def test_search_empty_results(self):
 
         self.login()
 
-        self.search_resource('nousedkeyword')
-        catalogue_base_element = self.get_current_catalogue_base_element()
+        with self.marketplace_view as marketplace:
+            marketplace.search('nousedkeyword')
+            catalogue_base_element = marketplace.wait_catalogue_ready()
 
-        resources = catalogue_base_element.find_elements_by_css_selector('.resource_list .resource')
-        self.assertEqual(len(resources), 0)
+            resources = catalogue_base_element.find_elements_by_css_selector('.resource_list .resource')
+            self.assertEqual(len(resources), 0)
 
-        alert = catalogue_base_element.find_elements_by_css_selector('.alert')
-        self.assertEqual(len(alert), 1)
-        self.assertIn('nousedkeyword', alert[0].text)
+            alert = catalogue_base_element.find_elements_by_css_selector('.alert')
+            self.assertEqual(len(alert), 1)
+            self.assertIn('nousedkeyword', alert[0].text)
