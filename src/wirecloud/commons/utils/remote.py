@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import shutil
 import sys
 import time
 
@@ -402,6 +403,10 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
     @classmethod
     def tearDownClass(cls):
+
+        # Remove chrome/chromium temporal directories
+        if 'chrome' in cls.driver.capabilities:
+            shutil.rmtree(cls.driver.capabilities['chrome']['userDataDir'], ignore_errors=True)
 
         cls.driver.quit()
 
