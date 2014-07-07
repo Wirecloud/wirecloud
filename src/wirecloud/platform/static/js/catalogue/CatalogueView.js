@@ -75,7 +75,7 @@
             'initial': this.alternatives.createAlternative(),
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter, resource_extra_context: resource_extra_context}}),
             'developer': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.PublishView, containerOptions: {catalogue: this.catalogue, mainview: this}}),
-            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.ResourceDetailsView, containerOptions: {catalogue: this}})
+            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();
 
@@ -103,6 +103,10 @@
     };
 
     CatalogueView.prototype._onShow = function _onShow() {
+    };
+
+    CatalogueView.prototype.onHistoryChange = function onHistoryChange(state) {
+        this.changeCurrentView(state.subview);
     };
 
     CatalogueView.prototype.search = function search(onSuccess, onError, options) {

@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -83,10 +83,15 @@
 
     ResourceDetailsView.prototype.view_name = 'details';
 
+    ResourceDetailsView.prototype.buildStateData = function buildStateData(data) {
+        data.resource = this.currentResource.uri;
+    };
+
     ResourceDetailsView.prototype.paint = function paint(resource) {
+        this.currentResource = resource;
         this.clear();
         this.appendChild(this.resource_details_painter.paint(resource));
     };
 
-    Wirecloud.ui.ResourceDetailsView = ResourceDetailsView;
+    Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView = ResourceDetailsView;
 })();

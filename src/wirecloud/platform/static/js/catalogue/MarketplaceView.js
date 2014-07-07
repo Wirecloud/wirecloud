@@ -147,18 +147,31 @@
     MarketplaceView.prototype.view_name = 'marketplace';
 
     MarketplaceView.prototype.buildStateData = function buildStateData() {
-        var data = Wirecloud.Utils.merge(Wirecloud.HistoryManager.getCurrentState(), {
+        var data, subview;
+
+        data = Wirecloud.Utils.merge(Wirecloud.HistoryManager.getCurrentState(), {
             view: 'marketplace'
         });
 
         if (this.loading === false && this.error === false && this.alternatives.getCurrentAlternative() !== this.emptyAlternative) {
-            if (this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name != null) {
-                data.subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name;
+            subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative();
+            if (subview.view_name != null) {
+                data.subview = subview.view_name;
+                if ('buildStateData' in subview) {
+                    subview.buildStateData(data);
+                }
             }
             data.market = this.alternatives.getCurrentAlternative().market_id;
         }
 
         return data;
+    };
+
+    MarketplaceView.prototype.onHistoryChange = function onHistoryChange(state) {
+        this.changeCurrentMarket(state.market);
+        if ('onHistoryChange' in this.alternatives.getCurrentAlternative()) {
+            this.alternatives.getCurrentAlternative().onHistoryChange(state);
+        }
     };
 
     MarketplaceView.prototype.getBreadcrum = function getBreadcrum() {

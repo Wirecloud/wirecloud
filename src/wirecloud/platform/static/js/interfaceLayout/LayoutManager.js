@@ -212,7 +212,7 @@ var LayoutManagerFactory = function () {
          * Handler for changes in the hash to navigate to other areas
          */
         LayoutManager.prototype.onHashChange = function(state) {
-            var tab_id, tab, nextWorkspace, opManager, dragboard, alert_msg;
+            var tab_id, tab, nextWorkspace, opManager, dragboard, alert_msg, nextView;
 
             opManager = OpManagerFactory.getInstance();
 
@@ -232,8 +232,13 @@ var LayoutManagerFactory = function () {
                 Wirecloud.changeActiveWorkspace(nextWorkspace, state.tab);
             }
 
-            if (state.view !== this.alternatives.getCurrentAlternative().view_name) {
-                this.alternatives.showAlternative(this.viewsByName[state.view]);
+            nextView = this.viewsByName[state.view];
+            if (nextView !== this.alternatives.getCurrentAlternative()) {
+                this.alternatives.showAlternative(nextView);
+            }
+
+            if ('onHistoryChange' in nextView) {
+                nextView.onHistoryChange(state);
             }
         };
 
