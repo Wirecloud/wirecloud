@@ -34,9 +34,9 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
     }
     tags = ('markets',)
 
-    def check_resource_buttons(self, resources, button_text=None):
+    def check_resource_buttons(self, marketplace, resources, button_text=None):
         for resource_name in resources:
-            resource = self.search_in_catalogue_results(resource_name)
+            resource = marketplace.search_in_results(resource_name)
             self.assertIsNotNone(resource)
             button = resource.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, button_text)
@@ -44,46 +44,56 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_add_marketplace(self):
 
         self.login()
-        self.add_marketplace('remote', 'http://wcatalogue.example.com', 'wirecloud')
-        self.check_resource_buttons(('New Widget', 'New Operator', 'New Mashup'), 'Install')
-        self.check_resource_buttons(('Test', 'TestOperator', 'Test Mashup'), 'Uninstall')
+        with self.marketplace_view as marketplace:
+            marketplace.add('remote', 'http://wcatalogue.example.com', 'wirecloud')
+            self.check_resource_buttons(marketplace, ('New Widget', 'New Operator', 'New Mashup'), 'Install')
+            self.check_resource_buttons(marketplace, ('Test', 'TestOperator', 'Test Mashup'), 'Uninstall')
 
         self.login('normuser', 'admin')
-        popup_menu = self.open_marketplace_menu()
-        popup_menu.check(must_be_absent=('remote',))
+        with self.marketplace_view as marketplace:
+            popup_menu = marketplace.open_menu()
+            popup_menu.check(must_be_absent=('remote',))
 
     def test_add_public_marketplace(self):
 
         self.login()
-        self.add_marketplace('remote', 'http://wcatalogue.example.com', 'wirecloud', public=True)
-        self.check_resource_buttons(('New Widget', 'New Operator', 'New Mashup'), 'Install')
-        self.check_resource_buttons(('Test', 'TestOperator', 'Test Mashup'), 'Uninstall')
+        with self.marketplace_view as marketplace:
+            marketplace.add('remote', 'http://wcatalogue.example.com', 'wirecloud', public=True)
+            self.check_resource_buttons(marketplace, ('New Widget', 'New Operator', 'New Mashup'), 'Install')
+            self.check_resource_buttons(marketplace, ('Test', 'TestOperator', 'Test Mashup'), 'Uninstall')
 
         self.login('normuser', 'admin')
-        self.change_marketplace('remote')
-        self.check_resource_buttons(('New Widget', 'New Operator', 'New Mashup'), 'Install')
-        self.check_resource_buttons(('Test', 'TestOperator', 'Test Mashup'), 'Uninstall')
+        with self.marketplace_view as marketplace:
+            marketplace.switch_to('remote')
+            self.check_resource_buttons(marketplace, ('New Widget', 'New Operator', 'New Mashup'), 'Install')
+            self.check_resource_buttons(marketplace, ('Test', 'TestOperator', 'Test Mashup'), 'Uninstall')
 
     def test_add_duplicated_marketplace(self):
 
         self.login('user_with_markets', 'admin')
-        self.add_marketplace('deleteme', 'http://localhost:8080', 'wirecloud', expect_error=True)
+        with self.marketplace_view as marketplace:
+            marketplace.add('deleteme', 'http://localhost:8080', 'wirecloud', expect_error=True)
 
     def test_delete_marketplace(self):
 
         self.login('user_with_markets', 'admin')
 
-        self.delete_marketplace('deleteme')
+        with self.marketplace_view as marketplace:
+            marketplace.switch_to('deleteme')
+            marketplace.delete()
 
     def test_global_marketplace_are_deletable_by_superusers(self):
 
         self.login('normuser', 'admin')
 
-        self.change_marketplace('origin')
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.check_popup_menu((), (), ('Delete marketplace',))
+        with self.marketplace_view as marketplace:
+            marketplace.switch_to('origin')
+            popup_menu = marketplace.open_menu()
+            self.check_popup_menu((), (), ('Delete marketplace',))
 
         self.login('admin', 'admin')
 
-        self.delete_marketplace('origin')
+        with self.marketplace_view as marketplace:
+            marketplace.switch_to('origin')
+            marketplace.delete()
 

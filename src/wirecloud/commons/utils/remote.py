@@ -289,8 +289,6 @@ class IWidgetWalletTester(object):
 
     def search(self, keywords):
 
-        self.testcase.change_main_view('workspace')
-
         search_input = self.element.find_element_by_css_selector('.styled_text_field div input')
         self.testcase.fill_form_input(search_input, keywords)
         self.testcase.driver.execute_script('''
@@ -725,13 +723,6 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
         return self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
 
-    def get_current_marketplace_name(self):
-        self.change_main_view('marketplace')
-        try:
-            return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level').text
-        except:
-            return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
-
     def perform_workspace_action(self, action):
         self.change_main_view('workspace')
         popup_button = self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu')
@@ -749,68 +740,6 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
                 return catalogue_element
 
         return None
-
-    def add_marketplace(self, name, url, type_, expect_error=False, public=False):
-
-        self.change_main_view('marketplace')
-        self.perform_market_action("Add new marketplace")
-
-        market_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')
-        self.fill_form_input(market_name_input, name)
-        market_url_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="url"]')
-        self.fill_form_input(market_url_input, url)
-        market_type_input = self.driver.find_element_by_css_selector('.window_menu .styled_form select')
-        self.fill_form_input(market_type_input, type_)
-
-        if public:
-            self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="public"]').click()
-
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-        self.wait_wirecloud_ready()
-        time.sleep(0.1)  # work around some problems
-
-        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
-        if expect_error:
-            if window_menus == 1:
-                self.fail('Error: marketplace shouldn\'t be added')
-
-            self.assertNotEqual(self.get_current_marketplace_name(), name)
-        else:
-            if window_menus != 1:
-                self.fail('Error: marketplace was not added')
-
-            self.assertEqual(self.get_current_marketplace_name(), name)
-            self.wait_catalogue_ready()
-
-    def change_marketplace(self, market, timeout=30):
-
-        self.change_main_view('marketplace')
-        if self.get_current_marketplace_name() == market:
-            return
-
-        self.perform_market_action(market)
-        WebDriverWait(self.driver, timeout, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_marketplace_name() == market)
-        self.wait_catalogue_ready()
-
-    def delete_marketplace(self, market, expect_error=False):
-
-        self.change_main_view('marketplace')
-        self.change_marketplace(market)
-        self.perform_market_action("Delete marketplace")
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
-        self.wait_wirecloud_ready()
-
-        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
-        if expect_error:
-            if window_menus == 1:
-                self.fail('Error: marketplace shouldn\'t be deleted')
-
-            self.assertEqual(self.get_current_marketplace_name(), market)
-        else:
-            if window_menus != 1:
-                self.fail('Error: marketplace was not deleted')
-
-            self.assertNotEqual(self.get_current_marketplace_name(), market)
 
 
 class MarketplaceViewTester(object):
@@ -838,7 +767,74 @@ class MarketplaceViewTester(object):
         self.testcase.driver.find_element_by_css_selector('.wirecloud_header_nav .icon-reorder').click()
         popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
 
-        return PopupMenuTester(self, popup_menu_element)
+        return PopupMenuTester(self.testcase, popup_menu_element)
+
+    def get_current_marketplace_name(self):
+        try:
+            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level').text
+        except:
+            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+
+    def switch_to(self, market, timeout=10):
+
+        if self.get_current_marketplace_name() == market:
+            return
+
+        self.open_menu().click_entry(market)
+        WebDriverWait(self.testcase.driver, timeout, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_marketplace_name() == market)
+        self.wait_catalogue_ready()
+
+    def add(self, name, url, type_, expect_error=False, public=False):
+
+        self.open_menu().click_entry("Add new marketplace")
+
+        market_name_input = self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')
+        self.testcase.fill_form_input(market_name_input, name)
+        market_url_input = self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form input[name="url"]')
+        self.testcase.fill_form_input(market_url_input, url)
+        market_type_input = self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form select')
+        self.testcase.fill_form_input(market_type_input, type_)
+
+        if public:
+            self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form input[name="public"]').click()
+
+        self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        self.testcase.wait_wirecloud_ready()
+        time.sleep(0.1)  # work around some problems
+
+        window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
+        if expect_error:
+            if window_menus == 1:
+                self.testcase.fail('Error: marketplace shouldn\'t be added')
+
+            self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+            self.testcase.assertNotEqual(self.get_current_marketplace_name(), name)
+        else:
+            if window_menus != 1:
+                self.testcase.fail('Error: marketplace was not added')
+
+            self.testcase.assertEqual(self.get_current_marketplace_name(), name)
+            self.wait_catalogue_ready()
+
+    def delete(self, expect_error=False):
+
+        market = self.get_current_marketplace_name()
+
+        self.open_menu().click_entry("Delete marketplace")
+        self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+        self.testcase.wait_wirecloud_ready()
+
+        window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
+        if expect_error:
+            if window_menus == 1:
+                self.testcase.fail('Error: marketplace shouldn\'t be deleted')
+
+            self.testcase.assertEqual(self.get_current_marketplace_name(), market)
+        else:
+            if window_menus != 1:
+                self.testcase.fail('Error: marketplace was not deleted')
+
+            self.testcase.assertNotEqual(self.get_current_marketplace_name(), market)
 
     def search(self, keyword):
         catalogue_base_element = self.wait_catalogue_ready()
@@ -982,9 +978,6 @@ class WirecloudRemoteTestCase(WirecloudBaseRemoteTestCase):
         self.widget_wallet = IWidgetWalletTester(self)
         self.marketplace_view = MarketplaceViewTester(self)
         self.wiring_view = WiringViewTester(self)
-
-    def change_main_view(self, view_name):
-        pass
 
     def add_widget_to_mashup(self, widget_name, new_name=None):
 
