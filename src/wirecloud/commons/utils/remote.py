@@ -757,6 +757,7 @@ class MarketplaceViewTester(object):
         self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
 
     def wait_catalogue_ready(self, timeout=20):
+        time.sleep(0.1)
         catalogue_element = self.testcase.get_current_catalogue_base_element()
         search_view = catalogue_element.find_element_by_class_name('search_interface')
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in search_view.get_attribute('class'))
