@@ -47,10 +47,11 @@ def wiring_loaded(driver):
 
 class PopupMenuTester(object):
 
-    def __init__(self, testcase, element):
+    def __init__(self, testcase, element, button=None):
 
         self.testcase = testcase
         self.element = element
+        self.button = button
 
     def get_entry(self, name):
 
@@ -63,8 +64,23 @@ class PopupMenuTester(object):
 
         return None
 
-    def click_entry(self, name):
-        self.get_entry(name).click()
+    def click_entry(self, item_name):
+
+        if not isinstance(item_name, tuple):
+            item_name = (item_name,)
+
+        tester = self
+        prev_popups = self.testcase.driver.find_elements_by_css_selector('.popup_menu')
+        for i, entry in enumerate(item_name[:-1]):
+            current_element = tester.get_entry(entry)
+            ActionChains(self.testcase.driver).move_to_element(current_element).perform()
+            WebDriverWait(self.testcase.driver, 5).until(lambda driver: len(driver.find_elements_by_css_selector('.popup_menu')) > len(prev_popups))
+            next_popups = self.testcase.driver.find_elements_by_css_selector('.popup_menu')
+            next_popup = next_popups[-1]
+            tester = PopupMenuTester(self.testcase, next_popup)
+            prev_popups = next_popups
+
+        tester.get_entry(item_name[-1]).click()
 
     def check(self, must_be=(), must_be_absent=(), must_be_disabled=()):
 
@@ -81,6 +97,13 @@ class PopupMenuTester(object):
             menu_item = self.get_entry(item)
             self.testcase.assertIsNotNone(menu_item, '"%(item)s" item should be present' % { 'item': item })
             self.testcase.assertTrue('disabled' in menu_item.get_attribute('class'), '"%(item)s" item shouldn\'t be enabled' % { 'item': item })
+
+        return self
+
+    def close(self):
+        if self.button is not None:
+            self.button.click()
+
 
 
 class WiringEndpointTester(object):
@@ -120,8 +143,6 @@ class IWidgetTester(object):
 
         if key == 'id':
             return self.id
-        elif key == 'element':
-            return self.element
 
     def __enter__(self):
         self.content_element = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%d).content;' % self.id)
@@ -173,15 +194,18 @@ class IWidgetTester(object):
             return [position.x, position.y];
         ''' % self.id));
 
-    def perform_action(self, action):
+    def open_menu(self):
 
-        self.element.find_element_by_css_selector('.icon-cogs').click()
-        self.testcase.popup_menu_click(action)
+        button = self.element.find_element_by_css_selector('.icon-cogs')
+        button.click()
+        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
+
+        return PopupMenuTester(self.testcase, popup_menu_element, button)
 
     def rename(self, new_name, timeout=30):
 
-        self.perform_action('Rename')
-        name_input = self['element'].find_element_by_css_selector('.widget_menu > span')
+        self.open_menu().click_entry('Rename')
+        name_input = self.element.find_element_by_css_selector('.widget_menu > span')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
         self.element.find_element_by_css_selector('.statusBar').click()
@@ -339,6 +363,22 @@ class IOperatorTester(object):
         ''' % self.id)
 
 
+class WorkspaceTabTester(object):
+
+    def __init__(self, testcase, element):
+
+        self.testcase = testcase
+        self.element = element
+
+    def open_menu(self):
+
+        tab_menu_button = self.testcase.wait_element_visible_by_css_selector('.icon-tab-menu', element=self.element)
+        tab_menu_button.click()
+        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
+
+        return PopupMenuTester(self.testcase, popup_menu_element, tab_menu_button)
+
+
 class RemoteTestCase(object):
 
     def fill_form_input(self, form_input, value):
@@ -463,26 +503,17 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
     def get_current_view(self):
 
-        current_view_menu_entry = self.driver.find_element_by_css_selector('#wirecloud_header .menu > .selected')
-        return current_view_menu_entry.get_attribute('class').split(' ')[0]
+        try:
+            return self.driver.execute_script("return LayoutManagerFactory.getInstance().header.currentView.view_name;");
+        except:
+            return ""
 
-    def change_main_view(self, view_name):
-
-        if self.get_current_view() == view_name:
-            return
-
-        self.driver.find_element_by_css_selector("#wirecloud_header .menu ." + view_name).click()
-
-        WebDriverWait(self.driver, 30).until(lambda driver: self.get_current_view() == view_name)
-
-        if view_name == 'marketplace':
-            WebDriverWait(self.driver, 30).until(marketplace_loaded)
-
-    def check_popup_menu(self, must_be=(), must_be_absent=(), must_be_disabled=()):
-
+    def open_menu(self):
+        button = self.wait_element_visible_by_css_selector('.wirecloud_header_nav .icon-reorder')
+        button.click()
         popup_menu_element = self.wait_element_visible_by_css_selector('.popup_menu')
-        tester = PopupMenuTester(self, popup_menu_element)
-        tester.check(must_be, must_be_absent, must_be_disabled)
+
+        return PopupMenuTester(self, popup_menu_element, button)
 
     def get_current_wiring_editor_ioperators(self):
 
@@ -514,8 +545,8 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
             'new_iwidget': None,
         }
         def iwidget_loaded(driver):
-            if tmp['new_iwidget'] is not None and tmp['new_iwidget']['element'] is not None:
-                return tmp['new_iwidget']['element'].is_displayed()
+            if tmp['new_iwidget'] is not None and tmp['new_iwidget'].element is not None:
+                return tmp['new_iwidget'].element.is_displayed()
 
             iwidgets = self.get_current_iwidgets()
             iwidget_count = len(iwidgets)
@@ -588,30 +619,8 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
     def count_iwidgets(self):
         return len(self.driver.find_elements_by_css_selector('div.iwidget'))
 
-    def popup_menu_click(self, item_name, element=None):
-
-        if element is None:
-            element = self.wait_element_visible_by_css_selector('.popup_menu')
-
-        if not isinstance(item_name, tuple):
-            item_name = (item_name,)
-
-        tester = PopupMenuTester(self, element)
-        prev_popups = self.driver.find_elements_by_css_selector('.popup_menu')
-        for i, entry in enumerate(item_name[:-1]):
-            current_element = tester.get_entry(entry)
-            ActionChains(self.driver).move_to_element(current_element).perform()
-            WebDriverWait(self.driver, 5).until(lambda driver: len(self.driver.find_elements_by_css_selector('.popup_menu')) > len(prev_popups))
-            next_popups = self.driver.find_elements_by_css_selector('.popup_menu')
-            next_popup = next_popups[-1]
-            tester = PopupMenuTester(self, next_popup)
-            prev_popups = next_popups
-
-        tester.click_entry(item_name[-1])
-
     def get_current_workspace_name(self):
 
-        self.change_main_view('workspace')
         return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
 
     def get_workspace_tab_by_name(self, tab_name):
@@ -620,13 +629,12 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
         for tab in tabs:
             span = tab.find_element_by_css_selector('span')
             if span.text == tab_name:
-                return tab
+                return WorkspaceTabTester(self, tab)
 
         return None
 
     def create_workspace(self, workspace_name):
-        self.change_main_view('workspace')
-        self.perform_workspace_action('New workspace')
+        self.open_menu().click_entry('New workspace')
 
         workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
         self.fill_form_input(workspace_name_input, workspace_name)
@@ -637,8 +645,7 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def rename_workspace(self, workspace_name):
-        self.change_main_view('workspace')
-        self.perform_workspace_action('Rename')
+        self.open_menu().click_entry('Rename')
 
         workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
         self.fill_form_input(workspace_name_input, workspace_name)
@@ -649,18 +656,14 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def change_current_workspace(self, workspace_name):
-        self.change_main_view('workspace')
-
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click(workspace_name)
+        self.open_menu().click_entry(workspace_name)
 
         self.wait_wirecloud_ready()
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def remove_workspace(self):
-        self.change_main_view('workspace')
         workspace_to_remove = self.get_current_workspace_name()
-        self.perform_workspace_action('Remove')
+        self.open_menu().click_entry('Remove')
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
@@ -668,10 +671,8 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
         self.assertNotEqual(workspace_to_remove, self.get_current_workspace_name())
 
     def publish_workspace(self, info):
-        self.change_main_view('workspace')
 
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click('Upload to local catalogue')
+        self.open_menu().click_entry('Upload to local catalogue')
 
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
 
@@ -714,23 +715,14 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
         old_tab_count = self.count_workspace_tabs()
 
-        self.change_main_view('workspace')
         self.driver.find_element_by_css_selector('#workspace .tab_wrapper .icon-add-tab').click()
         self.wait_wirecloud_ready()
 
         new_tab_count = self.count_workspace_tabs()
         self.assertEqual(new_tab_count, old_tab_count + 1)
 
-        return self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
-
-    def perform_workspace_action(self, action):
-        self.change_main_view('workspace')
-        popup_button = self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu')
-
-        if 'open' not in popup_button.get_attribute('class'):
-            popup_button.click()
-
-        self.popup_menu_click(action)
+        element = self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
+        return WorkspaceTabTester(self, element)
 
     def get_current_catalogue_base_element(self):
 
@@ -765,10 +757,11 @@ class MarketplaceViewTester(object):
         return catalogue_element
 
     def open_menu(self):
-        self.testcase.driver.find_element_by_css_selector('.wirecloud_header_nav .icon-reorder').click()
+        button = self.testcase.wait_element_visible_by_css_selector('.wirecloud_header_nav .icon-reorder')
+        button.click()
         popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
 
-        return PopupMenuTester(self.testcase, popup_menu_element)
+        return PopupMenuTester(self.testcase, popup_menu_element, button)
 
     def get_current_marketplace_name(self):
         try:

@@ -88,12 +88,10 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
 
         with self.marketplace_view as marketplace:
             marketplace.switch_to('origin')
-            popup_menu = marketplace.open_menu()
-            self.check_popup_menu((), (), ('Delete marketplace',))
+            marketplace.open_menu().check((), (), ('Delete marketplace',))
 
         self.login('admin', 'admin')
 
         with self.marketplace_view as marketplace:
             marketplace.switch_to('origin')
             marketplace.delete()
-
