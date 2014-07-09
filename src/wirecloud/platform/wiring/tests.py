@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import codecs
 import json
 import os
@@ -351,45 +353,48 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login()
 
-        self.add_packaged_resource_to_catalogue('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
+        with self.marketplace_view as marketplace:
+            marketplace.upload_resource('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
-        menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+            wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
+            menubar = wiring_base_element.find_element_by_css_selector('.menubar')
 
-        menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
-        menubar.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperatorSelenium']")
+            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+            menubar.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperatorSelenium']")
     test_operators_are_usable_after_installing.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
 
     def test_operators_are_not_usable_after_being_uninstalled(self):
 
         self.login()
 
-        self.uninstall_resource('TestOperator')
+        with self.marketplace_view as marketplace:
+            marketplace.uninstall_resource('TestOperator')
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
-        menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+            wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
+            menubar = wiring_base_element.find_element_by_css_selector('.menubar')
 
-        menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
-        self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
+            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+            self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
     test_operators_are_not_usable_after_being_uninstalled.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
 
     def test_operators_are_not_usable_after_being_deleted(self):
 
         self.login()
 
-        self.delete_resource('TestOperator')
+        with self.marketplace_view as marketplace:
+            marketplace.delete_resource('TestOperator')
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
-        menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+            wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
+            menubar = wiring_base_element.find_element_by_css_selector('.menubar')
 
-        menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
-        self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
+            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+            self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
 
     def test_basic_wiring_editor_operations(self):
 
@@ -398,25 +403,31 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login()
 
-        self.add_widget_to_mashup('Test', new_name='Test (1)')
-        self.add_widget_to_mashup('Test', new_name='Test (2)')
-        self.add_widget_to_mashup('Test', new_name='Test (3)')
+        with self.widget_wallet as wallet:
+            wallet.search('Test')
+            widget = wallet.search_in_results('Test')
+            widget.instantiate()
+            widget.instantiate()
+            widget.instantiate()
+
         iwidgets = self.get_current_iwidgets()
+        iwidgets[0].rename('Test (1)')
+        iwidgets[1].rename('Test (2)')
+        iwidgets[2].rename('Test (3)')
 
-        self.change_main_view('wiring')
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+        with self.wiring_view as wiring:
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release().perform()
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release().perform()
 
-        source = iwidgets[0].get_wiring_endpoint('outputendpoint')
-        target = iwidgets[1].get_wiring_endpoint('inputendpoint')
-        ActionChains(self.driver).drag_and_drop(source.element, target.element).perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
 
-        self.change_main_view('workspace')
+            source = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('outputendpoint')
+            target = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('inputendpoint')
+            ActionChains(self.driver).drag_and_drop(source.element, target.element).perform()
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -450,30 +461,26 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         if not selenium_supports_draganddrop(self.driver):  # pragma: no cover
             raise unittest.SkipTest('This test need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
-        self.login()
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
-        self.add_widget_to_mashup('Test', new_name='Test (1)')
-        self.add_widget_to_mashup('Test', new_name='Test (2)')
-        self.add_widget_to_mashup('Test', new_name='Test (3)')
         iwidgets = self.get_current_iwidgets()
 
-        self.change_main_view('wiring')
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+        with self.wiring_view as wiring:
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-100, -100).release().perform()
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(50, 40).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-100, -100).release().perform()
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(80, 70).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(50, 40).release().perform()
 
-        source = iwidgets[0].get_wiring_endpoint('outputendpoint')
-        target = iwidgets[1].get_wiring_endpoint('inputendpoint')
-        ActionChains(self.driver).drag_and_drop(source.element, target.element).perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(80, 70).release().perform()
 
-        self.change_main_view('workspace')
+            source = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('outputendpoint')
+            target = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('inputendpoint')
+            ActionChains(self.driver).drag_and_drop(source.element, target.element).perform()
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -500,21 +507,19 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        source = iwidgets[0].get_wiring_endpoint('outputendpoint')
-        target = iwidgets[1].get_wiring_endpoint('inputendpoint')
-        target2 = iwidgets[2].get_wiring_endpoint('inputendpoint')
-        arrows = grid.find_elements_by_css_selector('.arrow')
-        self.assertEqual(len(arrows), 1)
-        arrows[0].find_element_by_css_selector('g').click()
+            source = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('outputendpoint')
+            target = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('inputendpoint')
+            target2 = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('inputendpoint')
+            arrows = grid.find_elements_by_css_selector('.arrow')
+            self.assertEqual(len(arrows), 1)
+            arrows[0].find_element_by_css_selector('g').click()
 
-        ActionChains(self.driver).drag_and_drop(target.element, target2.element).perform()
+            ActionChains(self.driver).drag_and_drop(target.element, target2.element).perform()
 
-        arrows = grid.find_elements_by_css_selector('.arrow')
-        self.assertEqual(len(arrows), 1)
-
-        self.change_main_view('workspace')
+            arrows = grid.find_elements_by_css_selector('.arrow')
+            self.assertEqual(len(arrows), 1)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -551,25 +556,21 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        # Change widget settings
-        widget = self.wait_element_visible_by_css_selector('.grid > .iwidget')
-        widget.find_element_by_css_selector('.editPos_button').click()
-        self.popup_menu_click('Settings')
+            # Change widget settings
+            wiring.get_iwidget(iwidget).open_menu().click_entry('Settings')
 
-        list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
-        self.fill_form_input(list_input, '1')  # value1
-        text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
-        self.fill_form_input(text_input, 'test')
-        boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="boolean"]')
-        boolean_input.click()
-        password_input = self.driver.find_element_by_css_selector('.window_menu [name="password"]')
-        self.fill_form_input(password_input, 'password')
+            list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
+            self.fill_form_input(list_input, '1')  # value1
+            text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
+            self.fill_form_input(text_input, 'test')
+            boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="boolean"]')
+            boolean_input.click()
+            password_input = self.driver.find_element_by_css_selector('.window_menu [name="password"]')
+            self.fill_form_input(password_input, 'password')
 
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-        self.change_main_view('workspace')
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         with iwidget:
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
@@ -582,20 +583,17 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login(username='user_with_workspaces')
         iwidgets = self.get_current_iwidgets()
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        # Change operator settings
-        ioperator = self.get_current_wiring_editor_ioperators()[0]
-        ioperator.element.find_element_by_css_selector('.specialIcon').click()
-        self.wait_element_visible_by_css_selector('.editPos_button', element=ioperator.element).click()
-        self.popup_menu_click('Settings')
+            # Change operator settings
+            ioperator = wiring.get_ioperators()[0]
+            ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            ioperator.open_menu().click_entry('Settings')
 
-        prefix_input = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
-        self.fill_form_input(prefix_input, 'prefix: ')
+            prefix_input = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
+            self.fill_form_input(prefix_input, 'prefix: ')
 
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-        self.change_main_view('workspace')
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         with iwidgets[0]:
             try:
@@ -634,7 +632,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.assertIsNotNone(source_iwidget.element)
         self.assertIsNotNone(target_iwidget.element)
 
-        target_iwidget.perform_action('Settings')
+        target_iwidget.open_menu().click_entry('Settings')
 
         boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="boolean"]')
         boolean_input.click()
@@ -661,18 +659,15 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         source_iwidget = iwidgets[1]
         target_iwidget = iwidgets[0]
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        # Change operator settings
-        ioperator = self.get_current_wiring_editor_ioperators()[0]
-        ioperator.element.find_element_by_css_selector('.specialIcon').click()
-        self.wait_element_visible_by_css_selector('.editPos_button', element=ioperator.element).click()
-        self.popup_menu_click('Settings')
+            # Change operator settings
+            ioperator = wiring.get_ioperators()[0]
+            ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            ioperator.open_menu().click_entry('Settings')
 
-        self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').click()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-        self.change_main_view('workspace')
+            self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').click()
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         with source_iwidget:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -681,30 +676,30 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.driver.execute_script('sendEvent();')
             #self.driver.find_element_by_id('b1').click()
 
-        self.change_main_view('wiring')
-        ioperator = self.get_current_wiring_editor_ioperators()[0]
-        self.assertEqual(ioperator.error_count, 1)
-        self.assertEqual(target_iwidget.error_count, 0)
+        with self.wiring_view as wiring:
+
+            ioperator = wiring.get_ioperators()[0]
+            self.assertEqual(ioperator.error_count, 1)
+            self.assertEqual(target_iwidget.error_count, 0)
 
     def test_operator_logging_support(self):
 
         self.login(username='user_with_workspaces')
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        ioperator = self.get_current_wiring_editor_ioperators()[0]
-        self.assertEqual(ioperator.error_count, 0)
+            ioperator = wiring.get_ioperators()[0]
+            self.assertEqual(ioperator.error_count, 0)
 
-        # Change operator settings
-        ioperator.element.find_element_by_css_selector('.specialIcon').click()
-        self.wait_element_visible_by_css_selector('.editPos_button', element=ioperator.element).click()
-        self.popup_menu_click('Settings')
+            # Change operator settings
+            ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            ioperator.open_menu().click_entry('Settings')
 
-        self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').click()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+            self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').click()
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
-        self.assertEqual(ioperator.error_count, 2)
-        self.assertEqual(len(ioperator.log_entries), 5)
+            self.assertEqual(ioperator.error_count, 2)
+            self.assertEqual(len(ioperator.log_entries), 5)
 
         with self.get_current_iwidgets()[0]:
             try:
@@ -790,14 +785,14 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
-        self.change_main_view('wiring')
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
-        time.sleep(2)
-        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
-        self.assertEqual(window_menus, 1)
 
-        self.change_main_view('workspace')
+        with self.wiring_view as wiring:
+            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+            time.sleep(2)
+            window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
+            self.assertEqual(window_menus, 1)
+
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
@@ -845,17 +840,19 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
-        self.change_main_view('wiring')
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
-        time.sleep(2)
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
-        time.sleep(2)
-        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
-        self.assertEqual(window_menus, 1)
-        wiring_entities = self.driver.find_elements_by_css_selector('.grid > .ioperator, .grid > .iwidget')
-        self.assertEqual(len(wiring_entities), 0)
+
+        with self.wiring_view as wiring:
+
+            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+            time.sleep(2)
+            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+            time.sleep(2)
+            window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
+            self.assertEqual(window_menus, 1)
+            wiring_entities = self.driver.find_elements_by_css_selector('.grid > .ioperator, .grid > .iwidget')
+            self.assertEqual(len(wiring_entities), 0)
 
 
 class WiringGhostTestCase(WirecloudSeleniumTestCase):
@@ -932,24 +929,23 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        # Check ghost widget
-        ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
-        ghostEndpointsLabelsFirst1 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[0].text
-        ghostEndpointsLabelsFirst2 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[1].text
-        self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the first access to Wiring Editor")
+            # Check ghost widget
+            ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
+            ghostEndpointsLabelsFirst1 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[0].text
+            ghostEndpointsLabelsFirst2 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[1].text
+            self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the first access to Wiring Editor")
 
         # Reload wiring Editor
-        self.change_main_view('workspace')
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        # Check ghost widget
-        ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
-        self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the second access to Wiring Editor")
-        ghostEndpointsLabelsSecond = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')
-        self.assertEqual(ghostEndpointsLabelsFirst1, ghostEndpointsLabelsSecond[0].text, "The ghost Widget has change the endpoints label in the second access to Wiring Editor")
-        self.assertEqual(ghostEndpointsLabelsFirst2, ghostEndpointsLabelsSecond[1].text, "The ghost Widget has change the endpoints label in the second access to Wiring Editor")
+            # Check ghost widget
+            ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
+            self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the second access to Wiring Editor")
+            ghostEndpointsLabelsSecond = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')
+            self.assertEqual(ghostEndpointsLabelsFirst1, ghostEndpointsLabelsSecond[0].text, "The ghost Widget has change the endpoints label in the second access to Wiring Editor")
+            self.assertEqual(ghostEndpointsLabelsFirst2, ghostEndpointsLabelsSecond[1].text, "The ghost Widget has change the endpoints label in the second access to Wiring Editor")
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_show_invisible_widget_with_connections(self):
@@ -1082,14 +1078,17 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
-        self.assertTrue('error' in self.driver.find_element_by_css_selector("#wirecloud_header .menu .wiring").get_attribute('class'))
-        self.change_main_view('wiring')
+        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_app_bar .icon-puzzle-piece + .badge")
+        self.assertTrue(wiring_error_badge.is_displayed())
+        self.assertEqual(wiring_error_badge.text, '2')
 
-        ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
-        self.assertEqual(len(ghostWidget), 1)
-        # 5 connections
-        connections = self.driver.find_elements_by_css_selector('.arrow')
-        self.assertEqual(len(connections), 5, "Fail in ghost Widget connections")
+        with self.wiring_view as wiring:
+
+            ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
+            self.assertEqual(len(ghostWidget), 1)
+            # 5 connections
+            connections = self.driver.find_elements_by_css_selector('.arrow')
+            self.assertEqual(len(connections), 5, "Fail in ghost Widget connections")
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_show_invisible_operator(self):
@@ -1163,20 +1162,23 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
-        self.change_main_view('wiring')
-        ghostWidget = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
-        ghostEndpointsLabelsFirst1 = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')[0].text
-        ghostEndpointsLabelsFirst2 = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')[1].text
-        # Ghost
-        self.assertEqual(len(ghostWidget), 1, "The ghost Operator has not been painted in the first access to Wiring Editor")
-        self.change_main_view('workspace')
-        self.change_main_view('wiring')
-        ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
-        self.assertEqual(len(ghostOperator), 1, "The ghost Operator has not been painted in the second access to Wiring Editor")
-        ghostEndpointsLabelsSecond = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')
-        # compare labels
-        self.assertEqual(ghostEndpointsLabelsFirst1, ghostEndpointsLabelsSecond[0].text, "The ghost Operator has change the endpoints label in the second access to Wiring Editor")
-        self.assertEqual(ghostEndpointsLabelsFirst2, ghostEndpointsLabelsSecond[1].text, "The ghost Operator has change the endpoints label in the second access to Wiring Editor")
+
+        with self.wiring_view as wiring:
+
+            ghostWidget = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
+            ghostEndpointsLabelsFirst1 = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')[0].text
+            ghostEndpointsLabelsFirst2 = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')[1].text
+            # Ghost
+            self.assertEqual(len(ghostWidget), 1, "The ghost Operator has not been painted in the first access to Wiring Editor")
+
+        with self.wiring_view as wiring:
+
+            ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
+            self.assertEqual(len(ghostOperator), 1, "The ghost Operator has not been painted in the second access to Wiring Editor")
+            ghostEndpointsLabelsSecond = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')
+            # compare labels
+            self.assertEqual(ghostEndpointsLabelsFirst1, ghostEndpointsLabelsSecond[0].text, "The ghost Operator has change the endpoints label in the second access to Wiring Editor")
+            self.assertEqual(ghostEndpointsLabelsFirst2, ghostEndpointsLabelsSecond[1].text, "The ghost Operator has change the endpoints label in the second access to Wiring Editor")
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_show_invisible_operator_with_connections(self):
@@ -1312,14 +1314,17 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
-        self.assertTrue('error' in self.driver.find_element_by_css_selector("#wirecloud_header .menu .wiring").get_attribute('class'))
-        self.change_main_view('wiring')
+        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_app_bar .icon-puzzle-piece + .badge")
+        self.assertTrue(wiring_error_badge.is_displayed())
+        self.assertEqual(wiring_error_badge.text, '4')
 
-        ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
-        self.assertEqual(len(ghostOperator), 1)
-        # 5 connections
-        connections = self.driver.find_elements_by_css_selector('.arrow')
-        self.assertEqual(len(connections), 5, "Fail in ghost Operator connections")
+        with self.wiring_view as wiring:
+
+            ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
+            self.assertEqual(len(ghostOperator), 1)
+            # 5 connections
+            connections = self.driver.find_elements_by_css_selector('.arrow')
+            self.assertEqual(len(connections), 5, "Fail in ghost Operator connections")
 
     def test_read_only_connections_cannot_be_deleted_in_WiringEditor(self):
 
@@ -1400,14 +1405,16 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
-        self.change_main_view('wiring')
-        arrows = self.driver.find_elements_by_css_selector('.arrow')
-        self.assertEqual(len(arrows), 2)
-        # The find_element_by_css_selector is needed to work around a bug in the firefox driver
-        arrows[0].find_element_by_css_selector('g').click()
-        self.wait_element_visible_by_css_selector('.closer', element=arrows[0]).click()
-        arrows = self.driver.find_elements_by_css_selector('.arrow')
-        self.assertEqual(len(arrows), 2)
+
+        with self.wiring_view as wiring:
+
+            arrows = self.driver.find_elements_by_css_selector('.arrow')
+            self.assertEqual(len(arrows), 2)
+            # The find_element_by_css_selector is needed to work around a bug in the firefox driver
+            arrows[0].find_element_by_css_selector('g').click()
+            self.wait_element_visible_by_css_selector('.closer', element=arrows[0]).click()
+            arrows = self.driver.find_elements_by_css_selector('.arrow')
+            self.assertEqual(len(arrows), 2)
 
     def test_widget_and_operator_with_read_only_connections_cannot_be_deleted_in_WiringEditor(self):
 
@@ -1487,17 +1494,19 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
-        self.change_main_view('wiring')
-        widget = self.driver.find_elements_by_css_selector('.grid > .iwidget')[0]
-        operator = self.driver.find_elements_by_css_selector('.grid > .ioperator')[0]
-        widget.click()
-        widget.find_element_by_css_selector('.closebutton').click()
-        operator.click()
-        self.wait_element_visible_by_css_selector('.closebutton', element=operator).click()
-        widgets = self.driver.find_elements_by_css_selector('.grid > .iwidget')
-        operators = self.driver.find_elements_by_css_selector('.grid > .ioperator')
-        self.assertEqual(len(widgets), 2)
-        self.assertEqual(len(operators), 1)
+
+        with self.wiring_view as wiring:
+
+            widget = self.driver.find_elements_by_css_selector('.grid > .iwidget')[0]
+            operator = self.driver.find_elements_by_css_selector('.grid > .ioperator')[0]
+            widget.click()
+            widget.find_element_by_css_selector('.closebutton').click()
+            operator.click()
+            self.wait_element_visible_by_css_selector('.closebutton', element=operator).click()
+            widgets = self.driver.find_elements_by_css_selector('.grid > .iwidget')
+            operators = self.driver.find_elements_by_css_selector('.grid > .ioperator')
+            self.assertEqual(len(widgets), 2)
+            self.assertEqual(len(operators), 1)
 
 
 class EndpointOrderTestCase(WirecloudSeleniumTestCase):
@@ -1519,87 +1528,83 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         self.login()
 
-        iwidget = self.add_widget_to_mashup('Test_Multiendpoint', new_name='Test (1)')
-        self.change_main_view('wiring')
+        iwidget = self.add_widget_to_mashup('Test_Multiendpoint')
 
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
-        miniwidget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+        with self.wiring_view as wiring:
 
-        ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).release().perform()
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            miniwidget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test_Multiendpoint']")
 
-        widget = self.wait_element_visible_by_css_selector('.grid > .iwidget')
-        widget.find_element_by_css_selector('.editPos_button').click()
-        self.popup_menu_click('Reorder endpoints')
+            ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).release().perform()
 
-        output1 = iwidget.get_wiring_endpoint('output1')
-        self.assertEqual(output1.pos, 0)
-        self.assertEqual(iwidget.get_wiring_endpoint('output2').pos, 1)
+            iwidget_wiring = wiring.get_iwidget(iwidget)
+            iwidget_wiring.open_menu().click_entry('Reorder endpoints')
 
-        input3 = iwidget.get_wiring_endpoint('input3')
-        self.assertEqual(input3.pos, 2)
-        self.assertEqual(iwidget.get_wiring_endpoint('output1').pos, 0)
+            output1 = iwidget_wiring.get_wiring_endpoint('output1')
+            self.assertEqual(output1.pos, 0)
+            self.assertEqual(iwidget_wiring.get_wiring_endpoint('output2').pos, 1)
 
-        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 50).move_by_offset(0, 50).release().perform()
-        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -50).move_by_offset(0, -50).release().perform()
-        time.sleep(0.2)
+            input3 = iwidget_wiring.get_wiring_endpoint('input3')
+            self.assertEqual(input3.pos, 2)
+            self.assertEqual(iwidget_wiring.get_wiring_endpoint('output1').pos, 0)
 
-        self.assertEqual(output1.pos, 2)
-        self.assertEqual(input3.pos, 0)
+            ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 50).move_by_offset(0, 50).release().perform()
+            ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -50).move_by_offset(0, -50).release().perform()
+            time.sleep(0.2)
+
+            self.assertEqual(output1.pos, 2)
+            self.assertEqual(input3.pos, 0)
 
         # Reload the wiring view
-        self.change_main_view('workspace')
-        time.sleep(0.3) # We need to wait for the wiring status been saved
-        self.change_main_view('wiring')
-        time.sleep(2)
+        with self.wiring_view as wiring:
 
-        self.assertEqual(iwidget.get_wiring_endpoint('output1').pos, 2)
-        self.assertEqual(iwidget.get_wiring_endpoint('output2').pos, 0)
-        self.assertEqual(iwidget.get_wiring_endpoint('input3').pos, 0)
-        self.assertEqual(iwidget.get_wiring_endpoint('input1').pos, 1)
+            iwidget_wiring = wiring.get_iwidget(iwidget)
+            self.assertEqual(iwidget_wiring.get_wiring_endpoint('output1').pos, 2)
+            self.assertEqual(iwidget_wiring.get_wiring_endpoint('output2').pos, 0)
+            self.assertEqual(iwidget_wiring.get_wiring_endpoint('input3').pos, 0)
+            self.assertEqual(iwidget_wiring.get_wiring_endpoint('input1').pos, 1)
 
     @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
     def test_wiring_operator_reorder_endpoints(self):
 
         self.login()
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        self.driver.find_element_by_xpath("//*[text()='Operators']").click()
-        time.sleep(0.2)
-        minioperator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOp. Multiendpoint']")
+            self.driver.find_element_by_xpath("//*[text()='Operators']").click()
+            time.sleep(0.2)
+            minioperator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOp. Multiendpoint']")
 
-        ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).release().perform()
-        self.wait_element_visible_by_css_selector('.grid > .ioperator')
+            ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).release().perform()
+            self.wait_element_visible_by_css_selector('.grid > .ioperator')
 
-        ioperator = self.get_current_wiring_editor_ioperators()[0]
-        output1 = ioperator.get_wiring_endpoint('output1')
-        self.assertEqual(output1.pos, 0)
-        self.assertEqual(ioperator.get_wiring_endpoint('output3').pos, 2)
-        input3 = ioperator.get_wiring_endpoint('input3')
-        self.assertEqual(input3.pos, 2)
-        self.assertEqual(ioperator.get_wiring_endpoint('input1').pos, 0)
+            ioperator = wiring.get_ioperators()[0]
+            output1 = ioperator.get_wiring_endpoint('output1')
+            self.assertEqual(output1.pos, 0)
+            self.assertEqual(ioperator.get_wiring_endpoint('output3').pos, 2)
+            input3 = ioperator.get_wiring_endpoint('input3')
+            self.assertEqual(input3.pos, 2)
+            self.assertEqual(ioperator.get_wiring_endpoint('input1').pos, 0)
 
-        ioperator.element.find_element_by_css_selector('.editPos_button').click()
-        self.popup_menu_click('Reorder endpoints')
+            ioperator.open_menu().click_entry('Reorder endpoints')
 
-        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 50).move_by_offset(0, 50).release().perform()
-        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -50).move_by_offset(0, -50).release().perform()
-        time.sleep(0.2)
+            ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 50).move_by_offset(0, 50).release().perform()
+            ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -50).move_by_offset(0, -50).release().perform()
+            time.sleep(0.2)
 
-        self.assertEqual(output1.pos, 2)
-        self.assertEqual(input3.pos, 0)
+            self.assertEqual(output1.pos, 2)
+            self.assertEqual(input3.pos, 0)
 
         # Reload the wiring view
-        self.change_main_view('workspace')
-        time.sleep(0.3) # We need to wait for the wiring status been saved
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
 
-        self.assertEqual(ioperator.get_wiring_endpoint('output1').pos, 2)
-        self.assertEqual(ioperator.get_wiring_endpoint('output2').pos, 0)
-        self.assertEqual(ioperator.get_wiring_endpoint('input3').pos, 0)
-        self.assertEqual(ioperator.get_wiring_endpoint('input1').pos, 1)
+            ioperator = wiring.get_ioperators()[0]
+            self.assertEqual(ioperator.get_wiring_endpoint('output1').pos, 2)
+            self.assertEqual(ioperator.get_wiring_endpoint('output2').pos, 0)
+            self.assertEqual(ioperator.get_wiring_endpoint('input3').pos, 0)
+            self.assertEqual(ioperator.get_wiring_endpoint('input1').pos, 1)
 
 
 class MulticonnectorTestCase(WirecloudSeleniumTestCase):
@@ -1620,70 +1625,62 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         self.login()
 
-        iwidget = self.add_widget_to_mashup('Test', new_name='Test (1)')
+        iwidget = self.add_widget_to_mashup('Test')
 
-        self.change_main_view('wiring')
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+        with self.wiring_view as wiring:
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(10, 10).release().perform()
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = iwidget.get_wiring_endpoint('outputendpoint')
-        target = iwidget.get_wiring_endpoint('inputendpoint')
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(10, 10).release().perform()
 
-        source.perform_action('Add multiconnector')
+            source = wiring.get_iwidget(iwidget).get_wiring_endpoint('outputendpoint')
+            target = wiring.get_iwidget(iwidget).get_wiring_endpoint('inputendpoint')
 
-        sourcesmulti = self.driver.find_elements_by_css_selector('.source.multiconnector.anchor')
-        self.assertEqual(len(sourcesmulti), 1)
+            source.open_menu().click_entry('Add multiconnector')
 
-        target.perform_action('Add multiconnector')
+            sourcesmulti = self.driver.find_elements_by_css_selector('.source.multiconnector.anchor')
+            self.assertEqual(len(sourcesmulti), 1)
 
-        targetsmulti = self.driver.find_elements_by_css_selector('.target.multiconnector.anchor')
-        self.assertEqual(len(targetsmulti), 1)
+            target.open_menu().click_entry('Add multiconnector')
 
-        self.change_main_view('workspace')
-        time.sleep(0.3) # We need to wait for the wiring status been saved
-        self.change_main_view('wiring')
-        time.sleep(2)
+            targetsmulti = self.driver.find_elements_by_css_selector('.target.multiconnector.anchor')
+            self.assertEqual(len(targetsmulti), 1)
 
-        sourcesmulti = self.driver.find_elements_by_css_selector('.source.multiconnector.anchor')
-        self.assertEqual(len(sourcesmulti), 1)
-        targetsmulti = self.driver.find_elements_by_css_selector('.target.multiconnector.anchor')
-        self.assertEqual(len(targetsmulti), 1)
+        with self.wiring_view as wiring:
+
+            sourcesmulti = self.driver.find_elements_by_css_selector('.source.multiconnector.anchor')
+            self.assertEqual(len(sourcesmulti), 1)
+            targetsmulti = self.driver.find_elements_by_css_selector('.target.multiconnector.anchor')
+            self.assertEqual(len(targetsmulti), 1)
 
     def test_wiring_source_multiconnector_connection(self):
 
-        self.login()
-
-        self.add_widget_to_mashup('Test', new_name='Test (1)')
-        self.add_widget_to_mashup('Test', new_name='Test (2)')
-        self.add_widget_to_mashup('Test', new_name='Test (3)')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
         iwidgets = self.get_current_iwidgets()
 
-        self.change_main_view('wiring')
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+        with self.wiring_view as wiring:
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -50).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -50).release().perform()
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -120).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -120).release().perform()
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, 40).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, 40).release().perform()
 
-        source = iwidgets[0].get_wiring_endpoint('outputendpoint')
-        target1 = iwidgets[1].get_wiring_endpoint('inputendpoint')
-        target2 = iwidgets[2].get_wiring_endpoint('inputendpoint')
+            source = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('outputendpoint')
+            target1 = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('inputendpoint')
+            target2 = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('inputendpoint')
 
-        source.perform_action('Add multiconnector')
-        multi = self.driver.find_element_by_css_selector('.anchor.multiconnector.anchor')
+            source.open_menu().click_entry('Add multiconnector')
+            multi = self.driver.find_element_by_css_selector('.anchor.multiconnector.anchor')
 
-        ActionChains(self.driver).drag_and_drop(target1.element, multi).perform()
-        ActionChains(self.driver).drag_and_drop(target2.element, multi).perform()
-
-        self.change_main_view('workspace')
+            ActionChains(self.driver).drag_and_drop(target1.element, multi).perform()
+            ActionChains(self.driver).drag_and_drop(target2.element, multi).perform()
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -1713,36 +1710,32 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, 'first hello world!!')
 
     def test_wiring_target_multiconnector_connection(self):
-        self.login()
-
-        self.add_widget_to_mashup('Test', new_name='Test (1)')
-        self.add_widget_to_mashup('Test', new_name='Test (2)')
-        self.add_widget_to_mashup('Test', new_name='Test (3)')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
         iwidgets = self.get_current_iwidgets()
-        self.change_main_view('wiring')
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
+        with self.wiring_view as wiring:
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
 
-        target = iwidgets[0].get_wiring_endpoint('inputendpoint')
-        source1 = iwidgets[1].get_wiring_endpoint('outputendpoint')
-        source2 = iwidgets[2].get_wiring_endpoint('outputendpoint')
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
 
-        target.perform_action('Add multiconnector')
-        multi = self.driver.find_element_by_css_selector('.anchor.multiconnector.anchor')
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
 
-        ActionChains(self.driver).drag_and_drop(source1.element, multi).perform()
-        ActionChains(self.driver).drag_and_drop(source2.element, multi).perform()
+            target = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('inputendpoint')
+            source1 = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('outputendpoint')
+            source2 = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('outputendpoint')
 
-        self.change_main_view('workspace')
+            target.open_menu().click_entry('Add multiconnector')
+            multi = self.driver.find_element_by_css_selector('.anchor.multiconnector.anchor')
+
+            ActionChains(self.driver).drag_and_drop(source1.element, multi).perform()
+            ActionChains(self.driver).drag_and_drop(source2.element, multi).perform()
 
         with iwidgets[1]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -1796,36 +1789,37 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
             raise unittest.SkipTest('Sticky effect tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
     def test_wiring_sticky_effect_in_endpoint_label(self):
+
         self.login()
 
-        self.add_widget_to_mashup('Test', new_name='Test (1)')
-        iwidgets = self.get_current_iwidgets()
-        self.change_main_view('wiring')
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+        iwidget = self.add_widget_to_mashup('Test', new_name='Test 1')
 
-        widget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(widget).move_to_element(grid).move_by_offset(90, -50).release().perform()
+        with self.wiring_view as wiring:
 
-        wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
-        menubar = wiring_base_element.find_element_by_css_selector('.menubar')
-        menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        operator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
-        ActionChains(self.driver).click_and_hold(operator).move_to_element(grid).move_by_offset(-220, -120).release().perform()
-        ioperator = self.get_current_wiring_editor_ioperators()[0]
+            widget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test 1']")
+            ActionChains(self.driver).click_and_hold(widget).move_to_element(grid).move_by_offset(90, -50).release().perform()
 
-        widgetInput = iwidgets[0].get_wiring_endpoint('inputendpoint')
-        widgetOutput = iwidgets[0].get_wiring_endpoint('outputendpoint')
-        operatorInput = ioperator.get_wiring_endpoint('input')
-        operatorOutput = ioperator.get_wiring_endpoint('output')
+            wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
+            menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
 
-        # Try to connect using sticky effect in label endpoints
-        ActionChains(self.driver).drag_and_drop(widgetOutput.element, operatorInput.label).perform()
-        ActionChains(self.driver).drag_and_drop(operatorOutput.element, widgetInput.label).perform()
+            operator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
+            ActionChains(self.driver).click_and_hold(operator).move_to_element(grid).move_by_offset(-220, -120).release().perform()
+            wiring_iwidget = wiring.get_iwidget(iwidget)
+            ioperator = wiring.get_ioperators()[0]
 
-        self.change_main_view('workspace')
+            widgetInput = wiring_iwidget.get_wiring_endpoint('inputendpoint')
+            widgetOutput = wiring_iwidget.get_wiring_endpoint('outputendpoint')
+            operatorInput = ioperator.get_wiring_endpoint('input')
+            operatorOutput = ioperator.get_wiring_endpoint('output')
 
-        with iwidgets[0]:
+            # Try to connect using sticky effect in label endpoints
+            ActionChains(self.driver).drag_and_drop(widgetOutput.element, operatorInput.label).perform()
+            ActionChains(self.driver).drag_and_drop(operatorOutput.element, widgetInput.label).perform()
+
+        with iwidget:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
             # Work around hang when using Firefox Driver
@@ -1851,99 +1845,97 @@ class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
             raise unittest.SkipTest('Simple recommendation tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
     def test_wiring_recommendations_basic_mouseon(self):
-        self.login()
 
-        self.add_widget_to_mashup('Test', new_name='Test (1)')
-        self.add_widget_to_mashup('Test', new_name='Test (2)')
-        self.add_widget_to_mashup('Test', new_name='Test (3)')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
         iwidgets = self.get_current_iwidgets()
-        self.change_main_view('wiring')
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
+        with self.wiring_view as wiring:
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
 
-        target = iwidgets[0].get_wiring_endpoint('inputendpoint')
-        source1 = iwidgets[1].get_wiring_endpoint('outputendpoint')
-        source2 = iwidgets[2].get_wiring_endpoint('outputendpoint')
-        source2b = iwidgets[2].get_wiring_endpoint('inputendpoint')
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
 
-        # Activate Recommendations mouseon anchors
-        ActionChains(self.driver).move_to_element(source1.element).perform();
-        time.sleep(2)
-        self.assertTrue('highlight' in target.label.get_attribute('class'))
-        self.assertTrue('highlight' in source1.label.get_attribute('class'))
-        self.assertTrue('highlight' in source2b.label.get_attribute('class'))
-        self.assertFalse('highlight' in source2.label.get_attribute('class'))
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
 
-        # Activate Invert Recommendations mouseon anchors
-        ActionChains(self.driver).move_to_element(target.element).perform();
-        time.sleep(2)
-        self.assertTrue('highlight' in target.label.get_attribute('class'))
-        self.assertTrue('highlight' in source1.label.get_attribute('class'))
-        self.assertTrue('highlight' in source2.label.get_attribute('class'))
-        self.assertFalse('highlight' in source2b.label.get_attribute('class'))
+            target = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('inputendpoint')
+            source1 = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('outputendpoint')
+            source2 = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('outputendpoint')
+            source2b = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('inputendpoint')
 
-        # Activate Recommendations mouseon labels
-        ActionChains(self.driver).move_to_element(source1.label).perform();
-        time.sleep(2)
-        self.assertTrue('highlight' in target.label.get_attribute('class'))
-        self.assertTrue('highlight' in source1.label.get_attribute('class'))
-        self.assertTrue('highlight' in source2b.label.get_attribute('class'))
-        self.assertFalse('highlight' in source2.label.get_attribute('class'))
+            # Activate Recommendations mouseon anchors
+            ActionChains(self.driver).move_to_element(source1.element).perform();
+            time.sleep(2)
+            self.assertTrue('highlight' in target.label.get_attribute('class'))
+            self.assertTrue('highlight' in source1.label.get_attribute('class'))
+            self.assertTrue('highlight' in source2b.label.get_attribute('class'))
+            self.assertFalse('highlight' in source2.label.get_attribute('class'))
 
-        # Activate Invert Recommendations mouseon labels
-        ActionChains(self.driver).move_to_element(target.label).perform();
-        time.sleep(2)
-        self.assertTrue('highlight' in target.label.get_attribute('class'))
-        self.assertTrue('highlight' in source1.label.get_attribute('class'))
-        self.assertTrue('highlight' in source2.label.get_attribute('class'))
-        self.assertFalse('highlight' in source2b.label.get_attribute('class'))
+            # Activate Invert Recommendations mouseon anchors
+            ActionChains(self.driver).move_to_element(target.element).perform();
+            time.sleep(2)
+            self.assertTrue('highlight' in target.label.get_attribute('class'))
+            self.assertTrue('highlight' in source1.label.get_attribute('class'))
+            self.assertTrue('highlight' in source2.label.get_attribute('class'))
+            self.assertFalse('highlight' in source2b.label.get_attribute('class'))
+
+            # Activate Recommendations mouseon labels
+            ActionChains(self.driver).move_to_element(source1.label).perform();
+            time.sleep(2)
+            self.assertTrue('highlight' in target.label.get_attribute('class'))
+            self.assertTrue('highlight' in source1.label.get_attribute('class'))
+            self.assertTrue('highlight' in source2b.label.get_attribute('class'))
+            self.assertFalse('highlight' in source2.label.get_attribute('class'))
+
+            # Activate Invert Recommendations mouseon labels
+            ActionChains(self.driver).move_to_element(target.label).perform();
+            time.sleep(2)
+            self.assertTrue('highlight' in target.label.get_attribute('class'))
+            self.assertTrue('highlight' in source1.label.get_attribute('class'))
+            self.assertTrue('highlight' in source2.label.get_attribute('class'))
+            self.assertFalse('highlight' in source2b.label.get_attribute('class'))
 
 
     def test_wiring_recommendations_creating_arrows(self):
-        self.login()
 
-        self.add_widget_to_mashup('Test', new_name='Test (1)')
-        self.add_widget_to_mashup('Test', new_name='Test (2)')
-        self.add_widget_to_mashup('Test', new_name='Test (3)')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
         iwidgets = self.get_current_iwidgets()
-        self.change_main_view('wiring')
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
+        with self.wiring_view as wiring:
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
+            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
 
-        target = iwidgets[0].get_wiring_endpoint('inputendpoint')
-        source1 = iwidgets[1].get_wiring_endpoint('outputendpoint')
-        source2 = iwidgets[2].get_wiring_endpoint('outputendpoint')
-        source2b = iwidgets[2].get_wiring_endpoint('inputendpoint')
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
 
-        # Activate Recommendations while arrow is being created
-        ActionChains(self.driver).click_and_hold(source1.element).move_by_offset(80, 80).perform()
-        self.assertTrue('highlight' in target.label.get_attribute('class'))
-        self.assertTrue('highlight' in source1.label.get_attribute('class'))
-        self.assertTrue('highlight' in source2b.label.get_attribute('class'))
-        self.assertFalse('highlight' in source2.label.get_attribute('class'))
-        ActionChains(self.driver).release().perform()
+            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
 
-        # Activate Invert Recommendations while arrow is being created
-        ActionChains(self.driver).click_and_hold(target.element).move_by_offset(80, 80).perform()
-        self.assertTrue('highlight' in target.label.get_attribute('class'))
-        self.assertTrue('highlight' in source1.label.get_attribute('class'))
-        self.assertTrue('highlight' in source2.label.get_attribute('class'))
-        self.assertFalse('highlight' in source2b.label.get_attribute('class'))
+            target = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('inputendpoint')
+            source1 = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('outputendpoint')
+            source2 = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('outputendpoint')
+            source2b = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('inputendpoint')
+
+            # Activate Recommendations while arrow is being created
+            ActionChains(self.driver).click_and_hold(source1.element).move_by_offset(80, 80).perform()
+            self.assertTrue('highlight' in target.label.get_attribute('class'))
+            self.assertTrue('highlight' in source1.label.get_attribute('class'))
+            self.assertTrue('highlight' in source2b.label.get_attribute('class'))
+            self.assertFalse('highlight' in source2.label.get_attribute('class'))
+            ActionChains(self.driver).release().perform()
+
+            # Activate Invert Recommendations while arrow is being created
+            ActionChains(self.driver).click_and_hold(target.element).move_by_offset(80, 80).perform()
+            self.assertTrue('highlight' in target.label.get_attribute('class'))
+            self.assertTrue('highlight' in source1.label.get_attribute('class'))
+            self.assertTrue('highlight' in source2.label.get_attribute('class'))
+            self.assertFalse('highlight' in source2b.label.get_attribute('class'))

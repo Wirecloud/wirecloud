@@ -104,6 +104,84 @@
         }
     },
     {
+        "pk": 9,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 0,
+            "posX": 0,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 10,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 11,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 0,
+            "posX": 6,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 12,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 13,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 0,
+            "posX": 12,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 14,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
         "pk": 1,
         "model": "platform.iwidget",
         "fields": {
@@ -185,6 +263,48 @@
             "readOnly": false,
             "position": 3,
             "icon_position": 4
+        }
+    },
+    {
+        "pk": 7,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test (1)",
+            "tab": 105,
+            "refused_version": null,
+            "readOnly": false,
+            "position": 9,
+            "icon_position": 10
+        }
+    },
+    {
+        "pk": 8,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test (2)",
+            "tab": 105,
+            "refused_version": null,
+            "readOnly": false,
+            "position": 11,
+            "icon_position": 12
+        }
+    },
+    {
+        "pk": 9,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test (3)",
+            "tab": 105,
+            "refused_version": null,
+            "readOnly": false,
+            "position": 13,
+            "icon_position": 14
         }
     },
     {
@@ -404,6 +524,114 @@
         }
     },
     {
+        "pk": 35,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 7,
+            "vardef": 1,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 36,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 7,
+            "vardef": 2,
+            "value": "initial text"
+        }
+    },
+    {
+        "pk": 37,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 7,
+            "vardef": 3,
+            "value": "false"
+        }
+    },
+    {
+        "pk": 38,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 7,
+            "vardef": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 39,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 8,
+            "vardef": 1,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 40,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 8,
+            "vardef": 2,
+            "value": "initial text"
+        }
+    },
+    {
+        "pk": 41,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 8,
+            "vardef": 3,
+            "value": "false"
+        }
+    },
+    {
+        "pk": 42,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 8,
+            "vardef": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 43,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 9,
+            "vardef": 1,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 44,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 9,
+            "vardef": 2,
+            "value": "initial text"
+        }
+    },
+    {
+        "pk": 45,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 9,
+            "vardef": 3,
+            "value": "false"
+        }
+    },
+    {
+        "pk": 46,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 9,
+            "vardef": 4,
+            "value": "default"
+        }
+    },
+    {
         "pk": 1,
         "model": "platform.xhtml",
         "fields": {
@@ -515,6 +743,16 @@
         }
     },
     {
+        "pk": 105,
+        "model": "platform.tab",
+        "fields": {
+            "visible": true,
+            "name": "Tab",
+            "workspace": 5,
+            "position": 0
+        }
+    },
+    {
         "pk": 2,
         "model": "platform.workspace",
         "fields": {
@@ -544,6 +782,17 @@
             "wiringStatus": "{\"views\":[{\"label\":\"default\",\"iwidgets\":{\"5\":{\"position\":{\"posX\":84,\"posY\":44},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}},\"6\":{\"position\":{\"posX\": 256,\"posY\":153},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}}},\"operators\":{\"0\":{\"position\":{\"posX\":84,\"posY\":296},\"endPointsInOuts\":{\"sources\":[\"output\"],\"targets\":[\"input\"]}}},\"multiconnectors\":{},\"connections\":[{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null}]}],\"operators\":{\"0\":{\"name\":\"Wirecloud/TestOperator/1.0\",\"id\":\"0\",\"preferences\":{}}},\"connections\":[{\"source\":{\"type\":\"iwidget\",\"id\":5,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":6,\"endpoint\":\"inputendpoint\"}},{\"source\":{\"type\":\"iwidget\",\"id\":6,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"input\"}},{\"source\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"output\"},\"target\":{\"type\":\"iwidget\",\"id\":5,\"endpoint\":\"inputendpoint\"}}]}",
             "name": "Public Workspace",
             "public": true,
+            "targetOrganizations": [],
+            "creator": 4
+        }
+    },
+    {
+        "pk": 5,
+        "model": "platform.workspace",
+        "fields": {
+            "forcedValues": "",
+            "wiringStatus": "{\"operators\":{},\"connections\":[]}",
+            "name": "WiringTests",
             "targetOrganizations": [],
             "creator": 4
         }
@@ -579,6 +828,17 @@
             "manager": "",
             "user": 4,
             "workspace": 4
+        }
+    },
+    {
+        "pk": 5,
+        "model": "platform.userworkspace",
+        "fields": {
+            "active": false,
+            "reason_ref": "",
+            "manager": "",
+            "user": 4,
+            "workspace": 5
         }
     }
 ]

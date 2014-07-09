@@ -624,6 +624,7 @@ if (!Wirecloud.ui) {
             this.emptyBox.classList.remove('hidden');
         }
         this.recommendations.init(iwidgets, availableOperators);
+        this.removeClassName('disabled');
     };
 
     /**
@@ -708,6 +709,7 @@ if (!Wirecloud.ui) {
     var clearInterface = function clearInterface() {
         var key, workspace;
 
+        this.addClassName('disabled');
         workspace = Wirecloud.activeWorkspace;
         if (this.valid) {
             workspace.wiring.load(this.serialize());
