@@ -199,6 +199,8 @@ label {
 
 .wirecloud_toolbar .styled_button .badge {
     position: absolute;
+    bottom: 0;
+    right: 0;
 }
 
 .breadcrum {

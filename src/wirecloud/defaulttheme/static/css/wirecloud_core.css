@@ -80,9 +80,6 @@ label {
 }
 
 #wirecloud_header {
-    font-family: "Courier New", courier;
-    font-size: 14pt;
-    font-weight: bold;
     margin-bottom: 0.5ex;
 }
 
@@ -201,6 +198,8 @@ label {
 
 .wirecloud_toolbar .styled_button .badge {
     position: absolute;
+    bottom: 0px;
+    right: 0px;
 }
 
 #wirecloud_breadcrum {
@@ -209,6 +208,7 @@ label {
     line-height: 42px;
     text-align: center;
     margin: 0 0 0 -1px;
+    font-family: "Courier New", courier;
     font-weight: bold;
     width: 320px;
     transition: width 0.30s ease-in;
