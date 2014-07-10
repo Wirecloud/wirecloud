@@ -8,7 +8,6 @@
     font-weight: normal;
     display: inline-block;
     margin: 3px;
-    position: relative;
     vertical-align: middle;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -18,7 +17,6 @@
 
 .styled_button > div:focus,
 .styled_button > div:hover {
-    position: relative;
     z-index: 2;
 }
 
@@ -36,6 +34,7 @@
 }
 
 .styled_button > div, .styled_button > button, .styled_button.plain {
+    position: relative;
     cursor: pointer;
 }
 
@@ -93,7 +92,7 @@
 
 .styled_button.btn-large {
     font-size: 15px;
-    line-height: normal;
+    line-height: 17px;
 }
 
 .styled_button.btn-large > div, .styled_button.btn-large > button {
