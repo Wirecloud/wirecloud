@@ -84,7 +84,7 @@ var OpManagerFactory = function () {
 
             var mergeOk = function(transport) {
                 LayoutManagerFactory.getInstance().logStep('');
-                Wirecloud.changeActiveWorkspace(Wirecloud.activeWorkspace);
+                Wirecloud.changeActiveWorkspace(Wirecloud.activeWorkspace.workspaceState);
             };
 
             var onMergeFailure = function onMergeFailure(response, e) {

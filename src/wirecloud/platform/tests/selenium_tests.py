@@ -538,7 +538,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_merge_mashup(self):
 
         self.login()
-        self.merge_mashup_from_catalogue('Test Mashup')
+
+        with self.mashup_wallet as wallet:
+            wallet.search('Test Mashup')
+            mashup = wallet.search_in_results('Test Mashup')
+            mashup.merge()
 
         self.assertEqual(self.count_workspace_tabs(), 3)
         tab = self.get_workspace_tab_by_name('Tab')
@@ -549,6 +553,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNotNone(tab)
 
         self.assertEqual(self.count_iwidgets(), 0)
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login')
     test_merge_mashup.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     def test_workspace_publish(self):

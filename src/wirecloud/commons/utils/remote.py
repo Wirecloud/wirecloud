@@ -25,7 +25,7 @@ import time
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from django.utils.importlib import import_module
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 import six
@@ -243,32 +243,70 @@ class IWidgetTester(object):
         WebDriverWait(self.testcase.driver, timeout).until(iwidget_unloaded)
 
 
-class IWidgetWalletResourceTester(object):
+class WidgetWalletResourceTester(object):
 
     def __init__(self, testcase, element):
         self.testcase = testcase
         self.element = element
 
     def instantiate(self):
-        return self.testcase.instantiate(self.element)
+
+        old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
+        old_iwidget_count = len(old_iwidget_ids)
+
+        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton div'))
+
+        tmp = {
+            'new_iwidget': None,
+        }
+        def iwidget_loaded(driver):
+            if tmp['new_iwidget'] is not None and tmp['new_iwidget'].element is not None:
+                return tmp['new_iwidget'].element.is_displayed()
+
+            iwidgets = self.testcase.get_current_iwidgets()
+            iwidget_count = len(iwidgets)
+            if iwidget_count != old_iwidget_count + 1:
+                return False
+
+            for iwidget in iwidgets:
+                if iwidget['id'] not in old_iwidget_ids:
+                    tmp['new_iwidget'] = iwidget
+
+            return tmp['new_iwidget']['element'] is not None and tmp['new_iwidget']['element'].is_displayed()
+
+        WebDriverWait(self.testcase.driver, 10).until(iwidget_loaded)
+        # TODO firefox
+        time.sleep(0.1)
+        return tmp['new_iwidget']
 
 
-class IWidgetWalletTester(object):
+class MashupWalletResourceTester(object):
+
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
+
+    def merge(self):
+        workspace_name = self.testcase.get_current_workspace_name()
+        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton div'))
+        self.testcase.wait_wirecloud_ready()
+        self.testcase.assertEqual(self.testcase.get_current_workspace_name(), workspace_name)
+
+
+class WalletTester(object):
 
     def __init__(self, testcase):
 
         self.testcase = testcase
         self.element = None
 
-    def __enter__(self):
-
-        self.testcase.wait_element_visible_by_css_selector('.wirecloud_toolbar .icon-plus').click()
-        self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
-        return self
-
     def __exit__(self, type, value, traceback):
 
-        self.testcase.driver.find_element_by_css_selector('.widget_wallet .icon-remove').click()
+        try:
+            self.testcase.driver.find_element_by_css_selector('.widget_wallet .icon-remove').click()
+        except NoSuchElementException:
+            pass
+
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: len(driver.find_elements_by_css_selector('#workspace .widget_wallet')) == 0)
         self.element = None
 
@@ -279,18 +317,6 @@ class IWidgetWalletTester(object):
         list_element = self.element.find_element_by_css_selector('.widget_wallet_list')
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in list_element.get_attribute('class'))
         time.sleep(0.1)
-
-    def search_in_results(self, widget_name):
-
-        self.wait_ready()
-
-        resources = self.element.find_elements_by_css_selector('.widget_wallet_list > .resource')
-        for resource in resources:
-            resource_name = resource.find_element_by_css_selector('.resource_name')
-            if resource_name.text == widget_name:
-                return IWidgetWalletResourceTester(self.testcase, resource)
-
-        return None
 
     def search(self, keywords):
 
@@ -306,6 +332,48 @@ class IWidgetWalletTester(object):
             }
             arguments[0].dispatchEvent(evt);
         ''', search_input)
+
+
+class MashupWalletTester(WalletTester):
+
+    def __enter__(self):
+
+        self.testcase.wait_element_visible_by_css_selector('.wirecloud_toolbar .icon-random').click()
+        self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
+        return self
+
+    def search_in_results(self, widget_name):
+
+        self.wait_ready()
+
+        resources = self.element.find_elements_by_css_selector('.widget_wallet_list > .resource')
+        for resource in resources:
+            resource_name = resource.find_element_by_css_selector('.resource_name')
+            if resource_name.text == widget_name:
+                return MashupWalletResourceTester(self.testcase, resource)
+
+        return None
+
+
+class WidgetWalletTester(WalletTester):
+
+    def __enter__(self):
+
+        self.testcase.wait_element_visible_by_css_selector('.wirecloud_toolbar .icon-plus').click()
+        self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
+        return self
+
+    def search_in_results(self, widget_name):
+
+        self.wait_ready()
+
+        resources = self.element.find_elements_by_css_selector('.widget_wallet_list > .resource')
+        for resource in resources:
+            resource_name = resource.find_element_by_css_selector('.resource_name')
+            if resource_name.text == widget_name:
+                return WidgetWalletResourceTester(self.testcase, resource)
+
+        return None
 
 
 class WiringEntityTester(object):
@@ -536,36 +604,6 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
         return PopupMenuTester(self, popup_menu_element, button)
 
-    def instantiate(self, resource, timeout=30):
-
-        old_iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
-        old_iwidget_count = len(old_iwidget_ids)
-
-        self.scroll_and_click(resource.find_element_by_css_selector('.mainbutton div'))
-
-        tmp = {
-            'new_iwidget': None,
-        }
-        def iwidget_loaded(driver):
-            if tmp['new_iwidget'] is not None and tmp['new_iwidget'].element is not None:
-                return tmp['new_iwidget'].element.is_displayed()
-
-            iwidgets = self.get_current_iwidgets()
-            iwidget_count = len(iwidgets)
-            if iwidget_count != old_iwidget_count + 1:
-                return False
-
-            for iwidget in iwidgets:
-                if iwidget['id'] not in old_iwidget_ids:
-                    tmp['new_iwidget'] = iwidget
-
-            return tmp['new_iwidget']['element'] is not None and tmp['new_iwidget']['element'].is_displayed()
-
-        WebDriverWait(self.driver, timeout).until(iwidget_loaded)
-        # TODO firefox
-        time.sleep(0.1)
-        return tmp['new_iwidget']
-
     def create_workspace_from_catalogue(self, mashup_name, expect_missing_dependencies=None, install_dependencies=False, parameters=None):
 
         self.change_main_view('marketplace')
@@ -607,16 +645,6 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
         self.wait_wirecloud_ready()
         self.assertTrue(self.get_current_workspace_name().startswith(mashup_name), 'Invalid workspace name after creating workspace from catalogue')
-
-    def merge_mashup_from_catalogue(self, mashup_name):
-
-        self.change_main_view('marketplace')
-        self.search_resource(mashup_name)
-        resource = self.search_in_results(mashup_name)
-
-        resource.find_element_by_css_selector('.instantiate_button div').click()
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Current Workspace']").click()
-        self.wait_wirecloud_ready()
 
     def count_iwidgets(self):
         return len(self.driver.find_elements_by_css_selector('div.iwidget'))
@@ -1000,7 +1028,8 @@ class WirecloudRemoteTestCase(WirecloudBaseRemoteTestCase):
 
     def setUp(self):
 
-        self.widget_wallet = IWidgetWalletTester(self)
+        self.widget_wallet = WidgetWalletTester(self)
+        self.mashup_wallet = MashupWalletTester(self)
         self.marketplace_view = MarketplaceViewTester(self)
         self.wiring_view = WiringViewTester(self)
 
