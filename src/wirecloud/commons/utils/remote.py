@@ -500,7 +500,7 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
         loading_message = self.driver.find_element_by_id('loading-message')
         try:
-            loading_message.click()
+            self.driver.execute_script("arguments[0].click();", loading_message)
         except:
             pass
 
