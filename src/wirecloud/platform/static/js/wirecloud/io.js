@@ -160,7 +160,7 @@ Wirecloud.location = {
                 if (this.options.encoding == null) {
                     this.options.encoding = 'UTF-8';
                 }
-            } else if (this.method === 'GET') {
+            } else {
                 if (this.url.indexOf('?') !== -1) {
                     this.url += '&' + toQueryString(this.options.parameters);
                 }  else {
