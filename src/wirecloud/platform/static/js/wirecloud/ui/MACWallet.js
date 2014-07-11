@@ -132,6 +132,13 @@
         }
     };
 
+    var _hide = function _hide() {
+        if (this.wallet.parentNode) {
+            this.wallet.parentNode.removeChild(this.wallet);
+        }
+        this.wallet = null;
+    };
+
     var MACWallet = function MACWallet(scope) {
         Object.defineProperty(this, 'search_scope', {value: scope});
 
@@ -187,13 +194,14 @@
 
     };
 
-    MACWallet.prototype.hide = function hide() {
+    MACWallet.prototype.hide = function hide(instant) {
         if (this.wallet != null) {
-            this.wallet.addEventListener('transitionend', function () {
-                this.wallet.parentNode.removeChild(this.wallet);
-                this.wallet = null;
-            }.bind(this));
-            this.wallet.classList.remove('in');
+            if (instant !== true && this.wallet.classList.contains('in')) {
+                this.wallet.addEventListener('transitionend', _hide.bind(this));
+                this.wallet.classList.remove('in');
+            } else {
+                _hide.call(this);
+            }
         }
     };
 

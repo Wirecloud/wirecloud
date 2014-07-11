@@ -65,6 +65,9 @@
         this.wiringErrorBadge.className = 'badge badge-important';
         this.wiringButton.buttonElement.appendChild(this.wiringErrorBadge);
         Wirecloud.events.activeworkspacechanged.addEventListener(function (workspace) {
+            this.widgetWallet.hide(true);
+            this.mashupWallet.hide(true);
+
             this._updateWiringErrors = function () {
                 this.wiringErrorBadge.innerHTML = workspace.wiring.logManager.errorCount;
                 if (workspace.wiring.logManager.errorCount !== 0) {
