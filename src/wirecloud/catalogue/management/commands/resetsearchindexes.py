@@ -19,13 +19,15 @@
 
 from __future__ import unicode_literals
 
-import shutil
+import os
 from optparse import make_option
+import shutil
 
 from django.core.management.base import CommandError, NoArgsCommand
 from django.utils.six.moves import input
+from whoosh import index
 
-from wirecloud.catalogue.models import add_document, CatalogueResource
+from wirecloud.catalogue.models import add_document, CatalogueResource, CatalogueResourceSchema
 
 
 class Command(NoArgsCommand):
@@ -45,25 +47,29 @@ class Command(NoArgsCommand):
 
         dirname = settings.WIRECLOUD_INDEX_DIR
 
-        message = ['\n']
-        message.append(
-            'You have requested to reset indexes found in the location\n'
-            'specified in your settings:\n\n'
-            '    %s\n\n' % dirname
-        )
-        message.append('This will DELETE EXISTING FILES!\n')
-        message.append(
-            'Are you sure you want to do this?\n\n'
-            "Type 'yes' to continue, or 'no' to cancel: "
-        )
+        if os.path.exists(dirname):
+            message = ['\n']
+            message.append(
+                'You have requested to reset indexes found in the location\n'
+                'specified in your settings:\n\n'
+                '    %s\n\n' % dirname
+            )
+            message.append('This will DELETE EXISTING FILES!\n')
+            message.append(
+                'Are you sure you want to do this?\n\n'
+                "Type 'yes' to continue, or 'no' to cancel: "
+            )
 
-        if self.interactive and input(''.join(message)) != 'yes':
-            raise CommandError("Reset search indexes cancelled.")
+            if self.interactive and input(''.join(message)) != 'yes':
+                raise CommandError("Reset search indexes cancelled.")
 
-        shutil.rmtree(dirname)
+        else:
+            os.mkdir(dirname)
+
+        index.create_in(dirname, CatalogueResourceSchema(), indexname='catalogue_resources')
 
         for resource in CatalogueResource.objects.all():
-            self.log('Adding %s' % resource.local_uri_part)
+            self.log('Adding %s\n' % resource.local_uri_part)
             add_document(CatalogueResource, resource, False, False)
 
     def log(self, msg, level=2):
