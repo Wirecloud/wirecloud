@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var PublishView, upload_wgt_file, submit_template;
+    var PublishView, upload_wgt_file;
 
     /*************************************************************************
      *                            Private methods                            *
@@ -40,31 +40,6 @@
         });
     };
 
-    submit_template = function submit_template() {
-        var template_uri = this.wrapperElement.getElementsByClassName('template_uri')[0].value;
-
-        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding resource to the catalogue"), 1);
-        LayoutManagerFactory.getInstance().logSubTask(gettext('Sending resource template to catalogue'));
-
-        this.catalogue.addResourceFromURL(template_uri, {
-            forceCreate: true,
-            onSuccess: function () {
-                LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uploaded successfully'));
-                LayoutManagerFactory.getInstance().logStep('');
-
-                this.mainview.home();
-                this.mainview.refresh_search_results();
-            }.bind(this),
-            onFailure: function (msg) {
-                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-            },
-            onComplete: function () {
-                LayoutManagerFactory.getInstance()._notifyPlatformReady();
-            }
-        });
-        return false;
-    };
-
     /*************************************************************************
      *                              PublishView                              *
      *************************************************************************/
@@ -76,7 +51,7 @@
         StyledElements.Alternative.call(this, id, options);
 
         var builder = new StyledElements.GUIBuilder();
-        var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud_catalogue_publish_interface'], {
+        var contents = builder.parse(Wirecloud.currentTheme.templates.wirecloud_catalogue_publish_interface, {
             'back_button': function () {
                 var button = new StyledElements.StyledButton({text: gettext('Close upload view')});
                 button.addEventListener('click', this.mainview.home.bind(this.mainview));
@@ -87,17 +62,9 @@
                 button.addClassName('upload_wgt_button');
                 button.addEventListener('click', upload_wgt_file.bind(this), true);
                 return button;
-            }.bind(this),
-            'submit_link_button': function () {
-                var button = new StyledElements.StyledButton({text: gettext('Add')});
-                button.addClassName('submit_link');
-                button.addEventListener('click', submit_template.bind(this), true);
-                return button;
             }.bind(this)
         });
         this.appendChild(contents);
-
-        this.wrapperElement.getElementsByClassName('template_submit_form')[0].onsubmit = function () {return false;};
     };
     PublishView.prototype = new StyledElements.Alternative();
 

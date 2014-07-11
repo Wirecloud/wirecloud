@@ -130,7 +130,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='admin', password='admin')
 
-        response = self.client.get(self.base_url + '?scope=widget&staff=True')
+        response = self.client.get(self.base_url + '?scope=widget&staff=true')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         widgets = [i['type'] for i in result_json['results']].count('widget')
@@ -142,7 +142,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='emptyuser', password='admin')
 
-        response = self.client.get(self.base_url+'?staff=True')
+        response = self.client.get(self.base_url+'?staff=true')
         self.assertEqual(response.status_code, 403)
 
         response = self.client.get(self.base_url+'?scope=application')
@@ -172,7 +172,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='admin', password='admin')
 
-        response = self.client.get(self.base_url+'?staff=True&pagelen=15')
+        response = self.client.get(self.base_url+'?staff=true&pagelen=15')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 1)
@@ -181,7 +181,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 17)
 
-        response = self.client.get(self.base_url+'?staff=True&pagenum=2')
+        response = self.client.get(self.base_url+'?staff=true&pagelen=10&pagenum=2')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 2)
@@ -191,7 +191,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 3)
 
-        response = self.client.get(self.base_url+'?staff=True&pagenum=2&pagelen=5')
+        response = self.client.get(self.base_url+'?staff=true&pagenum=2&pagelen=5')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 2)
@@ -263,14 +263,14 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 13)
 
-        response = self.client.get(self.base_url+'?staff=True')
+        response = self.client.get(self.base_url+'?staff=true')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 1)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['total'], 10)
+        self.assertEqual(result_json['total'], 11)
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
-        self.assertEqual(n, 14)
+        self.assertEqual(n, 17)
 
     @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None)
     def test_search_absolute_urls(self):

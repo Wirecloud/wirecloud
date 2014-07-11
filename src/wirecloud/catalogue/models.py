@@ -378,7 +378,7 @@ def open_index(indexname, dirname=None):
     return index.open_dir(dirname, indexname=indexname)
 
 
-def search(querytext, request, pagenum=1, pagelen=10, staff=False, scope=None,
+def search(querytext, request, pagenum=1, pagelen=30, staff=False, scope=None,
            orderby='-creation_date'):
 
     ix = open_index('catalogue_resources')

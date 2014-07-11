@@ -110,7 +110,7 @@ class ResourceCollection(Resource):
 
         filters = {
             'pagenum': int(request.GET.get('pagenum', '1')),
-            'pagelen': int(request.GET.get('pagelen', '10')),
+            'pagelen': int(request.GET.get('pagelen', '30')),
             'orderby': request.GET.get('orderby', '-creation_date'),
             'scope': request.GET.get('scope', None),
             'staff': request.GET.get('staff', 'false').lower() == 'true',
