@@ -316,6 +316,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(button.text, 'Install')
 
             self.scroll_and_click(button)
+            marketplace.wait_catalogue_ready()
             free_offering = marketplace.search_in_results(offering_name)
             button = free_offering.find_element_by_css_selector('.mainbutton > div')
             self.assertEqual(button.text, 'Uninstall')
