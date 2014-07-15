@@ -35,7 +35,7 @@
  *
  */
 
-/*global ActiveXObject, EventSource*/
+/*global ActiveXObject, DOMImplementation, EventSource, exports*/
 
 (function () {
 
@@ -248,11 +248,12 @@
 
     /* Request utility functions */
 
-    var makeXMLRequest = function makeXMLRequest(url, payload, parse_func, callbacks) {
+    var makeXMLRequest = function makeXMLRequest(url, payload, parse_func, callbacks, parameters) {
         this.makeRequest(url, {
             method: 'POST',
             contentType: 'application/xml',
             requestHeaders: this.request_headers,
+            parameters: parameters,
             postBody: NGSI.XML.serialize(payload),
             onSuccess: function (response) {
                 if (typeof callbacks.onSuccess === 'function') {
@@ -271,7 +272,7 @@
                         return;
                     }
 
-                    callbacks.onSuccess(data);
+                    callbacks.onSuccess.apply(null, data);
                 }
             },
             onFailure: function (response) {
@@ -309,6 +310,117 @@
         entityId.appendChild(id);
 
         return entityId;
+    };
+
+    var ngsi_build_scope_restriction_element = function ngsi_build_scope_restriction_element(doc, scope) {
+        var restrictionValueElement, vertexListElement, i, vertice,
+            vertexElement, latitudeElement, longitudeElement, invertedElement,
+            centerLatitudeElement, centerLongitudeElement, radiusElement;
+
+        if ('polygon' in scope.value) {
+            restrictionValueElement = doc.createElement('polygon');
+
+            vertexListElement = doc.createElement('vertexList');
+            restrictionValueElement.appendChild(vertexListElement);
+            for (i = 0; i < scope.value.polygon.vertices.length; i++) {
+                vertice = scope.value.polygon.vertices[i];
+
+                vertexElement = doc.createElement('vertex');
+                vertexListElement.appendChild(vertexElement);
+                latitudeElement = doc.createElement('latitude');
+                NGSI.XML.setTextContent(latitudeElement, vertice.latitude);
+                vertexElement.appendChild(latitudeElement);
+                longitudeElement = doc.createElement('longuitude');
+                NGSI.XML.setTextContent(longitudeElement, vertice.longitude);
+                vertexElement.appendChild(longitudeElement);
+            }
+
+            if (scope.value.polygon.inverted) {
+                invertedElement = doc.createElement('inverted');
+                NGSI.XML.setTextContent(invertedElement, 'true');
+                restrictionValueElement.appendChild(invertedElement);
+            }
+        } else if ('circle' in scope.value) {
+            restrictionValueElement = doc.createElement('circle');
+
+            centerLatitudeElement = doc.createElement('centerLatitude');
+            NGSI.XML.setTextContent(centerLatitudeElement, scope.value.circle.centerLatitude);
+            restrictionValueElement.appendChild(centerLatitudeElement);
+            centerLongitudeElement = doc.createElement('centerLongitude');
+            NGSI.XML.setTextContent(centerLongitudeElement, scope.value.circle.centerLongitude);
+            restrictionValueElement.appendChild(centerLongitudeElement);
+            radiusElement = doc.createElement('radius');
+            NGSI.XML.setTextContent(radiusElement, scope.value.circle.radius);
+            restrictionValueElement.appendChild(radiusElement);
+
+            if (scope.value.circle.inverted) {
+                invertedElement = doc.createElement('inverted');
+                NGSI.XML.setTextContent(invertedElement, 'true');
+                restrictionValueElement.appendChild(invertedElement);
+            }
+        }
+
+        return restrictionValueElement;
+    };
+
+    var ngsi_build_restriction_element = function ngsi_build_restriction_element(doc, restriction) {
+        var restrictionElement, attributeExpressionElement, scopeElement,
+            operationScopeElement, scopeTypeElement, scopeValueElement, i;
+
+
+        restrictionElement = doc.createElement('restriction');
+
+        if (restriction.attributeExpression != null) {
+            attributeExpressionElement = doc.createElement('attributeExpression');
+            NGSI.XML.setTextContent(attributeExpressionElement, restriction.attributeExpression);
+            restrictionElement.appendChild(attributeExpressionElement);
+        }
+
+        if (Array.isArray(restriction.scopes)) {
+            scopeElement = doc.createElement('scope');
+            restrictionElement.appendChild(scopeElement);
+
+            for (i = 0; i < restriction.scopes.length; i++) {
+                operationScopeElement = doc.createElement('operationScope');
+
+                scopeTypeElement = doc.createElement('scopeType');
+                NGSI.XML.setTextContent(scopeTypeElement, restriction.scopes[i].type);
+                operationScopeElement.appendChild(scopeTypeElement);
+
+                scopeValueElement = doc.createElement('scopeValue');
+                scopeValueElement.appendChild(ngsi_build_scope_restriction_element(doc, restriction.scopes[i]));
+                operationScopeElement.appendChild(scopeValueElement);
+
+                scopeElement.appendChild(operationScopeElement);
+            }
+        }
+
+        return restrictionElement;
+    };
+
+    var ngsi_build_attribute_metadata_element = function ngsi_build_attribute_metadata_element(doc, metadata) {
+        var metadataElement, i, contextMetadataElement, nameElement, typeElement, valueElement;
+
+        metadataElement = doc.createElement('metadata');
+        for (i = 0; i < metadata.length; i++) {
+            contextMetadataElement = doc.createElement('contextMetadata');
+
+            nameElement = doc.createElement('name');
+            NGSI.XML.setTextContent(nameElement, metadata[i].name);
+            contextMetadataElement.appendChild(nameElement);
+
+            typeElement = doc.createElement('type');
+            NGSI.XML.setTextContent(typeElement, metadata[i].type);
+            contextMetadataElement.appendChild(typeElement);
+
+            valueElement = doc.createElement('value');
+            NGSI.XML.setTextContent(valueElement, metadata[i].value);
+            contextMetadataElement.appendChild(valueElement);
+
+            metadataElement.appendChild(contextMetadataElement);
+        }
+
+        return metadataElement;
     };
 
     /* Request builders */
@@ -375,7 +487,7 @@
         return doc;
     };
 
-    var ngsi_build_query_context_request = function ngsi_build_query_context_request(e, attrNames) {
+    var ngsi_build_query_context_request = function ngsi_build_query_context_request(e, attrNames, restriction) {
         var doc, entityIdList, i, attributeList, attribute,
             attributeElement;
 
@@ -399,6 +511,10 @@
                 NGSI.XML.setTextContent(attributeElement, attribute);
                 attributeList.appendChild(attributeElement);
             }
+        }
+
+        if (restriction != null) {
+            doc.documentElement.appendChild(ngsi_build_restriction_element(doc, restriction));
         }
 
         return doc;
@@ -450,6 +566,10 @@
                 NGSI.XML.setTextContent(contextValueElement, contextValue);
                 attributeElement.appendChild(contextValueElement);
 
+                if (Array.isArray(attribute.metadata) && attribute.metadata.length > 0) {
+                    attributeElement.appendChild(ngsi_build_attribute_metadata_element(doc, attribute.metadata));
+                }
+
                 attributeListElement.appendChild(attributeElement);
             }
             contextElement.appendChild(attributeListElement);
@@ -493,7 +613,6 @@
     var ngsi_build_subscribe_update_context_availability_request = function ngsi_build_subscribe_update_context_availability_request(rootElement, e, attr, duration, restriction, subscriptionId, onNotify) {
         var doc, entityIdListElement, i, attributeListElement,
             attributeElement, referenceElement, durationElement,
-            restrictionElement, attributeExpressionElement,
             subscriptionIdElement;
 
         doc = NGSI.XML.createDocument(null, rootElement);
@@ -524,15 +643,8 @@
             doc.documentElement.appendChild(durationElement);
         }
 
-        if (restriction != null && typeof restriction === 'object') {
-            restrictionElement = doc.createElement('restriction');
-            doc.documentElement.appendChild(restrictionElement);
-
-            attributeExpressionElement = doc.createElement('attributeExpression');
-            NGSI.XML.setTextContent(attributeExpressionElement, restriction.attributeExpression);
-            restrictionElement.appendChild(attributeExpressionElement);
-
-            // TODO scope
+        if (restriction != null) {
+            doc.documentElement.appendChild(ngsi_build_restriction_element(doc, restriction));
         }
 
         if (subscriptionId != null) {
@@ -650,16 +762,39 @@
 
     /* Response parsers */
 
+    var parse_metadata_element = function parse_metadata_element(metadataElement) {
+        var metadata, metadataElements, i, nameElement, typeElement, valueElement;
+
+        metadata = [];
+        if (metadataElement == null) {
+            return metadata;
+        }
+
+        metadataElements = NGSI.XML.getChildElementsByTagName(metadataElement, 'contextMetadata');
+        for (i = 0; i < metadataElements.length; i++) {
+            nameElement = NGSI.XML.getChildElementByTagName(metadataElements[i], 'name');
+            typeElement = NGSI.XML.getChildElementByTagName(metadataElements[i], 'type');
+            valueElement = NGSI.XML.getChildElementByTagName(metadataElements[i], 'value');
+            metadata.push({
+                name: NGSI.XML.getTextContent(nameElement),
+                type: NGSI.XML.getTextContent(typeElement),
+                value: NGSI.XML.getTextContent(valueElement)
+            });
+        }
+
+        return metadata;
+    };
+
     var parse_register_context_response =  function parse_register_context_response(doc) {
 
         if (doc.documentElement.tagName !== 'registerContextResponse') {
             throw new NGSI.InvalidResponseError('');
         }
 
-        return {
+        return [{
             duration: NGSI.XML.getTextContent(NGSI.XML.getChildElementByTagName(doc.documentElement, 'duration')),
             registrationId: NGSI.XML.getTextContent(NGSI.XML.getChildElementByTagName(doc.documentElement, 'registrationId'))
-        };
+        }];
     };
 
     var parse_context_registration_response_list = function parse_context_registration_response_list(list) {
@@ -725,7 +860,7 @@
         }
 
         var list = NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextRegistrationResponseList');
-        return parse_context_registration_response_list(list);
+        return [parse_context_registration_response_list(list)];
     };
 
     var parse_subscribe_update_context_availability_response = function parse_subscribe_update_context_availability_response(doc) {
@@ -745,7 +880,7 @@
             data.errorCode = NGSI.XML.getTextContent(errorCodeElement);
         }
 
-        return data;
+        return [data];
     };
 
     var parse_unsubscribe_context_availability_response = function parse_unsubscribe_context_availability_response(doc) {
@@ -753,16 +888,17 @@
             throw new NGSI.InvalidResponseError('');
         }
 
-        return {
+        return [{
             subscriptionId: NGSI.XML.getTextContent(NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId')),
             statusCode: NGSI.XML.getTextContent(NGSI.XML.getChildElementByTagName(doc.documentElement, 'statusCode'))
-        };
+        }];
     };
 
-    var parse_context_response_list = function parse_context_response_list(element, options) {
+    var parse_context_response_list = function parse_context_response_list(element, update_response, options) {
         var contextResponses, contextResponse, entry, entityIdElement, nameElement, flat,
             typeElement, attributeName, contextValueElement, entityId, idElement, i, j,
-            contextAttributeListElement, attributeList, contextValue, data;
+            contextAttributeListElement, attributeList, contextValue, data, metadataElement,
+            status_info, error_data;
 
         flat = !!options.flat;
         if (flat) {
@@ -770,9 +906,15 @@
         } else {
             data = [];
         }
+        error_data = [];
+        if (update_response) {
+            contextValue = "";
+        }
+
         contextResponses = NGSI.XML.getChildElementsByTagName(element, 'contextElementResponse');
         for (i = 0; i < contextResponses.length; i += 1) {
             contextResponse = NGSI.XML.getChildElementByTagName(contextResponses[i], 'contextElement');
+            status_info = process_status_info(contextResponses[i]);
 
             if (flat) {
                 entry = {};
@@ -787,7 +929,7 @@
             entityIdElement = NGSI.XML.getChildElementByTagName(contextResponse, 'entityId');
             idElement = NGSI.XML.getChildElementByTagName(entityIdElement, 'id');
             entityId = NGSI.XML.getTextContent(idElement);
-            if (flat) {
+            if (status_info.code === 200 && flat) {
                 entry.id = entityId;
                 entry.type = entityIdElement.getAttribute('type');
             } else {
@@ -803,64 +945,139 @@
                 attributeList = NGSI.XML.getChildElementsByTagName(contextAttributeListElement, 'contextAttribute');
                 for (j = 0; j < attributeList.length; j += 1) {
                     nameElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'name');
-                    typeElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'type');
-                    contextValueElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'contextValue');
-                    contextValue = NGSI.XML.getTextContent(contextValueElement);
-                    if (contextValue === 'emptycontent') {
-                        contextValue = '';
+                    attributeName = NGSI.XML.getTextContent(nameElement);
+
+                    if (!update_response) {
+                        contextValueElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'contextValue');
+                        contextValue = NGSI.XML.getTextContent(contextValueElement);
+                        if (contextValue === 'emptycontent') {
+                            contextValue = '';
+                        }
                     }
 
-                    attributeName = NGSI.XML.getTextContent(nameElement);
                     if (flat) {
                         entry[attributeName] = contextValue;
                     } else {
-                        entry.attributes.push({
-                            name: attributeName,
-                            type: NGSI.XML.getTextContent(typeElement),
-                            contextValue: contextValue
-                        });
+                        typeElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'type');
+                        metadataElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'metadata');
+                        if (update_response) {
+                            entry.attributes.push({
+                                name: attributeName,
+                                type: NGSI.XML.getTextContent(typeElement)
+                            });
+                            if (metadataElement != null) {
+                                entry.attributes[entry.attributes.length - 1].metadata = parse_metadata_element(metadataElement);
+                            }
+                        } else {
+                            entry.attributes.push({
+                                name: attributeName,
+                                type: NGSI.XML.getTextContent(typeElement),
+                                contextValue: contextValue,
+                                metadata: parse_metadata_element(metadataElement)
+                            });
+                        }
                     }
                 }
             }
 
-            if (flat) {
-                data[entityId] = entry;
+            if (status_info.code === 200) {
+                if (flat) {
+                    data[entityId] = entry;
+                } else {
+                    data.push(entry);
+                }
             } else {
-                data.push(entry);
+                if (update_response) {
+                    entry.statusCode = status_info;
+                }
+                error_data.push(entry);
             }
         }
 
-        return data;
+        return [data, error_data];
+    };
+
+    var process_status_info = function process_status_info(element) {
+        var statusCodeElement, status_info, detailsElement;
+
+        statusCodeElement = NGSI.XML.getChildElementByTagName(element, 'statusCode');
+
+        status_info = {
+            code: parseInt(NGSI.XML.getChildElementByTagName(statusCodeElement, 'code').textContent, 10),
+            reasonPhrase: NGSI.XML.getChildElementByTagName(statusCodeElement, 'reasonPhrase').textContent
+        };
+
+        detailsElement = NGSI.XML.getChildElementByTagName(statusCodeElement, 'details');
+        if (detailsElement != null) {
+            status_info.details = detailsElement.textContent;
+        }
+
+        return status_info;
     };
 
     var process_error_code = function process_error_code(element) {
-        var errorCodeElement, codeElement, reasonPhraseElement;
+        var errorCodeElement, codeElement, reasonPhraseElement, detailsElement, details;
 
         errorCodeElement = NGSI.XML.getChildElementByTagName(element, 'errorCode');
         if (errorCodeElement != null) {
             codeElement = NGSI.XML.getChildElementByTagName(errorCodeElement, 'code');
             reasonPhraseElement = NGSI.XML.getChildElementByTagName(errorCodeElement, 'reasonPhrase');
-            throw new NGSI.InvalidRequestError(parseInt(codeElement.textContent, 10), reasonPhraseElement.textContent);
+            detailsElement = NGSI.XML.getChildElementByTagName(errorCodeElement, 'details');
+            if (detailsElement != null) {
+                details = detailsElement.textContent;
+            }
+
+            throw new NGSI.InvalidRequestError(parseInt(codeElement.textContent, 10), reasonPhraseElement.textContent, details);
         }
     };
 
+    var NGSI_QUERY_COUNT_RE = new RegExp('Count: (\\d+)');
+    var NGSI_INVALID_OFFSET_RE = new RegExp('Number of matching entities: (\\d+). Offset is (\\d+)');
+
     var parse_query_context_response = function parse_query_context_response(doc, options) {
+        var details, parsed_details, data, error_data, result;
 
         if (doc.documentElement.tagName !== 'queryContextResponse') {
-            throw new NGSI.InvalidResponseError('');
+            throw new NGSI.InvalidResponseError('Unexpected root element in response: ' + doc.documentElement.tagName);
         }
 
         try {
             process_error_code(doc.documentElement);
         } catch (e) {
-            if (e.code === 404) {
-                return options.flat ? {} : [];
-            } else {
+            switch (e.code) {
+            case 200:
+                parsed_details = e.details.match(NGSI_QUERY_COUNT_RE);
+                if (parsed_details) {
+                    details = {
+                        "count": parseInt(parsed_details[1], 10)
+                    };
+                }
+                break;
+            case 404:
+                data = options.flat ? {} : [];
+                error_data = options.flat ? {} : [];
+                parsed_details = e.details.match(NGSI_INVALID_OFFSET_RE);
+                if (parsed_details) {
+                    details = e.details = {
+                        "text": e.details,
+                        "matches": parseInt(parsed_details[1]),
+                        "offset": parseInt(parsed_details[2])
+                    };
+                }
+                if (options.offset != null && options.offset !== 0) {
+                    throw e;
+                } else {
+                    return [data, error_data, details];
+                }
+                break;
+            default:
                 throw e;
             }
         }
 
-        return parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), options);
+        result = parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), false, options);
+        result.push(details);
+        return result;
     };
 
     var parse_update_context_response = function parse_update_context_response(doc, options) {
@@ -868,7 +1085,9 @@
             throw new NGSI.InvalidResponseError('');
         }
 
-        return parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), options);
+        process_error_code(doc.documentElement);
+
+        return parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), true, options);
     };
 
     var parse_subscribe_response_element = function parse_subscribe_response_element(element) {
@@ -899,7 +1118,7 @@
         }
 
         var subscribeResponse = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscribeResponse');
-        return parse_subscribe_response_element(subscribeResponse);
+        return [parse_subscribe_response_element(subscribeResponse)];
     };
 
     var parse_update_context_subscription_response = function parse_update_context_subscription_response(doc) {
@@ -909,7 +1128,7 @@
         }
 
         var subscribeResponse = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscribeResponse');
-        return parse_subscribe_response_element(subscribeResponse);
+        return [parse_subscribe_response_element(subscribeResponse)];
     };
 
     var parse_unsubscribe_context_response = function parse_unsubscribe_context_response(doc) {
@@ -920,9 +1139,9 @@
 
         var subIdElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId');
 
-        return {
+        return [{
             subscriptionId: NGSI.XML.getTextContent(subIdElement)
-        };
+        }];
     };
 
     var parse_notify_context_availability_request = function parse_notify_context_availability_request(doc, options) {
@@ -932,7 +1151,7 @@
         }
 
         var list = NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextRegistrationResponseList');
-        return parse_context_registration_response_list(list);
+        return [parse_context_registration_response_list(list)];
     };
 
     NGSI.parseNotifyContextRequest = function parseNotifyContextRequest(doc, options) {
@@ -942,7 +1161,7 @@
             throw new NGSI.InvalidResponseError();
         }
 
-        data = parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), options);
+        data = parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), false, options)[0];
 
         data = {elements: data};
         subscriptionIdElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId');
@@ -986,7 +1205,7 @@
             for (i = 0; i < this.onload_callbacks.length; i += 1) {
                 try {
                     this.onload_callbacks[i]();
-                } catch (e) {}
+                } catch (exception) {}
             }
             this.onload_callbacks = [];
             this.onerror_callbacks = [];
@@ -1150,10 +1369,11 @@
     NGSI.ConnectionError.prototype = new Error();
     NGSI.ConnectionError.prototype.constructor = NGSI.ConnectionError;
 
-    NGSI.InvalidRequestError = function InvalidRequestError(code, message) {
+    NGSI.InvalidRequestError = function InvalidRequestError(code, message, details) {
         this.name = 'InvalidRequest';
         this.code = code;
         this.message = message || '';
+        this.details = details || '';
     };
     NGSI.InvalidRequestError.prototype = new Error();
     NGSI.InvalidRequestError.prototype.constructor = NGSI.InvalidRequestError;
@@ -1357,7 +1577,9 @@
         makeXMLRequest.call(this, url, payload, parse_unsubscribe_context_availability_response, callbacks);
     };
 
-    NGSI.Connection.prototype.query = function query(entities, attrNames, callbacks) {
+    NGSI.Connection.prototype.query = function query(entities, attrNames, options) {
+        var url, parameters, payload;
+
         if (!Array.isArray(entities) || entities.length === 0) {
             throw new TypeError('entities parameter must be a non-empty array');
         }
@@ -1368,14 +1590,40 @@
             attrNames = [];
         }
 
-        if (callbacks == null) {
-            callbacks = {};
+        if (options == null) {
+            options = {};
         }
 
-        var payload = ngsi_build_query_context_request(entities, attrNames);
-        var url = this.url + NGSI.endpoints.QUERY_CONTEXT;
+        // Parse pagination parameters
+        parameters = {};
+        if (options.limit != null) {
+            if (typeof options.limit !== 'number' || options.limit < 20) {
+                throw new TypeError('invalid value for the limit option');
+            }
+            parameters.limit = options.limit;
+        }
 
-        makeXMLRequest.call(this, url, payload, parse_query_context_response, callbacks);
+        if (options.offset != null) {
+            if (typeof options.offset !== 'number' || options.offset < 0) {
+                throw new TypeError('invalid value for the offset option');
+            }
+            parameters.offset = options.offset;
+        }
+
+        if (options.details != null) {
+            if (typeof options.details !== 'boolean') {
+                throw new TypeError('invalid value for the details option');
+            }
+            if (options.details) {
+                parameters.details = 'on';
+            } else {
+                parameters.details = 'off';
+            }
+        }
+
+        url = this.url + NGSI.endpoints.QUERY_CONTEXT;
+        payload = ngsi_build_query_context_request(entities, attrNames, options.restriction);
+        makeXMLRequest.call(this, url, payload, parse_query_context_response, options, parameters);
     };
 
     NGSI.Connection.prototype.updateAttributes = function updateAttributes(update, callbacks) {
