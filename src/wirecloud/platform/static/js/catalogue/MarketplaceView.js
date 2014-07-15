@@ -147,11 +147,14 @@
     MarketplaceView.prototype.view_name = 'marketplace';
 
     MarketplaceView.prototype.buildStateData = function buildStateData() {
-        var data, subview;
+        var currentState, data, subview;
 
-        data = Wirecloud.Utils.merge(Wirecloud.HistoryManager.getCurrentState(), {
+        currentState = Wirecloud.HistoryManager.getCurrentState();
+        data = {
+            workspace_creator: currentState.workspace_creator,
+            workspace_name: currentState.workspace_name,
             view: 'marketplace'
-        });
+        };
 
         if (this.loading === false && this.error === false && this.alternatives.getCurrentAlternative() !== this.emptyAlternative) {
             subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative();

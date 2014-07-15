@@ -141,9 +141,14 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.view_name = 'wiring';
 
     WiringEditor.prototype.buildStateData = function buildStateData() {
-        var data = Wirecloud.Utils.merge(Wirecloud.HistoryManager.getCurrentState(), {
+        var currentState, data;
+
+        currentState = Wirecloud.HistoryManager.getCurrentState();
+        data = {
+            workspace_creator: currentState.workspace_creator,
+            workspace_name: currentState.workspace_name,
             view: 'wiring'
-        });
+        };
 
         return data;
     };

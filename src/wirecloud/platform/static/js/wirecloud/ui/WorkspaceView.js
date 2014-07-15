@@ -82,15 +82,19 @@
             workspace.wiring.logManager.addEventListener('newentry', this._updateWiringErrors);
             this._updateWiringErrors();
         }.bind(this));
+
     };
     WorkspaceView.prototype = new StyledElements.Alternative();
 
     WorkspaceView.prototype.view_name = 'workspace';
 
     WorkspaceView.prototype.buildStateData = function buildStateData() {
-        return Wirecloud.Utils.merge(Wirecloud.HistoryManager.getCurrentState(), {
+        var currentState = Wirecloud.HistoryManager.getCurrentState();
+        return {
+            workspace_creator: currentState.workspace_creator,
+            workspace_name: currentState.workspace_name,
             view: 'workspace'
-        });
+        };
     };
 
     WorkspaceView.prototype.getBreadcrum = function getBreadcrum() {
