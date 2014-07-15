@@ -36,6 +36,7 @@
         this.backButton.addEventListener('click', function () {
             this.currentView.goUp();
         }.bind(this));
+        this.backButton.disable();
         this.backButton.insertInto(this.breadcrum.parentNode, this.breadcrum);
 
         this.menuButton = new StyledElements.PopupButton({'class': 'btn-large', 'iconClass': 'icon-reorder'});
