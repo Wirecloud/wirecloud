@@ -6,6 +6,7 @@ import os
 from south.v2 import DataMigration
 
 from wirecloud.commons.utils.downloader import download_http_content
+from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.template.parsers import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 
@@ -22,17 +23,29 @@ def update_resource_catalogue_cache(orm=None):
 
     for resource in resources:
 
-        if resource.fromWGT:
-            base_dir = wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
-            wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-            template = wgt_file.get_template()
-            wgt_file.close()
-        else:
-            template = download_http_content(resource.template_uri)
+        try:
 
-        template_parser = TemplateParser(template)
-        resource.json_description = json.dumps(template_parser.get_resource_info())
-        resource.save()
+            if resource.fromWGT:
+                base_dir = wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                template = wgt_file.get_template()
+                wgt_file.close()
+            else:
+                template = download_http_content(resource.template_uri)
+
+            template_parser = TemplateParser(template)
+            resource.json_description = json.dumps(template_parser.get_resource_info())
+            resource.save()
+
+        except TemplateParseException as e:
+
+            from django.conf import settings
+
+            if getattr(settings, 'WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION', False) is not True:
+                raise e
+
+            print('    Removing %s' % (resource.vendor + '/' + resource.short_name + '/' + resource.version))
+            resource.delete()
 
 
 class Migration(DataMigration):

@@ -61,6 +61,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
     settings['APPEND_SLASH'] = False
     settings['COMPRESS_OUTPUT_DIR'] = 'cache'
     settings['ALLOW_ANONYMOUS_ACCESS'] = True
+    settings['WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION'] = False
 
     settings['USE_TZ'] = True
 
