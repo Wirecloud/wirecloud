@@ -184,6 +184,11 @@ header.navbar .logo-header > .brand {
     font-family: "NeoTech";
 }
 
+header.navbar .logo-header > .brand > img {
+    margin: -3px 5px 0 0;
+    width: 97px;
+}
+
 header.navbar .logo-header > .brand > span {
     color: #002d67;
 }

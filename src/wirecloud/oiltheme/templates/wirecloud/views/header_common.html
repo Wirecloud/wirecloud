@@ -2,11 +2,13 @@
   <nav class="navbar-inner">
     <div class="logo-header">
         <a href="{{ FIWARE_HOME }}" class="logo-header">
-        <img alt="FI-WARE IdM" class="logo" src="{{ STATIC_URL}}images/header-logo.png" />
-      </a>
-      <a href="{{ FIWARE_HOME }}" class="brand">
+            <img alt="FI-WARE" class="logo" src="{{ STATIC_URL}}images/header-logo.png" />
+        </a>
+      <a href="{{ FIWARE_HOME }}" class="brand">{% ifequal FIWARE_HOME "https://lab.fi-ware.org" %}
+        <img alt="FI-LAB" class="logo" src="{{ STATIC_URL}}images/filab.png" />
+      {% else %}
         <span>FI-</span>WARE
-      </a>
+      {% endifequal %}</a>
     </div><ul class="oil-portal">
       {% for portal in FIWARE_PORTALS %}
       <li {% if portal.active %}class="active"{% endif %}>
