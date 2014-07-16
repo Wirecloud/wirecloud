@@ -19,7 +19,6 @@
 
 from django.conf import settings
 from django.conf.urls import patterns, include, url
-from django.contrib.auth.models import AnonymousUser
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page
 
@@ -252,10 +251,18 @@ class FiWarePlugin(WirecloudPlugin):
         return ('wirecloud.fiware.proxy.IDMTokenProcessor',)
 
     def get_django_template_context_processors(self):
-        return {
+        context = {
             "FIWARE_HOME": getattr(settings, "FIWARE_HOME", wirecloud.fiware.DEFAULT_FIWARE_HOME),
+            "FIWARE_OFFICIAL_PORTAL": getattr(settings, "FIWARE_OFFICIAL_PORTAL", False),
             "FIWARE_PORTALS": getattr(settings, "FIWARE_PORTALS", wirecloud.fiware.DEFAULT_FIWARE_PORTALS),
         }
+
+        if IDM_SUPPORT_ENABLED:
+            context["FIWARE_IDM_SERVER"] = getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FILAB_IDM_SERVER)
+        else:
+            context["FIWARE_IDM_SERVER"] = None
+
+        return context
 
     def get_api_auth_backends(self):
 
