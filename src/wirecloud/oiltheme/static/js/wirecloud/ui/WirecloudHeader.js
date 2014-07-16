@@ -112,14 +112,16 @@
                     }
                 };
                 for (i = 0; i < portal_logout_urls.length; i += 1) {
-                    Wirecloud.io.makeRequest(portal_logout_urls[i], {
-                        method: 'GET',
-                        supportsAccessControl: true,
-                        withCredentials: true,
-                        requestHeaders: {
-                            'X-Requested-With': null
-                        }
-                    });
+                    try {
+                        Wirecloud.io.makeRequest(portal_logout_urls[i], {
+                            method: 'GET',
+                            supportsAccessControl: true,
+                            withCredentials: true,
+                            requestHeaders: {
+                                'X-Requested-With': null
+                            }
+                        });
+                    } catch (error) {}
                 }
                 setTimeout(function () {
                     window.location = Wirecloud.URLs.LOGOUT_VIEW;
