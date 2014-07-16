@@ -25,6 +25,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_GET
 
+from wirecloud.commons.authentication import logout as wirecloud_logout
 from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url
 from wirecloud.fiware import DEFAULT_FIWARE_PORTALS
 
@@ -71,6 +72,6 @@ def logout(request):
             response = build_error_response(request, 403, '')
 
     if request.method == 'GET' and response.status_code == 204:
-        django_logout(request)
+        return wirecloud_logout(request)
 
     return response
