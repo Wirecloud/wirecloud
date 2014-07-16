@@ -1035,7 +1035,7 @@
     var NGSI_INVALID_OFFSET_RE = new RegExp('Number of matching entities: (\\d+). Offset is (\\d+)');
 
     var parse_query_context_response = function parse_query_context_response(doc, options) {
-        var details, parsed_details, data, error_data, result;
+        var details, parsed_details, data;
 
         if (doc.documentElement.tagName !== 'queryContextResponse') {
             throw new NGSI.InvalidResponseError('Unexpected root element in response: ' + doc.documentElement.tagName);
@@ -1055,7 +1055,6 @@
                 break;
             case 404:
                 data = options.flat ? {} : [];
-                error_data = options.flat ? {} : [];
                 parsed_details = e.details.match(NGSI_INVALID_OFFSET_RE);
                 if (parsed_details) {
                     details = e.details = {
@@ -1067,7 +1066,7 @@
                 if (options.offset != null && options.offset !== 0) {
                     throw e;
                 } else {
-                    return [data, error_data, details];
+                    return [data, details];
                 }
                 break;
             default:
@@ -1075,9 +1074,7 @@
             }
         }
 
-        result = parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), false, options);
-        result.push(details);
-        return result;
+        return [parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), false, options)[0], details];
     };
 
     var parse_update_context_response = function parse_update_context_response(doc, options) {
