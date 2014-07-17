@@ -26,15 +26,20 @@ from django.test import Client, TestCase
 from django.utils import unittest
 from django.utils.http import urlencode
 
+from wirecloud.commons.utils.testcases import WirecloudTestCase
+
 
 @unittest.skipIf(not 'wirecloud.oauth2provider' in settings.INSTALLED_APPS, 'OAuth2 provider not enabled')
-class Oauth2TestCase(TestCase):
+class Oauth2TestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'oauth2_test_data')
     tags = ('oauth2',)
 
     @classmethod
     def setUpClass(cls):
+
+        WirecloudTestCase.setUpClass.im_func(cls)
+
         cls.client = Client()
         cls.user_client = Client()
 

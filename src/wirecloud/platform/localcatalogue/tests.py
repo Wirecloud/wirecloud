@@ -21,8 +21,6 @@ from __future__ import unicode_literals
 
 import json
 import os.path
-from shutil import rmtree
-from tempfile import mkdtemp
 
 from django.contrib.auth.models import User, Group
 from django.core.urlresolvers import reverse
@@ -32,8 +30,8 @@ from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.commons
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
-from wirecloud.commons.utils.testcases import cleartree, DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase
-from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
+from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase
+from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
@@ -379,38 +377,10 @@ class PackagedResourcesTestCase(WirecloudTestCase):
 
     tags = ('localcatalogue',)
 
-    @classmethod
-    def setUpClass(cls):
-
-        super(PackagedResourcesTestCase, cls).setUpClass()
-
-        cls.old_catalogue_deployer = catalogue.wgt_deployer
-        cls.catalogue_tmp_dir = mkdtemp()
-        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
-
-        cls.old_deployer = wirecloud.platform.widget.utils.wgt_deployer
-        cls.tmp_dir = mkdtemp()
-        wirecloud.platform.widget.utils.wgt_deployer = WgtDeployer(cls.tmp_dir)
-
-    @classmethod
-    def tearDownClass(cls):
-
-        wirecloud.platform.widget.utils.wgt_deployer = cls.old_deployer
-        rmtree(cls.tmp_dir, ignore_errors=True)
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
-
-        super(PackagedResourcesTestCase, cls).tearDownClass()
-
     def setUp(self):
 
+        super(PackagedResourcesTestCase, self).setUp()
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
-
-    def tearDown(self):
-
-        cleartree(self.tmp_dir)
-        cleartree(self.catalogue_tmp_dir)
-        super(PackagedResourcesTestCase, self).tearDown()
 
     def test_basic_packaged_widget_deployment(self):
 

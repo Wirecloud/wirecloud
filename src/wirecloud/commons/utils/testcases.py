@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import codecs
 from six.moves.http_cookies import SimpleCookie
 from io import BytesIO
@@ -42,9 +41,7 @@ from six import string_types, text_type
 
 from wirecloud.platform.localcatalogue.utils import install_resource
 from wirecloud.platform.widget import utils as showcase
-from wirecloud.proxy.views import WIRECLOUD_PROXY
 from wirecloud.catalogue import utils as catalogue
-from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.remote import MobileWirecloudRemoteTestCase, WirecloudRemoteTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
@@ -283,7 +280,51 @@ class FakeNetwork(object):
         self.old_requests_post = None
 
 
+def prepare_temporal_resource_directories(cls):
+
+    from django.conf import settings
+
+    cls.tmp_dir = mkdtemp()
+
+    # Whoosh indexes
+    cls.old_index_dir = settings.WIRECLOUD_INDEX_DIR
+    settings.WIRECLOUD_INDEX_DIR = os.path.join(cls.tmp_dir, 'whoosh_indexes')
+
+    # catalogue deployer
+    cls.old_catalogue_deployer = catalogue.wgt_deployer
+    cls.catalogue_tmp_dir_backup = os.path.join(cls.tmp_dir, 'catalogue_backup')
+    cls.catalogue_tmp_dir = os.path.join(cls.tmp_dir, 'catalogue')
+    catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
+
+    # showcase deployer
+    cls.old_deployer = showcase.wgt_deployer
+    cls.localcatalogue_tmp_dir_backup = os.path.join(cls.tmp_dir, 'localcatalogue_backup')
+    cls.localcatalogue_tmp_dir = os.path.join(cls.tmp_dir, 'localcatalogue')
+    showcase.wgt_deployer = WgtDeployer(cls.localcatalogue_tmp_dir)
+
+    # deploy resource files
+    for resource_file in cls.base_resources:
+        resource_file = open(os.path.join(cls.shared_test_data_dir, resource_file), 'rb')
+        resource_wgt = WgtFile(resource_file)
+        catalogue.add_packaged_resource(resource_file, None, wgt_file=resource_wgt, deploy_only=True)
+        showcase.wgt_deployer.deploy(resource_wgt)
+        resource_file.close()
+
+    # And freeze the resource files backup directories
+    if os.path.exists(cls.localcatalogue_tmp_dir):
+        os.rename(cls.localcatalogue_tmp_dir, cls.localcatalogue_tmp_dir_backup)
+    else:
+        os.mkdir(cls.localcatalogue_tmp_dir_backup)
+
+    if os.path.exists(cls.catalogue_tmp_dir):
+        os.rename(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
+    else:
+        os.mkdir(cls.catalogue_tmp_dir_backup)
+
+
 class WirecloudTestCase(TransactionTestCase):
+
+    base_resources = ()
 
     @classmethod
     def setUpClass(cls):
@@ -310,35 +351,19 @@ class WirecloudTestCase(TransactionTestCase):
         }))
         cls.network.mock_requests()
 
-        # catalogue deployer
-        cls.old_catalogue_deployer = catalogue.wgt_deployer
-        cls.catalogue_tmp_dir_backup = mkdtemp()
-        cls.catalogue_tmp_dir = mkdtemp()
-        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
-
-        # showcase deployer
-        cls.old_deployer = showcase.wgt_deployer
-        cls.localcatalogue_tmp_dir_backup = mkdtemp()
-        cls.tmp_dir = mkdtemp()
-        showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
-
-        cls.old_index_dir = settings.WIRECLOUD_INDEX_DIR
-        settings.WIRECLOUD_INDEX_DIR = mkdtemp()
-        restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
-        restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
+        prepare_temporal_resource_directories(cls)
 
         super(WirecloudTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
 
+        # Remove temporal directory
+        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+
         # deployers
         catalogue.wgt_deployer = cls.old_catalogue_deployer
-        shutil.rmtree(cls.catalogue_tmp_dir_backup, ignore_errors=True)
-        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
         showcase.wgt_deployer = cls.old_deployer
-        shutil.rmtree(cls.localcatalogue_tmp_dir_backup, ignore_errors=True)
-        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
 
         # Restore previous language configuration
         from django.conf import settings
@@ -348,7 +373,6 @@ class WirecloudTestCase(TransactionTestCase):
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
         # Restore old index dir
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
         settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
 
         # Clear cache
@@ -362,10 +386,8 @@ class WirecloudTestCase(TransactionTestCase):
 
     def setUp(self):
 
-        from django.conf import settings
-
         # deployers
-        restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)
+        restoretree(self.localcatalogue_tmp_dir_backup, self.localcatalogue_tmp_dir)
         restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
 
         # clean example.com responses
@@ -380,6 +402,12 @@ class WirecloudTestCase(TransactionTestCase):
 
         # Restore English as the default language
         self.changeLanguage('en')
+
+    def tearDown(self):
+
+        from django.conf import settings
+
+        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
     def changeLanguage(self, new_language):
 
@@ -430,15 +458,13 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
 class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data')
+    base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')
     __test__ = False
 
     @classmethod
     def setUpClass(cls):
 
         from django.conf import settings
-
-        cls.old_index_dir = settings.WIRECLOUD_INDEX_DIR
-        settings.WIRECLOUD_INDEX_DIR = mkdtemp()
 
         WirecloudRemoteTestCase.setUpClass.im_func(cls)
 
@@ -459,33 +485,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         }))
         cls.network.mock_requests()
 
-        # catalogue deployer
-        cls.old_catalogue_deployer = catalogue.wgt_deployer
-        cls.catalogue_tmp_dir_backup = mkdtemp()
-        cls.catalogue_tmp_dir = mkdtemp()
-        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
-
-        # showcase deployer
-        cls.old_deployer = showcase.wgt_deployer
-        cls.localcatalogue_tmp_dir_backup = mkdtemp()
-        cls.tmp_dir = mkdtemp()
-        showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
-
-        # deploy resource files
-        operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
-        operator_wgt = WgtFile(operator_wgt_file)
-        catalogue.add_packaged_resource(operator_wgt_file, None, wgt_file=operator_wgt, deploy_only=True)
-        showcase.wgt_deployer.deploy(operator_wgt)
-        operator_wgt_file.close()
-
-        widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
-        widget_wgt = WgtFile(widget_wgt_file)
-        catalogue.add_packaged_resource(widget_wgt_file, None, wgt_file=widget_wgt, deploy_only=True)
-        showcase.wgt_deployer.deploy(widget_wgt)
-        widget_wgt_file.close()
-
-        restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
-        restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
+        prepare_temporal_resource_directories(cls)
 
         LiveServerTestCase.setUpClass.im_func(cls)
 
@@ -501,16 +501,14 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         # Unmock network requests
         cls.network.unmock_requests()
 
-        # deployers
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        shutil.rmtree(cls.catalogue_tmp_dir_backup, ignore_errors=True)
-        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
-        showcase.wgt_deployer = cls.old_deployer
-        shutil.rmtree(cls.localcatalogue_tmp_dir_backup, ignore_errors=True)
+        # Remove temporal directory
         shutil.rmtree(cls.tmp_dir, ignore_errors=True)
 
+        # deployers
+        catalogue.wgt_deployer = cls.old_catalogue_deployer
+        showcase.wgt_deployer = cls.old_deployer
+
         # Restore old index dir
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR)
         settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
 
         settings.LANGUAGES = cls.old_LANGUAGES
@@ -523,7 +521,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         from django.core.cache import cache
 
-        restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)
+        restoretree(self.localcatalogue_tmp_dir_backup, self.localcatalogue_tmp_dir)
         restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
         cache.clear()
         try:
@@ -534,11 +532,22 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         LiveServerTestCase.setUp.im_func(self)
         WirecloudRemoteTestCase.setUp.im_func(self)
 
+    def tearDown(self):
+
+        from django.conf import settings
+
+        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+
+        LiveServerTestCase.tearDown.im_func(self)
+        WirecloudRemoteTestCase.tearDown.im_func(self)
+
 
 class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data')
     __test__ = False
+
+    base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')
 
     @classmethod
     def setUpClass(cls):
@@ -564,33 +573,7 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
         }))
         cls.network.mock_requests()
 
-        # catalogue deployer
-        cls.old_catalogue_deployer = catalogue.wgt_deployer
-        cls.catalogue_tmp_dir_backup = mkdtemp()
-        cls.catalogue_tmp_dir = mkdtemp()
-        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
-
-        # showcase deployer
-        cls.old_deployer = showcase.wgt_deployer
-        cls.localcatalogue_tmp_dir_backup = mkdtemp()
-        cls.tmp_dir = mkdtemp()
-        showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
-
-        # deploy resource files
-        operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
-        operator_wgt = WgtFile(operator_wgt_file)
-        catalogue.add_packaged_resource(operator_wgt_file, None, wgt_file=operator_wgt, deploy_only=True)
-        showcase.wgt_deployer.deploy(operator_wgt)
-        operator_wgt_file.close()
-
-        widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
-        widget_wgt = WgtFile(widget_wgt_file)
-        catalogue.add_packaged_resource(widget_wgt_file, None, wgt_file=widget_wgt, deploy_only=True)
-        showcase.wgt_deployer.deploy(widget_wgt)
-        widget_wgt_file.close()
-
-        restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
-        restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
+        prepare_temporal_resource_directories(cls)
 
         LiveServerTestCase.setUpClass.im_func(cls)
 
@@ -606,13 +589,15 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
         # Unmock network requests
         cls.network.unmock_requests()
 
+        # Remove temporal directory
+        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+
         # deployers
         catalogue.wgt_deployer = cls.old_catalogue_deployer
-        shutil.rmtree(cls.catalogue_tmp_dir_backup, ignore_errors=True)
-        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
         showcase.wgt_deployer = cls.old_deployer
-        shutil.rmtree(cls.localcatalogue_tmp_dir_backup, ignore_errors=True)
-        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+
+        # Restore old index dir
+        settings.WIRECLOUD_INDEX_DIR = cls.old_index_dir
 
         settings.LANGUAGES = cls.old_LANGUAGES
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
@@ -624,7 +609,7 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
 
         from django.core.cache import cache
 
-        restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)
+        restoretree(self.localcatalogue_tmp_dir_backup, self.localcatalogue_tmp_dir)
         restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
         cache.clear()
         try:
@@ -633,6 +618,15 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
             pass
 
         super(MobileWirecloudSeleniumTestCase, self).setUp()
+
+    def tearDown(self):
+
+        from django.conf import settings
+
+        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+
+        LiveServerTestCase.tearDown.im_func(self)
+        MobileWirecloudRemoteTestCase.tearDown.im_func(self)
 
 
 DEFAULT_BROWSER_CONF = {
@@ -650,6 +644,7 @@ def get_configured_browsers():
     from django.conf import settings
 
     return getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', DEFAULT_BROWSER_CONF)
+
 
 def wirecloud_selenium_test_case(classes, namespace=None, browsers=None):
 
