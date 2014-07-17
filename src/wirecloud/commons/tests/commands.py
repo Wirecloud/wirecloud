@@ -27,7 +27,7 @@ from django.test import TestCase
 
 class ConvertCommandTestCase(TestCase):
 
-    tags = ('current',)
+    tags = ('wirecloud-commands', 'wirecloud-command-convert')
 
     @classmethod
     def setUpClass(cls):
