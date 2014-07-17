@@ -4,11 +4,13 @@
         <a href="{{ FIWARE_HOME }}" class="logo-header">
             <img alt="FI-WARE" class="logo" src="{{ STATIC_URL}}images/header-logo.png" />
         </a>
-      <a href="{{ FIWARE_HOME }}" class="brand">{% ifequal FIWARE_HOME "https://lab.fi-ware.org" %}
+        <a href="{{ FIWARE_HOME }}" class="brand">{% if FIWARE_OFFICIAL_PORTAL %}{% ifequal FIWARE_IDM_SERVER "https://account.lab.fi-ware.org" %}
         <img alt="FI-LAB" class="logo" src="{{ STATIC_URL}}images/filab.png" />
       {% else %}
+        <img alt="FI-WARE Testbed" class="logo" src="{{ STATIC_URL}}images/testbed.png" />
+      {% endifequal %}{% else %}
         <span>FI-</span>WARE
-      {% endifequal %}</a>
+      {% endif %}</a>
     </div><ul class="oil-portal">
       {% for portal in FIWARE_PORTALS %}
       <li {% if portal.active %}class="active"{% endif %}>

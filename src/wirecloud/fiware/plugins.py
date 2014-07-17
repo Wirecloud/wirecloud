@@ -248,6 +248,8 @@ class FiWarePlugin(WirecloudPlugin):
     def get_django_template_context_processors(self):
         return {
             "FIWARE_HOME": getattr(settings, "FIWARE_HOME", wirecloud.fiware.DEFAULT_FIWARE_HOME),
+            "FIWARE_IDM_SERVER": getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FILAB_IDM_SERVER),
+            "FIWARE_OFFICIAL_PORTAL": getattr(settings, "FIWARE_OFFICIAL_PORTAL", False),
             "FIWARE_PORTALS": getattr(settings, "FIWARE_PORTALS", wirecloud.fiware.DEFAULT_FIWARE_PORTALS),
         }
 
