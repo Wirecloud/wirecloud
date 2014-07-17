@@ -63,7 +63,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         options['stdout'].seek(0)
         self.assertEqual(options['stdout'].read(), '')
         options['stderr'].seek(0)
-        self.assertNotEqual(options['stderr'].read(), '')
+        self.assertEqual(options['stderr'].read(), '')
         self.assertFalse(os.path.exists(self.inexistent_index_dir))
 
     def test_resetsearchindexes_command_new_dir(self):

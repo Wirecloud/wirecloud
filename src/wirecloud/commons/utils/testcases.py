@@ -626,7 +626,6 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
         shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
         LiveServerTestCase.tearDown.im_func(self)
-        MobileWirecloudRemoteTestCase.tearDown.im_func(self)
 
 
 DEFAULT_BROWSER_CONF = {
