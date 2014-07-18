@@ -43,7 +43,9 @@
     box-sizing: border-box;
 }
 
-.styled_form td > .horizontal_layout.styled_file_field {
+.styled_form td > .styled_file_field,
+.styled_form td > .styled_mac_field
+{
     width: auto;
 }
 
@@ -54,7 +56,7 @@
 }
 
 .styled_form td > .styled_file_field,
-.styled_form td > .horizontal_layout.styled_file_field
+.styled_form td > .styled_mac_field
 {
     margin-top: 0;
     margin-bottom: 0;

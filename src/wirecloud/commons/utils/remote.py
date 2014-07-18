@@ -27,6 +27,8 @@ from django.utils.http import urlencode
 from django.utils.importlib import import_module
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import six
 
@@ -293,6 +295,17 @@ class MashupWalletResourceTester(object):
         self.testcase.assertEqual(self.testcase.get_current_workspace_name(), workspace_name)
 
 
+class SelectableMACTester(object):
+
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
+
+    def select(self):
+        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton div'))
+        WebDriverWait(self.testcase.driver, 10).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '.window_menu.mac_selection_dialog')))
+
+
 class WalletTester(object):
 
     def __init__(self, testcase):
@@ -303,11 +316,11 @@ class WalletTester(object):
     def __exit__(self, type, value, traceback):
 
         try:
-            self.testcase.driver.find_element_by_css_selector('.widget_wallet .icon-remove').click()
+            self.element.find_element_by_css_selector('.widget_wallet .icon-remove').click()
         except NoSuchElementException:
             pass
 
-        WebDriverWait(self.testcase.driver, 5).until(lambda driver: len(driver.find_elements_by_css_selector('#workspace .widget_wallet')) == 0)
+        WebDriverWait(self.testcase.driver, 5).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#workspace .widget_wallet')))
         self.element = None
 
     def wait_ready(self, timeout=10):
@@ -372,6 +385,43 @@ class WidgetWalletTester(WalletTester):
             resource_name = resource.find_element_by_css_selector('.resource_name')
             if resource_name.text == widget_name:
                 return WidgetWalletResourceTester(self.testcase, resource)
+
+        return None
+
+
+class MACFieldTester(WalletTester):
+
+    def __init__(self, testcase, field_element):
+
+        super(MACFieldTester, self).__init__(testcase)
+        self.field_element = field_element
+
+    def __enter__(self):
+        self.field_element.find_element_by_css_selector('.icon-search').click()
+        self.element = self.testcase.wait_element_visible_by_css_selector('.window_menu.mac_selection_dialog')
+        return self
+
+    def __exit__(self, type, value, traceback):
+        try:
+            # Calling any method forces a staleness check
+            self.element.is_enabled()
+        except StaleElementReferenceException as expected:
+            self.element = None
+
+        if self.element is not None:
+            self.element.find_element_by_css_selector('.window_bottom .styled_button > div').click()
+            WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(dialog))
+            self.element = None
+
+    def search_in_results(self, widget_name):
+
+        self.wait_ready()
+
+        resources = self.element.find_elements_by_css_selector('.widget_wallet_list > .resource')
+        for resource in resources:
+            resource_name = resource.find_element_by_css_selector('.resource_name')
+            if resource_name.text == widget_name:
+                return SelectableMACTester(self.testcase, resource)
 
         return None
 
@@ -604,13 +654,26 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
         return PopupMenuTester(self, popup_menu_element, button)
 
-    def create_workspace_from_catalogue(self, mashup_name, expect_missing_dependencies=None, install_dependencies=False, parameters=None):
+    def create_workspace(self, name=None, mashup=None, expect_missing_dependencies=None, install_dependencies=False, parameters=None):
 
-        self.change_main_view('marketplace')
-        self.search_resource(mashup_name)
-        resource = self.search_in_results(mashup_name)
+        if mashup is None and name is None:
+            raise ValueError('Missing workspace name')
 
-        resource.find_element_by_css_selector('.instantiate_button div').click()
+        self.open_menu().click_entry('New workspace')
+
+        dialog = self.driver.find_element_by_css_selector('.window_menu.new_workspace')
+        form = self.driver.find_element_by_css_selector('.styled_form')
+        if name:
+            name_input = form.find_element_by_css_selector('input')
+            self.fill_form_input(name_input, name)
+
+        if mashup:
+            with MACFieldTester(self, form.find_element_by_css_selector('.styled_mac_field')) as select_dialog:
+                select_dialog.search(mashup)
+                resource = select_dialog.search_in_results(mashup)
+                resource.select()
+
+        dialog.find_element_by_xpath("//*[text()='Accept']").click()
 
         if expect_missing_dependencies is not None:
 
@@ -629,8 +692,6 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
 
             continue_button.click()
 
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='New Workspace']").click()
-
         if parameters is not None:
 
             save_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Save']")
@@ -644,7 +705,11 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
             save_button.click()
 
         self.wait_wirecloud_ready()
-        self.assertTrue(self.get_current_workspace_name().startswith(mashup_name), 'Invalid workspace name after creating workspace from catalogue')
+
+        if name is not None:
+            self.assertEqual(self.get_current_workspace_name(), name)
+        else:
+            self.assertTrue(self.get_current_workspace_name().startswith(mashup), 'Invalid workspace name after creating workspace from catalogue')
 
     def count_iwidgets(self):
         return len(self.driver.find_elements_by_css_selector('div.iwidget'))
@@ -662,17 +727,6 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
                 return WorkspaceTabTester(self, tab)
 
         return None
-
-    def create_workspace(self, workspace_name):
-        self.open_menu().click_entry('New workspace')
-
-        workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
-        self.fill_form_input(workspace_name_input, workspace_name)
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-        self.wait_wirecloud_ready()
-        time.sleep(0.5)  # work around race condition
-        self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def rename_workspace(self, workspace_name):
         self.open_menu().click_entry('Rename')

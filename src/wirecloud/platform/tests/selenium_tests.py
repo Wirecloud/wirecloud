@@ -71,7 +71,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # We need atleast one Workspace, so we cannot delete current workspace
         self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue'), must_be_disabled=('Remove',)).close()
 
-        self.create_workspace('Test')
+        self.create_workspace(name='Test')
 
         # Now we have two workspaces so we can remove any of them
         self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue', 'Remove'), ()).close()
@@ -333,7 +333,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         # Create a new workspace
-        self.create_workspace('Test')
+        self.create_workspace(name='Test')
 
         self.driver.refresh()
         self.wait_wirecloud_ready()
@@ -425,15 +425,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_create_workspace_from_catalogue(self):
 
         self.login()
-        self.create_workspace_from_catalogue('Test Mashup')
+        self.create_workspace(mashup='Test Mashup')
 
         # Test that wiring works as expected
         tab = self.get_workspace_tab_by_name('Tab')
         tab2 = self.get_workspace_tab_by_name('Tab 2')
 
         # Load tab2
-        tab2.click()
-        tab.click()
+        tab2.element.click()
+        tab.element.click()
 
         iwidgets = self.get_current_iwidgets()
 
@@ -448,7 +448,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         time.sleep(0.2)
 
         # Check event is received by the second test widget
-        tab2.click()
+        tab2.element.click()
         with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
@@ -463,7 +463,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_create_workspace_from_catalogue_using_parameters(self):
 
         self.login()
-        self.create_workspace_from_catalogue('ParameterizedMashup', parameters={
+        self.create_workspace(mashup='ParameterizedMashup', parameters={
             'text_param': 'parameterized value',
             'password_param': 'parameterized password',
         })
@@ -489,24 +489,22 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'parameterized password')
 
-        self.change_main_view('wiring')
+        with self.wiring_view as wiring:
+            ioperator = wiring.get_ioperators()[0]
+            ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            ioperator.open_menu().click_entry('Settings')
 
-        ioperator = self.get_current_wiring_editor_ioperators()[0]
-        ioperator.element.find_element_by_css_selector('.specialIcon').click()
-        self.wait_element_visible_by_css_selector('.editPos_button', element=ioperator.element).click()
-        self.popup_menu_click('Settings')
+            prefix_pref = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
+            self.assertEqual(prefix_pref.get_attribute('disabled'), 'true')
+            self.assertEqual(prefix_pref.get_attribute('value'), 'parameterized value: ')
 
-        prefix_pref = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
-        self.assertEqual(prefix_pref.get_attribute('disabled'), 'true')
-        self.assertEqual(prefix_pref.get_attribute('value'), 'parameterized value: ')
-
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
 
     def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 
         self.login()
-        self.create_workspace('Test Mashup')
-        self.create_workspace_from_catalogue('Test Mashup')
+        self.create_workspace(name='Test Mashup')
+        self.create_workspace(mashup='Test Mashup')
         self.assertNotEqual(self.get_current_workspace_name(), 'Test Mashup')
     test_create_workspace_from_catalogue_duplicated_workspaces.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
@@ -532,7 +530,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             'Wirecloud/TestOperator/1.0',
             'Wirecloud/Test/1.0',
         )
-        self.create_workspace_from_catalogue('TestMashup2', expect_missing_dependencies=dependencies)
+        self.create_workspace(mashup='TestMashup2', expect_missing_dependencies=dependencies)
     test_create_workspace_from_catalogue_missing_dependencies.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     def test_merge_mashup(self):
@@ -585,7 +583,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             'readOnlyWidgets': True,
             'readOnlyConnectables': True,
         })
-        self.create_workspace_from_catalogue('Published Workspace')
+        self.create_workspace(mashup='Published Workspace')
         iwidget = self.get_current_iwidgets()[0]
         close_button = iwidget.element.find_element_by_css_selector('.icon-remove')
         self.assertTrue('disabled' in close_button.get_attribute('class'))

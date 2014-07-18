@@ -25,15 +25,36 @@
 
     "use strict";
 
+    var retry = function retry(data) {
+        Wirecloud.createWorkspace({
+            name: data.name,
+            mashup: data.mashup,
+            onSuccess: function (workspace) {
+                Wirecloud.changeActiveWorkspace(workspace);
+            },
+            onFailure: function (msg, details) {
+                var dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
+                dialog.show();
+            }
+        });
+    };
+
     var NewWorkspaceWindowMenu = function NewWorkspaceWindowMenu() {
         var fields = {
             'name': {
                 label: gettext('Name'),
-                type: 'text',
-                required: true
+                type: 'text'
+            },
+            'mashup': {
+                label: gettext('Template'),
+                type: 'mac',
+                scope: 'mashup',
+                dialog_title: gettext('Select a mashup template'),
+                required: false,
+                parent_dialog: this
             }
         };
-        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Create Workspace'));
+        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Create Workspace'), 'new_workspace');
     };
     NewWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
@@ -44,8 +65,19 @@
     NewWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
         Wirecloud.createWorkspace({
             name: data.name,
+            mashup: data.mashup,
             onSuccess: function (workspace) {
                 Wirecloud.changeActiveWorkspace(workspace);
+            },
+            onFailure: function (msg, details) {
+                var dialog;
+                if (details != null && 'missingDependencies' in details) {
+                    // Show missing dependencies
+                    dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(retry.bind(null, data), details);
+                } else {
+                    dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
+                }
+                dialog.show();
             }
         });
     };
