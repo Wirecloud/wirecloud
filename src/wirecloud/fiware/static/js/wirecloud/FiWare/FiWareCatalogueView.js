@@ -245,13 +245,6 @@
 
     FiWareCatalogueView.prototype.ui_commands = {};
 
-    FiWareCatalogueView.prototype.ui_commands.instantiate = function (resource) {
-        return function () {
-            this.instantiate(resource);
-            LayoutManagerFactory.getInstance().changeCurrentView('workspace');
-        }.bind(this);
-    };
-
     FiWareCatalogueView.prototype.ui_commands.showDetails = function (resource) {
         return function () {
             this.viewsByName.details.paint(resource);

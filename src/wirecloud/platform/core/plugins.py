@@ -361,7 +361,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/ExternalProcessWindowMenu.js',
                 'js/wirecloud/Widget/PreferencesWindowMenu.js',
                 'js/wirecloud/ui/MissingDependenciesWindowMenu.js',
-                'js/wirecloud/ui/InstantiateMashupWindowMenu.js',
                 'js/wirecloud/ui/FormWindowMenu.js',
                 'js/wirecloud/ui/LogWindowMenu.js',
                 'js/wirecloud/ui/EmbedCodeWindowMenu.js',

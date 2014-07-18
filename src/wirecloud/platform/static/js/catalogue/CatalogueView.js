@@ -121,34 +121,6 @@
         return this.catalogue.search(onSuccess, onError, options);
     };
 
-    CatalogueView.prototype.instantiate = function instantiate(resource) {
-
-        var next = function () {
-            // Ask if the user want to create a new workspace or merge it with the current one
-            (new Wirecloud.ui.InstantiateMashupWindowMenu(resource)).show();
-        };
-
-        if (resource.type === 'mashup') {
-            OpManagerFactory.getInstance().addWorkspaceFromMashup(resource, {
-                dry_run: true,
-                onSuccess: next,
-                onFailure: function (msg, details) {
-                    var dialog;
-                    if (details != null && 'missingDependencies' in details) {
-                        // Show missing dependencies
-                        dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(next, details);
-                    } else {
-                        dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
-                    }
-                    dialog.show();
-                }
-            })
-        } else {
-            var local_widget = Wirecloud.LocalCatalogue.getResourceId(resource.uri);
-            Wirecloud.activeWorkspace.addInstance(local_widget);
-        }
-    };
-
     CatalogueView.prototype.getPublishEndpoints = function getPublishEndpoints() {
         return null;
     };
@@ -233,13 +205,6 @@
                     LayoutManagerFactory.getInstance()._notifyPlatformReady();
                 }
             });
-        }.bind(this);
-    };
-
-    CatalogueView.prototype.ui_commands.instantiate = function instantiate(resource) {
-        return function () {
-            this.instantiate(resource);
-            LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         }.bind(this);
     };
 
