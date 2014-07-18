@@ -144,6 +144,14 @@
         };
     };
 
+    FiWareCatalogueView.prototype.goUp = function goUp() {
+        if (this.alternatives.getCurrentAlternative() === this.viewsByName.search) {
+            return false;
+        }
+        this.changeCurrentView('search');
+        return true;
+    };
+
     FiWareCatalogueView.prototype.search = function search(options) {
         options.onSuccess = this._onSearch.bind(this, options.onSuccess);
         this.catalogue.search(options);

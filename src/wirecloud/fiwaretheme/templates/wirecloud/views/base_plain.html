@@ -4,7 +4,7 @@
       xml:lang="{{ LANGUAGE_CODE }}"
       lang="{{ LANGUAGE_CODE }}">
 <head>
-    <title>{% block title %}{% trans "Wirecloud Platform" %}{% endblock %}</title>
+    <title>{% block title %}{% trans "WireCloud Platform" %}{% endblock %}</title>
 
     {% block meta %}
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
@@ -37,18 +37,16 @@
 <body>
     <div id="wirecloud_header">
         <div class="logo_wrapper">
-          <div>
-              <img src="{{ STATIC_URL }}images/wirecloud_logo.png" alt="Wirecloud" />
-              <div>
-                  <h2 class="fiware_title">fi-ware</h2>
-                  <h2 class="fiware_subtitle">Wirecloud Mashup Platform</h2>
-              </div>
-          </div>
+            <img src="{{ STATIC_URL }}images/wirecloud_logo.png" alt="WireCloud" />
+            <div>
+                <div>
+                    <h2 class="fiware_title"><span>FI-</span>WARE</h2>
+                    <h2 class="fiware_subtitle">WireCloud Mashup Platform</h2>
+                </div>
+            </div>
         </div>
 
-        <div class="breadcrum_wrapper"><div class="breadcrum">
-            /<span id="wirecloud_breadcrum">{% block path %}{% endblock %}</span>
-        </div></div>
+        <div class="wirecloud_app_bar"><div class="btn-group wirecloud_header_nav"><span id="wirecloud_breadcrum" class="breadcrum add-on">{% block path %}{% endblock %}</span></div></div>
 
     </div>
 

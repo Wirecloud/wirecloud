@@ -39,9 +39,7 @@
 
         {% include "wirecloud/views/header_common.html" %}
 
-        <div class="breadcrum_wrapper"><div class="breadcrum">
-            {% block path %}{% endblock %}
-        </div></div>
+        <div class="wirecloud_app_bar"><div class="btn-group wirecloud_header_nav"><span id="wirecloud_breadcrum" class="breadcrum add-on">{% block path %}{% endblock %}</span></div></div>
 
     </div>
 

@@ -39,6 +39,7 @@
         this.backButton.insertInto(this.breadcrum.parentNode, this.breadcrum);
 
         this.menuButton = new StyledElements.PopupButton({'class': 'btn-large', 'iconClass': 'icon-reorder'});
+        this.menuButton.disable();
         this.menuButton.insertInto(this.breadcrum.parentNode);
 
         this.toolbar = document.createElement('div');
