@@ -37,7 +37,12 @@ def update_resource_catalogue_cache(orm=None):
             resource.json_description = json.dumps(template_parser.get_resource_info())
             resource.save()
 
-        except TemplateParseException:
+        except TemplateParseException as e:
+
+            from django.conf import settings
+
+            if getattr(settings, 'WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION', False) is not True:
+                raise e
 
             print('    Removing %s' % (resource.vendor + '/' + resource.short_name + '/' + resource.version))
             resource.delete()
