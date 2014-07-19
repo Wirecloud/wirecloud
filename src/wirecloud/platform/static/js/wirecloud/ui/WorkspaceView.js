@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud, WorkspaceItems*/
+/*global gettext, StyledElements, Wirecloud */
 
 (function () {
 
@@ -34,7 +34,7 @@
             Wirecloud.changeActiveWorkspace(workspace);
         }));
         this.wsMenu.appendSeparator();
-        this.wsMenu.append(new WorkspaceItems(this));
+        this.wsMenu.append(new Wirecloud.ui.WorkspaceViewItems(this));
 
         this.widgetWallet = new Wirecloud.ui.MACWallet('widget');
         this.walletButton = new StyledElements.StyledButton({'iconClass': 'icon-plus'});
