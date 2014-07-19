@@ -192,11 +192,6 @@ var OpManagerFactory = function () {
             this.pref_window_menu.show();
         };
 
-
-        OpManager.prototype.logout = function logout() {
-            window.location = Wirecloud.URLs.LOGOUT_VIEW;
-        }
-
         //Operations on workspaces
 
         OpManager.prototype.workspaceExists = function (newName) {

@@ -124,9 +124,7 @@
                         });
                     } catch (error) {}
                 }
-                setTimeout(function () {
-                    window.location = Wirecloud.URLs.LOGOUT_VIEW;
-                }, 1000);
+                setTimeout(Wirecloud.logout, 1000);
             }));
         }
     };

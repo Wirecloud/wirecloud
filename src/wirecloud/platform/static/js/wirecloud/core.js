@@ -184,6 +184,10 @@
         }
     };
 
+    Wirecloud.logout = function logout() {
+        window.location = Wirecloud.URLs.LOGOUT_VIEW;
+    };
+
     Wirecloud.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab, options) {
         var msg, state, steps = this.activeWorkspace != null ? 2 : 1;
 

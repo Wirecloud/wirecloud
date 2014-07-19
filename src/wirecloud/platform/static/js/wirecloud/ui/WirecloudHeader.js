@@ -98,7 +98,7 @@
             }
             user_menu.append(new Wirecloud.ui.TutorialSubMenu());
 
-            user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
+            user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), Wirecloud.logout));
         }
     };
 
