@@ -299,9 +299,7 @@ function Workspace(workspaceState, resources) {
         name = name.trim();
 
         if (name === "") {
-            msg = gettext("Invalid workspace name");
-        } else if (OpManagerFactory.getInstance().workspaceExists(name)) {
-            msg = interpolate(gettext("Error updating workspace: the name %(name)s is already in use."), {name: name}, true);
+            throw new TypeError(gettext("Invalid workspace name"));
         }
 
         if (msg !== null) {

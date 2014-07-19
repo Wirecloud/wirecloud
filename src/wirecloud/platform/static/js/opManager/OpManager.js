@@ -194,13 +194,6 @@ var OpManagerFactory = function () {
 
         //Operations on workspaces
 
-        OpManager.prototype.workspaceExists = function (newName) {
-            var workspaces;
-
-            workspaces = Object.keys(this.workspacesByUserAndName[Wirecloud.contextManager.get('username')]);
-            return workspaces.indexOf(newName) !== -1;
-        }
-
         OpManager.prototype.addWorkspace = function addWorkspace(newName, options) {
             options = Wirecloud.Utils.merge({
                 replaceNavigationState: false

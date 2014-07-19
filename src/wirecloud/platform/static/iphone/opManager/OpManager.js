@@ -38,17 +38,6 @@ var OpManagerFactory = (function () {
 
     function OpManager() {
 
-        var onError;
-
-        // ****************
-        // CALLBACK METHODS
-        // ****************
-
-        onError = function (transport, e) {
-            alert("error en loadEnvironment");
-        };
-
-
         // *********************************
         // PRIVATE VARIABLES AND FUNCTIONS
         // *********************************
@@ -56,17 +45,6 @@ var OpManagerFactory = (function () {
         // ****************
         // PUBLIC METHODS
         // ****************
-
-        OpManager.prototype.workspaceExists = function (newName) {
-            var workspaceId;
-            for (workspaceId in this.workspaceInstances) {
-                if (workspaceValues[i].workspaceState.name === newName) {
-                    return true;
-                }
-            }
-            return false;
-        };
-
 
         OpManager.prototype.showDragboard = function (iWidgetId) {
             var dragboard = Wirecloud.activeWorkspace.getIWidget(iWidgetId).dragboard;
