@@ -1,0 +1,20 @@
+.macsearch_header > .styled_text_field {
+    width: 100%;
+}
+
+.macsearch_header > .styled_text_field > div {
+    margin: 1px 0 0 0;
+}
+
+.macsearch > .widget_wallet_list {
+    position: static;
+    margin: 0 0 0 -6px;
+}
+
+.macsearch > .widget_wallet_list > .alert {
+    margin: 0 0 6px 6px;
+}
+
+.macsearch > .widget_wallet_list > .resource {
+    margin: 0 0 6px 6px;
+}

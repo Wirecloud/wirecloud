@@ -35,6 +35,13 @@ WORKSPACE_CSS = (
     'css/workspace/empty_workspace_message.css',
 )
 
+CLASSIC_CORE_CSS = (
+    'css/window_menu.css',
+    'css/mac_search.css',
+    'css/mac_field.css',
+    'css/mac_selection_dialog.css',
+)
+
 CATALOGUE_CSS = (
     'css/catalogue/emptyCatalogueBox.css',
 )
@@ -303,6 +310,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/Wiring.js',
             'js/wirecloud/LogManager.js',
             'js/wirecloud/Widget/LogManager.js',
+            'js/wirecloud/ui/MACField.js',
             'js/wirecloud/ui/InputInterfaceFactory.js',
             'js/wirecloud/ui/IWidgetMenuItems.js',
             'js/wirecloud/ui/ResizeHandle.js',
@@ -334,6 +342,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/opManager/Workspace.js',
                 'js/wirecloud/ui/WorkspaceListItems.js',
                 'js/wirecloud/ui/WorkspaceViewItems.js',
+                'js/wirecloud/ui/MACSearch.js',
                 'js/wirecloud/ui/MACWallet.js',
                 'js/wirecloud/ui/WorkspaceView.js',
                 'js/opManager/TabMenuItems.js',
@@ -364,6 +373,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/FormWindowMenu.js',
                 'js/wirecloud/ui/LogWindowMenu.js',
                 'js/wirecloud/ui/EmbedCodeWindowMenu.js',
+                'js/wirecloud/ui/MACSelectionWindowMenu.js',
                 'js/wirecloud/ui/MessageWindowMenu.js',
                 'js/wirecloud/ui/NewWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/ParametrizeWindowMenu.js',
@@ -412,6 +422,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "catalogue_resource_template": "wirecloud/catalogue/resource.html",
                 "catalogue_main_resource_details_template": "wirecloud/catalogue/main_resource_details.html",
                 "catalogue_resource_details_template": "wirecloud/catalogue/resource_details.html",
+                "macsearch": "wirecloud/macsearch.html",
                 "wallet": "wirecloud/workspace/wallet/wallet.html",
                 "wallet_widget": "wirecloud/workspace/wallet/widget.html",
                 "wirecloud_catalogue_publish_interface": "wirecloud/catalogue/developers.html",
@@ -464,7 +475,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         common = BASE_CSS + STYLED_ELEMENTS_CSS
 
         if view == 'classic':
-            return common + WORKSPACE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS + TUTORIAL_CSS
+            return common + WORKSPACE_CSS + CLASSIC_CORE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS + TUTORIAL_CSS
         elif view == 'embedded':
             return common + WORKSPACE_CSS
         elif view == 'smartphone':

@@ -29,6 +29,7 @@
 
     InputInterfaceFactory.addFieldType('parametrizableValue', Wirecloud.ui.ParametrizableValueInputInterface);
     InputInterfaceFactory.addFieldType('parametrizedText', ParametrizedTextInputInterface);
+    InputInterfaceFactory.addFieldType('mac', Wirecloud.ui.MACInputInterface);
 
     Wirecloud.ui.InputInterfaceFactory = InputInterfaceFactory;
 

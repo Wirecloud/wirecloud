@@ -54,7 +54,7 @@
         );
     };
 
-    var WindowMenu = function WindowMenu(title, extra_class) {
+    var WindowMenu = function WindowMenu(title, extra_class, events) {
 
         var ui_fragment, i, element;
 
@@ -110,6 +110,7 @@
         // Make draggable
         makeDraggable.call(this, this.titleElement);
     };
+    WindowMenu.prototype = new StyledElements.ObjectWithEvents();
 
     /**
      * set position.
