@@ -35,7 +35,8 @@
 
     var create_workspace = function create_workspace(autoAction) {
         LayoutManagerFactory.getInstance().changeCurrentView('workspace');
-        opManager.addWorkspace('Basic concepts tutorial', {
+        Wirecloud.createWorkspace({
+            name: 'Basic concepts tutorial',
             allow_renaming: true,
             onSuccess: function () {
                 autoAction.nextHandler();

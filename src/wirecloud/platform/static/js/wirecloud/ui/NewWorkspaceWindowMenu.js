@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, OpManagerFactory, Wirecloud*/
+/*global gettext, Wirecloud*/
 
 (function () {
 
@@ -42,7 +42,12 @@
     };
 
     NewWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
-        OpManagerFactory.getInstance().addWorkspace(data.name);
+        Wirecloud.createWorkspace({
+            name: data.name,
+            onSuccess: function (workspace) {
+                Wirecloud.changeActiveWorkspace(workspace);
+            }
+        });
     };
 
     Wirecloud.ui.NewWorkspaceWindowMenu = NewWorkspaceWindowMenu;

@@ -38,34 +38,6 @@ var OpManagerFactory = function () {
         // CALLBACK METHODS
         // ****************
 
-        /*****WORKSPACE CALLBACK***/
-        var createWSSuccess = function(replaceNavigationState, onSuccess, response) {
-            var workspace = JSON.parse(response.responseText);
-            this.workspaceInstances[workspace.id] = workspace;
-            if (!(workspace.creator in this.workspacesByUserAndName)) {
-                this.workspacesByUserAndName[workspace.creator] = {};
-            }
-            this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
-            Wirecloud.changeActiveWorkspace(workspace, null, {replaceNavigationState: replaceNavigationState});
-
-            if (typeof onSuccess === 'function') {
-                try {
-                    onSuccess(workspace);
-                } catch (e) {}
-            }
-        };
-
-        var createWSError = function(onFailure, response) {
-            var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error creating a workspace: %(errorMsg)s."), response);
-
-            if (typeof onFailure === 'function') {
-                try {
-                    onFailure(msg);
-                } catch (e) {}
-            }
-        };
-
-
         // *********************************
         // PRIVATE VARIABLES AND FUNCTIONS
         // *********************************
@@ -126,65 +98,6 @@ var OpManagerFactory = function () {
             });
         };
 
-        OpManager.prototype.addWorkspaceFromMashup = function addWorkspaceFromMashup(resource, options) {
-
-            options = Wirecloud.Utils.merge({
-                allow_renaming: true,
-                dry_run: false
-            }, options);
-
-            var cloneOk = function(response) {
-                var workspace = null;
-
-                if ([201, 204].indexOf(response.status) === -1) {
-                    cloneError(response);
-                }
-
-                if (response.status === 201) {
-                    workspace = JSON.parse(response.responseText);
-                    this.workspaceInstances[workspace.id] = workspace;
-                    this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
-                }
-
-                if (typeof options.onSuccess === 'function') {
-                    try {
-                        options.onSuccess(workspace);
-                    } catch (e) {}
-                }
-            };
-
-            var cloneError = function(transport, e) {
-                var msg, details;
-
-                msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding the workspace: %(errorMsg)s."), transport, e);
-
-                if (typeof options.onFailure === 'function') {
-                    try {
-                        if (transport.status === 422) {
-                            details = JSON.parse(transport.responseText).details;
-                        }
-                    } catch (e) {}
-
-                    try {
-                        options.onFailure(msg, details);
-                    } catch (e) {}
-                }
-            };
-
-            Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
-                method: 'POST',
-                contentType: 'application/json',
-                requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify({
-                    'allow_renaming': options.allow_renaming,
-                    'mashup': resource.uri,
-                    'dry_run': options.dry_run
-                }),
-                onSuccess: cloneOk.bind(this),
-                onFailure: cloneError.bind(this)
-            });
-        };
-
         OpManager.prototype.showPlatformPreferences = function () {
             if (this.pref_window_menu == null) {
                 this.pref_window_menu = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
@@ -193,24 +106,6 @@ var OpManagerFactory = function () {
         };
 
         //Operations on workspaces
-
-        OpManager.prototype.addWorkspace = function addWorkspace(newName, options) {
-            options = Wirecloud.Utils.merge({
-                replaceNavigationState: false
-            }, options);
-
-            Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
-                method: 'POST',
-                contentType: 'application/json',
-                requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify({
-                    allow_renaming: !!options.allow_renaming,
-                    name: newName
-                }),
-                onSuccess: createWSSuccess.bind(this, options.replaceNavigationState, options.onSuccess),
-                onFailure: createWSError.bind(this, options.onFailure)
-            });
-        };
 
         OpManager.prototype.removeWorkspace = function(workspace) {
             // Removing reference

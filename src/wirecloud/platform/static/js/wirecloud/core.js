@@ -19,7 +19,8 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, OpManagerFactory, Wirecloud, Workspace*/
+/*global gettext, interpolate, LayoutManagerFactory, OpManagerFactory, StyledElements, Wirecloud, Workspace*/
+/*jshint -W002 */
 
 (function () {
 
@@ -38,10 +39,53 @@
     });
     Object.freeze(Wirecloud.events);
 
+    var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(options, response) {
+        var workspace = null;
+
+        if ([201, 204].indexOf(response.status) === -1) {
+            onCreateWorkspaceFailure.call(this, options, response);
+        }
+
+        if (response.status === 201) {
+            workspace = JSON.parse(response.responseText);
+            this.workspaceInstances[workspace.id] = workspace;
+            if (!(workspace.creator in this.workspacesByUserAndName)) {
+                this.workspacesByUserAndName[workspace.creator] = {};
+            }
+            this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
+        }
+
+        if (typeof options.onSuccess === 'function') {
+            try {
+                options.onSuccess(workspace);
+            } catch (e) {}
+        }
+    };
+
+    var onCreateWorkspaceFailure = function onCreateWorkspaceFailure(options, response, e) {
+        var msg, details;
+
+        msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding the workspace: %(errorMsg)s."), response, e);
+
+        if (typeof options.onFailure === 'function') {
+            try {
+                if (response.status === 422) {
+                    details = JSON.parse(response.responseText).details;
+                }
+            } catch (e) {}
+
+            try {
+                options.onFailure(msg, details);
+            } catch (e) {}
+        }
+    };
+
     /**
      * Loads the Wirecloud Platform.
      */
     Wirecloud.init = function init(options) {
+
+        var opManager = OpManagerFactory.getInstance(); // TODO
 
         options = Wirecloud.Utils.merge({
             'monitor': null
@@ -73,7 +117,12 @@
                         }.bind(opManager)
                     });
                 } else {
-                    opManager.addWorkspace(gettext('Workspace'), {replaceNavigationState: true});
+                    Wirecloud.createWorkspace({
+                        name: gettext('Workspace'),
+                        onSuccess: function (workspace) {
+                            Wirecloud.changeActiveWorkspace(workspace, null, {replaceNavigationState: true});
+                        }
+                    });
                 }
             }.bind(this);
         }
@@ -82,8 +131,6 @@
                       "beforeunload",
                       Wirecloud.unload.bind(this),
                       true);
-
-        var opManager = OpManagerFactory.getInstance(); // TODO
 
         var loaded_modules = 0;
         var checkPlatformReady = function checkPlatformReady() {
@@ -255,7 +302,9 @@
 
                         this.activeWorkspace = new Workspace(workspace_data, workspace_resources);
                         this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
-                            var workspace, old_name;
+                            var workspace, old_name, opManager;
+
+                            opManager = OpManagerFactory.getInstance(); // TODO
 
                             if ('name' in updated_attributes) {
                                 workspace = opManager.workspaceInstances[this.activeWorkspace.id];
@@ -280,6 +329,37 @@
                     }.bind(this)
                 });
             }.bind(this)
+        });
+    };
+
+    Wirecloud.createWorkspace = function createWorkspace(options) {
+        var body;
+
+        options = Wirecloud.Utils.merge({
+            allow_renaming: true,
+            dry_run: false
+        }, options);
+
+        body = {
+            allow_renaming: !!options.allow_renaming,
+            dry_run: !!options.dry_run
+        };
+
+        if (options.name != null) {
+            body.name = options.name;
+        }
+
+        if (options.mashup != null) {
+            body.mashup = options.mashup;
+        }
+
+        Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
+            method: 'POST',
+            contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
+            postBody: JSON.stringify(body),
+            onSuccess: onCreateWorkspaceSuccess.bind(this, options),
+            onFailure: onCreateWorkspaceFailure.bind(this, options)
         });
     };
 
