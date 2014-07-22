@@ -41,13 +41,6 @@ var OpManagerFactory = function () {
         // *********************************
         // PRIVATE VARIABLES AND FUNCTIONS
         // *********************************
-
-        this.loadCompleted = false;
-
-        // Variables for controlling the collection of wiring and dragboard instances of a user
-        this.workspaceInstances = {};
-        this.workspacesByUserAndName = {};
-
         // ****************
         // PUBLIC METHODS
         // ****************
@@ -103,18 +96,6 @@ var OpManagerFactory = function () {
                 this.pref_window_menu = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
             }
             this.pref_window_menu.show();
-        };
-
-        //Operations on workspaces
-
-        OpManager.prototype.removeWorkspace = function(workspace) {
-            // Removing reference
-            delete this.workspacesByUserAndName[workspace.workspaceState.creator][workspace.workspaceState.name];
-            delete this.workspaceInstances[workspace.id];
-
-            // Set the first workspace as current
-            var username = Wirecloud.contextManager.get('username');
-            Wirecloud.changeActiveWorkspace(Wirecloud.Utils.values(this.workspacesByUserAndName[username])[0]);
         };
 
     }

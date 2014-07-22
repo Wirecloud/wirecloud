@@ -212,11 +212,9 @@ var LayoutManagerFactory = function () {
          * Handler for changes in the hash to navigate to other areas
          */
         LayoutManager.prototype.onHashChange = function(state) {
-            var tab_id, tab, nextWorkspace, opManager, dragboard, alert_msg, nextView;
+            var tab_id, tab, nextWorkspace, dragboard, alert_msg, nextView;
 
-            opManager = OpManagerFactory.getInstance();
-
-            nextWorkspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
+            nextWorkspace = Wirecloud.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
             if (nextWorkspace == null) {
                 if (Wirecloud.activeWorkspace != null) {
                     Wirecloud.activeWorkspace.unload();

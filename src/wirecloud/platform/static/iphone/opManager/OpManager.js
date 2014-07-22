@@ -84,7 +84,6 @@ var OpManagerFactory = (function () {
         };
 
         // Singleton modules
-        this.loadCompleted = false;
         this.visibleLayer = null;
 
         // Variables for controlling the collection of wiring and dragboard instances of a user

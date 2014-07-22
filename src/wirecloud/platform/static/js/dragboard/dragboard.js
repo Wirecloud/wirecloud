@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
+/*global CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 

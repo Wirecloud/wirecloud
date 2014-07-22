@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, LayoutManagerFactory, OpManagerFactory, StyledElements, Wirecloud, Workspace*/
+/*global gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud, Workspace*/
 /*jshint -W002 */
 
 (function () {
@@ -80,12 +80,23 @@
         }
     };
 
+    var onWorkspaceRemoved = function(workspace) {
+        // Removing reference
+        delete this.workspacesByUserAndName[workspace.workspaceState.creator][workspace.workspaceState.name];
+        delete this.workspaceInstances[workspace.id];
+
+        // Set the first workspace as current
+        var username = Wirecloud.contextManager.get('username');
+        Wirecloud.changeActiveWorkspace(Wirecloud.Utils.values(this.workspacesByUserAndName[username])[0]);
+    };
+
     /**
      * Loads the Wirecloud Platform.
      */
     Wirecloud.init = function init(options) {
 
-        var opManager = OpManagerFactory.getInstance(); // TODO
+        this.workspaceInstances = {};
+        this.workspacesByUserAndName = {};
 
         options = Wirecloud.Utils.merge({
             'monitor': null
@@ -110,12 +121,8 @@
                 LayoutManagerFactory.getInstance().changeCurrentView('workspace');
 
                 if (state.workspace_name !== '') {
-                    var workspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
-                    this.changeActiveWorkspace(workspace, null, {
-                        onSuccess: function () {
-                            this.loadCompleted = true;
-                        }.bind(opManager)
-                    });
+                    var workspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
+                    this.changeActiveWorkspace(workspace, null, {});
                 } else {
                     Wirecloud.createWorkspace({
                         name: gettext('Workspace'),
@@ -209,7 +216,7 @@
                 }
 
                 checkPlatformReady();
-            }.bind(opManager),
+            }.bind(this),
             onFailure: function (response) {
                 Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving workspace list"), response);
             }
@@ -301,18 +308,17 @@
                         }
 
                         this.activeWorkspace = new Workspace(workspace_data, workspace_resources);
+                        this.activeWorkspace.addEventListener('removed', onWorkspaceRemoved.bind(this));
                         this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
-                            var workspace, old_name, opManager;
-
-                            opManager = OpManagerFactory.getInstance(); // TODO
+                            var workspace, old_name;
 
                             if ('name' in updated_attributes) {
-                                workspace = opManager.workspaceInstances[this.activeWorkspace.id];
+                                workspace = this.workspaceInstances[this.activeWorkspace.id];
                                 old_name = workspace.name;
-                                delete opManager.workspacesByUserAndName[workspace.creator][old_name];
+                                delete this.workspacesByUserAndName[workspace.creator][old_name];
 
                                 workspace.name = updated_attributes.name;
-                                opManager.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
+                                this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
                             }
                         }.bind(this));
 

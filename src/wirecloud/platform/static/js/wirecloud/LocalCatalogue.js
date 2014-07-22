@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
+/*global gettext, interpolate, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -60,7 +60,7 @@
     };
 
     var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(transport) {
-        var layoutManager, result, opManager, i, iwidget;
+        var layoutManager, result, i, iwidget;
 
         switch (this.resource.type) {
         case 'widget':
@@ -68,7 +68,6 @@
             result = JSON.parse(transport.responseText);
 
             layoutManager.logSubTask(gettext('Removing affected iWidgets'));
-            opManager = OpManagerFactory.getInstance();
             for (i = 0; i < result.removedIWidgets.length; i += 1) {
                 iwidget = Wirecloud.activeWorkspace.getIWidget(result.removedIWidgets[i]);
                 if (iwidget != null) {

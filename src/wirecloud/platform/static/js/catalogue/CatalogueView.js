@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueSearchView, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, StyledElements*/
+/*global CatalogueSearchView, gettext, interpolate, LayoutManagerFactory, Wirecloud, StyledElements*/
 
 (function () {
 

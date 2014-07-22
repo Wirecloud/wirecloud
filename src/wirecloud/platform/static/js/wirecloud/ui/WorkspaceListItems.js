@@ -19,7 +19,7 @@
  *
  */
 
-/*global OpManagerFactory, StyledElements, Wirecloud*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -38,7 +38,7 @@
         items = [];
 
         username = Wirecloud.contextManager.get('username');
-        user_workspaces = OpManagerFactory.getInstance().workspacesByUserAndName[username];
+        user_workspaces = Wirecloud.workspacesByUserAndName[username];
 
         if (user_workspaces == null || Object.keys(user_workspaces).length === 0) {
             items.push(new StyledElements.MenuItem(

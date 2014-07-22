@@ -21,7 +21,7 @@
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global CSSPrimitiveValue, Insertion, document, gettext, ngettext, interpolate, window */
-/*global DropDownMenu, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
+/*global DropDownMenu, LayoutManagerFactory, Wirecloud*/
 /*global IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu*/
 

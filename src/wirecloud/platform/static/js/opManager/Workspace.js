@@ -183,7 +183,7 @@ function Workspace(workspaceState, resources) {
     };
 
     var deleteSuccess = function (transport) {
-        OpManagerFactory.getInstance().removeWorkspace(this);
+        this.events.removed.dispatch(this);
         LayoutManagerFactory.getInstance().logSubTask(gettext('Workspace removed successfully'));
         LayoutManagerFactory.getInstance().logStep('');
     };
@@ -233,8 +233,7 @@ function Workspace(workspaceState, resources) {
         var response = transport.responseText;
         var data = JSON.parse(response);
         //update the new wsInfo
-        opManager = OpManagerFactory.getInstance();
-        var workspace = new Workspace(opManager.workspaceInstances[data.merged_workspace_id]);
+        var workspace = new Workspace(Wirecloud.workspaceInstances[data.merged_workspace_id]);
         Wirecloud.changeActiveWorkspace(workspace);
         LayoutManagerFactory.getInstance().hideCover();
     }
@@ -693,9 +692,8 @@ function Workspace(workspaceState, resources) {
 
         switch (action) {
         case "remove":
-            //opManager = OpManagerFactory.getInstance();
             username = Wirecloud.contextManager.get('username');
-            workspaces = OpManagerFactory.getInstance().workspacesByUserAndName[username];
+            workspaces = Wirecloud.workspacesByUserAndName[username];
             if (workspaces != null) {
                 nworkspaces = Object.keys(workspaces).length;
             } else {
@@ -735,7 +733,7 @@ function Workspace(workspaceState, resources) {
     this.loaded = false;
     this.valid = false;
 
-    StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
+    StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved', 'removed']);
 
     this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
     LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();

@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, OpManagerFactory, StyledElements, Wirecloud*/
+/*global gettext, StyledElements, Wirecloud*/
 
 (function () {
 
