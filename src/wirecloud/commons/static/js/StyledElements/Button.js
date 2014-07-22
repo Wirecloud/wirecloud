@@ -18,6 +18,14 @@
         }
     };
 
+    var onfocus = function onfocus() {
+        this.events.focus.dispatch(this);
+    };
+
+    var onblur = function onblur() {
+        this.events.blur.dispatch(this);
+    };
+
     /**
      *
      * Eventos que soporta este componente:
@@ -42,7 +50,7 @@
             return;
         }
 
-        StyledElements.StyledElement.call(this, ['click']);
+        StyledElements.StyledElement.call(this, ['click', 'focus', 'blur']);
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_button");
@@ -92,6 +100,8 @@
         button.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
         button.addEventListener('click', this._clickCallback, true);
         button.addEventListener('keydown', this._keydownCallback, true);
+        button.addEventListener('focus', onfocus.bind(this), true);
+        button.addEventListener('blur', onblur.bind(this), true);
 
         this.buttonElement = button;
     };
@@ -99,6 +109,10 @@
 
     StyledButton.prototype.focus = function focus() {
         this.buttonElement.focus();
+    };
+
+    StyledButton.prototype.blur = function blur() {
+        this.buttonElement.blur();
     };
 
     StyledButton.prototype.setLabel = function setLabel(label) {
