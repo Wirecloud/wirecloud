@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, OpManagerFactory, StyledElements, Wirecloud*/
+/*global gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -84,7 +84,10 @@
         this.user_button.insertInto(wrapper);
 
         user_menu = this.user_button.getPopupMenu();
-        item = new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences);
+        item = new StyledElements.MenuItem(gettext('Settings'), function () {
+            var dialog = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
+            dialog.show();
+        });
         user_menu.append(item);
         item.setDisabled(username === 'anonymous');
 

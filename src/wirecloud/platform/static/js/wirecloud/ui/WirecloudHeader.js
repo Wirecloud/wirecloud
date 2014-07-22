@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, OpManagerFactory, StyledElements, Wirecloud*/
+/*global gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -89,7 +89,10 @@
 
 
             user_menu = this.user_button.getPopupMenu();
-            user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
+            user_menu.append(new StyledElements.MenuItem(gettext('Settings'), function () {
+                var dialog = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
+                dialog.show();
+            }));
 
             if (Wirecloud.contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
                 user_menu.append(new StyledElements.MenuItem(gettext('DJango Admin panel'), function () {

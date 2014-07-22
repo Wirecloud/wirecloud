@@ -91,13 +91,6 @@ var OpManagerFactory = function () {
             });
         };
 
-        OpManager.prototype.showPlatformPreferences = function () {
-            if (this.pref_window_menu == null) {
-                this.pref_window_menu = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
-            }
-            this.pref_window_menu.show();
-        };
-
     }
 
     // *********************************
