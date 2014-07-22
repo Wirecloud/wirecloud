@@ -205,6 +205,7 @@ class IWidgetTester(object):
 
         self.open_menu().click_entry('Rename')
         name_input = self.element.find_element_by_css_selector('.widget_menu > span')
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: name_input.get_attribute('contenteditable') == 'true')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
         self.element.find_element_by_css_selector('.statusBar').click()
@@ -317,10 +318,10 @@ class WalletTester(object):
 
         try:
             self.element.find_element_by_css_selector('.widget_wallet .icon-remove').click()
-        except NoSuchElementException:
+        except StaleElementReferenceException:
             pass
 
-        WebDriverWait(self.testcase.driver, 5).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#workspace .widget_wallet')))
+        WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
         self.element = None
 
     def wait_ready(self, timeout=10):
