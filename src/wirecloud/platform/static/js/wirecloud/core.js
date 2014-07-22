@@ -90,6 +90,28 @@
         Wirecloud.changeActiveWorkspace(Wirecloud.Utils.values(this.workspacesByUserAndName[username])[0]);
     };
 
+    var onMergeSuccess = function onMergeSuccess(options, response) {
+        Wirecloud.changeActiveWorkspace(Wirecloud.activeWorkspace.workspaceState);
+    };
+
+    var onMergeFailure = function onMergeFailure(options, response, e) {
+        var msg, details;
+
+        msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error merging the mashup: %(errorMsg)s."), response, e);
+
+        if (typeof options.onFailure === 'function') {
+            try {
+                if (response.status === 422) {
+                    details = JSON.parse(response.responseText).details;
+                }
+            } catch (e) {}
+
+            try {
+                options.onFailure(msg, details);
+            } catch (e) {}
+        }
+    };
+
     /**
      * Loads the Wirecloud Platform.
      */
@@ -366,6 +388,29 @@
             postBody: JSON.stringify(body),
             onSuccess: onCreateWorkspaceSuccess.bind(this, options),
             onFailure: onCreateWorkspaceFailure.bind(this, options)
+        });
+    };
+
+    Wirecloud.mergeWorkspace = function mergeWorkspace(resource, options) {
+
+        if (options == null) {
+            options = {};
+        }
+
+        if (options.monitor) {
+            options.monitor.logSubTask(gettext("Merging mashup"));
+        }
+
+        var active_ws_id = Wirecloud.activeWorkspace.id;
+        var mergeURL = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: active_ws_id});
+
+        Wirecloud.io.makeRequest(mergeURL, {
+            method: 'POST',
+            contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
+            postBody: JSON.stringify({'mashup': resource.uri}),
+            onSuccess: onMergeSuccess.bind(this, options),
+            onFailure: onMergeFailure.bind(this, options)
         });
     };
 
