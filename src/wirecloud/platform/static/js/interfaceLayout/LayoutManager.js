@@ -57,7 +57,7 @@ var LayoutManagerFactory = function () {
             'initial': this.alternatives.createAlternative(),
             'workspace': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WorkspaceView}),
             'wiring': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WiringEditor}),
-            'marketplace': this.alternatives.createAlternative({'alternative_constructor': MarketplaceView})
+            'marketplace': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.MarketplaceView})
         };
         var plain_content = document.querySelector('.plain_content');
         if (plain_content != null) {

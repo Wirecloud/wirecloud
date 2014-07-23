@@ -25,9 +25,9 @@
 
     "use strict";
 
-    var MarketplaceView, onGetStoresSuccess, onGetStoresFailure, onGetStoresComplete;
+    var MarketplaceView, onGetMarketsSuccess, onGetMarketsFailure, onGetMarketsComplete;
 
-    onGetStoresSuccess = function onGetStoresSuccess(options, view_info) {
+    onGetMarketsSuccess = function onGetMarketsSuccess(options, view_info) {
         var info, old_views, view_element, view_constructor, first_element = null;
 
         this.loading = false;
@@ -73,7 +73,7 @@
         }
     };
 
-    onGetStoresFailure = function onGetStoresFailure(options, msg) {
+    onGetMarketsFailure = function onGetMarketsFailure(options, msg) {
         this.loading = false;
         this.error = true;
 
@@ -83,7 +83,7 @@
         }
     };
 
-    onGetStoresComplete = function onGetStoresComplete(options) {
+    onGetMarketsComplete = function onGetMarketsComplete(options) {
         var i;
 
         for (i = 0; i < this.callbacks.length; i+= 1) {
@@ -105,6 +105,7 @@
         this.viewsByName = {};
         this.alternatives = new StyledElements.StyledAlternatives();
         this.emptyAlternative = this.alternatives.createAlternative();
+        this.errorsAlternative = this.alternatives.createAlternative();
         this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative, in_alternative) {
             var new_status = this.buildStateData();
 
@@ -123,7 +124,7 @@
 
         this.addEventListener('show', function (view) {
             if (view.loading === null) {
-                Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(view, {}), onGetStoresFailure.bind(view, {}), onGetStoresComplete.bind(view, {}));
+                Wirecloud.MarketManager.getMarkets(onGetMarketsSuccess.bind(view, {}), onGetMarketsFailure.bind(view, {}), onGetMarketsComplete.bind(view, {}));
                 view.loading = true;
             }
 
@@ -223,7 +224,7 @@
 
         this.callbacks.push(callback);
         if (this.loading === null) {
-            Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this, {}), onGetStoresFailure.bind(this, {}), onGetStoresComplete.bind(this, {}));
+            Wirecloud.MarketManager.getMarkets(onGetMarketsSuccess.bind(this, {}), onGetMarketsFailure.bind(this, {}), onGetMarketsComplete.bind(this, {}));
             this.loading = true;
         }
     };
@@ -243,7 +244,7 @@
 
         this.number_of_alternatives = 0;
 
-        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this, options), onGetStoresFailure.bind(this, options), onGetStoresComplete.bind(this, options));
+        Wirecloud.MarketManager.getMarkets(onGetMarketsSuccess.bind(this, options), onGetMarketsFailure.bind(this, options), onGetMarketsComplete.bind(this, options));
     };
 
     MarketplaceView.prototype.addMarket = function addMarket(market_info) {
@@ -259,5 +260,5 @@
         this.alternatives.showAlternative(this.viewsByName[market]);
     };
 
-    window.MarketplaceView = MarketplaceView;
+    Wirecloud.ui.MarketplaceView = MarketplaceView;
 })();
