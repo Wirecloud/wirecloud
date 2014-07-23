@@ -1117,6 +1117,10 @@ class MobileWirecloudRemoteTestCase(RemoteTestCase):
     @classmethod
     def tearDownClass(cls):
 
+        # Remove chrome/chromium temporal directories
+        if 'chrome' in cls.driver.capabilities:
+            shutil.rmtree(cls.driver.capabilities['chrome']['userDataDir'], ignore_errors=True)
+
         cls.driver.quit()
 
     def login(self, username='admin', password='admin', next=None):
