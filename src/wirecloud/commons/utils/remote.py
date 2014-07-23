@@ -1059,16 +1059,20 @@ class WiringViewTester(object):
     def __init__(self, testcase):
 
         self.testcase = testcase
+        self.expect_error = False
 
     def __enter__(self):
         self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece").click()
-        wiring_loaded = lambda driver: self.testcase.get_current_view() == 'wiring' and 'disabled' not in driver.find_element_by_css_selector('.wiring_editor').get_attribute('class')
-        WebDriverWait(self.testcase.driver, 10).until(wiring_loaded)
+        if self.expect_error is False:
+            wiring_loaded = lambda driver: self.testcase.get_current_view() == 'wiring' and 'disabled' not in driver.find_element_by_css_selector('.wiring_editor').get_attribute('class')
+            WebDriverWait(self.testcase.driver, 10).until(wiring_loaded)
         return self
 
     def __exit__(self, type, value, traceback):
-        self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
-        WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
+        if self.expect_error is False or self.testcase.get_current_view() == 'wiring':
+            self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+            WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
+        self.expect_error = False
 
     def get_ioperators(self):
 

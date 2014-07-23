@@ -349,7 +349,7 @@ footer {
 
 .wirecloud_toolbar .styled_button .badge {
     position: absolute;
-    bottom: 0;
+    bottom: -10px;
     right: 0;
 }
 

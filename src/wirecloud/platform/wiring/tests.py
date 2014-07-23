@@ -714,7 +714,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor', 'wiring-recovery')
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_recovers_from_invalid_views_data(self):
@@ -786,6 +786,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
+        self.wiring_view.expect_error = True
         with self.wiring_view as wiring:
             self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
             self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
@@ -841,14 +842,16 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
+        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
+        self.assertEqual(error_badge.text, '1')
+        self.assertTrue(error_badge.is_displayed())
+        self.wiring_view.expect_error = True
         with self.wiring_view as wiring:
 
-            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
-            time.sleep(2)
-            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
-            time.sleep(2)
+            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+            time.sleep(0.2)
+            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+            time.sleep(0.2)
             window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
             self.assertEqual(window_menus, 1)
             wiring_entities = self.driver.find_elements_by_css_selector('.grid > .ioperator, .grid > .iwidget')
