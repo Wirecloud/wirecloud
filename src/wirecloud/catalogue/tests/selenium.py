@@ -24,7 +24,7 @@ __test__ = False
 
 class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
-    tags = ('catalogue', 'catalogue-selenium')
+    tags = ('wirecloud-selenium', 'catalogue', 'catalogue-selenium')
 
     def test_upload_packaged_widget(self):
 

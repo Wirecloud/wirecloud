@@ -49,7 +49,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             'store2.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store2'))),
         },
     }
-    tags = ('fiware', 'fiware-plugin', 'fiware-selenium')
+    tags = ('wirecloud-selenium', 'fiware', 'fiware-plugin', 'fiware-selenium')
 
     @classmethod
     def setUpClass(cls):

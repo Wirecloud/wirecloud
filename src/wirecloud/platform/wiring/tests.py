@@ -347,7 +347,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
 
     def test_operators_are_usable_after_installing(self):
 
@@ -714,7 +714,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_recovers_from_invalid_views_data(self):
@@ -858,7 +858,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_show_invisible_widget(self):
@@ -1512,7 +1512,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
 
     @classmethod
     def setUpClass(cls):
@@ -1610,7 +1610,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
 
     @classmethod
     def setUpClass(cls):
@@ -1777,7 +1777,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 class StickyEffectTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
 
     @classmethod
     def setUpClass(cls):
@@ -1833,7 +1833,7 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
 class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
 
     @classmethod
     def setUpClass(cls):

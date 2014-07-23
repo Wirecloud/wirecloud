@@ -32,7 +32,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
             'wcatalogue.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'wcatalogue'))),
         },
     }
-    tags = ('markets',)
+    tags = ('wirecloud-selenium', 'markets')
 
     def check_resource_buttons(self, marketplace, resources, button_text=None):
         for resource_name in resources:
