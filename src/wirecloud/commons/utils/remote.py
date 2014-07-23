@@ -566,7 +566,7 @@ class RemoteTestCase(object):
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
 
-class WirecloudBaseRemoteTestCase(RemoteTestCase):
+class WirecloudRemoteTestCase(RemoteTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -590,6 +590,13 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
             shutil.rmtree(cls.driver.capabilities['chrome']['userDataDir'], ignore_errors=True)
 
         cls.driver.quit()
+
+    def setUp(self):
+
+        self.widget_wallet = WidgetWalletTester(self)
+        self.mashup_wallet = MashupWalletTester(self)
+        self.marketplace_view = MarketplaceViewTester(self)
+        self.wiring_view = WiringViewTester(self)
 
     def tearDown(self):
 
@@ -728,6 +735,18 @@ class WirecloudBaseRemoteTestCase(RemoteTestCase):
                 return WorkspaceTabTester(self, tab)
 
         return None
+
+    def add_widget_to_mashup(self, widget_name, new_name=None):
+
+        with self.widget_wallet as wallet:
+            wallet.search(widget_name)
+            resource = wallet.search_in_results(widget_name)
+            iwidget = resource.instantiate()
+
+        if new_name is not None:
+            iwidget.rename(new_name)
+
+        return iwidget
 
     def rename_workspace(self, workspace_name):
         self.open_menu().click_entry('Rename')
@@ -1077,28 +1096,6 @@ class WiringViewTester(object):
             iwidget_id = iwidget
 
         return WiringIWidgetTester(self.testcase, iwidget_id, None)
-
-
-class WirecloudRemoteTestCase(WirecloudBaseRemoteTestCase):
-
-    def setUp(self):
-
-        self.widget_wallet = WidgetWalletTester(self)
-        self.mashup_wallet = MashupWalletTester(self)
-        self.marketplace_view = MarketplaceViewTester(self)
-        self.wiring_view = WiringViewTester(self)
-
-    def add_widget_to_mashup(self, widget_name, new_name=None):
-
-        with self.widget_wallet as wallet:
-            wallet.search(widget_name)
-            resource = wallet.search_in_results(widget_name)
-            iwidget = resource.instantiate()
-
-        if new_name is not None:
-            iwidget.rename(new_name)
-
-        return iwidget
 
 
 class MobileWirecloudRemoteTestCase(RemoteTestCase):
