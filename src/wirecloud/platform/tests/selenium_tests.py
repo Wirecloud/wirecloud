@@ -798,42 +798,40 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertElementHasFocus(next_button)
         next_button.click()
 
+        next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
+        self.assertElementHasFocus(next_button)
+        next_button.click()
+
         WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Basic concepts tutorial')
         next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
         self.assertElementHasFocus(next_button)
         next_button.click()
 
-        WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .menu .marketplace')))
-        self.change_main_view('marketplace')
-        next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
-        self.assertElementHasFocus(next_button)
-        next_button.click()
+        WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .wirecloud_toolbar .icon-plus')))
+        with self.widget_wallet as wallet:
+            time.sleep(1)
 
-        next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
-        self.assertElementHasFocus(next_button)
-        next_button.click()
+            # Add the youtube browser widget
+            def youtube_instantiable(driver):
+                resource = wallet.search_in_results('YouTube Browser')
+                return resource is not None and element_to_be_clickable((By.CSS_SELECTOR, '.mainbutton div'), base_element=resource.element)(driver)
+            WebDriverWait(self.driver, 10).until(youtube_instantiable).click()
 
-        time.sleep(5)
+            next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
+            self.assertElementHasFocus(next_button)
+            next_button.click()
 
-        testcase = self
-        def youtube_instantiable(driver):
-            resource = testcase.search_in_catalogue_results('YouTube Browser')
-            return element_to_be_clickable((By.CSS_SELECTOR, '.instantiate_button div'), base_element=resource)(driver)
-        WebDriverWait(self.driver, 10).until(youtube_instantiable).click()
-        next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
-        self.assertElementHasFocus(next_button)
-        next_button.click()
+            # Add the input box widget
+            time.sleep(1)
 
-        WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .menu .marketplace')))
-        self.change_main_view('marketplace')
+            def input_box_instantiable(driver):
+                resource = wallet.search_in_results('Input Box')
+                return resource is not None and element_to_be_clickable((By.CSS_SELECTOR, '.mainbutton div'), base_element=resource.element)(driver)
+            WebDriverWait(self.driver, 10).until(input_box_instantiable).click()
 
-        time.sleep(5)
+            WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '.widget_wallet .icon-remove')))
 
-        testcase = self
-        def input_box_instantiable(driver):
-            resource = testcase.search_in_catalogue_results('Input Box')
-            return element_to_be_clickable((By.CSS_SELECTOR, '.instantiate_button div'), base_element=resource)(driver)
-        WebDriverWait(self.driver, 10).until(input_box_instantiable).click()
+        # cancel current tutorial
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
 
         window_menues = self.driver.find_elements_by_css_selector('.window_menu')

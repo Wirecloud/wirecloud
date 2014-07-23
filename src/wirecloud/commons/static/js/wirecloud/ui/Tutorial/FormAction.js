@@ -114,7 +114,7 @@
             }
         }
         //main action for next step
-        this.endAction = new Wirecloud.ui.Tutorial.UserAction(this.tutorial, {'type': 'userAction', 'msg': this.endElementMsg, 'elem': form.acceptButton.wrapperElement, 'pos': this.endElementPos});
+        this.endAction = new Wirecloud.ui.Tutorial.UserAction(this.tutorial, {'type': 'userAction', 'msg': this.endElementMsg, 'elem': form.acceptButton, 'pos': this.endElementPos});
 
         this.endAction.setNext();
         var withoutCloseButton = true;

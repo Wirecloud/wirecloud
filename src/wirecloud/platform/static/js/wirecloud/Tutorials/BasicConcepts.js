@@ -38,23 +38,21 @@
         Wirecloud.createWorkspace({
             name: 'Basic concepts tutorial',
             allow_renaming: true,
-            onSuccess: function () {
-                autoAction.nextHandler();
+            onSuccess: function (workspace) {
+                Wirecloud.changeActiveWorkspace(workspace, null, {
+                    onSuccess: function () {
+                        autoAction.nextHandler();
+                    },
+                    onFailure: function () {
+                        autoAction.fail(); // TODO
+                    }
+                });
             }
         });
     };
 
     var build_static_url = function build_static_url(path) {
         return base_url + path;
-    };
-
-    var reset_marketplace_view = function reset_marketplace_view(autoAction) {
-        if (LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local != null) {
-            LayoutManagerFactory.getInstance().viewsByName.marketplace.changeCurrentMarket('local');
-            LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.home();
-        }
-
-        autoAction.nextHandler();
     };
 
     var install_input_box = function install_input_box(autoAction) {
@@ -98,50 +96,6 @@
         autoAction.nextHandler();
     };
 
-    var searchAction = function(autoAction, elem) {
-        elem.value = "";
-        setTimeout(function() {elem.value = 'y'}, 1000);
-        setTimeout(function() {elem.value += 'o'}, 1300);
-        setTimeout(function() {elem.value += 'u'}, 1600);
-        setTimeout(function() {elem.value += 't'}, 1900);
-        setTimeout(function() {elem.value += 'u'}, 2200);
-        setTimeout(function() {elem.value += 'b'}, 2500);
-        setTimeout(function() {elem.value += 'e'}, 2800);
-        setTimeout(function() {elem.value += ' '}, 3100);
-        setTimeout(function() {elem.value += 'b'}, 3400);
-        setTimeout(function() {elem.value += 'r'}, 3700);
-        setTimeout(function() {elem.value += 'o'}, 4000);
-        setTimeout(function() {elem.value += 'w'}, 4300);
-        setTimeout(function() {elem.value += 's'}, 4500);
-        setTimeout(function() {elem.value += 'e'}, 4700);
-        setTimeout(function() {
-            elem.value += 'r';
-            LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.viewsByName.search._onSearchInput();
-        }, 4900);
-        setTimeout(function() {autoAction.nextHandler();}, 6500);
-    };
-
-    var searchAction2 = function(autoAction, elem) {
-        elem.value = "";
-        setTimeout(function() {elem.value = 'i'}, 1000);
-        setTimeout(function() {elem.value += 'n'}, 1300);
-        setTimeout(function() {elem.value += 'p'}, 1600);
-        setTimeout(function() {elem.value += 'u'}, 1900);
-        setTimeout(function() {elem.value += 't'}, 2200);
-        setTimeout(function() {elem.value += ' '}, 2400);
-        setTimeout(function() {elem.value += 'b'}, 2600);
-        setTimeout(function() {elem.value += 'o'}, 2600);
-        setTimeout(function() {
-            elem.value += 'x';
-            LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.viewsByName.search._onSearchInput();
-        }, 2800);
-        setTimeout(function() {autoAction.nextHandler();}, 4400);
-    };
-
-    var searchInputMarketplace = function() {
-        return LayoutManagerFactory.getInstance().viewsByName.marketplace.alternatives.getCurrentAlternative().viewsByName.search.wrapperElement.getElementsByClassName('simple_search_text')[0];
-    };
-
     var findElementByTextContent = function findElementByTextContent(nodes, text) {
         var i;
         for (i = 0; i < nodes.length; i ++) {
@@ -152,28 +106,6 @@
         return null;
     };
 
-    var addbuttonInputBox = function() {
-        var resources, widget, element;
-
-        resources = LayoutManagerFactory.getInstance().viewsByName.marketplace.alternatives.getCurrentAlternative().viewsByName.search.wrapperElement.getElementsByClassName('resource_name');
-        widget = findElementByTextContent(resources, "Input Box");
-        element = widget.parentNode.getElementsByClassName("mainbutton")[0];
-        //element.scrollIntoView();
-
-        return element;
-    };
-
-    var addbuttonYoutubeSearch = function() {
-        var resources, widget, element;
-
-        resources = LayoutManagerFactory.getInstance().viewsByName.marketplace.alternatives.getCurrentAlternative().viewsByName.search.wrapperElement.getElementsByClassName('resource_name');
-        widget = findElementByTextContent(resources, "YouTube Browser");
-        element = widget.parentNode.getElementsByClassName("mainbutton")[0];
-        //element.scrollIntoView();
-
-        return element;
-    };
-
     var getDocument = function() {
         return document;
     };
@@ -182,9 +114,73 @@
         return document.getElementById('wirecloud_header');
     };
 
-    var main_view_button = function(view) {
-        return document.getElementById("wirecloud_header").getElementsByClassName(view)[0];
+    var append_character = function append_character(element, character) {
+        element.value += character;
     };
+
+    Wirecloud.ui.Tutorial.utils = {
+        basic_actions: {
+            sleep: function sleep(milliseconds, autoAction) {
+                setTimeout(function () {
+                    autoAction.nextHandler();
+                }, milliseconds);
+            },
+            input: function input(text, autoAction, element) {
+                var timeout, i;
+
+                if (element.tagName !== 'input') {
+                    element = element.querySelector('input');
+                }
+
+                element.value = "";
+                timeout = 0;
+                for (i = 0; i < text.length; i++) {
+                    timeout += 300;
+                    setTimeout(append_character.bind(null, element, text[i]), timeout);
+                }
+                setTimeout(function () {
+                    var evt = document.createEvent("KeyboardEvent");
+                    if (evt.initKeyEvent != null) {
+                        evt.initKeyEvent("keypress", true, true, window, false, false, false, false, 13, 0);
+                    } else {
+                        Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
+                        evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
+                    }
+                    element.dispatchEvent(evt);
+                }, timeout);
+
+                timeout += 1600;
+                setTimeout(function() {
+                    autoAction.nextHandler();
+                }, timeout);
+            }
+        },
+        basic_selectors: {
+            back_button: function back_button() {
+                return document.querySelector("#wirecloud_header .icon-caret-left").parentElement.parentElement;
+            },
+            toolbar_button: function toolbar_button(button_class) {
+                return document.querySelector("#wirecloud_header .wirecloud_toolbar").getElementsByClassName(button_class)[0].parentElement.parentElement;
+            },
+            mac_wallet_close_button: function mac_wallet_close_button() {
+                return document.querySelector('.widget_wallet .icon-remove');
+            },
+            mac_wallet_input: function mac_wallet_input() {
+                return document.querySelector('.widget_wallet .styled_text_field');
+            },
+            mac_wallet_resource_mainbutton: function mac_wallet_resource_mainbutton(resource_title) {
+                var resources, widget, element;
+
+                resources = document.querySelectorAll('.widget_wallet .widget_wallet_list .resource_name');
+                widget = findElementByTextContent(resources, resource_title);
+                element = widget.parentNode.getElementsByClassName("mainbutton")[0];
+
+                return element;
+            }
+        }
+    };
+    var BS = Wirecloud.ui.Tutorial.utils.basic_selectors;
+    var BA = Wirecloud.ui.Tutorial.utils.basic_actions;
 
     var get_menubar = function get_menubar() {
         var wiring_editor = document.getElementsByClassName('wiring_editor')[0];
@@ -290,31 +286,30 @@
 
     Wirecloud.TutorialCatalogue.add('basic-concepts', new Wirecloud.ui.Tutorial(gettext('Basic concepts'), [
             // Editor
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Welcome to Wirecloud!!</p><p>This tutorial will show you the basic concepts behind Wirecloud.</p>"), 'elem': null},
-            {'type': 'autoAction', 'action': create_workspace},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Editor</em> view. In this view, you can use and modify your workspaces. Currently you are in a newly created workspace: <em>Basic concepts tutorial</em>. This workspace is empty, so the first step is to add widgets from the Wirecloud marketplace.</p>"), 'elem': null},
-            // MarketPlace
-            {'type': 'autoAction', 'action': reset_marketplace_view},
-            {'type': 'userAction', 'msg': gettext("Click <em>Marketplace</em>"), 'elem': main_view_button.bind(null, 'marketplace'), 'pos': 'downLeft'},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext('<p>This is the <em>Marketplace</em> view. In this view you can browse the <em>Mashable Application Components</em> (<em>Widgets, operators</em> and <em>mashups</em>) that are currently available to you. Also, you can browse external catalogues too.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you in the catalogue. You can safetly uninstall these widgets after finishing the tutorial.</p></div>'), 'elem': null},
+            {type: 'simpleDescription', title: gettext('WireCloud Basic Tutorial'), msg: gettext("<p>Welcome to WireCloud!!</p><p>This tutorial will show you the basic concepts behind WireCloud.</p>")},
+            {type: 'autoAction', action: create_workspace},
+            {type: 'simpleDescription', title: gettext('WireCloud Basic Tutorial'), msg: gettext('<p>This is the <em>Editor</em> view. In this view, you can use and modify your workspaces. Currently you are in a newly created workspace: <em>Basic concepts tutorial</em>. This workspace is empty, so the first step is to add some widgets.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you in the catalogue. You can safetly uninstall these widgets after finishing the tutorial.</p></div>')},
+
+            // Marketplace
             {'type': 'autoAction', 'action': install_input_box},
             {'type': 'autoAction', 'action': install_youtubebrowser},
-            {'type': 'autoAction', 'action': refreshMarketplace},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly and you can find them in your local catalogue.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace. You can directly select the widget or, alternatively, you can reduce the list using the keyword search feature.</p>"), 'elem': null},
-            {'type': 'autoAction', 'msg': gettext('Typing "youtube browser" we can filter widgets that contains in their name or description these words'), 'elem': searchInputMarketplace, 'pos': 'downRight', 'action': searchAction},
-            {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': addbuttonYoutubeSearch, 'pos': 'downRight'},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p><span class=\"label label-success\">Great!</span> That was easy, wasn't it?.</p><p>Let's continue adding the <em>Input Box</em> widget.</p>"), 'elem': null},
-            {'type': 'userAction', 'msg': gettext("Click <em>Marketplace</em>"), 'elem': main_view_button.bind(null, 'marketplace'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'msg': gettext('Typing <em>input box</em>...'), 'elem': searchInputMarketplace, 'pos': 'downRight', 'action': searchAction2},
-            {'type': 'userAction', 'msg': gettext("Click <em>Add to workspace</em>"), 'elem': addbuttonInputBox, 'pos': 'downRight'},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace.</p>")},
+            {'type': 'userAction', 'msg': gettext("Click the <em>add widget button</em>"), 'elem': BS.toolbar_button.bind(null, 'icon-plus'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'action': BA.sleep.bind(null, 0.5)},
+            {'type': 'autoAction', 'msg': gettext('Typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input, 'pos': 'downRight', 'action': BA.input.bind(null, 'browser')},
+            {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton.bind(null, "YouTube Browser"), 'pos': 'downRight'},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p><span class=\"label label-success\">Great!</span> That was easy, wasn't it?.</p><p>Let's continue adding the <em>Input Box</em> widget.</p>"), 'elem': null},
+            {'type': 'autoAction', 'msg': gettext('Typing <em>input box</em>...'), 'elem': BS.mac_wallet_input, 'pos': 'downRight', 'action': BA.input.bind(null, 'input box')},
+            {'type': 'userAction', 'msg': gettext("Click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton.bind(null, "Input Box"), 'pos': 'downRight'},
+            {'type': 'userAction', 'msg': gettext("Close the widget wallet"), 'elem': BS.mac_wallet_close_button, 'pos': 'downRight'},
 
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>One of the main features of Wirecloud is that you can edit your workspaces' layout not only by adding and removing widgets, but also moving, resizing, renaming, etc.</p>"), 'elem': null},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>One of the main features of WireCloud is that you can edit your workspaces' layout not only by adding and removing widgets, but also moving, resizing, renaming, etc.</p>"), 'elem': null},
             {'type': 'userAction', 'msg': gettext("Drag &amp; drop to resize the widget"), 'elem': ResizeButton, 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown'},
             {'type': 'userAction', 'msg': gettext("Drag &amp; drop to move the widget"), 'elem': widget_title.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
             {'type': 'userAction', 'msg': gettext("Open <em>Input Box</em> menu"), 'elem': widget_menu.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
             {'type': 'userAction', 'msg': gettext("Click <em>Rename</em>"), 'elem': get_menu_item.bind(null, gettext('Rename')), 'pos': 'downRight', 'event': 'click'},
             {'type': 'userAction', 'msg': gettext("Enter a new name for the widget (e.g <em>Search</em>) and press Enter"), 'elem': widget_title.bind(null, 1), 'pos': 'downRight', 'event': 'blur'},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Also, some widgets can be parameterized through settings giving you the chance to use them for very general purporses.</p>"), 'elem': null},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>Also, some widgets can be parameterized through settings giving you the chance to use them for very general purporses.</p>"), 'elem': null},
             {'type': 'userAction', 'msg': gettext("Open <em>Input Box</em> menu"), 'elem': widget_menu.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
             {'type': 'userAction', 'msg': gettext("Click <em>Settings</em>"), 'elem': get_menu_item.bind(null, gettext('Settings')), 'pos': 'downRight', 'event': 'click'},
             {
@@ -329,13 +324,13 @@
                 'asynchronous': true
             },
 
-            {'type': 'userAction', 'msg': gettext("Click <em>Wiring</em> to continue"), 'elem': main_view_button.bind(null, 'wiring'), 'pos': 'downLeft'},
+            {'type': 'userAction', 'msg': gettext("Click <em>Wiring</em> to continue"), 'elem': BS.toolbar_button.bind(null, 'icon-puzzle-piece'), 'pos': 'downLeft'},
 
 
             // WiringEditor
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>"), 'elem': null},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets and a combination of these behaviours.</p>"), 'elem': get_menubar},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>"), 'elem': null},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets and a combination of these behaviours.</p>"), 'elem': get_menubar},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
 
             {
                 'type': 'userAction',
@@ -373,13 +368,13 @@
                 'nextStepMsg': gettext("... to <em>YouTube Browser</em>'s <em>keyword</em> endpoint"),
                 'elemToApplyNextStepEvent': get_full_endpoint.bind(null, 0, 'keyword'), 'event': 'mouseup', 'secondPos': 'downLeft',
             },
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("Now it's time to test our creation.")},
-            {'type': 'userAction', 'msg': gettext("Click <em>Editor</em>"), 'elem': main_view_button.bind(null, 'workspace'), 'pos': 'downLeft'},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("Now it's time to test our creation.")},
+            {'type': 'userAction', 'msg': gettext("Click <em>Editor</em>"), 'elem': BS.back_button, 'pos': 'downLeft'},
             {'type': 'userAction', 'msg': gettext("Enter a search keyword and press Enter"), 'elem': input_box_input, 'pos': 'downLeft', 'event': 'keypress', 'eventFilterFunction': enter_keypress},
 
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext('<p><span class="label label-success">Congratulations!</span> you have finished your first <em>application mashup</em>.</p><p>As you can see, the <em>YouTube Browser</em> widget has been updated successfuly.</p>'), 'elem': widget.bind(null, 0)},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext('<p><span class="label label-success">Congratulations!</span> you have finished your first <em>application mashup</em>.</p><p>As you can see, the <em>YouTube Browser</em> widget has been updated successfuly.</p>'), 'elem': widget.bind(null, 0)},
             {'type': 'autoAction', 'action': deploy_tutorial_menu},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext('<p>This is the end of this tutorial. Remember that you can always go to the Tutorial menu for others.</p>'), 'elem': get_menu_item.bind(null, 'Tutorials')},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext('<p>This is the end of this tutorial. Remember that you can always go to the Tutorial menu for others.</p>'), 'elem': get_menu_item.bind(null, 'Tutorials')},
     ]));
 
 })();

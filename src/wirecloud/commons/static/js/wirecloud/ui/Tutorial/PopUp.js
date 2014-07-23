@@ -35,7 +35,11 @@
         this.options = options;
 
         if (options.highlight === true) {
-            element.classList.add('tuto_highlight');
+            if (element instanceof StyledElements.StyledElement) {
+                element.addClassName('tuto_highlight');
+            } else {
+                element.classList.add('tuto_highlight');
+            }
         }
 
         this.wrapperElement = document.createElement("div");
@@ -122,7 +126,11 @@
         }
 
         if (this.options.highlight) {
-            this.element.classList.remove('tuto_highlight');
+            if (this.element instanceof StyledElements.StyledElement) {
+                this.element.removeClassName('tuto_highlight');
+            } else {
+                this.element.classList.remove('tuto_highlight');
+            }
         }
         if (this.wrapperElement.parentNode) {
             this.wrapperElement.parentNode.removeChild(this.wrapperElement);
