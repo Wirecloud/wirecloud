@@ -33,12 +33,11 @@ from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
 from whoosh import index
 from whoosh import fields
 from whoosh.qparser import MultifieldParser, QueryParser
-from whoosh.query import And, Every, Or, Prefix, Term
-from whoosh.sorting import FieldFacet, FunctionFacet, MultiFacet
+from whoosh.query import And, Every, Or, Term
+from whoosh.sorting import FieldFacet, FunctionFacet
 
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
@@ -201,7 +200,7 @@ class Version(object):
             other = Version(other)
 
         if not isinstance(other, Version):
-            raise ValueError("invalid version number '%s'" % vstring)
+            raise ValueError("invalid version number '%s'" % other)
 
         maxlen = max(len(self.version), len(other.version))
         compare = cmp(self.version + (0,)*(maxlen - len(self.version)), other.version + (0,)*(maxlen - len(other.version)))
@@ -323,8 +322,6 @@ def add_absolute_urls(results, request=None):
         hit['image'] = urljoin(base_url, hit['image'])
         hit['smartphoneimage'] = urljoin(base_url, hit['smartphoneimage'])
 
-    return results
-
 
 def add_other_versions(searcher, hits, user, staff):
 
@@ -363,22 +360,33 @@ def build_search_kwargs(user_q, request, scope, staff, orderby):
 
     return (user_q, search_kwargs)
 
+_wirecloud_search_indexes = {}
 
 def open_index(indexname, dirname=None):
+    global _wirecloud_search_indexes
 
-    if dirname is None:
-        dirname = settings.WIRECLOUD_INDEX_DIR
+    if indexname not in _wirecloud_search_indexes:
+        if dirname is None:
+            dirname = settings.WIRECLOUD_INDEX_DIR
 
-    if not os.path.exists(dirname):
-        os.mkdir(dirname)
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
 
-    if not index.exists_in(dirname, indexname=indexname):
-        return index.create_in(dirname, CatalogueResourceSchema(), indexname=indexname)
+        if not index.exists_in(dirname, indexname=indexname):
+            _wirecloud_search_indexes[indexname] = index.create_in(dirname, CatalogueResourceSchema(), indexname=indexname)
+        else:
+            _wirecloud_search_indexes[indexname] = index.open_dir(dirname, indexname=indexname)
 
-    return index.open_dir(dirname, indexname=indexname)
+    return _wirecloud_search_indexes[indexname]
 
 
-def search(querytext, request, pagenum=1, pagelen=30, staff=False, scope=None,
+def clear_index_cache():
+    global _wirecloud_search_indexes
+
+    _wirecloud_search_indexes = {}
+
+
+def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None,
            orderby='-creation_date'):
 
     ix = open_index('catalogue_resources')
@@ -392,7 +400,7 @@ def search(querytext, request, pagenum=1, pagelen=30, staff=False, scope=None,
 
         user_q = querytext and query_p.parse(querytext) or Every()
         user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
-        hits = searcher.search(user_q, limit=(pagenum * pagelen), **search_kwargs)
+        hits = searcher.search(user_q, limit=(pagenum * maxresults), **search_kwargs)
 
         if querytext and hits.is_empty():
 
@@ -405,33 +413,29 @@ def search(querytext, request, pagenum=1, pagelen=30, staff=False, scope=None,
 
                 user_q = query_p.parse(querytext)
                 user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
-                hits = searcher.search(user_q, limit=(pagenum * pagelen), **search_kwargs)
+                hits = searcher.search(user_q, limit=(pagenum * maxresults), **search_kwargs)
 
-        results = add_other_versions(searcher, hits, request.user, staff)
-        results = add_absolute_urls(results, request)
-
-        search_page(search_result, results, pagenum, pagelen)
+        search_page(search_result, hits, pagenum, maxresults)
+        search_result['results'] = add_other_versions(searcher, search_result['results'], request.user, staff)
+        add_absolute_urls(search_result['results'], request)
 
     return search_result
 
 
-def search_page(search_result, results, pagenum, pagelen):
+def search_page(search_result, hits, pagenum, maxresults):
 
-    search_result['total'] = len(results)
-    search_result['pagecount'] = search_result['total'] // pagelen + 1
+    search_result['total'] = hits.estimated_length()
+    search_result['pagecount'] = search_result['total'] // maxresults + 1
 
     if pagenum > search_result['pagecount']:
         pagenum = search_result['pagecount']
 
     search_result['pagenum'] = pagenum
-    offset = (pagenum - 1) * pagelen
-
-    if (offset + pagelen) > search_result['total']:
-        pagelen = search_result['total'] - offset
+    offset = (pagenum - 1) * maxresults
 
     search_result['offset'] = offset
-    search_result['pagelen'] = pagelen
-    search_result['results'] = results[offset:(offset + pagelen)]
+    search_result['results'] = hits[offset:]
+    search_result['pagelen'] = len(search_result['results'])
 
     return search_result
 

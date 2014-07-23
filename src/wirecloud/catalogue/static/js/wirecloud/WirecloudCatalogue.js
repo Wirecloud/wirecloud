@@ -94,20 +94,33 @@
 
         params = {};
 
-        if (options.correct_query != null && options.correct_query === false) {
-            params.correct_q = 'false';
-        }
-
         if (options.search_criteria != null && options.search_criteria !== '') {
             params.q = options.search_criteria;
         }
 
-        if (options.scope != null && options.scope !== 'all') {
+        if (options.scope != null && options.scope !== '' && options.scope !== 'all') {
+            if (['widget', 'operator', 'mashup'].indexOf(options.scope) === -1) {
+                throw new TypeError('invalid scope value');
+            }
             params.scope = options.scope;
         }
 
         if (options.order_by != null && options.order_by !== '') {
             params.orderby = options.order_by;
+        }
+
+        if (options.maxresults != null) {
+            if (typeof options.maxresults !== 'number' || options.maxresults < 20) {
+                throw new TypeError('invalid maxresults value');
+            }
+            params.maxresults = options.maxresults;
+        }
+
+        if (options.pagenum != null) {
+            if (typeof options.pagenum !== 'number' || options.pagenum < 0) {
+                throw new TypeError('invalid pagenum value');
+            }
+            params.pagenum = options.pagenum;
         }
 
         Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {

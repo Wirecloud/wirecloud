@@ -222,12 +222,11 @@
 
     CatalogueSearchView.prototype._search = function _search(page, options, onSuccess, onError) {
         options = {
-            'correct_query': options.correct_query,
             'order_by': options.order_by,
             'search_criteria': options.keywords,
             'scope': options.scope,
-            'starting_page': page,
-            'resources_per_page': options.pageSize,
+            'pagenum': page,
+            'maxresults': options.pageSize,
             'onSuccess': onSuccess,
             'onFailure': onError
         };

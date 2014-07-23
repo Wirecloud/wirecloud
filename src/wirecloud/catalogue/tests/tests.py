@@ -22,12 +22,10 @@ from __future__ import unicode_literals
 import codecs
 import json
 import os
-from shutil import rmtree
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase, Client
+from django.test import Client
 from django.test.utils import override_settings
 
 import wirecloud.catalogue.utils
@@ -35,7 +33,6 @@ from wirecloud.catalogue.utils import add_resource_from_template, get_resource_d
 from wirecloud.catalogue.models import CatalogueResource, Version
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.testcases import LocalFileSystemServer, WirecloudTestCase
-from wirecloud.commons.utils.wgt import WgtDeployer
 
 
 # Avoid nose to repeat these tests (they are run through __init__.py)
@@ -158,8 +155,8 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         response = self.client.get(self.base_url+'?orderby=-creation_date')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(result_json['pagelen'], 8)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['pagelen'], 8)
 
         response = self.client.get(self.base_url+'?orderby=creation_date')
         self.assertEqual(response.status_code, 200)
@@ -172,32 +169,32 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='admin', password='admin')
 
-        response = self.client.get(self.base_url+'?staff=true&pagelen=15')
+        response = self.client.get(self.base_url+'?staff=true&maxresults=15')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 1)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['total'], 11)
+        self.assertEqual(result_json['total'], result_json['pagelen'])
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 17)
 
-        response = self.client.get(self.base_url+'?staff=true&pagelen=10&pagenum=2')
+        response = self.client.get(self.base_url+'?staff=true&maxresults=10&pagenum=2')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 2)
         self.assertEqual(result_json['pagelen'], 1)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['total'], 11)
+        self.assertGreaterEqual(result_json['total'], 11)
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 3)
 
-        response = self.client.get(self.base_url+'?staff=true&pagenum=2&pagelen=5')
+        response = self.client.get(self.base_url+'?staff=true&pagenum=2&maxresults=5')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 2)
         self.assertEqual(result_json['pagelen'], 5)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['total'], 10)
+        self.assertEqual(result_json['total'], 11)
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 9)
 
@@ -259,7 +256,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 1)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['total'], 9)
+        self.assertEqual(result_json['total'], result_json['pagelen'])
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 13)
 

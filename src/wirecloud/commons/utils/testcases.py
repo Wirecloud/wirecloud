@@ -42,6 +42,7 @@ from six import string_types, text_type
 from wirecloud.platform.localcatalogue.utils import install_resource
 from wirecloud.platform.widget import utils as showcase
 from wirecloud.catalogue import utils as catalogue
+from wirecloud.catalogue.models import clear_index_cache
 from wirecloud.commons.utils.remote import MobileWirecloudRemoteTestCase, WirecloudRemoteTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
@@ -408,6 +409,7 @@ class WirecloudTestCase(TransactionTestCase):
         from django.conf import settings
 
         shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+        clear_index_cache()
 
     def changeLanguage(self, new_language):
 
@@ -537,6 +539,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         from django.conf import settings
 
         shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+        clear_index_cache()
 
         LiveServerTestCase.tearDown.im_func(self)
         WirecloudRemoteTestCase.tearDown.im_func(self)
@@ -624,6 +627,7 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
         from django.conf import settings
 
         shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
+        clear_index_cache()
 
         LiveServerTestCase.tearDown.im_func(self)
 
