@@ -605,12 +605,21 @@
         this._enableDisableButtons();
     };
 
-    StyledNotebook.prototype.addButton = function addButton(button) {
+    StyledNotebook.prototype.addButton = function addButton(button, position) {
         if (!(button instanceof StyledElements.StyledButton) && !(button instanceof StyledElements.StyledSelect)) {
             throw new TypeError();
         }
 
-        this.tabWrapper.getEastContainer().appendChild(button);
+        position = position || 'right';
+
+        switch (position) {
+        case 'left':
+            this.tabWrapper.getWestContainer().appendChild(button, this.moveLeftButton);
+            break;
+        case 'right':
+            this.tabWrapper.getEastContainer().appendChild(button);
+            break;
+        }
     };
 
     StyledNotebook.prototype.requestFullscreen = function requestFullscreen() {

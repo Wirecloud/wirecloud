@@ -48,7 +48,7 @@
                         });
                     }
                     select.addEntries(entries);
-                    details.addButton(select);
+                    details.addButton(select, 'left');
                     select.setDisabled(versions.length === 1);
                     select.setValue(resource.version.text);
                     select.addEventListener('change', function (select) {
