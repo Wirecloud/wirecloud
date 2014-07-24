@@ -369,8 +369,8 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.uninstall_resource('TestOperator')
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource('TestOperator')
 
         with self.wiring_view as wiring:
 
@@ -1090,7 +1090,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
             ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
             self.assertEqual(len(ghostWidget), 1)
             # 5 connections
-            connections = self.driver.find_elements_by_css_selector('.arrow')
+            connections = self.driver.find_elements_by_css_selector('.wiring_editor .arrow')
             self.assertEqual(len(connections), 5, "Fail in ghost Widget connections")
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
@@ -1326,7 +1326,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
             ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
             self.assertEqual(len(ghostOperator), 1)
             # 5 connections
-            connections = self.driver.find_elements_by_css_selector('.arrow')
+            connections = self.driver.find_elements_by_css_selector('.wiring_editor .arrow')
             self.assertEqual(len(connections), 5, "Fail in ghost Operator connections")
 
     def test_read_only_connections_cannot_be_deleted_in_WiringEditor(self):
@@ -1411,12 +1411,12 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            arrows = self.driver.find_elements_by_css_selector('.arrow')
+            arrows = self.driver.find_elements_by_css_selector('.wiring_editor .arrow')
             self.assertEqual(len(arrows), 2)
             # The find_element_by_css_selector is needed to work around a bug in the firefox driver
             arrows[0].find_element_by_css_selector('g').click()
             self.wait_element_visible_by_css_selector('.closer', element=arrows[0]).click()
-            arrows = self.driver.find_elements_by_css_selector('.arrow')
+            arrows = self.driver.find_elements_by_css_selector('.wiring_editor .arrow')
             self.assertEqual(len(arrows), 2)
 
     def test_widget_and_operator_with_read_only_connections_cannot_be_deleted_in_WiringEditor(self):
