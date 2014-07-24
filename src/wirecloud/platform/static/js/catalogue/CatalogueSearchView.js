@@ -160,23 +160,6 @@
                 }.bind(this));
                 return select;
             }.bind(this),
-            'widgetsperpage': function () {
-                var select = new StyledElements.StyledSelect({
-                    'initialValue': '30',
-                    'initialEntries': [
-                        {'value': '10'},
-                        {'value': '20'},
-                        {'value': '30'},
-                        {'value': '40'},
-                        {'value': '100'}
-                    ]
-                });
-                select.addEventListener('change', function (select) {
-                    this.source.changeOptions({'pageSize': select.getValue()});
-                }.bind(this));
-                this.widgetsperpage = select;
-                return select;
-            }.bind(this),
             'searchinput': this.simple_search_input
         });
 
