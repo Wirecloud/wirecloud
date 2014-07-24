@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -16,6 +16,8 @@
 
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import unicode_literals
 
 import json
 
@@ -35,6 +37,7 @@ class MarketManager:
 
 
 _market_classes = None
+_local_catalogue = None
 
 
 def get_market_classes():
@@ -48,6 +51,17 @@ def get_market_classes():
             _market_classes.update(plugin.get_market_classes())
 
     return _market_classes
+
+
+def get_local_catalogue():
+    global _local_catalogue
+
+    if _local_catalogue is None:
+
+        manager_classes = get_market_classes()
+        _local_catalogue = manager_classes['wirecloud'](None, 'local', {'name': 'local', 'type': 'wirecloud', 'url': None})
+
+    return _local_catalogue
 
 
 def get_market_managers(user):

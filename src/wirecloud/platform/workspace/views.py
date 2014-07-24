@@ -46,7 +46,7 @@ from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab
-from wirecloud.platform.markets.utils import get_market_managers
+from wirecloud.platform.markets.utils import get_local_catalogue
 
 
 def createEmptyWorkspace(workspaceName, user, allow_renaming=False):
@@ -565,10 +565,6 @@ class WorkspacePublisherEntry(Resource):
         zf.close()
         wgt_file = WgtFile(f)
 
-        market_managers = get_market_managers(request.user)
-        try:
-            market_managers['local'].publish(None, wgt_file, request.user, options, request)
-        except Exception as e:
-            return build_error_response(request, 502, unicode(e))
+        get_local_catalogue().publish(None, wgt_file, request.user, options, request)
 
         return HttpResponse(status=201)
