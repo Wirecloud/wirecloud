@@ -185,6 +185,7 @@
                     requestHeaders: {'Accept': 'application/json'},
                     onSuccess: function (response) {
                         Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(response.responseText));
+                        LayoutManagerFactory.getInstance()._init();
                         checkPlatformReady();
                     }
                 });

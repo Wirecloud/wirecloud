@@ -229,7 +229,7 @@
         "model": "platform.market",
         "fields": {
             "name": "deleteme",
-            "options": "{\"url\": null, \"type\":\"wirecloud\", \"label\":\"deleteme\"}",
+            "options": "{\"url\": \"http://deletemecatalogue.example.com\", \"type\":\"wirecloud\", \"label\":\"deleteme\"}",
             "user": 3
         }
     },
@@ -238,7 +238,7 @@
         "model": "platform.market",
         "fields": {
             "name": "origin",
-            "options": "{\"url\": null, \"type\":\"wirecloud\", \"label\":\"origin\"}"
+            "options": "{\"url\": \"http://wcatalogue.example.com\", \"type\":\"wirecloud\", \"label\":\"origin\"}"
         }
     }
 ]

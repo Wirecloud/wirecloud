@@ -34,6 +34,9 @@ var LayoutManagerFactory = function () {
     }
 
     // TODO
+    LayoutManager.prototype._init = function _init() {
+    };
+
     LayoutManager.prototype._startComplexTask = function _startComplexTask(task, subtasks) {
         this.monitor = new Wirecloud.TaskMonitorModel(task, subtasks);
         return this.monitor;

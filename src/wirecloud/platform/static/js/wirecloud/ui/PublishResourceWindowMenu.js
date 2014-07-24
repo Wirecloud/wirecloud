@@ -28,39 +28,29 @@
     /**
      * Specific class for publish windows
      */
-    var PublishResourceWindowMenu = function PublishResourceWindowMenu(resource, origin_market) {
+    var PublishResourceWindowMenu = function PublishResourceWindowMenu(resource) {
 
         this.resource = resource;
 
-        var fields = this._loadAvailableMarkets(origin_market);
+        var fields = this._loadAvailableMarkets();
         Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Upload resource'), 'publish_resource', {legend: false});
-
-        /*
-        // fill a warning message
-        var warning = document.createElement('div');
-        warning.addClassName('alert');
-        warning.innerHTML = gettext("<strong>Warning!</strong> Configured and stored data in your workspace (properties and preferences except passwords) will be shared by default!");
-        this.windowContent.insertBefore(warning, this.form.wrapperElement);
-        */
     };
     PublishResourceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
-    PublishResourceWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarkets(origin_market) {
+    PublishResourceWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarkets() {
         // Take available marketplaces from the instance of marketplace view
         var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
         var key, endpoints, secondInput, buttons = [];
 
         for (key in views) {
-            if (key !== origin_market) {
-                endpoints = views[key].getPublishEndpoints();
-                if (endpoints != null && endpoints.length > 0) {
-                    endpoints.forEach(function (endpoint) { endpoint.value = key + '#' + endpoint.value; });
-                    secondInput = new StyledElements.StyledSelect({initialEntries: endpoints});
-                } else {
-                    secondInput = null;
-                }
-                buttons.push({'label': key, 'value': key, 'secondInput': secondInput});
+            endpoints = views[key].getPublishEndpoints();
+            if (endpoints != null && endpoints.length > 0) {
+                endpoints.forEach(function (endpoint) { endpoint.value = key + '#' + endpoint.value; });
+                secondInput = new StyledElements.StyledSelect({initialEntries: endpoints});
+            } else {
+                secondInput = null;
             }
+            buttons.push({'label': key, 'value': key, 'secondInput': secondInput});
         }
         return [
             {

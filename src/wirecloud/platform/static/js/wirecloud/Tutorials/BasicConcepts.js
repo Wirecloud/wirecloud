@@ -91,11 +91,6 @@
         return widget.element.getElementsByClassName("widget_menu")[0].getElementsByTagName('span')[0];
     };
 
-    var refreshMarketplace = function refreshMarketplace(autoAction) {
-        LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.refresh_search_results();
-        autoAction.nextHandler();
-    };
-
     var findElementByTextContent = function findElementByTextContent(nodes, text) {
         var i;
         for (i = 0; i < nodes.length; i ++) {

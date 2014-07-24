@@ -57,7 +57,7 @@
             onSuccess: function (refreshed_offering) {
                 refreshed_offering.install({
                     onResourceSuccess: function (resource) {
-                        var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+                        var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
                         local_catalogue_view.viewsByName.search.mark_outdated();
                     },
                     onFailure: function (msg) {
@@ -115,6 +115,14 @@
         this.catalogue = new Wirecloud.FiWare.Marketplace(this.desc);
         this.number_of_stores = 0;
         this.refresh_store_info();
+        this.alternatives.addEventListener('preTransition', function () {
+            LayoutManagerFactory.getInstance().header._notifyViewChange();
+        });
+        this.alternatives.addEventListener('postTransition', function () {
+            var header = LayoutManagerFactory.getInstance().header;
+            header._notifyViewChange(header.currentView);
+        });
+
         this.addEventListener('show', function () {
             if (this.alternatives.getCurrentAlternative() === this.viewsByName.initial) {
                 this.changeCurrentView('search');

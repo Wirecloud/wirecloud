@@ -25,13 +25,44 @@
 
     "use strict";
 
-    var MarketplaceView, onGetMarketsSuccess, onGetMarketsFailure, onGetMarketsComplete;
+    var MarketplaceView, onGetMarketsSuccess, onGetMarketsFailure, onGetMarketsComplete, auto_select_initial_market, notifyError, builder, ERROR_TEMPLATE;
+
+    ERROR_TEMPLATE = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-error"><t:message/></div></s:styledgui>';
+
+    builder = new StyledElements.GUIBuilder();
+
+    notifyError = function notifyError(message, context) {
+        var error_alert;
+
+        message = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, context);
+        error_alert = builder.parse(ERROR_TEMPLATE, {
+            'message': message
+        });
+
+        this.errorsAlternative.clear();
+        this.errorsAlternative.appendChild(error_alert);
+        this.alternatives.showAlternative(this.errorsAlternative);
+    };
+
+    auto_select_initial_market = function auto_select_initial_market() {
+        var market_names = Object.keys(this.viewsByName);
+        if (market_names.length > 0) {
+            this.alternatives.showAlternative(this.viewsByName[market_names[0]]);
+        } else {
+            var msg = gettext("<p>WireCloud is not connected with any marketplace.</p>" +
+                "<p>Suggestions:</p>" +
+                "<ul>" +
+                "<li>Connect WireCloud with a new marketplace.</li>" +
+                "<li>Go to the my resources view instead</li>" +
+                "</ul>");
+            notifyError.call(this, msg);
+        }
+    };
 
     onGetMarketsSuccess = function onGetMarketsSuccess(options, view_info) {
         var info, old_views, view_element, view_constructor, first_element = null;
 
         this.loading = false;
-        this.error = false;
 
         old_views = this.viewsByName;
         this.viewsByName = {};
@@ -60,8 +91,8 @@
         }
 
         if (this.isVisible()) {
-            if (this.alternatives.getCurrentAlternative() === this.emptyAlternative) {
-                this.alternatives.showAlternative(this.viewsByName.local);
+            if (this.temporalAlternatives.indexOf(this.alternatives.getCurrentAlternative()) !== -1) {
+                auto_select_initial_market.call(this);
             } else {
                 // Refresh wirecloud header as current marketplace may have been changed
                 LayoutManagerFactory.getInstance().header.refresh();
@@ -75,9 +106,11 @@
 
     onGetMarketsFailure = function onGetMarketsFailure(options, msg) {
         this.loading = false;
-        this.error = true;
 
-        LayoutManagerFactory.getInstance().header.refresh();
+        this.errorsAlternative.clear();
+        var msg = gettext('<p>There were an error retreiving the marketplace list.</p>');
+        notifyError.call(this, msg);
+
         if (typeof options.onFailure === 'function') {
             options.onFailure();
         }
@@ -105,11 +138,13 @@
         this.viewsByName = {};
         this.alternatives = new StyledElements.StyledAlternatives();
         this.emptyAlternative = this.alternatives.createAlternative();
-        this.errorsAlternative = this.alternatives.createAlternative();
+        this.errorsAlternative = this.alternatives.createAlternative({containerOptions: {'class': 'marketplace-error-view'}});
+        this.temporalAlternatives = [this.emptyAlternative, this.errorsAlternative];
+
         this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative, in_alternative) {
             var new_status = this.buildStateData();
 
-            if (out_alternative === this.emptyAlternative) {
+            if (this.temporalAlternatives.indexOf(out_alternative) !== -1) {
                 Wirecloud.HistoryManager.replaceState(new_status);
             } else {
                 Wirecloud.HistoryManager.pushState(new_status);
@@ -130,19 +165,28 @@
 
             if (view.loading === false && !view.error) {
                 if (view.alternatives.getCurrentAlternative() === view.emptyAlternative) {
-                    view.alternatives.showAlternative(view.viewsByName.local);
+                    auto_select_initial_market.call(view);
                 } else {
                     view.alternatives.getCurrentAlternative().refresh_if_needed();
                 }
             }
         });
 
+        Object.defineProperty(this, 'error', {
+            get: function () {
+                return this.alternatives.getCurrentAlternative() === this.errorsAlternative;
+            }
+        });
+
+        this.myresourcesButton = new StyledElements.StyledButton({'iconClass': 'icon-archive'});
+        this.myresourcesButton.addEventListener('click', function () {
+            LayoutManagerFactory.getInstance().changeCurrentView('myresources');
+        });
+
         this.number_of_alternatives = 0;
         this.loading = null;
-        this.error = false;
         this.callbacks = [];
     };
-
     MarketplaceView.prototype = new StyledElements.Alternative();
 
     MarketplaceView.prototype.view_name = 'marketplace';
@@ -179,28 +223,34 @@
     };
 
     MarketplaceView.prototype.goUp = function goUp() {
-        var change = this.alternatives.getCurrentAlternative().goUp();
+        var current_alternative, change = false;
+
+        current_alternative = this.alternatives.getCurrentAlternative();
+        if (this.temporalAlternatives.indexOf(current_alternative) === -1) {
+            change = this.alternatives.getCurrentAlternative().goUp();
+        }
+
         if (!change) {
             LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         }
     };
 
     MarketplaceView.prototype.getBreadcrum = function getBreadcrum() {
-        var label, breadcrum, user;
+        var label, breadcrum, user, current_alternative;
 
         user = null;
-        if (this.loading !== false || (!this.error && this.alternatives.getCurrentAlternative() === this.emptyAlternative)) {
-            label = gettext('loading...');
-        } else if (this.error) {
-            label = gettext('list not available');
-        } else if (this.number_of_alternatives > 0) {
-            label = this.alternatives.getCurrentAlternative().getLabel();
-            user = this.alternatives.getCurrentAlternative().desc.user;
+        breadcrum = [];
+        current_alternative = this.alternatives.getCurrentAlternative();
+        if (current_alternative === this.emptyAlternative) {
+            label = gettext('loading marketplace view...');
+        } else if (current_alternative === this.errorsAlternative) {
+            label = gettext('marketplace list not available');
         } else {
-            label = gettext('no registered marketplace');
+            breadcrum = [{'label': 'marketplace'}];
+            label = current_alternative.getLabel();
+            user = current_alternative.desc.user;
         }
 
-        breadcrum = [{'label': 'marketplace'}];
         if (user != null) {
             breadcrum.push({'label': user});
         }
@@ -214,6 +264,10 @@
 
     MarketplaceView.prototype.getToolbarMenu = function getToolbarMenu() {
         return this.marketMenu;
+    };
+
+    MarketplaceView.prototype.getToolbarButtons = function getToolbarButtons() {
+        return [this.myresourcesButton];
     };
 
     MarketplaceView.prototype.waitMarketListReady = function waitMarketListReady(callback) {

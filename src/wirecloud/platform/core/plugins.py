@@ -347,6 +347,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/WorkspaceView.js',
                 'js/opManager/TabMenuItems.js',
                 'js/opManager/Tab.js',
+                'js/wirecloud/ui/MyResourcesView.js',
                 'js/wirecloud/ui/MarketplaceView.js',
                 'js/catalogue/CatalogueSearchView.js',
                 'js/catalogue/CatalogueView.js',

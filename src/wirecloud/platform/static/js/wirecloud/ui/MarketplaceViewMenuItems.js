@@ -146,7 +146,7 @@
                     }.bind(this));
                 dialog.show();
             }.bind(this));
-            item.setDisabled(current_catalogue == null || !current_catalogue.catalogue.isAllow('delete'));
+            item.setDisabled(current_catalogue == null || !current_catalogue.catalogue || !current_catalogue.catalogue.isAllow('delete'));
             items.push(item);
         }
 

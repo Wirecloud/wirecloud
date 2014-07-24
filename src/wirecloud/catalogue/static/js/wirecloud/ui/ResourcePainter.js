@@ -228,7 +228,7 @@
         }
 
         if (Wirecloud.LocalCatalogue.resourceExists(resource) && resource.isAllow('uninstall')) {
-            var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+            var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
             button = new StyledElements.StyledButton({
                 'class': 'btn-danger',
                 'text': gettext('Uninstall')

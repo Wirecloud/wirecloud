@@ -353,8 +353,8 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.upload_resource('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
 
         with self.wiring_view as wiring:
 
@@ -385,8 +385,8 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.delete_resource('TestOperator')
+        with self.myresources_view as myresources:
+            myresources.delete_resource('TestOperator')
 
         with self.wiring_view as wiring:
 

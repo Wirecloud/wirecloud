@@ -41,6 +41,11 @@
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: function onSuccess(transport) {
                 var raw_data = JSON.parse(transport.responseText);
+                for (var key in raw_data) {
+                    if (raw_data[key].url == null) {
+                        delete raw_data[key];
+                    }
+                }
                 callback(raw_data);
             },
             onFailure: function onFailure(transport) {

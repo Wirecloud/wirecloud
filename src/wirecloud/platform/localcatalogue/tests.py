@@ -459,30 +459,30 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='normuser')
 
-        with self.marketplace_view as marketplace:
-            marketplace.search('Test')
-            widget = marketplace.search_in_results('Test')
+        with self.myresources_view as myresources:
+            myresources.search('Test')
+            widget = myresources.search_in_results('Test')
             self.assertIsNotNone(widget)
 
             test_widget.public = False
             test_widget.users.clear()
             test_widget.save()
 
-            marketplace.search('Test')
-            widget = marketplace.search_in_results('Test')
+            myresources.search('Test')
+            widget = myresources.search_in_results('Test')
             self.assertIsNone(widget)
 
             test_widget.users.add(norm_user)
 
-            marketplace.search('Test')
-            widget = marketplace.search_in_results('Test')
+            myresources.search('Test')
+            widget = myresources.search_in_results('Test')
             self.assertIsNotNone(widget)
 
             test_widget.users.remove(norm_user)
             test_widget.groups.add(normusers_group)
 
-            marketplace.search('Test')
-            widget = marketplace.search_in_results('Test')
+            myresources.search('Test')
+            widget = myresources.search_in_results('Test')
             self.assertIsNotNone(widget)
 
     def test_resource_deletion(self):
@@ -490,23 +490,23 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         self.add_widget_to_mashup('Test')
-        with self.marketplace_view as marketplace:
-            marketplace.delete_resource('Test')
+        with self.myresources_view as myresources:
+            myresources.delete_resource('Test')
 
         self.assertEqual(self.count_iwidgets(), 0)
 
         self.login(username='normuser')
-        with self.marketplace_view as marketplace:
-            marketplace.search('Test')
-            widget = marketplace.search_in_results('Test')
+        with self.myresources_view as myresources:
+            myresources.search('Test')
+            widget = myresources.search_in_results('Test')
             self.assertIsNone(widget)
 
     def test_public_resources_are_uninstallable(self):
 
         self.login(username='normuser')
 
-        with self.marketplace_view as marketplace:
-            marketplace.uninstall_resource('Test', expect_error=True)
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource('Test', expect_error=True)
 
     def test_resource_uninstall(self):
 
@@ -517,8 +517,8 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='normuser')
 
         self.add_widget_to_mashup('Test')
-        with self.marketplace_view as marketplace:
-            marketplace.uninstall_resource('Test')
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource('Test')
 
         self.assertEqual(self.count_iwidgets(), 0)
 
@@ -530,7 +530,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.delete_resource('Test')
-            marketplace.delete_resource('TestOperator')
-            marketplace.delete_resource('Test Mashup')
+        with self.myresources_view as myresources:
+            myresources.delete_resource('Test')
+            myresources.delete_resource('TestOperator')
+            myresources.delete_resource('Test Mashup')

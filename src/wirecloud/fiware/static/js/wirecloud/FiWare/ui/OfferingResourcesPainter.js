@@ -33,7 +33,7 @@
 
         button.disable();
 
-        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
         layoutManager.logSubTask(gettext('Uploading resource'));
@@ -66,7 +66,7 @@
 
         button.disable();
 
-        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Uninstalling resource from local repository"), 3);
         layoutManager.logSubTask(gettext('Uninstalling resource'));

@@ -40,7 +40,7 @@
         offering.install({
             monitor: monitor,
             onComplete: function () {
-                var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+                var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
                 local_catalogue_view.viewsByName.search.mark_outdated();
                 catalogue_view.refresh_search_results();
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
@@ -52,7 +52,7 @@
         var layoutManager, local_catalogue_view, monitor, i, count, callbacks;
 
         layoutManager = LayoutManagerFactory.getInstance();
-        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
         monitor = layoutManager._startComplexTask(gettext("Uninstalling offering resources"), 1);
 
         count = offering.resources.length;
@@ -188,7 +188,7 @@
             'mainbutton': function () {
                 var button, local_catalogue_view;
 
-                local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+                local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
 
                 if (!this.catalogue_view.catalogue.is_purchased(this.offering) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
                     if (offering.pricing.length === 0 || !('priceComponents' in offering.pricing[0])) {

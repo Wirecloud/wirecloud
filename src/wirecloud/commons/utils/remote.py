@@ -25,7 +25,7 @@ import time
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from django.utils.importlib import import_module
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -35,12 +35,12 @@ import six
 
 def marketplace_loaded(driver):
     try:
-        if driver.find_element_by_css_selector('#wirecloud_breadcrum .first_level').text == 'marketplace':
-            return driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text != 'loading'
+        return driver.find_element_by_css_selector('#wirecloud_breadcrum').text != 'loading marketplace view...'
     except:
         pass
 
     return False
+
 
 class PopupMenuTester(object):
 
@@ -406,12 +406,12 @@ class MACFieldTester(WalletTester):
         try:
             # Calling any method forces a staleness check
             self.element.is_enabled()
-        except StaleElementReferenceException as expected:
+        except StaleElementReferenceException:
             self.element = None
 
         if self.element is not None:
             self.element.find_element_by_css_selector('.window_bottom .styled_button > div').click()
-            WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(dialog))
+            WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
             self.element = None
 
     def search_in_results(self, widget_name):
@@ -596,6 +596,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         self.widget_wallet = WidgetWalletTester(self)
         self.mashup_wallet = MashupWalletTester(self)
         self.marketplace_view = MarketplaceViewTester(self)
+        self.myresources_view = MyResourcesViewTester(self)
         self.wiring_view = WiringViewTester(self)
 
     def tearDown(self):
@@ -828,33 +829,39 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         element = self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
         return WorkspaceTabTester(self, element)
 
-    def get_current_catalogue_base_element(self):
-
-        catalogues = self.driver.find_elements_by_css_selector('#marketplace > .alternatives > .wrapper > .catalogue')
-        for catalogue_element in catalogues:
-            if 'hidden' not in catalogue_element.get_attribute('class'):
-                return catalogue_element
-
-        return None
-
 
 class MarketplaceViewTester(object):
 
     def __init__(self, testcase):
 
         self.testcase = testcase
+        self.myresources = MyResourcesViewTester(testcase, self)
 
     def __enter__(self):
         self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-shopping-cart").click()
+        WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
         WebDriverWait(self.testcase.driver, 10).until(marketplace_loaded)
         return self
 
     def __exit__(self, type, value, traceback):
-        self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+        button = self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left")
+        button_tester = button.find_element_by_xpath('../..');
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: 'disabled' not in button_tester.get_attribute('class'))
+        button.click()
+        WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
+
+    def get_current_catalogue_base_element(self):
+
+        catalogues = self.testcase.driver.find_elements_by_css_selector('#marketplace > .alternatives > .wrapper > .catalogue')
+        for catalogue_element in catalogues:
+            if 'hidden' not in catalogue_element.get_attribute('class'):
+                return catalogue_element
+
+        return None
 
     def wait_catalogue_ready(self, timeout=20):
         time.sleep(0.1)
-        catalogue_element = self.testcase.get_current_catalogue_base_element()
+        catalogue_element = self.get_current_catalogue_base_element()
         search_view = catalogue_element.find_element_by_class_name('search_interface')
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in search_view.get_attribute('class'))
 
@@ -868,10 +875,11 @@ class MarketplaceViewTester(object):
         return PopupMenuTester(self.testcase, popup_menu_element, button)
 
     def get_current_marketplace_name(self):
-        try:
-            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level').text
-        except:
-            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+        breadcrum = self.testcase.driver.find_element_by_id('wirecloud_breadcrum').text
+        if breadcrum.startswith('marketplace/'):
+            return breadcrum.split('/')[-1]
+        else:
+            return None
 
     def switch_to(self, market, timeout=10):
 
@@ -964,6 +972,35 @@ class MarketplaceViewTester(object):
 
         return None
 
+
+class MyResourcesViewTester(MarketplaceViewTester):
+
+    def __init__(self, testcase, marketplace_view=None):
+
+        self.testcase = testcase
+        self.marketplace_view = marketplace_view
+
+    def __enter__(self):
+        self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-archive").click()
+        WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'myresources')
+        return self
+
+    def __exit__(self, type, value, traceback):
+        if self.marketplace_view is None:
+            button = self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left")
+            button_tester = button.find_element_by_xpath('../..');
+            WebDriverWait(self.testcase.driver, 5).until(lambda driver: 'disabled' not in button_tester.get_attribute('class'))
+            button.click()
+
+            WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
+        else:
+            self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-shopping-cart").click()
+
+            WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
+
+    def get_current_catalogue_base_element(self):
+        return self.testcase.driver.find_element_by_css_selector('.catalogue.myresources')
+
     def upload_resource(self, wgt_file, resource_name, shared=False, expect_error=False):
 
         if shared:
@@ -974,7 +1011,7 @@ class MarketplaceViewTester(object):
 
         catalogue_base_element = self.wait_catalogue_ready()
 
-        self.open_menu().click_entry('Upload')
+        self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-cloud-upload").click()
 
         self.testcase.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element).send_keys(wgt_path)
         catalogue_base_element.find_element_by_css_selector('.upload_wgt_button div').click()
@@ -989,6 +1026,8 @@ class MarketplaceViewTester(object):
             self.testcase.driver.find_element_by_xpath(xpath)
             self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
+            self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+
             return None
         else:
             if window_menus != 1:
@@ -1000,7 +1039,7 @@ class MarketplaceViewTester(object):
             return resource
 
     def delete_resource(self, resource_name, timeout=30):
-        catalogue_base_element = self.testcase.get_current_catalogue_base_element()
+        catalogue_base_element = self.get_current_catalogue_base_element()
 
         self.search(resource_name)
         resource = self.search_in_results(resource_name)
@@ -1043,6 +1082,7 @@ class MarketplaceViewTester(object):
 
         if expect_error:
             self.testcase.assertIsNone(uninstall_button)
+            self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
         else:
             self.testcase.assertIsNotNone(uninstall_button)
             uninstall_button.click()

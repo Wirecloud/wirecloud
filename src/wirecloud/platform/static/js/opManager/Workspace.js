@@ -196,15 +196,14 @@ function Workspace(workspaceState, resources) {
     };
 
     var publishSuccess = function publishSuccess(options, transport) {
-        var layoutManager, marketplaceView;
+        var layoutManager;
 
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logSubTask(gettext('Workspace published successfully'));
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
 
-        marketplaceView = layoutManager.viewsByName.marketplace;
-        marketplaceView.viewsByName.local.viewsByName.search.mark_outdated();
+        layoutManager.viewsByName.myresources.viewsByName.search.mark_outdated();
 
         if (typeof options.onSuccess === 'function') {
             try {

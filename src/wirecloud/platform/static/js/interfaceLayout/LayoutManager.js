@@ -49,16 +49,21 @@ var LayoutManagerFactory = function () {
 
         /* TODO| FIXME */
         this.header = new Wirecloud.ui.WirecloudHeader(this);
+        this.alternatives.addEventListener('preTransition', function (alternatives, old_alternative, new_alternative) {
+            this.header._notifyViewChange();
+        }.bind(this));
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
             Wirecloud.HistoryManager.pushState(new_alternative.buildStateData());
             this.header._notifyViewChange(new_alternative);
         }.bind(this));
+
         this.viewsByName = {
             'initial': this.alternatives.createAlternative(),
             'workspace': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WorkspaceView}),
             'wiring': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WiringEditor}),
             'marketplace': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.MarketplaceView})
         };
+
         var plain_content = document.querySelector('.plain_content');
         if (plain_content != null) {
             this.viewsByName.initial.appendChild(plain_content);
@@ -114,6 +119,9 @@ var LayoutManagerFactory = function () {
             document.getElementById("loading-subtask-title").textContent = msg;
         };
 
+        LayoutManager.prototype._init = function _init() {
+            this.viewsByName.myresources = this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.MyResourcesView});
+        };
 
         LayoutManager.prototype._startComplexTask = function(task, subtasks) {
             var monitor = new Wirecloud.TaskMonitorModel(task, subtasks);

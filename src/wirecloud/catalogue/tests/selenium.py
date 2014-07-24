@@ -30,23 +30,23 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
 
     def test_upload_packaged_mashup(self):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.upload_resource('Wirecloud_PackagedTestMashup_1.0.zip', 'PackagedTestMashup', shared=True)
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_PackagedTestMashup_1.0.zip', 'PackagedTestMashup', shared=True)
 
     def test_reinstall_packaged_widget(self):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.delete_resource('Test')
-            marketplace.upload_resource('Wirecloud_Test_1.0.wgt', 'Test', shared=True)
+        with self.myresources_view as myresources:
+            myresources.delete_resource('Test')
+            myresources.upload_resource('Wirecloud_Test_1.0.wgt', 'Test', shared=True)
 
         self.add_widget_to_mashup('Test')
 
@@ -54,15 +54,15 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.upload_resource('Wirecloud_Test_1.0.wgt', 'Test', shared=True, expect_error='Resource already exists.')
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_Test_1.0.wgt', 'Test', shared=True, expect_error='Resource already exists.')
 
     def test_upload_and_instantiate_widget(self):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
 
         self.add_widget_to_mashup('Test_Selenium')
 
@@ -70,17 +70,17 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
-            marketplace.delete_resource('Test_Selenium')
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
+            myresources.delete_resource('Test_Selenium')
 
     def test_search_empty_results(self):
 
         self.login()
 
-        with self.marketplace_view as marketplace:
-            marketplace.search('nousedkeyword')
-            catalogue_base_element = marketplace.wait_catalogue_ready()
+        with self.myresources_view as myresources:
+            myresources.search('nousedkeyword')
+            catalogue_base_element = myresources.wait_catalogue_ready()
 
             resources = catalogue_base_element.find_elements_by_css_selector('.resource_list .resource')
             self.assertEqual(len(resources), 0)

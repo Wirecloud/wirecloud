@@ -19,6 +19,9 @@
 
 import os
 
+from selenium.webdriver.support.ui import WebDriverWait
+
+from wirecloud.platform.models import Market
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudSeleniumTestCase
 
 
@@ -40,6 +43,22 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertIsNotNone(resource)
             button = resource.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, button_text)
+
+    def test_no_marketplaces(self):
+
+        Market.objects.all().delete()
+
+        self.login('normuser')
+        with self.marketplace_view as marketplace:
+            alert = self.wait_element_visible_by_css_selector('.marketplace-error-view .alert')
+            self.assertIsNotNone(alert)
+            self.assertTrue(alert.is_displayed())
+
+    def test_default_marketplace(self):
+
+        self.login('normuser')
+        with self.marketplace_view as marketplace:
+            self.assertEqual(marketplace.get_current_marketplace_name(), 'origin')
 
     def test_add_marketplace(self):
 
@@ -95,3 +114,30 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.marketplace_view as marketplace:
             marketplace.switch_to('origin')
             marketplace.delete()
+
+    def test_publish_option_not_available_if_not_targets(self):
+
+        Market.objects.all().delete()
+        self.login(username='normuser')
+
+        with self.myresources_view as myresources:
+            catalogue_base_element = myresources.wait_catalogue_ready()
+
+            resource = myresources.search_in_results('Test')
+            self.scroll_and_click(resource)
+
+            WebDriverWait(self.driver, 5).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
+
+            found = False
+            for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
+                if operation.text == 'Publish':
+                    found = True
+                    operation.find_element_by_css_selector('div').click()
+                    break
+            self.assertTrue(found)
+
+            window_menu = self.wait_element_visible_by_css_selector('.window_menu.message')
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+            # Close resource details
+            self.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()

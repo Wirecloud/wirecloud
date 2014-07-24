@@ -55,6 +55,11 @@
             LayoutManagerFactory.getInstance().changeCurrentView('wiring');
         });
 
+        this.myresourcesButton = new StyledElements.StyledButton({'iconClass': 'icon-archive'});
+        this.myresourcesButton.addEventListener('click', function () {
+            LayoutManagerFactory.getInstance().changeCurrentView('myresources');
+        });
+
         this.marketButton = new StyledElements.StyledButton({'iconClass': 'icon-shopping-cart'});
         this.marketButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
@@ -131,7 +136,7 @@
     };
 
     WorkspaceView.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.walletButton, this.mergeButton, this.wiringButton, this.marketButton];
+        return [this.walletButton, this.mergeButton, this.wiringButton, this.myresourcesButton, this.marketButton];
     };
 
     WorkspaceView.prototype.destroy = function destroy() {

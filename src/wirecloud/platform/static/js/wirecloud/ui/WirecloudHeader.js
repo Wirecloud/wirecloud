@@ -174,9 +174,14 @@
     };
 
     WirecloudHeader.prototype._notifyViewChange = function _notifyViewChange(newView) {
-        this.currentView = newView;
+        if (newView == null) {
+            this.backButton.disable();
+            this.menuButton.disable();
+        } else {
+            this.currentView = newView;
 
-        this.refresh();
+            this.refresh();
+        }
     };
 
     WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {

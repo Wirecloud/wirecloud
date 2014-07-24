@@ -32,7 +32,7 @@
      * Specific class representing alert dialogs.
      */
     var MessageWindowMenu = function MessageWindowMenu(message, type) {
-        Wirecloud.ui.WindowMenu.call(this, '');
+        Wirecloud.ui.WindowMenu.call(this, '', 'message');
 
         // Warning icon
         this.iconElement = document.createElement('div');
