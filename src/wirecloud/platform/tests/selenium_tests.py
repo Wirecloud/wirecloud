@@ -566,9 +566,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             'version': '1.0',
             'email': 'a@b.com',
         })
-        with self.marketplace_view as marketplace:
-            marketplace.search('Published Workspace')
-            mashup = marketplace.search_in_results('Published Workspace')
+        with self.myresources_view as myresources:
+            myresources.search('Published Workspace')
+            mashup = myresources.search_in_results('Published Workspace')
             self.assertIsNotNone(mashup, 'The published workspace is not available on the local catalogue')
 
     def test_workspace_publish_readonly_widgets_and_connections(self):
