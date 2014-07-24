@@ -37,39 +37,33 @@
         } else {
             this.market_id = this.desc.name;
         }
-        if (this.desc.name === 'local') {
-            this.catalogue = Wirecloud.LocalCatalogue;
-        } else {
-            this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);
-        }
+        this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);
         this.alternatives = new StyledElements.StyledAlternatives();
         this.appendChild(this.alternatives);
 
-        if (this.catalogue !== Wirecloud.LocalCatalogue) {
-            resource_extra_context = {
-                'mainbutton': function (options, context, resource) {
-                    var button, local_catalogue_view;
+        resource_extra_context = {
+            'mainbutton': function (options, context, resource) {
+                var button, local_catalogue_view;
 
-                    local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-                    if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
-                        button = new StyledElements.StyledButton({
-                            'class': 'btn-danger',
-                            'text': gettext('Uninstall')
-                        });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue));
-                    } else {
-                        button = new StyledElements.StyledButton({
-                            'class': 'btn-success',
-                            'text': gettext('Install')
-                        });
+                local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+                if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
+                    button = new StyledElements.StyledButton({
+                        'class': 'btn-danger',
+                        'text': gettext('Uninstall')
+                    });
+                    button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue));
+                } else {
+                    button = new StyledElements.StyledButton({
+                        'class': 'btn-success',
+                        'text': gettext('Install')
+                    });
 
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', resource, this.catalogue));
-                    }
-                    button.addClassName('mainbutton');
-                    return button;
-                }.bind(this)
-            };
-        }
+                    button.addEventListener('click', local_catalogue_view.createUserCommand('install', resource, this.catalogue));
+                }
+                button.addClassName('mainbutton');
+                return button;
+            }.bind(this)
+        };
 
         this.viewsByName = {
             'initial': this.alternatives.createAlternative(),
