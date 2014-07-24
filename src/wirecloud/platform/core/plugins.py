@@ -82,6 +82,7 @@ TUTORIAL_FILES = (
 STYLED_ELEMENTS_FILES = (
     'js/StyledElements/ObjectWithEvents.js',
     'js/StyledElements/StyledElements.js',
+    'js/StyledElements/Container.js',
     'js/StyledElements/Addon.js',
     'js/StyledElements/Accordion.js',
     'js/StyledElements/Expander.js',
