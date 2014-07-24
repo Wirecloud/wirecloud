@@ -110,6 +110,15 @@
         return true;
     };
 
+    CatalogueView.prototype.wait_ready = function wait_ready(onComplete) {
+        if (typeof onComplete !== 'function') {
+            throw new TypeError('missing onComplete callback');
+        }
+        try {
+            onComplete();
+        } catch (e) {}
+    };
+
     CatalogueView.prototype.search = function search(onSuccess, onError, options) {
         return this.catalogue.search(onSuccess, onError, options);
     };

@@ -87,8 +87,9 @@
         } else {
             this.marketplace = this.desc.name;
         }
-        this.loading = false;
+        this.loading = null;
         this.error = false;
+        this.callbacks = [];
         this.store_info = [];
 
         this.storeSelect = new StyledElements.StyledSelect({
@@ -130,7 +131,6 @@
             this.refresh_if_needed();
         }.bind(this));
     };
-
     FiWareCatalogueView.prototype = new StyledElements.Alternative();
 
     FiWareCatalogueView.prototype.getLabel = function () {
@@ -200,6 +200,21 @@
         return stores;
     };
 
+    FiWareCatalogueView.prototype.wait_ready = function wait_ready(onComplete) {
+        if (typeof onComplete !== 'function') {
+            throw new TypeError('invalid onComplete parameter');
+        }
+
+        if (this.loading === false) {
+            onComplete();
+        }
+
+        this.callbacks.push(onComplete);
+        if (this.loading === null) {
+            this.refresh_store_info();
+        }
+    };
+
     FiWareCatalogueView.prototype.refresh_store_info = function refresh_store_info() {
         if (this.loading) {
             return;
@@ -211,7 +226,18 @@
         this.storeSelect.clear();
         this.storeSelect.addEntries([{label: gettext('loading...'), value: ''}]);
         this.storeSelect.disable();
-        this.catalogue.getStores(this.addStoreInfo.bind(this), this._getStoresErrorCallback.bind(this));
+        this.catalogue.getStores({
+            onSuccess: this.addStoreInfo.bind(this),
+            onFailure: this._getStoresErrorCallback.bind(this),
+            onComplete: function () {
+                for (var i = 0; i < this.callbacks.length; i+= 1) {
+                    try {
+                        this.callbacks[i]();
+                    } catch (e) {}
+                }
+                this.callbacks = [];
+            }.bind(this)
+        });
     };
 
     FiWareCatalogueView.prototype._getStoresErrorCallback = function _getStoresErrorCallback() {

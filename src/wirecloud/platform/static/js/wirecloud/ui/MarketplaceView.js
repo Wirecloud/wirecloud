@@ -270,13 +270,33 @@
         return [this.myresourcesButton];
     };
 
-    MarketplaceView.prototype.waitMarketListReady = function waitMarketListReady(callback) {
+    MarketplaceView.prototype.waitMarketListReady = function waitMarketListReady(options) {
+        if (options == null || typeof options.onComplete !== 'function') {
+            throw new TypeError('missing onComplete callback');
+        }
+
+        if (options.include_markets === true) {
+            options.onComplete = function (onComplete) {
+                var count = Object.keys(this.viewsByName).length;
+                var listener = function () {
+                    if (--count === 0) {
+                        onComplete();
+                    }
+                };
+                for (var key in this.viewsByName) {
+                    this.viewsByName[key].wait_ready(listener);
+                }
+            }.bind(this, options.onComplete);
+        }
+
         if (this.loading === false) {
-            callback();
+            try {
+                options.onComplete();
+            } catch (e) {}
             return;
         }
 
-        this.callbacks.push(callback);
+        this.callbacks.push(options.onComplete);
         if (this.loading === null) {
             Wirecloud.MarketManager.getMarkets(onGetMarketsSuccess.bind(this, {}), onGetMarketsFailure.bind(this, {}), onGetMarketsComplete.bind(this, {}));
             this.loading = true;

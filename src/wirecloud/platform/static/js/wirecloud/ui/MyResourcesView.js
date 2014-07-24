@@ -207,15 +207,18 @@
     MyResourcesView.prototype.ui_commands.publishOtherMarket = function publishOtherMarket(resource) {
         return function () {
             var marketplaceview = LayoutManagerFactory.getInstance().viewsByName.marketplace;
-            marketplaceview.waitMarketListReady(function () {
-                var dialog, msg;
-                if (marketplaceview.number_of_alternatives > 0) {
-                    dialog = new Wirecloud.ui.PublishResourceWindowMenu(resource);
-                } else {
-                    msg = gettext("You have not configured any marketplace to upload this resource. Please, configure one on the Marketplace view.");
-                    dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.WARN_MSG);
+            marketplaceview.waitMarketListReady({
+                include_markets: true,
+                onComplete: function () {
+                    var dialog, msg;
+                    if (marketplaceview.number_of_alternatives > 0) {
+                        dialog = new Wirecloud.ui.PublishResourceWindowMenu(resource);
+                    } else {
+                        msg = gettext("You have not configured any marketplace to upload this resource. Please, configure one on the Marketplace view.");
+                        dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.WARN_MSG);
+                    }
+                    dialog.show();
                 }
-                dialog.show();
             });
         }.bind(this);
     };

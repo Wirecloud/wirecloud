@@ -260,7 +260,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
                     break
             self.assertTrue(found)
 
-            window_menu = self.driver.find_element_by_css_selector('.window_menu.publish_resource')
+            window_menu = self.wait_element_visible_by_css_selector('.window_menu.publish_resource')
             window_menu.find_element_by_css_selector('input[value="user_with_markets/fiware"]').click()
             self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
             self.wait_wirecloud_ready()

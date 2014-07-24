@@ -24,15 +24,19 @@
 
     "use strict";
 
-    var Marketplace, _onSearchSuccess, _onSearchFailure;
+    var Marketplace, _onSearchSuccess, _onSearchFailure, _onGetStoresComplete;
 
-    _onSearchSuccess = function _onSearchSuccess(transport) {
-        var raw_data = JSON.parse(transport.responseText);
+    _onSearchSuccess = function _onSearchSuccess(response) {
+        var raw_data = JSON.parse(response.responseText);
         this.onSuccess(raw_data);
     };
 
-    _onSearchFailure = function _onSearchFailure(transport) {
+    _onSearchFailure = function _onSearchFailure(response) {
         this.onFailure();
+    };
+
+    _onGetStoresComplete = function _onGetStoresComplete(response) {
+        this.onComplete();
     };
 
     Marketplace = function Marketplace(options) {
@@ -133,19 +137,19 @@
         );
     };
 
-    Marketplace.prototype.getStores = function getStores(onSuccess, onError) {
-        var context, url = Wirecloud.URLs.FIWARE_STORE_COLLECTION.evaluate({market_user: this.market_user, market_name: this.market_name});
+    Marketplace.prototype.getStores = function getStores(options) {
+        var url = Wirecloud.URLs.FIWARE_STORE_COLLECTION.evaluate({market_user: this.market_user, market_name: this.market_name});
 
-        context = {
-            onSuccess: onSuccess,
-            onFailure: onError
-        };
+        if (options == null) {
+            options = {};
+        }
 
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
-            onSuccess: _onSearchSuccess.bind(context),
-            onFailure: _onSearchFailure.bind(context)
+            onSuccess: _onSearchSuccess.bind(options),
+            onFailure: _onSearchFailure.bind(options),
+            onComplete: _onGetStoresComplete.bind(options)
         });
     };
 

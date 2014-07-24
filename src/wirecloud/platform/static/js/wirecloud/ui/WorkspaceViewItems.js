@@ -77,9 +77,11 @@
         items.push(item);
 
         item = new StyledElements.MenuItem(gettext('Upload to local catalogue'), function () {
-            LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady(function () {
-                var dialog = new Wirecloud.ui.PublishWorkspaceWindowMenu(current_workspace);
-                dialog.show();
+            LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady({
+                onComplete: function () {
+                    var dialog = new Wirecloud.ui.PublishWorkspaceWindowMenu(current_workspace);
+                    dialog.show();
+                }
             });
         }.bind(this));
         items.push(item);
