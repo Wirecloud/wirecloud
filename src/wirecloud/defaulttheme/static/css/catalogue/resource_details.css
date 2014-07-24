@@ -40,3 +40,17 @@
 .resource_details .versions {
     margin: 3px;
 }
+
+.resource_details .markdown-body {
+    margin-left: 2ex;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6
+{
+    color: rgb(85, 85, 85);
+}
