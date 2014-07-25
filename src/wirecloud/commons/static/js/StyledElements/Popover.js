@@ -28,6 +28,15 @@
     var builder = new StyledElements.GUIBuilder();
     var template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="popover fade"><div class="arrow"/><h3 class="popover-title"><t:title/></h3><div class="popover-content"><t:content/></div></div></s:styledgui>';
 
+    var disableCallback = function disableCallback(e) {
+
+        if (e.button !== 0) {
+            return;
+        }
+
+        setTimeout(this.hide.bind(this), 0);
+    };
+
     var setPosition = function setPosition(refPosition, position) {
         this.element.classList.remove('top', 'right', 'bottom', 'left');
 
@@ -117,6 +126,9 @@
             content: this.options.content
         }).elements[0];
         document.body.appendChild(this.element);
+
+        document.addEventListener("click", this._disableCallback, true);
+
         searchBestPosition.call(this, refPosition, this.options.placement);
         this.element.classList.add('in');
     };
@@ -137,6 +149,7 @@
             visible: {get: function () {
                 return this.element != null;
             }},
+            _disableCallback: {value: disableCallback.bind(this), enumerable: false},
             _show: {value: _show.bind(this), enumerable: false}
         });
     };
@@ -171,6 +184,7 @@
             return;
         }
 
+        document.removeEventListener('click', this._disableCallback, true);
         this.element.addEventListener('transitionend', function () {
             document.body.removeChild(this.element);
             this.element = null;
