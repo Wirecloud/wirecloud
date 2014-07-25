@@ -6,6 +6,7 @@
     line-height: 1.4;
     visibility: visible;
     opacity: 0;
+    pointer-events: none;
 }
 
 .tooltip-arrow {
