@@ -108,7 +108,6 @@
         this.loading = false;
 
         this.errorsAlternative.clear();
-        var msg = gettext('<p>There were an error retreiving the marketplace list.</p>');
         notifyError.call(this, msg);
 
         if (typeof options.onFailure === 'function') {
@@ -119,7 +118,7 @@
     onGetMarketsComplete = function onGetMarketsComplete(options) {
         var i;
 
-        for (i = 0; i < this.callbacks.length; i+= 1) {
+        for (i = 0; i < this.callbacks.length; i += 1) {
             try {
                 this.callbacks[i]();
             } catch (e) {}
@@ -281,6 +280,14 @@
         if (options.include_markets === true) {
             options.onComplete = function (onComplete) {
                 var count = Object.keys(this.viewsByName).length;
+
+                if (count === 0) {
+                    try {
+                        onComplete();
+                    } catch (e) {}
+                    return;
+                }
+
                 var listener = function () {
                     if (--count === 0) {
                         onComplete();
