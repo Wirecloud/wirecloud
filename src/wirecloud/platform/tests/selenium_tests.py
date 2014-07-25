@@ -30,7 +30,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.remote import PopupMenuTester
-from wirecloud.commons.utils.testcases import uses_extra_resources, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
+from wirecloud.commons.utils.testcases import element_be_still, uses_extra_resources, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
 def element_to_be_clickable(selector, base_element=None):
@@ -492,6 +492,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             ioperator = wiring.get_ioperators()[0]
             ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
             ioperator.open_menu().click_entry('Settings')
 
             prefix_pref = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')

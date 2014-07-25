@@ -36,7 +36,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import element_be_still, uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase
 from wirecloud.platform import plugins
 from wirecloud.platform.workspace.models import Workspace
 
@@ -588,6 +588,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             # Change operator settings
             ioperator = wiring.get_ioperators()[0]
             ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
             ioperator.open_menu().click_entry('Settings')
 
             prefix_input = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
@@ -664,6 +665,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             # Change operator settings
             ioperator = wiring.get_ioperators()[0]
             ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
             ioperator.open_menu().click_entry('Settings')
 
             self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').click()
@@ -693,6 +695,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
             # Change operator settings
             ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
             ioperator.open_menu().click_entry('Settings')
 
             self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').click()
