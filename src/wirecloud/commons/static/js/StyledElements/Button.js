@@ -77,10 +77,6 @@
         this._button = button;
         button.setAttribute('tabindex', '0');
 
-        if (options.title) {
-            button.setAttribute('title', options.title);
-        }
-
         if (options.icon != null) {
             this.icon = document.createElement("img");
             this.icon.className = "icon";
@@ -99,6 +95,11 @@
                 this.label.classList.add(options.iconClass);
             }
             button.appendChild(this.label);
+        }
+
+        if (options.title) {
+            this.tooltip = new StyledElements.Tooltip({content: options.title});
+            this.tooltip.bind(this);
         }
 
         /* Event handlers */

@@ -43,12 +43,18 @@
         };
         this.viewsByName.search.init();
 
-        this.uploadButton = new StyledElements.StyledButton({'iconClass': 'icon-cloud-upload'});
+        this.uploadButton = new StyledElements.StyledButton({
+            'iconClass': 'icon-cloud-upload',
+            'title': gettext('Upload')
+        });
         this.uploadButton.addEventListener('click', function () {
             this.changeCurrentView('developer');
         }.bind(this));
 
-        this.marketButton = new StyledElements.StyledButton({'iconClass': 'icon-shopping-cart'});
+        this.marketButton = new StyledElements.StyledButton({
+            'iconClass': 'icon-shopping-cart',
+            'title': gettext('Marketplace')
+        });
         this.marketButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
         });

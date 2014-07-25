@@ -37,7 +37,10 @@
         this.wsMenu.append(new Wirecloud.ui.WorkspaceViewItems(this));
 
         this.widgetWallet = new Wirecloud.ui.MACWallet('widget');
-        this.walletButton = new StyledElements.StyledButton({'iconClass': 'icon-plus'});
+        this.walletButton = new StyledElements.StyledButton({
+            'iconClass': 'icon-plus',
+            'title': gettext('Add widget')
+        });
         this.walletButton.addEventListener('click', function () {
             this.mashupWallet.hide();
             this.widgetWallet.show();
@@ -50,17 +53,26 @@
             this.mashupWallet.show();
         }.bind(this));
 
-        this.wiringButton = new StyledElements.StyledButton({'iconClass': 'icon-puzzle-piece'});
+        this.wiringButton = new StyledElements.StyledButton({
+            'iconClass': 'icon-puzzle-piece',
+            'title': gettext('Wiring')
+        });
         this.wiringButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('wiring');
         });
 
-        this.myresourcesButton = new StyledElements.StyledButton({'iconClass': 'icon-archive'});
+        this.myresourcesButton = new StyledElements.StyledButton({
+            'iconClass': 'icon-archive',
+            'title': gettext('My Resources')
+        });
         this.myresourcesButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('myresources');
         });
 
-        this.marketButton = new StyledElements.StyledButton({'iconClass': 'icon-shopping-cart'});
+        this.marketButton = new StyledElements.StyledButton({
+            'iconClass': 'icon-shopping-cart',
+            'title': gettext('Marketplace')
+        });
         this.marketButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
         });

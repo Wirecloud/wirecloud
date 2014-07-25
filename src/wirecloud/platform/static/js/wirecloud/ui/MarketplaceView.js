@@ -178,7 +178,10 @@
             }
         });
 
-        this.myresourcesButton = new StyledElements.StyledButton({'iconClass': 'icon-archive'});
+        this.myresourcesButton = new StyledElements.StyledButton({
+            'iconClass': 'icon-archive',
+            'title': gettext('My Resources')
+        });
         this.myresourcesButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('myresources');
         });
