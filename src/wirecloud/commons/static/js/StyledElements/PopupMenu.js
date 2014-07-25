@@ -4,24 +4,26 @@
 
     "use strict";
 
+    var disableCallback = function disableCallback(e) {
+
+        if (e.button !== 0) {
+            return;
+        }
+
+        var boundingBox = this.wrapperElement.getBoundingClientRect();
+
+        if (e.clientX < boundingBox.left || e.clientX > boundingBox.right || e.clientY < boundingBox.top || e.clientY > boundingBox.bottom) {
+            setTimeout(this.hide.bind(this), 0);
+        }
+    };
+
     /**
      *
      */
     var PopupMenu = function PopupMenu(options) {
         StyledElements.PopupMenuBase.call(this, options);
 
-        this._disableCallback = function (e) {
-
-            if (e.button !== 0) {
-                return;
-            }
-
-            var boundingBox = this.wrapperElement.getBoundingClientRect();
-
-            if (e.clientX < boundingBox.left || e.clientX > boundingBox.right || e.clientY < boundingBox.top || e.clientY > boundingBox.bottom) {
-                setTimeout(this.hide.bind(this), 0);
-            }
-        }.bind(this);
+        this._disableCallback = disableCallback.bind(this);
     };
     PopupMenu.prototype = new StyledElements.PopupMenuBase({extending: true});
 
