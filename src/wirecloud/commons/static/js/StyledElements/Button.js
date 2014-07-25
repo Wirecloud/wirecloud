@@ -18,6 +18,14 @@
         }
     };
 
+    var onmouseenter = function onmouseenter() {
+        this.events.mouseenter.dispatch(this);
+    };
+
+    var onmouseleave = function onmouseleave() {
+        this.events.mouseleave.dispatch(this);
+    };
+
     var onfocus = function onfocus() {
         this.events.focus.dispatch(this);
     };
@@ -50,7 +58,7 @@
             return;
         }
 
-        StyledElements.StyledElement.call(this, ['click', 'focus', 'blur']);
+        StyledElements.StyledElement.call(this, ['click', 'focus', 'blur', 'mouseenter', 'mouseleave']);
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_button");
@@ -102,6 +110,8 @@
         button.addEventListener('keydown', this._keydownCallback, true);
         button.addEventListener('focus', onfocus.bind(this), true);
         button.addEventListener('blur', onblur.bind(this), true);
+        button.addEventListener('mouseenter', onmouseenter.bind(this), false);
+        button.addEventListener('mouseleave', onmouseleave.bind(this), false);
 
         this.buttonElement = button;
     };
