@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var ResourceDetails = function ResourceDetails(data) {
+    var ResourceDetails = function ResourceDetails(data, catalogue) {
 
         ///////////////////////
         // PRIVATE VARIABLES
@@ -57,6 +57,7 @@
         };
 
         Object.defineProperties(this, {
+            'catalogue': {value: catalogue},
             'vendor': {value: data.vendor},
             'name': {value: data.name},
             'version': {

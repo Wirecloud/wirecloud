@@ -26,7 +26,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import Http404, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
@@ -224,4 +224,27 @@ class ResourceChangelogEntry(Resource):
             doc_code = download_local_file(doc_path)
 
         doc = markdown.markdown(doc_code.decode('utf8'), output_format='xhtml5')
+        return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
+
+
+class ResourceDocumentationEntry(Resource):
+
+    def read(self, request, vendor, name, version):
+
+        resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
+        resource_info = json.loads(resource.json_description)
+        if resource_info['doc'] == '':
+            raise Http404
+
+        doc_path = os.path.join(catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version), url2pathname(resource_info['doc']))
+
+        (doc_filename_root, doc_filename_ext) = os.path.splitext(doc_path)
+        localized_doc_path = doc_filename_root + '.' + get_language() + doc_filename_ext
+
+        try:
+            doc_code = download_local_file(localized_doc_path)
+        except:
+            doc_code = download_local_file(doc_path)
+
+        doc = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')

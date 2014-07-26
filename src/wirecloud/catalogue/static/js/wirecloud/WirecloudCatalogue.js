@@ -71,6 +71,7 @@
 
         Object.defineProperties(this, {
             'RESOURCE_CHANGELOG_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/changelog')},
+            'RESOURCE_USERGUIDE_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/userguide')},
             'RESOURCE_COLLECTION': {value: options.url + 'catalogue/resources'},
             'RESOURCE_DETAILS_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s')},
             'RESOURCE_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s')},
@@ -139,11 +140,11 @@
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
             onSuccess: function (response) {
-                var resource_details = new Wirecloud.WirecloudCatalogue.ResourceDetails(JSON.parse(response.responseText));
+                var resource_details = new Wirecloud.WirecloudCatalogue.ResourceDetails(JSON.parse(response.responseText), this);
                 try {
                     options.onSuccess(resource_details);
                 } catch (e) {}
-            }
+            }.bind(this)
         });
     };
 

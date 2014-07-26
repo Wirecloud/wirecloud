@@ -21,7 +21,7 @@ from django.conf.urls import patterns, url
 
 from wirecloud.catalogue.views import ResourceCollection, ResourceVersionCollection
 from wirecloud.catalogue.views import ResourceEntry, ResourceChangelogEntry
-from wirecloud.catalogue.views import ResourceSuggestion
+from wirecloud.catalogue.views import ResourceSuggestion, ResourceDocumentationEntry
 
 urlpatterns = patterns('wirecloud.catalogue.views',
     # Resources
@@ -34,6 +34,9 @@ urlpatterns = patterns('wirecloud.catalogue.views',
     url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/changelog$',
         ResourceChangelogEntry(permitted_methods=('GET',)),
         name='wirecloud_catalogue.resource_changelog_entry'),
+    url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/userguide$',
+        ResourceDocumentationEntry(permitted_methods=('GET',)),
+        name='wirecloud_catalogue.resource_userguide_entry'),
     url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)$',
         ResourceEntry(permitted_methods=('DELETE',)),
         name='wirecloud_catalogue.resource_versions_collection'),

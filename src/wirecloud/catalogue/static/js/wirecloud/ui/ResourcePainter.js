@@ -121,8 +121,11 @@
                     'title': gettext('Documentation')
                 });
                 button.addEventListener('click', function () {
-                    window.open(resource.doc, '_blank');
+                    var doc_url = resource.catalogue.RESOURCE_USERGUIDE_ENTRY.evaluate(resource);
+                    var dialog = new Wirecloud.ui.HTMLWindowMenu(doc_url, resource.title);
+                    dialog.show();
                 });
+                button.setDisabled(resource.doc === '');
 
                 return button;
             },
