@@ -152,10 +152,10 @@
         },
         basic_selectors: {
             back_button: function back_button() {
-                return document.querySelector("#wirecloud_header .icon-caret-left").parentElement.parentElement;
+                return document.querySelector("#wirecloud_header .icon-caret-left").parentElement;
             },
             toolbar_button: function toolbar_button(button_class) {
-                return document.querySelector("#wirecloud_header .wirecloud_toolbar").getElementsByClassName(button_class)[0].parentElement.parentElement;
+                return document.querySelector("#wirecloud_header .wirecloud_toolbar").getElementsByClassName(button_class)[0].parentElement;
             },
             mac_wallet_close_button: function mac_wallet_close_button() {
                 return document.querySelector('.widget_wallet .icon-remove');

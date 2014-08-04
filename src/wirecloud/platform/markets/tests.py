@@ -132,7 +132,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
             for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
                 if operation.text == 'Publish':
                     found = True
-                    operation.find_element_by_css_selector('div').click()
+                    operation.click()
                     break
             self.assertTrue(found)
 

@@ -815,7 +815,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             # Add the youtube browser widget
             def youtube_instantiable(driver):
                 resource = wallet.search_in_results('YouTube Browser')
-                return resource is not None and element_to_be_clickable((By.CSS_SELECTOR, '.mainbutton div'), base_element=resource.element)(driver)
+                return resource is not None and element_to_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
             WebDriverWait(self.driver, 10).until(youtube_instantiable).click()
 
             next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
@@ -827,7 +827,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             def input_box_instantiable(driver):
                 resource = wallet.search_in_results('Input Box')
-                return resource is not None and element_to_be_clickable((By.CSS_SELECTOR, '.mainbutton div'), base_element=resource.element)(driver)
+                return resource is not None and element_to_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
             WebDriverWait(self.driver, 10).until(input_box_instantiable).click()
 
             WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '.widget_wallet .icon-remove')))
