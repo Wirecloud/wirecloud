@@ -55,9 +55,6 @@
 
 .iwidget > .widget_menu .styled_button {
     font-size: 75%;
-    margin: 0 3px;
-    padding: 0px;
-    border: 0px none;
     color: rgba(136, 136, 136, 0.6);
     -moz-transition-property: color;
     -moz-transition-duration: 1s;

@@ -12,48 +12,8 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
-
-.styled_button > div:focus,
-.styled_button > div:hover {
-    z-index: 2;
-}
-
-.styled_button.open {
-    z-index: 111113;
-}
-
-.styled_button.plain {
-    font-size: inherit;
-    line-height: inherit;
-    margin-bottom: 0px;
-    margin-top: 0px;
-    vertical-align: baseline;
-    display: inline-block;
-}
-
-.styled_button > div, .styled_button > button, .styled_button.plain {
     position: relative;
     cursor: pointer;
-}
-
-.styled_button.disabled > div, .styled_button.disabled > button, .styled_button.plain.disabled {
-    cursor: default;
-}
-
-.styled_button > span {
-    display: inline-block;
-}
-
-.styled_button > button {
-    border: 0px;
-    padding: 0px;
-    background: transparent;
-    font-size: inherit;
-    font-weight: inherit;
-}
-
-.styled_button > div, .styled_button > button {
     border-width: 1px;
     border-style: solid;
     border-color: rgb(197, 197, 197);
@@ -68,23 +28,51 @@
     background-repeat: repeat-x;
     border-radius: 5px;
     padding: 4px 14px;
+    box-sizing: border-box;
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.styled_button > div > span {
+.styled_button:focus, .styled_button:hover {
+    z-index: 2;
+}
+
+.styled_button.open {
+    z-index: 111113;
+}
+
+.styled_button.plain {
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    vertical-align: baseline;
+    background: transparent;
+    padding: 0;
+    border: 0 none transparent;
+    border-radius: 0px;
+    box-shadow: none;
+}
+
+.styled_button.disabled {
+    opacity: 0.65;
+    background-image: none;
+    cursor: default;
+}
+
+.styled_button > span {
     margin: 0px 3px 1px 3px;
 }
 
-.styled_button > div:active, .styled_button > button:active {
+.styled_button:not(.plain):active {
     background-color: rgb(230, 230, 230);
     -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.styled_button > div:hover, .styled_button > button:hover {
+.styled_button:hover, .styled_button.disabled {
     color: rgb(51, 51, 51);
     text-decoration: none;
     background-color: rgb(230, 230, 230);
@@ -95,21 +83,22 @@
     transition: background-position 0.1s linear;
 }
 
+.styled_button.plain:hover, .styled_button.disabled {
+    background: transparent;
+}
+
 .styled_button img.icon {
     margin: 3px;
     vertical-align: middle;
 }
 
-.styled_button > div:focus, .styled_button > button:focus, .styled_button.plain:focus {
+.styled_button:focus {
     outline: none;
     box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
 .styled_button.btn-large {
     font-size: 17.5px;
-}
-
-.styled_button.btn-large > div, .styled_button.btn-large > button {
     padding: 11px 19px;
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
@@ -118,9 +107,6 @@
 
 .styled_button.btn-small {
     font-size: 11.9px;
-}
-
-.styled_button.btn-small > div, .styled_button.btn-small > button {
     padding: 2px 10px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -129,9 +115,6 @@
 
 .styled_button.btn-mini {
     font-size: 10.5px;
-}
-
-.styled_button.btn-mini > div, .styled_button.btn-mini > button {
     padding: 0px 6px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -158,19 +141,14 @@
     margin: 0 -1px 0 0;
 }
 
-.input-prepend > .west_container > .styled_button > div,
-.input-prepend > .west_container > .styled_button > button,
-.btn-group > .styled_button > div,
-.btn-group > .styled_button > button {
+.input-prepend > .west_container > .styled_button,
+.btn-group > .styled_button {
     border-radius: 0px;
 }
 
-.input-prepend > .west_container > .styled_button:first-child > div,
-.input-prepend > .west_container > .styled_button:first-child > button,
-.btn-group > .styled_button:first-child > div,
-.btn-group > .styled_button:first-child > button,
-.pagination > .styled_button:first-child > div,
-.pagination > .styled_button:first-child > button {
+.input-prepend > .west_container > .styled_button:first-child,
+.btn-group > .styled_button:first-child,
+.pagination > .styled_button:first-child {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
@@ -179,23 +157,20 @@
     margin: 0 0 0 -1px;
 }
 
-.input-append > .east_container > .styled_button > div, .input-append > .east_container > .styled_button > button {
+.input-append > .east_container > .styled_button {
     border-radius: 0px;
 }
 
-.input-append > .east_container > .styled_button:last-child > div,
-.input-append > .east_container > .styled_button:last-child > button,
-.pagination > .styled_button:last-child > div,
-.pagination > .styled_button:last-child > button,
-.btn-group > .styled_button:last-child > div,
-.btn-group > .styled_button:last-child > button {
+.input-append > .east_container > .styled_button:last-child,
+.pagination > .styled_button:last-child,
+.btn-group > .styled_button:last-child {
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
 }
 
 /* Primary button */
 
-.styled_button.btn-primary > div, .styled_button.btn-primary > button {
+.styled_button.btn-primary {
     color: #ffffff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: #006dcc;
@@ -209,15 +184,17 @@
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
-.styled_button.btn-primary > div:hover, .styled_button.btn-primary > button:hover,
-.styled_button.btn-primary > div:active, .styled_button.btn-primary > button:active {
+.styled_button.btn-primary:hover,
+.styled_button.btn-primary:active,
+.styled_button.btn-primary.disabled
+{
     color: white;
     background-color: rgb(0, 68, 204);
 }
 
 /* Success button */
 
-.styled_button.btn-success > div, .styled_button.btn-success > button {
+.styled_button.btn-success {
     color: #ffffff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: #5bb75b;
@@ -231,15 +208,17 @@
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
-.styled_button.btn-success > div:hover, .styled_button.btn-success > button:hover,
-.styled_button.btn-success > div:active, .styled_button.btn-success > button:active {
+.styled_button.btn-success:hover,
+.styled_button.btn-success:active,
+.styled_button.btn-success.disabled
+{
     color: white;
     background-color: rgb(81, 163, 81);
 }
 
 /* Warning button */
 
-.styled_button.btn-warning > div, .styled_button.btn-warning > button {
+.styled_button.btn-warning {
     color: #ffffff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: #faa732;
@@ -253,16 +232,18 @@
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
-.styled_button.btn-warning > div:hover, .styled_button.btn-warning > button:hover,
-.styled_button.btn-warning > div:active, .styled_button.btn-warning > button:active {
+.styled_button.btn-warning:hover,
+.styled_button.btn-warning:active,
+.styled_button.btn-warning.disabled
+{
     color: white;
     background-color: rgb(248, 148, 6);
 }
 
 /* Danger button */
 
-.styled_button.btn-danger > div, .styled_button.btn-danger > button {
-    color: #ffffff;
+.styled_button.btn-danger {
+    color: white;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: #da4f49;
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ee5f5b), to(#bd362f));
@@ -275,8 +256,10 @@
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
 
-.styled_button.btn-danger > div:hover, .styled_button.btn-danger > button:hover,
-.styled_button.btn-danger > div:active, .styled_button.btn-danger > button:active {
+.styled_button.btn-danger:hover,
+.styled_button.btn-danger:active,
+.styled_button.btn-danger.disabled
+{
     color: white;
     background-color: rgb(189, 54, 47);
 }

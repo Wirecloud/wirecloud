@@ -102,11 +102,9 @@
         /* Pseudo button */
         var button = document.createElement('div');
         button.className = 'styled_button';
-        var button_wrapper = document.createElement('div');
-        button.appendChild(button_wrapper);
         var button_span = document.createElement('span');
         button_span.textContent = gettext('Select');
-        button_wrapper.appendChild(button_span);
+        button.appendChild(button_span);
         this.layout.getEastContainer().appendChild(button);
 
         /* Internal events */

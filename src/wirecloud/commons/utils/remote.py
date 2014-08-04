@@ -257,7 +257,7 @@ class WidgetWalletResourceTester(object):
         old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
 
-        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton div'))
+        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
 
         tmp = {
             'new_iwidget': None,
@@ -291,7 +291,7 @@ class MashupWalletResourceTester(object):
 
     def merge(self):
         workspace_name = self.testcase.get_current_workspace_name()
-        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton div'))
+        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
         self.testcase.wait_wirecloud_ready()
         self.testcase.assertEqual(self.testcase.get_current_workspace_name(), workspace_name)
 
@@ -303,7 +303,7 @@ class SelectableMACTester(object):
         self.element = element
 
     def select(self):
-        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton div'))
+        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
         WebDriverWait(self.testcase.driver, 10).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '.window_menu.mac_selection_dialog')))
 
 
@@ -410,7 +410,7 @@ class MACFieldTester(WalletTester):
             self.element = None
 
         if self.element is not None:
-            self.element.find_element_by_css_selector('.window_bottom .styled_button > div').click()
+            self.element.find_element_by_css_selector('.window_bottom .styled_button').click()
             WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
             self.element = None
 
@@ -845,7 +845,7 @@ class MarketplaceViewTester(object):
 
     def __exit__(self, type, value, traceback):
         button = self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left")
-        button_tester = button.find_element_by_xpath('../..');
+        button_tester = button.find_element_by_xpath('..')
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: 'disabled' not in button_tester.get_attribute('class'))
         button.click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
@@ -988,7 +988,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
     def __exit__(self, type, value, traceback):
         if self.marketplace_view is None:
             button = self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left")
-            button_tester = button.find_element_by_xpath('../..');
+            button_tester = button.find_element_by_xpath('..')
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: 'disabled' not in button_tester.get_attribute('class'))
             button.click()
 
@@ -1014,7 +1014,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-cloud-upload").click()
 
         self.testcase.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element).send_keys(wgt_path)
-        catalogue_base_element.find_element_by_css_selector('.upload_wgt_button div').click()
+        catalogue_base_element.find_element_by_css_selector('.upload_wgt_button').click()
         self.testcase.wait_wirecloud_ready()
 
         window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
@@ -1052,7 +1052,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
             if operation.text == 'Delete':
                 found = True
-                operation.find_element_by_css_selector('div').click()
+                operation.click()
                 break
         self.testcase.assertTrue(found)
 
@@ -1077,7 +1077,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         uninstall_button = None
         for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
             if operation.text == 'Uninstall':
-                uninstall_button = operation.find_element_by_css_selector('div')
+                uninstall_button = operation
                 break
 
         if expect_error:

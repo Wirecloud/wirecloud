@@ -133,7 +133,7 @@ label {
     height: 20px;
 }
 
-#wirecloud_header .user_menu_wrapper > .styled_button > div {
+#wirecloud_header .user_menu_wrapper > .styled_button {
     color: #FFF;
     font-size: 12px;
     margin: 0;
@@ -191,8 +191,9 @@ label {
     margin: 0 5px;
 }
 
-.wirecloud_toolbar .styled_button > div {
+.wirecloud_toolbar .styled_button {
     width: 21px;
+    box-sizing: content-box;
     text-align: center;
 }
 
@@ -332,18 +333,15 @@ label {
 .powered-by-wirecloud {
     margin: 1px 5px;
     vertical-align: top;
-}
-
-.powered-by-wirecloud > div {
     padding: 0px 5px;
 }
 
-.powered-by-wirecloud > div:before {
+.powered-by-wirecloud:before {
     content: 'Powered by ';
     vertical-align: middle;
 }
 
-.powered-by-wirecloud > div:after {
+.powered-by-wirecloud:after {
     content: '';
     display: inline-block;
     vertical-align: middle;

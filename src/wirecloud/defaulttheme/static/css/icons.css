@@ -43,13 +43,6 @@ span.icon {
     position: absolute;
     right: 5px;
     margin: 0px;
-    border-width: 0px 1px 1px 1px;
-    border-style: solid;
-    border-color: transparent;
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
-    background-color: white;
-    text-align: center;
 }
 
 .styled_button.icon-tab-menu.open {

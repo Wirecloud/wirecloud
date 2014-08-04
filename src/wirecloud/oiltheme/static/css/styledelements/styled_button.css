@@ -1,7 +1,6 @@
 .styled_button {
     border: 0px;
     padding: 0px;
-    background: transparent;
     font-family: Arial, sans-serif;
     font-size: 12px;
     line-height: 20px;
@@ -13,10 +12,21 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    position: relative;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(230, 230, 230) rgb(230, 230, 230) rgb(191, 191, 191);
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: rgb(137, 137, 137);
+    background: white;
+    border-radius: 5px;
+    padding: 3px 20px 2px;
+    box-sizing: border-box;
 }
 
-.styled_button > div:focus,
-.styled_button > div:hover {
+.styled_button:focus,
+.styled_button:hover {
     z-index: 2;
 }
 
@@ -30,47 +40,24 @@
     margin-bottom: 0px;
     margin-top: 0px;
     vertical-align: baseline;
-    display: inline-block;
+    background: transparent;
+    padding: 0;
+    border: 0 none transparent;
+    border-radius: 0px;
 }
 
-.styled_button > div, .styled_button > button, .styled_button.plain {
-    position: relative;
-    cursor: pointer;
-}
-
-.styled_button.disabled > div, .styled_button.disabled > button, .styled_button.plain.disabled {
+.styled_button.disabled {
+    text-decoration: none;
     cursor: default;
+    opacity: 0.65;
 }
 
 .styled_button > span {
-    display: inline-block;
-}
-
-.styled_button > button {
-    border: 0px;
-    padding: 0px;
-    background: transparent;
-    font-size: inherit;
-    font-weight: inherit;
-}
-
-.styled_button > div, .styled_button > button {
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgb(230, 230, 230) rgb(230, 230, 230) rgb(191, 191, 191);
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    color: rgb(137, 137, 137);
-    background-color: white;
-    border-radius: 5px;
-    padding: 3px 20px 2px;
-}
-
-.styled_button > div > span {
     margin: 0px 3px 1px 3px;
 }
 
-.styled_button > div:hover, .styled_button > button:hover,
-.styled_button.disabled > div, .styled_button.disabled > button {
+.styled_button:not(.plain):hover,
+.styled_button.disabled:not(.plain) {
     border-color: rgb(204, 204, 204);
     background-color: rgb(252, 253, 252);
 }
@@ -80,22 +67,9 @@
     vertical-align: middle;
 }
 
-.styled_button.disabled {
-    opacity: 0.65;
-    filter: alpha(opacity=65);
-}
-
-.styled_button.disabled > div, .styled_button.disabled > button {
-    background-image: none;
-    text-decoration: none;
-}
-
 .styled_button.btn-large {
     font-size: 15px;
     line-height: 17px;
-}
-
-.styled_button.btn-large > div, .styled_button.btn-large > button {
     padding: 9px 14px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -105,18 +79,12 @@
 .styled_button.btn-small {
     font-size: 10px;
     line-height: 11px;
-}
-
-.styled_button.btn-small > div, .styled_button.btn-small > button {
     padding: 5px 9px;
 }
 
 .styled_button.btn-mini {
     font-size: 10px;
     line-height: 11px;
-}
-
-.styled_button.btn-mini > div, .styled_button.btn-mini > button {
     padding: 2px 6px;
 }
 
@@ -140,40 +108,31 @@
     margin: 0 -1px 0 0;
 }
 
-.input-prepend > .west_container > .styled_button > div,
-.input-prepend > .west_container > .styled_button > button,
-.btn-group > .styled_button > div,
-.btn-group > .styled_button > button {
+.input-prepend > .west_container > .styled_button,
+.btn-group > .styled_button {
     border-radius: 0px;
 }
 
-.input-prepend > .west_container > .styled_button:first-child > div,
-.input-prepend > .west_container > .styled_button:first-child > button,
-.btn-group > .styled_button:first-child > div,
-.btn-group > .styled_button:first-child > button {
+.input-prepend > .west_container > .styled_button:first-child,
+.btn-group > .styled_button:first-child {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
 
 .input-append > .east_container > .styled_button {
     margin: 0 0 0 -1px;
-}
-
-.input-append > .east_container > .styled_button > div, .input-append > .east_container > .styled_button > button {
     border-radius: 0px;
 }
 
-.input-append > .east_container > .styled_button:last-child > div,
-.input-append > .east_container > .styled_button:last-child > button,
-.btn-group > .styled_button:last-child > div,
-.btn-group > .styled_button:last-child > button {
+.input-append > .east_container > .styled_button:last-child,
+.btn-group > .styled_button:last-child {
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
 }
 
 /* Primary button */
 
-.styled_button.btn-primary > div, .styled_button.btn-primary > button {
+.styled_button.btn-primary {
     color: #FFF;
     text-shadow: 0 1px 1px rgba(0, 134, 181, 0.1);
     border: 1px solid #50BCBC;
@@ -182,13 +141,14 @@
     background-color: #002B67;
 }
 
-.styled_button.btn-primary > div:hover, .styled_button.btn-primary > button:hover,
-.styled_button.btn-primary > div:active, .styled_button.btn-primary > button:active
+.styled_button.btn-primary:hover,
+.styled_button.btn-primary:active
 {
     border-color: #00CCDB;
+    background-color: #002B67;
 }
 
-.styled_button.btn-primary.disabled > div, .styled_button.btn-primary.disabled > button {
+.styled_button.btn-primary.disabled {
     background-color: #3E80AD;
     border: 1px solid #50BCBC;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
@@ -200,15 +160,15 @@
 
 /* Success button */
 
-.styled_button.btn-success > div, .styled_button.btn-success > button {
+.styled_button.btn-success {
     color: #FFF;
     background-color: rgb(91, 183, 91);
     border-color: rgb(91, 183, 91);
 }
 
-.styled_button.btn-success > div:hover, .styled_button.btn-success > button:hover,
-.styled_button.btn-success > div:active, .styled_button.btn-success > button:active,
-.styled_button.btn-success.disabled > div, .styled_button.btn-success.disabled > button
+.styled_button.btn-success:hover,
+.styled_button.btn-success:active,
+.styled_button.btn-success.disabled
 {
     background-color: rgb(81, 163, 81);
     border-color: rgb(81, 163, 81);
@@ -216,15 +176,15 @@
 
 /* Warning button */
 
-.styled_button.btn-warning > div, .styled_button.btn-warning > button {
+.styled_button.btn-warning {
     color: #FFF;
     background-color: rgb(250, 167, 50);
     border-color: rgb(250, 167, 50);
 }
 
-.styled_button.btn-warning > div:hover, .styled_button.btn-warning > button:hover,
-.styled_button.btn-warning > div:active, .styled_button.btn-warning > button:active,
-.styled_button.btn-warning.disabled > div, .styled_button.btn-warning.disabled > button
+.styled_button.btn-warning:hover,
+.styled_button.btn-warning:active,
+.styled_button.btn-warning.disabled
 {
     background-color: rgb(248, 148, 6);
     border-color: rgb(248, 148, 6);
@@ -232,17 +192,16 @@
 
 /* Danger button */
 
-.styled_button.btn-danger > div, .styled_button.btn-danger > button {
+.styled_button.btn-danger {
     color: #FFF;
     background-color: rgb(218, 79, 73);
     border-color: rgb(218, 79, 73);
 }
 
-.styled_button.btn-danger > div:hover, .styled_button.btn-danger > button:hover,
-.styled_button.btn-danger > div:active, .styled_button.btn-danger > button:active,
-.styled_button.btn-danger.disabled > div, .styled_button.btn-danger.disabled > button
+.styled_button.btn-danger:hover,
+.styled_button.btn-danger:active,
+.styled_button.btn-danger.disabled
 {
     background-color: rgb(189, 54, 47);
     border-color: rgb(189, 54, 47);
 }
-

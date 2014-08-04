@@ -91,10 +91,10 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         self.change_marketplace('FI-WARE')
         self.search_resource('Map Viewer')
         resource = self.search_in_catalogue_results('Map Viewer')
-        resource.find_element_by_css_selector('.mainbutton > div').click()
+        resource.find_element_by_css_selector('.mainbutton').click()
 
         wirecloud_window = self.driver.window_handles[0]
-        self.wait_element_visible_by_css_selector('.window_menu .btn-primary > div').click()
+        self.wait_element_visible_by_css_selector('.window_menu .btn-primary').click()
 
         wstore_window = self.driver.window_handles[1]
         self.driver.switch_to.window(wstore_window)
@@ -121,7 +121,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         time.sleep(0.5)
         self.wait_catalogue_ready()
         resource = self.search_in_catalogue_results('Map Viewer')
-        self.assertIn(resource.find_element_by_css_selector('.mainbutton > div').text, ('Install', 'Uninstall'))
+        self.assertIn(resource.find_element_by_css_selector('.mainbutton').text, ('Install', 'Uninstall'))
 
     def test_store_integration_install_bought_widget(self):
 
@@ -153,7 +153,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         self.change_marketplace('FI-WARE')
         self.search_resource('Map Viewer')
         resource = self.search_in_catalogue_results('Map Viewer')
-        install_button = resource.find_element_by_css_selector('.mainbutton > div')
+        install_button = resource.find_element_by_css_selector('.mainbutton')
         self.assertEqual(install_button.text, 'Install')
         install_button.click()
         time.sleep(0.1)
@@ -167,7 +167,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
 
         try:
             with iwidget:
-                self.driver.find_element_by_css_selector('.styled_button > div').click()
+                self.driver.find_element_by_css_selector('.styled_button').click()
                 self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success!')
         finally:
             iwidget.remove()
@@ -177,7 +177,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
 
         try:
             with iwidget:
-                self.driver.find_element_by_css_selector('.styled_button > div').click()
+                self.driver.find_element_by_css_selector('.styled_button').click()
                 self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success!')
         finally:
             iwidget.remove()

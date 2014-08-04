@@ -40,7 +40,7 @@
      *      - click: evento lanzado cuando se pulsa el botón.
      */
     var StyledButton = function StyledButton(options) {
-        var button, defaultOptions = {
+        var defaultOptions = {
             'text': null,
             'title': '',
             'class': '',
@@ -60,22 +60,18 @@
 
         StyledElements.StyledElement.call(this, ['click', 'focus', 'blur', 'mouseenter', 'mouseleave']);
 
-        this.wrapperElement = document.createElement("div");
+        if (options.usedInForm) {
+            this.wrapperElement = document.createElement("button");
+            this.wrapperElement.setAttribute('type', 'button');
+        } else {
+            this.wrapperElement = document.createElement("div");
+        }
+        this.wrapperElement.setAttribute('tabindex', '0');
         this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_button");
 
-        if (options.usedInForm) {
-            button = document.createElement("button");
-            button.setAttribute('type', 'button');
-            this.wrapperElement.appendChild(button);
-        } else if (options.plain) {
-            button = this.wrapperElement;
+        if (options.plain) {
             this.wrapperElement.classList.add('plain');
-        } else {
-            button = document.createElement("div");
-            this.wrapperElement.appendChild(button);
         }
-        this._button = button;
-        button.setAttribute('tabindex', '0');
 
         if (options.icon != null) {
             this.icon = document.createElement("img");
@@ -83,7 +79,7 @@
             this.icon.style.width = options.iconWidth + 'px';
             this.icon.style.height = options.iconHeight + 'px';
             this.icon.src = options.icon;
-            button.appendChild(this.icon);
+            this.wrapperElement.appendChild(this.icon);
         }
 
         if (options.text != null || options.iconClass != null) {
@@ -94,7 +90,7 @@
             if (options.iconClass != null) {
                 this.label.classList.add(options.iconClass);
             }
-            button.appendChild(this.label);
+            this.wrapperElement.appendChild(this.label);
         }
 
         if (options.title) {
@@ -106,24 +102,22 @@
         this._clickCallback = clickCallback.bind(this);
         this._keydownCallback = keydownCallback.bind(this);
 
-        button.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
-        button.addEventListener('click', this._clickCallback, true);
-        button.addEventListener('keydown', this._keydownCallback, true);
-        button.addEventListener('focus', onfocus.bind(this), true);
-        button.addEventListener('blur', onblur.bind(this), true);
-        button.addEventListener('mouseenter', onmouseenter.bind(this), false);
-        button.addEventListener('mouseleave', onmouseleave.bind(this), false);
-
-        this.buttonElement = button;
+        this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.wrapperElement.addEventListener('click', this._clickCallback, true);
+        this.wrapperElement.addEventListener('keydown', this._keydownCallback, true);
+        this.wrapperElement.addEventListener('focus', onfocus.bind(this), true);
+        this.wrapperElement.addEventListener('blur', onblur.bind(this), true);
+        this.wrapperElement.addEventListener('mouseenter', onmouseenter.bind(this), false);
+        this.wrapperElement.addEventListener('mouseleave', onmouseleave.bind(this), false);
     };
     StyledButton.prototype = new StyledElements.StyledElement();
 
     StyledButton.prototype.focus = function focus() {
-        this.buttonElement.focus();
+        this.wrapperElement.focus();
     };
 
     StyledButton.prototype.blur = function blur() {
-        this.buttonElement.blur();
+        this.wrapperElement.blur();
     };
 
     StyledButton.prototype.setLabel = function setLabel(label) {
@@ -131,7 +125,7 @@
     };
 
     StyledButton.prototype.setTitle = function setTitle(title) {
-        this.buttonElement.setAttribute('title', title);
+        this.wrapperElement.setAttribute('title', title);
     };
 
     StyledButton.prototype.click = function click() {
@@ -142,11 +136,10 @@
 
     StyledButton.prototype.destroy = function destroy() {
 
-        this._button.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
-        this._button.removeEventListener('click', this._clickCallback, true);
-        this._button.removeEventListener('keydown', this._keydownCallback, true);
+        this.wrapperElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.wrapperElement.removeEventListener('click', this._clickCallback, true);
+        this.wrapperElement.removeEventListener('keydown', this._keydownCallback, true);
 
-        delete this._button;
         delete this._clickCallback;
         delete this._keydownCallback;
 

@@ -80,7 +80,7 @@
         // Init wiring error badge
         this.wiringErrorBadge = document.createElement('span');
         this.wiringErrorBadge.className = 'badge badge-important hidden';
-        this.wiringButton.buttonElement.appendChild(this.wiringErrorBadge);
+        this.wiringButton.wrapperElement.appendChild(this.wiringErrorBadge);
         Wirecloud.events.activeworkspacechanged.addEventListener(function (workspace) {
             this.widgetWallet.hide(true);
             this.mashupWallet.hide(true);
