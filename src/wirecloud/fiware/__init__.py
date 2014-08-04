@@ -17,11 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-__version_info__ = (3, 3)
+__version_info__ = (3, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 DEFAULT_FIWARE_PORTALS = (
-    {'name': 'Cloud', 'url': 'http://cloud.lab.fi-ware.org', "logout_path": "/logout"},
+    {'name': 'Cloud', 'url': 'https://cloud.lab.fi-ware.org', "logout_path": "/logout"},
     {'name': 'Store', 'url': 'https://store.lab.fi-ware.org', "logout_path": "/logout"},
     {'name': 'Mashup', 'url': 'https://mashup.lab.fi-ware.org', "logout_path": "/logout", "active": True},
     {'name': 'Account', 'url': 'https://account.lab.fi-ware.org', "logout_path": "/users/sign_out"},
