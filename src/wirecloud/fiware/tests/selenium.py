@@ -238,6 +238,26 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         finally:
             self.network._servers['http']['store.example.com'] = old_store
 
+    def test_other_offering_buttons(self):
+
+        offering_name = 'Arbitrary Offering'
+
+        self.login(username='user_with_markets')
+
+        with self.marketplace_view as marketplace:
+
+            marketplace.switch_to('fiware')
+
+            catalogue_base_element = marketplace.wait_catalogue_ready()
+            offering = marketplace.search_in_results(offering_name)
+            self.scroll_and_click(offering)
+            buttons = len(catalogue_base_element.find_elements_by_css_selector('.resource_details .styled_button:not(.plain)'))
+
+            # Close resource details
+            self.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+
+            self.assertEqual(buttons, 0)
+
     def test_store_upload_resource(self):
 
         self.network._servers['http']['store.example.com'].add_response('POST', '/api/offering/resources', {'content': ''})
