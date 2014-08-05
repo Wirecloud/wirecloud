@@ -107,13 +107,6 @@ class CatalogueResource(models.Model):
 
         from wirecloud.catalogue.utils import wgt_deployer
 
-        if hasattr(self, 'widget'):
-            from wirecloud.platform.models import Widget
-            try:
-                self.widget.delete()
-            except Widget.DoesNotExist:
-                pass
-
         # Delete media resources if needed
         if not self.template_uri.startswith(('http', 'https')):
             wgt_deployer.undeploy(self.vendor, self.short_name, self.version)

@@ -170,7 +170,7 @@ def delete_resource(resource, user):
 
     result = {'removedIWidgets': []}
     if 'wirecloud.platform' in settings.INSTALLED_APPS and resource.resource_type() == 'widget':
-        resource.widget.delete()
+        result['removedIWidgets'] = list(resource.widget.iwidget_set.all().values_list('id', flat=True))
 
     # Delete the object
     resource.delete()

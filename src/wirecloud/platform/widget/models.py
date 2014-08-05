@@ -22,7 +22,7 @@ import random
 
 from django.core.cache import cache
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
@@ -173,3 +173,12 @@ def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs)
                 resource.widget = create_widget_from_wgt(wgt_file, resource.creator)
             else:
                 resource.widget = create_widget_from_template(resource.template_uri, resource.creator)
+
+
+@receiver(pre_delete, sender=CatalogueResource)
+def delete_widget_on_resource_deletion(sender, instance, using, **kwargs):
+    if instance.resource_type() == 'widget':
+        try:
+            instance.widget.delete()
+        except Widget.DoesNotExist:
+            pass
