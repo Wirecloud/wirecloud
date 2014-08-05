@@ -43,10 +43,6 @@
         }, options);
         options.buttonArea = this.windowBottom;
 
-        // TODO
-        this.iconElement = null;
-        this.msgElement = null;
-
         this.form = new Form(fields, options);
         this.form.insertInto(this.windowContent);
         this.form.addEventListener('submit', function (form, data) {

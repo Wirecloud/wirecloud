@@ -26,18 +26,12 @@
     "use strict";
 
     var titles = ['', gettext('Error'), gettext('Warning'), gettext('Info')];
-    var icons = ['', 'icon-error', 'icon-warning', 'icon-info'];
 
     /**
      * Specific class representing alert dialogs.
      */
     var MessageWindowMenu = function MessageWindowMenu(message, type) {
         Wirecloud.ui.WindowMenu.call(this, '', 'message');
-
-        // Warning icon
-        this.iconElement = document.createElement('div');
-        this.iconElement.className = "window-icon icon-size icon-warning";
-        this.windowContent.insertBefore(this.iconElement, this.windowContent.firstChild);
 
         this.msgElement = document.createElement('div');
         this.msgElement.className = "msg";
@@ -72,9 +66,6 @@
     MessageWindowMenu.prototype.setType = function setType(type) {
         // Update title
         this.setTitle(titles[type]);
-
-        // Update icon
-        this.iconElement.className += ' ' + icons[type];
     };
 
     Wirecloud.ui.MessageWindowMenu = MessageWindowMenu;

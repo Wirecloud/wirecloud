@@ -1,28 +1,3 @@
-.icon {
-    background-repeat: no-repeat;
-    background-position: left center;
-}
-
-.icon-size {
-    width: 16px;
-    height: 16px;
-}
-
-.window-icon {
-    display: inline-block;
-    margin-right: 10px;
-    vertical-align: top;
-    float: left;
-}
-
-span.icon {
-    width: 20px;
-}
-
-.versionbutton, .errorbutton {
-    display: none;
-}
-
 .styled_button.icon-menu {
     border-width: 1px 1px 0px 1px;
     border-style: solid;
@@ -56,8 +31,3 @@ span.icon {
 .icon-doc:before        { content: "\f02d"; }
 .icon-menu:before       { content: "\f0d7"; }
 .icon-tab-menu:before   { content: "\f0d8"; }
-
-.icon-info{ background-image: url(../images/icons-sprite.png); background-position: -48px -504px; }
-.icon-warning{ background-image: url(../images/icons-sprite.png); background-position: -24px -528px; }
-.icon-error { background-image: url(../images/icons-sprite.png); background-position: 0px -552px; }
-.icon-back { background-image: url(../images/icons-sprite.png); background-position: 0px -192px; display: block; }
