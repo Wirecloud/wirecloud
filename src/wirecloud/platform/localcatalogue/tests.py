@@ -489,12 +489,26 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
+        # Add a Test widget to the initial workspace and cache it
         self.add_widget_to_mashup('Test')
+        self.change_current_workspace('Workspace')
+
+        # Create a new workspace with a test widget
+        self.create_workspace(name='Test')
+        self.add_widget_to_mashup('Test')
+
+        # Delete Test widget
         with self.myresources_view as myresources:
             myresources.delete_resource('Test')
 
+        # Check current workspace has no widgets
         self.assertEqual(self.count_iwidgets(), 0)
 
+        # Check initial workspace has no widgets
+        self.change_current_workspace('Workspace')
+        self.assertEqual(self.count_iwidgets(), 0)
+
+        # Check normuser also has no access to the Test widget
         self.login(username='normuser')
         with self.myresources_view as myresources:
             myresources.search('Test')
@@ -516,15 +530,61 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='normuser')
 
+        # Add a Test widget to the initial workspace and cache it
         self.add_widget_to_mashup('Test')
+        self.change_current_workspace('Workspace')
+
+        # Create a new workspace with a test widget
+        self.create_workspace(name='Test')
+        self.add_widget_to_mashup('Test')
+
+        # Uninstall Test widget
         with self.myresources_view as myresources:
             myresources.uninstall_resource('Test')
 
+        # Check current workspace has no widgets
         self.assertEqual(self.count_iwidgets(), 0)
 
+        # Check initial workspace has no widgets
+        self.change_current_workspace('Workspace')
+        self.assertEqual(self.count_iwidgets(), 0)
+
+        # Check admin still has access to the Test widget
         self.login()
 
         self.add_widget_to_mashup('Test')
+
+    def test_resource_uninstall_last_usage(self):
+
+        norm_user = User.objects.get(username='normuser')
+
+        test_widget = CatalogueResource.objects.get(short_name='Test')
+        test_widget.public = False
+        test_widget.users.clear()
+        test_widget.users.add(norm_user)
+        test_widget.groups.clear()
+        test_widget.save()
+
+        self.login(username='normuser')
+
+        # Add a Test widget to the initial workspace and cache it
+        self.add_widget_to_mashup('Test')
+        self.change_current_workspace('Workspace')
+
+        # Create a new workspace with a test widget
+        self.create_workspace(name='Test')
+        self.add_widget_to_mashup('Test')
+
+        # Uninstall Test widget
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource('Test')
+
+        # Check current workspace has no widgets
+        self.assertEqual(self.count_iwidgets(), 0)
+
+        # Check initial workspace has no widgets
+        self.change_current_workspace('Workspace')
+        self.assertEqual(self.count_iwidgets(), 0)
 
     def test_resources_are_always_deletable_by_superusers(self):
 

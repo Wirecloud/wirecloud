@@ -98,6 +98,10 @@ class Widget(models.Model):
         return self.resource.is_available_for(user)
 
     def delete(self, *args, **kwargs):
+
+        for iwidget in self.iwidget_set.all():
+            iwidget.delete()
+
         try:
             self.xhtml.delete()
         except XHTML.DoesNotExist:

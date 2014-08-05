@@ -170,10 +170,7 @@ def delete_resource(resource, user):
 
     result = {'removedIWidgets': []}
     if 'wirecloud.platform' in settings.INSTALLED_APPS and resource.resource_type() == 'widget':
-        from wirecloud.platform.widget.views import deleteWidget
-
-        # Remove the widget from the showcase
-        result = deleteWidget(user, resource.short_name, resource.vendor, resource.version)
+        resource.widget.delete()
 
     # Delete the object
     resource.delete()

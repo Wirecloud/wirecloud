@@ -45,29 +45,6 @@ import wirecloud.platform.widget.utils as showcase_utils
 from wirecloud.platform.widget.utils import fix_widget_code
 
 
-def deleteWidget(user, name, vendor, version):
-
-    result = {'removedIWidgets': []}
-
-    try:
-
-        widget = Widget.objects.get(resource__short_name=name, resource__vendor=vendor, resource__version=version)
-
-        # TODO
-        # Remove all iwidget that matches this Widget Resource
-        iwidgets = IWidget.objects.filter(widget=widget)
-        for iwidget in iwidgets:
-            result['removedIWidgets'].append(iwidget.id)
-            iwidget.delete()
-
-        widget.delete()
-
-    except Widget.DoesNotExist:
-        pass
-
-    return result
-
-
 def process_requirements(requirements):
 
     return dict((requirement['name'], {}) for requirement in requirements)
