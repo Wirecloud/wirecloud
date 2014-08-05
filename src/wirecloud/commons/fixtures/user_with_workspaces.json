@@ -182,6 +182,84 @@
         }
     },
     {
+        "pk": 15,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 0,
+            "posX": 0,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 16,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 17,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 1,
+            "posX": 6,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 18,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 19,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 0,
+            "posX": 0,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 20,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
         "pk": 1,
         "model": "platform.iwidget",
         "fields": {
@@ -247,8 +325,8 @@
             "tab": 104,
             "refused_version": null,
             "readOnly": false,
-            "position": 1,
-            "icon_position": 2
+            "position": 15,
+            "icon_position": 16
         }
     },
     {
@@ -261,8 +339,8 @@
             "tab": 104,
             "refused_version": null,
             "readOnly": false,
-            "position": 3,
-            "icon_position": 4
+            "position": 17,
+            "icon_position": 18
         }
     },
     {
@@ -275,8 +353,8 @@
             "tab": 105,
             "refused_version": null,
             "readOnly": false,
-            "position": 9,
-            "icon_position": 10
+            "position": 19,
+            "icon_position": 20
         }
     },
     {
