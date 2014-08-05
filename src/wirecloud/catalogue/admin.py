@@ -24,7 +24,7 @@ from wirecloud.catalogue.models import CatalogueResource
 
 class CatalogueResourceAdmin(admin.ModelAdmin):
 
-    search_fields = ('vendor', 'short_name', 'version', 'author')
+    search_fields = ('vendor', 'short_name', 'version')
     list_display = ('vendor', 'short_name', 'version', 'resource_type')
     verbose_name_plural = 'Resources'
 
