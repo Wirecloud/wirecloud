@@ -159,7 +159,7 @@
         this._show(refElement);
     };
 
-    var _hide = function () {
+    var _hide = function _hide() {
         if (this.element != null) {
             document.body.removeChild(this.element);
             this.element = null;

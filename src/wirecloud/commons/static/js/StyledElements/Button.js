@@ -94,8 +94,7 @@
         }
 
         if (options.title) {
-            this.tooltip = new StyledElements.Tooltip({content: options.title});
-            this.tooltip.bind(this);
+            this.setTitle(options.title);
         }
 
         /* Event handlers */
@@ -125,7 +124,11 @@
     };
 
     StyledButton.prototype.setTitle = function setTitle(title) {
-        this.wrapperElement.setAttribute('title', title);
+        if (this.tooltip == null) {
+            this.tooltip = new StyledElements.Tooltip({content: title, placement: ['bottom', 'top', 'right', 'left']});
+            this.tooltip.bind(this);
+        }
+        this.tooltip.options.content = title;
     };
 
     StyledButton.prototype.click = function click() {
