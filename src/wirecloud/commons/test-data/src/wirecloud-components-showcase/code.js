@@ -128,6 +128,19 @@ var init = function init() {
     textField.insertInto(row);\n\
     container.appendChild(row);\n\
 \n\
+    /* Numeric Field */\n\
+    var row = document.createElement('div');\n\
+    var numberField = new StyledElements.StyledNumericField({initialValue: 1});\n\
+    var button = new StyledElements.StyledButton({text: 'Reset'});\n\
+    button.wrapperElement.style.cssText += 'float: right;';\n\
+    var resetNumberField = function(button) {\n\
+        numberField.reset();\n\
+    };\n\
+    button.addEventListener('click', resetNumberField);\n\
+    button.insertInto(row);\n\
+    numberField.insertInto(row);\n\
+    container.appendChild(row);\n\
+\n\
     /* Password Field */\n\
     var row = document.createElement('div');\n\
     var passField = new StyledElements.StyledPasswordField({initialValue: 'pass'});\n\

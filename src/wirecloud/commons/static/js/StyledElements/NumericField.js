@@ -41,6 +41,16 @@
         }
     };
 
+    var onfocus = function onfocus() {
+        this.wrapperElement.classList.add('focus');
+        this.events.focus.dispatch(this);
+    };
+
+    var onblur = function onblur() {
+        this.wrapperElement.classList.remove('focus');
+        this.events.blur.dispatch(this);
+    };
+
     /**
      * @param options Una tabla hash con opciones. Los posibles valores son los
      * siguientes:
@@ -68,7 +78,7 @@
         options.inc = Number(options.inc);
         options.initialValue = Number(options.initialValue);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
+        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = "se-numeric-field";
@@ -91,6 +101,8 @@
         /* Internal events */
         topButton.addEventListener("click", update.bind(this, options.inc));
         bottomButton.addEventListener("click", update.bind(this, -options.inc));
+        this.inputElement.addEventListener("focus", onfocus.bind(this), true);
+        this.inputElement.addEventListener("blur", onblur.bind(this), true);
 
         this.wrapperElement.appendChild(this.inputElement);
         topButton.insertInto(this.wrapperElement);

@@ -54,13 +54,10 @@
         StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "styled_select");
-
-        var wrapper = document.createElement("div");
-        this.wrapperElement.appendChild(wrapper);
+        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "se-select");
 
         var div =  document.createElement("div");
-        div.className = "arrow";
+        div.className = "se-select-arrow";
         this.inputElement = document.createElement("select");
 
         if (options.name) {
@@ -72,11 +69,11 @@
         }
 
         this.textDiv = document.createElement("div");
-        this.textDiv.className = "text";
+        this.textDiv.className = "se-select-text";
 
-        wrapper.appendChild(this.textDiv);
-        wrapper.appendChild(div);
-        wrapper.appendChild(this.inputElement);
+        this.wrapperElement.appendChild(this.textDiv);
+        this.wrapperElement.appendChild(div);
+        this.wrapperElement.appendChild(this.inputElement);
 
         this.optionsByValue = {};
         this.optionValues = {};

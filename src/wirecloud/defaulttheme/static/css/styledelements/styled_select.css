@@ -1,40 +1,35 @@
-div.styled_select {
-    font-size: 13px;
+.se-select {
+    font-size: 14px;
     font-weight: normal;
-    margin-bottom: 9px;
-}
-
-div.styled_select > div {
-    height: 18px;
+    height: 30px;
     padding: 4px 6px;
     font-family: Arial, sans-serif;
     line-height: 18px;
     color: #555;
     background-color: white;
     border: 1px solid #CCC;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    margin: 1px 4px 0px 4px;
+    border-radius: 4px;
+    margin: 1px 4px 9px 4px;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    width: auto;
+    width: 10em;
     display: block;
+    box-sizing: border-box;
     -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
     -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
     -o-transition: border linear 0.2s, box-shadow linear 0.2s;
     transition: border linear 0.2s, box-shadow linear 0.2s;
+    position: relative;
 }
 
-div.styled_select > div > div.text {
-    height: 16px;
-    line-height: normal;
+.se-select-text {
+    height: 20px;
     margin: 0 22px 0px 0px;
     overflow: hidden;
     padding: 0px 0;
     width: auto;
 }
 
-div.styled_select > div > div.arrow {
+.se-select-arrow {
     height:   20px;
     position: absolute;
     right:    6px;
@@ -43,9 +38,8 @@ div.styled_select > div > div.arrow {
     z-index:  2;
 }
 
-div.styled_select > div > div.arrow:before {
+.se-select-arrow:before {
     font-family: FontAwesome;
-    font-size: 14px;
     font-weight: normal;
     font-style: normal;
     display: inline-block;
@@ -53,7 +47,7 @@ div.styled_select > div > div.arrow:before {
     content: "\f0d7";
 }
 
-div.styled_select > div > select {
+.se-select > select {
     border:   0 none;
     outline:  0 none;
     display:  block;
@@ -68,7 +62,7 @@ div.styled_select > div > select {
     z-index:  3;
 }
 
-div.styled_select.focus > div {
+.se-select.focus {
     border-color: rgba(82, 168, 236, 0.8);
     outline: 0;
     outline: thin dotted \9;
@@ -79,7 +73,7 @@ div.styled_select.focus > div {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
-div.styled_select.error.focus > div {
+.se-select.error.focus {
     border-color: #953b39;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;

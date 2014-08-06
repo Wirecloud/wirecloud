@@ -11,12 +11,10 @@
     };
 
     onfocus = function onfocus() {
-        this.wrapperElement.classList.add('focus');
         this.events.focus.dispatch(this);
     };
 
     onblur = function onblur() {
-        this.wrapperElement.classList.remove('focus');
         this.events.blur.dispatch(this);
     };
 
@@ -39,14 +37,14 @@
 
         StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur', 'submit']);
 
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = "styled_text_field";
+        this.inputElement = document.createElement("input");
+        this.inputElement.setAttribute("type", "text");
+
+        this.wrapperElement = this.inputElement;
+        this.wrapperElement.className = "se-text-field";
         if (options['class'] !== "") {
             this.wrapperElement.className += " " + options['class'];
         }
-
-        this.inputElement = document.createElement("input");
-        this.inputElement.setAttribute("type", "text");
 
         if (options.name) {
             this.inputElement.setAttribute("name", options.name);
@@ -61,10 +59,6 @@
         }
 
         this.inputElement.setAttribute("value", options.initialValue);
-
-        var div = document.createElement("div");
-        div.appendChild(this.inputElement);
-        this.wrapperElement.appendChild(div);
 
         /* Internal events */
         this._oninput = oninput.bind(this);

@@ -45,6 +45,7 @@
         'StyledElement': window.parent.StyledElements.StyledElement,
         'StyledInputElement': window.parent.StyledElements.StyledInputElement,
         'StyledList': window.parent.StyledElements.StyledList,
+        'StyledNumericField': window.parent.StyledElements.StyledNumericField,
         'StyledTextField': window.parent.StyledElements.StyledTextField,
         'StyledPasswordField': window.parent.StyledElements.StyledPasswordField,
         'StyledRadioButton': window.parent.StyledElements.StyledRadioButton,
