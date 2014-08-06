@@ -27,7 +27,6 @@ import shutil
 import stat
 import sys
 from tempfile import mkdtemp
-import time
 from six.moves.urllib.error import URLError, HTTPError
 from six.moves.urllib.parse import urlparse
 
@@ -456,22 +455,6 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
         return wrapper
 
     return wrap
-
-
-class element_be_still(object):
-    """ An expectation for checking that an element is still
-    """
-    def __init__(self, element):
-        self.element = element
-
-    def __call__(self, driver):
-        old_position = self.element.location
-        time.sleep(0.1)
-        new_position = self.element.location
-        if old_position == new_position:
-            return self.element
-        else:
-            return False
 
 
 class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):

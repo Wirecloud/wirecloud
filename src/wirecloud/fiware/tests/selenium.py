@@ -21,8 +21,10 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
+from wirecloud.commons.utils.expected_conditions import element_be_clickable
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, uses_extra_resources, WirecloudSeleniumTestCase
 
 
@@ -254,7 +256,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             buttons = len(catalogue_base_element.find_elements_by_css_selector('.resource_details .styled_button:not(.plain)'))
 
             # Close resource details
-            self.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+            WebDriverWait(self.driver, 10).until(element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
 
             self.assertEqual(buttons, 0)
 

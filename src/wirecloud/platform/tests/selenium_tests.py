@@ -29,34 +29,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.commons.utils.expected_conditions import element_be_clickable, element_be_still
 from wirecloud.commons.utils.remote import PopupMenuTester
-from wirecloud.commons.utils.testcases import element_be_still, uses_extra_resources, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
-
-
-def element_to_be_clickable(selector, base_element=None):
-
-    def wrapper(driver):
-
-        try:
-            if base_element is not None:
-                element = base_element.find_element(*selector)
-            else:
-                element = driver.find_element(*selector)
-            position = element.location
-            top_element = driver.execute_script('return document.elementFromPoint(arguments[0], arguments[1]);',
-                    position['x'] + (element.size['width'] / 2),
-                    position['y'] + (element.size['height'] / 2)
-                )
-
-            while top_element is not None:
-                if element == top_element:
-                    return element
-                top_element = top_element.find_element_by_xpath('..')
-            return False
-        except (NoSuchElementException, StaleElementReferenceException):
-            return False
-
-    return wrapper
+from wirecloud.commons.utils.testcases import uses_extra_resources, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
@@ -808,14 +783,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertElementHasFocus(next_button)
         next_button.click()
 
-        WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .wirecloud_toolbar .icon-plus')))
+        WebDriverWait(self.driver, 10).until(element_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .wirecloud_toolbar .icon-plus')))
         with self.widget_wallet as wallet:
             time.sleep(1)
 
             # Add the youtube browser widget
             def youtube_instantiable(driver):
                 resource = wallet.search_in_results('YouTube Browser')
-                return resource is not None and element_to_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
+                return resource is not None and element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
             WebDriverWait(self.driver, 10).until(youtube_instantiable).click()
 
             next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
@@ -827,10 +802,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             def input_box_instantiable(driver):
                 resource = wallet.search_in_results('Input Box')
-                return resource is not None and element_to_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
+                return resource is not None and element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
             WebDriverWait(self.driver, 10).until(input_box_instantiable).click()
 
-            WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '.widget_wallet .icon-remove')))
+            WebDriverWait(self.driver, 10).until(element_be_clickable((By.CSS_SELECTOR, '.widget_wallet .icon-remove')))
 
         # cancel current tutorial
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()

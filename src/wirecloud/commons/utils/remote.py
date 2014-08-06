@@ -32,6 +32,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import six
 
+from wirecloud.commons.utils.expected_conditions import element_be_clickable
+
 
 def marketplace_loaded(driver):
     try:
@@ -844,10 +846,7 @@ class MarketplaceViewTester(object):
         return self
 
     def __exit__(self, type, value, traceback):
-        button = self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left")
-        button_tester = button.find_element_by_xpath('..')
-        WebDriverWait(self.testcase.driver, 5).until(lambda driver: 'disabled' not in button_tester.get_attribute('class'))
-        button.click()
+        WebDriverWait(self.testcase.driver, 5).until(element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
 
     def get_current_catalogue_base_element(self):
@@ -987,10 +986,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
     def __exit__(self, type, value, traceback):
         if self.marketplace_view is None:
-            button = self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left")
-            button_tester = button.find_element_by_xpath('..')
-            WebDriverWait(self.testcase.driver, 5).until(lambda driver: 'disabled' not in button_tester.get_attribute('class'))
-            button.click()
+            WebDriverWait(self.testcase.driver, 5).until(element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
 
             WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
         else:

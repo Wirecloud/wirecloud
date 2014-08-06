@@ -36,7 +36,8 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.utils.testcases import element_be_still, uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.expected_conditions import element_be_still
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase
 from wirecloud.platform import plugins
 from wirecloud.platform.workspace.models import Workspace
 
