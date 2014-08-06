@@ -48,10 +48,12 @@
         Object.defineProperty(this, 'options', {value: options});
 
         var default_value = '';
-        if (options.type !== 'boolean' && options.default != null) {
-            default_value = options.default;
-        } else if (options.type === 'boolean') {
+        if (options.type === 'boolean') {
             default_value = options.default.trim().toLowerCase() === 'true';
+        } else if (options.type === 'number' && options.default != null) {
+            default_value = Number(options.default);
+        } else if (options.default != null) {
+            default_value = options.default;
         }
         Object.defineProperty(this, 'default', {value: default_value});
     };

@@ -32,7 +32,7 @@
         'password': PasswordInputInterface,
         'hidden': HiddenInputInterface,
         'list': ListInputInterface,
-        'integer': IntegerInputInterface,
+        'number': NumberInputInterface,
         'longtext': LongTextInputInterface,
         'url': URLInputInterface,
         'email': EMailInputInterface,

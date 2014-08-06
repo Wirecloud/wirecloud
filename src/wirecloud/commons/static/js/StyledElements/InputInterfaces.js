@@ -152,7 +152,7 @@ ListInputInterface.prototype.isEmpty = function isEmpty() {
 /**
  *
  */
-function IntegerInputInterface(fieldId, options) {
+function NumberInputInterface(fieldId, options) {
     if (arguments.length === 0) {
         return;
     }
@@ -161,20 +161,20 @@ function IntegerInputInterface(fieldId, options) {
 
     this.inputElement = new StyledElements.StyledNumericField(options);
 }
-IntegerInputInterface.prototype = new InputInterface();
+NumberInputInterface.prototype = new InputInterface();
 
-IntegerInputInterface.prototype.parseFromPersistence = function parseFromPersistence(value) {
+NumberInputInterface.prototype.parseFromPersistence = function parseFromPersistence(value) {
     return parseInt(value, 10);
 };
 
-IntegerInputInterface.prototype._checkValue = function _checkValue(newValue) {
+NumberInputInterface.prototype._checkValue = function _checkValue(newValue) {
     if (this.inputElement.min !== undefined) {
-        if (newValue < parseInt(this.inputElement.min, 10)) {
+        if (newValue < this.inputElement.options.min) {
             return InputValidationError.OUT_OF_RANGE_ERROR;
         }
     }
     if (this.inputElement.max !== undefined) {
-        if (newValue < parseInt(this.inputElement.max, 10)) {
+        if (newValue < this.inputElement.options.max) {
             return InputValidationError.OUT_OF_RANGE_ERROR;
         }
     }

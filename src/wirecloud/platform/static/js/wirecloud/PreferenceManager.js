@@ -72,25 +72,25 @@
             "columns": {
                 "defaultValue":  20,
                 "label":         gettext("Grid columns"),
-                "type":          "integer",
+                "type":          "number",
                 "description":   gettext("Grid columns. (default: 20)")
             },
             "cell-height": {
                 "defaultValue":  12,
                 "label":         gettext("Cell Height (in pixels)"),
-                "type":          "integer",
+                "type":          "number",
                 "description":   gettext("Cell Height. Must be specified in pixel units. (default: 13)")
             },
             "horizontal-margin": {
                 "defaultValue":  4,
                 "label":         gettext("Horizontal Margin between iWidgets (in pixels)"),
-                "type":          "integer",
+                "type":          "number",
                 "description":   gettext("Horizontal Margin between iWidgets. Must be specified in pixel units. (default: 4)")
             },
             "vertical-margin": {
                 "defaultValue":  3,
                 "label":         gettext("Vertical Margin between iWidgets (in pixels)"),
-                "type":          "integer",
+                "type":          "number",
                 "description":   gettext("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
             }
         };
@@ -122,7 +122,7 @@
                 "inheritByDefault": true,
                 "defaultValue":  20,
                 "label":         gettext("Grid columns"),
-                "type":          "integer",
+                "type":          "number",
                 "description":   gettext("Grid columns. (default: 20)")
             },
             "cell-height": {
@@ -130,7 +130,7 @@
                 "inheritByDefault": true,
                 "defaultValue":  12,
                 "label":         gettext("Cell Height (in pixels)"),
-                "type":          "integer",
+                "type":          "number",
                 "description":   gettext("Cell Height. Must be specified in pixel units. (default: 13)")
             },
             "horizontal-margin": {
@@ -138,7 +138,7 @@
                 "inheritByDefault": true,
                 "defaultValue":  4,
                 "label":         gettext("Horizontal Margin between iWidgets (in pixels)"),
-                "type":          "integer",
+                "type":          "number",
                 "description":   gettext("Horizontal Margin between iWidgets. Must be specified in pixel units. (default: 4)")
             },
             "vertical-margin": {
@@ -146,7 +146,7 @@
                 "inheritByDefault": true,
                 "defaultValue":  3,
                 "label":         gettext("Vertical Margin between iWidgets (in pixels)"),
-                "type":          "integer",
+                "type":          "number",
                 "description":   gettext("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
             }
         };

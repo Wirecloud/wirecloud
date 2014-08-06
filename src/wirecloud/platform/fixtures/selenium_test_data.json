@@ -96,6 +96,18 @@
         }
     },
     {
+        "pk": 5,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": "2",
+            "name": "number",
+            "aspect": "PREF",
+            "type": "N",
+            "widget": 1,
+            "secure": false
+        }
+    },
+    {
         "pk": 1,
         "model": "auth.group",
         "fields": {

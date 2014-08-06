@@ -162,6 +162,8 @@ def get_variable_value_from_varname(user, iwidget, var_name):
 
     if entry['type'] == 'B':
         value = value.lower() == 'true'
+    elif entry['type'] == 'N':
+        value = float(value)
 
     return value
 
@@ -236,6 +238,8 @@ class VariableValueCacheManager():
 
             if entry['type'] == 'B':
                 value = value.lower() == 'true'
+            elif entry['type'] == 'N':
+                value = float(value)
 
             data_ret['value'] = value
 

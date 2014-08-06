@@ -55,6 +55,13 @@
                         document.getElementById("booleanPref").textContent = 'bad value';
                     }
                 }
+                if ('number' in new_values) {
+                    if (typeof new_values['number'] === 'number') {
+                        document.getElementById("numberPref").textContent = new_values['number'];
+                    } else {
+                        document.getElementById("numberPref").textContent = 'bad value';
+                    }
+                }
                 if ('password' in new_values) {
                     document.getElementById("passwordPref").textContent = new_values.password;
                 }
@@ -83,6 +90,11 @@
                 } else {
                     document.getElementById("booleanPref").textContent = 'bad value';
                 }
+                if (typeof MashupPlatform.prefs.get('number') === 'number') {
+                    document.getElementById("numberPref").textContent = MashupPlatform.prefs.get('number');
+                } else {
+                    document.getElementById("numberPref").textContent = 'bad value';
+                }
                 document.getElementById("passwordPref").textContent = MashupPlatform.prefs.get('password');
             }
         </script>
@@ -94,6 +106,8 @@
         <div class="content" id="textPref"></div>
         <div class="title">Boolean Pref:</div>
         <div class="content" id="booleanPref"></div>
+        <div class="title">Number Pref:</div>
+        <div class="content" id="numberPref"></div>
         <div class="title">Password Pref:</div>
         <div class="content" id="passwordPref"></div>
         <div class="title">Send event:</div>
