@@ -161,7 +161,7 @@
                 return document.querySelector('.widget_wallet .icon-remove');
             },
             mac_wallet_input: function mac_wallet_input() {
-                return document.querySelector('.widget_wallet .styled_text_field');
+                return document.querySelector('.widget_wallet .se-text-field');
             },
             mac_wallet_resource_mainbutton: function mac_wallet_resource_mainbutton(resource_title) {
                 var resources, widget, element;

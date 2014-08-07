@@ -319,7 +319,7 @@ class WalletTester(object):
     def __exit__(self, type, value, traceback):
 
         try:
-            self.element.find_element_by_css_selector('.widget_wallet .icon-remove').click()
+            WebDriverWait(self.testcase.driver, 5).until(element_be_clickable((By.CSS_SELECTOR, ".widget_wallet .icon-remove"), base_element=self.element)).click()
         except StaleElementReferenceException:
             pass
 
@@ -336,7 +336,7 @@ class WalletTester(object):
 
     def search(self, keywords):
 
-        search_input = self.element.find_element_by_css_selector('.styled_text_field div input')
+        search_input = self.element.find_element_by_css_selector('.se-text-field')
         self.testcase.fill_form_input(search_input, keywords)
         self.testcase.driver.execute_script('''
             var evt = document.createEvent("KeyboardEvent");

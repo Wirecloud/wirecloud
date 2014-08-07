@@ -439,7 +439,7 @@ class PackagedResourcesTestCase(WirecloudTestCase):
 
 class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
-    tags = ('localcatalogue',)
+    tags = ('localcatalogue', 'localcatalogue-selenium')
 
     def test_public_resources(self):
 

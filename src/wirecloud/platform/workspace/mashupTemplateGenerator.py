@@ -105,6 +105,8 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
 
         if pref.type == 'B':
             value = str(value).lower()
+        elif pref.type == 'N':
+            value = str(value)
 
         preferences[pref.name] = {
             'readonly': status != 'normal',

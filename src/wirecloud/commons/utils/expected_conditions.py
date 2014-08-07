@@ -36,7 +36,10 @@ class element_be_clickable(object):
                 element = self.base_element.find_element(*self.selector)
             else:
                 element = driver.find_element(*self.selector)
+        except NoSuchElementException:
+            return False
 
+        try:
             wrapper_element = element
             if self.check_parent is True:
                 wrapper_element = element.find_element_by_xpath('..')

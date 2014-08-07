@@ -35,13 +35,9 @@
     margin: 0 5px;
 }
 
-.widget_wallet_header > .styled_text_field {
-    margin: 0px;
-    width: 293px;
-}
-
-.widget_wallet_header > .styled_text_field > div {
+.widget_wallet_header > .se-text-field {
     margin: 0;
+    width: 293px;
 }
 
 .widget_wallet_list {
