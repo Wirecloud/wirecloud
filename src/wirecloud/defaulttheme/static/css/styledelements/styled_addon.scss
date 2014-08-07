@@ -1,26 +1,27 @@
+@import 'variables';
+@import 'compass/css3';
+
 .add-on {
     display: inline-block;
     width: auto;
-    height: 20px;
+    height: $input-height-base;
     min-width: 16px;
-    padding: 3px 5px 2px;
-    font-size: 14px;
+    padding: $padding-base-vertical $padding-base-horizontal;
+    font-size: $font-size-base;
     font-weight: normal;
-    line-height: 20px;
+    line-height: $line-height-base;
     text-align: center;
     text-shadow: 0 1px 0 #ffffff;
-    background-color: #eeeeee;
+    background-color: $gray-lighter;
     border: 1px solid #ccc;
     vertical-align: middle;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
+    box-sizing: border-box;
+    @include border-radius(0);
+    box-shadow: $input-external-shadow;
 }
 
 .input-prepend > .west_container > .add-on:first-child {
-    -webkit-border-radius: 4px 0 0 4px;
-    -moz-border-radius: 4px 0 0 4px;
-    border-radius: 4px 0 0 4px;
+    border-radius: $border-radius-base 0 0 $border-radius-base;
 }
 
 .input-prepend > .west_container > .add-on:last-child {
@@ -32,8 +33,5 @@
 }
 
 .input-append > .east_container > .add-on:last-child {
-    -webkit-border-radius: 0 4px 4px 0;
-    -moz-border-radius: 0 4px 4px 0;
-    border-radius: 0 4px 4px 0;
+    @include border-radius(0 $border-radius-base $border-radius-base 0);
 }
-

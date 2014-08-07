@@ -37,7 +37,7 @@ def extra_javascripts(context, view):
 
 @register.inclusion_tag('wirecloud/css_includes.html', takes_context=True)
 def platform_css(context, view):
-    files = get_platform_css(view)
+    files = [{'path': filename, 'type': 'text/css' if filename.endswith('.css') else 'text/x-scss'} for filename in get_platform_css(view)]
 
     return {'files': files, 'STATIC_URL': context['STATIC_URL']}
 

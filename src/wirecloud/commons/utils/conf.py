@@ -56,10 +56,14 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         settings['DEBUG'] = False
 
     settings['TEMPLATE_DEBUG'] = settings['DEBUG']
+    settings['APPEND_SLASH'] = False
+
     settings['COMPRESS'] = not settings['DEBUG']
     settings['COMPRESS_OFFLINE'] = False
-    settings['APPEND_SLASH'] = False
     settings['COMPRESS_OUTPUT_DIR'] = 'cache'
+    settings['COMPRESS_PRECOMPILERS'] = (
+        ('text/x-scss', 'wirecloud.commons.compressor_precompilers.SCSSPrecompiler'),
+    )
     settings['ALLOW_ANONYMOUS_ACCESS'] = True
     settings['WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION'] = False
 

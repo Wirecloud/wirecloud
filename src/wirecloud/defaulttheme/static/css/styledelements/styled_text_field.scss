@@ -1,0 +1,30 @@
+@import 'variables';
+@import 'styledelements/input_mixins';
+@import 'compass/css3';
+
+.se-text-field {
+    @include input-base();
+}
+
+.horizontal_layout > .center_container > .se-text-field {
+    width: 100%;
+    margin: 0;
+}
+
+.horizontal_layout.input-prepend > .center_container > .se-text-field {
+    margin-left: 0px;
+}
+
+.horizontal_layout.input-append > .center_container > .se-text-field {
+    margin-right: 0px;
+}
+
+.input-prepend > .center_container > .se-text-field {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-append > .center_container > .se-text-field {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
