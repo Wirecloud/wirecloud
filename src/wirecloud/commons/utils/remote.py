@@ -287,14 +287,16 @@ class WidgetWalletResourceTester(object):
 
 class MashupWalletResourceTester(object):
 
-    def __init__(self, testcase, element):
+    def __init__(self, testcase, element, wallet):
         self.testcase = testcase
         self.element = element
+        self.wallet = wallet
 
     def merge(self):
         workspace_name = self.testcase.get_current_workspace_name()
         self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
         self.testcase.wait_wirecloud_ready()
+        WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.wallet.element))
         self.testcase.assertEqual(self.testcase.get_current_workspace_name(), workspace_name)
 
 
@@ -319,7 +321,7 @@ class WalletTester(object):
     def __exit__(self, type, value, traceback):
 
         try:
-            WebDriverWait(self.testcase.driver, 5).until(element_be_clickable((By.CSS_SELECTOR, ".widget_wallet .icon-remove"), base_element=self.element)).click()
+            WebDriverWait(self.testcase.driver, 5).until(element_be_clickable((By.CSS_SELECTOR, ".widget_wallet .icon-remove"), parent=True, base_element=self.element)).click()
         except StaleElementReferenceException:
             pass
 
@@ -366,7 +368,7 @@ class MashupWalletTester(WalletTester):
         for resource in resources:
             resource_name = resource.find_element_by_css_selector('.resource_name')
             if resource_name.text == widget_name:
-                return MashupWalletResourceTester(self.testcase, resource)
+                return MashupWalletResourceTester(self.testcase, resource, self)
 
         return None
 
