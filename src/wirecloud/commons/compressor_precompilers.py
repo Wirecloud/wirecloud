@@ -20,6 +20,7 @@
 from itertools import product
 import os
 
+from compressor.filters.css_default import CssAbsoluteFilter
 from django.contrib.staticfiles import finders
 
 import scss
@@ -158,4 +159,5 @@ class SCSSPrecompiler(object):
 
     def input(self, filename=None, basename=None, **kwargs):
 
-        return get_scss_compiler().compile(scss_string=self.content, filename=self.filename)
+        content = get_scss_compiler().compile(scss_string=self.content, filename=self.filename)
+        return CssAbsoluteFilter(content).input(filename, basename, **kwargs)

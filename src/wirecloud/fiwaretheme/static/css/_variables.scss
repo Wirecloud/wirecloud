@@ -1,4 +1,53 @@
-$font-size-base:           13px;
-$line-height-base:         18px;
+$brand-primary:             #0093C6;
+$brand-success:             #5BB75B;
+$brand-info:                #49AFCD;
+$brand-warning:             #F89406;
+$brand-danger:              #DA4F49;
+
+$font-size-base:            13px;
+$font-size-large:           15px;
+$font-size-small:           10px;
+$font-size-xs:              10px;
+
+$line-height-base:          18px;
+
+$padding-vertical-base:     4px;
+$padding-horizontal-base:  23px;
+
+$padding-vertical-large:   8.5px;
+$padding-horizontal-large: 14px;
+
+$padding-vertical-small:    5px;
+$padding-horizontal-small:  9px;
+
+$padding-vertical-xs:       2px;
+$padding-horizontal-xs:     6px;
+
 
 @import 'defaults';
+
+$button-gradients:          false;
+
+$button-color-default:      $text-color;
+$button-background-default: #FFF;
+$button-border-default:     #CCC;
+
+$button-color-primary:      #FFF;
+$button-background-primary: $brand-primary;
+$button-border-primary:     #50BCBC;
+
+$button-color-success:      #FFF;
+$button-background-success: $brand-success;
+$button-border-success:     $brand-success;
+
+$button-color-info:         #FFF;
+$button-background-info:    $brand-info;
+$button-border-info:        $brand-info;
+
+$button-color-warning:      #FFF;
+$button-background-warning: $brand-warning;
+$button-border-warning:     $brand-warning;
+
+$button-color-danger:       #FFF;
+$button-background-danger:  $brand-danger;
+$button-border-danger:      $brand-danger;

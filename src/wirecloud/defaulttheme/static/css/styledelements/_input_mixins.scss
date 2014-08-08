@@ -1,17 +1,21 @@
 @mixin input-root-style() {
     font-size: $font-size-base;
-    color: $input-color;
     position: relative;
     line-height: $line-height-base;
 }
 
 @mixin input-box() {
     height: $input-height-base;
-    padding: $padding-base-vertical $padding-base-horizontal;
+    padding: $input-padding-vertical $input-padding-horizontal;
     border: 1px solid $input-border;
-    border-radius: $border-radius-base;
+    border-radius: $input-border-radius-base;
     background-color: $input-bg;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    color: $input-color;
+    @if ($button-gradients) {
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 1px 2px rgba(0, 0, 0, 0.05);
+    } @else {
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    }
     @include transition(border linear 0.2s, box-shadow linear 0.2s);
 }
 

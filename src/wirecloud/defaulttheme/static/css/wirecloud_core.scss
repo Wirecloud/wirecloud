@@ -1,3 +1,6 @@
+@import 'variables';
+@import 'compass/css3';
+
 @font-face {
   font-family: 'Comfortaa';
   font-style: normal;
@@ -51,6 +54,8 @@ body {
     right: 0;
     bottom: 0;
     left: 0;
+    background: $body-bg;
+    color: $text-color;
     font-family: "Open Sans";
 }
 
@@ -204,11 +209,7 @@ label {
 }
 
 #wirecloud_breadcrum {
-    padding: 0 5px;
-    height: 42px;
-    line-height: 42px;
     text-align: center;
-    margin: 0 0 0 -1px;
     font-family: "Courier New", courier;
     font-weight: bold;
     width: 320px;

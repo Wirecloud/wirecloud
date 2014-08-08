@@ -1,23 +1,33 @@
 @import 'variables';
 @import 'compass/css3';
 
-.add-on {
+.add-on, .box {
     display: inline-block;
     width: auto;
-    height: $input-height-base;
     min-width: 16px;
-    padding: $padding-base-vertical $padding-base-horizontal;
+    height: $input-height-base;
+    padding: $padding-vertical-base $padding-horizontal-base;
     font-size: $font-size-base;
     font-weight: normal;
     line-height: $line-height-base;
     text-align: center;
     text-shadow: 0 1px 0 #ffffff;
-    background-color: $gray-lighter;
     border: 1px solid #ccc;
     vertical-align: middle;
     box-sizing: border-box;
     @include border-radius(0);
-    box-shadow: $input-external-shadow;
+
+    @if ($button-gradients) {
+        box-shadow: $input-external-shadow;
+    }
+}
+
+.add-on {
+    background-color: $gray-lighter;
+}
+
+.box {
+    background-color: white;
 }
 
 .input-prepend > .west_container > .add-on:first-child {
@@ -34,4 +44,14 @@
 
 .input-append > .east_container > .add-on:last-child {
     @include border-radius(0 $border-radius-base $border-radius-base 0);
+}
+
+.btn-group .add-on:not(:first-child), .btn-group .box:not(:first-child),
+.pagination .add-on:not(:first-child), .pagination .box:not(:first-child) {
+    margin-left: -1px;
+}
+
+.btn-group-lg .add-on, .btn-group-lg .box {
+    height:  $input-height-large;
+    padding: $padding-vertical-large $padding-horizontal-large;
 }

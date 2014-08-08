@@ -74,16 +74,16 @@
         this.wrapperContainer.addClassName('pagination');
         this.wrapperElement = this.wrapperContainer.wrapperElement;
 
-        this.firstBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-first-page'});
+        this.firstBtn = new StyledElements.StyledButton({'iconClass': 'icon-first-page'});
         this.firstBtn.addEventListener('click', pagination.goToFirst.bind(pagination));
 
-        this.prevBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-prev-page'});
+        this.prevBtn = new StyledElements.StyledButton({'iconClass': 'icon-prev-page'});
         this.prevBtn.addEventListener('click', pagination.goToPrevious.bind(pagination));
 
-        this.nextBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-next-page'});
+        this.nextBtn = new StyledElements.StyledButton({'iconClass': 'icon-next-page'});
         this.nextBtn.addEventListener('click', pagination.goToNext.bind(pagination));
 
-        this.lastBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-last-page'});
+        this.lastBtn = new StyledElements.StyledButton({'iconClass': 'icon-last-page'});
         this.lastBtn.addEventListener('click', pagination.goToLast.bind(pagination));
 
         this.currentPageLabel = document.createElement('span');

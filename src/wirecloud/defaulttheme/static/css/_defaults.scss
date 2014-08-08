@@ -18,14 +18,62 @@ $border-radius-small:       3px !default;
 $font-size-base:           14px !default;
 $font-size-large:          ceil($font-size-base * 1.25) !default; // ~18px
 $font-size-small:          ceil($font-size-base * 0.85) !default; // ~12px
+$font-size-xs:             ceil($font-size-base * 0.75) !default; // ~11px
 
 $line-height-base:         20px !default;
-$padding-base-vertical:     4px !default;
-$padding-base-horizontal:   5px !default;
 
+$padding-vertical-base:     4px !default;
+$padding-horizontal-base:  12px !default;
+
+$padding-vertical-large:   11px !default;
+$padding-horizontal-large: 19px !default;
+
+$padding-vertical-small:    2px !default;
+$padding-horizontal-small: 10px !default;
+
+$padding-vertical-xs:       0px !default;
+$padding-horizontal-xs:     6px !default;
+
+$body-bg:                  #FFF !default;
+$text-color:               $gray-dark !default;
+$text-color-light:         $gray-dark !default;
+$text-color-dark:          #FFF !default;
+$text-color-threshold:     (lightness($text-color-light) + lightness($text-color-dark) / 2) !default;
+
+/* Buttons */
+$button-gradients:          true !default;
+$button-border-radius:      $border-radius-base !default;
+
+$button-background-default: #FFF !default;
+$button-border-default:     #CCC !default;
+
+$button-background-primary: #006DCC !default;
+$button-border-primary:     #0044CC !default;
+
+$button-background-success: #5BB75B !default;
+$button-border-success:     #51A351 !default;
+
+$button-background-info:    #49AFCD !default;
+$button-border-info:        #2F96B4 !default;
+
+$button-background-warning: #FAA732 !default;
+$button-border-warning:     #F89406 !default;
+
+$button-background-danger:  #DA4F49 !default;
+$button-border-danger:      #BD362F !default;
+
+/* Inputs */
 $input-color:              $gray !default;
 $input-bg:                 #FFF !default;
 $input-border:             #CCC !default;
-$input-border-color-focus: rgba(82, 168, 236, 0.8);
-$input-height-base:        ($line-height-base + ($padding-base-vertical * 2) + 2) !default;
+$input-border-color-focus: rgba(82, 168, 236, 0.8) !default;
+$input-border-radius-base: $border-radius-base !default;
+
+$input-height-base:        ($line-height-base + ($padding-vertical-base * 2) + 2) !default;
+$input-height-large:       ($line-height-base + ($padding-vertical-large * 2) + 2) !default;
+$input-height-small:       ($line-height-base + ($padding-vertical-small * 2) + 2) !default;
+$input-height-xs:          ($line-height-base + ($padding-vertical-xs * 2) + 2) !default;
+
 $input-external-shadow:    0 1px 2px rgba(0, 0, 0, 0.05) !default;
+$input-padding-horizontal: 6px !default;
+$input-padding-vertical:   $padding-vertical-base !default;

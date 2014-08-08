@@ -1,3 +1,5 @@
+@import 'variables';
+
 .label,
 .badge {
     display: inline-block;
@@ -6,11 +8,14 @@
     font-weight: bold;
     line-height: 14px;
     color: #ffffff;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     white-space: nowrap;
     vertical-align: baseline;
     background-color: #999999;
     margin: 0 2px;
+
+    @if ($button-gradients) {
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    }
 }
 
 .label {
@@ -28,27 +33,27 @@
     display: none;
 }
 
-.label-important,
-.badge-important {
-  background-color: #b94a48;
-}
-
-.label-warning,
-.badge-warning {
-  background-color: #f89406;
-}
-
-.label-success,
-.badge-success {
-  background-color: #468847;
+.label-important, .label-danger,
+.badge-important, .badge-danger {
+    background-color: $brand-danger;
 }
 
 .label-info,
 .badge-info {
-  background-color: #3a87ad;
+    background-color: $brand-info;
+}
+
+.label-warning,
+.badge-warning {
+    background-color: $brand-warning;
+}
+
+.label-success,
+.badge-success {
+    background-color: $brand-success;
 }
 
 .label-inverse,
 .badge-inverse {
-  background-color: #333333;
+    background-color: #333333;
 }

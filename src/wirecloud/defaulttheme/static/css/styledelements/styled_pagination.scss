@@ -1,0 +1,29 @@
+@import 'variables';
+
+.pagination {
+    display: inline-block;
+    font-size: $font-size-base;
+    margin: 5px 3px;
+}
+
+.pagination .icon-first-page:before { content: "\f048"; }
+.pagination .icon-last-page:before  { content: "\f051"; }
+.pagination .icon-prev-page:before  { content: "\f0d9"; }
+.pagination .icon-next-page:before  { content: "\f0da"; }
+
+/* pagination-large, pagination-small and mini */
+
+.pagination-large > .styled_button, .pagination-large > .box {
+    padding: 11px 19px;
+    font-size: 17.5px;
+}
+
+.pagination-small > .styled_button, .pagination-small > .box {
+    padding: 2px 10px;
+    font-size: 11.9px;
+}
+
+.pagination-mini > .styled_button, .pagination-mini > .box {
+    padding: 0 6px;
+    font-size: 10.5px;
+}

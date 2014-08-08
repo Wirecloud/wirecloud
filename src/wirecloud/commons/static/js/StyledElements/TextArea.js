@@ -32,12 +32,10 @@
     };
 
     onfocus = function onfocus() {
-        this.wrapperElement.classList.add('focus');
         this.events.focus.dispatch(this);
     };
 
     onblur = function onblur() {
-        this.wrapperElement.classList.remove('focus');
         this.events.blur.dispatch(this);
     };
 
@@ -53,13 +51,12 @@
 
         StyledElements.StyledInputElement.call(this, options.initialValue, ['blur', 'change', 'focus']);
 
-        this.wrapperElement = document.createElement("div");
+        this.inputElement = document.createElement("textarea");
+        this.wrapperElement = this.inputElement;
         this.wrapperElement.className = "styled_text_area";
         if (options['class'] !== "") {
             this.wrapperElement.className += " " + options['class'];
         }
-
-        this.inputElement = document.createElement("textarea");
 
         if (options.name) {
             this.inputElement.setAttribute("name", options.name);
@@ -70,10 +67,6 @@
         }
 
         this.setValue(options.initialValue);
-
-        var div = document.createElement("div");
-        div.appendChild(this.inputElement);
-        this.wrapperElement.appendChild(div);
 
         /* Internal events */
         this._oninput = oninput.bind(this);

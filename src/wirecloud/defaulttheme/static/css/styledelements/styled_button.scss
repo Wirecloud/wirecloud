@@ -1,0 +1,188 @@
+@import 'variables';
+@import 'compass/css3';
+@import 'compass/css3/images';
+@import 'compass/utilities/color/contrast';
+
+@mixin button-variant($background, $border-color) {
+    $highlight_background: darken($background, 10%);
+
+    color: contrast-color($background, $text-color-light, $text-color-dark, $text-color-threshold);
+    border: 1px solid $border-color;
+    background-color: $background;
+    @if ($button-gradients) {
+        border-bottom-color: darken($border-color, 10%);
+        background-repeat: repeat-x;
+        @include background-image(linear-gradient(lighten($background, 10%), $highlight_background));
+        @include box-shadow(inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05));
+    }
+
+    &:hover,
+    &:active,
+    &:focus,
+    &.disabled
+    {
+        color: contrast-color($highlight_background, $text-color-light, $text-color-dark, $text-color-threshold);
+        background-color: $highlight_background;
+    }
+}
+
+.styled_button {
+    font-size: $font-size-base;
+    padding: $padding-vertical-base $padding-horizontal-base;
+    @include border-radius($button-border-radius);
+    line-height: $line-height-base;
+    font-weight: normal;
+    display: inline-block;
+    margin: 3px;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: relative;
+    cursor: pointer;
+    @include button-variant($button-background-default, $button-border-default);
+    box-sizing: border-box;
+
+    @if ($button-gradients) {
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    }
+}
+
+.styled_button:focus, .styled_button:hover {
+    z-index: 2;
+}
+
+.styled_button.open {
+    z-index: 111113;
+}
+
+.styled_button.plain {
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    vertical-align: baseline;
+    background: transparent;
+    padding: 0;
+    border: 0 none transparent;
+    border-radius: 0px;
+    box-shadow: none;
+}
+
+.styled_button.disabled {
+    opacity: 0.65;
+    background-image: none;
+    cursor: default;
+}
+
+.styled_button:hover, .styled_button.disabled {
+    text-decoration: none;
+    background-position: 0 -15px;
+    @include transition(background-position 0.1s linear);
+}
+
+.styled_button.plain:hover, .styled_button.plain.disabled, .styled_button.plain:active {
+    background: transparent;
+    border: 0 none transparent;
+}
+
+.styled_button img.icon {
+    margin: 3px;
+    vertical-align: middle;
+}
+
+.styled_button:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+.styled_button.btn-large, .styled_button.btn-lg {
+    font-size: $font-size-large;
+    padding: $padding-vertical-large $padding-horizontal-large;
+    @include border-radius($border-radius-large);
+}
+
+.styled_button.btn-small, .styled_button.btn-sm {
+    font-size: $font-size-small;
+    padding: $padding-vertical-small $padding-horizontal-small;
+    @include border-radius($border-radius-small);
+}
+
+.styled_button.btn-mini, .styled_button.btn-xs {
+    font-size: $font-size-xs;
+    padding: $padding-vertical-xs $padding-horizontal-xs;
+    @include border-radius($border-radius-small);
+}
+
+/* Grouped buttons */
+
+.btn-group {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.btn-group > .styled_button,
+.pagination > .styled_button {
+    margin: 0px;
+}
+
+.btn-group > .styled_button:not(:first-child),
+.pagination > .styled_button:not(:first-child) {
+    margin-left: -1px;
+}
+
+.input-prepend > .west_container > .styled_button {
+    margin: 0 -1px 0 0;
+}
+
+.input-prepend > .west_container > .styled_button,
+.btn-group > .styled_button,
+.pagination > .styled_button {
+    border-radius: 0px;
+}
+
+.input-prepend > .west_container > .styled_button:first-child,
+.btn-group > .styled_button:first-child,
+.pagination > .styled_button:first-child {
+    border-top-left-radius: $border-radius-base;
+    border-bottom-left-radius: $border-radius-base;
+}
+
+.input-append > .east_container > .styled_button {
+    margin: 0 0 0 -1px;
+}
+
+.input-append > .east_container > .styled_button {
+    border-radius: 0px;
+}
+
+.input-append > .east_container > .styled_button:last-child,
+.pagination > .styled_button:last-child,
+.btn-group > .styled_button:last-child {
+    border-top-right-radius: $border-radius-base;
+    border-bottom-right-radius: $border-radius-base;
+}
+
+/* Button variants */
+
+.styled_button.btn-primary {
+    @include button-variant($button-background-primary, $button-border-primary);
+}
+
+.styled_button.btn-info {
+    @include button-variant($button-background-info, $button-border-info);
+}
+
+.styled_button.btn-success {
+    @include button-variant($button-background-success, $button-border-success);
+}
+
+.styled_button.btn-warning {
+    @include button-variant($button-background-warning, $button-border-warning);
+}
+
+.styled_button.btn-danger {
+    @include button-variant($button-background-danger, $button-border-danger);
+}

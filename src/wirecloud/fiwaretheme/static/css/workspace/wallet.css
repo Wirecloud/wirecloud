@@ -82,7 +82,7 @@
     right: 0px;
 }
 
-.widget_wallet_list > .resource .mainbutton > div {
+.widget_wallet_list > .resource .mainbutton {
     border-top-left-radius: 0px;
     border-bottom-right-radius: 0px;
 }
