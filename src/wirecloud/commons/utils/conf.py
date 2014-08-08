@@ -170,19 +170,13 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             }
         },
         'loggers': {
-            'django': {
+            '': {
                 'handlers': ['console'],
             },
             'django.request': {
                 'handlers': ['console', 'mail_admins'],
                 'level': 'ERROR',
                 'propagate': False,
-            },
-            'py.warnings': {
-                'handlers': ['console'],
-            },
-            'rdflib': {
-                'handlers': ['console'],
             },
         }
     }

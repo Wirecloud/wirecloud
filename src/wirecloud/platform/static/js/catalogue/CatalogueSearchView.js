@@ -107,8 +107,7 @@
             this.enable();
         }.bind(this));
         this.resource_list = new StyledElements.Container({'class': 'resource_list'});
-        this.simple_search_input = new StyledElements.StyledTextField();
-        this.simple_search_input.inputElement.className = 'simple_search_text';
+        this.simple_search_input = new StyledElements.StyledTextField({'class': 'simple_search_text', 'placeholder': 'Keywords...'});
         this.simple_search_input.inputElement.addEventListener('keypress', this._onSearchInputKeyPress.bind(this));
         this.simple_search_input.addEventListener('change', this._onSearchInput.bind(this));
 
