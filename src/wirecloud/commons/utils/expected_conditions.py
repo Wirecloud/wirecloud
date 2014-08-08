@@ -24,8 +24,8 @@ from selenium.common.exceptions import NoSuchElementException, StaleElementRefer
 
 class element_be_clickable(object):
 
-    def __init__(self, selector, base_element=None, parent=False):
-        self.selector = selector
+    def __init__(self, locator, base_element=None, parent=False):
+        self.locator = locator
         self.base_element = base_element
         self.check_parent = parent
 
@@ -33,9 +33,9 @@ class element_be_clickable(object):
 
         try:
             if self.base_element is not None:
-                element = self.base_element.find_element(*self.selector)
+                element = self.base_element.find_element(*self.locator)
             else:
-                element = driver.find_element(*self.selector)
+                element = driver.find_element(*self.locator)
         except NoSuchElementException:
             return False
 
@@ -75,6 +75,32 @@ class element_be_still(object):
         if old_position == new_position:
             return self.element
         else:
+            return False
+
+
+class visibility_of_element_located(object):
+    """ An expectation for checking that an element is present on the DOM of a
+    page and visible. Visibility means that the element is not only displayed
+    but also has a height and width that is greater than 0.
+    locator - used to find the element
+    returns the WebElement once it is located and visible
+    """
+    def __init__(self, locator, base_element=None):
+        self.locator = locator
+        self.base_element = base_element
+
+    def __call__(self, driver):
+        try:
+            if self.base_element is not None:
+                element = self.base_element.find_element(*self.locator)
+            else:
+                element = driver.find_element(*self.locator)
+        except NoSuchElementException:
+            return False
+
+        try:
+            return element if element.is_displayed() else None
+        except StaleElementReferenceException:
             return False
 
 

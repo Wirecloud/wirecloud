@@ -990,11 +990,11 @@ class MyResourcesViewTester(MarketplaceViewTester):
         if self.marketplace_view is None:
             WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
 
-            WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
+            WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'workspace')
         else:
             self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-shopping-cart").click()
 
-            WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
+            WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
 
     def get_current_catalogue_base_element(self):
         return self.testcase.driver.find_element_by_css_selector('.catalogue.myresources')
@@ -1023,8 +1023,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
             xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error adding packaged resource: " + expect_error + "']"
             self.testcase.driver.find_element_by_xpath(xpath)
             self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-            self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
 
             return None
         else:
@@ -1043,7 +1042,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         resource = self.search_in_results(resource_name)
         self.testcase.scroll_and_click(resource)
 
-        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
+        WebDriverWait(self.testcase.driver, 5).until(WEC.visibility_of_element_located((By.CSS_SELECTOR, '.advanced_operations'), base_element=catalogue_base_element))
         time.sleep(0.1)
 
         found = False
@@ -1069,7 +1068,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         resource = self.search_in_results(resource_name)
         self.testcase.scroll_and_click(resource)
 
-        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
+        WebDriverWait(self.testcase.driver, 5).until(WEC.visibility_of_element_located((By.CSS_SELECTOR, '.advanced_operations'), base_element=catalogue_base_element))
         time.sleep(0.1)
 
         uninstall_button = None
@@ -1080,7 +1079,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         if expect_error:
             self.testcase.assertIsNone(uninstall_button)
-            self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
         else:
             self.testcase.assertIsNotNone(uninstall_button)
             uninstall_button.click()
@@ -1108,7 +1107,7 @@ class WiringViewTester(object):
 
     def __exit__(self, type, value, traceback):
         if self.expect_error is False or self.testcase.get_current_view() == 'wiring':
-            self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
             WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
         self.expect_error = False
 
