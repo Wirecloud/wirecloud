@@ -23,13 +23,13 @@ from six.moves.urllib.parse import urljoin
 from six.moves.urllib.request import pathname2url
 import time
 
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.utils.expected_conditions import element_be_clickable, element_be_still
+from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
@@ -474,7 +474,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             ioperator = wiring.get_ioperators()[0]
             ioperator.element.find_element_by_css_selector('.specialIcon').click()
-            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
+            WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(ioperator.element))
             ioperator.open_menu().click_entry('Settings')
 
             prefix_pref = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
@@ -746,7 +746,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.rename_workspace('New Name')
 
         self.driver.back()
-        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == initial_workspace)
+        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, initial_workspace))
 
     def test_browser_navigation_to_deleted_workspace(self):
 
@@ -758,9 +758,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_name(), 'ExistingWorkspace')
 
         self.driver.back()
-        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Pending Events')
+        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Pending Events'))
         self.driver.back()
-        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Workspace')
+        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Workspace'))
 
     def assertElementHasFocus(self, element):
         # Workaround webkit problem with xhtml and retreiving element with focus
@@ -785,19 +785,19 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertElementHasFocus(next_button)
         next_button.click()
 
-        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Basic concepts tutorial')
+        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Basic concepts tutorial'))
         next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
         self.assertElementHasFocus(next_button)
         next_button.click()
 
-        WebDriverWait(self.driver, 10).until(element_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .wirecloud_toolbar .icon-plus')))
+        WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .wirecloud_toolbar .icon-plus')))
         with self.widget_wallet as wallet:
             time.sleep(1)
 
             # Add the youtube browser widget
             def youtube_instantiable(driver):
                 resource = wallet.search_in_results('YouTube Browser')
-                return resource is not None and element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
+                return resource is not None and WEC.element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
             WebDriverWait(self.driver, 10).until(youtube_instantiable).click()
 
             next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
@@ -809,10 +809,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             def input_box_instantiable(driver):
                 resource = wallet.search_in_results('Input Box')
-                return resource is not None and element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
+                return resource is not None and WEC.element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
             WebDriverWait(self.driver, 10).until(input_box_instantiable).click()
 
-            WebDriverWait(self.driver, 10).until(element_be_clickable((By.CSS_SELECTOR, '.widget_wallet .icon-remove')))
+            WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, '.widget_wallet .icon-remove')))
 
         # cancel current tutorial
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()

@@ -32,7 +32,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import six
 
-from wirecloud.commons.utils.expected_conditions import element_be_clickable
+from wirecloud.commons.utils import expected_conditions as WEC
 
 
 def marketplace_loaded(driver):
@@ -321,7 +321,7 @@ class WalletTester(object):
     def __exit__(self, type, value, traceback):
 
         try:
-            WebDriverWait(self.testcase.driver, 5).until(element_be_clickable((By.CSS_SELECTOR, ".widget_wallet .icon-remove"), parent=True, base_element=self.element)).click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".widget_wallet .icon-remove"), parent=True, base_element=self.element)).click()
         except StaleElementReferenceException:
             pass
 
@@ -848,7 +848,7 @@ class MarketplaceViewTester(object):
         return self
 
     def __exit__(self, type, value, traceback):
-        WebDriverWait(self.testcase.driver, 5).until(element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
 
     def get_current_catalogue_base_element(self):
@@ -882,13 +882,13 @@ class MarketplaceViewTester(object):
         else:
             return None
 
-    def switch_to(self, market, timeout=10):
+    def switch_to(self, market, timeout=5):
 
         if self.get_current_marketplace_name() == market:
             return
 
         self.open_menu().click_entry(market)
-        WebDriverWait(self.testcase.driver, timeout, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_marketplace_name() == market)
+        WebDriverWait(self.testcase.driver, timeout).until(WEC.marketplace_name(self, market))
         self.wait_catalogue_ready()
 
     def add(self, name, url, type_, expect_error=False, public=False):
@@ -988,7 +988,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
     def __exit__(self, type, value, traceback):
         if self.marketplace_view is None:
-            WebDriverWait(self.testcase.driver, 5).until(element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
 
             WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
         else:

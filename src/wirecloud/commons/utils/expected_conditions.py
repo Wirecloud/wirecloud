@@ -78,4 +78,29 @@ class element_be_still(object):
             return False
 
 
+class workspace_name(object):
+    """An expectation for checking the name of a workspace.
+    returns True if the name matches, false otherwise."""
+    def __init__(self, testcase, expected_name):
+        self.testcase = testcase
+        self.expected_name = expected_name
 
+    def __call__(self, driver):
+        try:
+            return self.testcase.get_current_workspace_name() == self.expected_name
+        except StaleElementReferenceException:
+            return False
+
+
+class marketplace_name(object):
+    """An expectation for checking the name of a marketplace.
+    returns True if the name matches, false otherwise."""
+    def __init__(self, marketplace_tester, expected_name):
+        self.marketplace_tester = marketplace_tester
+        self.expected_name = expected_name
+
+    def __call__(self, driver):
+        try:
+            return self.marketplace_tester.get_current_marketplace_name() == self.expected_name
+        except StaleElementReferenceException:
+            return False
