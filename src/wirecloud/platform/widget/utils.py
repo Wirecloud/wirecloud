@@ -24,6 +24,7 @@ from lxml import etree
 
 from django.conf import settings
 from django.db.models import Q
+from django.template import Context, Template
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
@@ -142,6 +143,30 @@ def xpath(tree, query, xmlns):
         return tree.xpath(query, namespaces={'xhtml': xmlns})
 
 
+_widget_platform_style = None
+def get_widget_platform_style():
+    global _widget_platform_style
+
+    if _widget_platform_style is None:
+        from wirecloud.platform.core.plugins import STYLED_ELEMENTS_CSS
+        code = '{% load compress %}{% compress css %}\n'
+        code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/gadget.css" type="text/css" />\n'
+        code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" type="text/css" />\n'
+        for cssfile in STYLED_ELEMENTS_CSS:
+            css_type = 'text/x-scss' if cssfile.endswith('.scss') else 'text/css'
+            code += '    <link rel="stylesheet" href="{{ STATIC_URL }}%s" type="%s" />\n' % (cssfile, css_type)
+        code+= '{% endcompress %}'
+
+        result = Template(code).render(Context({'STATIC_URL': settings.STATIC_URL}))
+        doc = etree.parse(BytesIO(bytes('<files>' + result + '</files>')), etree.XMLParser())
+
+        files = [link.get('href') for link in doc.getroot()]
+        files.reverse()
+        _widget_platform_style = tuple(files)
+
+    return _widget_platform_style
+
+
 def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_platform_style, requirements, force_base, mode):
 
     # This line is here for raising UnicodeDecodeError in case the widget_code is not encoded using the expecified encoding
@@ -197,8 +222,8 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
     head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudWidgetAPI.js', request=request)))
 
     if use_platform_style:
-        head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=get_absolute_static_url('js/EzWebAPI_ext/EzWebGadgets.css', request=request)))
-        head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=get_absolute_static_url('css/gadget.css', request=request)))
+        for file in get_widget_platform_style():
+            head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=file))
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, encoding=encoding, **serialization_options)
