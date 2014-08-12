@@ -123,6 +123,17 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['pagelen'], widgets)
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 6)
+
+        response = self.client.get(self.base_url + '?scope=widget,mashup')
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content.decode('utf-8'))
+        results_by_type = [i['type'] for i in result_json['results']]
+        new_request_widgets = results_by_type.count('widget')
+        new_request_mashups = results_by_type.count('mashup')
+        self.assertEqual(widgets, new_request_widgets)
+        self.assertEqual(result_json['pagelen'], 6)
+        self.assertEqual(result_json['pagelen'], new_request_widgets + new_request_mashups)
+
         self.client.logout()
 
         self.client.login(username='admin', password='admin')

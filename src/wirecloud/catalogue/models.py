@@ -333,14 +333,14 @@ def add_other_versions(searcher, hits, user, staff):
     return results
 
 
-def build_search_kwargs(user_q, request, scope, staff, orderby):
+def build_search_kwargs(user_q, request, types, staff, orderby):
 
     if not staff:
         user_q = And([user_q, Or([Term('public', 't'), Term('users', request.user.username)] +
             [Term('groups', group.name) for group in request.user.groups.all()])])
 
-    if scope:
-        user_q = And([user_q, Term('type', scope)])
+    if types and len(types) > 0:
+        user_q = And([user_q, Or([Term('type', resource_type) for resource_type in types])])
 
     orderby_f = FieldFacet(orderby.replace('-', ''), reverse=orderby.find('-') > -1)
 

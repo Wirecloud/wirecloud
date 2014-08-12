@@ -119,8 +119,11 @@ class ResourceCollection(Resource):
         if not filters['orderby'].replace('-', '', 1) in ['creation_date', 'name', 'vendor']:
             return build_error_response(request, 400, _('Orderby not supported'))
 
-        if filters['scope'] and not filters['scope'] in ['mashup', 'operator', 'widget']:
-            return build_error_response(request, 400, _('Scope not supported'))
+        if filters['scope']:
+            filters['scope'] = set(filters['scope'].split(','))
+            for scope in filters['scope']:
+                if scope not in ['mashup', 'operator', 'widget']:
+                    return build_error_response(request, 400, _('Scope not supported: %s') % scope)
 
         if filters['staff'] and not request.user.is_staff:
             return build_error_response(request, 403, _('Forbidden'))
