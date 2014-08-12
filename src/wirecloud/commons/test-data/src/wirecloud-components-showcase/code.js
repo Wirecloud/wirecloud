@@ -154,20 +154,6 @@ var init = function init() {
     passField.insertInto(row);\n\
     container.appendChild(row);\n\
 \n\
-    /* Numeric Field \n\
-    var row = document.createElement('div');\n\
-    var numericField = new StyledElements.StyledNumericField({initialValue: 10});\n\
-    container.appendChild(numericField);\n\
-    var button = new StyledElements.StyledButton({text: 'Reset'});\n\
-    button.wrapperElement.style.cssText += 'float: right;';\n\
-    var resetNumericField = function(button) {\n\
-        numericField.reset();\n\
-    };\n\
-    button.addEventListener('click', resetNumericField);\n\
-    button.insertInto(row);\n\
-    numericField.insertInto(row);\n\
-    container.appendChild(row);\n\
-*/\n\
     /* Check boxes */\n\
     var group1 = new StyledElements.ButtonsGroup('input5');\n\
     var radiobutton;\n\
@@ -431,6 +417,9 @@ var init = function init() {
     button = new StyledElements.StyledButton({text:'Primary', 'class': 'btn-primary'});\n\
     container.appendChild(button);\n\
 \n\
+    button = new StyledElements.StyledButton({text:'Info', 'class': 'btn-info'});\n\
+    container.appendChild(button);\n\
+\n\
     button = new StyledElements.StyledButton({text:'Success', 'class': 'btn-success'});\n\
     container.appendChild(button);\n\
 \n\
@@ -465,6 +454,10 @@ var init = function init() {
     container.appendChild(button);\n\
 \n\
     button = new StyledElements.StyledButton({text:'Primary', 'class': 'btn-primary'});\n\
+    button.disable();\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Info', 'class': 'btn-info'});\n\
     button.disable();\n\
     container.appendChild(button);\n\
 \n\
