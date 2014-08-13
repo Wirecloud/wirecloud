@@ -54,10 +54,6 @@
     margin: 6px;
 }
 
-.widget_wallet_list > .resource {
-    background: white;
-}
-
 .widget_wallet_addmore {
     position: absolute;
     bottom: 0px;

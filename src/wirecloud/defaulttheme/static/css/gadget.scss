@@ -1,3 +1,6 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
 @font-face {
   font-family: 'Comfortaa';
   font-style: normal;
@@ -40,6 +43,7 @@
 }
 
 body {
+    color: contrast-color($widget-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     font-family: "Open Sans";
     padding: 0;
     margin: 0;
@@ -47,6 +51,20 @@ body {
     height: 100%;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    margin: ($line-height-base / 2) 0;
+    font-family: $headings-font-family;
+    font-weight: $headings-font-weight;
+    line-height: $headings-line-height;
+    text-rendering: optimizelegibility;
+}
+
+h1 { font-size: $font-size-h1; }
+h2 { font-size: $font-size-h2; }
+h3 { font-size: $font-size-h3; }
+h4 { font-size: $font-size-h4; }
+h5 { font-size: $font-size-h5; }
+h6 { font-size: $font-size-h6; }
 
 .warning  table {
     background: transparent;

@@ -37,17 +37,6 @@
     margin: 0;
 }
 
-.window_menu > .window_top > .icon-remove {
-    float: right;
-    font-size: 20px;
-    opacity: 0.2;
-    line-height: 40px;
-}
-
-.window_menu > .window_top >.icon-remove:hover, .window_menu > .window_top > .icon-remove:focus {
-    opacity: 0.4;
-}
-
 .window_menu > .window_content {
     max-height: 400px;
     padding: 15px;

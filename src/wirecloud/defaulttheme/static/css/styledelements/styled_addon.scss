@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'compass/utilities/color/contrast';
 @import 'compass/css3';
 
 .add-on, .box {
@@ -12,7 +13,7 @@
     line-height: $line-height-base;
     text-align: center;
     text-shadow: 0 1px 0 #ffffff;
-    border: 1px solid #ccc;
+    border: 1px solid $input-border;
     vertical-align: middle;
     box-sizing: border-box;
     @include border-radius(0);
@@ -23,11 +24,13 @@
 }
 
 .add-on {
-    background-color: $gray-lighter;
+    color: contrast-color($addon-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    background-color: $addon-bg;
 }
 
 .box {
-    background-color: white;
+    color: contrast-color($box-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    background-color: $box-bg;
 }
 
 .input-prepend > .west_container > .add-on:first-child {

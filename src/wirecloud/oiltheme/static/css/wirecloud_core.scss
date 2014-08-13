@@ -70,8 +70,8 @@ h1, h2, h3, h4, h5, h6 {
     color: #60C1CF;
     margin: 10px 0;
     font-family: Comfortaa;
-    font-weight: bold;
-    line-height: 20px;
+    font-weight: $headings-font-weight;
+    line-height: $headings-line-height;
     text-rendering: optimizelegibility;
 }
 

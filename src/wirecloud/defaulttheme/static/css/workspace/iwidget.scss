@@ -1,10 +1,14 @@
+@import 'variables';
+@import 'compass/css3';
+@import 'compass/css3/images';
+@import 'compass/utilities/color/contrast';
+
 .iwidget {
     position: absolute;
     -moz-transition: opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in;
     -webkit-transition: opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in;
     transition: opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in;
-    background: white;
-    border-color: #C2CBD2;
+    border-color: $button-border-default;
     overflow: visible;
 }
 
@@ -15,9 +19,14 @@
 }
 
 .iwidget > .widget_menu {
-    background: transparent;
-    color: #4C5054;
+    @if (opacity($widget-menu-bg) == 0) {
+        color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    } @else {
+        color: contrast-color($widget-menu-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+        background: $widget-menu-bg;
+    }
     font-size: 24px;
+    padding: $widget-menu-padding;
     cursor: move;
     line-height: 30px;
     position: relative;
@@ -26,6 +35,11 @@
 .iwidget > .widget_menu > span {
     font-family: Comfortaa;
     display: inline-block;
+    @if (opacity($widget-menu-bg) == 0) {
+        color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    } @else {
+        color: contrast-color($widget-menu-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    }
 }
 
 .iwidget > .widget_menu > .buttons {
@@ -33,20 +47,16 @@
     position: absolute;
     top: 0px;
     right: 0px;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgb(255, 255, 255) 38px, rgb(255, 255, 255));
+    @if (opacity($widget-menu-bg) == 0) {
+        @include background-image(linear-gradient(to right, rgba($body-bg, 0), $body-bg 38px, $body-bg));
+    } @else {
+        @include background-image(linear-gradient(to right, rgba($widget-menu-bg, 0), $widget-menu-bg 38px, $widget-menu-bg));
+    }
     border-radius: 4px;
     padding: 0px 3px 0px 38px;
     opacity: 0;
     white-space: nowrap;
-    -moz-transition-property: opacity;
-    -moz-transition-duration: 1s;
-    -webkit-transition-property: opacity;
-    -webkit-transition-duration: 1s;
-    -o-transition-property: opacity;
-    -o-transition-duration: 1s;
-    transition-property: opacity;
-    transition-duration: 1s;
-    line-height: 28px;
+    @include transition(opacity 1s ease-in);
 }
 
 .iwidget > .widget_menu:hover > .buttons {
@@ -56,14 +66,7 @@
 .iwidget > .widget_menu .styled_button {
     font-size: 75%;
     color: rgba(136, 136, 136, 0.6);
-    -moz-transition-property: color;
-    -moz-transition-duration: 1s;
-    -webkit-transition-property: color;
-    -webkit-transition-duration: 1s;
-    -o-transition-property: color;
-    -o-transition-duration: 1s;
-    transition-property: color;
-    transition-duration: 1s;
+    @include transition(color 1s ease-in);
 }
 
 .iwidget > .widget_menu .styled_button:focus, .iwidget > .widget_menu .styled_button:hover {
@@ -72,12 +75,15 @@
 
 .iwidget > .widget_menu > .infobuttons {
     padding: 0px 38px 0px 3px;
-    background: linear-gradient(to left, rgba(255, 255, 255, 0), rgb(255, 255, 255) 38px, rgb(255, 255, 255));
+    @if (opacity($widget-menu-bg) == 0) {
+        @include background-image(linear-gradient(to left, rgba($body-bg, 0), $body-bg 38px, $body-bg));
+    } @else {
+        @include background-image(linear-gradient(to left, rgba($widget-menu-bg, 0), $widget-menu-bg 38px, $widget-menu-bg));
+    }
     position: absolute;
     top: 0px;
     left: 0px;
     margin: 0px;
-    line-height: 28px;
 }
 
 .iwidget > .widget_menu .errorbutton.disabled {
@@ -85,20 +91,23 @@
 }
 
 .iwidget > .widget_shadow {
-    -moz-transition: box-shadow 0.7s ease-in;
-    -webkit-transition: box-shadow 0.7s ease-in;
-    transition: box-shadow 0.7s ease-in;
-    border-radius: 4px 4px 0px 0px;
+    background: $widget-bg;
+    @include transition(box-shadow 0.7s ease-in);
+    @if ($widget-borders) {
+        border-radius: $border-radius-base $border-radius-base 0px 0px;
+    }
 }
 
 .iwidget > .widget_shadow > .widget_wrapper {
     clear: both;
     overflow: hidden;
     width: auto;
-    border-width: 1px 1px 0px 1px;
-    border-radius: 4px 4px 0px 0px;
-    border-style: solid;
-    border-color: #DDD;
+    @if ($widget-borders) {
+        border-width: 1px 1px 0px 1px;
+        border-radius: 4px 4px 0px 0px;
+        border-style: solid;
+        border-color: #DDD;
+    }
 }
 
 .iwidget > .widget_shadow > .widget_wrapper > iframe {
@@ -107,9 +116,18 @@
 }
 
 .iwidget > .widget_shadow > .statusBar {
-    border: 1px solid #DDD;
+    @if ($widget-borders) {
+        border: 1px solid #DDD;
+    }
     height: 16px;
     padding: 0 32px;
+
+    @if ($widget-footer-bg == 'transparent') {
+        color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    } @else {
+        color: contrast-color($widget-footer-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+        background: $widget-footer-bg;
+    }
 }
 
 .iwidget .bottomResizeHandle {

@@ -1,6 +1,9 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
 .model_table {
-    font-size: 14px;
-    line-height: 20px;
+    font-size: $font-size-base;
+    line-height: $line-height-base;
 }
 
 .model_table > .headrow {
@@ -59,7 +62,7 @@
 
 .model_table > .container.tbody {
     overflow-y: auto;
-    color: #333;
+    color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
 }
 
 .model_table > .tbody > .row {
@@ -69,11 +72,12 @@
 
 .model_table > .tbody > .row.highlight {
     background-color: #08C;
-    color: white;
+    color: contrast-color(#08C, $text-color-light, $text-color-dark, $text-color-threshold);
 }
 
 .model_table > .tbody > .row:hover {
     background-color: #f5f5f5;
+    color: contrast-color(#f5f5f5, $text-color-light, $text-color-dark, $text-color-threshold);
 }
 
 .model_table > .tbody > .row.highlight:hover {

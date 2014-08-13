@@ -8,10 +8,6 @@ div.fulldragboard {
   position: fixed;
 }
 
-div.widget_menu {
-  padding: 1px 3px 1px 7px;
-}
-
 /*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
 div.fixed div.widget_menu {
   cursor: default;

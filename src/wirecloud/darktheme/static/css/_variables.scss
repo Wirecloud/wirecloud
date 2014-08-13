@@ -1,0 +1,40 @@
+$gray-darker:           lighten(#000, 13.5%);
+$gray-dark:             lighten(#000, 20%);
+$gray:                  lighten(#000, 33.5%);
+$gray-light:            #4E5D6C;
+$gray-lighter:          #EBEBEB;
+
+$brand-default:         #FFFFFF;
+$brand-primary:         #8670BD;
+$brand-warning:         #EFA948;
+
+$body-bg:               #2B3E50;
+$text-color-light:      $body-bg;
+$text-color-dark:       $gray-lighter;
+$panel-default-heading-bg: $gray-light;
+$panel-bg:              #979EA5;
+$panel-footer-bg:       $gray-light;
+
+$headings-font-weight:  normal;
+
+$font-size: 15px;
+$line-height: 21px;
+
+$button-gradients:       false;
+$button-text-color-dark: #FFF;
+
+$nav-tabs-border-color: $gray-light;
+$nav-tabs-active-link-hover-border-color: $gray-light;
+$nav-tabs-active-link-hover-bg: $gray-light; 
+
+$modal-header-bg:           $panel-default-heading-bg;
+$modal-footer-bg:           $panel-default-heading-bg;
+$modal-header-border-color: none;
+
+$widget-menu-bg:      $panel-default-heading-bg;
+$widget-borders:        false;
+$resource-border:       false;
+
+@import 'defaults';
+
+$widget-menu-padding:   $padding-vertical-base $padding-horizontal-base;

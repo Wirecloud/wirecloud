@@ -1,25 +1,24 @@
+@import 'variables';
+@import 'compass/css3';
+@import 'compass/css3/images';
+
 .resource {
     position: relative;
     border: 1px solid #CDCED1;
-    padding: 0 8px;
+    padding: 0;
     border-radius: 6px;
     display: inline-block;
     margin: 6px;
     vertical-align: middle;
     height: 142px;
-    width: 300px;
+    width: 318px;
     text-align: left;
     overflow: hidden;
-    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
-    -moz-transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
-    -ms-transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
-    -o-transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
-    transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
-    -webkit-box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
-    -moz-box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
-    box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
-    background: white;
+    @include transition(border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s);
+    @include box-shadow(0 0 8px rgba(50, 50, 50, 0.1));
+    background: $resource-bg;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 .resource:hover {
@@ -30,8 +29,6 @@
 }
 
 .resource .txt-gradient {
-    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0), rgb(255, 255, 255));
-    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgb(255, 255, 255));
     position: absolute;
     bottom: 0px;
     width: 38px;
@@ -39,14 +36,21 @@
 }
 
 .resource > .header {
-    margin-top: 2px;
+    padding: $padding-vertical-base 8px;
+    background: $resource-header-bg;
 }
 
 .resource > .header > h2 > .txt-gradient {
+    @if ($resource-header-bg) {
+        @include background-image(linear-gradient(to right, rgba($resource-header-bg, 0), $resource-header-bg));
+    } @else {
+        @include background-image(linear-gradient(to right, rgba($resource-bg, 0), $resource-bg));
+    }
     height: 26px;
 }
 
 .resource > .description > .txt-gradient {
+    @include background-image(linear-gradient(to right, rgba($resource-bg, 0), $resource-bg));
     height: 18px;
     width: 60px;
 }

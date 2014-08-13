@@ -31,12 +31,12 @@ from wirecloud.platform.plugins import build_url_template, get_active_features_i
 WORKSPACE_CSS = (
     'css/workspace/wallet.css',
     'css/workspace/dragboard_cursor.css',
-    'css/workspace/iwidget.css',
+    'css/workspace/iwidget.scss',
     'css/workspace/empty_workspace_message.css',
 )
 
 CLASSIC_CORE_CSS = (
-    'css/window_menu.css',
+    'css/window_menu.scss',
     'css/mac_search.css',
     'css/mac_field.css',
     'css/mac_selection_dialog.css',
@@ -44,6 +44,7 @@ CLASSIC_CORE_CSS = (
 
 CATALOGUE_CSS = (
     'css/catalogue/emptyCatalogueBox.css',
+    'css/catalogue/resource.scss',
 )
 
 WIRING_EDITOR_FILES = (
@@ -159,7 +160,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_notebook.css',
     'css/styledelements/styled_form.css',
     'css/styledelements/styled_pagination.scss',
-    'css/styledelements/styled_numeric_field.css',
+    'css/styledelements/styled_numeric_field.scss',
     'css/styledelements/styled_text_field.scss',
     'css/styledelements/styled_text_area.scss',
     'css/styledelements/styled_password_field.scss',
@@ -167,7 +168,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_border_layout.css',
     'css/styledelements/styled_horizontal_layout.css',
     'css/styledelements/styled_file_field.scss',
-    'css/styledelements/styled_table.css',
+    'css/styledelements/styled_table.scss',
     'css/styledelements/styled_label_badge.scss',
     'css/styledelements/styled_message.css',
     'css/styledelements/styled_rating.css',
