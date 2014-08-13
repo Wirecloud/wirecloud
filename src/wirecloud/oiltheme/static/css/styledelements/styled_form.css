@@ -38,11 +38,11 @@
 }
 
 .styled_form td > .se-text-field,
-.styled_form td > .styled_text_area,
+.styled_form td > .se-text-area,
 .styled_form td > .se-numeric-field,
 .styled_form td > .se-password-field,
-.styled_form td > .styled_file_field,
-.styled_form td > .styled_mac_field,
+.styled_form td > .se-file-field,
+.styled_form td > .se-mac-field,
 .styled_form td > .se-select
 {
     width: 100%;

@@ -2,7 +2,7 @@
 @import 'styledelements/input_mixins';
 @import 'compass/css3';
 
-.styled_text_area {
+.se-text-area {
     @include input-base();
     height: 5em;
 }

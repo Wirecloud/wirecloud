@@ -67,7 +67,7 @@
 
         StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
-        this.layout = new StyledElements.HorizontalLayout({'class': 'styled_mac_field input input-prepend input-append'});
+        this.layout = new StyledElements.HorizontalLayout({'class': 'se-mac-field input input-prepend input-append'});
         this.wrapperElement = this.layout.wrapperElement;
         if (options['class'] !== "") {
             this.wrapperElement.className += " " + options['class'];

@@ -681,7 +681,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             self.fill_form_input(name_input, name)
 
         if mashup:
-            with MACFieldTester(self, form.find_element_by_css_selector('.styled_mac_field')) as select_dialog:
+            with MACFieldTester(self, form.find_element_by_css_selector('.se-mac-field')) as select_dialog:
                 select_dialog.search(mashup)
                 resource = select_dialog.search_in_results(mashup)
                 resource.select()

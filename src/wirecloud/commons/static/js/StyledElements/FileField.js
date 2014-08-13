@@ -73,7 +73,7 @@
 
         StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
-        this.layout = new StyledElements.HorizontalLayout({'class': 'styled_file_field input input-append'});
+        this.layout = new StyledElements.HorizontalLayout({'class': 'se-file-field input input-append'});
         this.wrapperElement = this.layout.wrapperElement;
         if (options['class'] !== "") {
             this.wrapperElement.className += " " + options['class'];

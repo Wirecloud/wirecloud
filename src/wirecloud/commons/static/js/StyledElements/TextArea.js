@@ -53,7 +53,7 @@
 
         this.inputElement = document.createElement("textarea");
         this.wrapperElement = this.inputElement;
-        this.wrapperElement.className = "styled_text_area";
+        this.wrapperElement.className = "se-text-area";
         if (options['class'] !== "") {
             this.wrapperElement.className += " " + options['class'];
         }
