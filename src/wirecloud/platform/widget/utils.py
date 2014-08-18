@@ -150,11 +150,11 @@ def get_widget_platform_style():
     if _widget_platform_style is None:
         from wirecloud.platform.core.plugins import STYLED_ELEMENTS_CSS
         code = '{% load compress %}{% compress css %}\n'
-        code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/gadget.scss" type="text/x-scss" />\n'
-        code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" type="text/css" />\n'
+        code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/gadget.scss" context="widget" type="text/x-scss" />\n'
+        code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" context="widget" type="text/css" />\n'
         for cssfile in STYLED_ELEMENTS_CSS:
             css_type = 'text/x-scss' if cssfile.endswith('.scss') else 'text/css'
-            code += '    <link rel="stylesheet" href="{{ STATIC_URL }}%s" type="%s" />\n' % (cssfile, css_type)
+            code += '    <link rel="stylesheet" href="{{ STATIC_URL }}%s" context="widget" type="%s" />\n' % (cssfile, css_type)
         code+= '{% endcompress %}'
 
         result = Template(code).render(Context({'STATIC_URL': settings.STATIC_URL}))

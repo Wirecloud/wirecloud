@@ -156,8 +156,11 @@ class SCSSPrecompiler(object):
     def __init__(self, content, attrs, filter_type=None, filename=None, charset=None):
         self.filename = filename
         self.content = content
+        self.context = attrs.get('context', 'platform')
 
     def input(self, filename=None, basename=None, **kwargs):
 
-        content = get_scss_compiler().compile(scss_string=self.content, filename=self.filename)
+        compiler = get_scss_compiler()
+        compiler._scss_vars = {'$context': scss.types.String.unquoted(self.context)}
+        content = compiler.compile(scss_string=self.content, filename=self.filename)
         return CssAbsoluteFilter(content).input(filename, basename, **kwargs)
