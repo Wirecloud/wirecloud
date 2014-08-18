@@ -56,12 +56,9 @@
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "notebook");
 
-        var div = document.createElement("div");
-        this.wrapperElement.appendChild(div);
-
-        tabWrapper = new StyledElements.HorizontalLayout({'class': 'tab_wrapper', 'autoHeight': false});
+        tabWrapper = new StyledElements.HorizontalLayout({'class': 'se-notebook-tabs-wrapper', 'autoHeight': false});
         this.tabWrapper = tabWrapper;
-        tabWrapper.insertInto(div);
+        tabWrapper.insertInto(this.wrapperElement);
 
         this.tabArea = tabWrapper.getCenterContainer();
         this.tabArea.addClassName('tab_area');
@@ -77,8 +74,8 @@
         tabWrapper.getEastContainer().appendChild(this.moveRightButton);
 
         this.contentArea = document.createElement("div");
-        this.contentArea.className = "wrapper";
-        div.appendChild(this.contentArea);
+        this.contentArea.className = "se-notebook-content-wrapper";
+        this.wrapperElement.appendChild(this.contentArea);
 
         this.tabs = [];
         this.tabsById = [];
@@ -498,7 +495,7 @@
      * @private
      */
     StyledNotebook.prototype._computeMaxTabElementWidth = function _computeMaxTabElementWidth() {
-        var tabAreaWidth, tabElement, computedStyle, padding;
+        var tabAreaWidth, tabElement, computedStyle;
 
         if (this.tabs.length === 0) {
             this.maxTabElementWidth = '';
@@ -513,11 +510,7 @@
             this.maxTabElementWidth = '';
             return;
         }
-        padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-        padding += computedStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
-        padding += 2 * computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-        this.maxTabElementWidth = (tabAreaWidth - padding) + 'px';
+        this.maxTabElementWidth = tabAreaWidth + 'px';
     };
 
     StyledNotebook.prototype.repaint = function repaint(temporal) {

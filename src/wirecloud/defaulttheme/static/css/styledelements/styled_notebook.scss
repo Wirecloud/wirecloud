@@ -1,54 +1,24 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
+$tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
+@if ($context == 'widget') {
+    $body-bg: $widget-bg;
+}
+
 .notebook {
     min-width: 5em;
     min-height: 5em;
     position: relative;
-    margin: 3px;
+    margin: 0px;
     padding: 0px;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .notebook.full {
     width: 100%;
     height: 100%;
-    margin: 0;
-}
-
-.notebook.full > div {
-    position: absolute;
-    left: 3px;
-    right: 3px;
-    top: 3px;
-    bottom: 3px;
-}
-
-.notebook .tab_wrapper > .tab_area_msg {
-    z-index: 3;
-    left: auto;
-    position: absolute;
-    top: 1px;
-    display: none;
-}
-
-.notebook .tab_wrapper {
-    position: absolute;
-    left: 0;
-    right: 0;
-}
-
-.notebook > div > .tab_wrapper > .tab_area {
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.notebook .tab_area .tab {
-    position: relative;
-    cursor: pointer;
-    display: inline-block;
-}
-
-.notebook .tab_area .tab.hidden {
-    height: 0px;
-    overflow: hidden;
 }
 
 .notebook .disable-layer {
@@ -66,28 +36,31 @@
 
 /* Styled Notebook */
 
-.notebook .tab_wrapper {
-    font-size: 16px;
-    border-bottom: 1px solid #DDD;
-    height: 32px;
-    line-height: 33px;
+.se-notebook-tabs-wrapper.horizontal_layout {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    font-size: $font-size-base;
+    height: $tabs-wrapper-height;
+    line-height: $tabs-wrapper-height;
     overflow: visible;
     color: rgb(85, 85, 85);
+    z-index: 2;
 }
 
-.notebook .tab_wrapper > .east_container {
+.se-notebook-tabs-wrapper > .east_container {
     white-space: nowrap;
 }
 
-.notebook .tab_wrapper .move_left {
+.se-notebook-tabs-wrapper .move_left {
     margin: 0 5px;
 }
 
-.notebook .tab_wrapper .move_right {
+.se-notebook-tabs-wrapper .move_right {
     margin: 0 5px;
 }
 
-.notebook .tab_wrapper .move_left, .notebook .tab_wrapper .move_right {
+.se-notebook-tabs-wrapper .move_left, .se-notebook-tabs-wrapper .move_right {
     cursor: default;
     display: inline-block;
     -moz-user-select: none;
@@ -98,79 +71,82 @@
     visibility: hidden;
 }
 
-.notebook .tab_wrapper .move_left.enabled, .notebook .tab_wrapper .move_right.enabled {
+.se-notebook-tabs-wrapper .move_left.enabled, .se-notebook-tabs-wrapper .move_right.enabled {
     cursor: pointer;
     visibility: visible;
 }
 
-.notebook .tab_area {
-    height: 33px;
+.se-notebook-tabs-wrapper > .tab_area {
+    overflow: hidden;
+    white-space: nowrap;
+    height: $tabs-wrapper-height;
     margin: 0;
 }
 
-.notebook .tab_area .tab {
+.se-notebook-tab {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
     background: transparent;
-    color: rgb(0, 136, 204);
-    height: 15px;
-    line-height: 16px;
-    border: 1px solid transparent;
+    color: $brand-primary;
+    box-sizing: border-box;
+    height: $tabs-wrapper-height;
+    line-height: $line-height-base;
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: transparent;
     vertical-align: top;
-    padding: 8px 12px;
-    border-radius: 4px 4px 0 0;
-    font-size: 13px;
+    padding: $nav-link-padding-vertical $nav-link-padding-horizontal;
+    border-radius: $border-radius-base $border-radius-base 0 0;
+    font-size: $font-size-base;
     font-weight: normal;
     min-width: 1ex;
     margin: 0 3px;
+    white-space: nowrap;
+
+    &:hover {
+        border-color: $nav-tabs-active-link-hover-border-color $nav-tabs-active-link-hover-border-color transparent $nav-tabs-active-link-hover-border-color;
+        background: $nav-tabs-active-link-hover-bg;
+        color: contrast-color($nav-tabs-active-link-hover-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    }
+
+    &.selected {
+        background: $body-bg;
+        color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+        border-color: $nav-tabs-active-link-hover-border-color $nav-tabs-active-link-hover-border-color transparent $nav-tabs-active-link-hover-border-color;
+    }
+
+    > span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    > img {
+        height: 16px;
+        margin: 0 0.5ex 0 0;
+        position: relative;
+        top: 1px;
+        vertical-align: sub;
+    }
+
+    > .close_button {
+        float: right;
+        margin: 0 0 0 6px;
+    }
 }
 
-.notebook .tab_area .tab:hover {
-    border-color: rgb(238, 238, 238) rgb(238, 238, 238) transparent rgb(221, 221, 221);
-    color: rgb(0, 85, 128);
-}
-
-.notebook .tab_area .tab img {
-  height: 16px;
-  margin: 0 0.5ex 0 0;
-  position: relative;
-  top: 1px;
-  vertical-align: sub;
-}
-
-.notebook .tab_area .tab > .close_button {
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 12px;
-    color: black;
-    text-shadow: 0 1px 0 white;
-    opacity: 0.2;
-    margin: 0 0 0 10px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.notebook .tab_area .tab.selected {
-    background: #FFFFFF;
-    color: rgb(85, 85, 85);
-    border-color: rgb(221, 221, 221) rgb(221, 221, 221) transparent rgb(221, 221, 221);
-}
-
-.notebook div.tab_wrapper > .tab_area_msg {
-  right: 80px;
-  border: 1px solid #3B7614;
-  background-color: #B6F48E;
-  padding: 2px 5px;
-  font-size: 90%;
-  min-width: 250px;
-}
-
-.notebook > div > .wrapper {
+.se-notebook-content-wrapper {
     background: transparent;
     position: absolute;
     overflow: hidden;
     padding: 0;
-    top: 33px;
+    top: $tabs-wrapper-height - 1;
     right: 0;
     bottom: 0;
     left: 0;
+    border-top: 1px solid $nav-tabs-border-color;
+    z-index: 1;
 }
 
 .se-notebook-tab-content {
@@ -191,4 +167,37 @@
     height: 0px;
     padding: 0px;
     overflow: hidden;
+}
+
+.se-notebook-bottom > .se-notebook-content-wrapper {
+    top: 0;
+    bottom: $tabs-wrapper-height - 1;
+    border-top: none;
+    border-bottom: 1px solid $nav-tabs-border-color;
+}
+
+.se-notebook-content-wrapper:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: inset 0px 10px 10px -10px rgba($body-bg, 0.8), inset 0px -10px 10px -10px rgba($body-bg, 0.8);
+}
+
+.se-notebook-bottom > .se-notebook-tabs-wrapper {
+    top: auto;
+    bottom: 0;
+
+    .se-notebook-tab {
+        border-width: 0 1px 1px 1px;
+        border-radius: 0 0 $border-radius-base $border-radius-base;
+
+        &.selected, &:hover {
+            border-color: transparent $nav-tabs-active-link-hover-border-color $nav-tabs-active-link-hover-border-color $nav-tabs-active-link-hover-border-color;
+        }
+    }
 }

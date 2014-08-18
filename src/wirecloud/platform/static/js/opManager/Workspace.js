@@ -734,7 +734,7 @@ function Workspace(workspaceState, resources) {
 
     StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved', 'removed']);
 
-    this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
+    this.notebook = new StyledElements.StyledNotebook({'class': 'workspace se-notebook-bottom'});
     LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
     LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
 

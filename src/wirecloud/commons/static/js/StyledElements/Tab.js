@@ -61,7 +61,7 @@
         this.notebook = notebook;
 
         this.tabElement = document.createElement("div");
-        this.tabElement.className = "tab";
+        this.tabElement.className = "se-notebook-tab";
         this.name = document.createElement('span');
         this.tabElement.appendChild(this.name);
 
@@ -81,12 +81,12 @@
         /* Process options */
         if (options.closable) {
             var closeButton = new StyledElements.StyledButton({
-                text: "X",
+                iconClass: "icon-remove",
                 plain: true,
                 'class': "close_button",
                 title: 'Close Tab'
             });
-            closeButton.insertInto(this.tabElement);
+            closeButton.insertInto(this.tabElement, this.name);
 
             closeButton.addEventListener("click",
                                          this.close.bind(this),

@@ -733,7 +733,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
     def get_workspace_tab_by_name(self, tab_name):
 
-        tabs = self.driver.find_elements_by_css_selector('.notebook.workspace .tab_wrapper .tab')
+        tabs = self.driver.find_elements_by_css_selector('.se-notebook.workspace > .se-notebook-tabs-wrapper .se-notebook-tab')
         for tab in tabs:
             span = tab.find_element_by_css_selector('span')
             if span.text == tab_name:

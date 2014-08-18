@@ -157,7 +157,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_alternatives.scss',
     'css/styledelements/styled_button.scss',
     'css/styledelements/styled_checkbox.css',
-    'css/styledelements/styled_notebook.css',
+    'css/styledelements/styled_notebook.scss',
     'css/styledelements/styled_form.css',
     'css/styledelements/styled_pagination.scss',
     'css/styledelements/styled_numeric_field.scss',
