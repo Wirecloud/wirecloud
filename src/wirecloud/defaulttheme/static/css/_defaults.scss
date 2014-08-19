@@ -5,11 +5,12 @@ $gray:                   lighten($gray-base, 33.5%) !default; // #555
 $gray-light:             lighten($gray-base, 46.7%) !default; // #777
 $gray-lighter:           lighten($gray-base, 93.5%) !default; // #EEE
 
+$brand-default:         #FFFFFF !default;
 $brand-primary:         #428bca !default;
 $brand-success:         #5cb85c !default;
 $brand-info:            #5bc0de !default;
 $brand-warning:         #f0ad4e !default;
-$brand-danger:          #b94a48 !default;
+$brand-danger:          #D8544F !default;
 
 $border-radius-base:        4px !default;
 $border-radius-large:       6px !default;
@@ -38,10 +39,9 @@ $padding-horizontal-xs:     6px !default;
 /* Global settings */
 
 $body-bg:                   #FFF !default;
-$text-color:                $gray-dark !default;
 $text-color-light:          $gray-dark !default;
 $text-color-dark:           #FFF !default;
-$text-color-threshold:      (lightness($text-color-light) + lightness($text-color-dark) / 2) !default;
+$text-color-threshold:      (((lightness($text-color-light) + lightness($text-color-dark)) / 2) + 3) !default;
 
 $font-family-base:          "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 
@@ -55,29 +55,66 @@ $font-size-h4:              floor($font-size-base * 1.25) !default; // 18px
 $font-size-h5:              $font-size-base !default;
 $font-size-h6:              floor($font-size-base * 0.85) !default;
 
+/* States */
+
+$state-success-text:        darken($brand-success, 20%);
+$state-success-bg:          lighten($brand-success, 35%);
+$state-success-border:      darken(spin($state-success-bg, -10), 5%);
+
+$state-info-text:           darken($brand-info, 20%);
+$state-info-bg:             lighten($brand-info, 35%);
+$state-info-border:         darken(spin($state-info-bg, -10), 5%);
+
+$state-warning-text:        darken($brand-warning, 20%);
+$state-warning-bg:          lighten($brand-warning, 35%);
+$state-warning-border:      darken(spin($state-warning-bg, -10), 5%);
+
+$state-danger-text:         darken($brand-danger, 20%);
+$state-danger-bg:           lighten($brand-danger, 35%);
+$state-danger-border:       darken(spin($state-danger-bg, -10), 5%);
+
+/* Code */
+
+$code-color:                  #c7254e;
+$code-bg:                     #f9f2f4;
+
+$kbd-color:                   #fff;
+$kbd-bg:                      #333;
+
+$pre-bg:                      #f5f5f5;
+$pre-color:                   $gray-dark;
+$pre-border-color:            #ccc;
+$pre-scrollable-max-height:   340px;
+
 /* Buttons */
+
+$button-text-color-light:     $text-color-light !default;
+$button-text-color-dark:      $text-color-dark !default;
+$button-text-color-threshold: (((lightness($button-text-color-light) + lightness($button-text-color-dark)) / 2) + 3) !default;
+
 $button-gradients:          true !default;
 $button-border-radius:      $border-radius-base !default;
 
-$button-background-default: #FFF !default;
-$button-border-default:     #CCC !default;
+$button-background-default: $brand-default !default;
+$button-border-default:     darken($brand-default, 10%) !default;
 
-$button-background-primary: #006DCC !default;
-$button-border-primary:     #0044CC !default;
+$button-background-primary: $brand-primary !default;
+$button-border-primary:     darken($brand-primary, 10%) !default;
 
-$button-background-success: #5BB75B !default;
-$button-border-success:     #51A351 !default;
+$button-background-success: $brand-success !default;
+$button-border-success:     darken($brand-success, 10%) !default;
 
-$button-background-info:    #49AFCD !default;
-$button-border-info:        #2F96B4 !default;
+$button-background-info:    $brand-info !default;
+$button-border-info:        darken($brand-info, 10%) !default;
 
-$button-background-warning: #FAA732 !default;
-$button-border-warning:     #F89406 !default;
+$button-background-warning: $brand-warning !default;
+$button-border-warning:     darken($brand-warning, 10%) !default;
 
-$button-background-danger:  #DA4F49 !default;
-$button-border-danger:      #BD362F !default;
+$button-background-danger:  $brand-danger !default;
+$button-border-danger:      darken($brand-danger, 10%) !default;
 
 /* Inputs */
+
 $addon-bg:                 $gray-lighter !default;
 $box-bg:                   white !default;
 $input-border:             #CCC !default;
@@ -95,11 +132,28 @@ $input-external-shadow:    0 1px 2px rgba(0, 0, 0, 0.05) !default;
 $input-padding-horizontal: 6px !default;
 $input-padding-vertical:   $padding-vertical-base !default;
 
+/* Navigation */
+
+$nav-tabs-border-color:       #DDD !default;
+$nav-tabs-active-link-hover-border-color: $nav-tabs-border-color !default;
+$nav-tabs-active-link-hover-bg: $nav-tabs-border-color !default;
+
+$nav-link-padding-vertical:    8px !default;
+$nav-link-padding-horizontal: 15px !default;
+
+/* Panels */
+
+$panel-bg:                 $body-bg !default;
+$panel-border-radius:      $border-radius-base !default;
+$panel-footer-bg:          #F5F5F5 !default;
+
+$panel-default-heading-bg: $panel-footer-bg !default;
+
 /* Modals */
 
-$modal-bg:                 $body-bg !default;
-$modal-header-bg:          $body-bg !default;
-$modal-footer-bg:          #F5F5F5 !default;
+$modal-bg:                 $panel-bg !default;
+$modal-header-bg:          $panel-bg !default;
+$modal-footer-bg:          $panel-footer-bg !default;
 
 $modal-header-border-color: #DDD !default;
 $modal-footer-border-color: $modal-header-border-color !default;
@@ -108,9 +162,9 @@ $modal-inner-padding:      15px !default;
 
 /* Widgets */
 
-$widget-bg:                $body-bg !default;
+$widget-bg:                $panel-bg !default;
 $widget-menu-bg:           rgba(white, 0) !default;
-$widget-footer-bg:         white !default;
+$widget-footer-bg:         $panel-footer-bg !default;
 
 $widget-menu-padding:      $padding-vertical-base 0 !default;
 
@@ -118,5 +172,6 @@ $widget-borders:           true !default;
 
 /* Catalogue */
 
-$resource-bg:              $body-bg !default;
-$resource-header-bg:       false !default;
+$resource-bg:              $panel-bg !default;
+$resource-header-bg:       $panel-default-heading-bg !default;
+$resource-border:          #CDCED1 !default;

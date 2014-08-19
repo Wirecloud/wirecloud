@@ -1,10 +1,13 @@
 @import 'variables';
 @import 'compass/css3';
 @import 'compass/css3/images';
+@import 'compass/utilities/color/contrast';
 
 .resource {
     position: relative;
-    border: 1px solid #CDCED1;
+    @if ($resource-border) {
+        border: 1px solid $resource-border;
+    }
     padding: 0;
     border-radius: 6px;
     display: inline-block;
@@ -16,6 +19,7 @@
     overflow: hidden;
     @include transition(border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s);
     @include box-shadow(0 0 8px rgba(50, 50, 50, 0.1));
+    color: contrast-color($resource-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     background: $resource-bg;
     cursor: pointer;
     box-sizing: border-box;
@@ -37,6 +41,7 @@
 
 .resource > .header {
     padding: $padding-vertical-base 8px;
+    color: contrast-color($resource-header-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     background: $resource-header-bg;
 }
 

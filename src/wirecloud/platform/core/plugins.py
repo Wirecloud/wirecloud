@@ -45,6 +45,7 @@ CLASSIC_CORE_CSS = (
 CATALOGUE_CSS = (
     'css/catalogue/emptyCatalogueBox.css',
     'css/catalogue/resource.scss',
+    'css/catalogue/resource_details.scss',
 )
 
 WIRING_EDITOR_FILES = (
@@ -131,6 +132,7 @@ STYLED_ELEMENTS_FILES = (
 BASE_CSS = (
     'css/base/body.css',
     'css/base/fade.css',
+    'css/base/code.scss',
     'css/windowmenues/logwindowmenu.css',
     'css/workspace/ioperator.css',
 )
@@ -170,7 +172,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_file_field.scss',
     'css/styledelements/styled_table.scss',
     'css/styledelements/styled_label_badge.scss',
-    'css/styledelements/styled_message.css',
+    'css/styledelements/styled_message.scss',
     'css/styledelements/styled_rating.css',
     'css/styledelements/styled_popup_menu.css',
     'css/styledelements/styled_popover.css',

@@ -76,6 +76,8 @@ h5 { font-size: $font-size-h5; }
 h6 { font-size: $font-size-h6; }
 
 a {
+    color: $brand-primary;
+    text-decoration: none;
     cursor: pointer;
 }
 
@@ -333,8 +335,6 @@ label {
 
 .powered-by-wirecloud {
     margin: 1px 5px;
-    vertical-align: top;
-    padding: 0px 5px;
 }
 
 .powered-by-wirecloud:before {

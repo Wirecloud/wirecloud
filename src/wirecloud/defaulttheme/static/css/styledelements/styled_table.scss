@@ -1,6 +1,10 @@
 @import 'variables';
 @import 'compass/utilities/color/contrast';
 
+@if ($context == 'widget') {
+    $body-bg: $widget-bg;
+}
+
 .model_table {
     font-size: $font-size-base;
     line-height: $line-height-base;

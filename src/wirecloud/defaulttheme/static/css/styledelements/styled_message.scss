@@ -1,42 +1,43 @@
+@import 'variables';
+
+@mixin alert-variant($color, $background, $border) {
+    color: $color;
+    background: $background;
+    border-color: $border;
+}
+
 .alert {
     padding: 8px 35px 8px 14px;
     margin-bottom: 20px;
-    color: #c09853;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-    background-color: #fcf8e3;
     border: 1px solid #fbeed5;
     border-radius: 4px;
-}
+    @include alert-variant($state-warning-text, $state-warning-bg, $state-warning-border);
 
-.alert h4 {
-    margin: 0;
-    color: inherit;
-}
+    h4 {
+        margin: 0;
+        color: inherit;
+    }
 
-.alert .close {
-    position: relative;
-    top: -2px;
-    right: -21px;
-    line-height: 20px;
+    .close {
+        position: relative;
+        top: -2px;
+        right: -21px;
+        line-height: $line-height-base;
+    }
 }
 
 .alert-success {
-    color: #468847;
-    background-color: #dff0d8;
-    border-color: #d6e9c6;
+    @include alert-variant($state-success-text, $state-success-bg, $state-success-border);
 }
 
 .alert-danger,
 .alert-error {
-    color: #b94a48;
-    background-color: #f2dede;
-    border-color: #eed3d7;
+    @include alert-variant($state-danger-text, $state-danger-bg, $state-danger-border);
 }
 
 .alert-info {
-    color: #3a87ad;
-    background-color: #d9edf7;
-    border-color: #bce8f1;
+    @include alert-variant($state-info-text, $state-info-bg, $state-info-border);
 }
 
 .alert-block {

@@ -26,12 +26,23 @@
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
-  font-weight: 400;
+  font-weight: normal;
   src: local('Open Sans'), local('OpenSans'),
        url("../fonts/opensans-regular-webfont.eot?#iefix") format("embedded-opentype"),
        url("../fonts/opensans-regular-webfont.woff") format("woff"),
        url("../fonts/opensans-regular-webfont.ttf") format("truetype"),
        url("../fonts/opensans-regular-webfont.svg#OpenSansRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Open Sans'), local('OpenSans'),
+       url("../fonts/opensans-bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-bold-webfont.woff") format("woff"),
+       url("../fonts/opensans-bold-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-bold-webfont.svg#OpenSansRegular") format("svg");
 }
 
 @font-face {

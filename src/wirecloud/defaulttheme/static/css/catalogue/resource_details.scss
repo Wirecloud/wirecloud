@@ -1,3 +1,6 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
 .resource_details img {
     width: 170px;
     height: 80px;
@@ -13,9 +16,10 @@
 }
 
 .resource_details .panel {
-    background-color: rgb(246, 246, 244);
+    color: contrast-color($panel-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    background-color: $panel-bg;
     border: 1px solid rgb(205, 206, 209);
-    border-radius: 6px 6px 6px 6px;
+    border-radius: $panel-border-radius;
     text-align: center;
     margin: 0 3ex;
     padding: 1ex;

@@ -17,6 +17,7 @@
 }
 
 .window_menu {
+    color: contrast-color($modal-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     background: $modal-bg;
     border-radius: 16px;
     box-shadow: 3px 3px 3px rgba(0,0,0,0.3);

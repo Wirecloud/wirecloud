@@ -1,16 +1,21 @@
 @import 'variables';
+@import 'compass/utilities/color/contrast';
+
+@mixin label-badge-variant($background) {
+    color: contrast-color($background, $button-text-color-light, $button-text-color-dark, $button-text-color-threshold);
+    background-color: $background;
+}
 
 .label,
 .badge {
+    @include label-badge-variant($brand-default);
     display: inline-block;
     padding: 2px 4px;
     font-size: 11.844px;
     font-weight: bold;
     line-height: 14px;
-    color: #ffffff;
     white-space: nowrap;
     vertical-align: baseline;
-    background-color: #999999;
     margin: 0 2px;
 
     @if ($button-gradients) {
@@ -33,27 +38,32 @@
     display: none;
 }
 
+.label-primary,
+.badge-primary {
+    @include label-badge-variant($brand-primary);
+}
+
 .label-important, .label-danger,
 .badge-important, .badge-danger {
-    background-color: $brand-danger;
+    @include label-badge-variant($brand-danger);
 }
 
 .label-info,
 .badge-info {
-    background-color: $brand-info;
+    @include label-badge-variant($brand-info);
 }
 
 .label-warning,
 .badge-warning {
-    background-color: $brand-warning;
+    @include label-badge-variant($brand-warning);
 }
 
 .label-success,
 .badge-success {
-    background-color: $brand-success;
+    @include label-badge-variant($brand-success);
 }
 
 .label-inverse,
 .badge-inverse {
-    background-color: #333333;
+    @include label-badge-variant(#333);
 }
