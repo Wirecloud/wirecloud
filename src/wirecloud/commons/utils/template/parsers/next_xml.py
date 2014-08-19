@@ -225,10 +225,10 @@ class ApplicationMashupTemplateParser(object):
                 self._info['wiring']['inputs'].append({
                     'name': slot.get('name'),
                     'type': slot.get('type'),
-                    'label': slot.get('label'),
+                    'label': slot.get('label', ''),
                     'description': slot.get('description', ''),
                     'actionlabel': slot.get('actionlabel', ''),
-                    'friendcode': slot.get('friendcode'),
+                    'friendcode': slot.get('friendcode', ''),
                 })
 
             for event in self._xpath(OUTPUT_ENDPOINT_XPATH, wiring_element):
@@ -237,9 +237,9 @@ class ApplicationMashupTemplateParser(object):
                 self._info['wiring']['outputs'].append({
                     'name': event.get('name'),
                     'type': event.get('type'),
-                    'label': event.get('label'),
+                    'label': event.get('label', ''),
                     'description': event.get('description', ''),
-                    'friendcode': event.get('friendcode'),
+                    'friendcode': event.get('friendcode', ''),
                 })
 
         if parse_connections:

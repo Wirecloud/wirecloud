@@ -20,6 +20,7 @@
 from __future__ import unicode_literals
 
 import copy
+import os
 
 from django.utils.unittest import TestCase
 
@@ -1132,6 +1133,66 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+        cls.minimal_endpoint_info = {
+            'type': 'widget',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTest',
+            'version': '1.0',
+            'title': '',
+            'description': '',
+            'longdescription': '',
+            'authors': '',
+            'email': 'email@example.com',
+            'image': '',
+            'smartphoneimage': '',
+            'homepage': '',
+            'doc': '',
+            'license': '',
+            'licenseurl': '',
+            'changelog': '',
+            'requirements': [],
+            'preferences': [],
+            'properties': [],
+            'wiring': {
+                'inputs': [
+                    {
+                        'name': 'input1',
+                        'type': 'text',
+                        'label': '',
+                        'description': '',
+                        'actionlabel': '',
+                        'friendcode': ''
+                    },
+                ],
+                'outputs': [
+                    {
+                        'name': 'output1',
+                        'type': 'text',
+                        'label': '',
+                        'description': '',
+                        'friendcode': ''
+                    },
+                ],
+            },
+            'code_url': 'http://example.com/code.html',
+            'code_charset': 'utf-8',
+            'code_content_type': 'text/html',
+            'code_cacheable': True,
+            'code_uses_platform_style': False,
+            'default_lang': 'en',
+            'widget_width': '8',
+            'widget_height': '30',
+            'translations': {},
+            'translation_index_usage': {},
+        }
+
+    def read_template(self, *filename):
+        f = open(os.path.join(os.path.dirname(__file__), '..', 'test-data', *filename), 'rb')
+        contents = f.read()
+        f.close()
+
+        return contents
+
     def check_full_mashup(self, processed_info, expected_result):
 
         mashup_info = copy.deepcopy(expected_result)
@@ -1224,6 +1285,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.widget_info)
 
+    def test_json_parser_minimal_endpoint_info(self):
+
+        json_description = self.read_template('minimal_endpoint_info.json')
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.minimal_endpoint_info)
+
     def test_rdf_parser_writer_basic_operator(self):
 
         rdf_description = write_rdf_description(self.basic_operator_info)
@@ -1304,6 +1373,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.widget_info)
     test_rdf_parser_writer_widget.tags = ('template', 'fiware-ut-14')
+
+    def test_rdf_parser_minimal_endpoint_info(self):
+
+        xml_description = self.read_template('minimal_endpoint_info.rdf')
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.minimal_endpoint_info)
 
     def test_xml_parser_writer_basic_mashup(self):
 
@@ -1430,3 +1507,11 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.widget_info)
+
+    def test_next_xml_parser_minimal_endpoint_info(self):
+
+        xml_description = self.read_template('minimal_endpoint_info.xml')
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.minimal_endpoint_info)

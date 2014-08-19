@@ -222,11 +222,11 @@ class RDFTemplateParser(object):
         longdescription = self._get_field(DCTERMS, 'description', self._rootURI, id_=True, required=False)
         if longdescription != '' and isinstance(longdescription, rdflib.Literal):
             # Old and deprecated behaviour
-            self._info['description'] = self._get_translation_field(DCTERMS, 'description', self._rootURI, 'description', type='resource', field='description')
+            self._info['description'] = self._get_translation_field(DCTERMS, 'description', self._rootURI, 'description', required=False, type='resource', field='description')
             self._info['longdescription'] = ''
         else:
             self._info['longdescription'] = '%s' % longdescription
-            self._info['description'] = self._get_translation_field(DCTERMS, 'abstract', self._rootURI, 'description', type='resource', field='description')
+            self._info['description'] = self._get_translation_field(DCTERMS, 'abstract', self._rootURI, 'description', required=False, type='resource', field='description')
 
         authors = self._get_field(DCTERMS, 'creator', self._rootURI, required=False, id_=True)
         self._info['authors'] = self._get_field(FOAF, 'name', authors, required=False)
@@ -276,7 +276,7 @@ class RDFTemplateParser(object):
             var_name = self._get_field(DCTERMS, 'title', input_endpoint, required=True)
             self._info['wiring']['inputs'].append({
                 'name': var_name,
-                'type': self._get_field(WIRE, 'type', input_endpoint, required=False),
+                'type': self._get_field(WIRE, 'type', input_endpoint, required=True),
                 'label': self._get_translation_field(RDFS, 'label', input_endpoint, var_name + '_label', required=False, type='inputendpoint', variable=var_name, field='label'),
                 'description': self._get_translation_field(DCTERMS, 'description', input_endpoint, var_name + '_description', required=False, type='inputendpoint', variable=var_name, field='description'),
                 'actionlabel': self._get_translation_field(WIRE, 'inputActionLabel', input_endpoint, var_name + '_actionlabel', required=False, type='inputendpoint', variable=var_name, field='actionlabel'),
@@ -289,7 +289,7 @@ class RDFTemplateParser(object):
             var_name = self._get_field(DCTERMS, 'title', output_endpoint, required=True)
             self._info['wiring']['outputs'].append({
                 'name': var_name,
-                'type': self._get_field(WIRE, 'type', output_endpoint, required=False),
+                'type': self._get_field(WIRE, 'type', output_endpoint, required=True),
                 'label': self._get_translation_field(RDFS, 'label', output_endpoint, var_name + '_label', required=False, type='outputendpoint', variable=var_name, field='label'),
                 'description': self._get_translation_field(DCTERMS, 'description', output_endpoint, var_name + '_description', required=False, type='outputendpoint', variable=var_name, field='description'),
                 'friendcode': self._get_field(WIRE, 'friendcode', output_endpoint, required=False),

@@ -205,7 +205,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="label" use="required" type="macd:NonEmpty">
+        <xs:attribute name="label" use="optional" type="macd:NonEmpty">
             <xs:annotation>
                 <xs:documentation>
                     Text that will be used to reference this
@@ -214,21 +214,21 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="description" type="macd:NonEmpty">
+        <xs:attribute name="description" use="optional" type="macd:NonEmpty">
             <xs:annotation>
                 <xs:documentation>
                     Descriptive text.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="default" type="macd:NonEmpty">
+        <xs:attribute name="default" use="optional" type="macd:NonEmpty">
             <xs:annotation>
                 <xs:documentation>
                     Default value.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="readonly" type="xs:boolean">
+        <xs:attribute name="readonly" use="optional" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
                     Whether this preference can be modified.
@@ -317,10 +317,22 @@
                         </xs:simpleType>
                     </xs:attribute>
 
-                    <xs:attribute name="label" use="required" type="macd:NonEmpty">
+                    <xs:attribute name="label" use="optional" type="macd:NonEmpty">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Text that will be used to reference this
+                                variable in the user interface. This field can be
+                                translated.
+                            </xs:documentation>
+                        </xs:annotation>
                     </xs:attribute>
 
                     <xs:attribute name="description" use="optional" type="macd:NonEmpty">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Descriptive text.
+                            </xs:documentation>
+                        </xs:annotation>
                     </xs:attribute>
 
                     <xs:attribute name="default" use="optional" type="xs:string">
@@ -355,7 +367,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="label" use="required" type="macd:NonEmpty">
+        <xs:attribute name="label" use="optional" type="macd:NonEmpty">
             <xs:annotation>
                 <xs:documentation>
                     Text that will be used to reference this
@@ -364,7 +376,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="description" use="required" type="macd:NonEmpty">
+        <xs:attribute name="description" use="optional" type="macd:NonEmpty">
             <xs:annotation>
                 <xs:documentation>
                     Text describing in which conditions the resource is
@@ -378,7 +390,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="friendcode" use="required" type="macd:NonEmpty">
+        <xs:attribute name="friendcode" use="optional" type="macd:NonEmpty">
             <xs:annotation>
                 <xs:documentation>
                     Keyword used to tag this output endpoint,
@@ -405,7 +417,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="label" use="required" type="macd:NonEmpty">
+        <xs:attribute name="label" use="optional" type="macd:NonEmpty">
             <xs:annotation>
                 <xs:documentation>
                     Text that will be used to reference this
@@ -426,7 +438,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="description" use="required"
+        <xs:attribute name="description" use="optional"
             type="macd:NonEmpty">
             <xs:annotation>
                 <xs:documentation>
@@ -438,7 +450,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="friendcode" use="required"
+        <xs:attribute name="friendcode" use="optional"
             type="macd:NonEmpty">
             <xs:annotation>
                 <xs:documentation>

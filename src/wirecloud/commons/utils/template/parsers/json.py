@@ -63,7 +63,7 @@ class JSONTemplateParser(object):
             elif not isinstance(place[field], (list, tuple)):
                 raise TemplateParseException('An array value was expected for the %s field' % field)
 
-    def _check_string_fields(self, fields, place=None, required=False):
+    def _check_string_fields(self, fields, place=None, required=False, default=''):
         if place is None:
             place = self._info
 
@@ -72,9 +72,22 @@ class JSONTemplateParser(object):
                 if required:
                     raise TemplateParseException('Missing required field: %s' % field)
 
-                place[field] = ''
+                place[field] = default
             elif not isinstance(place[field], text_type):
                 raise TemplateParseException('A string value was expected for the %s field' % field)
+
+    def _check_boolean_fields(self, fields, place=None, required=False, default=False):
+        if place is None:
+            place = self._info
+
+        for field in fields:
+            if field not in place:
+                if required:
+                    raise TemplateParseException('Missing required field: %s' % field)
+
+                place[field] = default
+            elif not isinstance(place[field], bool):
+                raise TemplateParseException('A boolean value was expected for the %s field' % field)
 
     def _add_translation_index(self, value, **kwargs):
         index = get_trans_index(value)
@@ -92,6 +105,8 @@ class JSONTemplateParser(object):
         if self._info['type'] == 'widget':
 
             self._check_string_fields(('code_url',), required=True)
+            self._check_boolean_fields(('code_cacheable',), default=True)
+            self._check_boolean_fields(('code_uses_platform_style',), default=False)
             self._check_array_fields(('preferences', 'properties'))
 
             if self._info.get('code_content_type', None) is None:
@@ -106,6 +121,7 @@ class JSONTemplateParser(object):
         self._check_array_fields(('inputs', 'outputs'), place=self._info['wiring'])
 
         # Translations
+        self._check_string_fields(('default_lang',), default='en')
         self._info['translation_index_usage'] = {}
         if 'translations' not in self._info:
             self._info['translations'] = {}
@@ -127,13 +143,20 @@ class JSONTemplateParser(object):
                 self._add_translation_index(prop['description'], type='vdef', variable=prop['name'], field='description')
 
             for input_endpoint in self._info['wiring']['inputs']:
+                self._check_string_fields(('name', 'type'), required=True, place=input_endpoint)
+                self._check_string_fields(('label', 'description', 'actionlabel', 'friendcode'), place=input_endpoint)
                 self._add_translation_index(input_endpoint['label'], type='inputendpoint', variable=input_endpoint['name'], field='label')
                 self._add_translation_index(input_endpoint['description'], type='inputendpoint', variable=input_endpoint['name'], field='description')
                 self._add_translation_index(input_endpoint['actionlabel'], type='inputendpoint', variable=input_endpoint['name'], field='actionlabel')
 
             for output_endpoint in self._info['wiring']['outputs']:
+                self._check_string_fields(('name', 'type'), required=True, place=output_endpoint)
+                self._check_string_fields(('label', 'description', 'friendcode'), place=output_endpoint)
                 self._add_translation_index(output_endpoint['label'], type='outputendpoint', variable=output_endpoint['name'], field='label')
                 self._add_translation_index(output_endpoint['description'], type='outputendpoint', variable=output_endpoint['name'], field='description')
+
+        # Requirements
+        self._check_array_fields(('requirements',))
 
     def get_resource_type(self):
         return self._info['type']
