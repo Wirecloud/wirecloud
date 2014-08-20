@@ -367,32 +367,23 @@ function Workspace(workspaceState, resources) {
 
     Workspace.prototype.initGUI = function initGUI() {
 
-        // TODO
         if (this.isAllowed('add_tab')) {
-            this.addTabButton = new StyledElements.StyledButton({
-                'class': 'icon-add-tab',
-                'plain': true,
-                'title': gettext('Add a new tab')
-            });
-
-            this.notebook.addButton(this.addTabButton);
-            this.addTabButton.addEventListener('click', this.addTab.bind(this));
+            this.notebook.addEventListener('newTab', this.addTab.bind(this));
         }
 
-        if (Wirecloud.contextManager.get('mode') === 'embedded' && Wirecloud.Utils.isFullscreenSupported()) {
+        if (Wirecloud.Utils.isFullscreenSupported()) {
             this.fullscreenButton = new StyledElements.StyledButton({
-                'class': 'icon-resize-full',
-                'plain': true
+                'iconClass': 'icon-resize-full',
             });
             this.notebook.addButton(this.fullscreenButton);
             Wirecloud.Utils.onFullscreenChange(this.notebook, function () {
-                this.fullscreenButton.removeClassName('icon-resize-full');
-                this.fullscreenButton.removeClassName('icon-resize-small');
+                this.fullscreenButton.removeIconClassName('icon-resize-full');
+                this.fullscreenButton.removeIconClassName('icon-resize-small');
                 if (this.notebook.fullscreen) {
-                    this.fullscreenButton.addClassName('icon-resize-small');
+                    this.fullscreenButton.addIconClassName('icon-resize-small');
                     this.notebook.addClassName('fullscreen');
                 } else {
-                    this.fullscreenButton.addClassName('icon-resize-full');
+                    this.fullscreenButton.addIconClassName('icon-resize-full');
                     this.notebook.removeClassName('fullscreen');
                 }
             }.bind(this));

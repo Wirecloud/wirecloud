@@ -25,6 +25,10 @@
 
     "use strict";
 
+    var onNewTab = function onNewTab() {
+        this.events.newTab.dispatch(this);
+    };
+
     /**
      * El componente Styled Notebook crea dos paneles separados por un separador y
      * que permite redimensionar los dos paneles a la vez con el objetivo de que
@@ -44,7 +48,7 @@
     var StyledNotebook = function StyledNotebook(options) {
         var tabWrapper;
 
-        StyledElements.StyledElement.call(this, ['change', 'tabDeletion', 'tabInsertion']);
+        StyledElements.StyledElement.call(this, ['change', 'tabDeletion', 'tabInsertion', 'newTab']);
 
         var defaultOptions = {
             'class': '',
@@ -60,17 +64,14 @@
         this.tabWrapper = tabWrapper;
         tabWrapper.insertInto(this.wrapperElement);
 
-        this.tabArea = tabWrapper.getCenterContainer();
-        this.tabArea.addClassName('tab_area');
+        this.tabArea = new StyledElements.Container();
+        tabWrapper.getCenterContainer().appendChild(this.tabArea);
+        this.tabArea.addClassName('se-notebook-tab-area');
 
-        this.moveLeftButton = document.createElement("div");
-        this.moveLeftButton.className = "move_left";
-        this.moveLeftButton.appendChild(document.createTextNode("<"));
+        this.moveLeftButton = new StyledElements.StyledButton({'class': 'move_left', 'iconClass': 'icon-caret-left'});
         tabWrapper.getWestContainer().appendChild(this.moveLeftButton);
 
-        this.moveRightButton = document.createElement("div");
-        this.moveRightButton.className = "move_right";
-        this.moveRightButton.appendChild(document.createTextNode(">"));
+        this.moveRightButton = new StyledElements.StyledButton({'class': 'move_right', 'iconClass': 'icon-caret-right'});
         tabWrapper.getEastContainer().appendChild(this.moveRightButton);
 
         this.contentArea = document.createElement("div");
@@ -93,6 +94,23 @@
 
         this.focusOnSetVisible = options.focusOnSetVisible;
 
+        /* Tab creation support */
+        this.events.newTab.addEventListener = function addEventListener(listener) {
+            var new_tab_main_listener;
+
+            if (this.new_tab_button_tabs == null) {
+                new_tab_main_listener = onNewTab.bind(this);
+
+                this.new_tab_button_tabs = new StyledElements.StyledButton({iconClass: 'icon-plus', 'class': 'se-notebook-new-tab'});
+                this.new_tab_button_tabs.addEventListener('click', new_tab_main_listener);
+                this.tabArea.appendChild(this.new_tab_button_tabs);
+                this.new_tab_button_left = new StyledElements.StyledButton({iconClass: 'icon-plus', 'class': 'se-notebook-new-tab'});
+                this.new_tab_button_left.addEventListener('click', new_tab_main_listener);
+                this.addButton(this.new_tab_button_left);
+            }
+            StyledElements.Event.prototype.addEventListener.call(this.events.newTab, listener);
+        }.bind(this);
+
         /* Transitions code */
         var context = {
             control: this,
@@ -113,44 +131,47 @@
             } else {
                 // Finish current transition
                 context.control.tabArea.wrapperElement.scrollLeft = context.finalScrollLeft;
-                context.control._enableDisableButtons();
+                enableDisableButtons.call(context.control);
 
                 return false;
             }
         };
 
         var initFunc = function initFunc(context, command) {
-            var firstVisibleTab, currentTab, maxScrollLeft, baseTime, stepTimes;
+            var firstVisibleTab, currentTab, maxScrollLeft, baseTime, stepTimes, computedStyle, padding;
 
             context.initialScrollLeft = context.control.tabArea.wrapperElement.scrollLeft;
+            computedStyle = document.defaultView.getComputedStyle(context.control.tabArea.wrapperElement, null);
+            padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
             switch (command.type) {
             case 'shiftLeft':
 
-                if (context.control._isTabVisible(0)) {
+                if (isTabVisible.call(context.control, 0)) {
                     return false;
                 }
 
-                firstVisibleTab = context.control.getFirstVisibleTab();
+                firstVisibleTab = getFirstVisibleTab.call(context.control);
                 currentTab = context.control.tabs[firstVisibleTab - 1].getTabElement();
-                context.finalScrollLeft = currentTab.offsetLeft;
+                context.finalScrollLeft = currentTab.offsetLeft - padding;
                 break;
 
             case 'shiftRight':
-                if (context.control._isLastTabVisible()) {
+                if (isLastTabVisible.call(context.control)) {
                     return false;
                 }
 
-                firstVisibleTab = context.control.getFirstVisibleTab();
+                firstVisibleTab = getFirstVisibleTab.call(context.control);
                 currentTab = context.control.tabs[firstVisibleTab + 1].getTabElement();
-                context.finalScrollLeft = currentTab.offsetLeft;
+                context.finalScrollLeft = currentTab.offsetLeft - padding;
                 break;
             case 'focus':
                 currentTab = context.control.tabsById[command.tabId].getTabElement();
 
-                if (context.control._isTabVisible(context.control.getTabIndex(command.tabId))) {
+                if (isTabVisible.call(context.control, context.control.getTabIndex(command.tabId))) {
                     return false;
                 }
-                context.finalScrollLeft = currentTab.offsetLeft;
+                context.finalScrollLeft = currentTab.offsetLeft - padding;
                 break;
             }
 
@@ -173,13 +194,8 @@
         this.transitionsQueue = new CommandQueue(context, initFunc, stepFunc);
 
         /* Code for handling internal events */
-        this.moveLeftButton.addEventListener("click",
-                                             this.shiftLeftTabs.bind(this),
-                                             true);
-
-        this.moveRightButton.addEventListener("click",
-                                             this.shiftRightTabs.bind(this),
-                                             true);
+        this.moveLeftButton.addEventListener("click", this.shiftLeftTabs.bind(this));
+        this.moveRightButton.addEventListener("click", this.shiftRightTabs.bind(this));
 
         Object.defineProperty(this, 'fullscreen', {
             get: function () {
@@ -200,7 +216,7 @@
     /**
      * @private
      */
-    StyledNotebook.prototype._isTabVisible = function _isTabVisible(tabIndex, full) {
+    var isTabVisible = function isTabVisible(tabIndex, full) {
         var tabElement, tabAreaStart, tabAreaEnd, tabOffsetRight;
 
         tabElement = this.tabs[tabIndex].getTabElement();
@@ -219,48 +235,57 @@
     /**
      * @private
      */
-    StyledNotebook.prototype._isLastTabVisible = function _isLastTabVisible() {
+    var isLastTabVisible = function isLastTabVisible() {
         var lastTab = this.tabs.length - 1;
 
-        if (this.tabs.length === 0 || this._isTabVisible(lastTab, true)) {
+        if (this.tabs.length === 0 || isTabVisible.call(this, lastTab, true)) {
             return true;
         }
-        if (!this._isTabVisible(lastTab)) {
+        if (!isTabVisible.call(this, lastTab)) {
             return false;
         }
-        return this.tabs.length < 2 || !this._isTabVisible(lastTab - 1);
+        return this.tabs.length < 2 || !isTabVisible.call(this, lastTab - 1);
     };
 
     /**
      * @private
      */
-    StyledNotebook.prototype._enableDisableButtons = function _enableDisableButtons() {
+    var enableDisableButtons = function enableDisableButtons() {
         if (this.tabs.length === 0) {
-            this.moveLeftButton.classList.remove("enabled");
-            this.moveRightButton.classList.remove("enabled");
+            this.moveLeftButton.disable();
+            this.moveRightButton.disable();
+            if (this.new_tab_button_tabs != null) {
+                this.new_tab_button_tabs.enable();
+                this.new_tab_button_left.disable();
+            }
             return;
         }
 
-        if (this._isTabVisible(0)) {
-            this.moveLeftButton.classList.remove("enabled");
-        } else {
-            this.moveLeftButton.classList.add("enabled");
-        }
+        var first_tab_visible = isTabVisible.call(this, 0);
+        var last_tab_visible = isLastTabVisible.call(this);
 
-        if (this._isLastTabVisible()) {
-            this.moveRightButton.classList.remove("enabled");
-        } else {
-            this.moveRightButton.classList.add("enabled");
+        this.moveLeftButton.setDisabled(first_tab_visible);
+        this.moveRightButton.setDisabled(last_tab_visible);
+
+        if (this.new_tab_button_tabs != null) {
+            if (first_tab_visible && last_tab_visible) {
+                this.new_tab_button_tabs.enable();
+                this.new_tab_button_left.disable();
+            } else {
+                this.new_tab_button_tabs.disable();
+                this.new_tab_button_left.enable();
+            }
+            this.tabWrapper.repaint();
         }
     };
 
     /**
      * @private
      */
-    StyledNotebook.prototype.getFirstVisibleTab = function getFirstVisibleTab() {
+    var getFirstVisibleTab = function getFirstVisibleTab() {
         var i;
         for (i = 0; i < this.tabs.length; i += 1) {
-            if (this._isTabVisible(i)) {
+            if (isTabVisible.call(this, i)) {
                 return i;
             }
         }
@@ -325,7 +350,7 @@
         this.tabsById[tabId] = tab;
 
         var tabElement = tab.getTabElement();
-        this.tabArea.appendChild(tabElement);
+        this.tabArea.appendChild(tabElement, this.new_tab_button_tabs);
         tab.insertInto(this.contentArea);
         if (this.maxTabElementWidth === '') {
             this._computeMaxTabElementWidth();
@@ -338,7 +363,7 @@
         }
 
         // Enable/Disable tab moving buttons
-        this._enableDisableButtons();
+        enableDisableButtons.call(this);
 
         /* Process options */
         if (options.initiallyVisible) {
@@ -417,7 +442,7 @@
         this.contentArea.removeChild(tabToExtract.wrapperElement);
 
         // Enable/Disable tab scrolling buttons
-        this._enableDisableButtons();
+        enableDisableButtons.call(this);
 
         if ((this.visibleTab === tabToExtract) && (this.tabs.length > 0)) {
             nextTab = this.tabs[index];
@@ -531,7 +556,7 @@
         this.tabWrapper.repaint();
 
         // Enable/Disable tab scrolling buttons
-        this._enableDisableButtons();
+        enableDisableButtons.call(this);
 
         // Resize content
         if (temporal) {
@@ -595,7 +620,7 @@
         this.contentArea.innerHTML = '';
 
         // Enable/Disable tab scrolling buttons
-        this._enableDisableButtons();
+        enableDisableButtons.call(this);
     };
 
     StyledNotebook.prototype.addButton = function addButton(button, position) {
