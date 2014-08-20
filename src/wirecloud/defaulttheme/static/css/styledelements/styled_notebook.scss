@@ -21,6 +21,10 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     height: 100%;
 }
 
+.se-notebook.fullscreen {
+    background-color: $body-bg;
+}
+
 .se-notebook .disable-layer {
     position: absolute;
     top: 0;
