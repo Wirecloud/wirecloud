@@ -123,6 +123,14 @@
         this.label.textContent = label;
     };
 
+    StyledButton.prototype.addIconClassName = function addIconClassName(classname) {
+        this.label.classList.add(classname);
+    };
+
+    StyledButton.prototype.removeIconClassName = function removeIconClassName(classname) {
+        this.label.classList.remove(classname);
+    };
+
     StyledButton.prototype.setTitle = function setTitle(title) {
         if (this.tooltip == null) {
             this.tooltip = new StyledElements.Tooltip({content: title, placement: ['bottom', 'top', 'right', 'left']});
