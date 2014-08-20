@@ -25,12 +25,15 @@ import os.path
 from django.contrib.auth.models import User, Group
 from django.core.urlresolvers import reverse
 from django.test import Client
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.commons
+from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
-from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
 import wirecloud.platform.widget.utils
@@ -594,3 +597,25 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
             myresources.delete_resource('Test')
             myresources.delete_resource('TestOperator')
             myresources.delete_resource('Test Mashup')
+
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
+    def test_resource_with_several_versions(self):
+
+        self.login()
+
+        with self.myresources_view as myresources:
+            catalogue_base_element = myresources.wait_catalogue_ready()
+
+            test_widget = myresources.search_in_results('Test')
+            self.scroll_and_click(test_widget)
+
+            WebDriverWait(self.driver, 5).until(WEC.visibility_of_element_located((By.CSS_SELECTOR, '.advanced_operations'), base_element=catalogue_base_element))
+
+            version_select = Select(self.driver.find_element_by_css_selector('.resource_details .versions select'))
+            version_list = [option.text for option in version_select.options]
+
+            WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+
+            versions = set(version_list)
+            self.assertEqual(len(versions), len(version_list), 'Repeated versions')
+            self.assertEqual(versions, set(('v1.0', 'v2.0')))

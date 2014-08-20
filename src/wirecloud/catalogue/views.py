@@ -140,7 +140,7 @@ class ResourceEntry(Resource):
             resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
             data = get_resource_data(resource, request.user, request)
         else:
-            resources = get_list_or_404(CatalogueResource, Q(vendor=vendor) & Q(short_name=name) & (Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all())))
+            resources = get_list_or_404(CatalogueResource.objects.filter(Q(vendor=vendor) & Q(short_name=name) & (Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all()))).distinct())
             data = get_resource_group_data(resources, request.user, request)
 
         return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
