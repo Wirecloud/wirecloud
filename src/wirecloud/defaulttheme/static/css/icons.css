@@ -13,11 +13,8 @@
 }
 
 .styled_button.icon-tab-menu {
-    display: none;
-    vertical-align: middle;
-    position: absolute;
-    right: 5px;
-    margin: 0px;
+    float: right;
+    margin: 0 0 0 6px;
 }
 
 .styled_button.icon-tab-menu.open {

@@ -6,7 +6,7 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     $body-bg: $widget-bg;
 }
 
-.notebook {
+.se-notebook {
     min-width: 5em;
     min-height: 5em;
     position: relative;
@@ -16,12 +16,12 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     box-sizing: border-box;
 }
 
-.notebook.full {
+.se-notebook.full {
     width: 100%;
     height: 100%;
 }
 
-.notebook .disable-layer {
+.se-notebook .disable-layer {
     position: absolute;
     top: 0;
     left: 0;

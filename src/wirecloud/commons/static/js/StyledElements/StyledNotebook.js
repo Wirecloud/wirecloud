@@ -54,7 +54,7 @@
         options = Wirecloud.Utils.merge(defaultOptions, options);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "notebook");
+        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "se-notebook");
 
         tabWrapper = new StyledElements.HorizontalLayout({'class': 'se-notebook-tabs-wrapper', 'autoHeight': false});
         this.tabWrapper = tabWrapper;

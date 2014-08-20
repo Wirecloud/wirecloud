@@ -120,7 +120,7 @@
                 }
             });
             this.menu_button.getPopupMenu().append(new TabMenuItems(this));
-            this.menu_button.insertInto(this.tabElement);
+            this.menu_button.insertInto(this.tabElement, this.tabElement.childNodes[0]);
         }
 
         this.tabInfo = tabInfo;
