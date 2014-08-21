@@ -20,14 +20,17 @@
 from __future__ import unicode_literals
 
 import regex
+from six import text_type
 
 
 __all__ = ('is_valid_name', 'is_valid_vendor', 'is_valid_version')
 
 
+SEPARATOR_RE = regex.compile(r'\s*,\s*')
 NAME_RE = regex.compile(r'^[^/]+$')
 VENDOR_RE = regex.compile(r'^[^/]+$')
 VERSION_RE = regex.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)(?:(?:a|b|rc)[1-9]\d*)?$')
+CONTACT_RE = regex.compile(r'([^<(\s]+(?:\s+[^<()\s]+)*)(?:\s*<([^>]*)>)?(?:\s*\(([^)]*)\))?')
 
 
 class TemplateParseException(Exception):
@@ -55,3 +58,54 @@ def is_valid_vendor(vendor):
 def is_valid_version(version):
 
     return regex.match(VERSION_RE, version)
+
+
+def parse_contact_info(text):
+    result = regex.match(CONTACT_RE, text)
+    if result is None:
+        return {'name': ''}
+
+    contact = {'name': result[1]}
+
+    if result[2] is not None:
+        contact['email'] = result[2]
+
+    if result[3] is not None:
+        contact['url'] = result[3]
+
+    return contact
+
+
+def parse_contacts_info(info):
+
+    contacts = []
+
+    if isinstance(info, text_type):
+        info = regex.split(SEPARATOR_RE, info)
+
+    for contact in info:
+        if isinstance(contact, text_type):
+            contact = parse_contact_info(contact)
+
+        if contact.get('name', '') != '':
+            contacts.append(contact)
+
+    return contacts
+
+
+def stringify_contact(contact):
+
+    contact_string = contact['name']
+
+    if 'email' in contact:
+        contact_string += ' <' + contact['email'] + '>'
+
+    if 'url' in contact:
+        contact_string += ' (' + contact['url'] + ')'
+
+    return contact_string
+
+
+def stringify_contact_info(contacts):
+
+    return ', '.join([stringify_contact(contact) for contact in contacts])

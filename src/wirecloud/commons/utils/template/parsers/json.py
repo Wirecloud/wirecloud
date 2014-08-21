@@ -25,7 +25,7 @@ from django.utils import six
 from django.utils.translation import ugettext as _
 from six import text_type
 
-from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
+from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, parse_contacts_info, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
 
 
@@ -89,6 +89,21 @@ class JSONTemplateParser(object):
             elif not isinstance(place[field], bool):
                 raise TemplateParseException('A boolean value was expected for the %s field' % field)
 
+    def _check_contacts_fields(self, fields, place=None, required=False):
+        if place is None:
+            place = self._info
+
+        for field in fields:
+            if field not in place:
+                if required:
+                    raise TemplateParseException('Missing required field: %s' % field)
+
+                place[field] = []
+            elif isinstance(place[field], (text_type, list, tuple)):
+                place[field] = parse_contacts_info(place[field])
+            else:
+                raise TemplateParseException('%s field must be a list or string' % field)
+
     def _add_translation_index(self, value, **kwargs):
         index = get_trans_index(value)
         if not index:
@@ -101,7 +116,9 @@ class JSONTemplateParser(object):
 
     def _init(self):
 
-        self._check_string_fields(('title', 'description', 'longdescription', 'email', 'authors',  'homepage','doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl'))
+        self._check_string_fields(('title', 'description', 'longdescription', 'email',  'homepage','doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl'))
+        self._check_contacts_fields(('authors', 'contributors'))
+
         if self._info['type'] == 'widget':
 
             self._check_string_fields(('code_url',), required=True)

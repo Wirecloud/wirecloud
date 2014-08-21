@@ -20,6 +20,8 @@
 from lxml import etree
 import six
 
+from wirecloud.commons.utils.template.base import stringify_contact_info
+
 
 def write_mashup_tree(resources, options):
 
@@ -93,7 +95,15 @@ def build_xml_document(options):
     etree.SubElement(desc, 'Name').text = options.get('name')
     etree.SubElement(desc, 'Version').text = options.get('version')
     etree.SubElement(desc, 'DisplayName').text = options.get('title')
-    etree.SubElement(desc, 'Author').text = options.get('authors')
+
+    authors = options.get('authors', ())
+    if len(authors) > 0:
+        etree.SubElement(desc, 'Author').text = stringify_contact_info(authors)
+
+    contributors = options.get('contributors', ())
+    if len(contributors) > 0:
+        etree.SubElement(desc, 'Contributors').text = stringify_contact_info(contributors)
+
     etree.SubElement(desc, 'Mail').text = options.get('email')
     etree.SubElement(desc, 'LongDescription').text = options.get('longdescription')
     etree.SubElement(desc, 'Description').text = options.get('description')

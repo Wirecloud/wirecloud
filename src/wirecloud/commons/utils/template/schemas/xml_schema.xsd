@@ -53,7 +53,14 @@
             <xs:element name="authors" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
                 <xs:annotation>
                     <xs:documentation>
-                        Developer(s) of the widget.
+                        Main developers of this mashable application component.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="contributors" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+                <xs:annotation>
+                    <xs:documentation>
+                        Contributors of this mashable application component.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>

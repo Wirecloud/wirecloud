@@ -26,7 +26,7 @@ import os
 from django.utils.translation import ugettext as _
 from six import text_type
 
-from wirecloud.commons.utils.template.base import TemplateParseException
+from wirecloud.commons.utils.template.base import parse_contacts_info, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
 
 
@@ -41,7 +41,8 @@ RESOURCE_DESCRIPTION_XPATH = 't:details'
 DISPLAY_NAME_XPATH = 't:title'
 DESCRIPTION_XPATH = 't:description'
 LONG_DESCRIPTION_XPATH = 't:longdescription'
-AUTHOR_XPATH = 't:authors'
+AUTHORS_XPATH = 't:authors'
+CONTRIBUTORS_XPATH = 't:contributors'
 IMAGE_URI_XPATH = 't:image'
 IPHONE_IMAGE_URI_XPATH = 't:smartphoneimage'
 MAIL_XPATH = 't:email'
@@ -163,7 +164,7 @@ class ApplicationMashupTemplateParser(object):
 
         elements = self._xpath(xpath, element)
         if len(elements) == 1 and elements[0].text and len(elements[0].text.strip()) > 0:
-            return elements[0].text
+            return text_type(elements[0].text)
         elif not required:
             return ''
         else:
@@ -183,7 +184,8 @@ class ApplicationMashupTemplateParser(object):
         self._add_translation_index(self._info['description'], type='resource', field='description')
         self._info['longdescription'] = self._get_field(LONG_DESCRIPTION_XPATH, self._resource_description, required=False)
 
-        self._info['authors'] = self._get_field(AUTHOR_XPATH, self._resource_description, required=False)
+        self._info['authors'] = parse_contacts_info(self._get_field(AUTHORS_XPATH, self._resource_description, required=False))
+        self._info['contributors'] = parse_contacts_info(self._get_field(CONTRIBUTORS_XPATH, self._resource_description, required=False))
         self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)
         self._info['image'] = self._get_field(IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['smartphoneimage'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)

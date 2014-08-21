@@ -293,10 +293,27 @@ def build_rdf_graph(template_info):
     if longdescription not in (None, ''):
         graph.add((resource_uri, DCTERMS['description'], rdflib.URIRef(longdescription)))
 
-    authors = rdflib.BNode()
-    graph.add((authors, rdflib.RDF.type, FOAF['Person']))
-    graph.add((resource_uri, DCTERMS['creator'], authors))
-    graph.add((authors, FOAF['name'], rdflib.Literal(template_info.get('authors'))))
+    for index, author in enumerate(template_info.get('authors', ())):
+        author_node = rdflib.BNode()
+        graph.add((resource_uri, DCTERMS['creator'], author_node))
+        graph.add((author_node, rdflib.RDF.type, FOAF['Person']))
+        graph.add((author_node, WIRE['index'], rdflib.Literal(str(index))))
+        graph.add((author_node, FOAF['name'], rdflib.Literal(author['name'])))
+        if 'email' in author:
+            graph.add((author_node, FOAF['mbox'], rdflib.Literal(author['email'])))
+        if 'url' in author:
+            graph.add((author_node, FOAF['homepage'], rdflib.Literal(author['url'])))
+
+    for index, contributor in enumerate(template_info.get('contributors', ())):
+        contributor_node = rdflib.BNode()
+        graph.add((resource_uri, DCTERMS['contributor'], contributor_node))
+        graph.add((contributor_node, rdflib.RDF.type, FOAF['Person']))
+        graph.add((contributor_node, WIRE['index'], rdflib.Literal(str(index))))
+        graph.add((contributor_node, FOAF['name'], rdflib.Literal(contributor['name'])))
+        if 'email' in contributor:
+            graph.add((contributor_node, FOAF['mbox'], rdflib.Literal(contributor['email'])))
+        if 'url' in contributor:
+            graph.add((contributor_node, FOAF['homepage'], rdflib.Literal(contributor['url'])))
 
     graph.add((resource_uri, WIRE['hasImageUri'], rdflib.URIRef(template_info.get('image', ''))))
 

@@ -22,7 +22,7 @@ from lxml import etree
 from django.utils.translation import ugettext as _
 from six import text_type
 
-from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
+from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, parse_contacts_info, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
 
 
@@ -36,6 +36,7 @@ DISPLAY_NAME_XPATH = 't:DisplayName'
 DESCRIPTION_XPATH = 't:Description'
 LONG_DESCRIPTION_XPATH = 't:LongDescription'
 AUTHOR_XPATH = 't:Author'
+CONTRIBUTORS_XPATH = 't:Contributors'
 ORGANIZATION_XPATH = 't:Organization'
 IMAGE_URI_XPATH = 't:ImageURI'
 IPHONE_IMAGE_URI_XPATH = 't:iPhoneImageURI'
@@ -157,7 +158,7 @@ class WirecloudTemplateParser(object):
 
         elements = self._xpath(xpath, element)
         if len(elements) == 1 and elements[0].text and len(elements[0].text.strip()) > 0:
-            return elements[0].text
+            return text_type(elements[0].text)
         elif not required:
             return ''
         else:
@@ -185,7 +186,8 @@ class WirecloudTemplateParser(object):
         self._add_translation_index(self._info['description'], type='resource', field='description')
         self._info['longdescription'] = self._get_field(LONG_DESCRIPTION_XPATH, self._resource_description, required=False)
 
-        self._info['authors'] = self._get_field(AUTHOR_XPATH, self._resource_description, required=False)
+        self._info['authors'] = parse_contacts_info(self._get_field(AUTHOR_XPATH, self._resource_description, required=False))
+        self._info['contributors'] = parse_contacts_info(self._get_field(CONTRIBUTORS_XPATH, self._resource_description, required=False))
         self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)
         self._info['image'] = self._get_field(IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['smartphoneimage'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)

@@ -175,6 +175,29 @@ class RDFTemplateParser(object):
                 result = default
         return result
 
+    def _parse_people_field(self, namespace, element, subject):
+
+        people = []
+        sorted_people = sorted(self._graph.objects(subject, namespace[element]), key=lambda person: possible_int(self._get_field(WIRE, 'index', person, required=False)))
+        for person in sorted_people:
+            name = self._get_field(FOAF, 'name', person, required=False)
+            if name == '':
+                continue
+
+            person_info = {'name': name}
+
+            email = self._get_field(FOAF, 'mbox', person, required=False)
+            if email != '':
+                person_info['email'] = email
+
+            homepage = self._get_field(FOAF, 'homepage', person, required=False)
+            if homepage != '':
+                person_info['url'] = homepage
+
+            people.append(person_info)
+
+        return people
+
     def _parse_extra_info(self):
 
         if self._info['type'] == 'widget' or self._info['type'] == 'operator':
@@ -228,8 +251,8 @@ class RDFTemplateParser(object):
             self._info['longdescription'] = '%s' % longdescription
             self._info['description'] = self._get_translation_field(DCTERMS, 'abstract', self._rootURI, 'description', required=False, type='resource', field='description')
 
-        authors = self._get_field(DCTERMS, 'creator', self._rootURI, required=False, id_=True)
-        self._info['authors'] = self._get_field(FOAF, 'name', authors, required=False)
+        self._info['authors'] = self._parse_people_field(DCTERMS, 'creator', self._rootURI)
+        self._info['contributors'] = self._parse_people_field(DCTERMS, 'contributor', self._rootURI)
 
         self._info['image'] = self._get_field(WIRE, 'hasImageUri', self._rootURI, required=False)
         self._info['smartphoneimage'] = self._get_field(WIRE, 'hasiPhoneImageUri', self._rootURI, required=False)

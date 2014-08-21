@@ -23,6 +23,8 @@ from django.utils.translation import ugettext as _
 from lxml import etree
 import six
 
+from wirecloud.commons.utils.template.base import stringify_contact_info
+
 
 def processOption(options, field, required=False, type='string'):
     if field not in options:
@@ -34,10 +36,9 @@ def processOption(options, field, required=False, type='string'):
         if type == 'string':
             return unicode(options[field])
         elif type == 'boolean':
-            if options[field]:
-                return 'true'
-            else:
-                return 'false'
+            return 'true' if options[field] else 'false'
+        elif type == 'people':
+            return stringify_contact_info(options[field])
 
 
 def addAttribute(options, element, field, attr_name=None, default='', ignore_default=True, **other_options):
@@ -50,9 +51,11 @@ def addAttribute(options, element, field, attr_name=None, default='', ignore_def
     elif value is not None:
         element.set(attr_name, value)
 
+
 def addAttributes(options, element, attrs, **other_options):
     for attr in attrs:
         addAttribute(options, element, attr, **other_options)
+
 
 def addElement(options, element, field, attr_name=None, default='', ignore_default=True, **other_options):
     if attr_name is None:
@@ -65,14 +68,17 @@ def addElement(options, element, field, attr_name=None, default='', ignore_defau
         new_element = etree.SubElement(element, attr_name)
         new_element.text = value
 
+
 def addElements(options, element, attrs, **other_options):
     for attr in attrs:
         addElement(options, element, attr, **other_options)
+
 
 def addPreferenceValues(resource, preferences):
     for pref_name, pref in six.iteritems(preferences):
         element = etree.SubElement(resource, 'preferencevalue', name=pref_name, value=pref['value'])
         addAttributes(pref, element, ('readonly', 'hidden'), default='false', type='boolean')
+
 
 def write_mashup_tree(doc, resources, options):
 
@@ -139,7 +145,8 @@ def build_xml_document(options):
     template.set('version', options.get('version'))
 
     desc = etree.SubElement(template, 'details')
-    addElements(options, desc, ('title', 'authors', 'email', 'image', 'smartphoneimage', 'description', 'longdescription', 'homepage', 'doc', 'license', 'licenseurl', 'changelog'))
+    addElements(options, desc, ('title', 'email', 'image', 'smartphoneimage', 'description', 'longdescription', 'homepage', 'doc', 'license', 'licenseurl', 'changelog'))
+    addElements(options, desc, ('authors', 'contributors'), type='people')
 
     if len(options['requirements']) > 0:
         requirements = etree.SubElement(template, 'requirements')
