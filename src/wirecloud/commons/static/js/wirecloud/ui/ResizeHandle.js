@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,14 +29,10 @@
         return true;
     };
 
-    var cancel = function cancel() {
-        return false;
-    };
-
     var ResizeHandle = function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, onFinish, canBeResized) {
         var xDelta = 0, yDelta = 0;
         var xStart = 0, yStart = 0;
-        var yScroll = 0;
+        var scrollDelta, scrollStart = 0;
         var dragboardCover;
         var x, y;
         var endresize, resize, startresize, scroll;
@@ -44,86 +40,98 @@
 
 
         // remove the events
-        endresize = function (e) {
-            e = e || window.event; // needed for IE
+        endresize = function endresize(e) {
 
             // Only attend to left button (or right button for left-handed persons) events
-            if (e.button !== 0) {
+            if (e.type === 'mouseup' && e.button !== 0) {
+                return;
+            } else if (e.type === 'touchend' && e.touches.length > 0) {
                 return;
             }
 
-            document.removeEventListener("mouseup", endresize, true);
-            document.removeEventListener("mousemove", resize, true);
+            document.removeEventListener("mouseup", endresize, false);
+            document.removeEventListener("touchend", endresize, false);
+            document.removeEventListener("mousemove", resize, false);
+            document.removeEventListener("touchmove", resize, false);
 
             dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
             dragboardCover.parentNode.removeChild(dragboardCover);
             dragboardCover = null;
 
-            handleElement.removeEventListener("mouseup", endresize, true);
-            handleElement.removeEventListener("mousemove", resize, true);
+            handleElement.removeEventListener("mouseup", endresize, false);
+            handleElement.removeEventListener("touchend", endresize, false);
+            handleElement.removeEventListener("mousemove", resize, false);
+            handleElement.removeEventListener("touchmove", resize, false);
 
             onFinish(resizableElement, handleElement, data);
 
             // Restore start event listener
-            handleElement.addEventListener("mousedown", startresize, true);
+            handleElement.addEventListener("mousedown", startresize, false);
+            handleElement.addEventListener("touchstart", startresize, false);
 
-            document.onmousedown = null; // reenable context menu
-            document.onselectstart = null; // reenable text selection in IE
-            document.oncontextmenu = null; // reenable text selection
-
-            return false;
+            document.removeEventListener('mousedown', Wirecloud.Utils.preventDefaultListener, false); // reenable text selection
+            document.removeEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener, false); // reenable context menu
         };
 
         // fire each time the mouse is moved while resizing
-        resize = function (e) {
-            e = e || window.event; // needed for IE
+        resize = function resize(e) {
+            var clientX, clientY;
 
-            xDelta = xStart - parseInt(e.screenX, 10);
-            yDelta = yStart - parseInt(e.screenY, 10);
-            xStart = parseInt(e.screenX, 10);
-            yStart = parseInt(e.screenY, 10);
-            y = y - yDelta;
-            x = x - xDelta;
+            if ('touches' in e) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                // Work around chrome bug: https://code.google.com/p/chromium/issues/detail?id=150779
+                e.preventDefault();
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            xDelta = clientX - xStart;
+            yDelta = clientY - yStart;
 
-            onResize(resizableElement, handleElement, data, x, y);
+            onResize(resizableElement, handleElement, data, x + xDelta, y + yDelta - scrollDelta);
         };
 
         // fire each time the dragboard is scrolled while dragging
-        scroll = function () {
+        scroll = function scroll() {
             var dragboard = dragboardCover.parentNode;
             dragboardCover.style.height = dragboard.scrollHeight + "px";
             var scrollTop = parseInt(dragboard.scrollTop, 10);
-            var scrollDelta = yScroll - scrollTop;
-            y -= scrollDelta;
-            yScroll = scrollTop;
+            scrollDelta = scrollStart - scrollTop;
 
-            onResize(resizableElement, handleElement, data, x, y);
+            onResize(resizableElement, handleElement, data, x + xDelta, y + yDelta - scrollDelta);
         };
 
         // initiate the resizing
-        startresize = function (e) {
-            e = e || window.event; // needed for IE
+        startresize = function startresize(e) {
+
+            // Only attend to left button (or right button for left-handed persons) events
+            if (e.type === 'mousedown' && e.button !== 0) {
+                return;
+            }
 
             if (!canBeResized(resizableElement, data)) {
                 return false;
             }
 
-            // Only attend to left button (or right button for left-handed persons) events
-            if (e.button !== 0) {
-                return;
+            document.addEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener, false); // disable context menu
+            document.addEventListener('mousedown', Wirecloud.Utils.preventDefaultListener, false); // disable text selection
+            handleElement.removeEventListener("mousedown", startresize, false);
+            handleElement.removeEventListener("touchstart", startresize, false);
+
+            if ('touches' in e) {
+                xStart = e.touches[0].clientX;
+                yStart = e.touches[0].clientY;
+            } else {
+                xStart = e.clientX;
+                yStart = e.clientY;
             }
-
-            document.oncontextmenu = cancel; // disable context menu
-            document.onmousedown = cancel; // disable text selection
-            document.onselectstart = cancel; // disable text selection in IE
-            handleElement.removeEventListener("mousedown", startresize, true);
-
-            xStart = parseInt(e.screenX, 10);
-            yStart = parseInt(e.screenY, 10);
             x = resizableElement.offsetLeft + handleElement.offsetLeft + (handleElement.offsetWidth / 2);
             y = resizableElement.offsetTop + handleElement.offsetTop + (handleElement.offsetHeight / 2);
-            document.addEventListener("mouseup", endresize, true);
-            document.addEventListener("mousemove", resize, true);
+            document.addEventListener("mouseup", endresize, false);
+            document.addEventListener("touchend", endresize, false);
+            document.addEventListener("mousemove", resize, false);
+            document.addEventListener("touchmove", resize, false);
 
             var dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
             dragboardCover = document.createElement("div");
@@ -138,14 +146,17 @@
             dragboardCover.style.width = "100%";
             dragboardCover.style.height = dragboard.scrollHeight + "px";
 
-            yScroll = parseInt(dragboard.scrollTop, 10);
+            scrollStart = dragboard.scrollTop;
+            scrollDelta = 0;
 
             dragboard.addEventListener("scroll", scroll, true);
 
             dragboard.insertBefore(dragboardCover, dragboard.firstChild);
 
-            handleElement.addEventListener("mouseup", endresize, true);
-            handleElement.addEventListener("mousemove", resize, true);
+            handleElement.addEventListener("mouseup", endresize, false);
+            handleElement.addEventListener("touchend", endresize, false);
+            handleElement.addEventListener("mousemove", resize, false);
+            handleElement.addEventListener("touchmove", resize, false);
 
             onStart(resizableElement, handleElement, data);
 
@@ -153,7 +164,8 @@
         };
 
         // Add event listener
-        handleElement.addEventListener("mousedown", startresize, true);
+        handleElement.addEventListener("mousedown", startresize, false);
+        handleElement.addEventListener("touchstart", startresize, false);
 
         this.setResizableElement = function (element) {
             resizableElement = element;
