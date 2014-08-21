@@ -85,7 +85,8 @@
             'internalname': resource.uri,
             'vendor': resource.vendor,
             'version': resource.version.text,
-            'authors': resource.authors,
+            'authors': this.get_people_list.bind(null, resource.authors),
+            'contributors': this.get_people_list.bind(null, resource.contributors),
             'description': resource.description,
             'longdescription': function () {
                 return new StyledElements.Fragment(resource.longdescription);
@@ -297,6 +298,24 @@
         for (i = 0; i < elements.length; i += 1) {
             elements[i].addEventListener(_event, handler);
         }
+    };
+
+    ResourcePainter.prototype.get_people_list = function get_people_list(people) {
+        var ul, i, li;
+
+        if (people.length === 0) {
+            return gettext('N/A');
+        }
+
+        ul = document.createElement('ul');
+
+        for (i = 0; i < people.length; i++) {
+            li = document.createElement('li');
+            li.textContent = people[i].name;
+            ul.appendChild(li);
+        }
+
+        return ul;
     };
 
     ResourcePainter.prototype.get_popularity_html = function (popularity) {

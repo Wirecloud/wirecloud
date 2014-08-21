@@ -170,8 +170,8 @@ def build_json_template_from_workspace(options, workspace, user):
     else:
         options['description'] = description + '\n' + get_workspace_description(workspace)
 
-    if options.get('authors', '').strip() == '':
-        options['authors'] = unicode(user)
+    if 'authors' not in options:
+        options['authors'] = ({'name': unicode(user)},)
 
     options['requirements'] = []
 

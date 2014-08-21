@@ -70,6 +70,11 @@
                     return currentVersion.authors;
                 }
             },
+            'contributors': {
+                get: function () {
+                    return currentVersion.contributors;
+                }
+            },
             'uri': {
                 get: function () { return [this.vendor, this.name, currentVersion.version.text].join('/'); }
             },

@@ -463,7 +463,7 @@ class PublishTestCase(WirecloudTestCase):
         self.assertEqual(mashup.version, '1')
 
         self.assertEqual(mashup_info['description'], 'This template defines an empty mashup')
-        self.assertEqual(mashup_info['authors'], 'test')
+        self.assertEqual(mashup_info['authors'], [{'name': 'test'}])
 
     def test_publish_empty_mashup_xml(self):
         template_uri = "http://example.com/path/mashup.xml"

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import errno
 import json
 import os
 from six.moves.urllib.parse import urljoin, urlparse
@@ -28,10 +29,10 @@ import markdown
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
-from wirecloud.commons.utils.downloader import download_local_file
+from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.timezone import now
-from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.wgt import InvalidContents, WgtDeployer, WgtFile
 
 
@@ -231,6 +232,7 @@ def get_resource_data(resource, user, request=None):
             'uninstall': resource.public is False and resource.users.filter(pk=user.pk).exists(),
         },
         'authors': resource_info['authors'],
+        'contributors': resource_info['contributors'],
         'title': resource_info['title'],
         'description': resource_info['description'],
         'longdescription': longdescription,
@@ -279,3 +281,38 @@ def get_latest_resource_version(name, vendor):
         return resource_versions[index]
 
     return None
+
+
+def update_resource_catalogue_cache(orm=None):
+
+    if orm is not None:
+        resources = orm.CatalogueResource.objects.all()
+    else:
+        resources = CatalogueResource.objects.all()
+
+    for resource in resources:
+
+        try:
+
+            if resource.fromWGT:
+                base_dir = wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                template = wgt_file.get_template()
+                wgt_file.close()
+            else:
+                template = download_http_content(resource.template_uri)
+
+            template_parser = TemplateParser(template)
+            resource.json_description = json.dumps(template_parser.get_resource_info())
+            resource.save()
+
+        except (IOError, TemplateParseException) as e:
+
+            if isinstance(e, IOError) and e.errno != errno.ENOENT:
+                raise e
+
+            if getattr(settings, 'WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION', False) is False:
+                raise e
+
+            print('    Removing %s' % (resource.vendor + '/' + resource.short_name + '/' + resource.version))
+            resource.delete()
