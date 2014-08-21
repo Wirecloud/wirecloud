@@ -446,7 +446,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             catalogue_base_element = marketplace.wait_catalogue_ready()
             free_offering = marketplace.search_in_results(offering_name)
             self.scroll_and_click(free_offering)
-            tabs = catalogue_base_element.find_elements_by_css_selector('.resource_details .tab_wrapper .tab')
+            tabs = catalogue_base_element.find_elements_by_css_selector('.resource_details .se-notebook-tab')
             for tab in tabs:
                 tab.location_once_scrolled_into_view
                 if tab.text == 'Resources':

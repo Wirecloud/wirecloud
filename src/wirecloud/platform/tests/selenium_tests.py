@@ -67,7 +67,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Remove the recently created one
         new_tab.open_menu().click_entry('Remove')
         self.wait_wirecloud_ready()
-        self.assertEqual(len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')), 1)
+        self.assertEqual(self.count_workspace_tabs(), 1)
 
         self.remove_workspace()
 
@@ -328,7 +328,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.refresh()
         self.wait_wirecloud_ready()
 
-        tabs = len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
+        tabs = self.count_workspace_tabs()
         self.assertEqual(tabs, 2)
 
         tab = self.get_workspace_tab_by_name('Tab')

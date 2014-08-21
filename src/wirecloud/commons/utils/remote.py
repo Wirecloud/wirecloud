@@ -795,7 +795,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         self.fill_form_input(email_input, info['email'])
 
         if info.get('readOnlyWidgets', False) is True or info.get('readOnlyConnectables', False) is True:
-            tabs = self.driver.find_elements_by_css_selector('.styled_form .notebook .tab_wrapper .tab')
+            tabs = self.driver.find_elements_by_css_selector('.styled_form .se-notebook-tab')
             for tab in tabs:
                 span = tab.find_element_by_css_selector('span')
                 if span.text == 'Advanced':
@@ -818,19 +818,19 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         self.assertEqual(len(window_menus), 1, 'Error publishing workspace')
 
     def count_workspace_tabs(self):
-        return len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
+        return len(self.driver.find_elements_by_css_selector('#workspace > .se-notebook > .se-notebook-tabs-wrapper .se-notebook-tab'))
 
     def add_tab(self):
 
         old_tab_count = self.count_workspace_tabs()
 
-        self.driver.find_element_by_css_selector('#workspace .tab_wrapper .icon-add-tab').click()
+        self.driver.find_element_by_css_selector('#workspace > .se-notebook > .se-notebook-tabs-wrapper .se-notebook-new-tab:not(.disabled)').click()
         self.wait_wirecloud_ready()
 
         new_tab_count = self.count_workspace_tabs()
         self.assertEqual(new_tab_count, old_tab_count + 1)
 
-        element = self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
+        element = self.driver.find_elements_by_css_selector('#workspace > .se-notebook > .se-notebook-tabs-wrapper .se-notebook-tab')[-1]
         return WorkspaceTabTester(self, element)
 
 
