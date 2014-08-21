@@ -253,7 +253,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             catalogue_base_element = marketplace.wait_catalogue_ready()
             offering = marketplace.search_in_results(offering_name)
             self.scroll_and_click(offering)
-            buttons = len(catalogue_base_element.find_elements_by_css_selector('.resource_details .styled_button:not(.plain)'))
+            buttons = len(catalogue_base_element.find_elements_by_css_selector('.resource_details .panel .styled_button:not(.plain), .resource_details .se-notebook-tab-content .styled_button'))
 
             # Close resource details
             WebDriverWait(self.driver, 10).until(element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
