@@ -565,6 +565,6 @@ class WorkspacePublisherEntry(Resource):
         zf.close()
         wgt_file = WgtFile(f)
 
-        get_local_catalogue().publish(None, wgt_file, request.user, options, request)
+        resource = get_local_catalogue().publish(None, wgt_file, request.user, options, request)
 
-        return HttpResponse(status=201)
+        return HttpResponse(json.dumps(resource.get_processed_info(request), ensure_ascii=False), status=201, content_type='application/json; charset=utf-8')

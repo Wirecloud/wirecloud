@@ -89,6 +89,6 @@ class WirecloudCatalogueManager(MarketManager):
             if template is None:
                 template = TemplateParser(wgt_file.get_template())
 
-            install_resource_to_user(user, file_contents=wgt_file, packaged=True, raise_conflicts=True)
+            return install_resource_to_user(user, file_contents=wgt_file, packaged=True, raise_conflicts=True)
         else:
             raise Exception('TODO')
