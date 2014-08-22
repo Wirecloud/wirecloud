@@ -514,6 +514,11 @@ class WorkspaceTabTester(object):
         self.testcase = testcase
         self.element = element
 
+    @property
+    def name(self):
+        span = self.element.find_element_by_css_selector('span')
+        return span.text
+
     def open_menu(self):
 
         tab_menu_button = self.testcase.wait_element_visible_by_css_selector('.icon-tab-menu', element=self.element)
@@ -740,6 +745,11 @@ class WirecloudRemoteTestCase(RemoteTestCase):
                 return WorkspaceTabTester(self, tab)
 
         return None
+
+    def get_current_workspace_tab(self):
+
+        tab = self.driver.find_element_by_css_selector('.se-notebook.workspace > .se-notebook-tabs-wrapper .se-notebook-tab.selected')
+        return WorkspaceTabTester(self, tab)
 
     def add_widget_to_mashup(self, widget_name, new_name=None):
 

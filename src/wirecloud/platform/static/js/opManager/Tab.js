@@ -108,6 +108,16 @@
         Object.defineProperty(this, 'workspace', {value: options.workspace});
 
         this.addEventListener('show', function (tab) {
+            var currentState = Wirecloud.HistoryManager.getCurrentState();
+            var newState = Wirecloud.Utils.clone(currentState);
+            newState.tab = tab.getName();
+            if (currentState.tab != null) {
+                if (currentState.tab !== newState.tab) {
+                    Wirecloud.HistoryManager.pushState(newState);
+                }
+            } else {
+                Wirecloud.HistoryManager.replaceState(newState);
+            }
             tab.paint();
         });
 

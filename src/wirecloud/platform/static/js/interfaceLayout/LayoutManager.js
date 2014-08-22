@@ -220,25 +220,7 @@ var LayoutManagerFactory = function () {
          * Handler for changes in the hash to navigate to other areas
          */
         LayoutManager.prototype.onHashChange = function(state) {
-            var tab_id, tab, nextWorkspace, dragboard, alert_msg, nextView;
-
-            nextWorkspace = Wirecloud.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
-            if (nextWorkspace == null) {
-                if (Wirecloud.activeWorkspace != null) {
-                    Wirecloud.activeWorkspace.unload();
-                    Wirecloud.activeWorkspace = null;
-                }
-                alert_msg = document.createElement('div');
-                alert_msg.className = 'alert alert-info';
-                alert_msg.textContent = gettext('The requested workspace is no longer available (it was deleted).');;
-                LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
-                LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(alert_msg);
-                this.header.refresh();
-            } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
-                Wirecloud.changeActiveWorkspace(nextWorkspace, state.tab);
-            }
-
-            nextView = this.viewsByName[state.view];
+            var nextView = this.viewsByName[state.view];
             if (nextView !== this.alternatives.getCurrentAlternative()) {
                 this.alternatives.showAlternative(nextView);
             }

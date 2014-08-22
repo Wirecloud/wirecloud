@@ -151,6 +151,29 @@
         return [this.walletButton, this.mergeButton, this.wiringButton, this.myresourcesButton, this.marketButton];
     };
 
+    WorkspaceView.prototype.onHistoryChange = function onHistoryChange(newState) {
+        var target_tab, current_tab, nextWorkspace, alert_msg;
+
+        nextWorkspace = Wirecloud.workspacesByUserAndName[newState.workspace_creator][newState.workspace_name];
+        if (nextWorkspace == null) {
+            if (Wirecloud.activeWorkspace != null) {
+                Wirecloud.activeWorkspace.unload();
+                Wirecloud.activeWorkspace = null;
+            }
+            alert_msg = document.createElement('div');
+            alert_msg.className = 'alert alert-info';
+            alert_msg.textContent = gettext('The requested workspace is no longer available (it was deleted).');;
+            LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
+            LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(alert_msg);
+            this.header.refresh();
+        } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
+            Wirecloud.changeActiveWorkspace(nextWorkspace, newState.tab, {replaceNavigationState: 'leave'});
+        } else if (newState.tab != null) {
+            target_tab = Wirecloud.activeWorkspace.tabsByName[newState.tab];
+            Wirecloud.activeWorkspace.notebook.goToTab(target_tab);
+        }
+    };
+
     WorkspaceView.prototype.destroy = function destroy() {
 
         if (this.wsMenu) {

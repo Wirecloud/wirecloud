@@ -68,6 +68,7 @@ function Workspace(workspaceState, resources) {
             ]
         };
         this.tabInstances = {};
+        this.tabsByName = {};
         // TODO
         this.notebook.clear()
         this.tabInstances[0] = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': initialTab, 'workspace': this});
@@ -96,19 +97,20 @@ function Workspace(workspaceState, resources) {
 
             // Load workspace tabs
             var tabs = this.workspaceState.tabs;
-            var visibleTabId = null;
+            var default_initial_tab = null;
             var loading_tab = this.notebook.createTab({'closeable': false});
 
             if (tabs.length > 0) {
-                visibleTabId = tabs[0].id;
+                default_initial_tab = tabs[0];
 
                 for (var i = 0; i < tabs.length; i++) {
                     var tab = tabs[i];
                     var tabInstance = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tab, 'workspace': this});
                     this.tabInstances[tab.id] = tabInstance;
+                    this.tabsByName[tabInstance.getName()] = tabInstance;
 
                     if (tab.visible) {
-                        visibleTabId = tab.id;
+                        default_initial_tab = tabInstance;
                     }
                 }
             }
@@ -128,12 +130,14 @@ function Workspace(workspaceState, resources) {
             LayoutManagerFactory.getInstance().header._notifyWorkspaceLoaded(this);
             // END FIXME
 
-            if (this.initial_tab_id && this.tabInstances[this.initial_tab_id]) {
-                visibleTabId = this.initial_tab_id;
-            }
-
             this.wiring.load(this.workspaceState.wiring);
-            this.notebook.goToTab(this.tabInstances[visibleTabId]);
+
+            var initial_tab = Wirecloud.HistoryManager.getCurrentState().tab;
+            if (initial_tab != null && this.tabsByName[initial_tab]) {
+                this.notebook.goToTab(this.tabsByName[initial_tab]);
+            } else if (default_initial_tab != null) {
+                this.notebook.goToTab(default_initial_tab);
+            }
             loading_tab.close();
 
         } catch (error) {
@@ -261,6 +265,7 @@ function Workspace(workspaceState, resources) {
 
         var newTab = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tabInfo, 'workspace': this});
         this.tabInstances[tabInfo.id] = newTab;
+        this.tabsByName[newTab.getName()] = newTab;
 
         layoutManager.logSubTask(gettext('Tab added successfully'));
         layoutManager.logStep('');
@@ -465,13 +470,8 @@ function Workspace(workspaceState, resources) {
     }
 
     Workspace.prototype.tabExists = function (tabName) {
-        for (var key in this.tabInstances) {
-            if (this.tabInstances[key].tabInfo.name === tabName) {
-                return true;
-            }
-        }
-        return false;
-    }
+        return tabName in this.tabsByName;
+    };
 
     Workspace.prototype.addTab = function() {
         var layoutManager, msg, counter, prefixName, tabName, url;
@@ -534,17 +534,6 @@ function Workspace(workspaceState, resources) {
         return true;
     }
 
-    Workspace.prototype.unloadTab = function(tabId) {
-        if (!this.valid)
-            return;
-
-        var tab = this.tabInstances[tabId];
-
-        delete this.tabInstances[tabId];
-        tab.close();
-        tab.destroy();
-    };
-
     Workspace.prototype.unload = function() {
 
         var layoutManager = LayoutManagerFactory.getInstance();
@@ -552,10 +541,9 @@ function Workspace(workspaceState, resources) {
 
         this.loaded = false;
 
-        // After that, tab info is managed
-        for (var key in this.tabInstances) {
-            this.unloadTab(key);
-        }
+        this.notebook.clear();
+        this.tabInstances = null;
+        this.tabsByName = null;
 
         if (this.pref_window_menu != null) {
             this.pref_window_menu.destroy();
@@ -717,6 +705,7 @@ function Workspace(workspaceState, resources) {
     Object.defineProperty(this, '_iwidget_removed', {value: iwidget_removed.bind(this)});
     this.workspaceState = workspaceState;
     this.tabInstances = {};
+    this.tabsByName = {};
     this.highlightTimeouts = {};
     this.wiring = null;
     this.contextManager = null;

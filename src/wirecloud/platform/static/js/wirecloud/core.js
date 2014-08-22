@@ -144,7 +144,7 @@
 
                 if (state.workspace_name !== '') {
                     var workspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
-                    this.changeActiveWorkspace(workspace, null, {});
+                    this.changeActiveWorkspace(workspace, state.tab, {});
                 } else {
                     Wirecloud.createWorkspace({
                         name: gettext('Workspace'),
@@ -286,9 +286,9 @@
         if (initial_tab) {
             state.tab = initial_tab;
         }
-        if (options.replaceNavigationState) {
+        if (options.replaceNavigationState === true) {
             Wirecloud.HistoryManager.replaceState(state);
-        } else {
+        } else if (options.replaceNavigationState !== 'leave') {
             Wirecloud.HistoryManager.pushState(state);
         }
 

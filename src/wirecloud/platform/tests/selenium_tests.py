@@ -77,9 +77,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_move_iwidget_between_tabs(self):
 
-        self.login(username='user_with_workspaces')
-
-        self.change_current_workspace('Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
         src_tab_iwidgets = self.get_current_iwidgets(tab=102)
         dst_tab_iwidgets = self.get_current_iwidgets(tab=103)
@@ -735,6 +733,68 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
         self.driver.forward()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'marketplace')
+
+    def test_browser_workspace_navigation(self):
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+
+        # Fill navigation history
+        tab = self.get_workspace_tab_by_name('Tab 2')
+        tab.element.click()
+
+        self.change_current_workspace('ExistingWorkspace')
+        self.assertEqual(self.get_current_workspace_tab().name, 'OtherTab')
+
+        tab = self.get_workspace_tab_by_name('ExistingTab')
+        tab.element.click()
+
+        self.myresources_view.__enter__()
+
+        # Check navigation history has been filled correctly
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'workspace')
+        self.assertEqual(self.get_current_workspace_tab().name, 'ExistingTab')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'OtherTab')
+        self.assertEqual(self.get_current_workspace_name(), 'ExistingWorkspace')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_name(self, 'Pending Events'))
+        self.assertEqual(self.get_current_workspace_tab().name, 'Tab 2')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'Tab 1')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/Pending%20Events')
+
+        # Replay navigation history
+        self.driver.forward()
+        self.wait_wirecloud_ready()
+        self.assertEqual(self.get_current_workspace_name(), 'Pending Events')
+        self.assertEqual(self.get_current_workspace_tab().name, 'Tab 1')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'Tab 2')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'OtherTab')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'ExistingTab')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
+
+    def test_browser_workspace_initial_tab(self):
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events#tab=Tab 2')
+        self.assertEqual(self.get_current_workspace_tab().name, 'Tab 2')
+
+        # Now test using an invalid tab name
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events#tab=Tab 4')
+        self.assertEqual(self.get_current_workspace_tab().name, 'Tab 1')
 
     def test_browser_navigation_from_renamed_workspace(self):
 
