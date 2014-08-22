@@ -2298,9 +2298,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'version': '1.0.5',
             'email': 'test@example.com'
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_post_requires_authentication(self, url, json.dumps(data))
 
     def test_workspace_publish(self):
 
@@ -2312,11 +2310,17 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = {
             'vendor': 'Wirecloud',
             'name': 'test-published-mashup',
+            'title': 'Mashup (Rest API Test)',
             'version': '1.0.5',
             'email': 'test@example.com'
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['vendor'], 'Wirecloud')
+        self.assertEqual(response_data['name'], 'test-published-mashup')
+        self.assertEqual(response_data['title'], 'Mashup (Rest API Test)')
+        self.assertEqual(response_data['version'], '1.0.5')
 
     def test_workspace_publish_including_images(self):
 
