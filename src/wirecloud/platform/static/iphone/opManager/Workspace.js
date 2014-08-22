@@ -203,11 +203,6 @@ function Workspace(workspaceState, resources) {
         return null;
     };
 
-    Workspace.prototype.setTab = function (tab) {
-        this.visibleTab = tab;
-        this.visibleTab.show();
-    };
-
     Workspace.prototype.getVisibleTab = function () {
         return this.visibleTab;
     };

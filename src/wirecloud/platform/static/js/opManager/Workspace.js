@@ -433,33 +433,12 @@ function Workspace(workspaceState, resources) {
         return null;
     }
 
-    Workspace.prototype.prepareToShow = function() {
-        var layoutManager = LayoutManagerFactory.getInstance();
-
-        if (!this.loaded) {
-            return;
-        }
-
-
-    };
-
     Workspace.prototype.isValid = function() {
         return this.valid;
     }
 
     Workspace.prototype.getTab = function(tabId) {
         return this.tabInstances[tabId];
-    }
-
-    Workspace.prototype.setTab = function(tab) {
-        if (!this.loaded || tab == null) {
-            return;
-        }
-        if (!(tab instanceof Tab)) {
-            throw new TypeError();
-        }
-
-        this.notebook.goToTab(tab);
     }
 
     Workspace.prototype.getVisibleTab = function() {
