@@ -10,7 +10,7 @@
         <Mail>aarranz@conwet.com</Mail>
         <Description>This widget is used to test some of the features of the Wirecloud platform</Description>
         <ImageURI>images/catalogue.png</ImageURI>
-        <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
+        <iPhoneImageURI>images/smartphone.png</iPhoneImageURI>
         <WikiURI>doc/index.html</WikiURI>
     </Catalog.ResourceDescription>
 

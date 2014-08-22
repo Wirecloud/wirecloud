@@ -2318,7 +2318,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
-    def test_workspace_publish_including_image(self):
+    def test_workspace_publish_including_images(self):
 
         url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
 
@@ -2332,18 +2332,24 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'email': 'test@example.com'
         }
 
-        original_image = os.path.join(self.shared_test_data_dir, 'src/api-test/images/catalogue.png')
-        with open(original_image, 'rb') as f:
-            response = self.client.post(url, {'json': json.dumps(data), 'image': f}, HTTP_ACCEPT='application/json')
+        original_catalogue_image = os.path.join(self.shared_test_data_dir, 'src/api-test/images/catalogue.png')
+        original_smartphone_image = os.path.join(self.shared_test_data_dir, 'src/api-test/images/smartphone.png')
+        with open(original_catalogue_image, 'rb') as f1:
+            with open(original_smartphone_image, 'rb') as f2:
+                response = self.client.post(url, {'json': json.dumps(data), 'image': f1, 'smartphoneimage': f2}, HTTP_ACCEPT='application/json')
 
         self.assertEqual(response.status_code, 201)
 
-        # TODO search a better way for checking this
+        # Check images has been uploaded
         test_mashup = CatalogueResource.objects.get(short_name='test-published-mashup')
         base_dir = catalogue_utils.wgt_deployer.get_base_dir('Wirecloud', 'test-published-mashup', '1.0.5')
         test_mashup_info = json.loads(test_mashup.json_description)
+
         image_path = os.path.join(base_dir, test_mashup_info['image'])
-        self.assertTrue(filecmp.cmp(original_image, image_path))
+        self.assertTrue(filecmp.cmp(original_catalogue_image, image_path))
+
+        smartphone_image_path = os.path.join(base_dir, test_mashup_info['smartphoneimage'])
+        self.assertTrue(filecmp.cmp(original_smartphone_image, smartphone_image_path))
 
     def test_workspace_publish_bad_provided_data(self):
 
