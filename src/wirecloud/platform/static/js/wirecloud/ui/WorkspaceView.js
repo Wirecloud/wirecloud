@@ -165,7 +165,7 @@
             alert_msg.textContent = gettext('The requested workspace is no longer available (it was deleted).');;
             LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
             LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(alert_msg);
-            this.header.refresh();
+            LayoutManagerFactory.getInstance().header.refresh();
         } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
             Wirecloud.changeActiveWorkspace(nextWorkspace, newState.tab, {replaceNavigationState: 'leave'});
         } else if (newState.tab != null) {
