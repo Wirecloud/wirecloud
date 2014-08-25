@@ -25,7 +25,7 @@ import time
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from django.utils.importlib import import_module
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -479,15 +479,7 @@ class WiringIOperatorTester(WiringEntityTester):
 
 class WiringIWidgetTester(WiringEntityTester):
 
-    def get_wiring_endpoint(self, endpoint_name, timeout=5):
-
-        def widget_in_wiring_editor(driver):
-            return driver.execute_script('''
-                 var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-                 return wiringEditor.iwidgets[%(iwidget)d] != null;
-            ''' % {"iwidget": self.id, "endpoint": endpoint_name})
-
-        WebDriverWait(self.testcase.driver, timeout).until(widget_in_wiring_editor)
+    def get_wiring_endpoint(self, endpoint_name):
 
         return WiringEndpointTester(self.testcase, endpoint_name, self.testcase.driver.execute_script('''
              var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
@@ -1140,13 +1132,24 @@ class WiringViewTester(object):
             for i in range(len(ioperators[0]))
         ]
 
-    def get_iwidget(self, iwidget):
+    def get_iwidget(self, iwidget, timeout=0):
         if isinstance(iwidget, IWidgetTester):
             iwidget_id = iwidget.id
         else:
             iwidget_id = iwidget
 
-        return WiringIWidgetTester(self.testcase, iwidget_id, None)
+        def widget_in_wiring_editor(driver):
+            return driver.execute_script('''
+                 var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+                 return wiringEditor.iwidgets[%(iwidget)d] != null;
+            ''' % {"iwidget": iwidget_id})
+
+        try:
+            WebDriverWait(self.testcase.driver, timeout).until(widget_in_wiring_editor)
+
+            return WiringIWidgetTester(self.testcase, iwidget_id, None)
+        except TimeoutException:
+            return None
 
 
 class MobileWirecloudRemoteTestCase(RemoteTestCase):

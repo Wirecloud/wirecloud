@@ -508,7 +508,8 @@ IWidget.prototype.remove = function (orderFromServer) {
     if (!orderFromServer) {
         this.internal_iwidget.remove();
     } else {
-        this._iwidget_removed();
+        // TODO
+        this.internal_iwidget.events.removed.dispatch(this.internal_iwidget);
     }
 };
 

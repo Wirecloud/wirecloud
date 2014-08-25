@@ -372,6 +372,11 @@ function Workspace(workspaceState, resources) {
 
     Workspace.prototype.initGUI = function initGUI() {
 
+        this.notebook.addEventListener("tabDeletion", function (tab) {
+            delete this.tabInstances[tab.id];
+            delete this.tabsByName[tab.getName()];
+        });
+
         if (this.isAllowed('add_tab')) {
             this.notebook.addEventListener('newTab', this.addTab.bind(this));
         }

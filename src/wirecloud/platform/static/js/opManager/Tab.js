@@ -47,9 +47,13 @@
     };
 
     var deleteSuccess = function deleteSuccess(transport) {
-        var layoutManager = LayoutManagerFactory.getInstance();
+        var iwidgets, i, layoutManager = LayoutManagerFactory.getInstance();
 
-        this.workspace.unloadTab(this.id);
+        iwidgets = this.getIWidgets();
+        for (i = 0; i < iwidgets.length; i++) {
+            iwidgets[i].remove(true);
+        }
+        this.close();
 
         layoutManager.logSubTask(gettext('Tab deleted successfully'));
         layoutManager.logStep('');

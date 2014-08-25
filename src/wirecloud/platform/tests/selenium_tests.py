@@ -110,11 +110,21 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget.remove()
     test_remove_widget_from_workspace.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
+    def test_remove_tab_from_workspace(self):
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+
+        iwidgets = self.get_current_iwidgets()
+
+        tab = self.get_workspace_tab_by_name('Tab 1')
+        tab.open_menu().click_entry('Remove')
+
+        with self.wiring_view as wiring:
+            self.assertIsNone(wiring.get_iwidget(iwidgets[0]))
+
     def test_read_only_widgets_cannot_be_removed(self):
 
-        self.login(username='user_with_workspaces')
-
-        self.change_current_workspace('Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
         tab = self.get_workspace_tab_by_name('Tab 2')
         tab.element.click()
@@ -126,9 +136,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_tabs_with_read_only_widgets_cannot_be_removed(self):
 
-        self.login(username='user_with_workspaces')
-
-        self.change_current_workspace('Pending Events')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
         tab = self.get_workspace_tab_by_name('Tab 2')
         tab.element.click()
