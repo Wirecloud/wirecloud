@@ -56,9 +56,7 @@
         'MenuItem': window.parent.StyledElements.MenuItem,
         'ModelTable': window.parent.StyledElements.ModelTable,
         'HorizontalLayout': window.parent.StyledElements.HorizontalLayout,
-        'BorderLayout': window.parent.StyledElements.BorderLayout,
-        'Tab': window.parent.StyledElements.Tab,
-        'StyledNotebook': window.parent.StyledElements.StyledNotebook
+        'BorderLayout': window.parent.StyledElements.BorderLayout
     };
 
     var extend = function (parent_class, extra) {
@@ -240,6 +238,11 @@
     /* Button */
     StyledElements.StyledButton = extend(RealStyledElements.StyledButton, {
         Tooltip: StyledElements.Tooltip
+    });
+
+    /* Notebook */
+    StyledElements.StyledNotebook = extend(RealStyledElements.StyledNotebook, {
+        Button: StyledElements.StyledButton
     });
 
 

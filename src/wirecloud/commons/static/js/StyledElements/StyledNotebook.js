@@ -68,10 +68,10 @@
         tabWrapper.getCenterContainer().appendChild(this.tabArea);
         this.tabArea.addClassName('se-notebook-tab-area');
 
-        this.moveLeftButton = new StyledElements.StyledButton({'class': 'move_left', 'iconClass': 'icon-caret-left'});
+        this.moveLeftButton = new this.Button({'class': 'move_left', 'iconClass': 'icon-caret-left'});
         tabWrapper.getWestContainer().appendChild(this.moveLeftButton);
 
-        this.moveRightButton = new StyledElements.StyledButton({'class': 'move_right', 'iconClass': 'icon-caret-right'});
+        this.moveRightButton = new this.Button({'class': 'move_right', 'iconClass': 'icon-caret-right'});
         tabWrapper.getEastContainer().appendChild(this.moveRightButton);
 
         this.contentArea = document.createElement("div");
@@ -101,10 +101,10 @@
             if (this.new_tab_button_tabs == null) {
                 new_tab_main_listener = onNewTab.bind(this);
 
-                this.new_tab_button_tabs = new StyledElements.StyledButton({iconClass: 'icon-plus', 'class': 'se-notebook-new-tab'});
+                this.new_tab_button_tabs = new this.Button({iconClass: 'icon-plus', 'class': 'se-notebook-new-tab', title: gettext('Add Tab')});
                 this.new_tab_button_tabs.addEventListener('click', new_tab_main_listener);
                 this.tabArea.appendChild(this.new_tab_button_tabs);
-                this.new_tab_button_left = new StyledElements.StyledButton({iconClass: 'icon-plus', 'class': 'se-notebook-new-tab'});
+                this.new_tab_button_left = new this.Button({iconClass: 'icon-plus', 'class': 'se-notebook-new-tab', title: gettext('Add Tab')});
                 this.new_tab_button_left.addEventListener('click', new_tab_main_listener);
                 this.addButton(this.new_tab_button_left);
             }
@@ -212,6 +212,8 @@
         });
     };
     StyledNotebook.prototype = new StyledElements.StyledElement();
+
+    StyledNotebook.prototype.Button = StyledElements.StyledButton;
 
     /**
      * @private

@@ -382,18 +382,18 @@ function Workspace(workspaceState, resources) {
         }
 
         if (Wirecloud.Utils.isFullscreenSupported()) {
-            this.fullscreenButton = new StyledElements.StyledButton({
-                'iconClass': 'icon-resize-full',
-            });
+            this.fullscreenButton = new StyledElements.StyledButton({'iconClass': 'icon-resize-full', title: gettext('Full screen')});
             this.notebook.addButton(this.fullscreenButton);
             Wirecloud.Utils.onFullscreenChange(this.notebook, function () {
                 this.fullscreenButton.removeIconClassName('icon-resize-full');
                 this.fullscreenButton.removeIconClassName('icon-resize-small');
                 if (this.notebook.fullscreen) {
                     this.fullscreenButton.addIconClassName('icon-resize-small');
+                    this.fullscreenButton.setTitle(gettext('Exit full screen'));
                     this.notebook.addClassName('fullscreen');
                 } else {
                     this.fullscreenButton.addIconClassName('icon-resize-full');
+                    this.fullscreenButton.setTitle(gettext('Full screen'));
                     this.notebook.removeClassName('fullscreen');
                 }
             }.bind(this));
