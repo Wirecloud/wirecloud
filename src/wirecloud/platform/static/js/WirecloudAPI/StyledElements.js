@@ -40,7 +40,6 @@
         'Form': window.parent.Form,
         'ObjectWithEvents': window.parent.StyledElements.ObjectWithEvents,
         'StyledAlternatives': window.parent.StyledElements.StyledAlternatives,
-        'StyledButton': window.parent.StyledElements.StyledButton,
         'StyledCheckBox': window.parent.StyledElements.StyledCheckBox,
         'StyledElement': window.parent.StyledElements.StyledElement,
         'StyledInputElement': window.parent.StyledElements.StyledInputElement,
@@ -62,6 +61,20 @@
         'StyledNotebook': window.parent.StyledElements.StyledNotebook
     };
 
+    var extend = function (parent_class, extra) {
+        var new_class = function () {
+            parent_class.apply(this, arguments);
+        };
+
+        new_class.prototype = new parent_class();
+        for (var key in extra) {
+            new_class.prototype[key] = extra[key];
+        }
+
+        return new_class;
+    };
+
+    /* PopupMenu */
     var PopupMenu = function PopupMenu(options) {
         var menu = new RealStyledElements.PopupMenu(options);
 
@@ -199,6 +212,36 @@
         return items;
     };
     window.StyledElements.SendMenuItems = SendMenuItems;
+
+
+    /* Tooltip */
+    StyledElements.Tooltip = extend(RealStyledElements.Tooltip, {
+        'show': function show(refPosition) {
+            var position = iwidget.content.getBoundingClientRect();
+
+            if ('getBoundingClientRect' in refPosition) {
+                refPosition = refPosition.getBoundingClientRect();
+            }
+
+            refPosition = {
+                top: refPosition.top + position.top + platform.document.body.scrollTop,
+                left: refPosition.left + position.left + platform.document.body.scrollLeft,
+                width: refPosition.width,
+                height: refPosition.height
+            };
+            refPosition.right = refPosition.left + refPosition.width;
+            refPosition.bottom = refPosition.top + refPosition.height;
+            Object.freeze(refPosition);
+
+            RealStyledElements.Tooltip.prototype.show.call(this, refPosition);
+        }
+    });
+
+    /* Button */
+    StyledElements.StyledButton = extend(RealStyledElements.StyledButton, {
+        Tooltip: StyledElements.Tooltip
+    });
+
 
     Object.freeze(window.StyledElements);
 })();

@@ -90,6 +90,8 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Expander.js',
     'js/StyledElements/Fragment.js',
     'js/StyledElements/PaginatedSource.js',
+    'js/StyledElements/GUIBuilder.js',
+    'js/StyledElements/Tooltip.js',
     'js/StyledElements/Button.js',
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',
@@ -123,9 +125,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/InputInterfaceFactory.js',
     'js/StyledElements/DefaultInputInterfaceFactory.js',
     'js/StyledElements/Form.js',
-    'js/StyledElements/GUIBuilder.js',
     'js/StyledElements/PaginationInterface.js',
-    'js/StyledElements/Tooltip.js',
     'js/StyledElements/Popover.js',
 )
 

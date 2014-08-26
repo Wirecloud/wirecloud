@@ -33,24 +33,24 @@
 
         switch (position) {
         case 'top':
+            this.element.classList.add('top');
             this.element.style.left = (refPosition.left + (refPosition.width - this.element.offsetWidth) / 2) + "px";
             this.element.style.top = (refPosition.top - this.element.offsetHeight) + "px";
-            this.element.classList.add('top');
             break;
         case 'right':
+            this.element.classList.add('right');
             this.element.style.left = refPosition.right + "px";
             this.element.style.top = (refPosition.top + (refPosition.height - this.element.offsetHeight) / 2) + "px";
-            this.element.classList.add('right');
             break;
         case 'bottom':
+            this.element.classList.add('bottom');
             this.element.style.left = (refPosition.left + (refPosition.width - this.element.offsetWidth) / 2) + "px";
             this.element.style.top = refPosition.bottom + "px";
-            this.element.classList.add('bottom');
             break;
         case 'left':
+            this.element.classList.add('left');
             this.element.style.left = (refPosition.left - this.element.offsetWidth) + "px";
             this.element.style.top = (refPosition.top + (refPosition.height - this.element.offsetHeight) / 2) + "px";
-            this.element.classList.add('left');
             break;
         }
     };

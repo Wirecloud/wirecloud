@@ -111,6 +111,8 @@
     };
     StyledButton.prototype = new StyledElements.StyledElement();
 
+    StyledButton.prototype.Tooltip = StyledElements.Tooltip;
+
     StyledButton.prototype.focus = function focus() {
         this.wrapperElement.focus();
     };
@@ -132,11 +134,18 @@
     };
 
     StyledButton.prototype.setTitle = function setTitle(title) {
-        if (this.tooltip == null) {
-            this.tooltip = new StyledElements.Tooltip({content: title, placement: ['bottom', 'top', 'right', 'left']});
-            this.tooltip.bind(this);
+        if (title == null || title === '') {
+            if (this.tooltip != null) {
+                this.tooltip.destroy();
+                this.tooltip = null;
+            }
+        } else {
+            if (this.tooltip == null) {
+                this.tooltip = new this.Tooltip({content: title, placement: ['bottom', 'top', 'right', 'left']});
+                this.tooltip.bind(this);
+            }
+            this.tooltip.options.content = title;
         }
-        this.tooltip.options.content = title;
     };
 
     StyledButton.prototype.click = function click() {
