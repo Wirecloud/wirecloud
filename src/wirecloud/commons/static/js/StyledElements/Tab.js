@@ -83,8 +83,7 @@
             var closeButton = new StyledElements.StyledButton({
                 iconClass: "icon-remove",
                 plain: true,
-                'class': "close_button",
-                title: 'Close Tab'
+                'class': "close_button"
             });
             closeButton.insertInto(this.tabElement, this.name);
 
