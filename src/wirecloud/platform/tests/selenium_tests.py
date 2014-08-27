@@ -19,6 +19,7 @@
 
 
 import os
+from six import text_type
 from six.moves.urllib.parse import urljoin
 from six.moves.urllib.request import pathname2url
 import time
@@ -921,6 +922,56 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
     test_move_widget_and_restore.tags = ('wirecloud-selenium', 'dragboard')
+
+    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    def test_basic_add_and_move_widget(self):
+
+        self.login(username="admin")
+
+        with self.widget_wallet as wallet:
+            resource = wallet.search_in_results('Context Inspector')
+            widget1 = resource.instantiate()
+            widget2 = resource.instantiate()
+
+        initial_widget1_position = widget1.layout_position
+        with widget1:
+            initial_widget1_xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+            initial_widget1_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+
+        with widget2:
+            initial_widget2_xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+            self.assertEqual(initial_widget2_xPosition_changes, '0')
+
+            initial_widget2_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+            self.assertEqual(initial_widget2_yPosition_changes, '0')
+
+        # Move widget2 without affecting widget1
+        self.driver.execute_script('''
+            var layout = Wirecloud.activeWorkspace.getActiveDragboard().baseLayout;
+            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
+            layout.initializeMove(iwidget);
+            layout.moveTemporally(1, 0);
+            layout.acceptMove();
+        ''' % widget2.id);
+
+        self.assertEqual(widget1.layout_position, initial_widget1_position)
+        self.assertEqual(widget2.layout_position, (1, 0))
+
+        with widget1:
+            xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+            self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
+
+            yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+            self.assertEqual(yPosition_changes, initial_widget1_yPosition_changes)
+
+        with widget2:
+            xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+            self.assertEqual(xPosition_changes, text_type(int(initial_widget2_xPosition_changes) + 1))
+
+            yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+            self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
+
+    test_basic_add_and_move_widget.tags = ('wirecloud-selenium', 'dragboard')
 
     def test_move_widget_interchange(self):
 

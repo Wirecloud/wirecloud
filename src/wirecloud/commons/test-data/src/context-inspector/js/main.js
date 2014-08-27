@@ -5,7 +5,7 @@
     "use strict";
 
     var ContextTester = function ContextTester(concept, initialValue) {
-        var title, content;
+        var title, content, badge, counter = -1;
 
         if (arguments.length === 0) {
             return;
@@ -14,14 +14,22 @@
         StyledElements.StyledElement.call(this, []);
 
         this.update = function (new_value) {
+            counter += 1;
+            badge.textContent = counter;
             content.textContent = new_value;
         };
 
         this.wrapperElement = document.createElement('div');
+        this.wrapperElement.setAttribute('data-name', concept.name);
 
         title = document.createElement('div');
         title.className = 'title';
         title.textContent = concept.label + ' [' + concept.name + ']';
+
+        badge = document.createElement('span');
+        badge.className = 'badge badge-info';
+        title.appendChild(badge);
+
         this.wrapperElement.appendChild(title);
         title.title = concept.description;
 

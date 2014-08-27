@@ -606,7 +606,7 @@
     };
 
     /**
-     * @deprecated @experimental
+     * @experimental
      */
     Utils.clone = function clone(obj1) {
         var result;
@@ -624,6 +624,15 @@
         }
 
         return result;
+    };
+
+    Utils.isEmptyObject = function isEmptyObject(obj) {
+        var name;
+
+        for (name in obj) {
+            return false;
+        }
+        return true;
     };
 
     /**

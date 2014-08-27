@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -86,7 +86,7 @@
 
         Object.defineProperty(this, 'modify', {
             value: function get(values) {
-                var key, i;
+                var key, i, updated_values = {};
 
                 if (typeof values !== 'object') {
                     throw new TypeError();
@@ -99,13 +99,18 @@
                 }
 
                 for (key in values) {
-                    context[key] = values[key];
+                    if (context[key] !== values[key]) {
+                        context[key] = values[key];
+                        updated_values[key] = values[key];
+                    }
                 }
 
-                for (i = 0; i < handlers.length; i += 1) {
-                    try {
-                        handlers[i](values);
-                    } catch (e) {}
+                if (!Wirecloud.Utils.isEmptyObject(updated_values)) {
+                    for (i = 0; i < handlers.length; i += 1) {
+                        try {
+                            handlers[i](updated_values);
+                        } catch (e) {}
+                    }
                 }
             }
         });
