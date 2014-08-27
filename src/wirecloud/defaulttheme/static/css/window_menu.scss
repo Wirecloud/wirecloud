@@ -47,12 +47,7 @@
 .window_menu > .window_top > .icon-remove {
     float: right;
     font-size: 20px;
-    opacity: 0.2;
     line-height: floor($line-height-factor-base * $font-size-large);
-}
-
-.window_menu > .window_top >.icon-remove:hover, .window_menu > .window_top > .icon-remove:focus {
-    opacity: 0.4;
 }
 
 .window_menu > .window_content, .window_menu > .styled_form > div > table {

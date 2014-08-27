@@ -65,12 +65,8 @@
 
 .iwidget > .widget_menu .styled_button {
     font-size: 75%;
-    color: rgba(136, 136, 136, 0.6);
+    color: rgb(136, 136, 136);
     @include transition(color 1s ease-in);
-}
-
-.iwidget > .widget_menu .styled_button:focus, .iwidget > .widget_menu .styled_button:hover {
-    color: rgba(136, 136, 136, 1);
 }
 
 .iwidget > .widget_menu > .infobuttons {

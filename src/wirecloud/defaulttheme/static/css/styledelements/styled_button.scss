@@ -58,6 +58,20 @@
     z-index: 111113;
 }
 
+.styled_button.disabled {
+    opacity: 0.65;
+    background-image: none;
+    cursor: default;
+}
+
+.styled_button:hover, .styled_button.disabled {
+    text-decoration: none;
+    @if ($button-gradients) {
+        background-position: 0 -15px;
+        @include transition(background-position 0.1s linear);
+    }
+}
+
 .styled_button.plain {
     font-size: inherit;
     line-height: inherit;
@@ -71,23 +85,20 @@
     border-radius: 0px;
     box-shadow: none;
     color: inherit;
-}
+    opacity: .7;
 
-.styled_button.disabled {
-    opacity: 0.65;
-    background-image: none;
-    cursor: default;
-}
+    &:focus, &:hover, &.disabled, &:active {
+        background: transparent;
+        border: 0 none transparent;
+    }
 
-.styled_button:hover, .styled_button.disabled {
-    text-decoration: none;
-    background-position: 0 -15px;
-    @include transition(background-position 0.1s linear);
-}
+    &:focus, &:hover, &:active {
+        opacity: 1;
+    }
 
-.styled_button.plain:hover, .styled_button.plain.disabled, .styled_button.plain:active {
-    background: transparent;
-    border: 0 none transparent;
+    &.disabled {
+        opacity: .4;
+    }
 }
 
 .styled_button img.icon {
