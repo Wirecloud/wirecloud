@@ -717,7 +717,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='user_with_workspaces')
 
         with self.wiring_view:
-            time.sleep(0.6)
+            pass
         with self.marketplace_view:
             pass
 
