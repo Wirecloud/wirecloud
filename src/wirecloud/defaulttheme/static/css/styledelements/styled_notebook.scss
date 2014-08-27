@@ -137,7 +137,7 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     }
 
     > span {
-        display: inline-block;
+        display: block;
         overflow: hidden;
         text-overflow: ellipsis;
     }

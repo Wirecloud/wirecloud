@@ -53,13 +53,16 @@
   font-style: normal;
 }
 
+html, body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
 body {
     color: contrast-color($widget-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     font-family: "Open Sans";
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
