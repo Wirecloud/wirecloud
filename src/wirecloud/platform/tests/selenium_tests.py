@@ -341,11 +341,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab = self.get_workspace_tab_by_name('Tab')
 
         # Rename the created tab
-        tab.open_menu().click_entry('Rename')
-        tab_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
-        self.fill_form_input(tab_name_input, 'Other Name')
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-        self.wait_wirecloud_ready()
+        tab.rename('Other Name')
 
         self.driver.refresh()
         self.wait_wirecloud_ready()
@@ -765,7 +761,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_tab().name, 'ExistingTab')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'OtherTab')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('OtherTab'))
         self.assertEqual(self.get_current_workspace_name(), 'ExistingWorkspace')
 
         self.driver.back()
@@ -773,7 +769,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_tab().name, 'Tab 2')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'Tab 1')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('Tab 1'))
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/Pending%20Events')
@@ -785,13 +781,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_tab().name, 'Tab 1')
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'Tab 2')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('Tab 2'))
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'OtherTab')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('OtherTab'))
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_workspace_tab().name == 'ExistingTab')
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('ExistingTab'))
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
@@ -804,6 +800,32 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Now test using an invalid tab name
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events#tab=Tab 4')
         self.assertEqual(self.get_current_workspace_tab().name, 'Tab 1')
+
+    def test_browser_navigation_from_renamed_tab(self):
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+
+        initial_workspace_tab = self.get_current_workspace_tab()
+        initial_workspace_tab_name = initial_workspace_tab.name
+
+        next_tab = self.get_workspace_tab_by_name('Tab 2')
+        next_tab.element.click()
+        next_tab.rename('NewName')
+
+        initial_workspace_tab.element.click()
+
+        self.driver.back()
+        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, 'NewName'))
+
+        self.driver.back()
+        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, initial_workspace_tab_name))
+
+        # Navigation history should be replayable
+        self.driver.forward()
+        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, 'NewName'))
+
+        self.driver.forward()
+        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, initial_workspace_tab_name))
 
     def test_browser_navigation_from_renamed_workspace(self):
 

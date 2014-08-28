@@ -32,10 +32,22 @@
 
     //CALLBACK METHODS
     var renameSuccess = function renameSuccess(transport) {
-        var layoutManager = LayoutManagerFactory.getInstance();
+        var currentState, layoutManager;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+
+        delete this.tab.workspace.tabsByName[this.tab.getName()];
+        this.tab.workspace.tabsByName[this.newName] = this.tab;
 
         this.tab.tabInfo.name = this.newName;
         this.tab.rename(this.newName);
+
+        if (this.tab.workspace.getVisibleTab() === this.tab) {
+            var currentState = Wirecloud.HistoryManager.getCurrentState();
+            var newState = Wirecloud.Utils.clone(currentState);
+            newState.tab = this.newName;
+            Wirecloud.HistoryManager.replaceState(newState);
+        }
 
         layoutManager.logSubTask(gettext('Tab renamed successfully'));
         layoutManager.logStep('');

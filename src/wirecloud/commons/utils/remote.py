@@ -519,6 +519,14 @@ class WorkspaceTabTester(object):
 
         return PopupMenuTester(self.testcase, popup_menu_element, tab_menu_button)
 
+    def rename(self, name):
+
+        self.open_menu().click_entry('Rename')
+        tab_name_input = self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form input')
+        self.testcase.fill_form_input(tab_name_input, name)
+        self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        self.testcase.wait_wirecloud_ready()
+
 
 class RemoteTestCase(object):
 

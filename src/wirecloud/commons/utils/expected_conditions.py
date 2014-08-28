@@ -104,6 +104,20 @@ class visibility_of_element_located(object):
             return False
 
 
+class workspace_tab_name(object):
+    """An expectation for checking the name of a workspace tab.
+    returns True if the name matches, false otherwise."""
+    def __init__(self, testcase, expected_name):
+        self.testcase = testcase
+        self.expected_name = expected_name
+
+    def __call__(self, driver):
+        try:
+            return self.testcase.get_current_workspace_tab().name == self.expected_name
+        except StaleElementReferenceException:
+            return False
+
+
 class workspace_name(object):
     """An expectation for checking the name of a workspace.
     returns True if the name matches, false otherwise."""
