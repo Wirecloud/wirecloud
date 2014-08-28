@@ -621,12 +621,12 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             pass
         ActionChains(self.driver).click(element).perform()
 
-    def wait_wirecloud_ready(self, start_timeout=30, timeout=30):
+    def wait_wirecloud_ready(self, start_timeout=10, timeout=10):
 
         loading_window = self.driver.find_element_by_css_selector('#loading-window')
 
         def wait_loading_window(driver):
-            return loading_window.get_attribute('class').strip() in ('', 'disabled')
+            return loading_window.get_attribute('class').strip() in ('', 'fadding')
 
         def wait_loading_window_hidden(driver):
             return loading_window.get_attribute('class').strip() in ('fadding', 'disabled')
@@ -634,7 +634,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         WebDriverWait(self.driver, start_timeout).until(wait_loading_window)
         WebDriverWait(self.driver, timeout).until(wait_loading_window_hidden)
 
-        loading_message = self.driver.find_element_by_id('loading-message')
+        loading_message = loading_window.find_element_by_id('loading-message')
         try:
             self.driver.execute_script("arguments[0].click();", loading_message)
         except:
