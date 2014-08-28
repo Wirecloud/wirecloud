@@ -836,8 +836,21 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.change_current_workspace('Pending Events')
         self.rename_workspace('New Name')
 
+        self.change_current_workspace('ExistingWorkspace')
+
+        # Check navigation history has been filled correctly
+        self.driver.back()
+        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'New Name'))
+
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, initial_workspace))
+
+        # Navigation history should be replayable
+        self.driver.forward()
+        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'New Name'))
+
+        self.driver.forward()
+        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'ExistingWorkspace'))
 
     def test_browser_navigation_to_deleted_workspace(self):
 
