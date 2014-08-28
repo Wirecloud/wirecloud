@@ -14,15 +14,23 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     padding: 0px;
     overflow: hidden;
     box-sizing: border-box;
+
+    &:-moz-full-screen {
+        background-color: $body-bg;
+    }
+
+    &:-webkit-full-screen {
+        background-color: $body-bg;
+    }
+
+    &:fullscreen {
+        background-color: $body-bg;
+    }
 }
 
 .se-notebook.full {
     width: 100%;
     height: 100%;
-}
-
-.se-notebook.fullscreen {
-    background-color: $body-bg;
 }
 
 .se-notebook .disable-layer {
@@ -137,9 +145,10 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     }
 
     > span {
-        display: block;
+        display: inline-block;
         overflow: hidden;
         text-overflow: ellipsis;
+        vertical-align: middle;
     }
 
     > img {
@@ -151,8 +160,8 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     }
 
     > .close_button {
-        float: right;
         margin: 0 0 0 6px;
+        vertical-align: middle;
     }
 }
 
