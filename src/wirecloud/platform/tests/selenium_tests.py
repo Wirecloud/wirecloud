@@ -761,7 +761,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_tab().name, 'ExistingTab')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('OtherTab'))
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'OtherTab'))
         self.assertEqual(self.get_current_workspace_name(), 'ExistingWorkspace')
 
         self.driver.back()
@@ -769,7 +769,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_tab().name, 'Tab 2')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('Tab 1'))
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'Tab 1'))
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.driver.current_url == self.live_server_url + '/login?next=/user_with_workspaces/Pending%20Events')
@@ -781,13 +781,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_tab().name, 'Tab 1')
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('Tab 2'))
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'Tab 2'))
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('OtherTab'))
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'OtherTab'))
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name('ExistingTab'))
+        WebDriverWait(self.driver, timeout=5).until(WEC.workspace_tab_name(self, 'ExistingTab'))
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
