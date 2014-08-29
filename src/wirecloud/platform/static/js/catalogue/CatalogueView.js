@@ -210,15 +210,21 @@
         return function (e) {
             var onSuccess = function (resource_details) {
                 this.viewsByName.details.paint(resource_details);
-                this.alternatives.showAlternative(this.viewsByName.details);
                 this.viewsByName.details.repaint();
             };
+            var onComplete = function onSuccess() {
+                this.viewsByName.details.enable();
+            };
+
+            this.viewsByName.details.disable();
+            this.alternatives.showAlternative(this.viewsByName.details);
 
             if (resource instanceof Wirecloud.WirecloudCatalogue.ResourceDetails) {
                 onSuccess.call(this, resource);
             } else {
                 this.catalogue.getResourceDetails(resource.vendor, resource.name, {
-                    onSuccess: onSuccess.bind(this)
+                    onSuccess: onSuccess.bind(this),
+                    onComplete: onComplete.bind(this)
                 });
             }
         }.bind(this);

@@ -78,6 +78,32 @@ class element_be_still(object):
             return False
 
 
+class element_be_enabled(object):
+    """ An expectation for checking that an element is enabled
+    """
+    def __init__(self, locator, base_element=None):
+        self.locator = locator
+        self.base_element = base_element
+
+    def __call__(self, driver):
+
+        try:
+            if self.base_element is not None:
+                element = self.base_element.find_element(*self.locator)
+            else:
+                element = driver.find_element(*self.locator)
+        except NoSuchElementException:
+            return False
+
+        try:
+            if element.is_displayed() and 'disabled' not in element.get_attribute('class'):
+                return element
+            else:
+                return None
+        except StaleElementReferenceException:
+            return False
+
+
 class visibility_of_element_located(object):
     """ An expectation for checking that an element is present on the DOM of a
     page and visible. Visibility means that the element is not only displayed

@@ -29,6 +29,7 @@
         var extra_context;
 
         this.mainview = options.catalogue;
+        options['class'] = 'details_interface loading';
         StyledElements.Alternative.call(this, id, options);
 
         extra_context = function (resource) {

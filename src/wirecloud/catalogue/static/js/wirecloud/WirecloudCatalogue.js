@@ -136,6 +136,10 @@
 
     WirecloudCatalogue.prototype.getResourceDetails = function getResourceDetails(vendor, name, options) {
 
+        if (options == null) {
+            options = {};
+        }
+
         var url = this.RESOURCE_DETAILS_ENTRY.evaluate({vendor: vendor, name: name});
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
@@ -144,7 +148,9 @@
                 try {
                     options.onSuccess(resource_details);
                 } catch (e) {}
-            }.bind(this)
+            }.bind(this),
+            onFailure: options.onFailure,
+            onComplete: options.onComplete
         });
     };
 

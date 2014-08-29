@@ -1040,8 +1040,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         resource = self.search_in_results(resource_name)
         self.testcase.scroll_and_click(resource)
 
-        WebDriverWait(self.testcase.driver, 5).until(WEC.visibility_of_element_located((By.CSS_SELECTOR, '.advanced_operations'), base_element=catalogue_base_element))
-        time.sleep(0.1)
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
 
         found = False
         for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
@@ -1066,8 +1065,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         resource = self.search_in_results(resource_name)
         self.testcase.scroll_and_click(resource)
 
-        WebDriverWait(self.testcase.driver, 5).until(WEC.visibility_of_element_located((By.CSS_SELECTOR, '.advanced_operations'), base_element=catalogue_base_element))
-        time.sleep(0.1)
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
 
         uninstall_button = None
         for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
