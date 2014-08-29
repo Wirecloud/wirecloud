@@ -534,29 +534,17 @@ class RemoteTestCase(object):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
 
-    def wait_element_visible_by_css_selector(self, selector, timeout=30, element=None):
-        if element is None:
-            element = self.driver
+    def wait_element_visible_by_css_selector(self, selector, timeout=10, element=None):
+        condition = WEC.visibility_of_element_located((By.CSS_SELECTOR, selector), base_element=element)
+        return WebDriverWait(self.driver, timeout).until(condition)
 
-        WebDriverWait(self.driver, timeout).until(lambda driver: element.find_element_by_css_selector(selector).is_displayed())
-        time.sleep(0.1)
-        return element.find_element_by_css_selector(selector)
+    def wait_element_visible_by_id(self, selector, timeout=10, element=None):
+        condition = WEC.visibility_of_element_located((By.ID, selector), base_element=element)
+        return WebDriverWait(self.driver, timeout).until(condition)
 
-    def wait_element_visible_by_id(self, selector, timeout=30, element=None):
-        if element is None:
-            element = self.driver
-
-        WebDriverWait(self.driver, timeout).until(lambda driver: element.find_element_by_id(selector).is_displayed())
-        time.sleep(0.1)
-        return element.find_element_by_id(selector)
-
-    def wait_element_visible_by_xpath(self, selector, timeout=30, element=None):
-        if element is None:
-            element = self.driver
-
-        WebDriverWait(self.driver, timeout).until(lambda driver: element.find_element_by_xpath(selector).is_displayed())
-        time.sleep(0.1)
-        return element.find_element_by_xpath(selector)
+    def wait_element_visible_by_xpath(self, selector, timeout=10, element=None):
+        condition = WEC.visibility_of_element_located((By.XPATH, selector), base_element=element)
+        return WebDriverWait(self.driver, timeout).until(condition)
 
     def get_current_iwidgets(self, tab=None):
 
