@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -95,7 +95,7 @@
 
         if (iwidget.id in this.connectablesByWidget) {
             var msg = gettext("Error adding iWidget into the wiring module of the workspace: Widget instance already exists.");
-            Wirecloud.GlobalLogManager.log(msg);
+            this.logManager.log(msg);
             return;
         }
 
@@ -108,7 +108,7 @@
 
         if (!(iwidget.id in this.connectablesByWidget)) {
             var msg = gettext("Error: trying to remove an inexistant iWidget from the wiring module.");
-            Wirecloud.GlobalLogManager.log(msg);
+            this.logManager.log(msg);
             return;
         }
 
@@ -204,7 +204,7 @@
             } else {
                 if (operator_info.name in operators) {
                     try {
-                        this.ioperators[id] = operators[operator_info.name].instantiate(id, operator_info);
+                        this.ioperators[id] = operators[operator_info.name].instantiate(id, operator_info, this);
                     } catch (e) {
                         msg = gettext('Error instantiating the %(operator)s operator');
                         msg = interpolate(msg, {operator: operator_info.name}, true);

@@ -29,7 +29,7 @@
      *
      */
     var LogManager = function LogManager(wiring) {
-        Wirecloud.LogManager.call(this, null);
+        Wirecloud.LogManager.call(this, Wirecloud.GlobalLogManager);
         Object.defineProperty(this, 'wiring', {value: wiring});
     };
     LogManager.prototype = new Wirecloud.LogManager();

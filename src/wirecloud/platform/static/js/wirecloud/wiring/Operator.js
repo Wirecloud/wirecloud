@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var Operator = function Operator(operator_meta, id, operator_status, /* TODO */ wiringEditor) {
+    var Operator = function Operator(operator_meta, id, operator_status, wiring) {
         var i, inputs, outputs, data_uri, preferenceList, preferences, readonly, hidden, key, value;
 
         if (["object", "undefined"].indexOf(typeof operator_status) === -1) {
@@ -40,10 +40,13 @@
 
         StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 
-        Object.defineProperty(this, 'meta', {value: operator_meta});
-        Object.defineProperty(this, 'name', {value: operator_meta.name});
-        Object.defineProperty(this, 'title', {value: operator_meta.title});
-        Object.defineProperty(this, 'id', {value: "" + id});
+        Object.defineProperties(this, {
+            meta: {value: operator_meta},
+            name: {value: operator_meta.name},
+            title: {value: operator_meta.title},
+            id: {value: "" + id},
+            wiring: {value: wiring}
+        });
         Object.defineProperty(this, 'logManager', {value: new Wirecloud.wiring.OperatorLogManager(this)});
 
         this.loaded = false;
@@ -82,7 +85,7 @@
         Object.freeze(preferences);
         Object.defineProperty(this, 'preferences', {value: preferences});
 
-        if (!wiringEditor) {
+        if (wiring instanceof Wirecloud.Wiring) {
             this.element = document.createElement('iframe');
             this.element.className = 'ioperator';
             data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version.text}) + '#id=' + id;

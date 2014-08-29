@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,8 +26,10 @@
     "use strict";
 
     var LogManager = function LogManager(parentLogger) {
-        this.wrapperElement = document.createElement('div');
-        this.parentLogger = parentLogger;
+        Object.defineProperties(this, {
+            wrapperElement: {value: document.createElement('div')},
+            parentLogger: {value: parentLogger}
+        });
         this.errorCount = 0;
         this.totalCount = 0;
         this.entries = [];

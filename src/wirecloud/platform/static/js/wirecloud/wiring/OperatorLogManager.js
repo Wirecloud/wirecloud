@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,7 +29,7 @@
      *
      */
     var OperatorLogManager = function OperatorLogManager(ioperator) {
-        Wirecloud.LogManager.call(this, Wirecloud.GlobalLogManager);
+        Wirecloud.LogManager.call(this, ioperator.wiring.logManager);
         this.ioperator = ioperator;
     };
     OperatorLogManager.prototype = new Wirecloud.LogManager();

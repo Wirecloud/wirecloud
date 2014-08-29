@@ -55,8 +55,8 @@
         Object.defineProperty(this, 'outputs', {value: outputs});
     };
 
-    OperatorMeta.prototype.instantiate = function instantiate(id, operator_status /*TODO*/, wiringEditor) {
-        return new Wirecloud.Operator(this, id, operator_status /* TODO */, wiringEditor);
+    OperatorMeta.prototype.instantiate = function instantiate(id, operator_status, wiring) {
+        return new Wirecloud.Operator(this, id, operator_status, wiring);
     };
 
     Wirecloud.wiring.OperatorMeta = OperatorMeta;

@@ -679,6 +679,9 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.driver.execute_script('sendEvent();')
             #self.driver.find_element_by_id('b1').click()
 
+        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
+        self.assertEqual(error_badge.text, '1')
+        self.assertTrue(error_badge.is_displayed())
         with self.wiring_view as wiring:
 
             ioperator = wiring.get_ioperators()[0]
