@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -33,7 +33,6 @@
         Object.defineProperty(this, 'description', {value: meta.description});
         Object.defineProperty(this, 'iwidget', {value: iwidget});
 
-        this.connectable = this; // TODO
         Wirecloud.wiring.SourceEndpoint.call(this, this.meta.name, this.meta.type, this.friendcode, 'iwidget_' + iwidget.id + '_' + this.meta.name);
     };
     WidgetSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
