@@ -649,11 +649,11 @@
         var context;
 
         if (isSource) {
-            context =  {'data': new Wirecloud.wiring.GhostEndpoint(theEndpoint, this.entity, true), 'iObject': this};
+            context =  {'data': new Wirecloud.wiring.GhostSourceEndpoint(theEndpoint, this.entity), 'iObject': this};
             this.addSource(theEndpoint.endpoint, '', theEndpoint.endpoint, context, true);
             return this.sourceAnchorsByName[theEndpoint.endpoint];
         } else {
-            context =  {'data': new Wirecloud.wiring.GhostEndpoint(theEndpoint, this.entity, false), 'iObject': this};
+            context =  {'data': new Wirecloud.wiring.GhostTargetEndpoint(theEndpoint, this.entity), 'iObject': this};
             this.addTarget(theEndpoint.endpoint, '', theEndpoint.endpoint, context, true);
             return this.targetAnchorsByName[theEndpoint.endpoint];
         }

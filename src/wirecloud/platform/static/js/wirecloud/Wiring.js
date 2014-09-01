@@ -25,45 +25,72 @@
 
     "use strict";
 
-    var Wiring, findConnectable, unload, addIWidget, removeIWidget,
+    var Wiring, findEntity, unload, addIWidget, removeIWidget,
         iwidget_added_listener, iwidget_removed_listener,
-        iwidget_unload_listener;
+        iwidget_unload_listener, restore_connections;
 
     /*****************
      * Private methods
      *****************/
-    findConnectable = function findConnectable(desc) {
-        var entry;
-
+    findEntity = function findEntity(desc) {
         switch (desc.type) {
         case 'iwidget':
-            entry = this.connectablesByWidget[desc.id];
-            if (entry == null) {
-                return null;
-            }
-
-            if (desc.endpoint in entry.outputs) {
-                return entry.outputs[desc.endpoint];
-            } else if (desc.endpoint in entry.inputs) {
-                return entry.inputs[desc.endpoint];
-            } else {
-                return null;
-            }
-            break;
+            return this.iwidgets[desc.id];
         case 'ioperator':
-            entry = this.ioperators[desc.id];
-            if (entry == null) {
-                return null;
+            return this.ioperators[desc.id];
+        }
+    };
+
+    var findEndpoint = function findEndpoint(entity, desc, type) {
+        if (entity instanceof Wirecloud.wiring.GhostEntity) {
+            if (!(desc.endpoint in entity[type])) {
+                if (type === 'outputs') {
+                    entity[type][desc.endpoint] = new Wirecloud.wiring.GhostSourceEndpoint(entity, desc.endpoint);
+                } else {
+                    entity[type][desc.endpoint] = new Wirecloud.wiring.GhostTargetEndpoint(entity, desc.endpoint);
+                }
+            }
+        }
+
+        return entity[type][desc.endpoint];
+    };
+
+    restore_connections = function restore_connections(entity) {
+        var i, connection, sourceEntity, sourceEndpoint, targetEntity,
+            targetEndpoint, msg;
+
+        for (i = 0; i < this.status.connections.length; i += 1) {
+            connection = this.status.connections[i];
+            sourceEntity = findEntity.call(this, connection.source);
+            targetEntity = findEntity.call(this, connection.target);
+
+            if (entity != null && sourceEntity != entity && targetEndpoint != entity) {
+                // This connection has nothing to do with the especified entity, ignore it
+                continue;
             }
 
-            if (desc.endpoint in entry.inputs) {
-                return entry.inputs[desc.endpoint];
-            } else if (desc.endpoint in entry.outputs) {
-                return entry.outputs[desc.endpoint];
-            } else {
-                return null;
+            if (sourceEntity == null || targetEntity == null) {
+                msg = gettext('The connection between %(source)s and %(target)s could not be established');
+                msg = interpolate(msg, {
+                    source: JSON.stringify(connection.source),
+                    target: JSON.stringify(connection.target)
+                }, true);
+                this.logManager.log(msg);
+                continue;
             }
-            break;
+
+            sourceEndpoint = findEndpoint(sourceEntity, connection.source, 'outputs');
+            targetEndpoint = findEndpoint(targetEntity, connection.target, 'inputs');
+            if (sourceEndpoint != null && targetEndpoint != null) {
+                sourceEndpoint.connect(targetEndpoint);
+            } else {
+                msg = gettext('The connection between %(source)s and %(target)s could not be established');
+                msg = interpolate(msg, {
+                    source: JSON.stringify(connection.source),
+                    target: JSON.stringify(connection.target)
+                }, true);
+                this.logManager.log(msg);
+            }
         }
     };
 
@@ -78,7 +105,7 @@
 
         widgets = this.workspace.getIWidgets();
         for (i = 0; i < widgets.length; i++) {
-            this.connectablesByWidget[widgets[i].id].fullDisconnect();
+            this.iwidgets[widgets[i].id].fullDisconnect();
         }
 
         for (key in this.ioperators) {
@@ -93,20 +120,20 @@
 
     addIWidget = function addIWidget(iwidget) {
 
-        if (iwidget.id in this.connectablesByWidget) {
+        if (iwidget.id in this.iwidgets) {
             var msg = gettext("Error adding iWidget into the wiring module of the workspace: Widget instance already exists.");
             this.logManager.log(msg);
             return;
         }
 
         iwidget.addEventListener('unload', this._iwidget_unload_listener);
-        this.connectablesByWidget[iwidget.id] = iwidget;
+        this.iwidgets[iwidget.id] = iwidget;
     };
 
     removeIWidget = function removeIWidget(iwidget) {
         var widgetEntry, i, connection;
 
-        if (!(iwidget.id in this.connectablesByWidget)) {
+        if (!(iwidget.id in this.iwidgets)) {
             var msg = gettext("Error: trying to remove an inexistant iWidget from the wiring module.");
             this.logManager.log(msg);
             return;
@@ -131,7 +158,7 @@
         }
 
         iwidget.removeEventListener('unload', this._iwidget_unload_listener);
-        delete this.connectablesByWidget[iwidget.id];
+        delete this.iwidgets[iwidget.id];
     };
 
     iwidget_added_listener = function iwidget_added_listener(workspace, iwidget) {
@@ -143,7 +170,7 @@
     };
 
     iwidget_unload_listener = function iwidget_unload_listener(iWidget) {
-        var key, entry = this.connectablesByWidget[iWidget.id];
+        var key, entry = this.iwidgets[iWidget.id];
 
         for (key in entry.inputs) {
             entry.inputs[key].callback = null;
@@ -157,7 +184,7 @@
     Wiring = function Wiring(workspace) {
         this.status = null;
         this.workspace = workspace;
-        this.connectablesByWidget = {};
+        this.iwidgets = {};
         this.ioperators = {};
         Object.defineProperty(this, 'logManager', {value: new Wirecloud.wiring.LogManager(this)});
 
@@ -173,8 +200,7 @@
     Wiring.prototype = new StyledElements.ObjectWithEvents();
 
     Wiring.prototype.load = function load(status) {
-        var connection, sourceConnectable, targetConnectable, operators, id,
-            operator_info, i, old_operators, msg;
+        var operators, id, operator_info, old_operators, msg;
 
         if (status == null || status === '') {
             unload.call(this);
@@ -189,6 +215,20 @@
 
         this.events.load.dispatch();
 
+        if (!('views' in status) || !Array.isArray(status.views)) {
+            status.views = [];
+        }
+
+        if (status.views.length === 0) {
+            status.views.push({
+                label: 'default',
+                iwidgets: {},
+                operators: {},
+                multiconnectors: {},
+                connections: []
+            });
+        }
+
         if (this.workspace.owned) {
             operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
         } else {
@@ -201,6 +241,12 @@
             if (id in old_operators) {
                 this.ioperators[id] = old_operators[id];
                 delete old_operators[id];
+
+                if (this.ioperators[id] instanceof Wirecloud.wiring.GhostOperator) {
+                    msg = gettext('%(operator)s operator is not available for this account');
+                    msg = interpolate(msg, {operator: operator_info.name}, true);
+                    this.logManager.log(msg);
+                }
             } else {
                 if (operator_info.name in operators) {
                     try {
@@ -209,11 +255,19 @@
                         msg = gettext('Error instantiating the %(operator)s operator');
                         msg = interpolate(msg, {operator: operator_info.name}, true);
                         this.logManager.log(msg);
+                        this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
+                        if (id in status.views[0].operators) {
+                            this.ioperators[id].fillFromViewInfo(status.views[0].operators[id]);
+                        }
                     }
                 } else {
                     msg = gettext('%(operator)s operator is not available for this account');
                     msg = interpolate(msg, {operator: operator_info.name}, true);
                     this.logManager.log(msg);
+                    this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
+                    if (id in status.views[0].operators) {
+                        this.ioperators[id].fillFromViewInfo(status.views[0].operators[id]);
+                    }
                 }
             }
         }
@@ -221,23 +275,8 @@
             old_operators[id].destroy();
         }
 
-        for (i = 0; i < status.connections.length; i += 1) {
-            connection = status.connections[i];
-            sourceConnectable = findConnectable.call(this, connection.source);
-            targetConnectable = findConnectable.call(this, connection.target);
-            if (sourceConnectable != null && targetConnectable != null) {
-                sourceConnectable.connect(targetConnectable);
-            } else {
-                msg = gettext('The connection between %(source)s and %(target)s could not be established');
-                msg = interpolate(msg, {
-                    source: JSON.stringify(connection.source),
-                    target: JSON.stringify(connection.target)
-                }, true);
-                this.logManager.log(msg);
-            }
-        }
-
         this.status = status;
+        restore_connections.call(this);
 
         this.events.loaded.dispatch();
     };
@@ -254,10 +293,10 @@
     Wiring.prototype.destroy = function destroy() {
         var key, i;
 
-        for (key in this.connectablesByWidget) {
-            this.connectablesByWidget[key].fullDisconnect();
+        for (key in this.iwidgets) {
+            this.iwidgets[key].fullDisconnect();
         }
-        this.connectablesByWidget = null;
+        this.iwidgets = null;
 
         for (key in this.ioperators) {
             this.ioperators[key].destroy();
@@ -271,21 +310,56 @@
         this.workspace = null;
     };
 
-    Wiring.prototype._notifyOperatorUninstall = function _notifyOperatorUninstall(operator) {
-        var id, msg, affected = false;
+    Wiring.prototype._notifyOperatorInstall = function _notifyOperatorInstall(operator) {
+        var id, operator_info, ioperator, msg;
 
-        for (id in this.ioperators) {
-            if (this.ioperators[id].meta.uri === operator.uri) {
-                affected = true;
-                this.ioperators[id].destroy();
-                delete this.ioperators[id];
+        for (id in this.status.operators) {
+            operator_info = this.status.operators[id];
+            if (operator_info.name === operator.uri) {
+                try {
+                    ioperator = operator.instantiate(id, operator_info, this);
+                    this.ioperators[id] = ioperator;
+                    // TODO
+                    // This code remove operator not available error counts
+                    // Search a better way
+                    this.logManager.errorCount -= 1;
+                } catch (e) {
+                    msg = gettext('Error instantiating the %(operator)s operator');
+                    msg = interpolate(msg, {operator: operator_info.name}, true);
+                    this.logManager.log(msg);
+                }
+
+                // Restore ioperators connections
+                restore_connections.call(this, ioperator);
             }
         }
+    };
 
-        if (affected) {
-            msg = gettext('%(operator)s operator was removed while in use');
-            msg = interpolate(msg, {operator: operator.uri}, true);
-            this.events.error.dispatch(msg);
+    Wiring.prototype._notifyOperatorUninstall = function _notifyOperatorUninstall(resource_details) {
+        var id, operator, msg, ghost_operator, i, endpoint;
+
+        for (id in this.ioperators) {
+            if (this.ioperators[id].meta.uri === resource_details.uri) {
+                operator = this.ioperators[id].meta;
+                this.ioperators[id].destroy();
+
+                ghost_operator = new Wirecloud.wiring.GhostOperator(id, this.status.operators[id]);
+                this.ioperators[id] = ghost_operator;
+
+                // GhostEndpoints
+                for (i = 0; i < operator.inputs.length; i++) {
+                    endpoint = new Wirecloud.wiring.GhostTargetEndpoint(ghost_operator, operator.inputs[i].name);
+                    ghost_operator.inputs[endpoint.name] = endpoint;
+                }
+                for (i = 0; i < operator.outputs.length; i++) {
+                    endpoint = new Wirecloud.wiring.GhostSourceEndpoint(ghost_operator, operator.outputs[i].name);
+                    ghost_operator.outputs[endpoint.name] = endpoint;
+                }
+
+                msg = gettext('operator instance %(ioperator_id)s was unloaded as %(operator)s operator has been uninstalled');
+                msg = interpolate(msg, {ioperator_id: id, operator: operator.uri}, true);
+                this.logManager.log(msg);
+            }
         }
     };
 

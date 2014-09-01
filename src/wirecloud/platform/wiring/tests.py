@@ -382,6 +382,35 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
     test_operators_are_not_usable_after_being_uninstalled.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
 
+    def test_operators_in_use_install_uninstall_behaviour(self):
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource('TestOperator')
+
+        # Check the operator enter into ghost mode
+        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
+        self.assertEqual(error_badge.text, '1')
+        self.assertTrue(error_badge.is_displayed())
+
+        with self.wiring_view as wiring:
+            ioperator = wiring.get_ioperators()[0]
+            ioperator_class_list = re.split('\s+', ioperator.element.get_attribute('class'))
+            self.assertIn('ghost', ioperator_class_list)
+
+        # Reinstall the operator
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_TestOperator_1.0.zip', 'TestOperator', shared=True)
+
+        # Check the operator leaves the ghost mode
+        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
+        self.assertFalse(error_badge.is_displayed())
+        with self.wiring_view as wiring:
+            ioperator = wiring.get_ioperators()[0]
+            ioperator_class_list = re.split('\s+', ioperator.element.get_attribute('class'))
+            self.assertNotIn('ghost', ioperator_class_list)
+
     def test_operators_are_not_usable_after_being_deleted(self):
 
         self.login()
@@ -1146,7 +1175,8 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                             "endPointsInOuts": {
                                 "sources": ["in"],
                                 "targets": ["out"]
-                            }
+                            },
+                            "minimized": False
                         }
                     },
                     "connections": []
@@ -1172,6 +1202,10 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
+
+        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_app_bar .icon-puzzle-piece + .badge")
+        self.assertTrue(wiring_error_badge.is_displayed())
+        self.assertEqual(wiring_error_badge.text, '1')
 
         with self.wiring_view as wiring:
 
@@ -1234,8 +1268,8 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                                 "posY": 400
                             },
                             "endPointsInOuts": {
-                                "sources": ["in"],
-                                "targets": ["out"]
+                                "sources": ["out"],
+                                "targets": ["in"]
                             }
                         }
                     },
@@ -1326,15 +1360,21 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_app_bar .icon-puzzle-piece + .badge")
         self.assertTrue(wiring_error_badge.is_displayed())
-        self.assertEqual(wiring_error_badge.text, '4')
+        self.assertEqual(wiring_error_badge.text, '1')
 
         with self.wiring_view as wiring:
 
+            # 1 ghost operator
             ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
             self.assertEqual(len(ghostOperator), 1)
+
             # 5 connections
             connections = self.driver.find_elements_by_css_selector('.wiring_editor .arrow')
-            self.assertEqual(len(connections), 5, "Fail in ghost Operator connections")
+            self.assertEqual(len(connections), 5, "Missing connections")
+
+            # of which 3 are ghost ones
+            connections = self.driver.find_elements_by_css_selector('.wiring_editor .arrow.ghost')
+            self.assertEqual(len(connections), 3, "Invalid number of ghost connections")
 
     def test_read_only_connections_cannot_be_deleted_in_WiringEditor(self):
 

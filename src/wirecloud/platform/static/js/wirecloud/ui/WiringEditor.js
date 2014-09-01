@@ -395,21 +395,7 @@ if (!Wirecloud.ui) {
         var operator_instance, op_id, i, endpoint_order, position, is_minimized, operator_interface;
 
         try {
-            if (!(id in reallyInUseOperators)) {
-                // Ghost Operator
-                operator_instance = {
-                    'id': operator.id,
-                    'title': operator.name,
-                    'name': operator.name,
-                    'ghost': true,
-                    'meta': {
-                        'uri': operator.name
-                    }
-                };
-            } else {
-                // Normal Operator
-                operator_instance = reallyInUseOperators[id];
-            }
+            operator_instance = reallyInUseOperators[id];
             // Get operator id
             op_id = parseInt(operator_instance.id, 10);
             if (this.nextOperatorId <= op_id) {
@@ -938,9 +924,7 @@ if (!Wirecloud.ui) {
                 }
 
                 // Create arrow
-                if (startAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
-                    isGhost = true;
-                }
+                isGhost = startAnchor.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint;
                 arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
                                               endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement), extraclass, readOnly, isGhost);
 

@@ -179,7 +179,7 @@
                     if (!arrowCreator.invert) {
                         arrowCreator.theArrow.setEnd(pos);
                         if (!arrowCreator.theArrow.isGhost &&
-                            this.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
+                            this.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint) {
                             //Ghost Arrow
                             arrowCreator.theArrow.isGhost = true;
                             arrowCreator.theArrow.addClassName('ghost');
@@ -187,7 +187,7 @@
                     } else {
                         arrowCreator.theArrow.setStart(pos);
                         if (!arrowCreator.theArrow.isGhost &&
-                            this.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
+                            this.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint) {
                             //Ghost Arrow
                             arrowCreator.theArrow.isGhost = true;
                             arrowCreator.theArrow.addClassName('ghost');
@@ -198,6 +198,8 @@
             }
         }.bind(this);
         this._mouseout_callback = function _mouseout_callback(e) {
+            var initEndpoint;
+
             // Only process left mouse button events
             if (this.enabled && e.button === 0) {
                 if (arrowCreator.initAnchor != null) {
@@ -207,8 +209,9 @@
                     if (this instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
                         this.unstick();
                     }
+                    initEndpoint = arrowCreator.initAnchor.context.data;
                     if (arrowCreator.theArrow.isGhost &&
-                        !(arrowCreator.initAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint)) {
+                        !(initEndpoint instanceof Wirecloud.wiring.GhostSourceEndpoint || initEndpoint instanceof Wirecloud.wiring.GhostTargetEndpoint)) {
                         //Clean Ghost Arrow
                         arrowCreator.theArrow.isGhost = false;
                         arrowCreator.theArrow.removeClassName('ghost');

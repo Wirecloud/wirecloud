@@ -41,6 +41,11 @@
             break;
         case 'operator':
             resource = new Wirecloud.wiring.OperatorMeta(resource_data);
+            if (Wirecloud.activeWorkspace != null && Wirecloud.activeWorkspace.wiring != null) {
+                try {
+                    Wirecloud.activeWorkspace.wiring._notifyOperatorInstall(resource);
+                } catch (error) {}
+            }
             break;
         default:
             resource = resource_data;

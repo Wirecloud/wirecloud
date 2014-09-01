@@ -1,8 +1,8 @@
 /*
  *     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
  *
- *     Copyright (c) 2012-2013 Universidad Politécnica de Madrid
- *     Copyright (c) 2012-2013 the Center for Open Middleware
+ *     Copyright (c) 2012-2014 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 the Center for Open Middleware
  *
  *     Licensed under the Apache License, Version 2.0 (the
  *     "License"); you may not use this file except in compliance
@@ -38,59 +38,35 @@
         this.ioperator = ioperator;
         this.wiringEditor = wiringEditor;
 
-        if ('ghost' in ioperator) {
-            // Ghost Operator
-            isGhost = true;
-
-            for (i = 0; i < endPointPos.sources.length; i += 1) {
-                outputs[endPointPos.sources[i]] = {
-                    'description': '',
-                    'label': endPointPos.sources[i],
-                    'name': endPointPos.sources[i],
-                    'friendcode': 'ghost'
-                };
-            }
-            for (i = 0; i < endPointPos.targets.length; i += 1) {
-                inputs[endPointPos.targets[i]] = {
-                    'description': '',
-                    'label': endPointPos.targets[i],
-                    'name': endPointPos.targets[i],
-                    'friendcode': 'ghost'
-                };
-            }
-        } else {
-            isGhost = false;
-        }
+        isGhost = ioperator instanceof Wirecloud.wiring.GhostOperator;
 
         Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, ioperator, this.ioperator.title, manager, 'ioperator', isGhost);
         if (!isMenubarRef) {
 
             // Sort
-            if (!isGhost) {
-                if ((endPointPos.sources.length > 0) || (endPointPos.targets.length > 0)) {
-                    for (i = 0; i < endPointPos.sources.length; i += 1) {
-                        if(ioperator.outputs[endPointPos.sources[i]]) {
-                            outputs[endPointPos.sources[i]] = ioperator.outputs[endPointPos.sources[i]];
-                        } else {
-                            // Lost endpoint.
-                            outputs = ioperator.outputs;
-                            break;
-                        }
+            if ((endPointPos.sources.length > 0) || (endPointPos.targets.length > 0)) {
+                for (i = 0; i < endPointPos.sources.length; i += 1) {
+                    if (ioperator.outputs[endPointPos.sources[i]]) {
+                        outputs[endPointPos.sources[i]] = ioperator.outputs[endPointPos.sources[i]];
+                    } else {
+                        // Lost endpoint.
+                        outputs = ioperator.outputs;
+                        break;
                     }
-                    for (i = 0; i < endPointPos.targets.length; i += 1) {
-                        if (ioperator.inputs[endPointPos.targets[i]]) {
-                            inputs[endPointPos.targets[i]] = ioperator.inputs[endPointPos.targets[i]];
-                        } else {
-                            // Lost endpoint.
-                            inputs = ioperator.inputs;
-                            break;
-                        }
-                    }
-                } else {
-                    // No enpoint order info available
-                    inputs = ioperator.inputs;
-                    outputs = ioperator.outputs;
                 }
+                for (i = 0; i < endPointPos.targets.length; i += 1) {
+                    if (ioperator.inputs[endPointPos.targets[i]]) {
+                        inputs[endPointPos.targets[i]] = ioperator.inputs[endPointPos.targets[i]];
+                    } else {
+                        // Lost endpoint.
+                        inputs = ioperator.inputs;
+                        break;
+                    }
+                }
+            } else {
+                // No enpoint order info available
+                inputs = ioperator.inputs;
+                outputs = ioperator.outputs;
             }
 
             // Sources & targets anchors (sourceAnchor and targetAnchor)

@@ -49,7 +49,7 @@
          * stardrag, first step to draw a dragable arrow
          */
         this.startdrag = function startdrag(e, initAnchor) {
-            var tmpPos, xStart, yStart, isGhost;
+            var tmpPos, xStart, yStart, endpoint, isGhost;
             // Only process left mouse button events
             if (e.button !== 0) {
                 return;
@@ -76,7 +76,8 @@
             tmpPos = initAnchor.getCoordinates(layer);
 
             // Arrow pointer
-            if (initAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
+            endpoint = initAnchor.context.data;
+            if (endpoint instanceof Wirecloud.wiring.GhostSourceEndpoint || endpoint instanceof Wirecloud.wiring.GhostTargetEndpoint) {
                 //Arrow from Ghost Endpoint. Ghost Arrow
                 isGhost = true;
             }
