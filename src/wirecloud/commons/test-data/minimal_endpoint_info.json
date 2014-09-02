@@ -3,7 +3,6 @@
     "name": "TemplateTest",
     "version": "1.0",
     "code_url": "http://example.com/code.html",
-    "email": "email@example.com",
     "type": "widget",
     "widget_height": "30",
     "widget_width": "8",

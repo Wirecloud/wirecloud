@@ -186,7 +186,7 @@ class ApplicationMashupTemplateParser(object):
 
         self._info['authors'] = parse_contacts_info(self._get_field(AUTHORS_XPATH, self._resource_description, required=False))
         self._info['contributors'] = parse_contacts_info(self._get_field(CONTRIBUTORS_XPATH, self._resource_description, required=False))
-        self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)
+        self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description, required=False)
         self._info['image'] = self._get_field(IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['smartphoneimage'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['homepage'] = self._get_field(HOMEPAGE_XPATH, self._resource_description, required=False)

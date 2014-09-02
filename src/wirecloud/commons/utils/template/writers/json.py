@@ -18,15 +18,35 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import, unicode_literals
+
 import copy
 import json
+import six
 
 
-def remove_empty_fields(fields, data):
+def remove_empty_string_fields(fields, data):
 
     for field in fields:
+
         value = data.get(field)
+
+        if value is not None and not isinstance(value, six.string_types):
+            raise Exception("Invalid value for field %s" % field)
+
         if value is None or value == '':
+            del data[field]
+
+
+def remove_empty_array_fields(fields, data):
+
+    for field in fields:
+
+        value = data.get(field)
+
+        if value is not None and not isinstance(value, (list, tuple)):
+            raise Exception("Invalid value for field %s" % field)
+
+        if value is None or len(value) == 0:
             del data[field]
 
 
@@ -37,7 +57,8 @@ def write_json_description(template_info):
 
     template_info = copy.copy(template_info)
 
-    remove_empty_fields(('title', 'description', 'longdescription', 'authors', 'homepage', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl'), template_info)
+    remove_empty_string_fields(('title', 'description', 'longdescription', 'homepage', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl'), template_info)
+    remove_empty_array_fields(('authors', 'contributors'), template_info)
 
     del template_info['translation_index_usage']
     return json.dumps(template_info, sort_keys=True, indent=4)

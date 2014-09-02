@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -263,8 +263,11 @@ class RDFTemplateParser(object):
 
         self._info['title'] = self._get_translation_field(WIRE, 'displayName', self._rootURI, 'title', required=False, type='resource', field='title')
 
-        addr_element = self._get_field(VCARD, 'addr', self._rootURI, id_=True)
-        self._info['email'] = self._get_field(VCARD, 'email', addr_element)
+        self._info['email'] = ''
+        addr_element = self._get_field(VCARD, 'addr', self._rootURI, id_=True, default=None, required=False)
+        if addr_element is not None:
+            self._info['email'] = self._get_field(VCARD, 'email', addr_element, required=False)
+
         self._parse_requirements()
 
     def _parse_requirements(self):

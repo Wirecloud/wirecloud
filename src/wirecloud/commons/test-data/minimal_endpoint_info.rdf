@@ -20,12 +20,6 @@
         <dcterms:title>TemplateTest</dcterms:title>
         <usdl:versionInfo>1.0</usdl:versionInfo>
 
-        <vcard:addr>
-            <vcard:Work rdf:nodeID="N203e2b5d8ebd4354be6f007675af1e1c">
-                <vcard:email>email@example.com</vcard:email>
-            </vcard:Work>
-        </vcard:addr>
-
         <usdl:utilizedResource>
             <usdl:Resource rdf:about="http://example.com/code.html"/>
         </usdl:utilizedResource>

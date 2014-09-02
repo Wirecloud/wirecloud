@@ -337,10 +337,12 @@ def build_rdf_graph(template_info):
             graph.add((license, rdflib.RDF.type, DCTERMS['LicenseDocument']))
             graph.add((license, RDFS['label'], rdflib.Literal(license_text)))
 
-    addr = rdflib.BNode()
-    graph.add((addr, rdflib.RDF.type, VCARD['Work']))
-    graph.add((resource_uri, VCARD['addr'], addr))
-    graph.add((addr, VCARD['email'], rdflib.Literal(template_info.get('email'))))
+    contact_email = template_info.get('email', None)
+    if contact_email not in (None, ''):
+        addr = rdflib.BNode()
+        graph.add((addr, rdflib.RDF.type, VCARD['Work']))
+        graph.add((resource_uri, VCARD['addr'], addr))
+        graph.add((addr, VCARD['email'], rdflib.Literal(contact_email)))
 
     # Requirements
     for requirement in template_info['requirements']:
