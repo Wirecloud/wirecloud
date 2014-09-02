@@ -291,7 +291,7 @@ function Workspace(workspaceState, resources) {
     this.tabsContainerElement = null;
     this.layout = null;
 
-    StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
+    StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved', 'removed']);
 
     this.init();
     OpManagerFactory.getInstance().visibleLayer = "tabs_container";

@@ -66,7 +66,6 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/ColorSmartBox.js',
     'js/wirecloud/ui/BasicRecommendations.js',
     'js/wirecloud/ui/RecommendationManager.js',
-    'js/wirecloud/wiring/GhostEndpoint.js',
 )
 
 TUTORIAL_FILES = (
@@ -337,6 +336,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/EndpointError.js',
             'js/wirecloud/wiring/SourceEndpoint.js',
             'js/wirecloud/wiring/TargetEndpoint.js',
+            'js/wirecloud/wiring/GhostEndpoint.js',
             'js/wirecloud/wiring/OperatorFactory.js',
             'js/wirecloud/wiring/OperatorLogManager.js',
             'js/wirecloud/wiring/Operator.js',
