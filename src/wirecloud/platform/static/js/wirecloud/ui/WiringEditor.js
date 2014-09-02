@@ -1002,7 +1002,7 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.serialize = function serialize() {
         var pos, i, key, widget, arrow, operator_interface, ioperator,
         WiringStatus, multiconnector, height, inOutPos, positions, name,
-        is_minimized;
+        is_minimized, pref;
 
         // positions
         WiringStatus = {
@@ -1047,7 +1047,18 @@ if (!Wirecloud.ui) {
                 'endPointsInOuts': inOutPos
             };
             ioperator = operator_interface.getIOperator();
-            WiringStatus.operators[key] = {"name": ioperator.meta.uri, 'id': key, 'preferences': ioperator.preferences};
+            WiringStatus.operators[key] = {
+                'id': key,
+                'name': ioperator.meta.uri,
+                'preferences': {}
+            };
+            for (pref in ioperator.preferences) {
+                WiringStatus.operators[key].preferences[pref] = {
+                    "readOnly": ioperator.preferences[pref].readOnly,
+                    "hidden": ioperator.preferences[pref].hidden,
+                    "value": ioperator.preferences[pref].value
+                };
+            }
             WiringStatus.views[0].operators[key] = positions;
         }
 

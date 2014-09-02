@@ -30,11 +30,20 @@
             return;
         }
 
+        if (info.preferences == null) {
+            info.preferences = {};
+        }
+
         Object.defineProperties(this, {
             'id':    {value: id},
-            'meta':  {value: {uri: info.name}},
+            'meta':  {value: {
+                    uri: info.name,
+                    preferenceList: []
+                }
+            },
             'name':  {value: info.name},
-            'title': {value: info.name}
+            'title': {value: info.name},
+            'preferences': {value: info.preferences, writable: true}
         });
         this.inputs = {};
         this.outputs = {};

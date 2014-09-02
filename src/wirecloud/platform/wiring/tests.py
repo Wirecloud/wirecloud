@@ -368,28 +368,12 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_operators_are_not_usable_after_being_uninstalled(self):
 
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.uninstall_resource('TestOperator')
-
-        with self.wiring_view as wiring:
-
-            wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
-            menubar = wiring_base_element.find_element_by_css_selector('.menubar')
-
-            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
-            self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
-    test_operators_are_not_usable_after_being_uninstalled.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
-
-    def test_operators_in_use_install_uninstall_behaviour(self):
-
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
         with self.myresources_view as myresources:
             myresources.uninstall_resource('TestOperator')
 
-        # Check the operator enter into ghost mode
+        # Check the operator enters into ghost mode
         error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
         self.assertEqual(error_badge.text, '1')
         self.assertTrue(error_badge.is_displayed())
@@ -399,17 +383,70 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             ioperator_class_list = re.split('\s+', ioperator.element.get_attribute('class'))
             self.assertIn('ghost', ioperator_class_list)
 
+            # And cannot be used anymore
+            wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
+            menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+
+            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+            self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
+    test_operators_are_not_usable_after_being_uninstalled.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
+
+    def check_operator_reinstall_behaviour(self, reload):
+        workspace = Workspace.objects.get(id=3)
+        parsedStatus = json.loads(workspace.wiringStatus)
+        parsedStatus['operators']['0']['preferences'] = {
+            'prefix': { "readOnly": False, "hidden": False, "value": 'test_' },
+            'exception_on_event': { "readOnly": False, "hidden": False, "value": 'true' },
+            'test_logging': { "readOnly": False, "hidden": False, "value": 'true' }
+        }
+        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
+        workspace.save()
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+
+        with self.wiring_view as wiring:
+            ioperator = wiring.get_ioperators()[0]
+            ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
+
+            ioperator.open_menu().click_entry('Settings')
+
+            self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').click()  # disable test_logging
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource('TestOperator')
+
+        if reload is True:
+            self.driver.refresh()
+
         # Reinstall the operator
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_TestOperator_1.0.zip', 'TestOperator', shared=True)
 
-        # Check the operator leaves the ghost mode
+        # Check the operator leaves ghost mode
         error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
         self.assertFalse(error_badge.is_displayed())
         with self.wiring_view as wiring:
             ioperator = wiring.get_ioperators()[0]
             ioperator_class_list = re.split('\s+', ioperator.element.get_attribute('class'))
             self.assertNotIn('ghost', ioperator_class_list)
+
+            ioperator.open_menu().click_entry('Settings')
+
+            self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="prefix"]').get_attribute('value'), 'test_')
+            self.assertTrue(self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').is_selected())
+            self.assertFalse(self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').is_selected())
+
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+    def test_operators_in_use_reinstall_behaviour(self):
+
+        self.check_operator_reinstall_behaviour(False)
+
+    def test_operators_in_use_reinstall_behaviour_reload(self):
+
+        self.check_operator_reinstall_behaviour(True)
 
     def test_operators_are_not_usable_after_being_deleted(self):
 
