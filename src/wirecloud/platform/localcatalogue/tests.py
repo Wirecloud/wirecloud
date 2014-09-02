@@ -638,3 +638,30 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         final_widgets = self.get_current_iwidgets()
         self.assertEqual(final_widgets, initial_widgets)
+
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
+    def test_resource_delete_version(self):
+
+        self.login()
+
+        # Delete Test widget
+        with self.myresources_view as myresources:
+            myresources.delete_resource('Test', version="1.0")
+
+        self.login(username='normuser')
+        with self.myresources_view as myresources:
+            catalogue_base_element = myresources.wait_catalogue_ready()
+
+            test_widget = myresources.search_in_results('Test')
+            self.scroll_and_click(test_widget)
+
+            WebDriverWait(self.driver, 5).until(WEC.visibility_of_element_located((By.CSS_SELECTOR, '.advanced_operations'), base_element=catalogue_base_element))
+
+            version_select = Select(self.driver.find_element_by_css_selector('.resource_details .versions select'))
+            version_list = [option.text for option in version_select.options]
+
+            WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+
+            versions = set(version_list)
+            self.assertEqual(len(versions), len(version_list), 'Repeated versions')
+            self.assertEqual(versions, set(('v2.0',)))

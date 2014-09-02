@@ -221,6 +221,7 @@
 
             if (resource instanceof Wirecloud.WirecloudCatalogue.ResourceDetails) {
                 onSuccess.call(this, resource);
+                onComplete.call(this);
             } else {
                 this.catalogue.getResourceDetails(resource.vendor, resource.name, {
                     onSuccess: onSuccess.bind(this),

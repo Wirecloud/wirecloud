@@ -1036,7 +1036,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
             self.testcase.assertIsNotNone(resource)
             return resource
 
-    def delete_resource(self, resource_name, timeout=30):
+    def delete_resource(self, resource_name, version=None):
         catalogue_base_element = self.get_current_catalogue_base_element()
 
         self.search(resource_name)
@@ -1044,6 +1044,14 @@ class MyResourcesViewTester(MarketplaceViewTester):
         self.testcase.scroll_and_click(resource)
 
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+
+        version_select = Select(catalogue_base_element.find_element_by_css_selector('.resource_details .versions select'))
+        version_list = [option.text for option in version_select.options]
+        should_disappear_from_listings = version is None or len(version_list) == 1
+
+        if version is not None:
+            version_select.select_by_value(version)
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
 
         found = False
         for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
@@ -1053,13 +1061,16 @@ class MyResourcesViewTester(MarketplaceViewTester):
                 break
         self.testcase.assertTrue(found)
 
-        WebDriverWait(self.testcase.driver, timeout).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
+        WebDriverWait(self.testcase.driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
         self.testcase.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
         self.testcase.wait_wirecloud_ready()
 
         self.search(resource_name)
         resource = self.search_in_results(resource_name)
-        self.testcase.assertIsNone(resource)
+        if should_disappear_from_listings:
+            self.testcase.assertIsNone(resource)
+        else:
+            self.testcase.assertIsNotNone(resource)
 
     def uninstall_resource(self, resource_name, version=None, expect_error=False):
         catalogue_base_element = self.wait_catalogue_ready()
@@ -1070,6 +1081,12 @@ class MyResourcesViewTester(MarketplaceViewTester):
         self.testcase.scroll_and_click(resource)
 
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+
+        version_select = Select(catalogue_base_element.find_element_by_css_selector('.resource_details .versions select'))
+        version_list = [option.text for option in version_select.options]
+        if version is not None:
+            version_select.select_by_value(version)
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
 
         uninstall_button = None
         for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
@@ -1083,9 +1100,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         else:
             self.testcase.assertIsNotNone(uninstall_button)
 
-            version_select = Select(catalogue_base_element.find_element_by_css_selector('.resource_details .versions select'))
-            version_list = [option.text for option in version_select.options]
-            should_disappear_from_listings = len(version_list) == 1
+            should_disappear_from_listings = version is None or len(version_list) == 1
 
             uninstall_button.click()
             self.testcase.wait_wirecloud_ready()
