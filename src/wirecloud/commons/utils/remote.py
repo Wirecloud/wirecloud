@@ -29,7 +29,7 @@ from selenium.common.exceptions import StaleElementReferenceException, TimeoutEx
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select, WebDriverWait
 import six
 
 from wirecloud.commons.utils import expected_conditions as WEC
@@ -144,6 +144,9 @@ class IWidgetTester(object):
 
         if key == 'id':
             return self.id
+
+    def __eq__(self, other):
+        return isinstance(other, IWidgetTester) and other.id == self.id
 
     def __enter__(self):
         self.content_element = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%d).content;' % self.id)
@@ -1058,8 +1061,9 @@ class MyResourcesViewTester(MarketplaceViewTester):
         resource = self.search_in_results(resource_name)
         self.testcase.assertIsNone(resource)
 
-    def uninstall_resource(self, resource_name, timeout=30, expect_error=False):
+    def uninstall_resource(self, resource_name, version=None, expect_error=False):
         catalogue_base_element = self.wait_catalogue_ready()
+        should_disappear_from_listings = False
 
         self.search(resource_name)
         resource = self.search_in_results(resource_name)
@@ -1078,13 +1082,20 @@ class MyResourcesViewTester(MarketplaceViewTester):
             WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
         else:
             self.testcase.assertIsNotNone(uninstall_button)
-            uninstall_button.click()
 
+            version_select = Select(catalogue_base_element.find_element_by_css_selector('.resource_details .versions select'))
+            version_list = [option.text for option in version_select.options]
+            should_disappear_from_listings = len(version_list) == 1
+
+            uninstall_button.click()
             self.testcase.wait_wirecloud_ready()
 
             self.search(resource_name)
             resource = self.search_in_results(resource_name)
-            self.testcase.assertIsNone(resource)
+            if should_disappear_from_listings:
+                self.testcase.assertIsNone(resource)
+            else:
+                self.testcase.assertIsNotNone(resource)
 
 
 class WiringViewTester(object):

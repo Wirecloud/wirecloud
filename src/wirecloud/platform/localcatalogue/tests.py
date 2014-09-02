@@ -442,6 +442,7 @@ class PackagedResourcesTestCase(WirecloudTestCase):
 
 class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('localcatalogue', 'localcatalogue-selenium')
 
     def test_public_resources(self):
@@ -619,3 +620,21 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
             versions = set(version_list)
             self.assertEqual(len(versions), len(version_list), 'Repeated versions')
             self.assertEqual(versions, set(('v1.0', 'v2.0')))
+
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('user_with_workspaces',))
+    def test_resource_uninstall_version(self):
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+
+        initial_widgets = self.get_current_iwidgets()
+
+        # This is the only widget using version 2.0 and should automatically be
+        # removed after uninstalling version 2.0 of the Test widget
+        self.add_widget_to_mashup('Test')
+
+        # Uninstall Test widget
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource('Test', version="2.0")
+
+        final_widgets = self.get_current_iwidgets()
+        self.assertEqual(final_widgets, initial_widgets)
