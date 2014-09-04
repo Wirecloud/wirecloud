@@ -123,26 +123,10 @@
         this._list = document.createElement('div');
         this._list.className = 'widget_wallet_list';
 
-        var input, addmoretext;
-
-        if (this.search_scope === 'widget') {
-            addmoretext = gettext('Get more widgets');
-        } else {
-            addmoretext = gettext('Get more mashups');
-        }
+        var input;
 
         var template = Wirecloud.currentTheme.templates[options.template];
         this.wrapperElement = builder.parse(template, Wirecloud.Utils.merge({
-            addmore: function () {
-                var div = document.createElement('div');
-                div.className = 'widget_wallet_addmore';
-                var button = new StyledElements.StyledButton({text: addmoretext, "class": "btn-success"});
-                button.addEventListener('click', function () {
-                    LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
-                });
-                button.insertInto(div);
-                return div;
-            },
             searchinput: function () {
                 input = new StyledElements.StyledTextField({'placeholder': 'Keywords...'});
                 input.inputElement.addEventListener('keypress', _onSearchInputKeyPress.bind(this, input));

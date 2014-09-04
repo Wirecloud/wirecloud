@@ -64,6 +64,16 @@
 
         this.wallet = new Wirecloud.ui.MACSearch({
             extra_template_context: {
+                addmore: function () {
+                    var div = document.createElement('div');
+                    div.className = 'widget_wallet_addmore';
+                    var button = new StyledElements.StyledButton({text: gettext('Get more resources'), "class": "btn-success"});
+                    button.addEventListener('click', function () {
+                        LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
+                    });
+                    button.insertInto(div);
+                    return div;
+                },
                 scope: function () {
                     var pills = new StyledElements.Pills();
                     pills.add('widget', 'Widgets');
