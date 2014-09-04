@@ -19,6 +19,7 @@
 
 
 import os
+import re
 from six import text_type
 from six.moves.urllib.parse import urljoin
 from six.moves.urllib.request import pathname2url
@@ -605,6 +606,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
 
+        widget_wallet_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-plus').find_element_by_xpath('..')
+        self.assertIn('disabled', re.split('\s+', widget_wallet_button.get_attribute('class')))
+        wiring_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-puzzle-piece').find_element_by_xpath('..')
+        self.assertIn('disabled', re.split('\s+', wiring_button.get_attribute('class')))
+        myresources_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-archive').find_element_by_xpath('..')
+        self.assertNotIn('disabled', re.split('\s+', myresources_button.get_attribute('class')))
+        marketplace_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-shopping-cart').find_element_by_xpath('..')
+        self.assertNotIn('disabled', re.split('\s+', marketplace_button.get_attribute('class')))
+
         # Check public workspaces cannot be renamed/removed by non owners
         self.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Remove')).close()
 
@@ -626,10 +636,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.get(url)
         self.wait_wirecloud_ready()
 
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '#wirecloud_breadcrum .second_level > .icon-menu')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '#wirecloud_header .menu .workspace')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '#wirecloud_header .menu .wiring')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '#wirecloud_header .menu .marketplace')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wirecloud_toolbar .icon-plus')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wirecloud_toolbar .icon-puzzle-piece')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wirecloud_toolbar .icon-archive')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wirecloud_toolbar .icon-shopping-cart')
 
         self.check_public_workspace()
 

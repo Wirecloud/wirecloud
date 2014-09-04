@@ -377,7 +377,7 @@ function Workspace(workspaceState, resources) {
             delete this.tabsByName[tab.getName()];
         });
 
-        if (this.isAllowed('add_tab')) {
+        if (this.isAllowed('edit')) {
             this.notebook.addEventListener('newTab', this.addTab.bind(this));
         }
 
@@ -672,7 +672,7 @@ function Workspace(workspaceState, resources) {
             return this.removable && this._isAllowed('change_workspace_preferences');
         case "rename":
             return this.removable && this._isAllowed('rename_workspaces');
-        case "add_tab":
+        case "edit":
             return this.removable;
         default:
             return this._isAllowed(action);

@@ -148,7 +148,13 @@
     };
 
     WorkspaceView.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.walletButton, this.mergeButton, this.wiringButton, this.myresourcesButton, this.marketButton];
+        if (Wirecloud.contextManager && Wirecloud.contextManager.get('username') !== 'anonymous') {
+            this.walletButton.setDisabled(!Wirecloud.activeWorkspace.isAllowed('edit'));
+            this.wiringButton.setDisabled(!Wirecloud.activeWorkspace.isAllowed('edit'));
+            return [this.walletButton, this.wiringButton, this.myresourcesButton, this.marketButton];
+        } else {
+            return [];
+        }
     };
 
     WorkspaceView.prototype.onHistoryChange = function onHistoryChange(newState) {
