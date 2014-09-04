@@ -70,9 +70,11 @@ class element_be_still(object):
 
     def __call__(self, driver):
         old_position = self.element.location
+        old_size = self.element.size
         time.sleep(0.1)
         new_position = self.element.location
-        if old_position == new_position:
+        new_size = self.element.size
+        if old_position == new_position and old_size == new_size:
             return self.element
         else:
             return False

@@ -339,10 +339,15 @@ class WalletTester(object):
 
     def switch_scope(self, scope):
 
+        self.wait_ready()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.element))
+
         for pill in self.element.find_elements_by_css_selector('.se-pills > .se-pill'):
             if pill.text == scope:
                 pill.click()
-                break
+                return
+
+        raise Exception('Invalid scope')
 
     def wait_ready(self, timeout=10):
 
