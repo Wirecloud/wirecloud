@@ -1,0 +1,11 @@
+@import 'variables';
+
+body {
+    font-family: $font-family-base;
+    font-size: $font-size-base;
+    line-height: $line-height-base;
+}
+
+p {
+    margin: 0 0 floor($line-height-base / 2) 0;
+}

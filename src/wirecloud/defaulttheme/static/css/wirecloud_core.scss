@@ -57,7 +57,6 @@ body {
     left: 0;
     background: $body-bg;
     color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
-    font-family: $font-family-base;
 }
 
 h1, h2, h3, h4, h5, h6 {

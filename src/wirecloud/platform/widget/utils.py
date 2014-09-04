@@ -147,11 +147,16 @@ _widget_platform_style = None
 def get_widget_platform_style():
     global _widget_platform_style
 
-    if _widget_platform_style is None:
-        from wirecloud.platform.core.plugins import STYLED_ELEMENTS_CSS
+    if _widget_platform_style is None or settings.DEBUG is True:
+        from wirecloud.platform.core.plugins import BASE_CSS, STYLED_ELEMENTS_CSS
         code = '{% load compress %}{% compress css %}\n'
         code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/gadget.scss" context="widget" type="text/x-scss" />\n'
         code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" context="widget" type="text/css" />\n'
+
+        for cssfile in BASE_CSS:
+            css_type = 'text/x-scss' if cssfile.endswith('.scss') else 'text/css'
+            code += '    <link rel="stylesheet" href="{{ STATIC_URL }}%s" context="widget" type="%s" />\n' % (cssfile, css_type)
+
         for cssfile in STYLED_ELEMENTS_CSS:
             css_type = 'text/x-scss' if cssfile.endswith('.scss') else 'text/css'
             code += '    <link rel="stylesheet" href="{{ STATIC_URL }}%s" context="widget" type="%s" />\n' % (cssfile, css_type)
