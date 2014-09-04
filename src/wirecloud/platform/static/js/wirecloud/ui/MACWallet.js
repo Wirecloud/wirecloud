@@ -25,43 +25,56 @@
 
     "use strict";
 
-    var MACWallet = function MACWallet(scope) {
-        Object.defineProperty(this, 'search_scope', {value: scope});
+    var buttontitle = function buttontitle(resource) {
+        if (resource.type === 'widget') {
+            return gettext('Add to workspace');
+        } else {
+            return gettext('Merge');
+        }
+    };
+
+    var buttonlistener = function buttonlistener(resource) {
+        if (resource.type === 'widget') {
+            var local_widget = Wirecloud.LocalCatalogue.getResource(resource.vendor, resource.name, resource.version);
+            Wirecloud.activeWorkspace.addInstance(local_widget);
+        } else {
+            Wirecloud.mergeWorkspace(resource, {
+                onFailure: function (msg, details) {
+                    var dialog;
+                    if (details != null && 'missingDependencies' in details) {
+                        // Show missing dependencies
+                        dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(null, details);
+                    } else {
+                        dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
+                    }
+                    dialog.show();
+                }
+            });
+        }
+    };
+
+    var MACWallet = function MACWallet() {
     };
 
     MACWallet.prototype.show = function show() {
-        var listener, buttontitle;
 
         if (this.wallet != null) {
             return;
         }
 
-        if (this.search_scope === 'widget') {
-            buttontitle = gettext('Add to workspace');
-            listener = function (resource) {
-                var local_widget = Wirecloud.LocalCatalogue.getResource(resource.vendor, resource.name, resource.version);
-                Wirecloud.activeWorkspace.addInstance(local_widget);
-            };
-        } else {
-            buttontitle = gettext('Merge');
-            listener = function (resource) {
-                Wirecloud.mergeWorkspace(resource, {
-                    onFailure: function (msg, details) {
-                        var dialog;
-                        if (details != null && 'missingDependencies' in details) {
-                            // Show missing dependencies
-                            dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(null, details);
-                        } else {
-                            dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
-                        }
-                        dialog.show();
-                    }
-                });
-            };
-        }
-
         this.wallet = new Wirecloud.ui.MACSearch({
             extra_template_context: {
+                scope: function () {
+                    var pills = new StyledElements.Pills();
+                    pills.add('widget', 'Widgets');
+                    pills.add('mashup', 'Mashups');
+                    pills.switchPill('widget');
+                    pills.addEventListener('change', function (pills, enabled_pill) {
+                        this.wallet.search_scope = enabled_pill;
+                        this.wallet.refresh();
+                    }.bind(this));
+                    return pills;
+                }.bind(this),
                 closebutton: function () {
                     var button = new StyledElements.StyledButton({"class": "icon-remove", plain: true});
                     button.addEventListener('click', function () {
@@ -72,8 +85,8 @@
             },
             resourceButtonIconClass: 'icon-plus',
             resourceButtonTooltip: buttontitle,
-            resourceButtonListener: listener,
-            scope: this.search_scope,
+            resourceButtonListener: buttonlistener,
+            scope: 'widget',
             template: 'wallet'
         });
         Wirecloud.activeWorkspace.notebook.contentArea.appendChild(this.wallet.wrapperElement);

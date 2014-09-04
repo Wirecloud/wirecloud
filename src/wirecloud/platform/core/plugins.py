@@ -29,7 +29,7 @@ from wirecloud.platform.plugins import build_url_template, get_active_features_i
 
 
 WORKSPACE_CSS = (
-    'css/workspace/wallet.css',
+    'css/workspace/wallet.scss',
     'css/workspace/dragboard_cursor.css',
     'css/workspace/iwidget.scss',
     'css/workspace/empty_workspace_message.css',
@@ -108,6 +108,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/PasswordField.js',
     'js/StyledElements/Select.js',
     'js/StyledElements/ToggleButton.js',
+    'js/StyledElements/Pills.js',
     'js/StyledElements/Tab.js',
     'js/StyledElements/StyledNotebook.js',
     'js/StyledElements/Alternative.js',
@@ -158,6 +159,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_alternatives.scss',
     'css/styledelements/styled_button.scss',
     'css/styledelements/styled_checkbox.css',
+    'css/styledelements/styled_pills.scss',
     'css/styledelements/styled_notebook.scss',
     'css/styledelements/styled_form.css',
     'css/styledelements/styled_pagination.scss',

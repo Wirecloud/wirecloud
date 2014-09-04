@@ -354,7 +354,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNone(tab)
 
         # Add two widgets to the mashup
-        with self.widget_wallet as wallet:
+        with self.wallet as wallet:
             wallet.search('Test')
             resource = wallet.search_in_results('Test')
             resource.instantiate()
@@ -524,7 +524,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.mashup_wallet as wallet:
+        with self.wallet as wallet:
+            wallet.switch_scope('Mashups')
             wallet.search('Test Mashup')
             mashup = wallet.search_in_results('Test Mashup')
             mashup.merge()
@@ -905,7 +906,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         next_button.click()
 
         WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .wirecloud_toolbar .icon-plus')))
-        with self.widget_wallet as wallet:
+        with self.wallet as wallet:
             time.sleep(1)
 
             # Add the youtube browser widget
@@ -973,7 +974,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="admin")
 
-        with self.widget_wallet as wallet:
+        with self.wallet as wallet:
             resource = wallet.search_in_results('Context Inspector')
             widget1 = resource.instantiate()
             widget2 = resource.instantiate()

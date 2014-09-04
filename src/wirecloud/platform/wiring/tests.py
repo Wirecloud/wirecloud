@@ -470,7 +470,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.login()
 
-        with self.widget_wallet as wallet:
+        with self.wallet as wallet:
             wallet.search('Test')
             widget = wallet.search_in_results('Test')
             widget.instantiate()

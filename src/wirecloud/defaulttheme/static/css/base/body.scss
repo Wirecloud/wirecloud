@@ -6,6 +6,12 @@ body {
     line-height: $line-height-base;
 }
 
+a {
+    color: $brand-primary;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 p {
     margin: 0 0 floor($line-height-base / 2) 0;
 }

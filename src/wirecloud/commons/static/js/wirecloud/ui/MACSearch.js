@@ -36,10 +36,14 @@
                 if (this.resource_painter == null) {
                     this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates.wallet_widget, null, {
                         'mainbutton': function (options, context, resource) {
+                            var tooltip = this.resourceButtonTooltip;
+                            if (typeof tooltip === 'function') {
+                                tooltip = tooltip(resource);
+                            }
                             var button = new StyledElements.StyledButton({
                                 'class': 'mainbutton btn-primary',
                                 'iconClass': this.resourceButtonIconClass,
-                                'title': this.resourceButtonTooltip
+                                'title': tooltip
                             });
                             button.addEventListener('click', this.resourceButtonListener.bind(null, resource));
                             return button;
@@ -150,15 +154,20 @@
 
         Object.defineProperties(this, {
             'inputField': {value: input},
-            'search_scope': {value: options.scope},
+            'search_scope': {value: options.scope, writable: true},
             'resourceButtonIconClass': {value: options.resourceButtonIconClass},
             'resourceButtonListener': {value: options.resourceButtonListener},
             'resourceButtonTooltip': {value: options.resourceButtonTooltip}
         });
 
+        this.input = input;
         _search.call(this, '');
     };
     MACSearch.prototype = new StyledElements.StyledElement();
+
+    MACSearch.prototype.refresh = function refresh() {
+        _keywordTimeoutHandler.call(this, this.input);
+    };
 
     MACSearch.prototype.focus = function focus() {
         this.inputField.focus();

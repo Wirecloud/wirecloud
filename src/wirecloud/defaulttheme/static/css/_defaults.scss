@@ -138,8 +138,12 @@ $nav-tabs-border-color:       #DDD !default;
 $nav-tabs-active-link-hover-border-color: $nav-tabs-border-color !default;
 $nav-tabs-active-link-hover-bg: $nav-tabs-border-color !default;
 
-$nav-link-padding-vertical:    8px !default;
+$nav-link-padding-vertical:   10px !default;
 $nav-link-padding-horizontal: 15px !default;
+$nav-link-hover-bg:             $gray-lighter !default;
+
+$nav-disabled-link-color:       $gray-light !default;
+$nav-disabled-link-hover-color: $gray-light !default;
 
 /* Panels */
 

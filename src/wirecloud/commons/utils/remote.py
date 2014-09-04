@@ -321,6 +321,12 @@ class WalletTester(object):
         self.testcase = testcase
         self.element = None
 
+    def __enter__(self):
+
+        self.testcase.wait_element_visible_by_css_selector('.wirecloud_toolbar .icon-plus').click()
+        self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
+        return self
+
     def __exit__(self, type, value, traceback):
 
         try:
@@ -330,6 +336,13 @@ class WalletTester(object):
 
         WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
         self.element = None
+
+    def switch_scope(self, scope):
+
+        for pill in self.element.find_elements_by_css_selector('.se-pills > .se-pill'):
+            if pill.text == scope:
+                pill.click()
+                break
 
     def wait_ready(self, timeout=10):
 
@@ -355,14 +368,6 @@ class WalletTester(object):
         ''', search_input)
 
 
-class MashupWalletTester(WalletTester):
-
-    def __enter__(self):
-
-        self.testcase.wait_element_visible_by_css_selector('.wirecloud_toolbar .icon-random').click()
-        self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
-        return self
-
     def search_in_results(self, widget_name):
 
         self.wait_ready()
@@ -371,28 +376,10 @@ class MashupWalletTester(WalletTester):
         for resource in resources:
             resource_name = resource.find_element_by_css_selector('.resource_name')
             if resource_name.text == widget_name:
-                return MashupWalletResourceTester(self.testcase, resource, self)
-
-        return None
-
-
-class WidgetWalletTester(WalletTester):
-
-    def __enter__(self):
-
-        self.testcase.wait_element_visible_by_css_selector('.wirecloud_toolbar .icon-plus').click()
-        self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
-        return self
-
-    def search_in_results(self, widget_name):
-
-        self.wait_ready()
-
-        resources = self.element.find_elements_by_css_selector('.widget_wallet_list > .resource')
-        for resource in resources:
-            resource_name = resource.find_element_by_css_selector('.resource_name')
-            if resource_name.text == widget_name:
-                return WidgetWalletResourceTester(self.testcase, resource)
+                if self.element.find_element_by_css_selector('.se-pills > .se-pill.active').text == 'Widgets':
+                    return WidgetWalletResourceTester(self.testcase, resource)
+                else:
+                    return MashupWalletResourceTester(self.testcase, resource, self)
 
         return None
 
@@ -593,8 +580,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
     def setUp(self):
 
-        self.widget_wallet = WidgetWalletTester(self)
-        self.mashup_wallet = MashupWalletTester(self)
+        self.wallet = WalletTester(self)
         self.marketplace_view = MarketplaceViewTester(self)
         self.myresources_view = MyResourcesViewTester(self)
         self.wiring_view = WiringViewTester(self)
@@ -744,7 +730,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
     def add_widget_to_mashup(self, widget_name, new_name=None):
 
-        with self.widget_wallet as wallet:
+        with self.wallet as wallet:
             wallet.search(widget_name)
             resource = wallet.search_in_results(widget_name)
             iwidget = resource.instantiate()

@@ -36,21 +36,13 @@
         this.wsMenu.appendSeparator();
         this.wsMenu.append(new Wirecloud.ui.WorkspaceViewItems(this));
 
-        this.widgetWallet = new Wirecloud.ui.MACWallet('widget');
+        this.wallet = new Wirecloud.ui.MACWallet();
         this.walletButton = new StyledElements.StyledButton({
             'iconClass': 'icon-plus',
             'title': gettext('Add widget')
         });
         this.walletButton.addEventListener('click', function () {
-            this.mashupWallet.hide();
-            this.widgetWallet.show();
-        }.bind(this));
-
-        this.mashupWallet = new Wirecloud.ui.MACWallet('mashup');
-        this.mergeButton = new StyledElements.StyledButton({'iconClass': 'icon-random'});
-        this.mergeButton.addEventListener('click', function () {
-            this.widgetWallet.hide();
-            this.mashupWallet.show();
+            this.wallet.show();
         }.bind(this));
 
         this.wiringButton = new StyledElements.StyledButton({
@@ -82,8 +74,7 @@
         this.wiringErrorBadge.className = 'badge badge-important hidden';
         this.wiringButton.wrapperElement.appendChild(this.wiringErrorBadge);
         Wirecloud.events.activeworkspacechanged.addEventListener(function (workspace) {
-            this.widgetWallet.hide(true);
-            this.mashupWallet.hide(true);
+            this.wallet.hide(true);
 
             this._updateWiringErrors = function () {
                 this.wiringErrorBadge.innerHTML = workspace.wiring.logManager.errorCount;

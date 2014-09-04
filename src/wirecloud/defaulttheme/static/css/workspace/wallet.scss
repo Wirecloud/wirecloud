@@ -1,3 +1,5 @@
+@import 'variables';
+
 .widget_wallet {
     position: absolute;
     margin: 0 5px 10px 5px;
@@ -31,19 +33,20 @@
     white-space: nowrap;
 }
 
-.widget_wallet_header > .styled_button {
-    margin: 0 5px;
+.widget_wallet_header .icon-remove {
+    float: right;
+    margin: $nav-link-padding-vertical 5px 0px 0px;
 }
 
 .widget_wallet_header > .se-text-field {
-    margin: 0;
-    width: 293px;
+    margin: 6px 0 0 0;
+    width: 100%;
 }
 
 .widget_wallet_list {
     position: absolute;
-    top: 40px;
-    bottom: 40px;
+    top: ($input-height-base + (2 * $nav-link-padding-vertical) + $line-height-base + (3 * 6));
+    bottom: ((2 * $padding-vertical-base) + $line-height-base + 14);
     left: 0px;
     right: 0px;
     overflow-x: hidden;
