@@ -149,22 +149,23 @@ class ResourceEntry(Resource):
     @commit_on_http_success
     def delete(self, request, vendor, name, version=None):
 
-        response_json = {'result': 'ok', 'removedIWidgets': []}
+        response_json = {
+            'affectedVersions': [],
+            'removedIWidgets': []
+        }
         if version is not None:
-            #Delete only the specified version of the widget
-            resource = get_object_or_404(CatalogueResource, short_name=name,
-                                         vendor=vendor, version=version)
-            result = delete_resource(resource, request.user)
-            response_json['removedIWidgets'] = result['removedIWidgets']
+            # Delete only the specified version of the widget
+            resources = (get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version),)
         else:
-            #Delete all versions of the widget
+            # Delete all versions of the widget
             resources = get_list_or_404(CatalogueResource, short_name=name, vendor=vendor)
-            for resource in resources:
-                result = delete_resource(resource, request.user)
-                response_json['removedIWidgets'] += result['removedIWidgets']
 
-        return HttpResponse(json.dumps(response_json),
-                            content_type='application/json; charset=UTF-8')
+        for resource in resources:
+            result = delete_resource(resource, request.user)
+            response_json['affectedVersions'].append(resource.version)
+            response_json['removedIWidgets'] += result['removedIWidgets']
+
+        return HttpResponse(json.dumps(response_json), content_type='application/json; charset=UTF-8')
 
 
 class ResourceSuggestion(Resource):

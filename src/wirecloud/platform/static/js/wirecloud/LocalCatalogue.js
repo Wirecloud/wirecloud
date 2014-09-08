@@ -64,13 +64,16 @@
         this.resourcesByType[resource_data.type][resource_full_id] = resource;
     };
 
-    var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(transport) {
-        var layoutManager, result, i, iwidget;
+    var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(resource, next, result) {
+        var layoutManager, result, i, iwidget, uri;
 
-        switch (this.resource.type) {
+        if (result.affectedVersions == null) {
+            result.affectedVersions = [resource.version];
+        }
+
+        switch (resource.type) {
         case 'widget':
             layoutManager = LayoutManagerFactory.getInstance();
-            result = JSON.parse(transport.responseText);
 
             layoutManager.logSubTask(gettext('Removing affected iWidgets'));
             for (i = 0; i < result.removedIWidgets.length; i += 1) {
@@ -85,31 +88,31 @@
         case 'operator':
             layoutManager = LayoutManagerFactory.getInstance();
             layoutManager.logSubTask(gettext('Uninstantiating affected operators'));
-            Wirecloud.activeWorkspace.wiring._notifyOperatorUninstall(this.resource);
+            Wirecloud.activeWorkspace.wiring._notifyOperatorUninstall(resource, result.affectedVersions);
             layoutManager.logSubTask(gettext('Purging operator info'));
             break;
         }
 
-        try {
-            delete this.catalogue.resources[this.resource.uri];
-            delete this.catalogue.resourcesByType[this.resource.type][this.resource.uri];
-        } catch (e) {}
-
-        if (typeof this.onSuccess === 'function') {
-            this.onSuccess();
+        for (i = 0; i < result.affectedVersions.length; i++) {
+            try {
+                uri = resource.vendor + '/' + resource.name + '/' + result.affectedVersions[i];
+                delete this.resources[uri];
+                delete this.resourcesByType[resource.type][uri];
+            } catch (e) {}
         }
+
+        if (typeof next === 'function') {
+            next();
+        }
+    };
+
+    var uninstallSuccessCallback = function uninstallSuccessCallback(resource, next, response) {
+        var result = JSON.parse(response.responseText);
+        uninstallOrDeleteSuccessCallback.call(this, resource, next, result);
     };
 
     var uninstallErrorCallback = function uninstallErrorCallback(transport, e) {
         var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error uninstalling resource: %(errorMsg)s."), transport, e);
-
-        if (typeof this.onError === 'function') {
-            this.onError(msg);
-        }
-    };
-
-    var deleteErrorCallback = function deleteErrorCallback(transport, e) {
-        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting resource: %(errorMsg)s."), transport, e);
 
         if (typeof this.onError === 'function') {
             this.onError(msg);
@@ -209,7 +212,6 @@
         context = {
             catalogue: this,
             resource: resource,
-            onSuccess: options.onSuccess,
             onError: options.onFailure
         };
 
@@ -217,37 +219,20 @@
         Wirecloud.io.makeRequest(url + '?affected=true', {
             method: 'DELETE',
             requestHeaders: {'Accept': 'application/json'},
-            onSuccess: uninstallOrDeleteSuccessCallback.bind(context),
+            onSuccess: uninstallSuccessCallback.bind(this, resource, options.onSuccess),
             onFailure: uninstallErrorCallback.bind(context),
             onException: uninstallErrorCallback.bind(context),
             onComplete: options.onComplete
         });
     };
 
-    LocalCatalogue.deleteResource = function deleteResource(resource, onSuccess, onError) {
-        var url, context;
+    LocalCatalogue.deleteResource = function deleteResource(resource, options) {
+        if (options == null) {
+            options = {};
+        }
 
-        url = this.RESOURCE_ENTRY.evaluate({
-            vendor: resource.vendor,
-            name: resource.name,
-            version: resource.version.text
-        });
-
-        context = {
-            catalogue: this,
-            resource: resource,
-            onSuccess: onSuccess,
-            onError: onError
-        };
-
-        // Send request to delete de widget
-        Wirecloud.io.makeRequest(url, {
-            method: 'DELETE',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: uninstallOrDeleteSuccessCallback.bind(context),
-            onFailure: deleteErrorCallback.bind(context),
-            onException: deleteErrorCallback.bind(context)
-        });
+        options.onSuccess = uninstallOrDeleteSuccessCallback.bind(this, resource, options.onSuccess);
+        Wirecloud.WirecloudCatalogue.prototype.deleteResource.call(this, resource, options);
     };
 
     LocalCatalogue.addPackagedResource = function addPackagedResource(data, options) {

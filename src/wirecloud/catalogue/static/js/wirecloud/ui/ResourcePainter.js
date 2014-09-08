@@ -255,7 +255,7 @@
                 'class': 'btn-danger',
                 'text': gettext('Delete all versions')
             });
-            button.addEventListener('click', this.catalogue_view.createUserCommand('delete', resource));
+            button.addEventListener('click', this.catalogue_view.createUserCommand('deleteall', resource));
             fragment.appendChild(button);
         }
 

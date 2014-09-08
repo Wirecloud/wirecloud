@@ -175,37 +175,6 @@
         }.bind(this);
     };
 
-    CatalogueView.prototype.ui_commands.uninstall = function uninstall(resource, catalogue_source) {
-        return function () {
-            var layoutManager;
-
-            layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Uninstalling resource"), 3);
-            layoutManager.logSubTask(gettext('Uninstalling resource'));
-
-            this.catalogue.uninstallResource(resource, {
-                onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uninstalled successfully'));
-                    LayoutManagerFactory.getInstance().logStep('');
-
-                    this.refresh_search_results();
-
-                    if (catalogue_source != null) {
-                        catalogue_source.home();
-                        catalogue_source.refresh_search_results();
-                    }
-                }.bind(this),
-                onFailure: function (msg) {
-                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                    Wirecloud.GlobalLogManager.log(msg);
-                },
-                onComplete: function () {
-                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
-                }
-            });
-        }.bind(this);
-    };
-
     CatalogueView.prototype.ui_commands.showDetails = function showDetails(resource) {
         return function (e) {
             var onSuccess = function (resource_details) {
@@ -249,14 +218,17 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Deleting widget resource from catalogue"), 3);
+            layoutManager._startComplexTask(gettext("Deleting resource from catalogue"), 3);
             layoutManager.logSubTask(gettext('Requesting server'));
 
-            this.catalogue.deleteResource(resource, success_callback, error_callback);
+            this.catalogue.deleteResource(resource, {
+                onSuccess: success_callback,
+                onFailure: error_callback
+            });
         };
 
         // First ask the user
-        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") widget?');
+        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
         context = {
             vendor: resource.vendor,
             name: resource.name,

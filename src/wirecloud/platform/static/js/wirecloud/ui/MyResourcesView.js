@@ -272,18 +272,65 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Deleting widget resource from catalogue"), 3);
+            layoutManager._startComplexTask(gettext("Deleting resource from catalogue"), 3);
             layoutManager.logSubTask(gettext('Requesting server'));
 
-            this.catalogue.deleteResource(resource, success_callback, error_callback);
+            this.catalogue.deleteResource(resource, {
+                onSuccess: success_callback,
+                onFailure: error_callback
+            });
         };
 
         // First ask the user
-        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") widget?');
+        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
         context = {
             vendor: resource.vendor,
             name: resource.name,
             version: resource.version.text
+        };
+
+        msg = interpolate(msg, context, true);
+        return function () {
+            var dialog = new Wirecloud.ui.AlertWindowMenu();
+            dialog.setMsg(msg);
+            dialog.setHandler(doRequest.bind(this));
+            dialog.show();
+        }.bind(this);
+    };
+
+    MyResourcesView.prototype.ui_commands.deleteall = function deleteall(resource) {
+        var success_callback, error_callback, doRequest, msg, context;
+
+        success_callback = function (response) {
+            LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            this.home();
+            this.refresh_search_results();
+        }.bind(this);
+
+        error_callback = function (msg) {
+            LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+        };
+
+        doRequest = function () {
+            var layoutManager;
+
+            layoutManager = LayoutManagerFactory.getInstance();
+            layoutManager._startComplexTask(gettext("Deleting all versions of the resource from catalogue"), 3);
+            layoutManager.logSubTask(gettext('Requesting server'));
+
+            this.catalogue.deleteResource(resource, {
+                allversions: true,
+                onSuccess: success_callback,
+                onFailure: error_callback
+            });
+        };
+
+        // First ask the user
+        msg = gettext('Do you really want to remove all versions of the (vendor: "%(vendor)s", name: "%(name)s") resource?');
+        context = {
+            vendor: resource.vendor,
+            name: resource.name
         };
 
         msg = interpolate(msg, context, true);

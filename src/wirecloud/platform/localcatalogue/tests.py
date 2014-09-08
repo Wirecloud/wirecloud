@@ -640,6 +640,21 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(final_widgets, initial_widgets)
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
+    def test_resource_delete_all_version(self):
+
+        self.login()
+
+        # Delete all versions of the Test widget
+        with self.myresources_view as myresources:
+            myresources.delete_resource('Test')
+
+        self.login(username='normuser')
+        with self.myresources_view as myresources:
+            myresources.search('Test')
+            widget = myresources.search_in_results('Test')
+            self.assertIsNone(widget)
+
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_resource_delete_version(self):
 
         self.login()

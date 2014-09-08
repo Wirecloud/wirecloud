@@ -1040,13 +1040,16 @@ class MyResourcesViewTester(MarketplaceViewTester):
         version_list = [option.text for option in version_select.options]
         should_disappear_from_listings = version is None or len(version_list) == 1
 
+        action = 'Delete'
         if version is not None:
             version_select.select_by_value(version)
             WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+        elif len(version_list) > 1:
+            action = 'Delete all versions'
 
         found = False
         for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
-            if operation.text == 'Delete':
+            if operation.text == action:
                 found = True
                 operation.click()
                 break

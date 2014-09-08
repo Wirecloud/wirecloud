@@ -47,14 +47,21 @@
         this.onFailure();
     };
 
-    deleteSuccessCallback = function deleteSuccessCallback() {
-        this.onSuccess();
+    deleteSuccessCallback = function deleteSuccessCallback(response) {
+        var result;
+
+        if (typeof this.onSuccess === 'function') {
+            result = JSON.parse(response.responseText);
+            this.onSuccess(result);
+        }
     };
 
-    deleteErrorCallback = function deleteErrorCallback(transport, e) {
-        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting resource: %(errorMsg)s."), transport, e);
+    deleteErrorCallback = function deleteErrorCallback(response, e) {
+        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting resource: %(errorMsg)s."), response, e);
 
-        this.onError(msg);
+        if (typeof this.onFailure === 'function') {
+            this.onFailure(msg);
+        }
     };
 
     /*************************************************************************/
@@ -73,7 +80,7 @@
             'RESOURCE_CHANGELOG_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/changelog')},
             'RESOURCE_USERGUIDE_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s/userguide')},
             'RESOURCE_COLLECTION': {value: options.url + 'catalogue/resources'},
-            'RESOURCE_DETAILS_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s')},
+            'RESOURCE_UNVERSIONED_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s')},
             'RESOURCE_ENTRY': {value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s')},
         });
     };
@@ -140,7 +147,7 @@
             options = {};
         }
 
-        var url = this.RESOURCE_DETAILS_ENTRY.evaluate({vendor: vendor, name: name});
+        var url = this.RESOURCE_UNVERSIONED_ENTRY.evaluate({vendor: vendor, name: name});
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
             onSuccess: function (response) {
@@ -249,29 +256,33 @@
         });
     };
 
-    WirecloudCatalogue.prototype.deleteResource = function deleteResource(resource, onSuccess, onError) {
-        var url, context;
+    WirecloudCatalogue.prototype.deleteResource = function deleteResource(resource, options) {
+        var url;
 
-        url = this.RESOURCE_ENTRY.evaluate({
-            vendor: resource.vendor,
-            name: resource.name,
-            version: resource.version.text
-        });
+        options = Wirecloud.Utils.merge({
+            'allversions': false
+        }, options);
 
-        context = {
-            catalogue: this,
-            resource: resource,
-            onSuccess: onSuccess,
-            onError: onError
-        };
+        if (options.allversions) {
+            url = this.RESOURCE_UNVERSIONED_ENTRY.evaluate({
+                vendor: resource.vendor,
+                name: resource.name
+            });
+        } else {
+            url = this.RESOURCE_ENTRY.evaluate({
+                vendor: resource.vendor,
+                name: resource.name,
+                version: resource.version.text
+            });
+        }
 
         // Send request to delete de widget
         Wirecloud.io.makeRequest(url, {
             method: 'DELETE',
             requestHeaders: {'Accept': 'application/json'},
-            onSuccess: deleteSuccessCallback.bind(context),
-            onFailure: deleteErrorCallback.bind(context),
-            onException: deleteErrorCallback.bind(context)
+            onSuccess: deleteSuccessCallback.bind(options),
+            onFailure: deleteErrorCallback.bind(options),
+            onException: deleteErrorCallback.bind(options)
         });
     };
 
