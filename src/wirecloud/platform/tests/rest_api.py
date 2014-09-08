@@ -1723,12 +1723,13 @@ class ResourceManagementAPI(WirecloudTestCase):
 
         resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
         resource.users.clear()
+        resource.users.add(2)
         resource.public = False
         resource.save()
 
         url = reverse('wirecloud.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
 
-        self.client.login(username='admin', password='admin')
+        self.client.login(username='normuser', password='admin')
 
         response = self.client.delete(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
