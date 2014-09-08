@@ -36,20 +36,6 @@ WIRECLOUD_SECURE_DATA_HEADER = 'x-wirecloud-secure-data'
 VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 
 
-class FixServletBugsProcessor(object):
-
-    def process_request(self, request):
-
-        method = request['method']
-        if method == 'POST' or method == 'PUT' and not 'content-type' in request['headers']:
-            # Add Content-Type (Servlets bug)
-            request['headers']['content-type'] = "application/x-www-form-urlencoded"
-
-        # Remote user header
-        if not request['user'].is_anonymous():
-            request['headers']['Remote-User'] = request['user'].username
-
-
 def get_variable_value_by_ref(ref, user):
 
     result = VAR_REF_RE.match(ref)
