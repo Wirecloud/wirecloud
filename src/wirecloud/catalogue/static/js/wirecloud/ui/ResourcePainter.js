@@ -241,6 +241,15 @@
             fragment.appendChild(button);
         }
 
+        if ((resource.getAllVersions().length > 1) && resource.isAllow('uninstall-all')) {
+            button = new StyledElements.StyledButton({
+                'class': 'btn-danger',
+                'text': gettext('Uninstall all versions')
+            });
+            button.addEventListener('click', this.catalogue_view.createUserCommand('uninstallall', resource, this.catalogue_view));
+            fragment.appendChild(button);
+        }
+
         if (resource.isAllow('delete')) {
             button = new StyledElements.StyledButton({
                 'class': 'btn-danger',

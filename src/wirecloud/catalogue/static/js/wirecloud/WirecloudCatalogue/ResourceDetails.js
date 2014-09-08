@@ -49,6 +49,7 @@
 
             switch (action) {
             case 'uninstall':
+            case 'uninstall-all':
                 return currentVersion.permissions.uninstall;
             case 'delete':
             case 'delete-all':

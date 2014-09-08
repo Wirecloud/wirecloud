@@ -27,7 +27,7 @@ from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_list_or_404, get_object_or_404
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
@@ -223,35 +223,35 @@ class ResourceEntry(Resource):
 
     @authentication_required
     @commit_on_http_success
-    def delete(self, request, vendor, name, version):
+    def delete(self, request, vendor, name, version=None):
 
-        resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
-        resource.users.remove(request.user)
+        if version is not None:
+            resources = [get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version, users=request.user)]
+        else:
+            resources = get_list_or_404(CatalogueResource, vendor=vendor, short_name=name, users=request.user)
 
-        resource_uninstalled.send(sender=resource, user=request.user)
+        result = {
+            "affectedVersions": [],
+            "removedIWidgets": []
+        } if request.GET.get('affected', 'false').lower() == 'true' else None
 
-        result = None
-        iwidgets_to_remove = None
-
-        if request.GET.get('affected', 'false').lower() == 'true':
-            result = {
-                'affectedVersions': [resource.version]
-            }
+        for resource in resources:
+            resource.users.remove(request.user)
+            resource_uninstalled.send(sender=resource, user=request.user)
+            if result is not None:
+                result['affectedVersions'].append(resource.version)
 
             if resource.resource_type() == 'widget':
                 iwidgets_to_remove = get_iwidgets_to_remove(resource, request.user)
-                result['removedIWidgets'] = [iwidget.id for iwidget in iwidgets_to_remove]
+                if result is not None:
+                    result['removedIWidgets'] += [iwidget.id for iwidget in iwidgets_to_remove]
 
-        if resource.public is False and resource.users.count() == 0 and resource.groups.count() == 0:
-            resource.delete()
-        elif resource.resource_type() == 'widget':
+                # We need to iterate the iwidget list as currently only the individual delete method removes Workspace cache
+                for iwidget in iwidgets_to_remove:
+                    iwidget.delete()
 
-            if iwidgets_to_remove is None:
-                iwidgets_to_remove = get_iwidgets_to_remove(resource, request.user)
-
-            # We need to iterate the iwidget list as currently only the individual delete method removes Workspace cache
-            for iwidget in iwidgets_to_remove:
-                iwidget.delete()
+            if resource.public is False and resource.users.count() == 0 and resource.groups.count() == 0:
+                resource.delete()
 
         if result is not None:
             return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')

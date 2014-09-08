@@ -210,6 +210,38 @@
         }.bind(this);
     };
 
+    MyResourcesView.prototype.ui_commands.uninstallall = function uninstallall(resource, catalogue_source) {
+        return function () {
+            var layoutManager;
+
+            layoutManager = LayoutManagerFactory.getInstance();
+            layoutManager._startComplexTask(gettext("Uninstalling resource"), 3);
+            layoutManager.logSubTask(gettext('Uninstalling resource'));
+
+            this.catalogue.uninstallResource(resource, {
+                allversions: true,
+                onSuccess: function () {
+                    LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uninstalled successfully'));
+                    LayoutManagerFactory.getInstance().logStep('');
+
+                    this.refresh_search_results();
+
+                    if (catalogue_source != null) {
+                        catalogue_source.home();
+                        catalogue_source.refresh_search_results();
+                    }
+                }.bind(this),
+                onFailure: function (msg) {
+                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+                    Wirecloud.GlobalLogManager.log(msg);
+                },
+                onComplete: function () {
+                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                }
+            });
+        }.bind(this);
+    };
+
     MyResourcesView.prototype.ui_commands.publishOtherMarket = function publishOtherMarket(resource) {
         return function () {
             var marketplaceview = LayoutManagerFactory.getInstance().viewsByName.marketplace;

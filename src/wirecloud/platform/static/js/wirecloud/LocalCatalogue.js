@@ -111,11 +111,11 @@
         uninstallOrDeleteSuccessCallback.call(this, resource, next, result);
     };
 
-    var uninstallErrorCallback = function uninstallErrorCallback(transport, e) {
-        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error uninstalling resource: %(errorMsg)s."), transport, e);
+    var uninstallErrorCallback = function uninstallErrorCallback(options, response) {
+        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error uninstalling resource: %(errorMsg)s."), response);
 
-        if (typeof this.onError === 'function') {
-            this.onError(msg);
+        if (typeof options.onFailure === 'function') {
+            options.onFailure(msg);
         }
     };
 
@@ -201,27 +201,31 @@
     };
 
     LocalCatalogue.uninstallResource = function uninstallResource(resource, options) {
-        var url, context;
+        var url;
 
-        url = Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate({
-            vendor: resource.vendor,
-            name: resource.name,
-            version: resource.version.text
-        });
+        options = Wirecloud.Utils.merge({
+            'allversions': false
+        }, options);
 
-        context = {
-            catalogue: this,
-            resource: resource,
-            onError: options.onFailure
-        };
+        if (options.allversions) {
+            url = Wirecloud.URLs.LOCAL_UNVERSIONED_RESOURCE_ENTRY.evaluate({
+                vendor: resource.vendor,
+                name: resource.name
+            });
+        } else {
+            url = Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate({
+                vendor: resource.vendor,
+                name: resource.name,
+                version: resource.version.text
+            });
+        }
 
         // Send request to uninstall de widget
         Wirecloud.io.makeRequest(url + '?affected=true', {
             method: 'DELETE',
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: uninstallSuccessCallback.bind(this, resource, options.onSuccess),
-            onFailure: uninstallErrorCallback.bind(context),
-            onException: uninstallErrorCallback.bind(context),
+            onFailure: uninstallErrorCallback.bind(this, options),
             onComplete: options.onComplete
         });
     };

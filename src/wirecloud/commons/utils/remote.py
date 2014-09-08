@@ -1078,13 +1078,18 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         version_select = Select(catalogue_base_element.find_element_by_css_selector('.resource_details .versions select'))
         version_list = [option.text for option in version_select.options]
+        should_disappear_from_listings = version is None or len(version_list) == 1
+
+        action = 'Uninstall'
         if version is not None:
             version_select.select_by_value(version)
             WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+        elif len(version_list) > 1:
+            action = 'Uninstall all versions'
 
         uninstall_button = None
         for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
-            if operation.text == 'Uninstall':
+            if operation.text == action:
                 uninstall_button = operation
                 break
 
@@ -1093,8 +1098,6 @@ class MyResourcesViewTester(MarketplaceViewTester):
             WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
         else:
             self.testcase.assertIsNotNone(uninstall_button)
-
-            should_disappear_from_listings = version is None or len(version_list) == 1
 
             uninstall_button.click()
             self.testcase.wait_wirecloud_ready()

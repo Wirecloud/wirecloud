@@ -634,6 +634,29 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.check_multiversioned_widget(admin=False)
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('user_with_workspaces',))
+    def test_resource_uninstall_all_version(self):
+
+        user_with_workspaces = User.objects.get(username='user_with_workspaces')
+
+        test_widget = CatalogueResource.objects.get(short_name='Test', version='1.0')
+        test_widget.public = False
+        test_widget.users.clear()
+        test_widget.users.add(user_with_workspaces)
+        test_widget.groups.clear()
+        test_widget.save()
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+
+        self.add_widget_to_mashup('Test')
+
+        # Uninstall all Test widget versions
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource('Test')
+
+        final_widgets = self.get_current_iwidgets()
+        self.assertEqual(final_widgets, [])
+
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('user_with_workspaces',))
     def test_resource_uninstall_version(self):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')

@@ -451,6 +451,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
             {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud.resource_collection')},
             {'id': 'LOCAL_RESOURCE_ENTRY', 'url': build_url_template('wirecloud.resource_entry', ['vendor', 'name', 'version'])},
+            {'id': 'LOCAL_UNVERSIONED_RESOURCE_ENTRY', 'url': build_url_template('wirecloud.unversioned_resource_entry', ['vendor', 'name'])},
             {'id': 'IWIDGET_COLLECTION', 'url': build_url_template('wirecloud.iwidget_collection', ['workspace_id', 'tab_id'])},
             {'id': 'IWIDGET_ENTRY', 'url': build_url_template('wirecloud.iwidget_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
             {'id': 'IWIDGET_PREFERENCES', 'url': build_url_template('wirecloud.iwidget_preferences', ['workspace_id', 'tab_id', 'iwidget_id'])},
