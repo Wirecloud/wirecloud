@@ -27,7 +27,7 @@
 
     var Wiring, findEntity, unload, addIWidget, removeIWidget,
         iwidget_added_listener, iwidget_removed_listener,
-        iwidget_unload_listener, restore_connections;
+        iwidget_unload_listener, restore_connections, unload_operators;
 
     /*****************
      * Private methods
@@ -174,6 +174,46 @@
 
         for (key in entry.inputs) {
             entry.inputs[key].callback = null;
+        }
+    };
+
+    unload_operators = function unload_operators(resource_details, version) {
+        var id, operator, msg, ghost_operator, i, endpoint, key, uri;
+
+        uri = resource_details.vendor + '/' + resource_details.name + '/' + version;
+
+        for (id in this.ioperators) {
+            if (this.ioperators[id].meta.uri === uri) {
+                operator = this.ioperators[id];
+                this.ioperators[id].destroy();
+
+                ghost_operator = new Wirecloud.wiring.GhostOperator(id, this.status.operators[id]);
+                this.ioperators[id] = ghost_operator;
+
+                // Preserve preferences
+                ghost_operator.preferences = {};
+                for (key in operator.preferences) {
+                    ghost_operator.preferences[key] = {
+                        "readOnly": operator.preferences[key].readOnly,
+                        "hidden": operator.preferences[key].hidden,
+                        "value": operator.preferences[key].value
+                    };
+                }
+
+                // GhostEndpoints
+                for (i = 0; i < operator.meta.inputs.length; i++) {
+                    endpoint = new Wirecloud.wiring.GhostTargetEndpoint(ghost_operator, operator.meta.inputs[i].name);
+                    ghost_operator.inputs[endpoint.name] = endpoint;
+                }
+                for (i = 0; i < operator.meta.outputs.length; i++) {
+                    endpoint = new Wirecloud.wiring.GhostSourceEndpoint(ghost_operator, operator.meta.outputs[i].name);
+                    ghost_operator.outputs[endpoint.name] = endpoint;
+                }
+
+                msg = gettext('operator instance %(ioperator_id)s was unloaded as %(operator)s operator has been uninstalled');
+                msg = interpolate(msg, {ioperator_id: id, operator: operator.meta.uri}, true);
+                this.logManager.log(msg);
+            }
         }
     };
 
@@ -335,41 +375,11 @@
         }
     };
 
-    Wiring.prototype._notifyOperatorUninstall = function _notifyOperatorUninstall(resource_details) {
-        var id, operator, msg, ghost_operator, i, endpoint, key;
+    Wiring.prototype._notifyOperatorUninstall = function _notifyOperatorUninstall(resource_details, versions) {
+        var i;
 
-        for (id in this.ioperators) {
-            if (this.ioperators[id].meta.uri === resource_details.uri) {
-                operator = this.ioperators[id];
-                this.ioperators[id].destroy();
-
-                ghost_operator = new Wirecloud.wiring.GhostOperator(id, this.status.operators[id]);
-                this.ioperators[id] = ghost_operator;
-
-                // Preserve preferences
-                ghost_operator.preferences = {};
-                for (key in operator.preferences) {
-                    ghost_operator.preferences[key] = {
-                        "readOnly": operator.preferences[key].readOnly,
-                        "hidden": operator.preferences[key].hidden,
-                        "value": operator.preferences[key].value
-                    };
-                }
-
-                // GhostEndpoints
-                for (i = 0; i < operator.meta.inputs.length; i++) {
-                    endpoint = new Wirecloud.wiring.GhostTargetEndpoint(ghost_operator, operator.meta.inputs[i].name);
-                    ghost_operator.inputs[endpoint.name] = endpoint;
-                }
-                for (i = 0; i < operator.meta.outputs.length; i++) {
-                    endpoint = new Wirecloud.wiring.GhostSourceEndpoint(ghost_operator, operator.meta.outputs[i].name);
-                    ghost_operator.outputs[endpoint.name] = endpoint;
-                }
-
-                msg = gettext('operator instance %(ioperator_id)s was unloaded as %(operator)s operator has been uninstalled');
-                msg = interpolate(msg, {ioperator_id: id, operator: operator.meta.uri}, true);
-                this.logManager.log(msg);
-            }
+        for (i = 0; i < versions.length; i++) {
+            unload_operators.call(this, resource_details, versions[i]);
         }
     };
 
