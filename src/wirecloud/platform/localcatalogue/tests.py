@@ -599,10 +599,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
             myresources.delete_resource('TestOperator')
             myresources.delete_resource('Test Mashup')
 
-    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
-    def test_resource_with_several_versions(self):
-
-        self.login()
+    def check_multiversioned_widget(self, admin):
 
         with self.myresources_view as myresources:
             catalogue_base_element = myresources.wait_catalogue_ready()
@@ -610,7 +607,13 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
             test_widget = myresources.search_in_results('Test')
             self.scroll_and_click(test_widget)
 
-            WebDriverWait(self.driver, 5).until(WEC.visibility_of_element_located((By.CSS_SELECTOR, '.advanced_operations'), base_element=catalogue_base_element))
+            WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+
+            operations = [operation.text for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button')]
+            if admin:
+                self.assertIn('Delete all versions', operations)
+            else:
+                self.assertNotIn('Delete all versions', operations)
 
             version_select = Select(self.driver.find_element_by_css_selector('.resource_details .versions select'))
             version_list = [option.text for option in version_select.options]
@@ -620,6 +623,15 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
             versions = set(version_list)
             self.assertEqual(len(versions), len(version_list), 'Repeated versions')
             self.assertEqual(versions, set(('v1.0', 'v2.0')))
+
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
+    def test_resource_with_several_versions(self):
+
+        self.login()
+        self.check_multiversioned_widget(admin=True)
+
+        self.login(username='normuser')
+        self.check_multiversioned_widget(admin=False)
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('user_with_workspaces',))
     def test_resource_uninstall_version(self):
