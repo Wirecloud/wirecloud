@@ -39,11 +39,13 @@ VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 def get_variable_value_by_ref(ref, user):
 
     result = VAR_REF_RE.match(ref)
-    if result:
+    try:
         if result.group('iwidget_id') == 'c':
             return result.group('var_name')
         else:
             return get_variable_value_from_varname(user, result.group('iwidget_id'), result.group('var_name'))
+    except:
+        raise ValueError('Invalid variable reference: %s' % ref)
 
 
 def check_empty_params(**kargs):
@@ -62,7 +64,7 @@ def check_invalid_refs(**kargs):
     invalid_params = []
 
     for param_name in kargs:
-        if kargs[param_name] == None:
+        if kargs[param_name] is None:
             invalid_params.append(param_name)
 
     if len(invalid_params) > 0:
@@ -116,10 +118,16 @@ def process_secure_data(text, request, ignore_errors=False):
 
                 token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))[:-1]
                 request['headers']['Authorization'] = 'Basic ' + token.decode('ascii')
-        except:
-            # TODO logging?
+
+        except ValidationError:
+
             if not ignore_errors:
                 raise
+
+        except Exception as e:
+            # TODO logging?
+            if not ignore_errors:
+                raise ValidationError("%s" % e)
 
 
 class SecureDataProcessor(object):

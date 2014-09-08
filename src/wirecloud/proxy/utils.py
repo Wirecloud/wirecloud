@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.http import HttpResponse
+from wirecloud.commons.utils.http import build_error_response
 
 
 # hop-by-hop headers(http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1)
@@ -33,8 +33,8 @@ class ValidationError(Exception):
     def __init__(self, msg):
         self.msg = msg
 
-    def get_response(self):
-        return HttpResponse(self.msg, status=422)
+    def get_response(self, request):
+        return build_error_response(request, 422, self.msg)
 
 
 def is_valid_response_header(header):

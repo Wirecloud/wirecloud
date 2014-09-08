@@ -135,7 +135,7 @@ class Proxy():
             for processor in get_request_proxy_processors():
                 processor.process_request(request_data)
         except ValidationError as e:
-            return e.get_response()
+            return e.get_response(request)
 
         # Cookies
         cookie_header_content = ', '.join([cookie_parser[key].OutputString() for key in request_data['cookies']])

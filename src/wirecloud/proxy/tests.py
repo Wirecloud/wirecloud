@@ -292,13 +292,17 @@ class ProxySecureDataTests(ProxyTestsBase):
 
     tags = ('proxy', 'proxy-secure-data')
 
+    def setUp(self):
+        super(ProxySecureDataTests, self).setUp()
+
+        self.client = Client()
+
     def test_secure_data(self):
 
         set_variable_value(1, 'test_password')
         self.assertTrue(Variable.objects.get(pk=1).value != 'test_password')
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         def echo_response(method, url, *args, **kwargs):
             return {'status_code': 200, 'content': kwargs['data'].read()}
@@ -308,7 +312,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         user_ref = '1/username'
         secure_data_header = 'action=data, substr=|password|, var_ref=' + pass_ref
         secure_data_header += '&action=data, substr=|username|, var_ref=' + user_ref
-        response = client.post(self.basic_url,
+        response = self.client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
@@ -319,7 +323,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         self.assertEqual(self.read_response(response), b'username=test_username&password=test_password')
 
         secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
-        response = client.post(self.basic_url,
+        response = self.client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
@@ -332,7 +336,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         # Secure data header using constants
         secure_data_header = 'action=data, substr=|password|, var_ref=c/test_password'
         secure_data_header += '&action=data, substr=|username|, var_ref=c/test_username'
-        response = client.post(self.basic_url,
+        response = self.client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
@@ -345,7 +349,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         # Secure data header using encoding=url
         secure_data_header = 'action=data, substr=|password|, var_ref=c%2Fa%3D%2C%20z , encoding=url'
         secure_data_header += '&action=data, substr=|username|, var_ref=c%2Fa%3D%2C%20z'
-        response = client.post(self.basic_url,
+        response = self.client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
@@ -355,9 +359,66 @@ class ProxySecureDataTests(ProxyTestsBase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'username=a=, z&password=a%3D%2C%20z')
 
+        # Secure data header using encoding=base64
+        secure_data_header = 'action=data, substr=|password|, var_ref=1/password, encoding=base64'
+        response = self.client.post(self.basic_url,
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.read_response(response), b'username=|username|&password=dGVzdF9wYXNzd29yZA=')
+
+    def check_invalid_ref(self, invalid_ref):
+
+        secure_data_header = 'action=data, substr=|password|, var_ref=' + invalid_ref
+        response = self.client.post(self.basic_url,
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_ACCEPT='application/json',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
+
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content)
+        self.assertNotEqual(response_data['description'], '')
+
+    def test_secure_data_invalid_var_ref(self):
+
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+        for ref in ('666/inexitent', 'adfasdf', 'a/b/c'):
+            self.check_invalid_ref(ref)
+
+    def test_secure_data_missing_parameters(self):
+
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
         # Secure data header with empty parameters
         secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
-        response = client.post(self.basic_url,
+        response = self.client.post(self.basic_url,
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
+
+        self.assertEqual(response.status_code, 422)
+
+        # Secure data header missing parameters
+        secure_data_header = 'action=basic_auth'
+        response = self.client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
@@ -371,8 +432,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         set_variable_value(1, 'test_password')
         self.assertTrue(Variable.objects.get(pk=1).value != 'test_password')
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         def echo_response(method, url, *args, **kwargs):
             return {'status_code': 200, 'content': kwargs['data'].read()}
@@ -382,8 +442,8 @@ class ProxySecureDataTests(ProxyTestsBase):
         user_ref = '1/username'
         secure_data_header = 'action=data, substr=|password|, var_ref=' + pass_ref
         secure_data_header += '&action=data, substr=|username|, var_ref=' + user_ref
-        client.cookies[str('X-WireCloud-Secure-Data')] = secure_data_header
-        response = client.post(self.basic_url,
+        self.client.cookies[str('X-WireCloud-Secure-Data')] = secure_data_header
+        response = self.client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
@@ -393,8 +453,8 @@ class ProxySecureDataTests(ProxyTestsBase):
         self.assertEqual(self.read_response(response), b'username=test_username&password=test_password')
 
         secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
-        client.cookies[str('X-WireCloud-Secure-Data')] = secure_data_header
-        response = client.post(self.basic_url,
+        self.client.cookies[str('X-WireCloud-Secure-Data')] = secure_data_header
+        response = self.client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
@@ -405,8 +465,8 @@ class ProxySecureDataTests(ProxyTestsBase):
 
         # Secure data header with empty parameters
         secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
-        client.cookies[str('X-WireCloud-Secure-Data')] = secure_data_header
-        response = client.post(self.basic_url,
+        self.client.cookies[str('X-WireCloud-Secure-Data')] = secure_data_header
+        response = self.client.post(self.basic_url,
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
