@@ -201,11 +201,16 @@ def build_xml_document(options):
         write_mashup_wiring_tree(resources, options)
     elif options['type'] == 'widget':
         # Widget code
-        xhtml = etree.SubElement(template, 'contents', src=options['code_url'])
-        addAttribute(options, xhtml, 'code_content_type', attr_name='contenttype')
-        addAttribute(options, xhtml, 'code_charset', attr_name='charset')
-        addAttribute(options, xhtml, 'code_cacheable', attr_name='cacheable', default='true', type='boolean')
-        addAttribute(options, xhtml, 'code_uses_platform_style', attr_name='useplatformstyle', default='false', type='boolean')
+        xhtml = etree.SubElement(template, 'contents', src=options['contents']['src'])
+        addAttribute(options['contents'], xhtml, 'contenttype', default='text/html')
+        addAttribute(options['contents'], xhtml, 'charset', default='utf-8')
+        addAttribute(options['contents'], xhtml, 'cacheable', default='true', type='boolean')
+        addAttribute(options['contents'], xhtml, 'useplatformstyle', default='false', type='boolean')
+
+        for altcontents in options.get('altcontents', ()):
+            altcontents_element = etree.SubElement(xhtml, 'altcontents', scope=altcontents['scope'], src=altcontents['src'])
+            addAttribute(altcontents, altcontents_element, 'contenttype', default='text/html')
+            addAttribute(altcontents, altcontents_element, 'charset', default='utf-8')
 
         # Widget rendering
         etree.SubElement(template, 'rendering', width=options['widget_width'], height=options['widget_height'])

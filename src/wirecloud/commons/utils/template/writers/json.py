@@ -33,7 +33,7 @@ def remove_empty_string_fields(fields, data):
         if value is not None and not isinstance(value, six.string_types):
             raise Exception("Invalid value for field %s" % field)
 
-        if value is None or value == '':
+        if field in data and (value is None or value == ''):
             del data[field]
 
 
@@ -46,7 +46,7 @@ def remove_empty_array_fields(fields, data):
         if value is not None and not isinstance(value, (list, tuple)):
             raise Exception("Invalid value for field %s" % field)
 
-        if value is None or len(value) == 0:
+        if field in data and (value is None or len(value) == 0):
             del data[field]
 
 
@@ -58,7 +58,17 @@ def write_json_description(template_info):
     template_info = copy.copy(template_info)
 
     remove_empty_string_fields(('title', 'description', 'longdescription', 'homepage', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl'), template_info)
-    remove_empty_array_fields(('authors', 'contributors'), template_info)
+    remove_empty_array_fields(('authors', 'contributors', 'altcontents'), template_info)
+
+    if template_info['type'] == 'widget':
+        contents = template_info.get('contents')
+        if contents is None or 'src' not in contents:
+            raise Exception('Missing widget content info')
+
+        if 'altcontents' in template_info:
+            for altcontents in template_info['altcontents']:
+                if not isinstance(altcontents, dict) or 'src' not in altcontents or 'scope' not in altcontents:
+                    raise Exception('Invalid alternative contents')
 
     del template_info['translation_index_usage']
     return json.dumps(template_info, sort_keys=True, indent=4)

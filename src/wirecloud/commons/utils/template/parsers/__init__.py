@@ -162,7 +162,8 @@ class TemplateParser(object):
             info[field] = absolutize_url_field(info[field], base)
 
         if info['type'] == 'widget':
-            info['code_url'] = absolutize_url_field(info['code_url'], base)
+            info['contents']['src'] = absolutize_url_field(info['contents']['src'], base)
+            info['altcontents'] = [absolutize_url_field(contents_file, base) for contents_file in info['altcontents']]
         elif info['type'] == 'operator':
             info['js_files'] = [absolutize_url_field(js_file, base) for js_file in info['js_files']]
 

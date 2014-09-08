@@ -1002,11 +1002,14 @@ class TemplateUtilsTestCase(TestCase):
                 'inputs': [],
                 'outputs': [],
             },
-            'code_url': 'http://example.com/code.html',
-            'code_charset': 'utf-8',
-            'code_content_type': 'text/html',
-            'code_cacheable': True,
-            'code_uses_platform_style': False,
+            'contents': {
+                'src': 'http://example.com/code.html',
+                'charset': 'utf-8',
+                'contenttype': 'text/html',
+                'cacheable': True,
+                'useplatformstyle': False
+            },
+            'altcontents': [],
             'default_lang': 'en',
             'widget_width': '8',
             'widget_height': '30',
@@ -1130,11 +1133,16 @@ class TemplateUtilsTestCase(TestCase):
                     }
                 ]
             },
-            'code_url': 'http://example.com/code.html',
-            'code_charset': 'utf-8',
-            'code_content_type': 'application/xhtml+xml',
-            'code_cacheable': False,
-            'code_uses_platform_style': True,
+            'contents': {
+                'src': 'http://example.com/code.html',
+                'charset': 'utf-8',
+                'contenttype': 'application/xhtml+xml',
+                'cacheable': False,
+                'useplatformstyle': True
+            },
+            'altcontents': [
+                {'scope': 'native-tablet', 'src': 'native.html', 'contenttype': 'application/xhtml+xml', 'charset': 'utf-8'}
+            ],
             'default_lang': 'en',
             'widget_width': '8',
             'widget_height': '30',
@@ -1184,11 +1192,14 @@ class TemplateUtilsTestCase(TestCase):
                     },
                 ],
             },
-            'code_url': 'http://example.com/code.html',
-            'code_charset': 'utf-8',
-            'code_content_type': 'text/html',
-            'code_cacheable': True,
-            'code_uses_platform_style': False,
+            'contents': {
+                'src': 'http://example.com/code.html',
+                'charset': 'utf-8',
+                'contenttype': 'text/html',
+                'cacheable': True,
+                'useplatformstyle': False
+            },
+            'altcontents': [],
             'default_lang': 'en',
             'widget_width': '8',
             'widget_height': '30',

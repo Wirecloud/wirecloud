@@ -66,7 +66,7 @@ class WidgetCodeEntry(Resource):
         widget_info = json.loads(resource.json_description)
 
         # check if the xhtml code has been cached
-        if widget_info['code_cacheable'] is True:
+        if widget_info['contents']['cacheable'] is True:
 
             cache_key = resource.widget.xhtml.get_cache_key(get_current_domain(request), mode)
             cache_entry = cache.get(cache_key)
@@ -77,8 +77,8 @@ class WidgetCodeEntry(Resource):
 
         # process xhtml
         xhtml = resource.widget.xhtml
-        content_type = widget_info.get('code_content_type', 'text/html')
-        charset = widget_info.get('code_charset', 'utf-8')
+        content_type = widget_info['contents'].get('contenttype', 'text/html')
+        charset = widget_info['contents'].get('charset', 'utf-8')
 
         force_base = False
         base_url = xhtml.url

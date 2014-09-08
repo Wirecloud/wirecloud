@@ -138,6 +138,7 @@ def write_mashup_params(graph, resource_uri, template_info):
             graph.add((param_node, WIRE['type'], rdflib.Literal(param['type'])))
             graph.add((resource_uri, WIRE_M['hasMashupParam'], param_node))
 
+
 def write_mashup_resources_graph(graph, resource_uri, template_info):
 
     # Tabs & resources
@@ -254,6 +255,27 @@ def write_mashup_wiring_graph(graph, wiring, template_info):
         graph.add((target, WIRE_M['endpoint'], rdflib.Literal(connection['target']['endpoint'])))
 
     write_wiring_views_graph(graph, wiring, template_info)
+
+
+def write_contents_node(graph, resource_uri, contents_info, alternative=True):
+
+    contents_node = rdflib.URIRef(contents_info.get('src'))
+    graph.add((contents_node, rdflib.RDF.type, USDL['Resource']))
+    graph.add((resource_uri, USDL['utilizedResource'], contents_node))
+
+    if contents_info['contenttype'] != 'text/html' or contents_info['charset'] != 'utf-8':
+        contenttype = contents_info.get('contenttype', 'text/html') + '; charset=' + contents_info.get('charset', 'utf-8').upper()
+        graph.add((contents_node, DCTERMS['format'], rdflib.Literal(contenttype)))
+
+    if alternative is False:
+        if contents_info['cacheable'] is False:
+            graph.add((contents_node, WIRE['codeCacheable'], rdflib.Literal('false')))
+
+        if contents_info['useplatformstyle']:
+            graph.add((contents_node, WIRE['usePlatformStyle'], rdflib.Literal('true')))
+
+    else:
+        graph.add((contents_node, WIRE['contentsScope'], rdflib.Literal(str(contents_info['scope']))))
 
 
 def build_rdf_graph(template_info):
@@ -457,19 +479,11 @@ def build_rdf_graph(template_info):
 
     # Code
     if template_info['type'] == 'widget':
-        xhtml_element = rdflib.URIRef(template_info.get('code_url'))
-        graph.add((xhtml_element, rdflib.RDF.type, USDL['Resource']))
-        graph.add((resource_uri, USDL['utilizedResource'], xhtml_element))
 
-        if template_info['code_content_type'] != 'text/html' or template_info['code_charset'] != 'utf-8':
-            content_type = template_info.get('code_content_type', 'text/html') + '; charset=' + template_info.get('code_charset', 'utf-8').upper()
-            graph.add((xhtml_element, DCTERMS['format'], rdflib.Literal(content_type)))
+        write_contents_node(graph, resource_uri, template_info['contents'], alternative=False)
 
-        if template_info['code_cacheable'] is False:
-            graph.add((xhtml_element, WIRE['codeCacheable'], rdflib.Literal('false')))
-
-        if template_info['code_uses_platform_style']:
-            graph.add((xhtml_element, WIRE['usePlatformStyle'], rdflib.Literal('true')))
+        for altcontents in template_info['altcontents']:
+            write_contents_node(graph, resource_uri, altcontents)
 
     elif template_info['type'] == 'operator':
         for index, js_file in enumerate(template_info['js_files']):

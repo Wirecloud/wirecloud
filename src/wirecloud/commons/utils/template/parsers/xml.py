@@ -50,6 +50,7 @@ REQUIREMENTS_XPATH = 't:Requirements'
 
 FEATURE_XPATH = 't:Feature'
 CODE_XPATH = '/t:Template/t:Platform.Link[1]/t:XHTML'
+ALTCONTENT_XPATH = '/t:Template/t:Platform.Link[1]/t:AltContents'
 PREFERENCE_XPATH = 't:Preference'
 PREFERENCES_XPATH = '/t:Template/t:Platform.Preferences[1]/t:Preference'
 OPTION_XPATH = 't:Option'
@@ -356,15 +357,26 @@ class WirecloudTemplateParser(object):
         xhtml_elements = self._xpath(CODE_XPATH, self._doc)
         if len(xhtml_elements) == 1 and xhtml_elements[0].get('href', '') != '':
             xhtml_element = xhtml_elements[0]
-            self._info['code_url'] = xhtml_element.get('href')
         else:
             msg = _('missing required attribute in Platform.Link: href')
             raise TemplateParseException(msg)
 
-        self._info['code_content_type'] = xhtml_element.get('content-type', 'text/html')
-        self._info['code_charset'] = xhtml_element.get('charset', 'utf-8')
-        self._info['code_uses_platform_style'] = xhtml_element.get('use-platform-style', 'false').lower() == 'true'
-        self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
+        self._info['contents'] = {
+            'src': xhtml_element.get('href'),
+            'contenttype': xhtml_element.get('content-type', 'text/html'),
+            'charset': xhtml_element.get('charset', 'utf-8'),
+            'useplatformstyle': xhtml_element.get('use-platform-style', 'false').lower() == 'true',
+            'cacheable': xhtml_element.get('cacheable', 'true').lower() == 'true'
+        }
+
+        self._info['altcontents'] = []
+        for altcontents_element in self._xpath(ALTCONTENT_XPATH, self._doc):
+            self._info['altcontents'].append({
+                'scope': altcontents_element.get('scope'),
+                'src': altcontents_element.get('href'),
+                'contenttype': altcontents_element.get('content-type', 'text/html'),
+                'charset': altcontents_element.get('charset', 'utf-8')
+            })
 
         rendering_element = self.get_xpath(PLATFORM_RENDERING_XPATH, self._doc)
         self._info['widget_width'] = rendering_element.get('width')

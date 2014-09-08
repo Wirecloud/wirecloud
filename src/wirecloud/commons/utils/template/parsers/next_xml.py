@@ -55,6 +55,7 @@ REQUIREMENTS_XPATH = 't:requirements'
 
 FEATURE_XPATH = 't:feature'
 CODE_XPATH = 't:contents'
+ALTCONTENT_XPATH = 't:altcontents'
 PREFERENCE_XPATH = 't:preference'
 PREFERENCE_VALUE_XPATH = 't:preferencevalue'
 PREFERENCES_XPATH = 't:preferences/t:preference'
@@ -310,11 +311,22 @@ class ApplicationMashupTemplateParser(object):
         self._parse_wiring_info()
 
         xhtml_element = self._xpath(CODE_XPATH, self._doc)[0]
-        self._info['code_url'] = xhtml_element.get('src')
-        self._info['code_content_type'] = xhtml_element.get('contenttype', 'text/html')
-        self._info['code_charset'] = xhtml_element.get('charset', 'utf-8')
-        self._info['code_uses_platform_style'] = xhtml_element.get('useplatformstyle', 'false').lower() == 'true'
-        self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
+        self._info['contents'] = {
+            'src': xhtml_element.get('src'),
+            'contenttype': xhtml_element.get('contenttype', 'text/html'),
+            'charset': xhtml_element.get('charset', 'utf-8'),
+            'useplatformstyle': xhtml_element.get('useplatformstyle', 'false').lower() == 'true',
+            'cacheable': xhtml_element.get('cacheable', 'true').lower() == 'true'
+        }
+
+        self._info['altcontents'] = []
+        for altcontents in self._xpath(ALTCONTENT_XPATH, xhtml_element):
+            self._info['altcontents'].append({
+                'scope': altcontents.get('scope'),
+                'src': altcontents.get('src'),
+                'contenttype': altcontents.get('contenttype', 'text/html'),
+                'charset': altcontents.get('charset', 'utf-8')
+            })
 
         rendering_element = self.get_xpath(PLATFORM_RENDERING_XPATH, self._doc)
         self._info['widget_width'] = rendering_element.get('width')

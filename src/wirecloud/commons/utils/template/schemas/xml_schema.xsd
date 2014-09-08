@@ -484,6 +484,93 @@
         </xs:choice>
     </xs:complexType>
 
+    <xs:complexType name="WidgetContents">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="altcontents">
+                <xs:annotation>
+                    <xs:documentation>Alternative contents</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:attribute name="scope" type="macd:NonEmpty" use="required">
+                        <xs:annotation>
+                            <xs:documentation>Scope for this content.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="src" type="xs:anyURI" use="required">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Absolute or template-relative URL of
+                                widget code.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="contenttype" type="macd:NonEmpty" use="optional">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Content type of the linked resource.
+                                Suggested values are: text/html and
+                                application/xml+xhtml. Optional attribute, 'text/html'
+                                by default.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="charset" type="macd:NonEmpty" use="optional">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Charset used by the linked resource.
+                                Optional attribute, 'utf-8' by default.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+        <xs:attribute name="src" type="xs:anyURI" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    Absolute or template-relative URL of
+                    widget code.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contenttype" type="macd:NonEmpty" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Content type of the linked resource.
+                    Suggested values are: text/html and
+                    application/xml+xhtml. Optional attribute, 'text/html'
+                    by default.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="charset" type="macd:NonEmpty" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Charset used by the linked resource.
+                    Optional attribute, 'utf-8' by default.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="cacheable" type="xs:boolean" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Whether this code can be cached by the
+                    platform. Possible values are "true" and "false".
+                    Optional attribute, "true" by default.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useplatformstyle" type="xs:boolean" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Whether this widget will inherit the style of the platform.
+                    Possible values are "true" and "false". Optional attribute,
+                    "false" by default.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
     <xs:complexType name="Translations">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="translation">
@@ -793,53 +880,12 @@
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
-                        <xs:element name="contents" minOccurs="1" maxOccurs="1">
-                            <xs:complexType>
-                                <xs:attribute name="src" type="xs:anyURI" use="required">
-                                    <xs:annotation>
-                                        <xs:documentation>
-                                            Absolute or template-relative URL of
-                                            widget code.
-                                        </xs:documentation>
-                                    </xs:annotation>
-                                </xs:attribute>
-                                <xs:attribute name="contenttype" type="macd:NonEmpty">
-                                    <xs:annotation>
-                                        <xs:documentation>
-                                            Content type of the linked resource.
-                                            Suggested values are: text/html and
-                                            application/xml+xhtml. Optional attribute, 'text/html'
-                                            by default.
-                                        </xs:documentation>
-                                    </xs:annotation>
-                                </xs:attribute>
-                                <xs:attribute name="charset" type="macd:NonEmpty">
-                                    <xs:annotation>
-                                        <xs:documentation>
-                                            Charset used by the linked resource.
-                                            Optional attribute, 'utf-8' by default.
-                                        </xs:documentation>
-                                    </xs:annotation>
-                                </xs:attribute>
-                                <xs:attribute name="cacheable" type="xs:boolean">
-                                    <xs:annotation>
-                                        <xs:documentation>
-                                            Whether this code can be cached by the
-                                            platform. Possible values are "true" and "false".
-                                            Optional attribute, "true" by default.
-                                        </xs:documentation>
-                                    </xs:annotation>
-                                </xs:attribute>
-                                <xs:attribute name="useplatformstyle" type="xs:boolean">
-                                    <xs:annotation>
-                                        <xs:documentation>
-                                            Whether this widget will inherit the style of the platform.
-                                            Possible values are "true" and "false". Optional attribute,
-                                            "false" by default.
-                                        </xs:documentation>
-                                    </xs:annotation>
-                                </xs:attribute>
-                            </xs:complexType>
+                        <xs:element name="contents" type="macd:WidgetContents" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    Contents of the widget
+                                </xs:documentation>
+                            </xs:annotation>
                         </xs:element>
                         <xs:element name="rendering" minOccurs="1"
                             maxOccurs="1">

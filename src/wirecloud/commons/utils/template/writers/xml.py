@@ -188,13 +188,18 @@ def build_xml_document(options):
     else:
         # Widget code
         link = etree.SubElement(template, 'Platform.Link')
-        xhtml = etree.SubElement(link, 'XHTML', href=options['code_url'])
-        xhtml.set('content-type', options['code_content_type'])
-        xhtml.set('charset', options['code_charset'])
-        if options['code_cacheable'] is False:
+        xhtml = etree.SubElement(link, 'XHTML', href=options['contents']['src'])
+        xhtml.set('content-type', options['contents']['contenttype'])
+        xhtml.set('charset', options['contents']['charset'])
+        if options['contents']['cacheable'] is False:
             xhtml.set('cacheable', 'false')
-        if options['code_uses_platform_style']:
+        if options['contents']['useplatformstyle']:
             xhtml.set('use-platform-style', 'true')
+
+        for altcontents in options['altcontents']:
+            altcontents_element = etree.SubElement(link, 'AltContents', scope=altcontents['scope'], href=altcontents['src'])
+            altcontents_element.set('content-type', altcontents['contenttype'])
+            altcontents_element.set('charset', altcontents['charset'])
 
         # Widget rendering
         etree.SubElement(template, 'Platform.Rendering', width=options['widget_width'], height=options['widget_height'])

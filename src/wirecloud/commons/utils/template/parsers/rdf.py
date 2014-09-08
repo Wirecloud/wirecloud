@@ -479,23 +479,33 @@ class RDFTemplateParser(object):
 
         if self._info['type'] == 'widget':
             # It contains the widget code
-            xhtml_element = self._get_field(USDL, 'utilizedResource', self._rootURI, id_=True)
+            self._info['altcontents'] = []
+            sorted_contents = sorted(self._graph.objects(self._rootURI, USDL['utilizedResource']), key=lambda contents: possible_int(self._get_field(WIRE, 'index', contents, required=False)))
 
-            self._info['code_url'] = unicode(xhtml_element)
-            content_type, parameters = parse_mime_type(self._get_field(DCTERMS, 'format', xhtml_element, required=False))
+            for contents_node in sorted_contents:
+                contents_info = {
+                    'src': unicode(contents_node),
+                }
+                contents_info['scope'] = self._get_field(WIRE, 'contentsScope', contents_node, required=False)
+                contenttype, parameters = parse_mime_type(self._get_field(DCTERMS, 'format', contents_node, required=False))
 
-            self._info['code_content_type'] = 'text/html'
-            self._info['code_charset'] = 'utf-8'
-            if content_type != '':
-                self._info['code_content_type'] = content_type
-                if 'charset' in parameters:
-                    self._info['code_charset'] = parameters['charset'].lower()
+                contents_info['contenttype'] = 'text/html'
+                contents_info['charset'] = 'utf-8'
+                if contenttype != '':
+                    contents_info['contenttype'] = contenttype
+                    if 'charset' in parameters:
+                        contents_info['charset'] = parameters['charset'].lower()
 
-            elif len(parameters) > 1:
-                raise Exception('Invalid code content type')
+                elif len(parameters) > 1:
+                    raise Exception('Invalid code content type')
 
-            self._info['code_uses_platform_style'] = self._get_field(WIRE, 'usePlatformStyle', xhtml_element, required=False).lower() == 'true'
-            self._info['code_cacheable'] = self._get_field(WIRE, 'codeCacheable', xhtml_element, required=False, default='true').lower() == 'true'
+                if contents_info['scope'] == '':
+                    del contents_info['scope']
+                    contents_info['useplatformstyle'] = self._get_field(WIRE, 'usePlatformStyle', contents_node, required=False).lower() == 'true'
+                    contents_info['cacheable'] = self._get_field(WIRE, 'codeCacheable', contents_node, required=False, default='true').lower() == 'true'
+                    self._info['contents'] = contents_info
+                else:
+                    self._info['altcontents'].append(contents_info)
 
             rendering_element = self._get_field(WIRE, 'hasPlatformRendering', self._rootURI, id_=True, required=False)
 

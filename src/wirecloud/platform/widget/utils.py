@@ -74,13 +74,13 @@ def create_widget_from_template(template, user, request=None, base=None):
 
     widget = Widget()
     widget.resource = CatalogueResource.objects.get(vendor=parser.get_resource_vendor(), short_name=parser.get_resource_name(), version=parser.get_resource_version())
-    widget_code = parser.get_absolute_url(widget_info['code_url'], base)
+    widget_code = parser.get_absolute_url(widget_info['contents']['src'], base)
     widget.xhtml = XHTML.objects.create(
         uri=widget.uri + "/xhtml",
         url=widget_code,
-        content_type=widget_info['code_content_type'],
-        use_platform_style=widget_info['code_uses_platform_style'],
-        cacheable=widget_info['code_cacheable']
+        content_type=widget_info['contents']['contenttype'],
+        use_platform_style=widget_info['contents']['useplatformstyle'],
+        cacheable=widget_info['contents']['cacheable']
     )
 
     widget.width = widget_info['widget_width']

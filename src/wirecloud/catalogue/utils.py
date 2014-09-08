@@ -100,14 +100,14 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
 
     if template.get_resource_type() == 'widget':
         resource_info = template.get_resource_info()
-        code_url = resource_info['code_url']
+        code_url = resource_info['contents']['src']
         if not code_url.startswith(('http://', 'https://')):
             code = wgt_file.read(code_url)
             try:
-                unicode(code, resource_info['code_charset'])
+                unicode(code, resource_info['contents']['charset'])
             except UnicodeDecodeError:
                 msg = _('%(file_name)s was not encoded using the specified charset (%(charset)s according to the widget descriptor file).')
-                raise InvalidContents(msg % {'file_name': code_url, 'charset': resource_info['code_charset']})
+                raise InvalidContents(msg % {'file_name': code_url, 'charset': resource_info['contents']['charset']})
 
     resource_id = (
         template.get_resource_vendor(),

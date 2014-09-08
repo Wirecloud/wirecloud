@@ -104,6 +104,20 @@ class JSONTemplateParser(object):
             else:
                 raise TemplateParseException('%s field must be a list or string' % field)
 
+    def _check_contents_field(self, data, alternative=True):
+        if isinstance(data, dict):
+            self._check_string_fields(('src',), place=data, required=True)
+            self._check_string_fields(('contenttype',), place=data, default='text/html')
+            self._check_string_fields(('charset',), place=data, default='utf-8')
+
+            if alternative is True:
+                self._check_string_fields(('scope',), place=data, required=True)
+            else:
+                self._check_boolean_fields(('cacheable',), place=data, default=True)
+                self._check_boolean_fields(('useplatformstyle',), place=data, default=False)
+        else:
+            raise TemplateParseException('contents info must be an object')
+
     def _add_translation_index(self, value, **kwargs):
         index = get_trans_index(value)
         if not index:
@@ -121,16 +135,15 @@ class JSONTemplateParser(object):
 
         if self._info['type'] == 'widget':
 
-            self._check_string_fields(('code_url',), required=True)
-            self._check_boolean_fields(('code_cacheable',), default=True)
-            self._check_boolean_fields(('code_uses_platform_style',), default=False)
-            self._check_array_fields(('preferences', 'properties'))
+            self._check_array_fields(('preferences', 'properties', 'altcontents'))
+            if self._info.get('contents', None) is None:
+                raise TemplateParseException('Missing widget content info')
+            if not isinstance(self._info['contents'], dict):
+                raise TemplateParseException('Content info must be an object')
 
-            if self._info.get('code_content_type', None) is None:
-                self._info['code_content_type'] = 'text/html'
-
-            if self._info.get('code_charset', None) is None:
-                self._info['code_charset'] = 'utf-8'
+            self._check_contents_field(self._info['contents'], alternative=False)
+            for altcontent in self._info['altcontents']:
+                self._check_contents_field(altcontent)
 
         if not 'wiring' in self._info:
             self._info['wiring'] = {}
