@@ -233,9 +233,14 @@ class ResourceEntry(Resource):
         result = None
         iwidgets_to_remove = None
 
-        if resource.resource_type() == 'widget' and request.GET.get('affected', 'false').lower() == 'true':
-            iwidgets_to_remove = get_iwidgets_to_remove(resource, request.user)
-            result = {'removedIWidgets': [iwidget.id for iwidget in iwidgets_to_remove]}
+        if request.GET.get('affected', 'false').lower() == 'true':
+            result = {
+                'affectedVersions': [resource.version]
+            }
+
+            if resource.resource_type() == 'widget':
+                iwidgets_to_remove = get_iwidgets_to_remove(resource, request.user)
+                result['removedIWidgets'] = [iwidget.id for iwidget in iwidgets_to_remove]
 
         if resource.public is False and resource.users.count() == 0 and resource.groups.count() == 0:
             resource.delete()
