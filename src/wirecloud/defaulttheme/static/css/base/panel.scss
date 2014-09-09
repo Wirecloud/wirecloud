@@ -1,0 +1,9 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
+.panel {
+    color: contrast-color($panel-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    background-color: $panel-bg;
+    border: 1px solid rgb(205, 206, 209);
+    border-radius: $panel-border-radius;
+}
