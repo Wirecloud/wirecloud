@@ -16,10 +16,6 @@
 }
 
 .resource_details .panel {
-    color: contrast-color($panel-bg, $text-color-light, $text-color-dark, $text-color-threshold);
-    background-color: $panel-bg;
-    border: 1px solid rgb(205, 206, 209);
-    border-radius: $panel-border-radius;
     text-align: center;
     margin: 0 3ex;
     padding: 1ex;

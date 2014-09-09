@@ -132,6 +132,7 @@ STYLED_ELEMENTS_FILES = (
 BASE_CSS = (
     'css/base/body.scss',
     'css/base/fade.css',
+    'css/base/panel.scss',
     'css/base/code.scss',
     'css/windowmenues/logwindowmenu.css',
     'css/workspace/ioperator.css',

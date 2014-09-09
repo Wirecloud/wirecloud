@@ -1,20 +1,7 @@
 {% extends 'wirecloud/views/base_plain.html' %}
 {% load i18n compress wirecloudtags %}
-{% block title %}{% trans "Wirecloud · Build application mashups" %}{% endblock %}
+{% block title %}{% trans "WireCloud · Build application mashups" %}{% endblock %}
 {% block path %}{% trans "Welcome to WireCloud!" %}{% endblock %}
-{% block basecss %}
-    {% compress css %}
-    {% platform_css "classic" %}
-    <link rel="stylesheet" type="text/x-scss" href="{{ STATIC_URL }}css/wirecloud_core.scss"  />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard_core.css"  />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue_core.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue.css" />
-
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/icons.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/font-awesome.css" />
-    {% endcompress %}
-{% endblock %}
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/landing_page.css" />
 {% endblock %}
@@ -24,7 +11,7 @@
     <section id="innertop" class="grid-block">
 
         <div class="grid-box width25">
-            <div class="module">
+            <div class="panel module">
                 <p class="img"> <img src="{{ STATIC_URL }}images/innovation3.png" alt="Innovation"/> </p>
                 <h3> Innovation </h3>
                         <p> Innovate through experimentation by choosing the best suited widgets and prefab mashup-lets for your devised mashup from a vast, ever-growing distributed catalogue </p>
@@ -32,7 +19,7 @@
             </div>
 
         <div class="grid-box width25">
-            <div class="module">
+            <div class="panel module">
                 <p class="img"> <img src="{{ STATIC_URL }}images/features.png" alt="Features"/> </p>
                 <h3> Generic Features </h3>
                 <ul>
@@ -44,7 +31,7 @@
         </div>
 
         <div class="grid-box width25">
-            <div class="module">
+            <div class="panel module">
                 <p class="img"> <img src="{{ STATIC_URL }}images/piping.png" alt="Wiring &amp; Piping"/> </p>
                 <h3> Wiring &amp; Piping </h3>
                 <p> Wiring allows you to easily connect widgets in a mashup to create a full-fledged dashboard with RIA functionality. </p>
@@ -53,7 +40,7 @@
         </div>
 
         <div class="grid-box width25">
-            <div class="module">
+            <div class="panel module">
                 <p class="img"> <img src="{{ STATIC_URL }}images/fiware2.png" alt="Fiware" /></p>
                 <h3>100% FI-Ware</h3>
                 <ul>
@@ -74,17 +61,4 @@
 
     </section>
 
-{% endblock %}
-
-{% block js %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Wirecloud.init({
-                'monitor': new Wirecloud.TaskMonitorModel(),
-                'onSuccess': function () {
-                    LayoutManagerFactory.getInstance().resizeWrapper();
-                }
-            });
-        }, true);
-    </script>
 {% endblock %}

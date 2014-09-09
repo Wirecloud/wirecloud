@@ -7,13 +7,24 @@
     <title>{% block title %}{% trans "Wirecloud Platform" %}{% endblock %}</title>
 
     {% block meta %}
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="google" value="notranslate" />
     <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
     {% endblock %}
 
     {% block basecss %}
         {% compress css %}
-        <link rel="stylesheet" type="text/x-scss" href="{{ STATIC_URL }}css/wirecloud_core.scss" />
+        {% platform_css VIEW_MODE %}
+        <link rel="stylesheet" type="text/x-scss" href="{{ STATIC_URL }}css/wirecloud_core.scss"  />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard_core.css"  />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue_core.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue.css" />
+
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/icons.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/font-awesome.css" />
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/static_pages.css" />
         {% endcompress %}
     {% endblock %}
@@ -24,6 +35,8 @@
     {% block basejs %}
         <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}"></script>
         {% compress js %}
+        <script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime-locales.js"></script>
         {% wirecloud_bootstrap "classic" %}
         {% include "wirecloud/views/js_includes.js" %}
         {% extra_javascripts "classic" %}
@@ -31,18 +44,24 @@
     {% endblock %}
 
     {% block js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Wirecloud.init({
+                'monitor': new Wirecloud.TaskMonitorModel(),
+                'onSuccess': function () {
+                    LayoutManagerFactory.getInstance().resizeWrapper();
+                }
+            });
+        }, true);
+    </script>
     {% endblock %}
 </head>
 
 <body>
-    <div id="wirecloud_header">
-
+    <header id="wirecloud_header">
         {% include "wirecloud/views/header_common.html" %}
-
-        <div class="wirecloud_app_bar"><div class="btn-group wirecloud_header_nav"><span id="wirecloud_breadcrum" class="breadcrum add-on">{% block path %}{% endblock %}</span></div></div>
-
-    </div>
-
+        <div class="wirecloud_app_bar"><div class="btn-group btn-group-lg wirecloud_header_nav"><span id="wirecloud_breadcrum" class="breadcrum add-on">{% block path %}{% endblock %}</span></div></div>
+    </header>
     <div class="plain_content">
     {% block content %}
     {% endblock %}
