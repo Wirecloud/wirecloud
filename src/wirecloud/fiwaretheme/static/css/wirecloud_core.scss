@@ -64,65 +64,6 @@ body {
     color: #333333;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    color: #3E80AD;
-    margin: 10px 0;
-    font-family: Comfortaa;
-    font-weight: bold;
-    line-height: 20px;
-    text-rendering: optimizelegibility;
-}
-
-h1,
-h2,
-h3 {
-    line-height: 40px;
-}
-
-h1 {
-    font-size: 38.5px;
-}
-
-h2 {
-    font-size: 31.5px;
-}
-
-h3 {
-    font-size: 24.5px;
-}
-
-h4 {
-    font-size: 17.5px;
-}
-
-h5 {
-    font-size: 14px;
-}
-
-h6 {
-    font-size: 11.9px;
-}
-
-ul, ol {
-    padding: 0;
-    margin: 0 0 9px 25px;
-}
-
-ul ul,
-ul ol,
-ol ol,
-ol ul {
-    margin-bottom: 0;
-}
-
-ul {
-    list-style: disc;
-}
-
-li {
-    line-height: 18px;
-}
-
 label {
     display: block;
     margin-bottom: 5px;
@@ -136,6 +77,11 @@ label {
     font-size: 14pt;
     font-weight: bold;
     margin-bottom: 5px;
+}
+
+.wirecloud_app_bar {
+    padding: 0px 0 5px 0;
+    white-space: nowrap;
 }
 
 .logo_wrapper {
@@ -363,14 +309,8 @@ label {
     bottom: 0px;
     width: 70%;
     max-width: 100%;
-    height: 10ex;
     z-index: 4;
     margin: 4ex;
-    height: 8ex;
-}
-
-#loading-message .window_content {
-    margin-top: 1ex;
 }
 
 #loading-subtask-title {
@@ -420,7 +360,7 @@ label {
 }
 
 .powered-by-wirecloud {
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 .powered-by-wirecloud:before {

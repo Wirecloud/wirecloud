@@ -67,63 +67,6 @@ body {
     background: #fcfcfc;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    color: #60C1CF;
-    margin: 10px 0;
-    font-family: Comfortaa;
-    font-weight: $headings-font-weight;
-    line-height: $headings-line-height;
-    text-rendering: optimizelegibility;
-}
-
-h1, h2, h3 {
-    line-height: 40px;
-}
-
-h1 {
-    font-size: 38.5px;
-}
-
-h2 {
-    font-size: 31.5px;
-}
-
-h3 {
-    font-size: 24.5px;
-}
-
-h4 {
-    font-size: 17.5px;
-}
-
-h5 {
-    font-size: 14px;
-}
-
-h6 {
-    font-size: 11.9px;
-}
-
-ul, ol {
-    padding: 0;
-    margin: 0 0 9px 25px;
-}
-
-ul ul,
-ul ol,
-ol ol,
-ol ul {
-    margin-bottom: 0;
-}
-
-ul {
-    list-style: disc;
-}
-
-li {
-    line-height: 18px;
-}
-
 a:hover {
     color: #60C1CF;
 }
@@ -315,7 +258,7 @@ footer {
 /* END OIL Header */
 
 .wirecloud_app_bar {
-    margin: 0 0 5px 0;
+    margin: 0 0 6px 0;
     white-space: nowrap;
 }
 
@@ -345,7 +288,7 @@ footer {
 
 .wirecloud_toolbar .styled_button .badge {
     position: absolute;
-    bottom: -10px;
+    bottom: -6px;
     right: 0;
 }
 
@@ -543,7 +486,7 @@ footer {
 }
 
 .powered-by-wirecloud {
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 .powered-by-wirecloud:before {

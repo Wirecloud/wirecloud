@@ -1,3 +1,7 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+@import 'compass/css3';
+
 .popover {
     position: absolute;
     top: 0;
@@ -7,15 +11,14 @@
     padding: 1px;
     text-align: left;
     white-space: normal;
-    background-color: #ffffff;
+    font-size: $font-size-base;
+    line-height: $line-height-base;
+    color: contrast-color($popover-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    background-color: $popover-bg;
     border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -webkit-background-clip: padding-box;
-    -moz-background-clip: padding;
-    background-clip: padding-box;
+    border-radius: $border-radius-large;
+    @include box-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+    @include background-clip(padding-box);
 }
 
 .popover.top {
@@ -37,12 +40,11 @@
 .popover-title {
     padding: 8px 14px;
     margin: 0;
-    font-size: 14px;
     font-weight: normal;
-    line-height: 18px;
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #ebebeb;
-    border-radius: 5px 5px 0 0;
+    font-size: $font-size-base;
+    background-color: $popover-title-bg;
+    border-bottom: 1px solid darken($popover-title-bg, 5%);
+    border-radius: ($border-radius-large - 1) ($border-radius-large - 1) 0 0;
 }
 
 .popover-title:empty {
@@ -83,7 +85,7 @@
 .popover.top .arrow:after {
     bottom: 1px;
     margin-left: -10px;
-    border-top-color: #ffffff;
+    border-top-color: $popover-bg;
     border-bottom-width: 0;
 }
 
@@ -98,7 +100,7 @@
 .popover.right .arrow:after {
     bottom: -10px;
     left: 1px;
-    border-right-color: #ffffff;
+    border-right-color: $popover-bg;
     border-left-width: 0;
 }
 
@@ -113,7 +115,7 @@
 .popover.bottom .arrow:after {
     top: 1px;
     margin-left: -10px;
-    border-bottom-color: #ffffff;
+    border-bottom-color: $popover-bg;
     border-top-width: 0;
 }
 
@@ -128,6 +130,6 @@
 .popover.left .arrow:after {
     right: 1px;
     bottom: -10px;
-    border-left-color: #ffffff;
+    border-left-color: $popover-bg;
     border-right-width: 0;
 }

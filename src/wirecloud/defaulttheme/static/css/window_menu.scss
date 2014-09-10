@@ -19,7 +19,8 @@
 .window_menu {
     color: contrast-color($modal-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     background: $modal-bg;
-    border-radius: 16px;
+    border: 1px solid $modal-content-border-color;
+    border-radius: $border-radius-large;
     box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
     position: absolute;
     text-align: left;
@@ -45,9 +46,9 @@
 }
 
 .window_menu > .window_top > .icon-remove {
+    margin-top: ((($headings-line-height * $font-size-h3) - 20px) / 2);
     float: right;
     font-size: 20px;
-    line-height: floor($line-height-factor-base * $font-size-large);
 }
 
 .window_menu > .window_content, .window_menu > .styled_form > div > table {
@@ -70,4 +71,9 @@
     border: 1px solid #888;
     padding: 1ex;
     border-radius: 1ex;
+}
+
+/* TODO */
+.publish_workspace .se-notebook {
+    height: 357px;
 }

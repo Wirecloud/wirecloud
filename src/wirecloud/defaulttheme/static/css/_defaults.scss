@@ -9,7 +9,7 @@ $brand-default:         #FFFFFF !default;
 $brand-primary:         #428bca !default;
 $brand-success:         #5cb85c !default;
 $brand-info:            #5bc0de !default;
-$brand-warning:         #f0ad4e !default;
+$brand-warning:         #E9C12F !default;
 $brand-danger:          #D8544F !default;
 
 $border-radius-base:        4px !default;
@@ -48,6 +48,7 @@ $font-family-base:          "Helvetica Neue", Helvetica, Arial, sans-serif !defa
 $headings-font-family:      inherit !default;
 $headings-font-weight:      bold !default;
 $headings-line-height:      1.1 !default;
+$headings-color:            inherit !default;
 $font-size-h1:              floor($font-size-base * 2.75) !default; // 38px
 $font-size-h2:              floor($font-size-base * 2.25) !default; // 32px
 $font-size-h3:              floor($font-size-base * 1.75) !default; // 24px
@@ -149,9 +150,14 @@ $nav-disabled-link-hover-color: $gray-light !default;
 
 $panel-bg:                 $body-bg !default;
 $panel-border-radius:      $border-radius-base !default;
-$panel-footer-bg:          #F5F5F5 !default;
+$panel-footer-bg:          darken($panel-bg, 3%) !default;
 
 $panel-default-heading-bg: $panel-footer-bg !default;
+
+/* Popovers */
+
+$popover-bg:               #FFF !default;
+$popover-title-bg:         darken($popover-bg, 3%) !default;
 
 /* Modals */
 
@@ -159,6 +165,7 @@ $modal-bg:                 $panel-bg !default;
 $modal-header-bg:          $panel-bg !default;
 $modal-footer-bg:          $panel-footer-bg !default;
 
+$modal-content-border-color: rgba(0,0,0,.2);
 $modal-header-border-color: #DDD !default;
 $modal-footer-border-color: $modal-header-border-color !default;
 

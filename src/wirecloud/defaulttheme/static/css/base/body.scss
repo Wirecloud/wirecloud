@@ -6,6 +6,32 @@ body {
     line-height: $line-height-base;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    margin: ($line-height-base / 2) 0;
+    font-family: $headings-font-family;
+    font-weight: $headings-font-weight;
+    line-height: $headings-line-height;
+    color: $headings-color;
+    text-rendering: optimizelegibility;
+}
+
+h1, h2, h3 {
+    margin-top: $line-height-base;
+    margin-bottom: ($line-height-base / 2);
+}
+
+h4, h5, h6 {
+    margin-top: ($line-height-base / 2);
+    margin-bottom: ($line-height-base / 2);
+}
+
+h1 { font-size: $font-size-h1; }
+h2 { font-size: $font-size-h2; }
+h3 { font-size: $font-size-h3; }
+h4 { font-size: $font-size-h4; }
+h5 { font-size: $font-size-h5; }
+h6 { font-size: $font-size-h6; }
+
 a {
     color: $brand-primary;
     text-decoration: none;
@@ -14,4 +40,24 @@ a {
 
 p {
     margin: 0 0 floor($line-height-base / 2) 0;
+}
+
+.lead {
+    margin-bottom: $line-height-base;
+    font-size: floor(($font-size-base * 1.15));
+    font-weight: 300;
+    line-height: 1.4;
+
+    @media (min-width: 768px) {
+        font-size: floor(($font-size-base * 1.5));
+    }
+}
+
+ul, ol {
+    margin-top: 0;
+    margin-bottom: floor($line-height-base / 2);
+
+    ul, ol {
+        margin-bottom: 0;
+    }
 }

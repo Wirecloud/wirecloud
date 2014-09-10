@@ -84,7 +84,8 @@ label {
 }
 
 .wirecloud_app_bar {
-    margin: -5px 0 5px 0;
+    margin: -5px 0 0 0;
+    padding: 0 0 5px 0;
     white-space: nowrap;
 }
 
@@ -199,7 +200,7 @@ label {
 
 .wirecloud_toolbar .styled_button .badge {
     position: absolute;
-    bottom: -10px;
+    bottom: -5px;
     right: 0px;
 }
 
@@ -250,16 +251,6 @@ label {
     z-index: 3;
 }
 
-#loading-window .window_top {
-    padding-bottom: 0px;
-    margin-bottom: 4px;
-    font-size: 120%;
-}
-
-#loading-window .window_title:before {
-    content: none;
-}
-
 #loading-window.fadding #loading-background {
     display: none;
 }
@@ -274,10 +265,8 @@ label {
     bottom: 0px;
     width: 70%;
     max-width: 100%;
-    height: 10ex;
     z-index: 4;
     margin: 4ex;
-    height: 8ex;
 }
 
 #loading-subtask-title {
