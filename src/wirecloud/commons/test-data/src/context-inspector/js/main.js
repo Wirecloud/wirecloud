@@ -77,7 +77,7 @@
                 testers[key].update(new_values[key]);
             }
 
-            if ('heightInPixels' in new_values) {
+            if ('heightInPixels' in new_values || 'widthInPixels' in new_values) {
                 notebook.repaint();
             }
         });
