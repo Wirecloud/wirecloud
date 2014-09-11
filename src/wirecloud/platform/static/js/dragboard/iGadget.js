@@ -322,9 +322,14 @@ IWidget.prototype.build = function () {
     this.rightResizeHandle = contents.tmp.rightresizehandle;
     this.titleelement = contents.tmp.titleelement;
 
-    this.element.addEventListener('transitionend', function () {
-        if (this.layout.iwidgetToMove == null) {
-            this._notifyWindowResizeEvent();
+    this.element.addEventListener('transitionend', function (e) {
+        if (this.layout.iwidgetToMove == null && ['width', 'height', 'top', 'left'].indexOf(e.propertyName) !== -1) {
+            this.internal_iwidget.contextManager.modify({
+                'height': this.contentHeight,
+                'width': this.contentWidth,
+                'heightInPixels': this.content.offsetHeight,
+                'widthInPixels': this.content.offsetWidth
+            });
         }
     }.bind(this), true);
 
@@ -562,16 +567,6 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
 
     // Recompute size
     this._recomputeSize(true);
-
-    /* TODO this is a temporally workaround needed when using display:none to hide tabs */
-    // Notify new sizes if needed
-    var newHeight = this.getHeight();
-    var newWidth = this.getWidth();
-
-    if ((oldHeight !== newHeight) || (oldWidth !== newWidth)) {
-        this.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
-    }
-    /* TODO end of temporally workaround */
 };
 
 /**
@@ -587,11 +582,6 @@ IWidget.prototype._recomputeWidth = function () {
     }
 
     this.element.style.width = width + "px";
-
-    // Notify Context Manager
-    this.internal_iwidget.contextManager.modify({
-        'widthInPixels': width
-    });
 };
 
 /**
@@ -686,12 +676,6 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
         }
 
         this._recomputeWrapper(contentHeight);
-
-        // Notify Context Manager about the new size
-        this.internal_iwidget.contextManager.modify({
-            'heightInPixels': contentHeight
-        });
-
     } else { // minimized
         this._recomputeWrapper();
         contentHeight = this.element.offsetHeight;
@@ -757,6 +741,11 @@ IWidget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persi
         this.internal_iwidget.contextManager.modify({
             'height': this.contentHeight,
             'width': this.contentWidth,
+            'heightInPixels': this.content.offsetHeight,
+            'widthInPixels': this.content.offsetWidth
+        });
+    } else {
+        this.internal_iwidget.contextManager.modify({
             'heightInPixels': this.content.offsetHeight,
             'widthInPixels': this.content.offsetWidth
         });
