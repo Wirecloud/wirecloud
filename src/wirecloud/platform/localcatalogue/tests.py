@@ -445,6 +445,38 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('localcatalogue', 'localcatalogue-selenium')
 
+    def test_basic_resource_details(self):
+
+        self.login()
+
+        with self.myresources_view as myresources:
+            catalogue_base_element = myresources.wait_catalogue_ready()
+            myresources.search('Test')
+            resource = myresources.search_in_results('Test')
+            self.scroll_and_click(resource)
+            details_interface = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+            try:
+                tabs = details_interface.find_elements_by_css_selector('.se-notebook-tab')
+                changelog_tab_found = False
+                for tab in tabs:
+                    if tab.text == 'Change Log':
+                        changelog_tab_found = True
+                        tab.click()
+                        changelog_contents = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.se-notebook-tab-content.changelog'), base_element=details_interface))
+                        headings = changelog_contents.find_elements_by_css_selector('h1')
+                        self.assertEqual(len(headings), 1)
+                self.assertTrue(changelog_tab_found, 'Missing change log tab')
+
+                WebDriverWait(self.driver, 1).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-doc"), base_element=details_interface, parent=True)).click()
+                self.wait_element_visible_by_css_selector('.window_menu:not(#loading-message) .window_content h1')
+                doc_content = self.driver.find_element_by_css_selector('.window_menu:not(#loading-message) .window_content')
+                headings = doc_content.find_elements_by_css_selector('h1, h2')
+                self.assertEqual(len(headings), 2)
+                WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".window_menu .icon-remove"), parent=True)).click()
+
+            finally:
+                WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+
     def test_public_resources(self):
 
         self.login()

@@ -61,13 +61,17 @@
                     main_description.appendChild(this.main_details_painter.paint(resource));
 
                     if (resource.changelog) {
-                        var changelog = details.createTab({'name': gettext('Change Log'), 'closable': false});
-                        changelog.addEventListener('show', function () {
+                        var changelog = details.createTab({'name': gettext('Change Log'), 'containerOptions': {'class': 'changelog loading'}, 'closable': false});
+                        changelog.addEventListener('show', function (tab) {
+                            tab.disable();
                             Wirecloud.io.makeRequest(this.mainview.catalogue.RESOURCE_CHANGELOG_ENTRY.evaluate(resource), {
                                 method: 'GET',
                                 onSuccess: function (response) {
                                     changelog.wrapperElement.innerHTML = response.responseText;
-                                }.bind(this)
+                                }.bind(this),
+                                onComplete: function () {
+                                    tab.enable();
+                                }
                             });
                         }.bind(this));
                     }
