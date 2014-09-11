@@ -244,7 +244,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         with api_test_iwidget:
             self.assertEqual(self.driver.find_element_by_id('pref_registercallback_test').text, 'Success!!')
-            self.assertEqual(self.driver.find_element_by_id('makerequest_test').text, 'Success!!')
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('makerequest_test').text, 'Success!!')
             prop_input = self.driver.find_element_by_css_selector('#update_prop_input')
             self.fill_form_input(prop_input, 'new value')
             # Work around Firefox driver bugs
