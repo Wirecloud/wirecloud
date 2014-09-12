@@ -232,9 +232,8 @@
         }
         this.events.visibilityChange.dispatch(this);
 
-        // TODO Hay que ajustar refPosition.y y refPosition.x para que el menú no
-        // pueda salirse del área visible
-        if ('x' in refPosition && 'y' in refPosition) {
+        if (!('left' in refPosition) && 'x' in refPosition && 'y' in refPosition) {
+
             this.wrapperElement.style.top = refPosition.y + "px";
             this.wrapperElement.style.left = refPosition.x + "px";
         } else {
