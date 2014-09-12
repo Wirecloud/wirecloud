@@ -25,14 +25,6 @@
 
     "use strict";
 
-    var updateTitle = function updateTitle() {
-        if (typeof this.title === 'undefined' || this.title === null) {
-            this.tabElement.setAttribute('title', this.nameText);
-        } else {
-            this.tabElement.setAttribute('title', this.title);
-        }
-    };
-
     /**
      * Este compontente representa a un tab de un notebook.
      */
@@ -57,8 +49,10 @@
         }
         options.useFullHeight = true;
 
-        this.tabId = id;
-        this.notebook = notebook;
+        Object.defineProperties(this, {
+            'notebook': {value: notebook},
+            'tabId': {value: id}
+        });
 
         this.tabElement = document.createElement("div");
         this.tabElement.className = "se-notebook-tab";
@@ -80,22 +74,25 @@
 
         /* Process options */
         if (options.closable) {
-            var closeButton = new StyledElements.StyledButton({
+            var closeButton = new this.Button({
                 iconClass: "icon-remove",
                 plain: true,
                 'class': "close_button"
             });
-            closeButton.insertInto(this.tabElement, this.name);
+            closeButton.insertInto(this.tabElement);
 
             closeButton.addEventListener("click",
                                          this.close.bind(this),
                                          false);
         }
 
-        this.title = options.title;
         this.rename(options.name);
+        this.setTitle(options.title);
     };
     Tab.prototype = new StyledElements.Container({extending: true});
+
+    Tab.prototype.Tooltip = StyledElements.Tooltip;
+    Tab.prototype.Button = StyledElements.StyledButton;
 
     /**
      * Elimina este Tab del notebook al que está asociado.
@@ -112,8 +109,6 @@
     Tab.prototype.rename = function rename(newName) {
         this.nameText = newName;
         this.name.textContent = this.nameText;
-
-        updateTitle.call(this);
     };
 
     /**
@@ -121,10 +116,20 @@
      * puntero del ratón este encima de la pestaña simulando al atributo "title" de
      * los elementos HTML.
      */
-    Tab.prototype.setTitle = function setTitle(newTitle) {
-        this.title = newTitle;
+    Tab.prototype.setTitle = function setTitle(title) {
 
-        updateTitle.call(this);
+        if (title == null || title === '') {
+            if (this.tooltip != null) {
+                this.tooltip.destroy();
+                this.tooltip = null;
+            }
+        } else {
+            if (this.tooltip == null) {
+                this.tooltip = new this.Tooltip({content: title, placement: ['bottom', 'top', 'right', 'left']});
+                this.tooltip.bind(this.tabElement);
+            }
+            this.tooltip.options.content = title;
+        }
     };
 
     /**

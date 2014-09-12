@@ -120,6 +120,8 @@
     PopupMenu.prototype = new window.StyledElements.StyledElement();
     window.StyledElements.PopupMenu = PopupMenu;
 
+    /* Popover */
+
     var Popover = function Popover(options) {
         var popover = new RealStyledElements.Popover(options);
 
@@ -167,6 +169,8 @@
         }
     };
     window.StyledElements.Popover = Popover;
+
+    /* SendMenuItems */
 
     var getEventActions = function getEventActions(endpoint) {
         var i, actions, contactSlots, nslotsByLabel, slotInfo, actionLabel;
@@ -267,8 +271,15 @@
         Tooltip: StyledElements.Tooltip
     });
 
+    /* Tab */
+    var Tab = extend(RealStyledElements.StyledNotebook.prototype.Tab, {
+        Button: StyledElements.StyledButton,
+        Tooltip: StyledElements.Tooltip
+    });
+
     /* Notebook */
     StyledElements.StyledNotebook = extend(RealStyledElements.StyledNotebook, {
+        Tab: StyledElements.Tab,
         Button: StyledElements.StyledButton
     });
 

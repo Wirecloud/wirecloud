@@ -214,6 +214,7 @@
     StyledNotebook.prototype = new StyledElements.StyledElement();
 
     StyledNotebook.prototype.Button = StyledElements.StyledButton;
+    StyledNotebook.prototype.Tab = StyledElements.Tab;
 
     /**
      * @private
@@ -334,7 +335,7 @@
         var defaultOptions = {
             'initiallyVisible': false,
             'name': '',
-            'tab_constructor': StyledElements.Tab
+            'tab_constructor': this.Tab
         };
         options = Wirecloud.Utils.merge(defaultOptions, options);
 
