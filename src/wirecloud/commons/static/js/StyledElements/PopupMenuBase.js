@@ -25,8 +25,21 @@
 
     "use strict";
 
-    var setPosition = function setPosition(refPosition, position) {
-        switch (position) {
+    var POPUP_POSITIONS = ['left-bottom', 'right-bottom', 'top-left', 'top-right', 'bottom-right', 'bottom-left'];
+    Object.freeze(POPUP_POSITIONS);
+
+    var DEFAULT_PLACEMENT = ['bottom-left', 'bottom-right', 'top-left', 'top-right'];
+    Object.freeze(DEFAULT_PLACEMENT);
+
+
+    var setPosition = function setPosition(refPosition, placement) {
+        var i = 0;
+        for (i = 0; i < POPUP_POSITIONS.length; i++) {
+            this.wrapperElement.classList.remove('se-popup-menu-' + POPUP_POSITIONS[i]);
+        }
+
+        this.wrapperElement.classList.add('se-popup-menu-' + placement);
+        switch (placement) {
         case 'left-bottom':
             this.wrapperElement.style.left = (refPosition.left - this.wrapperElement.offsetWidth + 1) + "px";
             this.wrapperElement.style.top = (refPosition.top - 1) + "px";
@@ -66,12 +79,12 @@
         return element_area - visible_area;
     };
 
-    var fixPosition = function fixPosition(refPosition, weights, positions) {
+    var fixPosition = function fixPosition(refPosition, weights, placements) {
         var best_weight = Math.min.apply(Math, weights);
         var index = weights.indexOf(best_weight);
-        var position = positions[index];
+        var placement = placements[index];
 
-        setPosition.call(this, refPosition, position);
+        setPosition.call(this, refPosition, placement);
 
         var parent_box = this.wrapperElement.parentElement.getBoundingClientRect();
         var element_box = this.wrapperElement.getBoundingClientRect();
@@ -92,7 +105,7 @@
      */
     var PopupMenuBase = function PopupMenuBase(options) {
         var defaultOptions = {
-            'position': ['bottom-left', 'bottom-right', 'top-left', 'top-right']
+            'placement': null
         };
         options = Wirecloud.Utils.merge(defaultOptions, options);
 
@@ -103,13 +116,27 @@
         StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange']);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = 'popup_menu hidden';
+        this.wrapperElement.className = 'se-popup-menu hidden';
         this._context = null;
-        if (Array.isArray(options.position)) {
-            this._position = options.position;
+        if ('position' in options) {
+            // Backwards compatibility
+            if (Array.isArray(options.position)) {
+                this._placement = options.position;
+            } else if (typeof options.position === 'string') {
+                this._placement = [options.placement];
+            } else {
+                this._placement = DEFAULT_PLACEMENT;
+            }
         } else {
-            this._position = [options.position];
+            if (Array.isArray(options.placement)) {
+                this._placement = options.placement;
+            } else if (typeof options.placement === 'string') {
+                this._placement = [options.placement];
+            } else {
+                this._placement = DEFAULT_PLACEMENT;
+            }
         }
+
         this._items = [];
         this._dynamicItems = [];
         this._submenus = [];
@@ -214,13 +241,13 @@
             i = 0;
             var weights = [];
             do {
-                setPosition.call(this, refPosition, this._position[i]);
+                setPosition.call(this, refPosition, this._placement[i]);
                 weights.push(standsOut.call(this));
                 i += 1;
-            } while (weights[i - 1] > 0 && i < this._position.length);
+            } while (weights[i - 1] > 0 && i < this._placement.length);
 
             if (weights[i - 1] > 0) {
-                fixPosition.call(this, refPosition, weights, this._position);
+                fixPosition.call(this, refPosition, weights, this._placement);
             }
         }
         this.wrapperElement.style.display = 'block';

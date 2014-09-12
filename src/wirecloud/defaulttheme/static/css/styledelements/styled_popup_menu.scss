@@ -1,10 +1,10 @@
 @import 'variables';
 @import 'compass/utilities/color/contrast';
 
-.popup_menu {
+.se-popup-menu {
     position: absolute;
     z-index: 111112;
-    margin: 0;
+    margin: 4px;
     white-space: nowrap;
     padding: 5px 0;
     background: #FFFFFF;
@@ -14,33 +14,66 @@
     font-size: $font-size-base;
     font-family: arial, sans-serif;
     border-radius: $border-radius-base;
+    box-sizing: border-box;
+    min-width: 160px;
+
+    &.se-popup-menu-left-bottom {
+        margin-top: 0;
+        margin-left: -4px;
+    }
+
+    &.se-popup-menu-right-bottom {
+        margin-top: 0;
+    }
+
+    &.se-popup-menu-top-left {
+        margin-top: -4px;
+        margin-left: 0;
+    }
+
+    &.se-popup-menu-top-right {
+        margin-top: -4px;
+        margin-left: 0;
+    }
+
+    &.se-popup-menu-bottom-left {
+        margin-left: 0;
+    }
+
+    &.se-popup-menu-bottom-right {
+        margin-left: 0;
+    }
+
+    &.se-popup-submenu {
+        margin: 0;
+    }
 }
 
-.popup_menu > .menu_item {
+.se-popup-menu-item {
     padding: 3px 20px;
     cursor: pointer;
+
+    &.submenu:after {
+        display: block;
+        content: " ";
+        float: right;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+        border-width: 5px 0 5px 5px;
+        border-left-color: #ccc;
+        margin-top: 3px;
+        margin-right: -5px;
+    }
+
+    &.hovered {
+        color: contrast-color($brand-primary, $text-color-light, $text-color-dark, $text-color-threshold);
+        background: $brand-primary;
+    }
 }
 
-.popup_menu > .submenu:after {
-    display: block;
-    content: " ";
-    float: right;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: 5px 0 5px 5px;
-    border-left-color: #ccc;
-    margin-top: 3px;
-    margin-right: -5px;
-}
-
-.popup_menu > .menu_item.hovered {
-    color: contrast-color($brand-primary, $text-color-light, $text-color-dark, $text-color-threshold);
-    background: $brand-primary;
-}
-
-.popup_menu > hr {
+.se-popup-menu > hr {
     height: 1px;
     background-color: #BEBEBE;
     outline: none;

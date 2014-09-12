@@ -11,7 +11,7 @@
         StyledElements.StyledElement.call(this, ['click', 'mouseover', 'mouseout']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.classList.add("menu_item");
+        this.wrapperElement.classList.add("se-popup-menu-item");
 
         var span = document.createElement("span");
         span.appendChild(document.createTextNode(text));

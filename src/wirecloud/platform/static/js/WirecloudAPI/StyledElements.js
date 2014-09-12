@@ -53,6 +53,7 @@
         'PaginatedSource': window.parent.StyledElements.PaginatedSource,
         'PaginationInterface': window.parent.StyledElements.PaginationInterface,
         'StaticPaginatedSource': window.parent.StyledElements.StaticPaginatedSource,
+        'Separator': window.parent.StyledElements.Separator,
         'MenuItem': window.parent.StyledElements.MenuItem,
         'ModelTable': window.parent.StyledElements.ModelTable,
         'HorizontalLayout': window.parent.StyledElements.HorizontalLayout,
@@ -94,6 +95,26 @@
             Object.freeze(refPosition);
 
             menu.show(refPosition);
+        };
+
+        this.hide = function hide() {
+            menu.hide();
+        };
+
+        this.isVisible = function isVisible() {
+            return menu.isVisible();
+        };
+
+        this.addEventListener = function addEventListener(event_name, listener) {
+            menu.addEventListener(event_name, listener);
+        };
+
+        this.removeEventListener = function removeEventListener(event_name, listener) {
+            menu.removeEventListener(event_name, listener);
+        };
+
+        this.destroy = function destroy() {
+            menu = null;
         };
     };
     PopupMenu.prototype = new window.StyledElements.StyledElement();
@@ -237,6 +258,12 @@
 
     /* Button */
     StyledElements.StyledButton = extend(RealStyledElements.StyledButton, {
+        Tooltip: StyledElements.Tooltip
+    });
+
+    /* PopupButton */
+    StyledElements.PopupButton = extend(RealStyledElements.PopupButton, {
+        PopupMenu: StyledElements.PopupMenu,
         Tooltip: StyledElements.Tooltip
     });
 

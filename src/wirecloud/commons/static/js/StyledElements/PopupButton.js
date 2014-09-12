@@ -25,8 +25,17 @@
 
     "use strict";
 
+    var visibilityChangeListener = function visibilityChangeListener() {
+        if (this.popup_menu.isVisible()) {
+            this.wrapperElement.classList.add('open');
+        } else {
+            this.wrapperElement.classList.remove('open');
+        }
+    };
+
     var PopupButton = function PopupButton(options) {
         var defaultOptions = {
+            'menuOptions': null,
             'menu': null
         };
         options = Wirecloud.Utils.merge(defaultOptions, options);
@@ -37,7 +46,7 @@
             this.popup_menu = options.menu;
             this._owned_popup_menu = false;
         } else {
-            this.popup_menu = new StyledElements.PopupMenu(options.menuOptions);
+            this.popup_menu = new this.PopupMenu(options.menuOptions);
             this._owned_popup_menu = true;
         }
 
@@ -49,16 +58,11 @@
             }
         }.bind(this));
 
-        this._visibilityChangeListener = function () {
-            if (this.popup_menu.isVisible()) {
-                this.wrapperElement.classList.add('open');
-            } else {
-                this.wrapperElement.classList.remove('open');
-            }
-        }.bind(this);
+        this._visibilityChangeListener = visibilityChangeListener.bind(this);
         this.popup_menu.addEventListener('visibilityChange', this._visibilityChangeListener);
     };
     PopupButton.prototype = new StyledElements.StyledButton({extending: true});
+    PopupButton.prototype.PopupMenu = StyledElements.PopupMenu;
 
     PopupButton.prototype.getPopupMenu = function getPopupMenu() {
         return this.popup_menu;
