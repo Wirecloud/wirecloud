@@ -222,8 +222,8 @@
     };
 
     var get_menu_item = function get_menu_item(label) {
-        var popup_menu = document.getElementsByClassName('popup_menu')[0];
-        return findElementByTextContent(popup_menu.getElementsByClassName('menu_item'), label);
+        var popup_menu = document.getElementsByClassName('se-popup-menu')[0];
+        return findElementByTextContent(popup_menu.getElementsByClassName('se-popup-menu-item'), label);
     };
 
     var get_endpoint = function get_endpoint(index, name) {

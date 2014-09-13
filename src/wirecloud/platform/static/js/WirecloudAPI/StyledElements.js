@@ -272,7 +272,7 @@
     });
 
     /* Tab */
-    var Tab = extend(RealStyledElements.StyledNotebook.prototype.Tab, {
+    StyledElements.Tab = extend(RealStyledElements.StyledNotebook.prototype.Tab, {
         Button: StyledElements.StyledButton,
         Tooltip: StyledElements.Tooltip
     });

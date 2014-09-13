@@ -86,7 +86,7 @@
     var publishWorkspace_in_popUp = function() {
         var popUpElements;
 
-        popUpElements = document.getElementsByClassName("popup_menu")[0].childNodes;
+        popUpElements = document.getElementsByClassName("se-popup-menu")[0].childNodes;
         return this.tutorial.findElementByTextContent(popUpElements, 'Upload to local catalogue');
     };
 

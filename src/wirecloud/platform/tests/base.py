@@ -139,7 +139,7 @@ class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
         if sign_in_button.text != 'Sign in':
             # Oiltheme
             sign_in_button.click()
-            popup_menu_element = self.wait_element_visible_by_css_selector('.popup_menu')
+            popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
             popup_menu = PopupMenuTester(self, popup_menu_element)
             popup_menu.click_entry('Sign in')
         else:
@@ -160,7 +160,7 @@ class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
         if sign_in_button.text != 'Sign in':
             # Oiltheme
             sign_in_button.click()
-            popup_menu_element = self.wait_element_visible_by_css_selector('.popup_menu')
+            popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
             popup_menu = PopupMenuTester(self, popup_menu_element)
             popup_menu.click_entry('Sign in')
         else:

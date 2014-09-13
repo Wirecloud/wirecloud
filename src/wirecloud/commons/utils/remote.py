@@ -54,7 +54,7 @@ class PopupMenuTester(object):
 
     def get_entry(self, name):
 
-        items = self.element.find_elements_by_css_selector('.menu_item')
+        items = self.element.find_elements_by_css_selector('.se-popup-menu-item')
 
         for item in items:
             span = item.find_element_by_css_selector('span')
@@ -69,12 +69,12 @@ class PopupMenuTester(object):
             item_name = (item_name,)
 
         tester = self
-        prev_popups = self.testcase.driver.find_elements_by_css_selector('.popup_menu')
+        prev_popups = self.testcase.driver.find_elements_by_css_selector('.se-popup-menu')
         for i, entry in enumerate(item_name[:-1]):
             current_element = tester.get_entry(entry)
             ActionChains(self.testcase.driver).move_to_element(current_element).perform()
-            WebDriverWait(self.testcase.driver, 5).until(lambda driver: len(driver.find_elements_by_css_selector('.popup_menu')) > len(prev_popups))
-            next_popups = self.testcase.driver.find_elements_by_css_selector('.popup_menu')
+            WebDriverWait(self.testcase.driver, 5).until(lambda driver: len(driver.find_elements_by_css_selector('.se-popup-menu')) > len(prev_popups))
+            next_popups = self.testcase.driver.find_elements_by_css_selector('.se-popup-menu')
             next_popup = next_popups[-1]
             tester = PopupMenuTester(self.testcase, next_popup)
             prev_popups = next_popups
@@ -127,7 +127,7 @@ class WiringEndpointTester(object):
 
     def open_menu(self):
         ActionChains(self.testcase.driver).context_click(self.element).perform()
-        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
+        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
         return PopupMenuTester(self.testcase, popup_menu_element)
 
@@ -202,7 +202,7 @@ class IWidgetTester(object):
 
         button = self.element.find_element_by_css_selector('.icon-cogs')
         button.click()
-        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
+        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
         return PopupMenuTester(self.testcase, popup_menu_element, button)
 
@@ -437,7 +437,7 @@ class WiringEntityTester(object):
     def open_menu(self):
         button = self.testcase.wait_element_visible_by_css_selector('.editPos_button', element=self.element)
         button.click()
-        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
+        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
         return PopupMenuTester(self.testcase, popup_menu_element, button)
 
@@ -510,7 +510,7 @@ class WorkspaceTabTester(object):
 
         tab_menu_button = self.testcase.wait_element_visible_by_css_selector('.icon-tab-menu', element=self.element)
         tab_menu_button.click()
-        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
+        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
         return PopupMenuTester(self.testcase, popup_menu_element, tab_menu_button)
 
@@ -650,7 +650,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
     def open_menu(self):
         button = self.wait_element_visible_by_css_selector('.wirecloud_header_nav .icon-reorder')
         button.click()
-        popup_menu_element = self.wait_element_visible_by_css_selector('.popup_menu')
+        popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
 
         return PopupMenuTester(self, popup_menu_element, button)
 
@@ -863,7 +863,7 @@ class MarketplaceViewTester(object):
     def open_menu(self):
         button = self.testcase.wait_element_visible_by_css_selector('.wirecloud_header_nav .icon-reorder')
         button.click()
-        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.popup_menu')
+        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
         return PopupMenuTester(self.testcase, popup_menu_element, button)
 

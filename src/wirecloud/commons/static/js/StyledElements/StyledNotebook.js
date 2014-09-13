@@ -343,7 +343,7 @@
         var tabId = this.tabsById.push(null);
 
         // Create the tab
-        if ((options.tab_constructor != StyledElements.Tab) && !(options.tab_constructor.prototype instanceof StyledElements.Tab)) {
+        if ((options.tab_constructor != this.Tab) && !(options.tab_constructor.prototype instanceof StyledElements.Tab)) {
             throw new TypeError();
         }
         var tab = new options.tab_constructor(tabId, this, options);
