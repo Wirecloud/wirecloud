@@ -117,7 +117,7 @@ def build_response(request, status_code, context, formatters, headers):
     return response
 
 
-def build_error_response(request, status_code, error_msg, extra_formats=None, headers=None, details=None):
+def build_error_response(request, status_code, error_msg, extra_formats=None, headers=None, details=None, context=None):
 
     if extra_formats is not None:
         formatters = extra_formats.copy()
@@ -125,7 +125,12 @@ def build_error_response(request, status_code, error_msg, extra_formats=None, he
     else:
         formatters = ERROR_FORMATTERS
 
-    return build_response(request, status_code, {'error_msg': error_msg, 'details': details}, formatters, headers)
+    if context is None:
+        context = {}
+
+    context.update({'error_msg': error_msg, 'details': details})
+
+    return build_response(request, status_code, context, formatters, headers)
 
 
 def parse_mime_type(mime_type):

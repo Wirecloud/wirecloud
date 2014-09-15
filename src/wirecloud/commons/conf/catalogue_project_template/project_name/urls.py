@@ -22,5 +22,5 @@ urlpatterns = patterns('',
 
 urlpatterns += staticfiles_urlpatterns()
 
-handler404 = "django.views.defaults.page_not_found"
+handler404 = "wirecloud.commons.views.page_not_found"
 handler500 = "wirecloud.commons.views.server_error"

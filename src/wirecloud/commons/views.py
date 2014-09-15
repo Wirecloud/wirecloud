@@ -25,6 +25,11 @@ extra_formatters = {
 }
 
 
+def page_not_found(request):
+
+    return build_error_response(request, 404, 'Page Not Found', extra_formatters, context={'request_path': request.path})
+
+
 def server_error(request):
 
     return build_error_response(request, 500, 'Internal Server Error', extra_formatters)
