@@ -87,7 +87,7 @@
         var popUpElements;
 
         popUpElements = document.getElementsByClassName("se-popup-menu")[0].childNodes;
-        return this.tutorial.findElementByTextContent(popUpElements, 'Upload to local catalogue');
+        return this.tutorial.findElementByTextContent(popUpElements, 'Upload to my resources');
     };
 
     var acceptButton = function() {
@@ -100,7 +100,7 @@
     Wirecloud.TutorialCatalogue.add('save-mashups', new Wirecloud.ui.Tutorial(gettext('Save & share your mashups'), [
             {'type': 'simpleDescription', 'title': gettext('Upload your Workspace'), 'msg': gettext("<p>You can upload your workspace in your local catalogue</p>"), 'elem': null},
             {'type': 'userAction', 'msg': gettext("Please click here to display the Workspaces menu management."), 'elem': workspaceButton, 'pos': 'downRight'},
-            {'type': 'userAction', 'msg': gettext("Click <em>Upload to local catalogue</em>"), 'elem': publishWorkspace_in_popUp, 'pos': 'downRight'},
+            {'type': 'userAction', 'msg': gettext("Click <em>Upload to my resources</em>"), 'elem': publishWorkspace_in_popUp, 'pos': 'downRight'},
             {'type': 'formAction',
              'mainTitle': 'Upload your Workspace',
              'mainMsg': "Complete the form",

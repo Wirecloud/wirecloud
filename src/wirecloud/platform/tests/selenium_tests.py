@@ -46,12 +46,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         # We need atleast one Workspace, so we cannot delete current workspace
-        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue'), must_be_disabled=('Remove',)).close()
+        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources'), must_be_disabled=('Remove',)).close()
 
         self.create_workspace(name='Test')
 
         # Now we have two workspaces so we can remove any of them
-        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue', 'Remove'), ()).close()
+        self.open_menu().check(('Rename', 'Settings', 'New workspace', 'Upload to my resources', 'Remove'), ()).close()
 
         self.rename_workspace('test2')
         tab = self.get_workspace_tab_by_name('Tab')

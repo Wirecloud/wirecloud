@@ -773,7 +773,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
     def publish_workspace(self, info):
 
-        self.open_menu().click_entry('Upload to local catalogue')
+        self.open_menu().click_entry('Upload to my resources')
 
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
 

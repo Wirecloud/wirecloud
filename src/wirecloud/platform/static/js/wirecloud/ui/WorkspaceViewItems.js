@@ -76,7 +76,7 @@
         });
         items.push(item);
 
-        item = new StyledElements.MenuItem(gettext('Upload to local catalogue'), function () {
+        item = new StyledElements.MenuItem(gettext('Upload to my resources'), function () {
             LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady({
                 onComplete: function () {
                     var dialog = new Wirecloud.ui.PublishWorkspaceWindowMenu(current_workspace);
