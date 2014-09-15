@@ -20,7 +20,7 @@
 from copy import deepcopy
 from six.moves.urllib.parse import urljoin
 
-from six import string_types
+import six
 
 from wirecloud.commons.utils.template.base import TemplateParseException
 from wirecloud.commons.utils.template.parsers.json import JSONTemplateParser
@@ -137,13 +137,13 @@ class TemplateParser(object):
                     elif use['type'] in ('vdef', 'inputendpoint', 'outputendpoint'):
                         variable = variables[use['variable']]
                         for field in variable:
-                            if isinstance(variable[field], string_types):
+                            if isinstance(variable[field], six.string_types):
                                 variable[field] = variable[field].replace('__MSG_' + index + '__', value)
                     elif use['type'] == 'upo':
                         variable = variables[use['variable']]
                         for option in variable['options']:
                             for field in option:
-                                if isinstance(option[field], string_types):
+                                if isinstance(option[field], six.string_types):
                                     option[field] = option[field].replace('__MSG_' + index + '__', value)
         del info['translations']
         del info['translation_index_usage']
@@ -168,3 +168,20 @@ class TemplateParser(object):
             info['js_files'] = [absolutize_url_field(js_file, base) for js_file in info['js_files']]
 
         return info
+
+    def get_resource_dependencies(self):
+
+        dependencies = set()
+
+        info = self.get_resource_info()
+        if info['type'] != 'mashup':
+            return dependencies
+
+        for tab_entry in info['tabs']:
+            for resource in tab_entry['resources']:
+                dependencies.add('/'.join([resource['vendor'], resource['name'], resource['version']]))
+
+        for id_, op in six.iteritems(info['wiring']['operators']):
+            dependencies.add(op['name'])
+
+        return dependencies

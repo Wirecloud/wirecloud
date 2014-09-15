@@ -420,7 +420,7 @@ class WirecloudTestCase(TransactionTestCase):
         translation.activate(new_language)
 
 
-def uses_extra_resources(resources, shared=False, public=True, users=(), groups=()):
+def uses_extra_resources(resources, shared=False, public=True, users=(), groups=(), deploy_only=False):
 
     def wrap(test_func):
 
@@ -434,6 +434,11 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
             for resource in resources:
                 wgt_file = open(os.path.join(base, resource), 'rb')
                 wgt = WgtFile(wgt_file)
+
+                if deploy_only:
+                    catalogue.add_packaged_resource(wgt_file, None, wgt_file=wgt, deploy_only=True)
+                    wgt_file.close()
+                    continue
 
                 resource = install_resource(wgt, None, None, True)
 

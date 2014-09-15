@@ -517,6 +517,8 @@ class WorkspacePublisherEntry(Resource):
     @commit_on_http_success
     def create(self, request, workspace_id):
 
+        import wirecloud.catalogue.utils as catalogue_utils
+
         content_type = get_content_type(request)[0]
         image_file = None
         smartphoneimage_file = None
@@ -533,7 +535,7 @@ class WorkspacePublisherEntry(Resource):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        missing_fields = check_json_fields(options, ('name', 'vendor', 'version', 'email'))
+        missing_fields = check_json_fields(options, ('name', 'vendor', 'version'))
         if len(missing_fields) > 0:
             return build_error_response(request, 400, _('Malformed JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
 
@@ -553,8 +555,10 @@ class WorkspacePublisherEntry(Resource):
         if smartphoneimage_file is not None:
             smartphoneimage_filename = 'images/smartphone' + os.path.splitext(smartphoneimage_file.name)[1]
             options['smartphoneimage'] = smartphoneimage_filename
+
         description = build_rdf_template_from_workspace(options, workspace, request.user)
 
+        # Build mashup wgt file
         f = BytesIO()
         zf = zipfile.ZipFile(f, 'w')
         zf.writestr('config.xml', bytes(description.serialize(format='pretty-xml')))
@@ -562,6 +566,11 @@ class WorkspacePublisherEntry(Resource):
             zf.writestr(image_filename, image_file.read())
         if smartphoneimage_file is not None:
             zf.writestr(smartphoneimage_filename, smartphoneimage_file.read())
+        for resource_info in options['embedded']:
+            (vendor, name, version) = (resource_info['vendor'], resource_info['name'], resource_info['version'])
+            resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+            base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
+            zf.write(os.path.join(base_dir, resource.template_uri), resource_info['src'])
         zf.close()
         wgt_file = WgtFile(f)
 

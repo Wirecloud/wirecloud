@@ -31,7 +31,7 @@ from django.test import Client
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
-from wirecloud.commons.utils.testcases import WirecloudTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
 from wirecloud.platform.models import IWidget, Tab, Variable, Workspace, UserWorkspace
 
 
@@ -2435,6 +2435,31 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         smartphone_image_path = os.path.join(base_dir, test_mashup_info['smartphoneimage'])
         self.assertTrue(filecmp.cmp(original_smartphone_image, smartphone_image_path))
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt', 'Wirecloud_TestOperator_1.0.zip'), shared=True, deploy_only=True)
+    def test_workspace_publish_embedmacs(self):
+
+        url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {
+            'vendor': 'Wirecloud',
+            'name': 'test-published-mashup',
+            'title': 'Mashup (Rest API Test)',
+            'version': '1.0.5',
+            'embedmacs': True
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['vendor'], 'Wirecloud')
+        self.assertEqual(response_data['name'], 'test-published-mashup')
+        self.assertEqual(response_data['title'], 'Mashup (Rest API Test)')
+        self.assertEqual(response_data['version'], '1.0.5')
+        embedded_resources = set(['/'.join((resource['vendor'], resource['name'], resource['version'])) for resource in response_data['embedded']])
+        self.assertEqual(embedded_resources, set(('Wirecloud/Test/1.0', 'Wirecloud/TestOperator/1.0')))
 
     def test_workspace_publish_bad_provided_data(self):
 

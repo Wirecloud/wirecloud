@@ -78,25 +78,16 @@ def check_mashup_dependencies(template, user):
         template = TemplateParser(template)
 
     missing_dependencies = set()
-    workspace_info = template.get_resource_info()
+    dependencies = template.get_resource_dependencies()
 
-    for tab_entry in workspace_info['tabs']:
-        for resource in tab_entry['resources']:
-            try:
-                catalogue_resource = CatalogueResource.objects.get(vendor=resource.get('vendor'), short_name=resource.get('name'), version=resource.get('version'))
-                if not catalogue_resource.is_available_for(user):
-                    raise CatalogueResource.DoesNotExist
-            except CatalogueResource.DoesNotExist:
-                missing_dependencies.add('/'.join((resource.get('vendor'), resource.get('name'), resource.get('version'))))
-
-    for id_, op in six.iteritems(workspace_info['wiring']['operators']):
-        (vendor, name, version) = op['name'].split('/')
+    for dependency in dependencies:
+        (vendor, name, version) = dependency.split('/')
         try:
-            resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-            if not resource.is_available_for(user):
+            catalogue_resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+            if not catalogue_resource.is_available_for(user):
                 raise CatalogueResource.DoesNotExist
         except CatalogueResource.DoesNotExist:
-            missing_dependencies.add('/'.join((vendor, name, version)))
+            missing_dependencies.add(dependency)
 
     if len(missing_dependencies) > 0:
         raise MissingDependencies(list(missing_dependencies))

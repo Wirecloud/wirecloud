@@ -162,6 +162,8 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
 def build_json_template_from_workspace(options, workspace, user):
     options['type'] = 'mashup'
     options['params'] = []
+    options['embedmacs'] = options.get('embedmacs', False) is True
+    options['embedded'] = set()
     options['translations'] = {}
     options['translation_index_usage'] = {}
 
@@ -212,7 +214,10 @@ def build_json_template_from_workspace(options, workspace, user):
 
         resources = []
         for iwidget in tab.iwidget_set.select_related('widget__resource', 'position').all():
-            resources.append(process_iwidget(workspace, iwidget, options['wiring'], parametrization['iwidgets'], readOnlyWidgets))
+            resource_info = process_iwidget(workspace, iwidget, options['wiring'], parametrization['iwidgets'], readOnlyWidgets)
+            resources.append(resource_info)
+            if options['embedmacs']:
+                options['embedded'].add('/'.join((resource_info['vendor'], resource_info['name'], resource_info['version'])))
 
         options['tabs'].append({
             'name': tab.name,
@@ -268,6 +273,8 @@ def build_json_template_from_workspace(options, workspace, user):
             }
 
         options['wiring']['operators'][id_] = operator_data
+        if options['embedmacs']:
+            options['embedded'].add(operator['name'])
 
     options['wiring']['connections'] = []
     for connection in wiring_status['connections']:
@@ -278,6 +285,18 @@ def build_json_template_from_workspace(options, workspace, user):
         })
 
     options['wiring']['views'] = wiring_status.get('views', ())
+
+    embedded = options['embedded']
+    options['embedded'] = []
+    for resource in embedded:
+        (vendor, name, version) = resource.split('/')
+        options['embedded'].append({
+            'vendor': vendor,
+            'name': name,
+            'version': version,
+            'src': 'macs/%s_%s_%s.wgt' % (vendor, name, version)
+        })
+    del options['embedmacs']
 
     return options
 
