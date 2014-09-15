@@ -144,7 +144,7 @@ class Proxy():
 
         # Open the request
         try:
-            res = requests.request(request_data['method'], request_data['url'], headers=request_data['headers'], data=request_data['data'], stream=True)
+            res = requests.request(request_data['method'], request_data['url'], headers=request_data['headers'], data=request_data['data'], stream=True, verify=getattr(settings, 'WIRECLOUD_HTTPS_VERIFY', True))
         except requests.exceptions.HTTPError:
             return HttpResponse(status=504)
         except requests.exceptions.ConnectionError:

@@ -65,6 +65,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         ('text/x-scss', 'wirecloud.commons.compressor_precompilers.SCSSPrecompiler'),
     )
     settings['ALLOW_ANONYMOUS_ACCESS'] = True
+    settings['WIRECLOUD_HTTPS_VERIFY'] = True
     settings['WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION'] = False
 
     settings['USE_TZ'] = True
