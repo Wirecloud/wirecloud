@@ -63,7 +63,8 @@
                 'shortTitle': gettext('Advanced'),
                 'fields': [
                     {name: 'readOnlyWidgets', label: gettext('Block widgets'), type: 'boolean'},
-                    {name: 'readOnlyConnectables', label: gettext('Block connections'), type: 'boolean'}
+                    {name: 'readOnlyConnectables', label: gettext('Block connections'), type: 'boolean'},
+                    {name: 'embedmacs', label: gettext('Embed used widgets/operators'), type: 'boolean'}
                 ]
             }
         ];
