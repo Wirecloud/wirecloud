@@ -13,7 +13,7 @@
     display: inline-block;
     margin: 6px;
     vertical-align: middle;
-    height: 142px;
+    height: 152px;
     width: 318px;
     text-align: left;
     overflow: hidden;
@@ -57,7 +57,7 @@
 .resource > .description > .txt-gradient {
     @include background-image(linear-gradient(to right, rgba($resource-bg, 0), $resource-bg));
     height: 18px;
-    width: 60px;
+    width: 70px;
 }
 
 .resource > img {
