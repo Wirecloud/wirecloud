@@ -89,7 +89,7 @@ header.navbar {
 }
 
 header.navbar {
-    height: 35px;
+    height: 37px;
     padding: 1px 2% 1px;
 }
 
@@ -102,17 +102,10 @@ header.navbar > .navbar-inner > .logo-header, header.navbar > .navbar-inner > .l
     display: inline-block;
 }
 
-header.navbar .logo-header > .logo {
-    border: 0px none;
-    display: block;
-    width: 60px;
-    padding-top: 0;
-}
-
 header.navbar .logo-header > .brand {
     display: inline-block;
     padding: 0;
-    margin: 12px 0 0 -1px;
+    margin: 2px 0 0 -8px;
     font-size: 23px;
     font-weight: 200;
     color: #60c1cf;
@@ -122,9 +115,15 @@ header.navbar .logo-header > .brand {
     font-family: "NeoTech";
 }
 
-header.navbar .logo-header > .brand > img {
-    margin: -3px 5px 0 0;
-    width: 97px;
+header.navbar .logo-header .fiware-logo {
+    border: 0px none;
+    display: block;
+    width: 60px;
+    padding-top: 0;
+}
+
+header.navbar .logo-header > .brand > .fiware-logo {
+    width: 158px;
 }
 
 header.navbar .logo-header > .brand > span {
@@ -135,19 +134,21 @@ header.navbar ul.oil-portal {
     height: 36px;
     padding: 0px;
     margin-bottom: 0px;
-    margin-left: 2px;
-    margin-top: 1px;
+    margin-left: 3px;
+    margin-top: 0px;
     display: inline-block;
     vertical-align: top;
+    font-family: Arial;
 }
 
 header.navbar ul.oil-portal > li {
     display: inline-block;
-    padding: 13px 18px 10px;
+    padding: 12px 18px 8px;
     list-style-type: none;
     line-height: 20px;
     vertical-align: top;
     font-size: 14px;
+    margin-right: 4px;
 }
 
 header.navbar ul.oil-portal > li:hover {
@@ -159,7 +160,6 @@ header.navbar ul.oil-portal > li:hover {
 header.navbar ul.oil-portal > li.active {
     background: #fcfcfc;
     height: 18px;
-    box-shadow: 0px 9px 0px -1px #FCFCFC;
 }
 
 header.navbar ul.oil-portal > li > a {
@@ -193,7 +193,7 @@ header.navbar .nav {
 
 header.navbar > .nav.pull-right {
     float: right;
-    margin-right: 0;
+    margin-right: -5px;
 }
 
 header.navbar .nav > li {
@@ -217,7 +217,7 @@ header.navbar .nav > li > a:hover {
 }
 
 header.navbar .nav > li > a > img {
-    width: 24px;
+    width: 20px;
     height: auto;
     vertical-align: middle;
     border: 0;
@@ -230,18 +230,19 @@ header.navbar .nav > li > a > .name {
     text-overflow: ellipsis;
     display: inline-block;
     font-size: 14px;
+    vertical-align: middle;
 }
 
 header.navbar .nav > .arrow-down-settings {
     vertical-align: middle;
-    width: 25px;
+    width: 22px;
     height: 25px;
     background-image: url("../images/arrow-down.png");
     display: inline-block;
     vertical-align: text-top;
     background-repeat: no-repeat;
     background-position: -1px -35px;
-    margin: 10px 0px 10px 1px;
+    margin: 8px 0px 6px 1px;
 }
 
 header.navbar .nav > .arrow-down-settings:hover {
@@ -250,6 +251,7 @@ header.navbar .nav > .arrow-down-settings:hover {
 
 footer {
     font-size: 14px;
+    font-family: Arial;
     line-height: 21px;
     color: rgb(140, 140, 140);
     padding: 1ex 1ex 11px 20px;

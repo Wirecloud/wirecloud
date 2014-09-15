@@ -209,9 +209,13 @@
     };
 
     WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {
-        if (this.footer == null) {
+        if (Wirecloud.constants.FIWARE_OFFICIAL_PORTAL && this.footer == null) {
             this.footer = document.createElement('footer');
-            this.footer.innerHTML = '<div>2014 © <a href="http://fi-ware.org/">FI-WARE</a>. The use of FI-LAB services is subject to the acceptance of the <a href="http://wiki.fi-ware.org/FI-LAB_Terms_and_Conditions">Terms and Conditions</a> and the <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/FI-LAB_Personal_Data_Protection_Policy">Personal Data Protection Policy</a></div>';
+            if (Wirecloud.constants.FIWARE_IDM_SERVER === 'https://account.lab.fi-ware.org') {
+                this.footer.innerHTML = '<div>2014 © <a href="http://fi-ware.org/">FIWARE</a>. The use of FIWARE Lab services is subject to the acceptance of the <a href="http://wiki.fi-ware.org/FI-LAB_Terms_and_Conditions">Terms and Conditions</a> and <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/FI-LAB_Personal_Data_Protection_Policy">Personal Data Protection Policy</a></div>';
+            } else {
+                this.footer.innerHTML = '<div>2014 © <a href="http://fi-ware.org/">FIWARE</a>. The use of FIWARE Testbed services is subject to the acceptance of the <a href="http://wiki.fi-ware.org/FI-LAB_Terms_and_Conditions">Terms and Conditions</a> and <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/FI-LAB_Personal_Data_Protection_Policy">Personal Data Protection Policy</a></div>';
+            }
             LayoutManagerFactory.getInstance().mainLayout.getSouthContainer().appendChild(this.footer);
             LayoutManagerFactory.getInstance().mainLayout.repaint();
         }

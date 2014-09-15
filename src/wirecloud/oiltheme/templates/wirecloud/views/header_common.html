@@ -1,22 +1,26 @@
 <header class="navbar">
   <nav class="navbar-inner">
     <div class="logo-header">
-        <a href="{{ FIWARE_HOME }}" class="logo-header">
-            <img alt="FI-WARE" class="logo" src="{{ STATIC_URL}}images/header-logo.png" />
-        </a>
-        <a href="{{ FIWARE_HOME }}" class="brand">{% if FIWARE_OFFICIAL_PORTAL %}{% ifequal FIWARE_IDM_SERVER "https://account.lab.fi-ware.org" %}
-        <img alt="FI-LAB" class="logo" src="{{ STATIC_URL}}images/filab.png" />
+      {% if FIWARE_OFFICIAL_PORTAL %}
+      <a href="{{ FIWARE_HOME }}" class="brand">
+        {% ifequal FIWARE_IDM_SERVER "https://account.lab.fi-ware.org" %}
+          <img alt="FIWARE Lab" class="fiware-logo" src="{{ STATIC_URL }}images/fiwarelab.png" />
+        {% else %}
+          <img alt="FIWARE Testbed" class="fiware-logo" src="{{ STATIC_URL }}images/fiwaretestbed.png" />
+        {% endifequal %}
+      </a>
       {% else %}
-        <img alt="FI-WARE Testbed" class="logo" src="{{ STATIC_URL}}images/testbed.png" />
-      {% endifequal %}{% else %}
-        <span>FI-</span>WARE
-      {% endif %}</a>
+      <a href="{{ FIWARE_HOME }}">
+          <img alt="FIWARE" class="fiware-logo" src="{{ STATIC_URL }}images/header-logo.png" />
+      </a>
+      <a href="{{ FIWARE_HOME }}" class="brand">
+          <span>FI</span>WARE
+      </a>
+      {% endif %}
     </div><ul class="oil-portal">
-      {% for portal in FIWARE_PORTALS %}
-      <li {% if portal.active %}class="active"{% endif %}>
+{% for portal in FIWARE_PORTALS %}<li {% if portal.active %}class="active"{% endif %}>
         <a href="{{ portal.url }}">{{ portal.name }}</a>
-      </li>
-      {% endfor %}
+</li>{% endfor %}
     </ul>
 
   </nav>
