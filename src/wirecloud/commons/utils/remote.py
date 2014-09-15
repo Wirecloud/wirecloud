@@ -25,7 +25,7 @@ import time
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from django.utils.importlib import import_module
-from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -286,6 +286,51 @@ class WidgetWalletResourceTester(object):
         # TODO firefox
         time.sleep(0.1)
         return tmp['new_iwidget']
+
+
+class CatalogueEntryTester(object):
+
+    def __init__(self, testcase, element, catalogue):
+
+        self.testcase = testcase
+        self.element = element
+        self.catalogue = catalogue
+
+    def __enter__(self):
+
+        catalogue_base_element = self.catalogue.get_current_catalogue_base_element()
+        self.testcase.scroll_and_click(self.element)
+        self.details = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+
+        return self
+
+    def __exit__(self, type, value, traceback):
+
+        if self.catalogue.get_subview() == 'details':
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+
+        self.details = None
+
+    def get_version_list(self):
+
+        version_select = Select(self.details.find_element_by_css_selector('.versions select'))
+        return [option.text for option in version_select.options]
+
+    def switch_to(self, version):
+
+        version_select = Select(self.details.find_element_by_css_selector('.versions select'))
+        version_select.select_by_value(version)
+        catalogue_base_element = self.catalogue.get_current_catalogue_base_element()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+
+    def advanced_operation(self, action):
+
+        for operation in self.details.find_elements_by_css_selector('.advanced_operations .styled_button'):
+            if operation.text == action:
+                operation.click()
+                return
+
+        raise NoSuchElementException
 
 
 class MashupWalletResourceTester(object):
@@ -852,7 +897,7 @@ class MarketplaceViewTester(object):
 
         return None
 
-    def wait_catalogue_ready(self, timeout=20):
+    def wait_catalogue_ready(self, timeout=10):
         time.sleep(0.1)
         catalogue_element = self.get_current_catalogue_base_element()
         search_view = catalogue_element.find_element_by_class_name('search_interface')
@@ -873,6 +918,10 @@ class MarketplaceViewTester(object):
             return breadcrum.split('/')[-1]
         else:
             return None
+
+    def get_subview(self):
+
+        return self.testcase.driver.execute_script('return LayoutManagerFactory.getInstance().viewsByName.marketplace.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name;')
 
     def switch_to(self, market, timeout=5):
 
@@ -961,7 +1010,7 @@ class MarketplaceViewTester(object):
         for resource in resources:
             c_resource_name = resource.find_element_by_css_selector('.resource_name').text
             if c_resource_name == resource_name:
-                return resource
+                return CatalogueEntryTester(self.testcase, resource, self)
 
         return None
 
@@ -990,6 +1039,10 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
     def get_current_catalogue_base_element(self):
         return self.testcase.driver.find_element_by_css_selector('.catalogue.myresources')
+
+    def get_subview(self):
+
+        return self.testcase.driver.execute_script('return LayoutManagerFactory.getInstance().viewsByName.myresources.alternatives.getCurrentAlternative().view_name;')
 
     def upload_resource(self, wgt_file, resource_name, shared=False, expect_error=False):
 
@@ -1028,38 +1081,25 @@ class MyResourcesViewTester(MarketplaceViewTester):
             return resource
 
     def delete_resource(self, resource_name, version=None):
-        catalogue_base_element = self.get_current_catalogue_base_element()
 
         self.search(resource_name)
-        resource = self.search_in_results(resource_name)
-        self.testcase.scroll_and_click(resource)
+        with self.search_in_results(resource_name) as resource:
 
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+            version_list = resource.get_version_list()
+            should_disappear_from_listings = version is None or len(version_list) == 1
 
-        version_select = Select(catalogue_base_element.find_element_by_css_selector('.resource_details .versions select'))
-        version_list = [option.text for option in version_select.options]
-        should_disappear_from_listings = version is None or len(version_list) == 1
+            action = 'Delete'
+            if version is not None:
+                resource.switch_to(version)
+            elif len(version_list) > 1:
+                action = 'Delete all versions'
 
-        action = 'Delete'
-        if version is not None:
-            version_select.select_by_value(version)
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
-        elif len(version_list) > 1:
-            action = 'Delete all versions'
+            resource.advanced_operation(action)
 
-        found = False
-        for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
-            if operation.text == action:
-                found = True
-                operation.click()
-                break
-        self.testcase.assertTrue(found)
+            WebDriverWait(self.testcase.driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
+            self.testcase.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
+            self.testcase.wait_wirecloud_ready()
 
-        WebDriverWait(self.testcase.driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
-        self.testcase.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
-        self.testcase.wait_wirecloud_ready()
-
-        self.search(resource_name)
         resource = self.search_in_results(resource_name)
         if should_disappear_from_listings:
             self.testcase.assertIsNone(resource)
@@ -1067,47 +1107,33 @@ class MyResourcesViewTester(MarketplaceViewTester):
             self.testcase.assertIsNotNone(resource)
 
     def uninstall_resource(self, resource_name, version=None, expect_error=False):
-        catalogue_base_element = self.wait_catalogue_ready()
+
         should_disappear_from_listings = False
 
         self.search(resource_name)
-        resource = self.search_in_results(resource_name)
-        self.testcase.scroll_and_click(resource)
+        with self.search_in_results(resource_name) as resource:
 
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+            version_list = resource.get_version_list()
+            should_disappear_from_listings = version is None or len(version_list) == 1
 
-        version_select = Select(catalogue_base_element.find_element_by_css_selector('.resource_details .versions select'))
-        version_list = [option.text for option in version_select.options]
-        should_disappear_from_listings = version is None or len(version_list) == 1
+            action = 'Uninstall'
+            if version is not None:
+                resource.switch_to(version)
+            elif len(version_list) > 1:
+                action = 'Uninstall all versions'
 
-        action = 'Uninstall'
-        if version is not None:
-            version_select.select_by_value(version)
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
-        elif len(version_list) > 1:
-            action = 'Uninstall all versions'
-
-        uninstall_button = None
-        for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button'):
-            if operation.text == action:
-                uninstall_button = operation
-                break
-
-        if expect_error:
-            self.testcase.assertIsNone(uninstall_button)
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
-        else:
-            self.testcase.assertIsNotNone(uninstall_button)
-
-            uninstall_button.click()
-            self.testcase.wait_wirecloud_ready()
-
-            self.search(resource_name)
-            resource = self.search_in_results(resource_name)
-            if should_disappear_from_listings:
-                self.testcase.assertIsNone(resource)
+            if expect_error:
+                self.testcase.assertRaises(NoSuchElementException, resource.advanced_operation, action)
+                return
             else:
-                self.testcase.assertIsNotNone(resource)
+                resource.advanced_operation(action)
+                self.testcase.wait_wirecloud_ready()
+
+        resource = self.search_in_results(resource_name)
+        if should_disappear_from_listings:
+            self.testcase.assertIsNone(resource)
+        else:
+            self.testcase.assertIsNotNone(resource)
 
 
 class WiringViewTester(object):

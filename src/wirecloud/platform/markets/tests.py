@@ -41,7 +41,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         for resource_name in resources:
             resource = marketplace.search_in_results(resource_name)
             self.assertIsNotNone(resource)
-            button = resource.find_element_by_css_selector('.mainbutton')
+            button = resource.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, button_text)
 
     def test_no_marketplaces(self):
@@ -123,21 +123,8 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             catalogue_base_element = myresources.wait_catalogue_ready()
 
-            resource = myresources.search_in_results('Test')
-            self.scroll_and_click(resource)
+            with myresources.search_in_results('Test') as resource:
 
-            WebDriverWait(self.driver, 5).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
-
-            found = False
-            for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
-                if operation.text == 'Publish':
-                    found = True
-                    operation.click()
-                    break
-            self.assertTrue(found)
-
-            window_menu = self.wait_element_visible_by_css_selector('.window_menu.message')
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-            # Close resource details
-            self.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+                resource.advanced_operation('Publish')
+                window_menu = self.wait_element_visible_by_css_selector('.window_menu.message')
+                self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()

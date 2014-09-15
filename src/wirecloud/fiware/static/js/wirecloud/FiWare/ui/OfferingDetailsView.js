@@ -29,6 +29,7 @@
         var extra_context;
 
         this.mainview = options.catalogue;
+        options['class'] = 'details_interface loading';
         StyledElements.Alternative.call(this, id, options);
 
         extra_context = function (resource) {
@@ -70,6 +71,8 @@
         this.resource_details_painter = new Wirecloud.FiWare.ui.OfferingPainter(this.mainview, Wirecloud.currentTheme.templates['fiware_catalogue_resource_details_template'], this, extra_context);
     };
     OfferingDetailsView.prototype = new StyledElements.Alternative();
+
+    OfferingDetailsView.prototype.view_name = 'details';
 
     OfferingDetailsView.prototype.paint = function paint(resource) {
         this.clear();

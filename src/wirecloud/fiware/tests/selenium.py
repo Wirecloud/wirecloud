@@ -21,10 +21,8 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
-from wirecloud.commons.utils.expected_conditions import element_be_clickable
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, uses_extra_resources, WirecloudSeleniumTestCase
 
 
@@ -153,8 +151,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.switch_to('fiware')
 
             marketplace.search('test')
-            widget_offering = marketplace.search_in_results('Smart City Lights application')
-            self.assertIsNotNone(widget_offering)
+            self.assertIsNotNone(marketplace.search_in_results('Smart City Lights application'))
 
     def test_marketplace_filter_by_store(self):
 
@@ -185,24 +182,24 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.switch_to('fiware')
 
             free_offering = marketplace.search_in_results('Weather widget')
-            button = free_offering.find_element_by_css_selector('.mainbutton')
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Free')
 
             simple_price_offering = marketplace.search_in_results('Test Operator')
-            button = simple_price_offering.find_element_by_css_selector('.mainbutton')
+            button = simple_price_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, '10 €')
 
             complex_price_offering = marketplace.search_in_results('Smart City Lights application')
-            button = complex_price_offering.find_element_by_css_selector('.mainbutton')
+            button = complex_price_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Purchase')
 
             arbitrary_offering = marketplace.search_in_results('Arbitrary Offering')
-            button = arbitrary_offering.find_element_by_css_selector('.mainbutton')
+            button = arbitrary_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Details')
 
             # Purchased offerings
             pack_offering = marketplace.search_in_results('MultimediaPack')
-            button = pack_offering.find_element_by_css_selector('.mainbutton')
+            button = pack_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Install')
 
     def test_marketplace_offering_list_when_store_down(self):
@@ -220,22 +217,22 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
                 # Weather widget comes from an accesible store (store2 is online)
                 free_offering = marketplace.search_in_results('Weather widget')
-                button = free_offering.find_element_by_css_selector('.mainbutton')
+                button = free_offering.element.find_element_by_css_selector('.mainbutton')
                 self.assertEqual(button.text, 'Free')
 
                 # Test Operator comes from store1 that is currently down
                 simple_price_offering = marketplace.search_in_results('Test Operator')
-                button = simple_price_offering.find_element_by_css_selector('.mainbutton')
+                button = simple_price_offering.element.find_element_by_css_selector('.mainbutton')
                 self.assertEqual(button.text, 'Details')
 
                 # Smart City Lights application comes from store1 that is currently down
                 complex_price_offering = marketplace.search_in_results('Smart City Lights application')
-                button = complex_price_offering.find_element_by_css_selector('.mainbutton')
+                button = complex_price_offering.element.find_element_by_css_selector('.mainbutton')
                 self.assertEqual(button.text, 'Details')
 
                 # MultimediaPack comes from store1 that is currently down
                 pack_offering = marketplace.search_in_results('MultimediaPack')
-                button = pack_offering.find_element_by_css_selector('.mainbutton')
+                button = pack_offering.element.find_element_by_css_selector('.mainbutton')
                 self.assertEqual(button.text, 'Details')
         finally:
             self.network._servers['http']['store.example.com'] = old_store
@@ -250,15 +247,9 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
             marketplace.switch_to('fiware')
 
-            catalogue_base_element = marketplace.wait_catalogue_ready()
-            offering = marketplace.search_in_results(offering_name)
-            self.scroll_and_click(offering)
-            buttons = len(catalogue_base_element.find_elements_by_css_selector('.resource_details .panel .styled_button:not(.plain), .resource_details .se-notebook-tab-content .styled_button'))
-
-            # Close resource details
-            WebDriverWait(self.driver, 10).until(element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
-
-            self.assertEqual(buttons, 0)
+            with marketplace.search_in_results(offering_name) as offering:
+                buttons = len(offering.details.find_elements_by_css_selector('.panel .styled_button:not(.plain), .se-notebook-tab-content .styled_button'))
+                self.assertEqual(buttons, 0)
 
     def test_store_upload_resource(self):
 
@@ -267,31 +258,17 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login(username='user_with_markets')
 
         with self.myresources_view as myresources:
-            catalogue_base_element = myresources.wait_catalogue_ready()
+            with myresources.search_in_results('Test') as resource:
 
-            resource = myresources.search_in_results('Test')
-            self.scroll_and_click(resource)
+                resource.advanced_operation('Publish')
 
-            WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
+                window_menu = self.wait_element_visible_by_css_selector('.window_menu.publish_resource')
+                window_menu.find_element_by_css_selector('input[value="user_with_markets/fiware"]').click()
+                self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+                self.wait_wirecloud_ready()
 
-            found = False
-            for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
-                if operation.text == 'Publish':
-                    found = True
-                    operation.click()
-                    break
-            self.assertTrue(found)
-
-            window_menu = self.wait_element_visible_by_css_selector('.window_menu.publish_resource')
-            window_menu.find_element_by_css_selector('input[value="user_with_markets/fiware"]').click()
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-            self.wait_wirecloud_ready()
-
-            window_menus = self.driver.find_elements_by_css_selector('.window_menu')
-            self.assertEqual(len(window_menus), 1, 'Resource was not uploaded')
-
-            # Close resource details
-            self.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+                window_menus = self.driver.find_elements_by_css_selector('.window_menu')
+                self.assertEqual(len(window_menus), 1, 'Resource was not uploaded')
 
     def test_store_buy_offering(self):
 
@@ -307,7 +284,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.switch_to('fiware')
 
             free_offering = marketplace.search_in_results('Weather widget')
-            free_offering.find_element_by_css_selector('.mainbutton').click()
+            free_offering.element.find_element_by_css_selector('.mainbutton').click()
 
             response_text = read_response_file('responses', 'store2', 'service2_bought.json')
             self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': response_text})
@@ -316,7 +293,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.wait_catalogue_ready()
 
             free_offering = marketplace.search_in_results('Weather widget')
-            button = free_offering.find_element_by_css_selector('.mainbutton')
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Uninstall')
 
     def test_install_store_offering(self):
@@ -332,24 +309,22 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
             with marketplace.myresources as myresources:
                 myresources.search(resource_name)
-                resource = myresources.search_in_results(resource_name)
-                self.assertIsNone(resource)
+                self.assertIsNone(myresources.search_in_results(resource_name))
 
             marketplace.switch_to('fiware')
 
             free_offering = marketplace.search_in_results(offering_name)
-            button = free_offering.find_element_by_css_selector('.mainbutton')
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Install')
 
             self.scroll_and_click(button)
             marketplace.wait_catalogue_ready()
             free_offering = marketplace.search_in_results(offering_name)
-            button = free_offering.find_element_by_css_selector('.mainbutton')
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Uninstall')
 
             with marketplace.myresources as myresources:
-                resource = myresources.search_in_results(resource_name)
-                self.assertIsNotNone(resource)
+                self.assertIsNotNone(myresources.search_in_results(resource_name))
 
     def test_install_store_pack_offering(self):
 
@@ -365,26 +340,24 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
             with marketplace.myresources as myresources:
                 for resource_name in resources:
-                    resource = myresources.search_in_results(resource_name)
-                    self.assertIsNone(resource)
+                    self.assertIsNone(myresources.search_in_results(resource_name))
 
             marketplace.switch_to('fiware')
 
             free_offering = marketplace.search_in_results(offering_name)
-            button = free_offering.find_element_by_css_selector('.mainbutton')
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Install')
 
             button.click()
             self.wait_wirecloud_ready()
 
             free_offering = marketplace.search_in_results(offering_name)
-            button = free_offering.find_element_by_css_selector('.mainbutton')
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Uninstall')
 
             with marketplace.myresources as myresources:
                 for resource_name in resources:
-                    resource = myresources.search_in_results(resource_name)
-                    self.assertIsNotNone(resource)
+                    self.assertIsNotNone(myresources.search_in_results(resource_name))
 
     @uses_extra_resources((
         'responses/static/CoNWeT__Input Box Widget__1.0__CoNWeT_input-box_1.0.wgt',
@@ -406,26 +379,24 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
             with marketplace.myresources as myresources:
                 for resource_name in resources:
-                    resource = myresources.search_in_results(resource_name)
-                    self.assertIsNotNone(resource)
+                    self.assertIsNotNone(myresources.search_in_results(resource_name))
 
             marketplace.switch_to('fiware')
 
             free_offering = marketplace.search_in_results(offering_name)
-            button = free_offering.find_element_by_css_selector('.mainbutton')
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Uninstall')
 
             button.click()
             self.wait_wirecloud_ready()
 
             free_offering = marketplace.search_in_results(offering_name)
-            button = free_offering.find_element_by_css_selector('.mainbutton')
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Install')
 
             with marketplace.myresources as myresources:
                 for resource_name in resources:
-                    resource = myresources.search_in_results(resource_name)
-                    self.assertIsNone(resource)
+                    self.assertIsNone(myresources.search_in_results(resource_name))
 
     def test_install_individual_resource_from_store_offering(self):
 
@@ -438,32 +409,25 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
             with marketplace.myresources as myresources:
                 myresources.search(resource_name)
-                resource = myresources.search_in_results(resource_name)
-                self.assertIsNone(resource)
+                self.assertIsNone(myresources.search_in_results(resource_name))
 
             marketplace.switch_to('fiware')
 
-            catalogue_base_element = marketplace.wait_catalogue_ready()
-            free_offering = marketplace.search_in_results(offering_name)
-            self.scroll_and_click(free_offering)
-            tabs = catalogue_base_element.find_elements_by_css_selector('.resource_details .se-notebook-tab')
-            for tab in tabs:
-                tab.location_once_scrolled_into_view
-                if tab.text == 'Resources':
-                    self.scroll_and_click(tab)
-                    break
-            resources = catalogue_base_element.find_elements_by_css_selector('.resource_details .offering_resource_list .offering_resource')
-            resource = resources[0]
-            button = resource.find_element_by_css_selector('.styled_button')
-            self.assertEqual(button.text, 'Install')
-            button.click()
+            with marketplace.search_in_results(offering_name) as free_offering:
+                tabs = free_offering.details.find_elements_by_css_selector('.se-notebook-tab')
+                for tab in tabs:
+                    tab.location_once_scrolled_into_view
+                    if tab.text == 'Resources':
+                        self.scroll_and_click(tab)
+                        break
+                resources = free_offering.details.find_elements_by_css_selector('.offering_resource_list .offering_resource')
+                resource = resources[0]
+                button = resource.find_element_by_css_selector('.styled_button')
+                self.assertEqual(button.text, 'Install')
+                button.click()
 
-            self.wait_wirecloud_ready()
-            self.assertEqual(button.text, 'Uninstall')
-
-            # Close offering details
-            self.driver.find_element_by_css_selector(".wirecloud_header_nav .icon-caret-left").click()
+                self.wait_wirecloud_ready()
+                self.assertEqual(button.text, 'Uninstall')
 
             with marketplace.myresources as myresources:
-                resource = myresources.search_in_results(resource_name)
-                self.assertIsNotNone(resource)
+                self.assertIsNotNone(myresources.search_in_results(resource_name))

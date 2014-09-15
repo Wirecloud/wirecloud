@@ -452,30 +452,24 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             catalogue_base_element = myresources.wait_catalogue_ready()
             myresources.search('Test')
-            resource = myresources.search_in_results('Test')
-            self.scroll_and_click(resource)
-            details_interface = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
-            try:
-                tabs = details_interface.find_elements_by_css_selector('.se-notebook-tab')
+            with myresources.search_in_results('Test') as resource:
+                tabs = resource.details.find_elements_by_css_selector('.se-notebook-tab')
                 changelog_tab_found = False
                 for tab in tabs:
                     if tab.text == 'Change Log':
                         changelog_tab_found = True
                         tab.click()
-                        changelog_contents = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.se-notebook-tab-content.changelog'), base_element=details_interface))
+                        changelog_contents = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.se-notebook-tab-content.changelog'), base_element=resource.details))
                         headings = changelog_contents.find_elements_by_css_selector('h1')
                         self.assertEqual(len(headings), 1)
                 self.assertTrue(changelog_tab_found, 'Missing change log tab')
 
-                WebDriverWait(self.driver, 1).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-doc"), base_element=details_interface, parent=True)).click()
+                WebDriverWait(self.driver, 1).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-doc"), base_element=resource.details, parent=True)).click()
                 self.wait_element_visible_by_css_selector('.window_menu:not(#loading-message) .window_content h1')
                 doc_content = self.driver.find_element_by_css_selector('.window_menu:not(#loading-message) .window_content')
                 headings = doc_content.find_elements_by_css_selector('h1, h2')
                 self.assertEqual(len(headings), 2)
                 WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".window_menu .icon-remove"), parent=True)).click()
-
-            finally:
-                WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
 
     def test_public_resources(self):
 
@@ -634,27 +628,18 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
     def check_multiversioned_widget(self, admin):
 
         with self.myresources_view as myresources:
-            catalogue_base_element = myresources.wait_catalogue_ready()
+            with myresources.search_in_results('Test') as test_widget:
 
-            test_widget = myresources.search_in_results('Test')
-            self.scroll_and_click(test_widget)
+                operations = [operation.text for operation in test_widget.details.find_elements_by_css_selector('.advanced_operations .styled_button')]
+                if admin:
+                    self.assertIn('Delete all versions', operations)
+                else:
+                    self.assertNotIn('Delete all versions', operations)
 
-            WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
-
-            operations = [operation.text for operation in catalogue_base_element.find_elements_by_css_selector('.advanced_operations .styled_button')]
-            if admin:
-                self.assertIn('Delete all versions', operations)
-            else:
-                self.assertNotIn('Delete all versions', operations)
-
-            version_select = Select(self.driver.find_element_by_css_selector('.resource_details .versions select'))
-            version_list = [option.text for option in version_select.options]
-
-            WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
-
-            versions = set(version_list)
-            self.assertEqual(len(versions), len(version_list), 'Repeated versions')
-            self.assertEqual(versions, set(('v1.0', 'v2.0')))
+                version_list = test_widget.get_version_list()
+                versions = set(version_list)
+                self.assertEqual(len(versions), len(version_list), 'Repeated versions')
+                self.assertEqual(versions, set(('v1.0', 'v2.0')))
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_resource_with_several_versions(self):
@@ -718,8 +703,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='normuser')
         with self.myresources_view as myresources:
             myresources.search('Test')
-            widget = myresources.search_in_results('Test')
-            self.assertIsNone(widget)
+            self.assertIsNone(myresources.search_in_results('Test'))
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_resource_delete_version(self):
@@ -734,16 +718,10 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             catalogue_base_element = myresources.wait_catalogue_ready()
 
-            test_widget = myresources.search_in_results('Test')
-            self.scroll_and_click(test_widget)
+            with myresources.search_in_results('Test') as test_widget:
 
-            WebDriverWait(self.driver, 5).until(WEC.visibility_of_element_located((By.CSS_SELECTOR, '.advanced_operations'), base_element=catalogue_base_element))
+                version_list = test_widget.get_version_list()
 
-            version_select = Select(self.driver.find_element_by_css_selector('.resource_details .versions select'))
-            version_list = [option.text for option in version_select.options]
-
-            WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
-
-            versions = set(version_list)
-            self.assertEqual(len(versions), len(version_list), 'Repeated versions')
-            self.assertEqual(versions, set(('v2.0',)))
+                versions = set(version_list)
+                self.assertEqual(len(versions), len(version_list), 'Repeated versions')
+                self.assertEqual(versions, set(('v2.0',)))
