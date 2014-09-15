@@ -145,6 +145,15 @@ class JSONTemplateParser(object):
             for altcontent in self._info['altcontents']:
                 self._check_contents_field(altcontent)
 
+        elif self._info['type'] == 'mashup':
+
+            self._check_array_fields(('params', 'embedded'))
+            for resource in self._info['embedded']:
+                if isinstance(resource, dict):
+                    self._check_string_fields(('vendor', 'name', 'version', 'src'), place=resource, required=True)
+                else:
+                    raise TemplateParseException('embedded resource info must be an object')
+
         if not 'wiring' in self._info:
             self._info['wiring'] = {}
 

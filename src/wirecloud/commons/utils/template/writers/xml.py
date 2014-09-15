@@ -29,6 +29,16 @@ def write_mashup_tree(resources, options):
     for param in options['params']:
         etree.SubElement(resources, 'Param', name=param['name'], label=param['label'], type=param['type'])
 
+    # Embedded resources
+    if len(options['embedded']) > 0:
+        embedded_element = etree.SubElement(resources, 'Embedded')
+        for resource in options['embedded']:
+            etree.SubElement(embedded_element, 'Resource',
+                    vendor=resource['vendor'],
+                    name=resource['name'],
+                    version=resource['version'],
+                    src=resource['src'])
+
     # Tabs & resources
     for tab_index, tab in enumerate(options['tabs']):
         tabElement = etree.SubElement(resources, 'Tab', name=tab['name'], id=str(tab_index))

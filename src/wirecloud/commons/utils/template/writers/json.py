@@ -58,7 +58,7 @@ def write_json_description(template_info):
     template_info = copy.copy(template_info)
 
     remove_empty_string_fields(('title', 'description', 'longdescription', 'homepage', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl'), template_info)
-    remove_empty_array_fields(('authors', 'contributors', 'altcontents'), template_info)
+    remove_empty_array_fields(('authors', 'contributors', 'altcontents', 'embedded'), template_info)
 
     if template_info['type'] == 'widget':
         contents = template_info.get('contents')
@@ -69,6 +69,13 @@ def write_json_description(template_info):
             for altcontents in template_info['altcontents']:
                 if not isinstance(altcontents, dict) or 'src' not in altcontents or 'scope' not in altcontents:
                     raise Exception('Invalid alternative contents')
+
+    elif template_info['type'] == 'mashup':
+
+        if 'embedded' in template_info:
+            for resource in template_info['embedded']:
+                if not isinstance(resource, dict) or 'src' not in resource or 'vendor' not in resource or 'name' not in resource or 'version' not in resource:
+                    raise Exception('Invalid embedded resource')
 
     del template_info['translation_index_usage']
     return json.dumps(template_info, sort_keys=True, indent=4)

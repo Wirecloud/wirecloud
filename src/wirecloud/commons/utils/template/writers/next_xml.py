@@ -90,6 +90,16 @@ def write_mashup_tree(doc, resources, options):
             addAttributes(pref, pref_element, ('type', 'label', 'description', 'default'))
             addAttribute(pref, pref_element, 'readonly', default='false', type='boolean')
 
+    # Embedded resources
+    if len(options['embedded']) > 0:
+        embedded_element = etree.SubElement(doc, 'embedded')
+        for resource in options['embedded']:
+            etree.SubElement(embedded_element, 'resource',
+                    vendor=resource['vendor'],
+                    name=resource['name'],
+                    version=resource['version'],
+                    src=resource['src'])
+
     # Tabs & resources
     for tab_index, tab in enumerate(options['tabs']):
         tabElement = etree.SubElement(resources, 'tab', name=tab['name'], id=str(tab_index))

@@ -139,6 +139,21 @@ def write_mashup_params(graph, resource_uri, template_info):
             graph.add((resource_uri, WIRE_M['hasMashupParam'], param_node))
 
 
+def write_mashup_embedded_resources(graph, resource_uri, template_info):
+
+    if len(template_info['embedded']) > 0:
+        for resource in template_info['embedded']:
+            resource_node = rdflib.URIRef(resource['src'])
+            graph.add((resource_uri, WIRE_M['hasEmbeddedResource'], resource_node))
+
+            provider_node = rdflib.BNode()
+            graph.add((provider_node, rdflib.RDF.type, GR['BussisnessEntity']))
+            graph.add((provider_node, FOAF['name'], rdflib.Literal(resource['vendor'])))
+            graph.add((resource_node, USDL['hasProvider'], provider_node))
+            graph.add((resource_node, RDFS['label'], rdflib.Literal(resource['name'])))
+            graph.add((resource_node, USDL['versionInfo'], rdflib.Literal(resource['version'])))
+
+
 def write_mashup_resources_graph(graph, resource_uri, template_info):
 
     # Tabs & resources
@@ -379,6 +394,7 @@ def build_rdf_graph(template_info):
     # Params
     if template_info['type'] == 'mashup':
         write_mashup_params(graph, resource_uri, template_info)
+        write_mashup_embedded_resources(graph, resource_uri, template_info)
 
     # Create wiring
     wiring = rdflib.BNode()

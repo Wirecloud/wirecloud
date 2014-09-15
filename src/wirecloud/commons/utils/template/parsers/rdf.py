@@ -548,6 +548,17 @@ class RDFTemplateParser(object):
                 'type': self._get_field(WIRE, 'type', param),
             })
 
+        self._info['embedded'] = []
+        for resource in self._graph.objects(self._rootURI, WIRE_M['hasEmbeddedResource']):
+            vendor = self._get_field(USDL, 'hasProvider', resource, id_=True, required=True)
+
+            self._info['embedded'].append({
+                'vendor': self._get_field(FOAF, 'name', vendor),
+                'name': self._get_field(RDFS, 'label', resource),
+                'version': self._get_field(USDL, 'versionInfo', resource),
+                'src': unicode(resource)
+            })
+
         ordered_tabs = sorted(self._graph.objects(self._rootURI, WIRE_M['hasTab']), key=lambda raw_tab: possible_int(self._get_field(WIRE, 'index', raw_tab, required=False)))
 
         tabs = []
@@ -564,12 +575,12 @@ class RDFTemplateParser(object):
             for resource in self._graph.objects(tab, WIRE_M['hasiWidget']):
                 position = self._get_field(WIRE_M, 'hasPosition', resource, id_=True, required=False)
                 rendering = self._get_field(WIRE_M, 'hasiWidgetRendering', resource, id_=True, required=False)
-                vendor = self._get_field(USDL, 'hasProvider', resource, id_=True, required=False)
+                vendor = self._get_field(USDL, 'hasProvider', resource, id_=True, required=True)
 
                 resource_info = {
                     'id': self._get_field(WIRE_M, 'iWidgetId', resource),
-                    'name': self._get_field(RDFS, 'label', resource),
                     'vendor': self._get_field(FOAF, 'name', vendor),
+                    'name': self._get_field(RDFS, 'label', resource),
                     'version': self._get_field(USDL, 'versionInfo', resource),
                     'title': self._get_field(DCTERMS, 'title', resource),
                     'readonly': self._get_field(WIRE_M, 'readonly', resource, required=False).lower() == 'true',

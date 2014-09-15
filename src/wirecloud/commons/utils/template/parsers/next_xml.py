@@ -74,6 +74,7 @@ RESOURCE_XPATH = 't:resource'
 POSITION_XPATH = 't:position'
 RENDERING_XPATH = 't:rendering'
 PARAM_XPATH = 't:preferences/t:preference'
+EMBEDDEDRESOURCE_XPATH = 't:embedded/t:resource'
 PROPERTIES_XPATH = 't:variablevalue'
 CONNECTION_XPATH = 't:connection'
 IOPERATOR_XPATH = 't:operator'
@@ -406,6 +407,15 @@ class ApplicationMashupTemplateParser(object):
                 'name': param.get('name'),
                 'label': param.get('label'),
                 'type': param.get('type'),
+            })
+
+        self._info['embedded'] = []
+        for resource in self._xpath(EMBEDDEDRESOURCE_XPATH, self._doc):
+            self._info['embedded'].append({
+                'vendor': resource.get('vendor'),
+                'name': resource.get('name'),
+                'version': resource.get('version'),
+                'src': resource.get('src')
             })
 
         tabs = []

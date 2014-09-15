@@ -434,6 +434,7 @@ class TemplateUtilsTestCase(TestCase):
             'requirements': [],
             'params': [],
             'preferences': {},
+            'embedded': [],
             'tabs': [
                 {
                     'name': 'Tab 1',
@@ -479,6 +480,10 @@ class TemplateUtilsTestCase(TestCase):
             'preferences': {
                 'columns': '8'
             },
+            'embedded': [
+                {'vendor': 'Wirecloud', 'name': 'TestOperator', 'version': '1.0', 'src': 'macs/Wirecloud_TestOperator_1.0.wgt'},
+                {'vendor': 'Wirecloud', 'name': 'TestOperator', 'version': '2.0', 'src': 'https://macs.example.com/macs/Wirecloud_TestOperator_2.0.wgt'}
+            ],
             'tabs': [
                 {
                     'name': 'Tab 1',
@@ -668,6 +673,7 @@ class TemplateUtilsTestCase(TestCase):
             'preferences': {
                 'columns': '8'
             },
+            'embedded': [],
             'tabs': [
                 {
                     'name': 'Tab 1',
@@ -872,6 +878,7 @@ class TemplateUtilsTestCase(TestCase):
             'preferences': {
                 'columns': '8'
             },
+            'embedded': [],
             'tabs': [
                 {
                     'name': 'Tab 1',
@@ -1231,6 +1238,10 @@ class TemplateUtilsTestCase(TestCase):
         self.assertItemsEqual(processed_info['requirements'], mashup_info['requirements'])
         del processed_info['requirements']
         del mashup_info['requirements']
+
+        self.assertItemsEqual(processed_info['embedded'], mashup_info['embedded'])
+        del processed_info['embedded']
+        del mashup_info['embedded']
 
         self.assertEqual(processed_info, mashup_info)
 

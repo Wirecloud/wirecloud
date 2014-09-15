@@ -66,6 +66,7 @@ RESOURCE_XPATH = 't:Resource'
 POSITION_XPATH = 't:Position'
 RENDERING_XPATH = 't:Rendering'
 PARAM_XPATH = 't:Param'
+EMBEDDEDRESOURCE_XPATH = 't:Embedded/t:Resource'
 PROPERTIES_XPATH = 't:Property'
 CONNECTION_XPATH = 't:Connection'
 IOPERATOR_XPATH = 't:Operator'
@@ -397,6 +398,15 @@ class WirecloudTemplateParser(object):
                 'name': param.get('name'),
                 'label': param.get('label'),
                 'type': param.get('type'),
+            })
+
+        self._info['embedded'] = []
+        for resource in self._xpath(EMBEDDEDRESOURCE_XPATH, workspace_structure):
+            self._info['embedded'].append({
+                'vendor': resource.get('vendor'),
+                'name': resource.get('name'),
+                'version': resource.get('version'),
+                'src': resource.get('src')
             })
 
         tabs = []
