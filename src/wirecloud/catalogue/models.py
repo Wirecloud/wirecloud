@@ -146,7 +146,7 @@ class CatalogueResource(models.Model):
 def get_template_url(vendor, name, version, url, request=None):
 
     if urlparse(url).scheme == '':
-        template_url = get_absolute_reverse_url('wirecloud.showcase_media', kwargs={
+        template_url = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
             'vendor': vendor,
             'name': name,
             'version': version,
