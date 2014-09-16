@@ -24,6 +24,7 @@ DEFAULT_FIWARE_PORTALS = (
     {'name': 'Cloud', 'url': 'https://cloud.lab.fi-ware.org', "logout_path": "/logout"},
     {'name': 'Store', 'url': 'https://store.lab.fi-ware.org', "logout_path": "/logout"},
     {'name': 'Mashup', 'url': 'https://mashup.lab.fi-ware.org', "logout_path": "/logout", "active": True},
+    {'name': 'Data', 'url': 'https://data.lab.fi-ware.org', "logout_path": "/user/_logout"},
     {'name': 'Account', 'url': 'https://account.lab.fi-ware.org', "logout_path": "/users/sign_out"},
     {'name': 'Help&info', 'url': 'https://lab.fi-ware.org'},
 )
