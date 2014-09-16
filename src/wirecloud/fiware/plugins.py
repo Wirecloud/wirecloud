@@ -79,7 +79,7 @@ class FiWareMarketManager(MarketManager):
         if template is None:
             template = TemplateParser(wgt_file.get_template())
 
-        resource_info = template.get_resource_info()
+        resource_info = template.get_resource_processed_info(lang='en')
 
         mimetypes = {
             'widget': 'application/x-widget+mashable-application-component',
