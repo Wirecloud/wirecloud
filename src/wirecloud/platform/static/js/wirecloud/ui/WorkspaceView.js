@@ -140,8 +140,8 @@
 
     WorkspaceView.prototype.getToolbarButtons = function getToolbarButtons() {
         if (Wirecloud.contextManager && Wirecloud.contextManager.get('username') !== 'anonymous') {
-            this.walletButton.setDisabled(!Wirecloud.activeWorkspace.isAllowed('edit'));
-            this.wiringButton.setDisabled(!Wirecloud.activeWorkspace.isAllowed('edit'));
+            this.walletButton.setDisabled(Wirecloud.activeWorkspace == null || !Wirecloud.activeWorkspace.isAllowed('edit'));
+            this.wiringButton.setDisabled(Wirecloud.activeWorkspace == null || !Wirecloud.activeWorkspace.isAllowed('edit'));
             return [this.walletButton, this.wiringButton, this.myresourcesButton, this.marketButton];
         } else {
             return [];

@@ -224,8 +224,8 @@
     };
 
     WirecloudHeader.prototype.refresh = function refresh() {
-        this._paintToolbar(this.currentView);
         this._paintBreadcrum(this.currentView);
+        this._paintToolbar(this.currentView);
         this._replaceMenu(this.currentView);
         this.backButton.setDisabled(this.currentView == null || !('goUp' in this.currentView));
     };

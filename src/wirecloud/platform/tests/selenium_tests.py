@@ -874,8 +874,19 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Pending Events'))
+
+        widget_wallet_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-plus').find_element_by_xpath('..')
+        self.assertIn('disabled', re.split('\s+', widget_wallet_button.get_attribute('class')))
+        wiring_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-puzzle-piece').find_element_by_xpath('..')
+        self.assertIn('disabled', re.split('\s+', wiring_button.get_attribute('class')))
+
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Workspace'))
+
+        widget_wallet_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-plus').find_element_by_xpath('..')
+        self.assertNotIn('disabled', re.split('\s+', widget_wallet_button.get_attribute('class')))
+        wiring_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-puzzle-piece').find_element_by_xpath('..')
+        self.assertNotIn('disabled', re.split('\s+', wiring_button.get_attribute('class')))
 
     def assertElementHasFocus(self, element):
         # Workaround webkit problem with xhtml and retreiving element with focus
