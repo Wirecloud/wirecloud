@@ -18,7 +18,7 @@
         }, options);
 
         StyledElements.PopupMenuBase.call(this, options);
-        this.wrapperElement.classList.add('.se-popup-submenu');
+        this.wrapperElement.classList.add('se-popup-submenu');
 
         this.menuItem = new StyledElements.MenuItem(text, handler);
         this.menuItem.addClassName('submenu');
