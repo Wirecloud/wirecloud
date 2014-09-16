@@ -2,7 +2,7 @@
 @import 'compass/css3';
 @import 'styledelements/input_mixins';
 
-.se-field-field {
+.se-file-field {
     @include input-root-style();
 
     color: $input-color;
@@ -14,14 +14,14 @@
     border-radius: $input-border-radius-base;
 }
 
-.se-field-field > .west_container > .preview {
+.se-file-field > .west_container > .preview {
     display: block;
     height: $line-height-base;
     width:  20px;
     margin-right: 2px;
 }
 
-.se-field-field > .center_container > .filename {
+.se-file-field > .center_container > .filename {
     display: block;
     height: $input-height-base;
     width:   auto;
@@ -40,7 +40,7 @@
     box-sizing: border-box;
 }
 
-.se-field-field > .input_wrapper {
+.se-file-field > .input_wrapper {
     overflow: hidden;
     position: absolute;
     left: 0px;
@@ -50,7 +50,7 @@
     cursor: pointer;
 }
 
-.se-field-field > .input_wrapper > input {
+.se-file-field > .input_wrapper > input {
     position: absolute;
     top: -100px;
     left: -100px;
@@ -61,15 +61,15 @@
     cursor: pointer;
 }
 
-.se-field-field.focus {
+.se-file-field.focus {
     box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
-.se-field-field.focus > .center_container > .filename {
+.se-file-field.focus > .center_container > .filename {
     border-color: $input-border-color-focus;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
 
-.se-field-field.focus > .east_container > .styled_button {
+.se-file-field.focus > .east_container > .styled_button {
     border-color: $input-border-color-focus;
 }
