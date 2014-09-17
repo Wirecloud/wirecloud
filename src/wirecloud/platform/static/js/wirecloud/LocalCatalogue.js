@@ -264,13 +264,14 @@
                 template_uri: url,
                 packaged: !!options.packaged,
                 force_create: !!options.forceCreate,
+                install_embedded_resources: true,
                 market_endpoint: options.market_info
             }),
             onSuccess: function (response) {
                 var i, id, response_data, resource_data;
 
                 response_data = JSON.parse(response.responseText);
-                process_upload_response.call(this, response_data);
+                process_upload_response.call(this, [response_data.resource_details].concat(response_data.extra_resources));
 
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();

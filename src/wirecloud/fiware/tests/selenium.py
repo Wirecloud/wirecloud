@@ -326,6 +326,42 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             with marketplace.myresources as myresources:
                 self.assertIsNotNone(myresources.search_in_results(resource_name))
 
+    def test_install_store_offering_embedded(self):
+
+        response_text = read_response_file('responses', 'store2', 'service_embedded_bought.json')
+        self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': response_text})
+        offering_name = 'Weather widget'
+        resources = (
+            'TestMashupEmbedded',
+            'nonavailable-widget',
+            'nonavailable-operator',
+        )
+
+        self.login(username='user_with_markets')
+
+        with self.marketplace_view as marketplace:
+
+            with marketplace.myresources as myresources:
+                for resource_name in resources:
+                    self.assertIsNone(myresources.search_in_results(resource_name))
+
+            marketplace.switch_to('fiware')
+
+            free_offering = marketplace.search_in_results(offering_name)
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
+            self.assertEqual(button.text, 'Install')
+
+            self.scroll_and_click(button)
+            self.wait_wirecloud_ready()
+            marketplace.wait_catalogue_ready()
+            free_offering = marketplace.search_in_results(offering_name)
+            button = free_offering.element.find_element_by_css_selector('.mainbutton')
+            self.assertEqual(button.text, 'Uninstall')
+
+            with marketplace.myresources as myresources:
+                for resource_name in resources:
+                    self.assertIsNotNone(myresources.search_in_results(resource_name))
+
     def test_install_store_pack_offering(self):
 
         offering_name = 'MultimediaPack'

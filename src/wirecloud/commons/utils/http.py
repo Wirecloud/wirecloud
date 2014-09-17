@@ -251,3 +251,16 @@ def get_absolute_static_url(url, request=None):
     scheme = get_current_scheme()
     base = urljoin(scheme + '://' + get_current_domain(request), settings.STATIC_URL)
     return urljoin(base, url)
+
+
+def normalize_boolean_param(name, value):
+
+    if isinstance(value, string_types):
+        value = value.strip().lower()
+        if value not in ('true', 'false'):
+            raise ValueError(_('Invalid %(parameter)s value') % name)
+        return value == 'true'
+    elif not isinstance(value, bool):
+        return TypeError(_('Invalid %(parameter) type') % name)
+
+    return value

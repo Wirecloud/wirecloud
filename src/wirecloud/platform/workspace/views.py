@@ -36,7 +36,7 @@ from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.downloader import download_http_content
-from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, supported_request_mime_types, supported_response_mime_types
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, supported_request_mime_types, supported_response_mime_types
 from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
@@ -75,19 +75,6 @@ def setActiveWorkspace(user, workspace):
 
     UserWorkspace.objects.filter(user=user, active=True).exclude(workspace=workspace).update(active=False)
     UserWorkspace.objects.filter(user=user, workspace=workspace).update(active=True)
-
-
-def normalize_boolean_param(name, value):
-
-    if isinstance(value, string_types):
-        value = value.strip().lower()
-        if value not in ('true', 'false'):
-            raise ValueError(_('Invalid %(parameter)s value') % name)
-        return value == 'true'
-    elif not isinstance(value, bool):
-        return TypeError(_('Invalid %(parameter) type') % name)
-
-    return value
 
 
 class WorkspaceCollection(Resource):

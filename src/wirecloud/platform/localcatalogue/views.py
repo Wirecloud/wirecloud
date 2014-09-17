@@ -37,7 +37,7 @@ from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.downloader import download_http_content
-from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, supported_request_mime_types, supported_response_mime_types
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, supported_request_mime_types, supported_response_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
@@ -119,7 +119,7 @@ class ResourceCollection(Resource):
                     msg = _("malformed json data: %s") % unicode(e)
                     return build_error_response(request, 400, msg)
 
-                install_embedded_resources = data.get('install_embedded_resources', 'false').strip().lower() == 'true'
+                install_embedded_resources = normalize_boolean_param('install_embedded_resources', data.get('install_embedded_resources', False))
                 force_create = data.get('force_create', False)
                 packaged = data.get('packaged', False)
                 templateURL = data.get('template_uri')
@@ -204,7 +204,6 @@ class ResourceCollection(Resource):
             }
             if resource.resource_type() == 'mashup':
                 resource_info = resource.get_processed_info(process_urls=False)
-                base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
                 for embedded_resource in resource_info['embedded']:
                     if embedded_resource['src'].startswith('https://'):
                         resource_file = download_http_content(embedded_resource['src'])
