@@ -119,7 +119,7 @@ class ResourceCollection(Resource):
                     msg = _("malformed json data: %s") % unicode(e)
                     return build_error_response(request, 400, msg)
 
-                install_embedded_resources = data.get('install_embedded_resources', 'false').strip().lower() != 'true'
+                install_embedded_resources = data.get('install_embedded_resources', 'false').strip().lower() == 'true'
                 force_create = data.get('force_create', False)
                 packaged = data.get('packaged', False)
                 templateURL = data.get('template_uri')
