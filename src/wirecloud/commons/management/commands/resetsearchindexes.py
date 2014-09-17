@@ -25,10 +25,9 @@ from optparse import make_option
 from django.core.management.base import CommandError, NoArgsCommand
 from django.utils.six.moves import input
 from django.utils.translation import ugettext_lazy as _
-from whoosh import index as whoosh_index
 
-from wirecloud.catalogue.models import add_document, CatalogueResource, CatalogueResourceSchema
-from wirecloud.commons.searchers import get_search_engine, is_available
+from wirecloud.commons.searchers import get_available_search_engines, get_search_engine, is_available
+
 
 class Command(NoArgsCommand):
 
@@ -54,7 +53,7 @@ class Command(NoArgsCommand):
 
         dirname = settings.WIRECLOUD_INDEX_DIR
         if options['indexes'] == '':
-            indexes = ['resource', 'user', 'group']
+            indexes = [search_engine.indexname for search_engine in get_available_search_engines()]
         else:
             indexes = options['indexes'].split(',')
 
@@ -87,20 +86,12 @@ class Command(NoArgsCommand):
 
         for indexname in indexes:
 
-            if indexname == 'resource':
+            search_engine = get_search_engine(indexname)
+            search_engine.clear_index()
 
-                whoosh_index.create_in(dirname, CatalogueResourceSchema(), indexname='catalogue_resources')
-                for resource in CatalogueResource.objects.all():
-                    self.log('Adding %s\n' % resource.local_uri_part)
-                    add_document(CatalogueResource, resource, False, False)
-
-            else:
-
-                search_engine = get_search_engine(indexname)
-                search_engine.clear_index()
-
-                for resource in search_engine.get_model().objects.all():
-                    search_engine.add_resource(resource)
+            for resource in search_engine.get_model().objects.all():
+                self.log('Adding %s\n' % resource.local_uri_part)
+                search_engine.add_resource(resource)
 
             self.log(self.update_success_message % indexname)
 

@@ -39,6 +39,7 @@ from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.query import And, Every, Or, Term
 from whoosh.sorting import FieldFacet, FunctionFacet
 
+from wirecloud.commons.searchers import BaseSearcher, get_search_engine
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
 
@@ -121,7 +122,7 @@ class CatalogueResource(models.Model):
             pass
 
         # Remove document from search indexes
-        ix = open_index('catalogue_resources')
+        ix = get_search_engine('resource').open_index()
 
         try:
             with ix.writer() as writer:
@@ -141,6 +142,74 @@ class CatalogueResource(models.Model):
 
     def __str__(self):
         return self.local_uri_part
+
+
+class CatalogueResourceSchema(fields.SchemaClass):
+
+    pk = fields.ID(stored=True, unique=True)
+    vendor_name = fields.ID
+    name = fields.TEXT(stored=True)
+    vendor = fields.TEXT(stored=True, spelling=True)
+    version = fields.TEXT(stored=True)
+    template_uri = fields.STORED
+    type = fields.TEXT(stored=True)
+    creation_date = fields.DATETIME
+    title = fields.TEXT(stored=True, spelling=True)
+    image = fields.STORED
+    smartphoneimage = fields.STORED
+    description = fields.TEXT(stored=True, spelling=True)
+    wiring = fields.TEXT(spelling=True)
+    public = fields.BOOLEAN
+    users = fields.KEYWORD(commas=True)
+    groups = fields.KEYWORD(commas=True)
+    content = fields.NGRAMWORDS()
+
+
+class CatalogueResourceSearcher(BaseSearcher):
+
+    indexname = 'resource'
+    model = CatalogueResource
+    schema_class = CatalogueResourceSchema
+
+    def build_compatible_fields(self, resource):
+
+        resource_info = resource.get_processed_info(process_urls=False)
+
+        endpoint_descriptions = ''
+
+        for endpoint in resource_info['wiring']['inputs']:
+            endpoint_descriptions += endpoint['description'] + ' '
+
+        for endpoint in resource_info['wiring']['outputs']:
+            endpoint_descriptions += endpoint['description'] + ' '
+
+        content = ' '.join([resource_info['description'],
+                            resource_info['title'],
+                            resource.short_name,
+                            resource.vendor,
+                            endpoint_descriptions])
+
+        fields = {
+            'pk': '%s' % resource.pk,
+            'vendor_name': '%s/%s' % (resource.vendor, resource.short_name),
+            'vendor': '%s' % resource.vendor,
+            'name': '%s' % resource.short_name,
+            'version': resource_info['version'],
+            'template_uri': resource.template_uri,
+            'type': resource_info['type'],
+            'creation_date': resource.creation_date.utcnow(),
+            'public': resource.public,
+            'title': resource_info['title'],
+            'description': resource_info['description'],
+            'wiring': endpoint_descriptions,
+            'image': resource_info['image'],
+            'smartphoneimage': resource_info['smartphoneimage'],
+            'users': ', '.join(resource.users.all().values_list('username', flat=True)),
+            'groups': ', '.join(resource.groups.all().values_list('name', flat=True)),
+            'content': content,
+        }
+
+        return fields
 
 
 def get_template_url(vendor, name, version, url, request=None):
@@ -228,83 +297,18 @@ class Version(object):
         return self.__cmp__(other) > 0
 
 
-
-class CatalogueResourceSchema(fields.SchemaClass):
-
-    pk = fields.ID(stored=True, unique=True)
-    vendor_name = fields.ID
-    name = fields.TEXT(stored=True)
-    vendor = fields.TEXT(stored=True, spelling=True)
-    version = fields.TEXT(stored=True)
-    template_uri = fields.STORED
-    type = fields.TEXT(stored=True)
-    creation_date = fields.DATETIME
-    title = fields.TEXT(stored=True, spelling=True)
-    image = fields.STORED
-    smartphoneimage = fields.STORED
-    description = fields.TEXT(stored=True, spelling=True)
-    wiring = fields.TEXT(spelling=True)
-    public = fields.BOOLEAN
-    users = fields.KEYWORD(commas=True)
-    groups = fields.KEYWORD(commas=True)
-    #content = fields.TEXT(spelling=True)
-    content = fields.NGRAMWORDS()
-
-
 @receiver(post_save, sender=CatalogueResource)
-def add_document(sender, instance, created, raw, **kwargs):
-
-    resource = instance
-    resource_info = resource.get_processed_info(process_urls=False)
-    endpoint_descriptions = ''
-
-    for endpoint in resource_info['wiring']['inputs']:
-        endpoint_descriptions += endpoint['description'] + ' '
-
-    for endpoint in resource_info['wiring']['outputs']:
-        endpoint_descriptions += endpoint['description'] + ' '
-
-    content = (resource_info['description'] + ' ' + resource_info['title'] + ' ' +
-               resource.short_name + ' ' + resource.vendor + ' ' + endpoint_descriptions)
-
-    data = {
-        'pk': '%s' % resource.pk,
-        'vendor_name': '%s/%s' % (resource.vendor, resource.short_name),
-        'vendor': '%s' % resource.vendor,
-        'name': '%s' % resource.short_name,
-        'version': resource_info['version'],
-        'template_uri': resource.template_uri,
-        'type': resource_info['type'],
-        'creation_date': resource.creation_date.utcnow(),
-        'public': resource.public,
-        'title': resource_info['title'],
-        'description': resource_info['description'],
-        'wiring': endpoint_descriptions,
-        'image': resource_info['image'],
-        'smartphoneimage': resource_info['smartphoneimage'],
-        'users': ', '.join(resource.users.all().values_list('username', flat=True)),
-        'groups': ', '.join(resource.groups.all().values_list('name', flat=True)),
-        'content': content,
-    }
-
-    ix = open_index('catalogue_resources')
-
-    try:
-        with ix.writer() as writer:
-            writer.update_document(**data)
-    except:
-        with ix.writer() as writer:
-            writer.add_document(**data)
+def update_catalogue_index(sender, instance, **kwargs):
+    get_search_engine('resource').add_resource(instance)
 
 
 @receiver(m2m_changed, sender=CatalogueResource.groups.through)
 @receiver(m2m_changed, sender=CatalogueResource.users.through)
-def update_users(sender, instance, action, reverse, model, pk_set, using, **kwargs):
-
+def update_users_or_groups(sender, instance, action, reverse, model, pk_set, using, **kwargs):
     if reverse or action.startswith('pre_') or (pk_set is not None and len(pk_set) == 0):
         return
 
-    add_document(sender, instance, False, False)
+    update_catalogue_index(sender, instance)
 
 
 def add_absolute_urls(results, request=None):
@@ -353,36 +357,11 @@ def build_search_kwargs(user_q, request, types, staff, orderby):
 
     return (user_q, search_kwargs)
 
-_wirecloud_search_indexes = {}
-
-def open_index(indexname, dirname=None):
-    global _wirecloud_search_indexes
-
-    if indexname not in _wirecloud_search_indexes:
-        if dirname is None:
-            dirname = settings.WIRECLOUD_INDEX_DIR
-
-        if not os.path.exists(dirname):
-            os.mkdir(dirname)
-
-        if not index.exists_in(dirname, indexname=indexname):
-            _wirecloud_search_indexes[indexname] = index.create_in(dirname, CatalogueResourceSchema(), indexname=indexname)
-        else:
-            _wirecloud_search_indexes[indexname] = index.open_dir(dirname, indexname=indexname)
-
-    return _wirecloud_search_indexes[indexname]
-
-
-def clear_index_cache():
-    global _wirecloud_search_indexes
-
-    _wirecloud_search_indexes = {}
-
 
 def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None,
            orderby='-creation_date'):
 
-    ix = open_index('catalogue_resources')
+    ix = get_search_engine('resource').open_index()
     search_result = {}
 
     fieldnames = ['description', 'vendor', 'title', 'wiring']
@@ -435,7 +414,7 @@ def search_page(search_result, hits, pagenum, maxresults):
 
 def suggest(request, prefix='', number=30):
 
-    reader = open_index('catalogue_resources').reader()
+    reader = get_search_engine('resource').open_index().reader()
     filenames = ['title', 'vendor', 'description']
     result_suggestion = {}
     frequent_terms = []

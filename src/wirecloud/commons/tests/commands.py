@@ -27,7 +27,7 @@ from django.core.management.base import CommandError
 from django.test import TestCase
 from whoosh import fields, index
 
-from wirecloud.commons.searchers import available_search_engines
+from wirecloud.commons.searchers import get_available_search_engines
 
 
 class ResetSearchIndexesCommandTestCase(TestCase):
@@ -67,7 +67,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         self.options["interactive"] = False
 
         os.mkdir(self.new_index_dir)
-        index.create_in(self.new_index_dir, fields.Schema(content = fields.TEXT), 'catalogue_resources')
+        index.create_in(self.new_index_dir, fields.Schema(content = fields.TEXT), 'resource')
         self.assertTrue(os.path.exists(self.new_index_dir))
 
         with self.settings(WIRECLOUD_INDEX_DIR=self.new_index_dir):
@@ -81,8 +81,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
         self.assertTrue(os.path.exists(self.new_index_dir))
-        self.assertTrue(index.exists_in(self.new_index_dir, indexname='catalogue_resources'))
-        for search_index in available_search_engines:
+        for search_index in get_available_search_engines():
             self.assertTrue(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
 
     def test_resetsearchindexes_command_existing_dir_other_indexes(self):
@@ -103,8 +102,9 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
         self.assertTrue(os.path.exists(self.new_index_dir))
-        self.assertTrue(index.exists_in(self.new_index_dir, indexname='catalogue_resources'))
         self.assertTrue(index.exists_in(self.new_index_dir, indexname='other_index'))
+        for search_index in get_available_search_engines():
+            self.assertTrue(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
 
     def test_resetsearchindexes_command_individual_index(self):
         self.options['indexes'] = 'user'
@@ -115,7 +115,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         self.options['stdout'].seek(0)
         self.options['stderr'].seek(0)
 
-        for search_index in available_search_engines:
+        for search_index in get_available_search_engines():
             if search_index.indexname != 'user':
                 self.assertFalse(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
 
@@ -130,7 +130,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         self.options['stdout'].seek(0)
         self.options['stderr'].seek(0)
 
-        for search_index in available_search_engines:
+        for search_index in get_available_search_engines():
             if search_index.indexname not in ('user', 'group'):
                 self.assertFalse(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
 

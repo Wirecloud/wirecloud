@@ -19,13 +19,13 @@
 
 from __future__ import unicode_literals
 
+import os
+
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from whoosh.fields import ID, NGRAM, SchemaClass, TEXT
 from whoosh.index import create_in, exists_in, open_dir
 from whoosh.qparser import QueryParser
-
-import os
 
 
 class IndexManager(object):
@@ -34,6 +34,9 @@ class IndexManager(object):
     schema_class = None
 
     def __init__(self):
+        self._index_cached = None
+
+    def clear_index_cached(self):
         self._index_cached = None
 
     def clear_index(self):
@@ -117,6 +120,22 @@ class BaseSearcher(IndexWriterMixin, IndexManager):
 
         return result
 
+    def search_page(self, result, hits, pagenum, maxresults):
+        result['total'] = hits.estimated_length()
+        result['pagecount'] = result['total'] // maxresults + 1
+
+        if pagenum > result['pagecount']:
+            pagenum = result['pagecount']
+
+        result['pagenum'] = pagenum
+        offset = (pagenum - 1) * maxresults
+
+        result['offset'] = offset
+        result['results'] = hits[offset:]
+        result['pagelen'] = len(result['results'])
+
+        return result
+
 
 class GroupSchema(SchemaClass):
 
@@ -166,17 +185,26 @@ class UserSearcher(BaseSearcher):
         return fields
 
 
-available_search_engines = [GroupSearcher(), UserSearcher()]
+_available_search_engines = None
+def get_available_search_engines():
+    global _available_search_engines
+
+    if _available_search_engines is None:
+        from wirecloud.catalogue.models import CatalogueResourceSearcher
+
+        _available_search_engines = [GroupSearcher(), UserSearcher(), CatalogueResourceSearcher()]
+
+    return _available_search_engines
 
 
 def is_available(indexname):
-    indexnames = [s.indexname for s in available_search_engines]
+    indexnames = [s.indexname for s in get_available_search_engines()]
 
     return indexname in indexnames
 
 
 def get_search_engine(indexname):
-    for s in available_search_engines:
+    for s in get_available_search_engines():
         if s.indexname == indexname:
             return s
 
