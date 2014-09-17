@@ -40,6 +40,16 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_PackagedTestMashup_1.0.zip', 'PackagedTestMashup', shared=True)
 
+    def test_upload_packaged_mashup_embedded_resources(self):
+
+        self.login()
+
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_TestMashupEmbedded_1.0.zip', 'TestMashupEmbedded', shared=True)
+            myresources.search('nonavailable')
+            self.assertIsNotNone(myresources.search_in_results('nonavailable-widget'))
+            self.assertIsNotNone(myresources.search_in_results('nonavailable-operator'))
+
     def test_reinstall_packaged_widget(self):
 
         self.login()

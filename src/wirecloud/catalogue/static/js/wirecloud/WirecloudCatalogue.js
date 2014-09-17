@@ -187,6 +187,8 @@
             }
         }
 
+        data.append('install_embedded_resources', 'true');
+
         if (options.monitor) {
             task = options.monitor.nextSubtask(gettext('Uploading packaged resource'));
             onUploadProgress = function (event) {
@@ -203,7 +205,7 @@
 
                 if (typeof options.onSuccess === 'function') {
                     try {
-                        options.onSuccess(response_data);
+                        options.onSuccess(response_data.resource_details, response_data.extra_resources);
                     } catch (e) {}
                 }
             }.bind(this),

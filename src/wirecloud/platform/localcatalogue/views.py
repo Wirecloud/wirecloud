@@ -82,12 +82,14 @@ class ResourceCollection(Resource):
     def create(self, request):
 
         force_create = False
+        install_embedded_resources = False
         templateURL = None
         file_contents = None
         content_type = get_content_type(request)[0]
         if content_type == 'multipart/form-data':
             packaged = True
-            force_create = request.POST.get('force_create', False) == 'true'
+            force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
+            install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
             if not 'file' in request.FILES:
                 return build_error_response(request, 400, _('Missing file to upload'))
 
@@ -117,6 +119,7 @@ class ResourceCollection(Resource):
                     msg = _("malformed json data: %s") % unicode(e)
                     return build_error_response(request, 400, msg)
 
+                install_embedded_resources = data.get('install_embedded_resources', 'false').strip().lower() != 'true'
                 force_create = data.get('force_create', False)
                 packaged = data.get('packaged', False)
                 templateURL = data.get('template_uri')
@@ -193,7 +196,30 @@ class ResourceCollection(Resource):
 
             return build_error_response(request, 409, _('Resource already exists'))
 
-        return HttpResponse(json.dumps(resource.get_processed_info(request)), status=201, content_type='application/json; charset=UTF-8')
+        if install_embedded_resources:
+
+            info = {
+                'resource_details': resource.get_processed_info(request),
+                'extra_resources': []
+            }
+            if resource.resource_type() == 'mashup':
+                resource_info = resource.get_processed_info(process_urls=False)
+                base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
+                for embedded_resource in resource_info['embedded']:
+                    if embedded_resource['src'].startswith('https://'):
+                        resource_file = download_http_content(embedded_resource['src'])
+                    else:
+                        resource_file = BytesIO(file_contents.read(embedded_resource['src']))
+
+                    extra_resource_contents = WgtFile(resource_file)
+                    extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, packaged=True, raise_conflicts=False)
+                    info['extra_resources'].append(extra_resource.get_processed_info(request))
+
+            return HttpResponse(json.dumps(info), status=201, content_type='application/json; charset=UTF-8')
+
+        else:
+
+            return HttpResponse(json.dumps(resource.get_processed_info(request)), status=201, content_type='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):

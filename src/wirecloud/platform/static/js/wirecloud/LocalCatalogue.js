@@ -244,7 +244,9 @@
             options = {};
         }
 
-        options.onSuccess = process_packaged_upload_response.bind(this, options.onSuccess);
+        options.onSuccess = function (next, main_resource, extra_resources) {
+            process_packaged_upload_response.call(this, next, [main_resource].concat(extra_resources));
+        }.bind(this, options.onSuccess);
 
         Wirecloud.WirecloudCatalogue.prototype.addPackagedResource.call(this, data, options);
     };
@@ -264,18 +266,18 @@
                 force_create: !!options.forceCreate,
                 market_endpoint: options.market_info
             }),
-            onSuccess: function (transport) {
+            onSuccess: function (response) {
                 var i, id, response_data, resource_data;
 
-                response_data = JSON.parse(transport.responseText);
+                response_data = JSON.parse(response.responseText);
                 process_upload_response.call(this, response_data);
 
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();
                 }
             }.bind(this),
-            onFailure: function (transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding resource from URL: %(errorMsg)s."), transport);
+            onFailure: function (response) {
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding resource from URL: %(errorMsg)s."), response);
 
                 if (typeof options.onFailure === 'function') {
                     options.onFailure(msg);
