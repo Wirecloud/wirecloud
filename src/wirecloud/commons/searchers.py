@@ -26,6 +26,7 @@ from django.contrib.auth.models import Group, User
 from whoosh.fields import ID, NGRAM, SchemaClass, TEXT
 from whoosh.index import create_in, exists_in, open_dir
 from whoosh.qparser import QueryParser
+from whoosh.writing import BufferedWriter
 
 
 class IndexManager(object):
@@ -86,13 +87,10 @@ class IndexWriterMixin(object):
             resource = self.build_compatible_fields(resource)
 
         ix = self.open_index()
+        writer = BufferedWriter(ix, period=120, limit=20)
 
-        try:
-            with ix.writer() as writer:
-                writer.update_document(**resource)
-        except:
-            with ix.writer() as writer:
-                writer.add_document(**resource)
+        writer.update_document(**resource)
+        writer.close()
 
     def build_compatible_fields(self, resource):
         raise NotImplementedError
