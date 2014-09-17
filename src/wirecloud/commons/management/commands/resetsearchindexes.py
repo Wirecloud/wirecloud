@@ -41,8 +41,9 @@ class Command(NoArgsCommand):
             help="Do NOT prompt the user for input of any kind."),
     )
 
-    update_success_message = _('The "%s" index was updated successfully.')
-    nonavailable_indexes_message = _('The following indexes are not available: %s.')
+    update_start_message = _('Reseting "%s" index')
+    update_success_message = _('The "%s" index was updated successfully')
+    nonavailable_indexes_message = _('The following indexes are not available: %s')
 
     def handle_noargs(self, **options):
 
@@ -86,11 +87,13 @@ class Command(NoArgsCommand):
 
         for indexname in indexes:
 
+            self.log(self.update_start_message % indexname)
+
             search_engine = get_search_engine(indexname)
             search_engine.clear_index()
 
             for resource in search_engine.get_model().objects.all():
-                self.log('Adding %s\n' % resource.local_uri_part)
+                self.log('    ' + _('Adding %s\n') % resource)
                 search_engine.add_resource(resource)
 
             self.log(self.update_success_message % indexname)
