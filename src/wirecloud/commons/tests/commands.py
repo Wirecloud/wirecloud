@@ -44,6 +44,8 @@ class ResetSearchIndexesCommandTestCase(TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+        for searcher in get_available_search_engines():
+            searcher.clear_index_cached()
 
     def setUp(self):
         self.options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}

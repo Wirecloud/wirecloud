@@ -39,7 +39,7 @@ class UserSearcherTestCase(WirecloudTestCase):
         super(UserSearcherTestCase, self).setUp()
 
     def test_simple_search(self):
-        response = self.client.get(self.url + '?namespace=users&q=li')
+        response = self.client.get(self.url + '?namespace=user&q=li')
 
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
