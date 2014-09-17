@@ -1,0 +1,132 @@
+[
+    {
+        "pk": 120,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Lourdes",
+            "last_name": "McGlynn",
+            "email": "Vincenza.Berge@tod.us",
+            "username": "Madaline.Hane",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 121,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Linwood",
+            "last_name": "DuBuque",
+            "email": "Jonas.Wisoky@trystan.ca",
+            "username": "Dahlia",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 122,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Samantha",
+            "last_name": "Kihn",
+            "email": "Cristopher@norberto.us",
+            "username": "Estel_Murray",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 123,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Rachael",
+            "last_name": "Hegmann",
+            "email": "Georgette.Feil@sharon.org",
+            "username": "Jalyn",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 124,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Hayley",
+            "last_name": "Reichel",
+            "email": "Myron_Cronin@karson.biz",
+            "username": "Priscilla.Berge",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 125,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Carlos",
+            "last_name": "Johns",
+            "email": "Marcelina@walker.org",
+            "username": "Dominique",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 126,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Tanner",
+            "last_name": "Koss",
+            "email": "Aniya_Grant@elwyn.us",
+            "username": "Selmer",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 127,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Elsie",
+            "last_name": "Jacobson",
+            "email": "Misty.Shields@blaise.biz",
+            "username": "Fredrick",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 128,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Allison",
+            "last_name": "Dare",
+            "email": "Vanessa.Turner@marianna.info",
+            "username": "Filiberto",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    },
+    {
+        "pk": 129,
+        "model": "auth.user",
+        "fields": {
+            "first_name": "Tiara",
+            "last_name": "Botsford",
+            "email": "Heather_Reynolds@conner.name",
+            "username": "Hoyt",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_active": true,
+            "is_staff": false
+        }
+    }
+]

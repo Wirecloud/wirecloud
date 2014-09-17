@@ -22,6 +22,7 @@ from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 from django.views.i18n import javascript_catalog
 
+from wirecloud.commons.views import ResourceSearch
 from wirecloud.platform import views
 from wirecloud.platform.context import views as context_views
 from wirecloud.platform.iwidget import views as iwidget_views
@@ -57,6 +58,12 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^showcase/media/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<file_path>.+)$',
         widget_views.serve_showcase_media,
         name='wirecloud.showcase_media'
+    ),
+
+    # Resource search
+    url(r'^api/search$',
+        ResourceSearch(permitted_methods=('GET',)),
+        name='wirecloud.resource_search'
     ),
 
     # Widgets

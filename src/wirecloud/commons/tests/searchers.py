@@ -19,18 +19,28 @@
 
 from __future__ import unicode_literals
 
-from django.contrib.auth.models import Group, User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+import json
 
-from wirecloud.commons.searchers import get_search_engine
-
-
-@receiver(post_save, sender=Group)
-def update_group_index(sender, instance, **kwargs):
-    get_search_engine('group').add_resource(instance)
+from django.core.urlresolvers import reverse
+from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 
-@receiver(post_save, sender=User)
-def update_user_index(sender, instance, **kwargs):
-    get_search_engine('user').add_resource(instance)
+class UserSearcherTestCase(WirecloudTestCase):
+
+    fixtures = ('user_search_test_data',)
+    tags = ('user-search',)
+
+    @classmethod
+    def setUpClass(cls):
+        super(UserSearcherTestCase, cls).setUpClass()
+        cls.url = reverse('wirecloud.resource_search')
+
+    def setUp(self):
+        super(UserSearcherTestCase, self).setUp()
+
+    def test_simple_search(self):
+        response = self.client.get(self.url + '?namespace=users&q=li')
+
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(result_json['results']), 3)

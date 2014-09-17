@@ -21,22 +21,29 @@ from __future__ import unicode_literals
 
 import os
 from optparse import make_option
-import shutil
 
 from django.core.management.base import CommandError, NoArgsCommand
 from django.utils.six.moves import input
-from whoosh import index
+from django.utils.translation import ugettext_lazy as _
+from whoosh import index as whoosh_index
 
 from wirecloud.catalogue.models import add_document, CatalogueResource, CatalogueResourceSchema
-
+from wirecloud.commons.searchers import get_search_engine, is_available
 
 class Command(NoArgsCommand):
+
     help = 'Resets search indexes'
     option_list = NoArgsCommand.option_list + (
+        make_option('--indexes',
+            action='store', dest='indexes', default='', type="string",
+            help="Indexes to reset. All by default"),
         make_option('--noinput',
             action='store_false', dest='interactive', default=True,
             help="Do NOT prompt the user for input of any kind."),
     )
+
+    update_success_message = _('The "%s" index was updated successfully.')
+    nonavailable_indexes_message = _('The following indexes are not available: %s.')
 
     def handle_noargs(self, **options):
 
@@ -46,6 +53,18 @@ class Command(NoArgsCommand):
         from django.conf import settings
 
         dirname = settings.WIRECLOUD_INDEX_DIR
+        if options['indexes'] == '':
+            indexes = ['resource', 'user', 'group']
+        else:
+            indexes = options['indexes'].split(',')
+
+            nonavailable_indexes = []
+            for index in indexes:
+                if not is_available(index):
+                    nonavailable_indexes.append(index)
+
+            if len(nonavailable_indexes) > 0:
+                raise CommandError(self.nonavailable_indexes_message % nonavailable_indexes)
 
         if os.path.exists(dirname):
             message = ['\n']
@@ -66,11 +85,25 @@ class Command(NoArgsCommand):
         else:
             os.mkdir(dirname)
 
-        index.create_in(dirname, CatalogueResourceSchema(), indexname='catalogue_resources')
+        for indexname in indexes:
 
-        for resource in CatalogueResource.objects.all():
-            self.log('Adding %s\n' % resource.local_uri_part)
-            add_document(CatalogueResource, resource, False, False)
+            if indexname == 'resource':
+
+                whoosh_index.create_in(dirname, CatalogueResourceSchema(), indexname='catalogue_resources')
+                for resource in CatalogueResource.objects.all():
+                    self.log('Adding %s\n' % resource.local_uri_part)
+                    add_document(CatalogueResource, resource, False, False)
+
+            else:
+
+                search_engine = get_search_engine(indexname)
+                search_engine.clear_index()
+
+                for resource in search_engine.get_model().objects.all():
+                    search_engine.add_resource(resource)
+
+            self.log(self.update_success_message % indexname)
+
 
     def log(self, msg, level=2):
         """

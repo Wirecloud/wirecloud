@@ -1,2 +1,4 @@
-from wirecloud.commons.tests.commands import ConvertCommandTestCase
+from wirecloud.commons.tests.admin_commands import ConvertCommandTestCase
+from wirecloud.commons.tests.commands import ResetSearchIndexesCommandTestCase
+from wirecloud.commons.tests.searchers import UserSearcherTestCase
 from wirecloud.commons.tests.template import TemplateUtilsTestCase
