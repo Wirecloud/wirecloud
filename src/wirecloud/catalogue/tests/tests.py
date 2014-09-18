@@ -46,6 +46,7 @@ class AddWidgetTestCase(WirecloudTestCase):
             'example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data')),
         },
     }
+    tags = ('catalogue',)
 
     @classmethod
     def setUpClass(cls):
@@ -408,6 +409,7 @@ class CatalogueSuggestionTestCase(WirecloudTestCase):
 class CatalogueAPITestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_test_data',)
+    tags = ('catalogue',)
 
     @classmethod
     def setUpClass(cls):
@@ -442,7 +444,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
 
 class PublishTestCase(WirecloudTestCase):
 
-    tags = ('fiware-ut-4',)
+    tags = ('catalogue', 'fiware-ut-4')
 
     def setUp(self):
         super(PublishTestCase, self).setUp()
@@ -487,6 +489,8 @@ class PublishTestCase(WirecloudTestCase):
 
 
 class WGTDeploymentTestCase(WirecloudTestCase):
+
+    tags = ('catalogue',)
 
     def setUp(self):
         super(WGTDeploymentTestCase, self).setUp()
