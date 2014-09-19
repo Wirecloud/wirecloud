@@ -363,7 +363,9 @@ def build_rdf_graph(template_info):
     if template_info.get('doc'):
         graph.add((resource_uri, FOAF['page'], rdflib.URIRef(template_info.get('doc'))))
 
-    add_translated_nodes(graph, resource_uri, WIRE, 'displayName', template_info.get('title', ''), {'type': 'resource', 'field': 'title'}, template_info)
+    display_name = template_info.get('title', '')
+    if display_name not in (None, ''):
+        add_translated_nodes(graph, resource_uri, WIRE, 'displayName', display_name, {'type': 'resource', 'field': 'title'}, template_info)
 
     license_url_text = template_info.get('licenseurl', None)
     if license_url_text not in (None, ''):

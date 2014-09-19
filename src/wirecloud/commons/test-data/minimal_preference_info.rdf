@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+  xmlns:gr="http://purl.org/goodrelations/v1#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:usdl="http://www.linked-usdl.org/ns/usdl-core#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+>
+  <wire:Operator rdf:about="http://wirecloud.conwet.fi.upm.es/ns/widget#Wirecloud/TemplateTest/1.0">
+    <usdl:hasProvider>
+      <gr:BusinessEntity rdf:nodeID="N515112ee50cb4f19a5aa6e3dbf0ca589">
+        <foaf:name>Wirecloud</foaf:name>
+      </gr:BusinessEntity>
+    </usdl:hasProvider>
+    <dcterms:title>TemplateTest</dcterms:title>
+    <usdl:versionInfo>1.0</usdl:versionInfo>
+
+    <wire:hasPlatformPreference>
+      <wire:PlatformPreference rdf:nodeID="Na76ec98f57b345eea888d5c9de167f81">
+        <wire:index>0</wire:index>
+        <dcterms:title>pref1</dcterms:title>
+        <wire:type>text</wire:type>
+      </wire:PlatformPreference>
+    </wire:hasPlatformPreference>
+
+    <wire:hasPlatformPreference>
+      <wire:PlatformPreference rdf:nodeID="Nc4f159362d184eaab017df61da240de2">
+        <dcterms:description></dcterms:description>
+        <dcterms:title>pref2</dcterms:title>
+        <wire:type>text</wire:type>
+        <wire:index>1</wire:index>
+        <rdfs:label></rdfs:label>
+      </wire:PlatformPreference>
+    </wire:hasPlatformPreference>
+
+    <usdl:utilizedResource>
+      <usdl:Resource rdf:about="js/main.js">
+        <wire:index>0</wire:index>
+      </usdl:Resource>
+    </usdl:utilizedResource>
+
+  </wire:Operator>
+</rdf:RDF>

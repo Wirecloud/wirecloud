@@ -1214,6 +1214,58 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+        cls.minimal_preference_info = {
+            'type': 'operator',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTest',
+            'version': '1.0',
+            'title': '',
+            'description': '',
+            'longdescription': '',
+            'authors': [],
+            'contributors': [],
+            'email': '',
+            'image': '',
+            'smartphoneimage': '',
+            'homepage': '',
+            'doc': '',
+            'license': '',
+            'licenseurl': '',
+            'changelog': '',
+            'requirements': [],
+            'preferences': [
+                {
+                    'name': 'pref1',
+                    'type': 'text',
+                    'secure': False,
+                    'readonly': False,
+                    'label': '',
+                    'description': '',
+                    'default': '',
+                    'value': None
+                },
+                {
+                    'name': 'pref2',
+                    'type': 'text',
+                    'secure': False,
+                    'readonly': False,
+                    'label': '',
+                    'description': '',
+                    'default': '',
+                    'value': None
+                },
+            ],
+            'properties': [],
+            'wiring': {
+                'inputs': [],
+                'outputs': [],
+            },
+            'js_files': ['js/main.js'],
+            'default_lang': 'en',
+            'translations': {},
+            'translation_index_usage': {},
+        }
+
     def read_template(self, *filename):
         f = open(os.path.join(os.path.dirname(__file__), '..', 'test-data', *filename), 'rb')
         contents = f.read()
@@ -1325,6 +1377,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.minimal_endpoint_info)
 
+    def test_json_parser_minimal_preference_info(self):
+
+        json_description = self.read_template('minimal_preference_info.json')
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.minimal_preference_info)
+
     def test_rdf_parser_writer_basic_operator(self):
 
         rdf_description = write_rdf_description(self.basic_operator_info)
@@ -1413,6 +1473,14 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.minimal_endpoint_info)
+
+    def test_rdf_parser_minimal_preference_info(self):
+
+        rdf_description = self.read_template('minimal_preference_info.rdf')
+        template = TemplateParser(rdf_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.minimal_preference_info)
 
     def test_xml_parser_writer_basic_mashup(self):
 
@@ -1547,3 +1615,11 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.minimal_endpoint_info)
+
+    def test_next_xml_parser_minimal_preference_info(self):
+
+        xml_description = self.read_template('minimal_preference_info.xml')
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.minimal_preference_info)

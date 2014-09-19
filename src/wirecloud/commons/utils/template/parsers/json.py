@@ -63,7 +63,7 @@ class JSONTemplateParser(object):
             elif not isinstance(place[field], (list, tuple)):
                 raise TemplateParseException('An array value was expected for the %s field' % field)
 
-    def _check_string_fields(self, fields, place=None, required=False, default=''):
+    def _check_string_fields(self, fields, place=None, required=False, default='', null=False):
         if place is None:
             place = self._info
 
@@ -74,6 +74,8 @@ class JSONTemplateParser(object):
 
                 place[field] = default
             elif not isinstance(place[field], text_type):
+                if null is True and place[field] is None:
+                    continue
                 raise TemplateParseException('A string value was expected for the %s field' % field)
 
     def _check_boolean_fields(self, fields, place=None, required=False, default=False):
@@ -133,9 +135,24 @@ class JSONTemplateParser(object):
         self._check_string_fields(('title', 'description', 'longdescription', 'email',  'homepage','doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl'))
         self._check_contacts_fields(('authors', 'contributors'))
 
+        # Normalize/check preferences and properties (only for widgets and operators)
+        if self._info['type'] != 'mashup':
+
+            self._check_array_fields(('preferences', 'properties'))
+            for preference in self._info['preferences']:
+                self._check_string_fields(('name', 'type'), place=preference, required=True)
+                self._check_string_fields(('label', 'description', 'default'), place=preference)
+                self._check_boolean_fields(('readonly', 'secure'), place=preference, default=False)
+                self._check_string_fields(('value',), place=preference, null=True, default=None)
+
+            for prop in self._info['properties']:
+                self._check_string_fields(('name', 'type'), place=prop, required=True)
+                self._check_string_fields(('label', 'description', 'default'), place=prop)
+                self._check_boolean_fields(('readonly', 'secure'), place=preference, default=False)
+
         if self._info['type'] == 'widget':
 
-            self._check_array_fields(('preferences', 'properties', 'altcontents'))
+            self._check_array_fields(('altcontents',))
             if self._info.get('contents', None) is None:
                 raise TemplateParseException('Missing widget content info')
             if not isinstance(self._info['contents'], dict):
