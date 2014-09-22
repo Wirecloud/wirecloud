@@ -408,9 +408,9 @@ class WirecloudTestCase(TransactionTestCase):
 
         from django.conf import settings
 
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
         for searcher in get_available_search_engines():
-            searcher.clear_index_cached()
+            searcher.clear_cache()
+        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
     def changeLanguage(self, new_language):
 
@@ -544,9 +544,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         from django.conf import settings
 
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
         for searcher in get_available_search_engines():
-            searcher.clear_index_cached()
+            searcher.clear_cache()
+        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
         LiveServerTestCase.tearDown.im_func(self)
         WirecloudRemoteTestCase.tearDown.im_func(self)
@@ -633,9 +633,9 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
 
         from django.conf import settings
 
-        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
         for searcher in get_available_search_engines():
-            searcher.clear_index_cached()
+            searcher.clear_cache()
+        shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
         LiveServerTestCase.tearDown.im_func(self)
 

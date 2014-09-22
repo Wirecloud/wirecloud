@@ -35,9 +35,6 @@ class UserSearcherTestCase(WirecloudTestCase):
         super(UserSearcherTestCase, cls).setUpClass()
         cls.url = reverse('wirecloud.resource_search')
 
-    def setUp(self):
-        super(UserSearcherTestCase, self).setUp()
-
     def test_simple_search(self):
         response = self.client.get(self.url + '?namespace=user&q=li')
 

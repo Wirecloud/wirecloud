@@ -35,9 +35,9 @@ class IndexManager(object):
     schema_class = None
 
     def __init__(self):
-        self._index_cached = None
+        self.clear_cache()
 
-    def clear_index_cached(self):
+    def clear_cache(self):
         self._index_cached = None
 
     def clear_index(self):
@@ -77,23 +77,46 @@ class IndexManager(object):
 
         return self._index_cached
 
+    def searcher(self):
+        return self.open_index().searcher()
 
-class IndexWriterMixin(object):
+
+class IndexWriter(IndexManager):
 
     model = None
+    batch_writer = None
 
-    def add_resource(self, resource, render=True):
+    def add_resource(self, resource, created=True, render=True):
         if render:
             resource = self.build_compatible_fields(resource)
 
-        ix = self.open_index()
-        writer = BufferedWriter(ix, period=120, limit=20)
-
-        writer.update_document(**resource)
-        writer.close()
+        writer = self.get_batch_writer()
+        if created:
+            writer.add_document(**resource)
+        else:
+            writer.update_document(**resource)
 
     def build_compatible_fields(self, resource):
         raise NotImplementedError
+
+    def close_batch_writer(self):
+        if self.batch_writer is not None:
+            self.batch_writer.close()
+            self.batch_writer = None
+
+    def clear_cache(self):
+        self.close_batch_writer()
+        IndexManager.clear_cache.im_func(self)
+
+    def get_batch_writer(self):
+        if self.batch_writer is None:
+            index = self.open_index()
+            self.batch_writer = BufferedWriter(index, period=30, limit=5)
+
+        return self.batch_writer
+
+    def searcher(self):
+        return self.get_batch_writer().searcher()
 
     def get_model(self):
         if self.model is None:
@@ -102,7 +125,7 @@ class IndexWriterMixin(object):
         return self.model
 
 
-class BaseSearcher(IndexWriterMixin, IndexManager):
+class BaseSearcher(IndexWriter):
 
     fieldname = 'content'
 
@@ -112,7 +135,7 @@ class BaseSearcher(IndexWriterMixin, IndexManager):
         user_q = QueryParser(self.fieldname, ix.schema).parse(querytext)
         result = {}
 
-        with ix.searcher() as searcher:
+        with self.searcher() as searcher:
             hits = searcher.search(user_q)
             result.update({'results': [hit.fields() for hit in hits]})
 

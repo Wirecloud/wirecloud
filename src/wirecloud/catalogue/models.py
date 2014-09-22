@@ -298,8 +298,8 @@ class Version(object):
 
 
 @receiver(post_save, sender=CatalogueResource)
-def update_catalogue_index(sender, instance, **kwargs):
-    get_search_engine('resource').add_resource(instance)
+def update_catalogue_index(sender, instance, created, **kwargs):
+    get_search_engine('resource').add_resource(instance, created)
 
 
 @receiver(m2m_changed, sender=CatalogueResource.groups.through)
@@ -308,7 +308,7 @@ def update_users_or_groups(sender, instance, action, reverse, model, pk_set, usi
     if reverse or action.startswith('pre_') or (pk_set is not None and len(pk_set) == 0):
         return
 
-    update_catalogue_index(sender, instance)
+    update_catalogue_index(sender, instance, False)
 
 
 def add_absolute_urls(results, request=None):
@@ -361,18 +361,19 @@ def build_search_kwargs(user_q, request, types, staff, orderby):
 def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None,
            orderby='-creation_date'):
 
-    ix = get_search_engine('resource').open_index()
+    search_engine = get_search_engine('resource')
+    ix = search_engine.open_index()
     search_result = {}
 
     fieldnames = ['description', 'vendor', 'title', 'wiring']
     query_p = QueryParser('content', ix.schema)
     multif_p = MultifieldParser(fieldnames, ix.schema)
 
-    with ix.searcher() as searcher:
+    with search_engine.searcher() as searcher:
 
         user_q = querytext and query_p.parse(querytext) or Every()
         user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
-        hits = searcher.search(user_q, limit=(pagenum * maxresults), **search_kwargs)
+        hits = searcher.search(user_q, limit=(pagenum * maxresults) + 1, **search_kwargs)
 
         if querytext and hits.is_empty():
 
@@ -396,17 +397,24 @@ def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None
 
 def search_page(search_result, hits, pagenum, maxresults):
 
-    search_result['total'] = hits.estimated_length()
-    search_result['pagecount'] = search_result['total'] // maxresults + 1
+    if hits.has_exact_length():
+        search_result['total'] = len(hits.top_n)
+    else:
+        search_result['total'] = hits.estimated_length()
+
+    search_result['pagecount'] = search_result['total'] // maxresults
+    if (search_result['total'] % maxresults) != 0:
+        search_result['pagecount'] += 1
 
     if pagenum > search_result['pagecount']:
         pagenum = search_result['pagecount']
 
     search_result['pagenum'] = pagenum
-    offset = (pagenum - 1) * maxresults
+    start = (pagenum - 1) * maxresults
+    end = pagenum * maxresults
 
-    search_result['offset'] = offset
-    search_result['results'] = hits[offset:]
+    search_result['offset'] = start
+    search_result['results'] = hits[start:end]
     search_result['pagelen'] = len(search_result['results'])
 
     return search_result

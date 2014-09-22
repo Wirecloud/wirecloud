@@ -177,38 +177,64 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result2_json['pagelen'], len(result2_json['results']))
         self.assertEqual(result2_json['results'][0], result_json['results'][-1])
 
+    def check_last_page(self, response):
+
+        self.assertEqual(response.status_code, 200)
+        result_json = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(result_json['pagenum'], 3)
+        self.assertEqual(result_json['pagelen'], 1)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(result_json['total'], 11)
+        self.assertEqual(result_json['pagecount'], 3)
+        n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
+        self.assertEqual(n, 3)
+
     def test_basic_search_with_pagination(self):
 
         self.client.login(username='admin', password='admin')
 
-        response = self.client.get(self.base_url+'?staff=true&maxresults=15')
+        # Less hits than the maxresults parameter
+        response = self.client.get(self.base_url + '?staff=true&maxresults=15')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 1)
+        self.assertEqual(result_json['pagecount'], 1)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['total'], result_json['pagelen'])
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 17)
 
-        response = self.client.get(self.base_url+'?staff=true&maxresults=10&pagenum=2')
+        # Exactly maxresults hits
+        response = self.client.get(self.base_url + '?staff=true&maxresults=11')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(result_json['pagenum'], 2)
-        self.assertEqual(result_json['pagelen'], 1)
+        self.assertEqual(result_json['pagenum'], 1)
+        self.assertEqual(result_json['pagecount'], 1)
+        self.assertEqual(result_json['pagelen'], 11)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertGreaterEqual(result_json['total'], 11)
+        self.assertEqual(result_json['total'], 11)
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
-        self.assertEqual(n, 3)
+        self.assertEqual(n, 17)
 
-        response = self.client.get(self.base_url+'?staff=true&pagenum=2&maxresults=5')
+        # Paginated response returning maxresults results
+        response = self.client.get(self.base_url + '?staff=true&pagenum=2&maxresults=5')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 2)
         self.assertEqual(result_json['pagelen'], 5)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['total'], 11)
+        self.assertGreater(result_json['total'], 10)
+        self.assertGreater(result_json['pagecount'], 2)
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 9)
+
+        # Paginated response returning less than maxresults results
+        response = self.client.get(self.base_url + '?staff=true&pagenum=3&maxresults=5')
+        self.check_last_page(response)
+
+        # Requesting a page beyond pagecount
+        response = self.client.get(self.base_url + '?staff=true&pagenum=5&maxresults=5')
+        self.check_last_page(response)
 
     def test_basic_search_with_querytext(self):
 

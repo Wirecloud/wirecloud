@@ -27,10 +27,10 @@ from wirecloud.commons.searchers import get_search_engine
 
 
 @receiver(post_save, sender=Group)
-def update_group_index(sender, instance, **kwargs):
-    get_search_engine('group').add_resource(instance)
+def update_group_index(sender, instance, created, **kwargs):
+    get_search_engine('group').add_resource(instance, created)
 
 
 @receiver(post_save, sender=User)
-def update_user_index(sender, instance, **kwargs):
-    get_search_engine('user').add_resource(instance)
+def update_user_index(sender, instance, created, **kwargs):
+    get_search_engine('user').add_resource(instance, created)
