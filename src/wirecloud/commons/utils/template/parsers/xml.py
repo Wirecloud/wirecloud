@@ -320,7 +320,7 @@ class WirecloudTemplateParser(object):
             preference_info = {
                 'name': preference.get('name'),
                 'type': preference.get('type'),
-                'label': preference.get('label'),
+                'label': preference.get('label', ''),
                 'description': preference.get('description', ''),
                 'readonly': preference.get('readonly', 'false').lower() == 'true',
                 'default': preference.get('default', ''),
