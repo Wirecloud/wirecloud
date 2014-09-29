@@ -677,6 +677,9 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
         self.driver.get(url)
 
+        # TODO
+        self.driver.add_cookie({'name': 'policy_cookie', 'value': 'on', 'path': '/'})
+
         username_input = self.wait_element_visible_by_css_selector('#id_username')
         self.fill_form_input(username_input, username)
         password_input = self.driver.find_element_by_id('id_password')

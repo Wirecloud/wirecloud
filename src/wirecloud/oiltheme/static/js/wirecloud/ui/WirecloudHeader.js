@@ -47,6 +47,7 @@
         this.app_bar.appendChild(this.toolbar);
 
         this.currentView = null;
+        this.close_cookie_banner_button = null;
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
@@ -208,8 +209,28 @@
         }
     };
 
+    var cookies;
+    var fiware_cookie_policy_cookie = 'policy_cookie';
+    var fiware_cookie_policy_days = 10;
+
+    var readCookie = function readCookie(name) {
+        var parts, cookie, i;
+
+        if (cookies == null) {
+            parts = document.cookie.split('; ');
+            cookies = {};
+
+            for (i = parts.length - 1; i >= 0; i--) {
+                cookie = parts[i].split('=');
+                cookies[cookie[0]] = cookie[1];
+            }
+        }
+
+        return cookies[name];
+    };
+
     WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {
-        var msg, environment;
+        var msg, environment, cookie_banner, expiration_date;
 
         if (Wirecloud.constants.FIWARE_OFFICIAL_PORTAL && this.footer == null) {
             this.footer = document.createElement('footer');
@@ -222,6 +243,24 @@
             }
             msg = interpolate(msg, {environment: environment}, true);
             this.footer.innerHTML = msg;
+
+            if (readCookie(fiware_cookie_policy_cookie) !== 'on') {
+                cookie_banner = document.createElement('div');
+                cookie_banner.setAttribute('id', 'cookie-law');
+                cookie_banner.innerHTML = '<p>We use first and third-party’s cookies to improve your experience and our services, identifying your Internet browsing preferences on our website. If you keep browsing, you accept its use. You can get more information on our <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/Cookies_Policy_FIWARE_Lab">Cookie Policy</a>.</p>';
+                document.body.appendChild(cookie_banner);
+
+                this.close_cookie_banner_button = new StyledElements.StyledButton({text: 'X', plain: true, id: 'close-cookie-banner'});
+                this.close_cookie_banner_button.insertInto(cookie_banner);
+                this.close_cookie_banner_button.addEventListener('click', function () {
+                    document.body.removeChild(cookie_banner);
+                }.bind(this));
+
+                var expiration_date = new Date();
+                expiration_date.setTime(expiration_date.getTime() + (fiware_cookie_policy_days * 24 * 60 * 60 * 1000));
+                document.cookie = fiware_cookie_policy_cookie + "=on; expires=" + expiration_date.toGMTString() + "; path=/";
+            }
+
             LayoutManagerFactory.getInstance().mainLayout.getSouthContainer().appendChild(this.footer);
             LayoutManagerFactory.getInstance().mainLayout.repaint();
         }

@@ -69,6 +69,10 @@
         this.wrapperElement.setAttribute('tabindex', '0');
         this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_button");
 
+        if (options.id != null) {
+            this.wrapperElement.setAttribute('id', options.id);
+        }
+
         if (options.plain) {
             this.wrapperElement.classList.add('plain');
         }

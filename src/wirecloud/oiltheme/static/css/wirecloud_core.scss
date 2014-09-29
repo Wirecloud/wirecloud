@@ -65,6 +65,7 @@ body {
     left: 0;
     color: rgb(140, 140, 140);
     background: #fcfcfc;
+    text-rendering: optimizeLegibility;
 }
 
 a:hover {
@@ -503,4 +504,44 @@ footer {
     width: 33px;
     height: 20px;
     background: url("../images/logos/wc1-mini.png");
+}
+
+/* Cookies banner */
+
+#cookie-law {
+    background: rgba(44,44,44,0.9);
+    position: fixed;
+    font-family: Arial;
+    z-index: 10000;
+    bottom: 0;
+    left: 0;
+}
+
+#cookie-law p {
+    color: white;
+    padding: 10px;
+    font-size: 15px;
+    line-height: 19px;
+    text-align: center;
+    margin: 0;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-bottom: 0;
+}
+
+#cookie-law a {
+    color: white;
+    font-weight: bold;
+}
+
+#close-cookie-banner {
+    color: white;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    opacity: 1;
+    margin: 0;
+    line-height: 20px;
 }
