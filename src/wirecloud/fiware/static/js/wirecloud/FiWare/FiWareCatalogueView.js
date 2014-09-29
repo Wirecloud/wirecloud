@@ -52,10 +52,17 @@
     };
 
     var onBuySuccess = function onBuySuccess(offering) {
+        var layoutManager, monitor;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        monitor = layoutManager._startComplexTask(gettext("Importing offering resources into local repository"), 3);
+
         this.viewsByName.search.mark_outdated();
         this.catalogue.get_offering_info(offering.store, offering.marketName, {
+            monitor: monitor,
             onSuccess: function (refreshed_offering) {
                 refreshed_offering.install({
+                    monitor: monitor,
                     onResourceSuccess: function (resource) {
                         var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
                         local_catalogue_view.viewsByName.search.mark_outdated();
@@ -65,6 +72,7 @@
                     },
                     onComplete: function () {
                         this.refresh_search_results();
+                        layoutManager._notifyPlatformReady();
                     }.bind(this)
                 });
             }.bind(this),

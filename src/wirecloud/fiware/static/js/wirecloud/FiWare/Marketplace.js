@@ -83,11 +83,17 @@
     };
 
     Marketplace.prototype.get_offering_info = function get_offering_info(store, offering_name, options) {
+        var subtask, url;
+
         if (options == null) {
             options = {};
         }
 
-        var url = Wirecloud.URLs.FIWARE_OFFERING_ENTRY.evaluate({market_user: this.market_user, market_name: this.market_name, store: store, offering_id: offering_name});
+        if (options.monitor) {
+            subtask = options.monitor.nextSubtask(gettext('Retrieving offering info'));
+        }
+
+        url = Wirecloud.URLs.FIWARE_OFFERING_ENTRY.evaluate({market_user: this.market_user, market_name: this.market_name, store: store, offering_id: offering_name});
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},

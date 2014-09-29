@@ -39,9 +39,11 @@
 
         offering.install({
             monitor: monitor,
-            onComplete: function () {
+            onResourceSuccess: function () {
                 var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
                 local_catalogue_view.viewsByName.search.mark_outdated();
+            },
+            onComplete: function () {
                 catalogue_view.refresh_search_results();
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
             }

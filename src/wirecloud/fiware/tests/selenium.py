@@ -290,6 +290,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': response_text})
             self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Start']").click()
             WebDriverWait(self.driver, 10).until(lambda driver: len(driver.find_elements_by_css_selector('.window_menu')) == 1)
+            self.wait_wirecloud_ready()
             marketplace.wait_catalogue_ready()
 
             free_offering = marketplace.search_in_results('Weather widget')
@@ -318,6 +319,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(button.text, 'Install')
 
             self.scroll_and_click(button)
+            self.wait_wirecloud_ready()
             marketplace.wait_catalogue_ready()
             free_offering = marketplace.search_in_results(offering_name)
             button = free_offering.element.find_element_by_css_selector('.mainbutton')

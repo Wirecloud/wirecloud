@@ -19,7 +19,7 @@
  *
  */
 
-/*global interpolate, Wirecloud*/
+/*global Wirecloud*/
 
 (function () {
 
@@ -138,7 +138,7 @@
     };
 
     Offering.prototype.install = function install(options) {
-        var i, subtask, onComplete = null, onSuccess, count = this.resources.length;
+        var i, subtask, onComplete = null, onSuccess, count = this.resources.length, msg;
 
         if (options == null) {
             options = {};
@@ -157,7 +157,8 @@
         for (i = 0; i < this.resources.length; i++) {
             if ('type' in this.resources[i]) {
                 if (options.monitor) {
-                    subtask = options.monitor.nextSubtask(interpolate('Installing "%(resource_name)s" from the offering', {resource_name: this.resources[i].name}, true));
+                    msg = gettext('Installing "%(resource_name)s" from the offering');
+                    subtask = options.monitor.nextSubtask(Wirecloud.Utils.interpolate(msg, {resource_name: this.resources[i].name}, true));
                 }
 
                 if (typeof options.onResourceSuccess === 'function') {
