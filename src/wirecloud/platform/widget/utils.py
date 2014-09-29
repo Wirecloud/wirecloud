@@ -30,7 +30,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import get_absolute_static_url
-from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.commons.utils.template import TemplateParser, UnsupportedFeature
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.models import Widget, UserWorkspace, VariableDef, Workspace, XHTML
 from wirecloud.platform.plugins import get_active_features, get_widget_api_extensions
@@ -47,11 +47,11 @@ def check_requirements(resource):
         if requirement['type'] == 'feature':
 
             if requirement['name'] not in active_features:
-                raise Exception('Required feature is not enabled: %s' % requirement['name'])
+                raise UnsupportedFeature('Required feature (%s) is not enabled for this WireCloud installation.' % requirement['name'])
 
         else:
 
-            raise Exception('Unsupported requirement type: %s' % requirement['type'])
+            raise UnsupportedFeature('Unsupported requirement type (%s).' % requirement['type'])
 
 
 def create_widget_from_template(template, user, request=None, base=None):

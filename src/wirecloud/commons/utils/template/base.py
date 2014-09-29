@@ -22,6 +22,8 @@ from __future__ import unicode_literals
 import regex
 from six import text_type
 
+from django.utils.encoding import python_2_unicode_compatible
+
 
 __all__ = ('is_valid_name', 'is_valid_vendor', 'is_valid_version')
 
@@ -33,16 +35,24 @@ VERSION_RE = regex.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)(?:(?:a|b|rc)[1-9
 CONTACT_RE = regex.compile(r'([^<(\s]+(?:\s+[^<()\s]+)*)(?:\s*<([^>]*)>)?(?:\s*\(([^)]*)\))?')
 
 
+@python_2_unicode_compatible
 class TemplateParseException(Exception):
 
     def __init__(self, msg):
         self.msg = msg
 
     def __str__(self):
-        return str(self.msg)
+        return text_type(self.msg)
 
-    def __unicode__(self):
-        return unicode(self.msg)
+
+@python_2_unicode_compatible
+class UnsupportedFeature(Exception):
+
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return text_type(self.msg)
 
 
 def is_valid_name(name):

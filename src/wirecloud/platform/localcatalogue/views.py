@@ -38,7 +38,7 @@ import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, supported_request_mime_types, supported_response_mime_types
-from wirecloud.commons.utils.template import TemplateParseException
+from wirecloud.commons.utils.template import TemplateParseException, UnsupportedFeature
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
@@ -188,7 +188,7 @@ class ResourceCollection(Resource):
             details = "%s" % e
             return build_error_response(request, 400, msg, details=details)
 
-        except InvalidContents as e:
+        except (InvalidContents, UnsupportedFeature) as e:
 
             return build_error_response(request, 400, unicode(e))
 

@@ -214,7 +214,7 @@
         if (Wirecloud.constants.FIWARE_OFFICIAL_PORTAL && this.footer == null) {
             this.footer = document.createElement('footer');
 
-            msg = '<div>2014 © <a href="http://fi-ware.org/">FIWARE</a>. The use of FIWARE %(environment)s services is subject to the acceptance of the <a href="http://wiki.fi-ware.org/FI-LAB_Terms_and_Conditions">Terms and Conditions</a>, <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/FI-LAB_Personal_Data_Protection_Policy">Personal Data Protection Policy</a> and <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/Cookies_Policy_FIWARE_Lab">Cookies Policy</a></div>';
+            msg = '<div>2014 © <a href="http://fiware.org/">FIWARE</a>. The use of FIWARE %(environment)s services is subject to the acceptance of the <a href="http://wiki.fi-ware.org/FI-LAB_Terms_and_Conditions">Terms and Conditions</a>, <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/FI-LAB_Personal_Data_Protection_Policy">Personal Data Protection Policy</a> and <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/Cookies_Policy_FIWARE_Lab">Cookies Policy</a></div>';
             if (Wirecloud.constants.FIWARE_IDM_SERVER === 'https://account.lab.fi-ware.org') {
                 environment = 'Lab';
             } else {
