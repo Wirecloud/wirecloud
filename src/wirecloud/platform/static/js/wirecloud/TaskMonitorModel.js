@@ -61,6 +61,7 @@
         var subtask = new SubtaskMonitorModel(title);
         this.subtasks.push(subtask);
         subtask.addEventListener('progress', updateGlobalTaskProgress.bind(this));
+        updateGlobalTaskProgress.call(this);
 
         return subtask;
     };

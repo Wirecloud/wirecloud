@@ -129,6 +129,7 @@ var LayoutManagerFactory = function () {
 
             this.monitor = monitor; // TODO
             this.monitor.addEventListener('progress', updateTaskProgress);
+            updateTaskProgress(monitor, 0);
             return monitor;
         };
 
