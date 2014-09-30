@@ -760,16 +760,10 @@ if (!Wirecloud.ui) {
         theInterface.wrapperElement.style.maxWidth = defaultMaxWidgetWidth + 'em';
 
         if (theInterface.getBoundingClientRect().height != virginDimensions.height) {
-            console.debug('Labels demasiado largas!');
             setSourceTargetMaxWidths.call(this, theInterface, defaultMaxWidgetWidth)
         }
-        //theInterface.wrapperElement.style.maxWidth = '';
         theInterface.wrapperElement.style.minWidth = '';
-        // Correction
-        /*while (parseFloat(theInterface.getBoundingClientRect().height) > parseFloat(virginDimensions.height)) {
-            console.debug('Es scroll nos la está liando!! incrementando minwidth en 0,1em');
-            theInterface.wrapperElement.style.minWidth = (parseFloat(theInterface.wrapperElement.style.minWidth) + 0.1) + 'em';
-        }*/
+
         // Fix text-align ceneter problem when text-overflow: ellipsis
         if (titleSpan.offsetWidth < titleSpan.scrollWidth) {
             // text-overflow: ellipsis ON
