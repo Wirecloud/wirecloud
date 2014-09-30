@@ -122,10 +122,8 @@ class CatalogueResource(models.Model):
             pass
 
         # Remove document from search indexes
-        ix = get_search_engine('resource').open_index()
-
         try:
-            with ix.writer() as writer:
+            with get_search_engine('resource').get_batch_writer() as writer:
                 writer.delete_by_term('pk', '%s' % old_id)
         except:
             pass  # ignore errors
@@ -362,14 +360,13 @@ def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None
            orderby='-creation_date'):
 
     search_engine = get_search_engine('resource')
-    ix = search_engine.open_index()
     search_result = {}
 
-    fieldnames = ['description', 'vendor', 'title', 'wiring']
-    query_p = QueryParser('content', ix.schema)
-    multif_p = MultifieldParser(fieldnames, ix.schema)
-
     with search_engine.searcher() as searcher:
+
+        fieldnames = ['description', 'vendor', 'title', 'wiring']
+        query_p = QueryParser('content', searcher.schema)
+        multif_p = MultifieldParser(fieldnames, searcher.schema)
 
         user_q = querytext and query_p.parse(querytext) or Every()
         user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
@@ -377,8 +374,10 @@ def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None
 
         if querytext and hits.is_empty():
 
-            correction_q = multif_p.parse(querytext)
-            corrected = searcher.correct_query(correction_q, querytext)
+            # TODO currently searches from BufferedWriters give problems when correcting queries
+            with search_engine.open_index().searcher() as corrector:
+                correction_q = multif_p.parse(querytext)
+                corrected = corrector.correct_query(correction_q, querytext)
 
             if corrected.query != correction_q:
                 querytext = corrected.string
