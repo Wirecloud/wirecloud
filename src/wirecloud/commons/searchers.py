@@ -111,7 +111,7 @@ class IndexWriter(IndexManager):
     def get_batch_writer(self):
         if self.batch_writer is None:
             index = self.open_index()
-            self.batch_writer = BufferedWriter(index, period=30, limit=5)
+            self.batch_writer = BufferedWriter(index, period=None, limit=5)
 
         return self.batch_writer
 
