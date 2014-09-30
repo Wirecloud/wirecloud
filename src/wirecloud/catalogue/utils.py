@@ -211,10 +211,14 @@ def get_resource_data(resource, user, request=None):
 
         try:
             description_code = download_local_file(localized_longdescription_path)
+            longdescription = markdown.markdown(description_code, output_format='xhtml5')
         except:
-            description_code = download_local_file(longdescription_path)
+            try:
+                description_code = download_local_file(longdescription_path)
+                longdescription = markdown.markdown(description_code, output_format='xhtml5')
+            except:
+                longdescription = resource_info['description']
 
-        longdescription = markdown.markdown(description_code, output_format='xhtml5')
     else:
         longdescription = resource_info['description']
 
