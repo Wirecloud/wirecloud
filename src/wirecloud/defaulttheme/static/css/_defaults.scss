@@ -58,34 +58,34 @@ $font-size-h6:              floor($font-size-base * 0.85) !default;
 
 /* States */
 
-$state-success-text:        darken($brand-success, 20%);
-$state-success-bg:          lighten($brand-success, 35%);
-$state-success-border:      darken(spin($state-success-bg, -10), 5%);
+$state-success-text:        darken($brand-success, 20%) !default;
+$state-success-bg:          lighten($brand-success, 35%) !default;
+$state-success-border:      darken(spin($state-success-bg, -10), 5%) !default;
 
-$state-info-text:           darken($brand-info, 20%);
-$state-info-bg:             lighten($brand-info, 35%);
-$state-info-border:         darken(spin($state-info-bg, -10), 5%);
+$state-info-text:           darken($brand-info, 20%) !default;
+$state-info-bg:             lighten($brand-info, 35%) !default;
+$state-info-border:         darken(spin($state-info-bg, -10), 5%) !default;
 
-$state-warning-text:        darken($brand-warning, 20%);
-$state-warning-bg:          lighten($brand-warning, 35%);
-$state-warning-border:      darken(spin($state-warning-bg, -10), 5%);
+$state-warning-text:        darken($brand-warning, 20%) !default;
+$state-warning-bg:          lighten($brand-warning, 35%) !default;
+$state-warning-border:      darken(spin($state-warning-bg, -10), 5%) !default;
 
-$state-danger-text:         darken($brand-danger, 20%);
-$state-danger-bg:           lighten($brand-danger, 35%);
-$state-danger-border:       darken(spin($state-danger-bg, -10), 5%);
+$state-danger-text:         darken($brand-danger, 20%) !default;
+$state-danger-bg:           lighten($brand-danger, 35%) !default;
+$state-danger-border:       darken(spin($state-danger-bg, -10), 5%) !default;
 
 /* Code */
 
-$code-color:                  #c7254e;
-$code-bg:                     #f9f2f4;
+$code-color:                  #c7254e !default;
+$code-bg:                     #f9f2f4 !default;
 
-$kbd-color:                   #fff;
-$kbd-bg:                      #333;
+$kbd-color:                   #fff !default;
+$kbd-bg:                      #333 !default;
 
-$pre-bg:                      #f5f5f5;
-$pre-color:                   $gray-dark;
-$pre-border-color:            #ccc;
-$pre-scrollable-max-height:   340px;
+$pre-bg:                      #f5f5f5 !default;
+$pre-color:                   $gray-dark !default;
+$pre-border-color:            #ccc !default;
+$pre-scrollable-max-height:   340px !default;
 
 /* Buttons */
 
