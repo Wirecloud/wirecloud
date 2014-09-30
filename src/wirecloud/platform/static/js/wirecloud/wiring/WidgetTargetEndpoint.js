@@ -78,14 +78,25 @@
     };
 
     WidgetTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
+        var msg, details;
+
         if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
             if (this.iwidget.loaded) {
+                if (this.callback == null) {
+                    msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                    msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
+                    details = gettext('Widget has not registered a callback for this input endpoint');
+                    this.iwidget.logManager.log(msg, {details: details});
+                    return;
+                }
                 try {
                     this.callback.call(this.iwidget, newValue);
                 } catch (error) {
-                    var msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                    msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
                     msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
-                    this.iwidget.logManager.log(msg);
+                    details = document.createElement('pre');
+                    details.textContent = error.stack;
+                    this.iwidget.logManager.log(msg, {details: [details]});
                 }
             } else {
                 this.iwidget.pending_events.push({'endpoint': this.meta.name, 'value': newValue});

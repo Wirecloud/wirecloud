@@ -40,14 +40,22 @@
     };
 
     var print_entry = function print_entry(entry) {
-        var entry_element = document.createElement('div');
+        var entry_element, dateElement, expander;
+
+        entry_element = document.createElement('div');
         entry_element.className = 'fade alert ' + LEVEL_CLASS[entry.level - 1];
 
-        var dateElement = document.createElement('strong');
+        dateElement = document.createElement('strong');
         dateElement.textContent = entry.date.strftime('%x %X');//_('short_date')));
         entry_element.appendChild(dateElement);
 
         entry_element.appendChild(document.createTextNode(entry.msg));
+
+        if (entry.details != null) {
+            expander = new StyledElements.Expander({title: gettext('Details')});
+            expander.insertInto(entry_element);
+            expander.appendChild(new StyledElements.Fragment(entry.details));
+        }
 
         this.windowContent.insertBefore(entry_element, this.windowContent.firstChild);
 

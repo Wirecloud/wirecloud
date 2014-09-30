@@ -75,14 +75,25 @@
     };
 
     OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
+        var msg, details;
+
         if (!options || this._is_target_slot(options.targetEndpoints)) {
             if (this.operator.loaded) {
+                if (this.callback == null) {
+                    msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                    msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
+                    details = gettext('Operator has not registered a callback for this input endpoint');
+                    this.operator.logManager.log(msg, {details: details});
+                    return;
+                }
                 try {
                     this.callback.call(this.operator, newValue);
                 } catch (error) {
-                    var msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                    msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
                     msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
-                    this.operator.logManager.log(msg);
+                    details = document.createElement('pre');
+                    details.textContent = error.stack;
+                    this.operator.logManager.log(msg, {details: [details]});
                 }
             } else {
                 this.operator.pending_events.push({'endpoint': this.meta.name, 'value': newValue});

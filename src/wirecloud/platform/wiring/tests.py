@@ -40,6 +40,7 @@ from wirecloud.commons.utils.expected_conditions import element_be_still
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase
 from wirecloud.platform import plugins
 from wirecloud.platform.workspace.models import Workspace
+from wirecloud.platform.workspace.utils import set_variable_value
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests.py)
@@ -690,7 +691,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'prefix: hello world!!')
 
-    def test_input_endpoint_exceptions(self):
+    def check_input_endpoint_exceptions(self):
 
         self.login(username='user_with_workspaces')
 
@@ -699,13 +700,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         target_iwidget = iwidgets[1]
         self.assertIsNotNone(source_iwidget.element)
         self.assertIsNotNone(target_iwidget.element)
-
-        target_iwidget.open_menu().click_entry('Settings')
-
-        boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="boolean"]')
-        boolean_input.click()
-
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         self.assertEqual(source_iwidget.error_count, 0)
         self.assertEqual(target_iwidget.error_count, 0)
@@ -727,17 +721,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         source_iwidget = iwidgets[1]
         target_iwidget = iwidgets[0]
 
-        with self.wiring_view as wiring:
-
-            # Change operator settings
-            ioperator = wiring.get_ioperators()[0]
-            ioperator.element.find_element_by_css_selector('.specialIcon').click()
-            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
-            ioperator.open_menu().click_entry('Settings')
-
-            self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').click()
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
         with source_iwidget:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
@@ -753,6 +736,35 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             ioperator = wiring.get_ioperators()[0]
             self.assertEqual(ioperator.error_count, 1)
             self.assertEqual(target_iwidget.error_count, 0)
+
+    def test_input_endpoint_exceptions(self):
+
+        # Enable widget exceptions
+        set_variable_value(9, 'true')
+
+        # Enable operator exceptions
+        workspace = Workspace.objects.get(id=2)
+        parsedStatus = json.loads(workspace.wiringStatus)
+        parsedStatus['operators']['0']['preferences']['exception_on_event'] = { "readOnly": False, "hidden": False, "value": 'true' }
+        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
+        workspace.save()
+
+        # Check exceptions
+        self.check_input_endpoint_exceptions()
+    test_input_endpoint_exceptions.tags = ('current',)
+
+    def test_input_endpoint_no_handler_exceptions(self):
+
+        # Update wiring connections to use the not handled input endpoints
+        workspace = Workspace.objects.get(id=2)
+        parsedStatus = json.loads(workspace.wiringStatus)
+        parsedStatus['connections'][0]['target']['endpoint'] = 'nothandled'
+        parsedStatus['connections'][1]['target']['endpoint'] = 'nothandled'
+        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
+        workspace.save()
+
+        self.check_input_endpoint_exceptions()
+    test_input_endpoint_no_handler_exceptions.tags = ('current',)
 
     def test_operator_logging_support(self):
 

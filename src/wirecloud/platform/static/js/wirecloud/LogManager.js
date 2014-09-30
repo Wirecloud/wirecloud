@@ -66,8 +66,16 @@
         this.resetCounters();
     };
 
-    LogManager.prototype.log = function log(msg, level) {
-        var date, index, logentry, entry;
+    LogManager.prototype.log = function log(msg, options) {
+        var date, index, entry, level, expander;
+
+        if (typeof options === 'number') {
+            // Backwards compatibility
+            level = options;
+            options = {};
+        } else if (options == null) {
+            options = {};
+        }
 
         date = new Date();
         switch (level) {
@@ -90,20 +98,15 @@
             break;
         }
 
-        logentry = document.createElement("p");
-        while ((index = msg.indexOf("\n")) != -1) {
-            logentry.appendChild(document.createTextNode(msg.substring(0, index)));
-            logentry.appendChild(document.createElement("br"));
-            msg = msg.substring(index + 1);
-        }
-        logentry.appendChild(document.createTextNode(msg));
-
         entry = {
             "level": level,
-            "msg": logentry.innerHTML,
+            "msg": msg,
             "date": date,
             "logManager": this
         };
+        if (options.details != null) {
+            entry.details = options.details;
+        }
         this._addEntry(entry);
     };
 
