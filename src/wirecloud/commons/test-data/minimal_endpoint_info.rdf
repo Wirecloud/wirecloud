@@ -30,12 +30,28 @@
                     <wire:OutputEndpoint rdf:nodeID="Nd374b28e04144d218995ca1448ebb068">
                         <dcterms:title>output1</dcterms:title>
                         <wire:type>text</wire:type>
+                        <wire:index>0</wire:index>
+                    </wire:OutputEndpoint>
+                </wire:hasOutputEndpoint>
+                <wire:hasOutputEndpoint>
+                    <wire:OutputEndpoint rdf:nodeID="Nd374b28e04144d218995ca1448ebb069">
+                        <dcterms:title>output2</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <wire:index>1</wire:index>
                     </wire:OutputEndpoint>
                 </wire:hasOutputEndpoint>
                 <wire:hasInputEndpoint>
                     <wire:InputEndpoint rdf:nodeID="Naba6cc18bba24ecdb51cf13a7d0774a9">
                         <dcterms:title>input1</dcterms:title>
                         <wire:type>text</wire:type>
+                        <wire:index>0</wire:index>
+                    </wire:InputEndpoint>
+                </wire:hasInputEndpoint>
+                <wire:hasInputEndpoint>
+                    <wire:InputEndpoint rdf:nodeID="Naba6cc18bba24ecdb51cf13a7d0774aa">
+                        <dcterms:title>input2</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <wire:index>1</wire:index>
                     </wire:InputEndpoint>
                 </wire:hasInputEndpoint>
             </wire:PlatformWiring>

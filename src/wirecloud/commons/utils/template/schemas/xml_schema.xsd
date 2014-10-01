@@ -50,21 +50,21 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="authors" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+            <xs:element name="authors" minOccurs="0" maxOccurs="1" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>
                         Main developers of this mashable application component.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="contributors" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+            <xs:element name="contributors" minOccurs="0" maxOccurs="1" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>
                         Contributors of this mashable application component.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="email" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+            <xs:element name="email" minOccurs="0" maxOccurs="1" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>
                         E-mail address to get in touch with the
@@ -72,14 +72,14 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="description" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+            <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>
                         A brief textual description of the mashable application component.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="longdescription" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+            <xs:element name="longdescription" minOccurs="0" maxOccurs="1" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>
                         A detailed  description of the mashable application component (using Markdown syntax by default).
@@ -374,7 +374,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="label" use="optional" type="macd:NonEmpty">
+        <xs:attribute name="label" use="optional" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
                     Text that will be used to reference this
@@ -383,7 +383,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="description" use="optional" type="macd:NonEmpty">
+        <xs:attribute name="description" use="optional" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
                     Text describing in which conditions the resource is
@@ -397,7 +397,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="friendcode" use="optional" type="macd:NonEmpty">
+        <xs:attribute name="friendcode" use="optional" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
                     Keyword used to tag this output endpoint,
@@ -424,7 +424,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="label" use="optional" type="macd:NonEmpty">
+        <xs:attribute name="label" use="optional" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
                     Text that will be used to reference this
@@ -433,7 +433,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="actionlabel" type="macd:NonEmpty" use="optional">
+        <xs:attribute name="actionlabel" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
                     Short text describing what is going to
@@ -445,8 +445,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="description" use="optional"
-            type="macd:NonEmpty">
+        <xs:attribute name="description" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
                     Text describing what is going to happen if an event
@@ -457,8 +456,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="friendcode" use="optional"
-            type="macd:NonEmpty">
+        <xs:attribute name="friendcode" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
                     Keyword used to tag the input endpoint,

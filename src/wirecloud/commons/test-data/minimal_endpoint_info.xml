@@ -4,7 +4,9 @@
     </details>
     <wiring>
         <outputendpoint name="output1" type="text" />
+        <outputendpoint name="output2" type="text" label="" description="" friendcode="" />
         <inputendpoint name="input1" type="text" />
+        <inputendpoint name="input2" type="text" label="" description="" actionlabel="" friendcode=""/>
     </wiring>
     <contents src="http://example.com/code.html"/>
     <rendering width="8" height="30"/>

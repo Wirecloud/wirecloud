@@ -1188,10 +1188,25 @@ class TemplateUtilsTestCase(TestCase):
                         'actionlabel': '',
                         'friendcode': ''
                     },
+                    {
+                        'name': 'input2',
+                        'type': 'text',
+                        'label': '',
+                        'description': '',
+                        'actionlabel': '',
+                        'friendcode': ''
+                    },
                 ],
                 'outputs': [
                     {
                         'name': 'output1',
+                        'type': 'text',
+                        'label': '',
+                        'description': '',
+                        'friendcode': ''
+                    },
+                    {
+                        'name': 'output2',
                         'type': 'text',
                         'label': '',
                         'description': '',

@@ -10,16 +10,12 @@
     "widget_width": "8",
     "wiring": {
         "inputs": [
-            {
-                "name": "input1",
-                "type": "text"
-            }
+            {"name": "input1", "type": "text"},
+            {"name": "input2", "type": "text", "label": "", "description": "", "actionlabel": "", "friendcode": ""}
         ],
         "outputs": [
-            {
-                "name": "output1",
-                "type": "text"
-            }
+            {"name": "output1", "type": "text"},
+            {"name": "output2", "type": "text", "label": "", "description": "", "friendcode": ""}
         ]
     }
 }
