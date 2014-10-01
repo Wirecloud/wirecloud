@@ -1266,6 +1266,63 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+        cls.minimal_property_info = {
+            'type': 'widget',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTest',
+            'version': '1.0',
+            'title': '',
+            'description': '',
+            'longdescription': '',
+            'authors': [],
+            'contributors': [],
+            'email': '',
+            'image': '',
+            'smartphoneimage': '',
+            'homepage': '',
+            'doc': '',
+            'license': '',
+            'licenseurl': '',
+            'changelog': '',
+            'requirements': [],
+            'preferences': [],
+            'properties': [
+                {
+                    'name': 'prop1',
+                    'type': 'text',
+                    'secure': False,
+                    'label': '',
+                    'description': '',
+                    'default': '',
+                },
+                {
+                    'name': 'prop2',
+                    'type': 'text',
+                    'secure': False,
+                    'label': '',
+                    'description': '',
+                    'default': '',
+                },
+            ],
+            'wiring': {
+                'inputs': [],
+                'outputs': [],
+            },
+            'contents': {
+                'src': 'http://example.com/code.html',
+                'charset': 'utf-8',
+                'contenttype': 'text/html',
+                'cacheable': True,
+                'useplatformstyle': False
+            },
+            'altcontents': [],
+            'default_lang': 'en',
+            'widget_width': '8',
+            'widget_height': '30',
+            'translations': {},
+            'translation_index_usage': {},
+        }
+
     def read_template(self, *filename):
         f = open(os.path.join(os.path.dirname(__file__), '..', 'test-data', *filename), 'rb')
         contents = f.read()
@@ -1385,6 +1442,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.minimal_preference_info)
 
+    def test_json_parser_minimal_property_info(self):
+
+        json_description = self.read_template('minimal_property_info.json')
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.minimal_property_info)
+
     def test_rdf_parser_writer_basic_operator(self):
 
         rdf_description = write_rdf_description(self.basic_operator_info)
@@ -1481,6 +1546,14 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.minimal_preference_info)
+
+    def test_rdf_parser_minimal_property_info(self):
+
+        rdf_description = self.read_template('minimal_property_info.rdf')
+        template = TemplateParser(rdf_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.minimal_property_info)
 
     def test_xml_parser_writer_basic_mashup(self):
 
@@ -1623,3 +1696,11 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.minimal_preference_info)
+
+    def test_next_xml_parser_minimal_property_info(self):
+
+        xml_description = self.read_template('minimal_property_info.xml')
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.minimal_property_info)

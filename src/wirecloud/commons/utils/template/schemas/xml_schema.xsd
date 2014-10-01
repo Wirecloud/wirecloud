@@ -324,7 +324,7 @@
                         </xs:simpleType>
                     </xs:attribute>
 
-                    <xs:attribute name="label" use="optional" type="macd:NonEmpty">
+                    <xs:attribute name="label" use="optional" type="xs:string">
                         <xs:annotation>
                             <xs:documentation>
                                 Text that will be used to reference this
@@ -334,7 +334,7 @@
                         </xs:annotation>
                     </xs:attribute>
 
-                    <xs:attribute name="description" use="optional" type="macd:NonEmpty">
+                    <xs:attribute name="description" use="optional" type="xs:string">
                         <xs:annotation>
                             <xs:documentation>
                                 Descriptive text.

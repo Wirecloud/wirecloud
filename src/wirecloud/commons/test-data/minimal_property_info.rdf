@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+    xmlns:gr="http://purl.org/goodrelations/v1#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:usdl="http://www.linked-usdl.org/ns/usdl-core#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    >
+    <wire:Widget rdf:about="http://wirecloud.conwet.fi.upm.es/ns/widget#Wirecloud/TemplateTest/1.0">
+        <usdl:hasProvider>
+            <gr:BusinessEntity rdf:nodeID="N8b0f5eff332b4dbe9f13914e250fe7a1">
+                <foaf:name>Wirecloud</foaf:name>
+            </gr:BusinessEntity>
+        </usdl:hasProvider>
+        <dcterms:title>TemplateTest</dcterms:title>
+        <usdl:versionInfo>1.0</usdl:versionInfo>
+        <wire:hasPlatformStateProperty>
+            <wire:PlatformStateProperty rdf:nodeID="N25444fe7888c421c8f1a9e313b2f6cfc">
+                <dcterms:title>prop1</dcterms:title>
+                <dcterms:description></dcterms:description>
+                <wire:index>0</wire:index>
+                <wire:type>text</wire:type>
+                <rdfs:label></rdfs:label>
+            </wire:PlatformStateProperty>
+        </wire:hasPlatformStateProperty>
+        <wire:hasPlatformStateProperty>
+            <wire:PlatformStateProperty rdf:nodeID="Ne89be79e43ff4741b168db4874cc8560">
+                <wire:index>1</wire:index>
+                <dcterms:title>prop2</dcterms:title>
+                <rdfs:label></rdfs:label>
+                <wire:type>text</wire:type>
+                <dcterms:description></dcterms:description>
+            </wire:PlatformStateProperty>
+        </wire:hasPlatformStateProperty>
+        <wire:hasPlatformRendering>
+            <wire:PlatformRendering rdf:nodeID="N4ef9759dfada4c388f8c303c0688a069">
+                <wire:renderingWidth>8</wire:renderingWidth>
+                <wire:renderingHeight>30</wire:renderingHeight>
+            </wire:PlatformRendering>
+        </wire:hasPlatformRendering>
+        <usdl:utilizedResource>
+            <usdl:Resource rdf:about="http://example.com/code.html"/>
+        </usdl:utilizedResource>
+    </wire:Widget>
+</rdf:RDF>

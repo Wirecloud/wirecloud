@@ -1,0 +1,15 @@
+{
+    "vendor": "Wirecloud",
+    "name": "TemplateTest",
+    "version": "1.0",
+    "contents": {
+        "src": "http://example.com/code.html"
+    },
+    "type": "widget",
+    "widget_height": "30",
+    "widget_width": "8",
+    "properties": [
+        {"name": "prop1", "type": "text"},
+        {"name": "prop2", "type": "text", "label": "", "description": "", "default": ""}
+    ]
+}

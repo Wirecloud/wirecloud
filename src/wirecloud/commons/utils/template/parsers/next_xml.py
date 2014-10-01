@@ -381,7 +381,7 @@ class ApplicationMashupTemplateParser(object):
             self._info['properties'].append({
                 'name': prop.get('name'),
                 'type': prop.get('type'),
-                'label': prop.get('label'),
+                'label': prop.get('label', ''),
                 'description': prop.get('description', ''),
                 'default': prop.get('default', ''),
                 'secure': prop.get('secure', 'false').lower() == 'true',
