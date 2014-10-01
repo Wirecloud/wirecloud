@@ -91,8 +91,7 @@
                 } catch (error) {
                     msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
                     msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
-                    details = document.createElement('pre');
-                    details.textContent = error.stack;
+                    details = this.operator.logManager.formatException(error);
                     this.operator.logManager.log(msg, {details: [details]});
                 }
             } else {

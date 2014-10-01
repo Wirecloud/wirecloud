@@ -134,7 +134,7 @@ BASE_CSS = (
     'css/base/fade.css',
     'css/base/panel.scss',
     'css/base/code.scss',
-    'css/windowmenues/logwindowmenu.css',
+    'css/windowmenues/logwindowmenu.scss',
     'css/workspace/ioperator.css',
 )
 
@@ -430,6 +430,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_templates(self, view):
         if view == 'classic':
             return {
+                "exception_log_details": "wirecloud/ui/exception_log_details.html",
                 "iwidget": "wirecloud/ui/iwidget.html",
                 "iwidget_smartphone": "wirecloud/ui/iwidget_smartphone.html",
                 "window_menu": "wirecloud/ui/window_menu.html",

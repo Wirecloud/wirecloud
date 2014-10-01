@@ -54,7 +54,11 @@
         if (entry.details != null) {
             expander = new StyledElements.Expander({title: gettext('Details')});
             expander.insertInto(entry_element);
-            expander.appendChild(new StyledElements.Fragment(entry.details));
+            if (typeof entry.details === 'string') {
+                expander.appendChild(new StyledElements.Fragment(entry.details));
+            } else {
+                expander.appendChild(entry.details);
+            }
         }
 
         this.windowContent.insertBefore(entry_element, this.windowContent.firstChild);

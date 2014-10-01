@@ -25,6 +25,8 @@
 
     "use strict";
 
+    var builder = new StyledElements.GUIBuilder();
+
     var LogManager = function LogManager(parentLogger) {
         Object.defineProperties(this, {
             wrapperElement: {value: document.createElement('div')},
@@ -108,6 +110,13 @@
             entry.details = options.details;
         }
         this._addEntry(entry);
+    };
+
+    LogManager.prototype.formatException = function formatException(exception) {
+        return builder.parse(Wirecloud.currentTheme.templates.exception_log_details, {
+            message: exception.toString(),
+            stacktrace: exception.stack
+        });
     };
 
     LogManager.prototype.formatError = function formatError(format, transport, e) {
