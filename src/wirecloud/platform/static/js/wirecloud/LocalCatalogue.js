@@ -29,41 +29,6 @@
      * Private methods
      *************************************************************************/
 
-    var includeResource = function includeResource(resource_data) {
-        var resource, resource_id, resource_full_id;
-
-        resource_id = resource_data.vendor + '/' + resource_data.name;
-        resource_full_id = resource_id + '/' + resource_data.version;
-
-        switch (resource_data.type) {
-        case 'widget':
-            resource = new Wirecloud.Widget(resource_data);
-            break;
-        case 'operator':
-            resource = new Wirecloud.wiring.OperatorMeta(resource_data);
-            if (Wirecloud.activeWorkspace != null && Wirecloud.activeWorkspace.wiring != null) {
-                try {
-                    Wirecloud.activeWorkspace.wiring._notifyOperatorInstall(resource);
-                } catch (error) {}
-            }
-            break;
-        default:
-            resource = resource_data;
-        }
-
-        if (!(resource_id in this.resourceVersions)) {
-            this.resourceVersions[resource_id] = [];
-        }
-
-        this.resourceVersions[resource_id].push(resource);
-        this.resources[resource_full_id] = resource;
-
-        if (!(resource_data.type in this.resourcesByType)) {
-            this.resourcesByType[resource_data.type] = {};
-        }
-        this.resourcesByType[resource_data.type][resource_full_id] = resource;
-    };
-
     var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(resource, next, result) {
         var layoutManager, result, i, iwidget, uri;
 
@@ -129,7 +94,7 @@
         this.resourcesByType = {};
 
         for (resource_id in resources) {
-            includeResource.call(this, resources[resource_id]);
+            this._includeResource.call(this, resources[resource_id]);
         }
 
         if (typeof context.onSuccess === 'function') {
@@ -157,7 +122,7 @@
                 continue;
             }
 
-            includeResource.call(this, resource_data);
+            this._includeResource.call(this, resource_data);
         }
     };
 
@@ -298,6 +263,41 @@
         } else {
             return {};
         }
+    };
+
+    LocalCatalogue._includeResource = function _includeResource(resource_data) {
+        var resource, resource_id, resource_full_id;
+
+        resource_id = resource_data.vendor + '/' + resource_data.name;
+        resource_full_id = resource_id + '/' + resource_data.version;
+
+        switch (resource_data.type) {
+        case 'widget':
+            resource = new Wirecloud.Widget(resource_data);
+            break;
+        case 'operator':
+            resource = new Wirecloud.wiring.OperatorMeta(resource_data);
+            if (Wirecloud.activeWorkspace != null && Wirecloud.activeWorkspace.wiring != null) {
+                try {
+                    Wirecloud.activeWorkspace.wiring._notifyOperatorInstall(resource);
+                } catch (error) {}
+            }
+            break;
+        default:
+            resource = resource_data;
+        }
+
+        if (!(resource_id in this.resourceVersions)) {
+            this.resourceVersions[resource_id] = [];
+        }
+
+        this.resourceVersions[resource_id].push(resource);
+        this.resources[resource_full_id] = resource;
+
+        if (!(resource_data.type in this.resourcesByType)) {
+            this.resourcesByType[resource_data.type] = {};
+        }
+        this.resourcesByType[resource_data.type][resource_full_id] = resource;
     };
 
     LocalCatalogue.getResourceId = function getResourceId(id) {

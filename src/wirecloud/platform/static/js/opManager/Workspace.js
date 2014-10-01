@@ -199,7 +199,7 @@ function Workspace(workspaceState, resources) {
         LayoutManagerFactory.getInstance()._notifyPlatformReady();
     };
 
-    var publishSuccess = function publishSuccess(options, transport) {
+    var publishSuccess = function publishSuccess(options, response) {
         var layoutManager;
 
         layoutManager = LayoutManagerFactory.getInstance();
@@ -207,6 +207,7 @@ function Workspace(workspaceState, resources) {
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
 
+        Wirecloud.LocalCatalogue._includeResource(JSON.parse(response.responseText));
         layoutManager.viewsByName.myresources.viewsByName.search.mark_outdated();
 
         if (typeof options.onSuccess === 'function') {
