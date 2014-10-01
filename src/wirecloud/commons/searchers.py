@@ -26,7 +26,7 @@ from django.contrib.auth.models import Group, User
 from whoosh.fields import ID, NGRAM, SchemaClass, TEXT
 from whoosh.index import create_in, exists_in, open_dir
 from whoosh.qparser import QueryParser
-from whoosh.writing import BufferedWriter
+from whoosh.writing import IndexWriter as WhooshIndexWriter
 
 
 class IndexManager(object):
@@ -84,39 +84,23 @@ class IndexManager(object):
 class IndexWriter(IndexManager):
 
     model = None
-    batch_writer = None
 
     def add_resource(self, resource, created=True, render=True):
         if render:
             resource = self.build_compatible_fields(resource)
 
-        writer = self.get_batch_writer()
-        if created:
-            writer.add_document(**resource)
-        else:
-            writer.update_document(**resource)
+        with self.get_batch_writer() as writer:
+            if created:
+                writer.add_document(**resource)
+            else:
+                writer.update_document(**resource)
 
     def build_compatible_fields(self, resource):
         raise NotImplementedError
 
-    def close_batch_writer(self):
-        if self.batch_writer is not None:
-            self.batch_writer.close()
-            self.batch_writer = None
-
-    def clear_cache(self):
-        self.close_batch_writer()
-        IndexManager.clear_cache.im_func(self)
-
     def get_batch_writer(self):
-        if self.batch_writer is None:
-            index = self.open_index()
-            self.batch_writer = BufferedWriter(index, period=None, limit=5)
-
-        return self.batch_writer
-
-    def searcher(self):
-        return self.get_batch_writer().searcher()
+        index = self.open_index()
+        return SafeWriter(index)
 
     def get_model(self):
         if self.model is None:
@@ -156,6 +140,74 @@ class BaseSearcher(IndexWriter):
         result['pagelen'] = len(result['results'])
 
         return result
+
+
+class SafeWriter(WhooshIndexWriter):
+
+    def __init__(self, index, delay=0.25, writerargs=None):
+        """
+        :param index: the :class:`whoosh.index.Index` to write to.
+        :param delay: the delay (in seconds) between attempts to instantiate
+            the actual writer.
+        :param writerargs: an optional dictionary specifying keyword arguments
+            to to be passed to the index's ``writer()`` method.
+        """
+
+        self.running = False
+        self.index = index
+        self.writerargs = writerargs or {}
+        self.delay = delay
+        self.events = []
+        try:
+            self.writer = self.index.writer(**self.writerargs)
+        except LockError:
+            self.writer = None
+
+    def reader(self):
+        return self.index.reader()
+
+    def searcher(self, **kwargs):
+        from whoosh.searching import Searcher
+        return Searcher(self.reader(), fromindex=self.index, **kwargs)
+
+    def _record(self, method, args, kwargs):
+        if self.writer:
+            getattr(self.writer, method)(*args, **kwargs)
+        else:
+            self.events.append((method, args, kwargs))
+
+    def delete_document(self, *args, **kwargs):
+        self._record("delete_document", args, kwargs)
+
+    def add_document(self, *args, **kwargs):
+        self._record("add_document", args, kwargs)
+
+    def update_document(self, *args, **kwargs):
+        self._record("update_document", args, kwargs)
+
+    def add_field(self, *args, **kwargs):
+        self._record("add_field", args, kwargs)
+
+    def remove_field(self, *args, **kwargs):
+        self._record("remove_field", args, kwargs)
+
+    def delete_by_term(self, *args, **kwargs):
+        self._record("delete_by_term", args, kwargs)
+
+    def commit(self, *args, **kwargs):
+        writer = self.writer
+        while writer is None:
+            try:
+                writer = self.index.writer(**self.writerargs)
+            except LockError:
+                time.sleep(self.delay)
+        for method, args, kwargs in self.events:
+            getattr(writer, method)(*args, **kwargs)
+        writer.commit(*args, **kwargs)
+
+    def cancel(self, *args, **kwargs):
+        if self.writer:
+            self.writer.cancel(*args, **kwargs)
 
 
 class GroupSchema(SchemaClass):
