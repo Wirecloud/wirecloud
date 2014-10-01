@@ -542,9 +542,6 @@ class WirecloudTemplateParser(object):
     def get_resource_version(self):
         return self._info['version']
 
-    def get_resource_basic_info(self):
-        return self._info
-
     def get_resource_info(self):
         if not self._parsed:
             self._parse_extra_info()

@@ -77,9 +77,6 @@ class TemplateParser(object):
     def get_resource_type(self):
         return self._parser.get_resource_type()
 
-    def get_resource_uri(self):
-        return self._parser.get_resource_uri()
-
     def get_resource_name(self):
         return self._parser.get_resource_name()
 
@@ -88,9 +85,6 @@ class TemplateParser(object):
 
     def get_resource_version(self):
         return self._parser.get_resource_version()
-
-    def get_resource_basic_info(self):
-        return self._parser.get_resource_basic_info()
 
     def get_resource_info(self):
 
