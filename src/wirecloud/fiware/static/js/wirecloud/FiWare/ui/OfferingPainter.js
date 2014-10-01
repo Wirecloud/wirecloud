@@ -247,6 +247,7 @@
             }.bind({catalogue_view: this.catalogue_view, offering: offering, is_details_view: this.is_details_view}),
             'image': function () {
                 var image = document.createElement('img');
+                image.className = "wc-resource-img";
                 image.onerror = function (event) {
                     event.target.src = '/static/images/noimage.png';
                 };

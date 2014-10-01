@@ -60,7 +60,7 @@
     width: 70px;
 }
 
-.resource > img {
+.wc-resource-img-container {
     width: 170px;
     height: 80px;
     position: absolute;
@@ -68,6 +68,14 @@
     left: 0px;
     background: white;
     border-radius: 0 4px;
+    display: inline-block;
+    text-align: center;
+    overflow: hidden;
+}
+
+.wc-resource-img {
+    max-width: 170px;
+    max-height: 80px;
     display: inline-block;
 }
 

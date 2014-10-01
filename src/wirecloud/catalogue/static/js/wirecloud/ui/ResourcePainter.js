@@ -171,6 +171,7 @@
             'rating': this.get_popularity_html.bind(this, resource.rating),
             'image': function () {
                 var image = document.createElement('img');
+                image.className = 'wc-resource-img';
                 image.onerror = function (event) {
                     event.target.src = '/static/images/noimage.png';
                 };
