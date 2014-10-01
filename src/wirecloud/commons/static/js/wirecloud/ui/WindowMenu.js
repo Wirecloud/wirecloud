@@ -103,6 +103,7 @@
         if (extra_class != null) {
             this.htmlElement.classList.add(extra_class);
         }
+        this.windowHeader = this.htmlElement.querySelector('.window_top');
 
         // Initial title
         this.setTitle(title);
@@ -160,6 +161,7 @@
 
         this.htmlElement.style.maxHeight = '';
         this.htmlElement.style.maxWidth = '';
+        this.windowContent.style.maxHeight = '';
         var menuWidth = this.htmlElement.offsetWidth;
 
         if (menuWidth > windowWidth) {
@@ -172,14 +174,9 @@
         coordenates[0] = (windowWidth - menuWidth) / 2;
 
         if (windowHeight < menuHeight) {
-            var windowStyle = document.defaultView.getComputedStyle(this.htmlElement, null);
-
-            var padding;
-            padding = windowStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
-            padding += windowStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-            this.htmlElement.style.maxHeight = windowHeight - padding + 'px';
+            this.htmlElement.style.maxHeight = windowHeight + 'px';
             this.htmlElement.style.top = '0px';
+            this.windowContent.style.maxHeight = (windowHeight - this.windowHeader.offsetHeight - this.windowBottom.offsetHeight) + 'px';
         } else {
             this.htmlElement.style.top = coordenates[1] + "px";
         }
