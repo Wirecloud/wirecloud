@@ -751,7 +751,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         # Check exceptions
         self.check_input_endpoint_exceptions()
-    test_input_endpoint_exceptions.tags = ('current',)
 
     def test_input_endpoint_no_handler_exceptions(self):
 
@@ -764,7 +763,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         workspace.save()
 
         self.check_input_endpoint_exceptions()
-    test_input_endpoint_no_handler_exceptions.tags = ('current',)
 
     def test_operator_logging_support(self):
 
