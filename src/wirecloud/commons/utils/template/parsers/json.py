@@ -21,7 +21,6 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 
-from django.utils import six
 from django.utils.translation import ugettext as _
 from six import text_type
 
@@ -148,7 +147,7 @@ class JSONTemplateParser(object):
             for prop in self._info['properties']:
                 self._check_string_fields(('name', 'type'), place=prop, required=True)
                 self._check_string_fields(('label', 'description', 'default'), place=prop)
-                self._check_boolean_fields(('readonly', 'secure'), place=preference, default=False)
+                self._check_boolean_fields(('readonly', 'secure'), place=prop, default=False)
 
         if self._info['type'] == 'widget':
 

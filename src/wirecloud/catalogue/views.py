@@ -227,6 +227,7 @@ class ResourceChangelogEntry(Resource):
         except:
             doc_code = download_local_file(doc_path)
 
+        doc_code = doc_code.decode('utf-8')
         doc = markdown.markdown(doc_code.decode('utf8'), output_format='xhtml5')
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
 
@@ -250,5 +251,6 @@ class ResourceDocumentationEntry(Resource):
         except:
             doc_code = download_local_file(doc_path)
 
+        doc_code = doc_code.decode('utf-8')
         doc = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
