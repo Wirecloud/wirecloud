@@ -274,6 +274,14 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 2)
 
+        # Empty query
+        result = self.client.get(self.base_url+'?q=totally+uncorrectable+search+giving+an+empty+resultset')
+        result_json = json.loads(result.content.decode('utf-8'))
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagenum'], 1)
+        self.assertEqual(result_json['pagelen'], 0)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+
         self.client.logout()
         self.client.login(username='MyUser', password='admin')
 

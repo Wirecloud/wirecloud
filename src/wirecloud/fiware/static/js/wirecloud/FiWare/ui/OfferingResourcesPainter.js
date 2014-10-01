@@ -29,7 +29,7 @@
     };
 
     var onInstallClick = function onInstallClick(resource, catalogue, store, button) {
-        var layoutManager, local_catalogue_view, market_id, url;
+        var layoutManager, local_catalogue_view, url;
 
         button.disable();
 
@@ -48,6 +48,7 @@
                 button.clearEventListeners('click');
                 button.addEventListener('click', onUninstallClick.bind(null, resource, catalogue, store));
 
+                catalogue.viewsByName.search.mark_outdated();
                 local_catalogue_view.viewsByName.search.mark_outdated();
             },
             onFailure: function (msg) {
@@ -62,7 +63,7 @@
     };
 
     var onUninstallClick = function onUninstallClick(resource, catalogue, store, button) {
-        var layoutManager, local_catalogue_view, market_id, url;
+        var layoutManager, local_catalogue_view, url;
 
         button.disable();
 
@@ -70,12 +71,6 @@
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Uninstalling resource from local repository"), 3);
         layoutManager.logSubTask(gettext('Uninstalling resource'));
-
-        if (catalogue.market_user !== 'public') {
-            market_id = catalogue.market_user + '/' + catalogue.market_name;
-        } else {
-            market_id = catalogue.market_name;
-        }
 
         local_catalogue_view.catalogue.uninstallResource(resource, {
             onSuccess: function () {
@@ -87,6 +82,7 @@
                 button.clearEventListeners('click');
                 button.addEventListener('click', onInstallClick.bind(null, resource, catalogue, store));
 
+                catalogue.viewsByName.search.mark_outdated();
                 local_catalogue_view.viewsByName.search.mark_outdated();
             },
             onFailure: function (msg) {

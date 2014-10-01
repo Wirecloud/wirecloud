@@ -362,6 +362,9 @@ def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None
     search_engine = get_search_engine('resource')
     search_result = {}
 
+    if pagenum < 1:
+        pagenum = 1
+
     with search_engine.searcher() as searcher:
 
         fieldnames = ['description', 'vendor', 'title', 'wiring']
@@ -406,7 +409,7 @@ def search_page(search_result, hits, pagenum, maxresults):
         search_result['pagecount'] += 1
 
     if pagenum > search_result['pagecount']:
-        pagenum = search_result['pagecount']
+        pagenum = max(1, search_result['pagecount'])
 
     search_result['pagenum'] = pagenum
     start = (pagenum - 1) * maxresults

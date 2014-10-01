@@ -59,7 +59,7 @@
                     if (Array.isArray(resource.resources)) {
                         offering_resource_description = details.createTab({'name': gettext('Resources'), 'closable': false});
                         painter = new Wirecloud.FiWare.ui.OfferingResourcePainter();
-                        painter.paint(resource, offering_resource_description, this.mainview.catalogue);
+                        painter.paint(resource, offering_resource_description, this.mainview);
                     }
 
                     return details;
