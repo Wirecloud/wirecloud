@@ -112,6 +112,7 @@ setup(
         'whoosh>=2.5.6',
         'pycrypto',
         'pyScss==1.2.0.post3',
+        'Pygments',
     ),
     tests_require=('django-nose'),
     classifiers=(
