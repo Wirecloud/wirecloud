@@ -20,11 +20,12 @@
 from __future__ import unicode_literals
 
 import os
+import time
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from whoosh.fields import ID, NGRAM, SchemaClass, TEXT
-from whoosh.index import create_in, exists_in, open_dir
+from whoosh.index import create_in, exists_in, LockError, open_dir
 from whoosh.qparser import QueryParser
 from whoosh.writing import IndexWriter as WhooshIndexWriter
 
