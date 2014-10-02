@@ -289,6 +289,29 @@ def check_delete_requires_permission(self, url, test_after_request=None):
     self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
 
+def check_cache_is_purged(self, workspace, change_function, current_etag=None):
+
+    url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': workspace})
+    if current_etag is None:
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        current_etag = response['ETag']
+
+    change_function()
+
+    response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=current_etag)
+    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+    json.loads(response.content)
+    self.assertEqual(response.status_code, 200)
+
+    new_etag = response['ETag']
+
+    # There are no changes in the workspaces, so next requests so return a 304 error code
+    cached_response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=new_etag)
+    self.assertEqual(cached_response.status_code, 304)
+
+    return new_etag
+
+
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
@@ -740,6 +763,51 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertTrue('preferences' in response_data)
         self.assertTrue(isinstance(response_data['preferences'], dict))
 
+    def test_workspace_entry_get_allows_anonymous_requests(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 4})
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+        self.assertTrue('id' in response_data)
+        self.assertEqual(response_data['name'], 'Public Workspace')
+        self.assertEqual(response_data['creator'], 'user_with_workspaces')
+
+    def test_workspace_entry_cache(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 4})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make initial request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        json.loads(response.content)
+        etag = response['ETag']
+
+        # There are no changes in the workspaces, so next requests so return a 304 error code
+        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=etag)
+        self.assertEqual(response.status_code, 304)
+
+        # TODO those tests should live in they own method
+        # Update widget position
+        def update_widget_position():
+            url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 4, 'tab_id': 104})
+            data = [
+                {"id": 5, "top": 24, "left": 6}
+            ]
+            response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+
+        etag = check_cache_is_purged(self, 4, update_widget_position, etag)
+
     def test_workspace_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
@@ -822,14 +890,16 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request
-        data = json.dumps(new_wiring_status)
-        response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
+        def update_workspace_wiring():
+            data = json.dumps(new_wiring_status)
+            response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
 
-        # Workspace wiring status should have change
-        workspace = Workspace.objects.get(id=1)
-        wiring_status = json.loads(workspace.wiringStatus)
-        self.assertEqual(wiring_status, new_wiring_status)
+            # Workspace wiring status should have change
+            workspace = Workspace.objects.get(id=1)
+            wiring_status = json.loads(workspace.wiringStatus)
+            self.assertEqual(wiring_status, new_wiring_status)
+        check_cache_is_purged(self, 1, update_workspace_wiring)
 
     def test_workspace_wiring_entry_put_bad_request_syntax(self):
 
@@ -867,19 +937,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request
-        data = {
-            'name': 'rest_api_test',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 201)
+        def create_workspace_tab():
+            data = {
+                'name': 'rest_api_test',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 201)
 
-        # Check basic response structure
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
-        self.assertEqual(response_data['name'], 'rest_api_test')
+            # Check basic response structure
+            response_data = json.loads(response.content)
+            self.assertTrue(isinstance(response_data, dict))
+            self.assertEqual(response_data['name'], 'rest_api_test')
 
-        # Tab should be created
-        self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
+            # Tab should be created
+            self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
+        check_cache_is_purged(self, 1, create_workspace_tab)
 
     def test_tab_collection_post_conflict(self):
 
@@ -929,30 +1001,34 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request (rename tab)
-        data = {
-            'name': 'new tab name'
-        }
-        response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
+        def update_workspace_tab_name():
+            data = {
+                'name': 'new tab name'
+            }
+            response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
 
-        # Tab should be renamed
-        tab2 = Tab.objects.get(pk=103)
-        self.assertEqual(tab2.name, 'new tab name')
-        self.assertFalse(tab2.visible)
+            # Tab should be renamed
+            tab2 = Tab.objects.get(pk=103)
+            self.assertEqual(tab2.name, 'new tab name')
+            self.assertFalse(tab2.visible)
+        check_cache_is_purged(self, 3, update_workspace_tab_name)
 
-        # Mark second tab as the default tab
-        data = {
-            'visible': True
-        }
-        response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
+        # Mark second tab as the default Tab
+        def mark_workspace_tab_active():
+            data = {
+                'visible': True
+            }
+            response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
 
-        # Tab should be marked as the default one
-        tab2 = Tab.objects.get(pk=103)
-        self.assertEqual(tab2.name, 'new tab name')
-        self.assertTrue(tab2.visible)
-        tab1 = Tab.objects.get(pk=102)
-        self.assertFalse(tab1.visible)
+            # Tab should be marked as the default one
+            tab2 = Tab.objects.get(pk=103)
+            self.assertEqual(tab2.name, 'new tab name')
+            self.assertTrue(tab2.visible)
+            tab1 = Tab.objects.get(pk=102)
+            self.assertFalse(tab1.visible)
+        check_cache_is_purged(self, 3, mark_workspace_tab_active)
 
         # Mark first tab as the default tab
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 3, 'tab_id': 102})
@@ -1051,7 +1127,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         self.assertEqual(tuple(Workspace.objects.get(pk=3).tab_set.order_by('position').values_list('pk', flat=True)), data)
 
-    def test_tab_collection_post_bad_request_content_type(self):
+    def test_tab_order_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.tab_order', kwargs={'workspace_id': 3})
         check_post_bad_request_content_type(self, url)
@@ -1087,13 +1163,15 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request
-        data = {
-            'widget': 'Wirecloud/Test/1.0',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        def add_iwidget_to_workspace():
+            data = {
+                'widget': 'Wirecloud/Test/1.0',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 200)
+            response_data = json.loads(response.content)
+            self.assertTrue(isinstance(response_data, dict))
+        check_cache_is_purged(self, 1, add_iwidget_to_workspace)
 
     def test_iwidget_collection_post_creation_from_nonexistent_widget(self):
 
@@ -1175,16 +1253,18 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request
-        data = {
-            'name': 'New Name',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.content, '')
+        def update_iwidget_name():
+            data = {
+                'name': 'New Name',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content, '')
 
-        # Check that the iwidget name has been changed
-        iwidget = IWidget.objects.get(pk=2)
-        self.assertEqual(iwidget.name, 'New Name')
+            # Check that the iwidget name has been changed
+            iwidget = IWidget.objects.get(pk=2)
+            self.assertEqual(iwidget.name, 'New Name')
+        check_cache_is_purged(self, 2, update_iwidget_name)
 
     def test_iwidget_entry_post_bad_request_content_type(self):
 
@@ -1231,21 +1311,24 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request
-        data = {
-            'text': 'new value',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.content, '')
+        def update_iwidget_preference():
+            data = {
+                'text': 'new value',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content, '')
 
-        # IWidget preferences should be updated
-        variable = Variable.objects.get(
-            vardef__name='text',
-            iwidget__id=2
-        )
-        self.assertEqual(variable.value, 'new value')
+            # IWidget preferences should be updated
+            variable = Variable.objects.get(
+                vardef__name='text',
+                iwidget__id=2
+            )
+            self.assertEqual(variable.value, 'new value')
 
-    def test_iwidget_entry_post_bad_request_content_type(self):
+        check_cache_is_purged(self, 2, update_iwidget_preference)
+
+    def test_iwidget_preferences_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
         check_post_bad_request_content_type(self, url)
@@ -1338,19 +1421,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request
-        data = {
-            'prop': 'new value',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.content, '')
+        def update_iwidget_property():
+            data = {
+                'prop': 'new value',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content, '')
 
-        # IWidget properties should be updated
-        variable = Variable.objects.get(
-            vardef__name='prop',
-            iwidget__id=2
-        )
-        self.assertEqual(variable.value, 'new value')
+            # IWidget properties should be updated
+            variable = Variable.objects.get(
+                vardef__name='prop',
+                iwidget__id=2
+            )
+            self.assertEqual(variable.value, 'new value')
+        check_cache_is_purged(self, 2, update_iwidget_property)
 
     def test_iwidget_properties_entry_post_bad_request_content_type(self):
 
@@ -1401,12 +1486,14 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request
-        response = self.client.delete(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.content, '')
+        def delete_iwidget_from_workspace():
+            response = self.client.delete(url, HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content, '')
 
-        # IWidget should be deleted
-        self.assertRaises(IWidget.DoesNotExist, IWidget.objects.get, pk=2)
+            # IWidget should be deleted
+            self.assertRaises(IWidget.DoesNotExist, IWidget.objects.get, pk=2)
+        check_cache_is_purged(self, 2, delete_iwidget_from_workspace)
 
     def test_iwidget_entry_delete_read_only(self):
 
@@ -1423,6 +1510,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # IWidget should not be deleted
         IWidget.objects.get(pk=4)
+
 
 class ResourceManagementAPI(WirecloudTestCase):
 
@@ -1888,7 +1976,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        json.loads(response.content)
 
     def test_market_collection_bad_request_content_type(self):
 
@@ -2027,21 +2115,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(len(response_data), 1)
         self.assertEqual(response_data[0]['name'], 'Public Workspace')
 
-    def test_workspace_entry_get_allows_anonymous_requests(self):
-
-        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 4})
-
-        # Make the request
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 200)
-
-        # Response should be a dict
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertTrue('id' in response_data)
-        self.assertEqual(response_data['name'], 'Public Workspace')
-        self.assertEqual(response_data['creator'], 'user_with_workspaces')
-
     def test_workspace_entry_post_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
@@ -2081,27 +2154,34 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
-        data = {
-            'name': 'RenamedWorkspace',
-            'active': False,
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
+        # Update workspace name
+        def update_workspace_name():
+            data = {
+                'name': 'RenamedWorkspace',
+                'active': False,
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
 
-        user_workspace = UserWorkspace.objects.get(pk=2)
-        self.assertEqual(user_workspace.workspace.name, data['name'])
-        self.assertEqual(user_workspace.active, False)
+            user_workspace = UserWorkspace.objects.get(pk=2)
+            self.assertEqual(user_workspace.workspace.name, data['name'])
+            self.assertEqual(user_workspace.active, False)
 
-        data = {
-            'name': 'Workspace',
-            'active': 'True',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
+        check_cache_is_purged(self, 2, update_workspace_name)
 
-        user_workspace = UserWorkspace.objects.get(pk=2)
-        self.assertEqual(user_workspace.workspace.name, data['name'])
-        self.assertEqual(user_workspace.active, True)
+        # Set workspace as active
+        def mark_workspace_active():
+            data = {
+                'name': 'Workspace',
+                'active': 'True',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+
+            user_workspace = UserWorkspace.objects.get(pk=2)
+            self.assertEqual(user_workspace.workspace.name, data['name'])
+            self.assertEqual(user_workspace.active, True)
+        check_cache_is_purged(self, 2, mark_workspace_active)
 
     def test_workspace_entry_post_bad_request_content_type(self):
 
@@ -2139,23 +2219,20 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request
-        data = {
-            'mashup': 'Wirecloud/test-mashup/1.0',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
+        def merge_workspaces():
+            data = {
+                'mashup': 'Wirecloud/test-mashup/1.0',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
 
-        # Check new workspace status
-        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertEqual(len(response_data['tabs']), 3)
-        self.assertEqual(len(response_data['tabs'][0]['iwidgets']), 2)
-        self.assertEqual(len(response_data['tabs'][1]['iwidgets']), 1)
-        self.assertEqual(len(response_data['tabs'][2]['iwidgets']), 1)
+            # Check new workspace status_code
+            workspace = Workspace.objects.get(pk=2)
+            self.assertEqual(workspace.tab_set.all().count(), 3)
+            self.assertEqual(workspace.tab_set.all()[0].iwidget_set.count(), 2)
+            self.assertEqual(workspace.tab_set.all()[1].iwidget_set.count(), 1)
+            self.assertEqual(workspace.tab_set.all()[2].iwidget_set.count(), 1)
+        check_cache_is_purged(self, 2, merge_workspaces)
 
     def test_workspace_merge_service_post_required_paramateres(self):
 
@@ -2196,23 +2273,20 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         # Make the request
-        data = {
-            'workspace': '3',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
+        def merge_workspaces():
+            data = {
+                'workspace': '3',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
 
-        # Check new workspace status
-        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertEqual(len(response_data['tabs']), 3)
-        self.assertEqual(len(response_data['tabs'][0]['iwidgets']), 2)
-        self.assertEqual(len(response_data['tabs'][1]['iwidgets']), 1)
-        self.assertEqual(len(response_data['tabs'][2]['iwidgets']), 1)
+            # Check new workspace status
+            workspace = Workspace.objects.get(pk=2)
+            self.assertEqual(workspace.tab_set.all().count(), 3)
+            self.assertEqual(workspace.tab_set.all()[0].iwidget_set.count(), 2)
+            self.assertEqual(workspace.tab_set.all()[1].iwidget_set.count(), 1)
+            self.assertEqual(workspace.tab_set.all()[2].iwidget_set.count(), 1)
+        check_cache_is_purged(self, 2, merge_workspaces)
 
     def test_workspace_merge_service_post_from_mashup_bad_id(self):
 
@@ -2242,7 +2316,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
-    def test_workspace_entry_post_bad_request_content_type(self):
+    def test_workspace_merge_service_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
         check_post_bad_request_content_type(self, url)
@@ -2300,15 +2374,19 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
-        data = {
-            'pref1': {'inherit': 'false', 'value': '5'},
-            'pref2': {'inherit': 'true', 'value': 'false'}
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.content, '')
+        # Make the request
+        def update_workspace_preferences():
 
-    def test_workspace_entry_post_bad_request_content_type(self):
+            data = {
+                'pref1': {'inherit': 'false', 'value': '5'},
+                'pref2': {'inherit': 'true', 'value': 'false'}
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content, '')
+        check_cache_is_purged(self, 2, update_workspace_preferences)
+
+    def test_workspace_entry_preference_collection_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
         check_post_bad_request_content_type(self, url)
@@ -2366,13 +2444,16 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
-        data = {
-            'pref1': '5',
-            'pref2': 'true',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.content, '')
+        # Make the request
+        def update_workspace_tab_preferences():
+            data = {
+                'pref1': '5',
+                'pref2': 'true',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content, '')
+        check_cache_is_purged(self, 2, update_workspace_tab_preferences)
 
     def test_tab_preference_collection_post_bad_request_content_type(self):
 
