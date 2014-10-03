@@ -31,7 +31,7 @@
     PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
     PreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
-        var oldValue, newValue, varName;
+        var oldValue, newValue, varName, details;
 
         for (varName in new_values) {
             oldValue = this._current_iwidget.preferences[varName].value;
@@ -61,8 +61,9 @@
         if (typeof this._current_iwidget.prefCallback === 'function') {
             try {
                 this._current_iwidget.prefCallback(new_values);
-            } catch (e) {
-                this._current_iwidget.logManager.log(gettext('Exception catched while processing preference changes'));
+            } catch (error) {
+                details = this._current_iwidget.logManager.formatException(error);
+                this._current_iwidget.logManager.log(gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
     };

@@ -31,7 +31,7 @@
     OperatorPreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
     OperatorPreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
-        var key;
+        var key, details;
 
         for (key in new_values) {
             if (this._current_ioperator.preferences[key].value !== new_values[key]) {
@@ -44,8 +44,9 @@
         if (typeof this._current_ioperator.prefCallback === 'function') {
             try {
                 this._current_ioperator.prefCallback(new_values);
-            } catch (e) {
-                this._current_ioperator.logManager.log(gettext('Exception catched while processing preference changes'));
+            } catch (error) {
+                details = this._current_ioperator.logManager.formatException(error);
+                this._current_ioperator.logManager.log(gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
 
