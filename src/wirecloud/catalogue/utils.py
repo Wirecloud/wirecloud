@@ -102,7 +102,13 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
         resource_info = template.get_resource_info()
         code_url = resource_info['contents']['src']
         if not code_url.startswith(('http://', 'https://')):
-            code = wgt_file.read(code_url)
+
+            try:
+                code = wgt_file.read(code_url)
+            except KeyError:
+                msg = _('Missing contents file: %(file_name)s.')
+                raise InvalidContents(msg % {'file_name': code_url})
+
             try:
                 unicode(code, resource_info['contents']['charset'])
             except UnicodeDecodeError:

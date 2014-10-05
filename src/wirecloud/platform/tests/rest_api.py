@@ -1622,6 +1622,20 @@ class ResourceManagementAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_resource_collection_post_resource_missing_contents_file(self):
+
+        url = reverse('wirecloud.resource_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Missing_HTML_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
     def test_resource_collection_post_resource_invalid_config_xml(self):
 
         url = reverse('wirecloud.resource_collection')
