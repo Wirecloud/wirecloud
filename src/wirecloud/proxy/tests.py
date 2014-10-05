@@ -123,6 +123,7 @@ class ProxyTests(ProxyTestsBase):
 
         client = Client()
 
+        # Create an anonymous session
         engine = import_module(settings.SESSION_ENGINE)
         cookie = engine.SessionStore()
         cookie.save()  # we need to make load() work, or the cookie is worthless

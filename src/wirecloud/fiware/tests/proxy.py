@@ -19,9 +19,11 @@
 
 import json
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils import unittest
+from django.utils.importlib import import_module
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
@@ -36,14 +38,10 @@ class ProxyTestCase(WirecloudTestCase):
     fixtures = ('selenium_test_data', 'fiware_proxy_test_data')
     tags = ('fiware-proxy',)
 
-    def read_response(self, response):
+    @classmethod
+    def setUpClass(cls):
 
-        if getattr(response, 'streaming', False) is True:
-            return "".join(response.streaming_content)
-        else:
-            return response.content
-
-    def test_fiware_idm_processor_header(self):
+        super(ProxyTestCase, cls).setUpClass()
 
         def echo_headers_response(method, url, *args, **kwargs):
             body = json.dumps(kwargs['headers'])
@@ -55,7 +53,18 @@ class ProxyTestCase(WirecloudTestCase):
                 'content': body,
             }
 
-        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_headers_response)
+        cls.echo_headers_response = echo_headers_response
+
+    def read_response(self, response):
+
+        if getattr(response, 'streaming', False) is True:
+            return "".join(response.streaming_content)
+        else:
+            return response.content
+
+    def test_fiware_idm_processor_header(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
 
         client = Client()
@@ -88,3 +97,45 @@ class ProxyTestCase(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(self.read_response(response))
         self.assertEqual(data['token'], TEST_TOKEN)
+
+    def test_fiware_idm_anonymous_user(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+
+        client = Client()
+
+        # Create an anonymous session
+        engine = import_module(settings.SESSION_ENGINE)
+        cookie = engine.SessionStore()
+        cookie.save()  # we need to make load() work, or the cookie is worthless
+        client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
+        client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
+
+        # Make the request
+        response = client.post(url, data='{}', content_type='application/json',
+                HTTP_ACCEPT='application/json',
+                HTTP_HOST='localhost',
+                HTTP_REFERER='http://localhost/user/workspace',
+                HTTP_X_FI_WARE_OAUTH_TOKEN='true',
+                HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
+        self.assertEqual(response.status_code, 422)
+        json.loads(self.read_response(response))
+
+    def test_fiware_idm_no_token_available(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+
+        client = Client()
+        client.login(username='normuser', password='admin')
+
+        # Make the request
+        response = client.post(url, data='{}', content_type='application/json',
+                HTTP_ACCEPT='application/json',
+                HTTP_HOST='localhost',
+                HTTP_REFERER='http://localhost/user/workspace',
+                HTTP_X_FI_WARE_OAUTH_TOKEN='true',
+                HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
+        self.assertEqual(response.status_code, 422)
+        json.loads(self.read_response(response))
