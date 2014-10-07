@@ -202,8 +202,8 @@ class SafeWriter(WhooshIndexWriter):
                 writer = self.index.writer(**self.writerargs)
             except LockError:
                 time.sleep(self.delay)
-        for method, args, kwargs in self.events:
-            getattr(writer, method)(*args, **kwargs)
+        for method, evt_args, evt_kwargs in self.events:
+            getattr(writer, method)(*evt_args, **evt_kwargs)
         writer.commit(*args, **kwargs)
 
     def cancel(self, *args, **kwargs):
