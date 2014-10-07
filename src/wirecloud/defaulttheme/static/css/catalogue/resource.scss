@@ -71,12 +71,14 @@
     display: inline-block;
     text-align: center;
     overflow: hidden;
+    line-height: 80px;
 }
 
 .wc-resource-img {
     max-width: 170px;
     max-height: 80px;
     display: inline-block;
+    vertical-align: middle;
 }
 
 .resource > .header > .rating {

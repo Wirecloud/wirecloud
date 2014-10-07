@@ -246,13 +246,18 @@
                 return button;
             }.bind({catalogue_view: this.catalogue_view, offering: offering, is_details_view: this.is_details_view}),
             'image': function () {
+                var container = document.createElement('div');
+                container.className = "wc-resource-img-container";
+
                 var image = document.createElement('img');
                 image.className = "wc-resource-img";
                 image.onerror = function (event) {
                     event.target.src = '/static/images/noimage.png';
                 };
                 image.src = offering.image;
-                return image;
+
+                container.appendChild(image);
+                return container;
             },
             'tags': function (options) {
                 return this.painter.renderTagList(this.offering, options.max);

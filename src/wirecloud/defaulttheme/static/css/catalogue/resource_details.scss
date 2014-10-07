@@ -1,14 +1,10 @@
 @import 'variables';
 @import 'compass/utilities/color/contrast';
 
-.resource_details img {
-    width: 170px;
-    height: 80px;
-    border: 1px solid;
-    border-color: #CDCED1;
+.resource_details .wc-resource-img-container {
+    position: static;
+    border: 1px solid #CDCED1;
     border-radius: 4px;
-    background: white;
-    display: inline-block;
 }
 
 .resource_details .north_container {
