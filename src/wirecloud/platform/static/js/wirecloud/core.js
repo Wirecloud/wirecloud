@@ -80,7 +80,7 @@
         }
     };
 
-    var onWorkspaceRemoved = function(workspace) {
+    var onWorkspaceRemoved = function onWorkspaceRemoved(workspace) {
         // Removing reference
         delete this.workspacesByUserAndName[workspace.workspaceState.creator][workspace.workspaceState.name];
         delete this.workspaceInstances[workspace.id];
@@ -174,13 +174,16 @@
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: function (response) {
+                var url;
+
                 options.monitor.nextSubtask('Processing initial context data');
                 Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, JSON.parse(response.responseText));
                 Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
                 LayoutManagerFactory.getInstance().header._initUserMenu();
 
                 // Init theme
-                Wirecloud.io.makeRequest(Wirecloud.URLs.THEME_ENTRY.evaluate({name: Wirecloud.contextManager.get('theme')}), {
+                url =  Wirecloud.URLs.THEME_ENTRY.evaluate({name: Wirecloud.contextManager.get('theme')}) + "?v=" + Wirecloud.contextManager.get('version_hash');
+                Wirecloud.io.makeRequest(url, {
                     method: 'GET',
                     requestHeaders: {'Accept': 'application/json'},
                     onSuccess: function (response) {

@@ -290,17 +290,19 @@ class WidgetWalletResourceTester(object):
 
 class CatalogueEntryTester(object):
 
-    def __init__(self, testcase, element, catalogue):
+    def __init__(self, testcase, element, catalogue, name):
 
         self.testcase = testcase
         self.element = element
         self.catalogue = catalogue
+        self.name = name
 
     def __enter__(self):
 
         catalogue_base_element = self.catalogue.get_current_catalogue_base_element()
         self.testcase.scroll_and_click(self.element)
         self.details = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+        self.testcase.assertEqual(self.catalogue.get_current_resource(), self.name)
 
         return self
 
@@ -1013,7 +1015,7 @@ class MarketplaceViewTester(object):
         for resource in resources:
             c_resource_name = resource.find_element_by_css_selector('.resource_name').text
             if c_resource_name == resource_name:
-                return CatalogueEntryTester(self.testcase, resource, self)
+                return CatalogueEntryTester(self.testcase, resource, self, resource_name)
 
         return None
 
