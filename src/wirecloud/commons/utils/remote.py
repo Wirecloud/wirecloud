@@ -932,6 +932,11 @@ class MarketplaceViewTester(object):
 
         return self.testcase.driver.execute_script('return LayoutManagerFactory.getInstance().viewsByName.marketplace.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name;')
 
+    def get_current_resource(self):
+
+        if self.get_subview() == 'details':
+            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .first_level').text
+
     def switch_to(self, market, timeout=5):
 
         if self.get_current_marketplace_name() == market:
