@@ -751,7 +751,11 @@ class WirecloudRemoteTestCase(RemoteTestCase):
                 param_input = window_menu.find_element_by_css_selector('input[name="' + parameter_name + '"]')
                 self.fill_form_input(param_input, parameter_value)
 
-            time.sleep(0.2) # Work around saving form data problems
+            # TODO Currently browsers only use the ETag/If-None-Match headers when using https
+            # Last-Modified/If-Modified-Since headers have a resolution of 1 second
+            time.sleep(1)
+            # END TODO
+
             save_button.click()
 
         self.wait_wirecloud_ready()

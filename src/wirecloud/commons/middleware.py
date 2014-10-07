@@ -184,6 +184,7 @@ class ConditionalGetMiddleware(object):
                 # automatically removes content for this status code (in
                 # http.conditional_content_removal()).
                 response.status_code = 304
+                return response
 
         if response.has_header('Last-Modified'):
             if_modified_since = request.META.get('HTTP_IF_MODIFIED_SINCE')
