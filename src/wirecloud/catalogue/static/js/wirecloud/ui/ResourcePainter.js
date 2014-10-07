@@ -114,23 +114,6 @@
                 return label;
             },
             'lastupdate': function () { return resource.date.strftime('%x'); },
-            'doc': function () {
-                var button;
-
-                button = new StyledElements.StyledButton({
-                    'plain': true,
-                    'class': 'icon-doc',
-                    'title': gettext('Documentation')
-                });
-                button.addEventListener('click', function () {
-                    var doc_url = resource.catalogue.RESOURCE_USERGUIDE_ENTRY.evaluate(resource);
-                    var dialog = new Wirecloud.ui.HTMLWindowMenu(doc_url, resource.title);
-                    dialog.show();
-                });
-                button.setDisabled(resource.doc === '');
-
-                return button;
-            },
             'home': function () {
                 var button;
 

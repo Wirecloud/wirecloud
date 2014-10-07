@@ -35,7 +35,7 @@
         extra_context = function (resource) {
             return {
                 'details': function (options, context) {
-                    var details, painter, i, entries, versions;
+                    var details, i, entries, versions;
 
                     details = new StyledElements.StyledNotebook();
 
@@ -60,6 +60,26 @@
                     var main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
                     main_description.appendChild(this.main_details_painter.paint(resource));
 
+                    if (resource.doc) {
+                        var documentation = details.createTab({'name': gettext('Documentation'), 'containerOptions': {'class': 'documentation loading'}, 'closable': false});
+                        documentation.addEventListener('show', function (tab) {
+                            tab.disable();
+                            var doc_url = resource.catalogue.RESOURCE_USERGUIDE_ENTRY.evaluate(resource);
+                            Wirecloud.io.makeRequest(doc_url, {
+                                method: 'GET',
+                                onSuccess: function (response) {
+                                    var article = document.createElement('article');
+                                    article.innerHTML = response.responseText;
+                                    documentation.clear();
+                                    documentation.appendChild(article);
+                                }.bind(this),
+                                onComplete: function () {
+                                    tab.enable();
+                                }
+                            });
+                        }.bind(this));
+                    }
+
                     if (resource.changelog) {
                         var changelog = details.createTab({'name': gettext('Change Log'), 'containerOptions': {'class': 'changelog loading'}, 'closable': false});
                         changelog.addEventListener('show', function (tab) {
@@ -67,7 +87,10 @@
                             Wirecloud.io.makeRequest(this.mainview.catalogue.RESOURCE_CHANGELOG_ENTRY.evaluate(resource), {
                                 method: 'GET',
                                 onSuccess: function (response) {
-                                    changelog.wrapperElement.innerHTML = response.responseText;
+                                    var article = document.createElement('article');
+                                    article.innerHTML = response.responseText;
+                                    changelog.clear();
+                                    changelog.appendChild(article);
                                 }.bind(this),
                                 onComplete: function () {
                                     tab.enable();
@@ -81,8 +104,8 @@
             };
         }.bind(this);
 
-        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['catalogue_main_resource_details_template'], this);
-        this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['catalogue_resource_details_template'], this, extra_context);
+        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates.catalogue_main_resource_details_template, this);
+        this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates.catalogue_resource_details_template, this, extra_context);
     };
     ResourceDetailsView.prototype = new StyledElements.Alternative();
 
