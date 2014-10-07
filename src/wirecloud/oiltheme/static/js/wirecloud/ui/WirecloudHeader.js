@@ -136,6 +136,10 @@
     var paint_breadcrum_entry = function paint_breadcrum_entry(i, breadcrum_entry) {
         var breadcrum_part, breadcrum_levels = ['first_level', 'second_level', 'third_level'];
 
+        if (typeof breadcrum_entry === 'string') {
+            breadcrum_entry = {label: breadcrum_entry};
+        }
+
         breadcrum_part = document.createElement('span');
         breadcrum_part.textContent = breadcrum_entry.label;
         breadcrum_part.className = breadcrum_levels[i];

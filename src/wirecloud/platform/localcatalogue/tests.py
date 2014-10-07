@@ -725,3 +725,58 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
                 versions = set(version_list)
                 self.assertEqual(len(versions), len(version_list), 'Repeated versions')
                 self.assertEqual(versions, set(('v2.0',)))
+
+    def test_myresources_navigation(self):
+
+        self.login(username="user_with_markets")
+
+        # Fill navigation history
+        with self.myresources_view as myresources:
+            with myresources.search_in_results('Test'):
+                pass
+            with myresources.search_in_results('Test Mashup'):
+                pass
+
+        catalogue_base_element = self.myresources_view.get_current_catalogue_base_element()
+
+        # Check navigation history has been filled correctly
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
+        self.assertEqual(self.myresources_view.get_subview(), 'search')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
+        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+        self.assertEqual(self.myresources_view.get_current_resource(), 'Test Mashup')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'search')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
+        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+        self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'search')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'workspace')
+
+        # Replay navigation history
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
+        self.assertEqual(self.myresources_view.get_subview(), 'search')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
+        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+        self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'search')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
+        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
+        self.assertEqual(self.myresources_view.get_current_resource(), 'Test Mashup')

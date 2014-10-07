@@ -91,9 +91,9 @@
         this.currentStore = 'All stores';
         Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
         if (this.desc.user != null) {
-            this.marketplace = this.desc.user + '/' + this.desc.name;
+            Object.defineProperty(this, 'market_id', {value: this.desc.user + '/' + this.desc.name});
         } else {
-            this.marketplace = this.desc.name;
+            Object.defineProperty(this, 'market_id', {value: this.desc.name});
         }
         this.loading = null;
         this.error = false;
@@ -127,10 +127,18 @@
         this.alternatives.addEventListener('preTransition', function () {
             LayoutManagerFactory.getInstance().header._notifyViewChange();
         });
-        this.alternatives.addEventListener('postTransition', function () {
+        this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative) {
+            var new_status = options.catalogue.buildStateData();
+
+            if (out_alternative === this.viewsByName.initial) {
+                Wirecloud.HistoryManager.replaceState(new_status);
+            } else {
+                Wirecloud.HistoryManager.pushState(new_status);
+            }
+
             var header = LayoutManagerFactory.getInstance().header;
             header._notifyViewChange(header.currentView);
-        });
+        }.bind(this));
 
         this.addEventListener('show', function () {
             if (this.alternatives.getCurrentAlternative() === this.viewsByName.initial) {
@@ -143,6 +151,10 @@
 
     FiWareCatalogueView.prototype.getLabel = function () {
         return this.desc.name;
+    };
+
+    FiWareCatalogueView.prototype.onHistoryChange = function onHistoryChange(state) {
+        this.changeCurrentView(state.subview);
     };
 
     // this functions are used to update and know the current store in diferent views

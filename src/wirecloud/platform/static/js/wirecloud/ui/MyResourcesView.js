@@ -109,7 +109,24 @@
     };
 
     MyResourcesView.prototype.onHistoryChange = function onHistoryChange(state) {
-        this.changeCurrentView(state.subview);
+        var details, parts, currentResource;
+
+        if (state.subview === 'search') {
+            this.changeCurrentView(state.subview);
+        } else {
+            parts = state.resource.split('/');
+            details = {
+                vendor: parts[0],
+                name: parts[1],
+                version: parts[2]
+            };
+
+            currentResource = this.viewsByName.details.currentResource;
+            if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
+                details = currentResource.changeVersion(details.version);
+            }
+            this.createUserCommand('showDetails', details)();
+        }
     };
 
     MyResourcesView.prototype.goUp = function goUp() {
@@ -120,7 +137,13 @@
     };
 
     MyResourcesView.prototype.getBreadcrum = function getBreadcrum() {
-        return [{label: gettext('My Resources')}];
+        var breadcrum = [gettext('My Resources')];
+
+        if (this.alternatives.getCurrentAlternative() === this.viewsByName.details && this.viewsByName.details.currentResource != null) {
+            breadcrum.push(this.viewsByName.details.currentResource.title);
+        }
+
+        return breadcrum;
     };
 
     MyResourcesView.prototype.getToolbarButtons = function getToolbarButtons() {

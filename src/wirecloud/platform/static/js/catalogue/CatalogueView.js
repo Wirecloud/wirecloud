@@ -99,7 +99,24 @@
     };
 
     CatalogueView.prototype.onHistoryChange = function onHistoryChange(state) {
-        this.changeCurrentView(state.subview);
+        var details, parts, currentResource;
+
+        if (state.subview === 'search') {
+            this.changeCurrentView(state.subview);
+        } else {
+            parts = state.resource.split('/');
+            details = {
+                vendor: parts[0],
+                name: parts[1],
+                version: parts[2]
+            };
+
+            currentResource = this.viewsByName.details.currentResource;
+            if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
+                details = currentResource.changeVersion(details.version);
+            }
+            this.createUserCommand('showDetails', details)();
+        }
     };
 
     CatalogueView.prototype.goUp = function goUp() {

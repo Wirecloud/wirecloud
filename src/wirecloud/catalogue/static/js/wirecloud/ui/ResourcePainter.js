@@ -35,6 +35,7 @@
         this.structure_template = resource_template;
         this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-error"><t:message/></div></s:styledgui>';
         this.info_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-info"><t:message/></div></s:styledgui>';
+        this.currentResource = null;
         this.container = container;
         if (extra_context != null && (typeof extra_context === 'object' || typeof extra_context === 'function')) {
             this.extra_context = extra_context;

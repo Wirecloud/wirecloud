@@ -469,3 +469,66 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
             with marketplace.myresources as myresources:
                 self.assertIsNotNone(myresources.search_in_results(resource_name))
+
+    def test_marketplace_navigation(self):
+
+        self.login(username="user_with_markets")
+
+        # Fill navigation history
+        with self.marketplace_view as marketplace:
+            marketplace.switch_to('fiware')
+            with marketplace.search_in_results('MultimediaPack'):
+                pass
+            with marketplace.search_in_results('Weather widget'):
+                pass
+
+        # Check navigation history has been filled correctly
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'marketplace')
+        self.assertEqual(self.marketplace_view.get_current_marketplace_name(), 'fiware')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+        # Check we are se Weather widget offering details
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+        # Open MultimediaPack offering details
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_current_marketplace_name() == 'origin')
+        self.assertEqual(self.marketplace_view.get_subview(), 'search')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'workspace')
+
+        # Replay navigation history
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'marketplace')
+        self.assertEqual(self.marketplace_view.get_current_marketplace_name(), 'origin')
+        self.assertEqual(self.marketplace_view.get_subview(), 'search')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_current_marketplace_name() == 'fiware')
+        self.assertEqual(self.marketplace_view.get_subview(), 'search')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'workspace')

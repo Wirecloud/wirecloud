@@ -1047,6 +1047,11 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         return self.testcase.driver.execute_script('return LayoutManagerFactory.getInstance().viewsByName.myresources.alternatives.getCurrentAlternative().view_name;')
 
+    def get_current_resource(self):
+
+        if self.get_subview() == 'details':
+            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+
     def upload_resource(self, wgt_file, resource_name, shared=False, expect_error=False):
 
         if shared:

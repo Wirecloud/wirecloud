@@ -67,6 +67,7 @@
             };
         }.bind(this);
 
+        this.currentOffering = null;
         this.main_details_painter = new Wirecloud.FiWare.ui.OfferingPainter(this.mainview, Wirecloud.currentTheme.templates['fiware_main_details_template'], this);
         this.resource_details_painter = new Wirecloud.FiWare.ui.OfferingPainter(this.mainview, Wirecloud.currentTheme.templates['fiware_catalogue_resource_details_template'], this, extra_context);
     };
@@ -74,7 +75,12 @@
 
     OfferingDetailsView.prototype.view_name = 'details';
 
+    OfferingDetailsView.prototype.buildStateData = function buildStateData(data) {
+        data.offering = this.currentOffering.uri;
+    };
+
     OfferingDetailsView.prototype.paint = function paint(resource) {
+        this.currentOffering = resource;
         this.clear();
         this.appendChild(this.resource_details_painter.paint(resource));
     };

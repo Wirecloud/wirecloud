@@ -140,6 +140,8 @@
             } else {
                 currentVersion = data_by_version[allVersions[0].text];
             }
+
+            return this;
         };
 
         ////////////////////////
