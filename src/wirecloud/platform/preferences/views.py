@@ -93,23 +93,19 @@ def update_tab_preferences(tab, preferences_json):
 
         preference.save()
 
-    from wirecloud.platform.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(tab.workspace)
+    tab.workspace.save()  # Invalidate workspace cache
 
-def make_workspace_preferences_cache_key(workspace_id):
-    return '_workspace_preferences_cache/' + str(workspace_id)
+
+def make_workspace_preferences_cache_key(workspace):
+    return '_workspace_preferences_cache/%s/%s' % (workspace.id, workspace.last_modified)
 
 
 def get_workspace_preference_values(workspace):
-    if isinstance(workspace, Workspace):
-        workspace_id = workspace.id
-    else:
-        workspace_id = int(workspace)
 
-    cache_key = make_workspace_preferences_cache_key(workspace_id)
+    cache_key = make_workspace_preferences_cache_key(workspace)
     values = cache.get(cache_key)
     if values is None:
-        values = parseInheritableValues(WorkspacePreference.objects.filter(workspace=workspace_id))
+        values = parseInheritableValues(workspace.workspacepreference_set.all())
         cache.set(cache_key, values)
 
     return values
@@ -137,11 +133,9 @@ def update_workspace_preferences(workspace, preferences_json):
 
         preference.save()
 
-    cache_key = make_workspace_preferences_cache_key(workspace.id)
+    cache_key = make_workspace_preferences_cache_key(workspace)
     cache.delete(cache_key)
-
-    from wirecloud.platform.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(workspace)
+    workspace.save()  # Invalidate workspace cache
 
 
 class PlatformPreferencesCollection(Resource):
@@ -184,7 +178,7 @@ class WorkspacePreferencesCollection(Resource):
         if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
             return build_error_response(request, 403, _('You are not allowed to read this workspace'))
 
-        result = get_workspace_preference_values(workspace.id)
+        result = get_workspace_preference_values(workspace)
 
         return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 

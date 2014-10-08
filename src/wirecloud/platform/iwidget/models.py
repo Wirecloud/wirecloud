@@ -65,6 +65,11 @@ class IWidget(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    def save(self, *args, **kwargs):
+
+        super(IWidget, self).save(*args, **kwargs)
+        self.tab.workspace.save()  # Invalidate workspace cache
+
     def delete(self, *args, **kwargs):
 
         # Delete all IWidget's variables
@@ -80,10 +85,7 @@ class IWidget(models.Model):
         wiring = json.loads(self.tab.workspace.wiringStatus)
         remove_related_iwidget_connections(wiring, self)
         self.tab.workspace.wiringStatus = json.dumps(wiring, ensure_ascii=False)
-        self.tab.workspace.save()
-
-        from wirecloud.platform.get_data import _invalidate_cached_variables
-        _invalidate_cached_variables(self)
+        self.tab.workspace.save()  # This also invalidates the workspace cache
 
         super(IWidget, self).delete(*args, **kwargs)
 
@@ -98,9 +100,7 @@ class Variable(models.Model):
     def save(self, *args, **kwargs):
 
         super(Variable, self).save(*args, **kwargs)
-
-        from wirecloud.platform.get_data import _invalidate_cached_variable_values
-        _invalidate_cached_variable_values(self.iwidget.tab.workspace)
+        self.iwidget.tab.workspace.save()  # Invalidate workspace cache
 
     def set_variable_value(self, value):
 

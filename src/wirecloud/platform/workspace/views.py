@@ -264,9 +264,6 @@ class WorkspaceEntry(Resource):
                 iwidget.delete()
             workspace.delete()
 
-            from wirecloud.platform.get_data import _invalidate_cached_variable_values
-            _invalidate_cached_variable_values(workspace)
-
         return HttpResponse(status=204)
 
 

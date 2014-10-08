@@ -19,6 +19,9 @@
 
 from __future__ import unicode_literals
 
+import random
+import time
+
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -30,10 +33,14 @@ class Workspace(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
     creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
+    creation_date = models.BigIntegerField(_('Creation Date'), null=False, blank=False, default=lambda: time.time() * 1000)
+    last_modified = models.BigIntegerField(_('Last Modification Date'), null=True, blank=True)
 
     public = models.BooleanField(_('Available to all users'), default=False)
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkspace')
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
+    description = models.TextField(_('Description'), max_length=140, blank=True)
+    longdescription = models.TextField(_('Long description'), blank=True)
     forcedValues = models.TextField(blank=True)
     wiringStatus = models.TextField(blank=True)
 
@@ -58,10 +65,9 @@ class Workspace(models.Model):
             update_workspace_preferences(self, {'public': {'value': self.public}})
             self.__original_public = self.public
 
-        super(Workspace, self).save(*args, **kwargs)
+        self.last_modified = time.time() * 1000
 
-        from wirecloud.platform.get_data import _invalidate_cached_variable_values
-        _invalidate_cached_variable_values(self)
+        super(Workspace, self).save(*args, **kwargs)
 
     def is_shared(self):
         return len(self.users.all()) > 1
@@ -107,5 +113,4 @@ class Tab(models.Model):
 
         super(Tab, self).save(*args, **kwargs)
 
-        from wirecloud.platform.get_data import _invalidate_cached_variable_values
-        _invalidate_cached_variable_values(self.workspace)
+        self.workspace.save()

@@ -32,7 +32,6 @@
 from __future__ import unicode_literals
 
 import json
-import random
 import re
 
 from django.core.cache import cache
@@ -66,7 +65,7 @@ def _get_cached_variables(iwidget):
 def _invalidate_cached_variables(iwidget):
     key = _variable_cache_key(iwidget)
     cache.delete(key)
-    _invalidate_cached_variable_values(iwidget.tab.workspace)
+    iwidget.tab.workspace.save()  # Invalidate workspace cache
 
 
 def _populate_variables_values_cache(workspace, user, key, forced_values=None):
@@ -121,22 +120,12 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     return values
 
 
-def _get_workspace_version(workspace):
-    version = cache.get('_workspace_version/' + str(workspace.id))
-    if version is None:
-        version = random.randrange(1, 100000)
-        cache.set('_workspace_version/' + str(workspace.id), version)
-    return version
-
-
 def _variable_values_cache_key(workspace, user):
-    version = _get_workspace_version(workspace)
-    return '/'.join(('_variables_values_cache', str(workspace.id), str(version), str(user.id)))
+    return '_variables_values_cache/%s/%s/%s' % (workspace.id, workspace.last_modified, user.id)
 
 
 def _workspace_cache_key(workspace, user):
-    version = _get_workspace_version(workspace)
-    return '/'.join(('_workspace_global_data', str(workspace.id), str(version), str(user.id)))
+    return '_workspace_global_data/%s/%s/%s' % (workspace.id, workspace.last_modified, user.id)
 
 
 def get_variable_value_from_varname(user, iwidget, var_name):
@@ -170,18 +159,12 @@ def get_variable_value_from_varname(user, iwidget, var_name):
     return value
 
 
-def _invalidate_cached_variable_values(workspace, user=None):
-    if user is not None:
-        key = _variable_values_cache_key(workspace, user)
-        cache.delete(key)
+def _invalidate_cached_variable_values(workspace, user):
+    key = _variable_values_cache_key(workspace, user)
+    cache.delete(key)
 
-        key = _workspace_cache_key(workspace, user)
-        cache.delete(key)
-    else:
-        try:
-            cache.incr('_workspace_version/' + str(workspace.id))
-        except ValueError:
-            pass
+    key = _workspace_cache_key(workspace, user)
+    cache.delete(key)
 
 
 class VariableValueCacheManager():
@@ -264,6 +247,26 @@ def get_workspace_data(workspace, user):
         except UserWorkspace.DoesNotExist:
             pass
 
+    longdescription = workspace.longdescription
+    if longdescription != '':
+        longdescription_path = os.path.join(wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version), longdescription)
+
+        (filename_root, filename_ext) = os.path.splitext(longdescription_path)
+        localized_longdescription_path = filename_root + '.' + get_language() + filename_ext
+
+        try:
+            description_code = download_local_file(localized_longdescription_path)
+            longdescription = markdown.markdown(description_code, output_format='xhtml5')
+        except:
+            try:
+                description_code = download_local_file(longdescription_path)
+                longdescription = markdown.markdown(description_code, output_format='xhtml5')
+            except:
+                longdescription = workspace.description
+
+    else:
+        longdescription = workspace.description
+
     return {
         'id': workspace.id,
         'name': workspace.name,
@@ -272,6 +275,9 @@ def get_workspace_data(workspace, user):
         'owned': workspace.creator == user,
         'removable': workspace.creator == user and (user_workspace is None or user_workspace.manager == ''),
         'active': user_workspace is not None and user_workspace.active,
+        'lastmodified': workspace.last_modified,
+        'description': workspace.description,
+        'longdescription': longdescription,
     }
 
 
@@ -366,7 +372,7 @@ def _get_global_workspace_data(workspaceDAO, user):
     data_ret['context'] = get_workspace_context(workspaceDAO, user)
 
     # Workspace preferences
-    preferences = get_workspace_preference_values(workspaceDAO.pk)
+    preferences = get_workspace_preference_values(workspaceDAO)
     data_ret['preferences'] = preferences
 
     # Process forced variable values

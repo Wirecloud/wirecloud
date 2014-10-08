@@ -33,7 +33,6 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.exceptions import Http403
 from wirecloud.platform.models import IWidget, Position, Tab, Variable, VariableDef
 
 
@@ -128,9 +127,6 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
             initial_value = None
         addIWidgetVariable(new_iwidget, varDef, initial_value)
 
-    from wirecloud.platform.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(new_iwidget.tab.workspace)
-
     return new_iwidget
 
 
@@ -223,5 +219,4 @@ def UpdateIWidget(iwidget, user, tab):
     # save the changes
     position.save()
 
-    from wirecloud.platform.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(ig.tab.workspace)
+    ig.tab.workspace.save() # Invalidate workspace cache

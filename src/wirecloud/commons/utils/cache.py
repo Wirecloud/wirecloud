@@ -1,3 +1,22 @@
+# -*- coding: utf-8 -*-
+
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+
+# This file is part of Wirecloud.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
 import json
 import time
 
@@ -26,14 +45,13 @@ def patch_cache_headers(response, timestamp=None, cache_timeout=None):
         timestamp = int(timestamp)
 
     response['Last-Modified'] = http_date(timestamp / 1000)
-    response['ETag'] = '"' + str(timestamp) + '"'
+    response['ETag'] = '"%s"' % timestamp
 
     if cache_timeout is not None and timestamp + cache_timeout > current_timestamp:
-        timeout_str = str(timestamp + cache_timeout - current_timestamp)
-        response['Cache-Control'] = 'private, max-age=' + timeout_str
+        response['Cache-Control'] = 'private, max-age=%s' % (timestamp + cache_timeout - current_timestamp)
         response['Expires'] = http_date((timestamp / 1000) + cache_timeout)
     else:
-        response['Cache-Control'] = 'private, max-age=0, post-check=0, pre-check=0, must-revalidate'
+        response['Cache-Control'] = 'private, max-age=0'
 
 
 class CacheableData(object):
