@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from io import BytesIO
 import os
 import json
@@ -241,15 +243,19 @@ class ResourceDocumentationEntry(Resource):
         if resource_info['doc'] == '':
             raise Http404
 
-        doc_path = os.path.join(catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version), url2pathname(resource_info['doc']))
+        if resource_info['doc'].startswith(('http://', 'https://')):
+            doc_code = _('You can find the documentation of this resource in this external <a target="_blank" href="%s">link</a>') % resource_info['doc']
+            doc_code = '<div style="margin-top: 10px"><p>%s</p></div>' % doc_code
+        else:
+            doc_path = os.path.join(catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version), url2pathname(resource_info['doc']))
 
-        (doc_filename_root, doc_filename_ext) = os.path.splitext(doc_path)
-        localized_doc_path = doc_filename_root + '.' + get_language() + doc_filename_ext
+            (doc_filename_root, doc_filename_ext) = os.path.splitext(doc_path)
+            localized_doc_path = doc_filename_root + '.' + get_language() + doc_filename_ext
 
-        try:
-            doc_code = download_local_file(localized_doc_path)
-        except:
-            doc_code = download_local_file(doc_path)
+            try:
+                doc_code = download_local_file(localized_doc_path)
+            except:
+                doc_code = download_local_file(doc_path)
 
         doc_code = doc_code.decode('utf-8')
         doc = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])

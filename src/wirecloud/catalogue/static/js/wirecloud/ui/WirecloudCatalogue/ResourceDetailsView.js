@@ -69,6 +69,7 @@
                                 method: 'GET',
                                 onSuccess: function (response) {
                                     var article = document.createElement('article');
+                                    article.className = 'markdown-body';
                                     article.innerHTML = response.responseText;
                                     documentation.clear();
                                     documentation.appendChild(article);
@@ -88,6 +89,7 @@
                                 method: 'GET',
                                 onSuccess: function (response) {
                                     var article = document.createElement('article');
+                                    article.className = 'markdown-body';
                                     article.innerHTML = response.responseText;
                                     changelog.clear();
                                     changelog.appendChild(article);
