@@ -107,6 +107,7 @@
             'pricing': {value: resourceJSON_.pricing},
             'rating': {value: resourceJSON_.rating},
             'sla': {value: resourceJSON_.sla},
+            'open': {value: resourceJSON_.open},
             'state': {value: resourceJSON_.state},
             'store': {value: resourceJSON_.store},
             'usdl_url': {value: resourceJSON_.usdl_url},

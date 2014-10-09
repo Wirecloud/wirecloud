@@ -116,7 +116,7 @@
     };
 
     Marketplace.prototype.is_purchased = function is_purchased(offering) {
-        return offering.state === 'purchased' || offering.state === 'rated';
+        return offering.open === true || offering.state === 'purchased' || offering.state === 'rated';
     };
 
     Marketplace.prototype.start_purchase = function start_purchase(resource, options) {

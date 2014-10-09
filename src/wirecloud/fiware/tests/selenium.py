@@ -202,6 +202,10 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             button = pack_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Install')
 
+            open_offering = marketplace.search_in_results('Open Offering')
+            button = open_offering.element.find_element_by_css_selector('.mainbutton')
+            self.assertEqual(button.text, 'Install')
+
     def test_marketplace_offering_list_when_store_down(self):
 
         response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')
@@ -220,20 +224,20 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
                 button = free_offering.element.find_element_by_css_selector('.mainbutton')
                 self.assertEqual(button.text, 'Free')
 
-                # Test Operator comes from store1 that is currently down
-                simple_price_offering = marketplace.search_in_results('Test Operator')
-                button = simple_price_offering.element.find_element_by_css_selector('.mainbutton')
+                arbitrary_offering = marketplace.search_in_results('Arbitrary Offering')
+                button = arbitrary_offering.element.find_element_by_css_selector('.mainbutton')
                 self.assertEqual(button.text, 'Details')
 
-                # Smart City Lights application comes from store1 that is currently down
-                complex_price_offering = marketplace.search_in_results('Smart City Lights application')
-                button = complex_price_offering.element.find_element_by_css_selector('.mainbutton')
-                self.assertEqual(button.text, 'Details')
+                open_offering = marketplace.search_in_results('Open Offering')
+                button = open_offering.element.find_element_by_css_selector('.mainbutton')
+                self.assertEqual(button.text, 'Install')
 
-                # MultimediaPack comes from store1 that is currently down
-                pack_offering = marketplace.search_in_results('MultimediaPack')
-                button = pack_offering.element.find_element_by_css_selector('.mainbutton')
-                self.assertEqual(button.text, 'Details')
+                # All offerings from should have a Details button (as tore1 is currently down)
+                for offering_name in ('Test Operator', 'Smart City Lights application', 'MultimediaPack'):
+                    offering = marketplace.search_in_results(offering_name)
+                    button = offering.element.find_element_by_css_selector('.mainbutton')
+                    self.assertEqual(button.text, 'Details')
+
         finally:
             self.network._servers['http']['store.example.com'] = old_store
 

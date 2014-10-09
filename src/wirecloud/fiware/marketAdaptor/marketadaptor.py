@@ -167,6 +167,7 @@ class MarketAdaptor(object):
                 ser['type'] = offering_type
                 ser['uriImage'] = urljoin(store_client._url, offering_info['image_url'])
                 ser['publicationdate'] = offering_info['publication_date']
+                ser['open'] = offering_info['open']
                 ser['state'] = offering_info['state']
                 ser['rating'] = offering_info['rating']
 

@@ -6,6 +6,7 @@
     "creation_date": "2013-07-11 09:37:29.725000",
     "owner_admin_user_id": "app_provider",
     "publication_date": "2013-07-11 13:41:51.418000",
+    "open": false,
     "owner_organization": "CoNWeT",
     "name": "TestOperator",
     "tags": [],
