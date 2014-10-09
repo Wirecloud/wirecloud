@@ -104,11 +104,11 @@
             'changelog': {
                 get: function () { return currentVersion.changelog; }
             },
+            'size': {
+                get: function () { return currentVersion.size; }
+            },
             'title': {
                 get: function () { return currentVersion.title; }
-            },
-            'uploader': {
-                get: function () { return currentVersion.uploader; }
             },
             'tags': {
                 get: function () { return []; }

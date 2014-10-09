@@ -7,3 +7,7 @@
     border: 1px solid rgb(205, 206, 209);
     border-radius: $panel-border-radius;
 }
+
+.panel-body {
+    padding: $panel-body-padding;
+}

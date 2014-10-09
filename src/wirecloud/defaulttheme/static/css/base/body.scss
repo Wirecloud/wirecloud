@@ -61,3 +61,24 @@ ul, ol {
         margin-bottom: 0;
     }
 }
+
+dl {
+    margin-top: 0;
+    margin-bottom: $line-height-base;
+}
+
+dl, dt {
+    line-height: $line-height-base;
+}
+
+dt {
+    font-weight: bold;
+}
+
+dd {
+    margin-left: 0;
+
+    & > *:last-child {
+        margin-bottom: 0;
+    }
+}

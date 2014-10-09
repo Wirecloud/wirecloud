@@ -189,6 +189,7 @@ def get_resource_data(resource, user, request=None):
     """Gets all the information related to the given resource."""
     resource_info = resource.get_processed_info(request)
 
+    size = None
     if urlparse(resource.template_uri).scheme == '':
         template_uri = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
             'vendor': resource.vendor,
@@ -196,14 +197,11 @@ def get_resource_data(resource, user, request=None):
             'version': resource.version,
             'file_path': resource.template_uri
         }, request=request)
+
+        wgt_path = os.path.join(wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version), resource.template_uri)
+        size = os.path.getsize(wgt_path)
     else:
         template_uri = resource.template_uri
-
-    uploader = None
-    if resource.creator is not None:
-        uploader = resource.creator.get_full_name()
-        if uploader.strip() == '':
-            uploader = resource.creator.username
 
     cdate = resource.creation_date
     creation_timestamp = time.mktime(cdate.timetuple()) * 1e3 + cdate.microsecond / 1e3
@@ -236,7 +234,6 @@ def get_resource_data(resource, user, request=None):
         'type': resource_info['type'],
         'packaged': resource.fromWGT,
         'date': creation_timestamp,
-        'uploader': uploader,
         'permissions': {
             'delete': user.is_superuser,
             'uninstall': resource.public is False and resource.users.filter(pk=user.pk).exists(),
@@ -251,6 +248,7 @@ def get_resource_data(resource, user, request=None):
         'homepage': resource_info['homepage'],
         'doc': resource_info['doc'],
         'changelog': resource_info['changelog'],
+        'size': size,
         'uriTemplate': template_uri,
         'license': resource_info['license'],
         'licenseurl': resource_info['licenseurl'],

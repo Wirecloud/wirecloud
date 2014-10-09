@@ -4,7 +4,7 @@
     <s:options>{"class": "resource_details"}</s:options>
 
     <s:westcontainer>
-        <div class="panel">
+        <div class="panel"><div class="panel-body">
             <t:image/>
             <t:rating/>
             <t:mainbutton/>
@@ -12,13 +12,17 @@
             <div class="links">
                 <t:home/>
             </div>
-            <div class="summary">
-                <div><span class="attr_title">{% trans 'Store:' %}</span> <t:store/></div>
-                <div><span class="attr_title">{% trans 'Owner:' %}</span> <t:owner/></div>
-                <div><span class="attr_title">{% trans 'Version:' %}</span> <t:version/></div>
-                <div><span class="attr_title">{% trans 'Publication date:' %}</span> <t:publicationdate/></div>
-            </div>
-        </div>
+            <dl class="summary">
+                <dt>{% trans 'Store' %}</dt>
+                <dd><t:store/></dd>
+                <dt>{% trans 'Owner' %}</dt>
+                <dd><t:owner/></dd>
+                <dt>{% trans 'Version' %}</dt>
+                <dd><t:version/></dd>
+                <dt>{% trans 'Publication date' %}</dt>
+                <dd><t:publicationdate/></dd>
+            </dl>
+        </div></div>
     </s:westcontainer>
 
     <s:centercontainer>

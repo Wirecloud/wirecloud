@@ -7,10 +7,16 @@
     <div class="tag_cloud"><t:tags>{"max": 3}</t:tags></div>
 
     <h3>{% trans 'Detailed data' %}</h3>
-    <div><span class="attr_title">{% trans 'Internal ID:' %}</span> <t:internalname/></div>
-    <div><span class="attr_title">{% trans 'Author(s):' %}</span> <t:authors/></div>
-    <div><span class="attr_title">{% trans 'Contributor(s):' %}</span> <t:contributors/></div>
-    <div><span class="attr_title">{% trans 'Available versions:' %}</span> <t:versions/></div>
+    <dl>
+        <dt>{% trans 'Internal ID' %}</dt>
+        <dd><t:internalname/></dd>
+        <dt>{% trans 'Author(s)' %}</dt>
+        <t:authors/>
+        <dt>{% trans 'Contributor(s)' %}</dt>
+        <t:contributors/>
+        <dt>{% trans 'Size' %}</dt>
+        <dd><t:size/></dd>
+    </dl>
 
     <h3>{% trans 'Advanced operations' %}</h3>
     <div class="advanced_operations"><t:advancedops/></div>
