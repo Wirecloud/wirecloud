@@ -316,6 +316,10 @@
     Object.freeze(SIZE_UNITS);
 
     ResourcePainter.prototype.format_size = function format_size(size) {
+        if (size == null) {
+            return gettext('N/A');
+        }
+
         for (var i = 0; i < SIZE_UNITS.length; i++) {
             if (size < 1024) {
                 break;
