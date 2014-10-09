@@ -26,13 +26,11 @@ import json
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
-from django.test import Client
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.iwidget.utils import SaveIWidget
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
+from wirecloud.platform.models import Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_xml_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
@@ -116,19 +114,17 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
     def test_updating_preferences_invalidates_cache(self):
 
-        client = Client()
-        put_data = {
-            'password': 'new_password',
-            'username': 'new_username',
-        }
+        variable = self.workspace.tab_set.get(pk=1).iwidget_set.get(pk=1).variable_set.select_related('vardef').get(
+            vardef__name='username',
+            vardef__aspect='PREF'
+        )
+        variable.set_variable_value('new_username')
+        variable.save()
 
-        put_data = json.dumps(put_data, ensure_ascii=False).encode('utf-8')
-        client.login(username='test', password='test')
-        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 1, 'tab_id': 1, 'iwidget_id': 1})
-        result = client.post(url, put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(result.status_code, 204)
+        workspace_info = get_global_workspace_data(self.workspace, self.user)
+        self.assertNotEqual(self.initial_info.timestamp, workspace_info.timestamp)
 
-        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
+        data = json.loads(workspace_info.get_data())
         variables = data['tabs'][0]['iwidgets'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
@@ -137,16 +133,15 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
     def test_updating_properties_invalidates_cache(self):
 
-        client = Client()
-        put_data = {
-            'prop': 'new_data',
-        }
+        variable = self.workspace.tab_set.get(pk=1).iwidget_set.get(pk=1).variable_set.select_related('vardef').get(
+            vardef__name='prop',
+            vardef__aspect='PROP'
+        )
+        variable.set_variable_value('new_data')
+        variable.save()
 
-        put_data = json.dumps(put_data, ensure_ascii=False).encode('utf-8')
-        client.login(username='test', password='test')
-        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 1, 'tab_id': 1, 'iwidget_id': 1})
-        result = client.post(url, put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(result.status_code, 204)
+        workspace_info = get_global_workspace_data(self.workspace, self.user)
+        self.assertNotEqual(self.initial_info.timestamp, workspace_info.timestamp)
 
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         variables = data['tabs'][0]['iwidgets'][0]['variables']
@@ -157,7 +152,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
     def test_widget_instantiation_invalidates_cache(self):
 
-        tab = Tab.objects.get(pk=1)
+        tab = self.workspace.tab_set.get(pk=1)
         iwidget_data = {
             'widget': 'Test/Test Widget/1.0.0',
             'name': 'test',
@@ -172,14 +167,20 @@ class WorkspaceCacheTestCase(CacheTestCase):
         }
         SaveIWidget(iwidget_data, self.user, tab, {})
 
-        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
+        workspace_info = get_global_workspace_data(self.workspace, self.user)
+        self.assertNotEqual(self.initial_info.timestamp, workspace_info.timestamp)
 
+        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 3)
 
     def test_widget_deletion_invalidates_cache(self):
 
-        IWidget.objects.get(pk=1).delete()
+        self.workspace.tab_set.get(pk=1).iwidget_set.get(pk=1).delete()
+
+        workspace_info = get_global_workspace_data(self.workspace, self.user)
+        self.assertNotEqual(self.initial_info.timestamp, workspace_info.timestamp)
+
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 1)
