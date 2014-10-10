@@ -3,3 +3,5 @@
 /catalogue/
 /deployment/
 *.pyc
+*.mo
+*.db
