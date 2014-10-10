@@ -1,0 +1,18 @@
+{
+    "browser": true,
+    "debug": false,
+    "devel": false,
+    "curly": true,
+    "eqnull": true,
+    "forin": false,
+    "undef": true,
+    "unused": "vars",
+    "indent": 4,
+    "prototypejs": false,
+    "strict": true,
+    "trailing": true,
+    "white": true,
+    "globals": {
+        "URL": false
+    }
+}
