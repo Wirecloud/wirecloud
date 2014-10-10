@@ -17,12 +17,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import io
+import os
 import shutil
 from tempfile import mkdtemp
 
-from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
+
+from wirecloud.commons.utils.testcases import cleartree
 
 
 class ConvertCommandTestCase(TestCase):
@@ -33,6 +36,7 @@ class ConvertCommandTestCase(TestCase):
     def setUpClass(cls):
 
         cls.tmp_dir = mkdtemp()
+        cls.test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
 
     @classmethod
     def tearDownClass(cls):
@@ -43,6 +47,9 @@ class ConvertCommandTestCase(TestCase):
 
         from wirecloud.commons.commands.convert import ConvertCommand
         self.command = ConvertCommand()
+
+    def tearDown(self):
+        cleartree(self.tmp_dir)
 
     def test_no_args(self):
 
@@ -67,3 +74,30 @@ class ConvertCommandTestCase(TestCase):
             "dest_format": "invalid"
         }
         self.assertRaises(CommandError, self.command.execute, *args, **options)
+
+    def test_minimal_info_conversion_stdout(self):
+
+        for format in ('json', 'xml', 'rdf', 'old_xml'):
+            args = [os.path.join(self.test_data_dir, 'minimal_endpoint_info.json')]
+            options = {"dest_format": format, "rdf_format": "n3", "stdout": io.BytesIO(), "stderr": io.BytesIO()}
+            self.command.execute(*args, **options)
+
+            options['stdout'].seek(0)
+            self.assertNotEqual(options['stdout'].read(), '')
+            options['stderr'].seek(0)
+            self.assertEqual(options['stderr'].read(), '')
+
+    def test_minimal_info_conversion_outputfile(self):
+
+        dest_file = os.path.join(self.tmp_dir, 'new_file.xml')
+        args = [os.path.join(self.test_data_dir, 'minimal_endpoint_info.json'), dest_file]
+        options = {"dest_format": 'rdf', "rdf_format": "pretty-xml", "stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command.execute(*args, **options)
+
+        options['stdout'].seek(0)
+        self.assertEqual(options['stdout'].read(), '')
+        options['stderr'].seek(0)
+        self.assertEqual(options['stderr'].read(), '')
+
+        with open(dest_file, 'rb') as f:
+            self.assertNotEqual(f.read(), '')

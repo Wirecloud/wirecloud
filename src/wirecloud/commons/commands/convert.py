@@ -26,6 +26,7 @@ from wirecloud.commons.utils.commands import BaseCommand
 from wirecloud.commons.utils.template.parsers import TemplateParser
 from wirecloud.commons.utils.template.writers import json, rdf, next_xml as xml, xml as old_xml
 
+
 class ConvertCommand(BaseCommand):
     args = '<source_widget_descriptor> [dest_file]'
     help = 'Converts a widget description from one format to another'
@@ -74,4 +75,4 @@ class ConvertCommand(BaseCommand):
             output_file.write(converted_template)
             output_file.close()
         else:
-            print(converted_template)
+            self.stdout.write(converted_template)
