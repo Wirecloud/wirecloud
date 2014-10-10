@@ -107,7 +107,7 @@
             'pricing': {value: resourceJSON_.pricing},
             'rating': {value: resourceJSON_.rating},
             'sla': {value: resourceJSON_.sla},
-            'open': {value: resourceJSON_.open},
+            'open': {value: !!resourceJSON_.open},
             'state': {value: resourceJSON_.state},
             'store': {value: resourceJSON_.store},
             'usdl_url': {value: resourceJSON_.usdl_url},
@@ -115,7 +115,7 @@
             'publicationdate': {value: publicationdate}
         });
 
-        if (['purchased', 'rated'].indexOf(this.state) != -1) {
+        if (this.open === true || ['purchased', 'rated'].indexOf(this.state) != -1) {
             for (var i = 0; i < this.resources.length; i += 1) {
                 var resource = this.resources[i];
                 if (is_mac_mimetype(resource.content_type)) {

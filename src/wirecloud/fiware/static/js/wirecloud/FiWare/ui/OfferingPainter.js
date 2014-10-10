@@ -128,7 +128,7 @@
             'owner': offering.owner,
             'store': offering.store,
             'version': offering.version,
-            'abstract': offering['abstract'],
+            'abstract': offering.abstract,
             'description': offering.description,
             'type': function () {
                 var label = document.createElement('div');
@@ -188,7 +188,7 @@
             },
             'rating': this.get_popularity_html.bind(this, offering.rating),
             'mainbutton': function () {
-                var button, local_catalogue_view;
+                var button, local_catalogue_view, resource;
 
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
 
@@ -216,7 +216,8 @@
                 if (['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
 
                     for (i = 0; i < this.offering.resources.length; i++) {
-                        if (!Wirecloud.LocalCatalogue.resourceExistsId(this.offering.resources[i].id)) {
+                        resource = this.offering.resources[i];
+                        if ('type' in resource && !Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
                             button = new StyledElements.StyledButton({
                                 'text': gettext('Install')
                             });
