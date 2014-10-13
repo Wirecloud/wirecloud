@@ -30,6 +30,7 @@ import markdown
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
+from wirecloud.commons.utils.html import clean_html
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
@@ -215,11 +216,11 @@ def get_resource_data(resource, user, request=None):
 
         try:
             description_code = download_local_file(localized_longdescription_path)
-            longdescription = markdown.markdown(description_code, output_format='xhtml5')
+            longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'))
         except:
             try:
                 description_code = download_local_file(longdescription_path)
-                longdescription = markdown.markdown(description_code, output_format='xhtml5')
+                longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'))
             except:
                 longdescription = resource_info['description']
 

@@ -44,6 +44,7 @@ from wirecloud.catalogue.utils import add_packaged_resource, add_resource_from_t
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
+from wirecloud.commons.utils.html import clean_html
 from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -230,7 +231,7 @@ class ResourceChangelogEntry(Resource):
             doc_code = download_local_file(doc_path)
 
         doc_code = doc_code.decode('utf-8')
-        doc = markdown.markdown(doc_code.decode('utf8'), output_format='xhtml5')
+        doc = clean_html(markdown.markdown(doc_code.decode('utf8'), output_format='xhtml5'))
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
 
 
@@ -258,5 +259,5 @@ class ResourceDocumentationEntry(Resource):
                 doc_code = download_local_file(doc_path)
 
         doc_code = doc_code.decode('utf-8')
-        doc = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
+        doc = clean_html(markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite']))
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')

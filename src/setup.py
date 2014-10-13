@@ -99,7 +99,7 @@ setup(
     install_requires=(
         'Django>=1.4.2,<1.7',
         'south>=0.7.4,<2.0',
-        'lxml',
+        'lxml>=2.3',
         'django_compressor>=1.4',
         'rdflib>=3.2.0',
         'requests>=2.0.0',
