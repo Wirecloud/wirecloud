@@ -120,23 +120,21 @@
             <xs:element name="license" minOccurs="0" maxOccurs="1" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>
-                        Absolute or template-relative URL of the
-                        mashable application component license.
+                        Name of the license associated to the mashable application component.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="licenseurl" minOccurs="0" maxOccurs="1" type="xs:anyURI">
                 <xs:annotation>
                     <xs:documentation>
-                        Absolute or template-relative URL of the
-                        widget documentation.
+                        Absolute or template-relative URL pointing to the full license document.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="changelog" minOccurs="0" maxOccurs="1" type="xs:anyURI">
                 <xs:annotation>
                     <xs:documentation>
-                        Absolute or template-relative URL for the changelog documentation.
+                        Relative path to a markdown file detailing the changes made to the mashable application component in each version.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
