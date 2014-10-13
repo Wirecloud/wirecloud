@@ -92,7 +92,7 @@ class BaseCommand(object):
         parser = self.create_parser(prog_name, subcommand)
         parser.print_help()
 
-    def run_from_argv(self, argv):
+    def run_from_argv(self, argv, stdout=None, stderr=None):
         """
         Set up any environment changes requested (e.g., Python path
         and Django settings), then run this command.
@@ -104,6 +104,12 @@ class BaseCommand(object):
         options = options.__dict__
         show_traceback = options.get('traceback', False)
 
+        if stdout:
+            options['stdout'] = stdout
+
+        if stderr:
+            options['stderr'] = stderr
+
         try:
             self.execute(*args, **options)
         except Exception as e:
@@ -111,7 +117,8 @@ class BaseCommand(object):
                 traceback.print_exc()
             else:
                 self.stderr.write(smart_str(self.style.ERROR('Error: %s\n' % e)))
-            sys.exit(1)
+
+            raise e
 
     def execute(self, *args, **options):
         """

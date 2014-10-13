@@ -25,7 +25,69 @@ from tempfile import mkdtemp
 from django.core.management.base import CommandError
 from django.test import TestCase
 
+
+from wirecloud.commons.wirecloud_admin import CommandLineUtility
 from wirecloud.commons.utils.testcases import cleartree
+import wirecloud.platform
+
+
+class BaseAdminCommandTestCase(TestCase):
+
+    tags = ('wirecloud-commands', 'wirecloud-command-base')
+
+    @classmethod
+    def setUpClass(cls):
+
+        from wirecloud.commons.commands.convert import ConvertCommand
+        from wirecloud.commons.commands.startproject import StartprojectCommand
+        from wirecloud.fiware.commands.passintegrationtests import IntegrationTestsCommand
+        cls.command_utility = CommandLineUtility({
+            "convert": ConvertCommand(),
+            "startproject": StartprojectCommand(),
+            "passintegrationtests": IntegrationTestsCommand(),
+        }, prog_name='wirecloud-admin')
+        cls.test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
+
+    def test_help(self):
+
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(['wirecloud-admin'], **options)
+        options['stdout'].seek(0)
+        first_output = options['stdout'].read()
+        self.assertIn('Available subcommands', first_output)
+
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(['wirecloud-admin', '--help'], **options)
+        options['stdout'].seek(0)
+        second_output = options['stdout'].read()
+
+        self.assertEqual(first_output, second_output)
+
+    def test_version(self):
+
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(['wirecloud-admin', 'version'], **options)
+        options['stdout'].seek(0)
+        self.assertEqual(wirecloud.platform.__version__ + '\n', options['stdout'].read())
+
+    def test_command_list(self):
+
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(['wirecloud-admin', '--version'], **options)
+        options['stdout'].seek(0)
+        first_output = options['stdout'].read()
+        self.assertNotIn('Available subcommands', first_output)
+
+    def test_basic_command_call(self):
+
+        args = ['wirecloud-admin', 'convert', '-d', 'xml', os.path.join(self.test_data_dir, 'minimal_endpoint_info.json')]
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(args, **options)
+
+        options['stdout'].seek(0)
+        self.assertNotEqual(options['stdout'].read(), '')
+        options['stderr'].seek(0)
+        self.assertEqual(options['stderr'].read(), '')
 
 
 class ConvertCommandTestCase(TestCase):

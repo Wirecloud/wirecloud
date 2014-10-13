@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,16 +27,19 @@ import wirecloud.platform
 
 class CommandLineUtility(object):
 
-    def __init__(self, commands, argv=None):
+    def __init__(self, commands, prog_name=None):
 
         self.commands = commands
-        self.argv = argv or sys.argv[:]
-        self.prog_name = os.path.basename(self.argv[0])
+        if prog_name is None:
+            self.prog_name = os.path.basename(sys.argv[0])
+        else:
+            self.prog_name = prog_name
 
     def main_help_text(self, commands_only=False):
         """
         Returns the script's main help text, as a string.
         """
+
         if commands_only:
             usage = sorted(self.commands.keys())
         else:
@@ -65,49 +68,58 @@ class CommandLineUtility(object):
         else:
             return None
 
-    def execute(self):
+    def execute(self, argv=None, stdout=None, stderr=None):
+
+        if argv is None:
+            argv = sys.argv
 
         parser = LaxOptionParser(usage="%prog subcommand [options] [args]",
             version=wirecloud.platform.__version__,
             option_list=())
 
+        if stdout is None:
+            stdout = sys.stdout
+
+        if stderr is None:
+            stderr = sys.stderr
+
         try:
-            options, args = parser.parse_args(self.argv)
+            options, args = parser.parse_args(argv)
         except:
             pass  # Ignore any option errors at this point.
 
         try:
-            subcommand = self.argv[1]
+            subcommand = argv[1]
         except IndexError:
             subcommand = 'help'  # Display help if no arguments were given.
 
         if subcommand == 'help':
             if len(args) <= 2:
                 parser.print_lax_help()
-                sys.stdout.write(self.main_help_text() + '\n')
+                stdout.write(self.main_help_text() + '\n')
             elif args[2] == '--commands':
-                sys.stdout.write(self.main_help_text(commands_only=True) + '\n')
+                stdout.write(self.main_help_text(commands_only=True) + '\n')
             else:
                 command = self.fetch_command(args[2])
                 if command is not None:
                     command.print_help(self.prog_name, args[2])
                 else:
-                    sys.stdout.write(self.unknown_command_text(args[2]) + '\n')
+                    stdout.write(self.unknown_command_text(args[2]) + '\n')
 
         elif subcommand == 'version':
-            sys.stdout.write(parser.get_version() + '\n')
-        elif '--version' in self.argv[1:]:
+            stdout.write(parser.get_version() + '\n')
+        elif '--version' in argv[1:]:
             # LaxOptionParser already takes care of printing the version.
             pass
-        elif '--help' in self.argv[1:] or '-h' in self.argv[1:]:
+        elif '--help' in argv[1:] or '-h' in argv[1:]:
             parser.print_lax_help()
-            sys.stdout.write(self.main_help_text() + '\n')
+            stdout.write(self.main_help_text() + '\n')
         else:
             command = self.fetch_command(subcommand)
             if command is not None:
-                command.run_from_argv(self.argv)
+                command.run_from_argv(argv, stdout=stdout, stderr=stderr)
             else:
-                sys.stdout.write(self.unknown_command_text(subcommand) + '\n')
+                stdout.write(self.unknown_command_text(subcommand) + '\n')
 
 
 def execute_from_command_line():
@@ -119,7 +131,11 @@ def execute_from_command_line():
         "startproject": StartprojectCommand(),
         "passintegrationtests": IntegrationTestsCommand(),
     })
-    utility.execute()
+    try:
+        utility.execute()
+    except:
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     execute_from_command_line()
