@@ -151,10 +151,7 @@ class Proxy():
             return HttpResponse(status=502)
 
         # Build a Django response
-        response = StreamingHttpResponse(res.raw.stream(4096, decode_content=False))
-
-        # Set status code to the response
-        response.status_code = res.status_code
+        response = StreamingHttpResponse(res.raw.stream(4096, decode_content=False), status=res.status_code, reason=res.reason_phrase)
 
         # Add all the headers received from the response
         for header in res.headers:

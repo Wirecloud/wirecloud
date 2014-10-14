@@ -32,6 +32,7 @@ from six.moves.urllib.parse import urlparse
 
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
+from django.http.response import REASON_PHRASES
 from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
 from django.test.client import Client
@@ -232,6 +233,8 @@ class FakeNetwork(object):
         res = requests.Response()
         res.url = res_info.get('url', url)
         res.status_code = res_info.get('status_code', 200)
+        res.reason_phrase = res_info.get('reason_phrase', REASON_PHRASES.get(res.status_code, 'UNKNOWN STATUS CODE'))
+
         if 'reason' in res_info:
             res.reason = res_info['reason']
 
