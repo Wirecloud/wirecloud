@@ -102,7 +102,7 @@ class CommandLineUtility(object):
             else:
                 command = self.fetch_command(args[2])
                 if command is not None:
-                    command.print_help(self.prog_name, args[2])
+                    command.print_help(self.prog_name, args[2], file=stdout)
                 else:
                     stdout.write(self.unknown_command_text(args[2]) + '\n')
 
@@ -112,8 +112,16 @@ class CommandLineUtility(object):
             # LaxOptionParser already takes care of printing the version.
             pass
         elif '--help' in argv[1:] or '-h' in argv[1:]:
-            parser.print_lax_help()
-            stdout.write(self.main_help_text() + '\n')
+            if len(args) <= 2:
+                parser.print_lax_help()
+                stdout.write(self.main_help_text() + '\n')
+            else:
+                command = self.fetch_command(args[1])
+                if command is not None:
+                    command.print_help(self.prog_name, args[1], file=stdout)
+                else:
+                    stdout.write(self.unknown_command_text(args[1]) + '\n')
+
         else:
             command = self.fetch_command(subcommand)
             if command is not None:

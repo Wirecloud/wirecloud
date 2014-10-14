@@ -48,7 +48,7 @@ class BaseAdminCommandTestCase(TestCase):
         }, prog_name='wirecloud-admin')
         cls.test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
 
-    def test_help(self):
+    def test_general_help(self):
 
         options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
         self.command_utility.execute(['wirecloud-admin'], **options)
@@ -58,6 +58,20 @@ class BaseAdminCommandTestCase(TestCase):
 
         options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
         self.command_utility.execute(['wirecloud-admin', '--help'], **options)
+        options['stdout'].seek(0)
+        second_output = options['stdout'].read()
+
+        self.assertEqual(first_output, second_output)
+
+    def test_command_help(self):
+
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(['wirecloud-admin', 'help', 'convert'], **options)
+        options['stdout'].seek(0)
+        first_output = options['stdout'].read()
+
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(['wirecloud-admin', 'convert', '--help'], **options)
         options['stdout'].seek(0)
         second_output = options['stdout'].read()
 
@@ -73,7 +87,7 @@ class BaseAdminCommandTestCase(TestCase):
     def test_command_list(self):
 
         options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
-        self.command_utility.execute(['wirecloud-admin', '--version'], **options)
+        self.command_utility.execute(['wirecloud-admin', 'help', '--commands'], **options)
         options['stdout'].seek(0)
         first_output = options['stdout'].read()
         self.assertNotIn('Available subcommands', first_output)
@@ -88,6 +102,42 @@ class BaseAdminCommandTestCase(TestCase):
         self.assertNotEqual(options['stdout'].read(), '')
         options['stderr'].seek(0)
         self.assertEqual(options['stderr'].read(), '')
+
+    def test_invalid_command(self):
+
+        # Calling directly to an inexistent command
+        args = ['wirecloud-admin', 'inexistentcommand', 'option1']
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(args, **options)
+
+        options['stdout'].seek(0)
+        first_output = options['stdout'].read()
+        self.assertNotEqual(first_output, '')
+        options['stderr'].seek(0)
+        self.assertEqual(options['stderr'].read(), '')
+
+        # Requesting help for an inexistent command
+        args = ['wirecloud-admin', 'help', 'inexistentcommand']
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(args, **options)
+
+        options['stdout'].seek(0)
+        second_output = options['stdout'].read()
+        options['stderr'].seek(0)
+        self.assertEqual(options['stderr'].read(), '')
+
+        # Requesting help for an inexistent command (alternative way)
+        args = ['wirecloud-admin', 'inexistentcommand', '--help']
+        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        self.command_utility.execute(args, **options)
+
+        options['stdout'].seek(0)
+        third_output = options['stdout'].read()
+        options['stderr'].seek(0)
+        self.assertEqual(options['stderr'].read(), '')
+
+        self.assertEqual(first_output, second_output)
+        self.assertEqual(second_output, third_output)
 
 
 class ConvertCommandTestCase(TestCase):

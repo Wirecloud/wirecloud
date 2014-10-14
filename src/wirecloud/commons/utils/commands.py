@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -83,14 +83,14 @@ class BaseCommand(object):
                             version=self.get_version(),
                             option_list=self.option_list)
 
-    def print_help(self, prog_name, subcommand):
+    def print_help(self, prog_name, subcommand, file=sys.stdout):
         """
         Print the help message for this command, derived from
         ``self.usage()``.
 
         """
         parser = self.create_parser(prog_name, subcommand)
-        parser.print_help()
+        parser.print_help(file=file)
 
     def run_from_argv(self, argv, stdout=None, stderr=None):
         """
