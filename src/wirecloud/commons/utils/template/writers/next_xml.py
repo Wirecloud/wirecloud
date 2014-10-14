@@ -186,7 +186,7 @@ def build_xml_document(options):
 
         if len(options['properties']) > 0:
 
-            properties_element = etree.SubElement(template, 'persitentvariables')
+            properties_element = etree.SubElement(template, 'persistentvariables')
             for prop in options['properties']:
                 prop_element = etree.SubElement(properties_element, 'variable', name=prop['name'])
                 addAttributes(prop, prop_element, ('type', 'label', 'description', 'description', 'default'))

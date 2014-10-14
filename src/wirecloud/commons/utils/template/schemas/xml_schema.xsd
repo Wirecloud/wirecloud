@@ -878,11 +878,11 @@
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
-                        <xs:element name="persitentvariables" type="macd:PersistentVariables" minOccurs="0" maxOccurs="1">
+                        <xs:element name="persistentvariables" type="macd:PersistentVariables" minOccurs="0" maxOccurs="1">
                             <xs:annotation>
                                 <xs:documentation>
                                     This element contains some variables that reflects
-                                    the persitent widget state. The state can be any information
+                                    the persistent widget state. The state can be any information
                                     desired to be persisted.
                                 </xs:documentation>
                             </xs:annotation>
@@ -944,7 +944,7 @@
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
-                        <xs:element name="persitentvariables" type="macd:PersistentVariables" minOccurs="0" maxOccurs="1">
+                        <xs:element name="persistentvariables" type="macd:PersistentVariables" minOccurs="0" maxOccurs="1">
                             <xs:annotation>
                                 <xs:documentation>
                                     This element contains some variables that reflects
