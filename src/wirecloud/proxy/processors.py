@@ -27,7 +27,7 @@ from six.moves.urllib.parse import unquote
 from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
 
-from wirecloud.platform.get_data import get_variable_value_from_varname
+from wirecloud.platform.workspace.utils import get_variable_value_from_varname
 from wirecloud.proxy.utils import ValidationError
 
 

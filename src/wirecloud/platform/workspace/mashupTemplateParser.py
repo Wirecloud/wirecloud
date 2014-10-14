@@ -26,12 +26,11 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.context.utils import get_context_values
-from wirecloud.platform.get_data import TemplateValueProcessor
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.preferences.views import update_tab_preferences, update_workspace_preferences
 from wirecloud.platform.models import Workspace, UserWorkspace
-from wirecloud.platform.workspace.utils import createTab
+from wirecloud.platform.workspace.utils import createTab, TemplateValueProcessor
 
 
 def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=None):

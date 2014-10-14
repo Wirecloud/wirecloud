@@ -29,10 +29,10 @@ from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
-from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget
 from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Variable, Workspace
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
+from wirecloud.platform.workspace.utils import VariableValueCacheManager, get_iwidget_data
 
 
 class IWidgetCollection(Resource):

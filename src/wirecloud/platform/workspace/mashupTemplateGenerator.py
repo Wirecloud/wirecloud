@@ -27,8 +27,8 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.template.base import parse_contacts_info
 from wirecloud.commons.utils.template.writers import rdf
 from wirecloud.commons.utils.template.writers import xml
-from wirecloud.platform.get_data import get_variable_value_from_varname
 from wirecloud.platform.models import IWidget
+from wirecloud.platform.workspace.utils import get_variable_value_from_varname
 
 
 def get_iwidgets_description(included_iwidgets):

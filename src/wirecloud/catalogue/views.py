@@ -228,7 +228,11 @@ class ResourceChangelogEntry(Resource):
         try:
             doc_code = download_local_file(localized_doc_path)
         except:
-            doc_code = download_local_file(doc_path)
+            try:
+                doc_code = download_local_file(doc_path)
+            except:
+                msg = _('Error opening the changelog file')
+                doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
         doc_code = doc_code.decode('utf-8')
         doc = clean_html(markdown.markdown(doc_code.decode('utf8'), output_format='xhtml5'))
@@ -256,7 +260,11 @@ class ResourceDocumentationEntry(Resource):
             try:
                 doc_code = download_local_file(localized_doc_path)
             except:
-                doc_code = download_local_file(doc_path)
+                try:
+                    doc_code = download_local_file(doc_path)
+                except:
+                    msg = _('Error opening the documentation file')
+                    doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
         doc_code = doc_code.decode('utf-8')
         doc = clean_html(markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite']))
