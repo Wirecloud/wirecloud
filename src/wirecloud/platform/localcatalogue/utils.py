@@ -71,12 +71,12 @@ def install_resource_to_user(user, **kwargs):
     raise_conflicts = kwargs.get('raise_conflicts', False)
 
     resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
-    if raise_conflicts and resource.users.filter(pk=user.pk).exists():
-        raise IntegrityError(_('Resource already exists %(resource_id)s') % {'resource_id': resource.local_uri_part})
-
-    resource.users.add(user)
-
-    resource_installed.send(sender=resource, user=user)
+    if resource.users.filter(pk=user.pk).exists():
+        if raise_conflicts:
+            raise IntegrityError(_('Resource already exists %(resource_id)s') % {'resource_id': resource.local_uri_part})
+    else:
+        resource.users.add(user)
+        resource_installed.send(sender=resource, user=user)
 
     return resource
 
