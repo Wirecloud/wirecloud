@@ -32,7 +32,6 @@ from six.moves.urllib.parse import urlparse
 
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
-from django.http.response import REASON_PHRASES
 from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
 from django.test.client import Client
@@ -44,6 +43,7 @@ from wirecloud.platform.localcatalogue.utils import install_resource
 from wirecloud.platform.widget import utils as showcase
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.searchers import get_available_search_engines
+from wirecloud.commons.utils.http import REASON_PHRASES
 from wirecloud.commons.utils.remote import MobileWirecloudRemoteTestCase, WirecloudRemoteTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 

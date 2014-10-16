@@ -151,7 +151,10 @@ class Proxy():
             return HttpResponse(status=502)
 
         # Build a Django response
-        response = StreamingHttpResponse(res.raw.stream(4096, decode_content=False), status=res.status_code, reason=res.reason_phrase)
+        response = StreamingHttpResponse(res.raw.stream(4096, decode_content=False), status=res.status_code)
+        if 'reason_phrase' in response:  # pragma: no cover
+            # Currently only django 1.6+ supports custom reason phrases
+            response.reason_phrase = res.reason_phrase
 
         # Add all the headers received from the response
         for header in res.headers:
