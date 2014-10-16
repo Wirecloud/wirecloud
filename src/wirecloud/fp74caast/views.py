@@ -203,7 +203,7 @@ def deploy_tenant_ac(request):
     # Install uploaded MAC resource
     try:
 
-        resource = install_resource_to_user(user, file_contents=wgt_file, templateURL=fileURL, packaged=True)
+        resource = install_resource_to_user(user, file_contents=wgt_file)
 
     except TemplateParseException as e:
 

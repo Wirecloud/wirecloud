@@ -80,9 +80,6 @@
                 get: function () { return [this.vendor, this.name, currentVersion.version.text].join('/'); }
             },
             'type': {value: data.type},
-            'packaged': {
-                get: function () { return currentVersion.packaged; }
-            },
             'image': {
                 get: function () { return currentVersion.image; }
             },
@@ -152,7 +149,6 @@
         for (i = 0; i < data.versions.length; i += 1) {
             version_data = data.versions[i];
 
-            version_data.packaged = !! version_data.packaged;
             version_data.version = new Wirecloud.Version(version_data.version, 'catalogue');
             version_data.date = new Date(version_data.date);
 

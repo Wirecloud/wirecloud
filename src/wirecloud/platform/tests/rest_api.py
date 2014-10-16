@@ -1753,7 +1753,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('name', response_data)
         self.assertIn('version', response_data)
 
-    def test_resource_collection_post_using_bad_packaged_resouce_from_uri(self):
+    def test_resource_collection_post_using_invalid_resource_url(self):
 
         url = reverse('wirecloud.resource_collection')
 
@@ -1762,11 +1762,10 @@ class ResourceManagementAPI(WirecloudTestCase):
 
         # Make the request
         data = {
-            'packaged': True,
-            'template_uri': 'http://localhost:8001/test-mashup.rdf'
+            'url': 'http://localhost:8001/inexistentresource.wgt'
         }
         response = self.client.post(url, json.dumps(data), content_type="application/json", HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 409)
 
     def test_resource_collection_post_using_octet_stream_error(self):
 

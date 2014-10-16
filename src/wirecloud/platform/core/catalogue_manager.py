@@ -51,17 +51,11 @@ class WirecloudCatalogueManager(MarketManager):
 
             if len(resources) == 1:
                 resource = resources[0]
-
-                if resource.template_uri.startswith(('http://', 'https://')):
-                    downloaded_file = download_http_content(resource.template_uri, user=user)
-                else:
-                    base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
-                    downloaded_file = download_local_file(os.path.join(base_dir, resource.template_uri))
+                base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
+                downloaded_file = download_local_file(os.path.join(base_dir, resource.template_uri))
 
                 return {
                     'downloaded_file': downloaded_file,
-                    'template_url': resource.template_uri,
-                    'packaged': resource.fromWGT
                 }
             else:
                 return None

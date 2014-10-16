@@ -227,7 +227,6 @@
             requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify({
                 template_uri: url,
-                packaged: !!options.packaged,
                 force_create: !!options.forceCreate,
                 install_embedded_resources: true,
                 market_endpoint: options.market_info

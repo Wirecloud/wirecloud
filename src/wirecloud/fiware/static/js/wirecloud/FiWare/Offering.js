@@ -46,7 +46,6 @@
         }
 
         Wirecloud.LocalCatalogue.addResourceFromURL(resource.url, {
-            packaged: true,
             forceCreate: true,
             monitor: options.monitor,
             market_info: {

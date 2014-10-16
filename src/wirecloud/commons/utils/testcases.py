@@ -444,7 +444,7 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
                     wgt_file.close()
                     continue
 
-                resource = install_resource(wgt, None, None, True)
+                resource = install_resource(wgt, None)
 
                 if public:
                     resource.public = True

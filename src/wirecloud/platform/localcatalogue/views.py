@@ -87,7 +87,6 @@ class ResourceCollection(Resource):
         file_contents = None
         content_type = get_content_type(request)[0]
         if content_type == 'multipart/form-data':
-            packaged = True
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
             install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
             if not 'file' in request.FILES:
@@ -101,7 +100,6 @@ class ResourceCollection(Resource):
 
         elif content_type == 'application/octet-stream':
 
-            packaged = True
             downloaded_file = BytesIO(request.body)
             try:
                 file_contents = WgtFile(downloaded_file)
@@ -121,17 +119,13 @@ class ResourceCollection(Resource):
 
                 install_embedded_resources = normalize_boolean_param('install_embedded_resources', data.get('install_embedded_resources', False))
                 force_create = data.get('force_create', False)
-                packaged = data.get('packaged', False)
                 templateURL = data.get('template_uri')
                 market_endpoint = data.get('market_endpoint', None)
 
             else:
                 force_create = request.POST.get('force_create', False) == 'true'
-                packaged = request.POST.get('packaged', False) == 'true'
                 if 'url' in request.POST:
                     templateURL = request.POST['url']
-                elif 'template_uri' in request.POST:
-                    templateURL = request.POST['template_uri']
 
             if market_endpoint is not None:
 
@@ -154,22 +148,17 @@ class ResourceCollection(Resource):
                 except:
                     return build_error_response(request, 409, _('Content cannot be downloaded from the marketplace'))
 
-            if packaged:
+            try:
+                downloaded_file = BytesIO(downloaded_file)
+                file_contents = WgtFile(downloaded_file)
 
-                try:
-                    downloaded_file = BytesIO(downloaded_file)
-                    file_contents = WgtFile(downloaded_file)
+            except zipfile.BadZipfile:
 
-                except zipfile.BadZipfile:
-
-                    return build_error_response(request, 400, _('The file downloaded from the marketplace is not a zip file'))
-
-            else:
-                file_contents = downloaded_file
+                return build_error_response(request, 400, _('The file downloaded from the marketplace is not a zip file'))
 
         try:
 
-            resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, packaged=packaged, raise_conflicts=force_create)
+            resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, raise_conflicts=force_create)
 
         except OSError as e:
 
@@ -180,10 +169,7 @@ class ResourceCollection(Resource):
 
         except TemplateParseException as e:
 
-            if packaged:
-                msg = "Error parsing config.xml descriptor file: %s" % e
-            else:
-                msg = "Error parsing resource descriptor from the providen URL: %s" % e
+            msg = "Error parsing config.xml descriptor file: %s" % e
 
             details = "%s" % e
             return build_error_response(request, 400, msg, details=details)
@@ -211,7 +197,7 @@ class ResourceCollection(Resource):
                         resource_file = BytesIO(file_contents.read(embedded_resource['src']))
 
                     extra_resource_contents = WgtFile(resource_file)
-                    extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, packaged=True, raise_conflicts=False)
+                    extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
                     info['extra_resources'].append(extra_resource.get_processed_info(request))
 
             return HttpResponse(json.dumps(info), status=201, content_type='application/json; charset=UTF-8')

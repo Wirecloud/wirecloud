@@ -171,7 +171,6 @@
             layoutManager.logSubTask(gettext('Uploading resource'));
 
             this.catalogue.addResourceFromURL(resource.description_url, {
-                packaged: resource.packaged,
                 onSuccess: function () {
                     LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
                     LayoutManagerFactory.getInstance().logStep('');

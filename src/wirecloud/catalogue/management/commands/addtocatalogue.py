@@ -33,7 +33,7 @@ from wirecloud.commons.utils.wgt import WgtFile
 
 class Command(BaseCommand):
     args = '<file.wgt>...'
-    help = 'Adds a packaged widget into the catalogue'
+    help = 'Adds a packaged resource into the catalogue'
     option_list = BaseCommand.option_list + (
         make_option('-d', '--deploy-only',
             action='store_true',

@@ -58,7 +58,6 @@
     var install_input_box = function install_input_box(autoAction) {
         if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/input-box/1.0')) {
             Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_input-box_1.0.wgt'), {
-                packaged: true,
                 onSuccess: autoAction.nextHandler.bind(autoAction)
             });
         } else {
@@ -69,7 +68,6 @@
     var install_youtubebrowser = function install_youtubebrowser(autoAction) {
         if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/youtube-browser/2.99.0')) {
             Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_youtube-browser_2.99.0.wgt'), {
-                packaged: true,
                 onSuccess: autoAction.nextHandler.bind(autoAction)
             });
         } else {

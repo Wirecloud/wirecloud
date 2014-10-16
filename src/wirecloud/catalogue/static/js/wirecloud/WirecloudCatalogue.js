@@ -237,7 +237,7 @@
         Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'POST',
             requestHeaders: {'Accept': 'application/json'},
-            parameters: {'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate},
+            parameters: {'template_uri': url, force_create: !!options.forceCreate},
             onSuccess: function () {
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();

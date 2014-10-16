@@ -86,10 +86,7 @@ class ResourceCollection(Resource):
 
                 template_uri = request.POST['template_uri']
                 downloaded_file = download_http_content(template_uri, user=request.user)
-                if request.POST.get('packaged', 'false').lower() == 'true':
-                    resource = add_packaged_resource(BytesIO(downloaded_file), request.user)
-                else:
-                    resource = add_resource_from_template(template_uri, downloaded_file, request.user)
+                resource = add_packaged_resource(BytesIO(downloaded_file), request.user)
 
             else:
 

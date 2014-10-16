@@ -31,21 +31,18 @@ from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 
 
-def install_resource(file_contents, templateURL, executor_user, packaged):
+def install_resource(file_contents, executor_user):
 
-    if packaged:
-        if isinstance(file_contents, string_types):
-            file_contents = BytesIO(file_contents)
-            wgt_file = WgtFile(file_contents)
-        elif isinstance(file_contents, WgtFile):
-            wgt_file = file_contents
-            file_contents = wgt_file.get_underlying_file()
-        else:
-            raise Exception
-
-        template_contents = wgt_file.get_template()
+    if isinstance(file_contents, string_types):
+        file_contents = BytesIO(file_contents)
+        wgt_file = WgtFile(file_contents)
+    elif isinstance(file_contents, WgtFile):
+        wgt_file = file_contents
+        file_contents = wgt_file.get_underlying_file()
     else:
-        template_contents = file_contents
+        raise Exception
+
+    template_contents = wgt_file.get_template()
 
     template = TemplateParser(template_contents)
     resources = CatalogueResource.objects.filter(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())[:1]
@@ -54,23 +51,18 @@ def install_resource(file_contents, templateURL, executor_user, packaged):
     if len(resources) == 1:
         resource = resources[0]
     else:
-        if packaged:
-            resource = add_packaged_resource(file_contents, executor_user, wgt_file=wgt_file)
-        else:
-            resource = add_resource_from_template(templateURL, template_contents, executor_user)
+        resource = add_packaged_resource(file_contents, executor_user, wgt_file=wgt_file)
 
     return resource
 
 
 def install_resource_to_user(user, **kwargs):
 
-    packaged = kwargs.get('packaged', False)
     executor_user = kwargs.get('executor_user', user)
-    templateURL = kwargs.get('templateURL', None)
     downloaded_file = kwargs.get('file_contents', None)
     raise_conflicts = kwargs.get('raise_conflicts', False)
 
-    resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
+    resource = install_resource(downloaded_file, executor_user)
     if resource.users.filter(pk=user.pk).exists():
         if raise_conflicts:
             raise IntegrityError(_('Resource already exists %(resource_id)s') % {'resource_id': resource.local_uri_part})
@@ -83,12 +75,10 @@ def install_resource_to_user(user, **kwargs):
 
 def install_resource_to_group(group, **kwargs):
 
-    packaged = kwargs.get('packaged', False)
     executor_user = kwargs.get('executor_user', None)
-    templateURL = kwargs.get('templateURL', None)
     downloaded_file = kwargs.get('file_contents', None)
 
-    resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
+    resource = install_resource(downloaded_file, executor_user)
     resource.groups.add(group)
 
     resource_installed.send(sender=resource, group=group)
@@ -98,12 +88,10 @@ def install_resource_to_group(group, **kwargs):
 
 def install_resource_to_all_users(**kwargs):
 
-    packaged = kwargs.get('packaged', False)
     executor_user = kwargs.get('executor_user', None)
-    templateURL = kwargs.get('templateURL', None)
     downloaded_file = kwargs.get('file_contents', None)
 
-    resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
+    resource = install_resource(downloaded_file, executor_user)
     resource.public = True
     resource.save()
 
@@ -130,7 +118,7 @@ def install_resource_from_available_marketplaces(vendor, name, version, user):
 
     if resource_info is not None:
 
-        return install_resource_to_user(user, file_contents=resource_info['downloaded_file'], templateURL=resource_info['template_url'], packaged=resource_info['packaged'])
+        return install_resource_to_user(user, file_contents=resource_info['downloaded_file'])
     else:
         raise Exception
 
