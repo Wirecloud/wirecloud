@@ -23,7 +23,6 @@ import filecmp
 import json
 from lxml import etree
 import os
-import shutil
 
 from django.core.urlresolvers import reverse
 from django.test import Client
@@ -1783,23 +1782,11 @@ class ResourceManagementAPI(WirecloudTestCase):
         url = reverse('wirecloud.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
         check_get_requires_authentication(self, url)
 
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, deploy_only=True)
     def test_resource_entry_get(self):
 
-        resource_id = [
-            'Wirecloud',
-            'Test',
-            '1.0'
-        ]
+        resource_id = ['Wirecloud', 'Test', '1.0']
         url = reverse('wirecloud.resource_entry', args=resource_id)
-        file_name = '_'.join(resource_id) + '.wgt'
-        local_dir = catalogue.wgt_deployer.get_base_dir(*resource_id)
-        dst_file = os.path.join(local_dir, file_name)
-
-        if not os.path.exists(local_dir):
-            os.makedirs(local_dir)
-
-        src_file = os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt')
-        shutil.copy(src_file, dst_file)
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -2035,6 +2022,40 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
     def test_market_collection_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.market_collection')
+        check_post_bad_request_syntax(self, url)
+
+    def test_market_publish_service_requires_authentication(self):
+
+        data = {'resource': 'Wirecloud/Test/1.0', 'marketplaces': [{'market': 'origin'}]}
+        url = reverse('wirecloud.publish_on_other_marketplace')
+        check_post_requires_authentication(self, url, json.dumps(data))
+
+    @uses_extra_resources(('Wirecloud_TestOperator_1.0.zip',), shared=True, deploy_only=True)
+    def test_market_publish_service_requires_permission(self):
+
+        data = {'resource': 'Wirecloud/TestOperator/1.0', 'marketplaces': [{'market': 'origin'}]}
+        url = reverse('wirecloud.publish_on_other_marketplace')
+        check_post_requires_permission(self, url, json.dumps(data))
+
+    @uses_extra_resources(('Wirecloud_TestOperator_1.0.zip',), shared=True, deploy_only=True)
+    def test_market_publish_service_requires_error_reporting(self):
+
+        url = reverse('wirecloud.publish_on_other_marketplace')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        data = {'resource': 'Wirecloud/TestOperator/1.0', 'marketplaces': [{'market': 'origin'}]}
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 502)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertIn('details', response_data)
+
+    def test_market_publish_service_bad_request_syntax(self):
+
+        url = reverse('wirecloud.publish_on_other_marketplace')
         check_post_bad_request_syntax(self, url)
 
     def test_platform_context_collection_get(self):

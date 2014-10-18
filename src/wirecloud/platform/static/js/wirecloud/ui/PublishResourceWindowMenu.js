@@ -101,9 +101,23 @@
                 layoutManager.logSubTask(gettext('Resource published successfully'));
                 layoutManager.getInstance().logStep('');
             },
-            onFailure: function (transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error publishing resource: %(errorMsg)s."), transport, null);
-                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
+            onFailure: function (response) {
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error publishing resource: %(errorMsg)s."), response, null);
+                var dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
+
+                // TODO
+                dialog.msgElement.textContent = msg;
+                var response_data = JSON.parse(response.responseText);
+                if ('details' in response_data) {
+                    var expander = new StyledElements.Expander({title: gettext('Details')});
+                    expander.insertInto(dialog.msgElement);
+                    for (var key in response_data.details) {
+                        expander.appendChild(new StyledElements.Fragment('<p><b>' + key + '</b>' + response_data.details[key] + '</p>'));
+                    }
+                }
+                // END TODO
+
+                dialog.show();
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();

@@ -54,7 +54,12 @@
      * Updates the message displayed by this <code>WindowMenu</code>
      */
     MessageWindowMenu.prototype.setMsg = function setMsg(msg) {
-        this.msgElement.textContent = msg;
+
+        if (msg instanceof StyledElements.StyledElement) {
+            msg.insertInto(this.msgElement);
+        } else {
+            this.msgElement.textContent = msg;
+        }
 
         this.calculatePosition();
     };

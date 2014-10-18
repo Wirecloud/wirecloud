@@ -128,6 +128,9 @@ class PublishService(Service):
         (resource_vendor, resource_name, resource_version) = data['resource'].split('/')
         resource = get_object_or_404(CatalogueResource, vendor=resource_vendor, short_name=resource_name, version=resource_version)
 
+        if not resource.is_available_for(request.user):
+            return build_error_response(request, 403, _('You are not allowed to delete this market'))
+
         if not resource.fromWGT:
             msg = _('Only packaged resources can be published')
             return build_error_response(request, 400, msg)
@@ -147,6 +150,6 @@ class PublishService(Service):
         if len(errors) == 0:
             return HttpResponse(status=204)
         elif len(errors) == len(data['marketplaces']):
-            return HttpResponse(json.dumps(errors), status=502, content_type='application/json; charset=UTF-8')
+            return build_error_response(request, 502, _('Something went wrong (see details for more info)'), details=errors)
         else:
-            return HttpResponse(json.dumps(errors), status=200, content_type='application/json; charset=UTF-8')
+            return build_error_response(request, 200, _('Something went wrong (see details for more info)'), details=errors)
