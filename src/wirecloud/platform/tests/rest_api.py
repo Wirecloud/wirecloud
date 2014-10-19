@@ -1957,6 +1957,38 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
+    def test_market_collection_post_other_user(self):
+
+        url = reverse('wirecloud.market_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make request
+        data = {
+            'name': 'new_market',
+            'options': {
+                'user': 'user_with_markets',
+                'type': 'wirecloud',
+                'url': 'http://example.com'
+            }
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+    def test_market_collection_post_other_user_requires_permission(self):
+
+        url = reverse('wirecloud.market_collection')
+        data = {
+            'name': 'new_market',
+            'options': {
+                'user': 'user_with_markets',
+                'type': 'wirecloud',
+                'url': 'http://example.com'
+            }
+        }
+        check_post_requires_permission(self, url, json.dumps(data))
+
     def test_market_collection_post_duplicated(self):
 
         url = reverse('wirecloud.market_collection')
