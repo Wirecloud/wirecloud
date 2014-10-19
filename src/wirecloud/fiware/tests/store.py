@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from io import BytesIO
 import json
 import os
@@ -60,4 +62,9 @@ class StoreTestCase(WirecloudTestCase):
     def test_resource_upload(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 200})
-        self.store_client.upload_resource('Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO('file contents'), 'test_token')
+        self.store_client.upload_resource('Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO(b'file contents'), 'test_token')
+
+    def test_resource_upload_error(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 400})
+        self.assertRaises(Exception, self.store_client.upload_resource, 'Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO(b'file contents'), 'test_token')
