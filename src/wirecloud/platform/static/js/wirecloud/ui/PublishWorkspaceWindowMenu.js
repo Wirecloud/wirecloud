@@ -117,7 +117,7 @@
             prop_params = [];
             for (j = 0; j < iwidget.propertyList.length; j += 1) {
                 prop_params.push({
-                    label: iwidget.preferenceList[i].meta.label,
+                    label: iwidget.preferenceList[i].label,
                     type: 'parametrizableValue',
                     variable: iwidget.propertyList[j],
                     parentWindow: this
