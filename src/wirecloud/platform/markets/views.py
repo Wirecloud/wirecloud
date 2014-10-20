@@ -109,9 +109,6 @@ class MarketEntry(Resource):
 
         return HttpResponse(status=204)
 
-    def update(self, request, market):
-        pass
-
 
 class PublishService(Service):
 

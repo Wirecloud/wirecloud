@@ -129,11 +129,11 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.market_collection'
     ),
     url(r'^api/market/(?P<market>[\w -]+)/?$',
-        market_views.MarketEntry(permitted_methods=('PUT', 'DELETE')),
+        market_views.MarketEntry(permitted_methods=('DELETE',)),
         name='wirecloud.market_entry'
     ),
     url(r'^api/market/(?P<user>[^/]+)/(?P<market>[\w -]+)/?$',
-        market_views.MarketEntry(permitted_methods=('PUT', 'DELETE')),
+        market_views.MarketEntry(permitted_methods=('DELETE',)),
         name='wirecloud.market_entry'
     ),
     url(r'^api/markets/publish/?$',
