@@ -38,7 +38,7 @@ class Workspace(models.Model):
 
     public = models.BooleanField(_('Available to all users'), default=False)
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkspace')
-    targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
+    groups = models.ManyToManyField(Group, verbose_name=_('Groups'), blank=True, null=True)
     description = models.TextField(_('Description'), max_length=140, blank=True)
     longdescription = models.TextField(_('Long description'), blank=True)
     forcedValues = models.TextField(blank=True)
@@ -70,7 +70,7 @@ class Workspace(models.Model):
         super(Workspace, self).save(*args, **kwargs)
 
     def is_shared(self):
-        return len(self.users.all()) > 1
+        return self.public or self.users.count() > 1 or self.groups.count() > 1
 
 
 @python_2_unicode_compatible

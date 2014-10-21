@@ -749,6 +749,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
+        self.assertFalse(response_data['shared'])
         self.assertEqual(response_data['name'], 'ExistingWorkspace')
         self.assertEqual(response_data['creator'], 'user_with_workspaces')
         self.assertTrue('wiring' in response_data)
@@ -779,6 +780,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content)
         self.assertTrue('id' in response_data)
+        self.assertTrue(response_data['shared'])
         self.assertEqual(response_data['name'], 'Public Workspace')
         self.assertEqual(response_data['creator'], 'user_with_workspaces')
 

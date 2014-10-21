@@ -847,7 +847,7 @@
             "forcedValues": "",
             "wiringStatus": "{\"views\":[{\"label\":\"default\",\"iwidgets\":{\"1\":{\"position\":{\"posX\":84,\"posY\":44},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}},\"2\":{\"position\":{\"posX\": 256,\"posY\":153},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}}},\"operators\":{\"0\":{\"position\":{\"posX\":84,\"posY\":296},\"endPointsInOuts\":{\"sources\":[\"output\"],\"targets\":[\"input\"]}}},\"multiconnectors\":{},\"connections\":[{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null}]}],\"operators\":{\"0\":{\"name\":\"Wirecloud/TestOperator/1.0\",\"id\":\"0\",\"preferences\":{}}},\"connections\":[{\"source\":{\"type\":\"iwidget\",\"id\":1,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":2,\"endpoint\":\"inputendpoint\"}},{\"source\":{\"type\":\"iwidget\",\"id\":2,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"input\"}},{\"source\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"output\"},\"target\":{\"type\":\"iwidget\",\"id\":1,\"endpoint\":\"inputendpoint\"}}]}",
             "name": "Workspace",
-            "targetOrganizations": [],
+            "groups": [],
             "creator": 4
         }
     },
@@ -858,7 +858,7 @@
             "forcedValues": "",
             "wiringStatus": "{\"views\":[{\"label\":\"default\",\"iwidgets\":{\"3\":{\"position\":{\"posX\":84,\"posY\":44},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}},\"4\":{\"position\":{\"posX\":84,\"posY\":153},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}}},\"operators\":{\"0\":{\"position\":{\"posX\":84,\"posY\":256},\"endPointsInOuts\":{\"sources\":[\"output\"],\"targets\":[\"input\"]}}},\"multiconnectors\":{},\"connections\":[{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null}]}],\"operators\":{\"0\":{\"name\":\"Wirecloud/TestOperator/1.0\",\"id\":\"0\",\"preferences\":{}}},\"connections\":[{\"source\":{\"type\":\"iwidget\",\"id\":3,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":4,\"endpoint\":\"inputendpoint\"}},{\"source\":{\"type\":\"iwidget\",\"id\":4,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"input\"}},{\"source\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"output\"},\"target\":{\"type\":\"iwidget\",\"id\":3,\"endpoint\":\"inputendpoint\"}}]}",
             "name": "Pending Events",
-            "targetOrganizations": [],
+            "groups": [],
             "creator": 4
         }
     },
@@ -870,7 +870,7 @@
             "wiringStatus": "{\"views\":[{\"label\":\"default\",\"iwidgets\":{\"5\":{\"position\":{\"posX\":84,\"posY\":44},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}},\"6\":{\"position\":{\"posX\": 256,\"posY\":153},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}}},\"operators\":{\"0\":{\"position\":{\"posX\":84,\"posY\":296},\"endPointsInOuts\":{\"sources\":[\"output\"],\"targets\":[\"input\"]}}},\"multiconnectors\":{},\"connections\":[{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null}]}],\"operators\":{\"0\":{\"name\":\"Wirecloud/TestOperator/1.0\",\"id\":\"0\",\"preferences\":{}}},\"connections\":[{\"source\":{\"type\":\"iwidget\",\"id\":5,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":6,\"endpoint\":\"inputendpoint\"}},{\"source\":{\"type\":\"iwidget\",\"id\":6,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"input\"}},{\"source\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"output\"},\"target\":{\"type\":\"iwidget\",\"id\":5,\"endpoint\":\"inputendpoint\"}}]}",
             "name": "Public Workspace",
             "public": true,
-            "targetOrganizations": [],
+            "groups": [],
             "creator": 4
         }
     },
@@ -881,7 +881,7 @@
             "forcedValues": "",
             "wiringStatus": "{\"operators\":{},\"connections\":[]}",
             "name": "WiringTests",
-            "targetOrganizations": [],
+            "groups": [],
             "creator": 4
         }
     },
