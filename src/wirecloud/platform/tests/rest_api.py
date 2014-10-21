@@ -1883,18 +1883,9 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
-    def test_resource_description_entry_get_requires_authentication(self):
-
-        url = reverse('wirecloud.resource_description_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
-        check_get_requires_authentication(self, url)
-
     def test_resource_description_entry_get(self):
 
-        resource_id = [
-            'Wirecloud',
-            'Test',
-            '1.0'
-        ]
+        resource_id = ['Wirecloud', 'Test', '1.0']
         url = reverse('wirecloud.resource_description_entry', args=resource_id)
 
         # Authenticate
@@ -1905,15 +1896,37 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
 
-    def test_resource_description_entry_get_requires_permission(self):
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, deploy_only=True)
+    def test_resource_description_entry_get_including_files(self):
 
-        resource_id = (
-            'Wirecloud',
-            'TestOperator',
-            '1.0',
-        )
-        url = reverse('wirecloud.resource_description_entry', args=resource_id)
-        check_get_requires_permission(self, url)
+        resource_id = ['Wirecloud', 'Test', '1.0']
+        url = reverse('wirecloud.resource_description_entry', args=resource_id) + '?include_wgt_files=true'
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+        self.assertEqual(set(response_data['wgt_files']), set(['images/catalogue_iphone.png', 'images/catalogue.png', 'test.html', 'config.xml', 'CHANGELOG.md', 'doc/index.md']))
+
+    @uses_extra_resources(('Wirecloud_TestOperator_1.0.zip',), shared=True, deploy_only=True)
+    def test_resource_description_entry_get_including_files_distributable_resource(self):
+
+        resource_id = ['Wirecloud', 'TestOperator', '1.0']
+        url = reverse('wirecloud.resource_description_entry', args=resource_id) + '?include_wgt_files=true'
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+        self.assertEqual(set(response_data['wgt_files']), set(['images/catalogue_iphone.png', 'images/catalogue.png', 'js/main.js', 'config.xml']))
 
     def test_market_collection_get_requires_authentication(self):
 

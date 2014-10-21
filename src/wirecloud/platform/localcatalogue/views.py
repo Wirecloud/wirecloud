@@ -272,12 +272,13 @@ class ResourceEntry(Resource):
 
 class ResourceDescriptionEntry(Resource):
 
-    @authentication_required
+    #@authentication_required
     def read(self, request, vendor, name, version):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
-        if not request.user.is_superuser and not resource.is_available_for(request.user):
-            return build_error_response(request, 403, _('You are not allowed to retrieve info about this resource'))
+        # For now, all components are freely accessible/distributable
+        #if not request.user.is_superuser and not resource.is_available_for(request.user):
+        #    return build_error_response(request, 403, _('You are not allowed to retrieve info about this resource'))
 
         resource_info = resource.get_processed_info(request)
         if request.GET.get('include_wgt_files', '').lower() == 'true':
