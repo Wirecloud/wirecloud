@@ -525,6 +525,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
+    @uses_extra_resources(('Wirecloud_test-mashup_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_collection_post_creation_from_mashup_dry_run(self):
 
         url = reverse('wirecloud.workspace_collection')
@@ -548,6 +549,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
+    @uses_extra_resources(('Wirecloud_test-mashup_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_collection_post_creation_from_mashup(self):
 
         url = reverse('wirecloud.workspace_collection')
@@ -572,6 +574,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
 
+    @uses_extra_resources(('Wirecloud_test-mashup_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_collection_post_creation_from_mashup_conflict(self):
 
         url = reverse('wirecloud.workspace_collection')
@@ -602,6 +605,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
+    @uses_extra_resources(('Wirecloud_test-mashup-dependencies_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_collection_post_creation_from_mashup_missing_dependencies(self):
 
         url = reverse('wirecloud.workspace_collection')
@@ -670,6 +674,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'Wirecloud/Test/1.0',
         )))
 
+    @uses_extra_resources(('Wirecloud_test-mashup-dependencies_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_collection_post_creation_from_mashup_missing_dependencies_dry_run(self):
 
         url = reverse('wirecloud.workspace_collection')
@@ -2259,6 +2264,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
         check_post_bad_request_syntax(self, url)
 
+    @uses_extra_resources(('Wirecloud_test-mashup_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_merge_service_post_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
@@ -2268,6 +2274,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         }
         check_post_requires_authentication(self, url, json.dumps(data))
 
+    @uses_extra_resources(('Wirecloud_test-mashup_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_merge_service_post_requires_permission(self):
 
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
@@ -2277,6 +2284,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         }
         check_post_requires_permission(self, url, json.dumps(data))
 
+    @uses_extra_resources(('Wirecloud_test-mashup_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_merge_service_post(self):
 
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
@@ -2314,6 +2322,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Request should fail as the API requires you to provide a mashup or a workspace id
         self.assertEqual(response.status_code, 422)
 
+    @uses_extra_resources(('Wirecloud_test-mashup_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_merge_service_post_using_workspace_and_mashup_parameters(self):
 
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})

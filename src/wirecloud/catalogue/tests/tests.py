@@ -39,63 +39,6 @@ from wirecloud.commons.utils.testcases import LocalFileSystemServer, WirecloudTe
 __test__ = False
 
 
-class AddWidgetTestCase(WirecloudTestCase):
-
-    servers = {
-        'http': {
-            'example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data')),
-        },
-    }
-    tags = ('catalogue',)
-
-    @classmethod
-    def setUpClass(cls):
-
-        super(AddWidgetTestCase, cls).setUpClass()
-
-        cls.template_uri = "http://example.com/template1.xml"
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data/template1.xml'), 'rb')
-        cls.template = f.read()
-        f.close()
-
-    def setUp(self):
-        super(AddWidgetTestCase, self).setUp()
-
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
-
-    def test_add_resource_from_template(self):
-
-        widget = add_resource_from_template(self.template_uri, self.template, self.user)
-        widget_info = widget.get_processed_info()
-
-        self.assertEqual(widget.vendor, 'Morfeo')
-        self.assertEqual(widget.short_name, 'Test')
-        self.assertEqual(widget.version, '0.1')
-        self.assertEqual(widget_info['wiring'], {
-            'inputs': [
-                {'friendcode': 'test_friend_code', 'name': 'slot', 'actionlabel': '', 'label': 'Slot label', 'type': 'text', 'description': ''}
-            ],
-            'outputs': [
-                {'description': '', 'type': 'text', 'friendcode': 'test_friend_code', 'name': 'event', 'label': 'Event label'}
-            ]
-        })
-
-    def test_add_resource_from_template_translations(self):
-
-        widget = add_resource_from_template(self.template_uri, self.template, self.user)
-        self.changeLanguage('en')
-        data = get_resource_data(widget, self.user)
-
-        self.assertEqual(data['title'], 'Test Widget')
-        self.assertEqual(data['description'], 'Test Widget description')
-
-        self.changeLanguage('es')
-        data = get_resource_data(widget, self.user)
-
-        self.assertEqual(data['title'], 'Widget de pruebas')
-        self.assertEqual(data['description'], 'Descripción del Widget de pruebas')
-
-
 class CatalogueSearchTestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_search_data',)

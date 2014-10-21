@@ -281,13 +281,10 @@ class ResourceDescriptionEntry(Resource):
 
         resource_info = resource.get_processed_info(request)
         if request.GET.get('include_wgt_files', '').lower() == 'true':
-            if resource.fromWGT:
-                base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
-                wgt_file = zipfile.ZipFile(os.path.join(base_dir, resource.template_uri))
-                resource_info['wgt_files'] = [filename for filename in wgt_file.namelist() if filename[-1] != '/']
-                wgt_file.close()
-            else:
-                resource_info['wgt_files'] = ()
+            base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
+            wgt_file = zipfile.ZipFile(os.path.join(base_dir, resource.template_uri))
+            resource_info['wgt_files'] = [filename for filename in wgt_file.namelist() if filename[-1] != '/']
+            wgt_file.close()
 
         return HttpResponse(json.dumps(resource_info), content_type='application/json; charset=UTF-8')
 

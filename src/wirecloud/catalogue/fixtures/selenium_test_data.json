@@ -85,7 +85,6 @@
             "creator": 1,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",
-            "fromWGT": true,
             "type": 0,
             "public": true,
             "users": [1, 2]
@@ -96,7 +95,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "http://localhost:8001/test-mashup.rdf",
+            "template_uri": "Wirecloud_test-mashup_1.0.wgt",
             "popularity": "0",
             "vendor": "Wirecloud",
             "short_name": "test-mashup",
@@ -104,7 +103,6 @@
             "creator": 1,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",
-            "fromWGT": false,
             "type": 1,
             "public": true,
             "users": []
@@ -123,7 +121,6 @@
             "creator": 1,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",
-            "fromWGT": true,
             "type": 2,
             "public": false,
             "users": [1, 2, 4]
@@ -134,7 +131,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "http://localhost:8001/test-mashup-dependencies.rdf",
+            "template_uri": "Wirecloud_test-mashup-dependencies_1.0.wgt",
             "popularity": "0",
             "vendor": "Wirecloud",
             "short_name": "test-mashup-dependencies",
@@ -142,7 +139,6 @@
             "creator": 1,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",
-            "fromWGT": false,
             "type": 1,
             "public": true,
             "users": [2]

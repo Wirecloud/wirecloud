@@ -74,7 +74,7 @@ class ResourceCollection(Resource):
     @method_decorator(login_required)
     @commit_on_http_success
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'multipart/form-data'))
-    def create(self, request, fromWGT=False):
+    def create(self, request):
 
         try:
             if 'file' in request.FILES:

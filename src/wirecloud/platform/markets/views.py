@@ -128,10 +128,6 @@ class PublishService(Service):
         if not resource.is_available_for(request.user):
             return build_error_response(request, 403, _('You are not allowed to delete this market'))
 
-        if not resource.fromWGT:
-            msg = _('Only packaged resources can be published')
-            return build_error_response(request, 400, msg)
-
         base_dir = catalogue.wgt_deployer.get_base_dir(resource_vendor, resource_name, resource_version)
         wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
 

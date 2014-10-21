@@ -142,16 +142,9 @@ class WorkspaceCollection(Resource):
                 except CatalogueResource.DoesNotExist:
                     return build_error_response(request, 422, _('Mashup not found: %(mashup_id)s') % {'mashup_id': mashup_id})
 
-                if resource.fromWGT:
-                    base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
-                    wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                    template = TemplateParser(wgt_file.get_template())
-                else:
-                    template = download_http_content(resource.template_uri, user=request.user)
-                    try:
-                        template = TemplateParser(template)
-                    except:
-                        build_error_response(request, 422, _('Downloaded invalid resource description from: %(url)s') % {'url': resource.template_uri})
+                base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                template = TemplateParser(wgt_file.get_template())
 
             else:
 
@@ -443,16 +436,9 @@ class MashupMergeService(Service):
             except CatalogueResource.DoesNotExist:
                 return build_error_response(request, 422, _('Mashup not found: %(mashup_id)s') % {'mashup_id': mashup_id})
 
-            if resource.fromWGT:
-                base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
-                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                template = TemplateParser(wgt_file.get_template())
-            else:
-                template = download_http_content(resource.template_uri, user=request.user)
-                try:
-                    template = TemplateParser(template)
-                except:
-                    build_error_response(request, 424, _('Downloaded invalid resource description from: %(url)s') % {'url': resource.template_uri})
+            base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
+            wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+            template = TemplateParser(wgt_file.get_template())
 
         else:
 

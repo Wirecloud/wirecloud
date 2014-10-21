@@ -70,7 +70,6 @@ class CatalogueResource(models.Model):
     template_uri = models.CharField(_('templateURI'), max_length=200, blank=True)
 
     popularity = models.DecimalField(_('popularity'), default=0, max_digits=2, decimal_places=1)
-    fromWGT = models.BooleanField(_('fromWGT'), default=False)
 
     json_description = models.TextField(_('JSON description'))
 

@@ -81,7 +81,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.5",
-            "fromWGT": true,
             "type": 0,
             "public": true,
             "users": []
@@ -100,7 +99,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "2.0",
-            "fromWGT": true,
             "type": 0,
             "public": true,
             "users": [81, 82]
@@ -119,7 +117,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "2.5",
-            "fromWGT": true,
             "type": 0,
             "public": false,
             "users": [82]
@@ -138,7 +135,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.5",
-            "fromWGT": true,
             "type": 0,
             "public": true,
             "users": [80]
@@ -157,7 +153,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.11",
-            "fromWGT": true,
             "type": 0,
             "public": true,
             "users": []
@@ -168,7 +163,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "http://localhost:8001/test-mashup.rdf",
+            "template_uri": "Wirecloud_test-mashup_1.0.wgt",
             "popularity": "0",
             "vendor": "Wirecloud",
             "short_name": "test-mashup",
@@ -176,7 +171,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",
-            "fromWGT": false,
             "type": 1,
             "public": true,
             "users": []
@@ -187,7 +181,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "http://localhost:8001/test-mashup.rdf",
+            "template_uri": "Wirecloud_test-mashup_1.0.5.wgt",
             "popularity": "0",
             "vendor": "Wirecloud",
             "short_name": "test-mashup",
@@ -195,7 +189,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0.5",
-            "fromWGT": false,
             "type": 1,
             "public": true,
             "users": [80, 82]
@@ -206,7 +199,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "http://localhost:8001/test-mashup-dependencies.rdf",
+            "template_uri": "CoNWeT_test-mashup-dependencies_1.5.5.wgt",
             "popularity": "0",
             "vendor": "CoNWeT",
             "short_name": "test-mashup-dependencies",
@@ -214,7 +207,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.5.5",
-            "fromWGT": false,
             "type": 1,
             "public": false,
             "users": [82]
@@ -225,7 +217,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "http://localhost:8001/test-mashup-dependencies.rdf",
+            "template_uri": "CoNWeT_test-mashup-dependencies_1.10.5.wgt",
             "popularity": "0",
             "vendor": "CoNWeT",
             "short_name": "test-mashup-dependencies",
@@ -233,7 +225,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.10.5",
-            "fromWGT": false,
             "type": 1,
             "public": false,
             "users": [83]
@@ -244,7 +235,7 @@
         "model": "catalogue.catalogueresource",
         "fields": {
             "groups": [],
-            "template_uri": "http://localhost:8001/test-mashup-dependencies.rdf",
+            "template_uri": "Store_sky-weather_3.0.wgt",
             "popularity": "0",
             "vendor": "Store",
             "short_name": "sky_weather",
@@ -252,7 +243,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "3.0",
-            "fromWGT": false,
             "type": 1,
             "public": true,
             "users": []
@@ -271,7 +261,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "2.0",
-            "fromWGT": true,
             "type": 2,
             "public": true,
             "users": []
@@ -290,7 +279,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",
-            "fromWGT": true,
             "type": 2,
             "public": true,
             "users": []
@@ -309,7 +297,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",
-            "fromWGT": true,
             "type": 2,
             "public": false,
             "users": [82]
@@ -328,7 +315,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.5",
-            "fromWGT": true,
             "type": 2,
             "public": true,
             "users": [81, 82]
@@ -347,7 +333,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "2.0",
-            "fromWGT": true,
             "type": 2,
             "public": false,
             "users": [80]
@@ -366,7 +351,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.5",
-            "fromWGT": true,
             "type": 0,
             "public": true,
             "users": []
@@ -385,7 +369,6 @@
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "1.0",
-            "fromWGT": true,
             "type": 0,
             "public": true,
             "users": [80]

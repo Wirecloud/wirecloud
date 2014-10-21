@@ -469,7 +469,7 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
 class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data')
-    base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')
+    base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt', 'Wirecloud_test-mashup_1.0.wgt')
     __test__ = False
 
     @classmethod

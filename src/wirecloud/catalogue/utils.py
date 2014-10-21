@@ -138,10 +138,10 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
     f.close()
 
     if not deploy_only:
-        return add_resource_from_template(file_name, template, user, fromWGT=True, overrides=overrides)
+        return add_resource_from_template(file_name, template, user, overrides=overrides)
 
 
-def add_resource_from_template(template_uri, template, user, fromWGT=False, overrides=None):
+def add_resource_from_template(template_uri, template, user, overrides=None):
 
     if isinstance(template, TemplateParser):
         parser = template
@@ -156,7 +156,6 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         short_name=resource_info['name'],
         vendor=resource_info['vendor'],
         version=resource_info['version'],
-        fromWGT=fromWGT,
         type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
         creator=user,
         template_uri=template_uri,
@@ -233,7 +232,6 @@ def get_resource_data(resource, user, request=None):
         'name': resource.short_name,
         'version': resource.version,
         'type': resource_info['type'],
-        'packaged': resource.fromWGT,
         'date': creation_timestamp,
         'permissions': {
             'delete': user.is_superuser,
@@ -303,13 +301,10 @@ def update_resource_catalogue_cache(orm=None):
 
         try:
 
-            if resource.fromWGT:
-                base_dir = wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
-                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                template = wgt_file.get_template()
-                wgt_file.close()
-            else:
-                template = download_http_content(resource.template_uri)
+            base_dir = wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
+            wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+            template = wgt_file.get_template()
+            wgt_file.close()
 
             template_parser = TemplateParser(template)
             resource.json_description = json.dumps(template_parser.get_resource_info())

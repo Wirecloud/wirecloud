@@ -167,12 +167,9 @@ def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs)
         try:
             resource.widget
         except Widget.DoesNotExist:
-            if resource.fromWGT:
-                base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
-                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                resource.widget = create_widget_from_wgt(wgt_file, resource.creator)
-            else:
-                resource.widget = create_widget_from_template(resource.template_uri, resource.creator)
+            base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
+            wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+            resource.widget = create_widget_from_wgt(wgt_file, resource.creator)
 
 
 @receiver(pre_delete, sender=CatalogueResource)

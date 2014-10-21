@@ -34,7 +34,7 @@ def deploy_operators_on_resource_creation(sender, instance, created, raw, **kwar
     import wirecloud.platform.widget.utils as showcase_utils
 
     resource = instance
-    if not created or raw or not resource.fromWGT or resource.resource_type() != 'operator':
+    if not created or raw or resource.resource_type() != 'operator':
         return
 
     base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
@@ -49,7 +49,7 @@ def undeploy_operators_on_resource_deletion(sender, instance, **kwargs):
     import wirecloud.platform.widget.utils as showcase_utils
 
     resource = instance
-    if not resource.fromWGT or resource.resource_type() != 'operator':
+    if resource.resource_type() != 'operator':
         return
 
     showcase_utils.wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
