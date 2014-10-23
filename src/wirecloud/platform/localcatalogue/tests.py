@@ -185,11 +185,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         client = Client()
         client.login(username='test', password='test')
-        widget_id = {
-            'vendor': 'Wirecloud',
-            'name': 'test',
-            'version': '0.1',
-        }
+        widget_id = {'vendor': 'Wirecloud', 'name': 'test', 'version': '0.1'}
 
         file_contents = self.build_simple_wgt('template1.xml')
         resource = install_resource_to_user(self.user, file_contents=file_contents)

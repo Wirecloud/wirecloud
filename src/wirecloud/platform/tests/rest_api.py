@@ -29,9 +29,9 @@ from django.test import Client
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
-import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
 from wirecloud.platform.models import IWidget, Tab, Variable, Workspace, UserWorkspace
+from wirecloud.platform.widget import utils as localcatalogue
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -1226,6 +1226,103 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
         check_post_bad_request_syntax(self, url)
+
+    def test_widget_code_entry_get_operator(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'TestOperator', 'version': '1.0'}
+        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 404)
+
+    def test_widget_code_entry_get_bad_encoding(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
+        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+
+        # Prepare invalid widget code
+        base_dir = localcatalogue.wgt_deployer.get_base_dir(**widget_id)
+        os.makedirs(base_dir)
+        with open(os.path.join(base_dir, 'test.html'), 'wb') as f:
+            f.write('<html><div>á</div</html>'.encode('iso-8859-15'))
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
+        json_description = json.loads(resource.json_description)
+        json_description['contents']['contenttype'] = 'application/xhtml+xml'
+        resource.json_description = json.dumps(json_description)
+        resource.save()
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 502)
+        self.assertIn('Widget code was not encoded using the specified charset (utf-8', response.content)
+
+    def test_widget_code_entry_get_bad_encoding_noncacheable(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
+        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+
+        # Prepare invalid widget code
+        base_dir = localcatalogue.wgt_deployer.get_base_dir(**widget_id)
+        os.makedirs(base_dir)
+        with open(os.path.join(base_dir, 'test.html'), 'wb') as f:
+            f.write('<html><div>á</div</html>'.encode('iso-8859-15'))
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
+        json_description = json.loads(resource.json_description)
+        json_description['contents']['contenttype'] = 'application/xhtml+xml'
+        resource.json_description = json.dumps(json_description)
+        resource.save()
+
+        from wirecloud.platform.models import XHTML
+        xhtml = XHTML.objects.get(pk=1)
+        xhtml.cacheable = False
+        xhtml.save()
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 502)
+        self.assertIn('Widget code was not encoded using the specified charset (utf-8', response.content)
+
+    def test_widget_code_entry_get_html_missing(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
+        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 502)
+        self.assertIn('HTML code is not accessible', response.content)
+
+    def test_widget_code_entry_get_invalid_html(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
+        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+
+        # Prepare invalid widget code
+        base_dir = localcatalogue.wgt_deployer.get_base_dir(**widget_id)
+        os.makedirs(base_dir)
+        with open(os.path.join(base_dir, 'test.html'), 'wb') as f:
+            f.write('<html><div></div</html>')
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
+        json_description = json.loads(resource.json_description)
+        json_description['contents']['contenttype'] = 'application/xhtml+xml'
+        resource.json_description = json.dumps(json_description)
+        resource.save()
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 502)
+        self.assertIn('Error processing widget code', response.content)
 
     def test_iwidget_entry_post_requires_authentication(self):
 
@@ -2613,7 +2710,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         # Check images has been uploaded
         test_mashup = CatalogueResource.objects.get(short_name='test-published-mashup')
-        base_dir = catalogue_utils.wgt_deployer.get_base_dir('Wirecloud', 'test-published-mashup', '1.0.5')
+        base_dir = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'test-published-mashup', '1.0.5')
         test_mashup_info = json.loads(test_mashup.json_description)
 
         image_path = os.path.join(base_dir, test_mashup_info['image'])

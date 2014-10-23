@@ -39,10 +39,9 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
-from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain
-from wirecloud.platform.models import Widget, IWidget
+from wirecloud.commons.utils.http import build_response, get_absolute_reverse_url, get_current_domain
 import wirecloud.platform.widget.utils as showcase_utils
-from wirecloud.platform.widget.utils import fix_widget_code
+from wirecloud.platform.widget.utils import WIDGET_ERROR_FORMATTERS, fix_widget_code
 
 
 def process_requirements(requirements):
@@ -98,14 +97,18 @@ class WidgetCodeEntry(Resource):
                     code = download_local_file(os.path.join(showcase_utils.wgt_deployer.root_dir, url2pathname(xhtml.url)))
 
             except Exception as e:
-                msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
-                return build_error_response(request, 502, msg)
+                return build_response(request, 502, {'error_msg': _("(X)HTML code is not accessible"), 'details': "%s" % e}, WIDGET_ERROR_FORMATTERS)
         else:
             # Code contents comes as unicode from persistence, we need bytes
             code = code.encode(charset)
 
         if xhtml.cacheable and (xhtml.code == '' or xhtml.code_timestamp is None):
-            xhtml.code = code.decode(charset)
+            try:
+                xhtml.code = code.decode(charset)
+            except UnicodeDecodeError:
+                msg = _('Widget code was not encoded using the specified charset (%(charset)s as stated in the widget description file).') % {'charset': charset}
+                return build_response(request, 502, {'error_msg': msg}, WIDGET_ERROR_FORMATTERS)
+
             xhtml.code_timestamp = time.time() * 1000
             xhtml.save()
         elif not xhtml.cacheable and xhtml.code != '':
@@ -115,9 +118,12 @@ class WidgetCodeEntry(Resource):
 
         try:
             code = fix_widget_code(code, base_url, content_type, request, charset, xhtml.use_platform_style, process_requirements(widget_info['requirements']), force_base, mode)
-        except UnicodeEncodeError:
-            msg = _('Widget code was not encoded using the specified charset (%(charset)s according to the widget descriptor file).')
-            return build_error_response(request, 502, msg % {'charset': charset})
+        except UnicodeDecodeError:
+            msg = _('Widget code was not encoded using the specified charset (%(charset)s as stated in the widget description file).') % {'charset': charset}
+            return build_response(request, 502, {'error_msg': msg}, WIDGET_ERROR_FORMATTERS)
+        except Exception as e:
+            msg = _('Error processing widget code')
+            return build_response(request, 502, {'error_msg': msg, 'details':"%s" % e}, WIDGET_ERROR_FORMATTERS)
 
         if xhtml.cacheable:
             cache_timeout = 31536000  # 1 year

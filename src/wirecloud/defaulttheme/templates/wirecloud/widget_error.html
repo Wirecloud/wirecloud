@@ -1,0 +1,10 @@
+{% load i18n %}<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+    <h1>{% block title %}{% trans "Error 400 - Bad request" %}{% endblock %}</h1>
+    <p>{{ error_msg }}</p>
+    <p>{{ details }}</p>
+</body>
+</html>

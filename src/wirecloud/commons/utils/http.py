@@ -157,7 +157,7 @@ ERROR_FORMATTERS = {
 }
 
 
-def build_response(request, status_code, context, formatters, headers):
+def build_response(request, status_code, context, formatters, headers=None):
 
     if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
         content_type = 'application/json; charset=utf-8'

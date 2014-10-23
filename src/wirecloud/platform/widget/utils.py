@@ -29,7 +29,7 @@ from django.template import Context, Template
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.downloader import download_http_content
-from wirecloud.commons.utils.http import get_absolute_static_url
+from wirecloud.commons.utils.http import ERROR_FORMATTERS, get_absolute_static_url
 from wirecloud.commons.utils.template import TemplateParser, UnsupportedFeature
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.models import Widget, UserWorkspace, VariableDef, Workspace, XHTML
@@ -37,6 +37,17 @@ from wirecloud.platform.plugins import get_active_features, get_widget_api_exten
 
 
 wgt_deployer = WgtDeployer(settings.GADGETS_DEPLOYMENT_DIR)
+WIDGET_ERROR_FORMATTERS = ERROR_FORMATTERS.copy()
+
+
+def get_html_widget_error_response(request, mimetype, status_code, context):
+    from django.shortcuts import render
+    return render(request, 'wirecloud/widget_error.html', context, status=status_code, content_type=mimetype)
+
+WIDGET_ERROR_FORMATTERS.update({
+    'text/html; charset=utf-8': get_html_widget_error_response,
+    'application/xhtml+xml; charset=utf-8': get_html_widget_error_response,
+})
 
 
 def check_requirements(resource):
@@ -177,12 +188,17 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
     # This line is here for raising UnicodeDecodeError in case the widget_code is not encoded using the expecified encoding
     widget_code.decode(encoding)
 
+    if content_type in ('text/html', 'application/xhtml+xml') and widget_code.strip() == '':
+        widget_code = b'<html></html>'
+
     if content_type == 'text/html':
         parser = etree.HTMLParser(encoding=encoding)
         serialization_options = {'method': 'html'}
+
     elif content_type == 'application/xhtml+xml':
         parser = etree.XMLParser(encoding=encoding)
         serialization_options = {'method': 'xml', 'xml_declaration': False}
+
     else:
         return widget_code
 

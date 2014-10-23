@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import os.path
 import re
 
@@ -77,44 +79,82 @@ class CodeTransformationTestCase(TestCase):
 
         return contents
 
+    def test_unhandled_content_type(self):
+
+        initial_code = b'plain text'
+        final_code = fix_widget_code(initial_code, 'http://server.com/widget', 'text/plain', None, 'utf-8', False, {}, False, 'classic')
+        self.assertEqual(final_code, initial_code)
+
+    def test_empty_html(self):
+
+        initial_code = b''
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False, {}, False, 'classic')) + b'\n'
+        expected_code = self.read_file('test-data/html-empty-expected.html')
+        self.assertEqual(final_code, expected_code)
+
+    def test_html_unclosed_tags(self):
+
+        initial_code = self.read_file('test-data/html-unclosed-tags-initial.html')
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False, {}, False, 'classic')) + b'\n'
+        expected_code = self.read_file('test-data/html-unclosed-tags-expected.html')
+        self.assertEqual(final_code, expected_code)
+
     def test_basic_html(self):
         initial_code = self.read_file('test-data/xhtml1-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False, {}, False, 'classic')) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False, {}, False, 'classic')) + b'\n'
         expected_code = self.read_file('test-data/xhtml1-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_basic_html_iso8859_15(self):
         initial_code = self.read_file('test-data/xhtml1-iso8859-15-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'iso-8859-15', False, {}, False, 'classic')) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'iso-8859-15', False, {}, False, 'classic')) + b'\n'
         expected_code = self.read_file('test-data/xhtml1-iso8859-15-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_html_with_one_base_element(self):
         initial_code = self.read_file('test-data/xhtml4-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False, {}, False, 'classic')) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False, {}, False, 'classic')) + b'\n'
         expected_code = self.read_file('test-data/xhtml4-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_html_with_more_than_one_base_element(self):
         initial_code = self.read_file('test-data/xhtml4-extra-base-elements-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False, {}, False, 'classic')) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False, {}, False, 'classic')) + b'\n'
         expected_code = self.read_file('test-data/xhtml4-expected.html')
         self.assertEqual(final_code, expected_code)
 
+    def test_html_with_more_than_one_base_element_force_base(self):
+        initial_code = self.read_file('test-data/xhtml4-extra-base-elements-initial.html')
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False, {}, True, 'classic')) + b'\n'
+        expected_code = self.read_file('test-data/xhtml4-forced-base-expected.html')
+        self.assertEqual(final_code, expected_code)
+
+    def test_empty_xhtml(self):
+
+        initial_code = b''
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False, {}, False, 'classic')) + b'\n'
+        expected_code = self.read_file('test-data/xhtml-empty-expected.html')
+        self.assertEqual(final_code, expected_code)
+
+    def test_xhtml_unclosed_tags(self):
+
+        initial_code = self.read_file('test-data/xhtml-unclosed-tags-initial.html')
+        self.assertRaises(Exception, fix_widget_code, initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False, {}, False, 'classic')
+
     def test_basic_xhtml(self):
         initial_code = self.read_file('test-data/xhtml2-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False, {}, False, 'classic')) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False, {}, False, 'classic')) + b'\n'
         expected_code = self.read_file('test-data/xhtml2-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_basic_xhtml_iso8859_15(self):
         initial_code = self.read_file('test-data/xhtml2-iso8859-15-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'iso-8859-15', False, {}, False, 'classic')) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'iso-8859-15', False, {}, False, 'classic')) + b'\n'
         expected_code = self.read_file('test-data/xhtml2-iso8859-15-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_xhtml_without_head_element(self):
         initial_code = self.read_file('test-data/xhtml3-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False, {}, False, 'classic')) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False, {}, False, 'classic')) + b'\n'
         expected_code = self.read_file('test-data/xhtml3-expected.html')
         self.assertEqual(final_code, expected_code)
