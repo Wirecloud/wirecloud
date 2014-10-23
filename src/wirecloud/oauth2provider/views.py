@@ -24,7 +24,7 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django.shortcuts import render
 
-from wirecloud.commons.utils.http import get_absolute_reverse_url
+from wirecloud.commons.utils.http import get_absolute_reverse_url, build_error_response
 from wirecloud.oauth2provider.provider import WirecloudAuthorizationProvider
 
 
@@ -48,14 +48,11 @@ def provide_authorization_code(request):
 
     params = request.GET.dict()
 
-    if 'response_type' not in params:
-        return build_error_response(request, 400, 'Missing parameter response_type in URL query')
-
-    if 'client_id' not in params:
-        return build_error_response(request, 400, 'Missing parameter client_id in URL query')
-
     if 'redirect_uri' not in params:
-        return build_error_response(request, 400, 'Missing parameter redirect_uri in URL query')
+        return build_error_response(request, 400, 'Missing redirect_uri parameter')
+
+    if 'response_type' not in params or 'client_id' not in params:
+        return provider._make_redirect_error_response(params['redirect_uri'], 'invalid_request')
 
     if request.method == 'GET':
         return render(request, 'wirecloud/oauth2provider/auth.html', {'app': provider.get_client(params['client_id'])})

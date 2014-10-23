@@ -33,7 +33,7 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 class Oauth2TestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'oauth2_test_data')
-    tags = ('oauth2',)
+    tags = ('wirecloud-oauth2provider',)
 
     @classmethod
     def setUpClass(cls):
@@ -73,6 +73,39 @@ class Oauth2TestCase(WirecloudTestCase):
         self.assertTrue(isinstance(response_data, dict))
 
         return response
+
+    def test_authorization_missing_response_type(self):
+
+        # Authorization request
+        query = {'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2', 'redirect_uri': 'https://customapp.com/oauth/redirect'}
+        auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
+
+        response = self.user_client.get(auth_req_url, HTTP_ACCEPT='text/html, application/xhtml+xml')
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].startswith('https://customapp.com/oauth/redirect'))
+        response_data = parse_qs(urlparse(response['Location']).query)
+        self.assertEqual(response_data['error'][0], 'invalid_request')
+
+    def test_authorization_missing_client_id(self):
+
+        # Authorization request
+        query = {'response_type': 'code', 'redirect_uri': 'https://customapp.com/oauth/redirect'}
+        auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
+
+        response = self.user_client.get(auth_req_url, HTTP_ACCEPT='text/html, application/xhtml+xml')
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].startswith('https://customapp.com/oauth/redirect'))
+        response_data = parse_qs(urlparse(response['Location']).query)
+        self.assertEqual(response_data['error'][0], 'invalid_request')
+
+    def test_authorization_missing_redirect_uri(self):
+
+        # Authorization request
+        query = {'response_type': 'code', 'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2'}
+        auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
+
+        response = self.user_client.get(auth_req_url, HTTP_ACCEPT='text/html, application/xhtml+xml')
+        self.assertEqual(response.status_code, 400)
 
     def test_authorization_code_grant_flow(self):
 
@@ -117,7 +150,7 @@ class Oauth2TestCase(WirecloudTestCase):
         # Make an authenticated request
         self.check_token_is_valid(token)
 
-    test_authorization_code_grant_flow.tags = ('oauth2', 'fiware-ut-9')
+    test_authorization_code_grant_flow.tags = ('wirecloud-oauth2provider', 'fiware-ut-9')
 
     def test_authorization_bad_token(self):
         self.check_token_is_invalid('invalid_token')

@@ -404,45 +404,6 @@ class AuthorizationProvider(Provider):
             'refresh_token': refresh_token
         })
 
-    def get_authorization_code_from_uri(self, uri):
-        """Get authorization code response from a URI. This method will
-        ignore the domain and path of the request, instead
-        automatically parsing the query string parameters.
-
-        :param uri: URI to parse for authorization information.
-        :type uri: str
-        :rtype: requests.Response
-        """
-        params = utils.url_query_params(uri)
-        try:
-            if 'response_type' not in params:
-                raise TypeError('Missing parameter response_type in URL query')
-
-            if 'client_id' not in params:
-                raise TypeError('Missing parameter client_id in URL query')
-
-            if 'redirect_uri' not in params:
-                raise TypeError('Missing parameter redirect_uri in URL query')
-
-            return self.get_authorization_code(**params)
-        except TypeError as exc:
-            self._handle_exception(exc)
-
-            # Catch missing parameters in request
-            err = 'invalid_request'
-            if 'redirect_uri' in params:
-                u = params['redirect_uri']
-                return self._make_redirect_error_response(u, err)
-            else:
-                return self._invalid_redirect_uri_response()
-        except StandardError as exc:
-            self._handle_exception(exc)
-
-            # Catch all other server errors
-            err = 'server_error'
-            u = params['redirect_uri']
-            return self._make_redirect_error_response(u, err)
-
     def get_token_from_post_data(self, data):
         """Get a token response from POST data.
 

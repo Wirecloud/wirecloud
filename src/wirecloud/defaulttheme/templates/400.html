@@ -1,0 +1,8 @@
+{% extends 'wirecloud/views/base_plain.html' %}
+{% load i18n %}
+{% block path %}{% trans "error400" %}{% endblock %}
+{% block content %}
+    <h1>{% block title %}{% trans "Error 400 - Bad request" %}{% endblock %}</h1>
+    <p>{{ error_msg }}</p>
+    <p>{{ details }}</p> 
+{% endblock %}
