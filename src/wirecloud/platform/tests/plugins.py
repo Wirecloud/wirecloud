@@ -65,10 +65,16 @@ class WirecloudTestConflictingPlugin(WirecloudPlugin):
 
 class WirecloudPluginTestCase(TestCase):
 
+    tags = ('wirecloud-plugins',)
+
     @classmethod
     def setUpClass(cls):
         cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', None)
         super(WirecloudPluginTestCase, cls).setUpClass()
+
+    def setUp(self):
+        super(WirecloudPluginTestCase, self).setUp()
+        clear_cache()
 
     def tearDown(self):
         settings.WIRECLOUD_PLUGINS = self.OLD_WIRECLOUD_PLUGINS
@@ -78,7 +84,6 @@ class WirecloudPluginTestCase(TestCase):
     def test_basic_conf(self):
 
         settings.WIRECLOUD_PLUGINS = ()
-        clear_cache()
 
         core_plugins = len(get_plugins())
         core_features = len(get_active_features())
@@ -100,11 +105,29 @@ class WirecloudPluginTestCase(TestCase):
         self.assertEqual(len(get_widget_api_extensions('classic', {})), core_classic_extensions + 1)
         self.assertEqual(len(get_widget_api_extensions('smartphone', {})), core_smartphone_extensions + 0)
 
+    def test_inexistent_module(self):
+
+        settings.WIRECLOUD_PLUGINS = ('inexistent.module.WirecloudTestPlugin1',)
+
+        self.assertRaises(ImproperlyConfigured, get_plugins)
+
+    def test_inexistent_plugin(self):
+
+        settings.WIRECLOUD_PLUGINS = ('wirecloud.platform.tests.plugins.InexistentWirecloudTestPlugin',)
+
+        self.assertRaises(ImproperlyConfigured, get_plugins)
+
+    def test_invalid_plugin_entry(self):
+
+        settings.WIRECLOUD_PLUGINS = (5,)
+
+        self.assertRaises(ImproperlyConfigured, get_plugins)
+
     def test_several_plugins_with_the_same_feature(self):
+
         settings.WIRECLOUD_PLUGINS = (
             'wirecloud.platform.tests.plugins.WirecloudTestPlugin1',
             'wirecloud.platform.tests.plugins.WirecloudTestConflictingPlugin',
         )
-        clear_cache()
 
         self.assertRaises(ImproperlyConfigured, get_plugins)

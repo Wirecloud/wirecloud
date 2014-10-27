@@ -108,7 +108,7 @@ def get_plugins():
             elif inspect.isclass(entry):
                 plugin = entry()
             else:
-                raise ImproperlyConfigured('Error importing wirecloud plugin %s: "%s"' % entry)
+                raise ImproperlyConfigured('Error importing wirecloud plugin. Invalid plugin entry: "%s"' % entry)
 
             add_plugin(plugin.__module__, plugin)
 
