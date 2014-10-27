@@ -111,31 +111,40 @@ def get_workspace_preference_values(workspace):
     return values
 
 
-def update_workspace_preferences(workspace, preferences_json):
-    _currentPreferences = WorkspacePreference.objects.filter(workspace=workspace)
+def update_workspace_preferences(workspace, preferences_json, invalidate_cache=True):
+
+    changes = False
+
+    # Create a preference instance dict
     currentPreferences = {}
-    for currentPreference in _currentPreferences:
+    for currentPreference in workspace.workspacepreference_set.all():
         currentPreferences[currentPreference.name] = currentPreference
 
+    # Update preference values
     for name in preferences_json.keys():
         preference_data = preferences_json[name]
+        pref_changes = False
 
         if name in currentPreferences:
             preference = currentPreferences[name]
         else:
             preference = WorkspacePreference(workspace=workspace, name=name)
 
-        if 'value' in preference_data:
-            preference.value = unicode(preference_data['value'])
+        if 'value' in preference_data and preference.value != preference_data['value']:
+            preference.value = preference_data['value']
+            changes = pref_changes = True
 
-        if 'inherit' in preference_data:
+        if 'inherit' in preference_data and preference.inherit != preference_data['inherit']:
             preference.inherit = preference_data['inherit']
+            changes = pref_changes = True
 
-        preference.save()
+        if pref_changes:
+            preference.save()
 
-    cache_key = make_workspace_preferences_cache_key(workspace)
-    cache.delete(cache_key)
-    workspace.save()  # Invalidate workspace cache
+    if invalidate_cache and changes:
+        cache_key = make_workspace_preferences_cache_key(workspace)
+        cache.delete(cache_key)
+        workspace.save()  # Invalidate workspace cache
 
 
 class PlatformPreferencesCollection(Resource):

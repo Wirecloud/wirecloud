@@ -30,7 +30,7 @@ from django.test import Client
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
-from wirecloud.platform.models import IWidget, Tab, Variable, Workspace, UserWorkspace
+from wirecloud.platform.models import IWidget, Tab, Variable, Workspace, UserWorkspace, WorkspacePreference
 from wirecloud.platform.widget import utils as localcatalogue
 
 
@@ -288,7 +288,7 @@ def check_delete_requires_permission(self, url, test_after_request=None):
     self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
 
-def check_cache_is_purged(self, workspace, change_function, current_etag=None):
+def check_cache_is_purged(self, workspace, change_function, current_etag=None, inverse=False):
 
     url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': workspace})
     if current_etag is None:
@@ -297,12 +297,15 @@ def check_cache_is_purged(self, workspace, change_function, current_etag=None):
 
     change_function()
 
-    response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=current_etag)
-    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-    json.loads(response.content)
-    self.assertEqual(response.status_code, 200)
+    if not inverse:
+        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=current_etag)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
 
-    new_etag = response['ETag']
+        new_etag = response['ETag']
+    else:
+        new_etag = current_etag
 
     # There are no changes in the workspaces, so next requests so return a 304 error code
     cached_response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=new_etag)
@@ -2565,13 +2568,35 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         def update_workspace_preferences():
 
             data = {
-                'pref1': {'inherit': 'false', 'value': '5'},
-                'pref2': {'inherit': 'true', 'value': 'false'}
+                'pref1': {'inherit': False, 'value': '5'},
+                'pref2': {'inherit': True, 'value': 'false'},
+                'public': {'inherit': False, 'value': 'true'}
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
             self.assertEqual(response.content, '')
         check_cache_is_purged(self, 2, update_workspace_preferences)
+
+    def test_workspace_preference_collection_post_withoutchanges(self):
+
+        url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
+        WorkspacePreference.objects.create(workspace_id=2, name='pref1', inherit=False, value='5')
+        WorkspacePreference.objects.create(workspace_id=2, name='pref2', inherit=True, value='false')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def update_workspace_preferences():
+
+            data = {
+                'pref1': {'inherit': False, 'value': '5'},
+                'pref2': {'inherit': True, 'value': 'false'}
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content, '')
+        check_cache_is_purged(self, 2, update_workspace_preferences, inverse=True)
 
     def test_workspace_entry_preference_collection_post_bad_request_content_type(self):
 

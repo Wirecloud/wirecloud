@@ -62,7 +62,7 @@ class Workspace(models.Model):
 
         if self.public != self.__original_public:
             from wirecloud.platform.preferences.views import update_workspace_preferences
-            update_workspace_preferences(self, {'public': {'value': self.public}})
+            update_workspace_preferences(self, {'public': {'value': self.public}}, invalidate_cache=False)
             self.__original_public = self.public
 
         self.last_modified = long(time.time() * 1000)
