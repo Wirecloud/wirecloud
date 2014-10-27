@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -157,7 +157,8 @@ class TemplateParser(object):
 
         if info['type'] == 'widget':
             info['contents']['src'] = absolutize_url_field(info['contents']['src'], base)
-            info['altcontents'] = [absolutize_url_field(contents_file, base) for contents_file in info['altcontents']]
+            for altcontent in info['altcontents']:
+                altcontent['src'] = absolutize_url_field(altcontent['src'], base)
         elif info['type'] == 'operator':
             info['js_files'] = [absolutize_url_field(js_file, base) for js_file in info['js_files']]
 

@@ -20,6 +20,7 @@
 from __future__ import unicode_literals
 
 import copy
+import json
 import os
 
 from django.utils.unittest import TestCase
@@ -1141,14 +1142,14 @@ class TemplateUtilsTestCase(TestCase):
                 ]
             },
             'contents': {
-                'src': 'http://example.com/code.html',
+                'src': 'code.html',
                 'charset': 'utf-8',
                 'contenttype': 'application/xhtml+xml',
                 'cacheable': False,
                 'useplatformstyle': True
             },
             'altcontents': [
-                {'scope': 'native-tablet', 'src': 'native.html', 'contenttype': 'application/xhtml+xml', 'charset': 'utf-8'}
+                {'scope': 'yaast', 'src': 'native.html', 'contenttype': 'application/xhtml+xml', 'charset': 'utf-8'}
             ],
             'default_lang': 'en',
             'widget_width': '8',
@@ -1719,3 +1720,23 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.minimal_property_info)
+
+    def test_get_resource_processed_info(self):
+
+        json_description = json.dumps(self.widget_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_processed_info(base='https://example.com/')
+        self.assertEqual(processed_info['image'], 'https://example.com/images/catalogue.png')
+        self.assertEqual(processed_info['smartphoneimage'], 'https://example.com/images/smartphone.png')
+        self.assertEqual(processed_info['contents']['src'], 'https://example.com/code.html')
+        self.assertEqual(processed_info['altcontents'][0]['src'], 'https://example.com/native.html')
+
+    def test_get_resource_processed_info_no_process_urls(self):
+
+        json_description = json.dumps(self.widget_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_processed_info(base='https://example.com/', process_urls=False)
+        self.assertEqual(processed_info['image'], 'images/catalogue.png')
+        self.assertEqual(processed_info['smartphoneimage'], 'images/smartphone.png')
+        self.assertEqual(processed_info['contents']['src'], 'code.html')
+        self.assertEqual(processed_info['altcontents'][0]['src'], 'native.html')
