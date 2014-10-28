@@ -55,12 +55,16 @@ def provide_authorization_code(request):
         return provider._make_redirect_error_response(params['redirect_uri'], 'invalid_request')
 
     if request.method == 'GET':
-        return render(request, 'wirecloud/oauth2provider/auth.html', {'app': provider.get_client(params['client_id'])})
+        error_response = provider.validate_authorization_code_request(request, request.user, **params)
+        if error_response is None:
+            return render(request, 'wirecloud/oauth2provider/auth.html', {'app': provider.get_client(params['client_id'])})
+        else:
+            return error_response
     else:
-        return provider.get_authorization_code(request.user, **params)
+        return provider.get_authorization_code(request, request.user, **params)
 
 
 @require_POST
 def provide_authorization_token(request):
 
-    return provider.get_token_from_post_data(request.POST.dict())
+    return provider.get_token_from_post_data(request, request.POST.dict())

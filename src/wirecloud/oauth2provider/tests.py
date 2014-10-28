@@ -76,7 +76,6 @@ class Oauth2TestCase(WirecloudTestCase):
 
     def test_authorization_missing_response_type(self):
 
-        # Authorization request
         query = {'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2', 'redirect_uri': 'https://customapp.com/oauth/redirect'}
         auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
 
@@ -88,7 +87,6 @@ class Oauth2TestCase(WirecloudTestCase):
 
     def test_authorization_missing_client_id(self):
 
-        # Authorization request
         query = {'response_type': 'code', 'redirect_uri': 'https://customapp.com/oauth/redirect'}
         auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
 
@@ -100,11 +98,136 @@ class Oauth2TestCase(WirecloudTestCase):
 
     def test_authorization_missing_redirect_uri(self):
 
-        # Authorization request
         query = {'response_type': 'code', 'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2'}
         auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
 
         response = self.user_client.get(auth_req_url, HTTP_ACCEPT='text/html, application/xhtml+xml')
+        self.assertEqual(response.status_code, 400)
+
+    def test_authorization_invalid_response_type(self):
+
+        query = {'response_type': 'invalid_type', 'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2', 'redirect_uri': 'https://customapp.com/oauth/redirect'}
+        auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
+
+        response = self.user_client.get(auth_req_url, HTTP_ACCEPT='text/html, application/xhtml+xml')
+        self.assertEqual(response.status_code, 302)
+        response_data = parse_qs(urlparse(response['Location']).query)
+        self.assertEqual(response_data['error'][0], 'unsupported_response_type')
+
+    def test_authorization_invalid_redirect_uri(self):
+
+        query = {'response_type': 'code', 'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2', 'redirect_uri': 'https://customapp2.com/oauth/redirect'}
+        auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
+
+        response = self.user_client.get(auth_req_url, HTTP_ACCEPT='text/html, application/xhtml+xml')
+        self.assertEqual(response.status_code, 400)
+
+    def test_authorization_invalid_client_id(self):
+
+        query = {'response_type': 'code', 'client_id': 'invalid_client_id', 'redirect_uri': 'https://customapp.com/oauth/redirect'}
+        auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
+
+        response = self.user_client.get(auth_req_url, HTTP_ACCEPT='text/html, application/xhtml+xml')
+        self.assertEqual(response.status_code, 400)
+
+    def test_access_token_missing_grant_type(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'code': 'test_code',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': '9643b7c3f59ef531931d39a3e19bcdd7',
+            'redirect_uri': 'https://customapp.com/oauth/redirect',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_access_token_missing_client_id(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'code': 'test_code',
+            'grant_type': 'authorization_code',
+            'client_secret': '9643b7c3f59ef531931d39a3e19bcdd7',
+            'redirect_uri': 'https://customapp.com/oauth/redirect',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_access_token_missing_client_secret(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'code': 'test_code',
+            'grant_type': 'authorization_code',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'redirect_uri': 'https://customapp.com/oauth/redirect',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_access_token_missing_redirect_uri(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'code': 'test_code',
+            'grant_type': 'authorization_code',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': '9643b7c3f59ef531931d39a3e19bcdd7',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_access_token_invalid_grant_type(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'code': 'test_code',
+            'grant_type': 'invalid_grant_type',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': '9643b7c3f59ef531931d39a3e19bcdd7',
+            'redirect_uri': 'https://customapp.com/oauth/redirect',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_access_token_invalid_client_id(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'code': 'test_code',
+            'grant_type': 'authorization_code',
+            'client_id': 'invalid_client_id',
+            'client_secret': '9643b7c3f59ef531931d39a3e19bcdd7',
+            'redirect_uri': 'https://customapp.com/oauth/redirect',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_access_token_invalid_code(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'code': 'invalid_code',
+            'grant_type': 'authorization_code',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': '9643b7c3f59ef531931d39a3e19bcdd7',
+            'redirect_uri': 'https://customapp.com/oauth/redirect',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_access_token_invalid_client_secret(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'code': 'test_code',
+            'grant_type': 'authorization_code',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': 'invalid_client_secret',
+            'redirect_uri': 'https://customapp.com/oauth/redirect',
+        }
+        response = self.client.post(url, data)
         self.assertEqual(response.status_code, 400)
 
     def test_authorization_code_grant_flow(self):

@@ -22,6 +22,7 @@ import time
 from django.http import HttpResponse
 import six
 
+from wirecloud.commons.utils.http import build_error_response
 from wirecloud.oauth2provider.pyoauth2 import AuthorizationProvider
 from wirecloud.oauth2provider.models import Application, Code, Token
 
@@ -35,6 +36,9 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
             response[k] = v
 
         return response
+
+    def _make_error_response(self, request, err):
+        return build_error_response(request, 400, err)
 
     def get_client(self, client_id):
         return Application.objects.get(client_id=client_id)
