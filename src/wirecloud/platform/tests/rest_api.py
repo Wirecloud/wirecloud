@@ -2417,10 +2417,11 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
             # Check new workspace status_code
             workspace = Workspace.objects.get(pk=2)
-            self.assertEqual(workspace.tab_set.all().count(), 3)
-            self.assertEqual(workspace.tab_set.all()[0].iwidget_set.count(), 2)
-            self.assertEqual(workspace.tab_set.all()[1].iwidget_set.count(), 1)
-            self.assertEqual(workspace.tab_set.all()[2].iwidget_set.count(), 1)
+            tabs = workspace.tab_set.order_by('position')[:]
+            self.assertEqual(len(tabs), 3)
+            self.assertEqual(tabs[0].iwidget_set.count(), 2)
+            self.assertEqual(tabs[1].iwidget_set.count(), 1)
+            self.assertEqual(tabs[2].iwidget_set.count(), 1)
         check_cache_is_purged(self, 2, merge_workspaces)
 
     def test_workspace_merge_service_post_required_paramateres(self):
@@ -2472,10 +2473,11 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
             # Check new workspace status
             workspace = Workspace.objects.get(pk=2)
-            self.assertEqual(workspace.tab_set.all().count(), 3)
-            self.assertEqual(workspace.tab_set.all()[0].iwidget_set.count(), 2)
-            self.assertEqual(workspace.tab_set.all()[1].iwidget_set.count(), 1)
-            self.assertEqual(workspace.tab_set.all()[2].iwidget_set.count(), 1)
+            tabs = workspace.tab_set.order_by('position')[:]
+            self.assertEqual(len(tabs), 3)
+            self.assertEqual(tabs[0].iwidget_set.count(), 2)
+            self.assertEqual(tabs[1].iwidget_set.count(), 1)
+            self.assertEqual(tabs[2].iwidget_set.count(), 1)
         check_cache_is_purged(self, 2, merge_workspaces)
 
     def test_workspace_merge_service_post_from_mashup_bad_id(self):
