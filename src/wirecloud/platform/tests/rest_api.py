@@ -409,7 +409,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response_data['creator'], 'emptyuser')
         self.assertEqual(response_data['name'], 'Public Workspace')
         public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
-        self.assertEqual(public_preference['value'], 'False')
+        self.assertEqual(public_preference['value'], 'false')
 
     def test_workspace_collection_post_from_workspace_allow_renaming(self):
 
@@ -430,7 +430,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response_data['creator'], 'user_with_workspaces')
         self.assertEqual(response_data['name'], 'Pending Events 2')
         public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
-        self.assertEqual(public_preference['value'], 'False')
+        self.assertEqual(public_preference['value'], 'false')
 
     def test_workspace_collection_post_from_workspace_requires_permission(self):
 

@@ -28,6 +28,7 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
+from wirecloud.platform.plugins import get_workspace_preferences
 from wirecloud.platform.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
 
 
@@ -106,6 +107,10 @@ def get_workspace_preference_values(workspace):
     values = cache.get(cache_key)
     if values is None:
         values = parseInheritableValues(workspace.workspacepreference_set.all())
+        for preference in get_workspace_preferences():
+            if preference['name'] not in values:
+                values[preference['name']] = {'inherit': bool(preference.get('inheritByDefault', False)), 'value': json.dumps(preference['defaultValue'], ensure_ascii=False)}
+
         cache.set(cache_key, values)
 
     return values

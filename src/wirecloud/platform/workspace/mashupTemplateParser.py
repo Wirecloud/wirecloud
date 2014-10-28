@@ -119,16 +119,17 @@ def fillWorkspaceUsingTemplate(workspace, template):
         update_workspace_preferences(workspace, new_values)
 
     new_forced_values = {
-        'extra_prefs': {},
+        'extra_prefs': [],
         'iwidget': {},
         'ioperator': {},
     }
     for param in workspace_info['params']:
-        new_forced_values['extra_prefs'][param['name']] = {
+        new_forced_values['extra_prefs'].append({
+            'name': param['name'],
             'inheritable': False,
             'label': param.get('label'),
             'type': param.get('type'),
-        }
+        })
 
     for tab_entry in workspace_info['tabs']:
         tab = createTab(tab_entry.get('name'), workspace, allow_renaming=True)
@@ -290,7 +291,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         forced_values = json.loads(workspace.forcedValues)
     else:
         forced_values = {
-            'extra_prefs': {},
+            'extra_prefs': [],
             'iwidget': {},
             'ioperator': {},
         }
@@ -301,7 +302,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
     if 'iwidget' not in forced_values:
         forced_values['iwidget'] = {}
 
-    forced_values['extra_prefs'].update(new_forced_values['extra_prefs'])
+    forced_values['extra_prefs'] += new_forced_values['extra_prefs']
     forced_values['iwidget'].update(new_forced_values['iwidget'])
     forced_values['ioperator'].update(new_forced_values['ioperator'])
     workspace.forcedValues = json.dumps(forced_values, ensure_ascii=False)

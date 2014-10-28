@@ -39,6 +39,7 @@ _wirecloud_request_proxy_processors = []
 _wirecloud_response_proxy_processors = []
 _wirecloud_constants = None
 _wirecloud_api_auth_backends = None
+_wirecloud_workspace_preferences = None
 
 
 def find_wirecloud_plugins():
@@ -153,6 +154,7 @@ def clear_cache():
     global _wirecloud_response_proxy_processors
     global _wirecloud_constants
     global _wirecloud_api_auth_backends
+    global _wirecloud_workspace_preferences
 
     _wirecloud_plugins = None
     _wirecloud_features = None
@@ -162,6 +164,7 @@ def clear_cache():
     _wirecloud_response_proxy_processors = []
     _wirecloud_constants = None
     _wirecloud_api_auth_backends = None
+    _wirecloud_workspace_preferences = None
 
 
 def get_plugin_urls():
@@ -195,6 +198,21 @@ def get_extra_javascripts(view):
     return files
 
 
+def get_workspace_preferences():
+    global _wirecloud_workspace_preferences
+
+    if _wirecloud_workspace_preferences is None:
+        plugins = get_plugins()
+        preferences = []
+
+        for plugin in plugins:
+            preferences += plugin.get_workspace_preferences()
+
+        _wirecloud_workspace_preferences = preferences
+
+    return _wirecloud_workspace_preferences
+
+
 def get_constants():
     global _wirecloud_constants
 
@@ -203,6 +221,8 @@ def get_constants():
         constants_dict = {}
         for plugin in plugins:
             constants_dict.update(plugin.get_constants())
+
+        constants_dict['WORKSPACE_PREFERENCES'] = get_workspace_preferences()
 
         constants = []
         for constant_key in constants_dict:
@@ -401,6 +421,9 @@ class WirecloudPlugin(object):
         return {}
 
     def get_workspace_context_current_values(self, workspace, user):
+        return {}
+
+    def get_workspace_preferences(self):
         return {}
 
     def get_scripts(self, view):

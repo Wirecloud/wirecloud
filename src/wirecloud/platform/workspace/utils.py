@@ -463,7 +463,7 @@ def process_forced_values(workspace, user, concept_values, preferences):
         }
 
     if not 'extra_prefs' in forced_values:
-        forced_values['extra_prefs'] = {}
+        forced_values['extra_prefs'] = []
 
     if not 'ioperator' in forced_values:
         forced_values['ioperator'] = {}
@@ -478,11 +478,11 @@ def process_forced_values(workspace, user, concept_values, preferences):
     param_values = {}
     empty_params = []
     for param in forced_values['extra_prefs']:
-        if param in preferences:
-            param_values[param] = preferences[param]['value']
+        if param['name'] in preferences:
+            param_values[param['name']] = preferences[param['name']]['value']
         else:
-            empty_params.append(param)
-            param_values[param] = ''
+            empty_params.append(param['name'])
+            param_values[param['name']] = ''
     forced_values['empty_params'] = empty_params
 
     processor = TemplateValueProcessor({'user': user, 'context': concept_values, 'params': param_values})

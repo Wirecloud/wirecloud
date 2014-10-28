@@ -34,8 +34,9 @@
         var definitions, i;
 
         // Platform Preferences
-        var platformPreferences = {
-            "language": {
+        var platformPreferences = [
+            {
+                "name": "language",
                 "label": gettext('Language'),
                 "type": "select",
                 "initialEntries": [
@@ -43,81 +44,34 @@
                     {value: 'browser', label: gettext('Browser detect')}
                 ]
             }
-        };
-
-        // Workspace preferences
-        var workspacePreferences = {
-            "public": {
-                "defaultValue":  false,
-                "label":         gettext("Public"),
-                "type":          "boolean",
-                "description":   gettext("Allows other users to open this workspace (in read-only mode). (default: disabled)")
-            },
-            "layout": {
-                "defaultValue":  "Fixed",
-                "label":         gettext("Default grid layout"),
-                "type":          "select",
-                "initialEntries": [
-                    {value: "Fixed", label: gettext("Fixed to the grid")},
-                    {value: "Free", label: gettext("Out of the grid")}
-                ],
-                "description":   gettext("Default layout for the new widgets.")
-            },
-            "smart": {
-                "defaultValue":  true,
-                "label":         gettext("Smart grid for widgets fixed to the grid"),
-                "type":          "boolean",
-                "description":   gettext("iWidgets will be automatically reordered if this option is enabled. (default: enabled)")
-            },
-            "columns": {
-                "defaultValue":  20,
-                "label":         gettext("Grid columns"),
-                "type":          "number",
-                "description":   gettext("Grid columns. (default: 20)")
-            },
-            "cell-height": {
-                "defaultValue":  12,
-                "label":         gettext("Cell Height (in pixels)"),
-                "type":          "number",
-                "description":   gettext("Cell Height. Must be specified in pixel units. (default: 13)")
-            },
-            "horizontal-margin": {
-                "defaultValue":  4,
-                "label":         gettext("Horizontal Margin between iWidgets (in pixels)"),
-                "type":          "number",
-                "description":   gettext("Horizontal Margin between iWidgets. Must be specified in pixel units. (default: 4)")
-            },
-            "vertical-margin": {
-                "defaultValue":  3,
-                "label":         gettext("Vertical Margin between iWidgets (in pixels)"),
-                "type":          "number",
-                "description":   gettext("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
-            }
-        };
+        ];
 
         // Tab preferences
-        var tabPreferences = {
-            "layout": {
-                "inheritable":   true,
+        var tabPreferences = [
+            {
+                "name":             "layout",
+                "inheritable":      true,
                 "inheritByDefault": true,
-                "defaultValue":  "Fixed",
-                "label":         gettext("Default grid layout"),
-                "type":          "select",
+                "defaultValue":     "Fixed",
+                "label":            gettext("Default grid layout"),
+                "type":             "select",
                 "initialEntries": [
                     {value: "Fixed", label: gettext("Fixed to the grid")},
                     {value: "Free", label: gettext("Out of the grid")}
                 ],
-                "description":   gettext("Default layout for the new widgets.")
+                "description":      gettext("Default layout for the new widgets.")
             },
-            "smart": {
-                "inheritable":   true,
+            {
+                "name":             "smart",
+                "inheritable":      true,
                 "inheritByDefault": true,
-                "defaultValue":  true,
-                "label":         gettext("Smart grid for widgets fixed to the grid"),
-                "type":          "boolean",
-                "description":   gettext("iWidgets will be automatically reordered if this option is enabled. (default: enabled)")
+                "defaultValue":     true,
+                "label":            gettext("Smart grid for widgets fixed to the grid"),
+                "type":             "boolean",
+                "description":      gettext("iWidgets will be automatically reordered if this option is enabled. (default: enabled)")
             },
-            "columns": {
+            {
+                "name":          "columns",
                 "inheritable":   true,
                 "inheritByDefault": true,
                 "defaultValue":  20,
@@ -125,7 +79,8 @@
                 "type":          "number",
                 "description":   gettext("Grid columns. (default: 20)")
             },
-            "cell-height": {
+            {
+                "name":          "cell-height",
                 "inheritable":   true,
                 "inheritByDefault": true,
                 "defaultValue":  12,
@@ -133,44 +88,47 @@
                 "type":          "number",
                 "description":   gettext("Cell Height. Must be specified in pixel units. (default: 13)")
             },
-            "horizontal-margin": {
-                "inheritable":   true,
+            {
+                "name":             "horizontal-margin",
+                "inheritable":      true,
                 "inheritByDefault": true,
-                "defaultValue":  4,
-                "label":         gettext("Horizontal Margin between iWidgets (in pixels)"),
-                "type":          "number",
-                "description":   gettext("Horizontal Margin between iWidgets. Must be specified in pixel units. (default: 4)")
+                "defaultValue":     4,
+                "label":            gettext("Horizontal Margin between iWidgets (in pixels)"),
+                "type":             "number",
+                "description":      gettext("Horizontal Margin between iWidgets. Must be specified in pixel units. (default: 4)")
             },
-            "vertical-margin": {
-                "inheritable":   true,
+            {
+                "name":             "vertical-margin",
+                "inheritable":      true,
                 "inheritByDefault": true,
-                "defaultValue":  3,
-                "label":         gettext("Vertical Margin between iWidgets (in pixels)"),
-                "type":          "number",
-                "description":   gettext("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
+                "defaultValue":     3,
+                "label":            gettext("Vertical Margin between iWidgets (in pixels)"),
+                "type":             "number",
+                "description":      gettext("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
             }
-        };
+        ];
 
         // Initialize some dynamic preferences (language)
         for (i = 0; i < Wirecloud.constants.AVAILABLE_LANGUAGES.length; i += 1) {
-            platformPreferences.language.initialEntries.push(Wirecloud.constants.AVAILABLE_LANGUAGES[i]);
+            platformPreferences[0].initialEntries.push(Wirecloud.constants.AVAILABLE_LANGUAGES[i]);
         }
 
-        // Save they into our structures
+        // Save them into our structures
         definitions = this.processDefinitions(platformPreferences);
         this.preferencesDef.platform = [Wirecloud.PlatformPreferencesDef, definitions];
-        definitions = this.processDefinitions(workspacePreferences);
+        definitions = this.processDefinitions(Wirecloud.constants.WORKSPACE_PREFERENCES);
         this.preferencesDef.workspace = [Wirecloud.WorkspacePreferencesDef, definitions];
         definitions = this.processDefinitions(tabPreferences);
         this.preferencesDef.tab = [Wirecloud.TabPreferencesDef, definitions];
     };
 
     PreferenceManager.prototype.processDefinitions = function processDefinitions(preferences) {
-        var definitions = {};
-        for (var key in preferences) {
-            var preference_data = preferences[key];
-            var preferenceDef = new Wirecloud.PreferenceDef(key, preference_data.inheritable, preference_data.inheritByDefault, preference_data.hidden, preference_data);
-            definitions[key] = preferenceDef;
+        var i, preference_data, preferenceDef, definitions = {};
+
+        for (i = 0; i < preferences.length; i++) {
+            preference_data = preferences[i];
+            preferenceDef = new Wirecloud.PreferenceDef(preference_data.name, preference_data.inheritable, preference_data.inheritByDefault, preference_data.hidden, preference_data);
+            definitions[preference_data.name] = preferenceDef;
         }
         return definitions;
     };

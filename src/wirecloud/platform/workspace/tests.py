@@ -702,7 +702,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
     def check_workspace_with_params(self, workspace):
 
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
-        self.assertEqual(workspace_data['extra_prefs'], {'param': {'type': 'text', 'inheritable': False, 'label': 'Parameter'}})
+        self.assertEqual(workspace_data['extra_prefs'], [{'name': 'param', 'type': 'text', 'inheritable': False, 'label': 'Parameter'}])
 
         update_workspace_preferences(workspace, {'param': {'value': 'world'}});
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
