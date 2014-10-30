@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from copy import deepcopy
 from hashlib import sha1
 import json
 
@@ -340,6 +341,18 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "description":   _("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
             }
         ]
+
+    def get_tab_preferences(self):
+        workspace_preferences = self.get_workspace_preferences()
+        tab_preferences = deepcopy(workspace_preferences)
+        for preference in tab_preferences:
+            if preference['name'] == 'public':
+                tab_preferences.remove(preference)
+            else:
+                preference['inheriable'] = True
+                preference['inheritableByDefault'] = True
+
+        return tab_preferences
 
     def get_scripts(self, view):
         common = (

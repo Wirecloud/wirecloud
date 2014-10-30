@@ -28,7 +28,7 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
-from wirecloud.platform.plugins import get_workspace_preferences
+from wirecloud.platform.plugins import get_tab_preferences, get_workspace_preferences
 from wirecloud.platform.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
 
 
@@ -68,8 +68,22 @@ def parseInheritableValues(values):
     return _values
 
 
+def make_tab_preferences_cache_key(tab):
+    return '_tab_preferences_cache/%s/%s' % (tab.id, tab.workspace.last_modified)
+
+
 def get_tab_preference_values(tab):
-    return parseInheritableValues(TabPreference.objects.filter(tab=tab.pk))
+    cache_key = make_tab_preferences_cache_key(tab)
+    values = cache.get(cache_key)
+    if values is None:
+        values = parseInheritableValues(tab.tabpreference_set.all())
+        for preference in get_tab_preferences():
+            if preference['name'] not in values:
+                values[preference['name']] = {'inherit': bool(preference.get('inheritByDefault', False)), 'value': json.dumps(preference['defaultValue'], ensure_ascii=False)}
+
+        cache.set(cache_key, values)
+
+    return values
 
 
 def update_tab_preferences(tab, preferences_json):

@@ -46,68 +46,6 @@
             }
         ];
 
-        // Tab preferences
-        var tabPreferences = [
-            {
-                "name":             "layout",
-                "inheritable":      true,
-                "inheritByDefault": true,
-                "defaultValue":     "Fixed",
-                "label":            gettext("Default grid layout"),
-                "type":             "select",
-                "initialEntries": [
-                    {value: "Fixed", label: gettext("Fixed to the grid")},
-                    {value: "Free", label: gettext("Out of the grid")}
-                ],
-                "description":      gettext("Default layout for the new widgets.")
-            },
-            {
-                "name":             "smart",
-                "inheritable":      true,
-                "inheritByDefault": true,
-                "defaultValue":     true,
-                "label":            gettext("Smart grid for widgets fixed to the grid"),
-                "type":             "boolean",
-                "description":      gettext("iWidgets will be automatically reordered if this option is enabled. (default: enabled)")
-            },
-            {
-                "name":          "columns",
-                "inheritable":   true,
-                "inheritByDefault": true,
-                "defaultValue":  20,
-                "label":         gettext("Grid columns"),
-                "type":          "number",
-                "description":   gettext("Grid columns. (default: 20)")
-            },
-            {
-                "name":          "cell-height",
-                "inheritable":   true,
-                "inheritByDefault": true,
-                "defaultValue":  12,
-                "label":         gettext("Cell Height (in pixels)"),
-                "type":          "number",
-                "description":   gettext("Cell Height. Must be specified in pixel units. (default: 13)")
-            },
-            {
-                "name":             "horizontal-margin",
-                "inheritable":      true,
-                "inheritByDefault": true,
-                "defaultValue":     4,
-                "label":            gettext("Horizontal Margin between iWidgets (in pixels)"),
-                "type":             "number",
-                "description":      gettext("Horizontal Margin between iWidgets. Must be specified in pixel units. (default: 4)")
-            },
-            {
-                "name":             "vertical-margin",
-                "inheritable":      true,
-                "inheritByDefault": true,
-                "defaultValue":     3,
-                "label":            gettext("Vertical Margin between iWidgets (in pixels)"),
-                "type":             "number",
-                "description":      gettext("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
-            }
-        ];
-
         // Initialize some dynamic preferences (language)
         for (i = 0; i < Wirecloud.constants.AVAILABLE_LANGUAGES.length; i += 1) {
             platformPreferences[0].initialEntries.push(Wirecloud.constants.AVAILABLE_LANGUAGES[i]);
@@ -118,7 +56,7 @@
         this.preferencesDef.platform = [Wirecloud.PlatformPreferencesDef, definitions];
         definitions = this.processDefinitions(Wirecloud.constants.WORKSPACE_PREFERENCES);
         this.preferencesDef.workspace = [Wirecloud.WorkspacePreferencesDef, definitions];
-        definitions = this.processDefinitions(tabPreferences);
+        definitions = this.processDefinitions(Wirecloud.constants.TAB_PREFERENCES);
         this.preferencesDef.tab = [Wirecloud.TabPreferencesDef, definitions];
     };
 

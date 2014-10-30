@@ -39,6 +39,7 @@ _wirecloud_request_proxy_processors = []
 _wirecloud_response_proxy_processors = []
 _wirecloud_constants = None
 _wirecloud_api_auth_backends = None
+_wirecloud_tab_preferences = None
 _wirecloud_workspace_preferences = None
 
 
@@ -154,6 +155,7 @@ def clear_cache():
     global _wirecloud_response_proxy_processors
     global _wirecloud_constants
     global _wirecloud_api_auth_backends
+    global _wirecloud_tab_preferences
     global _wirecloud_workspace_preferences
 
     _wirecloud_plugins = None
@@ -164,6 +166,7 @@ def clear_cache():
     _wirecloud_response_proxy_processors = []
     _wirecloud_constants = None
     _wirecloud_api_auth_backends = None
+    _wirecloud_tab_preferences = None
     _wirecloud_workspace_preferences = None
 
 
@@ -198,6 +201,21 @@ def get_extra_javascripts(view):
     return files
 
 
+def get_tab_preferences():
+    global _wirecloud_tab_preferences
+
+    if _wirecloud_tab_preferences is None:
+        plugins = get_plugins()
+        preferences = []
+
+        for plugin in plugins:
+            preferences += plugin.get_tab_preferences()
+
+        _wirecloud_tab_preferences = preferences
+
+    return _wirecloud_tab_preferences
+
+
 def get_workspace_preferences():
     global _wirecloud_workspace_preferences
 
@@ -223,6 +241,7 @@ def get_constants():
             constants_dict.update(plugin.get_constants())
 
         constants_dict['WORKSPACE_PREFERENCES'] = get_workspace_preferences()
+        constants_dict['TAB_PREFERENCES'] = get_tab_preferences()
 
         constants = []
         for constant_key in constants_dict:
@@ -415,6 +434,9 @@ class WirecloudPlugin(object):
         return {}
 
     def get_platform_context_current_values(self, user):
+        return {}
+
+    def get_tab_preferences(self):
         return {}
 
     def get_workspace_context_definitions(self):
