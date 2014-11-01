@@ -993,6 +993,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         initial_widget1_position = widget1.layout_position
         with widget1:
+            position_from_context = (
+                int(self.driver.find_element_by_css_selector('[data-name="xPosition"] .content').text),
+                int(self.driver.find_element_by_css_selector('[data-name="yPosition"] .content').text),
+            )
+            self.assertEqual(position_from_context, initial_widget1_position)
             initial_widget1_xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
             initial_widget1_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
 
@@ -1022,12 +1027,24 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
             self.assertEqual(yPosition_changes, initial_widget1_yPosition_changes)
 
+            height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+            self.assertEqual(height_changes, "0")
+
+            width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+            self.assertEqual(height_changes, "0")
+
         with widget2:
             xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
             self.assertEqual(xPosition_changes, text_type(int(initial_widget2_xPosition_changes) + 1))
 
             yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
             self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
+
+            height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+            self.assertEqual(height_changes, "0")
+
+            width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+            self.assertEqual(height_changes, "0")
 
     test_basic_add_and_move_widget.tags = ('wirecloud-selenium', 'dragboard')
 

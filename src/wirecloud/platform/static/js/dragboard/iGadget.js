@@ -428,7 +428,9 @@ IWidget.prototype.paint = function (onInit) {
         'xPosition': this.position.x,
         'yPosition': this.position.y,
         'height': this.contentHeight,
-        'width': this.contentWidth
+        'width': this.contentWidth,
+        'heightInPixels': this.content.offsetHeight,
+        'widthInPixels': this.content.offsetWidth
     });
 
     this._updateButtons();
