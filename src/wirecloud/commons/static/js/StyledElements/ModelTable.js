@@ -26,19 +26,27 @@
     "use strict";
 
     var buildHeader = function buildHeader() {
-        var i, column, cell;
+        var i, column, cell, label;
 
         this.pHeaderCells = [];
         for (i = 0; i < this.columns.length; i += 1) {
             column = this.columns[i];
 
+            if (column.label == null) {
+                label = column.field;
+            } else {
+                label = column.label;
+            }
+
             cell = document.createElement('div');
             cell.className = 'cell';
-            cell.style.width = column.width;
-            cell.textContent = column.label;
+            if (column.width != null) {
+                cell.style.width = column.width;
+            }
+            cell.textContent = label;
             if (column.sortable !== false) {
                 cell.classList.add('sortable');
-                cell.setAttribute('title', 'Ordenar por ' + column.label);
+                cell.setAttribute('title', Wirecloud.Utils.interpolate(gettext('Sort by %(column_name)s'), {column_name: label}));
                 cell.callback = this.pSortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
             }
@@ -108,7 +116,13 @@
                         }
                         cellContent = this.pFormatDate(item, column.field, today, column.dateparser);
                     }
-                } else {
+                } else if (column.type === 'number') {
+                    cellContent = this.pGetFieldValue(item, column.field);
+
+                    if (column.unit) {
+                        cellContent = cellContent + " " + column.unit;
+                    }
+                } else {
                     cellContent = this.pGetFieldValue(item, column.field);
                 }
 
