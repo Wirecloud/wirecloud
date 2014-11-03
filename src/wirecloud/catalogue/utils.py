@@ -301,10 +301,14 @@ def update_resource_catalogue_cache(orm=None):
 
         try:
 
-            base_dir = wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
-            wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-            template = wgt_file.get_template()
-            wgt_file.close()
+            if getattr(resource, 'fromWGT', True):
+                base_dir = wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                template = wgt_file.get_template()
+                wgt_file.close()
+            else:
+                # fromWGT attribute support was removed from Wirecloud in version 0.7.0
+                template = download_http_content(resource.template_uri)
 
             template_parser = TemplateParser(template)
             resource.json_description = json.dumps(template_parser.get_resource_info())
