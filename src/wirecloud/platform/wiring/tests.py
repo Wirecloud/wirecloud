@@ -412,7 +412,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
             ioperator.open_menu().click_entry('Settings')
 
-            self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').click()  # disable test_logging
+            self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').click()  # disable exception_on_event
             self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         with self.myresources_view as myresources:
@@ -428,6 +428,22 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         # Check the operator leaves ghost mode
         error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
         self.assertFalse(error_badge.is_displayed())
+
+        # Check operator connections are restored sucessfully
+        tab = self.get_workspace_tab_by_name('Tab 2')
+        tab.element.click()
+        (target_iwidget, source_iwidget) = self.get_current_iwidgets()
+        with source_iwidget:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        with target_iwidget:
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('wiringOut').text != 'hello world!!')
+
+        # Check preference values has been restored to the values used before uninstalling the widget and not to the default ones
         with self.wiring_view as wiring:
             ioperator = wiring.get_ioperators()[0]
             ioperator_class_list = re.split('\s+', ioperator.element.get_attribute('class'))
@@ -436,8 +452,8 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             ioperator.open_menu().click_entry('Settings')
 
             self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="prefix"]').get_attribute('value'), 'test_')
-            self.assertTrue(self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').is_selected())
-            self.assertFalse(self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').is_selected())
+            self.assertFalse(self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').is_selected())
+            self.assertTrue(self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').is_selected())
 
             self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 

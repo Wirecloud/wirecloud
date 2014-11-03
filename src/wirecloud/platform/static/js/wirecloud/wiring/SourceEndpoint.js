@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2008-2013 Universidad Politécnica de Madrid
+ *     Copyright 2008-2014 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,6 +32,10 @@
     SourceEndpoint.prototype = new Wirecloud.wiring.Endpoint();
 
     SourceEndpoint.prototype.connect = function connect(out) {
+        if (!(out instanceof Wirecloud.wiring.TargetEndpoint)) {
+            throw new TypeError('Invalid target endpoint');
+        }
+
         this.outputs.push(out);
 
         out._addInput(this);

@@ -128,6 +128,10 @@
     };
     GhostTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
+    GhostTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
+        // Do nothing
+    };
+
     GhostTargetEndpoint.prototype.serialize = function serialize() {
         return {
             'type': this.type,

@@ -64,7 +64,7 @@
             sourceEntity = findEntity.call(this, connection.source);
             targetEntity = findEntity.call(this, connection.target);
 
-            if (entity != null && sourceEntity != entity && targetEndpoint != entity) {
+            if (entity != null && sourceEntity != entity && targetEntity != entity) {
                 // This connection has nothing to do with the especified entity, ignore it
                 continue;
             }
@@ -356,6 +356,7 @@
         for (id in this.status.operators) {
             operator_info = this.status.operators[id];
             if (operator_info.name === operator.uri) {
+                this.ioperators[id].fullDisconnect();
                 try {
                     ioperator = operator.instantiate(id, operator_info, this);
                     this.ioperators[id] = ioperator;
