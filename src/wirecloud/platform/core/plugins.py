@@ -349,10 +349,12 @@ class WirecloudCorePlugin(WirecloudPlugin):
         tab_preferences = deepcopy(workspace_preferences)
         for preference in tab_preferences:
             if preference['name'] == 'public':
-                tab_preferences.remove(preference)
+                public_preference = preference
             else:
-                preference['inheriable'] = True
-                preference['inheritableByDefault'] = True
+                preference['inheritable'] = True
+                preference['inheritByDefault'] = True
+
+        tab_preferences.remove(public_preference)
 
         return tab_preferences
 
