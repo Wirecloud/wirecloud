@@ -297,6 +297,7 @@ def update_resource_catalogue_cache(orm=None):
     else:
         resources = CatalogueResource.objects.all()
 
+    resources_to_remove = []
     for resource in resources:
 
         try:
@@ -319,8 +320,11 @@ def update_resource_catalogue_cache(orm=None):
             if isinstance(e, IOError) and e.errno != errno.ENOENT:
                 raise e
 
-            if getattr(settings, 'WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION', False) is False:
-                raise e
+            resources_to_remove.append(resource)
 
-            print('    Removing %s' % (resource.vendor + '/' + resource.short_name + '/' + resource.version))
-            resource.delete()
+    if len(resources_to_remove) > 0 and getattr(settings, 'WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION', False) is False:
+        raise Exception('There are some mashable application components that are not supported anymore (use WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION for removing automatically them in the migration process')
+
+    for resource in resources_to_remove:
+        print('    Removing %s' % (resource.vendor + '/' + resource.short_name + '/' + resource.version))
+        resource.delete()
