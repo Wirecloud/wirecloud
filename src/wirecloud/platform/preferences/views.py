@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import six
 
 from django.core.cache import cache
 from django.http import HttpResponse
@@ -72,6 +73,14 @@ def make_tab_preferences_cache_key(tab):
     return '_tab_preferences_cache/%s/%s' % (tab.id, tab.workspace.last_modified)
 
 
+def serialize_default_value(value):
+
+    if isinstance(value, six.text_type):
+        return value
+    else:
+        return json.dumps(value, ensure_ascii=False)
+
+
 def get_tab_preference_values(tab):
     cache_key = make_tab_preferences_cache_key(tab)
     values = cache.get(cache_key)
@@ -79,7 +88,7 @@ def get_tab_preference_values(tab):
         values = parseInheritableValues(tab.tabpreference_set.all())
         for preference in get_tab_preferences():
             if preference['name'] not in values:
-                values[preference['name']] = {'inherit': bool(preference.get('inheritByDefault', False)), 'value': json.dumps(preference['defaultValue'], ensure_ascii=False)}
+                values[preference['name']] = {'inherit': bool(preference.get('inheritByDefault', False)), 'value': serialize_default_value(preference['defaultValue'])}
 
         cache.set(cache_key, values)
 
@@ -123,7 +132,7 @@ def get_workspace_preference_values(workspace):
         values = parseInheritableValues(workspace.workspacepreference_set.all())
         for preference in get_workspace_preferences():
             if preference['name'] not in values:
-                values[preference['name']] = {'inherit': bool(preference.get('inheritByDefault', False)), 'value': json.dumps(preference['defaultValue'], ensure_ascii=False)}
+                values[preference['name']] = {'inherit': bool(preference.get('inheritByDefault', False)), 'value': serialize_default_value(preference['defaultValue'])}
 
         cache.set(cache_key, values)
 
