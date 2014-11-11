@@ -8,17 +8,14 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
 
-        resources = orm.CatalogueResource.objects.all()
+        resources_to_remove = orm.CatalogueResource.objects.filter(fromWGT=False)
 
-        for resource in resources:
+        if resources_to_remove.count() > 0 and getattr(settings, 'WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION', False) is False:
+            raise Exception('Resources installed from templates are not supported anymore (use WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION for removing automatically them in the migration process')
 
-            if resource.fromWGT is False:
-
-                if getattr(settings, 'WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION', False) is False:
-                    raise Exception('Resources installed from templates are not supported anymore (use WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION for removing automatically them in the migration process')
-
-                print('    Removing %s' % (resource.vendor + '/' + resource.short_name + '/' + resource.version))
-                resource.delete()
+        for resource in resources_to_remove:
+            print('    Removing %s' % (resource.vendor + '/' + resource.short_name + '/' + resource.version))
+            resource.delete()
 
     def backwards(self, orm):
         pass
