@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 f = open(file_name, 'rb')
                 wgt_file = WgtFile(f)
             except:
-                print _('Failed to read from %(file_name)s') % {'file_name': file_name}
+                self.log(_('Failed to read from %(file_name)s') % {'file_name': file_name}, level=1)
                 continue
 
             try:
@@ -79,12 +79,19 @@ class Command(BaseCommand):
 
                 wgt_file.close()
                 f.close()
-                print _('Successfully imported %(name)s widget') % {'name': template.get_resource_name()}
+                self.log(_('Successfully imported %(name)s widget') % {'name': template.get_resource_name()}, level=1)
             except IntegrityError:
-                print _('Version %(version)s of the %(name)s widget (from %(vendor)s) already exists') % {
+                self.log(_('Version %(version)s of the %(name)s widget (from %(vendor)s) already exists') % {
                     'name': template.get_resource_name(),
                     'version': template.get_resource_version(),
                     'vendor': template.get_resource_vendor(),
-                }
+                }, level=1)
             except:
-                print _('Failed to import widget from %(file_name)s') % {'file_name': file_name}
+                self.log(_('Failed to import widget from %(file_name)s') % {'file_name': file_name}, level=1)
+
+    def log(self, msg, level=2):
+        """
+        Small log helper
+        """
+        if self.verbosity >= level:
+            self.stdout.write(msg)
