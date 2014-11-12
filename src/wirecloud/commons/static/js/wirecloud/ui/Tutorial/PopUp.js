@@ -48,7 +48,6 @@
         // Close button
         if (options.closable) {
             this.cancelButton = new StyledElements.StyledButton({
-                'title': gettext("Cancel"),
                 'class': 'button icon-remove',
                 'plain': true
             });

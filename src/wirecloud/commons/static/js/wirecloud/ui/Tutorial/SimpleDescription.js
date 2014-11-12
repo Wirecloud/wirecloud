@@ -89,7 +89,6 @@
         this.windowContent.innerHTML = options.msg;
 
         this.nextButton = new StyledElements.StyledButton({
-            'title': gettext("next"),
             'class': 'nextButton btn-primary',
             'text': gettext(this.nextButtonText),
         });
@@ -98,7 +97,6 @@
 
         // Cancel button
         this.cancelButton = new StyledElements.StyledButton({
-            'title': gettext("Cancel"),
             'class': 'cancelButton',
             'text': gettext("Cancel"),
         });
