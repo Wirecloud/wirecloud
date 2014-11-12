@@ -124,6 +124,7 @@
             'monitor': null
         }, options);
 
+        Wirecloud.UserInterfaceManager.init();
         if (options.monitor == null) {
             // Init Layout Manager
             var layoutManager = LayoutManagerFactory.getInstance();
@@ -255,7 +256,6 @@
      */
     Wirecloud.unload = function unload() {
         var layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager.hideCover();
         layoutManager._startComplexTask(gettext('Unloading Wirecloud Platform'));
 
         if (this.activeWorkspace != null) {

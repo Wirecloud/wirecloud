@@ -366,6 +366,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/constants.js',
             'js/StyledElements/Event.js',
             'js/wirecloud/core.js',
+            'js/wirecloud/UserInterfaceManager.js',
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
             'js/wirecloud/PreferenceError.js',

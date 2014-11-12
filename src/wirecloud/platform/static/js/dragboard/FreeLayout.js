@@ -236,7 +236,6 @@ FreeLayout.prototype.cancelMove = function () {
 FreeLayout.prototype._raiseIWidgetCallback = function () {
     this.iwidget.setMinimizeStatus(false);
     this.iwidget.layout.dragboard.raiseToTop(this.iwidget);
-    LayoutManagerFactory.getInstance().hideCover();
 };
 
 FreeLayout.prototype.fillFloatingWidgetsMenu = function (menu) {

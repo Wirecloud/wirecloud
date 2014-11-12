@@ -75,13 +75,6 @@ var LayoutManagerFactory = function () {
             document.getElementById("loading-window").addEventListener('click', this._clickCallback, true);
         }
 
-        this.currentMenu = null;  // current root dialog
-        this.coverLayerElement = document.createElement('div');               // disabling background layer
-        this.coverLayerElement.id = 'menu_layer';
-        this.coverLayerElement.className = 'disabled_background fade';
-        this.coverLayerElement.style.display = 'none';
-        document.body.insertBefore(this.coverLayerElement, document.body.firstChild);
-
         // Listen to resize events
         window.addEventListener("resize", this.resizeWrapper.bind(this), true);
     }
@@ -230,40 +223,6 @@ var LayoutManagerFactory = function () {
                 nextView.onHistoryChange(state);
             }
         };
-
-        LayoutManager.prototype.showUnclickableCover = function() {
-            this.coverLayerElement.style.display = "block";
-            setTimeout(function () {
-                this.coverLayerElement.classList.add('in');
-            }.bind(this), 0);
-        };
-
-        /**
-         * @private
-         * Only to be used by WindowMenu.
-         */
-        LayoutManager.prototype._showWindowMenu = function (window_menu) {
-            if (!(window_menu instanceof Wirecloud.ui.WindowMenu)) {
-                throw TypeError('window_menu must be a WindowMenu instance');
-            }
-
-            if (this.currentMenu != null) {
-                // only if the layer is displayed.
-                this.hideCover();
-            }
-            this.showUnclickableCover();
-            this.currentMenu = window_menu;
-        };
-
-        //hides the disabling layer and so, the current menu
-        LayoutManager.prototype.hideCover = function() {
-            if (this.currentMenu) {
-                this.currentMenu.hide();
-            }
-            this.currentMenu = null;
-            this.coverLayerElement.classList.remove('in');
-            this.coverLayerElement.style.display = "none";
-        }
 
     // *********************************
     // SINGLETON GET INSTANCE

@@ -53,9 +53,6 @@ var LayoutManagerFactory = function () {
         this.monitor = null;
     };
 
-    LayoutManager.prototype.hideCover = function hideCover() {
-    };
-
     LayoutManager.prototype.changeCurrentView = function changeCurrentView() {
     };
 
