@@ -100,6 +100,7 @@
             template: 'wallet'
         });
         Wirecloud.activeWorkspace.notebook.contentArea.appendChild(this.wallet.wrapperElement);
+        Wirecloud.UserInterfaceManager._registerPopup(this);
         setTimeout(function () {
             this.wallet.focus();
             this.wallet.addClassName('in');
@@ -109,6 +110,7 @@
     var _hide = function _hide() {
         if (this.wallet != null && this.wallet.wrapperElement.parentNode) {
             this.wallet.wrapperElement.parentNode.removeChild(this.wallet.wrapperElement);
+            Wirecloud.UserInterfaceManager._unregisterPopup(this);
         }
         this.wallet = null;
     };

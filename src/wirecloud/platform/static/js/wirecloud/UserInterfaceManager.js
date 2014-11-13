@@ -94,6 +94,7 @@
         }
 
         if (this.currentWindowMenu != null) {
+            this.currentWindowMenu.hide();
             hideCover();
         }
 
