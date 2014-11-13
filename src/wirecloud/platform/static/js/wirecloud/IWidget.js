@@ -249,6 +249,12 @@
             this._notifyUnloaded.bind(this),
             true);
 
+        element.contentDocument.defaultView.addEventListener('keydown', function (event) {
+            if (event.keyCode === 27 /* escape */) {
+                Wirecloud.UserInterfaceManager.handleEscapeEvent();
+            }
+        }, true);
+
         /* Propagate pending events */
         for (var i = 0; i < this.pending_events.length; i += 1) {
             this.inputs[this.pending_events[i].endpoint].propagate(this.pending_events[i].value);

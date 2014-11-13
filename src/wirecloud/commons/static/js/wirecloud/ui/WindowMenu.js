@@ -197,8 +197,9 @@
 
         if (this._parentWindowMenu != null) {
             this._parentWindowMenu._addChildWindow(this);
+            Wirecloud.UserInterfaceManager._registerPopup(this);
         } else {
-            Wirecloud.UserInterfaceManager._showWindowMenu(this);
+            Wirecloud.UserInterfaceManager._registerRootWindowMenu(this);
         }
 
         document.body.appendChild(this.htmlElement);
@@ -227,9 +228,10 @@
 
         if (this._parentWindowMenu != null) {
             this._parentWindowMenu._removeChildWindow(this);
+            Wirecloud.UserInterfaceManager._unregisterPopup(this);
             this._parentWindowMenu = null;
         } else {
-            Wirecloud.UserInterfaceManager._showWindowMenu(null);
+            Wirecloud.UserInterfaceManager._unregisterRootWindowMenu(this);
         }
     };
 

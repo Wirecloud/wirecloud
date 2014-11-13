@@ -230,6 +230,7 @@
         } catch (e) {
             document.body.appendChild(this.wrapperElement);
         }
+        Wirecloud.UserInterfaceManager._registerPopup(this);
         this.events.visibilityChange.dispatch(this);
 
         if (!('left' in refPosition) && 'x' in refPosition && 'y' in refPosition) {
@@ -278,6 +279,7 @@
         this.wrapperElement.innerHTML = '';
         Wirecloud.Utils.removeFromParent(this.wrapperElement);
 
+        Wirecloud.UserInterfaceManager._unregisterPopup(this);
         this.events.visibilityChange.dispatch(this);
     };
 

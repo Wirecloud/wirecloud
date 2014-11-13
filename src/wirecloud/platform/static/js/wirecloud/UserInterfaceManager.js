@@ -24,7 +24,8 @@
     "use strict";
 
     var UserInterfaceManager = {
-        currentWindowMenu: null
+        currentWindowMenu: null,
+        currentPopups: []
     };
 
     var coverLayerElement = null;
@@ -57,27 +58,64 @@
         coverLayerElement.className = 'disabled_background fade';
         coverLayerElement.style.display = 'none';
         document.body.insertBefore(coverLayerElement, document.body.firstChild);
+
+        // Default escape keypress handler
+        document.addEventListener('keydown', function (event) {
+            if (event.keyCode === 27 /* escape */) {
+                Wirecloud.UserInterfaceManager.handleEscapeEvent();
+            }
+        }, true);
+    };
+
+    UserInterfaceManager.handleEscapeEvent = function handleEscapeEvent() {
+        if (this.currentPopups.length > 0) {
+            this.currentPopups[this.currentPopups.length - 1].hide();
+        }
     };
 
     /**
      * @private
      * Only to be used by WindowMenu.
      */
-    UserInterfaceManager._showWindowMenu = function _showWindowMenu(window_menu) {
+    UserInterfaceManager._unregisterRootWindowMenu = function _unregisterRootWindowMenu(window_menu) {
+        this._unregisterPopup(window_menu);
+        this.currentWindowMenu = null;
+        hideCover();
+    };
 
-        if (window_menu != null && !(window_menu instanceof Wirecloud.ui.WindowMenu)) {
+    /**
+     * @private
+     * Only to be used by WindowMenu.
+     */
+    UserInterfaceManager._registerRootWindowMenu = function _registerRootWindowMenu(window_menu) {
+
+        if (!(window_menu instanceof Wirecloud.ui.WindowMenu)) {
             throw TypeError('window_menu must be a WindowMenu instance');
         }
 
         if (this.currentWindowMenu != null) {
-            // only if the layer is displayed.
             hideCover();
         }
 
         this.currentWindowMenu = window_menu;
-        if (this.currentWindowMenu != null) {
-            showCover();
+        this._registerPopup(window_menu);
+        showCover();
+    };
+
+    UserInterfaceManager._unregisterPopup = function _unregisterPopup(popup) {
+        var index = this.currentPopups.indexOf(popup);
+        if (index !== -1) {
+            this.currentPopups.splice(index, 1);
         }
+    };
+
+    UserInterfaceManager._registerPopup = function _registerPopup(popup) {
+        if (popup != null && !('hide' in popup)) {
+            throw new TypeError('invalid popup parameter');
+        }
+
+        this._unregisterPopup(popup);
+        this.currentPopups.push(popup);
     };
 
     Wirecloud.UserInterfaceManager = UserInterfaceManager;

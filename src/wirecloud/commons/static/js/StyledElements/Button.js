@@ -107,7 +107,7 @@
 
         this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, true);
-        this.wrapperElement.addEventListener('keydown', this._keydownCallback, true);
+        this.wrapperElement.addEventListener('keydown', this._keydownCallback, false);
         this.wrapperElement.addEventListener('focus', onfocus.bind(this), true);
         this.wrapperElement.addEventListener('blur', onblur.bind(this), true);
         this.wrapperElement.addEventListener('mouseenter', onmouseenter.bind(this), false);
@@ -162,7 +162,7 @@
 
         this.wrapperElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('click', this._clickCallback, true);
-        this.wrapperElement.removeEventListener('keydown', this._keydownCallback, true);
+        this.wrapperElement.removeEventListener('keydown', this._keydownCallback, false);
 
         delete this._clickCallback;
         delete this._keydownCallback;

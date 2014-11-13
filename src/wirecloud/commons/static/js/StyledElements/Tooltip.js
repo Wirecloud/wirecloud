@@ -103,6 +103,7 @@
 
     var _show = function _show(refPosition) {
 
+        Wirecloud.UserInterfaceManager._registerPopup(this);
         if (this.visible) {
             this.repaint();
             return;
@@ -163,6 +164,7 @@
         if (this.element != null) {
             document.body.removeChild(this.element);
             this.element = null;
+            Wirecloud.UserInterfaceManager._unregisterPopup(this);
         }
     };
 

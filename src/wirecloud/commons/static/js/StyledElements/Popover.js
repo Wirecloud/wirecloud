@@ -112,6 +112,7 @@
 
     var _show = function _show(refPosition) {
 
+        Wirecloud.UserInterfaceManager._registerPopup(this);
         if (this.visible) {
             this.repaint();
             return;
@@ -179,17 +180,26 @@
         this._show(refElement);
     };
 
+    var _hide = function _hide() {
+        if (this.element != null) {
+            document.body.removeChild(this.element);
+            this.element = null;
+            Wirecloud.UserInterfaceManager._unregisterPopup(this);
+        }
+    };
+
     Popover.prototype.hide = function hide() {
         if (!this.visible) {
             return;
         }
 
         document.removeEventListener('click', this._disableCallback, true);
-        this.element.addEventListener('transitionend', function () {
-            document.body.removeChild(this.element);
-            this.element = null;
-        }.bind(this));
-        this.element.classList.remove('in');
+        if (this.element.classList.contains('in')) {
+            this.element.addEventListener('transitionend', _hide.bind(this));
+            this.element.classList.remove('in');
+        } else {
+            _hide.call(this);
+        }
     };
 
     StyledElements.Popover = Popover;
