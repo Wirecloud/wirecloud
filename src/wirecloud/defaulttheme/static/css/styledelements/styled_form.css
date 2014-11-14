@@ -1,4 +1,4 @@
-.styled_form table {
+.styled_form table, table.styled_form {
     width: 100%;
 }
 
@@ -41,6 +41,7 @@
 .styled_form td > .se-numeric-field,
 .styled_form td > .se-password-field,
 .styled_form td > .se-file-field,
+.styled_form td > .se-layout-field,
 .styled_form td > .se-mac-field,
 .styled_form td > .se-select
 {

@@ -157,15 +157,17 @@
          *
          */
         Dragboard.prototype._buildLayoutFromPreferences = function _buildLayoutFromPreferences(description) {
-            var columns = this.tab.preferences.get('columns');
-            var cell_height = this.tab.preferences.get('cell-height');
-            var vertical_margin = this.tab.preferences.get('vertical-margin');
-            var horizontal_margin = this.tab.preferences.get('horizontal-margin');
+            var layoutInfo = this.tab.preferences.get('baselayout');
 
-            if (this.tab.preferences.get('smart')) {
-                return new Wirecloud.ui.SmartColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
-            } else {
-                return new Wirecloud.ui.ColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
+            switch (layoutInfo.type) {
+            case 'columnlayout':
+                if (layoutInfo.smart) {
+                    return new Wirecloud.ui.SmartColumnLayout(this, layoutInfo.columns, layoutInfo.cellheight, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
+                } else {
+                    return new Wirecloud.ui.ColumnLayout(this, layoutInfo.columns, layoutInfo.cellheight, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
+                }
+            case 'gridlayout':
+                return new Wirecloud.ui.GridLayout(this, layoutInfo.columns, layoutInfo.rows, layoutInfo.verticalmargin, layoutInfo.horizontalmargin);
             }
         };
 
@@ -248,7 +250,7 @@
             //width = layout.adaptWidth(width, width).inLU;
             var width = widget.default_width;
             var height = widget.default_height;
-            var layout = this.tab.preferences.get('layout') === "Free" ? 1 : 0;
+            var layout = this.tab.preferences.get('initiallayout') === "Free" ? 1 : 0;
 
             // Check if the widget doesn't fit in the dragboard
             if (layout instanceof Wirecloud.ui.ColumnLayout) {
@@ -545,30 +547,14 @@
             return; // Do nothing
         }
 
-        /* Pre reserve scroll bar space */
-
-        var dragboardElement = this.dragboardElement;
-        this.dragboardWidth = parseInt(dragboardElement.clientWidth, 10);
-
+        // Read padding values
         this.topMargin = cssStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
         this.bottomMargin = cssStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
         this.leftMargin = cssStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
         this.rightMargin = cssStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX);
 
-        this.dragboardWidth = parseInt(dragboardElement.offsetWidth, 10);
-        this.dragboardWidth -= this.leftMargin + this.rightMargin;
-
-        var tmp = this.dragboardWidth;
-        tmp -= parseInt(dragboardElement.clientWidth, 10);
-
-        if (tmp > this.scrollbarSpace) {
-            this.dragboardWidth -= tmp;
-        } else {
-            this.dragboardWidth -= this.scrollbarSpace;
-        }
-
-        // TODO
-        this.dragboardHeight = parseInt(dragboardElement.clientHeight, 10);
+        this.dragboardWidth = parseInt(this.dragboardElement.offsetWidth, 10) - this.leftMargin - this.rightMargin;
+        this.dragboardHeight = parseInt(this.dragboardElement.parentNode.clientHeight, 10) - this.topMargin - this.bottomMargin;
     };
 
     /**

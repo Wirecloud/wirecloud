@@ -40,7 +40,7 @@
 
         this.inherit = inherit;
         if (value != null) {
-            this.value = value;
+            this.value = Wirecloud.ui.InputInterfaceFactory.parse(preferenceDef.options.type, value);
         } else {
             this.value = preferenceDef.default;
         }

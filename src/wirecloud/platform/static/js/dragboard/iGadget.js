@@ -685,12 +685,10 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
         this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
     }
 
-    if (oldHeight !== this.height) {
-        // Notify Context Manager about new size
-        this.internal_iwidget.contextManager.modify({
-            'height': this.height
-        });
-    }
+    // Notify Context Manager about new size
+    this.internal_iwidget.contextManager.modify({
+        'height': this.contentHeight
+    });
 };
 
 /**
@@ -983,16 +981,14 @@ IWidget.prototype.moveToLayout = function (newLayout) {
     // ##### END TODO
 
     affectedWidgetsAdding = newLayout.addIWidget(this, dragboardChange);
+    this.internal_iwidget.contextManager.modify({
+        'height': this.contentHeight,
+        'width': this.contentWidth
+    });
 
     if (minimizeOnFinish) {
         this.toggleMinimizeStatus();
     }
-
-    if (!dragboardChange) {
-        // This is needed to check if the scrollbar status has changed (visible/hidden)
-        newLayout.dragboard._notifyWindowResizeEvent();
-    }
-
 
     //if the widget hasn't been taken to another tab and
     //the movement affects the rest of widgets

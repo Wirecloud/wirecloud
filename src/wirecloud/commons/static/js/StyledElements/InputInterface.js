@@ -245,16 +245,6 @@
         this.inputElement.insertInto(element);
     };
 
-    /**
-     *
-     * @param {String} value
-     *
-     * @return {Object}
-     */
-    InputInterface.prototype.parseFromPersistence = function parseFromPersistence(value) {
-        return value;
-    };
-
     InputInterface.prototype.assignDefaultButton = function assignDefaultButton(button) {
     };
 

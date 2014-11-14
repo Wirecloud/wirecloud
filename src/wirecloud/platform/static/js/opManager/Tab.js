@@ -82,26 +82,9 @@
      * This method is called when tab preferences are changed
      */
     var preferencesChanged = function preferencesChanged(preferences, modifiedValues) {
-        var preferenceName, newLayout;
+        var preferenceName;
 
-        for (preferenceName in modifiedValues) {
-            newLayout = false;
-
-            switch (preferenceName) {
-            case "smart":
-            case "columns":
-            case "cell-height":
-            case "vertical-margin":
-            case "horizontal-margin":
-                newLayout = true;
-                break;
-            default:
-                continue;
-            }
-            break;
-        }
-
-        if (newLayout) {
+        if ('baselayout' in modifiedValues) {
             this.dragboard._updateBaseLayout();
         }
     };

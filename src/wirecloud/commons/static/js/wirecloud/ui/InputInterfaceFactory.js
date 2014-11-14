@@ -27,6 +27,7 @@
 
     var InputInterfaceFactory = new StyledElements.InputInterfaceFactory();
 
+    InputInterfaceFactory.addFieldType('layout', Wirecloud.ui.LayoutInputInterface);
     InputInterfaceFactory.addFieldType('parametrizableValue', Wirecloud.ui.ParametrizableValueInputInterface);
     InputInterfaceFactory.addFieldType('parametrizedText', ParametrizedTextInputInterface);
     InputInterfaceFactory.addFieldType('mac', Wirecloud.ui.MACInputInterface);

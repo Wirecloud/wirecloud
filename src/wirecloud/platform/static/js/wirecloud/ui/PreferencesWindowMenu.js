@@ -13,16 +13,17 @@
     };
 
     var build_inherit_input = function build_inherit_input(preference) {
-        return StyledElements.DefaultInputInterfaceFactory.createInterface('inherit-' + preference.name, {'type': 'boolean'});
+        return Wirecloud.ui.InputInterfaceFactory.createInterface('inherit-' + preference.name, {'type': 'boolean'});
     };
 
     var build_pref_input = function build_pref_input(preference) {
-        return StyledElements.DefaultInputInterfaceFactory.createInterface(preference.name, preference.options);
+        return Wirecloud.ui.InputInterfaceFactory.createInterface(preference.name, preference.options);
     };
 
     var build_form = function build_form() {
         // Build a form for changing this gruop of preferences
         var table = document.createElement('table');
+        table.classList.add('styled_form');
         table.setAttribute('cellspacing', '0');
         table.setAttribute('cellpadding', '0');
 
@@ -51,6 +52,7 @@
             } else {
                 var complexRow = tbody.insertRow(-1);
                 var complexCell = complexRow.insertCell(-1);
+                complexCell.style.padding = "0";
                 complexCell.colSpan = "2";
 
                 var complexTable = document.createElement('table');
@@ -184,13 +186,15 @@
     };
 
     PreferencesWindowMenu.prototype.show = function show(parentWindow) {
+        var pref_name;
+
         this.setTitle(this.manager.buildTitle());
 
         if (!('interfaces' in this)) {
             build_form.call(this);
         }
 
-        for (var pref_name in this.manager.preferences) {
+        for (pref_name in this.manager.preferences) {
             this.interfaces[pref_name].base.setValue(this.manager.preferences[pref_name].value);
             if ('inherit' in this.interfaces[pref_name]) {
                 this.interfaces[pref_name].inherit.setValue(this.manager.preferences[pref_name].inherit);
@@ -198,6 +202,10 @@
             }
         }
         Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
+
+        for (pref_name in this.manager.preferences) {
+            this.interfaces[pref_name].base.repaint();
+        }
     };
 
     PreferencesWindowMenu.prototype.destroy = function destroy() {

@@ -53,3 +53,31 @@
     margin:   0;
     z-index:  3;
 }
+
+.btn-group > .se-select {
+    margin: 0px;
+}
+
+.input-append > .west_container > .se-select {
+    margin: 0;
+}
+
+.input-append > .west_container > .se-select:last-child {
+    margin: 0 -1px 0 0;
+}
+
+.input-append > .west_container > .se-select, .input-prepend > .east_container > .se-select {
+    border-radius: 0px;
+}
+
+.input-append > .west_container > .se-select:first-child,
+.btn-group > .se-select:last-child {
+    border-top-left-radius: $border-radius-base;
+    border-bottom-left-radius: $border-radius-base;
+}
+
+.input-append > .east_container > .se-select:last-child,
+.btn-group > .se-select:last-child {
+    border-top-right-radius: $border-radius-base;
+    border-bottom-right-radius: $border-radius-base;
+}

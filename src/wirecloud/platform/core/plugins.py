@@ -41,6 +41,7 @@ WORKSPACE_CSS = (
 CLASSIC_CORE_CSS = (
     'css/window_menu.scss',
     'css/mac_search.css',
+    'css/layout_field.css',
     'css/mac_field.css',
     'css/mac_selection_dialog.css',
 )
@@ -124,6 +125,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/InputInterface.js',
     'js/StyledElements/InputInterfaces.js',
     'js/wirecloud/ui/ParametrizableValueInputInterface.js',
+    'js/wirecloud/ui/LayoutInputInterface.js',
     'js/StyledElements/VersionInputInterface.js',
     'js/StyledElements/InputInterfaceFactory.js',
     'js/StyledElements/DefaultInputInterfaceFactory.js',
@@ -297,50 +299,21 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "description":   _("Allows other users to open this workspace (in read-only mode). (default: disabled)")
             },
             {
-                "name":          "layout",
+                "name":          "initiallayout",
                 "defaultValue":  "Fixed",
-                "label":         _("Default grid layout"),
+                "label":         _("Default layout"),
                 "type":          "select",
                 "initialEntries": [
-                    {"value": "Fixed", "label": _("Fixed to the grid")},
-                    {"value": "Free", "label": _("Out of the grid")}
+                    {"value": "Fixed", "label": _("Base")},
+                    {"value": "Free", "label": _("Free")}
                 ],
                 "description":   _("Default layout for the new widgets.")
             },
             {
-                "name":          "smart",
-                "defaultValue":  True,
-                "label":         _("Smart grid for widgets fixed to the grid"),
-                "type":          "boolean",
-                "description":   _("iWidgets will be automatically reordered if this option is enabled. (default: enabled)")
-            },
-            {
-                "name":          "columns",
-                "defaultValue":  20,
-                "label":         _("Grid columns"),
-                "type":          "number",
-                "description":   _("Grid columns. (default: 20)")
-            },
-            {
-                "name":          "cell-height",
-                "defaultValue":  12,
-                "label":         _("Cell Height (in pixels)"),
-                "type":          "number",
-                "description":   _("Cell Height. Must be specified in pixel units. (default: 13)")
-            },
-            {
-                "name":          "horizontal-margin",
-                "defaultValue":  4,
-                "label":         _("Horizontal Margin between iWidgets (in pixels)"),
-                "type":          "number",
-                "description":   _("Horizontal Margin between iWidgets. Must be specified in pixel units. (default: 4)")
-            },
-            {
-                "name":          "vertical-margin",
-                "defaultValue":  3,
-                "label":         _("Vertical Margin between iWidgets (in pixels)"),
-                "type":          "number",
-                "description":   _("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
+                "name":          "baselayout",
+                "defaultValue":  "{\"type\": \"columnlayout\", \"smart\": \"false\", \"columns\": 20, \"cellheight\": 12, \"horizontalmargin\": 4, \"verticalmargin\": 3}",
+                "label":         _("Base layout"),
+                "type":          "layout"
             }
         ]
 

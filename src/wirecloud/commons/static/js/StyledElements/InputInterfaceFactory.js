@@ -69,6 +69,20 @@
 
             mapping[type] = class_;
         };
+
+        this.parse = function parse(type, value) {
+            if (mapping[type] == null) {
+                throw new TypeError('Invalid data type');
+            }
+            return mapping[type].parse(value);
+        };
+
+        this.stringify = function stringify(type, value) {
+            if (mapping[type] == null) {
+                throw new TypeError('Invalid data type');
+            }
+            return mapping[type].stringify(value);
+        };
     };
 
     StyledElements.InputInterfaceFactory = InputInterfaceFactory;

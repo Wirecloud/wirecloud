@@ -98,6 +98,14 @@ function TextInputInterface(fieldId, options) {
 }
 TextInputInterface.prototype = new InputInterface();
 
+TextInputInterface.parse = function parse(value) {
+    return value;
+};
+
+TextInputInterface.stringify = function stringify(value) {
+    return value;
+};
+
 TextInputInterface.prototype.assignDefaultButton = function assignDefaultButton(button) {
     this.inputElement.addEventListener('submit', function () {
         button.click();
@@ -118,6 +126,9 @@ function PasswordInputInterface(fieldId, options) {
 }
 PasswordInputInterface.prototype = new InputInterface();
 
+PasswordInputInterface.parse = TextInputInterface.parse;
+PasswordInputInterface.stringify = TextInputInterface.stringify;
+
 /**
  *
  */
@@ -131,6 +142,14 @@ function ListInputInterface(fieldId, options) {
     this.inputElement = new StyledElements.StyledList(options);
 }
 ListInputInterface.prototype = new InputInterface();
+
+ListInputInterface.prototype.parse = function parse(value) {
+    return JSON.parse(value);
+};
+
+ListInputInterface.prototype.stringify = function stringify(value) {
+    return JSON.stringify(value);
+};
 
 ListInputInterface.prototype._setValue = function _setValue(newValue) {
     if (newValue === null || newValue === undefined) {
@@ -163,8 +182,8 @@ function NumberInputInterface(fieldId, options) {
 }
 NumberInputInterface.prototype = new InputInterface();
 
-NumberInputInterface.prototype.parseFromPersistence = function parseFromPersistence(value) {
-    return parseInt(value, 10);
+NumberInputInterface.parse = function parse(value) {
+    return Number(value);
 };
 
 NumberInputInterface.prototype._checkValue = function _checkValue(newValue) {
@@ -191,6 +210,9 @@ function LongTextInputInterface(fieldId, options) {
 }
 LongTextInputInterface.prototype = new InputInterface();
 
+LongTextInputInterface.parse = TextInputInterface.parse;
+LongTextInputInterface.stringify = TextInputInterface.stringify;
+
 /**
  *
  */
@@ -200,9 +222,11 @@ function URLInputInterface(fieldId, options) {
     }
 
     TextInputInterface.call(this, fieldId, options);
-}
-
+};
 URLInputInterface.prototype = new TextInputInterface();
+
+URLInputInterface.parse = TextInputInterface.parse;
+URLInputInterface.stringify = TextInputInterface.stringify;
 
 URLInputInterface.prototype._URLChecker = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
@@ -216,7 +240,6 @@ URLInputInterface.prototype._checkValue = function _checkValue(newValue) {
 function EMailInputInterface(fieldId, options) {
     TextInputInterface.call(this, fieldId, options);
 }
-
 EMailInputInterface.prototype = new TextInputInterface();
 
 EMailInputInterface.prototype._EMailChecker = /[\w\d][\w\-]*@[\w\d\-]+\.[\w\d]+/;
@@ -240,6 +263,14 @@ function BooleanInputInterface(fieldId, options) {
 }
 BooleanInputInterface.prototype = new InputInterface();
 
+BooleanInputInterface.parse = function parse(value) {
+    return ("" + value).trim().toLowerCase() === 'true';
+};
+
+BooleanInputInterface.stringify = function stringify(value) {
+    return "" + value;
+};
+
 BooleanInputInterface.prototype.isEmpty = function isEmpty() {
     return false;
 };
@@ -250,10 +281,6 @@ BooleanInputInterface.prototype._normalize = function _normalize(value) {
 
 BooleanInputInterface.prototype._checkValue = function _checkValue(newValue) {
     return (typeof newValue === 'boolean') ? InputValidationError.NO_ERROR : InputValidationError.BOOLEAN_ERROR;
-};
-
-BooleanInputInterface.prototype.parseFromPersistence = function parseFromPersistence(value) {
-    return typeof value === 'boolean' ? value : value.toLowerCase() === 'true';
 };
 
 /**
@@ -286,6 +313,14 @@ function SelectInputInterface(fieldId, desc) {
     this.inputElement = new StyledElements.StyledSelect(desc);
 }
 SelectInputInterface.prototype = new InputInterface();
+
+SelectInputInterface.parse = function parse(value) {
+    return value;
+};
+
+SelectInputInterface.stringify = function stringify(value) {
+    return "" + value;
+};
 
 SelectInputInterface.prototype._setValue = function _setValue(newValue) {
     var entries;

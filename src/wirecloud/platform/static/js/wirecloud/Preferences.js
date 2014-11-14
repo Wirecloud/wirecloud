@@ -121,6 +121,7 @@
 
             if ('value' in changes) {
                 preference.value = changes.value;
+                changes.value = Wirecloud.ui.InputInterfaceFactory.stringify(preference.meta.options.type, preference.value);
             }
 
             modifiedValues[name] = changes;
