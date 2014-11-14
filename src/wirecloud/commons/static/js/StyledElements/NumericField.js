@@ -31,14 +31,20 @@
             value = Math.round((value + inc) * 100) / 100;
 
             // Check for max & min values
-            if ((inc > 0) && value > this.options.max) {
+            if (value > this.options.max) {
                 value = this.options.max;
-            } else if ((inc < 0) && value < this.options.min) {
+            } else if (value < this.options.min) {
                 value = this.options.min;
             }
-
-            this.inputElement.value = value;
+        } else if (inc > 0 && this.options.min !== Number.NEGATIVE_INFINITY) {
+            value = this.options.min;
+        } else if (inc < 0 && this.options.max !== Number.POSITIVE_INFINITY) {
+            value = this.options.max;
+        } else {
+            value = 0;
         }
+
+        this.inputElement.value = value;
     };
 
     var onfocus = function onfocus() {
