@@ -186,17 +186,15 @@ NumberInputInterface.parse = function parse(value) {
     return Number(value);
 };
 
+NumberInputInterface.prototype._normalize = function _normalize(value) {
+    return Number(value);
+};
+
 NumberInputInterface.prototype._checkValue = function _checkValue(newValue) {
-    if (this.inputElement.min !== undefined) {
-        if (newValue < this.inputElement.options.min) {
-            return InputValidationError.OUT_OF_RANGE_ERROR;
-        }
+    if (!Number.isFinite(newValue) || newValue < this.inputElement.options.min || newValue > this.inputElement.options.max) {
+        return InputValidationError.OUT_OF_RANGE_ERROR;
     }
-    if (this.inputElement.max !== undefined) {
-        if (newValue < this.inputElement.options.max) {
-            return InputValidationError.OUT_OF_RANGE_ERROR;
-        }
-    }
+
     return InputValidationError.NO_ERROR;
 };
 

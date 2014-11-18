@@ -21,6 +21,17 @@
     @include transition(border linear 0.2s, box-shadow linear 0.2s);
 }
 
+@mixin input-variant($color, $border) {
+    color: $color;
+    border-color: $border;
+    @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075));
+
+    &:focus {
+        border-color: darken($border, 10%);
+        @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px $border);
+    }
+}
+
 @mixin input-base() {
     @include input-root-style();
     @include input-box();
@@ -39,13 +50,6 @@
     }
 
     &.error {
-        color: #b94a48;
-        border-color: #b94a48;
-        @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075));
-    }
-
-    &.error:focus {
-        border-color: #953b39;
-        @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392);
+        @include input-variant($state-danger-text, $state-danger-border);
     }
 }
