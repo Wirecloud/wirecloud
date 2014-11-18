@@ -28,7 +28,7 @@ import time
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils import expected_conditions as WEC
@@ -1080,6 +1080,93 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(iwidgets[1].layout_position, (0, 0))
 
     test_move_widget_interchange.tags = ('wirecloud-selenium', 'dragboard')
+
+    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    def test_basic_layout_parameter_change(self):
+
+        self.login(username="admin")
+
+        with self.wallet as wallet:
+            resource = wallet.search_in_results('Context Inspector')
+            widget = resource.instantiate()
+
+        # Check initial sizes
+        with widget:
+            old_width_from_context = int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text)
+            self.assertEqual(old_width_from_context, 6)
+
+        # Change layout type (to gridlayout)
+        self.open_menu().click_entry('Settings')
+        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.window_menu.workspace_preferences')
+
+        workspace_preferences_dialog.find_element_by_css_selector('.icon-cogs').click()
+        layout_settings_dialog = self.wait_element_visible_by_css_selector('.window_menu.layout_settings')
+        columns_input = layout_settings_dialog.find_element_by_css_selector('[name="columns"]')
+        self.fill_form_input(columns_input, '10')
+        layout_settings_dialog.find_element_by_xpath("//*[text()='Accept']").click()
+
+        workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
+
+        # Check new sizes
+        with widget:
+            width_changes = self.driver.find_element_by_css_selector('[data-name="width"] .badge').text
+            self.assertEqual(width_changes, '1')
+            height_changes = self.driver.find_element_by_css_selector('[data-name="height"] .badge').text
+            self.assertEqual(height_changes, '0')
+
+            new_width_from_context = self.driver.find_element_by_css_selector('[data-name="width"] .content').text
+            self.assertEqual(new_width_from_context, '3')
+
+            width_in_pixels_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+            self.assertEqual(width_in_pixels_changes, '0')
+            height_in_pixels_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+            self.assertEqual(height_in_pixels_changes, '0')
+
+    test_basic_layout_parameter_change.tags = ('wirecloud-selenium', 'dragboard')
+
+    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    def test_layout_type_change(self):
+
+        self.login(username="admin")
+
+        with self.wallet as wallet:
+            resource = wallet.search_in_results('Context Inspector')
+            widget = resource.instantiate()
+
+        # Check initial sizes
+        with widget:
+            old_size_from_context = (
+                int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text),
+                int(self.driver.find_element_by_css_selector('[data-name="height"] .content').text),
+            )
+            old_size_in_pixels_from_context = (
+                int(self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .content').text),
+                int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .content').text),
+            )
+            self.assertEqual(old_size_from_context, (6, 18))
+
+        # Change layout columns
+        self.open_menu().click_entry('Settings')
+        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.window_menu.workspace_preferences')
+        layout_type_select = Select(workspace_preferences_dialog.find_element_by_css_selector('[name="baselayout-type"]'))
+        layout_type_select.select_by_value('gridlayout')
+        workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
+
+        # Check new sizes
+        with widget:
+            new_size_from_context = (
+                int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text),
+                int(self.driver.find_element_by_css_selector('[data-name="height"] .content').text),
+            )
+            new_size_in_pixels_from_context = (
+                int(self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .content').text),
+                int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .content').text),
+            )
+            self.assertEqual(new_size_from_context[0], old_size_from_context[0])
+            self.assertNotEqual(new_size_from_context[1], old_size_from_context[1])
+            self.assertEqual(new_size_in_pixels_from_context[0], old_size_in_pixels_from_context[0])
+
+    test_layout_type_change.tags = ('wirecloud-selenium', 'dragboard')
 
 
 @wirecloud_selenium_test_case
