@@ -1,4 +1,4 @@
-label {
+label.checkbox, label.radio {
     cursor: pointer;
 }
 
