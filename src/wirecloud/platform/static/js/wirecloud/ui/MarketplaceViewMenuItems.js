@@ -120,7 +120,8 @@
 
             item = new StyledElements.MenuItem(gettext('Delete marketplace'), function () {
                 //First ask if the user really wants to remove the marketplace
-                var msg = gettext('Do you really want to remove the marketplace ') + this.market.alternatives.getCurrentAlternative().getLabel() + '?';
+                var msg = gettext('Do you really want to remove the marketplace "%(marketName)s"?');
+                msg = Wirecloud.Utils.interpolate(msg, {'marketName': this.market.alternatives.getCurrentAlternative().getLabel()});
                 var dialog = new Wirecloud.ui.AlertWindowMenu();
                 dialog.setMsg(msg);
                 dialog.setHandler(function () {
