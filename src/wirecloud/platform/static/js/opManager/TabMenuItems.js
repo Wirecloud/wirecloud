@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,21 +19,34 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, StyledElements*/
+/*global gettext, StyledElements, Wirecloud*/
 
 (function () {
 
     "use strict";
 
-    var TabMenuItems = function (tab) {
+    var onTabRemove = function onTabRemove(tab) {
+        if (tab.getIWidgets().length !== 0) {
+            var msg = gettext('Do you really want to delete the tab "%(tabName)s"?');
+            msg = Wirecloud.Utils.interpolate(msg, {tabName: tab.getName()});
+            var dialog = new Wirecloud.ui.AlertWindowMenu();
+            dialog.setMsg(new StyledElements.Fragment(msg));
+            dialog.setHandler(tab.workspace.removeTab.bind(tab.workspace, tab));
+            dialog.show();
+        } else {
+            tab.workspace.removeTab(tab);
+        }
+    };
+
+    var TabMenuItems = function TabMenuItems(tab) {
         StyledElements.DynamicMenuItems.call(this);
 
         this.tab = tab;
     };
     TabMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
-    TabMenuItems.prototype.build = function () {
-        var items, item, fulldragboard_label;
+    TabMenuItems.prototype.build = function build() {
+        var items, item;
 
         items = [];
 
@@ -53,10 +66,10 @@
 
         item = new StyledElements.MenuItem(
             gettext("Remove"),
-            this.tab.workspace.removeTab.bind(this.tab.workspace, this.tab)
+            onTabRemove.bind(null, this.tab)
         );
         items.push(item);
-        item.setDisabled(!this.tab.isAllowed('remove'))
+        item.setDisabled(!this.tab.isAllowed('remove'));
 
         items.push(new StyledElements.MenuItem(
             gettext("Settings"),

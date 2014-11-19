@@ -66,7 +66,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         new_tab.element.click()
         new_tab.open_menu().check(must_be=('Rename', 'Remove')).close()
 
-        # Remove the recently created one
+        # Remove the recently created one (no confirmation needed as the tab is empty)
         new_tab.open_menu().click_entry('Remove')
         self.wait_wirecloud_ready()
         self.assertEqual(self.count_workspace_tabs(), 1)
@@ -120,6 +120,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         tab = self.get_workspace_tab_by_name('Tab 1')
         tab.open_menu().click_entry('Remove')
+        # Confirm tab deletion
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
         with self.wiring_view as wiring:
             self.assertIsNone(wiring.get_iwidget(iwidgets[0]))
@@ -380,7 +382,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(iwidget.name, 'Other Test')
 
         # Remove a widget
-
         iwidget.remove()
 
         self.driver.refresh()
@@ -399,6 +400,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Remove the tab with widgets
         tab = self.get_workspace_tab_by_name('Other Name')
         tab.open_menu().click_entry('Remove')
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
         self.wait_wirecloud_ready()
 
         self.driver.refresh()

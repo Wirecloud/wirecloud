@@ -45,11 +45,14 @@
      * Updates the message displayed by this <code>WindowMenu</code>
      */
     AlertWindowMenu.prototype.setMsg = function setMsg(msg) {
-        this.msgElement.textContent = msg;
-
-        if (Wirecloud.Utils.XML.isElement(this.htmlElement.parentNode)) {
-            this.calculatePosition();
+        if (msg instanceof StyledElements.StyledElement) {
+            this.msgElement.innerHTML = '';
+            msg.insertInto(this.msgElement);
+        } else {
+            this.msgElement.textContent = msg;
         }
+
+        this.calculatePosition();
     };
 
     /**

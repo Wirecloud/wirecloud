@@ -56,6 +56,7 @@
     MessageWindowMenu.prototype.setMsg = function setMsg(msg) {
 
         if (msg instanceof StyledElements.StyledElement) {
+            this.msgElement.innerHTML = '';
             msg.insertInto(this.msgElement);
         } else {
             this.msgElement.textContent = msg;
