@@ -373,10 +373,10 @@ function Workspace(workspaceState, resources) {
 
     Workspace.prototype.initGUI = function initGUI() {
 
-        this.notebook.addEventListener("tabDeletion", function (tab) {
+        this.notebook.addEventListener("tabDeletion", function (notebook, tab) {
             delete this.tabInstances[tab.id];
             delete this.tabsByName[tab.getName()];
-        });
+        }.bind(this));
 
         if (this.isAllowed('edit')) {
             this.notebook.addEventListener('newTab', this.addTab.bind(this));
