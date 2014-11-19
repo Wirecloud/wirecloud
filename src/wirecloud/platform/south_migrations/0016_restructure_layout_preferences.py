@@ -3,32 +3,81 @@ import json
 
 from south.v2 import DataMigration
 
-from wirecloud.platform.preferences.views import get_workspace_preference_values
+
+DEFAULT_LAYOUT_PREFERENCE_VALUES = {
+    'smart': 'true',
+    'columns': '20',
+    'cell-height': '13',
+    'horizontal-margin': 4,
+    'vertical-margin': 3
+}
+
+
+def process_layout_preferences(preferences):
+    processed_values = DEFAULT_LAYOUT_PREFERENCE_VALUES.copy()
+    for preference in preferences:
+        processed_values[preference.name] = preference.value
+
+    return processed_values
 
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
+
         for workspace in orm.Workspace.objects.all():
+
+            changes = False
+
             workspace.workspacepreference_set.filter(name='layout').update(name='initiallayout')
             preferences = workspace.workspacepreference_set.filter(name__in=('smart', 'columns', 'cell-height', 'horizontal-margin', 'vertical-margin'))
             if preferences.count() > 0:
-                processed_values = get_workspace_preference_values(workspace)
+
+                changes = True
+
+                processed_values = process_layout_preferences(preferences)
                 workspace.workspacepreference_set.create(
                     name='baselayout',
                     value=json.dumps({
                         "type": "columnlayout",
-                        "smart": processed_values['smart']['value'].strip().lower() == 'true',
-                        "columns": int(processed_values['columns']['value']),
-                        "cellheight": int(processed_values['cell-height']['value']),
-                        "horizontalmargin": int(processed_values['horizontal-margin']['value']),
-                        "verticalmargin": int(processed_values['vertical-margin']['value'])
+                        "smart": processed_values['smart'].strip().lower() == 'true',
+                        "columns": int(processed_values['columns']),
+                        "cellheight": int(processed_values['cell-height']),
+                        "horizontalmargin": int(processed_values['horizontal-margin']),
+                        "verticalmargin": int(processed_values['vertical-margin'])
                     })
                 )
                 preferences.delete()
+
+            for tab in workspace.tab_set.all():
+                tab.tabpreference_set.filter(name='layout').update(name='initiallayout')
+                preferences = tab.tabpreference_set.filter(name__in=('smart', 'columns', 'cell-height', 'horizontal-margin', 'vertical-margin'))
+
+                if preferences.count() > 0:
+
+                    changes = True
+
+                    processed_values = process_layout_preferences(preferences)
+                    tab.tabpreference_set.create(
+                        name='baselayout',
+                        value=json.dumps({
+                            "type": "columnlayout",
+                            "smart": processed_values['smart'].strip().lower() == 'true',
+                            "columns": int(processed_values['columns']),
+                            "cellheight": int(processed_values['cell-height']),
+                            "horizontalmargin": int(processed_values['horizontal-margin']),
+                            "verticalmargin": int(processed_values['vertical-margin'])
+                        })
+                    )
+                    preferences.delete()
+
+            if changes:
                 workspace.save()  # Invalidate workspace cache
 
     def backwards(self, orm):
+
+        raise RuntimeError("Cannot reverse this migration.")
+
         for workspace in orm.Workspace.objects.all():
             workspace.workspacepreference_set.filter(name='initiallayout').update(name='layout')
             try:
@@ -43,7 +92,7 @@ class Migration(DataMigration):
 
             workspace.workspacepreference_set.create(name='smart', value=baselayout.get('smart', True))
             workspace.workspacepreference_set.create(name='columns', value=baselayout.get('columns', 20))
-            workspace.workspacepreference_set.create(name='cell-height', value=baselayout.get('cellheight', 12))
+            workspace.workspacepreference_set.create(name='cell-height', value=baselayout.get('cellheight', 13))
             workspace.workspacepreference_set.create(name='horizontal-margin', value=baselayout.get('horizontalmargin', 4))
             workspace.workspacepreference_set.create(name='vertical-margin', value=baselayout.get('verticalmargin', 3))
 
