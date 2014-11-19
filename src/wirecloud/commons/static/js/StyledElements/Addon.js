@@ -63,6 +63,15 @@
     };
     Addon.prototype = new StyledElements.Container();
 
+    Addon.prototype.setDisabled = function setDisabled(disabled) {
+        if (disabled) {
+            this.addClassName('disabled');
+        } else {
+            this.removeClassName('disabled');
+        }
+        this.enabled = !disabled;
+    };
+
     Addon.prototype.setLabel = function setLabel(label) {
         this.clear();
         this.wrapperElement.textContent = label;
