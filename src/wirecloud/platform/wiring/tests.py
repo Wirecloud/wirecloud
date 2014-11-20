@@ -753,6 +753,12 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(ioperator.error_count, 1)
             self.assertEqual(target_iwidget.error_count, 0)
 
+            ioperator.element.find_element_by_css_selector('.specialIcon').click()
+            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
+            ioperator.element.find_element_by_css_selector('.icon-warning-sign').click()
+            self.wait_element_visible_by_css_selector('.window_menu.logwindowmenu')
+            self.driver.find_element_by_xpath("//*[text()='Close']").click()
+
     def test_input_endpoint_exceptions(self):
 
         # Enable widget exceptions
