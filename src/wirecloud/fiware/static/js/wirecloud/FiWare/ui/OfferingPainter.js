@@ -158,34 +158,6 @@
                     return gettext('N/A');
                 }
             },
-            'doc': function () {
-                var button;
-
-                button = new StyledElements.StyledButton({
-                    'plain': true,
-                    'class': 'icon-doc',
-                    'title': gettext('Documentation')
-                });
-                button.addEventListener('click', function () {
-                    window.open(offering.getUriWiki(), '_blank');
-                });
-
-                return button;
-            },
-            'home': function () {
-                var button;
-
-                button = new StyledElements.StyledButton({
-                    'plain': true,
-                    'class': 'icon-home',
-                    'title': gettext('Home page')
-                });
-                button.addEventListener('click', function () {
-                    window.open(offering.getUriWiki(), '_blank');
-                });
-
-                return button;
-            },
             'rating': this.get_popularity_html.bind(this, offering.rating),
             'mainbutton': function () {
                 var button, local_catalogue_view, resource;
