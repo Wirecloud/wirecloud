@@ -87,6 +87,7 @@ TUTORIAL_FILES = (
 STYLED_ELEMENTS_FILES = (
     'js/StyledElements/ObjectWithEvents.js',
     'js/StyledElements/StyledElements.js',
+    'js/StyledElements/InputElement.js',
     'js/StyledElements/Container.js',
     'js/StyledElements/Addon.js',
     'js/StyledElements/Accordion.js',
@@ -121,7 +122,10 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/BorderLayout.js',
     'js/StyledElements/ModelTable.js',
     'js/StyledElements/EditableElement.js',
+    'js/StyledElements/HiddenField.js',
+    'js/StyledElements/ButtonsGroup.js',
     'js/StyledElements/CheckBox.js',
+    'js/StyledElements/RadioButton.js',
     'js/StyledElements/InputInterface.js',
     'js/StyledElements/InputInterfaces.js',
     'js/wirecloud/ui/ParametrizableValueInputInterface.js',

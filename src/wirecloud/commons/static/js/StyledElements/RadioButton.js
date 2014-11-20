@@ -28,27 +28,23 @@
     /**
      *
      */
-    var CheckBox = function StyledCheckBox(options) {
-
+    var StyledRadioButton = function StyledRadioButton(options) {
         var defaultOptions = {
-            'initialValue': false,
+            'initiallyChecked': false,
             'class': '',
             'group': null,
-            'secondInput': null,
-            'value': true
+            'value': null
         };
         options = Wirecloud.Utils.merge(defaultOptions, options);
 
-        // This is needed for backward compatibility
-        if ('initiallyChecked' in options) {
-            options.initialValue = options.initiallyChecked;
-        }
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
+        StyledElements.StyledInputElement.call(this, options.initiallyChecked, ['change']);
 
         this.wrapperElement = document.createElement("input");
-        this.wrapperElement.className = 'checkbox';
 
-        this.wrapperElement.setAttribute("type", "checkbox");
+        this.wrapperElement.setAttribute("type", "radio");
+        if (options.value != null) {
+            this.wrapperElement.setAttribute("value", options.value);
+        }
         this.inputElement = this.wrapperElement;
 
         if (options.name != null) {
@@ -59,10 +55,9 @@
             this.wrapperElement.setAttribute("id", options.id);
         }
 
-        this.value = options.value;
-        this.inputElement.setAttribute("value", options.value);
-        this.secondInput = options.secondInput;
-        this.setValue(options.initialValue);
+        if (options.initiallyChecked === true) {
+            this.inputElement.setAttribute("checked", true);
+        }
 
         if (options.group instanceof StyledElements.ButtonsGroup) {
             this.wrapperElement.setAttribute("name", options.group.name);
@@ -77,40 +72,31 @@
         this.inputElement.addEventListener('change',
                                     function () {
                                         if (this.enabled) {
-                                            if (this.secondInput != null) {
-                                                this.secondInput.setDisabled(!this.inputElement.checked);
-                                            }
                                             this.events.change.dispatch(this);
                                         }
                                     }.bind(this),
                                     true);
     };
+    StyledRadioButton.prototype = new StyledElements.StyledInputElement();
 
-    CheckBox.prototype = new StyledElements.StyledInputElement();
-
-    CheckBox.prototype.reset = function reset() {
-        this.setValue(this.defaultValue);
+    StyledRadioButton.prototype.insertInto = function insertInto(element, refElement) {
+        var checked = this.inputElement.checked; // Necesario para IE
+        StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
+        this.inputElement.checked = checked; // Necesario para IE
     };
 
-    CheckBox.prototype.getValue = function getValue() {
-        if (this.value === true && this.secondInput == null) {
-            return this.inputElement.checked;
-        } else if (this.secondInput == null) {
-            return this.inputElement.checked ? this.value : null;
-        } else {
-            return this.secondInput.getValue();
-        }
+    StyledRadioButton.prototype.reset = function reset() {
+        this.inputElement.checked = this.defaultValue;
+
+        return this;
     };
 
-    CheckBox.prototype.setValue = function setValue(newValue) {
-        this.inputElement.checked = newValue != null && newValue != false;
-        if (this.secondInput != null) {
-            this.secondInput.setDisabled(!this.inputElement.checked);
-            if (this.inputElement.checked) {
-                this.secondInput.setValue(newValue);
-            }
-        }
+    StyledRadioButton.prototype.setValue = function setValue(newValue) {
+        this.inputElement.checked = newValue;
+
+        return this;
     };
 
-    StyledElements.StyledCheckBox = CheckBox;
+    StyledElements.StyledRadioButton = StyledRadioButton;
+
 })();
