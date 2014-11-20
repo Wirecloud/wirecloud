@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global CommandQueue, CSSPrimitiveValue, StyledElements, Wirecloud*/
+/*global CSSPrimitiveValue, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -191,7 +191,7 @@
             return stepTimes; // we have things to do
         };
 
-        this.transitionsQueue = new CommandQueue(context, initFunc, stepFunc);
+        this.transitionsQueue = new StyledElements.CommandQueue(context, initFunc, stepFunc);
 
         /* Code for handling internal events */
         this.moveLeftButton.addEventListener("click", this.shiftLeftTabs.bind(this));

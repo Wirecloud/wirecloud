@@ -19,7 +19,7 @@
  *
  */
 
-/*global CommandQueue, StyledElements, Wirecloud*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -158,7 +158,7 @@
             return stepTimes; // we have things to do
         };
 
-        this.transitionsQueue = new CommandQueue(context, initFunc, stepFunc);
+        this.transitionsQueue = new StyledElements.CommandQueue(context, initFunc, stepFunc);
     };
     StyledAlternatives.prototype = new StyledElements.StyledElement();
     StyledAlternatives.HORIZONTAL_SLICE = "HorizontalSlice";

@@ -88,6 +88,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/ObjectWithEvents.js',
     'js/StyledElements/StyledElements.js',
     'js/StyledElements/InputElement.js',
+    'js/StyledElements/CommandQueue.js',
     'js/StyledElements/Container.js',
     'js/StyledElements/Addon.js',
     'js/StyledElements/Accordion.js',
