@@ -275,6 +275,77 @@ class Oauth2TestCase(WirecloudTestCase):
 
     test_authorization_code_grant_flow.tags = ('wirecloud-oauth2provider', 'fiware-ut-9')
 
+    def test_refresh_token_invalid_client_id(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'refresh_token': 'expired_token_refresh_token',
+            'grant_type': 'refresh_token',
+            'client_id': 'invalid_client_id',
+            'client_secret': '9643b7c3f59ef531931d39a3e19bcdd7',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_refresh_token_invalid_client_secret(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'refresh_token': 'expired_token_refresh_token',
+            'grant_type': 'refresh_token',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': 'invalid_client_secret',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_refresh_token_invalid_refresh_token(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'refresh_token': 'invalid_refresh_token',
+            'grant_type': 'refresh_token',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': 'invalid_client_secret',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_refresh_token_missing_refresh_token(self):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'grant_type': 'refresh_token',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': 'invalid_client_secret',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_refresh_token(self):
+        url = reverse('oauth2provider.token')
+        data = {
+            'refresh_token': 'expired_token_refresh_token',
+            'grant_type': 'refresh_token',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': '9643b7c3f59ef531931d39a3e19bcdd7',
+        }
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        token = response_data['access_token']
+        token_type = response_data['token_type']
+        self.assertEqual(token_type, 'Bearer')
+
+        # Make an authenticated request
+        self.check_token_is_valid(token)
+
+        # Using again the initial refresh token should fail
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 400)
+
     def test_authorization_bad_token(self):
         self.check_token_is_invalid('invalid_token')
 

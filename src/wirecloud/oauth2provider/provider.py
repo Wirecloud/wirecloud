@@ -43,21 +43,16 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
     def get_client(self, client_id):
         return Application.objects.get(client_id=client_id)
 
-    def validate_client_secret(self, client_id, client_secret):
-        return Application.objects.filter(client_id=client_id, client_secret=client_secret).exists()
+    def validate_client_secret(self, client, client_secret):
+        return client.client_secret == client_secret
 
-    def validate_redirect_uri(self, client_id, redirect_uri):
-        try:
-            app = Application.objects.get(client_id=client_id)
-        except:
-            return False
-
-        return app.redirect_uri == redirect_uri.split('?', 1)[0]
+    def validate_redirect_uri(self, client, redirect_uri):
+        return client.redirect_uri == redirect_uri.split('?', 1)[0]
 
     def validate_access(self):
         return True
 
-    def validate_scope(self, client_id, scope):
+    def validate_scope(self, client, scope):
         return True
 
     def persist_authorization_code(self, user, client, code, scope):
@@ -84,7 +79,7 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
     def from_authorization_code(self, client_id, code, scope):
         try:
             code = Code.objects.get(client_id=client_id, scope=scope, code=code)
-        except:
+        except Code.DoesNotExist:
             return None
 
         return {
@@ -97,4 +92,16 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
         Code.objects.filter(client_id=client_id, code=code).delete()
 
     def from_refresh_token(self, client_id, refresh_token, scope):
-        pass
+        try:
+            token = Token.objects.get(client_id=client_id, scope=scope, refresh_token=refresh_token)
+        except Token.DoesNotExist:
+            return None
+
+        return {
+            'client_id': client_id,
+            'scope': scope,
+            'user_id': token.user.id
+        }
+
+    def discard_refresh_token(self, client_id, refresh_token):
+        Token.objects.filter(client_id=client_id, refresh_token=refresh_token).delete()

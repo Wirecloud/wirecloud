@@ -55,9 +55,13 @@ def provide_authorization_code(request):
         return provider._make_redirect_error_response(params['redirect_uri'], 'invalid_request')
 
     if request.method == 'GET':
-        error_response = provider.validate_authorization_code_request(request, request.user, **params)
+        try:
+            client = provider.get_client(params['client_id'])
+        except:
+            client = None
+        error_response = provider.validate_authorization_code_request(request, request.user, client=client, **params)
         if error_response is None:
-            return render(request, 'wirecloud/oauth2provider/auth.html', {'app': provider.get_client(params['client_id'])})
+            return render(request, 'wirecloud/oauth2provider/auth.html', {'app': client})
         else:
             return error_response
     else:

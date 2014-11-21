@@ -33,7 +33,7 @@
             "client": "3faf0fb4c2fe76c1c3bb7d09c21b97c2",
             "user": 1,
             "token_type": "Bearer",
-            "refresh_token": "refresh_token",
+            "refresh_token": "expired_token_refresh_token",
             "creation_timestamp": 0,
             "expires_in": 3600
         }
@@ -45,7 +45,7 @@
             "client": "3faf0fb4c2fe76c1c3bb7d09c21b97c2",
             "user": 2,
             "token_type": "Bearer",
-            "refresh_token": "refresh_token",
+            "refresh_token": "eternal_token1_refresh_token",
             "creation_timestamp": 99999999999999,
             "expires_in": 3600
         }
@@ -57,7 +57,7 @@
             "client": "3faf0fb4c2fe76c1c3bb7d09c21b97c2",
             "user": 2,
             "token_type": "Bearer",
-            "refresh_token": "refresh_token",
+            "refresh_token": "eternal_token2_refresh_token",
             "creation_timestamp": 99999999999999,
             "expires_in": 3600
         }
@@ -69,7 +69,7 @@
             "client": "7fafcfb4c2fe76c1c3cb7d09c21b97c2",
             "user": 2,
             "token_type": "Bearer",
-            "refresh_token": "refresh_token",
+            "refresh_token": "eternal_token3_refresh_token",
             "creation_timestamp": 99999999999999,
             "expires_in": 3600
         }
