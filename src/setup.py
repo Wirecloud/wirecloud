@@ -113,6 +113,7 @@ setup(
         'pycrypto',
         'pyScss==1.2.0.post3',
         'Pygments',
+        'mock>=1.0,<2.0',
     ),
     tests_require=('django-nose'),
     classifiers=(
