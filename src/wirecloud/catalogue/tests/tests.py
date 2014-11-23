@@ -483,7 +483,7 @@ class WGTDeploymentTestCase(WirecloudTestCase):
 
         self.assertFalse(response.status_code > 200 and response.status_code < 300)
 
-    def test_upload_of_packaged_widget(self):
+    def test_upload_of_basic_packaged_widget(self):
         User.objects.create_user('test', 'test@example.com', 'test')
         widget_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
@@ -515,6 +515,21 @@ class WGTDeploymentTestCase(WirecloudTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(os.path.exists(widget_path))
+
+    def test_upload_of_packaged_widget(self):
+
+        user = User.objects.create_user('test', 'test@example.com', 'test')
+        c = Client()
+
+        c.login(username='test', password='test')
+        with open(os.path.join(os.path.dirname(__file__), '../../commons/test-data/Wirecloud_Test_1.0.wgt')) as f:
+            response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
+
+        self.assertEqual(response.status_code, 200)
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
+        widget_info = get_resource_data(resource, user)
+        self.assertEqual(widget_info['description'], 'This widget is used to test some of the features of the Wirecloud platform')
+        self.assertEqual(widget_info['longdescription'], '<p>This widget is used for <strong>testing</strong> some of the features provided by Wirecloud</p>')
 
     def test_upload_of_packaged_operators(self):
         User.objects.create_user('test', 'test@example.com', 'test')
