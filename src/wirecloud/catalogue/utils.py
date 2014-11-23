@@ -189,19 +189,15 @@ def get_resource_data(resource, user, request=None):
     """Gets all the information related to the given resource."""
     resource_info = resource.get_processed_info(request)
 
-    size = None
-    if urlparse(resource.template_uri).scheme == '':
-        template_uri = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
-            'vendor': resource.vendor,
-            'name': resource.short_name,
-            'version': resource.version,
-            'file_path': resource.template_uri
-        }, request=request)
+    template_uri = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
+        'vendor': resource.vendor,
+        'name': resource.short_name,
+        'version': resource.version,
+        'file_path': resource.template_uri
+    }, request=request)
 
-        wgt_path = os.path.join(wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version), resource.template_uri)
-        size = os.path.getsize(wgt_path)
-    else:
-        template_uri = resource.template_uri
+    wgt_path = os.path.join(wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version), resource.template_uri)
+    size = os.path.getsize(wgt_path)
 
     cdate = resource.creation_date
     creation_timestamp = time.mktime(cdate.timetuple()) * 1e3 + cdate.microsecond / 1e3
