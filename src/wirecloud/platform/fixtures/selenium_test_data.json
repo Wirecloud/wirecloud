@@ -113,6 +113,8 @@
         "fields": {
             "name": "ExistingWorkspace",
             "creator": 4,
+            "description": "This is an <b>example</b> of workspace",
+            "longdescription": "This is an **example** of workspace",
             "wiringStatus": "{\"operators\": {}, \"connections\": []}"
         }
     },

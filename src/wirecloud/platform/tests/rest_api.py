@@ -757,6 +757,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response_data['creator'], 'user_with_workspaces')
         self.assertTrue('wiring' in response_data)
 
+        self.assertEqual(response_data['description'], 'This is an <b>example</b> of workspace')
+        self.assertEqual(response_data['longdescription'], '<p>This is an <strong>example</strong> of workspace</p>')
         self.assertTrue('tabs' in response_data)
         self.assertTrue(isinstance(response_data['tabs'], list))
         self.assertTrue(len(response_data['tabs']) > 0)
