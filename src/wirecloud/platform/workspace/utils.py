@@ -213,12 +213,6 @@ def _get_cached_variables(iwidget):
     return variables
 
 
-def _invalidate_cached_variables(iwidget):
-    key = _variable_cache_key(iwidget)
-    cache.delete(key)
-    iwidget.tab.workspace.save()  # Invalidate workspace cache
-
-
 def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     """ populates VariableValue cached values for that user """
     values_by_varid = {}
@@ -310,14 +304,6 @@ def get_variable_value_from_varname(user, iwidget, var_name):
     return value
 
 
-def _invalidate_cached_variable_values(workspace, user):
-    key = _variable_values_cache_key(workspace, user)
-    cache.delete(key)
-
-    key = _workspace_cache_key(workspace, user)
-    cache.delete(key)
-
-
 class VariableValueCacheManager():
 
     workspace = None
@@ -383,9 +369,6 @@ class VariableValueCacheManager():
         data_ret['hidden'] = entry['hidden']
 
         return data_ret
-
-    def invalidate(self):
-        _invalidate_cached_variable_values(self.workspace, self.user)
 
 
 def get_workspace_data(workspace, user):
