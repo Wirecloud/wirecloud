@@ -78,27 +78,6 @@ class Migration(DataMigration):
 
         raise RuntimeError("Cannot reverse this migration.")
 
-        for workspace in orm.Workspace.objects.all():
-            workspace.workspacepreference_set.filter(name='initiallayout').update(name='layout')
-            try:
-                baselayout_preference = workspace.workspacepreference_set.get(name='baselayout')
-            except orm.WorkspacePreference.DoesNotExist:
-                continue
-
-            baselayout = json.loads(baselayout_preference.value)
-
-            if baselayout['type'] != 'columnlayout':
-                raise Exception()
-
-            workspace.workspacepreference_set.create(name='smart', value=baselayout.get('smart', True))
-            workspace.workspacepreference_set.create(name='columns', value=baselayout.get('columns', 20))
-            workspace.workspacepreference_set.create(name='cell-height', value=baselayout.get('cellheight', 13))
-            workspace.workspacepreference_set.create(name='horizontal-margin', value=baselayout.get('horizontalmargin', 4))
-            workspace.workspacepreference_set.create(name='vertical-margin', value=baselayout.get('verticalmargin', 3))
-
-            baselayout_preference.delete()
-            workspace.save()  # Invalidate workspace cache
-
     models = {
         u'auth.group': {
             'Meta': {'object_name': 'Group'},

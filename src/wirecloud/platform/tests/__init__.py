@@ -21,6 +21,7 @@
 from wirecloud.platform.tests.base import BasicViewsAPI
 from wirecloud.platform.tests.plugins import WirecloudPluginTestCase
 from wirecloud.platform.tests.rest_api import ApplicationMashupAPI, ResourceManagementAPI, ExtraApplicationMashupAPI
+from wirecloud.platform.tests.south_migrations import PlatformSouthMigrationsTestCase
 from wirecloud.platform.localcatalogue.tests import LocalCatalogueTestCase, PackagedResourcesTestCase
 from wirecloud.platform.wiring.tests import WiringTestCase, OperatorCodeEntryTestCase
 from wirecloud.platform.widget.tests import CodeTransformationTestCase
