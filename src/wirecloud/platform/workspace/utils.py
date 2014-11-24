@@ -20,11 +20,7 @@
 from __future__ import unicode_literals
 
 import base64
-try:
-    from Crypto.Cipher import AES
-    HAS_AES = True
-except ImportError:
-    HAS_AES = False
+from Crypto.Cipher import AES
 import json
 import re
 
@@ -85,9 +81,6 @@ def setVisibleTab(user, workspace_id, tab):
 
 
 def encrypt_value(value):
-    if not HAS_AES:
-        return value
-
     cipher = AES.new(settings.SECRET_KEY[:32])
     json_value = json.dumps(value, ensure_ascii=False).encode('utf8')
     padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * b' '
@@ -95,9 +88,6 @@ def encrypt_value(value):
 
 
 def decrypt_value(value):
-    if not HAS_AES:
-        return value
-
     cipher = AES.new(settings.SECRET_KEY[:32])
     try:
         value = cipher.decrypt(base64.b64decode(value))

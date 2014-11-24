@@ -32,7 +32,7 @@ from django.utils.importlib import import_module
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
 from wirecloud.platform.models import Variable
 from wirecloud.platform.plugins import clear_cache
-from wirecloud.platform.workspace.utils import HAS_AES, set_variable_value
+from wirecloud.platform.workspace.utils import set_variable_value
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -291,7 +291,6 @@ class ProxyTests(ProxyTestsBase):
         self.assertEqual(response.cookies[str('newcookie3')]['path'], cookie_path)
 
 
-@unittest.skipIf(not HAS_AES, 'python-crypto not found')
 class ProxySecureDataTests(ProxyTestsBase):
 
     tags = ('proxy', 'proxy-secure-data')

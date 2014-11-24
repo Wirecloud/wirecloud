@@ -34,7 +34,7 @@ from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_xml_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 import wirecloud.platform.workspace.utils
-from wirecloud.platform.workspace.utils import get_global_workspace_data
+from wirecloud.platform.workspace.utils import get_global_workspace_data, set_variable_value
 from wirecloud.platform.workspace.views import createEmptyWorkspace
 
 
@@ -203,8 +203,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
     def setUpClass(cls):
 
         super(ParameterizedWorkspaceGenerationTestCase, cls).setUpClass()
-        cls.old_HAS_AES = wirecloud.platform.workspace.utils.HAS_AES
-        wirecloud.platform.workspace.utils.HAS_AES = False
 
         cls.forced_value_options = {
             'vendor': 'Wirecloud Test Suite',
@@ -229,12 +227,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                 }
             },
         }
-
-    @classmethod
-    def tearDownClass(cls):
-
-        super(ParameterizedWorkspaceGenerationTestCase, cls).tearDownClass()
-        wirecloud.platform.workspace.utils.HAS_AES = cls.old_HAS_AES
 
     def setUp(self):
 
@@ -349,6 +341,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                     self.fail()
 
             self.assertTrue(pref_with_val_found and readonly_pref_found and hidden_pref_found)
+
     def test_build_xml_template_from_workspace(self):
 
         options = {
@@ -417,9 +410,10 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         self.check_workspace_xml_wiring(template)
 
-    test_build_xml_template_from_workspace_read_only_widgets.tags = ('next',)
-
     def test_build_xml_template_from_workspace_forced_values(self):
+
+        set_variable_value(1, 'test_password')
+        set_variable_value(6, 'test_password')
 
         # Workspace with iwidgets
         template = build_xml_template_from_workspace(self.forced_value_options, self.workspace_with_iwidgets, self.user)
@@ -449,9 +443,10 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'hidden', 'true')
 
-    test_build_xml_template_from_workspace_forced_values.tags = ('next',)
-
     def test_build_rdf_template_from_workspace(self):
+
+        set_variable_value(1, 'test_password')
+        set_variable_value(6, 'test_password')
 
         options = {
             'vendor': 'Wirecloud Test Suite',
@@ -516,6 +511,9 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
     def test_build_rdf_template_from_workspace_read_only_widgets(self):
 
+        set_variable_value(1, 'test_password')
+        set_variable_value(6, 'test_password')
+
         # Workspace with iwidgets
         options = {
             'vendor': 'Wirecloud Test Suite',
@@ -553,9 +551,10 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
             self.assertTrue(username_found and password_found)
 
-    test_build_rdf_template_from_workspace_read_only_widgets.tags = ('next',)
-
     def test_build_rdf_template_from_workspace_forced_values(self):
+
+        set_variable_value(1, 'test_password')
+        set_variable_value(6, 'test_password')
 
         # Workspace with iwidgets
         graph = build_rdf_template_from_workspace(self.forced_value_options, self.workspace_with_iwidgets, self.user)
@@ -603,7 +602,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                         self.fail()
 
             self.assertTrue(username_found and password_found)
-    test_build_rdf_template_from_workspace_forced_values.tags = ('next',)
 
     def test_build_rdf_template_from_workspace_utf8_char(self):
         options = {
