@@ -91,9 +91,12 @@ class CatalogueResource(models.Model):
 
         return self.public or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0
 
+    def get_template_url(self, request=None, for_base=False):
+        return get_template_url(self.vendor, self.short_name, self.version, '' if for_base else self.template_uri, request=request)
+
     def get_template(self, request=None):
 
-        template_uri = get_template_url(self.vendor, self.short_name, self.version, self.template_uri, request=request)
+        template_uri = self.get_template_url()
         parser = TemplateParser(self.json_description, base=template_uri)
         return parser
 

@@ -21,9 +21,10 @@ from __future__ import unicode_literals
 
 from lxml import etree
 from lxml.html import fragment_fromstring, XHTMLParser
+from six.moves.urllib.parse import urljoin, urlparse
 
 
-def clean_html(code):
+def clean_html(code, base_url=None):
     parser = XHTMLParser()
     doc = fragment_fromstring(code, create_parent=True, parser=parser)
 
@@ -39,8 +40,27 @@ def clean_html(code):
     for event_attrib in doc.xpath("//@*[starts-with(name(), 'on')]"):
         event_attrib.getparent().attrib.pop(event_attrib.attrname)
 
-    # Add target="_blank" to links
+    # Remove audio elements
+    for audio_element in doc.xpath('//audio'):
+        audio_element.drop_tree()
+
+    # Force controls on videos
+    for element in doc.xpath('//video'):
+        element.attrib['controls'] = 'controls'
+
+    if base_url is not None:
+        # Fix relative media urls
+        for element in doc.xpath('//img[@src]|//video[@src]|source[@src]'):
+            element.attrib['src'] = urljoin(base_url, element.attrib['src'])
+
+    # Fix links
     for link_element in doc.xpath('//a[@href]'):
+        # Remove server relative links
+        if not urlparse(link_element.attrib['href']).netloc:
+            link_element.drop_tag()
+            continue
+
+        # Add target="_blank" to general links
         link_element.attrib['target'] = '_blank'
 
     return (doc.text or '') + ''.join([etree.tostring(child, method='xml') for child in doc.iterchildren()])

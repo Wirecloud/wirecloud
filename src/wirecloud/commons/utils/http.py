@@ -304,6 +304,10 @@ def get_current_scheme(request=None):
         return 'http'
 
 
+def force_trailing_slash(url):
+    return url if url[-1] == '/' else url + '/'
+
+
 def get_absolute_reverse_url(viewname, request=None, **kwargs):
     path = reverse(viewname, **kwargs)
     scheme = get_current_scheme(request)

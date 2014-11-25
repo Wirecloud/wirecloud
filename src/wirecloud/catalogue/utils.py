@@ -20,7 +20,8 @@
 import errno
 import json
 import os
-from six.moves.urllib.parse import urljoin, urlparse
+from six.moves.urllib.parse import urljoin
+from six.moves.urllib.request import pathname2url, url2pathname
 import time
 
 from django.conf import settings
@@ -31,7 +32,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import get_absolute_reverse_url
+from wirecloud.commons.utils.http import get_absolute_reverse_url, force_trailing_slash
 from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.wgt import InvalidContents, WgtDeployer, WgtFile
@@ -204,18 +205,20 @@ def get_resource_data(resource, user, request=None):
 
     longdescription = resource_info['longdescription']
     if longdescription != '':
-        longdescription_path = os.path.join(wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version), longdescription)
+        longdescription_relative_path = url2pathname(longdescription)
+        longdescription_base_url = force_trailing_slash(urljoin(resource.get_template_url(request=request, for_base=True), pathname2url(os.path.dirname(longdescription_relative_path))))
+        longdescription_path = os.path.join(wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version), longdescription_relative_path)
 
         (filename_root, filename_ext) = os.path.splitext(longdescription_path)
         localized_longdescription_path = filename_root + '.' + get_language() + filename_ext
 
         try:
             description_code = download_local_file(localized_longdescription_path)
-            longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'))
+            longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'), base_url=longdescription_base_url)
         except:
             try:
                 description_code = download_local_file(longdescription_path)
-                longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'))
+                longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'), base_url=longdescription_base_url)
             except:
                 longdescription = resource_info['description']
 

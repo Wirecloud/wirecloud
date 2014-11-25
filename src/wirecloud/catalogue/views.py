@@ -22,7 +22,8 @@ from __future__ import unicode_literals
 from io import BytesIO
 import os
 import json
-from six.moves.urllib.request import url2pathname
+from six.moves.urllib.parse import urljoin
+from six.moves.urllib.request import pathname2url, url2pathname
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -40,12 +41,12 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.models import search, suggest
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import get_latest_resource_version, get_resource_data, get_resource_group_data
-from wirecloud.catalogue.utils import add_packaged_resource, add_resource_from_template, delete_resource
+from wirecloud.catalogue.utils import add_packaged_resource, delete_resource
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
+from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types, force_trailing_slash
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 
@@ -217,7 +218,9 @@ class ResourceChangelogEntry(Resource):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
         resource_info = resource.get_processed_info(process_urls=False)
-        doc_path = os.path.join(catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version), url2pathname(resource_info['changelog']))
+        doc_relative_path = url2pathname(resource_info['changelog'])
+        doc_base_url = force_trailing_slash(urljoin(resource.get_template_url(request=request, for_base=True), pathname2url(os.path.dirname(doc_relative_path))))
+        doc_path = os.path.join(catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version), doc_relative_path)
 
         (doc_filename_root, doc_filename_ext) = os.path.splitext(doc_path)
         localized_doc_path = doc_filename_root + '.' + get_language() + doc_filename_ext
@@ -232,7 +235,8 @@ class ResourceChangelogEntry(Resource):
                 doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
         doc_code = doc_code.decode('utf-8')
-        doc = clean_html(markdown.markdown(doc_code.decode('utf8'), output_format='xhtml5'))
+        doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
+        doc = clean_html(doc_pre_html, base_url=doc_base_url)
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
 
 
@@ -245,11 +249,14 @@ class ResourceDocumentationEntry(Resource):
         if resource_info['doc'] == '':
             raise Http404
 
+        doc_base_url = None
         if resource_info['doc'].startswith(('http://', 'https://')):
             doc_code = _('You can find the documentation of this resource in this external <a target="_blank" href="%s">link</a>') % resource_info['doc']
             doc_code = '<div style="margin-top: 10px"><p>%s</p></div>' % doc_code
         else:
-            doc_path = os.path.join(catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version), url2pathname(resource_info['doc']))
+            doc_relative_path = url2pathname(resource_info['doc'])
+            doc_base_url = force_trailing_slash(urljoin(resource.get_template_url(request=request, for_base=True), pathname2url(os.path.dirname(doc_relative_path))))
+            doc_path = os.path.join(catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version), doc_relative_path)
 
             (doc_filename_root, doc_filename_ext) = os.path.splitext(doc_path)
             localized_doc_path = doc_filename_root + '.' + get_language() + doc_filename_ext
@@ -264,5 +271,6 @@ class ResourceDocumentationEntry(Resource):
                     doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
         doc_code = doc_code.decode('utf-8')
-        doc = clean_html(markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite']))
+        doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
+        doc = clean_html(doc_pre_html, base_url=doc_base_url)
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
