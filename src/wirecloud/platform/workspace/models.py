@@ -121,4 +121,7 @@ class Tab(models.Model):
 
 @receiver(post_delete, sender=Tab)
 def update_catalogue_index(sender, instance, **kwargs):
-    instance.workspace.save()
+    try:
+        instance.workspace.save()
+    except Workspace.DoesNotExist:
+        pass
