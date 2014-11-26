@@ -163,6 +163,25 @@
 
         Object.defineProperty(this, 'manager', {value: manager});
 
+        // Reset button
+        this.resetButton = new StyledElements.StyledButton({
+            text: gettext('Set Defaults'),
+        });
+        this.resetButton.addEventListener("click", function () {
+            var pref_name, preference;
+
+            for (pref_name in this.manager.preferences) {
+                preference = this.manager.preferences[pref_name].meta;
+
+                this.interfaces[pref_name].base.setValue(preference['default']);
+                if ('inherit' in this.interfaces[pref_name]) {
+                    this.interfaces[pref_name].inherit.setValue(preference.inheritByDefault);
+                    this.interfaces[pref_name].base.setDisabled(preference.inheritByDefault);
+                }
+            }
+        }.bind(this));
+        this.resetButton.insertInto(this.windowBottom);
+
         // Accept button
         this.acceptButton = new StyledElements.StyledButton({
             text: gettext('Save'),

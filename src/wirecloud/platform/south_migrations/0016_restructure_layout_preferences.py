@@ -7,7 +7,7 @@ from south.v2 import DataMigration
 DEFAULT_LAYOUT_PREFERENCE_VALUES = {
     'smart': 'true',
     'columns': '20',
-    'cell-height': '13',
+    'cell-height': '12',
     'horizontal-margin': 4,
     'vertical-margin': 3
 }

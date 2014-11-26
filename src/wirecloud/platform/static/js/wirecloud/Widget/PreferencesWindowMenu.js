@@ -83,6 +83,7 @@
         }
         this._current_iwidget = iwidget;
         this._current_form = new Form(fields, {
+            resetButton: true,
             buttonArea: this.windowBottom
         });
         this._current_form.insertInto(this.windowContent);

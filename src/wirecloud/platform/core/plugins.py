@@ -316,7 +316,14 @@ class WirecloudCorePlugin(WirecloudPlugin):
             },
             {
                 "name":          "baselayout",
-                "defaultValue":  "{\"type\": \"columnlayout\", \"smart\": \"false\", \"columns\": 20, \"cellheight\": 12, \"horizontalmargin\": 4, \"verticalmargin\": 3}",
+                "defaultValue":  {
+                    "type": "columnlayout",
+                    "smart": "false",
+                    "columns": 20,
+                    "cellheight": 12,
+                    "horizontalmargin": 4,
+                    "verticalmargin": 3
+                },
                 "label":         _("Base layout"),
                 "type":          "layout"
             }

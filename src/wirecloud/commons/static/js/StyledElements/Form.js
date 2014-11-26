@@ -13,6 +13,7 @@
         defaultOptions = {
             'readOnly': false,
             'buttonArea': null,
+            'resetButton': false,
             'acceptButton': true,
             'cancelButton': true,
             'useHtmlForm': true,
@@ -26,13 +27,24 @@
         }
         options = Wirecloud.Utils.merge(defaultOptions, options);
 
+        // Parse resetButton
+        this.resetButton = null;
+        if (options.resetButton instanceof StyledElements.StyledButton) {
+            this.resetButton = options.resetButton;
+        } else if (options.resetButton === true) {
+            this.resetButton = new StyledElements.StyledButton({
+                usedInForm: options.useHtmlForm,
+                text: gettext('Set Defaults')
+            });
+        }
+
         // Parse acceptButton
         this.acceptButton = null;
         if (options.acceptButton instanceof StyledElements.StyledButton) {
             this.acceptButton = options.acceptButton;
         } else if (options.acceptButton === true) {
             this.acceptButton = new StyledElements.StyledButton({
-                'usedInForm': true,
+                'usedInForm': options.useHtmlForm,
                 'class': 'btn-primary',
                 'text': gettext('Accept')
             });
@@ -44,7 +56,7 @@
             this.cancelButton = options.cancelButton;
         } else if (options.cancelButton === true) {
             this.cancelButton = new StyledElements.StyledButton({
-                usedInForm: true,
+                usedInForm: options.useHtmlForm,
                 text: gettext('Cancel')
             });
         }
@@ -86,17 +98,21 @@
             div.appendChild(buttonArea);
         }
 
+        // Reset button
+        if (this.resetButton != null) {
+            this.resetButton.addEventListener("click", this.reset.bind(this));
+            this.resetButton.insertInto(buttonArea);
+        }
+
         // Accept button
-        this.pAcceptHandler = this.pAcceptHandler.bind(this);
-        if (this.acceptButton !== null) {
-            this.acceptButton.addEventListener("click", this.pAcceptHandler);
+        if (this.acceptButton != null) {
+            this.acceptButton.addEventListener("click", acceptHandler.bind(this));
             this.acceptButton.insertInto(buttonArea);
         }
 
         // Cancel button
-        this.pCancelHandler = this.pCancelHandler.bind(this);
-        if (this.cancelButton !== null) {
-            this.cancelButton.addEventListener("click", this.pCancelHandler);
+        if (this.cancelButton != null) {
+            this.cancelButton.addEventListener("click", cancelHandler.bind(this));
             this.cancelButton.insertInto(buttonArea);
         }
     };
@@ -390,7 +406,7 @@
     /**
      * @private
      */
-    Form.prototype.pAcceptHandler = function (e) {
+    var acceptHandler = function acceptHandler() {
         if (this.is_valid()) {
             var data = this.getData();
             this.events.submit.dispatch(this, data);
@@ -400,7 +416,7 @@
     /**
      * @private
      */
-    Form.prototype.pCancelHandler = function (e) {
+    var cancelHandler = function cancelHandler() {
         this.events.cancel.dispatch(this);
     };
 
@@ -437,8 +453,20 @@
         }
         this.childComponents = null;
 
-        this.pAcceptHandler = null;
-        this.pCancelHandler = null;
+        if (this.resetButton) {
+            this.resetButton.destroy();
+            this.resetButton = null;
+        }
+
+        if (this.acceptButton) {
+            this.acceptButton.destroy();
+            this.acceptButton = null;
+        }
+
+        if (this.cancelButton) {
+            this.cancelButton.destroy();
+            this.cancelButton = null;
+        }
     };
 
     /**
