@@ -76,7 +76,7 @@
                 inherit = values[definition.name].inherit;
                 value = values[key].value;
             } else {
-                value = definition.default;
+                value = null;
                 inherit = definition.inheritByDefault;
             }
 
