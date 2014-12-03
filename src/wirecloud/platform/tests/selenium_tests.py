@@ -1145,7 +1145,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
                 int(self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .content').text),
                 int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .content').text),
             )
-            self.assertEqual(old_size_from_context, (6, 18))
+            self.assertEqual(old_size_from_context[0], 6)
 
         # Change layout columns
         self.open_menu().click_entry('Settings')
