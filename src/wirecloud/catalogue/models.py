@@ -96,14 +96,13 @@ class CatalogueResource(models.Model):
 
     def get_template(self, request=None):
 
-        template_uri = self.get_template_url()
+        template_uri = self.get_template_url(request=request)
         parser = TemplateParser(self.json_description, base=template_uri)
         return parser
 
     def get_processed_info(self, request=None, lang=None, process_urls=True):
 
         parser = self.get_template(request)
-
         return parser.get_resource_processed_info(lang=lang, process_urls=process_urls)
 
     def delete(self, *args, **kwargs):
