@@ -36,6 +36,15 @@ from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
+def check_default_test_settings(test):
+
+    test.assertEqual(test.driver.find_element_by_id('listPref').text, 'default')
+    test.assertEqual(test.driver.find_element_by_id('textPref').text, 'initial text')
+    test.assertEqual(test.driver.find_element_by_id('booleanPref').text, 'false')
+    test.assertEqual(test.driver.find_element_by_id('numberPref').text, '2')
+    test.assertEqual(test.driver.find_element_by_id('passwordPref').text, 'default')
+
+
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
@@ -170,11 +179,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget = self.get_current_iwidgets()[0]
 
         with iwidget:
-            self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
-            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
-            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
-            self.assertEqual(self.driver.find_element_by_id('numberPref').text, '2')
-            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
+            check_default_test_settings(self)
 
         # Open widget settings
         iwidget.open_menu().click_entry('Settings')
@@ -231,6 +236,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
             self.assertEqual(self.driver.find_element_by_id('numberPref').text, '0')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
+
+        # Restore default widget settings
+        iwidget.open_menu().click_entry('Settings')
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Set Defaults']").click()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        with iwidget:
+            check_default_test_settings(self)
 
         # Use api test widget to test other API features
         self.network._servers['http']['example.com'].add_response('GET', '/success.html', {'content': 'remote makerequest was successful'})
@@ -1186,10 +1199,7 @@ class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
         source_iwidget = self.get_current_iwidgets()[1]
 
         with source_iwidget:
-            self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
-            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
-            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
-            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
+            check_default_test_settings(self)
 
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')

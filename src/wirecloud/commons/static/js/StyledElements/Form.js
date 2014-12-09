@@ -13,6 +13,7 @@
         defaultOptions = {
             'readOnly': false,
             'buttonArea': null,
+            'setdefaultsButton': false,
             'resetButton': false,
             'acceptButton': true,
             'cancelButton': true,
@@ -27,6 +28,17 @@
         }
         options = Wirecloud.Utils.merge(defaultOptions, options);
 
+        // Parse setdefaultsButton
+        this.setdefaultsButton = null;
+        if (options.setdefaultsButton instanceof StyledElements.StyledButton) {
+            this.setdefaultsButton = options.setdefaultsButton;
+        } else if (options.setdefaultsButton === true) {
+            this.setdefaultsButton = new StyledElements.StyledButton({
+                usedInForm: options.useHtmlForm,
+                text: gettext('Set Defaults')
+            });
+        }
+
         // Parse resetButton
         this.resetButton = null;
         if (options.resetButton instanceof StyledElements.StyledButton) {
@@ -34,7 +46,7 @@
         } else if (options.resetButton === true) {
             this.resetButton = new StyledElements.StyledButton({
                 usedInForm: options.useHtmlForm,
-                text: gettext('Set Defaults')
+                text: gettext('Reset')
             });
         }
 
@@ -96,6 +108,12 @@
             buttonArea = document.createElement('div');
             buttonArea.className = 'buttons';
             div.appendChild(buttonArea);
+        }
+
+        // Set Defaults button
+        if (this.setdefaultsButton != null) {
+            this.setdefaultsButton.addEventListener("click", this.defaults.bind(this));
+            this.setdefaultsButton.insertInto(buttonArea);
         }
 
         // Reset button
@@ -422,6 +440,20 @@
 
     Form.prototype.reset = function reset() {
         this.setData();
+
+        return this;
+    };
+
+    Form.prototype.defaults = function defaults() {
+        var field, fieldId;
+
+        this.pSetMsgs([]);
+        for (fieldId in this.fields) {
+            field = this.fieldInterfaces[fieldId];
+            field.setValue(field._defaultValue);
+        }
+
+        return this;
     };
 
     Form.prototype.normalSubmit = function (method, url, options) {
@@ -452,6 +484,11 @@
             this.childComponents[i].destroy();
         }
         this.childComponents = null;
+
+        if (this.setdefaultsButton) {
+            this.setdefaultsButton.destroy();
+            this.setdefaultsButton = null;
+        }
 
         if (this.resetButton) {
             this.resetButton.destroy();
@@ -512,4 +549,5 @@
     };
 
     window.Form = Form;
+
 })();

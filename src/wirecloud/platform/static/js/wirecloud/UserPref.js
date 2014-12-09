@@ -45,6 +45,7 @@
 
         desc = Wirecloud.Utils.merge(this.meta.options, {
             'type': type,
+            'defaultValue': this.meta.default,
             'initiallyDisabled': this.readOnly,
             'initialValue': this.value,
             'required': false
