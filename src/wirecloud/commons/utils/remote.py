@@ -915,7 +915,7 @@ class MarketplaceViewTester(object):
         return catalogue_element
 
     def open_menu(self):
-        button = self.testcase.wait_element_visible_by_css_selector('.wirecloud_header_nav .icon-reorder')
+        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-reorder"), parent=True))
         button.click()
         popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
@@ -935,7 +935,7 @@ class MarketplaceViewTester(object):
     def get_current_resource(self):
 
         if self.get_subview() == 'details':
-            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .first_level').text
+            return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .resource_title').text
 
     def switch_to(self, market, timeout=5):
 

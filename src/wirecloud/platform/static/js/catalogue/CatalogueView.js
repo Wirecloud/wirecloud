@@ -72,6 +72,10 @@
         };
         this.viewsByName.search.init();
 
+        this.alternatives.addEventListener('preTransition', function (alternatives, out_alternative) {
+            LayoutManagerFactory.getInstance().header._notifyViewChange();
+        });
+
         this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative) {
             var new_status = options.catalogue.buildStateData();
 
@@ -80,6 +84,7 @@
             } else {
                 Wirecloud.HistoryManager.pushState(new_status);
             }
+            LayoutManagerFactory.getInstance().header.refresh();
         }.bind(this));
 
         this.addEventListener('show', function () {
@@ -111,7 +116,7 @@
                 version: parts[2]
             };
 
-            currentResource = this.viewsByName.details.currentResource;
+            currentResource = this.viewsByName.details.currentEntry;
             if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
                 details = currentResource.changeVersion(details.version);
             }

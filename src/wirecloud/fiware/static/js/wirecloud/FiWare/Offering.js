@@ -98,6 +98,7 @@
             'marketName': {value: resourceJSON_.marketName},
             'owner': {value: resourceJSON_.vendor},
             'name': {value: resourceJSON_.name},
+            'title': {value: resourceJSON_.name},
             'version': {value: resourceJSON_.version},
             'type': {value: resourceJSON_.type},
             'image': {value: resourceJSON_.uriImage},

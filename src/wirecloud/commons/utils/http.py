@@ -276,6 +276,7 @@ def supported_request_mime_types(mime_types):
     return wrap
 
 
+_domain = None
 def get_current_domain(request=None):
     from django.conf import settings
     from django.contrib.sites.models import get_current_site
@@ -286,11 +287,14 @@ def get_current_domain(request=None):
         try:
             return get_current_site(request).domain
         except:
-            domain = socket.getfqdn()
-            port = getattr(settings, 'FORCE_PORT', 8000)
-            if port != 80:
-                domain += ':' + str(port)
-            return domain
+            global _domain
+            if _domain is None:
+                domain = socket.getfqdn()
+                port = getattr(settings, 'FORCE_PORT', 8000)
+                if port != 80:
+                    domain += ':' + str(port)
+                _domain = domain
+            return _domain
 
 
 def get_current_scheme(request=None):

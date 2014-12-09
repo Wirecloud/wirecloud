@@ -121,7 +121,7 @@
                 version: parts[2]
             };
 
-            currentResource = this.viewsByName.details.currentResource;
+            currentResource = this.viewsByName.details.currentEntry;
             if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
                 details = currentResource.changeVersion(details.version);
             }
@@ -139,8 +139,8 @@
     MyResourcesView.prototype.getBreadcrum = function getBreadcrum() {
         var breadcrum = [gettext('My Resources')];
 
-        if (this.alternatives.getCurrentAlternative() === this.viewsByName.details && this.viewsByName.details.currentResource != null) {
-            breadcrum.push(this.viewsByName.details.currentResource.title);
+        if (this.alternatives.getCurrentAlternative() === this.viewsByName.details && this.viewsByName.details.currentEntry != null) {
+            breadcrum.push(this.viewsByName.details.currentEntry.title);
         }
 
         return breadcrum;

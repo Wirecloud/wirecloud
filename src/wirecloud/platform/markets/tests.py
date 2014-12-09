@@ -128,3 +128,73 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
                 resource.advanced_operation('Publish')
                 window_menu = self.wait_element_visible_by_css_selector('.window_menu.message')
                 self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+    def test_marketplace_navigation(self):
+
+        self.login(username="user_with_markets")
+
+        # Fill navigation history
+        with self.marketplace_view as marketplace:
+            with marketplace.search_in_results('Test'):
+                pass
+            with marketplace.search_in_results('Test Mashup'):
+                pass
+            marketplace.switch_to('deleteme')
+
+        catalogue_base_element = self.marketplace_view.get_current_catalogue_base_element()
+
+        # Check navigation history has been filled correctly
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'marketplace')
+        self.assertEqual(self.marketplace_view.get_current_marketplace_name(), 'deleteme')
+        self.assertEqual(self.marketplace_view.get_subview(), 'search')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_current_marketplace_name() == 'origin')
+        self.assertEqual(self.marketplace_view.get_subview(), 'search')
+        self.assertEqual(self.marketplace_view.get_current_marketplace_name(), 'origin')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+        self.assertEqual(self.marketplace_view.get_current_resource(), 'Test Mashup')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+        self.assertEqual(self.marketplace_view.get_current_resource(), 'Test')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'workspace')
+
+        # Replay navigation history
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'marketplace')
+        self.assertEqual(self.marketplace_view.get_current_marketplace_name(), 'origin')
+        self.assertEqual(self.marketplace_view.get_subview(), 'search')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+        self.assertEqual(self.marketplace_view.get_current_resource(), 'Test')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+        self.assertEqual(self.marketplace_view.get_current_resource(), 'Test Mashup')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
+        self.assertEqual(self.marketplace_view.get_current_marketplace_name(), 'origin')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_current_marketplace_name() == 'deleteme')
+        self.assertEqual(self.marketplace_view.get_subview(), 'search')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'workspace')

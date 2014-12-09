@@ -114,11 +114,13 @@
     ResourceDetailsView.prototype.view_name = 'details';
 
     ResourceDetailsView.prototype.buildStateData = function buildStateData(data) {
-        data.resource = this.currentResource.uri;
+        if (this.currentEntry != null) {
+            data.resource = this.currentEntry.uri;
+        }
     };
 
     ResourceDetailsView.prototype.paint = function paint(resource) {
-        this.currentResource = resource;
+        this.currentEntry = resource;
         this.clear();
         this.appendChild(this.resource_details_painter.paint(resource));
     };

@@ -240,25 +240,27 @@
     MarketplaceView.prototype.getBreadcrum = function getBreadcrum() {
         var label, breadcrum, current_alternative;
 
-        breadcrum = [];
         current_alternative = this.alternatives.getCurrentAlternative();
         if (current_alternative === this.emptyAlternative) {
-            label = gettext('loading marketplace view...');
+            return [gettext('loading marketplace view...')];
         } else if (current_alternative === this.errorsAlternative) {
-            label = gettext('marketplace list not available');
-        } else if (current_alternative.alternatives.getCurrentAlternative().view_name === 'details') {
-            label = current_alternative.alternatives.getCurrentAlternative().currentOffering.name;
+            return [gettext('marketplace list not available')];
         } else {
             breadcrum = ['marketplace'];
             if (current_alternative.desc.user) {
                 breadcrum.push(current_alternative.desc.user);
             }
-            label = current_alternative.getLabel();
+
+            breadcrum.push(current_alternative.getLabel());
+
+            if (current_alternative.alternatives.getCurrentAlternative().view_name === 'details') {
+                breadcrum.push({
+                    label: current_alternative.alternatives.getCurrentAlternative().currentEntry.title,
+                    'class': 'resource_title'
+                });
+            }
+            return breadcrum;
         }
-
-        breadcrum.push(label);
-
-        return breadcrum;
     };
 
     MarketplaceView.prototype.getToolbarMenu = function getToolbarMenu() {
