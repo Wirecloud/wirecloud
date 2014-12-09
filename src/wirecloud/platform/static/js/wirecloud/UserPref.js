@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,7 +32,14 @@
         Object.defineProperty(this, 'meta', {value: pref_def});
         Object.defineProperty(this, 'readOnly', {value: !!readOnly});
         Object.defineProperty(this, 'hidden', {value: !!hidden});
-        this.value = currentValue;
+
+        if (pref_def.type === 'boolean' && typeof currentValue === 'string') {
+            this.value = currentValue.trim().toLowerCase() === 'true';
+        } else if (pref_def.type === 'number' && typeof currentValue === 'string') {
+            this.value = Number(currentValue);
+        } else {
+            this.value = currentValue;
+        }
     };
 
     UserPref.prototype.getInterfaceDescription = function getInterfaceDescription() {
