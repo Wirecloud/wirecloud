@@ -325,6 +325,16 @@ class CatalogueEntryTester(object):
         catalogue_base_element = self.catalogue.get_current_catalogue_base_element()
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
 
+    def switch_tab(self, tab_label):
+
+        tabs = self.details.find_elements_by_css_selector('.se-notebook-tab')
+        for tab in tabs:
+            if tab.text == tab_label:
+                tab.click()
+                return tab
+
+        return None
+
     def advanced_operation(self, action):
 
         for operation in self.details.find_elements_by_css_selector('.advanced_operations .styled_button'):

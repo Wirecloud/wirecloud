@@ -411,26 +411,18 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
             myresources.wait_catalogue_ready()
             myresources.search('Test')
             with myresources.search_in_results('Test') as resource:
-                tabs = resource.details.find_elements_by_css_selector('.se-notebook-tab')
-                changelog_tab_found = False
-                for tab in tabs:
-                    if tab.text == 'Change Log':
-                        changelog_tab_found = True
-                        tab.click()
-                        changelog_contents = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.se-notebook-tab-content.changelog'), base_element=resource.details))
-                        headings = changelog_contents.find_elements_by_css_selector('h1')
-                        self.assertEqual(len(headings), 1)
-                self.assertTrue(changelog_tab_found, 'Missing change log tab')
 
-                for tab in tabs:
-                    if tab.text == 'Documentation':
-                        documentation_tab_found = True
-                        tab.click()
+                tab = resource.switch_tab('Change Log')
+                self.assertIsNotNone(tab, 'Missing change log tab')
+                changelog_contents = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.se-notebook-tab-content.changelog'), base_element=resource.details))
+                headings = changelog_contents.find_elements_by_css_selector('h1')
+                self.assertEqual(len(headings), 1)
 
-                        documentation_contents = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.se-notebook-tab-content.documentation'), base_element=resource.details))
-                        headings = documentation_contents.find_elements_by_css_selector('h1, h2')
-                        self.assertEqual(len(headings), 2)
-                self.assertTrue(documentation_tab_found, 'Missing documentation tab')
+                tab = resource.switch_tab('Documentation')
+                self.assertIsNotNone(tab, 'Missing documentation tab')
+                documentation_contents = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.se-notebook-tab-content.documentation'), base_element=resource.details))
+                headings = documentation_contents.find_elements_by_css_selector('h1, h2')
+                self.assertEqual(len(headings), 2)
 
     def test_public_resources(self):
 
@@ -693,8 +685,8 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         # Fill navigation history
         with self.myresources_view as myresources:
-            with myresources.search_in_results('Test'):
-                pass
+            with myresources.search_in_results('Test') as resource:
+                resource.switch_tab('Documentation')
             with myresources.search_in_results('Test Mashup'):
                 pass
 
@@ -717,6 +709,11 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
         WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
         self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
+        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
+        self.assertEqual(current_tab, 'Documentation')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text == 'Main Info')
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'search')
@@ -733,6 +730,11 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
         WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
         self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
+        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
+        self.assertEqual(current_tab, 'Main Info')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text == 'Documentation')
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'search')

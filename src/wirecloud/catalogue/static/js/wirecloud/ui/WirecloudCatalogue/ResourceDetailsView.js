@@ -38,6 +38,11 @@
                     var details, i, entries, versions;
 
                     details = new StyledElements.StyledNotebook();
+                    details.addEventListener('change', function (notebook, oldTab, newTab) {
+                        var new_status = Wirecloud.HistoryManager.getCurrentState();
+                        new_status.tab = newTab.nameText;
+                        Wirecloud.HistoryManager.pushState(new_status);
+                    });
 
                     var select = new StyledElements.StyledSelect({'class': 'versions'});
                     entries = [];
@@ -101,6 +106,7 @@
                         }.bind(this));
                     }
 
+                    this.currentNotebook = details;
                     return details;
                 }.bind(this)
             };
@@ -116,6 +122,10 @@
     ResourceDetailsView.prototype.buildStateData = function buildStateData(data) {
         if (this.currentEntry != null) {
             data.resource = this.currentEntry.uri;
+
+            if (this.currentNotebook) {
+                data.tab = this.currentNotebook.getVisibleTab().nameText;
+            }
         }
     };
 
@@ -123,6 +133,11 @@
         this.currentEntry = resource;
         this.clear();
         this.appendChild(this.resource_details_painter.paint(resource));
+
+        var history_state = Wirecloud.HistoryManager.getCurrentState();
+        if ('tab' in history_state) {
+            this.currentNotebook.goToTab(this.currentNotebook.getTabByLabel(history_state.tab));
+        }
     };
 
     Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView = ResourceDetailsView;

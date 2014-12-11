@@ -391,6 +391,21 @@
     };
 
     /**
+     * Search a tab given the label. This method returns the first tab that maches.
+     *
+     * @param id identificador de la pestaña que se quiere recuperar.
+     * @returns {Tab}
+     */
+    StyledNotebook.prototype.getTabByLabel = function getTabByLabel(label) {
+        for (var i = 0; i < this.tabs.length; i++) {
+            if (this.tabs[i].nameText === label) {
+                return this.tabs[i];
+            }
+        }
+        return null;
+    };
+
+    /**
      * Returns current tab.
      *
      * @returns {StyledElements.Tab}
