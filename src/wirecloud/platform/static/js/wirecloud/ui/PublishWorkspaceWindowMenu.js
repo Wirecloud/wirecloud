@@ -69,7 +69,8 @@
             }
         ];
 
-        this._addVariableParametrization(workspace, fields);
+        // Disable preference and property parametrization for now
+        //this._addVariableParametrization(workspace, fields);
         Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Upload workspace to local catalogue'), 'publish_workspace', {autoHide: false});
 
         //fill a warning message
