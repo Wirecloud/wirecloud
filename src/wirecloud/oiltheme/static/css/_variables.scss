@@ -13,8 +13,8 @@ $font-size-small:           10px;
 $font-size-xs:              10px;
 
 $font-family-base:          "Open Sans", Arial, sans-serif;
-$headings-font-family:      Comfortaa;
-$headings-color:            #60C1CF;
+$headings-font-family:      NeoTech;
+$headings-color:            #002B67;
 
 $line-height-base:          18px;
 
@@ -38,5 +38,9 @@ $button-background-default: #FFF;
 $button-border-default:     #CCC;
 
 $button-border-primary:     $brand-primary;
+
+$rating-on-color:          #60C1CF;
+
+$resource-header-bg:       #EBEBEB;
 
 @import 'defaults';

@@ -172,6 +172,11 @@ $modal-footer-border-color: $modal-header-border-color !default;
 
 $modal-inner-padding:      15px !default;
 
+/* Rating */
+
+$rating-on-color:          $brand-primary !default;
+$rating-middle-color:      $rating-on-color !default;
+
 /* Widgets */
 
 $widget-bg:                $panel-bg !default;

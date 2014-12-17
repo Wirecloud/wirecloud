@@ -88,6 +88,10 @@
     line-height: 26px;
 }
 
+.resource > .header > .rating.disabled {
+    opacity: 0.1;
+}
+
 .resource > .header > .rating > .star {
     margin: 0px 1px 0px;
 }
