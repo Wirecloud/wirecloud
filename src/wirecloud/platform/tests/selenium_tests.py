@@ -36,7 +36,7 @@ from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
-def check_default_test_settings(test):
+def check_default_settings_values(test):
 
     test.assertEqual(test.driver.find_element_by_id('listPref').text, 'default')
     test.assertEqual(test.driver.find_element_by_id('textPref').text, 'initial text')
@@ -179,7 +179,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget = self.get_current_iwidgets()[0]
 
         with iwidget:
-            check_default_test_settings(self)
+            check_default_settings_values(self)
 
         # Open widget settings
         iwidget.open_menu().click_entry('Settings')
@@ -243,7 +243,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         with iwidget:
-            check_default_test_settings(self)
+            check_default_settings_values(self)
 
         # Use api test widget to test other API features
         self.network._servers['http']['example.com'].add_response('GET', '/success.html', {'content': 'remote makerequest was successful'})
@@ -1199,7 +1199,7 @@ class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
         source_iwidget = self.get_current_iwidgets()[1]
 
         with source_iwidget:
-            check_default_test_settings(self)
+            check_default_settings_values(self)
 
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
