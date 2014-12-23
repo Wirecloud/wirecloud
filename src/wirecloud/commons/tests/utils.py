@@ -17,9 +17,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from io import BytesIO
+import zipfile
+
 from django.test import TestCase
+from mock import patch
 
 from wirecloud.commons.utils.html import clean_html
+from wirecloud.commons.utils.wgt import WgtFile
 
 
 class HTMLCleanupTestCase(TestCase):
@@ -57,3 +62,96 @@ class HTMLCleanupTestCase(TestCase):
         initial_code = 'Example image: <img src="images/example.png"/>'
         expected_code = 'Example image: <img src="http://example.com/images/example.png"/>'
         self.assertEqual(clean_html(initial_code, base_url='http://example.com'), expected_code)
+
+
+class WGTTestCase(TestCase):
+
+    tags = ('wirecloud-wgt',)
+
+    def build_simple_wgt(self, other_files=()):
+
+        f = BytesIO()
+        zf = zipfile.ZipFile(f, 'w')
+        zf.writestr('config.xml', b'')
+        zf.writestr('test.html', b'')
+        for of in other_files:
+            zf.writestr(of, b'')
+        zf.close()
+        return WgtFile(f)
+
+    def test_extract_inexistent_dir(self):
+
+        with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
+            with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                wgt_file = self.build_simple_wgt()
+                self.assertRaises(KeyError, wgt_file.extract_dir, 'doc', '/tmp/test')
+                self.assertEqual(os_mock.makedirs.call_count, 0)
+                self.assertEqual(os_mock.mkdir.call_count, 0)
+                self.assertEqual(open_mock.call_count, 0)
+
+    def test_extract_empty_dir(self):
+
+        with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
+            with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                os_mock.path.exists.return_value = False
+                wgt_file = self.build_simple_wgt(other_files=('doc/',))
+                wgt_file.extract_dir('doc', '/tmp/test')
+
+                self.assertEqual(os_mock.makedirs.call_count, 1)
+                self.assertEqual(os_mock.mkdir.call_count, 0)
+                self.assertEqual(open_mock.call_count, 0)
+
+    def test_extract_empty_dir_existing_output_dir(self):
+
+        with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
+            with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                os_mock.path.exists.return_value = True
+                wgt_file = self.build_simple_wgt(other_files=('doc/',))
+                wgt_file.extract_dir('doc', '/tmp/test')
+
+                self.assertEqual(os_mock.makedirs.call_count, 0)
+                self.assertEqual(open_mock.call_count, 0)
+
+    def test_extract_dir(self):
+
+        def exists_side_effect(path):
+            if path != '/tmp/test/folder1':
+                return False
+            else:
+                result = not exists_side_effect.first_time
+                exists_side_effect.first_time = False
+                return result
+        exists_side_effect.first_time = True
+
+        with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
+            with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+
+                os_mock.path.exists.side_effect = exists_side_effect
+                os_mock.sep = '/'
+                wgt_file = self.build_simple_wgt(other_files=('doc/folder1/', 'doc/folder1/file1', 'doc/folder1/file2', 'doc/folder2/folder3/file3'))
+                wgt_file.extract_dir('doc/', '/tmp/test')
+
+                self.assertEqual(os_mock.makedirs.call_count, 1)
+                self.assertEqual(os_mock.mkdir.call_count, 3)
+                self.assertEqual(open_mock.call_count, 3)
+
+    def test_extract(self):
+
+        with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
+            with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                os_mock.path.exists.return_value = False
+                os_mock.sep = '/'
+                wgt_file = self.build_simple_wgt(other_files=('folder1/', 'folder2/'))
+                wgt_file.extract('/tmp/test')
+                self.assertEqual(os_mock.mkdir.call_count, 3)
+                self.assertEqual(open_mock.call_count, 2)
+
+    def test_extract_inexistent_file(self):
+
+        with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
+            with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                wgt_file = self.build_simple_wgt()
+                self.assertRaises(KeyError, wgt_file.extract_file, 'doc/index.md', '/tmp/test')
+                self.assertEqual(os_mock.makedirs.call_count, 0)
+                self.assertEqual(os_mock.mkdir.call_count, 0)
+                self.assertEqual(open_mock.call_count, 0)

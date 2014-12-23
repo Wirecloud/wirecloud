@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,7 +23,6 @@ from shutil import rmtree
 from six.moves.urllib.request import pathname2url
 import zipfile
 
-from lxml import etree
 from wirecloud.commons.utils.template import TemplateParser
 
 
@@ -74,16 +73,15 @@ class WgtFile(object):
         if not dir_name.endswith('/'):
             dir_name += '/'
 
-        if dir_name not in self._zip.namelist():
-            raise KeyError(dir_name)
+        files = tuple(name for name in self._zip.namelist() if name.startswith(dir_name))
+
+        if len(files) == 0:
+            raise KeyError("There is no directory named '%s' in the archive" % dir_name)
 
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
-        for name in self._zip.namelist():
-
-            if not name.startswith(dir_name):
-                continue
+        for name in files:
 
             local_name = name[len(dir_name):]
             listnames = local_name.split("/")[:-1]
