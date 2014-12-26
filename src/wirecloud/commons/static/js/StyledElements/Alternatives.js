@@ -100,13 +100,19 @@
 
                 context.alternativesObject.visibleAlt = context.inAlternative;
                 context.alternativesObject.events.postTransition.dispatch(context.alternativesObject, context.outAlternative, context.inAlternative);
+                if (typeof context.onComplete === 'function') {
+                    try {
+                        context.onComplete(context.alternativesObject, context.outAlternative, context.inAlternative);
+                    } catch (error) {}
+                }
                 return false; // we have finished here
             }
         };
 
         var initFunc = function initFunc(context, command) {
             context.outAlternative = context.alternativesObject.visibleAlt;
-            context.inAlternative = command;
+            context.inAlternative = command.id;
+            context.onComplete = command.onComplete;
             if (context.inAlternative != null) {
                 context.inAlternative = context.alternativesObject.alternatives[context.inAlternative];
             }
@@ -265,21 +271,28 @@
      * @param {Number|StyledElements.Alternative} Alternative to show. Must belong
      * to this instance of StyledAlternatives.
      */
-    StyledAlternatives.prototype.showAlternative = function showAlternative(alternative) {
-        var id;
+    StyledAlternatives.prototype.showAlternative = function showAlternative(alternative, options) {
+        var command = {};
+
+        if (options == null) {
+            options = {};
+        }
 
         if (alternative instanceof StyledElements.Alternative) {
-            id = alternative.getId();
-            if (this.alternatives[id] !== alternative) {
+            command.id = alternative.getId();
+            if (this.alternatives[command.id] !== alternative) {
                 throw new Error('Invalid alternative');
             }
         } else {
-            id = alternative;
-            if (this.alternatives[id] == null) {
+            command.id = alternative;
+            if (this.alternatives[command.id] == null) {
                 throw new Error('Invalid alternative');
             }
         }
-        this.transitionsQueue.addCommand(id);
+
+        command.onComplete = options.onComplete;
+
+        this.transitionsQueue.addCommand(command);
     };
 
     StyledElements.StyledAlternatives = StyledAlternatives;
