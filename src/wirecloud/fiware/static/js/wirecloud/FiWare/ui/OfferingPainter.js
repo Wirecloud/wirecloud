@@ -44,9 +44,9 @@
                 local_catalogue_view.viewsByName.search.mark_outdated();
             },
             onComplete: function () {
-                catalogue_view.refresh_search_results();
+                this.update_buttons();
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
-            }
+            }.bind(this)
         });
     };
 
@@ -66,9 +66,9 @@
             onComplete: function () {
                 if (--count === 0) {
                     LayoutManagerFactory.getInstance()._notifyPlatformReady();
-                    catalogue_view.refresh_if_needed();
+                    this.update_buttons();
                 }
-            }
+            }.bind(this)
         };
 
         for (i = 0; i < offering.resources.length; i++) {
@@ -159,65 +159,17 @@
                 }
             },
             'rating': this.get_popularity_html.bind(this, offering.rating),
-            'mainbutton': function () {
-                var button, local_catalogue_view, resource;
-
-                local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-
-                if (!this.catalogue_view.catalogue.is_purchased(this.offering) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
-                    if (offering.pricing.length === 0 || !('priceComponents' in offering.pricing[0])) {
-                        button = new StyledElements.StyledButton({
-                            'class': 'mainbutton btn-success',
-                            'text': gettext('Free')
-                        });
-                    } else if (is_single_payment(offering)) {
-                        button = new StyledElements.StyledButton({
-                            'class': 'mainbutton btn-warning',
-                            'text': offering.pricing[0].priceComponents[0].value + ' ' + CURRENCY_SYMBOL[offering.pricing[0].priceComponents[0].currency]
-                        });
-                    } else {
-                        button = new StyledElements.StyledButton({
-                            'class': 'mainbutton btn-warning',
-                            'text': gettext('Purchase')
-                        });
-                    }
-                    button.addEventListener('click', this.catalogue_view.createUserCommand('buy', this.offering));
-                    return button;
-                }
-
-                if (['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
-
-                    for (i = 0; i < this.offering.resources.length; i++) {
-                        resource = this.offering.resources[i];
-                        if ('type' in resource && !Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
-                            button = new StyledElements.StyledButton({
-                                'text': gettext('Install')
-                            });
-
-                            button.addEventListener('click', onInstallClick.bind(null, this.offering, this.catalogue_view));
-                            break;
-                        }
-                    }
-
-                    if (!button) {
-                        button = new StyledElements.StyledButton({
-                            'class': 'btn-danger',
-                            'text': gettext('Uninstall')
-                        });
-                        button.addEventListener('click', onUninstallClick.bind(null, this.offering, this.catalogue_view));
-                    }
-                } else if (!this.is_details_view) {
-                    button = new StyledElements.StyledButton({
-                        'text': gettext('Details')
-                    });
-
-                    button.addEventListener('click', this.catalogue_view.createUserCommand('showDetails', this.offering));
-                } else {
+            'mainbutton': function (options, context, offering_entry) {
+                var button;
+                if (['widget', 'operator', 'mashup', 'pack'].indexOf(offering.type) === -1 && this.is_details_view) {
                     return null;
+                } else {
+                    button = new StyledElements.StyledButton({text: ''});
+                    offering_entry.mainbuttons.push(button);
                 }
-                button.addClassName('mainbutton btn-primary');
+
                 return button;
-            }.bind({catalogue_view: this.catalogue_view, offering: offering, is_details_view: this.is_details_view}),
+            }.bind(this),
             'image': function () {
                 var container = document.createElement('div');
                 container.className = "wc-resource-img-container";
@@ -233,11 +185,12 @@
                 return container;
             },
             'tags': function (options) {
-                return this.painter.renderTagList(this.offering, options.max);
-            }.bind({painter: this, offering: offering})
+                return this.painter.renderTagList(offering, options.max);
+            }.bind({painter: this})
         });
-
-        offering_element = this.builder.parse(this.structure_template, context);
+        var offering_entry = new OfferingEntry(this, offering);
+        offering_element = this.builder.parse(this.structure_template, context, offering_entry);
+        offering_entry.update_buttons();
 
         // TODO "Show details"
         for (i = 0; i < offering_element.elements.length; i += 1) {
@@ -251,6 +204,58 @@
         }
 
         return offering_element;
+    };
+
+    var OfferingEntry = function OfferingEntry(painter, offering) {
+        this.painter = painter;
+        this.offering = offering;
+        this.mainbuttons = [];
+        this.resource_buttons = {};
+    };
+
+    OfferingEntry.prototype.update_mainbuttons = function update_mainbuttons() {
+        var i, button, local_catalogue_view;
+
+        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+
+        for (i = 0; i < this.mainbuttons.length; i++) {
+            button = this.mainbuttons[i];
+            button.clearClassName().addClassName('mainbutton');
+            button.clearEventListeners();
+
+            if (!this.painter.catalogue_view.catalogue.is_purchased(this.offering) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
+                if (this.offering.pricing.length === 0 || !('priceComponents' in this.offering.pricing[0])) {
+                    button.addClassName('btn-success').setLabel(gettext('Free'));
+                } else if (is_single_payment(this.offering)) {
+                    button.addClassName('btn-warning').setLabel(this.offering.pricing[0].priceComponents[0].value + ' ' + CURRENCY_SYMBOL[this.offering.pricing[0].priceComponents[0].currency]);
+                } else {
+                    button.addClassName('btn-warning').setLabel(gettext('Purchase'));
+                }
+                button.addEventListener('click', this.painter.catalogue_view.createUserCommand('buy', this.offering, this));
+                continue;
+            }
+
+            if (['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
+                if (!this.offering.installed) {
+                    button.addClassName('btn-primary').setLabel(gettext('Install'));
+                    button.addEventListener('click', onInstallClick.bind(this, this.offering, this.painter.catalogue_view));
+                } else {
+                    button.addClassName('btn-danger').setLabel(gettext('Uninstall'));
+                    button.addEventListener('click', onUninstallClick.bind(this, this.offering, this.painter.catalogue_view));
+                }
+            } else {
+                button.addClassName('btn-primary').setLabel(gettext('Details'));
+                button.addEventListener('click', this.painter.catalogue_view.createUserCommand('showDetails', this.offering));
+            }
+        }
+
+    };
+
+    OfferingEntry.prototype.update_buttons = function update_buttons() {
+        this.update_mainbuttons();
+        if ('update_resource_buttons' in this) {
+            this.update_resource_buttons();
+        }
     };
 
     OfferingPainter.prototype.create_simple_command = function (element, selector, _event, handler, required) {

@@ -125,7 +125,7 @@
 
     GUIBuilder = function GUIBuilder() {
         var mapping = {
-            'borderlayout': function (builder, element, options, tcomponents) {
+            'borderlayout': function (builder, element, options, tcomponents, context) {
                 var layout = new StyledElements.BorderLayout(options);
 
                 var populateContainer = function populateContainer(element, xpath, container) {
@@ -139,7 +139,7 @@
                             container.addClassName(options['class']);
                         }
 
-                        fragment = processRoot(builder, container_element, tcomponents);
+                        fragment = processRoot(builder, container_element, tcomponents, context);
                         container.appendChild(fragment);
                     }
                 };
@@ -162,12 +162,12 @@
             }
         };
 
-        this.build = function (element, tcomponents) {
+        this.build = function (element, tcomponents, context) {
             var builder, options;
 
             builder = mapping[element.localName];
             options = extractOptions(element);
-            return builder(this, element, options, tcomponents);
+            return builder(this, element, options, tcomponents, context);
         };
     };
 

@@ -127,6 +127,14 @@
 
     StyledButton.prototype.setLabel = function setLabel(label) {
         this.label.textContent = label;
+
+        return this;
+    };
+
+    StyledButton.prototype.clearClassName = function clearClassName() {
+        this.wrapperElement.className = 'styled_button';
+
+        return this;
     };
 
     StyledButton.prototype.addIconClassName = function addIconClassName(classname) {

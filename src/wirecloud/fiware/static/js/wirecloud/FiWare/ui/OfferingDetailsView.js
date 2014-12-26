@@ -34,7 +34,7 @@
 
         extra_context = function (resource) {
             return {
-                'details': function (options, context) {
+                'details': function (options, context, offering_entry) {
                     var details, painter, main_description,
                         legal_description, pricing_description,
                         sla_description, offering_resource_description;
@@ -59,7 +59,7 @@
                     if (Array.isArray(resource.resources)) {
                         offering_resource_description = details.createTab({'name': gettext('Resources'), 'closable': false});
                         painter = new Wirecloud.FiWare.ui.OfferingResourcePainter();
-                        painter.paint(resource, offering_resource_description, this.mainview);
+                        painter.paint(resource, offering_resource_description, this.mainview, offering_entry);
                     }
 
                     return details;
@@ -77,7 +77,7 @@
 
     OfferingDetailsView.prototype.buildStateData = function buildStateData(data) {
         if (this.currentEntry != null) {
-            data.offering = this.currentEntry.uri;
+            data.offering = this.currentEntry.id;
         }
     };
 

@@ -28,7 +28,7 @@
     var OfferingResourcePainter = function OfferingResourcePainter() {
     };
 
-    var onInstallClick = function onInstallClick(resource, catalogue, store, button) {
+    var onInstallClick = function onInstallClick(resource, catalogue, offering_entry, button) {
         var layoutManager, local_catalogue_view, url;
 
         button.disable();
@@ -42,11 +42,8 @@
             onSuccess: function () {
                 LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
                 LayoutManagerFactory.getInstance().logStep('');
-                button.removeClassName('btn-primary');
-                button.addClassName('btn-danger');
-                button.setLabel(gettext('Uninstall'));
-                button.clearEventListeners('click');
-                button.addEventListener('click', onUninstallClick.bind(null, resource, catalogue, store));
+
+                offering_entry.update_buttons();
 
                 catalogue.viewsByName.search.mark_outdated();
                 local_catalogue_view.viewsByName.search.mark_outdated();
@@ -62,7 +59,7 @@
         });
     };
 
-    var onUninstallClick = function onUninstallClick(resource, catalogue, store, button) {
+    var onUninstallClick = function onUninstallClick(resource, catalogue, offering_entry, button) {
         var layoutManager, local_catalogue_view, url;
 
         button.disable();
@@ -76,11 +73,8 @@
             onSuccess: function () {
                 LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uninstalled successfully'));
                 LayoutManagerFactory.getInstance().logStep('');
-                button.removeClassName('btn-danger');
-                button.addClassName('btn-primary');
-                button.setLabel(gettext('Install'));
-                button.clearEventListeners('click');
-                button.addEventListener('click', onInstallClick.bind(null, resource, catalogue, store));
+
+                offering_entry.update_buttons();
 
                 catalogue.viewsByName.search.mark_outdated();
                 local_catalogue_view.viewsByName.search.mark_outdated();
@@ -96,12 +90,29 @@
         });
     };
 
-    OfferingResourcePainter.prototype.paint = function paint(offering, dom_element, catalogue) {
+    OfferingResourcePainter.prototype.paint = function paint(offering, dom_element, catalogue, offering_entry) {
         var i, resource, wrapper, li, button;
 
         wrapper = document.createElement('ul');
         wrapper.className = 'offering_resource_list';
         dom_element.appendChild(wrapper);
+
+        offering_entry.update_resource_buttons = function update_resource_buttons() {
+            for (var key in this.resource_buttons) {
+                var button_info = this.resource_buttons[key];
+                var button = button_info.button;
+                var resource = button_info.resource;
+
+                button.clearClassName().clearEventListeners('click');
+                if (Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
+                    button.addClassName('btn-danger').setLabel(gettext('Uninstall'));
+                    button.addEventListener('click', onUninstallClick.bind(null, resource, catalogue, offering_entry));
+                } else {
+                    button.addClassName('btn-primary').setLabel(gettext('Install'));
+                    button.addEventListener('click', onInstallClick.bind(null, resource, catalogue, offering_entry));
+                }
+            }
+        };
 
         for (i = 0; i < offering.resources.length; i += 1) {
             resource = offering.resources[i];
@@ -112,13 +123,8 @@
             if ('url' in resource) {
                 if ('type' in resource) {
 
-                    if (Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
-                        button = new StyledElements.StyledButton({'class': 'btn-danger', text: gettext('Uninstall')});
-                        button.addEventListener('click', onUninstallClick.bind(null, resource, catalogue, offering.store));
-                    } else {
-                        button = new StyledElements.StyledButton({'class': 'btn-primary', text: gettext('Install')});
-                        button.addEventListener('click', onInstallClick.bind(null, resource, catalogue, offering.store));
-                    }
+                    button = new StyledElements.StyledButton({text: ''});
+                    offering_entry.resource_buttons[resource.id] = {resource: resource, button: button};
 
                 } else {
 

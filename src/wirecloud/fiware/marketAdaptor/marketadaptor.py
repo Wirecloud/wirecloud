@@ -116,7 +116,7 @@ class MarketAdaptor(object):
         for ser in parsed_usdl:
 
             ser['store'] = store
-            ser['marketName'] = name
+            ser['id'] = name
 
             if ser['uriTemplate'] == '':
                 ser['uriTemplate'] = url

@@ -274,7 +274,14 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
                 window_menus = self.driver.find_elements_by_css_selector('.window_menu')
                 self.assertEqual(len(window_menus), 1, 'Resource was not uploaded')
 
-    def test_store_buy_offering(self):
+    def _buy_offering(self):
+        bought_response_text = read_response_file('responses', 'store2', 'service2_bought.json')
+        self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': bought_response_text})
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Start']").click()
+        WebDriverWait(self.driver, 10).until(lambda driver: len(driver.find_elements_by_css_selector('.window_menu')) == 1)
+        self.wait_wirecloud_ready()
+
+    def check_store_buy_offering(self, from_details):
 
         response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/search/offerings/fulltext/test', {'content': response_text})
@@ -288,18 +295,27 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.switch_to('fiware')
 
             free_offering = marketplace.search_in_results('Weather widget')
-            free_offering.element.find_element_by_css_selector('.mainbutton').click()
+            if from_details:
+                with free_offering:
+                    free_offering.details.find_element_by_css_selector('.mainbutton').click()
+                    self._buy_offering()
+                    mainbutton = free_offering.details.find_element_by_css_selector('.mainbutton')
+                    self.assertEqual(mainbutton.text, 'Uninstall')
+            else:
+                free_offering.element.find_element_by_css_selector('.mainbutton').click()
+                self._buy_offering()
 
-            response_text = read_response_file('responses', 'store2', 'service2_bought.json')
-            self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': response_text})
-            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Start']").click()
-            WebDriverWait(self.driver, 10).until(lambda driver: len(driver.find_elements_by_css_selector('.window_menu')) == 1)
-            self.wait_wirecloud_ready()
             marketplace.wait_catalogue_ready()
 
             free_offering = marketplace.search_in_results('Weather widget')
             button = free_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Uninstall')
+
+    def test_store_buy_offering(self):
+        self.check_store_buy_offering(False)
+
+    def test_store_buy_offering_from_details(self):
+        self.check_store_buy_offering(True)
 
     def check_offering_install(self, offering_name, resources):
 
@@ -406,7 +422,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
                 for resource_name in resources:
                     self.assertIsNone(myresources.search_in_results(resource_name))
 
-    def test_install_individual_resource_from_store_offering(self):
+    def check_install_individual_resource_from_store_offering(self, last):
 
         offering_name = 'MultimediaPack'
         resource_name = 'YouTube Browser'
@@ -422,6 +438,9 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.switch_to('fiware')
 
             with marketplace.search_in_results(offering_name) as free_offering:
+                mainbutton = free_offering.details.find_element_by_css_selector('.mainbutton')
+                self.assertEqual(mainbutton.text, 'Install')
+
                 tabs = free_offering.details.find_elements_by_css_selector('.se-notebook-tab')
                 for tab in tabs:
                     tab.location_once_scrolled_into_view
@@ -437,8 +456,24 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
                 self.wait_wirecloud_ready()
                 self.assertEqual(button.text, 'Uninstall')
 
+                if last:
+                    self.assertEqual(mainbutton.text, 'Uninstall')
+                else:
+                    self.assertEqual(mainbutton.text, 'Install')
+
             with marketplace.myresources as myresources:
                 self.assertIsNotNone(myresources.search_in_results(resource_name))
+
+    def test_install_individual_resource_from_store_offering(self):
+        self.check_install_individual_resource_from_store_offering(False)
+
+    @uses_extra_resources((
+        'responses/static/CoNWeT__Input Box Widget__1.0__CoNWeT_input-box_1.0.wgt',
+        ),
+        public=False,
+        users=('user_with_markets',))
+    def test_install_last_individual_resource_from_store_offering(self):
+        self.check_install_individual_resource_from_store_offering(True)
 
     def test_marketplace_navigation(self):
 

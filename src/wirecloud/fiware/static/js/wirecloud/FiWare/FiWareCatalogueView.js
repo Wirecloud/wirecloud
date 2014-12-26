@@ -51,14 +51,13 @@
         this.storeSelect.addEntries(entries);
     };
 
-    var onBuySuccess = function onBuySuccess(offering) {
+    var onBuySuccess = function onBuySuccess(offering, offering_entry) {
         var layoutManager, monitor;
 
         layoutManager = LayoutManagerFactory.getInstance();
         monitor = layoutManager._startComplexTask(gettext("Importing offering resources into local repository"), 3);
 
-        this.viewsByName.search.mark_outdated();
-        this.catalogue.get_offering_info(offering.store, offering.marketName, {
+        this.catalogue.get_offering_info(offering.store, offering.id, {
             monitor: monitor,
             onSuccess: function (refreshed_offering) {
                 refreshed_offering.install({
@@ -66,12 +65,20 @@
                     onResourceSuccess: function (resource) {
                         var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
                         local_catalogue_view.viewsByName.search.mark_outdated();
-                    },
+                        this.viewsByName.search.mark_outdated();
+                    }.bind(this),
                     onFailure: function (msg) {
                         (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                     },
                     onComplete: function () {
-                        this.refresh_search_results();
+                        if (this.alternatives.getCurrentAlternative() === this.viewsByName.details) {
+                            this.createUserCommand('showDetails', refreshed_offering)();
+                        } else {
+                            this.refresh_search_results();
+                            if (offering_entry) {
+                                offering_entry.update_buttons();
+                            }
+                        }
                         layoutManager._notifyPlatformReady();
                     }.bind(this)
                 });
@@ -299,18 +306,37 @@
 
     FiWareCatalogueView.prototype.ui_commands = {};
 
-    FiWareCatalogueView.prototype.ui_commands.showDetails = function (resource, options) {
+    FiWareCatalogueView.prototype.ui_commands.showDetails = function showDetails(offering, options) {
         if (options == null) {
             options = {};
         }
 
         return function () {
-            this.viewsByName.details.paint(resource);
-            this.alternatives.showAlternative(this.viewsByName.details);
+            var onSuccess = function onSuccess() {
+                this.viewsByName.details.paint(offering);
+                this.viewsByName.details.repaint();
+            };
+            var onComplete = function onComplete() {
+                this.viewsByName.details.enable();
+                Wirecloud.Utils.callCallback(options.onComplete);
+            };
+
+            this.viewsByName.details.disable();
+            this.changeCurrentView('details');
+
+            if (offering instanceof Wirecloud.FiWare.Offering) {
+                onSuccess.call(this, offering);
+                onComplete.call(this);
+            } else {
+                this.catalogue.getOfferingDetails(offering.id, {
+                    onSuccess: onSuccess.bind(this),
+                    onComplete: onComplete.bind(this)
+                });
+            }
         }.bind(this);
     };
 
-    FiWareCatalogueView.prototype.ui_commands.buy = function (offering) {
+    FiWareCatalogueView.prototype.ui_commands.buy = function (offering, offering_entry) {
         return function () {
             this.catalogue.start_purchase(offering, {
                 onSuccess: function (data) {
@@ -319,7 +345,7 @@
                         data.url,
                         gettext('The buying process will continue in a separate window. This window will be controled by the store where the offering is hosted. After finishing the buying process, the control will return to Wirecloud.'),
                         {
-                            onSuccess: onBuySuccess.bind(this, offering)
+                            onSuccess: onBuySuccess.bind(this, offering, offering_entry)
                         }
                     );
                     dialog.show();

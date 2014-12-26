@@ -58,6 +58,18 @@
         });
     };
 
+    var installed = function installed() {
+        var i, resource;
+
+        for (i = 0; i < this.resources.length; i++) {
+            resource = this.resources[i];
+            if ('type' in resource && !Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     var Offering = function Offering(resourceJSON_, catalogue) {
 
         //////////////////////////
@@ -66,10 +78,6 @@
 
         this.getParts = function getParts() {
             return resourceJSON_.parts;
-        };
-
-        this.getId = function getId() {
-            return resourceJSON_.id;
         };
 
         this.getDisplayName = function getDisplayName() {
@@ -95,7 +103,7 @@
 
         Object.defineProperties(this, {
             'catalogue': {value: catalogue},
-            'marketName': {value: resourceJSON_.marketName},
+            'id': {value: resourceJSON_.id},
             'owner': {value: resourceJSON_.vendor},
             'name': {value: resourceJSON_.name},
             'title': {value: resourceJSON_.name},
@@ -112,12 +120,14 @@
             'store': {value: resourceJSON_.store},
             'usdl_url': {value: resourceJSON_.usdl_url},
             'resources': {value: resourceJSON_.resources},
-            'publicationdate': {value: publicationdate}
+            'publicationdate': {value: publicationdate},
+            'installed': {get: installed}
         });
 
         if (this.open === true || ['purchased', 'rated'].indexOf(this.state) != -1) {
             for (var i = 0; i < this.resources.length; i += 1) {
                 var resource = this.resources[i];
+                resource.offering = this;
                 if (is_mac_mimetype(resource.content_type)) {
                     try {
                         var parts = resource.id.split('/');
