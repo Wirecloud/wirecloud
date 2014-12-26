@@ -196,14 +196,19 @@
         }.bind(this);
     };
 
-    CatalogueView.prototype.ui_commands.showDetails = function showDetails(resource) {
-        return function (e) {
+    CatalogueView.prototype.ui_commands.showDetails = function showDetails(resource, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        return function () {
             var onSuccess = function (resource_details) {
                 this.viewsByName.details.paint(resource_details);
                 this.viewsByName.details.repaint();
             };
             var onComplete = function onSuccess() {
                 this.viewsByName.details.enable();
+                options.onComplete();
             };
 
             this.viewsByName.details.disable();

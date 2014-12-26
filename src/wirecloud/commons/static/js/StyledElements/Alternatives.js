@@ -99,12 +99,8 @@
                 context.inAlternative.wrapperElement.style.width = '';
 
                 context.alternativesObject.visibleAlt = context.inAlternative;
+                Wirecloud.Utils.callCallback(context.onComplete, context.alternativesObject, context.outAlternative, context.inAlternative);
                 context.alternativesObject.events.postTransition.dispatch(context.alternativesObject, context.outAlternative, context.inAlternative);
-                if (typeof context.onComplete === 'function') {
-                    try {
-                        context.onComplete(context.alternativesObject, context.outAlternative, context.inAlternative);
-                    } catch (error) {}
-                }
                 return false; // we have finished here
             }
         };

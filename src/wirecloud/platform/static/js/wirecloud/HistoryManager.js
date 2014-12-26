@@ -129,7 +129,7 @@
         }
         url = buildURL(data);
 
-        history.pushState(data, "", url);
+        history.pushState(data, document.title, url);
         currentState = data;
     };
 
@@ -149,7 +149,7 @@
         }
         url = buildURL(data);
 
-        history.replaceState(data, "", url);
+        history.replaceState(data, document.title, url);
         currentState = data;
     };
 

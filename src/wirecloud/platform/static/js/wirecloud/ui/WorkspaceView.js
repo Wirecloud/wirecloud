@@ -126,6 +126,15 @@
         return entries;
     };
 
+    WorkspaceView.prototype.getTitle = function getTitle() {
+        var current_state = Wirecloud.HistoryManager.getCurrentState();
+        if ('workspace_creator' in current_state) {
+            return current_state.workspace_creator + '/' + current_state.workspace_name;
+        } else {
+            return gettext('loading...');
+        }
+    };
+
     WorkspaceView.prototype.getToolbarMenu = function getToolbarMenu() {
         var context, current_state, menu;
         current_state = Wirecloud.HistoryManager.getCurrentState();
@@ -168,6 +177,9 @@
         } else if (newState.tab != null) {
             target_tab = Wirecloud.activeWorkspace.tabsByName[newState.tab];
             Wirecloud.activeWorkspace.notebook.goToTab(target_tab);
+            document.title = newState.workspace_creator + '/' + newState.workspace_name;
+        } else {
+            document.title = newState.workspace_creator + '/' + newState.workspace_name;
         }
     };
 

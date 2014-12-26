@@ -1602,6 +1602,14 @@ if (!Wirecloud.ui) {
         return workspace_breadcrum;
     };
 
+    /**
+     * getTitle
+     */
+    WiringEditor.prototype.getTitle = function getTitle() {
+        var workspace_title = LayoutManagerFactory.getInstance().viewsByName.workspace.getBreadcrum();
+        return Wirecloud.Utils.interpolate(gettext('%(workspace_title)s - Wiring'), {workspace_title: workspace_title});
+    };
+
    /**
      *  scrollHandler, using canvas for transformate the arrows layer
      */

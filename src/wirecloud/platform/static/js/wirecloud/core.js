@@ -141,11 +141,11 @@
             options.onSuccess = function () {
                 Wirecloud.HistoryManager.init();
                 var state = Wirecloud.HistoryManager.getCurrentState();
-                LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+                LayoutManagerFactory.getInstance().changeCurrentView('workspace', true);
 
                 if (state.workspace_name !== '') {
                     var workspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
-                    this.changeActiveWorkspace(workspace, state.tab, {});
+                    this.changeActiveWorkspace(workspace, state.tab, {replaceNavigationState: true});
                 } else {
                     Wirecloud.createWorkspace({
                         name: gettext('Workspace'),
@@ -269,7 +269,7 @@
     };
 
     Wirecloud.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab, options) {
-        var msg, state, steps = this.activeWorkspace != null ? 2 : 1;
+        var workspace_full_name, msg, state, steps = this.activeWorkspace != null ? 2 : 1;
 
         options = Wirecloud.Utils.merge({
             replaceNavigationState: false
@@ -289,13 +289,15 @@
         if (initial_tab) {
             state.tab = initial_tab;
         }
+        workspace_full_name = workspace.creator + '/' + workspace.name;
+        document.title = workspace_full_name;
         if (options.replaceNavigationState === true) {
             Wirecloud.HistoryManager.replaceState(state);
         } else if (options.replaceNavigationState !== 'leave') {
             Wirecloud.HistoryManager.pushState(state);
         }
 
-        msg = interpolate(gettext("Downloading workspace (%(name)s) data"), {name: workspace.creator + '/' + workspace.name}, true);
+        msg = interpolate(gettext("Downloading workspace (%(name)s) data"), {name: workspace_full_name}, true);
         LayoutManagerFactory.getInstance().logSubTask(msg, 1);
         new Wirecloud.WorkspaceCatalogue(workspace.id, {
             onSuccess: function (workspace_resources) {

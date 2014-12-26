@@ -263,6 +263,10 @@
         }
     };
 
+    MarketplaceView.prototype.getTitle = function getTitle() {
+        return gettext('Marketplace');
+    };
+
     MarketplaceView.prototype.getToolbarMenu = function getToolbarMenu() {
         return this.marketMenu;
     };

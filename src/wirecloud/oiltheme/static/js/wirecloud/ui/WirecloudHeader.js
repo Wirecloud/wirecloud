@@ -174,6 +174,12 @@
         }
     };
 
+    WirecloudHeader.prototype._refreshTitle = function _refreshTitle(newView) {
+        if (newView != null) {
+            document.title = newView.getTitle();
+        }
+    };
+
     WirecloudHeader.prototype._paintToolbar = function _paintToolbar(newView) {
         var buttons, i;
 
@@ -274,6 +280,7 @@
 
     WirecloudHeader.prototype.refresh = function refresh() {
         this._paintBreadcrum(this.currentView);
+        this._refreshTitle(this.currentView);
         this._paintToolbar(this.currentView);
         this._replaceMenu(this.currentView);
         this.backButton.setDisabled(this.currentView == null || !('goUp' in this.currentView));

@@ -299,7 +299,11 @@
 
     FiWareCatalogueView.prototype.ui_commands = {};
 
-    FiWareCatalogueView.prototype.ui_commands.showDetails = function (resource) {
+    FiWareCatalogueView.prototype.ui_commands.showDetails = function (resource, options) {
+        if (options == null) {
+            options = {};
+        }
+
         return function () {
             this.viewsByName.details.paint(resource);
             this.alternatives.showAlternative(this.viewsByName.details);

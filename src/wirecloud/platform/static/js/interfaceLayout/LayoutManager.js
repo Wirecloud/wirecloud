@@ -53,7 +53,6 @@ var LayoutManagerFactory = function () {
             this.header._notifyViewChange();
         }.bind(this));
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
-            Wirecloud.HistoryManager.pushState(new_alternative.buildStateData());
             this.header._notifyViewChange(new_alternative);
         }.bind(this));
 
@@ -206,8 +205,16 @@ var LayoutManagerFactory = function () {
         }
 
         /****VIEW OPERATIONS****/
-        LayoutManager.prototype.changeCurrentView = function(newView) {
-            this.alternatives.showAlternative(this.viewsByName[newView]);
+        LayoutManager.prototype.changeCurrentView = function changeCurrentView(newView, ignoreState) {
+            var options = {};
+
+            if (ignoreState !== true) {
+                options.onComplete = function (alternatives, old_alternative, new_alternative) {
+                    Wirecloud.HistoryManager.pushState(new_alternative.buildStateData());
+                };
+            }
+
+            this.alternatives.showAlternative(this.viewsByName[newView], options);
         };
 
         /*
@@ -216,7 +223,7 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype.onHashChange = function(state) {
             var nextView = this.viewsByName[state.view];
             if (nextView !== this.alternatives.getCurrentAlternative()) {
-                this.alternatives.showAlternative(nextView);
+                this.changeCurrentView(state.view, true);
             }
 
             if ('onHistoryChange' in nextView) {

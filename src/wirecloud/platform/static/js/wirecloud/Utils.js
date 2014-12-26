@@ -72,6 +72,14 @@
         e.preventDefault();
     };
 
+    Utils.callCallback = function callCallback(callback) {
+        if (typeof callback === 'function') {
+            try {
+                callback.apply(null, Array.prototype.slice.call(arguments, 1));
+            } catch (error) {}
+        }
+    };
+
     Utils.onFullscreenChange = function onFullscreenChange(element, callback) {
         if (element instanceof StyledElements.StyledElement) {
             element = element.wrapperElement;

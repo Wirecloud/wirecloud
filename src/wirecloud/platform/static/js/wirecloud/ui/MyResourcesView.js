@@ -61,22 +61,20 @@
 
         this.alternatives.addEventListener('preTransition', function (alternatives, out_alternative) {
             LayoutManagerFactory.getInstance().header._notifyViewChange();
-        }.bind(this));
+        });
 
         this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative) {
-            var new_status = this.buildStateData();
-
-            if (out_alternative === this.viewsByName.initial) {
-                Wirecloud.HistoryManager.replaceState(new_status);
-            } else {
-                Wirecloud.HistoryManager.pushState(new_status);
-            }
             LayoutManagerFactory.getInstance().header._notifyViewChange(this);
         }.bind(this));
 
         this.addEventListener('show', function () {
             if (this.alternatives.getCurrentAlternative() === this.viewsByName.initial) {
-                this.changeCurrentView('search');
+                this.changeCurrentView('search', {
+                    onComplete: function (alternatives, out_alternative) {
+                        var new_status = this.buildStateData();
+                        Wirecloud.HistoryManager.replaceState(new_status, gettext('My Resources'));
+                    }.bind(this)
+                });
             }
             this.refresh_if_needed();
         }.bind(this));
@@ -112,20 +110,19 @@
         var details, parts, currentResource;
 
         if (state.subview === 'search') {
-            this.changeCurrentView(state.subview);
+            this.changeCurrentView(state.subview, {});
         } else {
             parts = state.resource.split('/');
             details = {
                 vendor: parts[0],
-                name: parts[1],
-                version: parts[2]
+                name: parts[1]
             };
 
             currentResource = this.viewsByName.details.currentEntry;
             if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
-                details = currentResource.changeVersion(details.version);
+                details = currentResource;
             }
-            this.createUserCommand('showDetails', details)();
+            this.createUserCommand('showDetails', details, {tab: state.tab, version: parts[2]})();
         }
     };
 
@@ -146,6 +143,18 @@
         return breadcrum;
     };
 
+    MyResourcesView.prototype.getTitle = function getTitle() {
+        var currentResource;
+
+        if (this.alternatives.getCurrentAlternative() === this.viewsByName.details) {
+            currentResource = this.viewsByName.details.currentEntry;
+            if (currentResource != null) {
+                return Wirecloud.Utils.interpolate(gettext('My Resources - %(resource)s'), {resource: currentResource.uri});
+            }
+        }
+        return gettext('My Resources');
+    };
+
     MyResourcesView.prototype.getToolbarButtons = function getToolbarButtons() {
         return [this.uploadButton, this.marketButton];
     };
@@ -154,12 +163,21 @@
         return this.catalogue.search(onSuccess, onError, options);
     };
 
-    MyResourcesView.prototype.changeCurrentView = function changeCurrentView(view_name) {
+    MyResourcesView.prototype.changeCurrentView = function changeCurrentView(view_name, options) {
         if (!(view_name in this.viewsByName)) {
             throw new TypeError();
         }
 
-        this.alternatives.showAlternative(this.viewsByName[view_name]);
+        if (options == null) {
+            options = {
+                onComplete: function (alternatives, out_alternative) {
+                    var new_status = this.buildStateData();
+                    Wirecloud.HistoryManager.pushState(new_status);
+                }.bind(this)
+            };
+        }
+
+        this.alternatives.showAlternative(this.viewsByName[view_name], options);
     };
 
     MyResourcesView.prototype.home = function home() {
@@ -283,18 +301,28 @@
         }.bind(this);
     };
 
-    MyResourcesView.prototype.ui_commands.showDetails = function showDetails(resource) {
+    MyResourcesView.prototype.ui_commands.showDetails = function showDetails(resource, options) {
+        if (options == null) {
+            options = {};
+        }
+
         return function (e) {
             var onSuccess = function (resource_details) {
-                this.viewsByName.details.paint(resource_details);
+                if (options.version != null) {
+                    resource_details.changeVersion(options.version);
+                }
+                this.viewsByName.details.paint(resource_details, {
+                        tab: options.tab
+                    });
                 this.viewsByName.details.repaint();
             };
             var onComplete = function onSuccess() {
                 this.viewsByName.details.enable();
+                Wirecloud.Utils.callCallback(options.onComplete);
             };
 
             this.viewsByName.details.disable();
-            this.alternatives.showAlternative(this.viewsByName.details);
+            this.changeCurrentView('details');
 
             if (resource instanceof Wirecloud.WirecloudCatalogue.ResourceDetails) {
                 onSuccess.call(this, resource);

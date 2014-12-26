@@ -58,8 +58,15 @@
                     select.setDisabled(versions.length === 1);
                     select.setValue(resource.version.text);
                     select.addEventListener('change', function (select) {
+                        LayoutManagerFactory.getInstance().header._notifyViewChange();
                         resource.changeVersion(select.getValue());
-                        this.mainview.createUserCommand('showDetails', resource)();
+                        this.mainview.createUserCommand('showDetails', resource, {
+                                onComplete: function () {
+                                    var new_status = this.mainview.buildStateData();
+                                    Wirecloud.HistoryManager.pushState(new_status);
+                                    LayoutManagerFactory.getInstance().header.refresh();
+                                }.bind(this)
+                            })();
                     }.bind(this));
 
                     var main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
@@ -129,14 +136,17 @@
         }
     };
 
-    ResourceDetailsView.prototype.paint = function paint(resource) {
+    ResourceDetailsView.prototype.paint = function paint(resource, options) {
+        if (options == null) {
+            options = {};
+        }
+
         this.currentEntry = resource;
         this.clear();
         this.appendChild(this.resource_details_painter.paint(resource));
 
-        var history_state = Wirecloud.HistoryManager.getCurrentState();
-        if ('tab' in history_state) {
-            this.currentNotebook.goToTab(this.currentNotebook.getTabByLabel(history_state.tab));
+        if (options.tab != null) {
+            this.currentNotebook.goToTab(this.currentNotebook.getTabByLabel(options.tab));
         }
     };
 

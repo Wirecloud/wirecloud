@@ -679,6 +679,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
                 self.assertEqual(len(versions), len(version_list), 'Repeated versions')
                 self.assertEqual(versions, set(('v2.0',)))
 
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_myresources_navigation(self):
 
         self.login(username="user_with_markets")
@@ -686,6 +687,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         # Fill navigation history
         with self.myresources_view as myresources:
             with myresources.search_in_results('Test') as resource:
+                resource.switch_to('1.0')
                 resource.switch_tab('Documentation')
             with myresources.search_in_results('Test Mashup'):
                 pass
@@ -711,9 +713,16 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
         current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
         self.assertEqual(current_tab, 'Documentation')
+        self.assertEqual(self.driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text, 'v1.0')
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text == 'Main Info')
+        self.assertEqual(self.driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text, 'v1.0')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text == 'v2.0')
+        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
+        self.assertEqual(current_tab, 'Main Info')
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'search')
@@ -731,6 +740,11 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
         self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
         current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
+        self.assertEqual(current_tab, 'Main Info')
+        self.assertEqual(self.driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text, 'v2.0')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text == 'v1.0')
         self.assertEqual(current_tab, 'Main Info')
 
         self.driver.forward()
