@@ -1606,7 +1606,7 @@ if (!Wirecloud.ui) {
      * getTitle
      */
     WiringEditor.prototype.getTitle = function getTitle() {
-        var workspace_title = LayoutManagerFactory.getInstance().viewsByName.workspace.getBreadcrum();
+        var workspace_title = LayoutManagerFactory.getInstance().viewsByName.workspace.getTitle();
         return Wirecloud.Utils.interpolate(gettext('%(workspace_title)s - Wiring'), {workspace_title: workspace_title});
     };
 
