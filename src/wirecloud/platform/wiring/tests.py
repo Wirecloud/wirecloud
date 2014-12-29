@@ -363,7 +363,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
             menubar = wiring_base_element.find_element_by_css_selector('.menubar')
 
-            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+            menubar.find_element_by_xpath("//*[contains(@class, 'se-expander')]//*[contains(@class, 'title') and text()='Operators']").click()
             menubar.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperatorSelenium']")
     test_operators_are_usable_after_installing.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
 
@@ -388,7 +388,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
             menubar = wiring_base_element.find_element_by_css_selector('.menubar')
 
-            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+            menubar.find_element_by_xpath("//*[contains(@class, 'se-expander')]//*[contains(@class, 'title') and text()='Operators']").click()
             self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
     test_operators_are_not_usable_after_being_uninstalled.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
 
@@ -477,7 +477,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
             menubar = wiring_base_element.find_element_by_css_selector('.menubar')
 
-            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+            menubar.find_element_by_xpath("//*[contains(@class, 'se-expander')]//*[contains(@class, 'title') and text()='Operators']").click()
             self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
 
     def test_basic_wiring_editor_operations(self):
@@ -1924,7 +1924,7 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
 
             wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
             menubar = wiring_base_element.find_element_by_css_selector('.menubar')
-            menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+            menubar.find_element_by_xpath("//*[contains(@class, 'se-expander')]//*[contains(@class, 'title') and text()='Operators']").click()
 
             operator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
             ActionChains(self.driver).click_and_hold(operator).move_to_element(grid).move_by_offset(-220, -120).release().perform()
