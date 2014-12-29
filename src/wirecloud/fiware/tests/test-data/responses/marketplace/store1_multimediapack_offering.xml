@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<resource name="MultimediaPack">
+    <creator username="User 1">
+        <company>Company 1</company>
+        <email>user1@company1.example.com</email>
+        <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+    </creator>
+    <id>121</id>
+    <lasteditor username="User 1">
+        <company>Company 1</company>
+        <email>user1@company1.example.com</email>
+        <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+    </lasteditor>
+    <registrationDate>2013-08-30T15:17:59+02:00</registrationDate>
+    <url>http://repository.example.com/CoNWeT/service5.rdf</url>
+</resource>

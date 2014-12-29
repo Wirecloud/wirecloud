@@ -232,7 +232,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
                 button = open_offering.element.find_element_by_css_selector('.mainbutton')
                 self.assertEqual(button.text, 'Install')
 
-                # All offerings from should have a Details button (as tore1 is currently down)
+                # All offerings from store 1 should have a Details button (as it is currently down)
                 for offering_name in ('Test Operator', 'Smart City Lights application', 'MultimediaPack'):
                     offering = marketplace.search_in_results(offering_name)
                     button = offering.element.find_element_by_css_selector('.mainbutton')
@@ -477,6 +477,11 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_marketplace_navigation(self):
 
+        response_text = read_response_file('responses', 'marketplace', 'store2_weatherwidget_offering.xml')
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offering/WeatherWidget', {'content': response_text})
+        response_text = read_response_file('responses', 'marketplace', 'store1_multimediapack_offering.xml')
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%201/offering/MultimediaPack', {'content': response_text})
+
         self.login(username="user_with_markets")
 
         # Fill navigation history
@@ -494,14 +499,14 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
-        # Check we are se Weather widget offering details
+        self.assertEqual(self.marketplace_view.get_current_resource(), 'Weather widget')
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
-        # Open MultimediaPack offering details
+        self.assertEqual(self.marketplace_view.get_current_resource(), 'MultimediaPack')
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
@@ -525,12 +530,14 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+        self.assertEqual(self.marketplace_view.get_current_resource(), 'MultimediaPack')
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'details')
+        self.assertEqual(self.marketplace_view.get_current_resource(), 'Weather widget')
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.marketplace_view.get_subview() == 'search')

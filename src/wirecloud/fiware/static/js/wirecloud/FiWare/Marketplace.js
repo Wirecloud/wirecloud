@@ -101,16 +101,15 @@
                 var offering;
                 if (typeof options.onSuccess === 'function') {
                     offering = new Wirecloud.FiWare.Offering(JSON.parse(response.responseText), this);
-                    try {
-                        options.onSuccess(offering);
-                    } catch (e) {}
+                    Wirecloud.Utils.callCallback(options.onSuccess, offering);
                 }
             }.bind(this),
             onFailure: function (response) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting resource: %(errorMsg)s."), response);
-                try {
-                    options.onFailure(msg);
-                } catch (e) {}
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving offering info: %(errorMsg)s."), response);
+                Wirecloud.Utils.callCallback(options.onFailure, msg);
+            },
+            onComplete: function (response) {
+                Wirecloud.Utils.callCallback(options.onComplete);
             }
         });
     };

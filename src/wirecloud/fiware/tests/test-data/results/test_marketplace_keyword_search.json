@@ -89,7 +89,7 @@
                     }
                 ]
             },
-            "marketName": null,
+            "id": null,
             "usdl_url": "http://repository.example.com/CoNWeT/service1.rdf",
             "type": "unknown",
             "store": "Store 1"

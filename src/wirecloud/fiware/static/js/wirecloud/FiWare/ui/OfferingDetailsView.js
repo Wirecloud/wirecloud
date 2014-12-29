@@ -40,6 +40,11 @@
                         sla_description, offering_resource_description;
  
                     details = new StyledElements.StyledNotebook();
+                    details.addEventListener('change', function (notebook, oldTab, newTab) {
+                        var new_status = Wirecloud.HistoryManager.getCurrentState();
+                        new_status.tab = newTab.nameText;
+                        Wirecloud.HistoryManager.pushState(new_status);
+                    });
 
                     main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
                     main_description.appendChild(this.main_details_painter.paint(resource));
@@ -77,14 +82,22 @@
 
     OfferingDetailsView.prototype.buildStateData = function buildStateData(data) {
         if (this.currentEntry != null) {
-            data.offering = this.currentEntry.id;
+            data.offering = this.currentEntry.store + '/' + this.currentEntry.id;
         }
     };
 
-    OfferingDetailsView.prototype.paint = function paint(resource) {
+    OfferingDetailsView.prototype.paint = function paint(resource, options) {
+        if (options == null) {
+            options = {};
+        }
+
         this.currentEntry = resource;
         this.clear();
         this.appendChild(this.resource_details_painter.paint(resource));
+
+        if (options.tab != null) {
+            this.currentNotebook.goToTab(this.currentNotebook.getTabByLabel(options.tab));
+        }
     };
 
     if (!('ui' in Wirecloud.FiWare)) {

@@ -72,7 +72,7 @@
                 this.changeCurrentView('search', {
                     onComplete: function (alternatives, out_alternative) {
                         var new_status = this.buildStateData();
-                        Wirecloud.HistoryManager.replaceState(new_status, gettext('My Resources'));
+                        Wirecloud.HistoryManager.replaceState(new_status);
                     }.bind(this)
                 });
             }

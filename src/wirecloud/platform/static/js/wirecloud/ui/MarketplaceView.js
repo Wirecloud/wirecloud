@@ -219,8 +219,8 @@
 
     MarketplaceView.prototype.onHistoryChange = function onHistoryChange(state) {
         this.changeCurrentMarket(state.market);
-        if ('onHistoryChange' in this.alternatives.getCurrentAlternative()) {
-            this.alternatives.getCurrentAlternative().onHistoryChange(state);
+        if ('onHistoryChange' in this.viewsByName[state.market]) {
+            this.viewsByName[state.market].onHistoryChange(state);
         }
     };
 
@@ -264,7 +264,19 @@
     };
 
     MarketplaceView.prototype.getTitle = function getTitle() {
-        return gettext('Marketplace');
+        var current_alternative, marketname;
+
+        current_alternative = this.alternatives.getCurrentAlternative();
+        if (current_alternative === this.emptyAlternative || current_alternative === this.errorsAlternative) {
+            return gettext('Marketplace');
+        } else {
+            if (current_alternative.desc.user) {
+                marketname = current_alternative.desc.user + '/' + current_alternative.getLabel();
+            } else {
+                marketname = current_alternative.getLabel();
+            }
+            return Wirecloud.Utils.interpolate(gettext('Marketplace - %(marketname)s'), {marketname: marketname});
+        }
     };
 
     MarketplaceView.prototype.getToolbarMenu = function getToolbarMenu() {

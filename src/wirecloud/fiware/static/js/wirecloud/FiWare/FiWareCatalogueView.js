@@ -93,6 +93,7 @@
         options.class = 'catalogue fiware';
         StyledElements.Alternative.call(this, id, options);
 
+        this.mainview = options.catalogue;
         this.alternatives = new StyledElements.StyledAlternatives();
         this.appendChild(this.alternatives);
         this.currentStore = 'All stores';
@@ -135,21 +136,17 @@
             LayoutManagerFactory.getInstance().header._notifyViewChange();
         });
         this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative) {
-            var new_status = options.catalogue.buildStateData();
-
-            if (out_alternative === this.viewsByName.initial) {
-                Wirecloud.HistoryManager.replaceState(new_status);
-            } else {
-                Wirecloud.HistoryManager.pushState(new_status);
-            }
-
-            var header = LayoutManagerFactory.getInstance().header;
-            header._notifyViewChange(header.currentView);
-        }.bind(this));
+            LayoutManagerFactory.getInstance().header.refresh();
+        });
 
         this.addEventListener('show', function () {
             if (this.alternatives.getCurrentAlternative() === this.viewsByName.initial) {
-                this.changeCurrentView('search');
+                this.changeCurrentView('search', {
+                    onComplete: function (alternatives, out_alternative) {
+                        var new_status = this.mainview.buildStateData();
+                        Wirecloud.HistoryManager.replaceState(new_status);
+                    }.bind(this)
+                });
             }
             this.refresh_if_needed();
         }.bind(this));
@@ -161,7 +158,23 @@
     };
 
     FiWareCatalogueView.prototype.onHistoryChange = function onHistoryChange(state) {
-        this.changeCurrentView(state.subview);
+        var offering_info, parts, currentOffering;
+
+        if (state.subview === 'search') {
+            this.changeCurrentView(state.subview, {});
+        } else {
+            parts = state.offering.split('/');
+            offering_info = {
+                store: parts[0],
+                id: parts[1]
+            };
+
+            currentOffering = this.viewsByName.details.currentEntry;
+            if (currentOffering != null && currentOffering.store == offering_info.store && currentOffering.id == offering_info.id) {
+                currentOffering = currentOffering;
+            }
+            this.createUserCommand('showDetails', offering_info, {tab: state.tab})();
+        }
     };
 
     // this functions are used to update and know the current store in diferent views
@@ -288,12 +301,21 @@
         this.storeSelect.enable();
     };
 
-    FiWareCatalogueView.prototype.changeCurrentView = function (view_name) {
+    FiWareCatalogueView.prototype.changeCurrentView = function changeCurrentView(view_name, options) {
         if (!(view_name in this.viewsByName)) {
             throw new TypeError();
         }
 
-        this.alternatives.showAlternative(this.viewsByName[view_name]);
+        if (options == null) {
+            options = {
+                onComplete: function (alternatives, out_alternative) {
+                    var new_status = this.mainview.buildStateData();
+                    Wirecloud.HistoryManager.pushState(new_status);
+                }.bind(this)
+            };
+        }
+
+        this.alternatives.showAlternative(this.viewsByName[view_name], options);
     };
 
     FiWareCatalogueView.prototype.home = function () {
@@ -312,8 +334,10 @@
         }
 
         return function () {
-            var onSuccess = function onSuccess() {
-                this.viewsByName.details.paint(offering);
+            var onSuccess = function onSuccess(offering) {
+                this.viewsByName.details.paint(offering, {
+                        tab: options.tab
+                    });
                 this.viewsByName.details.repaint();
             };
             var onComplete = function onComplete() {
@@ -328,7 +352,7 @@
                 onSuccess.call(this, offering);
                 onComplete.call(this);
             } else {
-                this.catalogue.getOfferingDetails(offering.id, {
+                this.catalogue.get_offering_info(offering.store, offering.id, {
                     onSuccess: onSuccess.bind(this),
                     onComplete: onComplete.bind(this)
                 });
