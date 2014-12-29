@@ -83,14 +83,14 @@ var LayoutManagerFactory = function () {
         // ****************
 
         var updateSubTaskProgress = function updateSubTaskProgress() {
-            this.subTask.updateTaskProgress(Math.round((this.currentStep * 100) / this.totalSteps));
+            this.subTask.updateTaskProgress((this.currentStep * 100) / this.totalSteps);
         };
 
         var updateTaskProgress = function updateTaskProgress(monitor, progress) {
             var msg;
 
             msg = gettext("%(task)s %(percentage)s%");
-            msg = interpolate(msg, {task: monitor.title, percentage: progress}, true);
+            msg = interpolate(msg, {task: monitor.title, percentage: Math.round(progress)}, true);
             document.getElementById("loading-task-title").textContent = msg;
 
             if (monitor.subtasks.length === 0) {
@@ -99,12 +99,12 @@ var LayoutManagerFactory = function () {
                 msg = gettext("%(subTask)s: %(percentage)s%");
                 msg = interpolate(msg, {
                     subTask: monitor.subtasks[monitor.currentsubtask].title,
-                    percentage: monitor.subtasks[monitor.currentsubtask].progress
+                    percentage: Math.round(monitor.subtasks[monitor.currentsubtask].progress)
                 }, true);
             } else {
                 msg = "%(percentage)s";
                 msg = interpolate(msg, {
-                    percentage: monitor.subtasks[monitor.currentsubtask].progress
+                    percentage: Math.round(monitor.subtasks[monitor.currentsubtask].progress)
                 }, true);
             }
 
