@@ -61,7 +61,7 @@
 
     Container.prototype.appendChild = function appendChild(element, refElement) {
         if (element instanceof StyledElements.StyledElement) {
-            element.insertInto(this, refElement);
+            element.insertInto(this.wrapperElement, refElement);
             this.children.push(element);
         } else {
             if (refElement instanceof StyledElements.StyledElement) {

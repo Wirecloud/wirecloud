@@ -50,19 +50,12 @@
             refElement = refElement.wrapperElement;
         }
 
-        if (refElement != null) {
-            for (i = 0; i < this.elements.length; i += 1) {
-                currentElement = this.elements[i];
-                if (currentElement instanceof StyledElements.StyledElement) {
-                    currentElement.insertInto(element, refElement);
-                } else {
-                    element.insertBefore(currentElement, refElement);
-                }
-            }
-        } else {
-            for (i = 0; i < this.elements.length; i += 1) {
-                currentElement = this.elements[i];
-                element.appendChild(currentElement);
+        for (i = 0; i < this.elements.length; i += 1) {
+            currentElement = this.elements[i];
+            if (currentElement instanceof StyledElements.StyledElement) {
+                currentElement.insertInto(element, refElement);
+            } else {
+                element.insertBefore(currentElement, refElement);
             }
         }
     };

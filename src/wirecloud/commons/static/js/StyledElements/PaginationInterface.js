@@ -55,7 +55,7 @@
             'totalPages': this.totalPagesLabel
         };
         var contents = builder.parse(pattern, elements);
-        contents.insertInto(this.wrapperContainer);
+        this.wrapperContainer.appendChild(contents);
     };
 
     PaginationInterface = function PaginationInterface(pagination, options) {

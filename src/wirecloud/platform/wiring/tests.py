@@ -893,8 +893,10 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
         self.wiring_view.expect_error = True
         with self.wiring_view as wiring:
-            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+            alert_dialog = self.wait_element_visible_by_css_selector('.wc-alert-dialog')
+            # Alert should display detailed info about the problem (currently using an expandable panel)
+            alert_dialog.find_elements_by_css_selector('se-expander')
+            alert_dialog.find_element_by_xpath("//*[text()='Yes']").click()
             time.sleep(2)
             window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
             self.assertEqual(window_menus, 1)

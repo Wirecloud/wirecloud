@@ -623,7 +623,7 @@ if (!Wirecloud.ui) {
      * repaint the wiringEditor interface
      */
     var renewInterface = function renewInterface() {
-        var workspace, wiringStatus, layoutManager, msg;
+        var workspace, wiringStatus, layoutManager, msg, dialog;
 
         layoutManager = LayoutManagerFactory.getInstance();
         this.valid = false;
@@ -685,7 +685,11 @@ if (!Wirecloud.ui) {
             var noHandler = function () {
                 layoutManager.changeCurrentView('workspace');
             };
-            var msg = gettext("There was an error loading the wiring status. Do you want Wirecloud to try to recover the state of your connections automatically?");
+            var msg = new StyledElements.Fragment(gettext("<p>There was an error loading the wiring status. Do you want WireCloud to try to recover the state of your connections automatically?</p>"));
+            var details = new StyledElements.Expander({title: gettext('Details')});
+            msg.appendChild(details);
+            details.appendChild(document.createTextNode(err.message));
+
             var dialog = new Wirecloud.ui.AlertWindowMenu();
             dialog.setMsg(msg);
             dialog.setHandler(yesHandler, noHandler);
