@@ -62,10 +62,6 @@
             }
         }
 
-        items.push(new StyledElements.MenuItem(gettext('Refresh marketplace list'), function () {
-            this.refreshViewInfo();
-        }.bind(this.market)));
-
         if (!this.loading && !this.error) {
             items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
                 var menu, fields, type_entries;
