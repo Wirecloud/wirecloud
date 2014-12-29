@@ -82,6 +82,11 @@
                 }
             }.bind(this)
         });
+        this.source.addEventListener('optionsChanged', function (source, options) {
+            this.scopeSelect.setValue(options.scope);
+            this.simple_search_input.setValue(options.keywords);
+            update_resetbutton.call(this, options);
+        }.bind(this));
         this.source.addEventListener('requestStart', this.disable.bind(this));
         this.source.addEventListener('requestEnd', function (pagination, error) {
             var msg;
@@ -109,7 +114,7 @@
         this.resource_list = new StyledElements.Container({'class': 'resource_list'});
         this.simple_search_input = new StyledElements.StyledTextField({'class': 'simple_search_text', 'placeholder': 'Keywords...'});
         this.simple_search_input.inputElement.addEventListener('keypress', this._onSearchInputKeyPress.bind(this));
-        this.simple_search_input.addEventListener('change', this._onSearchInput.bind(this));
+        this.simple_search_input.addEventListener('change', onSearchInput.bind(this));
 
         if ('extra_context' in options) {
             extra_context = options.extra_context;
@@ -122,17 +127,16 @@
                 return new StyledElements.PaginationInterface(this.source);
             }.bind(this),
             'reset_button': function () {
-                var button = new StyledElements.StyledButton({text: gettext('View All')});
+                var button = new StyledElements.StyledButton({text: gettext('Refresh')});
                 button.addEventListener('click', function () {
-                    this.simple_search_input.setValue('');
-                    this.source.changeOptions({'correct_query': true, 'keywords': ''});
+                    this.source.changeOptions({'correct_query': true, 'keywords': '', scope: 'all'});
                 }.bind(this));
                 this.view_allbutton = button;
                 return button;
             }.bind(this),
             'orderby': function () {
                 var select = new StyledElements.StyledSelect({
-                    'initialValue': '-popularity',
+                    'initialValue': '-creation_date',
                     'initialEntries': [
                         {'label': gettext('Creation date'), 'value': '-creation_date'},
                         {'label': gettext('Title'), 'value': 'name'},
@@ -157,6 +161,7 @@
                 select.addEventListener('change', function (select) {
                     this.source.changeOptions({'scope': select.getValue()});
                 }.bind(this));
+                this.scopeSelect = select;
                 return select;
             }.bind(this),
             'searchinput': this.simple_search_input
@@ -225,7 +230,19 @@
         this.source.changeOptions({'correct_query': true, 'keywords': this.simple_search_input.getValue()});
     };
 
-    CatalogueSearchView.prototype._onSearchInput = function _onSearchInput(event) {
+    var update_resetbutton = function update_resetbutton(options) {
+        var filters_applied;
+
+        filters_applied = options.keywords !== '' || options.scope !== 'all';
+
+        if (filters_applied) {
+            this.view_allbutton.setLabel(gettext('Clear filters'));
+        } else {
+            this.view_allbutton.setLabel(gettext('Refresh'));
+        }
+    };
+
+    var onSearchInput = function onSearchInput(event) {
 
         // Cancel current timeout
         if (this.timeout !== null) {

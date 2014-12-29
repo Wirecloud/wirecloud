@@ -60,8 +60,21 @@
         }
     };
 
+    Fragment.prototype.repaint = function repaint() {
+        var i;
+
+        for (i = 0; i < this.elements.length; i++) {
+            if (typeof this.elements[i].repaint === 'function') {
+                this.elements[i].repaint();
+            }
+        }
+        return this;
+    };
+
     Fragment.prototype.appendChild = function appendChild(element) {
         this.elements.push(element);
+
+        return this;
     };
 
     StyledElements.Fragment = Fragment;

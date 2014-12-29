@@ -106,7 +106,7 @@
         }
 
         if (changed) {
-            this.events.optionsChanged.dispatch(this);
+            this.events.optionsChanged.dispatch(this, this.pOptions);
             this.refresh();
         }
     };
