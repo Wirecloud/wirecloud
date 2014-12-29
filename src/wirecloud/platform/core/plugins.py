@@ -189,6 +189,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_popup_menu.scss',
     'css/styledelements/styled_popover.scss',
     'css/styledelements/styled_tooltip.css',
+    'css/styledelements/styled_expander.scss',
 )
 
 

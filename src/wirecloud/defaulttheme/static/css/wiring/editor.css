@@ -19,6 +19,7 @@
     overflow-x: visible;
     overflow-y: auto;
     width: 180px;
+    padding: 5px 0px 0px 5px;
 }
 
 .wiring_editor .menubar .ioperator.disabled,
@@ -31,40 +32,10 @@
     cursor: url('../../images/wiring/cursorAdd.png'), crosshair;
 }
 
-.wiring_editor .menubar .styled_expander {
-    margin: 3px;
-    border: none;
-}
-
-.wiring_editor .menubar .styled_expander > div {
-    font-size: 120%;
-}
-
-.wiring_editor .menubar .styled_expander .title {
-    font-style: normal;
-    text-shadow: none;
-}
-
-.wiring_editor .menubar .styled_expander.expanded .contents {
+.wiring_editor .menubar .se-expander.expanded .panel-body {
     white-space: nowrap;
     font-size: 0.7em;
     padding: 1ex;
-}
-
-.wiring_editor .menubar .styled_expander .widgetsIcon {
-    background: url('../../images/wiring/blue_arrow_right.png');
-    position: absolute;
-    left: 5px;
-    height: 12px;
-    width: 6px;
-}
-
-.wiring_editor .menubar .styled_expander .operatorsIcon {
-    background: url('../../images/wiring/blue_arrow_right.png');
-    position: absolute;
-    left: 5px;
-    height: 12px;
-    width: 6px;
 }
 
 /* Entities max-width */

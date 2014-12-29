@@ -40,9 +40,10 @@
         StyledElements.StyledElement.call(this, ['expandChange']);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_expander");
+        this.wrapperElement.className = Wirecloud.Utils.appendWord("panel se-expander", options['class']);
 
         var header = document.createElement('div');
+        header.className = 'panel-heading';
         this.wrapperElement.appendChild(header);
 
         this.toggleButton = null;
@@ -60,7 +61,7 @@
             this.titleContainer.appendChild(document.createTextNode(options.title));
         }
 
-        this.contentContainer = new StyledElements.Container({'class': 'contents'});
+        this.contentContainer = new StyledElements.Container({'class': 'panel-body'});
         this.contentContainer.insertInto(this.wrapperElement);
 
         // Internal event handlers

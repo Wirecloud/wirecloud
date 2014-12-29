@@ -1,0 +1,39 @@
+@import 'variables';
+
+.se-expander {
+    overflow: hidden;
+}
+
+.se-expander .title {
+    font-size: inherit;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.se-expander > .panel-body {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.se-expander > .panel-heading > .icon-expand {
+    width: 1em;
+    text-align: center;
+    display: inline-block;
+}
+
+.se-expander > .panel-heading > .icon-expand.checked:before {
+    content: "\f0d7";
+}
+
+.se-expander > .panel-heading > .icon-expand:before {
+    content: "\f0da";
+}
+
+.se-expander.expanded .panel-body {
+    width: auto;
+    height: auto;
+    padding: 1ex;
+    overflow: auto;
+}
