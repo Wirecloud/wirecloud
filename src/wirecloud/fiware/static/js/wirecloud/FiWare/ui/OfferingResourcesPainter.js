@@ -91,7 +91,7 @@
     };
 
     OfferingResourcePainter.prototype.paint = function paint(offering, dom_element, catalogue, offering_entry) {
-        var i, resource, wrapper, li, button;
+        var i, resource, wrapper, li, btn_group, button, details_button;
 
         wrapper = document.createElement('ul');
         wrapper.className = 'offering_resource_list';
@@ -107,9 +107,11 @@
                 if (Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
                     button.addClassName('btn-danger').setLabel(gettext('Uninstall'));
                     button.addEventListener('click', onUninstallClick.bind(null, resource, catalogue, offering_entry));
+                    button_info.details_button.enable();
                 } else {
                     button.addClassName('btn-primary').setLabel(gettext('Install'));
                     button.addEventListener('click', onInstallClick.bind(null, resource, catalogue, offering_entry));
+                    button_info.details_button.disable();
                 }
             }
         };
@@ -121,17 +123,27 @@
             li.className = 'offering_resource';
             li.textContent = resource.name;
             if ('url' in resource) {
+                btn_group = document.createElement('div');
+                btn_group.className = 'btn-group';
+                li.appendChild(btn_group);
+
                 if ('type' in resource) {
 
                     button = new StyledElements.StyledButton({text: ''});
-                    offering_entry.resource_buttons[resource.id] = {resource: resource, button: button};
+                    button.insertInto(btn_group);
+                    details_button = new StyledElements.StyledButton({text: gettext('Details')});
+                    details_button.addEventListener('click', function () {
+                        var myresources_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+                        LayoutManagerFactory.getInstance().changeCurrentView('myresources', true);
+                        myresources_view.createUserCommand('showDetails', this, {version: this.version})();
+                    }.bind(resource));
+                    details_button.insertInto(btn_group);
+                    offering_entry.resource_buttons[resource.id] = {resource: resource, button: button, details_button: details_button};
 
                 } else {
-
                     button = new StyledElements.StyledButton({'class': 'btn-info', text: gettext('Download')});
-
+                    button.insertInto(btn_group);
                 }
-                button.insertInto(li);
             }
             wrapper.appendChild(li);
         }
