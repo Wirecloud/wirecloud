@@ -36,7 +36,6 @@
         this.appendChild(this.alternatives);
 
         this.viewsByName = {
-            'initial': this.alternatives.createAlternative(),
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter, resource_extra_context: resource_extra_context}}),
             'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView, containerOptions: {catalogue: this}}),
             'developer': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.PublishView, containerOptions: {catalogue: this.catalogue, mainview: this}})
@@ -67,17 +66,7 @@
             LayoutManagerFactory.getInstance().header._notifyViewChange(this);
         }.bind(this));
 
-        this.addEventListener('show', function () {
-            if (this.alternatives.getCurrentAlternative() === this.viewsByName.initial) {
-                this.changeCurrentView('search', {
-                    onComplete: function (alternatives, out_alternative) {
-                        var new_status = this.buildStateData();
-                        Wirecloud.HistoryManager.replaceState(new_status);
-                    }.bind(this)
-                });
-            }
-            this.refresh_if_needed();
-        }.bind(this));
+        this.addEventListener('show', this.refresh_if_needed.bind(this));
     };
     MyResourcesView.prototype = new StyledElements.Alternative();
 
@@ -90,16 +79,15 @@
         data = {
             workspace_creator: currentState.workspace_creator,
             workspace_name: currentState.workspace_name,
-            view: 'myresources'
+            view: 'myresources',
+            subview: 'search'
         };
 
-        if (this.alternatives.getCurrentAlternative() !== this.viewsByName.initial) {
-            subview = this.alternatives.getCurrentAlternative();
-            if (subview.view_name != null) {
-                data.subview = subview.view_name;
-                if ('buildStateData' in subview) {
-                    subview.buildStateData(data);
-                }
+        subview = this.alternatives.getCurrentAlternative();
+        if (subview.view_name != null) {
+            data.subview = subview.view_name;
+            if ('buildStateData' in subview) {
+                subview.buildStateData(data);
             }
         }
 
@@ -171,6 +159,7 @@
         if (options == null) {
             options = {
                 onComplete: function (alternatives, out_alternative) {
+                    this.refresh_if_needed();
                     var new_status = this.buildStateData();
                     Wirecloud.HistoryManager.pushState(new_status);
                 }.bind(this)
@@ -307,7 +296,7 @@
         }
 
         return function (e) {
-            var onSuccess = function (resource_details) {
+            var onSuccess = function onSuccess(resource_details) {
                 if (options.version != null) {
                     resource_details.changeVersion(options.version);
                 }
@@ -316,21 +305,35 @@
                     });
                 this.viewsByName.details.repaint();
             };
-            var onComplete = function onSuccess() {
-                this.viewsByName.details.enable();
+            var count = 2;
+            var onComplete = function onComplete() {
+                var new_status = this.buildStateData();
+                Wirecloud.HistoryManager.pushState(new_status);
                 Wirecloud.Utils.callCallback(options.onComplete);
+            };
+            var onCompleteRequest = function onCompleteRequest() {
+                this.viewsByName.details.enable();
+                if (--count == 0) {
+                    onComplete.call(this);
+                }
             };
 
             this.viewsByName.details.disable();
-            this.changeCurrentView('details');
+            this.changeCurrentView('details', {
+                onComplete: function () {
+                    if (--count == 0) {
+                        onComplete.call(this);
+                    }
+                }.bind(this)
+            });
 
             if (resource instanceof Wirecloud.WirecloudCatalogue.ResourceDetails) {
                 onSuccess.call(this, resource);
-                onComplete.call(this);
+                onCompleteRequest.call(this);
             } else {
                 this.catalogue.getResourceDetails(resource.vendor, resource.name, {
                     onSuccess: onSuccess.bind(this),
-                    onComplete: onComplete.bind(this)
+                    onComplete: onCompleteRequest.bind(this)
                 });
             }
         }.bind(this);

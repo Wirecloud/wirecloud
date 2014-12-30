@@ -48,7 +48,7 @@
     var StyledNotebook = function StyledNotebook(options) {
         var tabWrapper;
 
-        StyledElements.StyledElement.call(this, ['change', 'tabDeletion', 'tabInsertion', 'newTab']);
+        StyledElements.StyledElement.call(this, ['change', 'changed', 'tabDeletion', 'tabInsertion', 'newTab']);
 
         var defaultOptions = {
             'class': '',
@@ -485,21 +485,25 @@
      *
      * @param {Number|Tab} tab instancia o identificador de la pestaña que se quiere eliminar.
      */
-    StyledNotebook.prototype.goToTab = function goToTab(tab) {
+    StyledNotebook.prototype.goToTab = function goToTab(tab, options) {
         var newTab, oldTab;
 
         if (tab instanceof StyledElements.Tab) {
             if (this.tabsById[tab.tabId] !== tab) {
-                throw new Error();
+                throw new TypeError('tab is not owned by this notebook');
             }
             newTab = tab;
         } else {
             newTab = this.tabsById[tab];
             if (newTab == null) {
-                throw new Error();
+                throw new TypeError('Invalid tab id');
             }
         }
         oldTab = this.visibleTab;
+
+        if (options == null) {
+            options = {};
+        }
 
         if (this.visibleTab && newTab == this.visibleTab) {
             if (this.focusOnSetVisible) {
@@ -508,7 +512,7 @@
             return;
         }
 
-        this.events.change.dispatch(this, oldTab, newTab);
+        this.events.change.dispatch(this, oldTab, newTab, options.context);
 
         if (this.visibleTab) {
             this.visibleTab.setVisible(false);
@@ -520,6 +524,8 @@
         if (this.focusOnSetVisible) {
             this.focus(newTab.tabId);
         }
+
+        this.events.changed.dispatch(this, oldTab, newTab, options.context);
     };
 
     /**

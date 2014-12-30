@@ -39,6 +39,7 @@
             version: this.version.text
         }) + "?v=" + Wirecloud.contextManager.get('version_hash');
         this.code_content_type = data.code_content_type;
+        this.doc = data.doc;
 
         // Preferences
         this.preferences = {};
@@ -81,7 +82,6 @@
         this.default_height = data.widget_height;
 
         /* FIXME */
-        this.getUriWiki = function getUriWiki() { return data.doc; };
         this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
         this.getIPhoneImageURI = this.getIcon;
 

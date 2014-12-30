@@ -38,11 +38,13 @@
                     var details, i, entries, versions;
 
                     details = new StyledElements.StyledNotebook();
-                    details.addEventListener('change', function (notebook, oldTab, newTab) {
-                        var new_status = Wirecloud.HistoryManager.getCurrentState();
-                        new_status.tab = newTab.nameText;
-                        Wirecloud.HistoryManager.pushState(new_status);
-                    });
+                    details.addEventListener('changed', function (notebook, oldTab, newTab, context) {
+                        if (context == null || context.init !== true) {
+                            var new_status = this.mainview.buildStateData();
+                            Wirecloud.HistoryManager.pushState(new_status);
+                        }
+                        LayoutManagerFactory.getInstance().header.refresh();
+                    }.bind(this));
 
                     var select = new StyledElements.StyledSelect({'class': 'versions'});
                     entries = [];
@@ -146,7 +148,9 @@
         this.appendChild(this.resource_details_painter.paint(resource));
 
         if (options.tab != null) {
-            this.currentNotebook.goToTab(this.currentNotebook.getTabByLabel(options.tab));
+            this.currentNotebook.goToTab(this.currentNotebook.getTabByLabel(options.tab), {
+                context: {init: true}
+            });
         }
     };
 

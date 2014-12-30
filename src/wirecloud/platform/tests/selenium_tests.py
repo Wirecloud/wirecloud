@@ -295,6 +295,34 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 9)
     test_basic_widget_functionalities.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
+    def test_widget_navigation_to_doc(self):
+
+        self.login(username='user_with_workspaces')
+        iwidget = self.get_current_iwidgets()[0]
+
+        iwidget.open_menu().click_entry("User's Manual")
+
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
+        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
+        self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
+        self.assertEqual(current_tab, 'Documentation')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
+
+        self.driver.forward()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'myresources')
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
+        self.assertEqual(self.myresources_view.get_subview(), 'details')
+        self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
+
     def test_pending_wiring_events(self):
 
         self.login(username='user_with_workspaces')

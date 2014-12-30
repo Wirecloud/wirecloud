@@ -78,12 +78,19 @@
             }.bind(this.iWidget)
         ));
 
-        items.push(new StyledElements.MenuItem(
+        item = new StyledElements.MenuItem(
             gettext("User's Manual"),
             function () {
-                window.open(this.widget.getUriWiki(), '_blank');
+                var myresources_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
+                LayoutManagerFactory.getInstance().changeCurrentView('myresources', true);
+                myresources_view.createUserCommand('showDetails', this.widget, {
+                        version: this.widget.version,
+                        tab: 'Documentation'
+                    })();
             }.bind(this.iWidget)
-        ));
+        );
+        item.setDisabled(this.iWidget.widget.doc === '');
+        items.push(item);
 
         if (this.iWidget.isInFullDragboardMode()) {
             fulldragboard_label = gettext("Exit Full Dragboard");

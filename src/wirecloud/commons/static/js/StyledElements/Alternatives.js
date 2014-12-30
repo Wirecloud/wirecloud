@@ -114,6 +114,7 @@
             }
 
             if (context.inAlternative == null || context.inAlternative == context.outAlternative) {
+                Wirecloud.Utils.callCallback(context.onComplete, context.alternativesObject, context.outAlternative, context.inAlternative);
                 return false; // we are not going to process this command
             }
 
