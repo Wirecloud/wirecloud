@@ -206,6 +206,18 @@
         });
         fragment.appendChild(button);
 
+        if (resource.type === 'widget') {
+            button = new StyledElements.StyledButton({
+                'text': gettext('Add to workspace')
+            });
+            button.addEventListener('click', function () {
+                LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+                var local_widget = Wirecloud.LocalCatalogue.getResource(resource.vendor, resource.name, resource.version);
+                Wirecloud.activeWorkspace.addInstance(local_widget);
+            });
+            fragment.appendChild(button);
+        }
+
         if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue) {
             button = new StyledElements.StyledButton({
                 'text': gettext('Publish')
