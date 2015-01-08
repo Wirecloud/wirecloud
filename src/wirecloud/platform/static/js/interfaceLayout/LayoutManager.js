@@ -205,12 +205,15 @@ var LayoutManagerFactory = function () {
         }
 
         /****VIEW OPERATIONS****/
-        LayoutManager.prototype.changeCurrentView = function changeCurrentView(newView, ignoreState) {
-            var options = {};
+        LayoutManager.prototype.changeCurrentView = function changeCurrentView(newView, options) {
 
-            if (ignoreState !== true) {
-                options.onComplete = function (alternatives, old_alternative, new_alternative) {
-                    Wirecloud.HistoryManager.pushState(new_alternative.buildStateData());
+            if (options === true) {
+                options = {};
+            } else if (options == null) {
+                options = {
+                    onComplete: function (alternatives, old_alternative, new_alternative) {
+                        Wirecloud.HistoryManager.pushState(new_alternative.buildStateData());
+                    }
                 };
             }
 

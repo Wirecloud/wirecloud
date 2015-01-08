@@ -82,7 +82,6 @@
             gettext("User's Manual"),
             function () {
                 var myresources_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-                LayoutManagerFactory.getInstance().changeCurrentView('myresources', true);
                 myresources_view.createUserCommand('showDetails', this.widget, {
                         version: this.widget.version,
                         tab: 'Documentation'

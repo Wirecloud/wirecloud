@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -295,6 +295,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 9)
     test_basic_widget_functionalities.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_widget_navigation_to_doc(self):
 
         self.login(username='user_with_workspaces')
@@ -306,6 +307,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
         current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
         self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
+        self.assertEqual(self.driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text, 'v1.0')
         self.assertEqual(current_tab, 'Documentation')
 
         self.driver.back()

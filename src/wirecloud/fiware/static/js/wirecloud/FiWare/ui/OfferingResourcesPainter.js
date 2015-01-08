@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -134,7 +134,6 @@
                     details_button = new StyledElements.StyledButton({text: gettext('Details')});
                     details_button.addEventListener('click', function () {
                         var myresources_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-                        LayoutManagerFactory.getInstance().changeCurrentView('myresources', true);
                         myresources_view.createUserCommand('showDetails', this, {version: this.version})();
                     }.bind(resource));
                     details_button.insertInto(btn_group);

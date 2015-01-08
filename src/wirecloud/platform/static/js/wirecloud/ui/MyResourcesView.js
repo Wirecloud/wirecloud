@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -61,10 +61,6 @@
         this.alternatives.addEventListener('preTransition', function (alternatives, out_alternative) {
             LayoutManagerFactory.getInstance().header._notifyViewChange();
         });
-
-        this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative) {
-            LayoutManagerFactory.getInstance().header._notifyViewChange(this);
-        }.bind(this));
 
         this.addEventListener('show', this.refresh_if_needed.bind(this));
     };
@@ -162,6 +158,7 @@
                     this.refresh_if_needed();
                     var new_status = this.buildStateData();
                     Wirecloud.HistoryManager.pushState(new_status);
+                    LayoutManagerFactory.getInstance().header._notifyViewChange(this);
                 }.bind(this)
             };
         }
@@ -305,15 +302,19 @@
                     });
                 this.viewsByName.details.repaint();
             };
-            var count = 2;
+            var viewChanged = false, dataLoaded = false;
             var onComplete = function onComplete() {
-                var new_status = this.buildStateData();
-                Wirecloud.HistoryManager.pushState(new_status);
+                if (options.preventDefault !== true) {
+                    var new_status = this.buildStateData();
+                    Wirecloud.HistoryManager.pushState(new_status);
+                    LayoutManagerFactory.getInstance().header._notifyViewChange(this);
+                }
                 Wirecloud.Utils.callCallback(options.onComplete);
             };
             var onCompleteRequest = function onCompleteRequest() {
                 this.viewsByName.details.enable();
-                if (--count == 0) {
+                dataLoaded = true;
+                if (viewChanged && dataLoaded) {
                     onComplete.call(this);
                 }
             };
@@ -321,9 +322,14 @@
             this.viewsByName.details.disable();
             this.changeCurrentView('details', {
                 onComplete: function () {
-                    if (--count == 0) {
-                        onComplete.call(this);
-                    }
+                    LayoutManagerFactory.getInstance().changeCurrentView('myresources', {
+                        onComplete: function () {
+                            viewChanged = true;
+                            if (viewChanged && dataLoaded) {
+                                onComplete.call(this);
+                            }
+                        }.bind(this)
+                    });
                 }.bind(this)
             });
 
