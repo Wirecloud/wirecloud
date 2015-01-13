@@ -39,6 +39,16 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'NeoTech';
+  font-style: normal;
+  font-weight: normal;
+  src: local("Neo Tech"), local("NeoTech"),
+       url("../fonts/neotech-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/neotech-regular-webfont.woff") format("woff"),
+       url("../fonts/neotech-regular-webfont.ttf") format("truetype");
+}
+
 html, body {
     width: 100%;
     height: 100%;
