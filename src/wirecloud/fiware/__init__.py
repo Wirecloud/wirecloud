@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -21,12 +21,12 @@ __version_info__ = (4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 DEFAULT_FIWARE_PORTALS = (
-    {'name': 'Cloud', 'url': 'https://cloud.lab.fi-ware.org', "logout_path": "/logout"},
-    {'name': 'Store', 'url': 'https://store.lab.fi-ware.org', "logout_path": "/logout"},
-    {'name': 'Mashup', 'url': 'https://mashup.lab.fi-ware.org', "logout_path": "/logout", "active": True},
-    {'name': 'Data', 'url': 'https://data.lab.fi-ware.org', "logout_path": "/user/_logout"},
-    {'name': 'Account', 'url': 'https://account.lab.fi-ware.org', "logout_path": "/users/sign_out"},
-    {'name': 'Help&info', 'url': 'http://help.lab.fi-ware.org'},
+    {'name': 'Cloud', 'url': 'https://cloud.lab.fiware.org', "logout_path": "/logout"},
+    {'name': 'Store', 'url': 'https://store.lab.fiware.org', "logout_path": "/logout"},
+    {'name': 'Mashup', 'url': 'https://mashup.lab.fiware.org', "logout_path": "/logout", "active": True},
+    {'name': 'Data', 'url': 'https://data.lab.fiware.org', "logout_path": "/user/_logout"},
+    {'name': 'Account', 'url': 'https://account.lab.fiware.org', "logout_path": "/users/sign_out"},
+    {'name': 'Help&info', 'url': 'http://help.lab.fiware.org'},
 )
 
-DEFAULT_FIWARE_HOME = 'https://lab.fi-ware.org';
+DEFAULT_FIWARE_HOME = 'https://lab.fiware.org';

@@ -18,11 +18,11 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-FI-WARE IdM OAuth2 support.
+FIWARE IdM OAuth2 support.
 
-This contribution adds support for FI-WARE IdM OAuth2 service. The settings
+This contribution adds support for FIWARE IdM OAuth2 service. The settings
 FIWARE_APP_ID and FIWARE_APP_SECRET must be defined with the values
-given by FI-WARE IdM application registration process.
+given by FIWARE IdM application registration process.
 
 Extended permissions are supported by defining FIWARE_EXTENDED_PERMISSIONS
 setting, it must be a list of values to request.
@@ -40,7 +40,7 @@ from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend
 
 
-FILAB_IDM_SERVER = 'https://account.lab.fi-ware.org'
+FILAB_IDM_SERVER = 'https://account.lab.fiware.org'
 
 FIWARE_AUTHORIZATION_ENDPOINT = 'authorize'
 FIWARE_ACCESS_TOKEN_ENDPOINT = 'token'
@@ -48,7 +48,7 @@ FIWARE_USER_DATA_ENDPOINT = 'user'
 
 
 class FiwareBackend(OAuthBackend):
-    """FI-WARE IdM OAuth authentication backend"""
+    """FIWARE IdM OAuth authentication backend"""
     name = 'fiware'
     # Default extra data to store
     EXTRA_DATA = [
@@ -57,12 +57,12 @@ class FiwareBackend(OAuthBackend):
     ]
 
     def get_user_id(self, details, response):
-        """Return the user id, FI-WARE IdM only provides username as a unique
+        """Return the user id, FIWARE IdM only provides username as a unique
         identifier"""
         return response['nickName']
 
     def get_user_details(self, response):
-        """Return user details from FI-WARE account"""
+        """Return user details from FIWARE account"""
         name = response.get('displayName') or ''
         first_name = ''
         last_name = ''
@@ -78,7 +78,7 @@ class FiwareBackend(OAuthBackend):
 
 
 class FiwareAuth(BaseOAuth2):
-    """FI-WARE OAuth2 mechanism"""
+    """FIWARE OAuth2 mechanism"""
     AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
     ACCESS_TOKEN_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_ACCESS_TOKEN_ENDPOINT)
     USER_DATA_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_USER_DATA_ENDPOINT)

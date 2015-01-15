@@ -245,8 +245,8 @@
         if (Wirecloud.constants.FIWARE_OFFICIAL_PORTAL && this.footer == null) {
             this.footer = document.createElement('footer');
 
-            msg = '<div>2014 © <a href="http://fiware.org/" target="_blank">FIWARE</a>. The use of FIWARE %(environment)s services is subject to the acceptance of the <a href="http://wiki.fi-ware.org/FI-LAB_Terms_and_Conditions" target="_blank">Terms and Conditions</a>, <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/FI-LAB_Personal_Data_Protection_Policy" target="_blank">Personal Data Protection Policy</a> and <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/Cookies_Policy_FIWARE_Lab" target="_blank">Cookies Policy</a></div>';
-            if (Wirecloud.constants.FIWARE_IDM_SERVER === 'https://account.lab.fi-ware.org') {
+            msg = '<div>2014 © <a href="http://fiware.org/" target="_blank">FIWARE</a>. The use of FIWARE %(environment)s services is subject to the acceptance of the <a href="http://wiki.fiware.org/FI-LAB_Terms_and_Conditions" target="_blank">Terms and Conditions</a>, <a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-LAB_Personal_Data_Protection_Policy" target="_blank">Personal Data Protection Policy</a> and <a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Cookies_Policy_FIWARE_Lab" target="_blank">Cookies Policy</a></div>';
+            if (Wirecloud.constants.FIWARE_IDM_SERVER === 'https://account.lab.fiware.org') {
                 environment = 'Lab';
             } else {
                 environment = 'Testbed';
@@ -257,7 +257,7 @@
             if (readCookie(fiware_cookie_policy_cookie) !== 'on') {
                 cookie_banner = document.createElement('div');
                 cookie_banner.setAttribute('id', 'cookie-law');
-                cookie_banner.innerHTML = '<p>We use first and third-party’s cookies to improve your experience and our services, identifying your Internet browsing preferences on our website. If you keep browsing, you accept its use. You can get more information on our <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/Cookies_Policy_FIWARE_Lab" target="_blank">Cookie Policy</a>.</p>';
+                cookie_banner.innerHTML = '<p>We use first and third-party’s cookies to improve your experience and our services, identifying your Internet browsing preferences on our website. If you keep browsing, you accept its use. You can get more information on our <a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Cookies_Policy_FIWARE_Lab" target="_blank">Cookie Policy</a>.</p>';
                 document.body.appendChild(cookie_banner);
 
                 this.close_cookie_banner_button = new StyledElements.StyledButton({text: 'X', plain: true, id: 'close-cookie-banner'});

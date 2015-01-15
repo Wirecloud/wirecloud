@@ -66,8 +66,8 @@ def build_selenium_test_cases(classes, namespace):
             )
 build_selenium_test_cases.__test__ = False
 
-WIRECLOUD_INSTANCE = 'http://wirecloud.testbed.fi-ware.eu'
-STORE_INSTANCE = 'http://wstore.testbed.fi-ware.eu'
+WIRECLOUD_INSTANCE = 'https://wirecloud.testbed.fi-ware.org'
+STORE_INSTANCE = 'https://store.testbed.fi-ware.org'
 
 class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
 
@@ -84,7 +84,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         self.change_marketplace('FI-WARE')
         self.search_resource('Orion Context')
         resource = self.search_in_catalogue_results('Orion Context Broker')
-        self.assertIsNotNone(resource, "FI-WARE Marketplace searches doesn't work")
+        self.assertIsNotNone(resource, "FIWARE Marketplace searches doesn't work")
 
     def test_store_integration_buy(self):
 
