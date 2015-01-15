@@ -67,10 +67,11 @@ class ResourceCollection(Resource):
     @supported_response_mime_types(('application/json',))
     def read(self, request):
 
+        process_urls = process_urls=request.GET.get('process_urls', 'true') == 'true'
         resources = {}
         if request.user.is_authenticated():
             for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups=request.user.groups.all())):
-                options = resource.get_processed_info(request)
+                options = resource.get_processed_info(request, process_urls=process_urls)
                 resources[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(resources), content_type='application/json; chatset=UTF-8')
@@ -280,7 +281,7 @@ class ResourceDescriptionEntry(Resource):
         #if not request.user.is_superuser and not resource.is_available_for(request.user):
         #    return build_error_response(request, 403, _('You are not allowed to retrieve info about this resource'))
 
-        resource_info = resource.get_processed_info(request)
+        resource_info = resource.get_processed_info(request, process_urls=request.GET.get('process_urls', 'true') == 'true')
         if request.GET.get('include_wgt_files', '').lower() == 'true':
             base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
             wgt_file = zipfile.ZipFile(os.path.join(base_dir, resource.template_uri))
@@ -313,8 +314,9 @@ class WorkspaceResourceCollection(Resource):
                 pass
 
         result = {}
+        process_urls = process_urls=request.GET.get('process_urls', 'true') == 'true'
         for resource in resources:
-            options = resource.get_processed_info(request)
+            options = resource.get_processed_info(request, process_urls=process_urls)
             result[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(result), content_type='application/json; chatset=UTF-8')

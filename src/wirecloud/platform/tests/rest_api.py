@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -848,6 +848,39 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be removed
         self.assertFalse(Workspace.objects.filter(name='ExistingWorkspace').exists())
 
+    def test_workspace_resource_collection_get(self):
+
+        url = reverse('wirecloud.workspace_resource_collection', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue(response_data["Wirecloud/TestOperator/1.0"]["js_files"][0].startswith('http'))
+
+    def test_workspace_resource_collection_get_no_process_urls(self):
+
+        url = reverse('wirecloud.workspace_resource_collection', kwargs={'workspace_id': 2}) + '?process_urls=false'
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data["Wirecloud/TestOperator/1.0"]["js_files"][0], "js/main.js")
+
+    def test_workspace_resource_collection_get_requires_permission(self):
+
+        url = reverse('wirecloud.workspace_resource_collection', kwargs={'workspace_id': 1})
+        check_get_requires_permission(self, url)
+
     def test_workspace_wiring_entry_put_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
@@ -1650,6 +1683,32 @@ class ResourceManagementAPI(WirecloudTestCase):
             self.assertIn('name', resource)
             self.assertIn('version', resource)
 
+            if resource['type'] == 'operator':
+                for js_file in resource['js_files']:
+                    self.assertTrue(js_file.startswith('http'))
+            elif resource['type'] == 'widget':
+                self.assertTrue(resource['contents']['src'].startswith('http'))
+
+    def test_resource_collection_get_no_process_urls(self):
+
+        url = reverse('wirecloud.resource_collection') + '?process_urls=false'
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        for resource_id in response_data:
+            resource = response_data[resource_id]
+            self.assertIn('type', resource)
+            if resource['type'] == 'operator':
+                for js_file in resource['js_files']:
+                    self.assertTrue(not js_file.startswith('http'))
+            elif resource['type'] == 'widget':
+                self.assertTrue(not resource['contents']['src'].startswith('http'))
+
     def test_resource_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.resource_collection')
@@ -1999,6 +2058,23 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+        self.assertTrue(response_data["contents"]["src"].startswith('http'))
+
+    def test_resource_description_entry_get_no_process_urls(self):
+
+        resource_id = ['Wirecloud', 'Test', '1.0']
+        url = reverse('wirecloud.resource_description_entry', args=resource_id) + '?process_urls=false'
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+        self.assertFalse(response_data["contents"]["src"].startswith('http'))
 
     @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, deploy_only=True)
     def test_resource_description_entry_get_including_files(self):
