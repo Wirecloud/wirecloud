@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -73,7 +73,7 @@
 
             // Create instance model
             container = opManager.globalDragboard.newIWidgetContainer();
-            iwidget = new IWidget(widget, curIWidget.id, curIWidget.code, curIWidget.name, this, container, curIWidget.variables);
+            iwidget = new IWidget(widget, curIWidget.id, curIWidget.code, curIWidget.name, this, container, curIWidget);
             this.iWidgets[curIWidget.id] = iwidget;
 
             if (curIWidget.code >= this.currentCode) {

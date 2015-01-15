@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -53,7 +53,7 @@
  * @param {String}            menu_color    background color for the menu.
  *                                          (6 chars with a hexadecimal color)
  */
-function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, readOnly, variables) {
+function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, readOnly, description) {
 
     this.code = null;
     this.position = position;
@@ -85,12 +85,7 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.internal_iwidget = new Wirecloud.IWidget(
         widget,
         layout.dragboard.tab,
-        {
-            id: iWidgetId,
-            name: iWidgetName,
-            readOnly: readOnly,
-            variables: variables
-        }
+        description
     );
     this._iwidget_removed = this._iwidget_removed.bind(this);
     this.internal_iwidget.addEventListener('removed', this._iwidget_removed);

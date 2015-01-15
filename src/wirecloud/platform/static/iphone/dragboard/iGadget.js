@@ -31,7 +31,7 @@
 * This class represents a instance of a Widget.
 * @author aarranz
 */
-function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alternative, variables) {
+function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alternative, description) {
     this.code = iWidgetCode;
 
     this.dragboard = dragboard;
@@ -41,12 +41,7 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
     this.internal_iwidget = new Wirecloud.IWidget(
         widget,
         dragboard.tab,
-        {
-            id: iWidgetId,
-            name: iWidgetName,
-            readOnly: true, // TODO
-            variables: variables
-        }
+        description
     );
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},

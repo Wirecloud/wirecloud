@@ -25,9 +25,8 @@
 
     "use strict";
 
-    var PersistentVariable = function PersistentVariable(def, commiter, id, readonly, currentValue) {
+    var PersistentVariable = function PersistentVariable(def, commiter, readonly, currentValue) {
         Object.defineProperty(this, 'meta', {value: def});
-        Object.defineProperty(this, 'id', {value: id});
         Object.defineProperty(this, 'readnOnly', {value: readonly});
         Object.defineProperty(this, 'commiter', {value: commiter});
         this.value = currentValue;

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -580,17 +580,20 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         cache_manager = VariableValueCacheManager(workspace, user)
 
     variables = _get_cached_variables(iwidget)
-    data_ret['variables'] = {}
+    data_ret['preferences'] = {}
+    data_ret['properties'] = {}
     for variable in variables:
         var_data = get_variable_data(variable, workspace, cache_manager)
-        data_ret['variables'][variable.vardef.name] = var_data
+        if variable.vardef.aspect == "PROP":
+            data_ret['properties'][variable.vardef.name] = var_data
+        else:
+            data_ret['preferences'][variable.vardef.name] = var_data
 
     return data_ret
 
 
 def get_variable_data(variable, workspace, cache_manager=None, user=None):
     data_ret = {
-        'id': variable.id,
         'name': variable.vardef.name,
     }
 

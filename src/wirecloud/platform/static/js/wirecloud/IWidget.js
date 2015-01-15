@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -118,24 +118,29 @@
         preferences = this.meta.preferenceList;
         this.preferenceList = [];
         this.preferences = {};
-        if (options.variables != null) {
-            for (i = 0; i < preferences.length; i++) {
-                iwidget_pref_info = options.variables[preferences[i].name];
+        for (i = 0; i < preferences.length; i++) {
+            iwidget_pref_info = options.preferences[preferences[i].name];
+            if (iwidget_pref_info != null) {
                 this.preferenceList[i] = new Wirecloud.UserPref(preferences[i], iwidget_pref_info.readonly, iwidget_pref_info.hidden, iwidget_pref_info.value);
-                this.preferences[preferences[i].name] = this.preferenceList[i];
+            } else {
+                this.preferenceList[i] = new Wirecloud.UserPref(preferences[i], false, false, preferences[i].default);
             }
+
+            this.preferences[preferences[i].name] = this.preferenceList[i];
         }
 
         properties = this.meta.propertyList;
         this.propertyList = [];
         this.properties = {};
-        if (options.variables != null) {
-            this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
-            for (i = 0; i < properties.length; i++) {
-                iwidget_prop_info = options.variables[properties[i].name];
-                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, iwidget_prop_info.id, iwidget_prop_info.readonly, iwidget_prop_info.value);
-                this.properties[properties[i].name] = this.propertyList[i];
+        this.propertyCommiter = new Wirecloud.PropertyCommiter(this);
+        for (i = 0; i < properties.length; i++) {
+            iwidget_prop_info = options.properties[properties[i].name];
+            if (iwidget_prop_info != null) {
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, iwidget_prop_info.readonly, iwidget_prop_info.value);
+            } else {
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].meta.default);
             }
+            this.properties[properties[i].name] = this.propertyList[i];
         }
 
         this.callbacks = {
