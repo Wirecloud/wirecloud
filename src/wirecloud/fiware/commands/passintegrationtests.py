@@ -66,8 +66,8 @@ def build_selenium_test_cases(classes, namespace):
             )
 build_selenium_test_cases.__test__ = False
 
-WIRECLOUD_INSTANCE = 'https://wirecloud.testbed.fi-ware.org'
-STORE_INSTANCE = 'https://store.testbed.fi-ware.org'
+WIRECLOUD_INSTANCE = 'https://wirecloud.testbed.fiware.org'
+STORE_INSTANCE = 'https://wstore.testbed.fiware.org'
 
 class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
 
