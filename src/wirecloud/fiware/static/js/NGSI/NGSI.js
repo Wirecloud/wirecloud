@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of ngsijs.
  *
@@ -264,6 +264,9 @@
                         doc = response.responseXML;
                     }
                     try {
+                        if (doc.getElementsByTagName('parsererror').length > 0) {
+                            throw new NGSI.InvalidResponseError('Server returned invalid xml content');
+                        }
                         data = parse_func(doc, callbacks);
                     } catch (e) {
                         if (typeof callbacks.onFailure === 'function') {
@@ -279,10 +282,10 @@
                 var error;
 
                 if (typeof callbacks.onFailure === 'function') {
-                    if (response.status_code === 0) {
+                    if (response.status === 0) {
                         error = new NGSI.ConnectionError();
                     } else {
-                        error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status_code);
+                        error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
                     }
                     callbacks.onFailure(error);
                 }
@@ -293,6 +296,12 @@
                 }
             }
         });
+    };
+
+    var assert_root_element = function assert_root_element(doc, expected_root_element) {
+        if (doc.documentElement.tagName !== expected_root_element) {
+            throw new NGSI.InvalidResponseError('Unexpected root element in response: ' + doc.documentElement.tagName);
+        }
     };
 
     var ngsi_build_entity_id_element = function ngsi_build_entity_id_element(doc, entity) {
@@ -787,9 +796,7 @@
 
     var parse_register_context_response =  function parse_register_context_response(doc) {
 
-        if (doc.documentElement.tagName !== 'registerContextResponse') {
-            throw new NGSI.InvalidResponseError('');
-        }
+        assert_root_element(doc, 'registerContextResponse');
 
         return [{
             duration: NGSI.XML.getTextContent(NGSI.XML.getChildElementByTagName(doc.documentElement, 'duration')),
@@ -855,9 +862,8 @@
     };
 
     var parse_discover_context_availability_response = function parse_discover_context_availability_response(doc) {
-        if (doc.documentElement.tagName !== 'discoverContextAvailabilityResponse') {
-            throw new NGSI.InvalidResponseError('');
-        }
+
+        assert_root_element(doc, 'discoverContextAvailabilityResponse');
 
         var list = NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextRegistrationResponseList');
         return [parse_context_registration_response_list(list)];
@@ -884,9 +890,8 @@
     };
 
     var parse_unsubscribe_context_availability_response = function parse_unsubscribe_context_availability_response(doc) {
-        if (doc.documentElement.tagName !== 'unsubscribeContextAvailabilityResponse') {
-            throw new NGSI.InvalidResponseError('');
-        }
+
+        assert_root_element(doc, 'unsubscribeContextAvailabilityResponse');
 
         return [{
             subscriptionId: NGSI.XML.getTextContent(NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId')),
@@ -1037,9 +1042,7 @@
     var parse_query_context_response = function parse_query_context_response(doc, options) {
         var details, parsed_details, data;
 
-        if (doc.documentElement.tagName !== 'queryContextResponse') {
-            throw new NGSI.InvalidResponseError('Unexpected root element in response: ' + doc.documentElement.tagName);
-        }
+        assert_root_element(doc, 'queryContextResponse');
 
         try {
             process_error_code(doc.documentElement);
@@ -1078,9 +1081,8 @@
     };
 
     var parse_update_context_response = function parse_update_context_response(doc, options) {
-        if (doc.documentElement.tagName !== 'updateContextResponse') {
-            throw new NGSI.InvalidResponseError('');
-        }
+
+        assert_root_element(doc, 'updateContextResponse');
 
         process_error_code(doc.documentElement);
 
@@ -1110,9 +1112,7 @@
 
     var parse_subscribe_context_response = function parse_subscribe_context_response(doc) {
 
-        if (doc.documentElement.tagName !== 'subscribeContextResponse') {
-            throw new NGSI.InvalidResponseError();
-        }
+        assert_root_element(doc, 'subscribeContextResponse');
 
         var subscribeResponse = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscribeResponse');
         return [parse_subscribe_response_element(subscribeResponse)];
@@ -1120,9 +1120,7 @@
 
     var parse_update_context_subscription_response = function parse_update_context_subscription_response(doc) {
 
-        if (doc.documentElement.tagName !== 'updateContextSubscriptionResponse') {
-            throw new NGSI.InvalidResponseError();
-        }
+        assert_root_element(doc, 'updateContextSubscriptionResponse');
 
         var subscribeResponse = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscribeResponse');
         return [parse_subscribe_response_element(subscribeResponse)];
@@ -1130,9 +1128,7 @@
 
     var parse_unsubscribe_context_response = function parse_unsubscribe_context_response(doc) {
 
-        if (doc.documentElement.tagName !== 'unsubscribeContextResponse') {
-            throw new NGSI.InvalidResponseError();
-        }
+        assert_root_element(doc, 'unsubscribeContextResponse');
 
         var subIdElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId');
 
@@ -1143,9 +1139,7 @@
 
     var parse_notify_context_availability_request = function parse_notify_context_availability_request(doc, options) {
 
-        if (doc.documentElement.tagName !== 'notifyContextAvailabilityRequest') {
-            throw new NGSI.InvalidResponseError();
-        }
+        assert_root_element(doc, 'notifyContextAvailabilityRequest');
 
         var list = NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextRegistrationResponseList');
         return [parse_context_registration_response_list(list)];
@@ -1154,9 +1148,7 @@
     NGSI.parseNotifyContextRequest = function parseNotifyContextRequest(doc, options) {
         var subscriptionIdElement, originatorElement, data;
 
-        if (doc.documentElement.tagName !== 'notifyContextRequest') {
-            throw new NGSI.InvalidResponseError();
-        }
+        assert_root_element(doc, 'notifyContextRequest');
 
         data = parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), false, options)[0];
 
