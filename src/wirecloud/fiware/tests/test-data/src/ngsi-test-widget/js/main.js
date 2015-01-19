@@ -16,10 +16,13 @@
         } catch (err) {}
     }
 
-    var fail = function fail() {
+    var fail = function fail(e) {
         msg = document.createElement('div');
         msg.className = 'alert alert-block alert-error';
-        msg.textContent = 'Failure!';
+        msg.innerHTML = '<h4>Failure!</h4>';
+        if (e != null) {
+            msg.innerHTML += '<p>' + e.message + '</p>';
+        }
         document.body.appendChild(msg);
 
         msg.scrollIntoView();
@@ -44,7 +47,7 @@
                 onSuccess: onAddAttributesSuccess,
                 onFailure: function (e) {
                     document.getElementById('update_context_append').textContent = 'Fail';
-                    fail();
+                    fail(e);
                 }
             }
         );
@@ -66,7 +69,7 @@
                 onSuccess: onUpdateAttributesSuccess,
                 onFailure: function (e) {
                     document.getElementById('update_context_update').textContent = 'Fail';
-                    fail();
+                    fail(e);
                 }
             }
         );
@@ -79,7 +82,7 @@
                 onSuccess: onCancelRegistrationSuccess,
                 onFailure: function (e) {
                     document.getElementById('cancel_registration').textContent = 'Fail';
-                    fail();
+                    fail(e);
                 }
             }
         );
@@ -111,7 +114,7 @@
                 msg = null;
             }
 
-            connection = new NGSI.Connection(MashupPlatform.prefs.get('ngsi_server'), {use_user_fiware_token: true});
+            connection = new NGSI.Connection(MashupPlatform.prefs.get('ngsi_server'), {use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token')});
             connection.createRegistration([
                     {type: 'TestEntity', id: 'test1'}
                 ],
@@ -122,7 +125,7 @@
                     onSuccess: onRegisterContextSuccess,
                     onFailure: function (e) {
                         document.getElementById('register_context').textContent = 'Fail';
-                        fail();
+                        fail(e);
                     }
                 }
             );

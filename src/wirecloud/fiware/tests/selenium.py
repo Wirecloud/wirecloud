@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -47,6 +47,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             'static.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'static')),
             'store.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store'))),
             'store2.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store2'))),
+            'orion.example.com:1026': DynamicWebServer(),
         },
     }
     tags = ('wirecloud-selenium', 'fiware', 'fiware-plugin', 'fiware-selenium')
@@ -70,6 +71,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offerings', {'content': self.store2_offerings})
         self.network._servers['http']['store.example.com'].clear()
         self.network._servers['http']['store2.example.com'].clear()
+        self.network._servers['http']['orion.example.com'].clear()
 
     def test_add_fiware_marketplace(self):
 
@@ -111,6 +113,30 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
     test_ngsi_available_to_widgets.tags = ('fiware', 'fiware-plugin', 'fiware-selenium', 'fiware-ut-7')
+
+    @uses_extra_resources(('Wirecloud_ngsi-test-widget_1.0.1.wgt',))
+    def test_ngsi_api_reports_failures(self):
+        self.login()
+
+        widget = self.add_widget_to_mashup('Wirecloud NGSI API test widget')
+
+        # Open widget settings
+        widget.open_menu().click_entry('Settings')
+
+        # Change widget settings
+        text_input = self.driver.find_element_by_css_selector('.window_menu [name="ngsi_server"]')
+        self.fill_form_input(text_input, 'http://orion.example.com:1026')
+        boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="use_user_fiware_token"]')
+        boolean_input.click()
+
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        with widget:
+            api_element = self.driver.find_element_by_id('api_available')
+            self.assertEqual(api_element.text, 'Yes')
+            self.driver.find_element_by_css_selector('.btn-primary').click()
+            alert = self.driver.find_element_by_css_selector('.alert-error p')
+            self.assertEqual(alert.text, 'Unexpected error code: 404')
 
     def test_objectstorage_available_to_widgets(self):
 
