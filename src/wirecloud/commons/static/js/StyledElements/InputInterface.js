@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -18,6 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
+
 /*global InputValidationError, StyledElements*/
 
 (function () {
@@ -248,6 +249,6 @@
     InputInterface.prototype.assignDefaultButton = function assignDefaultButton(button) {
     };
 
-    window.InputInterface = InputInterface;
+    StyledElements.InputInterface = InputInterface;
 
 })();

@@ -113,11 +113,11 @@ function TextInputInterface(fieldId, options) {
         return;
     }
 
-    InputInterface.call(this, fieldId, options);
+    StyledElements.InputInterface.call(this, fieldId, options);
 
     this.inputElement = new StyledElements.StyledTextField(options);
 }
-TextInputInterface.prototype = new InputInterface();
+TextInputInterface.prototype = new StyledElements.InputInterface();
 
 TextInputInterface.parse = function parse(value) {
     return value;
@@ -141,11 +141,11 @@ function PasswordInputInterface(fieldId, options) {
         return;
     }
 
-    InputInterface.call(this, fieldId, options);
+    StyledElements.InputInterface.call(this, fieldId, options);
 
     this.inputElement = new StyledElements.StyledPasswordField(options);
 }
-PasswordInputInterface.prototype = new InputInterface();
+PasswordInputInterface.prototype = new StyledElements.InputInterface();
 
 PasswordInputInterface.parse = TextInputInterface.parse;
 PasswordInputInterface.stringify = TextInputInterface.stringify;
@@ -158,11 +158,11 @@ function ListInputInterface(fieldId, options) {
         return;
     }
 
-    InputInterface.call(this, fieldId, options);
+    StyledElements.InputInterface.call(this, fieldId, options);
 
     this.inputElement = new StyledElements.StyledList(options);
 }
-ListInputInterface.prototype = new InputInterface();
+ListInputInterface.prototype = new StyledElements.InputInterface();
 
 ListInputInterface.prototype.parse = function parse(value) {
     return JSON.parse(value);
@@ -197,11 +197,11 @@ function NumberInputInterface(fieldId, options) {
         return;
     }
 
-    InputInterface.call(this, fieldId, options);
+    StyledElements.InputInterface.call(this, fieldId, options);
 
     this.inputElement = new StyledElements.StyledNumericField(options);
 }
-NumberInputInterface.prototype = new InputInterface();
+NumberInputInterface.prototype = new StyledElements.InputInterface();
 
 NumberInputInterface.parse = function parse(value) {
     return Number(value);
@@ -223,11 +223,11 @@ NumberInputInterface.prototype._checkValue = function _checkValue(newValue) {
  *
  */
 function LongTextInputInterface(fieldId, options) {
-    InputInterface.call(this, fieldId, options);
+    StyledElements.InputInterface.call(this, fieldId, options);
 
     this.inputElement = new StyledElements.StyledTextArea(options);
 }
-LongTextInputInterface.prototype = new InputInterface();
+LongTextInputInterface.prototype = new StyledElements.InputInterface();
 
 LongTextInputInterface.parse = TextInputInterface.parse;
 LongTextInputInterface.stringify = TextInputInterface.stringify;
@@ -235,7 +235,7 @@ LongTextInputInterface.stringify = TextInputInterface.stringify;
 /**
  *
  */
-function URLInputInterface(fieldId, options) {
+var URLInputInterface = function URLInputInterface(fieldId, options) {
     if (arguments.length === 0) {
         return;
     }
@@ -271,7 +271,7 @@ EMailInputInterface.prototype._checkValue = function _checkValue(newValue) {
  *
  */
 function BooleanInputInterface(fieldId, options) {
-    InputInterface.call(this, fieldId, options);
+    StyledElements.InputInterface.call(this, fieldId, options);
 
     if (typeof options.initialValue === 'string') {
         options.initiallyChecked = options.initialValue.toLowerCase() === 'true';
@@ -280,7 +280,7 @@ function BooleanInputInterface(fieldId, options) {
     }
     this.inputElement = new StyledElements.StyledCheckBox(options);
 }
-BooleanInputInterface.prototype = new InputInterface();
+BooleanInputInterface.prototype = new StyledElements.InputInterface();
 
 BooleanInputInterface.parse = function parse(value) {
     return ("" + value).trim().toLowerCase() === 'true';
@@ -311,7 +311,7 @@ function SelectInputInterface(fieldId, desc) {
         desc.required = true;
     }
 
-    InputInterface.call(this, fieldId, desc);
+    StyledElements.InputInterface.call(this, fieldId, desc);
 
     if (typeof desc.entries === 'function') {
         this._update = desc.entries;
@@ -331,7 +331,7 @@ function SelectInputInterface(fieldId, desc) {
     }
     this.inputElement = new StyledElements.StyledSelect(desc);
 }
-SelectInputInterface.prototype = new InputInterface();
+SelectInputInterface.prototype = new StyledElements.InputInterface();
 
 SelectInputInterface.parse = function parse(value) {
     return value;
@@ -379,11 +379,11 @@ SelectInputInterface.prototype._checkValue = function _checkValue(newValue) {
  *
  */
 function HiddenInputInterface(fieldId, options) {
-    InputInterface.call(this, fieldId, options);
+    StyledElements.InputInterface.call(this, fieldId, options);
 
     this.inputElement = new StyledElements.StyledHiddenField(options);
 }
-HiddenInputInterface.prototype = new InputInterface();
+HiddenInputInterface.prototype = new StyledElements.InputInterface();
 
 
 /**
@@ -396,7 +396,7 @@ function ButtonGroupInputInterface(fieldId, fieldDesc) {
         return;
     }
 
-    InputInterface.call(this, fieldId, fieldDesc);
+    StyledElements.InputInterface.call(this, fieldId, fieldDesc);
 
     this.inputElement = new StyledElements.ButtonsGroup(fieldId);
     this.wrapperElement = document.createElement('div');
@@ -431,7 +431,7 @@ function ButtonGroupInputInterface(fieldId, fieldDesc) {
         this.inputElement.setValue(fieldDesc.initialValue);
     }
 }
-ButtonGroupInputInterface.prototype = new InputInterface();
+ButtonGroupInputInterface.prototype = new StyledElements.InputInterface();
 ButtonGroupInputInterface.prototype.insertInto = function insertInto(element) {
     element.appendChild(this.wrapperElement);
 };
@@ -449,11 +449,11 @@ ButtonGroupInputInterface.prototype._setError = function _setError(error) {
  */
 function FileInputInterface(fieldId, fieldDesc) {
 
-    InputInterface.call(this, fieldId, fieldDesc);
+    StyledElements.InputInterface.call(this, fieldId, fieldDesc);
 
     this.inputElement = new StyledElements.StyledFileField(fieldDesc);
 }
-FileInputInterface.prototype = new InputInterface();
+FileInputInterface.prototype = new StyledElements.InputInterface();
 
 FileInputInterface.prototype.getValue = function getValue() {
     return this.inputElement.getValue();
@@ -480,7 +480,7 @@ function MultivaluedInputInterface(fieldId, fieldDesc) {
     this.wrapperElement = new StyledElements.Container();
     this._addEntry();
 }
-MultivaluedInputInterface.prototype = new InputInterface();
+MultivaluedInputInterface.prototype = new StyledElements.InputInterface();
 
 MultivaluedInputInterface.prototype._addEntry = function _addEntry() {
     var entry, fields;
@@ -592,7 +592,7 @@ var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc, factory) 
         legend: false
     });
 };
-FieldSetInterface.prototype = new InputInterface();
+FieldSetInterface.prototype = new StyledElements.InputInterface();
 
 FieldSetInterface.prototype.repaint = function repaint() {
     return this.form.repaint();
@@ -620,7 +620,7 @@ FieldSetInterface.prototype._setError = function _setError(error) {
 function ParametrizedTextInputInterface(fieldId, options) {
     var i, param, contextFields, option;
 
-    InputInterface.call(this, fieldId, options);
+    StyledElements.InputInterface.call(this, fieldId, options);
 
     this.variable = options.variable;
     this.parameters = this.getAvailableParameters();
@@ -687,7 +687,7 @@ function ParametrizedTextInputInterface(fieldId, options) {
     // Initialize
     this._updateSecondSelect();
 }
-ParametrizedTextInputInterface.prototype = new InputInterface();
+ParametrizedTextInputInterface.prototype = new StyledElements.InputInterface();
 
 ParametrizedTextInputInterface.prototype._ESCAPE_RE = new RegExp("(%+)(\\([a-zA-Z]\\w*(?:\\.[a-zA-Z]\\w*)*\\))");
 ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function () {

@@ -1,4 +1,4 @@
-/*global gettext, InputInterface, InputValidationError, ParametrizedTextInputInterface, StyledElements, Wirecloud*/
+/*global gettext, InputValidationError, ParametrizedTextInputInterface, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -48,7 +48,7 @@
      *
      */
     var ParametrizableValueInputInterface = function ParametrizableValueInputInterface(fieldId, options) {
-        InputInterface.call(this, fieldId, options);
+        StyledElements.InputInterface.call(this, fieldId, options);
 
         this.parentWindow = options.parentWindow;
         this.variable = options.variable;
@@ -80,7 +80,7 @@
         }.bind(this));
         this.buttonElement.insertInto(this.wrapperElement);
     };
-    ParametrizableValueInputInterface.prototype = new InputInterface();
+    ParametrizableValueInputInterface.prototype = new StyledElements.InputInterface();
 
     ParametrizableValueInputInterface.prototype._checkValue = function _checkValue(newValue) {
         return InputValidationError.NO_ERROR;

@@ -19,7 +19,7 @@
  *
  */
 
-/*global InputInterface, StyledElements*/
+/*global StyledElements*/
 
 (function () {
 
@@ -60,7 +60,7 @@
         };
 
         this.addFieldType = function addFieldType(type, class_) {
-            if (!class_ instanceof InputInterface) {
+            if (!class_ instanceof StyledElements.InputInterface) {
                 throw new TypeError();
             }
             if (mapping[type] !== undefined) {
