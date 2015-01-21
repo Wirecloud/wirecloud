@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, Form, SelectInputInterface, StyledElements, Wirecloud */
+/*global interpolate, Form, SelectInputInterface, StyledElements, Wirecloud */
 "use strict";
 
 var ValidationErrorManager, InputValidationError = {};
@@ -632,7 +632,7 @@ function ParametrizedTextInputInterface(fieldId, options) {
     });
 
     this.resetButton = new StyledElements.StyledButton({
-        'text': gettext('Use current value')
+        'text': StyledElements.Utils.gettext('Use current value')
     });
     this.resetButton.addEventListener('click', function () {
         this.inputElement.setValue(this.escapeValue(this.variable.value));
@@ -662,7 +662,7 @@ function ParametrizedTextInputInterface(fieldId, options) {
     this.secondSelect.addEventListener('change', this._updateDescription.bind(this), true);
 
     this.addButton = new StyledElements.StyledButton({
-        'text': gettext('Add')
+        'text': StyledElements.Utils.gettext('Add')
     });
     this.addButton.addEventListener('click', function () {
         var prefix, suffix, parameter, start, input;
@@ -733,28 +733,28 @@ ParametrizedTextInputInterface.prototype.getAvailableParameters = function getAv
 
         parameters = [
             {
-                label: gettext('User'),
+                label: StyledElements.Utils.gettext('User'),
                 value: 'user',
                 fields: [
                     {
-                        label: gettext('User Name'),
+                        label: StyledElements.Utils.gettext('User Name'),
                         description: '',
                         value: 'username'
                     },
                     {
-                        label: gettext('First Name'),
+                        label: StyledElements.Utils.gettext('First Name'),
                         description: '',
                         value: 'first_name'
                     },
                     {
-                        label: gettext('Last Name'),
+                        label: StyledElements.Utils.gettext('Last Name'),
                         description: '',
                         value: 'last_name'
                     }
                 ]
             },
             {
-                label: gettext('Context'),
+                label: StyledElements.Utils.gettext('Context'),
                 value: 'context',
                 fields: contextFields['']
             }

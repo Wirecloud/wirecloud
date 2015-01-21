@@ -46,7 +46,7 @@
             cell.textContent = label;
             if (column.sortable !== false) {
                 cell.classList.add('sortable');
-                cell.setAttribute('title', StyledElements.Utils.interpolate(gettext('Sort by %(column_name)s'), {column_name: label}));
+                cell.setAttribute('title', StyledElements.Utils.interpolate(StyledElements.Utils.gettext('Sort by %(column_name)s'), {column_name: label}));
                 cell.callback = this.pSortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
             }

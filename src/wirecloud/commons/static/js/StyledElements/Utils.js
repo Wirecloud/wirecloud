@@ -33,6 +33,13 @@ if (window.StyledElements == null) {
     var Utils = {};
 
     /**
+     * Overwrite this method for supporting translations
+     */
+    Utils.gettext = function gettext(text) {
+        return text;
+    };
+
+    /**
      * Rellena los parámetros usados en un patrón. Los campos a rellenar en el
      * patrón vienen indicados mediante sentencias "%(nombre)s". Por ejemplo,
      * al finalizar la ejecución del siguiente código:
@@ -60,7 +67,7 @@ if (window.StyledElements == null) {
     };
 
     Utils.Template.prototype.evaluate = function evaluate(context) {
-        return interpolate(this.template, context, true);
+        return Utils.interpolate(this.template, context);
     };
 
     /**

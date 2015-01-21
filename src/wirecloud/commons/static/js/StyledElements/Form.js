@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements, ValidationErrorManager*/
+/*global StyledElements, ValidationErrorManager*/
 
 (function () {
 
@@ -56,7 +56,7 @@
         } else if (options.setdefaultsButton === true) {
             this.setdefaultsButton = new StyledElements.StyledButton({
                 usedInForm: options.useHtmlForm,
-                text: gettext('Set Defaults')
+                text: StyledElements.Utils.gettext('Set Defaults')
             });
         }
 
@@ -67,7 +67,7 @@
         } else if (options.resetButton === true) {
             this.resetButton = new StyledElements.StyledButton({
                 usedInForm: options.useHtmlForm,
-                text: gettext('Reset')
+                text: StyledElements.Utils.gettext('Reset')
             });
         }
 
@@ -79,7 +79,7 @@
             this.acceptButton = new StyledElements.StyledButton({
                 'usedInForm': options.useHtmlForm,
                 'class': 'btn-primary',
-                'text': gettext('Accept')
+                'text': StyledElements.Utils.gettext('Accept')
             });
         }
 
@@ -90,7 +90,7 @@
         } else if (options.cancelButton === true) {
             this.cancelButton = new StyledElements.StyledButton({
                 usedInForm: options.useHtmlForm,
-                text: gettext('Cancel')
+                text: StyledElements.Utils.gettext('Cancel')
             });
         }
 

@@ -103,7 +103,7 @@
         var button = document.createElement('div');
         button.className = 'styled_button';
         var button_span = document.createElement('span');
-        button_span.textContent = gettext('Select');
+        button_span.textContent = StyledElements.Utils.gettext('Select');
         button.appendChild(button_span);
         this.layout.getEastContainer().appendChild(button);
 
