@@ -59,6 +59,12 @@
         item.setDisabled(this.instance.meta.preferenceList.length === 0);
         items.push(item);
 
+        item = new StyledElements.MenuItem(gettext('Logs'), function () {
+            var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
+            dialog.show();
+        }.bind(this.geinterface));
+        items.push(item);
+
         if (this.geinterface.ioperator) {
             label = 'Minimize';
             items.push(new StyledElements.MenuItem(gettext(label), function () {
