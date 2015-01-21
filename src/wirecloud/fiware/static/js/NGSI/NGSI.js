@@ -282,8 +282,8 @@
                 var error;
 
                 if (typeof callbacks.onFailure === 'function') {
-                    if (response.status === 0) {
-                        error = new NGSI.ConnectionError();
+                    if ([0, 502, 504].indexOf(response.status) !== -1) {
+                        error = new NGSI.ConnectionError('Connection Error');
                     } else {
                         error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
                     }
@@ -1161,19 +1161,48 @@
         return data;
     };
 
+    var onInitFailure = function (response, error) {
+        var i;
+
+        this.connected = false;
+        this.connecting = false;
+
+        if (error == null) {
+            if ([0, 502, 504].indexOf(response.status) !== -1) {
+                error = new NGSI.ConnectionError();
+            } else {
+                error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
+            }
+        }
+
+        for (i = 0; i < this.onerror_callbacks.length; i += 1) {
+            try {
+                this.onerror_callbacks[i](error);
+            } catch (e) {}
+        }
+        this.onload_callbacks = [];
+        this.onerror_callbacks = [];
+
+    };
+
     var init = function init() {
         this.connecting = true;
 
         this.makeRequest(this.url + NGSI.proxy_endpoints.EVENTSOURCE_COLLECTION, {
             method: 'POST',
             onSuccess: function (response) {
-                this.source_url = response.getHeader('Location');
-                connect_to_eventsource.call(this);
+                if (response.status !== 201) {
+                    onInitFailure.call(this, response);
+                } else {
+                    this.source_url = response.getHeader('Location');
+                    if (this.source_url == null) {
+                        onInitFailure.call(this, response, new NGSI.InvalidResponseError('Missing Location Header'));
+                    } else {
+                        connect_to_eventsource.call(this);
+                    }
+                }
             }.bind(this),
-            onFailure: function () {
-                this.connected = false;
-                this.connecting = false;
-            }.bind(this)
+            onFailure: onInitFailure.bind(this)
         });
     };
 
@@ -1215,11 +1244,11 @@
         source.addEventListener('init', _wait_event_source_init, true);
 
         closeTimeout = setTimeout(function () {
-            var i;
+            var i, error = new NGSI.ConnectionError("Connection timeout");
 
             for (i = 0; i < this.onerror_callbacks.length; i += 1) {
                 try {
-                    this.onerror_callbacks[i]();
+                    this.onerror_callbacks[i](error);
                 } catch (e) {}
             }
             this.onload_callbacks = [];
@@ -1285,9 +1314,15 @@
                     };
                     onSuccess(data);
                 }.bind(this),
-                onFailure: function () {
+                onFailure: function (response) {
+                    var error;
+                    if (response.status === 0) {
+                        error = new NGSI.ConnectionError();
+                    } else {
+                        error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
+                    }
                     if (typeof onFailure === 'function') {
-                        onFailure();
+                        onFailure(error);
                     }
                 }
             });
@@ -1296,9 +1331,9 @@
         if (this.connected === false) {
             this.connect({
                 onSuccess: wrappedOnSuccess,
-                onFailure: function () {
+                onFailure: function (e) {
                     if (typeof onFailure === 'function') {
-                        onFailure();
+                        onFailure(e);
                     }
                 }
             });
@@ -1353,7 +1388,7 @@
 
     NGSI.ConnectionError = function ConnectionError(message) {
         this.name = 'ConnectionError';
-        this.message = message || '';
+        this.message = message || 'Connection Error';
     };
     NGSI.ConnectionError.prototype = new Error();
     NGSI.ConnectionError.prototype.constructor = NGSI.ConnectionError;
@@ -1374,6 +1409,12 @@
     NGSI.InvalidResponseError.prototype = new Error();
     NGSI.InvalidResponseError.prototype.constructor = NGSI.InvalidResponseError;
 
+    NGSI.ProxyConnectionError = function ProxyConnectionError(cause) {
+        this.name = 'ProxyConnectionError';
+        this.cause = cause;
+    };
+    NGSI.ProxyConnectionError.prototype = new Error();
+    NGSI.ProxyConnectionError.prototype.constructor = NGSI.ProxyConnectionError;
 
     /* NGSI Connection */
     NGSI.Connection = function NGSIConnection(url, options) {
@@ -1708,9 +1749,18 @@
                 }.bind(this);
 
                 makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, options);
-            }.bind(this), function () {
+            }.bind(this), function (e) {
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    var exception = new NGSI.ProxyConnectionError(e);
+                    try {
+                        options.onFailure(exception);
+                    } catch (error) {}
+                }
+
+                if (typeof options.onComplete === 'function') {
+                    try {
+                        options.onComplete();
+                    } catch (error) {}
                 }
             });
         } else {
