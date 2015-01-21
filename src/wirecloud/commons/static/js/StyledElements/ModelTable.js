@@ -122,7 +122,7 @@
                     if (column.unit) {
                         cellContent = cellContent + " " + column.unit;
                     }
-                } else {
+                } else {
                     cellContent = this.pGetFieldValue(item, column.field);
                 }
 
