@@ -71,7 +71,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offerings', {'content': self.store2_offerings})
         self.network._servers['http']['store.example.com'].clear()
         self.network._servers['http']['store2.example.com'].clear()
-        self.network._servers['http']['orion.example.com'].clear()
+        self.network._servers['http']['orion.example.com:1026'].clear()
 
     def test_add_fiware_marketplace(self):
 
