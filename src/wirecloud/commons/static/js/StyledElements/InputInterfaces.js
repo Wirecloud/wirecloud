@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, Form, SelectInputInterface, StyledElements */
+/*global gettext, interpolate, Form, SelectInputInterface, StyledElements, Wirecloud */
 "use strict";
 
 var ValidationErrorManager, InputValidationError = {};
@@ -172,11 +172,13 @@ ListInputInterface.prototype.stringify = function stringify(value) {
     return JSON.stringify(value);
 };
 
-ListInputInterface.prototype._setValue = function _setValue(newValue) {
-    if (newValue === null || newValue === undefined) {
-        newValue = [];
+ListInputInterface.prototype._normalize = function _normalize(value) {
+    if (!Array.isArray(value)) {
+        value = [];
     }
+};
 
+ListInputInterface.prototype._setValue = function _setValue(newValue) {
     this.inputElement.cleanSelection();
     this.inputElement.addSelection(newValue);
 };
@@ -356,7 +358,7 @@ SelectInputInterface.prototype._setValue = function _setValue(newValue) {
 };
 
 SelectInputInterface.prototype._checkValue = function _checkValue(newValue) {
-    var value, newValueId;
+    var newValueId;
 
     if (typeof newValue !== 'string') {
         try {
@@ -558,7 +560,7 @@ MultivaluedInputInterface.prototype.getValue = function getValue() {
 };
 
 MultivaluedInputInterface.prototype._setValue = function _setValue(newValue) {
-    var i, form, entry;
+    var i, entry;
 
     this._removeAllEntries();
 
@@ -618,7 +620,7 @@ FieldSetInterface.prototype._setError = function _setError(error) {
  *
  */
 function ParametrizedTextInputInterface(fieldId, options) {
-    var i, param, contextFields, option;
+    var i, param, option;
 
     StyledElements.InputInterface.call(this, fieldId, options);
 

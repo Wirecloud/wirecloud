@@ -126,7 +126,7 @@
     };
 
     StyledList.prototype.removeEntryByValue = function removeEntryByValue(value) {
-        var i, entry, index;
+        var entry, index;
 
         entry = this.entriesByValue[value];
         delete this.entriesByValue[value];
@@ -161,8 +161,9 @@
      * Borra la seleccion actual.
      */
     StyledList.prototype.cleanSelection = function cleanSelection() {
-        if (this.currentSelection.length === 0)
+        if (this.currentSelection.length === 0) {
             return;  // Nothing to do
+        }
 
         var oldSelection = this.currentSelection;
 
@@ -188,19 +189,22 @@
     StyledList.prototype.addSelection = function addSelection(selection) {
         var i, entry, addedValues = [], removedValues = [];
 
-        if (selection.length === 0)
+        if (selection.length === 0) {
             return;  // Nothing to do
+        }
 
         if (!this.multivalued) {
-            if (selection[0] === this.currentSelection[0])
+            if (selection[0] === this.currentSelection[0]) {
                 return; // Nothing to do
+            }
 
             removedValues = this.currentSelection;
 
             _cleanSelection.call(this);
 
-            if (selection.length > 1)
+            if (selection.length > 1) {
                 selection = selection.splice(0, 1);
+            }
         }
 
         for (i = 0; i < selection.length; i++) {
@@ -221,8 +225,9 @@
     StyledList.prototype.removeSelection = function removeSelection(selection) {
         var i, entry, index, removedValues = [];
 
-        if (selection.length === 0)
+        if (selection.length === 0) {
             return;  // Nothing to do
+        }
 
         for (i = 0; i < selection.length; i++) {
             entry = selection[i];

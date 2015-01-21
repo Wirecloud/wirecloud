@@ -1,3 +1,5 @@
+/*global StyledElements*/
+
 (function () {
 
     "use strict";

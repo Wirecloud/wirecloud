@@ -32,7 +32,7 @@
     var Alternative = function Alternative(id, options) {
         var defaultOptions;
 
-        if (arguments.length == 0) {
+        if (arguments.length === 0) {
             return;
         }
 
@@ -54,11 +54,11 @@
         if (newStatus) {
             this.wrapperElement.classList.remove("hidden");
             this.repaint(false);
-            this.events['show'].dispatch(this);
+            this.events.show.dispatch(this);
         } else {
             this.wrapperElement.classList.add("hidden");
             this.repaint(false);
-            this.events['hide'].dispatch(this);
+            this.events.hide.dispatch(this);
         }
     };
 

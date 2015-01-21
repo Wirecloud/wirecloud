@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements, ValidationErrorManager, Wirecloud*/
+/*global gettext, StyledElements, ValidationErrorManager*/
 
 (function () {
 
@@ -29,7 +29,7 @@
      * Form
      */
     var Form = function Form(fields, options) {
-        var div, legend, requiredMark, buttonArea, defaultOptions;
+        var div, buttonArea, defaultOptions;
 
         defaultOptions = {
             'readOnly': false,
@@ -533,7 +533,7 @@
     Form.prototype.setDisabled = function setDisabled(disabled) {
         var fieldId, inputInterface;
 
-        if (!this.enabled == disabled) {
+        if (this.enabled != disabled) {
           // Nothing to do
           return;
         }

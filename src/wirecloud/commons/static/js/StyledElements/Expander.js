@@ -116,8 +116,9 @@
     };
 
     Expander.prototype.setExpanded = function setExpanded(expanded) {
-        if (this.isExpanded() == expanded)
+        if (this.isExpanded() == expanded) {
             return;
+        }
 
         if (expanded) {
             this.addClassName('expanded');

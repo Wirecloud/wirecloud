@@ -33,7 +33,7 @@
     };
 
     var Pills = function Pills(options) {
-        var button, defaultOptions = {
+        var defaultOptions = {
             'class': ''
         };
         options = StyledElements.Utils.merge(defaultOptions, options);

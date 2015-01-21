@@ -114,7 +114,7 @@
 
     InputInterface.prototype._normalize = function _normalize(value) {
         if (value == null) {
-            return value;
+            return "";
         } else {
             return ("" + value).trim();
         }
@@ -172,9 +172,7 @@
      * @see <code>InputInterface.setValue</code>
      */
     InputInterface.prototype._setValue = function _setValue(newValue) {
-        if (newValue === null || newValue === undefined) {
-            newValue = "";
-        }
+        newValue = this._normalize(newValue);
 
         this.inputElement.setValue(newValue);
     };

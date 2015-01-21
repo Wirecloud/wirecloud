@@ -19,9 +19,11 @@
  *
  */
 
-/*global Wirecloud*/
+/*global StyledElements*/
 
 (function () {
+
+    "use strict";
 
     var onFocus = function onFocus(e) {
         var range = document.createRange();

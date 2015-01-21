@@ -1,3 +1,5 @@
+/*global StyledElements*/
+
 (function () {
 
     "use strict";
@@ -20,7 +22,7 @@
         this.buttons[this.buttons.length] = button;
         button.addEventListener('change',
                                 function () {
-                                    var changeHandlers = this.events['change'].dispatch(this);
+                                    this.events.change.dispatch(this);
                                 }.bind(this));
 
         return this;
@@ -47,7 +49,7 @@
         }
 
         return result;
-    }
+    };
 
     ButtonsGroup.prototype.setValue = function setValue(newValue) {
         if (newValue == null) {
@@ -82,6 +84,8 @@
      * StyledRadioButtons, la selección será como mucho de un elemento.
      */
     ButtonsGroup.prototype.getSelectedButtons = function getSelectedButtons() {
+        var i;
+
         if (this.buttons.length === 0) {
             return [];
         }
@@ -89,16 +93,18 @@
         if (this.buttons[0] instanceof StyledElements.StyledCheckBox) {
             var result = [];
 
-            for (var i = 0; i < this.buttons.length; i++) {
-                if (this.buttons[i].inputElement.checked)
+            for (i = 0; i < this.buttons.length; i++) {
+                if (this.buttons[i].inputElement.checked) {
                     result[result.length] = this.buttons[i];
+                }
             }
 
             return result;
         } else {
-            for (var i = 0; i < this.buttons.length; i++) {
-                if (this.buttons[i].inputElement.checked)
+            for (i = 0; i < this.buttons.length; i++) {
+                if (this.buttons[i].inputElement.checked) {
                     return [this.buttons[i]];
+                }
             }
             return [];
         }

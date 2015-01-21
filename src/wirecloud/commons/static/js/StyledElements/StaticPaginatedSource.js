@@ -19,7 +19,7 @@
  *
  */
 
-/*globals StyledElements, Wirecloud*/
+/*globals StyledElements*/
 
 (function () {
 
@@ -196,7 +196,7 @@
     StaticPaginatedSource.prototype = new StyledElements.PaginatedSource();
 
     StaticPaginatedSource.prototype.changeOptions = function changeOptions(newOptions) {
-        var column, sort_id, inverse, force_sort = false;
+        var force_sort = false;
 
         if ('keywords' in newOptions) {
             filterElements.call(this, newOptions.keywords);
@@ -212,8 +212,6 @@
     };
 
     StaticPaginatedSource.prototype.changeElements = function changeElements(newElements) {
-        var sort_id, column;
-
         if (Array.isArray(newElements)) {
             this.elements = newElements;
         } else {

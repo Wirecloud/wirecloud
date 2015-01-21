@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/*global StyledElements*/
 
 (function () {
 
@@ -103,7 +103,7 @@
     };
 
     CheckBox.prototype.setValue = function setValue(newValue) {
-        this.inputElement.checked = newValue != null && newValue != false;
+        this.inputElement.checked = newValue != null && newValue !== false;
         if (this.secondInput != null) {
             this.secondInput.setDisabled(!this.inputElement.checked);
             if (this.inputElement.checked) {

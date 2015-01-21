@@ -122,7 +122,7 @@
     };
 
     var Tooltip = function Tooltip(options) {
-        var button, defaultOptions = {
+        var defaultOptions = {
             'content': '',
             'class': '',
             'placement': ['right', 'bottom', 'left', 'top']

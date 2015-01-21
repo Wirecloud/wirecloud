@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -135,7 +135,7 @@
     };
 
     var Popover = function Popover(options) {
-        var button, defaultOptions = {
+        var defaultOptions = {
             'content': '',
             'title': '',
             'class': '',
@@ -159,7 +159,7 @@
     Popover.prototype.bind = function bind(element, mode) {
         switch (mode) {
         case "click":
-            element.addEventListener('click', toggle.bind(this), true);
+            element.addEventListener('click', this.toggle.bind(this), true);
             break;
         case "hover":
             break;

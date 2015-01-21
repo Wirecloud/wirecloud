@@ -35,7 +35,7 @@
     };
 
     var Addon = function Addon(options) {
-        var button, defaultOptions = {
+        var defaultOptions = {
             'text': null,
             'title': '',
             'class': ''

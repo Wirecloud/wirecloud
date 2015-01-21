@@ -124,6 +124,14 @@ if (window.StyledElements == null) {
       An ECMA-compliant, uniform cross-browser split method
     */
 
+    var fix_nonparticipanting_capturing_groups = function fix_nonparticipanting_capturing_groups() {
+        for (var i = 1; i < arguments.length - 2; i++) {
+            if (arguments[i] === undefined) {
+                this[i] = undefined;
+            }
+        }
+    };
+
     Utils.split = function split(str, separator, limit) {
         // if `separator` is not a regex, use the native `split`
         if (!separator instanceof RegExp) {
@@ -158,7 +166,7 @@ if (window.StyledElements == null) {
             }
         }
 
-        while (match = separator.exec(str)) {
+        while ((match = separator.exec(str))) {
             lastIndex = match.index + match[0].length; // `separator.lastIndex` is not reliable cross-browser
 
             if (lastIndex > lastLastIndex) {
@@ -166,13 +174,7 @@ if (window.StyledElements == null) {
 
                 // fix browsers whose `exec` methods don't consistently return `undefined` for nonparticipating capturing groups
                 if (!Utils.split._compliantExecNpcg && match.length > 1) {
-                    match[0].replace(separator2, function () {
-                        for (var i = 1; i < arguments.length - 2; i++) {
-                            if (arguments[i] === undefined) {
-                                match[i] = undefined;
-                            }
-                        }
-                    });
+                    match[0].replace(separator2, fix_nonparticipanting_capturing_groups.bind(match));
                 }
 
                 if (match.length > 1 && match.index < str.length) {
