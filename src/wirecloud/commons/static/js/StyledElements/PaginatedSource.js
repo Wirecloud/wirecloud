@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*globals StyledElements, Wirecloud*/
+/*globals StyledElements*/
 
 (function () {
 
@@ -70,7 +70,7 @@
 
         StyledElements.ObjectWithEvents.call(this, ['optionsChanged', 'paginationChanged', 'requestStart', 'requestEnd']);
 
-        this.pOptions = Wirecloud.Utils.merge(defaultOptions, options);
+        this.pOptions = StyledElements.Utils.merge(defaultOptions, options);
         this.currentPage = 1;
         this.currentElements = [];
         this.totalPages = 1;

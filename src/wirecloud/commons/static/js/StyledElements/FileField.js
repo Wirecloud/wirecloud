@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/*global StyledElements*/
 
 (function () {
 
@@ -69,7 +69,7 @@
         var defaultOptions = {
             'class': ''
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
@@ -113,8 +113,8 @@
         this._onfocus = onfocus.bind(this);
         this._onblur = onblur.bind(this);
 
-        this.inputElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._onclick, true);
         this.inputElement.addEventListener('change', this._onchange, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
@@ -137,7 +137,7 @@
 
     StyledFileField.prototype.destroy = function destroy() {
 
-        this.inputElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('click', this._onclick, true);
         this.inputElement.removeEventListener('change', this._onchange, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);

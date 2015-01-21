@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, StyledElements, Wirecloud*/
+/*global CSSPrimitiveValue, StyledElements*/
 
 (function () {
 
@@ -46,7 +46,7 @@
             cell.textContent = label;
             if (column.sortable !== false) {
                 cell.classList.add('sortable');
-                cell.setAttribute('title', Wirecloud.Utils.interpolate(gettext('Sort by %(column_name)s'), {column_name: label}));
+                cell.setAttribute('title', StyledElements.Utils.interpolate(gettext('Sort by %(column_name)s'), {column_name: label}));
                 cell.callback = this.pSortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
             }
@@ -168,7 +168,7 @@
             'initialSortColumn': -1,
             'pageSize': 5
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledElement.call(this, ['click']);
 

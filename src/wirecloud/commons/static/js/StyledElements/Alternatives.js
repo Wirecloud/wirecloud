@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/*global StyledElements*/
 
 (function () {
 
@@ -37,11 +37,11 @@
             'defaultEffect': 'None'
         };
 
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
         StyledElements.StyledElement.call(this, ['preTransition', 'postTransition']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "alternatives");
+        this.wrapperElement.className = StyledElements.Utils.prependWord(options['class'], "alternatives");
 
         this.contentArea = document.createElement("div");
         this.contentArea.className = "wrapper";
@@ -99,7 +99,7 @@
                 context.inAlternative.wrapperElement.style.width = '';
 
                 context.alternativesObject.visibleAlt = context.inAlternative;
-                Wirecloud.Utils.callCallback(context.onComplete, context.alternativesObject, context.outAlternative, context.inAlternative);
+                StyledElements.Utils.callCallback(context.onComplete, context.alternativesObject, context.outAlternative, context.inAlternative);
                 context.alternativesObject.events.postTransition.dispatch(context.alternativesObject, context.outAlternative, context.inAlternative);
                 return false; // we have finished here
             }
@@ -114,7 +114,7 @@
             }
 
             if (context.inAlternative == null || context.inAlternative == context.outAlternative) {
-                Wirecloud.Utils.callCallback(context.onComplete, context.alternativesObject, context.outAlternative, context.inAlternative);
+                StyledElements.Utils.callCallback(context.onComplete, context.alternativesObject, context.outAlternative, context.inAlternative);
                 return false; // we are not going to process this command
             }
 
@@ -188,7 +188,7 @@
             'containerOptions': {},
             'alternative_constructor': StyledElements.Alternative
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         var altId = this.nextAltId++;
 

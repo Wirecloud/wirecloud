@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -127,7 +127,7 @@
             'class': '',
             'placement': ['right', 'bottom', 'left', 'top']
         };
-        Object.defineProperty(this, 'options', {value: Wirecloud.Utils.merge(defaultOptions, options)});
+        Object.defineProperty(this, 'options', {value: StyledElements.Utils.merge(defaultOptions, options)});
 
         StyledElements.StyledElement.call(this, []);
 

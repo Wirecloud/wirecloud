@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, Wirecloud */
+/*global StyledElements */
 
 (function () {
 
@@ -42,7 +42,7 @@
      */
     ObjectWithEvents.prototype.addEventListener = function addEventListener(event, handler) {
         if (this.events[event] == null) {
-            throw new Error(Wirecloud.Utils.interpolate("Unhandled event \"%(event)s\"", {event: event}));
+            throw new Error(StyledElements.Utils.interpolate("Unhandled event \"%(event)s\"", {event: event}));
         }
 
         this.events[event].addEventListener(handler);
@@ -56,7 +56,7 @@
             }
         } else {
             if (this.events[event] == null) {
-                throw new TypeError(Wirecloud.Utils.interpolate("Unhandled event \"%(event)s\"", {event: event}));
+                throw new TypeError(StyledElements.Utils.interpolate("Unhandled event \"%(event)s\"", {event: event}));
             }
 
             this.events[event].clearEventListeners();
@@ -68,7 +68,7 @@
      */
     ObjectWithEvents.prototype.removeEventListener = function removeEventListener(event, handler) {
         if (this.events[event] == null) {
-            throw new Error(Wirecloud.Utils.interpolate("Unhandled event \"%(event)s\"", {event: event}));
+            throw new Error(StyledElements.Utils.interpolate("Unhandled event \"%(event)s\"", {event: event}));
         }
 
         this.events[event].removeEventListener(handler);

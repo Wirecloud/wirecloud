@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -70,7 +70,7 @@
 
     EditableElement.prototype.disableEdition = function disableEdition() {
         if (this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+            this.wrapperElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
             this.wrapperElement.removeAttribute('contenteditable');
             this.wrapperElement.blur();
             this.wrapperElement.scrollLeft = 0;
@@ -80,7 +80,7 @@
 
     EditableElement.prototype.enableEdition = function enableEdition() {
         if (!this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+            this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
             this.wrapperElement.setAttribute('contenteditable', 'true');
         }
         this.wrapperElement.focus();

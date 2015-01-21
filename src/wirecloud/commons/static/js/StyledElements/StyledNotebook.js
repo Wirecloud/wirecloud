@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, StyledElements, Wirecloud*/
+/*global CSSPrimitiveValue, StyledElements*/
 
 (function () {
 
@@ -55,10 +55,10 @@
             'focusOnSetVisible': true,
             'full': true
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "se-notebook");
+        this.wrapperElement.className = StyledElements.Utils.prependWord(options['class'], "se-notebook");
 
         tabWrapper = new StyledElements.HorizontalLayout({'class': 'se-notebook-tabs-wrapper', 'autoHeight': false});
         this.tabWrapper = tabWrapper;
@@ -337,7 +337,7 @@
             'name': '',
             'tab_constructor': this.Tab
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         // Reserve an id for the new tab
         var tabId = this.tabsById.push(null);
@@ -650,7 +650,7 @@
             this.disabledLayer.classList.add('disable-layer');
             this.wrapperElement.appendChild(this.disabledLayer);
         } else {
-            Wirecloud.Utils.removeFromParent(this.disabledLayer);
+            StyledElements.Utils.removeFromParent(this.disabledLayer);
             this.disabledLayer = null;
         }
         this.enabled = !disabled;
@@ -722,8 +722,8 @@
     };
 
     StyledNotebook.prototype.destroy = function destroy() {
-        if (Wirecloud.Utils.XML.isElement(this.wrapperElement.parentNode)) {
-            Wirecloud.Utils.removeFromParent(this.wrapperElement);
+        if (StyledElements.Utils.XML.isElement(this.wrapperElement.parentNode)) {
+            StyledElements.Utils.removeFromParent(this.wrapperElement);
         }
 
         this.tabs = null;

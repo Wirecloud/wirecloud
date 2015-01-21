@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -47,7 +47,7 @@
             'initialValue': '',
             'class': ''
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledInputElement.call(this, options.initialValue, ['blur', 'change', 'focus']);
 
@@ -73,8 +73,8 @@
         this._onfocus = onfocus.bind(this);
         this._onblur = onblur.bind(this);
 
-        this.inputElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', StyledElements.Utils.stopPropagationListener, true);
         this.inputElement.addEventListener('input', this._oninput, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
@@ -87,8 +87,8 @@
 
     StyledTextArea.prototype.destroy = function destroy() {
 
-        this.inputElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
-        this.inputElement.removeEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('click', StyledElements.Utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('input', this._oninput, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);

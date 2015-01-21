@@ -1,4 +1,25 @@
-/*global StyledElements, Wirecloud*/
+/*
+ *     Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*global StyledElements*/
 
 (function () {
 
@@ -22,7 +43,7 @@
      * A list
      */
     var StyledList = function StyledList(options) {
-        options = Wirecloud.Utils.merge({
+        options = StyledElements.Utils.merge({
             'class':            '',
             'id':               null,
             'multivalued':      false,
@@ -33,7 +54,7 @@
         StyledElements.StyledElement.call(this, ['change']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "styled_list");
+        this.wrapperElement.className = StyledElements.Utils.prependWord(options['class'], "styled_list");
 
         if (options.id != null) {
             this.wrapperElement.id = options.id;
@@ -110,7 +131,7 @@
         entry = this.entriesByValue[value];
         delete this.entriesByValue[value];
         this.entries.slice(this.entries.indexOf(entry), 1);
-        Wirecloud.Utils.removeFromParent(entry.element);
+        StyledElements.Utils.removeFromParent(entry.element);
 
         if (index !== -1) {
             this.currentSelection.splice(index, 1);
@@ -133,7 +154,7 @@
      * Devuelve una copia de la selección actual.
      */
     StyledList.prototype.getSelection = function getSelection() {
-        return Wirecloud.Utils.clone(this.currentSelection);
+        return StyledElements.Utils.clone(this.currentSelection);
     };
 
     /**

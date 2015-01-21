@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/*global StyledElements*/
 
 (function () {
 
@@ -40,12 +40,12 @@
             'title': '',
             'class': ''
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledElement.call(this, []);
 
         this.wrapperElement = document.createElement("span");
-        this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "add-on");
+        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "add-on");
 
         if (options.title) {
             this.setTitle(options.title);
@@ -58,7 +58,7 @@
         /* Event handlers */
         this._clickCallback = clickCallback.bind(this);
 
-        this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, true);
     };
     Addon.prototype = new StyledElements.Container();
@@ -87,7 +87,7 @@
 
     Addon.prototype.destroy = function destroy() {
 
-        this.wrapperElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.wrapperElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('click', this._clickCallback, true);
 
         delete this.wrapperElement;

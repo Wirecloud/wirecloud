@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -18,7 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*globals CSSPrimitiveValue, StyledElements, Wirecloud */
+/*globals CSSPrimitiveValue, StyledElements*/
 
 (function () {
 
@@ -30,13 +30,13 @@
             'exclusive': true,
             'full': true
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         this.exclusive = options.exclusive;
         this.full = options.full;
         this.children = [];
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_accordion");
+        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "styled_accordion");
     };
     Accordion.prototype = new StyledElements.StyledElement();
 
@@ -44,7 +44,7 @@
         var expander, defaultOptions = {
             'listenOnTitle': true
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
         expander = new StyledElements.Expander(options);
         expander.insertInto(this.wrapperElement);
 

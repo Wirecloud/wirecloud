@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -18,6 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
+
 /*globals StyledElements, Wirecloud */
 
 (function () {
@@ -28,7 +29,7 @@
         var defaultOptions = {
             'initiallyChecked': false
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledButton.call(this, options);
 

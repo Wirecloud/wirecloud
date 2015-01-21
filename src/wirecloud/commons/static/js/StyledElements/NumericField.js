@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -78,7 +78,7 @@
             'max': Number.POSITIVE_INFINITY,
             'inc': 1
         };
-        this.options = options = Wirecloud.Utils.merge(defaultOptions, options);
+        this.options = options = StyledElements.Utils.merge(defaultOptions, options);
         options.min = Number(options.min);
         options.max = Number(options.max);
         options.inc = Number(options.inc);

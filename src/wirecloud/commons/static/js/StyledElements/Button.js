@@ -1,3 +1,24 @@
+/*
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*global StyledElements, Wirecloud*/
 
 (function () {
@@ -51,7 +72,7 @@
             'iconClass': null,
             'usedInForm': false
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
 
         // Necesario para permitir herencia
         if (options.extending) {
@@ -67,7 +88,7 @@
             this.wrapperElement = document.createElement("div");
         }
         this.wrapperElement.setAttribute('tabindex', '0');
-        this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_button");
+        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "styled_button");
 
         if (options.id != null) {
             this.wrapperElement.setAttribute('id', options.id);
@@ -105,7 +126,7 @@
         this._clickCallback = clickCallback.bind(this);
         this._keydownCallback = keydownCallback.bind(this);
 
-        this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, true);
         this.wrapperElement.addEventListener('keydown', this._keydownCallback, false);
         this.wrapperElement.addEventListener('focus', onfocus.bind(this), true);
@@ -168,7 +189,7 @@
 
     StyledButton.prototype.destroy = function destroy() {
 
-        this.wrapperElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.wrapperElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('click', this._clickCallback, true);
         this.wrapperElement.removeEventListener('keydown', this._keydownCallback, false);
 

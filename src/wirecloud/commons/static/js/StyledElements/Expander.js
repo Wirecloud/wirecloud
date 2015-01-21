@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -18,7 +18,8 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*globals CSSPrimitiveValue, StyledElements, Wirecloud */
+
+/*globals CSSPrimitiveValue, StyledElements */
 
 (function () {
 
@@ -32,7 +33,7 @@
             'buttonFloat': 'left',
             'title': null
         };
-        options = Wirecloud.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.merge(defaultOptions, options);
         if (!options.expandButton && !options.listenOnTitle) {
             throw new TypeError();
         }
@@ -40,7 +41,7 @@
         StyledElements.StyledElement.call(this, ['expandChange']);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = Wirecloud.Utils.appendWord("panel se-expander", options['class']);
+        this.wrapperElement.className = StyledElements.Utils.appendWord("panel se-expander", options['class']);
 
         var header = document.createElement('div');
         header.className = 'panel-heading';

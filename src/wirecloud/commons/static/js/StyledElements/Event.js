@@ -19,9 +19,7 @@
  *
  */
 
-// TODO
-// Static class
-var StyledElements = new Object();
+/*global StyledElements*/
 
 (function () {
 

@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -18,6 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
+
 /*global Document, StyledElements, Wirecloud*/
 
 (function () {
@@ -62,7 +63,7 @@
 
         for (i = 0; i < element.childNodes.length; i += 1) {
             child = element.childNodes[i];
-            if (!Wirecloud.Utils.XML.isElement(child)) {
+            if (!StyledElements.Utils.XML.isElement(child)) {
                 continue;
             }
 
@@ -91,7 +92,7 @@
 
         for (i = 0; i < children.length; i += 1) {
             child = children[i];
-            if (!Wirecloud.Utils.XML.isElement(child)) {
+            if (!StyledElements.Utils.XML.isElement(child)) {
                 continue;
             }
 
@@ -112,7 +113,7 @@
         var options, options_element;
 
         options = null;
-        options_element = Wirecloud.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', 'options');
+        options_element = StyledElements.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', 'options');
         if (options_element != null) {
             options_element.parentNode.removeChild(options_element);
             try {
@@ -131,7 +132,7 @@
                 var populateContainer = function populateContainer(element, xpath, container) {
                     var container_element, fragment;
 
-                    container_element = Wirecloud.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', xpath);
+                    container_element = StyledElements.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', xpath);
 
                     if (container_element != null) {
                         options = extractOptions(container_element);
@@ -153,7 +154,7 @@
                 return layout;
             },
             'button': function (builder, element, options) {
-                options = Wirecloud.Utils.merge({}, options);
+                options = StyledElements.Utils.merge({}, options);
                 options.text = element.textContent;
                 return new StyledElements.StyledButton(options);
             },
@@ -176,7 +177,7 @@
 
     GUIBuilder.prototype.parse = function parse(document, tcomponents, context) {
         if (typeof document === 'string') {
-            document = Wirecloud.Utils.XML.parseFromString(document, 'application/xml');
+            document = StyledElements.Utils.XML.parseFromString(document, 'application/xml');
         }
 
         if (!(document instanceof Document)) {
