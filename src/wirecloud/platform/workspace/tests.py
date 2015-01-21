@@ -70,11 +70,12 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(len(data['tabs']), 1)
 
         tab = data['tabs'][0]
-        variables = tab['iwidgets'][0]['variables']
-        self.assertEqual(variables['password']['value'], '')
-        self.assertEqual(variables['password']['secure'], True)
-        self.assertEqual(variables['username']['value'], 'test_username')
-        self.assertEqual(variables['prop']['value'], 'test_data')
+        preferences = tab['iwidgets'][0]['preferences']
+        self.assertEqual(preferences['password']['value'], '')
+        self.assertEqual(preferences['password']['secure'], True)
+        self.assertEqual(preferences['username']['value'], 'test_username')
+        properties = tab['iwidgets'][0]['properties']
+        self.assertEqual(properties['prop']['value'], 'test_data')
     test_get_global_workspace_data.tags = ('fiware-ut-3',)
 
     def test_create_empty_workspace(self):
@@ -125,11 +126,12 @@ class WorkspaceCacheTestCase(CacheTestCase):
         self.assertNotEqual(self.initial_info.timestamp, workspace_info.timestamp)
 
         data = json.loads(workspace_info.get_data())
-        variables = data['tabs'][0]['iwidgets'][0]['variables']
-        self.assertEqual(variables['password']['value'], '')
-        self.assertEqual(variables['password']['secure'], True)
-        self.assertEqual(variables['username']['value'], 'new_username')
-        self.assertEqual(variables['prop']['value'], 'test_data')
+        preferences = data['tabs'][0]['iwidgets'][0]['preferences']
+        self.assertEqual(preferences['password']['value'], '')
+        self.assertEqual(preferences['password']['secure'], True)
+        self.assertEqual(preferences['username']['value'], 'new_username')
+        properties = data['tabs'][0]['iwidgets'][0]['properties']
+        self.assertEqual(properties['prop']['value'], 'test_data')
 
     def test_updating_properties_invalidates_cache(self):
 
@@ -144,11 +146,12 @@ class WorkspaceCacheTestCase(CacheTestCase):
         self.assertNotEqual(self.initial_info.timestamp, workspace_info.timestamp)
 
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
-        variables = data['tabs'][0]['iwidgets'][0]['variables']
-        self.assertEqual(variables['password']['value'], '')
-        self.assertEqual(variables['password']['secure'], True)
-        self.assertEqual(variables['username']['value'], 'test_username')
-        self.assertEqual(variables['prop']['value'], 'new_data')
+        preferences = data['tabs'][0]['iwidgets'][0]['preferences']
+        self.assertEqual(preferences['password']['value'], '')
+        self.assertEqual(preferences['password']['secure'], True)
+        self.assertEqual(preferences['username']['value'], 'test_username')
+        properties = data['tabs'][0]['iwidgets'][0]['properties']
+        self.assertEqual(properties['prop']['value'], 'new_data')
 
     def test_widget_instantiation_invalidates_cache(self):
 
@@ -674,28 +677,28 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         # Check iwidget 1 data
         self.assertEqual(iwidget1.get('readonly', False), False)
 
-        iwidget1_vars = iwidget1['variables']
+        iwidget1_preferences = iwidget1['preferences']
 
-        self.assertEqual(iwidget1_vars['list']['value'], 'default')
-        self.assertEqual(iwidget1_vars['list']['hidden'], True)
-        self.assertEqual(iwidget1_vars['list']['readonly'], True)
+        self.assertEqual(iwidget1_preferences['list']['value'], 'default')
+        self.assertEqual(iwidget1_preferences['list']['hidden'], True)
+        self.assertEqual(iwidget1_preferences['list']['readonly'], True)
 
-        self.assertEqual(iwidget1_vars['text']['value'], 'initial text')
-        self.assertEqual(iwidget1_vars['text']['hidden'], False)
-        self.assertEqual(iwidget1_vars['text']['readonly'], True)
+        self.assertEqual(iwidget1_preferences['text']['value'], 'initial text')
+        self.assertEqual(iwidget1_preferences['text']['hidden'], False)
+        self.assertEqual(iwidget1_preferences['text']['readonly'], True)
 
         # Check iwidget 2 data
         self.assertEqual(iwidget1.get('readonly', False), False)
 
-        iwidget2_vars = iwidget2['variables']
+        iwidget2_preferences = iwidget2['preferences']
 
-        self.assertEqual(iwidget2_vars['list']['value'], 'value1')
-        self.assertEqual(iwidget2_vars['list'].get('hidden', False), False)
-        self.assertEqual(iwidget2_vars['list'].get('readonly', False), False)
+        self.assertEqual(iwidget2_preferences['list']['value'], 'value1')
+        self.assertEqual(iwidget2_preferences['list'].get('hidden', False), False)
+        self.assertEqual(iwidget2_preferences['list'].get('readonly', False), False)
 
-        self.assertEqual(iwidget2_vars['text']['value'], 'value2')
-        self.assertEqual(iwidget2_vars['text'].get('hidden', False), False)
-        self.assertEqual(iwidget2_vars['text'].get('readonly', False), False)
+        self.assertEqual(iwidget2_preferences['text']['value'], 'value2')
+        self.assertEqual(iwidget2_preferences['text'].get('hidden', False), False)
+        self.assertEqual(iwidget2_preferences['text'].get('readonly', False), False)
 
     def check_workspace_with_params(self, workspace):
 
@@ -718,25 +721,25 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
                 iwidget3 = iwidget
 
         # Check iwidget 1 data
-        iwidget1_vars = iwidget1['variables']
+        iwidget1_preferences = iwidget1['preferences']
 
-        self.assertEqual(iwidget1_vars['text']['value'], 'initial world')
-        self.assertEqual(iwidget1_vars['text'].get('hidden', False), False)
-        self.assertEqual(iwidget1_vars['text']['readonly'], True)
+        self.assertEqual(iwidget1_preferences['text']['value'], 'initial world')
+        self.assertEqual(iwidget1_preferences['text'].get('hidden', False), False)
+        self.assertEqual(iwidget1_preferences['text']['readonly'], True)
 
         # Check iwidget 2 data
-        iwidget2_vars = iwidget2['variables']
+        iwidget2_preferences = iwidget2['preferences']
 
-        self.assertEqual(iwidget2_vars['text']['value'], 'initial world')
-        self.assertEqual(iwidget2_vars['text']['hidden'], True)
-        self.assertEqual(iwidget2_vars['text']['readonly'], True)
+        self.assertEqual(iwidget2_preferences['text']['value'], 'initial world')
+        self.assertEqual(iwidget2_preferences['text']['hidden'], True)
+        self.assertEqual(iwidget2_preferences['text']['readonly'], True)
 
         # Check iwidget 3 data
-        iwidget3_vars = iwidget3['variables']
+        iwidget3_preferences = iwidget3['preferences']
 
-        self.assertEqual(iwidget3_vars['text']['value'], 'initial %(params.param)')
-        self.assertEqual(iwidget3_vars['text'].get('hidden', False), False)
-        self.assertEqual(iwidget3_vars['text'].get('readonly', False), False)
+        self.assertEqual(iwidget3_preferences['text']['value'], 'initial %(params.param)')
+        self.assertEqual(iwidget3_preferences['text'].get('hidden', False), False)
+        self.assertEqual(iwidget3_preferences['text'].get('readonly', False), False)
 
     def test_fill_workspace_using_template(self):
         template = self.read_template('wt1.xml')
