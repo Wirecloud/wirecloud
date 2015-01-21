@@ -38,6 +38,11 @@
     }
     NGSIAPI.Connection.prototype = window.parent.NGSIManager.Connection.prototype;
 
+    NGSIAPI.ProxyConnectionError = window.parent.NGSIManager.NGSI.ProxyConnectionError;
+    NGSIAPI.InvalidResponseError = window.parent.NGSIManager.NGSI.InvalidResponseError;
+    NGSIAPI.InvalidRequestError = window.parent.NGSIManager.NGSI.InvalidRequestError;
+    NGSIAPI.ConnectionError = window.parent.NGSIManager.NGSI.ConnectionError;
+
     Object.freeze(NGSIAPI);
 
     window.NGSI = NGSIAPI;
