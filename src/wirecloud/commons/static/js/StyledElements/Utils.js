@@ -586,28 +586,6 @@ if (window.StyledElements == null) {
         };
     }
 
-    /**
-     * Constante para que el diálogo que muestre el método <code>alert</code>
-     * sea una alerta informativa.
-     * @type Number
-     */
-    Utils.ALERT_INFO = 0;
-
-    /**
-     * Constante para que el diálogo que muestre el método <code>alert</code>
-     * sea una  alerta de advertencia.
-     * @type Number
-     */
-    Utils.ALERT_WARNING = 1;
-
-    /**
-     * Constante para que el diálogo que muestre el método <code>alert</code>
-     * sea una  alerta de error.
-     * @type Number
-     */
-    Utils.ALERT_ERROR = 2;
-
-
     Utils.values = function values(object) {
         var result = [];
 
