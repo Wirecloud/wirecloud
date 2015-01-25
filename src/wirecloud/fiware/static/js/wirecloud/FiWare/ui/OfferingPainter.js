@@ -244,7 +244,7 @@
                     button.addEventListener('click', onUninstallClick.bind(this, this.offering, this.painter.catalogue_view));
                 }
             } else {
-                button.addClassName('btn-primary').setLabel(gettext('Details'));
+                button.addClassName('btn-info').setLabel(gettext('Details'));
                 button.addEventListener('click', this.painter.catalogue_view.createUserCommand('showDetails', this.offering));
             }
         }
