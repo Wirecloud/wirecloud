@@ -59,6 +59,10 @@ class StoreTestCase(WirecloudTestCase):
 
         self.assertEqual(info, response)
 
+    def test_offering_info_retreival_404(self):
+
+        self.assertRaises(Exception, self.store_client.get_offering_info, '17', 'wirecloud_token')
+
     def test_resource_upload(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 200})

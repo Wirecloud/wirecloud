@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import gevent
 import requests
 from requests.auth import HTTPBasicAuth
 from six.moves.urllib.error import URLError, HTTPError
@@ -84,6 +85,51 @@ def parse_resource_info(offering_resource):
     return resource_info
 
 
+def update_offering_info(ser, store_client, offering_id, token):
+
+    try:
+        offering_info = store_client.get_offering_info(offering_id, token)
+    except:
+        return
+
+    offering_type = 'other'
+
+    if 'resources' not in offering_info:
+        offering_info['resources'] = []
+
+    if len(offering_info['resources']) == 1:
+
+        offering_resource = offering_info['resources'][0]
+
+        if offering_resource['content_type'] == 'application/x-widget+mashable-application-component':
+            offering_type = 'widget'
+        elif offering_resource['content_type'] == 'application/x-operator+mashable-application-component':
+            offering_type = 'operator'
+        elif offering_resource['content_type'] == 'application/x-mashup+mashable-application-component':
+            offering_type = 'mashup'
+
+        ser['resources'] = [parse_resource_info(offering_resource)]
+    else:
+
+        info_offering_resources = []
+        for offering_resource in offering_info['resources']:
+            resource_info = parse_resource_info(offering_resource)
+
+            if resource_info['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
+                offering_type = 'pack'
+
+            info_offering_resources.append(resource_info)
+
+        ser['resources'] = info_offering_resources
+
+    ser['type'] = offering_type
+    ser['uriImage'] = urljoin(store_client._url, offering_info['image_url'])
+    ser['publicationdate'] = offering_info['publication_date']
+    ser['open'] = offering_info['open']
+    ser['state'] = offering_info['state']
+    ser['rating'] = offering_info['rating']
+
+
 class MarketAdaptor(object):
 
     _marketplace_uri = None
@@ -109,6 +155,7 @@ class MarketAdaptor(object):
     def _parse_offering(self, name, url, parsed_usdl, store, options):
 
         offerings = []
+        jobs = []
 
         if isinstance(parsed_usdl, dict):
             parsed_usdl = [parsed_usdl]
@@ -137,46 +184,14 @@ class MarketAdaptor(object):
                 else:
                     token = options['idm_token']
 
-                offering_info = store_client.get_offering_info(offering_id, token)
-                offering_type = 'other'
-                if len(offering_info['resources']) == 1:
-
-                    offering_resource = offering_info['resources'][0]
-
-                    if offering_resource['content_type'] == 'application/x-widget+mashable-application-component':
-                        offering_type = 'widget'
-                    elif offering_resource['content_type'] == 'application/x-operator+mashable-application-component':
-                        offering_type = 'operator'
-                    elif offering_resource['content_type'] == 'application/x-mashup+mashable-application-component':
-                        offering_type = 'mashup'
-
-                    ser['resources'] = [parse_resource_info(offering_resource)]
-                else:
-
-                    info_offering_resources = []
-                    for offering_resource in offering_info['resources']:
-                        resource_info = parse_resource_info(offering_resource)
-
-                        if resource_info['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
-                            offering_type = 'pack'
-
-                        info_offering_resources.append(resource_info)
-
-                    ser['resources'] = info_offering_resources
-
-                ser['type'] = offering_type
-                ser['uriImage'] = urljoin(store_client._url, offering_info['image_url'])
-                ser['publicationdate'] = offering_info['publication_date']
-                ser['open'] = offering_info['open']
-                ser['state'] = offering_info['state']
-                ser['rating'] = offering_info['rating']
+                jobs.append(gevent.spawn(update_offering_info, ser, store_client, offering_id, token))
 
             except:
                 pass
 
             offerings.append(ser)
 
-        return offerings
+        return offerings, jobs
 
     def get_all_stores(self):
 
@@ -226,7 +241,8 @@ class MarketAdaptor(object):
 
         parsed_body = etree.fromstring(response.content)
 
-        result = {'resources': []}
+        offerings = []
+        jobs = []
 
         for res in parsed_body.xpath(RESOURCE_XPATH):
 
@@ -237,9 +253,13 @@ class MarketAdaptor(object):
             except:
                 continue
 
-            result['resources'] += self._parse_offering(res.get('name'), url, parsed_usdl, store, options)
+            usdl_offerings, usdl_jobs = self._parse_offering(res.get('name'), url, parsed_usdl, store, options)
+            offerings += usdl_offerings
+            jobs += usdl_jobs
 
-        return result
+        gevent.joinall(jobs)
+
+        return {'resources': offerings}
 
     def get_offering_info(self, store, id, options):
 
@@ -254,7 +274,10 @@ class MarketAdaptor(object):
 
         parsed_usdl = parse_usdl_from_url(url)
 
-        return self._parse_offering(id, url, parsed_usdl, store, options)
+        offerings, jobs = self._parse_offering(id, url, parsed_usdl, store, options)
+        gevent.joinall(jobs)
+
+        return offerings
 
     def get_store(self, name):
         if name not in self._stores:
@@ -284,7 +307,8 @@ class MarketAdaptor(object):
 
         parsed_body = etree.fromstring(response.content)
 
-        result = {'resources': []}
+        offerings = []
+        jobs = []
         for res in parsed_body.xpath(SEARCH_RESULT_XPATH):
             service = res.xpath(SEARCH_SERVICE_XPATH)[0]
             url = service.xpath(URL_XPATH)[0].text
@@ -298,6 +322,10 @@ class MarketAdaptor(object):
             except:
                 continue
 
-            result['resources'] += self._parse_offering(res.get('name'), url, parsed_usdl, service_store, options)
+            usdl_offerings, usdl_jobs = self._parse_offering(res.get('name'), url, parsed_usdl, service_store, options)
+            offerings += usdl_offerings
+            jobs += usdl_jobs
 
-        return result
+        gevent.joinall(jobs)
+
+        return {'resources': offerings}

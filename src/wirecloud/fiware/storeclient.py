@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,6 +22,14 @@ import requests
 from six.moves.urllib.parse import urljoin
 
 
+class NotFound(Exception):
+    pass
+
+
+class UnexpectedResponse(Exception):
+    pass
+
+
 class StoreClient(object):
 
     def __init__(self, url):
@@ -34,6 +42,12 @@ class StoreClient(object):
             'Authorization': 'Bearer ' + token,
         }
         response = requests.get(urljoin(self._url, 'api/offering/offerings/' + offering_id), headers=headers)
+
+        if response.status_code == 404:
+            raise NotFound()
+
+        if response.status_code != 200:
+            raise UnexpectedResponse()
 
         return json.loads(response.text)
 

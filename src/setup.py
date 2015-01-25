@@ -103,6 +103,7 @@ setup(
         'django_compressor>=1.4',
         'rdflib>=3.2.0',
         'requests>=2.0.0',
+        'gevent>=1.0.0,<2.0.0',
         'selenium>=2.41',
         'pytz',
         'django_relatives',
