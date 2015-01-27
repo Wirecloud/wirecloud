@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -102,7 +102,7 @@ setup(
         'lxml>=2.3',
         'django_compressor>=1.4',
         'rdflib>=3.2.0',
-        'requests>=2.0.0',
+        'requests>=2.1.0',
         'gevent>=1.0.0,<2.0.0',
         'selenium>=2.41',
         'pytz',
