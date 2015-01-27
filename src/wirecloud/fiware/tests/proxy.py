@@ -82,6 +82,7 @@ class ProxyTestCase(WirecloudTestCase):
     def test_fiware_idm_processor_body(self):
 
         def echo_response(method, url, *args, **kwargs):
+            self.assertEqual(int(kwargs['headers']['content-length']), 99) # Content Length after token injection
             return {'content': kwargs['data'].read()}
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)

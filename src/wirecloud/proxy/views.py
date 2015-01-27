@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -82,13 +82,7 @@ class Proxy():
                 # Only take into account request body if the request has a
                 # Content-Length header (we don't support chunked requests)
                 request_data['data'] = request
-
-                # It's better not propagate the Content-Length header as
-                # request processors may change final data length. In addition
-                # to this, the requests modules ignores the Content-Length
-                # header and tries to obtain data length directly from the
-                # data parameter. Therefore, providing this value in the len
-                # attribute seems to be the best option
+                request_data['headers']['content-length'] = header[1]
                 request_data['data'].len = int(header[1])
 
             elif header_name == 'cookie' or header_name == 'http_cookie':

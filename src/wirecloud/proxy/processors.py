@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -105,7 +105,9 @@ def process_secure_data(text, request, ignore_errors=False):
                 else:
                     value = value.encode('utf8')
 
-                request['data'] = BytesIO(request['data'].read().replace(substr, value))
+                new_body = request['data'].read().replace(substr, value)
+                request['headers']['content-length'] = "%s" % len(new_body)
+                request['data'] = BytesIO(new_body)
 
             elif action == 'basic_auth':
                 user_ref = options.get('user_ref', '')

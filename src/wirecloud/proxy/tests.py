@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -188,11 +188,12 @@ class ProxyTests(ProxyTestsBase):
         # Basic POST request
         expected_response_headers = {
             'Content-Type': 'application/json',
-            'Content-Length': '187',
+            'Content-Length': '208',
             'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
         }
 
         expected_response_body = {
+            'content-length': 2,
             'content-type': 'application/json',
             'referer': 'http://localhost',
             'via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',

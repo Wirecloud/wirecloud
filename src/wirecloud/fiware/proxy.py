@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -48,7 +48,9 @@ class IDMTokenProcessor(object):
 
         if 'x-fi-ware-oauth-token-body-pattern' in request['headers']:
             pattern = request['headers']['x-fi-ware-oauth-token-body-pattern']
-            request['data'] = BytesIO(request['data'].read().replace(pattern.encode('utf8'), token.encode('utf8')))
+            new_body = request['data'].read().replace(pattern.encode('utf8'), token.encode('utf8'))
+            request['headers']['content-length'] = "%s" % len(new_body)
+            request['data'] = BytesIO(new_body)
             del request['headers']['x-fi-ware-oauth-token-body-pattern']
 
         del request['headers']['x-fi-ware-oauth-token']
