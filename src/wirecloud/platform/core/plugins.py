@@ -85,6 +85,7 @@ TUTORIAL_FILES = (
 )
 
 STYLED_ELEMENTS_FILES = (
+    # 'js/StyledElements/Utils.js', Added on bootstrap.html
     'js/StyledElements/ObjectWithEvents.js',
     'js/StyledElements/StyledElements.js',
     'js/StyledElements/InputElement.js',
