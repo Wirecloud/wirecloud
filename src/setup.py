@@ -112,7 +112,7 @@ setup(
         'markdown',
         'whoosh>=2.5.6',
         'pycrypto',
-        'pyScss==1.2.0.post3',
+        'pyScss>=1.3.4,<2.0',
         'Pygments',
         'mock>=1.0,<2.0',
     ),

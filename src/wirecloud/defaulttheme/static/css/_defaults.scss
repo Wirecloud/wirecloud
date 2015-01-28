@@ -44,6 +44,7 @@ $text-color-dark:           #FFF !default;
 $text-color-threshold:      (((lightness($text-color-light) + lightness($text-color-dark)) / 2) + 3) !default;
 
 $font-family-base:          "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$font-family-monospace:     Menlo, Monaco, Consolas, "Courier New", monospace;
 
 $headings-font-family:      inherit !default;
 $headings-font-weight:      bold !default;
