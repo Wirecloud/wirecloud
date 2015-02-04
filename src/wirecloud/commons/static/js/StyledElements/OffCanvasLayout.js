@@ -15,7 +15,7 @@
  *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*global StyledElements, Wirecloud*/
+/*global StyledElements*/
 
 
 StyledElements.OffCanvasLayout = (function () {
@@ -39,7 +39,7 @@ StyledElements.OffCanvasLayout = (function () {
             'iconRClassName': "icon-caret-right"
         };
 
-        options = Wirecloud.Utils.merge(defaults, options);
+        options = StyledElements.Utils.merge(defaults, options);
         StyledElements.StyledElement.call(this, ['slidedown', 'slideup']);
 
         this.wrapperElement = document.createElement('div');
