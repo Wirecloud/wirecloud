@@ -79,6 +79,16 @@
             description = '';
         }
         Object.defineProperty(this, 'description', {value: description});
+
+        // Base URL
+        Object.defineProperty(this, 'base_url', {
+            value: location.origin + Wirecloud.URLs.MAC_BASE_URL.evaluate({
+                vendor: this.vendor,
+                name: this.name,
+                version: this.version.text,
+                file_path: ''
+            })
+        });
     };
 
     Wirecloud.MashableApplicationComponent = MashableApplicationComponent;

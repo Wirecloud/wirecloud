@@ -47,7 +47,7 @@
             new_component = tcomponent;
         }
 
-        if (typeof new_component === 'string') {
+        if (['string', 'number', 'boolean'].indexOf(typeof new_component) !== -1) {
             new_component = element.ownerDocument.createTextNode(new_component);
         } else if (new_component != null) {
             new_component = new_component;

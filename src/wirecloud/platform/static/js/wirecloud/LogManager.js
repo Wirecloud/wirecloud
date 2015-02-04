@@ -69,39 +69,41 @@
     };
 
     LogManager.prototype.log = function log(msg, options) {
-        var date, index, entry, level, expander;
+        var date, index, entry, expander;
 
         if (typeof options === 'number') {
             // Backwards compatibility
-            level = options;
-            options = {};
-        } else if (options == null) {
-            options = {};
+            options = {level: options};
         }
+        options = Wirecloud.Utils.merge({
+            level: Wirecloud.constants.LOGGING.ERROR_MSG,
+            console: true,
+        }, options);
 
         date = new Date();
-        switch (level) {
-        default:
-            level = Wirecloud.constants.LOGGING.ERROR_MSG;
-        case Wirecloud.constants.LOGGING.ERROR_MSG:
-            if ('console' in window && typeof console.error === 'function') {
-                console.error(msg);
+        if (options.console === true) {
+            switch (options.level) {
+            default:
+            case Wirecloud.constants.LOGGING.ERROR_MSG:
+                if ('console' in window && typeof console.error === 'function') {
+                    console.error(msg);
+                }
+                break;
+            case Wirecloud.constants.LOGGING.WARN_MSG:
+                if ('console' in window && typeof console.warn === 'function') {
+                    console.warn(msg);
+                }
+                break;
+            case Wirecloud.constants.LOGGING.INFO_MSG:
+                if ('console' in window && typeof console.info === 'function') {
+                    console.info(msg);
+                }
+                break;
             }
-            break;
-        case Wirecloud.constants.LOGGING.WARN_MSG:
-            if ('console' in window && typeof console.warn === 'function') {
-                console.warn(msg);
-            }
-            break;
-        case Wirecloud.constants.LOGGING.INFO_MSG:
-            if ('console' in window && typeof console.info === 'function') {
-                console.info(msg);
-            }
-            break;
         }
 
         entry = {
-            "level": level,
+            "level": options.level,
             "msg": msg,
             "date": date,
             "logManager": this

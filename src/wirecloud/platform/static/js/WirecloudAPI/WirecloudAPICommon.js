@@ -27,6 +27,7 @@
 
     var platform = window.parent;
     var resource = MashupPlatform.resource;
+    var guibuilder = new platform.StyledElements.GUIBuilder();
 
     // Platform context module
     Object.defineProperty(window.MashupPlatform, 'context', {value: {}});
@@ -156,4 +157,14 @@
     });
     Object.preventExtensions(window.MashupPlatform.wiring);
 
+    // General error handler
+    window.onerror = function (message, url, line, column, error) {
+        var details;
+
+        if (error) {
+            details = platform.gettext("<ul><li><b>File:</b> <t:file/></li><li><b>Line: </b><t:line/></li></ul>");
+            details = guibuilder.parse(guibuilder.DEFAULT_OPENING + details + guibuilder.DEFAULT_CLOSING, {file: url.replace(resource.meta.base_url, ''), line: line});
+            resource.logManager.log(message, {details: details, console: false});
+        }
+    };
 })();
