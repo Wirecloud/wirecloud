@@ -26,7 +26,7 @@ import socket
 from six.moves.urllib.parse import urlparse
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import resolve, reverse
 from django.http import HttpResponse
 try:
     from django.http import StreamingHttpResponse
@@ -52,7 +52,7 @@ class Proxy():
     # set the timeout to 60 seconds
     socket.setdefaulttimeout(60)
 
-    def do_request(self, request, url, method):
+    def do_request(self, request, url, method, workspace):
 
         url = iri_to_uri(url)
 
@@ -63,6 +63,7 @@ class Proxy():
             "headers": {},
             "cookies": SimpleCookie(),
             "user": request.user,
+            "workspace": workspace,
             "original-request": request,
         }
 
@@ -183,11 +184,22 @@ def proxy_request(request, protocol, domain, path):
     # TODO improve proxy security
 
     try:
-        if request.get_host() != urlparse(request.META["HTTP_REFERER"])[1]:
-            raise Exception()
-
         if settings.SESSION_COOKIE_NAME not in request.COOKIES:
             raise Exception()
+
+        parsed_referer = urlparse(request.META["HTTP_REFERER"])
+        if request.get_host() != parsed_referer[1]:
+            raise Exception()
+
+        referer_view_info = resolve(parsed_referer.path)
+        if referer_view_info.url_name != 'wirecloud.workspace_view':
+            raise Exception()
+
+        from wirecloud.platform.models import Workspace
+        workspace = Workspace.objects.get(creator__username=referer_view_info.kwargs['owner'], name=referer_view_info.kwargs['name'])
+        if not workspace.public and workspace.creator != request.user:
+            raise Exception()
+
     except:
         return build_error_response(request, 403, _("Invalid request"))
 
@@ -196,7 +208,7 @@ def proxy_request(request, protocol, domain, path):
         url += '?' + request.GET.urlencode()
 
     try:
-        response = WIRECLOUD_PROXY.do_request(request, url, request.method.upper())
+        response = WIRECLOUD_PROXY.do_request(request, url, request.method.upper(), workspace)
     except Exception as e:
         msg = _("Error processing proxy request: %s") % unicode(e)
         return build_error_response(request, 500, msg)

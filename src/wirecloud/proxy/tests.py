@@ -110,13 +110,18 @@ class ProxyTests(ProxyTestsBase):
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://other.server.com')
         self.assertEqual(response.status_code, 403)
 
+        # Not access rights
+        client.login(username='test', password='test')
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test2/workspace')
+        self.assertEqual(response.status_code, 403)
+
     def test_request_without_started_session_are_forbidden(self):
 
         client = Client()
 
         # Basic GET request
         self.network._servers['http']['example.com'].add_response('GET', '/path', {'content': 'data'})
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 403)
 
     def test_basic_anonymous_proxy_requests(self):
@@ -165,12 +170,12 @@ class ProxyTests(ProxyTestsBase):
         # Basic GET request
         expected_response_headers = {
             'Content-Type': 'application/json',
-            'Content-Length': '151',
+            'Content-Length': '166',
             'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
         }
 
         expected_response_body = {
-            'referer': 'http://localhost',
+            'referer': 'http://localhost/test/workspace',
             'via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
             'x-forwarded-for': '127.0.0.1',
             'x-forwarded-host': 'example.com'
@@ -178,7 +183,7 @@ class ProxyTests(ProxyTestsBase):
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', echo_headers_response)
         # Using "request" to work around https://code.djangoproject.com/ticket/20596
-        response = client.request(PATH_INFO=self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = client.request(PATH_INFO=self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 200)
         if 'reason_phrase' in response:
             self.assertEqual(response.reason_phrase, 'CUSTOM REASON')
@@ -188,28 +193,28 @@ class ProxyTests(ProxyTestsBase):
         # Basic POST request
         expected_response_headers = {
             'Content-Type': 'application/json',
-            'Content-Length': '208',
+            'Content-Length': '223',
             'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
         }
 
         expected_response_body = {
             'content-length': 2,
             'content-type': 'application/json',
-            'referer': 'http://localhost',
+            'referer': 'http://localhost/test/workspace',
             'via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
             'x-forwarded-for': '127.0.0.1',
             'x-forwarded-host': 'example.com'
         }
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_headers_response)
-        response = client.post(self.basic_url, data='{}', content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = client.post(self.basic_url, data='{}', content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.get_response_headers(response), expected_response_headers)
         self.assertEqual(json.loads(self.read_response(response).decode('utf8')), expected_response_body)
 
         # Http Error 404
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/non_existing_file.html'})
-        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(self.read_response(response), b'')
 
@@ -223,7 +228,7 @@ class ProxyTests(ProxyTestsBase):
             raise requests.exceptions.ConnectionError()
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', refuse_connection)
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 502)
         self.assertEqual(self.read_response(response), b'')
 
@@ -237,7 +242,7 @@ class ProxyTests(ProxyTestsBase):
             raise requests.exceptions.HTTPError()
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', bad_response)
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 504)
         self.assertEqual(self.read_response(response), b'')
 
@@ -249,13 +254,13 @@ class ProxyTests(ProxyTestsBase):
         self.network._servers['http']['example.com'].add_response('GET', '/ca%C3%B1on', {'content': 'data'})
 
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/ca%C3%B1on'})
-        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'data')
 
         # We need to append the path because the reverse method encodes the url
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/'}) + 'cañon'
-        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'data')
 
@@ -272,7 +277,7 @@ class ProxyTests(ProxyTestsBase):
                 return {'status_code': 404}
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', cookie_response)
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'test=test')
 
@@ -320,7 +325,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
                             HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
@@ -331,7 +336,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
                             HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
@@ -344,7 +349,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
                             HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
@@ -357,7 +362,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
                             HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
@@ -369,7 +374,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
                             HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
@@ -383,7 +388,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             content_type='application/x-www-form-urlencoded',
                             HTTP_ACCEPT='application/json',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
                             HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 422)
@@ -415,7 +420,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
                             HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 422)
@@ -426,7 +431,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
                             HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 422)
@@ -451,7 +456,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost')
+                            HTTP_REFERER='http://localhost/test/workspace')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'username=test_username&password=test_password')
@@ -462,7 +467,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost')
+                            HTTP_REFERER='http://localhost/test/workspace')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'username=|username|&password=|password|')
@@ -474,6 +479,6 @@ class ProxySecureDataTests(ProxyTestsBase):
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
                             HTTP_HOST='localhost',
-                            HTTP_REFERER='http://localhost')
+                            HTTP_REFERER='http://localhost/test/workspace')
 
         self.assertEqual(response.status_code, 200)

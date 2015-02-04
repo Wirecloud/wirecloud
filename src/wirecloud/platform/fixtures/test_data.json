@@ -51,8 +51,19 @@
         "pk": "1",
         "fields": {
             "name": "workspace",
+            "public": true,
             "creator": "2",
             "wiringStatus": "{\"operators\": {\"1\": {\"id\": \"1\", \"name\": \"Wirecloud/TestOperator/1.0\", \"preferences\": {\"pref_with_val\": {\"readonly\": false, \"hidden\": false, \"value\": \"value1\"}, \"readonly_pref\": {\"readonly\": false, \"hidden\": false, \"value\": \"value2\"}, \"hidden_pref\": {\"readonly\": false, \"hidden\": false, \"value\": \"value3\"}}}}, \"connections\": []}"
+        }
+    },
+    {
+        "model": "platform.Workspace",
+        "pk": "2",
+        "fields": {
+            "name": "workspace",
+            "public": false,
+            "creator": "3",
+            "wiringStatus": "{\"operators\": {}, \"connections\": []}"
         }
     },
     {

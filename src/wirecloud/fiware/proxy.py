@@ -36,10 +36,23 @@ class IDMTokenProcessor(object):
             raise ValidationError(_('IDM support not enabled'))
 
         header_name = None
-        try:
-            token = request['user'].social_auth.get(provider='fiware').tokens['access_token']
-        except:
-            raise ValidationError(_('Current user has not an active FIWARE profile'))
+        source = 'user'
+        if 'x-fi-ware-oauth-source' in request['headers']:
+            source = request['headers']['x-fi-ware-oauth-source']
+            del request['headers']['x-fi-ware-oauth-source']
+
+        if source == 'user':
+            try:
+                token = request['user'].social_auth.get(provider='fiware').tokens['access_token']
+            except:
+                raise ValidationError(_('Current user has not an active FIWARE profile'))
+        elif source == 'workspaceowner':
+            try:
+                token = request['workspace'].creator.social_auth.get(provider='fiware').tokens['access_token']
+            except:
+                raise ValidationError(_('Workspace owner has not an active FIWARE profile'))
+        else:
+            raise ValidationError(_('Invalid FIWARE OAuth token source'))
 
         if 'x-fi-ware-oauth-header-name' in request['headers']:
             header_name = request['headers']['x-fi-ware-oauth-header-name']

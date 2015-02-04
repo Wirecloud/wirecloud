@@ -35,8 +35,8 @@ TEST_TOKEN = 'yLCdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y__uQ2ig3uIEaP6nJ0WxiRWGyC
 @unittest.skipIf(not IDM_SUPPORT_ENABLED, 'FI-WARE IdM support not available')
 class ProxyTestCase(WirecloudTestCase):
 
-    fixtures = ('selenium_test_data', 'fiware_proxy_test_data')
-    tags = ('fiware-proxy',)
+    fixtures = ('selenium_test_data', 'user_with_workspaces', 'fiware_proxy_test_data')
+    tags = ('fiware-proxy', 'proxy')
 
     @classmethod
     def setUpClass(cls):
@@ -71,7 +71,7 @@ class ProxyTestCase(WirecloudTestCase):
         client.login(username='admin', password='admin')
         response = client.post(url, data='{}', content_type='application/json',
                 HTTP_HOST='localhost',
-                HTTP_REFERER='http://localhost/user/workspace',
+                HTTP_REFERER='http://localhost/user_with_workspaces/Public Workspace',
                 HTTP_X_FI_WARE_OAUTH_TOKEN='true',
                 HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
         self.assertEqual(response.status_code, 200)
@@ -92,7 +92,7 @@ class ProxyTestCase(WirecloudTestCase):
         client.login(username='admin', password='admin')
         response = client.post(url, data='{"token": "%token%"}', content_type='application/json',
                 HTTP_HOST='localhost',
-                HTTP_REFERER='http://localhost/user/workspace',
+                HTTP_REFERER='http://localhost/user_with_workspaces/Public Workspace',
                 HTTP_X_FI_WARE_OAUTH_TOKEN='true',
                 HTTP_X_FI_WARE_OAUTH_TOKEN_BODY_PATTERN='%token%')
         self.assertEqual(response.status_code, 200)
@@ -117,7 +117,7 @@ class ProxyTestCase(WirecloudTestCase):
         response = client.post(url, data='{}', content_type='application/json',
                 HTTP_ACCEPT='application/json',
                 HTTP_HOST='localhost',
-                HTTP_REFERER='http://localhost/user/workspace',
+                HTTP_REFERER='http://localhost/user_with_workspaces/Public Workspace',
                 HTTP_X_FI_WARE_OAUTH_TOKEN='true',
                 HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
         self.assertEqual(response.status_code, 422)
@@ -135,8 +135,50 @@ class ProxyTestCase(WirecloudTestCase):
         response = client.post(url, data='{}', content_type='application/json',
                 HTTP_ACCEPT='application/json',
                 HTTP_HOST='localhost',
-                HTTP_REFERER='http://localhost/user/workspace',
+                HTTP_REFERER='http://localhost/user_with_workspaces/Public Workspace',
                 HTTP_X_FI_WARE_OAUTH_TOKEN='true',
+                HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
+        self.assertEqual(response.status_code, 422)
+        json.loads(self.read_response(response))
+
+    def test_fiware_idm_token_from_workspace_owner(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+
+        client = Client()
+        client.login(username='normuser', password='admin')
+
+        # Make the request
+        response = client.post(url, data='{}', content_type='application/json',
+                HTTP_ACCEPT='application/json',
+                HTTP_HOST='localhost',
+                HTTP_REFERER='http://localhost/user_with_workspaces/Public Workspace',
+                HTTP_X_FI_WARE_OAUTH_TOKEN='true',
+                HTTP_X_FI_WARE_OAUTH_SOURCE='workspaceowner',
+                HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
+        self.assertEqual(response.status_code, 200)
+        json.loads(self.read_response(response))
+
+    def test_fiware_idm_token_from_workspace_owner_no_token(self):
+
+        # Remove user_with_workspaces Token
+        from django.contrib.auth.models import User
+        User.objects.get(username="user_with_workspaces").social_auth.all().delete()
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+
+        client = Client()
+        client.login(username='normuser', password='admin')
+
+        # Make the request
+        response = client.post(url, data='{}', content_type='application/json',
+                HTTP_ACCEPT='application/json',
+                HTTP_HOST='localhost',
+                HTTP_REFERER='http://localhost/user_with_workspaces/Public Workspace',
+                HTTP_X_FI_WARE_OAUTH_TOKEN='true',
+                HTTP_X_FI_WARE_OAUTH_SOURCE='workspaceowner',
                 HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
         self.assertEqual(response.status_code, 422)
         json.loads(self.read_response(response))
