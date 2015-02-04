@@ -1,0 +1,152 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+@import 'compass/css3';
+
+
+$seOffcanvas-default-margin: 5px;
+$seOffcanvas-default-borderRadius: 4px;
+
+$seOffcanvas-sidebar-width: 250px;
+$seOffcanvas-sidebar-btnClose-zIndex: 5;
+$seOffcanvas-sidebar-btnClose-width: 15px;
+
+$seOffcanvas-footer-height: 40px;
+
+@mixin seOffcanvas-sidebar-btnClose-font($fontSize: 14px, $fontWeight: bold, $fontHeight: 1.43, $fontAlign: center) {
+    font-size: $fontSize;
+    font-weight: $fontWeight;
+    line-height: $fontHeight;
+    text-align: $fontAlign;
+}
+
+
+.se-offcanvas {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow-x: hidden;
+
+    .se-offcanvas-sidebar {
+        position: absolute;
+        top: 0;
+        bottom: $seOffcanvas-footer-height + $seOffcanvas-default-margin;
+        width: $seOffcanvas-sidebar-width;
+        margin: 0px $seOffcanvas-default-margin $seOffcanvas-default-margin;
+        border: solid 0px transparent;
+        box-sizing: border-box;
+
+        .se-offcanvas-btn-close {
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            margin: auto;
+            padding: 9px 0px 0px 0px;
+            cursor: pointer;
+            width: $seOffcanvas-sidebar-btnClose-width;
+            height: 40px;
+            @include seOffcanvas-sidebar-btnClose-font();
+            border: solid 1px transparent;
+            z-index: $seOffcanvas-sidebar-btnClose-zIndex;
+            box-sizing: border-box;
+        }
+    }
+
+    .se-offcanvas-content {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: $seOffcanvas-footer-height + $seOffcanvas-default-margin;
+        left: 0;
+        margin: 0px $seOffcanvas-default-margin $seOffcanvas-default-margin;
+        overflow: auto;
+        border: solid 0px transparent;
+        box-sizing: border-box;
+    }
+
+    .se-offcanvas-footer {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: $seOffcanvas-footer-height;
+        margin: 0px $seOffcanvas-default-margin $seOffcanvas-default-margin;
+        border: solid 0px transparent;
+        box-sizing: border-box;
+    }
+}
+
+.se-offcanvas.se-offcanvas-to-left {
+
+    .se-offcanvas-sidebar {
+        left: ($seOffcanvas-sidebar-width + $seOffcanvas-default-margin) * -1;
+
+        .se-offcanvas-btn-close {
+            right: ($seOffcanvas-sidebar-btnClose-width - 1px) * -1;
+            border-left-width: 0px;
+            border-radius: 0px $seOffcanvas-default-borderRadius $seOffcanvas-default-borderRadius 0px;
+        }
+    }
+
+    .se-offcanvas-sidebar,
+    .se-offcanvas-content {
+        @include transition(left .2s ease-out);
+    }
+
+    &.slipped {
+
+        .se-offcanvas-sidebar {
+            left: 0px;
+        }
+
+        .se-offcanvas-content {
+            left: $seOffcanvas-sidebar-width + $seOffcanvas-default-margin;
+        }
+    }
+}
+
+.se-offcanvas.se-offcanvas-to-right {
+
+    .se-offcanvas-sidebar {
+        right: ($seOffcanvas-sidebar-width + $seOffcanvas-default-margin) * -1;
+
+        .se-offcanvas-btn-close {
+            left: ($seOffcanvas-sidebar-btnClose-width - 1px) * -1;
+            border-right-width: 0px;
+            border-radius: $seOffcanvas-default-borderRadius 0px 0px $seOffcanvas-default-borderRadius;
+        }
+    }
+
+    .se-offcanvas-sidebar,
+    .se-offcanvas-content {
+        @include transition(right .2s ease-out);
+    }
+
+    &.slipped {
+
+        .se-offcanvas-sidebar {
+            right: 0px;
+        }
+
+        .se-offcanvas-content {
+            right: $seOffcanvas-sidebar-width + $seOffcanvas-default-margin;
+        }
+    }
+}
