@@ -16,13 +16,52 @@
         @include box-shadow(inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05));
     }
 
+    .icon-stacked {
+        background-color: lighten($background, 10%);
+
+        &.bottom-right {
+            border-left: solid 1px lighten($background, 10%);
+        }
+    }
+
     &:hover,
-    &:active,
-    &:focus,
-    &.disabled
-    {
+    &:focus, &.focus,
+    &:active, &.active,
+    &.disabled, &[disabled] {
+        text-decoration: none;
         color: contrast-color($highlight_background, $button-text-color-light, $button-text-color-dark, $button-text-color-threshold);
         background-color: $highlight_background;
+        @if ($button-gradients) {
+            background-position: 0 -15px;
+            @include transition(background-position 0.1s linear);
+        }
+
+        .icon-stacked {
+            background-color: $highlight_background;
+
+            &.bottom-right {
+                border-left: solid 1px $highlight_background;
+            }
+        }
+    }
+
+    &:active, &.active {
+        box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
+    }
+
+    &:focus:active, &.focus:active, &:focus.active, &.focus.active,  {
+        box-shadow: 0 0 8px rgba(82, 168, 236, 0.6), inset 0 3px 5px rgba(0, 0, 0, .125);
+    }
+
+    &.disabled {
+        opacity: 0.65;
+        background-image: none;
+        cursor: default;
     }
 }
 
@@ -58,20 +97,6 @@
     z-index: 111113;
 }
 
-.styled_button.disabled {
-    opacity: 0.65;
-    background-image: none;
-    cursor: default;
-}
-
-.styled_button:hover, .styled_button.disabled {
-    text-decoration: none;
-    @if ($button-gradients) {
-        background-position: 0 -15px;
-        @include transition(background-position 0.1s linear);
-    }
-}
-
 .styled_button.plain {
     font-size: inherit;
     line-height: inherit;
@@ -104,11 +129,6 @@
 .styled_button img.icon {
     margin: 3px;
     vertical-align: middle;
-}
-
-.styled_button:focus {
-    outline: none;
-    box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
 .styled_button.btn-large, .styled_button.btn-lg {
@@ -177,6 +197,34 @@
 .btn-group > .styled_button:last-child {
     border-top-right-radius: $border-radius-base;
     border-bottom-right-radius: $border-radius-base;
+}
+
+/* Button - Icon Stacked */
+
+.styled_button .icon-stacked {
+    position: absolute;
+    font-size: 12px;
+    border-radius: 50%;
+
+    &.bottom-left {
+        left: 0px;
+        bottom: 0px;
+    }
+
+    &.bottom-right {
+        right: 0px;
+        bottom: 0px;
+    }
+
+    &.top-left {
+        top: 0px;
+        left: 0px;
+    }
+
+    &.top-right {
+        top: 0px;
+        right: 0px;
+    }
 }
 
 /* Button variants */

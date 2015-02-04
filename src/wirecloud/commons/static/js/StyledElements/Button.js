@@ -70,7 +70,9 @@
             'iconWidth': 24,
             'icon': null,
             'iconClass': null,
-            'usedInForm': false
+            'usedInForm': false,
+            'positionIconStacked': '',
+            'iconStackedClass': ''
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
@@ -105,6 +107,12 @@
             this.icon.style.height = options.iconHeight + 'px';
             this.icon.src = options.icon;
             this.wrapperElement.appendChild(this.icon);
+        }
+
+        if (options.positionIconStacked.length) {
+            this.iconStacked = document.createElement('span');
+            this.iconStacked.className = [options.iconStackedClass, 'icon-stacked', options.positionIconStacked].join(' ');
+            this.wrapperElement.appendChild(this.iconStacked);
         }
 
         if (options.text != null || options.iconClass != null) {
