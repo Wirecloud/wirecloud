@@ -58,7 +58,7 @@
     },
     {
         "model": "platform.Workspace",
-        "pk": "2",
+        "pk": "201",
         "fields": {
             "name": "workspace",
             "public": false,

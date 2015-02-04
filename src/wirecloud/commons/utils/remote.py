@@ -301,8 +301,8 @@ class CatalogueEntryTester(object):
 
         catalogue_base_element = self.catalogue.get_current_catalogue_base_element()
         self.testcase.scroll_and_click(self.element)
-        self.details = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
-        self.testcase.assertEqual(self.catalogue.get_current_resource(), self.name)
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.catalogue.get_current_resource() == self.name)
+        self.details = catalogue_base_element.find_element_by_css_selector('.details_interface')
 
         return self
 
