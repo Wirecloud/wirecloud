@@ -55,6 +55,14 @@
         this.events.blur.dispatch(this);
     };
 
+    var update_tabindex = function update_tabindex() {
+        if (this.enabled) {
+            this.wrapperElement.setAttribute('tabindex', this.tabindex);
+        } else {
+            this.wrapperElement.setAttribute('tabindex', -1);
+        }
+    };
+
     /**
      *
      * Eventos que soporta este componente:
@@ -72,7 +80,8 @@
             'iconClass': null,
             'usedInForm': false,
             'positionIconStacked': '',
-            'iconStackedClass': ''
+            'iconStackedClass': '',
+            'tabindex': 0
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
@@ -89,7 +98,6 @@
         } else {
             this.wrapperElement = document.createElement("div");
         }
-        this.wrapperElement.setAttribute('tabindex', '0');
         this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "styled_button");
 
         if (options.id != null) {
@@ -130,6 +138,21 @@
             this.setTitle(options.title);
         }
 
+        /* Properties */
+        var tabindex;
+        Object.defineProperty(this, 'tabindex', {
+            get: function() {
+                return tabindex;
+            },
+            set: function(new_tabindex) {
+                tabindex = new_tabindex;
+                update_tabindex.call(this);
+            }
+        });
+
+        /* Initial status */
+        this.tabindex = options.tabindex;
+
         /* Event handlers */
         var prototype = Object.getPrototypeOf(this);
         if (typeof prototype._clickCallback === 'function') {
@@ -157,6 +180,29 @@
 
     StyledButton.prototype.blur = function blur() {
         this.wrapperElement.blur();
+    };
+
+    /**
+     * Enables this button
+     */
+    StyledButton.prototype.enable = function enable() {
+        this.enabled = true;
+        this.removeClassName('disabled');
+        update_tabindex.call(this);
+
+        return this;
+    };
+
+    /**
+     * Deshabilita el componente añadiendo la clase css .disabled
+     */
+    StyledButton.prototype.disable = function disable() {
+        this.enabled = false;
+        this.addClassName('disabled');
+        update_tabindex.call(this);
+        this.blur();
+
+        return this;
     };
 
     StyledButton.prototype.setLabel = function setLabel(label) {
