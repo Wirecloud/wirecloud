@@ -35,7 +35,7 @@
 
     var keydownCallback = function keydownCallback(e) {
         if (this.enabled && e.keyCode === 13) {
-            this.events.click.dispatch(this);
+            this._clickCallback(e);
         }
     };
 
@@ -74,7 +74,7 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        // Necesario para permitir herencia
+        // Support hirerarchy
         if (options.extending) {
             return;
         }
@@ -123,7 +123,12 @@
         }
 
         /* Event handlers */
-        this._clickCallback = clickCallback.bind(this);
+        var prototype = Object.getPrototypeOf(this);
+        if (typeof prototype._clickCallback === 'function') {
+            this._clickCallback = prototype._clickCallback.bind(this);
+        } else {
+            this._clickCallback = clickCallback.bind(this);
+        }
         this._keydownCallback = keydownCallback.bind(this);
 
         this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);

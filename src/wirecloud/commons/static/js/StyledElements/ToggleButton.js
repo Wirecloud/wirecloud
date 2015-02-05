@@ -31,6 +31,11 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
+        // Support hirerarchy
+        if (options.extending) {
+            return;
+        }
+
         StyledElements.StyledButton.call(this, options);
 
         if (options.checkedIcon == null) {
@@ -47,39 +52,43 @@
         this._text = options.text;
         this._checkedText = options.checkedText;
 
-        this._checked = false;
-        this.setChecked(options.initiallyChecked);
+        var _active = null;
+        Object.defineProperty(this, 'active', {
+            set: function (active) {
+                active = !!active;
+
+                if (active === _active) {
+                    return; // Nothing to do
+                }
+
+                if (active) {
+                    this.wrapperElement.classList.add('active');
+                    if (this.icon) {
+                        this.icon.src = this._checkedIcon;
+                    }
+                    if (this.label) {
+                        this.label.textContent = this._checkedText;
+                    }
+                } else {
+                    this.wrapperElement.classList.remove('active');
+                    if (this.icon) {
+                        this.icon.src = this._icon;
+                    }
+                    if (this.label) {
+                        this.label.textContent = this._text;
+                    }
+                }
+                _active = active;
+            },
+            get: function() {
+                return _active;
+            }
+        });
+
+        // Init status
+        this.active = options.initiallyChecked;
     };
     StyledElements.ToggleButton.prototype = new StyledElements.StyledButton({extending: true});
-
-    StyledElements.ToggleButton.prototype.isChecked = function isChecked(checked) {
-        return this._checked;
-    };
-
-    StyledElements.ToggleButton.prototype.setChecked = function setChecked(checked) {
-        if (checked == this.isChecked()) {
-            return; // Nothing to do
-        }
-
-        if (checked) {
-            this.wrapperElement.classList.add('checked');
-            if (this.icon) {
-                this.icon.src = this._checkedIcon;
-            }
-            if (this.label) {
-                this.label.textContent = this._checkedText;
-            }
-        } else {
-            this.wrapperElement.classList.remove('checked');
-            if (this.icon) {
-                this.icon.src = this._icon;
-            }
-            if (this.label) {
-                this.label.textContent = this._text;
-            }
-        }
-        this._checked = checked;
-    };
 
     StyledElements.ToggleButton.prototype._clickCallback = function _clickCallback(event) {
         if (!this.enabled) {
@@ -87,7 +96,7 @@
         }
 
         event.stopPropagation();
-        this.setChecked(!this.isChecked());
+        this.active = !this.active;
         this.events.click.dispatch(this);
     };
 

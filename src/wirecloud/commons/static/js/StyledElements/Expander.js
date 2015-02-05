@@ -127,7 +127,7 @@
             this.contentContainer.wrapperElement.style.height = '';
         }
         if (this.toggleButton) {
-            this.toggleButton.setChecked(expanded);
+            this.toggleButton.active = expanded;
         }
 
         this.events.expandChange.dispatch(this, expanded);

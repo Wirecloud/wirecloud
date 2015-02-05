@@ -23,7 +23,7 @@
     display: inline-block;
 }
 
-.se-expander > .panel-heading > .icon-expand.checked:before {
+.se-expander > .panel-heading > .icon-expand.active:before {
     content: "\f0d7";
 }
 
