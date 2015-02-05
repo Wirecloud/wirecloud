@@ -608,11 +608,15 @@ var init = function init() {
     container.appendChild(title);\n\
 \n\
     button = new StyledElements.StyledButton({'class': 'btn-danger', text: 'Delete', iconClass: 'icon-remove'});\n\
-    button.disable();\n\
     container.appendChild(button);\n\
 \n\
-    button = new StyledElements.StyledButton({text: 'Settings', iconClass: 'icon-cog'});\n\
-    button.disable();\n\
+    button = new StyledElements.StyledButton({iconClass: 'icon-cog'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({'class': 'btn-primary btn-large', 'iconClass': 'icon-archive', stackedIconClass: 'icon-plus-sign', stackedIconPlacement: 'bottom-left'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({'class': 'btn-info btn-large', 'iconClass': 'icon-archive', stackedIconClass: 'icon-info-sign', stackedIconPlacement: 'bottom-right', text: 'Info'});\n\
     container.appendChild(button);\n\
 \n\
     title = document.createElement('h3');\n\
@@ -623,6 +627,9 @@ var init = function init() {
     container.appendChild(button);\n\
 \n\
     button = new StyledElements.ToggleButton({text:'Primary', 'class': 'btn-primary'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.ToggleButton({text:'Info', 'class': 'btn-info'});\n\
     container.appendChild(button);\n\
 \n\
     button = new StyledElements.ToggleButton({text:'Success', 'class': 'btn-success'});\n\

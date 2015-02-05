@@ -79,8 +79,8 @@
             'icon': null,
             'iconClass': null,
             'usedInForm': false,
-            'positionIconStacked': '',
-            'iconStackedClass': '',
+            'stackedIconPlacement': 'bottom-right',
+            'stackedIconClass': '',
             'tabindex': 0
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
@@ -117,21 +117,23 @@
             this.wrapperElement.appendChild(this.icon);
         }
 
-        if (options.positionIconStacked.length) {
-            this.iconStacked = document.createElement('span');
-            this.iconStacked.className = [options.iconStackedClass, 'icon-stacked', options.positionIconStacked].join(' ');
-            this.wrapperElement.appendChild(this.iconStacked);
+        if (options.iconClass != null) {
+            this.icon = document.createElement('i');
+            this.icon.classList.add('se-icon');
+            this.icon.classList.add(options.iconClass);
+            this.wrapperElement.appendChild(this.icon);
         }
 
-        if (options.text != null || options.iconClass != null) {
+        if (options.text != null) {
             this.label = document.createElement('span');
-            if (options.text != null) {
-                this.label.appendChild(document.createTextNode(options.text));
-            }
-            if (options.iconClass != null) {
-                this.label.classList.add(options.iconClass);
-            }
+            this.label.appendChild(document.createTextNode(options.text));
             this.wrapperElement.appendChild(this.label);
+        }
+
+        if (options.iconClass != null && options.stackedIconClass.length) {
+            this.stackedIcon = document.createElement('span');
+            this.stackedIcon.className = [options.stackedIconClass, 'se-stacked-icon', options.stackedIconPlacement].join(' ');
+            this.icon.appendChild(this.stackedIcon);
         }
 
         if (options.title) {
