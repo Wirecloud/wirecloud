@@ -1,0 +1,105 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+$alert-default-bgColor: #fff;
+$alert-default-borderColor: #ddd;
+$alert-default-fontColor: #333;
+
+$alert-info-bgColor: #d9edf7;
+$alert-info-borderColor: #bce8f1;
+$alert-info-fontColor: #31708f;
+
+// ============================================================================
+// STYLED-ALERT - BASIC ALERT MESSAGE
+// ============================================================================
+
+.se-alert {
+    position: relative;
+    margin: 0px 0px;
+    padding: 14px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.se-alert-heading {
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.se-alert-body {
+    font-size: 14px;
+    text-align: justify;
+
+    .se-alert-blockquote {
+        display: block;
+        margin-top: 8px;
+        padding-left: 4px;
+        font-size: 14px;
+        border-left: solid 4px transparent;
+    }
+}
+
+// ============================================================================
+// STYLED-ALERT - ALIGNMENT
+// ============================================================================
+
+.se-alert.se-alert-fixed-top {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: 10px auto;
+}
+
+.se-alert.se-alert-text-center {
+
+    .se-alert-heading {
+        text-align: center;
+    }
+}
+
+.se-alert.se-alert-hidden {
+    display: none;
+}
+
+// ============================================================================
+// STYLED-ALERT - CONTEXTUAL STATES
+// ============================================================================
+
+.se-alert.se-alert-default {
+    color: $alert-default-fontColor;
+    background-color: $alert-default-bgColor;
+    border-color: $alert-default-borderColor;
+
+    .se-alert-blockquote {
+        border-left-color: $alert-default-borderColor;
+    }
+}
+
+.se-alert.se-alert-info {
+    color: $alert-info-fontColor;
+    background-color: $alert-info-bgColor;
+    border-color: $alert-info-borderColor;
+
+    .se-alert-blockquote {
+        border-left-color: $alert-info-borderColor;
+    }
+}

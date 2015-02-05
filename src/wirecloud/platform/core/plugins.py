@@ -139,6 +139,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/PaginationInterface.js',
     'js/StyledElements/Popover.js',
     'js/StyledElements/OffCanvasLayout.js',
+    'js/StyledElements/Alert.js',
 )
 
 BASE_CSS = (
@@ -193,6 +194,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_tooltip.css',
     'css/styledelements/styled_expander.scss',
     'css/styledelements/styled_offcanvas_layout.scss',
+    'css/styledelements/styled_alert.scss',
 )
 
 
