@@ -213,7 +213,16 @@ class IWidgetTester(object):
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: name_input.get_attribute('contenteditable') == 'true')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
-        self.element.find_element_by_css_selector('.statusBar').click()
+        self.testcase.driver.execute_script('''
+            var evt = document.createEvent("KeyboardEvent");
+            if (evt.initKeyEvent != null) {
+                evt.initKeyEvent("keydown", true, true, window, false, false, false, false, 13, 0);
+            } else {
+                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
+                evt.initKeyboardEvent("keydown", true, true, window, 0, 0, 0, 0, 0, 13);
+            }
+            arguments[0].dispatchEvent(evt);
+        ''', name_input)
 
         def name_changed(driver):
             return driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%s).name === "%s"' % (self.id, new_name))
@@ -301,7 +310,8 @@ class CatalogueEntryTester(object):
 
         catalogue_base_element = self.catalogue.get_current_catalogue_base_element()
         self.testcase.scroll_and_click(self.element)
-        WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.catalogue.get_current_resource() == self.name)
+        details_ready = WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element)
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: details_ready(driver) and self.catalogue.get_current_resource() == self.name)
         self.details = catalogue_base_element.find_element_by_css_selector('.details_interface')
 
         return self
@@ -1052,6 +1062,9 @@ class MyResourcesViewTester(MarketplaceViewTester):
         return self
 
     def __exit__(self, type, value, traceback):
+        if value is not None:
+            return False
+
         if self.marketplace_view is None:
             WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
 
@@ -1083,10 +1096,10 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         catalogue_base_element = self.wait_catalogue_ready()
 
-        self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-cloud-upload").click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_toolbar .icon-cloud-upload"), parent=True)).click()
 
         self.testcase.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element).send_keys(wgt_path)
-        catalogue_base_element.find_element_by_css_selector('.upload_wgt_button').click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, '.upload_wgt_button'),base_element=catalogue_base_element)) .click()
         self.testcase.wait_wirecloud_ready()
 
         window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
