@@ -200,7 +200,7 @@ class IWidgetTester(object):
 
     def open_menu(self):
 
-        button = self.element.find_element_by_css_selector('.icon-cogs')
+        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-cogs"), base_element=self.element, parent=True))
         button.click()
         popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
