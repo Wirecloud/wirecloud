@@ -42,11 +42,11 @@ StyledElements.Alert = (function () {
         StyledElements.StyledElement.call(this, ['show', 'hide']);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = "se-alert";
+        this.wrapperElement.className = "alert";
 
         if (options.contextualClass in ['default', 'success', 'info', 'warning', 'danger']) {
             this.contextualType = options.contextualClass;
-            this.wrapperElement.classList.add("se-alert-" + this.contextualClass)
+            this.wrapperElement.classList.add("alert-" + this.contextualClass)
         }
 
         options.extraClass = options.extraClass.split(' ');
@@ -133,7 +133,6 @@ StyledElements.Alert = (function () {
         var blockquote;
 
         blockquote = document.createElement('blockquote');
-        blockquote.className = "se-alert-blockquote";
         blockquote.innerHTML = contentString;
 
         this.noteList.push(this.body.appendChild(blockquote));
@@ -149,8 +148,10 @@ StyledElements.Alert = (function () {
      * @returns {Alert} The instance on which this function was called.
      */
     Alert.prototype.show = function show() {
-        this.events.show.dispatch();
-        this.wrapperElement.classList.remove('se-alert-hidden');
+        if (this.wrapperElement.classList.contains('hidden')) {
+            this.events.show.dispatch();
+            this.wrapperElement.classList.remove('hidden');
+        }
 
         return this;
     };
@@ -163,8 +164,10 @@ StyledElements.Alert = (function () {
      * @returns {Alert} The instance on which this function was called.
      */
     Alert.prototype.hide = function hide() {
-        this.events.hide.dispatch();
-        this.wrapperElement.classList.add('se-alert-hidden');
+        if (!this.wrapperElement.classList.contains('hidden')) {
+            this.events.hide.dispatch();
+            this.wrapperElement.classList.add('hidden');
+        }
 
         return this;
     };

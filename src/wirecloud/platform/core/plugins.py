@@ -143,6 +143,7 @@ STYLED_ELEMENTS_FILES = (
 )
 
 BASE_CSS = (
+    'css/base/utils.scss',
     'css/base/body.scss',
     'css/base/fade.css',
     'css/base/panel.scss',
@@ -187,14 +188,13 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_file_field.scss',
     'css/styledelements/styled_table.scss',
     'css/styledelements/styled_label_badge.scss',
-    'css/styledelements/styled_message.scss',
+    'css/styledelements/styled_alert.scss',
     'css/styledelements/styled_rating.scss',
     'css/styledelements/styled_popup_menu.scss',
     'css/styledelements/styled_popover.scss',
     'css/styledelements/styled_tooltip.css',
     'css/styledelements/styled_expander.scss',
     'css/styledelements/styled_offcanvas_layout.scss',
-    'css/styledelements/styled_alert.scss',
 )
 
 
