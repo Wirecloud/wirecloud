@@ -250,7 +250,9 @@
             //width = layout.adaptWidth(width, width).inLU;
             var width = widget.default_width;
             var height = widget.default_height;
-            var layout = this.tab.preferences.get('initiallayout') === "Free" ? 1 : 0;
+            var layout_id = this.tab.preferences.get('initiallayout') === "Free" ? 1 : 0;
+            var layout = layout_id === 1 ? this.freeLayout : this.baseLayout;
+            var initial_position = null;
 
             // Check if the widget doesn't fit in the dragboard
             if (layout instanceof Wirecloud.ui.ColumnLayout) {
@@ -259,6 +261,7 @@
                     // TODO warning
                     width = maxColumns;
                 }
+                initial_position = layout._searchFreeSpace(width, height);
             }
 
             var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
@@ -266,19 +269,24 @@
                 workspace_id: this.workspace.id
             });
 
-            var data = JSON.stringify({
+            var data = {
                 'widget': widget.id,
                 'width': width,
                 'height': height,
                 'name': options.iwidgetName,
-                'layout': layout
-            });
+                'layout': layout_id
+            };
+
+            if (initial_position != null) {
+                data['top'] = initial_position.y;
+                data['left'] = initial_position.x;
+            }
 
             Wirecloud.io.makeRequest(url, {
                 method: 'POST',
                 contentType: 'application/json',
                 requestHeaders: {'Accept': 'application/json'},
-                postBody: data,
+                postBody: JSON.stringify(data),
                 onSuccess: function onSuccess(response) {
                     var iwidgetinfo, widget, layout, iwidget;
 
