@@ -1053,30 +1053,30 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             initial_widget2_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
             self.assertEqual(initial_widget2_yPosition_changes, '0')
 
-        # Move widget2 without affecting widget1
+        # Move widget2 moving widget1 as side effect
         self.driver.execute_script('''
             var layout = Wirecloud.activeWorkspace.getActiveDragboard().baseLayout;
             var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
             layout.initializeMove(iwidget);
-            layout.moveTemporally(1, 0);
+            layout.moveTemporally(3, 0);
             layout.acceptMove();
         ''' % widget2.id);
 
-        self.assertEqual(widget1.layout_position, initial_widget1_position)
-        self.assertEqual(widget2.layout_position, (1, 0))
+        self.assertEqual(widget1.layout_position, (initial_widget1_position[0], 24))
+        self.assertEqual(widget2.layout_position, (3, 0))
 
         with widget1:
             xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
             self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
 
             yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
-            self.assertEqual(yPosition_changes, initial_widget1_yPosition_changes)
+            self.assertEqual(yPosition_changes, text_type(int(initial_widget1_yPosition_changes) + 1))
 
             height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
             self.assertEqual(height_changes, "0")
 
             width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
-            self.assertEqual(height_changes, "0")
+            self.assertEqual(width_changes, "0")
 
         with widget2:
             xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
@@ -1089,8 +1089,45 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(height_changes, "0")
 
             width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+            self.assertEqual(width_changes, "0")
+
+        # Move widget2 again without affecting widget1
+        self.driver.execute_script('''
+            var layout = Wirecloud.activeWorkspace.getActiveDragboard().baseLayout;
+            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
+            layout.initializeMove(iwidget);
+            layout.moveTemporally(0, 3);
+            layout.acceptMove();
+        ''' % widget2.id);
+
+        self.assertEqual(widget1.layout_position, (initial_widget1_position[0], 24))
+        self.assertEqual(widget2.layout_position, (0, 0))
+
+        with widget1:
+            xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+            self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
+
+            yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+            self.assertEqual(yPosition_changes, text_type(int(initial_widget1_yPosition_changes) + 1))
+
+            height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
             self.assertEqual(height_changes, "0")
 
+            width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+            self.assertEqual(width_changes, "0")
+
+        with widget2:
+            xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+            self.assertEqual(xPosition_changes, text_type(int(initial_widget2_xPosition_changes) + 2))
+
+            yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+            self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
+
+            height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+            self.assertEqual(height_changes, "0")
+
+            width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+            self.assertEqual(width_changes, "0")
     test_basic_add_and_move_widget.tags = ('wirecloud-selenium', 'dragboard')
 
     def test_move_widget_interchange(self):
