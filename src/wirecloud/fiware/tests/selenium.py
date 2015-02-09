@@ -135,7 +135,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
             self.driver.find_element_by_css_selector('.btn-primary').click()
-            alert = self.driver.find_element_by_css_selector('.alert-error p')
+            alert = self.wait_element_visible_by_css_selector('.alert-error p')
             self.assertEqual(alert.text, 'Unexpected error code: 404')
 
     def test_objectstorage_available_to_widgets(self):
@@ -163,7 +163,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
             tenant_id_step = self.driver.find_element_by_id('tenantId')
             self.assertEqual(tenant_id_step.text, 'Fail')
-            alert = self.driver.find_element_by_css_selector('.alert-error')
+            alert = self.wait_element_visible_by_css_selector('.alert-error')
             self.assertEqual(alert.text, 'Failure!')
 
     def test_marketplace_keyword_search(self):
