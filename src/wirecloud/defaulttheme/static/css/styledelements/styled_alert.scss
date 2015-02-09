@@ -117,17 +117,10 @@
 // STYLED-ALERT - ALIGNMENT
 // ============================================================================
 
-.alert.se-alert-fixed-top {
+.alert.se-alert-static-top {
     position: absolute;
     top: 0;
     right: 0;
     left: 0;
     margin: 10px auto;
-}
-
-.alert.se-alert-text-center {
-
-    .se-alert-heading {
-        text-align: center;
-    }
 }

@@ -35,7 +35,9 @@ StyledElements.Alert = (function () {
     var Alert = function Alert(options) {
         var i, defaults = {
             'contextualClass': "default",
-            'extraClass': ""
+            'extraClass': "",
+            'placement': "",
+            'minWidth': 300
         };
 
         options = Wirecloud.Utils.merge(defaults, options);
@@ -49,6 +51,11 @@ StyledElements.Alert = (function () {
             this.wrapperElement.classList.add("alert-" + this.contextualClass)
         }
 
+        if (options.placement in ['static-top']) {
+            this.wrapperElement.classList.add('se-alert-' + options.placement);
+            this.placement = options.placement;
+        }
+
         options.extraClass = options.extraClass.split(' ');
 
         for (i = 0; i < options.extraClass.length; i++) {
@@ -57,16 +64,15 @@ StyledElements.Alert = (function () {
             }
         }
 
-        this.children = [];
+        this.minWidth = options.minWidth;
         this.noteList = [];
 
         this.heading = document.createElement('div');
         this.heading.className = "se-alert-heading";
-        this.children.push(this.wrapperElement.appendChild(this.heading));
+        this.wrapperElement.appendChild(this.heading);
 
         this.body = new StyledElements.Container({"class": "se-alert-body"});
         this.body.insertInto(this.wrapperElement);
-        this.children.push(this.body);
 
         Object.defineProperty(this, 'visible', {
             'get': function get() {
@@ -87,6 +93,9 @@ StyledElements.Alert = (function () {
      * @returns {Alert} The instance on which this function was called.
      */
     Alert.prototype.repaint = function repaint(temporal) {
+        resizeElement.call(this);
+        this.body.repaint(temporal);
+
         return this;
     };
 
@@ -149,6 +158,7 @@ StyledElements.Alert = (function () {
      */
     Alert.prototype.show = function show() {
         if (this.wrapperElement.classList.contains('hidden')) {
+            resizeElement.call(this);
             this.events.show.dispatch();
             this.wrapperElement.classList.remove('hidden');
         }
@@ -167,6 +177,33 @@ StyledElements.Alert = (function () {
         if (!this.wrapperElement.classList.contains('hidden')) {
             this.events.hide.dispatch();
             this.wrapperElement.classList.add('hidden');
+        }
+
+        return this;
+    };
+
+    // ==================================================================================
+    // PRIVATE METHODS
+    // ==================================================================================
+
+    /**
+     * Set new size to wrapperElement.
+     * @function
+     * @private
+     *
+     * @returns {Alert} The instance on which this function was called.
+     */
+    var resizeElement = function resizeElement() {
+        var parentWidth;
+
+        if (this.alignment == 'static-top') {
+            parentWidth = this.wrapperElement.parentNode.clientWidth;
+
+            if (parentWidth < this.minWidth) {
+                this.wrapperElement.style.width = '100%';
+            } else {
+                this.wrapperElement.style.width = (parentWidth / 3) + 'px';
+            }
         }
 
         return this;
