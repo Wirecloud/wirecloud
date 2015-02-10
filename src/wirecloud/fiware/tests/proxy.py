@@ -30,6 +30,7 @@ from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 
 
 TEST_TOKEN = 'yLCdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y__uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPXg'
+TEST_WORKSPACE_TOKEN = 'rtHdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y..uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPx6'
 
 
 @unittest.skipIf(not IDM_SUPPORT_ENABLED, 'FI-WARE IdM support not available')
@@ -141,7 +142,7 @@ class ProxyTestCase(WirecloudTestCase):
         self.assertEqual(response.status_code, 422)
         json.loads(self.read_response(response))
 
-    def test_fiware_idm_token_from_workspace_owner(self):
+    def test_fiware_idm_token_from_workspace_owner_header(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
@@ -158,7 +159,9 @@ class ProxyTestCase(WirecloudTestCase):
                 HTTP_X_FI_WARE_OAUTH_SOURCE='workspaceowner',
                 HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
         self.assertEqual(response.status_code, 200)
-        json.loads(self.read_response(response))
+        request_headers = json.loads(self.read_response(response))
+        self.assertIn('X-Auth-Token', request_headers)
+        self.assertEqual(request_headers['X-Auth-Token'], TEST_WORKSPACE_TOKEN)
 
     def test_fiware_idm_token_from_workspace_owner_no_token(self):
 
@@ -179,6 +182,24 @@ class ProxyTestCase(WirecloudTestCase):
                 HTTP_REFERER='http://localhost/user_with_workspaces/Public Workspace',
                 HTTP_X_FI_WARE_OAUTH_TOKEN='true',
                 HTTP_X_FI_WARE_OAUTH_SOURCE='workspaceowner',
+                HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
+        self.assertEqual(response.status_code, 422)
+        json.loads(self.read_response(response))
+
+    def test_fiware_idm_token_invalid_source(self):
+
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+
+        client = Client()
+        client.login(username='normuser', password='admin')
+
+        # Make the request
+        response = client.post(url, data='{}', content_type='application/json',
+                HTTP_ACCEPT='application/json',
+                HTTP_HOST='localhost',
+                HTTP_REFERER='http://localhost/user_with_workspaces/Public Workspace',
+                HTTP_X_FI_WARE_OAUTH_TOKEN='true',
+                HTTP_X_FI_WARE_OAUTH_SOURCE='invalidsource',
                 HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
         self.assertEqual(response.status_code, 422)
         json.loads(self.read_response(response))
