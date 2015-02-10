@@ -597,7 +597,7 @@
         var i, height;
         temporal = temporal !== undefined ? temporal: false;
 
-        if (this.fullscreen !== true) {
+        if (this.wrapperElement.classList.contains('full') && this.fullscreen !== true) {
             height = this._getUsableHeight();
             if (height == null) {
                 return; // nothing to do

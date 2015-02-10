@@ -189,7 +189,7 @@
     Form.prototype.pBuildFieldGroups = function (fields) {
         var notebook, i, field, tab, tmp_field, tmp_input;
 
-        notebook = new StyledElements.StyledNotebook();
+        notebook = new StyledElements.StyledNotebook({full: false});
         this.childComponents.push(notebook);
 
         for (i = 0; i < fields.length; i += 1) {

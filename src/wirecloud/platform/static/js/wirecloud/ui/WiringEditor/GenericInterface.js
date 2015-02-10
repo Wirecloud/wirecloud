@@ -186,7 +186,7 @@
             this.iconAux.classList.add("specialIcon");
             this.iconAux.classList.add("icon-cogs");
             this.iconAux.setAttribute('title', title);
-            this.resourcesDiv.wrapperElement.appendChild(this.iconAux);
+            this.wrapperElement.appendChild(this.iconAux);
             this.iconAux.addEventListener('click', function () {
                 if (!this.movement) {
                     this.restore();
