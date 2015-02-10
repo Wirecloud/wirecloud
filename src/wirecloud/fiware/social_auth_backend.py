@@ -54,6 +54,8 @@ class FiwareBackend(OAuthBackend):
     EXTRA_DATA = [
         ('nickName', 'username'),
         ('actorId', 'uid'),
+        ('refresh_token', 'refresh_token'),
+        ('expires_in', 'expires_in'),
     ]
 
     def get_user_id(self, details, response):
