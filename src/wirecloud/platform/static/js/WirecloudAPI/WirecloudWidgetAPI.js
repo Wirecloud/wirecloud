@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -103,6 +103,10 @@
     });
     Object.defineProperty(window.MashupPlatform.widget.context, 'registerCallback', {
         value: function registerCallback(callback) {
+            if (typeof callback !== "function") {
+                throw new TypeError('callback must be a function');
+            }
+
             iwidget.registerContextAPICallback('iwidget', callback);
         }
     });

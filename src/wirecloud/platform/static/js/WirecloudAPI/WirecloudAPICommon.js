@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -43,6 +43,10 @@
     });
     Object.defineProperty(window.MashupPlatform.context, 'registerCallback', {
         value: function registerCallback(callback) {
+            if (typeof callback !== "function") {
+                throw new TypeError('callback must be a function');
+            }
+
             resource.registerContextAPICallback('platform', callback);
         }
     });
@@ -71,6 +75,10 @@
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'registerCallback', {
         value: function registerCallback(callback) {
+            if (typeof callback !== "function") {
+                throw new TypeError('callback must be a function');
+            }
+
             resource.registerContextAPICallback('mashup', callback);
         }
     });
@@ -94,6 +102,10 @@
     });
     Object.defineProperty(window.MashupPlatform.prefs, 'registerCallback', {
         value: function registerCallback(callback) {
+            if (typeof callback !== "function") {
+                throw new TypeError('callback must be a function');
+            }
+
             resource.registerPrefCallback(callback);
         }
     });
@@ -118,6 +130,10 @@
     Object.defineProperty(window.MashupPlatform, 'wiring', {value: {}});
     Object.defineProperty(window.MashupPlatform.wiring, 'registerCallback', {
         value: function registerCallback(inputName, callback) {
+            if (typeof callback !== "function") {
+                throw new TypeError('callback must be a function');
+            }
+
             if (inputName in resource.inputs) {
                 resource.inputs[inputName].callback = callback;
             } else {

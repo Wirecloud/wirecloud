@@ -293,6 +293,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('preference_exceptions_test').text == 'Success!!')
             self.assertEqual(api_test_iwidget.error_count, 7)
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 9)
+
+            self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_context_exceptions_button'))
+            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('context_exceptions_test').text == 'Success!!')
+
     test_basic_widget_functionalities.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
