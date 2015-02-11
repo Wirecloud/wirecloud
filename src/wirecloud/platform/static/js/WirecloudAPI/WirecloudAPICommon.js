@@ -94,8 +94,6 @@
                 return resource.preferences[key].value;
             } else {
                 var exception_msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
-                var log_msg = platform.interpolate('Error calling MashupPlatform.prefs.get: %(msg)s', {msg: exception_msg}, true);
-                resource.logManager.log(log_msg);
                 throw new MashupPlatform.prefs.PreferenceError(exception_msg);
             }
         }
@@ -115,8 +113,6 @@
                 resource.preferences[key].value = value;
             } else {
                 var exception_msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
-                var log_msg = platform.interpolate('Error calling MashupPlatform.prefs.set: %(msg)s', {msg: exception_msg}, true);
-                resource.logManager.log(log_msg);
                 throw new MashupPlatform.prefs.PreferenceError(exception_msg);
             }
         }
@@ -138,8 +134,6 @@
                 resource.inputs[inputName].callback = callback;
             } else {
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid input endpoint', {endpoint: inputName}, true);
-                var log_msg = platform.interpolate('Error calling MashupPlatform.wiring.registerCallback: %(msg)s', {msg: exception_msg}, true);
-                resource.logManager.log(log_msg);
                 throw new MashupPlatform.wiring.EndpointError(exception_msg);
             }
         }
@@ -150,8 +144,6 @@
                 resource.outputs[outputName].propagate(data, options);
             } else {
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
-                var log_msg = platform.interpolate('Error calling MashupPlatform.wiring.pushEvent: %(msg)s', {msg: exception_msg}, true);
-                resource.logManager.log(log_msg);
                 throw new MashupPlatform.wiring.EndpointError(exception_msg);
             }
         }
@@ -162,8 +154,6 @@
                 return resource.outputs[outputName].getFinalSlots();
             } else {
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
-                var log_msg = platform.interpolate('Error calling MashupPlatform.wiring.getReachableEndpoints: %(msg)s', {msg: exception_msg}, true);
-                resource.logManager.log(log_msg);
                 throw new MashupPlatform.wiring.EndpointError(exception_msg);
             }
         }

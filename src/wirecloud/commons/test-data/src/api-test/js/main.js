@@ -144,6 +144,10 @@ setTimeout(function () {
         }
     };
 
+    document.getElementById('check_general_exceptions_button').onclick = function () {
+        throw new Error('General exception test');
+    };
+
     var input = document.getElementById('update_prop_input');
     var variable = MashupPlatform.widget.getVariable('prop');
     input.value = variable.get();
