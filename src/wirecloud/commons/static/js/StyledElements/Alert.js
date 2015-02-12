@@ -165,7 +165,7 @@ StyledElements.Alert = (function () {
      * @returns {Alert} The instance on which this function was called.
      */
     Alert.prototype.show = function show() {
-        if (this.wrapperElement.classList.contains('hidden')) {
+        if (!this.visible) {
             resizeElement.call(this);
             this.events.show.dispatch();
             this.wrapperElement.classList.remove('hidden');
@@ -182,7 +182,7 @@ StyledElements.Alert = (function () {
      * @returns {Alert} The instance on which this function was called.
      */
     Alert.prototype.hide = function hide() {
-        if (!this.wrapperElement.classList.contains('hidden')) {
+        if (this.visible) {
             this.events.hide.dispatch();
             this.wrapperElement.classList.add('hidden');
         }
