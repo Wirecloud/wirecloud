@@ -116,8 +116,15 @@ StyledElements.Alert = (function () {
      * @returns {Alert} The instance on which this function was called.
      */
     Alert.prototype.setContent = function setContent(content) {
-        this.body.clear().appendChild(content);
+        var pElement;
 
+        if (typeof content === 'string') {
+            pElement = document.createElement('p');
+            pElement.appendChild(document.createTextNode(content));
+            content = pElement;
+        }
+
+        this.body.clear().appendChild(content);
         this.noteList = [];
 
         return this;
