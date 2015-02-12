@@ -37,7 +37,7 @@ StyledElements.Alert = (function () {
             'contextualClass': "default",
             'extraClass': "",
             'placement': "",
-            'minWidth': 300
+            'minWidth': 500
         };
 
         options = Wirecloud.Utils.merge(defaults, options);
@@ -65,6 +65,8 @@ StyledElements.Alert = (function () {
         }
 
         this.minWidth = options.minWidth;
+        this.defaultFraction = (this.minWidth / 100) * 10;
+
         this.noteList = [];
 
         this.heading = document.createElement('div');
@@ -214,10 +216,10 @@ StyledElements.Alert = (function () {
         if (this.placementType == 'static-top') {
             parentWidth = this.wrapperElement.parentNode.clientWidth;
 
-            if (parentWidth < this.minWidth) {
-                this.wrapperElement.style.width = '100%';
+            if (parentWidth < (this.minWidth + this.defaultFraction)) {
+                this.wrapperElement.style.width = '';
             } else {
-                this.wrapperElement.style.width = (parentWidth / 3) + 'px';
+                this.wrapperElement.style.width = this.minWidth + 'px';
             }
         }
 
