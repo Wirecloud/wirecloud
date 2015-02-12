@@ -46,14 +46,14 @@ StyledElements.Alert = (function () {
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = "alert";
 
-        if (options.contextualClass in ['default', 'success', 'info', 'warning', 'danger']) {
+        if (~Alert.defaults.contextualList.indexOf(options.contextualClass)) {
             this.contextualType = options.contextualClass;
-            this.wrapperElement.classList.add("alert-" + this.contextualClass)
+            this.wrapperElement.classList.add("alert-" + this.contextualType);
         }
 
-        if (options.placement in ['static-top']) {
+        if (~Alert.defaults.placementList.indexOf(options.placement)) {
             this.wrapperElement.classList.add('se-alert-' + options.placement);
-            this.placement = options.placement;
+            this.placementType = options.placement;
         }
 
         options.extraClass = options.extraClass.split(' ');
@@ -79,6 +79,14 @@ StyledElements.Alert = (function () {
                 return !this.wrapperElement.classList.contains('hidden');
             }
         });
+    };
+
+    Alert.defaults = {
+
+        contextualList: ['default', 'success', 'info', 'warning', 'danger'],
+
+        placementList: ['static-top']
+
     };
 
     Alert.prototype = new StyledElements.StyledElement();
@@ -196,7 +204,7 @@ StyledElements.Alert = (function () {
     var resizeElement = function resizeElement() {
         var parentWidth;
 
-        if (this.alignment == 'static-top') {
+        if (this.placementType == 'static-top') {
             parentWidth = this.wrapperElement.parentNode.clientWidth;
 
             if (parentWidth < this.minWidth) {
