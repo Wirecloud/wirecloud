@@ -168,7 +168,7 @@
         var details;
 
         if (error) {
-            details = platform.gettext("<ul><li><b>File:</b> <t:file/></li><li><b>Line: </b><t:line/></li></ul>");
+            details = platform.gettext("<ul><li><b>File:</b> <t:file/></li><li><b>Line: </b><t:line/></li></ul><p>See the <a href=\"http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers\" target=\"_blank\">browser console</a> for more details</p>");
             details = guibuilder.parse(guibuilder.DEFAULT_OPENING + details + guibuilder.DEFAULT_CLOSING, {file: url.replace(resource.meta.base_url, ''), line: line});
             resource.logManager.log(message, {details: details, console: false});
         }
