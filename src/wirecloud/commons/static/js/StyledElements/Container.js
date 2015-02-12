@@ -131,9 +131,12 @@
     Container.prototype.clear = function clear() {
         this.children = [];
         this.wrapperElement.innerHTML = "";
+
         if (this.disabledLayer != null) {
             this.wrapperElement.appendChild(this.disabledLayer);
         }
+
+        return this;
     };
 
     /**
