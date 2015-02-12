@@ -18,9 +18,12 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
+from django.utils import unittest
 from mock import Mock, patch
 from south.migration import Migrations
 import six
+
+from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 
 
 class TestQueryResult(object):
@@ -37,6 +40,7 @@ class TestQueryResult(object):
         return len(self.result)
 
 
+@unittest.skipIf(not IDM_SUPPORT_ENABLED, 'FIWARE IdM support not available')
 class FIWARESouthMigrationsTestCase(TestCase):
 
     tags = ('wirecloud-migrations', 'fiware-migrations')

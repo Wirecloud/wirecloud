@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -33,7 +33,7 @@ TEST_TOKEN = 'yLCdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y__uQ2ig3uIEaP6nJ0WxiRWGyC
 TEST_WORKSPACE_TOKEN = 'rtHdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y..uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPx6'
 
 
-@unittest.skipIf(not IDM_SUPPORT_ENABLED, 'FI-WARE IdM support not available')
+@unittest.skipIf(not IDM_SUPPORT_ENABLED, 'FIWARE IdM support not available')
 class ProxyTestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'fiware_proxy_test_data')
