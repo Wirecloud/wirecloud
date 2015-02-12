@@ -111,6 +111,16 @@
 
 .se-alert-body {
     text-align: justify;
+    font-size: $font-size-base;
+
+    blockquote {
+        padding: ($line-height-base / 4) ($line-height-base / 2);
+        font-size: inherit;
+
+        &:last-child {
+            margin-bottom: 0px;
+        }
+    }
 }
 
 // ============================================================================
