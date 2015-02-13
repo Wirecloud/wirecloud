@@ -38,7 +38,7 @@
             name: this.name,
             version: this.version.text
         }) + "?v=" + Wirecloud.contextManager.get('version_hash');
-        this.code_content_type = data.code_content_type;
+        this.code_content_type = data.contents.contenttype;
         this.doc = data.doc;
 
         // Preferences
