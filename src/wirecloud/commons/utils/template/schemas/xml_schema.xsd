@@ -138,6 +138,13 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="issuetracker" minOccurs="0" maxOccurs="1" type="xs:anyURI">
+                <xs:annotation>
+                    <xs:documentation>
+                        URL pointing to the issue tracker of the mashable application component.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:all>
     </xs:complexType>
 

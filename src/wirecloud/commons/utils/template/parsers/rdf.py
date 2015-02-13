@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -39,6 +39,7 @@ RDF = rdflib.Namespace(RDF_NS)
 RDFS = rdflib.Namespace("http://www.w3.org/2000/01/rdf-schema#")
 VCARD = rdflib.Namespace("http://www.w3.org/2006/vcard/ns#")
 BLUEPRINT = rdflib.Namespace("http://bizweb.sap.com/TR/blueprint#")
+DOAP = rdflib.Namespace('http://usefulinc.com/ns/doap#')
 
 
 def possible_int(value):
@@ -259,6 +260,7 @@ class RDFTemplateParser(object):
 
         self._info['changelog'] = self._get_field(WIRE, 'hasChangeLog', self._rootURI, required=False)
         self._info['homepage'] = self._get_field(FOAF, 'homepage', self._rootURI, required=False)
+        self._info['issuetracker'] = self._get_field(DOAP, 'bug-database', self._rootURI, required=False)
         self._info['doc'] = self._get_field(FOAF, 'page', self._rootURI, required=False)
 
         self._info['title'] = self._get_translation_field(WIRE, 'displayName', self._rootURI, 'title', required=False, type='resource', field='title')

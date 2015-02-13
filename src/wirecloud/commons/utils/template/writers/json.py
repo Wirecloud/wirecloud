@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -57,7 +57,7 @@ def write_json_description(template_info):
 
     template_info = copy.copy(template_info)
 
-    remove_empty_string_fields(('title', 'description', 'longdescription', 'homepage', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl'), template_info)
+    remove_empty_string_fields(('title', 'description', 'longdescription', 'homepage', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl', 'issuetracker'), template_info)
     remove_empty_array_fields(('authors', 'contributors', 'altcontents', 'embedded'), template_info)
 
     if template_info['type'] == 'widget':
