@@ -153,9 +153,6 @@
             },
             'rating': this.get_popularity_html.bind(this, resource.rating),
             'image': function () {
-                var container = document.createElement('div');
-                container.className = "wc-resource-img-container";
-
                 var image = document.createElement('img');
                 image.className = 'wc-resource-img';
                 image.onerror = function (event) {
@@ -163,8 +160,7 @@
                 };
                 image.src = resource.image;
 
-                container.appendChild(image);
-                return container;
+                return image;
             },
             'tags': function (options) {
                 return this.painter.renderTagList(this.resource, options.max);

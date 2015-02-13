@@ -171,9 +171,6 @@
                 return button;
             }.bind(this),
             'image': function () {
-                var container = document.createElement('div');
-                container.className = "wc-resource-img-container";
-
                 var image = document.createElement('img');
                 image.className = "wc-resource-img";
                 image.onerror = function (event) {
@@ -181,8 +178,7 @@
                 };
                 image.src = offering.image;
 
-                container.appendChild(image);
-                return container;
+                return image;
             },
             'tags': function (options) {
                 return this.painter.renderTagList(offering, options.max);
