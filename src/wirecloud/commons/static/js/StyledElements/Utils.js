@@ -670,6 +670,30 @@ if (window.StyledElements == null) {
         return obj1;
     };
 
+    if (!Object.hasOwnProperty('create')) {
+        Object.create = function create(parentPrototype) {
+            var ParentClass;
+
+            ParentClass = function ParentClass() {};
+            ParentClass.prototype = parentPrototype;
+
+            return new ParentClass;
+        };
+    }
+
+    /**
+     * Add the parentClass' prototype and constructor to the childClass given.
+     * @function
+     * @public
+     *
+     * @param {Function} childClass
+     * @param {Function} parentClass
+     */
+    Utils.inherit = function inherit(childClass, parentClass) {
+        childClass.prototype = Object.create(parentClass.prototype);
+        childClass.prototype.constructor = childClass;
+    };
+
     StyledElements.Utils = Utils;
 
 })();
