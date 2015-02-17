@@ -90,7 +90,7 @@
             return;
         }
 
-        StyledElements.StyledElement.call(this, ['click', 'focus', 'blur', 'mouseenter', 'mouseleave']);
+        StyledElements.StyledElement.call(this, ['click', 'focus', 'blur', 'mouseenter', 'mouseleave', 'show', 'hide']);
 
         if (options.usedInForm) {
             this.wrapperElement = document.createElement("button");
@@ -149,6 +149,23 @@
             set: function(new_tabindex) {
                 tabindex = new_tabindex;
                 update_tabindex.call(this);
+            }
+        });
+
+        /* List of States - Visibility */
+
+        Object.defineProperty(this, 'visible', {
+            'get': function get() {
+                return !this.wrapperElement.classList.contains('hidden');
+            },
+            'set': function set(newState) {
+                if (typeof newState === 'boolean') {
+                    if (newState) {
+                        this.wrapperElement.classList.remove('hidden');
+                    } else {
+                        this.wrapperElement.classList.add('hidden');
+                    }
+                }
             }
         });
 
@@ -258,6 +275,38 @@
         delete this._keydownCallback;
 
         StyledElements.StyledElement.prototype.destroy.call(this);
+    };
+
+    /**
+     * Display the button.
+     * @function
+     * @public
+     *
+     * @returns {StyledButton} The instance on which this function was called.
+     */
+    StyledButton.prototype.show = function show() {
+        if (!this.visible) {
+            this.visible = true;
+            this.events.show.dispatch(this);
+        }
+
+        return this;
+    };
+
+    /**
+     * Hide the button.
+     * @function
+     * @public
+     *
+     * @returns {StyledButton} The instance on which this function was called.
+     */
+    StyledButton.prototype.hide = function hide() {
+        if (this.visible) {
+            this.visible = false;
+            this.events.hide.dispatch(this);
+        }
+
+        return this;
     };
 
     StyledElements.StyledButton = StyledButton;
