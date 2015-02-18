@@ -438,17 +438,17 @@
 }
 
 /* clone slots and events during editing Drag&Drop */
-.wiring_editor .border_layout .source_clon {
+.wiring_editor .se-border-layout .source_clon {
     position: absolute;
     margin-top: 2px;
 }
 
-.wiring_editor .border_layout .target_clon {
+.wiring_editor .se-border-layout .target_clon {
     position: absolute;
     margin-top: 2px;
 }
 
-.wiring_editor .border_layout .source_clon .labelDiv{
+.wiring_editor .se-border-layout .source_clon .labelDiv{
     display: inline-block;
     float: right;
     margin-right: 14px;
@@ -461,7 +461,7 @@
     white-space: nowrap;
 }
 
-.wiring_editor .border_layout .target_clon .labelDiv{
+.wiring_editor .se-border-layout .target_clon .labelDiv{
     display: inline-block;
     float: left;
     margin-left: 14px;
@@ -474,16 +474,16 @@
     white-space: nowrap;
 }
 
-.wiring_editor .border_layout .source_clon .labelDiv .anchor {
+.wiring_editor .se-border-layout .source_clon .labelDiv .anchor {
     visibility: hidden;
 }
 
-.wiring_editor .border_layout .target_clon .labelDiv .anchor {
+.wiring_editor .se-border-layout .target_clon .labelDiv .anchor {
     visibility: hidden;
 }
 
 /* clone mini widget for Drag&Drop from menubar to grid */
-.wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .iwidget.clon {
+.wiring_editor .se-border-layout .ioperator.clon, .wiring_editor .se-border-layout .iwidget.clon {
     position: absolute;
     font-size: 0.95em;
     z-index: 20;
@@ -497,11 +497,11 @@
     white-space: nowrap;
 }
 
-.wiring_editor .border_layout .ioperator.clon .header, .wiring_editor .border_layout .iwidget.clon .header {
+.wiring_editor .se-border-layout .ioperator.clon .header, .wiring_editor .se-border-layout .iwidget.clon .header {
     padding-top: 4px;
 }
 
-.wiring_editor .border_layout .ioperator.clon .header .status, .wiring_editor .border_layout .iwidget.clon .header .status {
+.wiring_editor .se-border-layout .ioperator.clon .header .status, .wiring_editor .se-border-layout .iwidget.clon .header .status {
     display: none;
 }
 

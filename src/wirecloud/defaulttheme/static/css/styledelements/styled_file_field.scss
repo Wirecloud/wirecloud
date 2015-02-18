@@ -14,14 +14,14 @@
     border-radius: $input-border-radius-base;
 }
 
-.se-file-field > .west_container > .preview {
+.se-file-field > .se-hl-west-container > .preview {
     display: block;
     height: $line-height-base;
     width:  20px;
     margin-right: 2px;
 }
 
-.se-file-field > .center_container > .filename {
+.se-file-field > .se-hl-center-container > .filename {
     display: block;
     height: $input-height-base;
     width:   auto;
@@ -65,11 +65,11 @@
     box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
-.se-file-field.focus > .center_container > .filename {
+.se-file-field.focus > .se-hl-center-container > .filename {
     border-color: $input-border-color-focus;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
 
-.se-file-field.focus > .east_container > .styled_button {
+.se-file-field.focus > .se-hl-east-container > .styled_button {
     border-color: $input-border-color-focus;
 }

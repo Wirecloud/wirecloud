@@ -501,7 +501,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
 
             source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
             ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release().perform()
@@ -551,7 +551,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
 
             source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
             ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-100, -100).release().perform()
@@ -1653,7 +1653,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
             miniwidget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test_Multiendpoint']")
 
             ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).release().perform()
@@ -1692,7 +1692,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
 
             self.driver.find_element_by_xpath("//*[text()='Operators']").click()
             time.sleep(0.2)
@@ -1750,7 +1750,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
 
             source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test']")
             ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(10, 10).release().perform()
@@ -1782,7 +1782,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
 
         with self.wiring_view as wiring:
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
 
             source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
             ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -50).release().perform()
@@ -1837,7 +1837,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
 
             source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
             ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
@@ -1917,7 +1917,7 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
 
             widget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test 1']")
             ActionChains(self.driver).click_and_hold(widget).move_to_element(grid).move_by_offset(90, -50).release().perform()
@@ -1973,7 +1973,7 @@ class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
 
             source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
             ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
@@ -2030,7 +2030,7 @@ class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            grid = self.driver.find_element_by_css_selector(".grid")
 
             source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
             ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()

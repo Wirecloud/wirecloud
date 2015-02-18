@@ -40,12 +40,12 @@
     font-size: 24px;
 }
 
-.catalogue .search_interface .north_container.search_bar > div {
+.catalogue .search_interface .se-bl-north-container.search_bar > div {
     display: inline-block;
     white-space: nowrap;
 }
 
-.catalogue .search_interface .west_container > div > label {
+.catalogue .search_interface .se-bl-west-container > div > label {
     display: block;
 }
 

@@ -48,7 +48,7 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
 
 /* Styled Notebook */
 
-.se-notebook-tabs-wrapper.horizontal_layout {
+.se-notebook-tabs-wrapper.se-horizontal-layout {
     position: absolute;
     left: 4px;
     right: 4px;
@@ -76,7 +76,7 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     }
 }
 
-.se-notebook-tabs-wrapper > .east_container {
+.se-notebook-tabs-wrapper > .se-hl-east-container {
     white-space: nowrap;
 }
 
@@ -96,7 +96,7 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     padding: 0 $padding-horizontal-base;
 }
 
-.se-notebook-tabs-wrapper > .center_container:after {
+.se-notebook-tabs-wrapper > .se-hl-center-container:after {
     overflow: hidden;
     white-space: nowrap;
     content: '';
@@ -221,7 +221,7 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     top: auto;
     bottom: 0;
 
-    > .center_container:after {
+    > .se-hl-center-container:after {
         top: 1px;
         bottom: 0px;
     }
