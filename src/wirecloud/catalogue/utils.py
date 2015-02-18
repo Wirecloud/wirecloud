@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -250,6 +250,7 @@ def get_resource_data(resource, user, request=None):
         'uriTemplate': template_uri,
         'license': resource_info['license'],
         'licenseurl': resource_info['licenseurl'],
+        'issuetracker': resource_info['issuetracker'],
     }
 
 

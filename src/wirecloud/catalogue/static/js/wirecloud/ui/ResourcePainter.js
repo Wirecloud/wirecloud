@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -124,6 +124,24 @@
                 if (resource.homepage != null && resource.homepage !== '') {
                     button.addEventListener('click', function () {
                         window.open(resource.homepage, '_blank');
+                    });
+                } else {
+                    button.disable();
+                }
+
+                return button;
+            },
+            'issuetracker': function () {
+                var button;
+
+                button = new StyledElements.StyledButton({
+                    'plain': true,
+                    'class': 'icon-exclamation-sign',
+                    'title': gettext('Issue tracker')
+                });
+                if (resource.issuetracker != null && resource.issuetracker !== '') {
+                    button.addEventListener('click', function () {
+                        window.open(resource.issuetracker, '_blank');
                     });
                 } else {
                     button.disable();
