@@ -33,9 +33,15 @@ h5 { font-size: $font-size-h5; }
 h6 { font-size: $font-size-h6; }
 
 a {
-    color: $brand-primary;
+    color: $link-color;
     text-decoration: none;
     cursor: pointer;
+
+    &:hover,
+    &:focus {
+        color: $link-hover-color;
+        text-decoration: $link-hover-decoration;
+    }
 }
 
 p {
