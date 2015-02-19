@@ -111,6 +111,14 @@ header.navbar .logo-header > .brand {
     font-family: "NeoTech";
 }
 
+header.navbar .logo-header > .brand:hover {
+    text-decoration: none;
+}
+
+header.navbar .logo-header > .brand.unofficial {
+    margin: 12px 0px 0px;
+}
+
 header.navbar .logo-header .fiware-logo {
     border: 0px none;
     display: block;
