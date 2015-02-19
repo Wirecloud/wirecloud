@@ -33,7 +33,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.remote import PopupMenuTester
-from wirecloud.commons.utils.testcases import uses_extra_resources, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
+from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
 def check_default_settings_values(test):
@@ -1220,6 +1220,20 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     test_basic_layout_parameter_change.tags = ('wirecloud-selenium', 'dragboard')
 
+    def get_widget_sizes_from_context(self, widget):
+        # Check initial sizes
+        with widget:
+            size_from_context = (
+                int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text),
+                int(self.driver.find_element_by_css_selector('[data-name="height"] .content').text),
+            )
+            size_in_pixels_from_context = (
+                int(self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .content').text),
+                int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .content').text),
+            )
+
+        return size_from_context, size_in_pixels_from_context
+
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_layout_type_change(self):
 
@@ -1230,18 +1244,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             widget = resource.instantiate()
 
         # Check initial sizes
-        with widget:
-            old_size_from_context = (
-                int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text),
-                int(self.driver.find_element_by_css_selector('[data-name="height"] .content').text),
-            )
-            old_size_in_pixels_from_context = (
-                int(self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .content').text),
-                int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .content').text),
-            )
-            self.assertEqual(old_size_from_context[0], 6)
+        old_size_from_context, old_size_in_pixels_from_context = self.get_widget_sizes_from_context(widget)
+        self.assertEqual(old_size_from_context[0], 6)
 
-        # Change layout columns
+        # Change current layout to grid
         self.open_menu().click_entry('Settings')
         workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.window_menu.workspace_preferences')
         layout_type_select = Select(workspace_preferences_dialog.find_element_by_css_selector('[name="baselayout-type"]'))
@@ -1249,20 +1255,41 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
 
         # Check new sizes
-        with widget:
-            new_size_from_context = (
-                int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text),
-                int(self.driver.find_element_by_css_selector('[data-name="height"] .content').text),
-            )
-            new_size_in_pixels_from_context = (
-                int(self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .content').text),
-                int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .content').text),
-            )
-            self.assertEqual(new_size_from_context[0], old_size_from_context[0])
-            self.assertNotEqual(new_size_from_context[1], old_size_from_context[1])
-            self.assertEqual(new_size_in_pixels_from_context[0], old_size_in_pixels_from_context[0])
+        new_size_from_context, new_size_in_pixels_from_context = self.get_widget_sizes_from_context(widget)
+        self.assertEqual(new_size_from_context[0], old_size_from_context[0])
+        self.assertNotEqual(new_size_from_context[1], old_size_from_context[1])
+        self.assertEqual(new_size_in_pixels_from_context[0], old_size_in_pixels_from_context[0])
 
     test_layout_type_change.tags = ('wirecloud-selenium', 'dragboard')
+
+    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.0.wgt', shared=True)
+    def test_window_resize(self):
+
+        self.login(username="admin", next="/admin/GridLayoutTests")
+
+        iwidgets = self.get_current_iwidgets()
+        old_size_from_context1, old_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0])
+        old_size_from_context2, old_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
+
+        # Resize browser window
+        old_browser_size = self.driver.get_window_size()
+        try:
+            self.driver.set_window_size(800, 400)
+
+            # Check new widget sizes
+            new_size_from_context1, new_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0])
+            new_size_from_context2, new_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
+            self.assertEqual(new_size_from_context1, old_size_from_context1)
+            self.assertNotEqual(new_size_in_pixels_from_context1[0], old_size_in_pixels_from_context1[0])
+            self.assertNotEqual(new_size_in_pixels_from_context1[1], old_size_in_pixels_from_context1[1])
+            self.assertEqual(new_size_from_context2, old_size_from_context2)
+            self.assertNotEqual(new_size_in_pixels_from_context2[0], old_size_in_pixels_from_context2[0])
+            self.assertNotEqual(new_size_in_pixels_from_context2[1], old_size_in_pixels_from_context2[1])
+        finally:
+            self.driver.set_window_size(old_browser_size['width'], old_browser_size['height'])
+
+    test_window_resize.tags = ('wirecloud-selenium', 'dragboard')
 
 
 @wirecloud_selenium_test_case

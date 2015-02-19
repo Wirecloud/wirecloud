@@ -319,8 +319,9 @@ IWidget.prototype.build = function () {
 
     this.element.addEventListener('transitionend', function (e) {
         if (this.layout.iwidgetToMove == null && ['width', 'height', 'top', 'left'].indexOf(e.propertyName) !== -1) {
+            this._notifyWindowResizeEvent();
             this.internal_iwidget.contextManager.modify({
-                'height': this.contentHeight,
+                'height': this.height,
                 'width': this.contentWidth,
                 'heightInPixels': this.content.offsetHeight,
                 'widthInPixels': this.content.offsetWidth
@@ -422,7 +423,7 @@ IWidget.prototype.paint = function (onInit) {
     this.internal_iwidget.contextManager.modify({
         'xPosition': this.position.x,
         'yPosition': this.position.y,
-        'height': this.contentHeight,
+        'height': this.height,
         'width': this.contentWidth,
         'heightInPixels': this.content.offsetHeight,
         'widthInPixels': this.content.offsetWidth
@@ -539,6 +540,20 @@ IWidget.prototype.setContentSize = function (newWidth, newHeight, persist) {
 
     this._recomputeSize(true);
 
+    if (persist) {
+        this.internal_iwidget.contextManager.modify({
+            'height': this.height,
+            'width': this.contentWidth,
+            'heightInPixels': this.content.offsetHeight,
+            'widthInPixels': this.content.offsetWidth
+        });
+    } else {
+        this.internal_iwidget.contextManager.modify({
+            'heightInPixels': this.content.offsetHeight,
+            'widthInPixels': this.content.offsetWidth
+        });
+    }
+
     // Notify resize event
     this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false, persist);
 };
@@ -553,17 +568,19 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
         return;
     }
 
-    /* TODO this is a temporally workaround needed when using display:none to hide tabs */
-    var oldHeight = this.getHeight();
-    var oldWidth = this.getWidth();
-    /* TODO end of temporally workaround */
-
     // Recompute position
     this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
     this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
 
     // Recompute size
-    this._recomputeSize(true);
+    this._recomputeSize(false);
+
+    this.internal_iwidget.contextManager.modify({
+        'height': this.height,
+        'width': this.contentWidth,
+        'heightInPixels': this.content.offsetHeight,
+        'widthInPixels': this.content.offsetWidth
+    });
 };
 
 /**
@@ -640,9 +657,7 @@ IWidget.prototype._computeExtraHeightPixels = function () {
  * @private
  */
 IWidget.prototype._recomputeHeight = function (basedOnContent) {
-    var contentHeight, oldHeight;
-
-    oldHeight = this.height;
+    var contentHeight;
 
     if (!this.minimized) {
         if (basedOnContent) {
@@ -679,11 +694,6 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
         this.content.style.height = "0px";
         this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
     }
-
-    // Notify Context Manager about new size
-    this.internal_iwidget.contextManager.modify({
-        'height': this.contentHeight
-    });
 };
 
 /**
@@ -734,7 +744,7 @@ IWidget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persi
 
     if (persist) {
         this.internal_iwidget.contextManager.modify({
-            'height': this.contentHeight,
+            'height': this.height,
             'width': this.contentWidth,
             'heightInPixels': this.content.offsetHeight,
             'widthInPixels': this.content.offsetWidth
@@ -808,10 +818,17 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     var oldHeight = this.getHeight();
     this._recomputeHeight(true);
 
+    this.internal_iwidget.contextManager.modify({
+        'height': this.height,
+        'width': this.contentWidth,
+        'heightInPixels': this.content.offsetHeight,
+        'widthInPixels': this.content.offsetWidth
+    });
+
     // Notify resize event
-    reserveSpace = (typeof reserveSpace !== 'undefined' && reserveSpace !== null) ? reserveSpace : true;
+    reserveSpace = reserveSpace != null ? reserveSpace : true;
     if (reserveSpace) {
-        var persist = persistence !== null ? persistence : true;
+        var persist = persistence != null ? persistence : true;
         this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
     }
 };
@@ -977,7 +994,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
 
     affectedWidgetsAdding = newLayout.addIWidget(this, dragboardChange);
     this.internal_iwidget.contextManager.modify({
-        'height': this.contentHeight,
+        'height': this.height,
         'width': this.contentWidth
     });
 

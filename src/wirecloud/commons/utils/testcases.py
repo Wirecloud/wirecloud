@@ -30,7 +30,7 @@ from tempfile import mkdtemp
 from six.moves.urllib.error import URLError, HTTPError
 from six.moves.urllib.parse import urlparse
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.contrib.staticfiles import finders
 from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
@@ -41,6 +41,7 @@ from six import string_types, text_type
 
 from wirecloud.platform.localcatalogue.utils import install_resource
 from wirecloud.platform.widget import utils as showcase
+from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.searchers import get_available_search_engines
 from wirecloud.commons.utils.http import REASON_PHRASES
@@ -457,6 +458,34 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
                 resource.groups.add(*final_groups)
 
                 wgt_file.close()
+
+            return test_func(self, *args, **kwargs)
+
+        wrapper.__name__ = test_func.__name__
+        return wrapper
+
+    return wrap
+
+
+def uses_extra_workspace(owner, file_name, shared=False, public=False, users=(), groups=()):
+
+    def wrap(test_func):
+
+        def wrapper(self, *args, **kwargs):
+
+            owner_user = User.objects.get(username=owner)
+
+            if shared:
+                base = self.shared_test_data_dir
+            else:
+                base = self.test_data_dir
+
+            wgt_file = open(os.path.join(base, file_name), 'rb')
+            wgt = WgtFile(wgt_file)
+            template = wgt.get_template()
+            buildWorkspaceFromTemplate(template, owner_user)
+
+            wgt_file.close()
 
             return test_func(self, *args, **kwargs)
 
