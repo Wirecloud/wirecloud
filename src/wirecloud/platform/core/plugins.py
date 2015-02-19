@@ -169,6 +169,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styled_elements_core.css',
     'css/styledelements/styled_addon.scss',
     'css/styledelements/styled_alternatives.scss',
+    'css/styledelements/styled_container.css',
     'css/styledelements/styled_button.scss',
     'css/styledelements/styled_checkbox.css',
     'css/styledelements/styled_pills.scss',

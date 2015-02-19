@@ -55,7 +55,7 @@
             this.wrapperElement.setAttribute("id", options.id);
         }
 
-        this.wrapperElement.className = StyledElements.Utils.prependWord(options['class'], "container");
+        this.wrapperElement.className = StyledElements.Utils.prependWord(options['class'], "se-container");
     };
     Container.prototype = new StyledElements.StyledElement();
 
@@ -143,7 +143,7 @@
 
         if (disabled) {
             this.disabledLayer = document.createElement('div');
-            this.disabledLayer.className = 'disable-layer';
+            this.disabledLayer.className = 'se-container-disable-layer';
 
             this.disabled_icon = document.createElement('i');
             this.disabled_icon.className = 'disable-icon icon-spin icon-spinner';

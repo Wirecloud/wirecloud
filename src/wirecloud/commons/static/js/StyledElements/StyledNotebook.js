@@ -647,7 +647,7 @@
 
         if (disabled) {
             this.disabledLayer = document.createElement('div');
-            this.disabledLayer.classList.add('disable-layer');
+            this.disabledLayer.classList.add('se-container-disable-layer');
             this.wrapperElement.appendChild(this.disabledLayer);
         } else {
             StyledElements.Utils.removeFromParent(this.disabledLayer);
