@@ -120,6 +120,8 @@
     Container.prototype.clear = function clear() {
         this.children = [];
         this.wrapperElement.innerHTML = "";
+        this.wrapperElement.scrollTop = 0;
+        this.wrapperElement.scrollLeft = 0;
         if (this.disabledLayer != null) {
             this.wrapperElement.appendChild(this.disabledLayer);
         }
