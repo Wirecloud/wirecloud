@@ -204,3 +204,101 @@ $widget-borders:           true !default;
 $resource-bg:              $panel-bg !default;
 $resource-header-bg:       $panel-default-heading-bg !default;
 $resource-border:          #CDCED1 !default;
+
+// ============================================================================
+// WIRECLOUD - ANCHORS
+// ============================================================================
+
+$anchor-base-padding-vertical: 6px;
+$anchor-base-padding-horizontal: 0px;
+
+$anchor-primary-font-color: #d9edf7;
+
+$mousedover-anchor-base-font-shadow: 0 1px 0 rgba(0, 0, 0, .25);
+$mousedover-anchor-primary-font-color: #fff;
+
+// ============================================================================
+// WIRECLOUD - WIRING VIEW
+// ============================================================================
+
+$stroke-default-width: 2px !default;
+
+// ============================================================================
+// WIRECLOUD - UTILS
+// ============================================================================
+
+$border-radius-onlyleft: $border-radius-base 0px 0px $border-radius-base;
+$border-radius-onlytop: $border-radius-base $border-radius-base 0px 0px;
+$border-radius-onlyright: 0px $border-radius-base $border-radius-base 0px;
+$border-radius-onlybottom: 0px 0px $border-radius-base $border-radius-base;
+
+$btn-primary-active-background-color: #286090;
+
+$panel-base-border-wrapper: solid 1px;
+$panel-base-padding-vertical: 8px;
+$panel-base-padding-horizontal: 8px;
+
+$panel-default-border-color: #ddd;
+$panel-default-border: $panel-base-border-wrapper $panel-default-border-color;
+
+$panel-primary-border-color: #2e6da4;
+$panel-primary-border: $panel-base-border-wrapper $panel-primary-border-color;
+$panel-primary-heading-background-color: #337ab7;
+
+// ============================================================================
+// WIRECLOUD - MIXINS
+// ============================================================================
+
+@mixin children-display($selector-list: (), $display-value: none) {
+    @each $selector in $selector-list {
+        #{$selector} {
+            display: $display-value;
+        }
+    }
+}
+
+@mixin position-absolute($left: false, $top: false, $right: false, $bottom: false) {
+    position: absolute;
+
+    @if $left {
+        left: $left;
+    }
+
+    @if $top {
+        top: $top;
+    }
+
+    @if $right {
+        right: $right;
+    }
+
+    @if $bottom {
+        bottom: $bottom;
+    }
+}
+
+@mixin user-select() {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+         -o-user-select: none;
+            user-select: none;
+}
+
+@mixin font-base($font-weight: false) {
+    font-size: $font-size-base;
+    line-height: $line-height-base;
+
+    @if $font-weight {
+        font-weight: $font-weight;
+    }
+}
+
+@mixin font-truncate() {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+@function border-base($border-color: transparent) {
+    @return 1px solid $border-color;
+}
