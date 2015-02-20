@@ -20,7 +20,8 @@
 
 /*global gettext, ngettext, interpolate, StyledElements, Wirecloud*/
 
-(function () {
+
+Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
     "use strict";
 
@@ -37,16 +38,18 @@
         this.options.optionNotify.setTitle(label);
     };
 
-    /*************************************************************************
-     * Constructor
-     *************************************************************************/
+    // ==================================================================================
+    // CLASS CONSTRUCTOR
+    // ==================================================================================
+
     /**
-     * GenericInterface Class
+     * Create a new instance of class GenericInterface.
+     * @class
+     *
+     * @param {String} id
+     * @param {Object.<String, *>} [options]
      */
-    var GenericInterface = function GenericInterface(extending, wiringEditor, entity, title, manager, className, isGhost) {
-        if (extending === true) {
-            return;
-        }
+    var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
         StyledElements.Container.call(this, {'class': 'component component-' + className}, ['remove']);
@@ -355,7 +358,8 @@
 
         }//else miniInterface
     };
-    GenericInterface.prototype = new StyledElements.Container({'extending': true});
+
+    StyledElements.Utils.inherit(GenericInterface, StyledElements.Container);
 
     /*************************************************************************
      * Private methods
@@ -1662,8 +1666,6 @@
         }
     };
 
-    /*************************************************************************
-     * Make GenericInterface public
-     *************************************************************************/
-    Wirecloud.ui.WiringEditor.GenericInterface = GenericInterface;
+    return GenericInterface;
+
 })();
