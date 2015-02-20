@@ -18,10 +18,10 @@
  *     under the License.
  */
 
-/*global Coordinates, CSSPrimitiveValue, StyledElements, Wirecloud */
+/*global StyledElements, Wirecloud */
 
 
-(function () {
+Wirecloud.ui.WiringEditor.Anchor = (function () {
 
     "use strict";
 
@@ -222,7 +222,8 @@
         this.wrapperElement.addEventListener('mouseover', this._mouseover_callback, false);
         this.wrapperElement.addEventListener('mouseout', this._mouseout_callback, false);
     };
-    Anchor.prototype = new StyledElements.StyledElement();
+
+    StyledElements.Utils.inherit(Anchor, StyledElements.StyledElement);
 
     /*************************************************************************
      * Private methods
@@ -364,8 +365,6 @@
         this.wrapperElement = null;
     };
 
-    /*************************************************************************
-     * Make Anchor public
-     *************************************************************************/
-    Wirecloud.ui.WiringEditor.Anchor = Anchor;
+    return Anchor;
+
 })();
