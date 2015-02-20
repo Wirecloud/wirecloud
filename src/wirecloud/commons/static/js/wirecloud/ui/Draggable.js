@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -39,6 +39,7 @@
      * @param data {Object} context
      */
     var Draggable = function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScroll) {
+        var lastClientX, lastClientY;
         var xStart = 0, yStart = 0, xScrollStart = 0, yScrollStart = 0;
         var xScrollDelta, yScrollDelta;
         var dragboardCover;
@@ -78,19 +79,18 @@
 
         // fire each time it's dragged
         drag = function drag(e) {
-            var clientX, clientY;
 
             if ('touches' in e) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
+                lastClientX = e.touches[0].clientX;
+                lastClientY = e.touches[0].clientY;
                 // Work around chrome bug: https://code.google.com/p/chromium/issues/detail?id=150779
                 e.preventDefault();
             } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
+                lastClientX = e.clientX;
+                lastClientY = e.clientY;
             }
-            var xDelta = clientX - xStart - xScrollDelta;
-            var yDelta = clientY - yStart - yScrollDelta;
+            var xDelta = lastClientX - xStart - xScrollDelta;
+            var yDelta = lastClientY - yStart - yScrollDelta;
 
             onDrag(e, draggable, data, xDelta, yDelta);
         };
@@ -120,6 +120,8 @@
                 xStart = e.clientX;
                 yStart = e.clientY;
             }
+            lastClientX = xStart;
+            lastClientY = yStart;
 
             document.addEventListener("mouseup", enddrag, false);
             document.addEventListener("touchend", enddrag, false);
@@ -150,7 +152,7 @@
                 yScrollStart = parseInt(dragboard.scrollTop, 10);
                 xScrollStart = parseInt(dragboard.scrollLeft, 10);
 
-                dragboardCover.addEventListener("scroll", scroll, true);
+                dragboard.addEventListener("scroll", scroll, true);
 
                 dragboard.insertBefore(dragboardCover, dragboard.firstChild);
             }
@@ -163,20 +165,17 @@
 
             var dragboard = dragboardCover.parentNode;
             dragboardCover.style.height = dragboard.scrollHeight + "px";
-            var scrollTop = parseInt(dragboard.scrollTop, 10);
 
-            // yScrollDeltaDiff = diff between old scroll y delta and the new scroll y delta
-            var oldYDelta = yScrollDelta;
+            var scrollTop = parseInt(dragboard.scrollTop, 10);
             yScrollDelta = yScrollStart - scrollTop;
-            var yScrollDeltaDiff = yScrollDelta - oldYDelta;
 
             var scrollLeft = parseInt(dragboard.scrollLeft, 10);
-            // xScrollDeltaDiff = diff between old scroll x delta and the new scroll x delta
-            var oldXDelta = xScrollDelta;
             xScrollDelta = xScrollStart - scrollLeft;
-            var xScrollDeltaDiff = xScrollDelta - oldXDelta;
 
-            onScroll(e, draggable, data, xScrollDeltaDiff, yScrollDeltaDiff);
+            var xDelta = lastClientX - xStart - xScrollDelta;
+            var yDelta = lastClientY - yStart - yScrollDelta;
+
+            onDrag(e, draggable, data, xDelta, yDelta);
         };
 
         // add mousedown event listener
