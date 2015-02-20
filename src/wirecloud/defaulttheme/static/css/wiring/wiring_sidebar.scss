@@ -1,0 +1,105 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+@import 'wiring/defaults';
+
+
+// ============================================================================
+// WIRING SIDEBAR - PANEL
+// ============================================================================
+
+.wiring-sidebar .panel {
+    @include position-absolute(0, 0, 0, 0);
+    margin: 0px;
+    border-radius: 0px;
+    box-shadow: $wiring-view-panel-box-shadow;
+    box-sizing: border-box;
+}
+
+// ============================================================================
+// WIRING SIDEBAR - PANEL COMPONENTS
+// ============================================================================
+
+.wiring-sidebar .panel-components {
+    background-color: $panel-primary-heading-background-color;
+    border-color: $panel-primary-border-color;
+}
+
+// ============================================================================
+// WIRING SIDEBAR - PANEL COMPONENTS HEADING
+// ============================================================================
+
+.wiring-sidebar .panel-components .panel-heading {
+    @include position-absolute(0, 0, 0);
+    height: $panel-components-heading-height;
+    padding: $panel-base-padding-vertical $panel-base-padding-horizontal;
+    background-color: $panel-primary-heading-background-color;
+    border-radius: 0px;
+    box-sizing: border-box;
+
+    .styled_button {
+        position: relative;
+        display: table-cell;
+        width: 1%;
+        text-align: center;
+        color: $anchor-primary-font-color;
+        @include font-base($font-weight: bold);
+        padding: $anchor-base-padding-vertical $anchor-base-padding-horizontal;
+        border-base();
+        border-radius: 0px;
+        opacity: 1;
+
+        &:hover,
+        &:focus {
+            color: $mousedover-anchor-primary-font-color;
+            text-shadow: $mousedover-anchor-base-font-shadow;
+            box-shadow: none;
+        }
+
+        &.active,
+        &.active:hover,
+        &.active:focus {
+            color: $mousedover-anchor-primary-font-color;
+            background-color: $btn-primary-active-background-color;
+            border-radius: $border-radius-base;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING SIDEBAR - PANEL COMPONENTS BODY
+// ============================================================================
+
+.wiring-sidebar .panel-components .panel-body {
+    @include position-absolute(0, $panel-components-heading-height, $panel-base-padding-horizontal, 0);
+    padding: $panel-base-padding-vertical $panel-base-padding-horizontal;
+    background-color: $wiring-view-panel-background-color;
+    border: $panel-primary-border;
+    border-left-width: 0px;
+    border-bottom-width: 0px;
+    box-sizing: border-box;
+    overflow-y: auto;
+
+    .section {
+        position: relative;
+
+        &.hidden {
+            display: none;
+        }
+    }
+}

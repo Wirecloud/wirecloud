@@ -1,0 +1,95 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+@import 'wiring/defaults';
+
+
+// ============================================================================
+// WIRING-BOTTOMBAR - LEGEND ELEMENTS
+// ============================================================================
+
+.wiring-bottombar .wiring-element {
+    position: relative;
+    display: table-cell;
+    width: 1%;
+    padding-right: 10px;
+    color: #555;
+    font-size: 14px;
+    font-weight: bold;
+    vertical-align: middle;
+
+    .title {
+        display: block;
+        padding-left: 35px;
+    }
+
+    .symbols {
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 20px;
+        height: 10px;
+        margin: auto;
+    }
+
+    .symbol-fg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: solid 1px transparent;
+        border-radius: 2px;
+        box-sizing: border-box;
+    }
+}
+
+// ============================================================================
+// WIRING-BOTTOMBAR - LEGEND CONNECTIONS
+// ============================================================================
+
+.wiring-bottombar .legend-connections {
+
+    .symbol-fg {
+        background-color: $connection-background-color;
+        border-color: $connection-border-color;
+    }
+}
+
+// ============================================================================
+// WIRING-BOTTOMBAR - LEGEND OPERATORS
+// ============================================================================
+
+.wiring-bottombar .legend-operators {
+
+    .symbol-fg {
+        background-color: $component-operator-background-color;
+        border-color: $component-operator-border-color;
+    }
+}
+
+// ============================================================================
+// WIRING-BOTTOMBAR - LEGEND WIDGETS
+// ============================================================================
+
+.wiring-bottombar .legend-widgets {
+
+    .symbol-fg {
+        background-color: $component-widget-background-color;
+        border-color: $component-widget-border-color;
+    }
+}
