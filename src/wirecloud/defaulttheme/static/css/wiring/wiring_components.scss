@@ -1,0 +1,263 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+@import 'wiring/defaults';
+
+
+// ============================================================================
+// WIRING LEFTSIDE-BAR - COMPONENT
+// ============================================================================
+
+.wiring-sidebar .panel-components .component {
+    position: relative;
+    cursor: move;
+    margin: 0px 0px $panel-components-component-margin-vertical;
+    background-color: $panel-components-component-background-color;
+    border: $panel-components-component-border;
+    border-radius: $panel-components-component-border-radius;
+    box-sizing: border-box;
+    @include children-display((".status"), none);
+
+    .component-heading {
+        padding: 6px 12px;
+        color: $panel-components-component-font-color;
+        text-align: center;
+        @include font-base($font-weight: bold);
+        @include user-select();
+    }
+}
+
+.wiring-sidebar .panel-components .section {
+
+    .component:last-child {
+        margin-bottom: 0px;
+    }
+}
+
+// ============================================================================
+// WIRING LEFTSIDE-BAR - MOUSEDOVER-COMPONENT
+// ============================================================================
+
+.wiring-sidebar .panel-components .component:hover {
+    background-color: $panel-components-mousedover-component-background-color;
+    border-color: $panel-components-mousedover-component-border-color;
+}
+
+// ============================================================================
+// WIRING LEFTSIDE-BAR - DISABLED-COMPONENT
+// ============================================================================
+
+.wiring-sidebar .panel-components .component.disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: $panel-components-disabled-component-background-color;
+    border-color: $panel-components-disabled-component-border-color;
+    box-shadow: $panel-components-disabled-component-box-shadow;
+}
+
+// ============================================================================
+// WIRING VIEW - CLONED-COMPONENT
+// ============================================================================
+
+.wiring-view .component.cloned {
+    @include children-display((".status"), none);
+
+    .component-heading {
+        color: $component-heading-font-color;
+        text-align: center;
+        text-shadow: $component-heading-font-shadow;
+        @include font-base($font-weight: bold);
+        @include user-select();
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - COMPONENT
+// ============================================================================
+
+.wiring-view .component.cloned,
+.wiring-diagram .component {
+    position: absolute;
+    z-index: $component-zindex;
+    background-color: $component-background-color;
+    border: border-base();
+    border-radius: $component-border-radius;
+    box-shadow: $component-box-shadow;
+    box-sizing: border-box;
+}
+
+// ============================================================================
+// WIRING DIAGRAM - COMPONENT HEADING
+// ============================================================================
+
+.wiring-view .component.cloned .component-heading,
+.wiring-diagram .component-heading {
+    position: relative;
+    display: table;
+    cursor: move;
+    width: 100%;
+    padding: $component-heading-padding-vertical $component-heading-padding-horizontal;
+    border-radius: $component-heading-border-radius $component-heading-border-radius 0px 0px;
+    box-sizing: border-box;
+}
+
+.wiring-diagram .component-title {
+    display: table-cell;
+    vertical-align: middle;
+    color: $component-heading-font-color;
+    text-shadow: $component-heading-font-shadow;
+    @include user-select();
+
+    .component-name {
+        display: block;
+        max-width: $component-heading-font-max-width;
+        font-size: $component-heading-font-size;
+        font-weight: bold;
+        @include font-truncate();
+    }
+
+    .component-subtitle {
+        display: block;
+        max-width: $component-heading-font-max-width;
+        font-size: $component-heading-subtitle-font-size;
+        @include font-truncate();
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - COMPONENT BODY
+// ============================================================================
+
+.wiring-diagram .component-body {
+    position: relative;
+    display: table;
+    cursor: move;
+    width: 100%;
+    background-color: transparent;
+}
+
+// ============================================================================
+// WIRING DIAGRAM - COMPONENT OPTIONS
+// ============================================================================
+
+.wiring-diagram .component-options {
+    display: table-cell;
+    float: right;
+    padding-left: $component-options-padding-horizontal;
+
+    .styled_button {
+        margin: 0px $component-options-margin-horizontal;
+        @include font-base($font-weight: bold);
+        opacity: 1;
+
+        &:hover,
+        &:focus:active {
+            text-shadow: $component-mousedover-options-font-shadow;
+            box-shadow: none;
+        }
+    }
+
+    .styled_button:first-child {
+        margin-left: 0px;
+    }
+
+    .styled_button:last-child {
+        margin-right: 0px;
+    }
+
+    .styled_button.hidden {
+        display: none;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - COMPONENT OPERATOR
+// ============================================================================
+
+.wiring-view .component-operator.cloned,
+.wiring-diagram .component-operator {
+    border-color: $component-operator-border-color;
+
+    .component-heading {
+        background-color: $component-operator-background-color;
+    }
+
+    .component-options {
+
+        .styled_button {
+            color: $component-operator-options-font-color;
+
+            &:hover {
+                color: $component-mousedover-options-font-color;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - COMPONENT WIDGET
+// ============================================================================
+
+.wiring-view .component-widget.cloned,
+.wiring-diagram .component-widget {
+    border-color: $component-widget-border-color;
+
+    .component-heading {
+        background-color: $component-widget-background-color;
+    }
+
+    .component-options{
+
+        .styled_button {
+            color: $component-widget-options-font-color;
+
+            &:hover {
+                color: $component-mousedover-options-font-color;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - HIGHLIGHTED-COMPONENT
+// ============================================================================
+
+.wiring-diagram .component.highlighted {
+    z-index: $highlighted-component-zindex;
+    border-color: $highlighted-component-border-color;
+    box-shadow: $highlighted-component-box-shadow;
+
+    .component-heading {
+        background-color: $highlighted-component-heading-background-color;
+
+        .component-title {
+            color: $highlighted-component-heading-font-color;
+        }
+    }
+
+    .component-options {
+
+        .styled_button {
+            color: $highlighted-component-heading-font-color;
+
+            &:hover {
+                color: $highlighted-component-mousedover-options-font-color;
+            }
+        }
+    }
+}
