@@ -54,6 +54,7 @@ CATALOGUE_CSS = (
 
 WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor.js',
+    'js/wirecloud/ui/WiringEditor/PanelComponents.js',
     'js/wirecloud/ui/WiringEditor/Anchor.js',
     'js/wirecloud/ui/WiringEditor/Arrow.js',
     'js/wirecloud/ui/WiringEditor/ArrowCreator.js',
