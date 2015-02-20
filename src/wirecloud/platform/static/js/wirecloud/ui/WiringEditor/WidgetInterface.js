@@ -68,7 +68,7 @@
             isGhost = false;
         }
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, iwidget, this.iwidget.name, manager, 'iwidget', isGhost);
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, wiringEditor, iwidget, this.iwidget.name, manager, 'widget', isGhost);
         if (!isMenubarRef) {
 
             // Sort
@@ -115,7 +115,7 @@
         }
     };
 
-    WidgetInterface.prototype = new Wirecloud.ui.WiringEditor.GenericInterface(true);
+    StyledElements.Utils.inherit(WidgetInterface, Wirecloud.ui.WiringEditor.GenericInterface);
 
     /**
      * onFinish for draggable

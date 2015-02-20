@@ -40,7 +40,8 @@
 
         isGhost = ioperator instanceof Wirecloud.wiring.GhostOperator;
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, ioperator, this.ioperator.title, manager, 'ioperator', isGhost);
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, wiringEditor, ioperator, this.ioperator.title, manager, 'operator', isGhost);
+
         if (!isMenubarRef) {
 
             // Sort
@@ -85,7 +86,7 @@
         }
     };
 
-    OperatorInterface.prototype = new Wirecloud.ui.WiringEditor.GenericInterface(true);
+    StyledElements.Utils.inherit(OperatorInterface, Wirecloud.ui.WiringEditor.GenericInterface);
 
     /**
      * onFinish for draggable
