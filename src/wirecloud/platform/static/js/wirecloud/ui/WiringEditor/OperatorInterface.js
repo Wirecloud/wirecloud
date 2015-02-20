@@ -97,7 +97,7 @@
         position = data.iObjectClon.getPosition();
 
         //scroll correction
-        oc = this.wiringEditor.layout.getCenterContainer();
+        oc = this.wiringEditor.layout.content;
         scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
         scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
         position.posX += scrollX;
@@ -120,7 +120,11 @@
             position.posY = 8;
         }
         operator_interface.setPosition(position);
-        this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
+        if (!this.wiringEditor.layout.content.wrapperElement.contains(data.iObjectClon.wrapperElement)) {
+            this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
+        } else {
+            this.wiringEditor.layout.content.removeChild(data.iObjectClon);
+        }
     };
 
     /**

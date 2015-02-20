@@ -154,12 +154,13 @@ BASE_CSS = (
 )
 
 WIRING_EDITOR_CSS = (
-    'css/wiring/editor.css',
-    'css/wiring/anchor.css',
-    'css/wiring/arrow.css',
-    'css/wiring/entities.css',
+    'css/wiring/wiring_layout.scss',
+    'css/wiring/wiring_sidebar.scss',
+    'css/wiring/wiring_bottombar.scss',
+    'css/wiring/wiring_components.scss',
+    'css/wiring/wiring_endpoints.scss',
+    'css/wiring/wiring_connections.scss',
     'css/wiring/multiconnector.css',
-    'css/wiring/emptyWiringBox.css',
     'css/wiring/wiringPreview.css',
     'css/wiring/colorSmartBox.css',
 )

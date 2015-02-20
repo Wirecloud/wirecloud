@@ -39,12 +39,12 @@
 
         // Create a path for the arrow's border
         this.arrowElementBorder = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
-        this.arrowElementBorder.setAttribute('class', 'arrowborder');
+        this.arrowElementBorder.setAttribute('class', "connection-border");
         this.arrowBodyElement.appendChild(this.arrowElementBorder);
 
         // And another for the arrow's body
         this.arrowElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
-        this.arrowElement.setAttribute('class', 'arrowbody');
+        this.arrowElement.setAttribute('class', "connection-body");
         this.arrowBodyElement.appendChild(this.arrowElement);
 
         this.arrowBodyElement.addEventListener('click', function (e) {
@@ -62,7 +62,7 @@
 
         // Closer
         this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
-        this.closerElement.setAttribute('class', 'closer');
+        this.closerElement.setAttribute('class', "option-remove");
         this.closerElement.addEventListener('click', function (e) {
             // Only process left mouse button events
             if (e.button !== 0) {
@@ -88,14 +88,14 @@
         this.pullerEndElement.setAttribute("r", '0.4em');
         this.pullerEndElement.addEventListener("click", Wirecloud.Utils.stopPropagationListener, false);
 
-        this.pullerStartElement.setAttribute('class', 'pullerBall');
-        this.pullerEndElement.setAttribute('class', 'pullerBall');
+        this.pullerStartElement.setAttribute('class', "controller-ball");
+        this.pullerEndElement.setAttribute('class', "controller-ball");
 
         // PullerLines
         this.pullerStartLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
-        this.pullerStartLine.setAttribute('class', 'pullerLine');
+        this.pullerStartLine.setAttribute('class', "controller-line");
         this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
-        this.pullerEndLine.setAttribute('class', 'pullerLine');
+        this.pullerEndLine.setAttribute('class', "controller-line");
 
         // Draggable pullers
         this.pullerStartDraggable = new Wirecloud.ui.Draggable(this.pullerStartElement, {arrow: this},
@@ -365,7 +365,7 @@
     Arrow.prototype.emphasize = function emphasize() {
         if (this.emphasize_counter < 2) {
             this.emphasize_counter += 1;
-            this.addClassName('emphasize');
+            this.addClassName('highlighted');
         } else if (this.emphasize_counter == 2) {
             return;
         }
@@ -377,7 +377,7 @@
     Arrow.prototype.deemphasize = function deemphasize() {
         this.emphasize_counter -= 1;
         if (this.emphasize_counter === 0) {
-            this.removeClassName('emphasize');
+            this.removeClassName('highlighted');
         } else if (this.emphasize_counter < 0) {
             this.emphasize_counter = 0;
             return;

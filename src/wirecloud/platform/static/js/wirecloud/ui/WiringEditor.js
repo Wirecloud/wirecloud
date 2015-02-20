@@ -33,61 +33,50 @@ if (!Wirecloud.ui) {
      *************************************************************************/
 
     var WiringEditor = function WiringEditor(id, options) {
-        if (id == null) {
-            return;
-        }
-        options['class'] = 'wiring_editor';
+        var i;
+
+        options['class'] = 'wiring-view';
         StyledElements.Alternative.call(this, id, options);
 
-        var events = ['operatorremoved', 'widgetremoved', 'widgetadded',
-                      'operatoradded', 'widgetaddfail', 'operatoraddfail'];
-        for (var i = 0; i < events.length; i++) {
-            this.events[events[i]] = new StyledElements.Event();
+        for (i = 0; i < WiringEditor.defaults.eventList.length; i++) {
+            this.events[WiringEditor.defaults.eventList[i]] = new StyledElements.Event();
         }
 
-        this.addEventListener('show', renewInterface.bind(this));
-        this.addEventListener('hide', clearInterface.bind(this));
-
-        this.layout = new StyledElements.BorderLayout({class: 'containerLayer'});
+        this.layout = new StyledElements.OffCanvasLayout({
+            'direction': "to-left"
+        });
         this.appendChild(this.layout);
 
-        this.layout.getWestContainer().addClassName('menubar');
-        this.accordion = new StyledElements.Accordion();
-        this.mini_widget_section = this.accordion.createContainer({title: 'Widgets'});
-        this.mini_operator_section = this.accordion.createContainer({title: 'Operators'});
-        this.layout.getWestContainer().appendChild(this.accordion);
-        this.layout.getCenterContainer().addClassName('grid');
+        buildWirecloudToolbar.call(this);
 
-        this.layout.getCenterContainer().wrapperElement.addEventListener("scroll", this.scrollHandler.bind(this), false);
+        buildWiringSidebar.call(this);
+        buildWiringBottombar.call(this);
 
-        // Wiring alert for empty WiringEditor
+        this.layout.content.addClassName('wiring-diagram');
+        this.layout.content.wrapperElement.addEventListener("scroll", this.scrollHandler.bind(this), false);
+
+        this.layout.footer.addClassName('wiring-bottombar');
+
+        // Manage the alert for an empty wiring
         this.entitiesNumber = 0;
-        this.emptyBox = document.createElement('div');
 
-        this.emptyBox.classList.add('wiringEmptyBox');
-        this.emptyBox.classList.add('alert');
-        this.emptyBox.classList.add('alert-info');
-        this.emptyBox.classList.add('alert-block');
-
-        // Title
-        var pTitle = document.createElement('h4');
-        pTitle.textContent = gettext("Welcome to the Wiring Editor view!");
-        this.emptyBox.appendChild(pTitle);
-
-        // Message
-        var message = document.createElement('p');
-        message.innerHTML = gettext("Please drag some widgets and operators from the stencil on the left, and drop them into this area. <br/>Then, link outputs with inputs to wire the resources.");
-        this.emptyBox.appendChild(message);
-        this.layout.getCenterContainer().wrapperElement.appendChild(this.emptyBox);
-        this.emptyBox.classList.add('hidden');
+        this.alertEmptyWiring = new StyledElements.Alert({
+            'contextualClass': "info",
+            'placement': "static-top",
+        });
+        this.alertEmptyWiring.setHeadline("Hi, welcome to the mashup's wiring view!");
+        this.alertEmptyWiring.setContent("In this edition area, you can add web applications (widgets/operators) from the sidebar and then, connect them each other.");
+        this.alertEmptyWiring.addBlockquote("Only if a web application provides input or output endpoints, it will be connectable with others.");
+        this.alertEmptyWiring.hide();
+        this.layout.content.appendChild(this.alertEmptyWiring);
 
         // canvas for arrows
         this.canvas = new Wirecloud.ui.WiringEditor.Canvas();
         this.canvasElement = this.canvas.getHTMLElement();
-        this.layout.getCenterContainer().appendChild(this.canvasElement);
+        this.layout.content.appendChild(this.canvasElement);
+
         this.canvas.addEventListener('arrowadded', function (canvas, arrow) {
             this.arrows.push(arrow);
-
         }.bind(this));
         this.canvas.addEventListener('arrowremoved', function (canvas, arrow) {
             var pos;
@@ -126,13 +115,16 @@ if (!Wirecloud.ui) {
         this._keydownListener = keydownListener.bind(this);
         this._keyupListener = keyupListener.bind(this);
 
-        this.addEventListener('operatorremoved', function (entity) {
-            this.removeIOperator(entity);
-        }.bind(this));
+        this.addEventListener('show', renewInterface.bind(this));
+        this.addEventListener('hide', clearInterface.bind(this));
+    };
 
-        this.addEventListener('widgetremoved', function (entity) {
-            this.removeIWidget(entity);
-        }.bind(this));
+    WiringEditor.defaults = {
+
+        eventList: [
+            'operatoradded', 'operatoraddfail', 'operatorremoved',
+            'widgetadded', 'widgetaddfail', 'widgetremoved'
+        ]
 
     };
 
@@ -157,9 +149,67 @@ if (!Wirecloud.ui) {
         LayoutManagerFactory.getInstance().changeCurrentView('workspace');
     };
 
-    /*************************************************************************
-     * Private methods
-     *************************************************************************/
+    WiringEditor.prototype.getToolbarButtons = function getToolbarButtons() {
+        return [this.btnApps];
+    };
+
+    // ==================================================================================
+    // PRIVATE METHODS
+    // ==================================================================================
+
+    var buildWirecloudToolbar = function buildWirecloudToolbar() {
+        this.btnApps = new StyledElements.StyledButton({
+            'iconClass': 'icon-archive',
+            'stackedIconClass': 'icon-plus-sign',
+            'stackedIconposition': 'bottom-right',
+            'title': gettext("Apps available")
+        });
+        this.btnApps.addEventListener('click', function (styledElement) {
+            if (styledElement.hasClassName('active')) {
+                styledElement.removeClassName('active');
+                this.layout.slideUp();
+            } else {
+                styledElement.addClassName('active');
+                this.components.activeDefaultSection();
+                this.layout.slideDown();
+            }
+        }.bind(this));
+    };
+
+    var buildWiringSidebar = function buildWiringSidebar() {
+        this.components = new Wirecloud.ui.WiringEditor.PanelComponents();
+
+        this.layout.sidebar.addClassName('wiring-sidebar');
+        this.layout.sidebar.appendChild(this.components);
+
+        this.layout.addEventListener('slideup', function (event) {
+            this.btnApps.removeClassName('active');
+        }.bind(this));
+        this.layout.addEventListener('slidedown', function (event) {
+            this.btnApps.addClassName('active');
+        }.bind(this));
+    };
+
+    var buildWiringBottombar = function buildWiringBottombar() {
+        var wiringLegend = document.createElement('div');
+
+        wiringLegend.className = "wiring-legend";
+        wiringLegend.innerHTML =
+            '<div class="wiring-element legend-connections">' +
+                '<div class="symbols"><div class="symbol-fg"></div></div>' +
+                '<div class="title">Connections</div>' +
+            '</div>' +
+            '<div class="wiring-element legend-operators">' +
+                '<div class="symbols"><div class="symbol-fg"></div></div>' +
+                '<div class="title">Operators</div>' +
+            '</div>' +
+            '<div class="wiring-element legend-widgets">' +
+                '<div class="symbols"><div class="symbol-fg"></div></div>' +
+                '<div class="title">Widgets</div>' +
+            '</div>';
+
+        this.layout.footer.appendChild(wiringLegend);
+    };
 
     /**
      * @Private
@@ -168,7 +218,7 @@ if (!Wirecloud.ui) {
     var keydownListener = function keydownListener(event) {
         if (event.keyCode == 17) {
             this.ctrlPushed = true;
-            this.layout.getCenterContainer().addClassName('selecting');
+            this.layout.content.addClassName('selecting');
         }
     };
 
@@ -179,7 +229,7 @@ if (!Wirecloud.ui) {
     var keyupListener = function keyupListener(event) {
         if (event.keyCode == 17) {
             this.ctrlPushed = false;
-            this.layout.getCenterContainer().removeClassName('selecting');
+            this.layout.content.removeClassName('selecting');
         }
     };
 
@@ -281,7 +331,7 @@ if (!Wirecloud.ui) {
         try {
             miniwidget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(this, iwidget, this, true);
             this.mini_widgets[iwidget.id] = miniwidget_interface;
-            this.mini_widget_section.appendChild(miniwidget_interface);
+            this.components.appendWidget(miniwidget_interface);
         } catch (e){
             throw new Error('WiringEditor error (critical). Creating MiniWidget: ' + e.message);
         }
@@ -299,7 +349,7 @@ if (!Wirecloud.ui) {
             if (!versionInfo) {
                 // New operator
                 operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-                this.mini_operator_section.appendChild(operator_interface);
+                this.components.appendOperator(operator_interface);
                 this.operatorVersions[operator.vendor + '/' + operator.name] = {
                     'lastVersion': operator.version,
                     'currentVersion': operator.version,
@@ -311,9 +361,9 @@ if (!Wirecloud.ui) {
                 comp = versionInfo.lastVersion.compareTo(operator.version);
                 if (comp < 0) {
                     // upgrade
-                    this.mini_operator_section.removeChild(versionInfo.miniOperator);
+                    this.components.removeOperator(versionInfo.miniOperator);
                     operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-                    this.mini_operator_section.appendChild(operator_interface);
+                    this.components.appendOperator(operator_interface);
                     this.operatorVersions[operator.vendor + '/' + operator.name].lastVersion = operator.version;
                     this.operatorVersions[operator.vendor + '/' + operator.name].currentVersion = operator.version;
                     this.operatorVersions[operator.vendor + '/' + operator.name].versions.push({'version': operator.version, 'operatorInterface': operator_interface});
@@ -469,7 +519,7 @@ if (!Wirecloud.ui) {
                 return;
             }
             multiInstance = new Wirecloud.ui.WiringEditor.Multiconnector(multi.id, multi.objectId, multi.sourceName,
-                                            this.layout.getCenterContainer().wrapperElement,
+                                            this.layout.content.wrapperElement,
                                             this, anchor, multi.pos, multi.height);
             multiInstance = this.addMulticonnector(multiInstance);
             multiInstance.addMainArrow(multi.pullerStart, multi.pullerEnd);
@@ -528,7 +578,6 @@ if (!Wirecloud.ui) {
         this.selectedMulti = {};
         this.selectedMulti.length = 0;
         this.selectedCount = 0;
-        this.menubarWidth = document.getElementsByClassName('menubar')[0].offsetWidth;
         this.headerHeight = document.getElementById('wirecloud_header').offsetHeight;
         this.ctrlPushed = false;
         this.nextOperatorId = 0;
@@ -539,11 +588,14 @@ if (!Wirecloud.ui) {
         this.recommendations = new Wirecloud.ui.RecommendationManager();
         this.operatorVersions = {};
 
-        this.gridFullHeight = parseFloat(this.layout.getCenterContainer().wrapperElement.style.height);
-        this.gridFullWidth = parseFloat(this.layout.getCenterContainer().wrapperElement.style.width);
+        this.components.activeDefaultSection();
+        this.btnApps.removeClassName('active');
+
+        this.gridFullHeight = parseFloat(this.layout.content.wrapperElement.style.height);
+        this.gridFullWidth = parseFloat(this.layout.content.wrapperElement.style.width);
         this.fullHeaderHeight = LayoutManagerFactory.getInstance().mainLayout.getNorthContainer().wrapperElement.getBoundingClientRect().height;
         // Set 100% Zoom in grid
-        this.layout.getCenterContainer().wrapperElement.style.fontSize = '1em';
+        this.layout.content.wrapperElement.style.fontSize = '1em';
 
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
@@ -612,7 +664,7 @@ if (!Wirecloud.ui) {
         this.activateCtrlMultiSelect();
         this.valid = true;
         if (this.entitiesNumber === 0) {
-            this.emptyBox.classList.remove('hidden');
+            this.alertEmptyWiring.show();
         }
         this.recommendations.init(iwidgets, availableOperators);
         this.removeClassName('disabled');
@@ -711,22 +763,25 @@ if (!Wirecloud.ui) {
             workspace.wiring.save();
         }
         for (key in this.iwidgets) {
-            this.layout.getCenterContainer().removeChild(this.iwidgets[key]);
+            this.layout.content.removeChild(this.iwidgets[key]);
             this.iwidgets[key].destroy();
         }
         for (key in this.currentlyInUseOperators) {
-            this.layout.getCenterContainer().removeChild(this.currentlyInUseOperators[key]);
+            this.layout.content.removeChild(this.currentlyInUseOperators[key]);
             this.currentlyInUseOperators[key].destroy();
         }
         for (key in this.multiconnectors) {
-            this.layout.getCenterContainer().removeChild(this.multiconnectors[key]);
+            this.layout.content.removeChild(this.multiconnectors[key]);
             this.multiconnectors[key].destroy();
         }
         this.deactivateCtrlMultiSelect();
 
+        if (this.btnApps.hasClassName('active')) {
+            this.btnApps.wrapperElement.click();
+        }
+
         this.canvas.clear();
-        this.mini_widget_section.clear();
-        this.mini_operator_section.clear();
+        this.components.clear();
         this.arrows = [];
         this.mini_widgets = {};
         this.iwidgets = {};
@@ -737,57 +792,13 @@ if (!Wirecloud.ui) {
 
     /**
      * @Private
-     * set max width for widget or operator
-     */
-    var setEntityMaxWidth = function setEntityMaxWidth(theInterface) {
-        var auxDiv, titleSpan, virginDimensions;
-
-        var currentSize = parseFloat(this.layout.getCenterContainer().wrapperElement.style.fontSize);
-        var defaultMaxWidgetWidth = 22 * currentSize;
-
-        auxDiv = document.createElement('div');
-        theInterface.insertInto(auxDiv);
-        auxDiv.classList.add('calculateEntitySizeDiv');
-        titleSpan = theInterface.wrapperElement.getElementsByClassName('header')[0].getElementsByTagName('span')[0];
-
-        //width and height to avoid scroll problems
-        auxDiv.style.width = '10000px';
-        auxDiv.style.height = '10000px';
-        this.layout.getCenterContainer().appendChild(auxDiv);
-
-        theInterface.wrapperElement.style.maxWidth = '';
-        theInterface.wrapperElement.style.minWidth = '';
-        resetMaxWidth(theInterface);
-
-        virginDimensions = theInterface.getBoundingClientRect();
-
-        theInterface.wrapperElement.style.maxWidth = defaultMaxWidgetWidth + 'em';
-
-        if (theInterface.getBoundingClientRect().height != virginDimensions.height) {
-            setSourceTargetMaxWidths.call(this, theInterface, defaultMaxWidgetWidth)
-        }
-        theInterface.wrapperElement.style.minWidth = '';
-
-        // Fix text-align ceneter problem when text-overflow: ellipsis
-        if (titleSpan.offsetWidth < titleSpan.scrollWidth) {
-            // text-overflow: ellipsis ON
-            titleSpan.style.textAlign = 'left'
-        } else {
-            titleSpan.style.textAlign = 'center'
-        }
-
-        this.layout.getCenterContainer().removeChild(auxDiv);
-    };
-
-    /**
-     * @Private
      * set max width for widget or operator sources and targets Div
      */
     var setSourceTargetMaxWidths = function setSourceTargetMaxWidths(theInterface, maxWidth) {
         var sources, targets, sourcesVirginDims, targetsVirginDims, currentFontSize;
 
         // Current font-size from css
-        currentFontSize = parseFloat(this.layout.getCenterContainer().wrapperElement.style.fontSize) * parseInt(getComputedStyle(this.wrapperElement).fontSize);
+        currentFontSize = parseFloat(this.layout.content.wrapperElement.style.fontSize) * parseInt(getComputedStyle(this.wrapperElement).fontSize);
 
         // Sources
         sources = theInterface.wrapperElement.getElementsByClassName('sources')[0];
@@ -876,12 +887,12 @@ if (!Wirecloud.ui) {
         }
 
         //Change Version
-        this.mini_operator_section.removeChild(miniOperator);
+        this.components.removeOperator(miniOperator);
         if (this.operatorVersions[versionIndex].lastVersion.compareTo(versionInfo.version) > 0) {
             // Old Version
             versionInfo.operatorInterface.wrapperElement.classList.add('old');
         }
-        this.mini_operator_section.appendChild(versionInfo.operatorInterface);
+        this.components.appendOperator(versionInfo.operatorInterface);
         this.operatorVersions[versionIndex].currentVersion = versionInfo.version;
         this.operatorVersions[versionIndex].miniOperator = versionInfo.operatorInterface;
         return;
@@ -891,7 +902,7 @@ if (!Wirecloud.ui) {
      * returns the dom element asociated with the grid
      */
     WiringEditor.prototype.getGridElement = function getGridElement() {
-        return this.layout.getCenterContainer().wrapperElement;
+        return this.layout.content.wrapperElement;
     };
 
     /**
@@ -911,7 +922,7 @@ if (!Wirecloud.ui) {
                 if (connection.readOnly) {
                     // Set ReadOnly connection
                     readOnly = true;
-                    extraclass = 'readOnly';
+                    extraclass = 'readonly';
                     // Increase ReadOnly connection count in each entity
                     startAnchor.context.iObject.incReadOnlyConnectionsCount();
                     endAnchor.context.iObject.incReadOnlyConnectionsCount();
@@ -923,15 +934,15 @@ if (!Wirecloud.ui) {
 
                 // Create arrow
                 isGhost = startAnchor.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint;
-                arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
-                                              endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement), extraclass, readOnly, isGhost);
+                arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.content.wrapperElement),
+                                              endAnchor.getCoordinates(this.layout.content.wrapperElement), extraclass, readOnly, isGhost);
 
                 // Set arrow anchors
                 arrow.startAnchor = startAnchor;
                 startAnchor.addArrow(arrow);
                 arrow.endAnchor = endAnchor;
                 endAnchor.addArrow(arrow);
-                arrow.addClassName('arrow');
+                arrow.addClassName('connection');
 
                 // Set arrow pullers
                 arrow.setPullerStart(connectionView.pullerStart);
@@ -991,7 +1002,7 @@ if (!Wirecloud.ui) {
         document.removeEventListener("keydown", this._keydownListener, false);
         document.removeEventListener("keyup", this._keyupListener, false);
         this.ctrlPushed = false;
-        this.layout.getCenterContainer().removeClassName('selecting');
+        this.layout.content.removeClassName('selecting');
     };
 
     /**
@@ -1167,7 +1178,7 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.withinGrid = function withinGrid(event) {
         var clientX, clientY, box;
 
-        box = this.layout.getCenterContainer().getBoundingClientRect();
+        box = this.layout.content.getBoundingClientRect();
 
         if ('touches' in event) {
             clientX = event.changedTouches[0].clientX;
@@ -1187,11 +1198,15 @@ if (!Wirecloud.ui) {
         var widget_interface, i, anchor;
 
         widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator, false, enpPointPos);
+
+        widget_interface.addEventListener('remove', function (element, event) {
+            this.removeIWidget(element);
+            this.events.widgetremoved.dispatch(element, event);
+        }.bind(this));
+
         this.iwidgets[iwidget.id] = widget_interface;
 
-        setEntityMaxWidth.call(this, widget_interface);
-
-        this.layout.getCenterContainer().appendChild(widget_interface);
+        this.layout.content.appendChild(widget_interface);
 
         this.events.widgetadded.dispatch();
 
@@ -1210,10 +1225,8 @@ if (!Wirecloud.ui) {
         this.targetAnchorList = this.targetAnchorList.concat(widget_interface.targetAnchors);
         this.sourceAnchorList = this.sourceAnchorList.concat(widget_interface.sourceAnchors);
 
-        widget_interface.wrapperElement.style.minWidth = widget_interface.getBoundingClientRect().width + 'px';
-
         this.entitiesNumber += 1;
-        this.emptyBox.classList.add('hidden');
+        this.alertEmptyWiring.hide();
 
         return widget_interface;
     };
@@ -1233,9 +1246,12 @@ if (!Wirecloud.ui) {
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
 
-        setEntityMaxWidth.call(this, operator_interface);
+        operator_interface.addEventListener('remove', function (element, event) {
+            this.removeIOperator(element);
+            this.events.operatorremoved.dispatch(element, event);
+        }.bind(this));
 
-        this.layout.getCenterContainer().appendChild(operator_interface);
+        this.layout.content.appendChild(operator_interface);
 
         this.events.operatoradded.dispatch();
 
@@ -1254,12 +1270,10 @@ if (!Wirecloud.ui) {
         this.targetAnchorList = this.targetAnchorList.concat(operator_interface.targetAnchors);
         this.sourceAnchorList = this.sourceAnchorList.concat(operator_interface.sourceAnchors);
 
-        operator_interface.wrapperElement.style.minWidth = operator_interface.getBoundingClientRect().width + 'px';
-
         this.currentlyInUseOperators[operator_interface.getId()] = operator_interface;
 
         this.entitiesNumber += 1;
-        this.emptyBox.classList.add('hidden');
+        this.alertEmptyWiring.hide();
 
         return operator_interface;
     };
@@ -1498,7 +1512,7 @@ if (!Wirecloud.ui) {
         var i, anchor;
         widget_interface.unselect(false);
         delete this.iwidgets[widget_interface.getIWidget().id];
-        this.layout.getCenterContainer().removeChild(widget_interface);
+        this.layout.content.removeChild(widget_interface);
 
         for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
             anchor = widget_interface.sourceAnchors[i];
@@ -1518,7 +1532,7 @@ if (!Wirecloud.ui) {
 
         this.entitiesNumber -= 1;
         if (this.entitiesNumber === 0) {
-            this.emptyBox.classList.remove('hidden');
+            this.alertEmptyWiring.show();
         }
     };
 
@@ -1529,7 +1543,7 @@ if (!Wirecloud.ui) {
         var i, anchor;
         operator_interface.unselect(false);
         delete this.currentlyInUseOperators[operator_interface.getIOperator().id];
-        this.layout.getCenterContainer().removeChild(operator_interface);
+        this.layout.content.removeChild(operator_interface);
 
         for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
             anchor = operator_interface.sourceAnchors[i];
@@ -1546,7 +1560,7 @@ if (!Wirecloud.ui) {
 
         this.entitiesNumber -= 1;
         if (this.entitiesNumber === 0) {
-            this.emptyBox.classList.remove('hidden');
+            this.alertEmptyWiring.show();
         }
     };
 
@@ -1562,7 +1576,7 @@ if (!Wirecloud.ui) {
         } else {
             id = multiconnector.id;
         }
-        this.layout.getCenterContainer().appendChild(multiconnector);
+        this.layout.content.appendChild(multiconnector);
         this.multiconnectors[id] = multiconnector;
 
         this._startdrag_map_func(multiconnector);
@@ -1579,7 +1593,7 @@ if (!Wirecloud.ui) {
      * remove a multiconnector.
      */
     WiringEditor.prototype.removeMulticonnector = function removeMulticonnector(multiConnector) {
-        this.layout.getCenterContainer().removeChild(multiConnector);
+        this.layout.content.removeChild(multiConnector);
         if (multiConnector.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             this.targetAnchorList.splice(this.targetAnchorList.indexOf(multiConnector), 1);
         } else {
@@ -1619,7 +1633,7 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.scrollHandler = function scrollHandler() {
         var oc, scrollX, scrollY, param;
-        oc = this.layout.getCenterContainer();
+        oc = this.layout.content;
 
         scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
         scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
@@ -1637,13 +1651,13 @@ if (!Wirecloud.ui) {
         var key, invertPercent, calculatedHeight, calculatedWidth, calculatedLeft, top, left, currentSize;
 
         // Initial size
-        currentSize = parseFloat(this.layout.getCenterContainer().wrapperElement.style.fontSize);
+        currentSize = parseFloat(this.layout.content.wrapperElement.style.fontSize);
         // Change general grid zoom
-        changeZoom(this.layout.getCenterContainer().wrapperElement, percent);
+        changeZoom(this.layout.content.wrapperElement, percent);
         for (key in this.currentlyInUseOperators) {
-            this.layout.getCenterContainer().removeChild(this.currentlyInUseOperators[key]);
+            this.layout.content.removeChild(this.currentlyInUseOperators[key]);
             setEntityMaxWidth.call(this, this.currentlyInUseOperators[key]);
-            this.layout.getCenterContainer().appendChild(this.currentlyInUseOperators[key]);
+            this.layout.content.appendChild(this.currentlyInUseOperators[key]);
             // To avoid scroll problems
             this.currentlyInUseOperators[key].wrapperElement.style.minWidth = this.currentlyInUseOperators[key].getBoundingClientRect().width + 'px';
             // Calculate new position
@@ -1654,9 +1668,9 @@ if (!Wirecloud.ui) {
             this.currentlyInUseOperators[key].repaint();
         }
         for (key in this.iwidgets) {
-            this.layout.getCenterContainer().removeChild(this.iwidgets[key]);
+            this.layout.content.removeChild(this.iwidgets[key]);
             setEntityMaxWidth.call(this, this.iwidgets[key]);
-            this.layout.getCenterContainer().appendChild(this.iwidgets[key]);
+            this.layout.content.appendChild(this.iwidgets[key]);
             // To avoid scroll problems
             this.iwidgets[key].wrapperElement.style.minWidth = this.iwidgets[key].getBoundingClientRect().width + 'px';
             // Calculate new position

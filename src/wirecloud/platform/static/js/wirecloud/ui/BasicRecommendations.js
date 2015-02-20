@@ -45,14 +45,14 @@
      * Highlight anchor.
      */
     var highlightAnchorLabel = function highlightAnchorLabel(anchor) {
-        anchor.wrapperElement.parentNode.classList.add('highlight');
+        anchor.wrapperElement.parentNode.classList.add('highlighted');
     };
 
     /**
      * Unhighlight anchor.
      */
     var unhighlightAnchorLabel = function unhighlightAnchorLabel(anchor) {
-        anchor.wrapperElement.parentNode.classList.remove('highlight');
+        anchor.wrapperElement.parentNode.classList.remove('highlighted');
     };
 
     /*************************************************************************
@@ -100,7 +100,7 @@
     BasicRecommendations.prototype.emphasize = function emphasize(anchor) {
         var friendCode, anchors, i;
 
-        anchor.wrapperElement.parentNode.classList.add('highlight_main');
+        anchor.wrapperElement.parentNode.classList.add('highlighted');
         friendCode = anchor.context.data.friendcode;
         if (anchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             anchors = this.sourceAnchorsByFriendCode[friendCode];
@@ -122,7 +122,7 @@
     BasicRecommendations.prototype.deemphasize = function deemphasize(anchor) {
         var friendCode, anchors, i;
 
-        anchor.wrapperElement.parentNode.classList.remove('highlight_main');
+        anchor.wrapperElement.parentNode.classList.remove('highlighted');
         friendCode = anchor.context.data.friendcode;
         if (anchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             anchors = this.sourceAnchorsByFriendCode[friendCode];

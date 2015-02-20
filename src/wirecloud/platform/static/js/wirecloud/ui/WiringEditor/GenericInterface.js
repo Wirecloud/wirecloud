@@ -30,11 +30,11 @@
 
     var updateErrorInfo = function updateErrorInfo() {
         var label, errorCount = this.entity.logManager.getErrorCount();
-        this.log_button.setDisabled(errorCount === 0);
+        this.options.optionNotify.setDisabled(errorCount === 0);
 
         label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
         label = interpolate(label, {errorCount: errorCount}, true);
-        this.log_button.setTitle(label);
+        this.options.optionNotify.setTitle(label);
     };
 
     /*************************************************************************
@@ -49,7 +49,7 @@
         }
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': className}, []);
+        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['remove']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -77,7 +77,7 @@
         this.initialPos = null;
         this.isGhost = isGhost;
         this.readOnlyEndpoints = 0;
-        this.readOnly = false;
+        this.displayName = title;
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -89,7 +89,7 @@
 
         // Interface buttons, not for miniInterface
         if (!this.isMiniInterface) {
-            if (className == 'iwidget') {
+            if (className == 'component-widget') {
                 type = 'widget';
                 this.version = this.entity.version;
                 this.vendor = this.entity.vendor;
@@ -101,23 +101,48 @@
                 this.name = this.entity.meta.name;
             }
 
-            // header, sources and targets for the widget
-            this.resourcesDiv = new StyledElements.BorderLayout({'class': "geContainer"});
-            this.sourceDiv = this.resourcesDiv.getEastContainer();
-            this.sourceDiv.addClassName("sources");
-            this.targetDiv = this.resourcesDiv.getWestContainer();
-            this.targetDiv.addClassName("targets");
-            this.header = this.resourcesDiv.getNorthContainer();
-            this.header.addClassName('header');
+            /* Application Status - List of States */
 
-            this.wrapperElement.appendChild(this.resourcesDiv.wrapperElement);
+            var readOnly = false;
+
+            Object.defineProperty(this, 'readOnly', {
+                'get': function get() {
+                    return readOnly;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean') {
+                        if ((readOnly=state)) {
+                            this.options.optionRemove.hide();
+                        } else {
+                            this.options.optionRemove.show();
+                        }
+                    }
+                }
+            });
+
+            var collapsed = false;
+
+            Object.defineProperty(this, 'collapsed', {
+                'get': function get() {
+                    return collapsed;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean') {
+                        if ((collapsed=state)) {
+                            this.wrapperElement.classList.add('collapsed');
+                        } else {
+                            this.wrapperElement.classList.remove('collapsed');
+                        }
+                    }
+                }
+            });
 
             // Ghost interface
             if (isGhost) {
                 this.vendor = this.entity.name.split('/')[0];
                 this.name = this.entity.name.split('/')[1];
                 this.version = new Wirecloud.Version(this.entity.name.split('/')[2].trim());
-                this.wrapperElement.classList.add('ghost');
+                this.wrapperElement.classList.add('misplaced');
                 ghostNotification = document.createElement("span");
                 ghostNotification.classList.add('ghostNotification');
                 msg = gettext('Warning: %(type)s not found!');
@@ -139,72 +164,102 @@
                     this.wrapperElement.classList.add('old')
             }
 
-            // Widget name
-            this.nameElement = document.createElement("span");
-            this.nameElement.textContent = title;
-            this.nameElement.title = title;
-            this.header.appendChild(this.nameElement);
+            var headingElement = this.wrapperElement.appendChild(document.createElement('div'));
+                headingElement.className = 'component-heading';
 
-            // Close button
-            del_button = new StyledElements.StyledButton({
-                'title': gettext("Remove"),
-                'class': 'closebutton icon-remove',
-                'plain': true
-            });
-            del_button.insertInto(this.header);
-            del_button.addEventListener('click', function () {
-                if (this.readOnly == true) {
-                    return;
-                }
-                if (className == 'iwidget') {
-                    this.wiringEditor.events.widgetremoved.dispatch(this);
-                } else {
-                    this.wiringEditor.events.operatorremoved.dispatch(this);
-                }
-            }.bind(this));
+            /* Application Heading - Title */
 
-            // Log button
-            this.log_button = new StyledElements.StyledButton({
-                'plain': true,
-                'class': 'logbutton icon-warning-sign'
-            });
+            var titleElement = headingElement.appendChild(document.createElement('div'));
+                titleElement.className = 'component-title';
+
+            var nameElement = document.createElement('span');
+                nameElement.className = 'component-name';
+                nameElement.textContent = this.displayName;
+
+            var infoElement = document.createElement('span');
+                infoElement.className = 'component-subtitle';
+
+            this.heading = {
+
+                'element': headingElement,
+
+                'titlelement': titleElement,
+
+                'nameElement': titleElement.appendChild(nameElement),
+
+                'infoElement': titleElement.appendChild(infoElement)
+
+            };
+
+            /* Application Heading - List of Options */
+
+            var optionsElement = headingElement.appendChild(document.createElement('div'));
+                optionsElement.className = 'component-options';
+
+            this.options = {
+
+                'element': optionsElement,
+
+                'optionNotify': new StyledElements.StyledButton({
+                    'class': 'icon-exclamation-sign option-notify',
+                    'plain': true
+                }),
+
+                'optionPreferences': new StyledElements.PopupButton({
+                    'class': 'icon-cog option-preferences',
+                    'title': gettext("Preferences"),
+                    'plain': true
+                }),
+
+                'optionRemove': new StyledElements.StyledButton({
+                    'class': 'icon-remove option-remove',
+                    'title': gettext("Remove"),
+                    'plain': true
+                })
+
+            };
+
+            optionsElement.appendChild(this.options.optionNotify.hide().wrapperElement);
+
             if (!isGhost) {
-                this.log_button.addEventListener("click",
-                    function () {
-                        var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
+                this.options.optionNotify.addEventListener('click', function (event) {
+                    var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
                         dialog.show();
-                    }.bind(this));
+                }.bind(this));
+
                 updateErrorInfo.call(this);
                 this.entity.logManager.addEventListener('newentry', updateErrorInfo.bind(this));
-            } else {
-                this.log_button.disable();
             }
-            this.log_button.insertInto(this.header);
 
-            // special icon for minimized interface
-            this.iconAux = document.createElement("div");
-            this.iconAux.classList.add("specialIcon");
-            this.iconAux.classList.add("icon-cogs");
-            this.iconAux.setAttribute('title', title);
-            this.wrapperElement.appendChild(this.iconAux);
-            this.iconAux.addEventListener('click', function () {
-                if (!this.movement) {
-                    this.restore();
+            optionsElement.appendChild(this.options.optionPreferences.wrapperElement);
+            this.options.optionPreferences.popup_menu.append(new Wirecloud.ui.WiringEditor.GenericInterfaceSettingsMenuItems(this));
+
+            optionsElement.appendChild(this.options.optionRemove.wrapperElement);
+            this.options.optionRemove.addEventListener('click', function (event) {
+                if (!this.readOnly) {
+                    this.events.remove.dispatch(this, event);
                 }
             }.bind(this));
 
-            // Add a menu button except on mini interfaces
-            this.menu_button = new StyledElements.PopupButton({
-                'title': gettext("Menu"),
-                'class': 'editPos_button icon-cog',
-                'plain': true
-            });
-            this.menu_button.insertInto(this.header);
-            this.menu_button.popup_menu.append(new Wirecloud.ui.WiringEditor.GenericInterfaceSettingsMenuItems(this));
+            /* Application Endpoints - Targets and Sources */
 
+            var bodyElement = this.wrapperElement.appendChild(document.createElement('div'));
+                bodyElement.className = 'component-body';
+
+            var targetsElement = bodyElement.appendChild(document.createElement('div'));
+                targetsElement.className = 'endpoints target-endpoints';
+
+            var sourcesElement = bodyElement.appendChild(document.createElement('div'));
+                sourcesElement.className = 'endpoints source-endpoints';
+
+            this.endpoints = {
+                'element': bodyElement,
+                'sourcesElement': sourcesElement,
+                'targetsElement': targetsElement
+            };
         } else { // MiniInterface
             this.header = document.createElement("div");
-            this.header.classList.add('header');
+            this.header.classList.add('component-heading');
             this.wrapperElement.appendChild(this.header);
 
             // MiniInterface name
@@ -233,7 +288,7 @@
             this.header.appendChild(this.miniStatus);
 
             // MiniInterface Context Menu
-            if (className == 'ioperator') {
+            if (className == 'operator') {
                 this.contextmenu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left']});
                 this._miniwidgetMenu_callback = function _miniwidgetMenu_callback(e) {
                     // Context Menu
@@ -276,21 +331,26 @@
                         miniwidget_clon = new Wirecloud.ui.WiringEditor.OperatorInterface(context.iObject.wiringEditor,
                                             context.iObject.ioperator, context.iObject.wiringEditor, true);
                     }
-                    miniwidget_clon.addClassName('clon');
+                    miniwidget_clon.addClassName('cloned');
+                    wiringEditor.layout.slideUp();
                     //set the clon position over the originar miniWidget
                     miniwidget_clon.setBoundingClientRect(pos_miniwidget,
-                     {top: -headerHeight, left: 0, width: -2, height: -10});
+                     {top: -headerHeight, left: 0, width: -2});
                     // put the miniwidget clon in the layout
                     context.iObject.wiringEditor.layout.wrapperElement.appendChild(miniwidget_clon.wrapperElement);
                     //put the clon in the context.iObject
                     context.iObjectClon = miniwidget_clon;
                 },
                 function onDrag(e, draggable, context, xDelta, yDelta) {
+                    if (!wiringEditor.layout.content.wrapperElement.contains(context.iObjectClon.wrapperElement)) {
+                        wiringEditor.layout.wrapperElement.removeChild(context.iObjectClon.wrapperElement);
+                        wiringEditor.layout.content.appendChild(context.iObjectClon);
+                    }
                     context.iObjectClon.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
                     context.iObjectClon.repaint();
                 },
                 this.onFinish.bind(this),
-                function () { return this.enabled && !this.wrapperElement.classList.contains('clon'); }.bind(this)
+                function () { return this.enabled && !this.wrapperElement.classList.contains('cloned'); }.bind(this)
             );
 
         }//else miniInterface
@@ -536,10 +596,10 @@
     GenericInterface.prototype.makeSlotsDraggable = function makeSlotsDraggable() {
         var i;
         for (i = 0; i < this.draggableSources.length; i++) {
-            this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.center, 'source_clon');
+            this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.content, 'source-endpoint');
         }
         for (i = 0; i < this.draggableTargets.length; i++) {
-            this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.center, 'target_clon');
+            this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.content, 'target-endpoint');
         }
     };
 
@@ -557,9 +617,10 @@
                     context.y = pos_miniwidget.top - gridbounds.top;
                     context.x = pos_miniwidget.left - gridbounds.left;
                     //create clon
-                    context.iObject.wrapperElement.classList.add('moving');
+                    context.iObject.wrapperElement.classList.add('selected');
                     clon = context.iObject.wrapperElement.cloneNode(true);
                     clon.classList.add(className);
+                    clon.classList.add('cloned');
                     // put the clon in place
                     place.wrapperElement.appendChild(clon);
                     //set the clon position over the originar miniWidget
@@ -600,7 +661,7 @@
                     }
                 },
                 function onFinish(draggable, context) {
-                    context.iObject.wrapperElement.classList.remove('moving');
+                    context.iObject.wrapperElement.classList.remove('selected');
                     if (context.iObjectClon.parentNode) {
                         context.iObjectClon.parentNode.removeChild(context.iObjectClon);
                     }
@@ -1028,7 +1089,7 @@
                 this.fullConnections[endpoint][subdatakey] = [];
             }
             connection.addClassName('full');
-            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "arrow");
+            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "connection");
             this.fullConnections[endpoint][subdatakey].push(theArrow);
         } else {
             // Add a hollow connection
@@ -1038,7 +1099,7 @@
             if (this.hollowConnections[endpoint][subdatakey] == null) {
                 this.hollowConnections[endpoint][subdatakey] = [];
             }
-            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "arrow hollow");
+            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "connection hollow");
             this.hollowConnections[endpoint][subdatakey].push(theArrow);
         }
         theArrow.setEndAnchor(targetAnchor);
@@ -1098,38 +1159,33 @@
      * Add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext, isGhost) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, subAnchors;
+        var anchor, endpointElement, labelDiv, labelElement, treeDiv, subAnchors;
 
         // Sources counter
         this.numberOfSources += 1;
 
-        // AnchorDiv
-        anchorDiv = document.createElement("div");
-        // If the output have not description, take the label
-        if (desc === '') {
-            desc = label;
-        }
-        if (isGhost) {
-            anchorDiv.setAttribute('title', gettext("Mismatch endpoint! ") + label);
-        } else {
-            anchorDiv.setAttribute('title', label + ': ' + desc);
-        }
-        anchorDiv.classList.add('anchorDiv');
-        if (isGhost) {
-            anchorDiv.classList.add('ghost');
-        }
-        // Anchor visible label
-        anchorLabel = document.createElement("span");
-        anchorLabel.textContent = label;
+        endpointElement = document.createElement('div');
+        endpointElement.className = "endpoint";
 
-        labelDiv = document.createElement("div");
-        anchorDiv.appendChild(labelDiv);
-        labelDiv.setAttribute('class', 'labelDiv');
-        labelDiv.appendChild(anchorLabel);
+        if (isGhost) {
+            endpointElement.classList.add('misplaced');
+            endpointElement.setAttribute('title', gettext('Mismatch Endpoint') + ":" + label);
+        } else {
+            if (!desc.length) {
+                desc = label;
+            }
+
+            endpointElement.setAttribute('title', label + ': ' + desc);
+        }
+
+        labelElement = document.createElement('div');
+        labelElement.className = "endpoint-label";
+        labelElement.textContent = label;
+        endpointElement.appendChild(labelElement);
 
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator, null, isGhost);
-            labelDiv.appendChild(anchor.wrapperElement);
+            endpointElement.appendChild(anchor.wrapperElement);
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
@@ -1139,23 +1195,23 @@
                 this.generateTree(anchor, name, anchorContext, subAnchors, label, this.subdataHandler.bind(this, null, name));
             }
 
-            labelDiv.addEventListener('mouseover', function () {
+            endpointElement.addEventListener('mouseover', function () {
                 this.wiringEditor.recommendations.emphasize(anchor);
             }.bind(this));
-            labelDiv.addEventListener('mouseout', function () {
+            endpointElement.addEventListener('mouseout', function () {
                 this.wiringEditor.recommendations.deemphasize(anchor);
             }.bind(this));
 
             // Sticky effect
-            anchorDiv.addEventListener('mouseover', function (e) {
+            endpointElement.addEventListener('mouseover', function (e) {
                 anchor._mouseover_callback(e);
             }.bind(this));
-            anchorDiv.addEventListener('mouseout', function (e) {
+            endpointElement.addEventListener('mouseout', function (e) {
                 anchor._mouseout_callback(e);
             }.bind(this));
 
             // Connect anchor whith mouseup on the label
-            anchorDiv.addEventListener('mouseup', function (e) {
+            endpointElement.addEventListener('mouseup', function (e) {
                 anchor._mouseup_callback(e);
             }.bind(this));
 
@@ -1163,70 +1219,65 @@
             this.sourceAnchors.push(anchor);
         }
 
-        this.sourceDiv.appendChild(anchorDiv);
-        this.draggableSources.push({'wrapperElement': anchorDiv, 'context': anchorContext});
+        this.endpoints.sourcesElement.appendChild(endpointElement);
+        this.draggableSources.push({'wrapperElement': endpointElement, 'context': anchorContext});
     };
 
     /**
      * Add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext, isGhost) {
-        var anchor, anchorDiv, labelDiv, anchorLabel;
+        var anchor, endpointElement, labelDiv, labelElement;
 
         // Targets counter
         this.numberOfTargets += 1;
 
-        // AnchorDiv
-        anchorDiv = document.createElement("div");
-        // If the output have not description, take the label
-        if (desc === '') {
-            desc = label;
-        }
-        if (isGhost) {
-            anchorDiv.setAttribute('title', gettext('Mismatch endpoint! ') + label);
-        } else {
-            anchorDiv.setAttribute('title', label + ': ' + desc);
-        }
-        anchorDiv.classList.add('anchorDiv');
-        if (isGhost) {
-            anchorDiv.classList.add('ghost');
-        }
-        // Anchor visible label
-        anchorLabel = document.createElement("span");
-        anchorLabel.textContent = label;
+        endpointElement = document.createElement('div');
+        endpointElement.className = "endpoint";
 
-        labelDiv = document.createElement("div");
-        anchorDiv.appendChild(labelDiv);
-        labelDiv.setAttribute('class', 'labelDiv');
-        labelDiv.appendChild(anchorLabel);
+        if (isGhost) {
+            endpointElement.classList.add('misplaced');
+            endpointElement.setAttribute('title', gettext('Mismatch Endpoint') + ":" + label);
+        } else {
+            if (!desc.length) {
+                desc = label;
+            }
+
+            endpointElement.setAttribute('title', label + ': ' + desc);
+        }
+
+        labelElement = document.createElement('div');
+        labelElement.className = "endpoint-label";
+        labelElement.textContent = label;
+        endpointElement.appendChild(labelElement);
 
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator, isGhost);
-            labelDiv.appendChild(anchor.wrapperElement);
+            endpointElement.appendChild(anchor.wrapperElement);
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
-            labelDiv.addEventListener('mouseover', function () {
+            labelElement.addEventListener('mouseover', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.recommendations.emphasize(anchor);
                 }
             }.bind(this));
-            labelDiv.addEventListener('mouseout', function () {
+            labelElement.addEventListener('mouseout', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.recommendations.deemphasize(anchor);
                 }
             }.bind(this));
 
             // Sticky effect
-            anchorDiv.addEventListener('mouseover', function (e) {
+            endpointElement.addEventListener('mouseover', function (e) {
                 anchor._mouseover_callback(e);
             }.bind(this));
-            anchorDiv.addEventListener('mouseout', function (e) {
+            endpointElement.addEventListener('mouseout', function (e) {
                 anchor._mouseout_callback(e);
             }.bind(this));
 
             // Connect anchor whith mouseup on the label
-            anchorDiv.addEventListener('mouseup', function (e) {
+            endpointElement.addEventListener('mouseup', function (e) {
                 anchor._mouseup_callback(e);
             }.bind(this));
 
@@ -1234,8 +1285,8 @@
             this.targetAnchors.push(anchor);
         }
 
-        this.targetDiv.appendChild(anchorDiv);
-        this.draggableTargets.push({'wrapperElement': anchorDiv, 'context': anchorContext});
+        this.endpoints.targetsElement.appendChild(endpointElement);
+        this.draggableTargets.push({'wrapperElement': endpointElement, 'context': anchorContext});
     };
 
     /**
@@ -1280,14 +1331,14 @@
         if (this.hasClassName('disabled')) {
             return;
         }
-        if (this.hasClassName('selected')) {
+        if (this.hasClassName('highlighted')) {
             return;
         }
         if (!(this.wiringEditor.ctrlPushed) && (this.wiringEditor.selectedCount > 0) && (withCtrl)) {
             this.wiringEditor.resetSelection();
         }
         this.selected = true;
-        this.addClassName('selected');
+        this.addClassName('highlighted');
         // Arrows
         for (i = 0; i < this.targetAnchors.length; i += 1) {
             arrows = this.targetAnchors[i].arrows;
@@ -1310,7 +1361,7 @@
     GenericInterface.prototype.unselect = function unselect(withCtrl) {
         var i, j, arrows;
         this.selected = false;
-        this.removeClassName('selected');
+        this.removeClassName('highlighted');
         //arrows
         for (i = 0; i < this.targetAnchors.length; i += 1) {
             arrows = this.targetAnchors[i].arrows;
@@ -1396,9 +1447,7 @@
     GenericInterface.prototype.enableEdit = function enableEdit() {
         this.draggable.destroy();
         this.editingPos = true;
-        this.sourceDiv.wrapperElement.classList.add("editing");
-        this.targetDiv.wrapperElement.classList.add("editing");
-        this.addClassName("editing");
+        this.endpoints.element.classList.add('endpoint-sorting');
         this.makeSlotsDraggable();
     };
 
@@ -1410,9 +1459,8 @@
 
         this.makeDraggable();
         this.editingPos = false;
-        this.sourceDiv.wrapperElement.classList.remove("editing");
-        this.targetDiv.wrapperElement.classList.remove("editing");
-        this.removeClassName("editing");
+        this.endpoints.element.classList.remove('endpoint-sorting');
+
         for (i = 0; i < this.draggableSources.length; i++) {
             this.draggableSources[i].draggable.destroy();
         }
@@ -1447,11 +1495,11 @@
 
         sources = [];
         targets = [];
-        for (i = 0; i < this.sourceDiv.wrapperElement.childNodes.length; i++) {
-            sources[i] = this.getNameForSort(this.sourceDiv.wrapperElement.childNodes[i], 'source');
+        for (i = 0; i < this.endpoints.sourcesElement.childNodes.length; i++) {
+            sources[i] = this.getNameForSort(this.endpoints.sourcesElement.childNodes[i], 'source');
         }
-        for (i = 0; i < this.targetDiv.wrapperElement.childNodes.length; i++) {
-            targets[i] = this.getNameForSort(this.targetDiv.wrapperElement.childNodes[i], 'target');
+        for (i = 0; i < this.endpoints.targetsElement.childNodes.length; i++) {
+            targets[i] = this.getNameForSort(this.endpoints.targetsElement.childNodes[i], 'target');
         }
         return {'sources': sources, 'targets': targets};
     };
@@ -1492,7 +1540,7 @@
         this.wrapperElement.style.minWidth = '55px';
 
         // Scroll correction
-        oc = this.wiringEditor.layout.getCenterContainer();
+        oc = this.wiringEditor.layout.content;
 
         scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
         scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
@@ -1511,6 +1559,7 @@
         this.setPosition(position);
 
         this.isMinimized = true;
+        this.collapsed = true;
         this.repaint();
     };
 
@@ -1549,6 +1598,7 @@
         this.wrapperElement.classList.remove('reducedInt');
 
         this.isMinimized = false;
+        this.collapsed = false;
         this.repaint();
     };
 

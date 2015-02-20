@@ -33,7 +33,7 @@
         this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
         this.canvasElement.generalLayer = document.createElementNS(this.SVG_NAMESPACE, 'svg:g');
         this.canvasElement.appendChild(this.canvasElement.generalLayer);
-        this.canvasElement.setAttribute('class', 'canvas');
+        this.canvasElement.setAttribute('class', "wiring-connections");
         this.selectedArrow = null;
         this.canvasElement.addEventListener('click', function () {
             this.unselectArrow();
@@ -71,20 +71,23 @@
      */
     Canvas.prototype.drawArrow = function drawArrow(from, to, extraClass, readOnly, isGhost) {
         var arrow = new Wirecloud.ui.WiringEditor.Arrow(this);
-        arrow.addClassName(extraClass);
+        if (extraClass != null) {
+            arrow.addClassName(extraClass);
+        }
+
         if (readOnly) {
             arrow.readOnly = true;
         }
         if (isGhost) {
             arrow.isGhost = true;
-            arrow.addClassName('ghost');
+            arrow.addClassName('misplaced');
         }
         arrow.setStart(from);
         arrow.setEnd(to);
         arrow.redraw();
         arrow.insertInto(this.canvasElement.generalLayer);
 
-        if ((extraClass != 'multiconnector_arrow') && extraClass != 'arrow hollow') {
+        if ((extraClass != 'multiconnector_arrow') && extraClass != 'connection hollow') {
             this.events.arrowadded.dispatch(this, arrow);
         }
         return arrow;

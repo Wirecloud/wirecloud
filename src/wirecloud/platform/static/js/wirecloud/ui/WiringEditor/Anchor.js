@@ -44,13 +44,13 @@
 
         this.arrows = [];
 
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.classList.add('anchor');
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = "endpoint-anchor";
+
         if (isGhost) {
             this.wrapperElement.classList.add('icon-exclamation-sign');
-        } else {
-            this.wrapperElement.classList.add('icon-circle');
         }
+
         this.menu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left', 'bottom-right', 'top-right']});
 
         this._mousedown_callback = function _mousedown_callback(e) {
@@ -182,7 +182,7 @@
                             this.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint) {
                             //Ghost Arrow
                             arrowCreator.theArrow.isGhost = true;
-                            arrowCreator.theArrow.addClassName('ghost');
+                            arrowCreator.theArrow.addClassName('misplaced');
                         }
                     } else {
                         arrowCreator.theArrow.setStart(pos);
@@ -190,7 +190,7 @@
                             this.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint) {
                             //Ghost Arrow
                             arrowCreator.theArrow.isGhost = true;
-                            arrowCreator.theArrow.addClassName('ghost');
+                            arrowCreator.theArrow.addClassName('misplaced');
                         }
                     }
                     arrowCreator.theArrow.redraw();
@@ -214,7 +214,7 @@
                         !(initEndpoint instanceof Wirecloud.wiring.GhostSourceEndpoint || initEndpoint instanceof Wirecloud.wiring.GhostTargetEndpoint)) {
                         //Clean Ghost Arrow
                         arrowCreator.theArrow.isGhost = false;
-                        arrowCreator.theArrow.removeClassName('ghost');
+                        arrowCreator.theArrow.removeClassName('misplaced');
                     }
                 }
             }

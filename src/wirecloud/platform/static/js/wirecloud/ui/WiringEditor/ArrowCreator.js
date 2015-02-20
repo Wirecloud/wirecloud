@@ -81,7 +81,7 @@
                 //Arrow from Ghost Endpoint. Ghost Arrow
                 isGhost = true;
             }
-            theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow", false, isGhost);
+            theArrow = canvas.drawArrow(tmpPos, tmpPos, "connection", false, isGhost);
 
             // Minimized operators
             this.initAnchor.context.iObject.potentialArrow = theArrow;
