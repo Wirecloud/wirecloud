@@ -24,14 +24,21 @@ if (!Wirecloud.ui) {
     Wirecloud.ui = {};
 }
 
-(function () {
+Wirecloud.ui.WiringEditor = (function () {
 
     "use strict";
 
-    /*************************************************************************
-     * Constructor
-     *************************************************************************/
+    // ==================================================================================
+    // CLASS CONSTRUCTOR
+    // ==================================================================================
 
+    /**
+     * Create a new instance of class WiringEditor.
+     * @class
+     *
+     * @param {String} id
+     * @param {Object.<String, *>} [options]
+     */
     var WiringEditor = function WiringEditor(id, options) {
         var i;
 
@@ -129,6 +136,10 @@ if (!Wirecloud.ui) {
     };
 
     WiringEditor.prototype = new StyledElements.Alternative();
+
+    // ==================================================================================
+    // PUBLIC METHODS
+    // ==================================================================================
 
     WiringEditor.prototype.view_name = 'wiring';
 
@@ -1697,9 +1708,6 @@ if (!Wirecloud.ui) {
         element.style.fontSize = level + 'em';
     };
 
-    /*************************************************************************
-     * Make WiringEditor public
-     *************************************************************************/
-    Wirecloud.ui.WiringEditor = WiringEditor;
+    return WiringEditor;
 
 })();
