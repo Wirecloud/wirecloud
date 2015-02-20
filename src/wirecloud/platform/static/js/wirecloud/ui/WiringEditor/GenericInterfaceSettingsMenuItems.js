@@ -34,16 +34,40 @@
             this.instance = this.geinterface.iwidget;
         }
     };
+
     GenericInterfaceSettingsMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
     GenericInterfaceSettingsMenuItems.prototype.build = function build(context) {
-        var label;
-        var item, items = [];
+        var item, items = [], labelSortEndpoints;
 
-        item = new StyledElements.MenuItem(gettext('Reorder endpoints'), function () {
-                this.wiringEditor.ChangeObjectEditing(this);
+        if (this.geinterface.ioperator) {
+            items.push(new StyledElements.MenuItem(gettext("Collapse endpoints"), function () {
+                var interval;
+
+                if (this.isMinimized) {
+                    this.restore();
+                } else {
+                    this.minimize();
+                }
+            }.bind(this.geinterface)));
+        }
+
+        if (this.geinterface.editingPos) {
+            labelSortEndpoints = 'Stop sorting';
+        } else {
+            labelSortEndpoints = 'Sort endpoints';
+        }
+
+        item = new StyledElements.MenuItem(gettext(labelSortEndpoints), function () {
+            this.wiringEditor.ChangeObjectEditing(this);
         }.bind(this.geinterface));
         item.setDisabled(this.geinterface.sourceAnchors.length <= 1 && this.geinterface.targetAnchors.length <= 1);
+        items.push(item);
+
+        item = new StyledElements.MenuItem(gettext('Logs'), function () {
+            var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
+            dialog.show();
+        }.bind(this.geinterface));
         items.push(item);
 
         item = new StyledElements.MenuItem(gettext('Settings'), function () {
@@ -58,25 +82,6 @@
         }.bind(this.geinterface));
         item.setDisabled(this.instance.meta.preferenceList.length === 0);
         items.push(item);
-
-        item = new StyledElements.MenuItem(gettext('Logs'), function () {
-            var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
-            dialog.show();
-        }.bind(this.geinterface));
-        items.push(item);
-
-        if (this.geinterface.ioperator) {
-            label = 'Minimize';
-            items.push(new StyledElements.MenuItem(gettext(label), function () {
-                var interval;
-
-                if (this.isMinimized) {
-                    this.restore();
-                } else {
-                    this.minimize();
-                }
-            }.bind(this.geinterface)));
-        }
 
         return items;
     };
