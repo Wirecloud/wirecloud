@@ -37,21 +37,30 @@ class Migration(DataMigration):
 
         ids = set()
         users_to_remove = []
+        last_login_date = None
         for user in orm['social_auth.UserSocialAuth'].objects.all():
             if 'uid' not in user.extra_data:
-                if settings.WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS:
-                    users_to_remove.append(user)
-                    continue
-                else:
-                    raise Exception('User without uid information (using username as uid). FIWARE integration now relies on uids (actorId), so we cannot migrate it. User can fill this information signing in again, alternativelly, you can make use of the WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS setting for removing automatically those users')
+                users_to_remove.append(user)
+
+                if last_login_date is None or user.user.last_login > last_login_date:
+                    last_login_date = user.user.last_login
+
+                continue
 
             if user.extra_data['uid'] in ids:
                 raise Exception('Duplicated uid: %s' % user.extra_data['uid'])
 
             ids.add(user.extra_data['uid'])
 
-        for user in users_to_remove:
-            user.delete()
+        remove_users = getattr(settings, 'WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS', False)
+        if remove_users is True:
+            for user in users_to_remove:
+                user.user.delete()
+        elif remove_users == "disconnect":
+            for user in users_to_remove:
+                user.delete()
+        elif len(users_to_remove) > 0:
+            raise Exception('User without uid information (using username as uid). FIWARE integration now relies on uids (actorId), so we cannot migrate it. Users can fill this information signing in again using their FIWARE account, alternativelly, you can make use of the WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS=True setting for automatically remove those users or WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS="disconnect" for disconnecting those users from their FIWARE accounts\n\n%s users without actorId info: %s\n\nLast login date: %s' % (len(users_to_remove), list(user.username for user in users_to_remove), last_login_date))
 
         for user in orm['social_auth.UserSocialAuth'].objects.all():
             user.uid = "%s" % user.extra_data['uid']

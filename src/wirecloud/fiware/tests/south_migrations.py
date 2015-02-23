@@ -93,6 +93,14 @@ class FIWARESouthMigrationsTestCase(TestCase):
         orm.__getitem__ = lambda self, name: items[name]
         return orm
 
+    def check_users_after_execution(self, success, uid_field, users):
+
+        for auth_user in users:
+            self.assertEqual(auth_user.save.called, success)
+            self.assertEqual(auth_user.uid, "%s" % auth_user.extra_data[uid_field])
+            self.assertFalse(auth_user.delete.called)
+            self.assertFalse(auth_user.user.delete.called)
+
     def test_switch_to_actorId_forwards(self):
 
         users = self.prepare_basic_data('username', False)
@@ -102,10 +110,7 @@ class FIWARESouthMigrationsTestCase(TestCase):
         with self.settings(INSTALLED_APPS=('social_auth',)):
             migration.migration_instance().forwards(orm)
 
-        for user in users:
-            self.assertTrue(user.save.called)
-            self.assertEqual(user.uid, "%s" % user.extra_data['uid'])
-            self.assertFalse(user.delete.called)
+        self.check_users_after_execution(True, 'uid', users)
 
     def test_switch_to_actorId_forwards_repeated_uid(self):
 
@@ -117,10 +122,7 @@ class FIWARESouthMigrationsTestCase(TestCase):
         with self.settings(INSTALLED_APPS=('social_auth',)):
             self.assertRaises(Exception, migration.migration_instance().forwards, orm)
 
-        for user in users:
-            self.assertFalse(user.save.called)
-            self.assertEqual(user.uid, user.extra_data['username'])
-            self.assertFalse(user.delete.called)
+        self.check_users_after_execution(False, 'username', users)
 
     def test_switch_to_actorId_forwards_missing_uid(self):
 
@@ -133,12 +135,26 @@ class FIWARESouthMigrationsTestCase(TestCase):
         with self.settings(INSTALLED_APPS=('social_auth',), WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS=False):
             self.assertRaises(Exception, migration.migration_instance().forwards, orm)
 
-        for user in users:
-            self.assertFalse(user.save.called)
-            self.assertEqual(user.uid, user.extra_data['username'])
-            self.assertFalse(user.delete.called)
+        self.check_users_after_execution(False, 'username', users)
 
     def test_switch_to_actorId_forwards_missing_uid_autoremove(self):
+
+        users = self.prepare_basic_data('username', False)
+        del users[1].extra_data['uid']
+        user_to_be_removed = users[1]
+        users[1].user.delete.side_effect = lambda: users.remove(user_to_be_removed)
+
+        migration = self._pick_migration('0001_switch_to_actorId')
+        orm = self.prepare_orm(migration.orm())
+        orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
+        with self.settings(INSTALLED_APPS=('social_auth',), WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS=True):
+            migration.migration_instance().forwards(orm)
+
+        self.assertTrue(user_to_be_removed.user.delete.called)
+        self.assertFalse(user_to_be_removed.delete.called)
+        self.check_users_after_execution(True, 'uid', users)
+
+    def test_switch_to_actorId_forwards_missing_uid_autodisconnect(self):
 
         users = self.prepare_basic_data('username', False)
         del users[1].extra_data['uid']
@@ -148,14 +164,12 @@ class FIWARESouthMigrationsTestCase(TestCase):
         migration = self._pick_migration('0001_switch_to_actorId')
         orm = self.prepare_orm(migration.orm())
         orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
-        with self.settings(INSTALLED_APPS=('social_auth',), WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS=True):
+        with self.settings(INSTALLED_APPS=('social_auth',), WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS="disconnect"):
             migration.migration_instance().forwards(orm)
 
+        self.assertFalse(user_to_be_removed.user.delete.called)
         self.assertTrue(user_to_be_removed.delete.called)
-        for user in users:
-            self.assertTrue(user.save.called)
-            self.assertEqual(user.uid, "%s" % user.extra_data['uid'])
-            self.assertFalse(user.delete.called)
+        self.check_users_after_execution(True, 'uid', users)
 
     def test_switch_to_actorId_forwards_idm_integration_not_enabled(self):
 
@@ -175,10 +189,7 @@ class FIWARESouthMigrationsTestCase(TestCase):
         with self.settings(INSTALLED_APPS=('social_auth',)):
             migration.migration_instance().backwards(orm)
 
-        for user in users:
-            self.assertTrue(user.save.called)
-            self.assertEqual(user.uid, user.extra_data['username'])
-            self.assertFalse(user.delete.called)
+        self.check_users_after_execution(True, 'username', users)
 
     def test_switch_to_actorId_backwards_repeated_uid(self):
 
@@ -190,10 +201,7 @@ class FIWARESouthMigrationsTestCase(TestCase):
         with self.settings(INSTALLED_APPS=('social_auth',)):
             self.assertRaises(Exception, migration.migration_instance().backwards, orm)
 
-        for user in users:
-            self.assertFalse(user.save.called)
-            self.assertEqual(user.uid, "%s" % user.extra_data['uid'])
-            self.assertFalse(user.delete.called)
+        self.check_users_after_execution(False, 'uid', users)
 
     def test_switch_to_actorId_backwards_missing_username(self):
 
@@ -206,10 +214,7 @@ class FIWARESouthMigrationsTestCase(TestCase):
         with self.settings(INSTALLED_APPS=('social_auth',), WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS=False):
             self.assertRaises(Exception, migration.migration_instance().backwards, orm)
 
-        for user in users:
-            self.assertFalse(user.save.called)
-            self.assertEqual(user.uid, "%s" % user.extra_data['uid'])
-            self.assertFalse(user.delete.called)
+        self.check_users_after_execution(False, 'uid', users)
 
     def test_switch_to_actorId_backwards_idm_integration_not_enabled(self):
 
