@@ -77,6 +77,7 @@
             }
         }
         this.filteredElements = filteredElements;
+        this.totalCount = this.filteredElements.length;
     };
 
     var sortElements = function sortElements(order) {
@@ -169,7 +170,7 @@
         var end = start + options.pageSize;
 
         var elements = this.sortedElements.slice(start, end);
-        onSuccess(elements, {current_page: page, total_count: this.filteredElements.length});
+        onSuccess(elements, {current_page: page, total_count: this.totalCount});
     };
 
     var StaticPaginatedSource = function StaticPaginatedSource(options) {

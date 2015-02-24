@@ -95,9 +95,9 @@
                 this.resource_painter.setError(gettext('Connection error: No resources retrieved.'));
             }
 
-            if (pagination.pCachedTotalCount === 0 && pagination.pOptions.keywords.trim() === "" && pagination.pOptions.scope === 'all') {
+            if (pagination.totalCount === 0 && pagination.pOptions.keywords.trim() === "" && pagination.pOptions.scope === 'all') {
                 this.resource_list.appendChild(this.emptyBox);
-            } else if (pagination.pCachedTotalCount === 0) {
+            } else if (pagination.totalCount === 0) {
                 msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p>" +
                     "<p>Suggestions:</p>" +
                     "<ul>" +

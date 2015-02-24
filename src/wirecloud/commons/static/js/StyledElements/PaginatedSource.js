@@ -34,8 +34,8 @@
         this.currentPage = parseInt(options.current_page, 10);
         this.currentElements = elements;
 
-        if (this.pCachedTotalCount !== options.total_count) {
-            this.pCachedTotalCount = options.total_count;
+        if (this.totalCount !== options.total_count) {
+            this.totalCount = options.total_count;
             this._calculatePages();
             this.events.paginationChanged.dispatch(this);
         }
@@ -128,7 +128,7 @@
     };
 
     PaginatedSource.prototype._calculatePages = function _calculatePages() {
-        this.totalPages = Math.ceil(this.pCachedTotalCount / this.pOptions.pageSize);
+        this.totalPages = Math.ceil(this.totalCount / this.pOptions.pageSize);
         if (this.totalPages <= 0) {
             this.totalPages = 1;
         }
