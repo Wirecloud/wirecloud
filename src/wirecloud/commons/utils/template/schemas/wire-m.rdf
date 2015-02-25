@@ -12,8 +12,8 @@
          xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#">
 
     <owl:Ontology rdf:about="http://wirecloud.conwet.fi.upm.es/ns/mashup#">
-        <dc:title>Wirecloud mashup information vocabulary</dc:title>
-        <dc:description>Simple model for wirecloud mashup info</dc:description>
+        <dc:title>WIRE-M: Extra Application Mashup GE MAC description vocabulary used for describing Mashups.</dc:title>
+        <dc:description>Simple model for providing full mashup descriptions as required by the Application Mashup GE. This vocabulary cannot fully describe mashups, it also requires the basic Application Mashup GE ontology: WIRE</dc:description>
         <dc:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2012-06-08</dc:modified>
         <vann:preferredNamespaceUri>http://wirecloud.conwet.fi.upm.es/ns/mashup#</vann:preferredNamespaceUri>
         <vann:preferredNamespacePrefix>wire-m</vann:preferredNamespacePrefix>

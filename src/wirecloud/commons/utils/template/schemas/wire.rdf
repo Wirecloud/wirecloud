@@ -11,8 +11,8 @@
          xmlns:dc="http://purl.org/dc/elements/1.1/">
 
     <owl:Ontology rdf:about="http://wirecloud.conwet.fi.upm.es/ns/widget#">
-        <dc:title>Wirecloud widget information vocabulary</dc:title>
-        <dc:description>Simple model for wirecloud widget configuration info</dc:description>
+        <dc:title>WIRE: Basic Application Mashup GE Mashable Application Component description vocabulary.</dc:title>
+        <dc:description>Simple model for providing full description of Application Mashup Widgets and Operators. This vocabulary is also used for describing Mashups, but requires an additional ontology: WIRE-M</dc:description>
         <dc:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2012-06-08</dc:modified>
         <vann:preferredNamespaceUri>http://wirecloud.conwet.fi.upm.es/ns/widget#</vann:preferredNamespaceUri>
         <vann:preferredNamespacePrefix>wire</vann:preferredNamespacePrefix>
@@ -37,7 +37,7 @@
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
         <rdfs:isDefinedBy rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget"/>
         <rdfs:label>Platform preference</rdfs:label>
-        <rdfs:comment>A user preference in wirecloud platform</rdfs:comment>
+        <rdfs:comment>A user preference</rdfs:comment>
     </rdfs:Class>
     <rdfs:Class rdf:about="http://wirecloud.conwet.fi.upm.es/ns/widget#Option">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
@@ -48,8 +48,8 @@
     <rdfs:Class rdf:about="http://wirecloud.conwet.fi.upm.es/ns/widget#PlatformStateProperty">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
         <rdfs:isDefinedBy rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget"/>
-        <rdfs:label>Platform state property</rdfs:label>
-        <rdfs:comment>A state property in wirecloud platform</rdfs:comment>
+        <rdfs:label>Platform persistent variable</rdfs:label>
+        <rdfs:comment>A persistent variable in the Application Mashup GE</rdfs:comment>
     </rdfs:Class>
     <rdfs:Class rdf:about="http://wirecloud.conwet.fi.upm.es/ns/widget#PlatformWiring">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
