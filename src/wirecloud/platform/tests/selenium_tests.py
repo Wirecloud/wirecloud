@@ -1277,6 +1277,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         try:
             self.driver.set_window_size(800, 400)
 
+            WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(iwidgets[0].element))
+
             # Check new widget sizes
             new_size_from_context1, new_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0])
             new_size_from_context2, new_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
