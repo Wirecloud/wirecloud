@@ -261,3 +261,33 @@
         }
     }
 }
+
+
+// ============================================================================
+// WIRING DIAGRAM - ON-BACKGROUND-COMPONENT
+// ============================================================================
+
+.wiring-diagram .component.on-background {
+    z-index: $highlighted-component-zindex;
+    border-color: $highlighted-component-border-color;
+    box-shadow: $highlighted-component-box-shadow;
+
+    .component-heading {
+        background-color: $highlighted-component-heading-background-color;
+
+        .component-title {
+            color: $highlighted-component-heading-font-color;
+        }
+    }
+
+    .component-options {
+
+        .styled_button {
+            color: $highlighted-component-heading-font-color;
+
+            &:hover {
+                color: $highlighted-component-mousedover-options-font-color;
+            }
+        }
+    }
+}

@@ -150,3 +150,22 @@
         stroke-dasharray: $highlighted-connection-border-dasharray;
     }
 }
+
+// ============================================================================
+// WIRING DIAGRAM - ON-BACKGROUND-CONNECTION
+// ============================================================================
+
+.wiring-diagram .connection.on-background,
+.wiring-diagram .connection.on-background:hover {
+    cursor: default;
+    @include children-display((".option-remove", ".controller-line", ".controller-ball"));
+
+    .connection-body {
+        stroke: $connection-background-color;
+    }
+
+    .connection-border {
+        stroke: $connection-border-color;
+        stroke-dasharray: $connection-border-dasharray;
+    }
+}
