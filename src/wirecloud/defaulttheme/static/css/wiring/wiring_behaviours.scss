@@ -1,0 +1,85 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+@import 'wiring/defaults';
+
+
+// ============================================================================
+// WIRING SIDEBAR - BEHAVIOUR
+// ============================================================================
+
+.behaviour {
+    cursor: pointer;
+    padding: 6px 8px;
+    color: #333;
+    font-size: 13px;
+    line-height: 1.42857;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.behaviour-header .title {
+    font-weight: bold;
+}
+
+.behaviour-header .option {
+    float: right;
+}
+
+.behaviour-body {
+    font-size: 12px;
+}
+
+.behaviour:hover {
+    color: #555;
+    background-color: #f5f5f5;
+}
+
+.behaviour.active {
+    color: #fff;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.2);
+    background-color: #337ab7;
+    border-color: #337ab7;
+}
+
+.behaviour.active .behaviour-body {
+    color: #c7ddef;
+}
+
+.behaviour-counters {
+    margin-top: 5px;
+    text-align: center;
+}
+ 
+.behaviour-counters > .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    margin: 0px 6px;
+}
+
+.behaviour-counters > .badge-ioperator {
+    background-color: #dff0d8;
+    background-image: linear-gradient(to bottom, #dff0d8 0%, #c8e5bc 100%);
+}
+
+.behaviour-counters > .badge-iwidget {
+    background-color: #f5f5f5;
+    background-image: linear-gradient(to bottom, #f5f5f5 0%, #e8e8e8 100%);
+}
