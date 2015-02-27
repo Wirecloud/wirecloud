@@ -549,6 +549,26 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     /*************************************************************************
      * Public methods
      *************************************************************************/
+
+    GenericInterface.prototype.setHidden = function setHidden() {
+        this.addClassName('hidden');
+    };
+
+    GenericInterface.prototype.setOnBackground = function setOnBackground() {
+        this.addClassName('on-background');
+        this.del_button.addClassName('icon-plus');
+        this.del_button.removeClassName('icon-remove');
+        this.del_button.setTitle('Add');
+    };
+
+    GenericInterface.prototype.setOnForeground = function setOnForeground() {
+        this.removeClassName('hidden');
+        this.removeClassName('on-background');
+        this.del_button.addClassName('icon-remove');
+        this.del_button.removeClassName('icon-plus');
+        this.del_button.setTitle('Remove');
+    };
+
     /**
      * Making Interface Draggable.
      */
