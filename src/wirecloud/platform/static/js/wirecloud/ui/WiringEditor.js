@@ -85,6 +85,52 @@ Wirecloud.ui.WiringEditor = (function () {
         this.canvas.addEventListener('arrowadded', function (canvas, arrow) {
             this.arrows.push(arrow);
         }.bind(this));
+
+        this.canvas.addEventListener('connectionAdded', function (canvas, arrow) {
+            var connection, connectionIndex, i, startComponent, endComponent;
+
+            this.behaviourEngine.activeBehaviour.updateConnection(arrow.getId());
+
+            startComponent = arrow.getStartComponent();
+            endComponent = arrow.getEndComponent();
+
+            this.behaviourEngine.updateComponent(startComponent.type, startComponent.id, startComponent.view);
+            this.behaviourEngine.updateComponent(endComponent.type, endComponent.id, endComponent.view);
+
+            startComponent.instance.setOnForeground();
+            endComponent.instance.setOnForeground();
+
+            for (i = 0; i < this.connections.length; i++) {
+                connection = this.connections[i];
+
+                if (this.behaviourEngine.activeBehaviour.containsConnection(connection.getId())) {
+                    connection.removeClassName('on-background');
+                }
+            }
+        }.bind(this));
+        this.canvas.addEventListener('connectionEstablished', function (canvas, arrow) {
+            var connectionIndex;
+
+            connectionIndex = this.connections.push(arrow) - 1;
+            this.behaviourEngine.updateConnection(connectionIndex, {
+                'pullerStart': arrow.getPullerStart(),
+                'pullerEnd': arrow.getPullerEnd(),
+                'startMulti': arrow.startMulti,
+                'endMulti': arrow.endMulti
+            });
+        }.bind(this));
+
+        this.canvas.addEventListener('connectionDetached', function (canvas, arrow) {
+            var connectionIndex;
+
+            connectionIndex = this.connections.indexOf(arrow);
+
+            if (connectionIndex != -1) {
+                this.connections.splice(connectionIndex, 1);
+                this.behaviourEngine.removeConnection(connectionIndex);
+            }
+        }.bind(this));
+
         this.canvas.addEventListener('arrowremoved', function (canvas, arrow) {
             var pos;
             if (arrow.startMulti != null) {

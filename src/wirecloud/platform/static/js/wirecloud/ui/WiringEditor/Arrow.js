@@ -456,6 +456,10 @@
      */
     Arrow.prototype.destroy = function destroy() {
 
+        if (this.startAnchor !== null && this.endAnchor !== null) {
+            this.canvas.events.connectionDetached.dispatch(this.canvas, this);
+        }
+
         this.disconnect();
         if (this.canvas !== null) {
             this.canvas.removeArrow(this);

@@ -28,7 +28,7 @@
      * Constructor
      *************************************************************************/
     var Canvas = function Canvas() {
-        StyledElements.ObjectWithEvents.call(this, ['arrowadded', 'arrowremoved', 'unselectall']);
+        StyledElements.ObjectWithEvents.call(this, ['arrowadded', 'arrowremoved', 'unselectall', 'connectionEstablished', 'connectionDetached']);
 
         this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
         this.canvasElement.generalLayer = document.createElementNS(this.SVG_NAMESPACE, 'svg:g');

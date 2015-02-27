@@ -198,6 +198,7 @@
                         if (this.initWasMinimized) {
                             this.initAnchor.context.iObject.minimize();
                         }
+                        canvas.events.connectionEstablished.dispatch(canvas, theArrow);
                     } else {
                         theArrow.destroy();
                     }
