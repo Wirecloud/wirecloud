@@ -141,8 +141,8 @@
 
         iwidget.fullDisconnect();
 
-        if (this.status.views != null && this.status.views[0].iwidgets[iwidget.id]) {
-            delete this.status.views[0].iwidgets[iwidget.id];
+        if (typeof this.status.view !== 'object') {
+            delete this.status.view.components.iwidget[iwidget.id];
         }
 
         for (i = this.status.connections.length - 1; i >= 0 ; i -= 1) {
@@ -150,10 +150,10 @@
 
             if (connection.source.type === 'iwidget' && connection.source.id === iwidget.id) {
                 this.status.connections.splice(i, 1);
-                this.status.views[0].connections.splice(i, 1);
+                this.status.view.connections.splice(i, 1);
             } else if (connection.target.type === 'iwidget' && connection.target.id === iwidget.id) {
                 this.status.connections.splice(i, 1);
-                this.status.views[0].connections.splice(i, 1);
+                this.status.view.connections.splice(i, 1);
             }
         }
 
@@ -255,19 +255,7 @@
 
         this.events.load.dispatch();
 
-        if (!('views' in status) || !Array.isArray(status.views)) {
-            status.views = [];
-        }
-
-        if (status.views.length === 0) {
-            status.views.push({
-                label: 'default',
-                iwidgets: {},
-                operators: {},
-                multiconnectors: {},
-                connections: []
-            });
-        }
+        status = Wirecloud.ui.WiringEditor.BehaviourEngine.normalizeWiringStatus(status);
 
         if (this.workspace.owned) {
             operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
@@ -296,7 +284,7 @@
                         msg = interpolate(msg, {operator: operator_info.name}, true);
                         this.logManager.log(msg);
                         this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
-                        if (id in status.views[0].operators) {
+                        if (id in status.view.components.ioperator) {
                             this.ioperators[id].fillFromViewInfo(status.views[0].operators[id]);
                         }
                     }
@@ -305,7 +293,7 @@
                     msg = interpolate(msg, {operator: operator_info.name}, true);
                     this.logManager.log(msg);
                     this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
-                    if (id in status.views[0].operators) {
+                    if (id in status.view.components.ioperator) {
                         this.ioperators[id].fillFromViewInfo(status.views[0].operators[id]);
                     }
                 }

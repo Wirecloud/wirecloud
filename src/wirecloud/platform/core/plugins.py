@@ -54,6 +54,9 @@ CATALOGUE_CSS = (
 
 WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor.js',
+    'js/wirecloud/ui/WiringEditor/Behaviour.js',
+    'js/wirecloud/ui/WiringEditor/BehaviourEngine.js',
+    'js/wirecloud/ui/WiringEditor/PanelBehaviours.js',
     'js/wirecloud/ui/WiringEditor/PanelComponents.js',
     'js/wirecloud/ui/WiringEditor/Anchor.js',
     'js/wirecloud/ui/WiringEditor/Arrow.js',
@@ -160,6 +163,7 @@ WIRING_EDITOR_CSS = (
     'css/wiring/wiring_components.scss',
     'css/wiring/wiring_endpoints.scss',
     'css/wiring/wiring_connections.scss',
+    'css/wiring/wiring_behaviours.scss',
     'css/wiring/multiconnector.css',
     'css/wiring/wiringPreview.css',
     'css/wiring/colorSmartBox.css',

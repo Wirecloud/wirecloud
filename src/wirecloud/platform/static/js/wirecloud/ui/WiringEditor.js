@@ -164,6 +164,9 @@ Wirecloud.ui.WiringEditor = (function () {
             anchor.addEventListener('startdrag', this.disableAnchors);
         }.bind(this);
 
+        this.behaviourEngine = new Wirecloud.ui.WiringEditor.BehaviourEngine();
+        startBehaviourEngine.call(this, this);
+
         // Initialize key listener
         this._keydownListener = keydownListener.bind(this);
         this._keyupListener = keyupListener.bind(this);
@@ -207,12 +210,156 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     WiringEditor.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.btnApps];
+        return [this.btnApps, this.btnBehaviours];
     };
 
     // ==================================================================================
     // PRIVATE METHODS
     // ==================================================================================
+
+    var startBehaviourEngine = function startBehaviourEngine(wiringEditor) {
+
+        this.behaviourEngine.addEventListener('beforeActivate', function (behaviour) {
+            var component, id;
+
+            this.onlyUpdatable = true;
+
+            for (id in wiringEditor.iwidgets) {
+                component = wiringEditor.iwidgets[id];
+
+                this.updateComponent('iwidget', id, {
+                    'name': component.iwidget.widget.id,
+                    'position': component.getStylePosition(),
+                    'endPointsInOuts': component.getInOutPositions()
+                });
+            }
+
+            for (id in wiringEditor.currentlyInUseOperators) {
+                component = wiringEditor.currentlyInUseOperators[id];
+
+                this.updateComponent('ioperator', id, {
+                    'minimized': component.isMinimized,
+                    'position': component.getStylePosition(),
+                    'endPointsInOuts': component.getInOutPositions()
+                });
+            }
+
+            this.onlyUpdatable = false;
+        });
+
+        this.behaviourEngine.addEventListener('beforeRemove', function (behaviour) {
+            var component, id;
+
+            for (id in wiringEditor.iwidgets) {
+                component = wiringEditor.iwidgets[id];
+
+                if (behaviour.containsComponent('iwidget', id)) {
+                    wiringEditor.removeIWidget(component, false);
+                }
+            }
+
+            for (id in wiringEditor.currentlyInUseOperators) {
+                component = wiringEditor.currentlyInUseOperators[id];
+
+                if (behaviour.containsComponent('ioperator', id)) {
+                    wiringEditor.removeIOperator(component, false);
+                }
+            }
+        });
+
+        this.behaviourEngine.addEventListener('afterActivate', function (behaviour) {
+            var component, id;
+
+            for (id in wiringEditor.iwidgets) {
+                component = wiringEditor.iwidgets[id];
+                view = this.viewOf('iwidget', id);
+                component.setPosition(view.position);
+                component.setOnForeground();
+
+                if (!behaviour.containsComponent('iwidget', id)) {
+                    component.setOnBackground();
+                }
+            }
+
+            for (id in wiringEditor.currentlyInUseOperators) {
+                component = wiringEditor.currentlyInUseOperators[id];
+                view = this.viewOf('ioperator', id);
+                component.setPosition(view.position);
+                component.setOnForeground();
+
+                if (!behaviour.containsComponent('ioperator', id)) {
+                    component.setOnBackground();
+                }
+            }
+
+            for (id in wiringEditor.iwidgets) {
+                component = wiringEditor.iwidgets[id];
+                component.repaint();
+            }
+
+            for (id in wiringEditor.currentlyInUseOperators) {
+                component = wiringEditor.currentlyInUseOperators[id];
+                component.repaint();
+            }
+
+            for (i = 0; i < wiringEditor.connections.length; i++) {
+                connection = wiringEditor.connections[i];
+                connection.removeClassName('on-background');
+                connection.show();
+
+                if (!behaviour.containsConnection(connection.getId())) {
+                    connection.addClassName('on-background');
+                }
+            }
+        });
+
+        this.behaviourEngine.addEventListener('afterAppend', function (behaviour) {
+            behaviour.preferences.addEventListener('click', function (event) {
+                var acceptButton = new StyledElements.StyledButton({
+                    'text': gettext('Save changes'),
+                    'class': 'btn-primary'
+                });
+
+                var dialog = new Wirecloud.ui.FormWindowMenu([
+                        {name: 'title', label: gettext('Title'), type: 'text'},
+                        {name: 'description', label: gettext('Description'), type: 'longtext'}
+                    ],
+                    gettext('Behaviour settings'),
+                    'behaviour_form',
+                    {
+                        acceptButton: acceptButton
+                    });
+
+                dialog.executeOperation = function (data) {
+                    behaviour.saveSettings(data);
+                };
+
+                if (wiringEditor.behaviourEngine.removeBehaviourEnabled()) {
+                    var deleteButton = new StyledElements.StyledButton({
+                        'text': gettext('Delete behaviour'),
+                        'class': 'btn-danger'
+                    });
+
+                    deleteButton.addEventListener('click', function (e) {
+                        wiringEditor.behaviourEngine.removeBehaviour(behaviour);
+                        dialog.hide();
+                    });
+
+                    dialog.windowBottom.insertBefore(deleteButton.wrapperElement, acceptButton.wrapperElement);
+                }
+
+                dialog.show();
+                dialog.setValue(behaviour.data);
+
+                event.stopPropagation();
+            });
+        });
+
+        this.behaviourEngine.addEventListener('click', function (behaviour, event) {
+            this.activateBehaviour(behaviour);
+        });
+
+    };
 
     var buildWirecloudToolbar = function buildWirecloudToolbar() {
         this.btnApps = new StyledElements.StyledButton({
@@ -231,12 +378,19 @@ Wirecloud.ui.WiringEditor = (function () {
                 this.layout.slideDown();
             }
         }.bind(this));
+
+        this.btnBehaviours = new StyledElements.StyledButton({
+            'iconClass': 'icon-sitemap',
+            'title': gettext('Behaviours identified')
+        });
     };
 
     var buildWiringSidebar = function buildWiringSidebar() {
+        this.behaviours = new Wirecloud.ui.WiringEditor.PanelBehaviours();
         this.components = new Wirecloud.ui.WiringEditor.PanelComponents();
 
         this.layout.sidebar.addClassName('wiring-sidebar');
+        this.layout.sidebar.appendChild(this.behaviours);
         this.layout.sidebar.appendChild(this.components);
 
         this.layout.addEventListener('slideup', function (event) {
@@ -615,15 +769,14 @@ Wirecloud.ui.WiringEditor = (function () {
      */
     var loadWiring = function loadWiring(workspace, WiringStatus) {
         var iwidgets, iwidget, reallyInUseOperators, connectionView,
-            multiconnectors, key, operators, k, i, availableOperators;
-
-        this.wiringStatus = normalizeWiringStatus(WiringStatus);
+            multiconnectors, key, operators, k, i, availableOperators, state;
 
         this.targetsOn = true;
         this.sourcesOn = true;
         this.targetAnchorList = [];
         this.sourceAnchorList = [];
         this.arrows = [];
+        this.connections = [];
         this.iwidgets = {};
         this.multiconnectors = {};
         this.mini_widgets = {};
@@ -654,6 +807,9 @@ Wirecloud.ui.WiringEditor = (function () {
         // Set 100% Zoom in grid
         this.layout.content.wrapperElement.style.fontSize = '1em';
 
+        this.oldWiring = this.behaviourEngine.loadWiring(WiringStatus);
+        this.behaviourEngine.readOnly = true;
+
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
 
@@ -666,25 +822,19 @@ Wirecloud.ui.WiringEditor = (function () {
             generateMiniWidget.call(this, iwidget);
 
             // Create widget
-            for (k = 0; k < this.wiringStatus.views.length; k ++) {
-                // Each view
-                if (iwidget.id in this.wiringStatus.views[k].iwidgets) {
-                    // Disable mini-widget
-                    this.mini_widgets[iwidget.id].disable();
-                    // Add new Widget
-                    generateWidget.call(this, iwidget, this.wiringStatus.views[k].iwidgets[iwidget.id]);
-                    break;
-                }
+            if (this.behaviourEngine.containsComponent('iwidget', iwidget.id)) {
+                // Disable mini-widget
+                this.mini_widgets[iwidget.id].disable();
+                // Add new Widget
+                generateWidget.call(this, iwidget, this.behaviourEngine.viewOf('iwidget', iwidget.id));
             }
         }
 
         // Ghost Widgets!
-        for (k = 0; k < this.wiringStatus.views.length; k ++) {
-            for (key in this.wiringStatus.views[k].iwidgets) {
-                if (!this.iwidgets[key]) {
-                    // Add new Ghost Widget
-                    generateGhostWidget.call(this, this.wiringStatus.views[k], key);
-                }
+        for (key in this.behaviourEngine.getAllComponents('iwidget')) {
+            if (!this.iwidgets[key]) {
+                // Add new Ghost Widget
+                generateGhostWidget.call(this, key, this.behaviourEngine.viewOf('iwidget', key));
             }
         }
 
@@ -695,28 +845,25 @@ Wirecloud.ui.WiringEditor = (function () {
 
         // Create operators and Ghost Operators
         reallyInUseOperators = workspace.wiring.ioperators;
-        operators = this.wiringStatus.operators;
+        operators = this.behaviourEngine.getAllComponents('ioperator');
         for (key in operators) {
             generateOperator.call(this, key, operators[key], reallyInUseOperators, availableOperators);
         }
 
         // Create Multiconnectors
-        multiconnectors = this.wiringStatus.views[0].multiconnectors;
+        multiconnectors = this.behaviourEngine.getAllComponents('multiconnector');
         for (key in multiconnectors) {
             generateMulticonnector.call(this, multiconnectors[key]);
         }
 
         // Create connections
-        for (i = 0; i < this.wiringStatus.connections.length; i += 1) {
-            connectionView = {};
-            for (k = 0; k < this.wiringStatus.views.length; k ++) {
-                if (i in this.wiringStatus.views[k].connections) {
-                    connectionView = this.wiringStatus.views[k].connections[i];
-                    break;
-                }
-            }
-            this.generateConnection(workspace, this.wiringStatus.connections[i], connectionView);
+        for (i = 0; i < this.oldWiring.connections.length; i += 1) {
+            connectionView = this.behaviourEngine.getConnection(i);
+            this.generateConnection(workspace, this.oldWiring.connections[i], connectionView);
         }
+
+        this.behaviourEngine.readOnly = false;
+        this.behaviourEngine.activateBehaviour();
 
         this.activateCtrlMultiSelect();
         this.valid = true;
@@ -840,6 +987,7 @@ Wirecloud.ui.WiringEditor = (function () {
         this.canvas.clear();
         this.components.clear();
         this.arrows = [];
+        this.connections = [];
         this.mini_widgets = {};
         this.iwidgets = {};
         this.currentlyInUseOperators = {};
@@ -1027,6 +1175,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
                 // Draw the arrow
                 arrow.redraw();
+                this.connections.push(arrow);
             } catch (e) {
                 // TODO: Warning remove view for this connection and redo
                 msg = 'Creating connection. betwen [' + startAnchor.context.data.id + '] and [' + endAnchor.context.data.id + ']. ';
@@ -1072,31 +1221,22 @@ Wirecloud.ui.WiringEditor = (function () {
 
         // positions
         WiringStatus = {
-            views: [
-                {
-                    label: 'default',
-                    iwidgets: {
-                    },
-                    operators: {
-                    },
-                    multiconnectors: {
-                    },
-                    connections: [
-                    ]
-                }
-            ],
-            operators: {
-            },
-            connections: [
-            ]
+            operators: {},
+            connections: []
         };
+
+        this.behaviourEngine.onlyUpdatable = true;
 
         for (key in this.iwidgets) {
             widget = this.iwidgets[key];
             pos = widget.getStylePosition();
             inOutPos = widget.getInOutPositions();
-            positions = {'position': pos, 'endPointsInOuts': inOutPos, 'name': widget.iwidget.widget.id};
-            WiringStatus.views[0].iwidgets[key] = positions;
+
+            this.behaviourEngine.updateComponent('iwidget', key, {
+                'position': pos,
+                'endPointsInOuts': inOutPos,
+                'name': widget.iwidget.widget.id
+            });
         }
 
         for (key in this.currentlyInUseOperators) {
@@ -1125,7 +1265,7 @@ Wirecloud.ui.WiringEditor = (function () {
                     "value": ioperator.preferences[pref].value
                 };
             }
-            WiringStatus.views[0].operators[key] = positions;
+            this.behaviourEngine.updateComponent('ioperator', key, positions);
         }
 
         for (key in this.multiconnectors) {
@@ -1133,7 +1273,7 @@ Wirecloud.ui.WiringEditor = (function () {
             //TODO: this position is not exact
             pos = multiconnector.getStylePosition();
             height = parseFloat(multiconnector.wrapperElement.style.height);
-            WiringStatus.views[0].multiconnectors[key] = {
+            this.behaviourEngine.updateComponent('multiconnector', key, {
                 'id' : key,
                 'pos' : pos,
                 'height' : height,
@@ -1142,11 +1282,11 @@ Wirecloud.ui.WiringEditor = (function () {
                 'objectType' : multiconnector.context.iObject.className,
                 'pullerStart': multiconnector.mainArrow.getPullerStart(),
                 'pullerEnd': multiconnector.mainArrow.getPullerEnd()
-            };
+            });
         }
 
-        for (i = 0; i < this.arrows.length; i++) {
-            arrow = this.arrows[i];
+        for (i = 0; i < this.connections.length; i++) {
+            arrow = this.connections[i];
             if (!arrow.hasClassName('full') && !arrow.hasClassName('hollow')) {
                 WiringStatus.connections.push({
                     'readOnly': arrow.hasClassName('readOnly'),
@@ -1154,7 +1294,7 @@ Wirecloud.ui.WiringEditor = (function () {
                     'target': arrow.endAnchor.serialize(),
                     'isGhost': arrow.isGhost
                 });
-                WiringStatus.views[0].connections.push({
+                this.behaviourEngine.updateConnection({
                     'pullerStart': arrow.getPullerStart(),
                     'pullerEnd': arrow.getPullerEnd(),
                     'startMulti': arrow.startMulti,
@@ -1162,6 +1302,10 @@ Wirecloud.ui.WiringEditor = (function () {
                 });
             }
         }
+
+        this.behaviourEngine.onlyUpdatable = true;
+        WiringStatus.view = this.behaviourEngine.getGlobalView();
+        WiringStatus.behaviours = this.behaviourEngine.getBehaviours();
 
         return WiringStatus;
     };
@@ -1263,6 +1407,12 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.iwidgets[iwidget.id] = widget_interface;
 
+        this.behaviourEngine.updateComponent('iwidget', iwidget.id, {
+            'name': widget_interface.iwidget.widget.id,
+            'position': widget_interface.getStylePosition(),
+            'endPointsInOuts': widget_interface.getInOutPositions()
+        });
+
         this.layout.content.appendChild(widget_interface);
 
         this.events.widgetadded.dispatch();
@@ -1328,6 +1478,12 @@ Wirecloud.ui.WiringEditor = (function () {
         this.sourceAnchorList = this.sourceAnchorList.concat(operator_interface.sourceAnchors);
 
         this.currentlyInUseOperators[operator_interface.getId()] = operator_interface;
+
+        this.behaviourEngine.updateComponent('ioperator', operator_interface.getId(), {
+            'minimized': operator_interface.isMinimized,
+            'position': operator_interface.getStylePosition(),
+            'endPointsInOuts': operator_interface.getInOutPositions()
+        });
 
         this.entitiesNumber += 1;
         this.alertEmptyWiring.hide();
@@ -1562,11 +1718,51 @@ Wirecloud.ui.WiringEditor = (function () {
         }
     };
 
-    /**
-     * remove a iWidget.
-     */
-    WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface) {
-        var i, anchor;
+    var removeComponent = function removeComponent(component_type, component_id, component_interface) {
+        this.behaviourEngine.removeComponent(component_type, component_id, true);
+
+        switch(component_type) {
+            case 'ioperator':
+                _removeIOperator.call(this, component_interface);
+                break;
+            case 'iwidget':
+                _removeIWidget.call(this, component_interface);
+                 break;
+         }
+
+        return this;
+    };
+
+    var _removeIOperator = function _removeIOperator(operator_interface) {
+        var i, anchor, retVal;
+
+        operator_interface.unselect(false);
+        delete this.currentlyInUseOperators[operator_interface.getIOperator().id];
+        this.layout.content.removeChild(operator_interface);
+
+        for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
+            anchor = operator_interface.sourceAnchors[i];
+            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
+        }
+        for (i = 0; i < operator_interface.targetAnchors.length; i += 1) {
+            anchor = operator_interface.targetAnchors[i];
+            this.targetAnchorList.splice(this.targetAnchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
+        }
+
+        operator_interface.destroy();
+
+        this.entitiesNumber -= 1;
+        if (this.entitiesNumber === 0) {
+            this.alertEmptyWiring.show();
+        }
+
+        return this;
+    };
+
+    var _removeIWidget = function _removeIWidget(widget_interface) {
+
         widget_interface.unselect(false);
         delete this.iwidgets[widget_interface.getIWidget().id];
         this.layout.content.removeChild(widget_interface);
@@ -1591,34 +1787,100 @@ Wirecloud.ui.WiringEditor = (function () {
         if (this.entitiesNumber === 0) {
             this.alertEmptyWiring.show();
         }
+
+        return this;
+    };
+
+    /**
+     * remove a iWidget.
+     */
+    WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface, cascade_remove) {
+        var i, anchor, retVal;
+
+        retVal = this.behaviourEngine.removeComponent('iwidget', widget_interface.getIWidget().id);
+
+        if (typeof cascade_remove !== 'boolean') {
+            cascade_remove = true;
+        }
+
+        switch (retVal) {
+            case 0: // Add component to this behaviour
+                this.behaviourEngine.updateComponent('iwidget', widget_interface.getIWidget().id, {
+                    'name': widget_interface.iwidget.widget.id,
+                    'position': widget_interface.getStylePosition(),
+                    'endPointsInOuts': widget_interface.getInOutPositions()
+                });
+                widget_interface.setOnForeground();
+                break;
+            case 1: // Remove component but it exists in another behaviour
+                widget_interface.setOnBackground();
+                widget_interface.clearConnections();
+                if (cascade_remove) {
+                    var msg = gettext('This component belongs to other behaviours. ' +
+                        'Do you want to delete it from them too?');
+                    var dialog = new Wirecloud.ui.AlertWindowMenu();
+
+                    dialog.setMsg(msg);
+                    dialog.setHandler(
+                        removeComponent.bind(this, 'iwidget', widget_interface.getIWidget().id, widget_interface));
+                    dialog.show();
+                }
+                break;
+            case 2: // Remove component definitively
+                _removeIWidget.call(this, widget_interface);
+                break;
+            default:
+                // ERROR! throws
+                return this;
+        }
+
+        return this;
     };
 
     /**
      * remove a iOperator.
      */
-    WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
-        var i, anchor;
-        operator_interface.unselect(false);
-        delete this.currentlyInUseOperators[operator_interface.getIOperator().id];
-        this.layout.content.removeChild(operator_interface);
+    WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface, cascade_remove) {
+        var i, anchor, retVal;
 
-        for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
-            anchor = operator_interface.sourceAnchors[i];
-            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(anchor), 1);
-            this.recommendations.remove_anchor_to_recommendations(anchor);
-        }
-        for (i = 0; i < operator_interface.targetAnchors.length; i += 1) {
-            anchor = operator_interface.targetAnchors[i];
-            this.targetAnchorList.splice(this.targetAnchorList.indexOf(anchor), 1);
-            this.recommendations.remove_anchor_to_recommendations(anchor);
+        retVal = this.behaviourEngine.removeComponent('ioperator', operator_interface.getIOperator().id);
+
+        if (typeof cascade_remove !== 'boolean') {
+            cascade_remove = true;
         }
 
-        operator_interface.destroy();
+        switch (retVal) {
+            case 0: // Add component to this behaviour
+                this.behaviourEngine.updateComponent('ioperator', operator_interface.getIOperator().id, {
+                    'minimized': operator_interface.isMinimized,
+                    'position': operator_interface.getStylePosition(),
+                    'endPointsInOuts': operator_interface.getInOutPositions()
+                });
+                operator_interface.setOnForeground();
+                break;
+            case 1: // Remove component but it exists in another behaviour
+                operator_interface.setOnBackground();
+                operator_interface.clearConnections();
+                if (cascade_remove) {
+                    var msg = gettext('This component belongs to other behaviours. ' +
+                        'Do you want to delete it from them too?');
+                    var dialog = new Wirecloud.ui.AlertWindowMenu();
 
-        this.entitiesNumber -= 1;
-        if (this.entitiesNumber === 0) {
-            this.alertEmptyWiring.show();
+                    dialog.setMsg(msg);
+                    dialog.setHandler(
+                        removeComponent.bind(this, 'ioperator', operator_interface.getIOperator().id, operator_interface));
+                    dialog.show();
+                }
+                break;
+            case 2: // Remove component definitively
+                _removeIOperator.call(this, operator_interface);
+                break;
+            default:
+                // ERROR!
+                return this;
         }
+
+        return this;
     };
 
     /**
