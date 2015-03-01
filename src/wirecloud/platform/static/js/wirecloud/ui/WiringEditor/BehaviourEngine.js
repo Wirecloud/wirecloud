@@ -36,11 +36,18 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
         this.readOnly = false;
         this.minLength = 1;
+
+        this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
     };
 
     // ==================================================================================
     // STATIC METHODS
     // ==================================================================================
+
+    BehaviourEngine.viewpoints = {
+        'GLOBAL': 0,
+        'INDEPENDENT': 1
+    };
 
     /**
      * @static
@@ -115,7 +122,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         }
 
         return cloneObject(state);
-  };
+    };
 
     // ==================================================================================
     // PUBLIC METHODS
