@@ -368,6 +368,24 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
     };
 
+    /**
+     * Remove the set of behaviours saved.
+     * @public
+     * @function
+     *
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.empty = function empty() {
+        delete this.currentBehaviour;
+        delete this.currentState;
+        delete this.currentViewpoint;
+
+        this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
+        this.manager.empty();
+
+        return this;
+    };
+
     // ==================================================================================
     // PRIVATE METHODS
     // ==================================================================================
