@@ -42,49 +42,79 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     // STATIC METHODS
     // ==================================================================================
 
-    BehaviourEngine.normalizeWiringStatus = function normalizeWiringStatus(status) {
+    /**
+     * @static
+     * @function
+     *
+     * @param {Object.<String, *>} state
+     * @param {Boolean} [exhaustive=false]
+     * @returns {Object.<String, *>} The wiring state normalized.
+     */
+    BehaviourEngine.normalizeWiring = function normalizeWiring(state, exhaustive) {
         var i;
 
-        if (typeof status !== 'object') {
-            status = {};
+        if (typeof exhaustive !== 'boolean') {
+            exhaustive = false;
         }
 
-        if (!Array.isArray(status.connections)) {
-            status.connections = [];
+        if (typeof state !== 'object') {
+            state = {};
         }
 
-        if (typeof status.operators !== 'object') {
-            status.operators = {};
+        if (!Array.isArray(state.connections)) {
+            state.connections = [];
         }
 
-        if (typeof status.view !== 'object') {
-            status.view = {
-                components: {ioperator: {}, iwidget: {}},
-                connections: []
-            };
-
-        if (!Array.isArray(status.behaviours)) {
-            status.behaviours = [];
+        if (typeof state.operators !== 'object') {
+            state.operators = {};
         }
 
-        for (i = 0; i < status.behaviours.length; i) {
-            if (typeof status.behaviours[i] !== 'object') {
-                status.behaviours[i] = {
-                    components: {ioperator: {}, iwidget: {}},
+        if (exhaustive) {
+            if (typeof state.visual_part !== 'object') {
+                state.visual_part = {
+                    behaviours: [],
+                    components: {
+                        operator: {},
+                        widget: {}
+                    },
                     connections: []
                 };
             }
 
-            if (typeof status.behaviours[i].components !== 'object') {
-              status.behaviours[i].components = {};
+            if (!Array.isArray(state.visual_part.behaviours)) {
+                state.visual_part.behaviours = [];
             }
 
-            if (!Array.isArray(status.behaviours[i].connections)) {
-              status.behaviours[i].connections = [];
+            for (i = 0; i < state.visual_part.behaviours.length; i++) {
+                if (typeof state.visual_part.behaviours[i] !== 'object') {
+                    state.visual_part.behaviours[i] = {
+                        components: {
+                            operator: {},
+                            widget: {}
+                        },
+                        connections: []
+                    };
+                }
+
+                if (typeof state.visual_part.behaviours[i].components !== 'object') {
+                    state.visual_part.behaviours[i].components = {};
+                }
+
+                if (!Array.isArray(state.visual_part.behaviours[i].connections)) {
+                    state.visual_part.behaviours[i].connections = [];
+                }
+            }
+
+            if (typeof state.visual_part.components !== 'object') {
+                state.visual_part.components = {};
+            }
+
+            if (!Array.isArray(state.visual_part.connections)) {
+                state.visual_part.connections = [];
             }
         }
 
-        return cloneObject(status);
+        return cloneObject(state);
   };
 
     // ==================================================================================
