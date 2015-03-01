@@ -217,25 +217,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             return connectionView;
         },
 
-        'loadWiring': function loadWiring(data) {
-            var i, state;
-
-            clearBehaviourGroup.call(this);
-
-            state = BehaviourEngine.normalizeWiringStatus(data);
-            this.globalBehaviour = cloneObject(state.view);
-
-            for (i = 0; i < state.behaviours.length; i++) {
-                this.appendBehaviour(this.createBehaviour(state.behaviours[i]));
-            }
-
-            if (!this.behaviourList.length) {
-                this.appendBehaviour(this.createBehaviour());
-            }
-
-            return state;
-        },
-
         'removeBehaviour': function removeBehaviour(behaviour) {
             var found, i, index, oldBehaviour;
 
@@ -382,6 +363,31 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
         this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
         this.manager.empty();
+
+        return this;
+    };
+
+    /**
+     * Save the current wiring state given and all behaviours that contains them.
+     * @public
+     * @function
+     *
+     * @param {Object.<String, *>} state
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.loadWiring = function loadWiring(state) {
+        var i;
+
+        this.empty();
+        this.currentState = BehaviourEngine.normalizeWiring(state);
+
+        for (i = 0; i < this.currentState.visual_part.behaviours.length; i++) {
+            this.appendBehaviour(this.createBehaviour(this.currentState.visual_part.behaviours[i]));
+        }
+
+        if (!this.manager.hasChildren()) {
+            this.appendBehaviour(this.createBehaviour());
+        }
 
         return this;
     };
