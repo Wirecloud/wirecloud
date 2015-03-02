@@ -132,16 +132,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
     BehaviourEngine.prototype = {
 
-        'activateBehaviour': function activateBehaviour(behaviour) {
-            dispatchEvent.call(this, 'beforeActivate')(this.activeBehaviour);
-
-            desactivateAllExcept.call(this, behaviour);
-
-            dispatchEvent.call(this, 'afterActivate')(this.activeBehaviour);
-
-            return this;
-        },
-
         'appendBehaviour': function appendBehaviour(data) {
             var behaviour = createBehaviour.call(this, data);
 
@@ -338,6 +328,28 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     };
 
     /**
+     * @public
+     * @function
+     *
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.activateBehaviour = function activateBehaviour(behaviour) {
+        this.dispatchEvent('beforeActivate')({
+            'behaviour': this.currentBehaviour,
+            'behaviourEngine': this
+        });
+
+        desactivateAllExcept.call(this, behaviour);
+
+        this.dispatchEvent('activate')({
+            'behaviour': this.currentBehaviour,
+            'behaviourEngine': this
+        });
+
+        return this;
+    };
+
+    /**
      * Remove the set of behaviours saved.
      * @public
      * @function
@@ -390,7 +402,12 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         return new BehaviourEngine.Behaviour(data);
     };
 
-
+    /**
+     * @private
+     * @function
+     *
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
     var desactivateAllExcept = function desactivateAllExcept(behaviour) {
         var i, found;
 
@@ -398,12 +415,12 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             this.behaviourList[i].active = false;
 
             if (!found && this.behaviourList[i].equals(behaviour)) {
-                this.activeBehaviour = this.behaviourList[i];
+                this.currentBehaviour = this.behaviourList[i];
                 found = true;
             }
         }
 
-        this.activeBehaviour.active = true;
+        this.currentBehaviour.active = true;
 
         return this;
     };
