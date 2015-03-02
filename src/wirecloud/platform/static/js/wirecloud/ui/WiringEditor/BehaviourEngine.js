@@ -314,6 +314,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @public
      * @function
      *
+     * @param {Behaviour} behaviour
      * @returns {BehaviourEngine} The instance on which this function was called.
      */
     BehaviourEngine.prototype.activateBehaviour = function activateBehaviour(behaviour) {
@@ -411,6 +412,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @private
      * @function
      *
+     * @param {Behaviour} behaviour
      * @returns {BehaviourEngine} The instance on which this function was called.
      */
     var desactivateAllExcept = function desactivateAllExcept(behaviour) {
