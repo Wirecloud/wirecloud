@@ -97,7 +97,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
 
     StyledElements.Utils.inherit(Behaviour, null, StyledElements.EventManagerMixin);
 
-    Behaviour.events = ['click', 'preferences.click'];
+    Behaviour.events = ['click', 'info.click'];
 
     Behaviour.normalize = function normalize(data, index) {
         if (typeof data !== 'object') {
@@ -144,22 +144,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         'removeComponent': function removeComponent(type, id) {
             delete this.components[type][id];
             updateCounterList.call(this);
-
-            return this;
-        },
-
-        'saveSettings': function saveSettings(data) {
-            var prop;
-
-            if (data.title && data.title.length) {
-                this.title = data.title;
-                this.titleElement.innerHTML = data.title;
-            }
-
-            if (data.description && data.description.length) {
-                this.description = data.description;
-                this.descriptionElement.innerHTML = data.description;
-            }
 
             return this;
         }
@@ -303,6 +287,29 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
 
         if ((index=this.connections.indexOf(componentId)) == -1) {
             this.connections.push(connectionId);
+        }
+
+        return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {Object.<String, *>} data
+     * @returns {Behaviour} The instance on which this function was called.
+     */
+    Behaviour.prototype.updateInfo = function updateInfo(data) {
+        var prop;
+
+        if (typeof data.title === 'string' && data.title.length) {
+            this.title = data.title;
+            this.titleElement.textContent = data.title;
+        }
+
+        if (typeof data.description === 'string' && data.description.length) {
+            this.description = data.description;
+            this.descriptionElement.textContent = data.description;
         }
 
         return this;
