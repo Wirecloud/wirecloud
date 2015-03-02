@@ -394,6 +394,30 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     };
 
     /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {String} componentId
+     * @param {Object.<String, *>} componentView
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.updateComponent = function updateComponent(componentType, componentId, componentView) {
+        componentView = StyledElements.Utils.cloneObject(componentView);
+
+        switch (this.currentViewpoint) {
+            case BehaviourEngine.viewpoints.GLOBAL:
+                this.state.components[componentType][componentId] = componentView;
+                this.currentBehaviour.updateComponent(componentType, componentId);
+                break;
+            default:
+                break;
+        }
+
+        return this;
+    };
+
+    /**
      * @private
      * @function
      *

@@ -152,28 +152,33 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             return data;
         },
 
-        'updateComponent': function updateComponent(type, id, view) {
-            if (this.containsComponent(type, id)) {
-                if (typeof view !== 'undefined') {
-                    this.components[type][id] = view;
-                }
-            } else {
-                if (typeof view !== 'undefined') {
-                    this.components[type][id] = view;
-                } else {
-                    this.components[type][id] = {};
-                }
-            }
-
-            updateCounterList.call(this);
-
-            return this;
-        },
-
         'viewOf': function viewOf(type, id) {
             return this.components[type][id];
         }
 
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {String} componentId
+     * @param {Object.<String, *>} componentView
+     * @returns {Behaviour} The instance on which this function was called.
+     */
+    Behaviour.prototype.updateComponent = function updateComponent(componentType, componentId, componentView) {
+        if (typeof componentView === 'undefined') {
+            if (!this.containsComponent(componentType, componentId)) {
+                this.components[componentType][componentId] = {};
+            }
+        } else {
+            this.components[componentType][componentId] = componentView;
+        }
+
+        updateCounterList.call(this);
+
+        return this;
     };
 
     // ==================================================================================
