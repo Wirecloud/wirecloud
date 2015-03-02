@@ -20,42 +20,84 @@
 
 Wirecloud.ui.WiringEditor.Behaviour = (function () {
 
-    'use strict';
+    "use strict";
 
-    // ==================================================================================
-    // CLASS CONSTRUCTOR
-    // ==================================================================================
+    /**
+     * Create a new instance of class Behaviour.
+     * @class
+     *
+     * @param {Object.<String, *>} data
+     * @param {Object.<String, *>} [options]
+     */
+    var Behaviour = function Behaviour(data, options) {
+        var countersElement;
 
-    var Behaviour = function Behaviour(data, index, options) {
-        data = Behaviour.normalize(data, index);
-        this.eventTarget = buildEventTarget.call(this, data);
+        StyledElements.EventManagerMixin.call(this, Behaviour.events);
+        data = Behaviour.normalize(data);
+
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = "behaviour";
+
+        this.bodyElement = document.createElement('div');
+        this.bodyElement.className = "behaviour-body";
+        this.wrapperElement.appendChild(this.bodyElement);
 
         this.title = data.title;
         this.description = data.description;
 
-        this.components  = data.components;
+        this.titleElement = document.createElement('span');
+        this.titleElement.className = "behaviour-title";
+        this.titleElement.textContent = this.title;
+        this.bodyElement.appendChild(this.titleElement);
+
+        this.descriptionElement = document.createElement('span');
+        this.descriptionElement.className = "behaviour-description";
+        this.descriptionElement.textContent = this.description;
+        this.bodyElement.appendChild(this.descriptionElement);
+
+        countersElement = document.createElement('div');
+        countersElement.className = "behaviour-elements";
+        this.bodyElement.appendChild(this.countersElement);
+
+        this.components = data.components;
         this.connections = data.connections;
+
+        this.connectionsElement = document.createElement('div');
+        this.connectionsElement.className = "badge badge-connections";
+        countersElement.appendChild(this.connectionsElement);
+
+        this.operatorsElement = document.createElement('div');
+        this.operatorsElement.className = "badge badge-operators";
+        countersElement.appendChild(this.operatorsElement);
+
+        this.widgetsElement = document.createElement('div');
+        this.widgetsElement.className = "badge badge-widgets";
+        countersElement.appendChild(this.widgetsElement);
+
+        this.headingElement = document.createElement('div');
+        this.headingElement.className = "behaviour-heading";
+        this.wrapperElement.appendChild(this.headingElement);
 
         Object.defineProperty(this, 'active', {
             'get': function get() {
-                return this.eventTarget.classList.contains('active');
+                return this.wrapperElement.classList.contains('active');
             },
             'set': function set(value) {
                 if (value) {
-                    this.eventTarget.classList.add('active');
+                    this.wrapperElement.classList.add('active');
                 } else {
-                    this.eventTarget.classList.remove('active');
+                    this.wrapperElement.classList.remove('active');
                 }
             }
         });
 
-        updateCounterList.call(this);
         this.active = data.active;
+        updateCounterList.call(this);
     };
 
-    // ==================================================================================
-    // STATIC METHODS
-    // ==================================================================================
+    StyledElements.Utils.inherit(Behaviour, null, StyledElements.EventManagerMixin);
+
+    Behaviour.events = ['click', 'preferences.click'];
 
     Behaviour.normalize = function normalize(data, index) {
         if (typeof data !== 'object') {
@@ -96,14 +138,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
     // ==================================================================================
 
     Behaviour.prototype = {
-
-        'addEventListener': function addEventListener(eventType, eventHandler) {
-            this.eventTarget.addEventListener(eventType, function (event) {
-                eventHandler(this, event);
-            }.bind(this));
-
-            return this;
-        },
 
         'equals': function equals(behaviour) {
             return (behaviour instanceof Behaviour) && Object.is(this, behaviour);
@@ -234,44 +268,16 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         return this;
     };
 
-    // ==================================================================================
-    // PRIVATE METHODS
-    // ==================================================================================
-
-    var buildEventTarget = function buildEventTarget(data) {
-        var eventTarget;
-
-        eventTarget = document.createElement('div');
-        eventTarget.className = 'behaviour';
-        eventTarget.innerHTML =
-            '<div class="behaviour-header">' +
-            '<span class="title">' + data.title + '</span>' +
-            '<span class="option icon-cog"></span>' +
-            '</div>' +
-            '<div class="behaviour-body">' +
-                data.description +
-            '</div>' + 
-            '<div class="behaviour-counters">' +
-                '<div class="badge badge-connection"></div>' +
-                '<div class="badge badge-ioperator"></div>' +
-                '<div class="badge badge-iwidget"></div>' +
-            '</div>';
-
-        this.ioptCounter = eventTarget.querySelector('.badge-ioperator');
-        this.iwgtCounter = eventTarget.querySelector('.badge-iwidget');
-        this.cnctCounter = eventTarget.querySelector('.badge-connection');
-
-        this.title = eventTarget.querySelector('.title');
-        this.description = eventTarget.querySelector('.behaviour-body');
-        this.preferences = eventTarget.querySelector('.option.icon-cog');
-
-        return eventTarget;
-    };
-
+    /**
+     * @private
+     * @function
+     *
+     * @returns {Behaviour} The instance on which this function was called.
+     */
     var updateCounterList = function updateCounterList() {
-        this.ioptCounter.innerHTML = Object.keys(this.data.components.ioperator).length;
-        this.iwgtCounter.innerHTML = Object.keys(this.data.components.iwidget).length;
-        this.cnctCounter.innerHTML = this.data.connections.length;
+        this.connectionsElement.textContent = this.connections.length;
+        this.operatorsElement.textContent = Object.keys(this.components.operator).length;
+        this.widgetsElement.textContent = Object.keys(this.components.widget).length;
 
         return this;
     };
