@@ -123,7 +123,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }
         }
 
-        return cloneObject(state);
+        return StyledElements.Utils.cloneObject(state);
     };
 
     // ==================================================================================
@@ -392,10 +392,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         }
 
         return this;
-    };
-
-    var cloneObject = function cloneObject(objectData) {
-        return JSON.parse(JSON.stringify(objectData));
     };
 
     /**

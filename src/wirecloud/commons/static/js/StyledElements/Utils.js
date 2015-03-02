@@ -626,6 +626,10 @@ if (window.StyledElements == null) {
         return result;
     };
 
+    Utils.cloneObject = function cloneObject(object) {
+        return JSON.parse(JSON.stringify(object));
+    };
+
     Utils.isEmptyObject = function isEmptyObject(obj) {
         var name;
 
