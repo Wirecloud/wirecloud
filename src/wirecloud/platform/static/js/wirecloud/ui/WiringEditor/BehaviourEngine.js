@@ -334,28 +334,29 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     };
 
     /**
-     * Save the current wiring state given and all behaviours that contains them.
      * @public
      * @function
      *
      * @param {Object.<String, *>} state
-     * @returns {BehaviourEngine} The instance on which this function was called.
+     * @returns {Object.<String, *>} The wiring state normalized.
      */
     BehaviourEngine.prototype.loadWiring = function loadWiring(state) {
         var i;
 
-        this.empty();
-        this.currentState = BehaviourEngine.normalizeWiring(state);
+        state = BehaviourEngine.normalizeWiring(state);
 
-        for (i = 0; i < this.currentState.visual_part.behaviours.length; i++) {
-            this.appendBehaviour(this.createBehaviour(this.currentState.visual_part.behaviours[i]));
+        this.empty();
+        this.currentState = state.visual_part;
+
+        for (i = 0; i < this.currentState.behaviours.length; i++) {
+            this.appendBehaviour(this.createBehaviour(this.currentState.behaviours[i]));
         }
 
-        if (!this.manager.hasChildren()) {
+        if (!this.hasBehaviours()) {
             this.appendBehaviour(this.createBehaviour());
         }
 
-        return this;
+        return state;
     };
 
     /**

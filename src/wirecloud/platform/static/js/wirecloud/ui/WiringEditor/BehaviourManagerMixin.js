@@ -151,6 +151,16 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         return index;
     };
 
+    /**
+     * @public
+     * @function
+     *
+     * @returns {Boolean} If the list of behaviours is not empty.
+     */
+    BehaviourManagerMixin.prototype.hasBehaviours = function hasBehaviours() {
+        return this.behaviourList.length != 0;
+    };
+
     return BehaviourManagerMixin;
 
 })();
