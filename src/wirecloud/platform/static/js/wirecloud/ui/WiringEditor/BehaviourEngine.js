@@ -20,13 +20,15 @@
 
 Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
-    'use strict';
+    "use strict";
 
-    // ==================================================================================
-    // CLASS CONSTRUCTOR
-    // ==================================================================================
-
-    var BehaviourEngine = function BehaviourEngine(manager, options) {
+    /**
+     * Create a new instance of class BehaviourEngine.
+     * @class
+     *
+     * @param {Object.<String, *>} [options]
+     */
+    var BehaviourEngine = function BehaviourEngine(options) {
         StyledElements.EventManagerMixin.call(this, BehaviourEngine.events);
         Wirecloud.ui.WiringEditor.BehaviourManagerMixin.call(this);
 
