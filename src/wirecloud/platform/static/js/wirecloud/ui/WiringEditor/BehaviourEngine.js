@@ -132,18 +132,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
     BehaviourEngine.prototype = {
 
-        'containsComponent': function containsComponent(type, id) {
-            var i, found;
-
-            for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
-                if (this.behaviourList[i].containsComponent(type, id)) {
-                    found = true;
-                }
-            }
-
-            return found;
-        },
-
         'removeComponent': function removeComponent(type, id, cascadeRemove) {
             var i;
 
@@ -269,6 +257,26 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         this.emptyBehaviourList();
 
         return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {String} componentId
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.containsComponent = function containsComponent(type, id) {
+        var i, found;
+
+        for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
+            if (this.behaviourList[i].containsComponent(componentType, componentId)) {
+                found = true;
+            }
+        }
+
+        return found;
     };
 
     /**

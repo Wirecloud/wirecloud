@@ -105,10 +105,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             return this;
         },
 
-        'containsComponent': function containsComponent(type, id) {
-            return id in this.components[type];
-        },
-
         'equals': function equals(behaviour) {
             return (behaviour instanceof Behaviour) && Object.is(this, behaviour);
         },
@@ -152,6 +148,18 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             return data;
         }
 
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {String} componentId
+     * @returns {Boolean} If the component given is saved.
+     */
+    Behaviour.prototype.containsComponent = function containsComponent(componentType, componentId) {
+        return componentId in this.components[componentType];
     };
 
     /**
