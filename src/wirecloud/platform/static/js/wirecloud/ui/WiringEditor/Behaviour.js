@@ -133,19 +133,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         return data;
     };
 
-    // ==================================================================================
-    // PUBLIC METHODS
-    // ==================================================================================
-
     Behaviour.prototype = {
-
-        'equals': function equals(behaviour) {
-            return (behaviour instanceof Behaviour) && Object.is(this, behaviour);
-        },
-
-        'hasView': function hasView(type, id) {
-            return Object.keys(this.components[type][id]).length;
-        },
 
         'removeComponent': function removeComponent(type, id) {
             delete this.components[type][id];
@@ -182,6 +170,29 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      */
     Behaviour.prototype.containsComponent = function containsComponent(componentType, componentId) {
         return componentId in this.components[componentType];
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {Behaviour} behaviour
+     * @returns {Boolean} If the behaviour given is the same behaviour saved.
+     */
+    Behaviour.prototype.equals = function equals(behaviour) {
+        return (behaviour instanceof Behaviour) && Object.is(this, behaviour);
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {String} componentId
+     * @returns {Boolean} If the component given has view registered.
+     */
+    Behaviour.prototype.hasComponentView = function hasComponentView(componentType, componentId) {
+        return Object.keys(this.components[componentType][componentId]).length;
     };
 
     /**
