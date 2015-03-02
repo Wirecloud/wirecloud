@@ -232,6 +232,23 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @public
      * @function
      *
+     * @param {String} connectionId
+     * @returns {Behaviour} The instance on which this function was called.
+     */
+    Behaviour.prototype.removeConnection = function removeConnection(connectionId) {
+        var index;
+
+        if ((index=this.connections.indexOf(connectionId)) != -1) {
+            this.connections.splice(index, 1);
+        }
+
+        return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
      * @param {String} componentType
      * @param {String} componentId
      * @param {Object.<String, *>} componentView

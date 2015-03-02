@@ -168,18 +168,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             return 2;
         },
 
-        'removeConnection': function removeConnection(connectionIndex) {
-            if (this.readOnly || this.onlyUpdatable) {
-                return -1;
-            }
-
-            if (connectionIndex in this.globalBehaviour.connections) {
-                this.globalBehaviour.connections.splice(connectionIndex, 1);
-            }
-
-            return this;
-        },
-
         'serialize': function serialize() {
             var cleaned_data, i;
 
@@ -397,6 +385,26 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
             this.activateBehaviour(oldBehaviour);
             this._removeBehaviour(behaviour);
+        }
+
+        return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} connectionId
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.removeConnection = function removeConnection(connectionId) {
+        var found, i;
+
+        for (found = false, i = 0; !found && i < this.state.connections.length; i++) {
+            if (this.state.connections[i].id == connectionId) {
+                this.state.connections.splice(i, 1);
+                found = true;
+            }
         }
 
         return this;
