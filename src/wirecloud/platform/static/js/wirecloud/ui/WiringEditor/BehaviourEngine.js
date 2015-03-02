@@ -238,34 +238,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }
 
             return cleaned_data;
-        },
-
-        'updateComponent': function updateComponent(type, id, view) {
-            if (this.readOnly) {
-                return this;
-            }
-
-            view = cloneObject(view);
-
-            if (this.globalOutlook) {
-                if (!this.onlyUpdatable) {
-                    this.activeBehaviour.updateComponent(type, id);
-                }
-
-                this.globalBehaviour.components[type][id] = view;
-            }
-
-            return this;
-        },
-
-        'viewOf': function viewOf(type, id, behaviour) {
-            var view;
-
-            if (this.globalOutlook) {
-                view = this.globalBehaviour.components[type][id];
-            }
-
-            return view;
         }
 
     };
@@ -331,6 +303,28 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         this.emptyBehaviourList();
 
         return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {String} componentId
+     * @returns {Object.<String, *>} The current view of the component given.
+     */
+    BehaviourEngine.prototype.getComponentView = function getComponentView(componentType, componentId) {
+        var componentView;
+
+        switch (this.currentViewpoint) {
+            case BehaviourEngine.viewpoints.GLOBAL:
+                componentView = this.currentState.components[componentType][componentId];
+                break;
+            default:
+                break;
+        }
+
+        return componentView;
     };
 
     /**

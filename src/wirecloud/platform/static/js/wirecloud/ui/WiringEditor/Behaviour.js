@@ -150,12 +150,20 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             };
 
             return data;
-        },
-
-        'viewOf': function viewOf(type, id) {
-            return this.components[type][id];
         }
 
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {String} componentId
+     * @returns {Object.<String, *>} The current view of the component given.
+     */
+    Behaviour.prototype.getComponentView = function getComponentView(componentType, componentId) {
+        return this.components[componentType][componentId];
     };
 
     /**
