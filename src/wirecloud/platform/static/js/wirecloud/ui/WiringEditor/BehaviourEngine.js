@@ -40,10 +40,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     StyledElements.Utils.inherit(BehaviourEngine, null,
         StyledElements.EventManagerMixin, Wirecloud.ui.WiringEditor.BehaviourManagerMixin);
 
-    // ==================================================================================
-    // STATIC METHODS
-    // ==================================================================================
-
     BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeRemove'];
 
     BehaviourEngine.viewpoints = {
@@ -166,20 +162,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             delete this.globalBehaviour.components[type][id];
 
             return 2;
-        },
-
-        'serialize': function serialize() {
-            var cleaned_data, i;
-
-            cleaned_data = {
-                'global': cloneObject(this.globalBehaviour)
-            };
-
-            for (i = 0; i < this.behaviourList.length; i++) {
-                cleaned_data[i] = cloneObject(this.behaviourList[i].serialize());
-            }
-
-            return cleaned_data;
         }
 
     };
@@ -408,6 +390,28 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         }
 
         return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @returns {Object.<String, *>} The visual part of current wiring state.
+     */
+    BehaviourEngine.prototype.serialize = function serialize() {
+        var visualPart, i;
+
+        visualPart = {
+            components: this.state.components,
+            connections: this.state.connections,
+            behaviours: []
+        };
+
+        for (i = 0; i < this.behaviourList.length; i++) {
+            visualPart.behaviours.push(this.behaviourList[i]);
+        }
+
+        return StyledElements.Utils.cloneObject(visualPart);
     };
 
     /**

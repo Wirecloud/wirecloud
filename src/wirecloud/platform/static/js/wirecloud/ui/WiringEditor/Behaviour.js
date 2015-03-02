@@ -15,7 +15,7 @@
  *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals gettext, StyledElements, Wirecloud */
+/*global StyledElements, Wirecloud */
 
 
 Wirecloud.ui.WiringEditor.Behaviour = (function () {
@@ -168,18 +168,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             }
 
             return this;
-        },
-
-        'serialize': function serialize() {
-            var data = {
-                title: this.title,
-                description: this.description,
-                active: this.active,
-                components: this.components,
-                connections: this.connections
-            };
-
-            return data;
         }
 
     };
@@ -243,6 +231,24 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         }
 
         return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @returns {Object.<String, *>} The current information saved.
+     */
+    Behaviour.prototype.serialize = function serialize() {
+        var data = {
+            active: this.active,
+            title: this.title,
+            description: this.description,
+            components: this.components,
+            connections: this.connections
+        };
+
+        return StyledElements.Utils.cloneObject(data);
     };
 
     /**
