@@ -209,6 +209,23 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         return this;
     };
 
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentId
+     * @returns {Behaviour} The instance on which this function was called.
+     */
+    Behaviour.prototype.updateConnection = function updateConnection(connectionId) {
+        var index;
+
+        if ((index=this.connections.indexOf(componentId)) == -1) {
+            this.connections.push(connectionId);
+        }
+
+        return this;
+    };
+
     // ==================================================================================
     // PRIVATE METHODS
     // ==================================================================================

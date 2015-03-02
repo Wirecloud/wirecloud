@@ -132,22 +132,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
     BehaviourEngine.prototype = {
 
-        'updateConnection': function updateConnection(connectionIndex, connectionView) {
-            if (this.readOnly) {
-                return this;
-            }
-
-            if (connectionIndex in this.globalBehaviour.connections) {
-                this.globalBehaviour.connections[connectionIndex] = connectionView;
-            } else {
-                if (!this.onlyUpdatable) {
-                    this.globalBehaviour.connections.push(connectionView);
-                }
-            }
-
-            return this;
-        },
-
         'containsComponent': function containsComponent(type, id) {
             var i, found;
 
@@ -412,6 +396,41 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             case BehaviourEngine.viewpoints.GLOBAL:
                 this.state.components[componentType][componentId] = componentView;
                 this.currentBehaviour.updateComponent(componentType, componentId);
+                break;
+            default:
+                break;
+        }
+
+        return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentId
+     * @param {Object.<String, *>} componentView
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.updateConnection = function updateConnection(connectionId, connectionView) {
+        var found, i;
+
+        componentView = StyledElements.Utils.cloneObject(componentView);
+
+        switch (this.currentViewpoint) {
+            case BehaviourEngine.viewpoints.GLOBAL:
+                for (found = false, i = 0; !found && i < this.state.connections.length; i++) {
+                    if (this.state.connections[i].id == connectionId) {
+                        this.state.connections[i] = connectionView;
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    this.state.components.push(componentView);
+                }
+
+                this.currentBehaviour.updateConnection(connectionId);
                 break;
             default:
                 break;
