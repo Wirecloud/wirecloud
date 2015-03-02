@@ -139,17 +139,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         return data;
     };
 
-    Behaviour.prototype = {
-
-        'removeComponent': function removeComponent(type, id) {
-            delete this.components[type][id];
-            updateCounterList.call(this);
-
-            return this;
-        }
-
-    };
-
     /**
      * @public
      * @function
@@ -215,6 +204,21 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         }
 
         return connectionView;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {String} componentId
+     * @returns {Behaviour} The instance on which this function was called.
+     */
+    Behaviour.prototype.removeComponent = function removeComponent(componentType, componentId) {
+        delete this.components[componentType][componentId];
+        updateCounterList.call(this);
+
+        return this;
     };
 
     /**

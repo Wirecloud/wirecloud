@@ -122,50 +122,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         return StyledElements.Utils.cloneObject(state);
     };
 
-    // ==================================================================================
-    // PUBLIC METHODS
-    // ==================================================================================
-
-    BehaviourEngine.prototype = {
-
-        'removeComponent': function removeComponent(type, id, cascadeRemove) {
-            var i;
-
-            if (this.readOnly || this.onlyUpdatable) {
-                return -1;
-            }
-
-            if (typeof cascadeRemove !== 'boolean') {
-                cascadeRemove = false;
-            }
-
-            if (!this.containsComponent(type, id)) {
-                return -1;
-            }
-
-            if (cascadeRemove) {
-                for (i = 0; i < this.behaviourList.length; i++) {
-                    this.behaviourList[i].removeComponent(type, id);
-                }
-            } else {
-                if (!this.activeBehaviour.containsComponent(type, id)) {
-                    return 0;
-                }
-
-                this.activeBehaviour.removeComponent(type, id);
-
-                if (this.containsComponent(type, id)) {
-                    return 1;
-                }
-            }
-
-            delete this.globalBehaviour.components[type][id];
-
-            return 2;
-        }
-
-    };
-
     /**
      * @public
      * @function
@@ -370,6 +326,38 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         }
 
         return this;
+    };
+
+    BehaviourEngine.prototype.removeComponent = function removeComponent(componentType, componentId, cascadeRemove) {
+        var i;
+
+        if (typeof cascadeRemove !== 'boolean') {
+            cascadeRemove = false;
+        }
+
+        if (!this.containsComponent(componentType, componentId)) {
+            return -1;
+        }
+
+        if (cascadeRemove) {
+            for (i = 0; i < this.behaviourList.length; i++) {
+                this.behaviourList[i].removeComponent(componentType, componentId);
+            }
+        } else {
+            if (!this.currentBehaviour.containsComponent(componentType, componentId)) {
+                return 0;
+            }
+
+            this.currentBehaviour.removeComponent(componentType, componentId);
+
+            if (this.containsComponent(componentType, componentId)) {
+                return 1;
+            }
+        }
+
+        delete this.currentState.components[componentType][componentId];
+
+        return 2;
     };
 
     /**
