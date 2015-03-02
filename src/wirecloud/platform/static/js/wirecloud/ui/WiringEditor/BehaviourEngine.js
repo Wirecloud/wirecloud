@@ -229,12 +229,26 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.appendBehaviour = function appendBehaviour(behaviour) {
         this._appendBehaviour(behaviour);
 
+        behaviour.headingElement.addEventListener('click', function (event) {
+            behaviour.dispatchEvent('click')({
+                'behaviour': behaviour,
+                'behaviourEngine': this,
+            }, event);
+        }.bind(this));
+
+        behaviour.bodyElement.addEventListener('click', function (event) {
+            behaviour.dispatchEvent('click.preferences')({
+                'behaviour': behaviour,
+                'behaviourEngine': this,
+            }, event);
+        }.bind(this));
+
         if (behaviour.active || !this.currentBehaviour) {
             desactivateAllExcept.call(this, behaviour);
         }
 
         this.dispatchEvent('append')({
-            'behaviour': this.currentBehaviour,
+            'behaviour': behaviour,
             'behaviourEngine': this
         });
 
