@@ -682,16 +682,31 @@ if (window.StyledElements == null) {
     }
 
     /**
-     * Add the parentClass' prototype and constructor to the childClass given.
-     * @function
+     * Add public methods of 'parentClass' to the 'childClass' given.
      * @public
+     * @function
      *
      * @param {Function} childClass
      * @param {Function} parentClass
      */
     Utils.inherit = function inherit(childClass, parentClass) {
-        childClass.prototype = Object.create(parentClass.prototype);
+        var i, mixinClass, memberName;
+
+        if (parentClass !== null) {
+            childClass.prototype = Object.create(parentClass.prototype);
+        }
+
         childClass.prototype.constructor = childClass;
+
+        for (i = 2; i < arguments.length; i++) {
+            mixinClass = arguments[i];
+
+            for (memberName in mixinClass.prototype) {
+                if (memberName !== 'constructor') {
+                    childClass.prototype[memberName] = mixinClass.prototype[memberName];
+                }
+            }
+        }
     };
 
     StyledElements.Utils = Utils;
