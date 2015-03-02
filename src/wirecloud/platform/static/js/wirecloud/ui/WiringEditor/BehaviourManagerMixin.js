@@ -83,6 +83,18 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         return this;
     };
 
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {Object.<String, *>} data
+     * @returns {BehaviourManagerMixin} The instance on which this function was called.
+     */
+    BehaviourManagerMixin.prototype.createBehaviour = function createBehaviour(data) {
+        return new Wirecloud.ui.WiringEditor.Behaviour(data, this.behaviourList.length);
+    };
+
     /**
      * @public
      * @function

@@ -160,10 +160,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             return found;
         },
 
-        'createBehaviour': function createBehaviour(data) {
-            return new Wirecloud.ui.WiringEditor.Behaviour(data, this.behaviourList.length);
-        },
-
         'getAllComponents': function getAllComponents(type) {
             return this.globalBehaviour.components[type];
         },
@@ -400,12 +396,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
     var cloneObject = function cloneObject(objectData) {
         return JSON.parse(JSON.stringify(objectData));
-    };
-
-    var createBehaviour = function createBehaviour(data) {
-        data = BehaviourEngine.normalizeBehaviour(data, this.behaviourList.length);
-
-        return new BehaviourEngine.Behaviour(data);
     };
 
     /**
