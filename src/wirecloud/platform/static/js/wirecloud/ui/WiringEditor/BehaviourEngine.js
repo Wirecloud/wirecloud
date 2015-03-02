@@ -132,23 +132,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
     BehaviourEngine.prototype = {
 
-        'appendBehaviour': function appendBehaviour(data) {
-            var behaviour = createBehaviour.call(this, data);
-
-            bindEventHandlerGroup.call(this, behaviour);
-
-            this.parentElement.appendChild(behaviour);
-            this.behaviourList.push(behaviour);
-
-            if (behaviour.active || !this.activeBehaviour) {
-                desactivateAllExcept.call(this, behaviour);
-            }
-
-            dispatchEvent.call(this, 'afterAppend')(behaviour);
-
-            return this;
-        },
-
         'updateConnection': function updateConnection(connectionIndex, connectionView) {
             if (this.readOnly) {
                 return this;
@@ -342,6 +325,28 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         desactivateAllExcept.call(this, behaviour);
 
         this.dispatchEvent('activate')({
+            'behaviour': this.currentBehaviour,
+            'behaviourEngine': this
+        });
+
+        return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {Behaviour} behaviour
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.appendBehaviour = function appendBehaviour(behaviour) {
+        this._appendBehaviour(behaviour);
+
+        if (behaviour.active || !this.currentBehaviour) {
+            desactivateAllExcept.call(this, behaviour);
+        }
+
+        this.dispatchEvent('append')({
             'behaviour': this.currentBehaviour,
             'behaviourEngine': this
         });
