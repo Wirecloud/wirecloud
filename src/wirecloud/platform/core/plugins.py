@@ -142,6 +142,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Form.js',
     'js/StyledElements/PaginationInterface.js',
     'js/StyledElements/Popover.js',
+    'js/StyledElements/EventManagerMixin.js',
     'js/StyledElements/OffCanvasLayout.js',
     'js/StyledElements/Alert.js',
 )
