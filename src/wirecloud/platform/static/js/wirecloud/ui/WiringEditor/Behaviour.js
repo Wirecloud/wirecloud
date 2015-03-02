@@ -29,11 +29,11 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @param {Object.<String, *>} data
      * @param {Object.<String, *>} [options]
      */
-    var Behaviour = function Behaviour(data, options) {
+    var Behaviour = function Behaviour(data, index, options) {
         var countersElement;
 
         StyledElements.EventManagerMixin.call(this, Behaviour.events);
-        data = Behaviour.normalize(data);
+        data = Behaviour.normalize(data, index);
 
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = "behaviour";
@@ -102,28 +102,34 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
     Behaviour.normalize = function normalize(data, index) {
         if (typeof data !== 'object') {
             data = {
-                'title': 'Behaviour_' + index,
-                'description': 'No description given.',
-                'active': false,
-                'components': {'ioperator': {}, 'iwidget': {}},
-                'connections': []
+                active: false,
+                title: "New behaviour " + index,
+                description: "No description provided.",
+                components: {
+                    operator: {},
+                    widget: {}
+                },
+                connections: []
             };
-        }
-
-        if (typeof data.title !== 'string' || !data.title.length) {
-            data.title = 'Behaviour_' + index;
-        }
-
-        if (typeof data.description !== 'string' || !data.description.length) {
-            data.description = 'No description given.';
         }
 
         if (typeof data.active !== 'boolean') {
             data.active = false;
         }
 
+        if (typeof data.title !== 'string' || !data.title.length) {
+            data.title = "New behaviour " + index;
+        }
+
+        if (typeof data.description !== 'string' || !data.description.length) {
+            data.description = "No description provided.";
+        }
+
         if (typeof data.components !== 'object') {
-            data.components = {'iwidget': {}, 'ioperator': {}};
+            data.components = {
+                operator: {},
+                widget: {}
+            };
         }
 
         if (!Array.isArray(data.connections)) {
