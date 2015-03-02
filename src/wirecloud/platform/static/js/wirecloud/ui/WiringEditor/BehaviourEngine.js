@@ -33,8 +33,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         Wirecloud.ui.WiringEditor.BehaviourManagerMixin.call(this);
 
         this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
-        this.readOnly = false;
-        this.updateOnly = false;
     };
 
     StyledElements.Utils.inherit(BehaviourEngine, null,
@@ -370,9 +368,9 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.removeConnection = function removeConnection(connectionId) {
         var found, i;
 
-        for (found = false, i = 0; !found && i < this.state.connections.length; i++) {
-            if (this.state.connections[i].id == connectionId) {
-                this.state.connections.splice(i, 1);
+        for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
+            if (this.currentState.connections[i].id == connectionId) {
+                this.currentState.connections.splice(i, 1);
                 found = true;
             }
         }
@@ -390,8 +388,8 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         var visualPart, i;
 
         visualPart = {
-            components: this.state.components,
-            connections: this.state.connections,
+            components: this.currentState.components,
+            connections: this.currentState.connections,
             behaviours: []
         };
 
@@ -416,7 +414,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
         switch (this.currentViewpoint) {
             case BehaviourEngine.viewpoints.GLOBAL:
-                this.state.components[componentType][componentId] = componentView;
+                this.currentState.components[componentType][componentId] = componentView;
                 this.currentBehaviour.updateComponent(componentType, componentId);
                 break;
             default:
@@ -441,15 +439,15 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
         switch (this.currentViewpoint) {
             case BehaviourEngine.viewpoints.GLOBAL:
-                for (found = false, i = 0; !found && i < this.state.connections.length; i++) {
-                    if (this.state.connections[i].id == connectionId) {
-                        this.state.connections[i] = connectionView;
+                for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
+                    if (this.currentState.connections[i].id == connectionId) {
+                        this.currentState.connections[i] = connectionView;
                         found = true;
                     }
                 }
 
                 if (!found) {
-                    this.state.components.push(componentView);
+                    this.currentState.components.push(componentView);
                 }
 
                 this.currentBehaviour.updateConnection(connectionId);
