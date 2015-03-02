@@ -52,7 +52,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['remove']);
+        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragStop', 'remove']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -609,6 +609,8 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                     }
                     context.iObject.movement = true;
                 }
+
+                context.iObject.events.dragStop.dispatch(context.iObject);
             },
             function () {return true; }
         );
