@@ -28,17 +28,15 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
     var BehaviourEngine = function BehaviourEngine(manager, options) {
         StyledElements.EventManagerMixin.call(this, BehaviourEngine.events);
-
-        this.manager = manager;
-        this.onlyUpdatable = false;
-
-        this.readOnly = false;
-        this.minLength = 1;
+        Wirecloud.ui.WiringEditor.BehaviourManagerMixin.call(this);
 
         this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
+        this.readOnly = false;
+        this.updateOnly = false;
     };
 
-    StyledElements.Utils.inherit(BehaviourEngine, null, StyledElements.EventManagerMixin);
+    StyledElements.Utils.inherit(BehaviourEngine, null,
+        StyledElements.EventManagerMixin, Wirecloud.ui.WiringEditor.BehaviourManagerMixin);
 
     // ==================================================================================
     // STATIC METHODS
@@ -245,10 +243,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             return this;
         },
 
-        'removeBehaviourEnabled': function removeBehaviourEnabled() {
-            return this.behaviourList.length > this.minLength;
-        },
-
         'removeComponent': function removeComponent(type, id, cascadeRemove) {
             var i;
 
@@ -354,7 +348,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         delete this.currentViewpoint;
 
         this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
-        this.manager.empty();
+        this.emptyBehaviourList();
 
         return this;
     };
