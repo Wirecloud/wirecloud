@@ -27,6 +27,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @class
      *
      * @param {Object.<String, *>} data
+     * @param {Number} index
      * @param {Object.<String, *>} [options]
      */
     var Behaviour = function Behaviour(data, index, options) {
@@ -235,6 +236,8 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             this.connections.splice(index, 1);
         }
 
+        updateCounterList.call(this);
+
         return this;
     };
 
@@ -292,6 +295,8 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         if ((index=this.connections.indexOf(componentId)) == -1) {
             this.connections.push(connectionId);
         }
+
+        updateCounterList.call(this);
 
         return this;
     };
