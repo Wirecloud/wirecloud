@@ -26,13 +26,11 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     // CLASS CONSTRUCTOR
     // ==================================================================================
 
-    var BehaviourEngine = function BehaviourEngine(parentElement, options) {
-        this.globalOutlook = true;
-        this.onlyUpdatable = false;
+    var BehaviourEngine = function BehaviourEngine(manager, options) {
+        StyledElements.EventManagerMixin.call(this, BehaviourEngine.events);
 
-        this.parentElement = parentElement;
-        this.behaviourList = [];
-        this.eventHandlerGroup  = {};
+        this.manager = manager;
+        this.onlyUpdatable = false;
 
         this.readOnly = false;
         this.minLength = 1;
@@ -40,9 +38,13 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
     };
 
+    StyledElements.Utils.inherit(BehaviourEngine, null, StyledElements.EventManagerMixin);
+
     // ==================================================================================
     // STATIC METHODS
     // ==================================================================================
+
+    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeRemove'];
 
     BehaviourEngine.viewpoints = {
         'GLOBAL': 0,
@@ -136,16 +138,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             desactivateAllExcept.call(this, behaviour);
 
             dispatchEvent.call(this, 'afterActivate')(this.activeBehaviour);
-
-            return this;
-        },
-
-        'addEventListener': function addEventListener(eventType, eventHandler) {
-            if (!(eventType in this.eventHandlerGroup)) {
-                this.eventHandlerGroup[eventType] = [];
-            }
-
-            this.eventHandlerGroup[eventType].push(eventHandler);
 
             return this;
         },
@@ -392,43 +384,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         return this;
     };
 
-    // ==================================================================================
-    // PRIVATE METHODS
-    // ==================================================================================
-
-    var bindEventHandlerGroup = function bindEventHandlerGroup(behaviour) {
-        var i, eventHandler, eventType;
-
-        for (eventType in this.eventHandlerGroup) {
-            if (eventHandlerList.indexOf(eventType) != -1) {
-                continue;
-            }
-
-            for (i = 0; i < this.eventHandlerGroup[eventType].length; i++) {
-                eventHandler = this.eventHandlerGroup[eventType][i].bind(this);
-                behaviour.addEventListener(eventType, eventHandler);
-            }
-        }
-
-        return this;
-    };
-
-    var clearBehaviourGroup = function clearBehaviourGroup() {
-        var i;
-
-        for (i = 0; i < this.behaviourList.length; i++) {
-            this.parentElement.removeChild(this.behaviourList[i].eventTarget);
-        }
-
-        this.behaviourList.length = 0;
-        this.globalOutlook = true;
-
-        delete this.activeBehaviour;
-        delete this.globalBehaviour;
-
-        return this;
-    };
-
     var cloneObject = function cloneObject(objectData) {
         return JSON.parse(JSON.stringify(objectData));
     };
@@ -456,22 +411,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
         return this;
     };
-
-    var dispatchEvent = function dispatchEvent(eventType) {
-        return function wrapperEvent() {
-            var i;
-
-            if (eventType in this.eventHandlerGroup) {
-                for (i = 0; i < this.eventHandlerGroup[eventType].length; i++) {
-                    this.eventHandlerGroup[eventType][i].apply(this, arguments);
-                }
-            }
-
-            return this;
-        }.bind(this);
-    };
-
-    var eventHandlerList = ['afterActivate', 'afterAppend', 'beforeActivate', 'beforeRemove'];
 
     return BehaviourEngine;
 
