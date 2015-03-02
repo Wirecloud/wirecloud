@@ -15,7 +15,7 @@
  *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals gettext, StyledElements, Wirecloud */
+/*global StyledElements, Wirecloud */
 
 
 Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
@@ -176,42 +176,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }
 
             return connectionView;
-        },
-
-        'removeBehaviour': function removeBehaviour(behaviour) {
-            var found, i, index, oldBehaviour;
-
-            if (!(this.behaviourList.length > this.minLength)) {
-                return this;
-            }
-
-            for (index = -1, i = 0; index < 0 && i < this.behaviourList.length; i++) {
-                if (this.behaviourList[i].equals(behaviour)) {
-                    index = i;
-                }
-            }
-
-            if (index != -1) {
-                if (this.activeBehaviour.equals(behaviour)) {
-                    for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
-                        if (!this.behaviourList[i].equals(behaviour)) {
-                            oldBehaviour = this.behaviourList[i];
-                            found = true;
-                        }
-                    }
-                } else {
-                    oldBehaviour = this.activeBehaviour;
-                }
-
-                this.activateBehaviour(behaviour);
-                dispatchEvent.call(this, 'beforeRemove')(behaviour);
-
-                this.activateBehaviour(oldBehaviour);
-                this.parentElement.removeChild(behaviour.eventTarget);
-                this.behaviourList.splice(index, 1);
-            }
-
-            return this;
         },
 
         'removeComponent': function removeComponent(type, id, cascadeRemove) {
@@ -389,6 +353,41 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
         if (!this.manager.hasChildren()) {
             this.appendBehaviour(this.createBehaviour());
+        }
+
+        return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {Behaviour} behaviour
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.removeBehaviour = function removeBehaviour(behaviour) {
+        var found, i, index, oldBehaviour;
+
+        if (this.erasureEnabled && (index=this.getBehaviourIndexOf(behaviour)) != -1) {
+            if (this.currentBehaviour.equals(behaviour)) {
+                for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
+                    if (!this.behaviourList[i].equals(behaviour)) {
+                        oldBehaviour = this.behaviourList[i];
+                        found = true;
+                    }
+                }
+            } else {
+                oldBehaviour = this.currentBehaviour;
+            }
+
+            this.activateBehaviour(behaviour);
+            this.dispatchEvent('beforeRemove')({
+                'behaviour': behaviour,
+                'behaviourEngine': this
+            });
+
+            this.activateBehaviour(oldBehaviour);
+            this._removeBehaviour(behaviour);
         }
 
         return this;

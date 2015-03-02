@@ -132,6 +132,25 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         return;
     };
 
+    /**
+     * @public
+     * @function
+     *
+     * @param {Behaviour} behaviour
+     * @returns {Number} The index of behaviour found.
+     */
+    BehaviourManagerMixin.prototype.getBehaviourIndexOf = function getBehaviourIndexOf(behaviour) {
+        var i, index;
+
+        for (index = -1, i = 0; index < 0 && i < this.behaviourList.length; i++) {
+            if (this.behaviourList[i].equals(behaviour)) {
+                index = i;
+            }
+        }
+
+        return index;
+    };
+
     return BehaviourManagerMixin;
 
 })();
