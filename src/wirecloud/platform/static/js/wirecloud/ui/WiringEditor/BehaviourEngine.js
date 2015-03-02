@@ -160,24 +160,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             return found;
         },
 
-        'getAllComponents': function getAllComponents(type) {
-            return this.globalBehaviour.components[type];
-        },
-
-        'getAllConnections': function getAllConnections() {
-            return this.globalBehaviour.connections;
-        },
-
-        'getConnection': function getConnection(connectionIndex) {
-            var connectionView;
-
-            if (connectionIndex in this.globalBehaviour.connections) {
-                connectionView = this.globalBehaviour.connections[connectionIndex];
-            }
-
-            return connectionView;
-        },
-
         'removeComponent': function removeComponent(type, id, cascadeRemove) {
             var i;
 
@@ -325,6 +307,32 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         }
 
         return componentView;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} connectionId
+     * @returns {Object.<String, *>} The current view of the component given.
+     */
+    BehaviourEngine.prototype.getConnectionView = function getConnectionView(connectionId) {
+        var connectionView, found, i;
+
+        switch (this.currentViewpoint) {
+            case BehaviourEngine.viewpoints.GLOBAL:
+                for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
+                    if (this.currentState.connections[i].id == connectionId) {
+                        connectionView = this.currentState.connections[i];
+                        found = true;
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        return connectionView;
     };
 
     /**

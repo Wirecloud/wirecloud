@@ -170,6 +170,26 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @public
      * @function
      *
+     * @param {String} connectionId
+     * @returns {Object.<String, *>} The current view of the component given.
+     */
+    Behaviour.prototype.getConnectionView = function getConnectionView(connectionId) {
+        var connectionView, found, i;
+
+        for (found = false, i = 0; !found && i < this.connections.length; i++) {
+            if (this.connections[i].id == connectionId) {
+                connectionView = this.connections[i];
+                found = true;
+            }
+        }
+
+        return connectionView;
+    };
+
+    /**
+     * @public
+     * @function
+     *
      * @param {String} componentType
      * @param {String} componentId
      * @param {Object.<String, *>} componentView
