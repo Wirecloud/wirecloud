@@ -31,7 +31,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @param {Object.<String, *>} [options]
      */
     var Behaviour = function Behaviour(data, index, options) {
-        var countersElement;
+        var iconDisplay, countersElement;
 
         StyledElements.EventManagerMixin.call(this, Behaviour.events);
         data = Behaviour.normalize(data, index);
@@ -58,7 +58,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
 
         countersElement = document.createElement('div');
         countersElement.className = "behaviour-elements";
-        this.bodyElement.appendChild(this.countersElement);
+        this.bodyElement.appendChild(countersElement);
 
         this.components = data.components;
         this.connections = data.connections;
@@ -78,6 +78,10 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         this.headingElement = document.createElement('div');
         this.headingElement.className = "behaviour-heading";
         this.wrapperElement.appendChild(this.headingElement);
+
+        iconDisplay = document.createElement('span');
+        iconDisplay.className = "btn-display icon-eye-open";
+        this.headingElement.appendChild(iconDisplay);
 
         Object.defineProperty(this, 'active', {
             'get': function get() {
