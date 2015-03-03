@@ -74,7 +74,7 @@ StyledElements.EventManagerMixin = (function () {
 
             if (eventType in this.eventList) {
                 for (i = 0; i < this.eventList[eventType].length; i++) {
-                    this.eventList[eventType][i].apply(null, eventTarget, originalEvent);
+                    this.eventList[eventType][i](eventTarget, originalEvent);
                 }
             }
 
