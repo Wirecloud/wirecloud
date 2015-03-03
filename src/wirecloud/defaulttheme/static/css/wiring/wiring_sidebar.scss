@@ -35,6 +35,7 @@
 // WIRING SIDEBAR - PANEL COMPONENTS
 // ============================================================================
 
+.wiring-sidebar .panel-behaviours,
 .wiring-sidebar .panel-components {
     background-color: $panel-primary-heading-background-color;
     border-color: $panel-primary-border-color;
@@ -44,6 +45,7 @@
 // WIRING SIDEBAR - PANEL COMPONENTS HEADING
 // ============================================================================
 
+.wiring-sidebar .panel-behaviours .panel-heading,
 .wiring-sidebar .panel-components .panel-heading {
     @include position-absolute(0, 0, 0);
     height: $panel-components-heading-height;
@@ -85,6 +87,7 @@
 // WIRING SIDEBAR - PANEL COMPONENTS BODY
 // ============================================================================
 
+.wiring-sidebar .panel-behaviours .panel-body,
 .wiring-sidebar .panel-components .panel-body {
     @include position-absolute(0, $panel-components-heading-height, $panel-base-padding-horizontal, 0);
     padding: $panel-base-padding-vertical $panel-base-padding-horizontal;
@@ -102,4 +105,23 @@
             display: none;
         }
     }
+}
+
+.wiring-sidebar .panel-behaviours .btn-create {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    margin: 0px 0px $panel-components-component-margin-vertical;
+    padding: 6px 12px;
+    text-align: center;
+    background-color: $panel-components-component-background-color;
+    border: $panel-components-component-border;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.wiring-sidebar .panel-behaviours .btn-create:hover {
+    background-color: $panel-components-mousedover-component-background-color;
+    border-color: $panel-components-mousedover-component-border-color;
+    z-index: 5;
 }
