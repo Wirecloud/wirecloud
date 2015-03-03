@@ -28,7 +28,7 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
      * @class
      */
     var BehaviourManagerMixin = function BehaviourManagerMixin() {
-        var headingElement, minLength;
+        var iconElement, headingElement, minLength;
 
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = "panel panel-behaviours";
@@ -48,6 +48,14 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
             }
         });
 
+        this.btnCreate = document.createElement('div');
+        this.btnCreate.className = "btn btn-default btn-create";
+        this.bodyElement.appendChild(this.btnCreate);
+
+        iconElement = document.createElement('span');
+        iconElement.className = "icon-plus";
+        this.btnCreate.appendChild(iconElement);
+
         this.behaviourList = [];
     };
 
@@ -59,7 +67,7 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
      * @returns {BehaviourManagerMixin} The instance on which this function was called.
      */
     BehaviourManagerMixin.prototype._appendBehaviour = function _appendBehaviour(behaviour) {
-        this.bodyElement.appendChild(behaviour.wrapperElement);
+        this.bodyElement.insertBefore(behaviour.wrapperElement, this.btnCreate);
         this.behaviourList.push(behaviour);
 
         return this;

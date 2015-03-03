@@ -240,6 +240,31 @@ Wirecloud.ui.WiringEditor = (function () {
                 dialog.setValue(eventTarget.behaviour.getInfo());
             }.bind(this));
         }.bind(this));
+
+        this.behaviourEngine.addEventListener('create', function (eventTarget) {
+            var btnSave = new StyledElements.StyledButton({
+                'text': gettext("New behaviour"),
+                'class': 'btn-primary'
+            });
+
+            var dialog = new Wirecloud.ui.FormWindowMenu([
+                    {name: 'title', label: gettext("Title"), type: 'text'},
+                    {name: 'description', label: gettext("Description"), type: 'longtext'}
+                ],
+                gettext("Create a new behaviour"),
+                'form-create-behaviour',
+                {
+                    acceptButton: btnSave
+                });
+
+            dialog.executeOperation = function (data) {
+                var behaviour = eventTarget.behaviourEngine.createBehaviour(data);
+
+                eventTarget.behaviourEngine.appendBehaviour(behaviour);
+            };
+
+            dialog.show();
+        }.bind(this));
     };
 
     var buildWirecloudToolbar = function buildWirecloudToolbar() {

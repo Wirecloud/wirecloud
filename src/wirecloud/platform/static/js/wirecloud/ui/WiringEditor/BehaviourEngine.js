@@ -32,13 +32,19 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         StyledElements.EventManagerMixin.call(this, BehaviourEngine.events);
         Wirecloud.ui.WiringEditor.BehaviourManagerMixin.call(this);
 
+        this.btnCreate.addEventListener('click', function (event) {
+            this.dispatchEvent('create')({
+                'behaviourEngine': this
+            }, event);
+        }.bind(this));
+
         this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
     };
 
     StyledElements.Utils.inherit(BehaviourEngine, null,
         StyledElements.EventManagerMixin, Wirecloud.ui.WiringEditor.BehaviourManagerMixin);
 
-    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeRemove'];
+    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeRemove', 'create'];
 
     BehaviourEngine.viewpoints = {
         'GLOBAL': 0,
