@@ -22,7 +22,7 @@ from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 from django.views.i18n import javascript_catalog
 
-from wirecloud.commons.views import ResourceSearch
+from wirecloud.commons.views import ResourceSearch, SwitchUserService
 from wirecloud.platform import views
 from wirecloud.platform.context import views as context_views
 from wirecloud.platform.iwidget import views as iwidget_views
@@ -92,7 +92,7 @@ urlpatterns = patterns('wirecloud.platform.views',
         iwidget_views.IWidgetEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
         name='wirecloud.iwidget_entry'
     ),
-    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/preferences/?$',
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/preferences$',
         iwidget_views.IWidgetPreferences(permitted_methods=('POST',)),
         name='wirecloud.iwidget_preferences'
     ),
@@ -187,6 +187,11 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^api/workspace/(?P<workspace_id>\d+)/publish/?$',
         workspace_views.WorkspacePublisherEntry(permitted_methods=('POST',)),
         name='wirecloud.workspace_publish'
+    ),
+
+    url(r'api/admin/switchuser$',
+        SwitchUserService(),
+        name='wirecloud.switch_user'
     ),
 
     url('^oauth2/default_redirect_uri$',

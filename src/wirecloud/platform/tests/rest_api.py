@@ -2900,3 +2900,48 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
         check_post_bad_request_syntax(self, url)
+
+
+class AdministrationAPI(WirecloudTestCase):
+
+    fixtures = ('selenium_test_data',)
+    tags = ('rest_api',)
+
+    def check_current_user(self, user):
+
+        url = reverse('wirecloud.platform_context_collection')
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['username']['value'], user)
+
+    def test_switch_user(self):
+
+        url = reverse('wirecloud.switch_user')
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.post(url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.check_current_user('user_with_workspaces')
+
+    def test_switch_user_inexistent_user(self):
+
+        url = reverse('wirecloud.switch_user')
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.post(url, '{"username": "inexistentuser"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 404)
+        self.check_current_user('admin')
+
+    def test_switch_user_requires_permissions(self):
+
+        url = reverse('wirecloud.switch_user')
+
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.post(url, '{"username": "admin"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+        self.check_current_user('user_with_workspaces')
