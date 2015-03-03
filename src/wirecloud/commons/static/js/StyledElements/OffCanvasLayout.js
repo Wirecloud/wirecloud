@@ -166,6 +166,8 @@ StyledElements.OffCanvasLayout = (function () {
             this.directionalIcon.className = this.iconRClassName;
         }
 
+        this.events.slidedown.dispatch(panelOpened);
+
         return this;
     };
 
@@ -188,8 +190,6 @@ StyledElements.OffCanvasLayout = (function () {
      * @returns {OffCanvasLayout} The instance on which this function was called.
      */
     OffCanvasLayout.prototype.slideUp = function slideUp() {
-        this.events.slideup.dispatch();
-
         this.wrapperElement.classList.remove('slipped');
         this.slipped = false;
 
@@ -198,6 +198,8 @@ StyledElements.OffCanvasLayout = (function () {
         } else {
             this.directionalIcon.className = this.iconLClassName;
         }
+
+        this.events.slideup.dispatch();
 
         return this;
     };
