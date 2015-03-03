@@ -214,148 +214,32 @@ Wirecloud.ui.WiringEditor = (function () {
     // PRIVATE METHODS
     // ==================================================================================
 
-    var startBehaviourEngine = function startBehaviourEngine(wiringEditor) {
-
-        this.behaviourEngine.addEventListener('beforeActivate', function (behaviour) {
-            var component, id;
-
-            this.onlyUpdatable = true;
-
-            for (id in wiringEditor.iwidgets) {
-                component = wiringEditor.iwidgets[id];
-
-                this.updateComponent('iwidget', id, {
-                    'name': component.iwidget.widget.id,
-                    'position': component.getStylePosition(),
-                    'endPointsInOuts': component.getInOutPositions()
-                });
-            }
-
-            for (id in wiringEditor.currentlyInUseOperators) {
-                component = wiringEditor.currentlyInUseOperators[id];
-
-                this.updateComponent('ioperator', id, {
-                    'minimized': component.isMinimized,
-                    'position': component.getStylePosition(),
-                    'endPointsInOuts': component.getInOutPositions()
-                });
-            }
-
-            this.onlyUpdatable = false;
-        });
-
-        this.behaviourEngine.addEventListener('beforeRemove', function (behaviour) {
-            var component, id;
-
-            for (id in wiringEditor.iwidgets) {
-                component = wiringEditor.iwidgets[id];
-
-                if (behaviour.containsComponent('iwidget', id)) {
-                    wiringEditor.removeIWidget(component, false);
-                }
-            }
-
-            for (id in wiringEditor.currentlyInUseOperators) {
-                component = wiringEditor.currentlyInUseOperators[id];
-
-                if (behaviour.containsComponent('ioperator', id)) {
-                    wiringEditor.removeIOperator(component, false);
-                }
-            }
-        });
-
-        this.behaviourEngine.addEventListener('afterActivate', function (behaviour) {
-            var component, id;
-
-            for (id in wiringEditor.iwidgets) {
-                component = wiringEditor.iwidgets[id];
-                view = this.viewOf('iwidget', id);
-                component.setPosition(view.position);
-                component.setOnForeground();
-
-                if (!behaviour.containsComponent('iwidget', id)) {
-                    component.setOnBackground();
-                }
-            }
-
-            for (id in wiringEditor.currentlyInUseOperators) {
-                component = wiringEditor.currentlyInUseOperators[id];
-                view = this.viewOf('ioperator', id);
-                component.setPosition(view.position);
-                component.setOnForeground();
-
-                if (!behaviour.containsComponent('ioperator', id)) {
-                    component.setOnBackground();
-                }
-            }
-
-            for (id in wiringEditor.iwidgets) {
-                component = wiringEditor.iwidgets[id];
-                component.repaint();
-            }
-
-            for (id in wiringEditor.currentlyInUseOperators) {
-                component = wiringEditor.currentlyInUseOperators[id];
-                component.repaint();
-            }
-
-            for (i = 0; i < wiringEditor.connections.length; i++) {
-                connection = wiringEditor.connections[i];
-                connection.removeClassName('on-background');
-                connection.show();
-
-                if (!behaviour.containsConnection(connection.getId())) {
-                    connection.addClassName('on-background');
-                }
-            }
-        });
-
-        this.behaviourEngine.addEventListener('afterAppend', function (behaviour) {
-            behaviour.preferences.addEventListener('click', function (event) {
-                var acceptButton = new StyledElements.StyledButton({
-                    'text': gettext('Save changes'),
+    var startBehaviourEngine = function startBehaviourEngine() {
+        this.behaviourEngine.addEventListener('append', function (eventTarget) {
+            eventTarget.behaviour.addEventListener('info.click', function() {
+                var btnSave = new StyledElements.StyledButton({
+                    'text': gettext("Save changes"),
                     'class': 'btn-primary'
                 });
 
                 var dialog = new Wirecloud.ui.FormWindowMenu([
-                        {name: 'title', label: gettext('Title'), type: 'text'},
-                        {name: 'description', label: gettext('Description'), type: 'longtext'}
+                        {name: 'title', label: gettext("Title"), type: 'text'},
+                        {name: 'description', label: gettext("Description"), type: 'longtext'}
                     ],
-                    gettext('Behaviour settings'),
-                    'behaviour_form',
+                    gettext("Information of the behaviour"),
+                    'form-update-behaviour',
                     {
-                        acceptButton: acceptButton
+                        acceptButton: btnSave
                     });
 
                 dialog.executeOperation = function (data) {
-                    behaviour.saveSettings(data);
+                    eventTarget.behaviour.updateInfo(data);
                 };
 
-                if (wiringEditor.behaviourEngine.removeBehaviourEnabled()) {
-                    var deleteButton = new StyledElements.StyledButton({
-                        'text': gettext('Delete behaviour'),
-                        'class': 'btn-danger'
-                    });
-
-                    deleteButton.addEventListener('click', function (e) {
-                        wiringEditor.behaviourEngine.removeBehaviour(behaviour);
-                        dialog.hide();
-                    });
-
-                    dialog.windowBottom.insertBefore(deleteButton.wrapperElement, acceptButton.wrapperElement);
-                }
-
                 dialog.show();
-                dialog.setValue(behaviour.data);
-
-                event.stopPropagation();
-            });
-        });
-
-        this.behaviourEngine.addEventListener('click', function (behaviour, event) {
-            this.activateBehaviour(behaviour);
-        });
-
+                dialog.setValue(eventTarget.behaviour.getInfo());
+            }.bind(this));
+        }.bind(this));
     };
 
     var buildWirecloudToolbar = function buildWirecloudToolbar() {

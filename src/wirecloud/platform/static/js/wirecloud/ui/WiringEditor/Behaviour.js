@@ -211,6 +211,13 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         return connectionView;
     };
 
+    Behaviour.prototype.getInfo = function getInfo() {
+        return StyledElements.Utils.cloneObject({
+            'title': this.title,
+            'description': this.description
+        });
+    };
+
     /**
      * @public
      * @function
