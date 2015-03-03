@@ -79,6 +79,8 @@ StyledElements.OffCanvasLayout = (function () {
         this.iconLClassName = options.iconLClassName;
         this.iconRClassName = options.iconRClassName;
         this.slipped = false;
+        this.panelList = [];
+        this.lastestOpened = -1;
 
         this.directionalIcon = document.createElement('span');
 
@@ -108,6 +110,13 @@ StyledElements.OffCanvasLayout = (function () {
     // PUBLIC METHODS
     // ==================================================================================
 
+    OffCanvasLayout.prototype.appendPanel = function appendPanel(panelElement) {
+        this.sidebar.appendChild(panelElement.wrapperElement);
+        this.panelList.push(panelElement);
+
+        return this;
+    };
+
     /**
      * @override
      *
@@ -128,8 +137,25 @@ StyledElements.OffCanvasLayout = (function () {
      *
      * @returns {OffCanvasLayout} The instance on which this function was called.
      */
-    OffCanvasLayout.prototype.slideDown = function slideDown() {
-        this.events.slidedown.dispatch();
+    OffCanvasLayout.prototype.slideDown = function slideDown(panelIndex) {
+        var i, panelOpened;
+
+        if (this.panelList.length) {
+            for (i = 0; i < this.panelList.length; i++) {
+                if (typeof panelIndex !== 'undefined' && i === panelIndex) {
+                    this.lastestOpened = i;
+                    continue;
+                }
+
+                this.panelList[i].hide();
+            }
+
+            if (this.lastestOpened < 0) {
+                this.lastestOpened = 0;
+            }
+
+            panelOpened = this.panelList[this.lastestOpened].show();
+        }
 
         this.wrapperElement.classList.add('slipped');
         this.slipped = true;
