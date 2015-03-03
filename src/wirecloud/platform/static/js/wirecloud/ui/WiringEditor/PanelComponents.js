@@ -254,6 +254,12 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
         return;
     };
 
+    PanelComponents.prototype.hide = function hide() {
+        this.wrapperElement.classList.add('hidden');
+
+        return this;
+    };
+
     /**
      * Remove the ioperator given.
      * @function
@@ -288,6 +294,12 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
             this.iwidgets.splice(index, 0);
             this.sectionWidgets.removeChild(widgetInterface);
         }
+
+        return this;
+    };
+
+    PanelComponents.prototype.show = function show() {
+        this.wrapperElement.classList.remove('hidden');
 
         return this;
     };

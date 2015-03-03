@@ -161,6 +161,18 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         return this.behaviourList.length != 0;
     };
 
+    BehaviourManagerMixin.prototype.hide = function hide() {
+        this.wrapperElement.classList.add('hidden');
+
+        return this;
+    };
+
+    BehaviourManagerMixin.prototype.show = function show() {
+        this.wrapperElement.classList.remove('hidden');
+
+        return this;
+    };
+
     return BehaviourManagerMixin;
 
 })();
