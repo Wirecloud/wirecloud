@@ -88,14 +88,14 @@ class SwitchUserService(Service):
             return build_error_response(request, 400, msg)
 
         if "username" not in user_info:
-            return build_error_response(request, "422", "Missing target user info")
+            return build_error_response(request, 422, "Missing target user info")
 
         user_id = get_object_or_404(User, username=user_info['username']).id
+        target_user = None
         for backend in auth.get_backends():
             try:
                 target_user = backend.get_user(user_id)
-            except TypeError:
-                # This backend doesn't accept these credentials as arguments. Try the next one.
+            except:
                 continue
             if target_user is None:
                 continue

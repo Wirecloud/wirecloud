@@ -26,6 +26,7 @@ import os
 
 from django.core.urlresolvers import reverse
 from django.test import Client
+from mock import Mock, patch
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
@@ -153,10 +154,10 @@ def check_post_bad_request_content_type(self, url):
     self.assertTrue(isinstance(response_data, dict))
 
 
-def check_post_bad_request_syntax(self, url):
+def check_post_bad_request_syntax(self, url, username='user_with_workspaces'):
 
     # Authenticate
-    self.client.login(username='user_with_workspaces', password='admin')
+    self.client.login(username=username, password='admin')
 
     # Test bad json syntax
     response = self.client.post(url, 'bad syntax', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
@@ -2945,3 +2946,43 @@ class AdministrationAPI(WirecloudTestCase):
         response = self.client.post(url, '{"username": "admin"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 403)
         self.check_current_user('user_with_workspaces')
+
+    def test_switch_user_bad_request_syntax(self):
+
+        url = reverse('wirecloud.switch_user')
+        check_post_bad_request_syntax(self, url, username="admin")
+
+    def test_switch_user_bad_request_content(self):
+
+        url = reverse('wirecloud.switch_user')
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.post(url, json.dumps({}), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+
+    def test_switch_user_no_backend(self):
+
+        url = reverse('wirecloud.switch_user')
+
+        self.client.login(username='admin', password='admin')
+
+        with patch('wirecloud.commons.views.auth', autospec=True) as auth:
+            auth.get_backends.return_value = ()
+            response = self.client.post(url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 404)
+
+    def test_switch_user_no_associated_backend(self):
+
+        url = reverse('wirecloud.switch_user')
+
+        self.client.login(username='admin', password='admin')
+        backend1 = Mock()
+        backend1.get_user.return_value = None
+        backend2 = Mock()
+        backend2.get_user.side_effect = Exception()
+
+        with patch('wirecloud.commons.views.auth', autospec=True) as auth:
+            auth.get_backends.return_value = (backend1, backend2)
+            response = self.client.post(url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 404)
