@@ -17,10 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+import os
+import six
+
 from django.test import TestCase
 from mock import Mock, patch
 from south.migration import Migrations
-import six
 
 
 class TestQueryResult(object):
@@ -142,3 +145,45 @@ class PlatformSouthMigrationsTestCase(TestCase):
         migration = self._pick_migration('0016_restructure_layout_preferences')
         orm = Mock(autospec=migration.prev_orm())
         self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
+
+    def _read_json_fixtures(self, *args):
+        from django.conf import settings
+
+        testdir_path = os.path.join(settings.BASEDIR, 'wirecloud/platform/tests/test-data')
+        json_fixtures = []
+
+        for filename in args:
+            file_opened = open(os.path.join(testdir_path, filename))
+            json_fixtures.append(json.loads(file_opened.read()))
+            file_opened.close()
+
+        return tuple(json_fixtures)
+
+    def test_restructure_behaviour_oriented_wiring_forwards(self):
+        input_file, output_file = self._read_json_fixtures('wiring_state_1.0_data.json', 'wiring_state_2.0_data.json')
+
+        empty_workspace = Mock()
+        empty_workspace.wiringStatus = '{}'
+
+        workspace = Mock()
+        workspace.wiringStatus = json.dumps(input_file)
+
+        migration = self._pick_migration('0017_restructure_behaviour_oriented_wiring')
+        orm = Mock(autospec=migration.orm())
+        orm.Workspace.objects.all.return_value = TestQueryResult([empty_workspace, workspace])
+        migration.migration_instance().forwards(orm)
+
+        self.assertEqual(empty_workspace.save.call_count, 0)
+        self.assertEqual(workspace.save.call_count, 1)
+
+        new_wiring_state = json.loads(workspace.wiringStatus)
+
+        self.assertEqual(new_wiring_state, output_file)
+    test_restructure_behaviour_oriented_wiring_forwards.tags = ('behaviour-oriented-wiring',)
+
+    def test_restructure_behaviour_oriented_wiring_backwards(self):
+        migration = self._pick_migration('0017_restructure_behaviour_oriented_wiring')
+        orm = Mock(autospec=migration.prev_orm())
+
+        self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
+    test_restructure_behaviour_oriented_wiring_backwards.tags = ('behaviour-oriented-wiring',)
