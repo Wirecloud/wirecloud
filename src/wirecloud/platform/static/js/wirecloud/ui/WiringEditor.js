@@ -519,15 +519,16 @@ Wirecloud.ui.WiringEditor = (function () {
      * Create New widget
      */
     var generateWidget = function generateWidget (iwidget, widgetView) {
-        var widget_interface;
+        var widget_interface, position;
 
         try {
-            widget_interface = this.addIWidget(this, iwidget, widgetView.endPointsInOuts);
+            position = null;
 
-            // Set Widget Position
             if ('position' in widgetView) {
-                widget_interface.setPosition(widgetView.position);
+                position = widgetView.position;
             }
+
+            widget_interface = this.addIWidget(iwidget, widgetView.endPointsInOuts, position);
         } catch (e) {
             throw new Error('WiringEditor error (critical). Creating Widget: ' + e.message);;
         }
@@ -602,10 +603,7 @@ Wirecloud.ui.WiringEditor = (function () {
             }
 
             // Add the new operator
-            operator_interface = this.addIOperator(operator_instance, endpoint_order);
-            if (position != null) {
-                operator_interface.setPosition(position);
-            }
+            operator_interface = this.addIOperator(operator_instance, endpoint_order, position);
 
             // Set the minimized operator attribute
             if (is_minimized) {
@@ -1315,27 +1313,42 @@ Wirecloud.ui.WiringEditor = (function () {
     /**
      * add IWidget.
      */
-    WiringEditor.prototype.addIWidget = function addIWidget(wiringEditor, iwidget, enpPointPos) {
+    WiringEditor.prototype.addIWidget = function addIWidget(iwidget, enpPointPos, position) {
         var widget_interface, i, anchor;
 
-        widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator, false, enpPointPos);
+        widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(this, iwidget, this.arrowCreator, false, enpPointPos);
 
-        widget_interface.addEventListener('remove', function (element, event) {
-            this.removeIWidget(element);
-            this.events.widgetremoved.dispatch(element, event);
+        widget_interface.addEventListener('dragstop', function (eventTarget) {
+            this.behaviourEngine.updateComponent('widget', widget_interface.getId(), widget_interface.serialize());
         }.bind(this));
 
-        this.iwidgets[iwidget.id] = widget_interface;
-
-        this.behaviourEngine.updateComponent('iwidget', iwidget.id, {
-            'name': widget_interface.iwidget.widget.id,
-            'position': widget_interface.getStylePosition(),
-            'endPointsInOuts': widget_interface.getInOutPositions()
-        });
+        widget_interface.addEventListener('opt.remove', function (eventTarget, originalEvent) {
+            this.removeIWidget(eventTarget);
+            this.events.widgetremoved.dispatch(eventTarget, originalEvent);
+        }.bind(this));
 
         this.layout.content.appendChild(widget_interface);
 
+        if (position != null) {
+            if (position.posX < 0) {
+                position.posX = 8;
+            }
+            if (position.posY < 0) {
+                position.posY = 8;
+            }
+
+            widget_interface.setPosition(position);
+        } else {
+            widget_interface.setPosition({
+                'x': 8,
+                'y': 8
+            });
+        }
+
         this.events.widgetadded.dispatch();
+
+        this.iwidgets[iwidget.id] = widget_interface;
+        this.behaviourEngine.updateComponent('widget', iwidget.id, widget_interface.serialize());
 
         for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
             anchor = widget_interface.sourceAnchors[i];
@@ -1361,7 +1374,7 @@ Wirecloud.ui.WiringEditor = (function () {
     /**
      * add IOperator.
      */
-    WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos) {
+    WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos, position) {
         var instantiated_operator, operator_interface, i, anchor;
 
         if (ioperator instanceof Wirecloud.wiring.OperatorMeta) {
@@ -1373,12 +1386,32 @@ Wirecloud.ui.WiringEditor = (function () {
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
 
-        operator_interface.addEventListener('remove', function (element, event) {
-            this.removeIOperator(element);
-            this.events.operatorremoved.dispatch(element, event);
+        operator_interface.addEventListener('dragstop', function (eventTarget) {
+            this.behaviourEngine.updateComponent('operator', operator_interface.getId(), operator_interface.serialize());
+        }.bind(this));
+
+        operator_interface.addEventListener('opt.remove', function (eventTarget, originalEvent) {
+            this.removeIOperator(eventTarget);
+            this.events.operatorremoved.dispatch(eventTarget, originalEvent);
         }.bind(this));
 
         this.layout.content.appendChild(operator_interface);
+
+        if (position != null) {
+            if (position.posX < 0) {
+                position.posX = 8;
+            }
+            if (position.posY < 0) {
+                position.posY = 8;
+            }
+
+            operator_interface.setPosition(position);
+        } else {
+            operator_interface.setPosition({
+                'x': 8,
+                'y': 8
+            });
+        }
 
         this.events.operatoradded.dispatch();
 
@@ -1399,11 +1432,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.currentlyInUseOperators[operator_interface.getId()] = operator_interface;
 
-        this.behaviourEngine.updateComponent('ioperator', operator_interface.getId(), {
-            'minimized': operator_interface.isMinimized,
-            'position': operator_interface.getStylePosition(),
-            'endPointsInOuts': operator_interface.getInOutPositions()
-        });
+        this.behaviourEngine.updateComponent('operator', operator_interface.getId(), operator_interface.serialize());
 
         this.entitiesNumber += 1;
         this.alertEmptyWiring.hide();

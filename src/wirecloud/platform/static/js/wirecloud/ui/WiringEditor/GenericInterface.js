@@ -52,7 +52,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragStop', 'remove']);
+        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'opt.remove']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -103,6 +103,17 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 this.vendor = this.entity.meta.vendor;
                 this.name = this.entity.meta.name;
             }
+
+            /* Component Properties */
+
+            Object.defineProperty(this, 'position', {
+                get: function () {
+                    return {
+                        'x': parseInt(this.wrapperElement.style.left, 10),
+                        'y': parseInt(this.wrapperElement.style.top, 10)
+                    };
+                }
+            });
 
             /* Application Status - List of States */
 
@@ -240,7 +251,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             optionsElement.appendChild(this.options.optionRemove.wrapperElement);
             this.options.optionRemove.addEventListener('click', function (event) {
                 if (!this.readOnly) {
-                    this.events.remove.dispatch(this, event);
+                    this.events['opt.remove'].dispatch(this, event);
                 }
             }.bind(this));
 
@@ -349,7 +360,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                         wiringEditor.layout.wrapperElement.removeChild(context.iObjectClon.wrapperElement);
                         wiringEditor.layout.content.appendChild(context.iObjectClon);
                     }
-                    context.iObjectClon.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+                    context.iObjectClon.setPosition({'x': context.x + xDelta, 'y': context.y + yDelta});
                     context.iObjectClon.repaint();
                 },
                 this.onFinish.bind(this),
@@ -582,7 +593,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 context.iObject.wiringEditor.onStarDragSelected();
             },
             function onDrag(e, draggable, context, xDelta, yDelta) {
-                context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+                context.iObject.setPosition({'x': context.x + xDelta, 'y': context.y + yDelta});
                 context.iObject.repaint();
                 context.iObject.wiringEditor.onDragSelectedObjects(xDelta, yDelta);
             },
@@ -610,7 +621,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                     context.iObject.movement = true;
                 }
 
-                context.iObject.events.dragStop.dispatch(context.iObject);
+                context.iObject.events['dragstop'].dispatch(context.iObject);
             },
             function () {return true; }
         );
@@ -701,8 +712,8 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
      * Get the GenericInterface position.
      */
     GenericInterface.prototype.getPosition = function getPosition() {
-        var coordinates = {posX: this.wrapperElement.offsetLeft,
-                           posY: this.wrapperElement.offsetTop};
+        var coordinates = {'x': this.wrapperElement.offsetLeft,
+                           'y': this.wrapperElement.offsetTop};
         return coordinates;
     };
 
@@ -750,8 +761,8 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
      * Set the GenericInterface position.
      */
     GenericInterface.prototype.setPosition = function setPosition(coordinates) {
-        this.wrapperElement.style.left = coordinates.posX + 'px';
-        this.wrapperElement.style.top = coordinates.posY + 'px';
+        this.wrapperElement.style.left = coordinates.x + 'px';
+        this.wrapperElement.style.top = coordinates.y + 'px';
     };
 
     /**
@@ -1527,7 +1538,8 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         for (i = 0; i < this.endpoints.targetsElement.childNodes.length; i++) {
             targets[i] = this.getNameForSort(this.endpoints.targetsElement.childNodes[i], 'target');
         }
-        return {'sources': sources, 'targets': targets};
+
+        return {'source': sources, 'target': targets};
     };
 
     /**

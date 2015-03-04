@@ -48,19 +48,19 @@
             // Ghost Operator
             isGhost = true;
 
-            for (i = 0; i < endPointPos.sources.length; i += 1) {
+            for (i = 0; i < endPointPos.source.length; i += 1) {
                 outputs[i] = {
                     'description': '',
-                    'label': endPointPos.sources[i],
-                    'name': endPointPos.sources[i],
+                    'label': endPointPos.source[i],
+                    'name': endPointPos.source[i],
                     'friendcode': 'ghost'
                 };
             }
-            for (i = 0; i < endPointPos.targets.length; i += 1) {
+            for (i = 0; i < endPointPos.target.length; i += 1) {
                 inputs[i] = {
                     'description': '',
-                    'label': endPointPos.targets[i],
-                    'name': endPointPos.targets[i],
+                    'label': endPointPos.target[i],
+                    'name': endPointPos.target[i],
                     'friendcode': 'ghost'
                 };
             }
@@ -73,19 +73,19 @@
 
             // Sort
             if (!isGhost) {
-                if ((endPointPos.sources.length > 0) || (endPointPos.targets.length > 0)) {
-                    for (i = 0; i < endPointPos.sources.length; i += 1) {
-                        if (iwidget.outputs[endPointPos.sources[i]]) {
-                            outputs.push(iwidget.outputs[endPointPos.sources[i]]);
+                if ((endPointPos.source.length > 0) || (endPointPos.target.length > 0)) {
+                    for (i = 0; i < endPointPos.source.length; i += 1) {
+                        if (iwidget.outputs[endPointPos.source[i]]) {
+                            outputs.push(iwidget.outputs[endPointPos.source[i]]);
                         } else {
                             // Lost endpoint.
                             outputs = iwidget.widget.outputList.map(function (output) {return iwidget.outputs[output.name]});
                             break;
                         }
                     }
-                    for (i = 0; i < endPointPos.targets.length; i += 1) {
-                    if (iwidget.inputs[endPointPos.targets[i]]) {
-                            inputs.push(iwidget.inputs[endPointPos.targets[i]]);
+                    for (i = 0; i < endPointPos.target.length; i += 1) {
+                    if (iwidget.inputs[endPointPos.target[i]]) {
+                            inputs.push(iwidget.inputs[endPointPos.target[i]]);
                         } else {
                             // Lost endpoint.
                             inputs = iwidget.widget.inputList.map(function (input) {return iwidget.inputs[input.name]});
@@ -123,7 +123,7 @@
     WidgetInterface.prototype.onFinish = function onFinish(draggable, data, e) {
         var position, iwidget_interface, endPointPos, oc, scrollX, scrollY;
 
-        position = {posX: 0, posY: 0};
+        position = {'x': 0, 'y': 0};
         position = data.iObjectClon.getPosition();
 
         if (!this.wiringEditor.withinGrid(e)) {
@@ -136,21 +136,14 @@
         oc = this.wiringEditor.layout.content;
         scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
         scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
-        position.posX += scrollX;
-        position.posY += scrollY;
+        position.x += scrollX;
+        position.y += scrollY;
 
-        endPointPos = {'sources': [], 'targets': []};
-        iwidget_interface = this.wiringEditor.addIWidget(this.wiringEditor, this.iwidget, endPointPos);
+        position.x -= this.wiringEditor.getGridElement().getBoundingClientRect().left;
 
-        position.posX -= this.wiringEditor.getGridElement().getBoundingClientRect().left;
+        endPointPos = {'source': [], 'target': []};
+        iwidget_interface = this.wiringEditor.addIWidget(this.iwidget, endPointPos, position);
 
-        if (position.posX < 0) {
-            position.posX = 8;
-        }
-        if (position.posY < 0) {
-            position.posY = 8;
-        }
-        iwidget_interface.setPosition(position);
         if (!this.wiringEditor.layout.content.wrapperElement.contains(data.iObjectClon.wrapperElement)) {
             this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
         } else {
@@ -179,6 +172,15 @@
      */
     WidgetInterface.prototype.getId = function getId() {
         return this.iwidget.id;
+    };
+
+
+    WidgetInterface.prototype.serialize = function serialize() {
+        return {
+            'name': this.iwidget.widget.id,
+            'endpoints': this.getInOutPositions(),
+            'position': this.position
+        };
     };
 
     /*************************************************************************
