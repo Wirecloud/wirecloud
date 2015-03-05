@@ -286,7 +286,7 @@ Wirecloud.ui.WiringEditor = (function () {
             if (styledElement.hasClassName('active')) {
                 this.layout.slideUp();
             } else {
-                this.components.activeDefaultSection();
+                this.componentManager.activeDefaultSection();
                 this.layout.slideDown(0);
             }
         }.bind(this));
@@ -307,8 +307,8 @@ Wirecloud.ui.WiringEditor = (function () {
     var buildWiringSidebar = function buildWiringSidebar() {
         this.layout.sidebar.addClassName('wiring-sidebar');
 
-        this.components = new Wirecloud.ui.WiringEditor.PanelComponents();
-        this.layout.appendPanel(this.components);
+        this.componentManager = new Wirecloud.ui.WiringEditor.PanelComponents();
+        this.layout.appendPanel(this.componentManager);
 
         this.behaviourEngine = new WiringEditor.BehaviourEngine();
         this.layout.appendPanel(this.behaviourEngine);
@@ -470,7 +470,7 @@ Wirecloud.ui.WiringEditor = (function () {
         try {
             miniwidget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(this, iwidget, this, true);
             this.mini_widgets[iwidget.id] = miniwidget_interface;
-            this.components.appendWidget(miniwidget_interface);
+            this.componentManager.appendWidget(miniwidget_interface);
         } catch (e){
             throw new Error('WiringEditor error (critical). Creating MiniWidget: ' + e.message);
         }
@@ -488,7 +488,7 @@ Wirecloud.ui.WiringEditor = (function () {
             if (!versionInfo) {
                 // New operator
                 operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-                this.components.appendOperator(operator_interface);
+                this.componentManager.appendOperator(operator_interface);
                 this.operatorVersions[operator.vendor + '/' + operator.name] = {
                     'lastVersion': operator.version,
                     'currentVersion': operator.version,
@@ -500,9 +500,9 @@ Wirecloud.ui.WiringEditor = (function () {
                 comp = versionInfo.lastVersion.compareTo(operator.version);
                 if (comp < 0) {
                     // upgrade
-                    this.components.removeOperator(versionInfo.miniOperator);
+                    this.componentManager.removeOperator(versionInfo.miniOperator);
                     operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-                    this.components.appendOperator(operator_interface);
+                    this.componentManager.appendOperator(operator_interface);
                     this.operatorVersions[operator.vendor + '/' + operator.name].lastVersion = operator.version;
                     this.operatorVersions[operator.vendor + '/' + operator.name].currentVersion = operator.version;
                     this.operatorVersions[operator.vendor + '/' + operator.name].versions.push({'version': operator.version, 'operatorInterface': operator_interface});
@@ -728,7 +728,7 @@ Wirecloud.ui.WiringEditor = (function () {
         this.recommendations = new Wirecloud.ui.RecommendationManager();
         this.operatorVersions = {};
 
-        this.components.activeDefaultSection();
+        this.componentManager.activeDefaultSection();
         this.btnApps.removeClassName('active');
 
         this.gridFullHeight = parseFloat(this.layout.content.wrapperElement.style.height);
@@ -915,7 +915,7 @@ Wirecloud.ui.WiringEditor = (function () {
         }
 
         this.canvas.clear();
-        this.components.clear();
+        this.componentManager.clear();
         this.arrows = [];
         this.connections = [];
         this.mini_widgets = {};
@@ -1026,12 +1026,12 @@ Wirecloud.ui.WiringEditor = (function () {
         }
 
         //Change Version
-        this.components.removeOperator(miniOperator);
+        this.componentManager.removeOperator(miniOperator);
         if (this.operatorVersions[versionIndex].lastVersion.compareTo(versionInfo.version) > 0) {
             // Old Version
             versionInfo.operatorInterface.wrapperElement.classList.add('old');
         }
-        this.components.appendOperator(versionInfo.operatorInterface);
+        this.componentManager.appendOperator(versionInfo.operatorInterface);
         this.operatorVersions[versionIndex].currentVersion = versionInfo.version;
         this.operatorVersions[versionIndex].miniOperator = versionInfo.operatorInterface;
         return;
