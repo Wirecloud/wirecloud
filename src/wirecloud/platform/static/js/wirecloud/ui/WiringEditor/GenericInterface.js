@@ -52,7 +52,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'opt.remove']);
+        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'optremove']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -249,9 +249,11 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             this.options.optionPreferences.popup_menu.append(new Wirecloud.ui.WiringEditor.GenericInterfaceSettingsMenuItems(this));
 
             optionsElement.appendChild(this.options.optionRemove.wrapperElement);
-            this.options.optionRemove.addEventListener('click', function (event) {
+            this.options.optionRemove.addEventListener('click', function (originalEvent) {
                 if (!this.readOnly) {
-                    this.events['opt.remove'].dispatch(this, event);
+                    this.events.optremove.dispatch({
+                        'componentId': this.getId()
+                    }, originalEvent);
                 }
             }.bind(this));
 
@@ -600,16 +602,9 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             function onFinish(draggable, context) {
                 context.iObject.wiringEditor.onFinishSelectedObjects();
                 var position = context.iObject.getStylePosition();
-                if (position.posX < 0) {
-                    position.posX = 8;
-                }
-                if (position.posY < 0) {
-                    position.posY = 8;
-                }
-                context.iObject.setPosition(position);
-                context.iObject.repaint();
+
                 //pseudoClick
-                if ((Math.abs(context.x - position.posX) < 2) && (Math.abs(context.y - position.posY) < 2)) {
+                if ((Math.abs(context.x - position.x) < 2) && (Math.abs(context.y - position.y) < 2)) {
                     if (context.preselected) {
                         context.iObject.unselect(true);
                     }
@@ -621,7 +616,10 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                     context.iObject.movement = true;
                 }
 
-                context.iObject.events['dragstop'].dispatch(context.iObject);
+                context.iObject.events['dragstop'].dispatch({
+                    'componentId': context.iObject.getId(),
+                    'componentPosition': position
+                });
             },
             function () {return true; }
         );
@@ -722,8 +720,8 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
      */
     GenericInterface.prototype.getStylePosition = function getStylePosition() {
         var coordinates;
-        coordinates = {posX: parseInt(this.wrapperElement.style.left, 10),
-                       posY: parseInt(this.wrapperElement.style.top, 10)};
+        coordinates = {'x': parseInt(this.wrapperElement.style.left, 10),
+                       'y': parseInt(this.wrapperElement.style.top, 10)};
         return coordinates;
     };
 

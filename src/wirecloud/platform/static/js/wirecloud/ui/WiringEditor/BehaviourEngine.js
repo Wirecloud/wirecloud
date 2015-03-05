@@ -44,6 +44,13 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     StyledElements.Utils.inherit(BehaviourEngine, null,
         StyledElements.EventManagerMixin, Wirecloud.ui.WiringEditor.BehaviourManagerMixin);
 
+    BehaviourEngine.COMPONENT_UNREACHABLE = -1;
+    BehaviourEngine.COMPONENT_NOT_FOUND = -2;
+    BehaviourEngine.COMPONENT_UNSUPPORTED = -3;
+
+    BehaviourEngine.COMPONENT_REMOVED = 0;
+    BehaviourEngine.COMPONENT_REMOVED_FULLY = 1;
+
     BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeRemove', 'create'];
 
     BehaviourEngine.viewpoints = {
@@ -211,7 +218,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @param {String} componentId
      * @returns {BehaviourEngine} The instance on which this function was called.
      */
-    BehaviourEngine.prototype.containsComponent = function containsComponent(type, id) {
+    BehaviourEngine.prototype.containsComponent = function containsComponent(componentType, componentId) {
         var i, found;
 
         for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
@@ -221,6 +228,28 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         }
 
         return found;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {String} componentId
+     * @returns {Array.<Behaviour>} The behaviours that contain to the component given.
+     */
+    BehaviourEngine.prototype.getByComponent = function getByComponent(componentType, componentId) {
+        var behaviourList, i;
+
+        behaviourList = [];
+
+        for (i = 0; i < this.behaviourList.length; i++) {
+            if (this.behaviourList[i].containsComponent(componentType, componentId)) {
+                behaviourList.push(this.behaviourList[i]);
+            }
+        }
+
+        return behaviourList;
     };
 
     /**
@@ -335,12 +364,16 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.removeComponent = function removeComponent(componentType, componentId, cascadeRemove) {
         var i;
 
+        if (this.currentViewpoint !== BehaviourEngine.viewpoints.GLOBAL) {
+            return -1;
+        }
+
         if (typeof cascadeRemove !== 'boolean') {
             cascadeRemove = false;
         }
 
         if (!this.containsComponent(componentType, componentId)) {
-            return -1;
+            return BehaviourEngine.COMPONENT_NOT_FOUND;
         }
 
         if (cascadeRemove) {
@@ -349,19 +382,19 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }
         } else {
             if (!this.currentBehaviour.containsComponent(componentType, componentId)) {
-                return 0;
+                return BehaviourEngine.COMPONENT_UNREACHABLE;
             }
 
             this.currentBehaviour.removeComponent(componentType, componentId);
 
             if (this.containsComponent(componentType, componentId)) {
-                return 1;
+                return BehaviourEngine.COMPONENT_REMOVED;
             }
         }
 
         delete this.currentState.components[componentType][componentId];
 
-        return 2;
+        return BehaviourEngine.COMPONENT_REMOVED_FULLY;
     };
 
     /**
