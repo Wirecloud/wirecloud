@@ -670,6 +670,24 @@ if (window.StyledElements == null) {
         return obj1;
     };
 
+    var SIZE_UNITS = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+    Object.freeze(SIZE_UNITS);
+
+    Utils.formatSize = function formatSize(size) {
+        if (size == null) {
+            return Utils.gettext('N/A');
+        }
+
+        for (var i = 0; i < SIZE_UNITS.length; i++) {
+            if (size < 1024) {
+                break;
+            }
+            size = size / 1024;
+        }
+
+        return size.toFixed(2) + ' ' + SIZE_UNITS[i];
+    };
+
     StyledElements.Utils = Utils;
 
 })();

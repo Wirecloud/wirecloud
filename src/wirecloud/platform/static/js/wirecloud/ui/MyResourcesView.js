@@ -37,8 +37,7 @@
 
         this.viewsByName = {
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter, resource_extra_context: resource_extra_context}}),
-            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView, containerOptions: {catalogue: this}}),
-            'developer': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.PublishView, containerOptions: {catalogue: this.catalogue, mainview: this}})
+            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();
 
@@ -46,9 +45,10 @@
             'iconClass': 'icon-cloud-upload',
             'title': gettext('Upload')
         });
+        var upload_dialog = new Wirecloud.ui.WirecloudCatalogue.UploadWindowMenu({catalogue: this.catalogue, mainview: this});
         this.uploadButton.addEventListener('click', function () {
-            this.changeCurrentView('developer');
-        }.bind(this));
+            upload_dialog.show();
+        });
 
         this.marketButton = new StyledElements.StyledButton({
             'iconClass': 'icon-shopping-cart',

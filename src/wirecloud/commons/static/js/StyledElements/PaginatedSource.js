@@ -128,9 +128,13 @@
     };
 
     PaginatedSource.prototype._calculatePages = function _calculatePages() {
-        this.totalPages = Math.ceil(this.totalCount / this.pOptions.pageSize);
-        if (this.totalPages <= 0) {
+        if (this.pOptions.pageSize === 0) {
             this.totalPages = 1;
+        } else {
+            this.totalPages = Math.ceil(this.totalCount / this.pOptions.pageSize);
+            if (this.totalPages <= 0) {
+                this.totalPages = 1;
+            }
         }
     };
 

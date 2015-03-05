@@ -25,6 +25,13 @@
         right: -21px;
         line-height: $line-height-base;
     }
+
+    &::after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+
 }
 
 .alert-success {

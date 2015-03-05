@@ -162,17 +162,21 @@
     };
 
     var requestFunc = function requestFunc(index, options, onSuccess, onError) {
-        var page = index;
+        var elements, page = index;
 
         if (index > this.totalPages) {
             index = this.totalPages;
         }
         index -= 1;
 
-        var start = index * options.pageSize;
-        var end = start + options.pageSize;
+        if (options.pageSize > 0) {
+            var start = index * options.pageSize;
+            var end = start + options.pageSize;
+            elements = this.sortedElements.slice(start, end);
+        } else {
+            elements = this.sortedElements;
+        }
 
-        var elements = this.sortedElements.slice(start, end);
         onSuccess(elements, {current_page: page, total_count: this.sortedElements.length});
     };
 

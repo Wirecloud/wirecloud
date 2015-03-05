@@ -1098,8 +1098,9 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_toolbar .icon-cloud-upload"), parent=True)).click()
 
-        self.testcase.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element).send_keys(wgt_path)
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, '.upload_wgt_button'),base_element=catalogue_base_element)) .click()
+        dialog = WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.wc-upload-mac-dialog')))
+        dialog.find_element_by_css_selector('input[type="file"]').send_keys(wgt_path)
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, '.btn-primary'), base_element=dialog)).click()
         self.testcase.wait_wirecloud_ready()
 
         window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
@@ -1107,10 +1108,10 @@ class MyResourcesViewTester(MarketplaceViewTester):
             if window_menus == 1:
                 self.testcase.fail('Error: resource shouldn\'t be added')
 
-            xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error adding packaged resource: " + expect_error + "']"
-            self.testcase.driver.find_element_by_xpath(xpath)
-            self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+            dialog = WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.window_menu.message')))
+            error_msg = dialog.find_element_by_css_selector('.window_content li').text
+            self.testcase.assertEqual(error_msg, os.path.basename(wgt_file) + ": " + expect_error)
+            dialog.find_element_by_css_selector(".btn-primary").click()
 
             return None
         else:

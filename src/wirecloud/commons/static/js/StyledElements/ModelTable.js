@@ -40,7 +40,10 @@
 
             cell = document.createElement('div');
             cell.className = 'se-model-table-cell';
-            if (column.width != null) {
+            if (typeof column['class'] === 'string') {
+                cell.classList.add(column['class']);
+            }
+            if (column.width != null && column.width !== "css") {
                 cell.style.width = column.width;
             }
             cell.textContent = label;
@@ -98,7 +101,7 @@
                 cell = document.createElement('div');
                 cell.className = 'se-model-table-cell';
                 this.columnsCells[j].push(cell);
-                if (typeof column.width === 'string') {
+                if (typeof column.width === 'string' && column.width !== "css") {
                     cell.style.width = column.width;
                 }
                 if (typeof column['class'] === 'string') {
@@ -219,11 +222,14 @@
             this.source = new StyledElements.StaticPaginatedSource({pageSize: options.pageSize, sort_info: sort_info});
         }
         Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
-        this.paginationInterface = new StyledElements.PaginationInterface(this.source);
 
         this.pRefreshBody = this.reload.bind(this);
         this.source.addEventListener('requestEnd', this.pRefreshBody);
-        this.statusBar.appendChild(this.paginationInterface);
+
+        if (this.source.pOptions.pageSize !== 0) {
+            this.paginationInterface = new StyledElements.PaginationInterface(this.source);
+            this.statusBar.appendChild(this.paginationInterface);
+        }
 
         if (options.initialSortColumn === -1) {
             for (i = 0; i < this.columns.length; i += 1) {
@@ -448,8 +454,10 @@
         this.layout.destroy();
         this.layout = null;
 
-        this.paginationInterface.destroy();
-        this.paginationInterface = null;
+        if (this.paginationInterface) {
+            this.paginationInterface.destroy();
+            this.paginationInterface = null;
+        }
 
         this.source.destroy();
         this.source = null;

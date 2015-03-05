@@ -107,6 +107,8 @@ class ResourceCollection(Resource):
             except zipfile.BadZipfile:
                 return build_error_response(request, 400, _('The uploaded file is not a zip file'))
 
+            force_create = request.GET.get('force_create', 'false').strip().lower() == 'true'
+            install_embedded_resources = request.GET.get('install_embedded_resources', 'false').strip().lower() == 'true'
         else:
 
             market_endpoint = None

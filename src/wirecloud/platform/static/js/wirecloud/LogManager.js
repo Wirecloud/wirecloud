@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -121,6 +121,28 @@
         });
     };
 
+    LogManager.prototype.parseErrorResponse = function parseErrorResponse(response) {
+        var msg;
+
+        try {
+            var errorInfo = JSON.parse(response.responseText);
+            msg = errorInfo.description;
+        } catch (error) {
+            msg = gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
+            if (response.status !== 0 && response.statusText !== '') {
+                errorDesc = response.statusText;
+            } else {
+                errorDesc = Wirecloud.constants.HTTP_STATUS_DESCRIPTIONS[response.status];
+                if (errorDesc == null) {
+                    errorDesc = Wirecloud.constants.UNKNOWN_STATUS_CODE_DESCRIPTION;
+                }
+            }
+            msg = interpolate(msg, {errorCode: response.status, errorDesc: errorDesc}, true);
+        }
+
+        return msg;
+    };
+
     LogManager.prototype.formatError = function formatError(format, transport, e) {
         var msg, errorDesc;
 
@@ -142,21 +164,7 @@
                       context,
                       true);
         } else {
-            try {
-                var errorInfo = JSON.parse(transport.responseText);
-                msg = errorInfo.description;
-            } catch (error) {
-                msg = gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
-                if (transport.status !== 0 && transport.statusText !== '') {
-                    errorDesc = gettext(transport.statusText);
-                } else {
-                    errorDesc = Wirecloud.constants.HTTP_STATUS_DESCRIPTIONS[transport.status];
-                    if (errorDesc == null) {
-                        errorDesc = Wirecloud.constants.UNKNOWN_STATUS_CODE_DESCRIPTION;
-                    }
-                }
-                msg = interpolate(msg, {errorCode: transport.status, errorDesc: errorDesc}, true);
-            }
+            msg = this.parseErrorResponse(transport);
         }
         msg = interpolate(format, {errorMsg: msg}, true);
 

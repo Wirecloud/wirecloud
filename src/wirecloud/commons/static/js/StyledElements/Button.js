@@ -26,15 +26,25 @@
     "use strict";
 
     var clickCallback = function clickCallback(e) {
+        if (this.inputElement != null && e.target === this.inputElement) {
+            return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
         if (this.enabled) {
+            if (this.inputElement != null) {
+                this.inputElement.click();
+            }
             this.events.click.dispatch(this);
         }
     };
 
     var keydownCallback = function keydownCallback(e) {
         if (this.enabled && e.keyCode === 13) {
+            if (this.inputElement != null) {
+                this.inputElement.click();
+            }
             this.events.click.dispatch(this);
         }
     };
@@ -127,7 +137,7 @@
         this._keydownCallback = keydownCallback.bind(this);
 
         this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-        this.wrapperElement.addEventListener('click', this._clickCallback, true);
+        this.wrapperElement.addEventListener('click', this._clickCallback, false);
         this.wrapperElement.addEventListener('keydown', this._keydownCallback, false);
         this.wrapperElement.addEventListener('focus', onfocus.bind(this), true);
         this.wrapperElement.addEventListener('blur', onblur.bind(this), true);

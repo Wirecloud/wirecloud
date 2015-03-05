@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -50,6 +50,7 @@ CATALOGUE_CSS = (
     'css/catalogue/emptyCatalogueBox.css',
     'css/catalogue/resource.scss',
     'css/catalogue/resource_details.scss',
+    'css/catalogue/upload_window_menu.scss',
 )
 
 WIRING_EDITOR_FILES = (
@@ -99,6 +100,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/GUIBuilder.js',
     'js/StyledElements/Tooltip.js',
     'js/StyledElements/Button.js',
+    'js/StyledElements/FileButton.js',
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',
     'js/StyledElements/DynamicMenuItems.js',
@@ -441,9 +443,9 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/MarketplaceViewMenuItems.js',
                 'js/wirecloud/ui/ResourcePainter.js',
-                'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
-                'js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js',
                 'js/wirecloud/ui/WindowMenu.js',
+                'js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js',
+                'js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js',
                 'js/wirecloud/ui/AlertWindowMenu.js',
                 'js/wirecloud/ui/ExternalProcessWindowMenu.js',
                 'js/wirecloud/ui/HTMLWindowMenu.js',

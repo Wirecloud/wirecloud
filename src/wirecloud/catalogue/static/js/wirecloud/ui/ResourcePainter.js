@@ -184,7 +184,7 @@
                 return this.painter.renderTagList(this.resource, options.max);
             }.bind({painter: this, resource: resource}),
             'advancedops': this.renderAdvancedOperations.bind(this, resource),
-            'size': this.format_size.bind(this, resource.size),
+            'size': Wirecloud.Utils.formatSize.bind(this, resource.size),
             'versions': function () {
                 var versions = resource.getAllVersions().map(function (version) { return 'v' + version.text; });
                 return versions.join(', ');
@@ -335,24 +335,6 @@
         }
 
         return fragment;
-    };
-
-    var SIZE_UNITS = ['bytes', 'KB', 'MB', 'GB', 'TB'];
-    Object.freeze(SIZE_UNITS);
-
-    ResourcePainter.prototype.format_size = function format_size(size) {
-        if (size == null) {
-            return gettext('N/A');
-        }
-
-        for (var i = 0; i < SIZE_UNITS.length; i++) {
-            if (size < 1024) {
-                break;
-            }
-            size = size / 1024;
-        }
-
-        return size.toFixed(2) + ' ' + SIZE_UNITS[i];
     };
 
     ResourcePainter.prototype.get_popularity_html = function get_popularity_html(popularity) {

@@ -1,0 +1,66 @@
+@import 'variables';
+
+.wc-upload-mac-dialog .mac-package {
+    float: left;
+    margin-right: $padding-horizontal-base;
+}
+
+.wc-upload-mac-dialog .window_content {
+    position: relative;
+    height: 300px;
+}
+
+.wc-upload-mac-dialog .wc-upload-mac-border {
+    position: absolute;
+    transition: 0.35s border ease-in;
+    border: 3px solid transparent;
+    box-sizing: border-box;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+}
+
+.wc-upload-mac-dialog.drag-hover .wc-upload-mac-border {
+    border-color: $brand-primary;
+}
+
+.wc-upload-mac-message {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: $modal-inner-padding;
+}
+
+.wc-upload-mac-dialog-empty .wc-upload-mac-message {
+    display: block;
+}
+
+.wc-upload-mac-dialog-empty .se-model-table {
+    visibility: hidden;
+}
+
+.wc-upload-mac-size-column {
+    width: 90px;
+}
+
+.wc-upload-mac-button-column {
+    text-align: center;
+    width: 24px;
+}
+
+.wc-upload-mac-title {
+    text-align: center;
+    font-size:  ceil($font-size-base * 1.75);
+    line-height: ceil(ceil($font-size-base * 1.75) * $line-height-factor-base);
+}
+
+.wc-upload-mac-or {
+    text-align: center;
+    font-size:  ceil($font-size-base * 1.5);
+    line-height: ceil(ceil($font-size-base * 1.75) * $line-height-factor-base);
+}
+
+.wc-upload-mac-button {
+    text-align: center;
+}

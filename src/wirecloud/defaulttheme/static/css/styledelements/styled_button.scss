@@ -200,3 +200,14 @@
 .styled_button.btn-danger {
     @include button-variant($button-background-danger, $button-border-danger);
 }
+
+/* File buttons */
+.styled_button > input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    cursor: pointer;
+}
