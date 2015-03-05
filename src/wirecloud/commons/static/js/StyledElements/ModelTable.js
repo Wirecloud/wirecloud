@@ -39,7 +39,7 @@
             }
 
             cell = document.createElement('div');
-            cell.className = 'cell';
+            cell.className = 'se-model-table-cell';
             if (column.width != null) {
                 cell.style.width = column.width;
             }
@@ -87,7 +87,7 @@
             callback = this.pRowCallback.bind({control: this, item: item});
 
             row = document.createElement('div');
-            row.className = 'row';
+            row.className = 'se-model-table-row';
             if ((i % 2) === 1) {
                 row.classList.add('odd');
             }
@@ -96,7 +96,7 @@
                 column = this.columns[j];
 
                 cell = document.createElement('div');
-                cell.className = 'cell';
+                cell.className = 'se-model-table-cell';
                 this.columnsCells[j].push(cell);
                 if (typeof column.width === 'string') {
                     cell.style.width = column.width;
@@ -174,14 +174,14 @@
 
         this.columns = columns;
 
-        this.layout = new StyledElements.BorderLayout({'class': 'model_table'});
+        this.layout = new StyledElements.BorderLayout({'class': 'se-model-table'});
         this.wrapperElement = this.layout.wrapperElement;
 
         /*
          * Header
          */
         this.header = this.layout.getNorthContainer();
-        this.header.addClassName('headrow');
+        this.header.addClassName('se-model-table-headrow');
 
         buildHeader.call(this);
 
@@ -191,13 +191,13 @@
         this.pComponents = [];
         this.pListeners = [];
         this.tableBody = this.layout.getCenterContainer();
-        this.tableBody.addClassName('tbody');
+        this.tableBody.addClassName('se-model-table-body');
 
         /*
          * Status bar
          */
         this.statusBar = this.layout.getSouthContainer();
-        this.statusBar.addClassName('statusrow');
+        this.statusBar.addClassName('se-model-table-statusrow');
 
         this.sortColumn = null;
         if (options.source != null) {
