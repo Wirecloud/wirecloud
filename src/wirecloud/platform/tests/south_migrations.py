@@ -147,9 +147,7 @@ class PlatformSouthMigrationsTestCase(TestCase):
         self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
 
     def _read_json_fixtures(self, *args):
-        from django.conf import settings
-
-        testdir_path = os.path.join(settings.BASEDIR, 'wirecloud/platform/tests/test-data')
+        testdir_path = os.path.join(os.path.dirname(__file__), 'test-data')
         json_fixtures = []
 
         for filename in args:
