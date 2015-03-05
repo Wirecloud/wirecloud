@@ -1335,12 +1335,10 @@ Wirecloud.ui.WiringEditor = (function () {
         widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(this, iwidget, this.arrowCreator, false, enpPointPos);
 
         widget_interface.addEventListener('dragstop', function (eventTarget) {
-            this.behaviourEngine.updateComponent('widget', widget_interface.getId(), widget_interface.serialize());
-        }.bind(this));
+            widget_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
+            widget_interface.repaint();
 
-        widget_interface.addEventListener('opt.remove', function (eventTarget, originalEvent) {
-            this.removeIWidget(eventTarget);
-            this.events.widgetremoved.dispatch(eventTarget, originalEvent);
+            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize());
         }.bind(this));
 
         widget_interface.addEventListener('optremove', function (eventTarget, originalEvent) {
@@ -1505,12 +1503,10 @@ Wirecloud.ui.WiringEditor = (function () {
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
 
         operator_interface.addEventListener('dragstop', function (eventTarget) {
-            this.behaviourEngine.updateComponent('operator', operator_interface.getId(), operator_interface.serialize());
-        }.bind(this));
+            operator_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
+            operator_interface.repaint();
 
-        operator_interface.addEventListener('opt.remove', function (eventTarget, originalEvent) {
-            this.removeIOperator(eventTarget);
-            this.events.operatorremoved.dispatch(eventTarget, originalEvent);
+            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize());
         }.bind(this));
 
         operator_interface.addEventListener('optremove', function (eventTarget) {
