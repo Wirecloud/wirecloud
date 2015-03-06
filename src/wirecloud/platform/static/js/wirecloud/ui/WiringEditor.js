@@ -215,7 +215,7 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     WiringEditor.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.btnApps, this.btnBehaviours];
+        return [this.btnComponents, this.btnBehaviours];
     };
 
     // ==================================================================================
@@ -276,13 +276,14 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     var buildWirecloudToolbar = function buildWirecloudToolbar() {
-        this.btnApps = new StyledElements.StyledButton({
+        this.btnComponents = new StyledElements.StyledButton({
             'iconClass': 'icon-archive',
             'stackedIconClass': 'icon-plus-sign',
             'stackedIconposition': 'bottom-right',
-            'title': gettext("Apps available")
+            'title': gettext("Components"),
+            'class': "opt-components"
         });
-        this.btnApps.addEventListener('click', function (styledElement) {
+        this.btnComponents.addEventListener('click', function (styledElement) {
             if (styledElement.hasClassName('active')) {
                 this.layout.slideUp();
             } else {
@@ -307,7 +308,7 @@ Wirecloud.ui.WiringEditor = (function () {
     var buildWiringSidebar = function buildWiringSidebar() {
         this.layout.sidebar.addClassName('wiring-sidebar');
 
-        this.componentManager = new Wirecloud.ui.WiringEditor.PanelComponents();
+        this.componentManager = new WiringEditor.ComponentManager();
         this.layout.appendPanel(this.componentManager);
 
         this.behaviourEngine = new WiringEditor.BehaviourEngine();
@@ -315,15 +316,15 @@ Wirecloud.ui.WiringEditor = (function () {
         startBehaviourEngine.call(this);
 
         this.layout.addEventListener('slideup', function () {
-            this.btnApps.removeClassName('active');
+            this.btnComponents.removeClassName('active');
             this.btnBehaviours.removeClassName('active');
         }.bind(this));
         this.layout.addEventListener('slidedown', function (panelOpened) {
             if (panelOpened.wrapperElement.classList.contains('panel-components')) {
-                this.btnApps.addClassName('active');
+                this.btnComponents.addClassName('active');
                 this.btnBehaviours.removeClassName('active');
             } else {
-                this.btnApps.removeClassName('active');
+                this.btnComponents.removeClassName('active');
                 this.btnBehaviours.addClassName('active');
             }
         }.bind(this));
@@ -706,7 +707,7 @@ Wirecloud.ui.WiringEditor = (function () {
         this.operatorVersions = {};
 
         this.componentManager.activeDefaultSection();
-        this.btnApps.removeClassName('active');
+        this.btnComponents.removeClassName('active');
 
         this.gridFullHeight = parseFloat(this.layout.content.wrapperElement.style.height);
         this.gridFullWidth = parseFloat(this.layout.content.wrapperElement.style.width);
@@ -879,8 +880,8 @@ Wirecloud.ui.WiringEditor = (function () {
         }
         this.deactivateCtrlMultiSelect();
 
-        if (this.btnApps.hasClassName('active')) {
-            this.btnApps.wrapperElement.click();
+        if (this.btnComponents.hasClassName('active')) {
+            this.btnComponents.wrapperElement.click();
         }
 
         this.canvas.clear();

@@ -18,7 +18,7 @@
 /*globals gettext, StyledElements, Wirecloud*/
 
 
-Wirecloud.ui.WiringEditor.PanelComponents = (function () {
+Wirecloud.ui.WiringEditor.ComponentManager = (function () {
 
     "use strict";
 
@@ -27,12 +27,12 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
     // ==================================================================================
 
     /**
-     * Create a new instance of class PanelComponents.
+     * Create a new instance of class ComponentManager.
      * @class
      *
      * @param {Object.<String, *>} [options]
      */
-    var PanelComponents = function PanelComponents(options) {
+    var ComponentManager = function ComponentManager(options) {
         // Merge options's user with default options
         options = Wirecloud.Utils.merge({}, options);
 
@@ -58,9 +58,9 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
             this.activeSectionOperators();
         }.bind(this));
 
-        this.ioperators = [];
+        this.operatorGroup = {};
         this.sectionOperators = new StyledElements.Container({
-            'class': "section operators-section"
+            'class': "section operator-group"
         });
         this.sectionOperators.insertInto(containerElement);
 
@@ -86,9 +86,9 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
             this.activeSectionWidgets();
         }.bind(this));
 
-        this.iwidgets = [];
+        this.widgetGroup = {};
         this.sectionWidgets = new StyledElements.Container({
-            'class': "section widgets-section"
+            'class': "section widget-group"
         });
         this.sectionWidgets.insertInto(containerElement);
 
@@ -108,16 +108,16 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
         this.activeDefaultSection();
     };
 
-    StyledElements.Utils.inherit(PanelComponents, StyledElements.StyledElement);
+    StyledElements.Utils.inherit(ComponentManager, StyledElements.StyledElement);
 
     /**
      * Display the section chosen by default.
      * @function
      * @public
      *
-     * @returns {PanelComponents} The instance on which this function was called.
+     * @returns {ComponentManager} The instance on which this function was called.
      */
-    PanelComponents.prototype.activeDefaultSection = function activeDefaultSection() {
+    ComponentManager.prototype.activeDefaultSection = function activeDefaultSection() {
         this.activeSectionOperators();
 
         return this;
@@ -128,9 +128,9 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
      * @function
      * @public
      *
-     * @returns {PanelComponents} The instance on which this function was called.
+     * @returns {ComponentManager} The instance on which this function was called.
      */
-    PanelComponents.prototype.activeSectionOperators = function activeSectionOperators() {
+    ComponentManager.prototype.activeSectionOperators = function activeSectionOperators() {
         this.btnOperators.addClassName('active');
         this.sectionOperators.removeClassName('hidden');
 
@@ -145,9 +145,9 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
      * @function
      * @public
      *
-     * @returns {PanelComponents} The instance on which this function was called.
+     * @returns {ComponentManager} The instance on which this function was called.
      */
-    PanelComponents.prototype.activeSectionWidgets = function activeSectionWidgets() {
+    ComponentManager.prototype.activeSectionWidgets = function activeSectionWidgets() {
         this.btnOperators.removeClassName('active');
         this.sectionOperators.addClassName('hidden');
 
@@ -163,11 +163,11 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
      * @public
      *
      * @param {Object} operatorInterface
-     * @returns {PanelComponents} The instance on which this function was called.
+     * @returns {ComponentManager} The instance on which this function was called.
      */
-    PanelComponents.prototype.appendOperator = function appendOperator(operatorInterface) {
+    ComponentManager.prototype.appendOperator = function appendOperator(operatorInterface) {
+        this.operatorGroup[operatorInterface.getId()] = operatorInterface;
         this.sectionOperators.appendChild(operatorInterface);
-        this.ioperators.push(operatorInterface);
 
         if (!this.messageOperators.classList.contains('hidden')) {
             this.messageOperators.classList.add('hidden');
@@ -182,12 +182,11 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
      * @public
      *
      * @param {IWidget} iwidget
-     * @returns {PanelComponents} The instance on which this function was called.
+     * @returns {ComponentManager} The instance on which this function was called.
      */
-    PanelComponents.prototype.appendWidget = function appendWidget(widgetInterface) {
+    ComponentManager.prototype.appendWidget = function appendWidget(widgetInterface) {
+        this.widgetGroup[widgetInterface.getId()] = widgetInterface;
         this.sectionWidgets.appendChild(widgetInterface);
-
-        this.iwidgets.push(widgetInterface);
 
         if (!this.messageWidgets.classList.contains('hidden')) {
             this.messageWidgets.classList.add('hidden');
@@ -201,11 +200,14 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
      * @function
      * @public
      *
-     * @returns {PanelComponents} The instance on which this function was called.
+     * @returns {ComponentManager} The instance on which this function was called.
      */
-    PanelComponents.prototype.clear = function clear() {
+    ComponentManager.prototype.clear = function clear() {
         this.sectionOperators.clear();
         this.sectionWidgets.clear();
+
+        this.operatorGroup = {};
+        this.widgetGroup = {};
 
         this.sectionOperators.appendChild(this.messageOperators);
         this.sectionWidgets.appendChild(this.messageWidgets);
@@ -222,16 +224,20 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
      * @param {String} operatorTitle
      * @returns {Object} The ioperator found.
      */
-    PanelComponents.prototype.getOperatorByTitle = function getOperatorByTitle(operatorTitle) {
+    ComponentManager.prototype.getOperatorByTitle = function getOperatorByTitle(operatorTitle) {
         var i;
 
-        for (i = 0; i < this.ioperators.length; i++) {
-            if (this.ioperators[i].wrapperElement.textContent == operatorTitle) {
-                return this.ioperators[i];
+        for (i = 0; i < this.operatorGroup.length; i++) {
+            if (this.operatorGroup[i].wrapperElement.textContent == operatorTitle) {
+                return this.operatorGroup[i];
             }
         }
 
         return;
+    };
+
+    ComponentManager.prototype.getWidgetById = function getWidgetById(widgetId) {
+        return this.widgetGroup[widgetId];
     };
 
     /**
@@ -242,19 +248,19 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
      * @param {Object} widgetTitle
      * @returns {Object} The iwidget found.
      */
-    PanelComponents.prototype.getWidgetByTitle = function getWidgetByTitle(widgetTitle) {
+    ComponentManager.prototype.getWidgetByTitle = function getWidgetByTitle(widgetTitle) {
         var i;
 
-        for (i = 0; i < this.iwidgets.length; i++) {
-            if (this.iwidgets[i].wrapperElement.textContent == widgetTitle) {
-                return this.iwidgets[i];
+        for (i = 0; i < this.widgetGroup.length; i++) {
+            if (this.widgetGroup[i].wrapperElement.textContent == widgetTitle) {
+                return this.widgetGroup[i];
             }
         }
 
         return;
     };
 
-    PanelComponents.prototype.hide = function hide() {
+    ComponentManager.prototype.hide = function hide() {
         this.wrapperElement.classList.add('hidden');
 
         return this;
@@ -266,13 +272,13 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
      * @public
      *
      * @param {Object} operatorInterface
-     * @returns {PanelComponents} The instance on which this function was called.
+     * @returns {ComponentManager} The instance on which this function was called.
      */
-    PanelComponents.prototype.removeOperator = function removeOperator(operatorInterface) {
-        var index = this.ioperators.indexOf(operatorInterface);
+    ComponentManager.prototype.removeOperator = function removeOperator(operatorInterface) {
+        var index = this.operatorGroup.indexOf(operatorInterface);
 
         if (index != -1) {
-            this.ioperators.splice(index, 0);
+            this.operatorGroup.splice(index, 0);
             this.sectionOperators.removeChild(operatorInterface);
         }
 
@@ -285,25 +291,25 @@ Wirecloud.ui.WiringEditor.PanelComponents = (function () {
      * @public
      *
      * @param {Object} widgetInterface
-     * @returns {PanelComponents} The instance on which this function was called.
+     * @returns {ComponentManager} The instance on which this function was called.
      */
-    PanelComponents.prototype.removeWidget = function removeWidget(widgetInterface) {
-        var index = this.iwidgets.indexOf(widgetInterface);
+    ComponentManager.prototype.removeWidget = function removeWidget(widgetInterface) {
+        var index = this.widgetGroup.indexOf(widgetInterface);
 
         if (index != -1) {
-            this.iwidgets.splice(index, 0);
+            this.widgetGroup.splice(index, 0);
             this.sectionWidgets.removeChild(widgetInterface);
         }
 
         return this;
     };
 
-    PanelComponents.prototype.show = function show() {
+    ComponentManager.prototype.show = function show() {
         this.wrapperElement.classList.remove('hidden');
 
         return this;
     };
 
-    return PanelComponents;
+    return ComponentManager;
 
 })();
