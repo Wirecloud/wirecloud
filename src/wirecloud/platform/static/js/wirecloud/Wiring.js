@@ -34,9 +34,9 @@
      *****************/
     findEntity = function findEntity(desc) {
         switch (desc.type) {
-        case 'iwidget':
+        case 'widget':
             return this.iwidgets[desc.id];
-        case 'ioperator':
+        case 'operator':
             return this.ioperators[desc.id];
         }
     };
@@ -45,9 +45,9 @@
         if (entity instanceof Wirecloud.wiring.GhostEntity) {
             if (!(desc.endpoint in entity[type])) {
                 if (type === 'outputs') {
-                    entity[type][desc.endpoint] = new Wirecloud.wiring.GhostSourceEndpoint(entity, desc.endpoint);
+                    entity[type][desc.name] = new Wirecloud.wiring.GhostSourceEndpoint(entity, desc.name);
                 } else {
-                    entity[type][desc.endpoint] = new Wirecloud.wiring.GhostTargetEndpoint(entity, desc.endpoint);
+                    entity[type][desc.name] = new Wirecloud.wiring.GhostTargetEndpoint(entity, desc.name);
                 }
             }
         }
@@ -141,19 +141,17 @@
 
         iwidget.fullDisconnect();
 
-        if (typeof this.status.view !== 'object') {
-            delete this.status.view.components.iwidget[iwidget.id];
-        }
+        delete this.status.visualdescription.components.widget[iwidget.id];
 
         for (i = this.status.connections.length - 1; i >= 0 ; i -= 1) {
             connection = this.status.connections[i];
 
-            if (connection.source.type === 'iwidget' && connection.source.id === iwidget.id) {
+            if (connection.source.type === 'widget' && connection.source.id === iwidget.id) {
                 this.status.connections.splice(i, 1);
-                this.status.view.connections.splice(i, 1);
-            } else if (connection.target.type === 'iwidget' && connection.target.id === iwidget.id) {
+                this.status.visualdescription.connections.splice(i, 1);
+            } else if (connection.target.type === 'widget' && connection.target.id === iwidget.id) {
                 this.status.connections.splice(i, 1);
-                this.status.view.connections.splice(i, 1);
+                this.status.visualdescription.connections.splice(i, 1);
             }
         }
 
@@ -255,7 +253,7 @@
 
         this.events.load.dispatch();
 
-        status = Wirecloud.ui.WiringEditor.BehaviourEngine.normalizeWiringStatus(status);
+        status = Wirecloud.ui.WiringEditor.BehaviourEngine.normalizeWiring(status);
 
         if (this.workspace.owned) {
             operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
@@ -284,8 +282,8 @@
                         msg = interpolate(msg, {operator: operator_info.name}, true);
                         this.logManager.log(msg);
                         this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
-                        if (id in status.view.components.ioperator) {
-                            this.ioperators[id].fillFromViewInfo(status.views[0].operators[id]);
+                        if (id in status.visualdescription.components.operator) {
+                            this.ioperators[id].fillFromViewInfo(status.visualdescription.components.operator[id]);
                         }
                     }
                 } else {
@@ -293,8 +291,8 @@
                     msg = interpolate(msg, {operator: operator_info.name}, true);
                     this.logManager.log(msg);
                     this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
-                    if (id in status.view.components.ioperator) {
-                        this.ioperators[id].fillFromViewInfo(status.views[0].operators[id]);
+                    if (id in status.visualdescription.components.operator) {
+                        this.ioperators[id].fillFromViewInfo(status.visualdescription.components.operator[id]);
                     }
                 }
             }

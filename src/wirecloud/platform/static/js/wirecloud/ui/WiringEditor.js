@@ -462,18 +462,25 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     /**
-     * @Private
-     * Create Mini Widget for menubar
+     * @private
+     * @function
      */
-    var generateMiniWidget = function generateMiniWidget (iwidget) {
-        var miniwidget_interface;
+    var addWidgetItem = function addWidgetItem(component) {
+        var widgetItem;
+
         try {
-            miniwidget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(this, iwidget, this, true);
-            this.mini_widgets[iwidget.id] = miniwidget_interface;
-            this.componentManager.appendWidget(miniwidget_interface);
+            widgetItem = new WiringEditor.WidgetInterface(this, component, this, true);
         } catch (e){
-            throw new Error('WiringEditor error (critical). Creating MiniWidget: ' + e.message);
+            throw new Error("Create widget in sidebar failed: " + e.message);
         }
+
+        try {
+            this.componentManager.appendWidget(widgetItem);
+        } catch (e){
+            throw new Error("Append widget in sidebar failed: " + e.message);
+        }
+
+        return this;
     };
 
     /**
@@ -527,16 +534,10 @@ Wirecloud.ui.WiringEditor = (function () {
      * Create New widget
      */
     var generateWidget = function generateWidget (iwidget, widgetView) {
-        var widget_interface, position;
+        var widget_interface;
 
         try {
-            position = null;
-
-            if ('position' in widgetView) {
-                position = widgetView.position;
-            }
-
-            widget_interface = this.addIWidget(iwidget, widgetView.endPointsInOuts, position);
+            widget_interface = this.addIWidget(iwidget, widgetView.endpoints, widgetView.position);
         } catch (e) {
             throw new Error('WiringEditor error (critical). Creating Widget: ' + e.message);;
         }
@@ -593,30 +594,8 @@ Wirecloud.ui.WiringEditor = (function () {
                 this.nextOperatorId = op_id + 1;
             }
 
-            // Get the endpoint order info if available
-            endpoint_order = {'sources': [], 'targets': []};
-            position = null;
-            for (i = 0; i < this.wiringStatus.views.length; i ++) {
-                if (id in this.wiringStatus.views[i].operators) {
-                    if ('endPointsInOuts' in this.wiringStatus.views[i].operators[id]) {
-                        endpoint_order = this.wiringStatus.views[i].operators[id].endPointsInOuts;
-                    }
-                    is_minimized = true;
-                    if ('minimized' in this.wiringStatus.views[i].operators[id]) {
-                        is_minimized = this.wiringStatus.views[i].operators[id].minimized;
-                    }
-                    position = this.wiringStatus.views[i].operators[id].position;
-                    break;
-                }
-            }
-
             // Add the new operator
-            operator_interface = this.addIOperator(operator_instance, endpoint_order, position);
-
-            // Set the minimized operator attribute
-            if (is_minimized) {
-                operator_interface.minimize(true);
-            }
+            operator_interface = this.addIOperator(operator_instance, operator.endpoints, operator.position);
         } catch (e) {
             var errorMainmsg, detailmsg, msg;
 
@@ -709,8 +688,6 @@ Wirecloud.ui.WiringEditor = (function () {
             'operator': {},
             'widget': {}
         };
-        //this.components.widget = {};
-        //this.components.operator = {};
         this.selectedOps = {};
         this.selectedOps.length = 0;
         this.selectedWids = {};
@@ -738,7 +715,6 @@ Wirecloud.ui.WiringEditor = (function () {
         this.layout.content.wrapperElement.style.fontSize = '1em';
 
         this.oldWiring = this.behaviourEngine.loadWiring(WiringStatus);
-        this.behaviourEngine.readOnly = true;
 
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
@@ -749,22 +725,22 @@ Wirecloud.ui.WiringEditor = (function () {
         for (i = 0; i < iwidgets.length; i++) {
             // Create Menubar mini-widget
             iwidget = iwidgets[i];
-            generateMiniWidget.call(this, iwidget);
+            addWidgetItem.call(this, iwidget);
 
             // Create widget
-            if (this.behaviourEngine.containsComponent('iwidget', iwidget.id)) {
+            if (this.behaviourEngine.containsComponent(WiringEditor.WIDGET_TYPE, iwidget.id)) {
                 // Disable mini-widget
-                this.mini_widgets[iwidget.id].disable();
+                this.componentManager.getWidgetById(iwidget.id).disable();
                 // Add new Widget
-                generateWidget.call(this, iwidget, this.behaviourEngine.viewOf('iwidget', iwidget.id));
+                generateWidget.call(this, iwidget, this.behaviourEngine.getComponentView('widget', iwidget.id));
             }
         }
 
         // Ghost Widgets!
-        for (key in this.behaviourEngine.getAllComponents('iwidget')) {
-            if (!this.iwidgets[key]) {
+        for (key in this.behaviourEngine.currentState.components.widget) {
+            if (!this.components.widget[key]) {
                 // Add new Ghost Widget
-                generateGhostWidget.call(this, key, this.behaviourEngine.viewOf('iwidget', key));
+                generateGhostWidget.call(this, key, this.behaviourEngine.getComponentView('widget', key));
             }
         }
 
@@ -775,27 +751,20 @@ Wirecloud.ui.WiringEditor = (function () {
 
         // Create operators and Ghost Operators
         reallyInUseOperators = workspace.wiring.ioperators;
-        operators = this.behaviourEngine.getAllComponents('ioperator');
+        operators = this.behaviourEngine.currentState.components.operator;
         for (key in operators) {
             generateOperator.call(this, key, operators[key], reallyInUseOperators, availableOperators);
         }
 
-        // Create Multiconnectors
-        multiconnectors = this.behaviourEngine.getAllComponents('multiconnector');
-        for (key in multiconnectors) {
-            generateMulticonnector.call(this, multiconnectors[key]);
-        }
-
         // Create connections
         for (i = 0; i < this.oldWiring.connections.length; i += 1) {
-            connectionView = this.behaviourEngine.getConnection(i);
+            connectionView = this.behaviourEngine.getConnectionView(i);
             this.generateConnection(workspace, this.oldWiring.connections[i], connectionView);
         }
 
-        this.behaviourEngine.readOnly = false;
         this.behaviourEngine.activateBehaviour();
-
         this.activateCtrlMultiSelect();
+
         this.valid = true;
         if (this.entitiesNumber === 0) {
             this.alertEmptyWiring.show();
@@ -1058,7 +1027,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         if (startAnchor !== null && endAnchor !== null) {
             try {
-                if (connection.readOnly) {
+                if (connection.readonly) {
                     // Set ReadOnly connection
                     readOnly = true;
                     extraclass = 'readonly';
@@ -1149,99 +1118,37 @@ Wirecloud.ui.WiringEditor = (function () {
      * Saves the wiring state.
      */
     WiringEditor.prototype.serialize = function serialize() {
-        var pos, i, key, widget, arrow, operator_interface, ioperator,
-        WiringStatus, multiconnector, height, inOutPos, positions, name,
-        is_minimized, pref;
+        var wiringState, key, i, ioperator, arrow, pref;
 
-        // positions
-        WiringStatus = {
-            operators: {},
-            connections: []
-        };
-
-        this.behaviourEngine.onlyUpdatable = true;
-
-        for (key in this.components.widget) {
-            widget = this.components.widget[key];
-            pos = widget.getStylePosition();
-            inOutPos = widget.getInOutPositions();
-
-            this.behaviourEngine.updateComponent('iwidget', key, {
-                'position': pos,
-                'endPointsInOuts': inOutPos,
-                'name': widget.iwidget.widget.id
-            });
-        }
+        wiringState = this.behaviourEngine.serialize();
 
         for (key in this.components.operator) {
-            is_minimized = this.components.operator[key].isMinimized;
-            if (is_minimized) {
-                this.components.operator[key].restore(true);
-            }
-            operator_interface = this.components.operator[key];
-            pos = operator_interface.getStylePosition();
-            inOutPos = operator_interface.getInOutPositions();
-            positions = {
-                'minimized': is_minimized,
-                'position': pos,
-                'endPointsInOuts': inOutPos
-            };
-            ioperator = operator_interface.getIOperator();
-            WiringStatus.operators[key] = {
+            ioperator = this.components.operator[key].getIOperator();
+
+            wiringState.operators[key] = {
                 'id': key,
                 'name': ioperator.meta.uri,
                 'preferences': {}
             };
             for (pref in ioperator.preferences) {
-                WiringStatus.operators[key].preferences[pref] = {
+                wiringState.operators[key].preferences[pref] = {
                     "readOnly": ioperator.preferences[pref].readOnly,
                     "hidden": ioperator.preferences[pref].hidden,
                     "value": ioperator.preferences[pref].value
                 };
             }
-            this.behaviourEngine.updateComponent('ioperator', key, positions);
-        }
-
-        for (key in this.multiconnectors) {
-            multiconnector = this.multiconnectors[key];
-            //TODO: this position is not exact
-            pos = multiconnector.getStylePosition();
-            height = parseFloat(multiconnector.wrapperElement.style.height);
-            this.behaviourEngine.updateComponent('multiconnector', key, {
-                'id' : key,
-                'pos' : pos,
-                'height' : height,
-                'objectId' : multiconnector.objectId,
-                'sourceName' : multiconnector.sourceName,
-                'objectType' : multiconnector.context.iObject.className,
-                'pullerStart': multiconnector.mainArrow.getPullerStart(),
-                'pullerEnd': multiconnector.mainArrow.getPullerEnd()
-            });
         }
 
         for (i = 0; i < this.connections.length; i++) {
             arrow = this.connections[i];
-            if (!arrow.hasClassName('full') && !arrow.hasClassName('hollow')) {
-                WiringStatus.connections.push({
-                    'readOnly': arrow.hasClassName('readOnly'),
-                    'source': arrow.startAnchor.serialize(),
-                    'target': arrow.endAnchor.serialize(),
-                    'isGhost': arrow.isGhost
-                });
-                this.behaviourEngine.updateConnection({
-                    'pullerStart': arrow.getPullerStart(),
-                    'pullerEnd': arrow.getPullerEnd(),
-                    'startMulti': arrow.startMulti,
-                    'endMulti': arrow.endMulti
-                });
-            }
+            wiringState.connections.push({
+                'readonly': arrow.hasClassName('readonly'),
+                'source': arrow.startAnchor.serialize(),
+                'target': arrow.endAnchor.serialize()
+            });
         }
 
-        this.behaviourEngine.onlyUpdatable = true;
-        WiringStatus.view = this.behaviourEngine.getGlobalView();
-        WiringStatus.behaviours = this.behaviourEngine.getBehaviours();
-
-        return WiringStatus;
+        return wiringState;
     };
 
     /**

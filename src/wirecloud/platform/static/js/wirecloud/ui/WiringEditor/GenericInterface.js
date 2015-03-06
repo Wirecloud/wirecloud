@@ -92,7 +92,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
         // Interface buttons, not for miniInterface
         if (!this.isMiniInterface) {
-            if (className == 'component-widget') {
+            if (className == 'widget') {
                 type = 'widget';
                 this.version = this.entity.version;
                 this.vendor = this.entity.vendor;

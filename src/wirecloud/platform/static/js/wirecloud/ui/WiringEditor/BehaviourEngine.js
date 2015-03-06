@@ -63,74 +63,61 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @function
      *
      * @param {Object.<String, *>} state
-     * @param {Boolean} [exhaustive=false]
      * @returns {Object.<String, *>} The wiring state normalized.
      */
-    BehaviourEngine.normalizeWiring = function normalizeWiring(state, exhaustive) {
-        var i;
+    BehaviourEngine.normalizeWiring = function normalizeWiring(state) {
+        var element, i, key, wiringState;
 
-        if (typeof exhaustive !== 'boolean') {
-            exhaustive = false;
-        }
+        wiringState = {
+            'version': "2.0",
+            'connections': [],
+            'operators': {},
+            'visualdescription': {
+                'behaviourenabled': false,
+                'behaviours': [],
+                'components': {
+                    'operator': {},
+                    'widget': {}
+                },
+                'connections': []
+            }
+        };
 
         if (typeof state !== 'object') {
-            state = {};
+            return wiringState;
         }
 
-        if (!Array.isArray(state.connections)) {
-            state.connections = [];
-        }
-
-        if (typeof state.operators !== 'object') {
-            state.operators = {};
-        }
-
-        if (exhaustive) {
-            if (typeof state.visual_part !== 'object') {
-                state.visual_part = {
-                    behaviours: [],
-                    components: {
-                        operator: {},
-                        widget: {}
-                    },
-                    connections: []
-                };
+        if (state.version === "2.0") {
+            if (Array.isArray(state.connections)) {
+                wiringState.connections = state.connections;
             }
 
-            if (!Array.isArray(state.visual_part.behaviours)) {
-                state.visual_part.behaviours = [];
+            if (typeof state.operators === 'object') {
+                wiringState.operators = state.operators;
             }
 
-            for (i = 0; i < state.visual_part.behaviours.length; i++) {
-                if (typeof state.visual_part.behaviours[i] !== 'object') {
-                    state.visual_part.behaviours[i] = {
-                        components: {
-                            operator: {},
-                            widget: {}
-                        },
-                        connections: []
-                    };
+            if (typeof state.visualdescription === 'object') {
+                if (typeof state.visualdescription.behaviourenabled === 'boolean') {
+                    wiringState.visualdescription.behaviourenabled = state.visualdescription.behaviourenabled;
                 }
 
-                if (typeof state.visual_part.behaviours[i].components !== 'object') {
-                    state.visual_part.behaviours[i].components = {};
+                if (Array.isArray(state.visualdescription.behaviours)) {
+                    wiringState.visualdescription.behaviours = state.visualdescription.behaviours;
                 }
 
-                if (!Array.isArray(state.visual_part.behaviours[i].connections)) {
-                    state.visual_part.behaviours[i].connections = [];
+                if (typeof state.visualdescription.components === 'object') {
+                    wiringState.visualdescription.components = state.visualdescription.components;
+                }
+
+                if (Array.isArray(state.visualdescription.connections)) {
+                    wiringState.visualdescription.connections = state.visualdescription.connections;
                 }
             }
-
-            if (typeof state.visual_part.components !== 'object') {
-                state.visual_part.components = {};
-            }
-
-            if (!Array.isArray(state.visual_part.connections)) {
-                state.visual_part.connections = [];
-            }
+        } else {
+            //TODO: old version 1.0 supported?
         }
 
-        return StyledElements.Utils.cloneObject(state);
+        return StyledElements.Utils.cloneObject(wiringState);
     };
 
     /**
@@ -313,7 +300,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         state = BehaviourEngine.normalizeWiring(state);
 
         this.empty();
-        this.currentState = state.visual_part;
+        this.currentState = state.visualdescription;
 
         for (i = 0; i < this.currentState.behaviours.length; i++) {
             this.appendBehaviour(this.createBehaviour(this.currentState.behaviours[i]));
@@ -424,19 +411,18 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @returns {Object.<String, *>} The visual part of current wiring state.
      */
     BehaviourEngine.prototype.serialize = function serialize() {
-        var visualPart, i;
+        var wiringState, i;
 
-        visualPart = {
-            components: this.currentState.components,
-            connections: this.currentState.connections,
-            behaviours: []
-        };
+        wiringState = BehaviourEngine.normalizeWiring();
+
+        wiringState.visualdescription.components = this.currentState.components;
+        wiringState.visualdescription.connections = this.currentState.connections;
 
         for (i = 0; i < this.behaviourList.length; i++) {
-            visualPart.behaviours.push(this.behaviourList[i]);
+            wiringState.visualdescription.behaviours.push(this.behaviourList[i].serialize());
         }
 
-        return StyledElements.Utils.cloneObject(visualPart);
+        return StyledElements.Utils.cloneObject(wiringState);
     };
 
     /**
