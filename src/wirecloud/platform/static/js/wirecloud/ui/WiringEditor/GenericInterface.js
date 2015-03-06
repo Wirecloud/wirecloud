@@ -603,6 +603,10 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 context.iObject.wiringEditor.onFinishSelectedObjects();
                 var position = context.iObject.getStylePosition();
 
+                var parentElement = context.iObject.wrapperElement.parentNode;
+
+                parentElement.insertBefore(context.iObject.wrapperElement, null);
+
                 //pseudoClick
                 if ((Math.abs(context.x - position.x) < 2) && (Math.abs(context.y - position.y) < 2)) {
                     if (context.preselected) {

@@ -56,10 +56,10 @@ $component-zindex:              10;
 $component-heading-padding-vertical:    7px;
 $component-heading-padding-horizontal:  8px;
 $component-heading-font-max-width:      240px;
-$component-heading-font-size:           15px;
+$component-heading-font-size:           14px;
 $component-heading-font-color:          #fff;
 $component-heading-font-shadow:         0 -1px 0 rgba(0, 0, 0, .15);
-$component-heading-border-radius:       2px;
+$component-heading-border-radius:       3px;
 
 $component-heading-subtitle-font-size:  12px;
 
@@ -78,7 +78,7 @@ $component-widget-border-color:         #e38d13;
 $component-widget-options-font-color:   #fcf8e3;
 
 $highlighted-component-border-color:    #66afe9;
-$highlighted-component-box-shadow:      inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+$highlighted-component-box-shadow:      0 0 8px rgba(102, 175, 233, .6);
 $highlighted-component-zindex:          15;
 
 $highlighted-component-heading-background-color:    #d9edf7;
