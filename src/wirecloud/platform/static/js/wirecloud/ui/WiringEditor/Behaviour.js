@@ -80,7 +80,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         this.wrapperElement.appendChild(this.headingElement);
 
         iconDisplay = document.createElement('span');
-        iconDisplay.className = "btn-display icon-eye-open";
+        iconDisplay.className = "btn-display";
         this.headingElement.appendChild(iconDisplay);
 
         Object.defineProperty(this, 'active', {
@@ -90,8 +90,10 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             'set': function set(value) {
                 if (value) {
                     this.wrapperElement.classList.add('active');
+                    iconDisplay.className = "btn-display icon-eye-open";
                 } else {
                     this.wrapperElement.classList.remove('active');
+                    iconDisplay.className = "btn-display icon-eye-close";
                 }
             }
         });

@@ -34,7 +34,6 @@
     position: relative;
     display: inline-block;
     cursor: pointer;
-    margin-left: -1px;
     width: 15%;
     height: 90px;
     vertical-align: middle;
@@ -67,6 +66,7 @@
     background-color: $panel-components-component-background-color;
     border: $panel-components-component-border;
     border-radius: $border-radius-onlyleft;
+    border-right-width: 0px;
     box-sizing: border-box;
 
     .behaviour-title {
@@ -105,7 +105,6 @@
         padding: 0px 5px;
         font-size: 12px;
         line-height: 18px;
-        border: solid 1px transparent;
         border-radius: 0px;
         box-sizing: border-box;
     }
@@ -116,17 +115,14 @@
 
     .badge-connections {
         background-color: $connection-background-color;
-        border-color: $connection-border-color;
     }
 
     .badge-operators {
         background-color: $component-operator-background-color;
-        border-color: $component-operator-border-color;
     }
 
     .badge-widgets {
         background-color: $component-widget-background-color;
-        border-color: $component-widget-border-color;
     }
 }
 
@@ -135,4 +131,14 @@
     background-color: $panel-components-mousedover-component-background-color;
     border-color: $panel-components-mousedover-component-border-color;
     z-index: 5;
+}
+
+.wiring-sidebar .panel-behaviours .behaviour.active {
+
+    .behaviour-heading {
+        background-color: #337ab7;
+        border-color: #2e6da4;
+        color: #fff;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+    }
 }
