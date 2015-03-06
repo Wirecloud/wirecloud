@@ -1249,6 +1249,10 @@ Wirecloud.ui.WiringEditor = (function () {
             this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize());
         }.bind(this));
 
+        widget_interface.addEventListener('sortstop', function (eventTarget) {
+            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize());
+        }.bind(this));
+
         widget_interface.addEventListener('optremove', function (eventTarget, originalEvent) {
             var dialog, message, componentType, componentId;
 
@@ -1414,6 +1418,10 @@ Wirecloud.ui.WiringEditor = (function () {
             operator_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
             operator_interface.repaint();
 
+            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize());
+        }.bind(this));
+
+        operator_interface.addEventListener('sortstop', function (eventTarget) {
             this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize());
         }.bind(this));
 

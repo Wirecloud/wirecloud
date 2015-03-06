@@ -36,11 +36,13 @@
     clear: both;
     max-width: $endpoint-max-width;
     margin: $endpoint-margin-vertical 0px;
+    @include user-select();
 
     .endpoint-label {
         padding: 0px $endpoint-padding-horizontal;
         color: $endpoint-font-color;
-        @include font-base();
+        font-size: 12px;
+        line-height: 20px;
         @include font-truncate();
     }
 
@@ -141,7 +143,7 @@
 // WIRING DIAGRAM - ENDPOINT-SORTING
 // ============================================================================
 
-.wiring-diagram .component-body.endpoint-sorting {
+.wiring-diagram .endpoints.endpoint-sorting {
 
     .endpoint {
         cursor: move;

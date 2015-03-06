@@ -52,7 +52,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'optremove']);
+        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'optremove', 'sortstop']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -630,11 +630,21 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
      */
     GenericInterface.prototype.makeSlotsDraggable = function makeSlotsDraggable() {
         var i;
-        for (i = 0; i < this.draggableSources.length; i++) {
-            this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.content, 'source-endpoint');
+
+        if (this.draggableSources.length > 1) {
+            this.endpoints.sourcesElement.classList.add('endpoint-sorting');
+
+            for (i = 0; i < this.draggableSources.length; i++) {
+                this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.content, 'source-endpoint');
+            }
         }
-        for (i = 0; i < this.draggableTargets.length; i++) {
-            this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.content, 'target-endpoint');
+
+        if (this.draggableTargets.length > 1) {
+            this.endpoints.targetsElement.classList.add('endpoint-sorting');
+
+            for (i = 0; i < this.draggableTargets.length; i++) {
+                this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.content, 'target-endpoint');
+            }
         }
     };
 
@@ -1292,12 +1302,12 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
-            labelElement.addEventListener('mouseover', function () {
+            endpointElement.addEventListener('mouseover', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.recommendations.emphasize(anchor);
                 }
             }.bind(this));
-            labelElement.addEventListener('mouseout', function () {
+            endpointElement.addEventListener('mouseout', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.recommendations.deemphasize(anchor);
                 }
@@ -1482,7 +1492,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     GenericInterface.prototype.enableEdit = function enableEdit() {
         this.draggable.destroy();
         this.editingPos = true;
-        this.endpoints.element.classList.add('endpoint-sorting');
         this.makeSlotsDraggable();
     };
 
@@ -1494,14 +1503,26 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
         this.makeDraggable();
         this.editingPos = false;
-        this.endpoints.element.classList.remove('endpoint-sorting');
 
-        for (i = 0; i < this.draggableSources.length; i++) {
-            this.draggableSources[i].draggable.destroy();
+        if (this.draggableSources.length > 1) {
+            this.endpoints.sourcesElement.classList.remove('endpoint-sorting');
+
+            for (i = 0; i < this.draggableSources.length; i++) {
+                this.draggableSources[i].draggable.destroy();
+            }
         }
-        for (i = 0; i < this.draggableTargets.length; i++) {
-            this.draggableTargets[i].draggable.destroy();
+
+        if (this.draggableTargets.length > 1) {
+            this.endpoints.targetsElement.classList.remove('endpoint-sorting');
+
+            for (i = 0; i < this.draggableTargets.length; i++) {
+                this.draggableTargets[i].draggable.destroy();
+            }
         }
+
+        this.events.sortstop.dispatch({
+            'componentId': this.getId()
+        });
     };
 
     /**
