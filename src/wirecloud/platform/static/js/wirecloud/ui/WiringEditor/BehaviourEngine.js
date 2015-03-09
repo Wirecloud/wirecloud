@@ -453,29 +453,41 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @public
      * @function
      *
-     * @param {String} componentId
-     * @param {Object.<String, *>} componentView
+     * @param {Object.<String, *>} connectionView
+     * @param {Boolean} [updateOnly]
      * @returns {BehaviourEngine} The instance on which this function was called.
      */
-    BehaviourEngine.prototype.updateConnection = function updateConnection(connectionId, connectionView) {
-        var found, i;
+    BehaviourEngine.prototype.updateConnection = function updateConnection(connectionView, updateOnly) {
+        var found, i, index;
 
-        componentView = StyledElements.Utils.cloneObject(componentView);
+        connectionView = StyledElements.Utils.cloneObject(connectionView);
+
+        if (typeof updateOnly !== 'boolean') {
+            updateOnly = false;
+        }
 
         switch (this.currentViewpoint) {
             case BehaviourEngine.viewpoints.GLOBAL:
                 for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
-                    if (this.currentState.connections[i].id == connectionId) {
-                        this.currentState.connections[i] = connectionView;
+                    if (this.currentState.connections[i].sourcename == connectionView.sourcename &&
+                        this.currentState.connections[i].targetname == connectionView.targetname) {
                         found = true;
+                        index = i;
                     }
                 }
 
-                if (!found) {
-                    this.currentState.components.push(componentView);
+                if (updateOnly) {
+                    if (found) {
+                        this.currentState.connections[index] = connectionView;
+                    }
+                } else {
+                    if (found) {
+                        this.currentState.connections[index] = connectionView;
+                    } else {
+                        this.currentState.connections.push(connectionView);
+                    }
+                    this.currentBehaviour.updateConnection(connectionView);
                 }
-
-                this.currentBehaviour.updateConnection(connectionId);
                 break;
             default:
                 break;

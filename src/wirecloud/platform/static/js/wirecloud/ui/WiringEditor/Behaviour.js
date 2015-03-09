@@ -162,6 +162,28 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @public
      * @function
      *
+     * @param {String} sourceName
+     * @param {String} targetName
+     * @returns {Boolean} If the connection given is saved.
+     */
+    Behaviour.prototype.containsConnection = function containsConnection(sourceName, targetName) {
+        var connection, found, i;
+
+        for (found = false, i = 0; !found && i < this.connections.length; i++) {
+            connection = this.connections[i];
+
+            if (connection.sourcename == sourceName && connection.targetname == targetName) {
+                found = true;
+            }
+        }
+
+        return found;
+    };
+
+    /**
+     * @public
+     * @function
+     *
      * @param {Behaviour} behaviour
      * @returns {Boolean} If the behaviour given is the same behaviour saved.
      */
@@ -299,14 +321,22 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @public
      * @function
      *
-     * @param {String} componentId
+     * @param {Object.<String, *>} data
      * @returns {Behaviour} The instance on which this function was called.
      */
-    Behaviour.prototype.updateConnection = function updateConnection(connectionId) {
-        var index;
+    Behaviour.prototype.updateConnection = function updateConnection(connectionView) {
+        var found, i;
 
-        if ((index=this.connections.indexOf(componentId)) == -1) {
-            this.connections.push(connectionId);
+        for (found = false, i = 0; !found && i < this.connections.length; i++) {
+            if (this.connections[i].sourcename == connectionView.sourcename &&
+                this.connections[i].targetname == connectionView.targetname) {
+                this.connections[i] = connectionView;
+                found = true;
+            }
+        }
+
+        if (!found) {
+            this.connections.push(connectionView);
         }
 
         updateCounterList.call(this);
