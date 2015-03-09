@@ -104,7 +104,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
 
     StyledElements.Utils.inherit(Behaviour, null, StyledElements.EventManagerMixin);
 
-    Behaviour.events = ['click', 'info.click'];
+    Behaviour.events = ['click', 'dblclick', 'info.click'];
 
     Behaviour.normalize = function normalize(data, index) {
         if (typeof data !== 'object') {

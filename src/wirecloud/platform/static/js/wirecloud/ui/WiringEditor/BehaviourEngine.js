@@ -160,6 +160,13 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }, event);
         }.bind(this));
 
+        behaviour.headingElement.addEventListener('dblclick', function (event) {
+            behaviour.dispatchEvent('dblclick')({
+                'behaviour': behaviour,
+                'behaviourEngine': this,
+            }, event);
+        }.bind(this));
+
         behaviour.bodyElement.addEventListener('click', function (event) {
             behaviour.dispatchEvent('info.click')({
                 'behaviour': behaviour,

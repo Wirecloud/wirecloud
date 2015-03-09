@@ -224,6 +224,14 @@ Wirecloud.ui.WiringEditor = (function () {
 
     var startBehaviourEngine = function startBehaviourEngine() {
         this.behaviourEngine.addEventListener('append', function (eventTarget) {
+            eventTarget.behaviour.addEventListener('click', function() {
+                this.behaviourEngine.activateBehaviour(eventTarget.behaviour);
+            }.bind(this));
+
+            eventTarget.behaviour.addEventListener('dblclick', function() {
+                this.layout.slideUp();
+            }.bind(this));
+
             eventTarget.behaviour.addEventListener('info.click', function() {
                 var btnSave = new StyledElements.StyledButton({
                     'text': gettext("Save changes"),
