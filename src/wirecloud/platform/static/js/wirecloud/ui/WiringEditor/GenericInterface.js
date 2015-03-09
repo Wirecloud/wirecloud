@@ -270,7 +270,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             }
 
             optionsElement.appendChild(this.options.optionPreferences.wrapperElement);
-            this.options.optionPreferences.popup_menu.append(new Wirecloud.ui.WiringEditor.GenericInterfaceSettingsMenuItems(this));
+            this.options.optionPreferences.popup_menu.append(new Wirecloud.ui.WiringEditor.ComponentPreferences(this));
 
             optionsElement.appendChild(this.options.optionRemove.wrapperElement);
             this.options.optionRemove.addEventListener('click', function (originalEvent) {
