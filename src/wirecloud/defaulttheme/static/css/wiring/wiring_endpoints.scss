@@ -107,6 +107,20 @@
     }
 }
 
+.wiring-diagram .target-endpoints .endpoint.highlighted {
+
+    .endpoint-anchor {
+        border-right: solid 1px $highlighted-endpoint-background-color;
+    }
+}
+
+.wiring-diagram .source-endpoints .endpoint.highlighted {
+
+    .endpoint-anchor {
+        border-left: solid 1px $highlighted-endpoint-background-color;
+    }
+}
+
 // ============================================================================
 // WIRING DIAGRAM - MISPLACED-ENDPOINTS
 // ============================================================================
@@ -130,8 +144,7 @@
 .wiring-diagram .component.collapsed {
 
     .component-heading {
-        border-bottom-left-radius: $component-heading-border-radius;
-        border-bottom-right-radius: $component-heading-border-radius;
+        border-radius: $component-heading-border-radius;
     }
 
     .component-body {
@@ -170,6 +183,52 @@
 
 .wiring-diagram .source-endpoint.cloned {
     border-radius: $border-radius-onlyleft;
+}
+
+// ============================================================================
+// WIRING DIAGRAM - ENDPOINTS ON-BACKGROUND
+// ============================================================================
+
+.wiring-diagram .component.on-background {
+
+    .endpoint {
+        .endpoint-label {
+            color: $endpoint-onbackground-font-color;
+        }
+
+        .endpoint-anchor {
+            background-color: $endpoint-onbackground-background-color;
+        }
+    }
+
+    .endpoint.highlighted {
+        background-color: $highlighted-endpoint-background-color;
+
+        .endpoint-label {
+            color: $highlighted-endpoint-font-color;
+        }
+
+        .endpoint-anchor {
+            background-color: $highlighted-endpoint-background-color;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - ENDPOINTS IN COMPONENT HIGHLIGHTED
+// ============================================================================
+
+.wiring-diagram .component.highlighted {
+
+    .endpoint {
+        .endpoint-label {
+            color: $endpoint-font-color;
+        }
+
+        .endpoint-anchor {
+            background-color: $highlighted-component-border-color;
+        }
+    }
 }
 
 // ============================================================================

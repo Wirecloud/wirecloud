@@ -64,7 +64,7 @@ $component-heading-border-radius:       3px;
 $component-heading-subtitle-font-size:  12px;
 
 $component-options-padding-horizontal:  5px;
-$component-options-margin-horizontal:   2px;
+$component-options-margin-horizontal:   5px;
 
 $component-mousedover-options-font-color:   #fff;
 $component-mousedover-options-font-shadow:  0 1px 0 rgba(0, 0, 0, .25);
@@ -107,7 +107,7 @@ $endpoints-padding-horizontal: 2px;
 
 $endpoint-margin-vertical:      5px;
 $endpoint-padding-horizontal:   5px;
-$endpoint-displacement-width:   -12px;
+$endpoint-displacement-width:   -13px;
 $endpoint-font-color:           #333;
 $endpoint-max-width:            120px;
 
@@ -129,6 +129,9 @@ $selected-endpoint-box-shadow:          inset 0px 0px 5px rgba(0, 0, 0, 0.35);
 $selected-endpoint-background-color:    #f9f9f9;
 
 $cloned-endpoint-zindex: 15;
+
+$endpoint-onbackground-font-color: rgba(51, 51, 51, 0.3);
+$endpoint-onbackground-background-color: rgba(26, 172, 218, 0.3);
 
 // ============================================================================
 // WIRING VIEW - CONNECTIONS
