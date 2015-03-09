@@ -381,7 +381,7 @@ Wirecloud.ui.WiringEditor = (function () {
                     endPointPos = {'sources': [], 'targets': []};
                     iwidget_interface = this.addIWidget(this, iwidget, endPointPos);
                     iwidget_interface.setPosition({posX: 0, posY: 0});
-                    this.mini_widgets[iwidget.id].disable();
+                    this.componentManager.enableWidget(iwidget.id);
                     entity = iwidget_interface;
                 } else {
                     throw new Error('Widget not found');
@@ -675,7 +675,6 @@ Wirecloud.ui.WiringEditor = (function () {
         this.arrows = [];
         this.connections = [];
         this.multiconnectors = {};
-        this.mini_widgets = {};
         this.components = {
             'operator': {},
             'widget': {}
@@ -879,13 +878,10 @@ Wirecloud.ui.WiringEditor = (function () {
         this.componentManager.clear();
         this.arrows = [];
         this.connections = [];
-        this.mini_widgets = {};
         this.components = {
             'operator': {},
             'widget': {}
         };
-        //this.components.widget = {};
-        //this.components.operator = {};
         this.multiconnectors = {};
         this.recommendations.destroy();
     };
@@ -1352,8 +1348,8 @@ Wirecloud.ui.WiringEditor = (function () {
             this.alertEmptyWiring.show();
         }
 
-        if (componentType == WiringEditor.WIDGET_TYPE && componentId in this.mini_widgets) {
-            this.mini_widgets[componentId].enable();
+        if (componentType == WiringEditor.WIDGET_TYPE) {
+            this.componentManager.enableWidget(componentId);
         }
 
         return this;

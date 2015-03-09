@@ -225,11 +225,11 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
      * @returns {Object} The ioperator found.
      */
     ComponentManager.prototype.getOperatorByTitle = function getOperatorByTitle(operatorTitle) {
-        var i;
+        var id;
 
-        for (i = 0; i < this.operatorGroup.length; i++) {
-            if (this.operatorGroup[i].wrapperElement.textContent == operatorTitle) {
-                return this.operatorGroup[i];
+        for (id in this.operatorGroup) {
+            if (this.operatorGroup[id].wrapperElement.textContent == operatorTitle) {
+                return this.operatorGroup[id];
             }
         }
 
@@ -238,6 +238,14 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
 
     ComponentManager.prototype.getWidgetById = function getWidgetById(widgetId) {
         return this.widgetGroup[widgetId];
+    };
+
+    ComponentManager.prototype.enableWidget = function enableWidget(widgetId) {
+        if (widgetId in this.widgetGroup) {
+            this.widgetGroup[widgetId].enable();
+        }
+
+        return this;
     };
 
     /**
@@ -249,11 +257,11 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
      * @returns {Object} The iwidget found.
      */
     ComponentManager.prototype.getWidgetByTitle = function getWidgetByTitle(widgetTitle) {
-        var i;
+        var id;
 
-        for (i = 0; i < this.widgetGroup.length; i++) {
-            if (this.widgetGroup[i].wrapperElement.textContent == widgetTitle) {
-                return this.widgetGroup[i];
+        for (id in this.widgetGroup) {
+            if (this.widgetGroup[id].wrapperElement.textContent == widgetTitle) {
+                return this.widgetGroup[id];
             }
         }
 
@@ -275,10 +283,12 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
      * @returns {ComponentManager} The instance on which this function was called.
      */
     ComponentManager.prototype.removeOperator = function removeOperator(operatorInterface) {
-        var index = this.operatorGroup.indexOf(operatorInterface);
+        var id;
 
-        if (index != -1) {
-            this.operatorGroup.splice(index, 0);
+        id = operatorInterface.getId();
+
+        if (id in this.operatorGroup) {
+            delete this.operatorGroup[id];
             this.sectionOperators.removeChild(operatorInterface);
         }
 
@@ -294,10 +304,12 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
      * @returns {ComponentManager} The instance on which this function was called.
      */
     ComponentManager.prototype.removeWidget = function removeWidget(widgetInterface) {
-        var index = this.widgetGroup.indexOf(widgetInterface);
+        var id;
 
-        if (index != -1) {
-            this.widgetGroup.splice(index, 0);
+        id = widgetInterface.getId();
+
+        if (id in this.widgetGroup) {
+            delete this.widgetGroup[id];
             this.sectionWidgets.removeChild(widgetInterface);
         }
 
