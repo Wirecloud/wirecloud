@@ -162,22 +162,22 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.appendBehaviour = function appendBehaviour(behaviour) {
         this._appendBehaviour(behaviour);
 
-        behaviour.headingElement.addEventListener('click', function (event) {
-            behaviour.dispatchEvent('click')({
+        behaviour.btnActivate.addEventListener('click', function (event) {
+            behaviour.dispatchEvent('activate')({
                 'behaviour': behaviour,
                 'behaviourEngine': this,
             }, event);
         }.bind(this));
 
-        behaviour.headingElement.addEventListener('dblclick', function (event) {
-            behaviour.dispatchEvent('dblclick')({
+        behaviour.btnActivate.addEventListener('dblclick', function (event) {
+            behaviour.dispatchEvent('activate.dblclick')({
                 'behaviour': behaviour,
                 'behaviourEngine': this,
             }, event);
         }.bind(this));
 
         behaviour.bodyElement.addEventListener('click', function (event) {
-            behaviour.dispatchEvent('info.click')({
+            behaviour.dispatchEvent('open')({
                 'behaviour': behaviour,
                 'behaviourEngine': this,
             }, event);

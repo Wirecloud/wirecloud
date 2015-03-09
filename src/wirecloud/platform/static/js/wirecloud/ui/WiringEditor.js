@@ -233,15 +233,15 @@ Wirecloud.ui.WiringEditor = (function () {
         }.bind(this));
 
         this.behaviourEngine.addEventListener('append', function (eventTarget) {
-            eventTarget.behaviour.addEventListener('click', function() {
+            eventTarget.behaviour.addEventListener('activate', function() {
                 this.behaviourEngine.activateBehaviour(eventTarget.behaviour);
             }.bind(this));
 
-            eventTarget.behaviour.addEventListener('dblclick', function() {
+            eventTarget.behaviour.addEventListener('activate.dblclick', function() {
                 this.layout.slideUp();
             }.bind(this));
 
-            eventTarget.behaviour.addEventListener('info.click', function() {
+            eventTarget.behaviour.addEventListener('open', function() {
                 var btnSave = new StyledElements.StyledButton({
                     'text': gettext("Save changes"),
                     'class': 'btn-primary'
@@ -311,7 +311,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.btnBehaviours = new StyledElements.StyledButton({
             'iconClass': 'icon-sitemap',
-            'title': gettext('Behaviours identified')
+            'title': gettext("Behaviours")
         });
         this.btnBehaviours.addEventListener('click', function (styledElement) {
             if (styledElement.hasClassName('active')) {

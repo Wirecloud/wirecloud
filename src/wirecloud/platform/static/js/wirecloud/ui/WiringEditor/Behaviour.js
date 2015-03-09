@@ -31,7 +31,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @param {Object.<String, *>} [options]
      */
     var Behaviour = function Behaviour(data, index, options) {
-        var iconDisplay, countersElement;
+        var iconActivate, countersElement;
 
         StyledElements.EventManagerMixin.call(this, Behaviour.events);
         data = Behaviour.normalize(data, index);
@@ -79,21 +79,43 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         this.headingElement.className = "behaviour-heading";
         this.wrapperElement.appendChild(this.headingElement);
 
-        iconDisplay = document.createElement('span');
-        iconDisplay.className = "btn-display";
-        this.headingElement.appendChild(iconDisplay);
+        this.btnActivate = new StyledElements.StyledButton({
+            'class': 'opt-activate btn-primary',
+            'iconClass': 'icon-eye-open',
+            'title': gettext("Activate")
+        });
+        this.btnActivate.insertInto(this.headingElement);
+        iconActivate = this.btnActivate.icon;
+
+        this.btnEmpty = new StyledElements.StyledButton({
+            'class': 'opt-empty btn-default',
+            'iconClass': 'icon-eraser',
+            'title': gettext("Empty")
+        });
+        this.btnEmpty.insertInto(this.headingElement);
+
+        this.btnRemove = new StyledElements.StyledButton({
+            'class': 'opt-remove btn-danger',
+            'iconClass': 'icon-trash',
+            'title': gettext("Remove")
+        });
+        this.btnRemove.insertInto(this.headingElement);
 
         Object.defineProperty(this, 'active', {
             'get': function get() {
                 return this.wrapperElement.classList.contains('active');
             },
-            'set': function set(value) {
-                if (value) {
-                    this.wrapperElement.classList.add('active');
-                    iconDisplay.className = "btn-display icon-eye-open";
-                } else {
-                    this.wrapperElement.classList.remove('active');
-                    iconDisplay.className = "btn-display icon-eye-close";
+            'set': function set(state) {
+                if (typeof state === 'boolean') {
+                    if (state) {
+                        this.wrapperElement.classList.add('active');
+                        this.btnActivate.active = true;
+                        this.btnActivate.toggleIconClass('icon-eye-open', 'icon-eye-close');
+                    } else {
+                        this.wrapperElement.classList.remove('active');
+                        this.btnActivate.active = false;
+                        this.btnActivate.toggleIconClass('icon-eye-close', 'icon-eye-open');
+                    }
                 }
             }
         });
@@ -104,7 +126,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
 
     StyledElements.Utils.inherit(Behaviour, null, StyledElements.EventManagerMixin);
 
-    Behaviour.events = ['click', 'dblclick', 'info.click'];
+    Behaviour.events = ['activate', 'activate.dblclick', 'empty', 'open',  'remove'];
 
     Behaviour.normalize = function normalize(data, index) {
         if (typeof data !== 'object') {

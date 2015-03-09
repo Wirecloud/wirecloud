@@ -37,22 +37,24 @@
     width: 15%;
     height: 90px;
     vertical-align: middle;
-    background-color: $panel-components-component-background-color;
-    border: $panel-components-component-border;
     border-radius: $border-radius-onlyright;
     @include user-select();
     box-sizing: border-box;
 
-    .btn-display {
-        position: absolute;
-        display: inline-block;
-        margin: auto;
-        height: 13px;
-        top: 0px;
-        left: 0px;
-        bottom: 0px;
-        right: 0px;
+    .styled_button {
+        width: 100%;
+        margin: 0px;
+        padding: 4px 0px;
         text-align: center;
+        border-radius: 0px 0px 0px 0px;
+    }
+
+    .styled_button:first-child {
+        border-top-right-radius: 4px;
+    }
+
+    .styled_button:last-child {
+        border-bottom-right-radius: 4px;
     }
 }
 
@@ -128,7 +130,6 @@
     }
 }
 
-.wiring-sidebar .panel-behaviours .behaviour-heading:hover,
 .wiring-sidebar .panel-behaviours .behaviour-body:hover {
     background-color: $panel-components-mousedover-component-background-color;
     border-color: $panel-components-mousedover-component-border-color;
@@ -137,10 +138,4 @@
 
 .wiring-sidebar .panel-behaviours .behaviour.active {
 
-    .behaviour-heading {
-        background-color: #337ab7;
-        border-color: #2e6da4;
-        color: #fff;
-        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
-    }
 }
