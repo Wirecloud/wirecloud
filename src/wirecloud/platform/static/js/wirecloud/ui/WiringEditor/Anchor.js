@@ -310,6 +310,14 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
         }
     };
 
+    Anchor.prototype.getComponent = function getComponent() {
+        return this.context.iObject;
+    };
+
+    Anchor.prototype.getName = function getName() {
+        return [this.context.iObject.componentType, this.context.iObject.componentId, this.context.data.name].join('/');
+    };
+
     /**
      * Serialize an Anchor
      */
