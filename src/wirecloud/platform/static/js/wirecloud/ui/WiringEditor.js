@@ -241,6 +241,10 @@ Wirecloud.ui.WiringEditor = (function () {
                 this.layout.slideUp();
             }.bind(this));
 
+            eventTarget.behaviour.addEventListener('empty', function() {
+                this.behaviourEngine.emptyBehaviour(eventTarget.behaviour);
+            }.bind(this));
+
             eventTarget.behaviour.addEventListener('open', function() {
                 var btnSave = new StyledElements.StyledButton({
                     'text': gettext("Save changes"),
@@ -289,6 +293,22 @@ Wirecloud.ui.WiringEditor = (function () {
             };
 
             dialog.show();
+        }.bind(this));
+
+        this.behaviourEngine.addEventListener('beforeEmpty', function (eventTarget) {
+            var component, componentId, componentType, connection, i, idList;
+
+            for (componentType in this.components) {
+                idList = Object.keys(this.components[componentType]);
+
+                for (i = 0; i < idList.length; i++) {
+                    component = this.components[componentType][idList[i]];
+
+                    if (eventTarget.behaviour.containsComponent(componentType, idList[i])) {
+                        this.removeComponent(componentType, idList[i], false);
+                    }
+                }
+            }
         }.bind(this));
     };
 

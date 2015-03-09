@@ -209,6 +209,25 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @param {Behaviour} behaviour
      * @returns {Boolean} If the behaviour given is the same behaviour saved.
      */
+    Behaviour.prototype.empty = function empty() {
+        this.connections.length = 0;
+        this.components = {
+            'operator': {},
+            'widget': {}
+        };
+
+        updateCounterList.call(this);
+
+        return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {Behaviour} behaviour
+     * @returns {Boolean} If the behaviour given is the same behaviour saved.
+     */
     Behaviour.prototype.equals = function equals(behaviour) {
         return (behaviour instanceof Behaviour) && Object.is(this, behaviour);
     };

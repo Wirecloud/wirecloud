@@ -60,7 +60,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.CONNECTION_REMOVED = 1;
     BehaviourEngine.CONNECTION_REMOVED_FULLY = 0;
 
-    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeRemove', 'create'];
+    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeEmpty', 'beforeRemove', 'create'];
 
     BehaviourEngine.viewpoints = {
         'GLOBAL': 0,
@@ -171,6 +171,13 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
         behaviour.btnActivate.addEventListener('dblclick', function (event) {
             behaviour.dispatchEvent('activate.dblclick')({
+                'behaviour': behaviour,
+                'behaviourEngine': this,
+            }, event);
+        }.bind(this));
+
+        behaviour.btnEmpty.addEventListener('click', function (event) {
+            behaviour.dispatchEvent('empty')({
                 'behaviour': behaviour,
                 'behaviourEngine': this,
             }, event);
@@ -404,6 +411,39 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
             this.activateBehaviour(oldBehaviour);
             this._removeBehaviour(behaviour);
+        }
+
+        return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {Behaviour} behaviour
+     * @returns {BehaviourEngine} The instance on which this function was called.
+     */
+    BehaviourEngine.prototype.emptyBehaviour = function emptyBehaviour(behaviour) {
+        var found, i, index, oldBehaviour;
+
+        if (this.containsBehaviour(behaviour)) {
+            if (this.currentBehaviour.equals(behaviour)) {
+                oldBehaviour = null;
+            } else {
+                oldBehaviour = this.currentBehaviour;
+                this.activateBehaviour(behaviour);
+            }
+
+            this.dispatchEvent('beforeEmpty')({
+                'behaviour': behaviour,
+                'behaviourEngine': this
+            });
+
+            behaviour.empty();
+
+            if (oldBehaviour != null) {
+                this.activateBehaviour(oldBehaviour);
+            }
         }
 
         return this;
