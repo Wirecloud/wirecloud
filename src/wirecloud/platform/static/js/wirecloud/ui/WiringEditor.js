@@ -112,8 +112,13 @@ Wirecloud.ui.WiringEditor = (function () {
             }
 
             if (found) {
-                this.connections.splice(index, 1);
-                this.behaviourEngine.removeConnection(eventTarget.connection.serialize());
+                switch (this.behaviourEngine.removeConnection(eventTarget.sourceName, eventTarget.targetName, eventTarget.cascadeRemove)) {
+                case WiringEditor.BehaviourEngine.CONNECTION_REMOVED:
+                    eventTarget.connection.onbackground = true;
+                    break;
+                case WiringEditor.BehaviourEngine.CONNECTION_REMOVED_FULLY:
+                    this.connections.splice(index, 1);
+                }
             }
         }.bind(this));
 

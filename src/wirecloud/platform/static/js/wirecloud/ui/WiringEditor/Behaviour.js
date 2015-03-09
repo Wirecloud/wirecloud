@@ -219,6 +219,31 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @public
      * @function
      *
+     * @param {String} sourceName
+     * @param {String} targetName
+     * @returns {Number} The index of the connection found.
+     */
+    Behaviour.prototype.getConnectionIndex = function getConnectionIndex(sourceName, targetName) {
+        var connection, found, i, index;
+
+        index = -1;
+
+        for (found = false, i = 0; !found && i < this.connections.length; i++) {
+            connection = this.connections[i];
+
+            if (connection.sourcename == sourceName && connection.targetname == targetName) {
+                found = true;
+                index = i;
+            }
+        }
+
+        return index;
+    };
+
+    /**
+     * @public
+     * @function
+     *
      * @param {String} connectionId
      * @returns {Object.<String, *>} The current view of the component given.
      */
@@ -261,17 +286,17 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @public
      * @function
      *
-     * @param {String} connectionId
+     * @param {String} sourceName
+     * @param {String} targetName
      * @returns {Behaviour} The instance on which this function was called.
      */
-    Behaviour.prototype.removeConnection = function removeConnection(connectionId) {
+    Behaviour.prototype.removeConnection = function removeConnection(sourceName, targetName) {
         var index;
 
-        if ((index=this.connections.indexOf(connectionId)) != -1) {
+        if ((index=this.getConnectionIndex(sourceName, targetName)) != -1) {
             this.connections.splice(index, 1);
+            updateCounterList.call(this);
         }
-
-        updateCounterList.call(this);
 
         return this;
     };

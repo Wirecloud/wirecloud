@@ -44,12 +44,21 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     StyledElements.Utils.inherit(BehaviourEngine, null,
         StyledElements.EventManagerMixin, Wirecloud.ui.WiringEditor.BehaviourManagerMixin);
 
-    BehaviourEngine.COMPONENT_UNREACHABLE = -1;
-    BehaviourEngine.COMPONENT_NOT_FOUND = -2;
-    BehaviourEngine.COMPONENT_UNSUPPORTED = -3;
+    BehaviourEngine.OPERATION_NOT_ALLOWED = -1;
 
-    BehaviourEngine.COMPONENT_REMOVED = 0;
-    BehaviourEngine.COMPONENT_REMOVED_FULLY = 1;
+    BehaviourEngine.COMPONENT_NOT_FOUND = 4;
+    BehaviourEngine.COMPONENT_UNREACHABLE = 3;
+    BehaviourEngine.COMPONENT_UNSUPPORTED = 2;
+
+    BehaviourEngine.COMPONENT_REMOVED = 1;
+    BehaviourEngine.COMPONENT_REMOVED_FULLY = 0;
+
+    BehaviourEngine.CONNECTION_NOT_FOUND = 4;
+    BehaviourEngine.CONNECTION_UNREACHABLE = 3;
+    BehaviourEngine.CONNECTION_UNSUPPORTED = 2;
+
+    BehaviourEngine.CONNECTION_REMOVED = 1;
+    BehaviourEngine.CONNECTION_REMOVED_FULLY = 0;
 
     BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeRemove', 'create'];
 
@@ -228,6 +237,26 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @public
      * @function
      *
+     * @param {String} sourceName
+     * @param {String} targetName
+     * @returns {Boolean} If that connection is saved.
+     */
+    BehaviourEngine.prototype.containsConnection = function containsConnection(sourceName, targetName) {
+        var found, i;
+
+        for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
+            if (this.behaviourList[i].containsConnection(sourceName, targetName)) {
+                found = true;
+            }
+        }
+
+        return found;
+    };
+
+    /**
+     * @public
+     * @function
+     *
      * @param {String} componentType
      * @param {String} componentId
      * @returns {Array.<Behaviour>} The behaviours that contain to the component given.
@@ -266,6 +295,31 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         }
 
         return componentView;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} sourceName
+     * @param {String} targetName
+     * @returns {Number} The index of the connection found.
+     */
+    BehaviourEngine.prototype.getConnectionIndex = function getConnectionIndex(sourceName, targetName) {
+        var connection, found, i, index;
+
+        index = -1;
+
+        for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
+            connection = this.currentState.connections[i];
+
+            if (connection.sourcename == sourceName && connection.targetname == targetName) {
+                found = true;
+                index = i;
+            }
+        }
+
+        return index;
     };
 
     /**
@@ -359,7 +413,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         var i;
 
         if (this.currentViewpoint !== BehaviourEngine.viewpoints.GLOBAL) {
-            return -1;
+            return BehaviourEngine.OPERATION_NOT_ALLOWED;
         }
 
         if (typeof cascadeRemove !== 'boolean') {
@@ -395,20 +449,46 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @public
      * @function
      *
-     * @param {String} connectionId
-     * @returns {BehaviourEngine} The instance on which this function was called.
+     * @param {String} sourceName
+     * @param {String} targetName
+     * @returns {Number} A number that explain what operation was done.
      */
-    BehaviourEngine.prototype.removeConnection = function removeConnection(connectionId) {
-        var found, i;
+    BehaviourEngine.prototype.removeConnection = function removeConnection(sourceName, targetName, cascadeRemove) {
+        var i, index;
 
-        for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
-            if (this.currentState.connections[i].id == connectionId) {
-                this.currentState.connections.splice(i, 1);
-                found = true;
+        if (this.currentViewpoint !== BehaviourEngine.viewpoints.GLOBAL) {
+            return BehaviourEngine.OPERATION_NOT_ALLOWED;
+        }
+
+        if (typeof cascadeRemove !== 'boolean') {
+            cascadeRemove = false;
+        }
+
+        index = this.getConnectionIndex(sourceName, targetName);
+
+        if (index == -1) {
+            return BehaviourEngine.CONNECTION_NOT_FOUND;
+        }
+
+        if (cascadeRemove) {
+            for (i = 0; i < this.behaviourList.length; i++) {
+                this.behaviourList[i].removeConnection(sourceName, targetName);
+            }
+        } else {
+            if (!this.currentBehaviour.containsConnection(sourceName, targetName)) {
+                return BehaviourEngine.CONNECTION_UNREACHABLE;
+            }
+
+            this.currentBehaviour.removeConnection(sourceName, targetName);
+
+            if (this.containsConnection(sourceName, targetName)) {
+                return BehaviourEngine.CONNECTION_REMOVED;
             }
         }
 
-        return this;
+        this.currentState.connections.splice(index, 1);
+
+        return BehaviourEngine.CONNECTION_REMOVED_FULLY;
     };
 
     /**

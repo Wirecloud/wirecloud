@@ -106,16 +106,7 @@
                 });
             } else {
                 if (!this.controlledDestruction()) {
-                    this.canvas.events.detach.dispatch({
-                        'connection': this,
-                        'sourceComponent': this.sourceComponent,
-                        'sourceEndpoint': this.startAnchor,
-                        'sourceName': this.sourceName,
-                        'targetComponent': this.targetComponent,
-                        'targetEndpoint': this.endAnchor,
-                        'targetName': this.targetName
-                    });
-                    this.destroy();
+                    this.remove();
                 }
             }
             e.stopPropagation();
@@ -552,6 +543,27 @@
         if (this.endAnchor !== null) {
             this.endAnchor.removeArrow(this);
             this.endAnchor = null;
+        }
+    };
+
+    Arrow.prototype.remove = function remove(force) {
+        if (typeof force !== 'boolean') {
+            force = false;
+        }
+
+        this.canvas.events.detach.dispatch({
+            'connection': this,
+            'sourceComponent': this.sourceComponent,
+            'sourceEndpoint': this.startAnchor,
+            'sourceName': this.sourceName,
+            'targetComponent': this.targetComponent,
+            'targetEndpoint': this.endAnchor,
+            'targetName': this.targetName,
+            'cascadeRemove': force
+        });
+
+        if (force || !this.onbackground) {
+            this.destroy();
         }
     };
 
