@@ -124,6 +124,7 @@
         } else {
             this.wiringEditor.layout.content.removeChild(data.iObjectClon);
         }
+        this.wiringEditor.layout.slideDown();
     };
 
     /**
