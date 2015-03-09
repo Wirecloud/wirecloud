@@ -1265,7 +1265,7 @@ Wirecloud.ui.WiringEditor = (function () {
             widget_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
             widget_interface.repaint();
 
-            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize());
+            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), widget_interface.onbackground);
         }.bind(this));
 
         widget_interface.addEventListener('sortstop', function (eventTarget) {
@@ -1441,7 +1441,7 @@ Wirecloud.ui.WiringEditor = (function () {
             operator_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
             operator_interface.repaint();
 
-            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize());
+            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), operator_interface.onbackground);
         }.bind(this));
 
         operator_interface.addEventListener('sortstop', function (eventTarget) {
