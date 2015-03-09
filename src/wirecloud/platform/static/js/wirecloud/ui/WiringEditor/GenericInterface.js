@@ -1468,6 +1468,32 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         }
     };
 
+    GenericInterface.prototype.emptyConnections = function emptyConnections() {
+        var connections, i, j;
+
+        for (i = 0; i < this.sourceAnchors.length; i++) {
+            connections = this.sourceAnchors[i].arrows.slice(0);
+
+            for (j = connections.length - 1; j >= 0; j--) {
+                if (!connections[j].onbackground) {
+                    connections[j].remove();
+                }
+            }
+        }
+
+        for (i = 0; i < this.targetAnchors.length; i++) {
+            connections = this.targetAnchors[i].arrows.slice(0);
+
+            for (j = connections.length - 1; j >= 0; j--) {
+                if (!connections[j].onbackground) {
+                    connections[j].remove();
+                }
+            }
+        }
+
+        return this;
+    };
+
     /**
      * Destroy
      */
@@ -1484,7 +1510,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             arrows = this.sourceAnchors[i].arrows.slice(0);
             for (j = 0; j < arrows.length; j += 1) {
                 if (!arrows[j].controlledDestruction()) {
-                    arrows[j].destroy();
+                    arrows[j].remove(true);
                 }
             }
             this.sourceAnchors[i].destroy();
@@ -1494,7 +1520,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             arrows = this.targetAnchors[i].arrows.slice(0);
             for (j = 0; j < arrows.length; j += 1) {
                if (!arrows[j].controlledDestruction()) {
-                    arrows[j].destroy();
+                    arrows[j].remove(true);
                 }
             }
             this.targetAnchors[i].destroy();
