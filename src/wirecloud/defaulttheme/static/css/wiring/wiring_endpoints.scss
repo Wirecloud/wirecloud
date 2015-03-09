@@ -153,6 +153,21 @@
 }
 
 // ============================================================================
+// WIRING DIAGRAM - COMPONENT NO ENDPOINTS
+// ============================================================================
+
+.wiring-diagram .component.no-endpoints {
+
+    .component-heading {
+        border-radius: $component-heading-border-radius;
+    }
+
+    .component-body {
+        display: none;
+    }
+}
+
+// ============================================================================
 // WIRING DIAGRAM - ENDPOINT-SORTING
 // ============================================================================
 

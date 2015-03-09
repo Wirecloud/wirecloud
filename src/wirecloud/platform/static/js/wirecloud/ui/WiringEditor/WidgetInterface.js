@@ -112,6 +112,10 @@
                 anchorContext = {'data': inputs[i], 'iObject': this};
                 this.addTarget(label, desc, inputs[i].name, anchorContext);
             }
+
+            if (!this.sourceAnchors.length && !this.targetAnchors.length) {
+                this.wrapperElement.classList.add('no-endpoints');
+            }
         }
     };
 
