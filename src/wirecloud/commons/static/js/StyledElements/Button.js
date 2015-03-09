@@ -177,6 +177,23 @@
             }
         });
 
+        var active = false;
+
+        Object.defineProperty(this, 'active', {
+            'get': function get() {
+                return active;
+            },
+            'set': function set(state) {
+                if (typeof state === 'boolean') {
+                    if ((active=state)) {
+                        this.wrapperElement.classList.add('active');
+                    } else {
+                        this.wrapperElement.classList.remove('active');
+                    }
+                }
+            }
+        });
+
         /* Initial status */
         this.tabindex = options.tabindex;
 
