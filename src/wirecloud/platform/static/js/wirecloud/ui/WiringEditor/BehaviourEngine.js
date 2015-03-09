@@ -432,15 +432,26 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @param {String} componentType
      * @param {String} componentId
      * @param {Object.<String, *>} componentView
+     * @param {Boolean} updateOnly
      * @returns {BehaviourEngine} The instance on which this function was called.
      */
-    BehaviourEngine.prototype.updateComponent = function updateComponent(componentType, componentId, componentView) {
+    BehaviourEngine.prototype.updateComponent = function updateComponent(componentType, componentId, componentView, updateOnly) {
         componentView = StyledElements.Utils.cloneObject(componentView);
+
+        if (typeof updateOnly !== 'boolean') {
+            updateOnly = false;
+        }
 
         switch (this.currentViewpoint) {
             case BehaviourEngine.viewpoints.GLOBAL:
-                this.currentState.components[componentType][componentId] = componentView;
-                this.currentBehaviour.updateComponent(componentType, componentId);
+                if (updateOnly) {
+                    if (componentId in this.currentState.components[componentType]) {
+                        this.currentState.components[componentType][componentId] = componentView;
+                    }
+                } else {
+                    this.currentState.components[componentType][componentId] = componentView;
+                    this.currentBehaviour.updateComponent(componentType, componentId);
+                }
                 break;
             default:
                 break;

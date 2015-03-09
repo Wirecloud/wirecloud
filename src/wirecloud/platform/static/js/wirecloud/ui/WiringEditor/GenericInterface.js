@@ -52,7 +52,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'optremove', 'sortstop']);
+        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'optremove', 'optshare', 'sortstop']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -253,8 +253,13 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                     'class': 'icon-remove option-remove',
                     'title': gettext("Remove"),
                     'plain': true
-                })
+                }),
 
+                'optionShare': new StyledElements.StyledButton({
+                    'class': "icon-plus option-share",
+                    'title': gettext("Share"),
+                    'plain': true
+                })
             };
 
             optionsElement.appendChild(this.options.optionNotify.hide().wrapperElement);
@@ -276,6 +281,15 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             this.options.optionRemove.addEventListener('click', function (originalEvent) {
                 if (!this.readOnly && !this.onbackground) {
                     this.events.optremove.dispatch({
+                        'componentId': this.getId()
+                    }, originalEvent);
+                }
+            }.bind(this));
+
+            optionsElement.appendChild(this.options.optionShare.hide().wrapperElement);
+            this.options.optionShare.addEventListener('click', function (originalEvent) {
+                if (!this.readOnly && this.onbackground)  {
+                    this.events.optshare.dispatch({
                         'componentId': this.getId()
                     }, originalEvent);
                 }

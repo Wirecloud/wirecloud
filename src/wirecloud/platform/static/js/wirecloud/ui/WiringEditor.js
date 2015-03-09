@@ -1234,6 +1234,13 @@ Wirecloud.ui.WiringEditor = (function () {
                (clientY > box.top) && (clientY < box.bottom);
     };
 
+    var shareComponent = function shareComponent(component) {
+        this.behaviourEngine.updateComponent(component.componentType, component.componentId, component.serialize());
+        component.onbackground = false;
+
+        return this;
+    };
+
     /**
      * add IWidget.
      */
@@ -1273,6 +1280,10 @@ Wirecloud.ui.WiringEditor = (function () {
             } else {
                 this.removeComponent(componentType, componentId);
             }
+        }.bind(this));
+
+        widget_interface.addEventListener('optshare', function (eventTarget) {
+            shareComponent.call(this, widget_interface);
         }.bind(this));
 
         this.layout.content.appendChild(widget_interface);
@@ -1445,6 +1456,10 @@ Wirecloud.ui.WiringEditor = (function () {
             } else {
                 this.removeComponent(componentType, componentId);
             }
+        }.bind(this));
+
+        operator_interface.addEventListener('optshare', function (eventTarget) {
+            shareComponent.call(this, operator_interface);
         }.bind(this));
 
         this.layout.content.appendChild(operator_interface);
