@@ -27,8 +27,8 @@
     /*************************************************************************
      * Constructor
      *************************************************************************/
-    var Canvas = function Canvas() {
-        StyledElements.ObjectWithEvents.call(this, ['arrowadded', 'arrowremoved', 'unselectall', 'connectionEstablished', 'connectionDetached']);
+    var Canvas = function Canvas(containment) {
+        StyledElements.ObjectWithEvents.call(this, ['detach', 'duplicate', 'establish', 'unselectall', 'update']);
 
         this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
         this.canvasElement.generalLayer = document.createElementNS(this.SVG_NAMESPACE, 'svg:g');
@@ -40,6 +40,9 @@
             this.events.unselectall.dispatch();
         }.bind(this), false);
 
+        this.containment = containment;
+        this.containment.appendChild(this.canvasElement);
+        this.containment.wrapperElement.addEventListener("scroll", this._onscroll_updatePosition.bind(this));
     };
     Canvas.prototype = new StyledElements.ObjectWithEvents();
 
@@ -87,9 +90,6 @@
         arrow.redraw();
         arrow.insertInto(this.canvasElement.generalLayer);
 
-        if ((extraClass != 'multiconnector_arrow') && extraClass != 'connection hollow') {
-            this.events.arrowadded.dispatch(this, arrow);
-        }
         return arrow;
     };
 
@@ -103,7 +103,6 @@
         if (arrow.multiId == null) {
             arrow.wrapperElement.parentNode.removeChild(arrow.wrapperElement);
         }
-        this.events.arrowremoved.dispatch(this, arrow);
     };
 
     /**
@@ -147,6 +146,18 @@
             this.selectedArrow.unselect();
             this.selectedArrow = null;
         }
+    };
+
+    Canvas.prototype._onscroll_updatePosition = function _onscroll_updatePosition() {
+        var oc, scrollX, scrollY, param;
+        oc = this.containment;
+
+        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
+        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
+        param = "translate(" + (-scrollX) + " " + (-scrollY) + ")";
+        this.canvasElement.generalLayer.setAttribute('transform', param);
+        this.canvasElement.style.top = scrollY + 'px';
+        this.canvasElement.style.left = scrollX + 'px';
     };
 
     /*************************************************************************

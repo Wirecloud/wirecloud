@@ -60,6 +60,25 @@
             }
         }.bind(this), true);
 
+        /* Connection - Background */
+
+        var onbackground = false;
+
+        Object.defineProperty(this, 'onbackground', {
+            'get': function get() {
+                return onbackground;
+            },
+            'set': function set(state) {
+                if (typeof state === 'boolean') {
+                    if ((onbackground=state)) {
+                        this.wrapperElement.classList.add('on-background');
+                    } else {
+                        this.wrapperElement.classList.remove('on-background');
+                    }
+                }
+            }
+        });
+
         // Closer
         this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.closerElement.setAttribute('class', "option-remove");
@@ -75,6 +94,15 @@
                 return;
             }
             if (!this.controlledDestruction()) {
+                this.canvas.events.detach.dispatch({
+                    'connection': this,
+                    'sourceComponent': this.sourceComponent,
+                    'sourceEndpoint': this.startAnchor,
+                    'sourceName': this.sourceName,
+                    'targetComponent': this.targetComponent,
+                    'targetEndpoint': this.endAnchor,
+                    'targetName': this.targetName
+                });
                 this.destroy();
             }
             e.stopPropagation();
@@ -108,6 +136,16 @@
             },
             function onFinish(draggable, data) {
                 data.arrow.redraw();
+
+                canvas.events.update.dispatch({
+                    'connection': data.arrow,
+                    'sourceComponent': data.arrow.sourceComponent,
+                    'sourceEndpoint': data.arrow.startAnchor,
+                    'sourceName': data.arrow.sourceName,
+                    'targetComponent': data.arrow.targetComponent,
+                    'targetEndpoint': data.arrow.endAnchor,
+                    'targetName': data.arrow.targetName
+                });
             },
             function () {return true; }
         );
@@ -121,6 +159,16 @@
             },
             function onFinish(draggable, data) {
                 data.arrow.redraw();
+
+                canvas.events.update.dispatch({
+                    'connection': data.arrow,
+                    'sourceComponent': data.arrow.sourceComponent,
+                    'sourceEndpoint': data.arrow.startAnchor,
+                    'sourceName': data.arrow.sourceName,
+                    'targetComponent': data.arrow.targetComponent,
+                    'targetEndpoint': data.arrow.endAnchor,
+                    'targetName': data.arrow.targetName
+                });
             },
             function () {return true; }
         );
@@ -177,6 +225,8 @@
     Arrow.prototype.setStartAnchor = function setStartAnchor(anchor) {
         if (anchor != null) {
             this.startAnchor = anchor;
+            this.sourceName = this.startAnchor.getName();
+            this.sourceComponent = this.startAnchor.getComponent();
         }
     };
 
@@ -194,6 +244,8 @@
     Arrow.prototype.setEndAnchor = function setEndAnchor(anchor) {
         if (anchor != null) {
             this.endAnchor = anchor;
+            this.targetName = this.endAnchor.getName();
+            this.targetComponent = this.endAnchor.getComponent();
         }
     };
 
@@ -455,11 +507,6 @@
      * Destroy the arrow.
      */
     Arrow.prototype.destroy = function destroy() {
-
-        if (this.startAnchor !== null && this.endAnchor !== null) {
-            this.canvas.events.connectionDetached.dispatch(this.canvas, this);
-        }
-
         this.disconnect();
         if (this.canvas !== null) {
             this.canvas.removeArrow(this);
@@ -493,6 +540,26 @@
             this.endAnchor.removeArrow(this);
             this.endAnchor = null;
         }
+    };
+
+    Arrow.prototype.serialize = function serialize() {
+        var sourcehandle, targethandle;
+
+        sourcehandle = this.getPullerStart();
+        targethandle = this.getPullerEnd();
+
+        return {
+            'sourcename': this.sourceName,
+            'sourcehandle': {
+                'x': sourcehandle.posX,
+                'y': sourcehandle.posY
+            },
+            'targetname': this.targetName,
+            'targethandle': {
+                'x': targethandle.posX,
+                'y': targethandle.posY
+            }
+        };
     };
 
     /**

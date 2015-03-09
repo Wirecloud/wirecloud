@@ -84,6 +84,15 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
                                 // Normal arrow, click in startAnchor
                                 arrow.endAnchor.arrowCreator.startdrag(e, arrow.endAnchor);
                                 this.events.startdrag.dispatch(arrow.endAnchor);
+                                arrow.canvas.events.detach.dispatch({
+                                    'connection': arrow,
+                                    'sourceComponent': arrow.sourceComponent,
+                                    'sourceEndpoint': arrow.startAnchor,
+                                    'sourceName': arrow.sourceName,
+                                    'targetComponent': arrow.targetComponent,
+                                    'targetEndpoint': arrow.endAnchor,
+                                    'targetName': arrow.targetName
+                                });
                                 arrow.destroy();
                             } else {
                                 // Click in startAnchor, endAnchor is multiconector
@@ -97,6 +106,15 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
                                 // Normal arrow, click in endAnchor
                                 arrow.startAnchor.arrowCreator.startdrag(e, arrow.startAnchor);
                                 this.events.startdrag.dispatch(arrow.startAnchor);
+                                arrow.canvas.events.detach.dispatch({
+                                    'connection': arrow,
+                                    'sourceComponent': arrow.sourceComponent,
+                                    'sourceEndpoint': arrow.startAnchor,
+                                    'sourceName': arrow.sourceName,
+                                    'targetComponent': arrow.targetComponent,
+                                    'targetEndpoint': arrow.endAnchor,
+                                    'targetName': arrow.targetName
+                                });
                                 arrow.destroy();
                             } else {
                                 // Click in endAnchor, startAnchor is multiconector

@@ -39,7 +39,7 @@
         var theArrow;
         var draggable = this;
         var currentSource, currentTarget;
-        var layer = canvas.getHTMLElement().parentNode; // TODO Trampa
+        var layer = canvas.containment.wrapperElement; // TODO Trampa
         this.layer = layer;
         /*************************************************************************
          * Public methods
@@ -56,12 +56,7 @@
             }
 
             this.initAnchor = initAnchor;
-
-            if (initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                initAnchor.context.iObject.wiringEditor.recommendations.emphasize(initAnchor.initAnchor, true);
-            } else {
-                initAnchor.context.iObject.wiringEditor.recommendations.emphasize(initAnchor, true);
-            }
+            initAnchor.context.iObject.wiringEditor.recommendations.emphasize(initAnchor, true);
 
             document.oncontextmenu = _cancel; // disable context menu
             document.onmousedown = _cancel; // disable text selection in Firefox
@@ -85,13 +80,6 @@
 
             // Minimized operators
             this.initAnchor.context.iObject.potentialArrow = theArrow;
-            if (initAnchor.context.iObject.isMinimized) {
-                initAnchor.context.iObject.restore();
-                this.initWasMinimized = true;
-            } else {
-                this.initWasMinimized = false;
-            }
-
             this.theArrow = theArrow;
             theArrow.emphasize();
             // we can draw invert arrows from the end to the start
@@ -105,21 +93,8 @@
                 currentSource = initAnchor;
                 currentTarget = null;
                 theArrow.setStart(tmpPos, initAnchor);
-            } else if (initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                if (initAnchor.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
-                    this.invert = true;
-                    currentSource = null;
-                    currentTarget = initAnchor;
-                    theArrow.setEnd(tmpPos, initAnchor.initAnchor);
-                    theArrow.endMulti = initAnchor.id;
-                } else if (initAnchor.initAnchor instanceof Wirecloud.ui.WiringEditor.SourceAnchor) {
-                    this.invert = false;
-                    currentSource = initAnchor;
-                    currentTarget = null;
-                    theArrow.startMulti = initAnchor.id;
-                    theArrow.setStart(tmpPos, initAnchor.initAnchor);
-                }
             }
+
             document.addEventListener("mousemove", this.drag, false);
             onStart(draggable, data);
             return false;
@@ -153,71 +128,54 @@
             this.initAnchor.context.iObject.potentialArrow = null;
             if (fAnchor !== this.initAnchor) {
                 if (fAnchor != null) {
-                    if (fAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                        if (!this.invert) {
-                            currentTarget = fAnchor.initAnchor;
-                            theArrow.setEnd(fAnchor.getCoordinates(layer), fAnchor.initAnchor);
-                            theArrow.endMulti = fAnchor.id;
-                        } else {
-                            currentSource = fAnchor.initAnchor;
-                            theArrow.setStart(fAnchor.getCoordinates(layer), fAnchor.initAnchor);
-                            theArrow.startMulti = fAnchor.id;
-                        }
+                    if (!this.invert) {
+                        currentTarget = fAnchor;
+                        theArrow.setEnd(fAnchor.getCoordinates(layer), fAnchor);
                     } else {
-                        if (!this.invert) {
-                            currentTarget = fAnchor;
-                            theArrow.setEnd(fAnchor.getCoordinates(layer), fAnchor);
-                        } else {
-                            currentSource = fAnchor;
-                            theArrow.setStart(fAnchor.getCoordinates(layer), fAnchor);
-                        }
+                        currentSource = fAnchor;
+                        theArrow.setStart(fAnchor.getCoordinates(layer), fAnchor);
                     }
                     theArrow.deemphasize();
-                    if (isVal(currentSource, currentTarget)) {
+
+                    switch (validateConnection(currentSource, currentTarget)) {
+                    case ArrowCreator.CONNECTION_ALLOWED:
                         theArrow.calculateEmphasize();
                         theArrow.redraw();
                         // Add the arrow to the arrow list of both anchors
                         this.initAnchor.addArrow(theArrow);
-                        if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                            this.initAnchor.initAnchor.addArrow(theArrow);
-                        } else if (fAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                            fAnchor.initAnchor.addArrow(theArrow);
-                        }
                         fAnchor.addArrow(theArrow);
-
-                        // subdata connections
-                        if (currentSource.isSubAnchor) {
-                            currentSource.context.iObject.addSubdataConnection(currentSource.context.data.name.split("/")[0], currentSource.context.data.name, theArrow, currentSource, currentTarget, false);
-                            theArrow.addClassName('subdataConnection');
-                        } else if (currentTarget.isSubAnchor) {
-                            currentTarget.context.iObject.addSubdataConnection(currentTarget.context.data.name.split("/")[0], currentTarget.context.data.name, theArrow, currentSource, currentTarget, false);
-                            theArrow.addClassName('subdataConnection');
-                        }
-
-                        // minimized operators acctions
-                        if (this.initWasMinimized) {
-                            this.initAnchor.context.iObject.minimize();
-                        }
-                        canvas.events.connectionEstablished.dispatch(canvas, theArrow);
-                    } else {
+                        canvas.events.establish.dispatch({
+                            'connection': theArrow,
+                            'sourceComponent': theArrow.sourceComponent,
+                            'sourceEndpoint': theArrow.startAnchor,
+                            'sourceName': theArrow.sourceName,
+                            'targetComponent': theArrow.targetComponent,
+                            'targetEndpoint': theArrow.endAnchor,
+                            'targetName': theArrow.targetName
+                        });
+                        break;
+                    case ArrowCreator.CONNECTION_DUPLICATE:
+                        canvas.events.duplicate.dispatch({
+                            'connection': theArrow,
+                            'sourceComponent': theArrow.sourceComponent,
+                            'sourceEndpoint': theArrow.startAnchor,
+                            'sourceName': theArrow.sourceName,
+                            'targetComponent': theArrow.targetComponent,
+                            'targetEndpoint': theArrow.endAnchor,
+                            'targetName': theArrow.targetName
+                        });
+                    default:
                         theArrow.destroy();
                     }
                 // mouseup out of an anchor
                 } else {
                     theArrow.destroy();
-                    if (this.initWasMinimized) {
-                        this.initAnchor.context.iObject.minimize();
-                    }
                 }
             } else {
                 theArrow.destroy();
             }
 
-            if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                this.initAnchor.context.iObject.wiringEditor.recommendations.deemphasize(this.initAnchor.initAnchor,true);
-            } else {
-                this.initAnchor.context.iObject.wiringEditor.recommendations.deemphasize(this.initAnchor,true);
-            }
+            this.initAnchor.context.iObject.wiringEditor.recommendations.deemphasize(this.initAnchor,true);
 
             document.removeEventListener("mouseup", this.enddrag, false);
             document.removeEventListener("mousemove", this.drag, false);
@@ -233,58 +191,50 @@
         }.bind(this);
     };
 
-    /*************************************************************************
-     * Private methods
-     *************************************************************************/
+    ArrowCreator.CONNECTION_ALLOWED = 1;
+
+    ArrowCreator.CONNECTION_DUPLICATE = 0;
+
+    ArrowCreator.CONNECTION_SAME_COMPONENT = -1;
+
+    ArrowCreator.CONNECTION_SAME_ENDPOINT = -2;
+
+    ArrowCreator.ENDPOINT_MISTAKEN = -3;
 
     /**
-     * isVal return if the relation between currentTarget and currentSource is
-     * a valid connection or not.
+     * Check if the source and target endpoints are valid.
+     *
+     * @private
+     * @function
      */
-    var isVal = function isVal(currentSource, currentTarget) {
-        var arrows, i, source, target;
+    var validateConnection = function validateConnection(sourceEndpoint, targetEndpoint) {
+        var connections, i;
 
-        source = currentSource;
-        target = currentTarget;
-
-        if (source instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-            source = currentSource.initAnchor;
-            if (source.isSubAnchor || target.isSubAnchor) {
-                // multiconnectors are not compatible with subconnections
-                return false;
-            }
-        }
-        if (target instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-            target = currentTarget.initAnchor;
-            if (source.isSubAnchor || target.isSubAnchor) {
-                // multiconnectors are not compatible with subconnections
-                return false;
-            }
-        }
-        if (source === target) {
-            return false;
+        if (!(sourceEndpoint instanceof Wirecloud.ui.WiringEditor.SourceAnchor)) {
+            return ArrowCreator.ENDPOINT_MISTAKEN;
         }
 
-        if (!(source instanceof Wirecloud.ui.WiringEditor.SourceAnchor) || !(target instanceof Wirecloud.ui.WiringEditor.TargetAnchor)) {
-            return false;
+        if (!(targetEndpoint instanceof Wirecloud.ui.WiringEditor.TargetAnchor)) {
+            return ArrowCreator.ENDPOINT_MISTAKEN;
         }
 
-        if (target.context.iObject === source.context.iObject) {
-            return false;
-        }
-        if (source.isSubAnchor) {
-            arrows = source.context.iObject.sourceAnchorsByName[source.context.data.name.split('/')[0]].getArrows();
-        } else {
-            arrows = source.getArrows();
+        if (sourceEndpoint === targetEndpoint) {
+            return ArrowCreator.CONNECTION_SAME_ENDPOINT;
         }
 
-        for (i = 0; i < arrows.length; i++) {
-            if (arrows[i].endAnchor === target) {
-                return false;
+        if (targetEndpoint.context.iObject === sourceEndpoint.context.iObject) {
+            return ArrowCreator.CONNECTION_SAME_COMPONENT;
+        }
+
+        connections = sourceEndpoint.getArrows();
+
+        for (i = 0; i < connections.length; i++) {
+            if (connections[i].endAnchor === targetEndpoint) {
+                return ArrowCreator.CONNECTION_DUPLICATE;
             }
         }
 
-        return true;
+        return ArrowCreator.CONNECTION_ALLOWED;
     };
 
     /**

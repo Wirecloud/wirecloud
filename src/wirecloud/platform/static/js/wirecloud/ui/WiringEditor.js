@@ -60,8 +60,6 @@ Wirecloud.ui.WiringEditor = (function () {
         buildWiringBottombar.call(this);
 
         this.layout.content.addClassName('wiring-diagram');
-        this.layout.content.wrapperElement.addEventListener("scroll", this.scrollHandler.bind(this), false);
-
         this.layout.footer.addClassName('wiring-bottombar');
 
         // Manage the alert for an empty wiring
@@ -77,85 +75,70 @@ Wirecloud.ui.WiringEditor = (function () {
         this.alertEmptyWiring.hide();
         this.layout.content.appendChild(this.alertEmptyWiring);
 
-        // canvas for arrows
-        this.canvas = new Wirecloud.ui.WiringEditor.Canvas();
-        this.canvasElement = this.canvas.getHTMLElement();
-        this.layout.content.appendChild(this.canvasElement);
+        /* CONNECTION ENGINE SETTING */
 
-        this.canvas.addEventListener('arrowadded', function (canvas, arrow) {
-            this.arrows.push(arrow);
+        this.connectionEngine = new WiringEditor.Canvas(this.layout.content);
+
+        this.connectionEngine.addEventListener('establish', function (eventTarget) {
+            this.connections.push(eventTarget.connection);
+
+            shareComponent.call(this, eventTarget.sourceComponent);
+            shareComponent.call(this, eventTarget.targetComponent);
+
+            this.behaviourEngine.updateConnection(eventTarget.connection.serialize());
         }.bind(this));
 
-        this.canvas.addEventListener('connectionAdded', function (canvas, arrow) {
-            var connection, connectionIndex, i, startComponent, endComponent;
+        this.connectionEngine.addEventListener('duplicate', function (eventTarget) {
+            var connection, found, i;
 
-            this.behaviourEngine.activeBehaviour.updateConnection(arrow.getId());
-
-            startComponent = arrow.getStartComponent();
-            endComponent = arrow.getEndComponent();
-
-            this.behaviourEngine.updateComponent(startComponent.type, startComponent.id, startComponent.view);
-            this.behaviourEngine.updateComponent(endComponent.type, endComponent.id, endComponent.view);
-
-            startComponent.instance.setOnForeground();
-            endComponent.instance.setOnForeground();
-
-            for (i = 0; i < this.connections.length; i++) {
-                connection = this.connections[i];
-
-                if (this.behaviourEngine.activeBehaviour.containsConnection(connection.getId())) {
-                    connection.removeClassName('on-background');
+            for (found = false, i = 0; !found && i < this.connections.length; i++) {
+                if (this.connections[i].sourceName == eventTarget.sourceName &&
+                    this.connections[i].targetName == eventTarget.targetName) {
+                    connection = this.connections[i];
+                    found = true;
                 }
             }
-        }.bind(this));
-        this.canvas.addEventListener('connectionEstablished', function (canvas, arrow) {
-            var connectionIndex;
 
-            connectionIndex = this.connections.push(arrow) - 1;
-            this.behaviourEngine.updateConnection(connectionIndex, {
-                'pullerStart': arrow.getPullerStart(),
-                'pullerEnd': arrow.getPullerEnd(),
-                'startMulti': arrow.startMulti,
-                'endMulti': arrow.endMulti
-            });
-        }.bind(this));
+            if (found && connection.onbackground) {
+                shareComponent.call(this, connection.sourceComponent);
+                shareComponent.call(this, connection.targetComponent);
 
-        this.canvas.addEventListener('connectionDetached', function (canvas, arrow) {
-            var connectionIndex;
-
-            connectionIndex = this.connections.indexOf(arrow);
-
-            if (connectionIndex != -1) {
-                this.connections.splice(connectionIndex, 1);
-                this.behaviourEngine.removeConnection(connectionIndex);
+                this.behaviourEngine.updateConnection(connection.serialize());
+                connection.onbackground = false;
             }
         }.bind(this));
 
-        this.canvas.addEventListener('arrowremoved', function (canvas, arrow) {
-            var pos;
-            if (arrow.startMulti != null) {
-                this.multiconnectors[arrow.startMulti].removeArrow(arrow);
+        this.connectionEngine.addEventListener('detach', function (eventTarget) {
+            var found, i, index;
+
+            for (found = false, i = 0; !found && i < this.connections.length; i++) {
+                if (this.connections[i].sourceName == eventTarget.sourceName &&
+                    this.connections[i].targetName == eventTarget.targetName) {
+                    found = true;
+                    index = i;
+                }
             }
-            if (arrow.endMulti != null) {
-                this.multiconnectors[arrow.endMulti].removeArrow(arrow);
-            }
-            if (arrow.multiId != null) {
-                this.removeMulticonnector(this.multiconnectors[arrow.multiId]);
-            }
-            pos = this.arrows.indexOf(arrow);
-            if (pos != -1) {
-                this.arrows.splice(pos, 1);
+
+            if (found) {
+                this.connections.splice(index, 1);
+                this.behaviourEngine.removeConnection(eventTarget.connection.serialize());
             }
         }.bind(this));
 
-        this.canvas.addEventListener('unselectall', function () {
+        this.connectionEngine.addEventListener('unselectall', function () {
             this.ChangeObjectEditing(null);
+        }.bind(this));
+
+        this.connectionEngine.addEventListener('update', function (eventTarget) {
+            if (!eventTarget.connection.onbackground) {
+                this.behaviourEngine.updateConnection(eventTarget.connection.serialize(), true);
+            }
         }.bind(this));
 
         this.enableAnchors = this.enableAnchors.bind(this);
         this.disableAnchors = this.disableAnchors.bind(this);
 
-        this.arrowCreator = new Wirecloud.ui.WiringEditor.ArrowCreator(this.canvas, this,
+        this.arrowCreator = new Wirecloud.ui.WiringEditor.ArrowCreator(this.connectionEngine, this,
             function () {},
             function () {},
             this.enableAnchors
@@ -892,7 +875,7 @@ Wirecloud.ui.WiringEditor = (function () {
             this.btnComponents.wrapperElement.click();
         }
 
-        this.canvas.clear();
+        this.connectionEngine.clear();
         this.componentManager.clear();
         this.arrows = [];
         this.connections = [];
@@ -1051,7 +1034,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
                 // Create arrow
                 isGhost = startAnchor.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint;
-                arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.content.wrapperElement),
+                arrow = this.connectionEngine.drawArrow(startAnchor.getCoordinates(this.layout.content.wrapperElement),
                                               endAnchor.getCoordinates(this.layout.content.wrapperElement), extraclass, readOnly, isGhost);
 
                 // Set arrow anchors
@@ -1790,22 +1773,6 @@ Wirecloud.ui.WiringEditor = (function () {
         var workspace_title = LayoutManagerFactory.getInstance().viewsByName.workspace.getTitle();
         return Wirecloud.Utils.interpolate(gettext('%(workspace_title)s - Wiring'), {workspace_title: workspace_title});
     };
-
-   /**
-     *  scrollHandler, using canvas for transformate the arrows layer
-     */
-    WiringEditor.prototype.scrollHandler = function scrollHandler() {
-        var oc, scrollX, scrollY, param;
-        oc = this.layout.content;
-
-        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
-        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
-        param = "translate(" + (-scrollX) + " " + (-scrollY) + ")";
-        this.canvas.canvasElement.generalLayer.setAttribute('transform', param);
-        this.canvas.canvasElement.style.top = scrollY + 'px';
-        this.canvas.canvasElement.style.left = scrollX + 'px';
-    };
-
 
     /**
      *  Set Zoom level
