@@ -28,7 +28,7 @@
      * Constructor
      *************************************************************************/
     var Canvas = function Canvas(containment) {
-        StyledElements.ObjectWithEvents.call(this, ['detach', 'duplicate', 'establish', 'unselectall', 'update']);
+        StyledElements.ObjectWithEvents.call(this, ['detach', 'duplicate', 'establish', 'share', 'unselectall', 'update']);
 
         this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
         this.canvasElement.generalLayer = document.createElementNS(this.SVG_NAMESPACE, 'svg:g');

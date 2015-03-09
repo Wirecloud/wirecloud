@@ -81,11 +81,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.connectionEngine.addEventListener('establish', function (eventTarget) {
             this.connections.push(eventTarget.connection);
-
-            shareComponent.call(this, eventTarget.sourceComponent);
-            shareComponent.call(this, eventTarget.targetComponent);
-
-            this.behaviourEngine.updateConnection(eventTarget.connection.serialize());
+            shareConnection.call(this, eventTarget.connection);
         }.bind(this));
 
         this.connectionEngine.addEventListener('duplicate', function (eventTarget) {
@@ -100,11 +96,7 @@ Wirecloud.ui.WiringEditor = (function () {
             }
 
             if (found && connection.onbackground) {
-                shareComponent.call(this, connection.sourceComponent);
-                shareComponent.call(this, connection.targetComponent);
-
-                this.behaviourEngine.updateConnection(connection.serialize());
-                connection.onbackground = false;
+                shareConnection.call(this, connection);
             }
         }.bind(this));
 
@@ -123,6 +115,10 @@ Wirecloud.ui.WiringEditor = (function () {
                 this.connections.splice(index, 1);
                 this.behaviourEngine.removeConnection(eventTarget.connection.serialize());
             }
+        }.bind(this));
+
+        this.connectionEngine.addEventListener('share', function (eventTarget) {
+            shareConnection.call(this, eventTarget.connection);
         }.bind(this));
 
         this.connectionEngine.addEventListener('unselectall', function () {
@@ -1249,6 +1245,16 @@ Wirecloud.ui.WiringEditor = (function () {
     var shareComponent = function shareComponent(component) {
         this.behaviourEngine.updateComponent(component.componentType, component.componentId, component.serialize());
         component.onbackground = false;
+
+        return this;
+    };
+
+    var shareConnection = function shareConnection(connection) {
+        shareComponent.call(this, connection.sourceComponent);
+        shareComponent.call(this, connection.targetComponent);
+
+        this.behaviourEngine.updateConnection(connection.serialize());
+        connection.onbackground = false;
 
         return this;
     };

@@ -93,8 +93,9 @@
                 e.stopPropagation();
                 return;
             }
-            if (!this.controlledDestruction()) {
-                this.canvas.events.detach.dispatch({
+
+            if (this.onbackground) {
+                this.canvas.events.share.dispatch({
                     'connection': this,
                     'sourceComponent': this.sourceComponent,
                     'sourceEndpoint': this.startAnchor,
@@ -103,7 +104,19 @@
                     'targetEndpoint': this.endAnchor,
                     'targetName': this.targetName
                 });
-                this.destroy();
+            } else {
+                if (!this.controlledDestruction()) {
+                    this.canvas.events.detach.dispatch({
+                        'connection': this,
+                        'sourceComponent': this.sourceComponent,
+                        'sourceEndpoint': this.startAnchor,
+                        'sourceName': this.sourceName,
+                        'targetComponent': this.targetComponent,
+                        'targetEndpoint': this.endAnchor,
+                        'targetName': this.targetName
+                    });
+                    this.destroy();
+                }
             }
             e.stopPropagation();
         }.bind(this));
