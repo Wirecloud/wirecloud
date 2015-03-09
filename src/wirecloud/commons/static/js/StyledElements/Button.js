@@ -33,6 +33,14 @@
         }
     };
 
+    var dblclickCallback = function dblclickCallback(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.enabled) {
+            this.events.dblclick.dispatch(this);
+        }
+    };
+
     var keydownCallback = function keydownCallback(e) {
         if (this.enabled && e.keyCode === 13) {
             this._clickCallback(e);
@@ -90,7 +98,7 @@
             return;
         }
 
-        StyledElements.StyledElement.call(this, ['click', 'focus', 'blur', 'mouseenter', 'mouseleave', 'show', 'hide']);
+        StyledElements.StyledElement.call(this, ['click', 'dblclick', 'focus', 'blur', 'mouseenter', 'mouseleave', 'show', 'hide']);
 
         if (options.usedInForm) {
             this.wrapperElement = document.createElement("button");
@@ -183,6 +191,7 @@
 
         this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, true);
+        this.wrapperElement.addEventListener('dblclick', dblclickCallback.bind(this), true);
         this.wrapperElement.addEventListener('keydown', this._keydownCallback, false);
         this.wrapperElement.addEventListener('focus', onfocus.bind(this), true);
         this.wrapperElement.addEventListener('blur', onblur.bind(this), true);
