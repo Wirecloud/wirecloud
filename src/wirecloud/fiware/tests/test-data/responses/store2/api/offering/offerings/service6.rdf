@@ -22,7 +22,7 @@
                 "name": "Open Offering",
                 "created": "2013-06-04T00:00",
                 "interactions": [],
-                "long_description": "Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FI-WARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.",
+                "long_description": "Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FIWARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.",
                 "modified": "2012-11-19T00:00",
                 "legal": [
                     {

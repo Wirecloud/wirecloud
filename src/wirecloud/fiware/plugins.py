@@ -113,6 +113,7 @@ class FiWarePlugin(WirecloudPlugin):
 
     features = {
         'FI-WARE': wirecloud.fiware.__version__,
+        'FIWARE': wirecloud.fiware.__version__,
         'NGSI': '1.0',
         'ObjectStorage': '0.5',
     }
@@ -160,12 +161,12 @@ class FiWarePlugin(WirecloudPlugin):
     def get_platform_context_definitions(self):
         return {
             'fiware_version': {
-                'label': _('FI-WARE version'),
-                'description': _('FI-WARE version of the platform'),
+                'label': _('FIWARE version'),
+                'description': _('FIWARE version of the platform'),
             },
             'fiware_token_available': {
-                'label': _('FI-WARE token available'),
-                'description': _('Indicates if the current user has associated a FI-WARE auth token that can be used for accessing other FI-WARE resources'),
+                'label': _('FIWARE token available'),
+                'description': _('Indicates if the current user has associated a FIWARE auth token that can be used for accessing other FIWARE resources'),
             },
         }
 

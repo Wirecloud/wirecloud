@@ -3,7 +3,7 @@
     <div class="logo-header">
       {% if FIWARE_OFFICIAL_PORTAL %}
       <a href="{{ FIWARE_HOME }}" class="brand">
-        {% ifequal FIWARE_IDM_SERVER "https://account.lab.fi-ware.org" %}
+        {% ifequal FIWARE_IDM_SERVER "https://account.lab.fiware.org" %}
           <img alt="FIWARE Lab" class="fiware-logo" src="{{ STATIC_URL }}images/fiwarelab.png" />
         {% else %}
           <img alt="FIWARE Testbed" class="fiware-logo" src="{{ STATIC_URL }}images/fiwaretestbed.png" />

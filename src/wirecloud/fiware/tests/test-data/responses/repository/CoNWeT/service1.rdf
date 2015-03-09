@@ -48,7 +48,7 @@
         <dcterms:abstract xml:lang="en">Smart City Lights is an application that allows the management and analysis of Smart City entities status.</dcterms:abstract>
         <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2012-11-19T00:00</dcterms:modified>
         <foaf:page rdf:resource=""/>
-        <dcterms:description xml:lang="en">Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FI-WARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.</dcterms:description>
+        <dcterms:description xml:lang="en">Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FIWARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.</dcterms:description>
         <usdl:hasLegalCondition rdf:resource="http://store.example.com/offering/UPM__SantanderCityLights__1.0#EcCfJjMlQ5p0wQWs9"/>
         <usdl:hasProvider rdf:resource="http://store.example.com/offering/UPM__SantanderCityLights__1.0#gXQmZp2KsDRJj3VFg"/>
         <usdl:utilizedResource rdf:resource=""/>
