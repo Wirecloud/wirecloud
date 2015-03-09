@@ -263,11 +263,18 @@
     };
 
     StyledButton.prototype.addIconClassName = function addIconClassName(classname) {
-        this.label.classList.add(classname);
+        this.icon.classList.add(classname);
     };
 
     StyledButton.prototype.removeIconClassName = function removeIconClassName(classname) {
-        this.label.classList.remove(classname);
+        this.icon.classList.remove(classname);
+    };
+
+    StyledButton.prototype.toggleIconClass = function toggleIconClass(newClass, oldClass) {
+        this.icon.classList.add(newClass);
+        this.icon.classList.remove(oldClass);
+
+        return this;
     };
 
     StyledButton.prototype.setTitle = function setTitle(title) {
