@@ -1379,7 +1379,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         switch (this.behaviourEngine.removeComponent(componentType, componentId, cascadeRemove)) {
         case WiringEditor.BehaviourEngine.COMPONENT_REMOVED:
-            //this.components[componentType][componentId].onbackground = true;
+            this.components[componentType][componentId].onbackground = true;
             break;
         case WiringEditor.BehaviourEngine.COMPONENT_REMOVED_FULLY:
             _removeComponent.call(this, componentType, componentId);

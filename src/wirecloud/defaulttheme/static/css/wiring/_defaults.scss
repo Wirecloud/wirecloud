@@ -86,6 +86,19 @@ $highlighted-component-heading-font-color:          #31708f;
 
 $highlighted-component-mousedover-options-font-color:   #204d74;
 
+$component-onbackground-font-color: rgb(255, 255, 255);
+$component-onbackground-font-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1);
+$component-onbackground-options-font-color: rgba(255, 255, 255, 0.9);
+$component-onbackground-body-background-color: rgba(255, 255, 255, 0.4);
+$component-onbackground-box-shadow: 0 0px 3px rgba(0, 0, 0, 0.1);
+$component-onbackground-zindex: 10;
+
+$component-operator-onbackground-border-color: rgba(57, 132, 57, 0.3);
+$component-operator-onbackground-heading-background-color: rgba(67, 172, 106, 0.3);
+
+$component-widget-onbackground-border-color: rgba(227, 141, 19, 0.3);
+$component-widget-onbackground-heading-background-color: rgba(240, 173, 78, 0.3);
+
 // ============================================================================
 // WIRING VIEW - ENDPOINTS
 // ============================================================================

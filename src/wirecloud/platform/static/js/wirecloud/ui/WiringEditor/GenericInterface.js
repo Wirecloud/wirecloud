@@ -154,6 +154,27 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 }
             });
 
+            var onbackground = false;
+
+            Object.defineProperty(this, 'onbackground', {
+                'get': function get() {
+                    return onbackground;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean') {
+                        if ((onbackground=state)) {
+                            this.options.optionRemove.hide();
+                            this.options.optionShare.show();
+                            this.wrapperElement.classList.add('on-background');
+                        } else {
+                            this.options.optionRemove.show();
+                            this.options.optionShare.hide();
+                            this.wrapperElement.classList.remove('on-background');
+                        }
+                    }
+                }
+            });
+
             // Ghost interface
             if (isGhost) {
                 this.vendor = this.entity.name.split('/')[0];
@@ -253,7 +274,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
             optionsElement.appendChild(this.options.optionRemove.wrapperElement);
             this.options.optionRemove.addEventListener('click', function (originalEvent) {
-                if (!this.readOnly) {
+                if (!this.readOnly && !this.onbackground) {
                     this.events.optremove.dispatch({
                         'componentId': this.getId()
                     }, originalEvent);
