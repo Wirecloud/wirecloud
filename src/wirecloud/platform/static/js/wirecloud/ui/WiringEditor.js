@@ -206,6 +206,31 @@ Wirecloud.ui.WiringEditor = (function () {
     // ==================================================================================
 
     var startBehaviourEngine = function startBehaviourEngine() {
+        this.behaviourEngine.addEventListener('activate', function (eventTarget) {
+            var component, componentId, componentType, connection, i;
+
+            for (componentType in this.components) {
+                for (componentId in this.components[componentType]) {
+                    component = this.components[componentType][componentId];
+
+                    if (eventTarget.behaviour.containsComponent(componentType, componentId)) {
+                        component.onbackground = false;
+                    } else {
+                        component.onbackground = true;
+                    }
+                }
+            }
+
+            for (i = 0; i < this.connections.length; i++) {
+                connection = this.connections[i];
+                if (eventTarget.behaviour.containsConnection(connection.sourceName, connection.targetName)) {
+                    connection.onbackground = false;
+                } else {
+                    connection.onbackground = true;
+                }
+            }
+        }.bind(this));
+
         this.behaviourEngine.addEventListener('append', function (eventTarget) {
             eventTarget.behaviour.addEventListener('click', function() {
                 this.behaviourEngine.activateBehaviour(eventTarget.behaviour);
@@ -1247,7 +1272,7 @@ Wirecloud.ui.WiringEditor = (function () {
             this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize());
         }.bind(this));
 
-        widget_interface.addEventListener('optremove', function (eventTarget, originalEvent) {
+        widget_interface.addEventListener('optremove', function (eventTarget) {
             var dialog, message, componentType, componentId;
 
             componentId = eventTarget.componentId;
