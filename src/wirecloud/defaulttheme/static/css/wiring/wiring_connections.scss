@@ -143,7 +143,8 @@
 .wiring-diagram .connection.on-background,
 .wiring-diagram .connection.on-background:hover {
     cursor: default;
-    @include children-display((".option-remove", ".controller-line", ".controller-ball"));
+    @include children-display((".controller-line", ".controller-ball"));
+    @include children-display((".option-remove"), inline);
 
     .connection-body {
         stroke: $connection-onbackground-background-color;
