@@ -102,21 +102,6 @@
 }
 
 // ============================================================================
-// WIRING DIAGRAM - HIGHLIGHTED-CONNECTION
-// ============================================================================
-
-.wiring-diagram .connection.highlighted {
-
-    .connection-body {
-        stroke: $highlighted-connection-background-color;
-    }
-
-    .connection-border {
-        stroke: $highlighted-connection-border-color;
-    }
-}
-
-// ============================================================================
 // WIRING DIAGRAM - READONLY-CONNECTION
 // ============================================================================
 
@@ -152,7 +137,7 @@
 }
 
 // ============================================================================
-// WIRING DIAGRAM - ON-BACKGROUND-CONNECTION
+// WIRING DIAGRAM - CONNECTION ON BACKGROUND
 // ============================================================================
 
 .wiring-diagram .connection.on-background,
@@ -161,11 +146,26 @@
     @include children-display((".option-remove", ".controller-line", ".controller-ball"));
 
     .connection-body {
-        stroke: $connection-background-color;
+        stroke: $connection-onbackground-background-color;
     }
 
     .connection-border {
-        stroke: $connection-border-color;
+        stroke: $connection-onbackground-border-color;
         stroke-dasharray: $connection-border-dasharray;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - HIGHLIGHTED-CONNECTION
+// ============================================================================
+
+.wiring-diagram .connection.highlighted {
+
+    .connection-body {
+        stroke: $highlighted-connection-background-color;
+    }
+
+    .connection-border {
+        stroke: $highlighted-connection-border-color;
     }
 }
