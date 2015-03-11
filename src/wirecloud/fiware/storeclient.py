@@ -79,7 +79,7 @@ class StoreClient(object):
 
         return response.content
 
-    def upload_resource(self, name, version, filename, description, content_type, f, token):
+    def upload_resource(self, name, version, filename, description, content_type, f, token, open=True):
 
         headers = {
             'Authorization': 'Bearer ' + token,
@@ -90,6 +90,7 @@ class StoreClient(object):
                 'version': version,
                 'description': description,
                 'content_type': content_type,
+                'open': open
             })
         }
         # Rest file to ensure the full file is uploaded
