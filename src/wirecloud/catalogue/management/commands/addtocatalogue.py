@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,7 +19,7 @@
 
 from optparse import make_option
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
@@ -29,6 +29,7 @@ from wirecloud.catalogue.utils import delete_resource
 from wirecloud.catalogue.views import add_packaged_resource
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_group, install_resource_to_all_users
 
 
 class Command(BaseCommand):
@@ -39,9 +40,19 @@ class Command(BaseCommand):
             action='store_true',
             dest='deploy_only',
             default=False),
-        make_option('-r', '--reinstall',
+        make_option('-u', '--users',
+            action='store',
+            type='string',
+            dest='users',
+            default=''),
+        make_option('-g', '--groups',
+            action='store',
+            type='string',
+            dest='groups',
+            default=''),
+        make_option('-p', '--public',
             action='store_true',
-            dest='reinstall',
+            dest='public',
             default=False),
     )
 
@@ -49,9 +60,22 @@ class Command(BaseCommand):
         if len(args) < 1:
             raise CommandError(_('Wrong number of arguments'))
 
-        user = None
+        self.verbosity = int(options.get('verbosity', 1))
+
+        users = []
+        groups = []
+        public = options['public']
         if not options['deploy_only']:
-            user = User.objects.get(pk=1)
+
+            users_string = options['users'].strip()
+            if users_string != '':
+                for username in users_string.split(','):
+                    users.append(User.objects.get(username=username))
+
+            groups_string = options['groups'].strip()
+            if groups_string != '':
+                for groupname in groups_string.split(','):
+                    groups.append(Group.objects.get(name=groupname))
 
         for file_name in args:
             try:
@@ -64,18 +88,17 @@ class Command(BaseCommand):
             try:
                 template_contents = wgt_file.get_template()
                 template = TemplateParser(template_contents)
-                try:
-                    add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=options['deploy_only'])
-                except IntegrityError:
-                    if not options['reinstall']:
-                        raise
-                    else:
-                        old_resource = CatalogueResource.objects.get(vendor=template.get_resource_vendor(),
-                            short_name=template.get_resource_name(),
-                            version=template.get_resource_version()
-                        )
-                        delete_resource(old_resource, user)
-                        add_packaged_resource(f, user, wgt_file=wgt_file, template=template)
+                if options['deploy_only']:
+                    add_packaged_resource(f, None, wgt_file=wgt_file, template=template, deploy_only=True)
+                else:
+                    for user in users:
+                        install_resource_to_user(user, file_contents=wgt_file)
+
+                    for group in groups:
+                        install_resource_to_group(group, file_contents=wgt_file)
+
+                    if public:
+                        install_resource_to_all_users(file_contents=wgt_file)
 
                 wgt_file.close()
                 f.close()

@@ -1,3 +1,4 @@
+from wirecloud.catalogue.tests.commands import AddToCatalogueCommandTestCase
 from wirecloud.catalogue.tests.tests import CatalogueAPITestCase, PublishTestCase, WGTDeploymentTestCase, CatalogueSearchTestCase, CatalogueSuggestionTestCase  # pyflakes:ignore
 from wirecloud.catalogue.tests.south_migrations import CatalogueSouthMigrationsTestCase
 
