@@ -197,6 +197,10 @@ STYLED_ELEMENTS_CSS = (
 )
 
 
+def get_version_hash():
+    return sha1(json.dumps(get_active_features_info(), ensure_ascii=False, sort_keys=True).encode('utf8')).hexdigest()
+
+
 class WirecloudCorePlugin(WirecloudPlugin):
 
     features = {
@@ -278,7 +282,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'mode': 'unknown',
             'theme': settings.THEME_ACTIVE,
             'version': wirecloud.platform.__version__,
-            'version_hash': sha1(json.dumps(get_active_features_info(), ensure_ascii=False, sort_keys=True).encode('utf8')).hexdigest(),
+            'version_hash': get_version_hash(),
         }
 
     def get_workspace_context_definitions(self):

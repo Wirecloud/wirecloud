@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -30,6 +30,7 @@ from user_agents import parse as ua_parse
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import build_error_response
+from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.plugins import get_active_features_info
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
@@ -110,7 +111,7 @@ def render_wirecloud(request, view_type=None):
             view_type = get_default_view(request)
 
     try:
-        return render(request, 'wirecloud/views/%s.html' % view_type, {'VIEW_MODE': view_type}, content_type="application/xhtml+xml; charset=UTF-8")
+        return render(request, 'wirecloud/views/%s.html' % view_type, {'VIEW_MODE': view_type, 'WIRECLOUD_VERSION_HASH': get_version_hash()}, content_type="application/xhtml+xml; charset=UTF-8")
     except TemplateDoesNotExist:
         if 'mode' in request.GET:
             url = urlparse(request.build_absolute_uri())

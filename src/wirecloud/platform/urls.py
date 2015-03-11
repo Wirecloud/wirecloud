@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -25,6 +25,7 @@ from django.views.i18n import javascript_catalog
 from wirecloud.commons.views import ResourceSearch, SwitchUserService
 from wirecloud.platform import views
 from wirecloud.platform.context import views as context_views
+from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.iwidget import views as iwidget_views
 from wirecloud.platform.localcatalogue import views as localcatalogue_views
 from wirecloud.platform.markets import views as market_views
@@ -47,7 +48,7 @@ urlpatterns = patterns('wirecloud.platform.views',
     # i18n
     url(r'^api/i18n/', include('django.conf.urls.i18n')),
     url(r'^api/i18n/js_catalogue/?$',
-        cache_page(60 * 60 * 24)(javascript_catalog), {'packages': ()},
+        cache_page(60 * 60 * 24, key_prefix='js18n-%s' % get_version_hash())(javascript_catalog), {'packages': ()},
         name="wirecloud.javascript_translation_catalogue"),
 
     # Context
