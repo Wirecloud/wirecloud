@@ -154,6 +154,16 @@
         stroke: $connection-onbackground-border-color;
         stroke-dasharray: $connection-border-dasharray;
     }
+
+    .option-remove {
+        fill: $connection-bg-optrm-background-color;
+        stroke: $connection-bg-optrm-border-color;
+
+        &:hover {
+            fill: $connection-bg-optrm-mousedover-background-color;
+            stroke: $connection-bg-optrm-mousedover-border-color;
+        }
+    }
 }
 
 // ============================================================================
