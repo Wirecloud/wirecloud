@@ -1178,63 +1178,81 @@ class MyResourcesViewTester(MarketplaceViewTester):
             self.testcase.assertIsNotNone(resource)
 
 
+BACK_BUTTON = ".wirecloud_header_nav .icon-caret-left"
+WORKSPACE_OPT_WIRING = ".wirecloud_toolbar .icon-puzzle-piece"
+
+
 class WiringViewTester(object):
 
-    def __init__(self, testcase):
+    CSS_VIEW = ".wiring-view"
 
-        self.testcase = testcase
+    CSS_OPT_BEHAVIOURS = ".wirecloud_toolbar .opt-behaviours"
+    CSS_OPT_COMPONENTS = ".wirecloud_toolbar .opt-components"
+
+    CSS_SEC_SIDEBAR = ".wiring-view .wiring-sidebar"
+    CSS_SEC_DIAGRAM = ".wiring-view .wiring-diagram"
+
+    def __init__(self, testcase):
         self.expect_error = False
+        self.testcase = testcase
 
     def __enter__(self):
-        self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece").click()
+        self.testcase.wait_element_visible_by_css_selector(WORKSPACE_OPT_WIRING).click()
+
         if self.expect_error is False:
-            wiring_loaded = lambda driver: self.testcase.get_current_view() == 'wiring' and 'disabled' not in driver.find_element_by_css_selector('.wiring_editor').get_attribute('class')
+            wiring_loaded = lambda driver: self.testcase.get_current_view() == 'wiring' and 'disabled' not in driver.find_element_by_css_selector(self.CSS_VIEW).get_attribute('class')
             WebDriverWait(self.testcase.driver, 10).until(wiring_loaded)
+
         return self
 
     def __exit__(self, type, value, traceback):
         if self.expect_error is False or self.testcase.get_current_view() == 'wiring':
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, BACK_BUTTON), parent=True)).click()
             WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
+
         self.expect_error = False
 
-    def get_ioperators(self):
+    @property
+    def section_sidebar(self):
+        return self.testcase.driver.find_element_by_css_selector(self.CSS_SEC_SIDEBAR)
 
-        ioperators = self.testcase.driver.execute_script('''
-            var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-            var ioperator_ids = [];
-            var ioperator_elements = [];
+    @property
+    def section_diagram(self):
+        return self.testcase.driver.find_element_by_css_selector(self.CSS_SEC_DIAGRAM)
 
-            for (var key in wiringEditor.currentlyInUseOperators) {
-                ioperator_ids.push(key);
-                ioperator_elements.push(wiringEditor.currentlyInUseOperators[key].wrapperElement);
-            }
-            return [ioperator_ids, ioperator_elements];
-        ''');
+    def create_new_instance_of(self, component, pos_x=-40, pos_y=-40):
+        ActionChains(self.testcase.driver).click_and_hold(component).move_to_element(self.section_diagram).move_by_offset(pos_x, pos_y).release().perform()
 
-        return [
-            WiringIOperatorTester(self.testcase, ioperators[0][i], ioperators[1][i])
-            for i in range(len(ioperators[0]))
-        ]
+        return self
 
-    def get_iwidget(self, iwidget, timeout=0):
-        if isinstance(iwidget, IWidgetTester):
-            iwidget_id = iwidget.id
-        else:
-            iwidget_id = iwidget
+    def from_diagram_get_all_components(self, component_type):
+        return self.section_diagram.find_elements_by_css_selector(".component-%s" % component_type)
 
-        def widget_in_wiring_editor(driver):
-            return driver.execute_script('''
-                 var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-                 return wiringEditor.iwidgets[%(iwidget)d] != null;
-            ''' % {"iwidget": iwidget_id})
+    def from_sidebar_get_all_components(self, component_type):
+        return self.section_sidebar.find_elements_by_css_selector(".component-%s" % component_type)
 
-        try:
-            WebDriverWait(self.testcase.driver, timeout).until(widget_in_wiring_editor)
+    def from_sidebar_find_component_by_name(self, component_type, component_name, all_steps=False):
+        if all_steps:
+            self.open_component_bar()
+            self.open_component_group(component_type)
 
-            return WiringIWidgetTester(self.testcase, iwidget_id, None)
-        except TimeoutException:
-            return None
+        collection = self.section_sidebar.find_elements_by_css_selector(".component-%s" % component_type)
+
+        for component in collection:
+            if component.text == component_name:
+                return component
+
+        return None
+
+    def open_component_bar(self):
+        self.testcase.driver.find_element_by_css_selector(self.CSS_OPT_COMPONENTS).click()
+
+        return self
+
+    def open_component_group(self, component_type):
+        self.section_sidebar.find_element_by_css_selector(".%s-group" % component_type).click()
+
+        return self
 
 
 class MobileWirecloudRemoteTestCase(RemoteTestCase):

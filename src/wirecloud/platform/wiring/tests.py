@@ -351,21 +351,23 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
 
-    def test_operators_are_usable_after_installing(self):
-
+    def test_operator_available_after_being_installed(self):
         self.login()
 
         with self.myresources_view as myresources:
             myresources.upload_resource('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
 
         with self.wiring_view as wiring:
+            collection = wiring.from_sidebar_get_all_components('operator')
+            self.assertEqual(len(collection), 2)
 
-            wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
-            menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+            operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperatorSelenium', all_steps=True)
+            self.assertIsNotNone(operator)
+            wiring.create_new_instance_of(operator)
 
-            menubar.find_element_by_xpath("//*[contains(@class, 'se-expander')]//*[contains(@class, 'title') and text()='Operators']").click()
-            menubar.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperatorSelenium']")
-    test_operators_are_usable_after_installing.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
+            collection = wiring.from_diagram_get_all_components('operator')
+            self.assertEqual(len(collection), 1)
+    test_operator_available_after_being_installed.tags = ('behaviour-oriented-wiring',)
 
     def test_operators_are_not_usable_after_being_uninstalled(self):
 
