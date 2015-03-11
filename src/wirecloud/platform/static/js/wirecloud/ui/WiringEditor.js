@@ -199,7 +199,7 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     WiringEditor.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.btnComponents, this.btnBehaviours];
+        return [this.btnComponents, this.btnBehaviours, this.btnEmptyBehaviour];
     };
 
     // ==================================================================================
@@ -239,10 +239,6 @@ Wirecloud.ui.WiringEditor = (function () {
 
             eventTarget.behaviour.addEventListener('activate.dblclick', function() {
                 this.layout.slideUp();
-            }.bind(this));
-
-            eventTarget.behaviour.addEventListener('empty', function() {
-                this.behaviourEngine.emptyBehaviour(eventTarget.behaviour);
             }.bind(this));
 
             eventTarget.behaviour.addEventListener('open', function() {
@@ -331,7 +327,8 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.btnBehaviours = new StyledElements.StyledButton({
             'iconClass': 'icon-sitemap',
-            'title': gettext("Behaviours")
+            'title': gettext("Behaviours"),
+            'class': "opt-behaviours"
         });
         this.btnBehaviours.addEventListener('click', function (styledElement) {
             if (styledElement.hasClassName('active')) {
@@ -339,6 +336,28 @@ Wirecloud.ui.WiringEditor = (function () {
             } else {
                 this.layout.slideDown(1);
             }
+        }.bind(this));
+
+        this.btnEmptyBehaviour = new StyledElements.StyledButton({
+            'iconClass': 'icon-eraser',
+            'title': gettext("Empty behaviour"),
+            'class': "opt-empty-behaviour"
+        });
+        this.btnEmptyBehaviour.addEventListener('click', function (styledElement) {
+            var dialog, message;
+
+            message = gettext("The following operation is irreversible " +
+                "and cleans all components and connections belonging to the current behaviour. " +
+                "Would you like to continue?");
+
+            dialog = new Wirecloud.ui.AlertWindowMenu({
+                'acceptLabel': gettext("Yes, empty"),
+                'cancelLabel': gettext("No, thank you")
+            });
+
+            dialog.setMsg(message);
+            dialog.acceptHandler = this.behaviourEngine.emptyBehaviour.bind(this.behaviourEngine);
+            dialog.show();
         }.bind(this));
     };
 

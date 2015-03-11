@@ -176,13 +176,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }, event);
         }.bind(this));
 
-        behaviour.btnEmpty.addEventListener('click', function (event) {
-            behaviour.dispatchEvent('empty')({
-                'behaviour': behaviour,
-                'behaviourEngine': this,
-            }, event);
-        }.bind(this));
-
         behaviour.bodyElement.addEventListener('click', function (event) {
             behaviour.dispatchEvent('open')({
                 'behaviour': behaviour,
@@ -425,6 +418,10 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      */
     BehaviourEngine.prototype.emptyBehaviour = function emptyBehaviour(behaviour) {
         var found, i, index, oldBehaviour;
+
+        if (typeof behaviour === 'undefined') {
+            behaviour = this.currentBehaviour;
+        }
 
         if (this.containsBehaviour(behaviour)) {
             if (this.currentBehaviour.equals(behaviour)) {
