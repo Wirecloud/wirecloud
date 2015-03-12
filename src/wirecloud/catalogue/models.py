@@ -283,7 +283,7 @@ class Version(object):
                 compare = 1
 
             # case 4: both have prerelease: must compare them!
-            elif self.prerelease and other.prerelease:
+            else:
                 compare = cmp(self.prerelease, other.prerelease)
 
         return compare if not self.reverse else (compare * -1)
