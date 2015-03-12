@@ -60,7 +60,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.CONNECTION_REMOVED = 1;
     BehaviourEngine.CONNECTION_REMOVED_FULLY = 0;
 
-    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeEmpty', 'beforeRemove', 'create'];
+    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeEmpty', 'create', 'remove'];
 
     BehaviourEngine.viewpoints = {
         'GLOBAL': 0,
@@ -384,7 +384,11 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.removeBehaviour = function removeBehaviour(behaviour) {
         var found, i, index, oldBehaviour;
 
-        if (this.erasureEnabled && (index=this.getBehaviourIndexOf(behaviour)) != -1) {
+        if (typeof behaviour === 'undefined') {
+            behaviour = this.currentBehaviour;
+        }
+
+        if (this.erasureEnabled && (index=this.getBehaviourIndex(behaviour)) != -1) {
             if (this.currentBehaviour.equals(behaviour)) {
                 for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
                     if (!this.behaviourList[i].equals(behaviour)) {
@@ -396,14 +400,14 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
                 oldBehaviour = this.currentBehaviour;
             }
 
-            this.activateBehaviour(behaviour);
-            this.dispatchEvent('beforeRemove')({
+            this.emptyBehaviour(behaviour);
+            this.activateBehaviour(oldBehaviour);
+            this._removeBehaviour(behaviour);
+
+            this.dispatchEvent('remove')({
                 'behaviour': behaviour,
                 'behaviourEngine': this
             });
-
-            this.activateBehaviour(oldBehaviour);
-            this._removeBehaviour(behaviour);
         }
 
         return this;

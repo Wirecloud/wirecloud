@@ -91,6 +91,24 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         return this;
     };
 
+    /**
+     * @public
+     * @function
+     *
+     * @param {Behaviour} behaviour
+     * @returns {Boolean} If the behaviour given is saved.
+     */
+    BehaviourManagerMixin.prototype.containsBehaviour = function containsBehaviour(behaviour) {
+        var found, i;
+
+        for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
+            if (this.behaviourList[i].equals(behaviour)) {
+                found = true;
+            }
+        }
+
+        return found;
+    };
 
     /**
      * @public
@@ -147,7 +165,7 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
      * @param {Behaviour} behaviour
      * @returns {Number} The index of behaviour found.
      */
-    BehaviourManagerMixin.prototype.getBehaviourIndexOf = function getBehaviourIndexOf(behaviour) {
+    BehaviourManagerMixin.prototype.getBehaviourIndex = function getBehaviourIndex(behaviour) {
         var i, index;
 
         for (index = -1, i = 0; index < 0 && i < this.behaviourList.length; i++) {

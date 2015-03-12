@@ -87,13 +87,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         this.btnActivate.insertInto(this.headingElement);
         iconActivate = this.btnActivate.icon;
 
-        this.btnRemove = new StyledElements.StyledButton({
-            'class': 'opt-remove btn-danger',
-            'iconClass': 'icon-trash',
-            'title': gettext("Remove")
-        });
-        this.btnRemove.insertInto(this.headingElement);
-
         Object.defineProperty(this, 'active', {
             'get': function get() {
                 return this.wrapperElement.classList.contains('active');
@@ -119,7 +112,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
 
     StyledElements.Utils.inherit(Behaviour, null, StyledElements.EventManagerMixin);
 
-    Behaviour.events = ['activate', 'activate.dblclick', 'open', 'remove'];
+    Behaviour.events = ['activate', 'activate.dblclick', 'open'];
 
     Behaviour.normalize = function normalize(data, index) {
         if (typeof data !== 'object') {

@@ -199,7 +199,7 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     WiringEditor.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.btnComponents, this.btnBehaviours, this.btnEmptyBehaviour];
+        return [this.btnComponents, this.btnBehaviours, this.btnEmptyBehaviour, this.btnRemoveBehaviour];
     };
 
     // ==================================================================================
@@ -286,7 +286,8 @@ Wirecloud.ui.WiringEditor = (function () {
                 var behaviour = eventTarget.behaviourEngine.createBehaviour(data);
 
                 eventTarget.behaviourEngine.appendBehaviour(behaviour);
-            };
+                this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
+            }.bind(this);
 
             dialog.show();
         }.bind(this));
@@ -305,6 +306,10 @@ Wirecloud.ui.WiringEditor = (function () {
                     }
                 }
             }
+        }.bind(this));
+
+        this.behaviourEngine.addEventListener('remove', function (eventTarget) {
+            this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
         }.bind(this));
     };
 
@@ -357,6 +362,28 @@ Wirecloud.ui.WiringEditor = (function () {
 
             dialog.setMsg(message);
             dialog.acceptHandler = this.behaviourEngine.emptyBehaviour.bind(this.behaviourEngine);
+            dialog.show();
+        }.bind(this));
+
+        this.btnRemoveBehaviour = new StyledElements.StyledButton({
+            'iconClass': 'icon-trash',
+            'title': gettext("Remove behaviour"),
+            'class': "opt-remove-behaviour btn-danger"
+        });
+        this.btnRemoveBehaviour.addEventListener('click', function (styledElement) {
+            var dialog, message;
+
+            message = gettext("The following operation is irreversible " +
+                "and completely removes the current behaviour. " +
+                "Would you like to continue?");
+
+            dialog = new Wirecloud.ui.AlertWindowMenu({
+                'acceptLabel': gettext("Yes, remove"),
+                'cancelLabel': gettext("No, thank you")
+            });
+
+            dialog.setMsg(message);
+            dialog.acceptHandler = this.behaviourEngine.removeBehaviour.bind(this.behaviourEngine);
             dialog.show();
         }.bind(this));
     };
@@ -818,6 +845,7 @@ Wirecloud.ui.WiringEditor = (function () {
             this.generateConnection(workspace, this.oldWiring.connections[i], connectionView);
         }
 
+        this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
         this.behaviourEngine.activateBehaviour();
         this.activateCtrlMultiSelect();
 
