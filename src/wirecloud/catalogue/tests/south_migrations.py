@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
-from mock import Mock, patch
+from mock import Mock, patch, DEFAULT
 from south.migration import Migrations
 import six
 
@@ -50,9 +50,8 @@ class CatalogueSouthMigrationsTestCase(TestCase):
 
         return None
 
-    def test_remove_tag_vote_and_category_support_backwards(self):
-        migration = self._pick_migration('0003_remove_tag_vote_and_category_support')
-        orm = Mock(autospec=migration.prev_orm())
+    def fill_orm_external_models(self, orm):
+
         available_models = {
             'auth.user': Mock(),
             'auth.group': Mock(),
@@ -61,6 +60,42 @@ class CatalogueSouthMigrationsTestCase(TestCase):
             'catalogue.tag': Mock(),
         }
         orm.__getitem__ = lambda self, model: available_models[model.lower()]
+
+    def test_initial_forwards(self):
+        migration = self._pick_migration('0001_initial')
+        orm = Mock(autospec=migration.orm())
+        self.fill_orm_external_models(orm)
+        with patch.multiple('wirecloud.catalogue.south_migrations.0001_initial', db=DEFAULT, models=DEFAULT, autospec=True):
+            migration_instance = migration.migration_instance()
+            with patch.object(migration_instance, 'gf', autospec=True):
+                migration_instance.forwards(orm)
+
+    def test_initial_backwards(self):
+        migration = self._pick_migration('0001_initial')
+        orm = Mock(autospec=migration.prev_orm())
+        self.fill_orm_external_models(orm)
+        with patch.multiple('wirecloud.catalogue.south_migrations.0001_initial', db=DEFAULT, models=DEFAULT, autospec=True):
+            migration_instance = migration.migration_instance()
+            with patch.object(migration_instance, 'gf', autospec=True):
+                migration_instance.backwards(orm)
+
+    def test_del_field_catalogueresource_ie_compatible_forwards(self):
+        migration = self._pick_migration('0002_auto__del_field_catalogueresource_ie_compatible')
+        orm = Mock(autospec=migration.orm())
+        with patch('wirecloud.catalogue.south_migrations.0002_auto__del_field_catalogueresource_ie_compatible.db', autospec=True):
+            migration.migration_instance().forwards(orm)
+
+    def test_del_field_catalogueresource_ie_compatible_backwards(self):
+        migration = self._pick_migration('0002_auto__del_field_catalogueresource_ie_compatible')
+        orm = Mock(autospec=migration.prev_orm())
+        self.fill_orm_external_models(orm)
+        with patch('wirecloud.catalogue.south_migrations.0002_auto__del_field_catalogueresource_ie_compatible.db', autospec=True):
+            migration.migration_instance().backwards(orm)
+
+    def test_remove_tag_vote_and_category_support_backwards(self):
+        migration = self._pick_migration('0003_remove_tag_vote_and_category_support')
+        orm = Mock(autospec=migration.prev_orm())
+        self.fill_orm_external_models(orm)
         with patch('wirecloud.catalogue.south_migrations.0003_remove_tag_vote_and_category_support.db', autospec=True):
             with patch('wirecloud.catalogue.south_migrations.0003_remove_tag_vote_and_category_support.models', autospec=True):
                 migration_instance = migration.migration_instance()
