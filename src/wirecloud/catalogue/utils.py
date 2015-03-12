@@ -139,33 +139,21 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
     f.close()
 
     if not deploy_only:
-        return add_resource_from_template(file_name, template, user, overrides=overrides)
-
-
-def add_resource_from_template(template_uri, template, user, overrides=None):
-
-    if isinstance(template, TemplateParser):
-        parser = template
-    else:
-        parser = TemplateParser(template, base=template_uri)
-
-    resource_info = parser.get_resource_info()
-    if overrides is not None:
         resource_info.update(overrides)
 
-    resource = CatalogueResource.objects.create(
-        short_name=resource_info['name'],
-        vendor=resource_info['vendor'],
-        version=resource_info['version'],
-        type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
-        creator=user,
-        template_uri=template_uri,
-        creation_date=now(),
-        popularity='0.0',
-        json_description=json.dumps(resource_info)
-    )
+        resource = CatalogueResource.objects.create(
+            short_name=resource_info['name'],
+            vendor=resource_info['vendor'],
+            version=resource_info['version'],
+            type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
+            creator=user,
+            template_uri=file_name,
+            creation_date=now(),
+            popularity='0.0',
+            json_description=json.dumps(resource_info)
+        )
 
-    return resource
+        return resource
 
 
 def delete_resource(resource, user):
