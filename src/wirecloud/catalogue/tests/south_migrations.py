@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -73,10 +73,35 @@ class CatalogueSouthMigrationsTestCase(TestCase):
         orm.CatalogueResource.objects.all.return_value = TestQueryResult([])
         migration.migration_instance().forwards(orm)
 
+    def test_refresh_resource_cache_backwards_no_resources(self):
+        migration = self._pick_migration('0004_refresh_resource_cache')
+        orm = Mock(autospec=migration.prev_orm())
+        orm.CatalogueResource.objects.all.return_value = TestQueryResult([])
+        migration.migration_instance().backwards(orm)
+
+    def test_metadata_cleanup_migration_forwards(self):
+        migration = self._pick_migration('0005_metadata_cleanup')
+        orm = Mock(autospec=migration.orm())
+        with patch('wirecloud.catalogue.south_migrations.0005_metadata_cleanup.db', autospec=True):
+            migration.migration_instance().forwards(orm)
+
     def test_metadata_cleanup_migration_backwards(self):
         migration = self._pick_migration('0005_metadata_cleanup')
         orm = Mock(autospec=migration.prev_orm())
-        self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
+        with patch('wirecloud.catalogue.south_migrations.0005_metadata_cleanup.db', autospec=True):
+            self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
+
+    def test_refresh_resource_cache_forwards_0006_no_resources(self):
+        migration = self._pick_migration('0006_refresh_resource_cache')
+        orm = Mock(autospec=migration.orm())
+        orm.CatalogueResource.objects.all.return_value = TestQueryResult([])
+        migration.migration_instance().forwards(orm)
+
+    def test_refresh_resource_cache_backwards_0006_no_resources(self):
+        migration = self._pick_migration('0006_refresh_resource_cache')
+        orm = Mock(autospec=migration.prev_orm())
+        orm.CatalogueResource.objects.all.return_value = TestQueryResult([])
+        migration.migration_instance().backwards(orm)
 
     def test_remove_resources_from_template_url_forwards_no_conflict(self):
         migration = self._pick_migration('0007_remove_resources_from_template_url')
@@ -121,3 +146,15 @@ class CatalogueSouthMigrationsTestCase(TestCase):
         migration = self._pick_migration('0007_remove_resources_from_template_url')
         orm = Mock(autospec=migration.prev_orm())
         migration.migration_instance().backwards(orm)
+
+    def test_remove_fromWGT_field_from_catalogueresource_forwards(self):
+        migration = self._pick_migration('0008_auto__del_field_catalogueresource_fromWGT')
+        orm = Mock(autospec=migration.orm())
+        with patch('wirecloud.catalogue.south_migrations.0008_auto__del_field_catalogueresource_fromWGT.db', autospec=True):
+            migration.migration_instance().forwards(orm)
+
+    def test_remove_fromWGT_field_from_catalogueresource_backwards(self):
+        migration = self._pick_migration('0008_auto__del_field_catalogueresource_fromWGT')
+        orm = Mock(autospec=migration.prev_orm())
+        with patch('wirecloud.catalogue.south_migrations.0008_auto__del_field_catalogueresource_fromWGT.db', autospec=True):
+            migration.migration_instance().backwards(orm)
