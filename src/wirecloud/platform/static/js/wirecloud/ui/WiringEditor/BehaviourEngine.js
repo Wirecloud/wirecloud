@@ -176,7 +176,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }, event);
         }.bind(this));
 
-        behaviour.bodyElement.addEventListener('click', function (event) {
+        behaviour.titleElement.addEventListener('click', function (event) {
             behaviour.dispatchEvent('open')({
                 'behaviour': behaviour,
                 'behaviourEngine': this,

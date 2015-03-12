@@ -26,7 +26,7 @@
 .wiring-view .wiring-diagram {
     background-color: $wiring-view-panel-background-color;
     border: $panel-default-border;
-    box-shadow: $wiring-view-panel-box-shadow;
+    box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
 
     .alert .se-alert-heading {

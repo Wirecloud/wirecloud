@@ -39,26 +39,22 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = "behaviour";
 
-        this.bodyElement = document.createElement('div');
-        this.bodyElement.className = "behaviour-body";
-        this.wrapperElement.appendChild(this.bodyElement);
-
         this.title = data.title;
         this.description = data.description;
 
         this.titleElement = document.createElement('span');
         this.titleElement.className = "behaviour-title";
         this.titleElement.textContent = this.title;
-        this.bodyElement.appendChild(this.titleElement);
+        this.wrapperElement.appendChild(this.titleElement);
 
         this.descriptionElement = document.createElement('span');
         this.descriptionElement.className = "behaviour-description";
         this.descriptionElement.textContent = this.description;
-        this.bodyElement.appendChild(this.descriptionElement);
+        this.wrapperElement.appendChild(this.descriptionElement);
 
         countersElement = document.createElement('div');
         countersElement.className = "behaviour-elements";
-        this.bodyElement.appendChild(countersElement);
+        this.wrapperElement.appendChild(countersElement);
 
         this.components = data.components;
         this.connections = data.connections;
@@ -75,16 +71,12 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         this.widgetsElement.className = "badge badge-widgets";
         countersElement.appendChild(this.widgetsElement);
 
-        this.headingElement = document.createElement('div');
-        this.headingElement.className = "behaviour-heading";
-        this.wrapperElement.appendChild(this.headingElement);
-
         this.btnActivate = new StyledElements.StyledButton({
             'class': 'opt-activate btn-primary',
             'iconClass': 'icon-eye-open',
             'title': gettext("Activate")
         });
-        this.btnActivate.insertInto(this.headingElement);
+        this.btnActivate.insertInto(this.wrapperElement);
         iconActivate = this.btnActivate.icon;
 
         Object.defineProperty(this, 'active', {

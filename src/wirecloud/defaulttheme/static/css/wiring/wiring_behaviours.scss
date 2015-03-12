@@ -27,74 +27,62 @@
     position: relative;
     display: block;
     margin: 0px 0px $panel-components-component-margin-vertical;
-    box-sizing: border-box;
-}
-
-.wiring-sidebar .panel-behaviours .behaviour-heading {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-    width: 15%;
-    height: 90px;
-    vertical-align: middle;
-    border-radius: $border-radius-onlyright;
     @include user-select();
+    background-color: $panel-components-component-background-color;
+    border-radius: 4px;
     box-sizing: border-box;
 
-    .styled_button {
-        width: 100%;
+    .opt-activate {
+        position: absolute;
+        display: inline-block;
+        top: 0px;
+        right: 0px;
+        width: 30px;
         margin: 0px;
         padding: 4px 0px;
         text-align: center;
-        border-radius: 0px 0px 0px 0px;
-    }
-
-    .styled_button:first-child {
-        border-top-right-radius: 4px;
-    }
-
-    .styled_button:last-child {
-        border-bottom-right-radius: 4px;
+        border-radius: 0px 4px;
+        box-sizing: border-box;
     }
 }
 
-.wiring-sidebar .panel-behaviours .behaviour-body {
+.wiring-sidebar .panel-behaviours .behaviour-title,
+.wiring-sidebar .panel-behaviours .behaviour-description {
     position: relative;
-    display: inline-block;
-    cursor: pointer;
-    width: 85%;
-    height: 90px;
-    padding: 5px 0px 0px;
-    vertical-align: middle;
-    background-color: $panel-components-component-background-color;
+    display: block;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 20px;
+    @include user-select();
     border: $panel-components-component-border;
-    border-radius: $border-radius-onlyleft;
-    border-right-width: 0px;
     box-sizing: border-box;
+}
 
-    .behaviour-title {
-        position: relative;
-        display: block;
-        padding: 0px 5px;
-        font-size: 14px;
-        font-weight: bold;
-        line-height: 20px;
-        box-sizing: border-box;
-    }
+.wiring-sidebar .panel-behaviours .behaviour-title {
+    cursor: pointer;
+    padding-bottom: 0px;
+    font-weight: bold;
+    border-radius: 4px 4px 0px 0px;
+    border-bottom-width: 0px;
 
-    .behaviour-description {
-        position: relative;
-        display: block;
-        padding: 0px 5px;
-        font-size: 13px;
-        line-height: 20px;
-        box-sizing: border-box;
+    &:hover {
+        color: rgb(30, 80, 120);
+        text-decoration: underline;
     }
+}
+
+.wiring-sidebar .panel-behaviours .behaviour-description {
+    font-size: 13px;
+    border-radius: 0px;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    text-align: justify;
+    color: rgb(80, 80, 80);
+    height: 48px;
+    overflow-y: hidden;
 }
 
 .wiring-sidebar .panel-behaviours .behaviour-elements {
-    position: absolute;
-    bottom: 0px;
     width: 100%;
     display: block;
     text-align: center;
@@ -109,6 +97,7 @@
         color: #fff;
         font-size: 12px;
         line-height: 18px;
+        border: solid 1px transparent;
         border-radius: 0px;
         box-sizing: border-box;
     }
@@ -119,23 +108,18 @@
 
     .badge-connections {
         background-color: $connection-background-color;
+        border-color: $connection-border-color;
+        border-bottom-left-radius: 4px;
     }
 
     .badge-operators {
         background-color: $component-operator-background-color;
+        border-color: $component-operator-border-color;
     }
 
     .badge-widgets {
         background-color: $component-widget-background-color;
+        border-color: $component-widget-border-color;
+        border-bottom-right-radius: 4px;
     }
-}
-
-.wiring-sidebar .panel-behaviours .behaviour-body:hover {
-    background-color: $panel-components-mousedover-component-background-color;
-    border-color: $panel-components-mousedover-component-border-color;
-    z-index: 5;
-}
-
-.wiring-sidebar .panel-behaviours .behaviour.active {
-
 }
