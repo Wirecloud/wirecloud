@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.test import TestCase
-from mock import Mock, patch
+from mock import Mock, patch, DEFAULT
 from south.migration import Migrations
 import six
 
@@ -51,6 +51,55 @@ class PlatformSouthMigrationsTestCase(TestCase):
                 return migration
 
         return None
+
+    def fill_orm_external_models(self, orm):
+
+        available_models = {
+            'auth.user': Mock(),
+            'auth.group': Mock(),
+            'catalogue.catalogueresource': Mock(),
+            'platform.iwidget': Mock(),
+            'platform.market': Mock(),
+            'platform.position': Mock(),
+            'platform.publishedworkspace': Mock(),
+            'platform.tab': Mock(),
+            'platform.variable': Mock(),
+            'platform.variabledef': Mock(),
+            'platform.widget': Mock(),
+            'platform.workspace': Mock(),
+            'platform.xhtml': Mock(),
+        }
+        orm.__getitem__ = lambda self, model: available_models[model.lower()]
+
+    def test_initial_forwards(self):
+        migration = self._pick_migration('0001_initial')
+        orm = Mock(autospec=migration.orm())
+        self.fill_orm_external_models(orm)
+        with patch.multiple('wirecloud.platform.south_migrations.0001_initial', db=DEFAULT, models=DEFAULT, autospec=True):
+            migration_instance = migration.migration_instance()
+            with patch.object(migration_instance, 'gf', autospec=True):
+                migration_instance.forwards(orm)
+
+    def test_initial_backwards(self):
+        migration = self._pick_migration('0001_initial')
+        orm = Mock(autospec=migration.prev_orm())
+        self.fill_orm_external_models(orm)
+        with patch.multiple('wirecloud.platform.south_migrations.0001_initial', db=DEFAULT, models=DEFAULT, autospec=True):
+            migration_instance = migration.migration_instance()
+            with patch.object(migration_instance, 'gf', autospec=True):
+                migration_instance.backwards(orm)
+
+    def test_add_field_variabledef_readonly__add_field_variabledef_value_forwards(self):
+        migration = self._pick_migration('0002_auto__add_field_variabledef_readonly__add_field_variabledef_value')
+        orm = Mock(autospec=migration.orm())
+        with patch('wirecloud.platform.south_migrations.0002_auto__add_field_variabledef_readonly__add_field_variabledef_value.db', autospec=True):
+            migration.migration_instance().forwards(orm)
+
+    def test_add_field_variabledef_readonly__add_field_variabledef_value_backwards(self):
+        migration = self._pick_migration('0002_auto__add_field_variabledef_readonly__add_field_variabledef_value')
+        orm = Mock(autospec=migration.prev_orm())
+        with patch('wirecloud.platform.south_migrations.0002_auto__add_field_variabledef_readonly__add_field_variabledef_value.db', autospec=True):
+            migration.migration_instance().backwards(orm)
 
     def test_remove_userprefoption_model_and_metadata_fields_backwards(self):
 
