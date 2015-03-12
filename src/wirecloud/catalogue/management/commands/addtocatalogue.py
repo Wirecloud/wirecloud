@@ -64,15 +64,20 @@ class Command(BaseCommand):
 
         users = []
         groups = []
+        deploy_only = options['deploy_only']
         public = options['public']
+        users_string = options['users'].strip()
+        groups_string = options['groups'].strip()
+
+        if deploy_only is False and public is False and users_string == '' and groups_string == '':
+            raise CommandError(_('You must use at least one of the following flags: --deploy_only, --users, --groups or --public '))
+
         if not options['deploy_only']:
 
-            users_string = options['users'].strip()
             if users_string != '':
                 for username in users_string.split(','):
                     users.append(User.objects.get(username=username))
 
-            groups_string = options['groups'].strip()
             if groups_string != '':
                 for groupname in groups_string.split(','):
                     groups.append(Group.objects.get(name=groupname))
@@ -103,12 +108,6 @@ class Command(BaseCommand):
                 wgt_file.close()
                 f.close()
                 self.log(_('Successfully imported %(name)s widget') % {'name': template.get_resource_name()}, level=1)
-            except IntegrityError:
-                self.log(_('Version %(version)s of the %(name)s widget (from %(vendor)s) already exists') % {
-                    'name': template.get_resource_name(),
-                    'version': template.get_resource_version(),
-                    'vendor': template.get_resource_vendor(),
-                }, level=1)
             except:
                 self.log(_('Failed to import widget from %(file_name)s') % {'file_name': file_name}, level=1)
 

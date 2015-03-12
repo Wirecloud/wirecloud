@@ -144,6 +144,29 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
+    def test_addtocatalogue_command_simplewgt_no_action(self):
+
+        args = ['file.wgt']
+
+        with patch('__builtin__.open'):
+            with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue',
+                    add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
+                    WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
+
+                # Make the call to addtocatalogue
+                self.assertRaises((CommandError, SystemExit), call_command, 'addtocatalogue', *args, **self.options)
+
+                # Basic assert code
+                self.assertEqual(context['add_packaged_resource'].call_count, 0)
+                self.assertEqual(context['install_resource_to_user'].call_count, 0)
+                self.assertEqual(context['install_resource_to_group'].call_count, 0)
+                self.assertEqual(context['install_resource_to_all_users'].call_count, 0)
+
+        self.options['stdout'].seek(0)
+        self.assertEqual(self.options['stdout'].read(), '')
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
+
     def test_addtocatalogue_command_deploy_only(self):
 
         self.options['deploy_only'] = True
@@ -158,3 +181,71 @@ class AddToCatalogueCommandTestCase(TestCase):
                     self.assertEqual(context['add_packaged_resource'].call_args_list[1][1]['deploy_only'], True)
         except SystemExit:
             raise CommandError('')
+
+    def test_addtocatalogue_command_error_reading_file(self):
+
+        self.options['deploy_only'] = True
+
+        args = ['file1.wgt', 'file2.wgt']
+        try:
+            with patch('__builtin__.open') as open_mock:
+                def open_mock_side_effect(file_name, mode):
+                    if file_name == 'file1.wgt':
+                        raise Exception
+                open_mock.side_effect = open_mock_side_effect
+                with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue', add_packaged_resource=DEFAULT, WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
+                    call_command('addtocatalogue', *args, **self.options)
+                    self.assertEqual(context['add_packaged_resource'].call_count, 1)
+                    self.assertEqual(context['add_packaged_resource'].call_args_list[0][1]['deploy_only'], True)
+        except SystemExit:
+            raise CommandError('')
+
+        self.options['stdout'].seek(0)
+        self.assertNotEqual(self.options['stdout'].read(), '')
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
+
+    def test_addtocatalogue_command_error_installing_mac(self):
+
+        self.options['deploy_only'] = True
+
+        args = ['file1.wgt', 'file2.wgt']
+        try:
+            with patch('__builtin__.open'):
+                with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue', add_packaged_resource=DEFAULT, WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
+
+                    context['TemplateParser'].side_effect = (Exception, None)
+
+                    call_command('addtocatalogue', *args, **self.options)
+                    self.assertEqual(context['add_packaged_resource'].call_count, 1)
+                    self.assertEqual(context['add_packaged_resource'].call_args_list[0][1]['deploy_only'], True)
+        except SystemExit:
+            raise CommandError('')
+
+        self.options['stdout'].seek(0)
+        self.assertNotEqual(self.options['stdout'].read(), '')
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
+
+    def test_addtocatalogue_command_error_installing_mac_quiet(self):
+
+        self.options['verbosity'] = '0'
+        self.options['deploy_only'] = True
+
+        args = ['file1.wgt', 'file2.wgt']
+        try:
+            with patch('__builtin__.open'):
+                with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue', add_packaged_resource=DEFAULT, WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
+
+                    context['TemplateParser'].side_effect = (Exception, None)
+
+                    call_command('addtocatalogue', *args, **self.options)
+                    self.assertEqual(context['add_packaged_resource'].call_count, 1)
+                    self.assertEqual(context['add_packaged_resource'].call_args_list[0][1]['deploy_only'], True)
+        except SystemExit:
+            raise CommandError('')
+
+        self.options['stdout'].seek(0)
+        self.assertEqual(self.options['stdout'].read(), '')
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
