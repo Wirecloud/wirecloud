@@ -111,9 +111,8 @@ class CatalogueResource(models.Model):
 
         from wirecloud.catalogue.utils import wgt_deployer
 
-        # Delete media resources if needed
-        if not self.template_uri.startswith(('http', 'https')):
-            wgt_deployer.undeploy(self.vendor, self.short_name, self.version)
+        # Undeploy the resource from the filesystem
+        wgt_deployer.undeploy(self.vendor, self.short_name, self.version)
 
         old_id = self.id
         super(CatalogueResource, self).delete(*args, **kwargs)
