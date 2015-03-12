@@ -54,6 +54,12 @@
     };
     FileButton.prototype = new StyledElements.StyledButton();
 
+    FileButton.prototype.clear = function clear() {
+        this.inputElement.value = '';
+
+        return this;
+    };
+
     FileButton.prototype.getValue = function getValue() {
         return this.inputElement.files;
     };
