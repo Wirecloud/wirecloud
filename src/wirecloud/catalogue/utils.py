@@ -100,8 +100,8 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
         template_contents = wgt_file.get_template()
         template = TemplateParser(template_contents)
 
-    if template.get_resource_type() == 'widget':
-        resource_info = template.get_resource_info()
+    resource_info = template.get_resource_info()
+    if resource_info['type'] == 'widget':
         code_url = resource_info['contents']['src']
         if not code_url.startswith(('http://', 'https://')):
 
