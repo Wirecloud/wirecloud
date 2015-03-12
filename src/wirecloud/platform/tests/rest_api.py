@@ -1022,6 +1022,20 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
         check_post_bad_request_syntax(self, url)
 
+    def test_tab_collection_post_inexistent_workspace(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 666})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'ExistingTab',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 404)
+
     def test_tab_entry_put_requires_authentication(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})

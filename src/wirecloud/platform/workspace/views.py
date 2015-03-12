@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -267,6 +267,7 @@ class TabCollection(Resource):
     @commit_on_http_success
     def create(self, request, workspace_id):
 
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
         try:
             data = json.loads(request.body)
         except ValueError as e:
@@ -277,7 +278,6 @@ class TabCollection(Resource):
             return build_error_response(request, 400, _('Malformed tab JSON: expecting tab name.'))
 
         tab_name = data['name']
-        workspace = Workspace.objects.get(pk=workspace_id)
         if not (request.user.is_superuser or workspace.creator == request.user):
             return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
 
