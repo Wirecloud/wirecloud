@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -153,6 +153,9 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             },
             'require_debug_true': {
                 '()': 'wirecloud.commons.utils.log.RequireDebugTrue'
+            },
+            'skip_unreadable_posts': {
+                '()': 'wirecloud.commons.utils.log.SkipUnreadablePosts',
             }
         },
         'handlers': {
@@ -166,7 +169,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             },
             'mail_admins': {
                 'level': 'ERROR',
-                'filters': ['require_debug_false'],
+                'filters': ['require_debug_false', 'skip_unreadable_posts'],
                 'class': 'django.utils.log.AdminEmailHandler'
             }
         },
