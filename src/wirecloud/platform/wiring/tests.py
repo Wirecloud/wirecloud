@@ -369,30 +369,22 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(collection), 1)
     test_operator_available_after_being_installed.tags = ('behaviour-oriented-wiring',)
 
-    def test_operators_are_not_usable_after_being_uninstalled(self):
-
+    def test_operator_not_available_after_being_uninstalled(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
         with self.myresources_view as myresources:
             myresources.uninstall_resource('TestOperator')
 
-        # Check the operator enters into ghost mode
-        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
-        self.assertEqual(error_badge.text, '1')
-        self.assertTrue(error_badge.is_displayed())
-
         with self.wiring_view as wiring:
-            ioperator = wiring.get_ioperators()[0]
-            ioperator_class_list = re.split('\s+', ioperator.element.get_attribute('class'))
-            self.assertIn('ghost', ioperator_class_list)
+            operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperatorSelenium', all_steps=True)
+            self.assertIsNone(operator)
 
-            # And cannot be used anymore
-            wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
-            menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+            collection = wiring.from_sidebar_get_all_components('operator')
+            self.assertEqual(len(collection), 0)
 
-            menubar.find_element_by_xpath("//*[contains(@class, 'se-expander')]//*[contains(@class, 'title') and text()='Operators']").click()
-            self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
-    test_operators_are_not_usable_after_being_uninstalled.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
+            collection = wiring.from_diagram_get_all_components('operator')
+            self.assertEqual(len(collection), 0)
+    test_operator_not_available_after_being_uninstalled.tags = ('behaviour-oriented-wiring',)
 
     def check_operator_reinstall_behaviour(self, reload):
         workspace = Workspace.objects.get(id=3)
