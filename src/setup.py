@@ -113,10 +113,12 @@ setup(
         'whoosh>=2.5.6',
         'pycrypto',
         'pyScss>=1.3.4,<2.0',
-        'Pygments',
+        'Pygments'
+    ),
+    tests_require=(
+        'django-nose',
         'mock>=1.0,<2.0',
     ),
-    tests_require=('django-nose'),
     classifiers=(
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
