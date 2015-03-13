@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import errno
+
 from django.test import TestCase
 from mock import Mock, patch, DEFAULT
 
@@ -122,3 +124,74 @@ class CatalogueUtilsTestCase(TestCase):
         self.assertTrue(mac1.save.called)
         self.assertFalse(mac1.delete.called)
         self.assertTrue(mac2.delete.called)
+
+    def test_update_resource_catalogue_cache_from_normal_code(self):
+
+        # test calling the update_resource_catalogue_cache function without using a custom ORM (like when it is called from south_migrations)
+
+        mac1, mac2 = self.build_mac_mocks()
+
+        parser_mac1 = Mock()
+        parser_mac1.get_resource_info.return_value = "mac1_json"
+        parser_mac2 = Mock()
+        parser_mac2.get_resource_info.return_value = "mac2_json"
+
+        CatalogueResource_mock = Mock()
+        CatalogueResource_mock.objects.all.return_value = TestQueryResult([mac1, mac2])
+        with patch('wirecloud.catalogue.utils.CatalogueResource', CatalogueResource_mock):
+            with patch.multiple('wirecloud.catalogue.utils', WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
+                context['TemplateParser'].side_effect = (parser_mac1, parser_mac2)
+
+                update_resource_catalogue_cache()
+
+        self.assertTrue(mac1.save.called)
+        self.assertFalse(mac1.delete.called)
+        self.assertTrue(mac2.save.called)
+        self.assertFalse(mac2.delete.called)
+
+    def test_update_resource_catalogue_cache_using_templates(self):
+
+        # WireCloud should support external resources (through the template_url and fromWGT fields) for being able to migrate them
+
+        mac1, mac2 = self.build_mac_mocks()
+        mac1.fromWGT = False
+
+        parser_mac1 = Mock()
+        parser_mac1.get_resource_info.return_value = "mac1_json"
+        parser_mac2 = Mock()
+        parser_mac2.get_resource_info.return_value = "mac2_json"
+
+        CatalogueResource_mock = Mock()
+        CatalogueResource_mock.objects.all.return_value = TestQueryResult([mac1, mac2])
+        with patch('wirecloud.catalogue.utils.CatalogueResource', CatalogueResource_mock):
+            with patch.multiple('wirecloud.catalogue.utils', WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
+                context['TemplateParser'].side_effect = (parser_mac1, parser_mac2)
+
+                update_resource_catalogue_cache()
+
+        self.assertTrue(mac1.save.called)
+        self.assertFalse(mac1.delete.called)
+        self.assertTrue(mac2.save.called)
+        self.assertFalse(mac2.delete.called)
+
+    def test_update_resource_catalogue_cache_error_reading_wgt_file(self):
+
+        mac1, mac2 = self.build_mac_mocks()
+
+        parser_mac1 = Mock()
+        parser_mac1.get_resource_info.return_value = "mac1_json"
+
+        orm = Mock()
+        orm.CatalogueResource.objects.all.return_value = TestQueryResult([mac1, mac2])
+        with patch.multiple('wirecloud.catalogue.utils', WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
+            context['WgtFile'].side_effect = (Mock(), IOError(errno.EPERM, "Forbidden"))
+            context['TemplateParser'].side_effect = (parser_mac1, TemplateParseException('test'))
+
+            with self.settings(WIRECLOUD_REMOVE_UNSUPPORTED_RESOURCES_MIGRATION=True):
+                self.assertRaises(Exception, update_resource_catalogue_cache, orm)
+
+        # It's not important if update_resource_catalogue_cache calls to the save method of mac1,
+        # as it will be rolled back by the db engine
+        self.assertFalse(mac1.delete.called)
+        self.assertFalse(mac2.save.called)
+        self.assertFalse(mac2.delete.called)
