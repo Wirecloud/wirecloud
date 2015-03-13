@@ -61,3 +61,103 @@ def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode
     xhtml = t.render(c)
 
     return xhtml
+
+def get_endpoint_name(endpoint):
+    return "%s/%s/%s" % (endpoint['type'], endpoint['id'], endpoint['name'])
+
+def rename_component_type(component_type):
+    return component_type[1:] if component_type in ['iwidget', 'ioperator'] else "not_supported"
+
+def parse_wiring_old_version(wiring_status):
+
+    # set the structure for version 2.0
+    new_version = {
+        'version': "2.0",
+        'connections': [],
+        'operators': {},
+        'visualdescription': {
+            'behaviourenabled': True,
+            'behaviours': [],
+            'components': {
+                'operator': {},
+                'widget': {}
+            },
+            'connections': []
+        }
+    }
+
+    # set up business description
+
+    if 'operators' in wiring_status:
+        for operator_id, operator in wiring_status['operators'].items():
+            new_version['operators'][operator_id] = operator
+
+    if 'connections' in wiring_status:
+        for connection in wiring_status['connections']:
+            new_version['connections'].append({
+                'readonly': connection['readOnly'] if 'readOnly' in connection else False,
+                'source': {
+                    'type': rename_component_type(connection['source']['type']),
+                    'id': connection['source']['id'],
+                    'name': connection['source']['endpoint']
+                },
+                'target': {
+                    'type': rename_component_type(connection['target']['type']),
+                    'id': connection['target']['id'],
+                    'name': connection['target']['endpoint']
+                }
+            })
+
+    # set up visual description
+
+    if 'views' in wiring_status and len(wiring_status['views']) > 0:
+        old_view = wiring_status['views'][0]
+
+        # rebuild connections
+        connections_length = len(new_version['connections'])
+        for connection_index, connection_view in enumerate(old_view['connections']):
+            if connection_index < connections_length:
+                # get connection info from business part
+                connection = new_version['connections'][connection_index]
+                # set info into global behaviour
+                new_version['visualdescription']['connections'].append({
+                    'sourcename': get_endpoint_name(connection['source']),
+                    'sourcehandle': connection_view['pullerStart'],
+                    'targetname': get_endpoint_name(connection['target']),
+                    'targethandle': connection_view['pullerEnd']
+                })
+
+        # rebuild operators
+        for operator_id, operator in old_view['operators'].items():
+            if operator_id in new_version['operators']:
+                # set info into global behaviour
+                new_version['visualdescription']['components']['operator'][operator_id] = {
+                    'collapsed': operator['minimized'] if 'minimized' in operator else False,
+                    'endpoints': {
+                        'source': operator['endPointsInOuts']['sources'],
+                        'target': operator['endPointsInOuts']['targets']
+                    },
+                    'position': {
+                        'x': operator['position']['posX'],
+                        'y': operator['position']['posY']
+                    }
+                }
+
+        # rebuild widgets
+        for widget_id, widget in old_view['iwidgets'].items():
+            # set info into global behaviour
+            new_version['visualdescription']['components']['widget'][widget_id] = {
+                'endpoints': {
+                    'source': widget['endPointsInOuts']['sources'],
+                    'target': widget['endPointsInOuts']['targets']
+                },
+                'position': {
+                    'x': widget['position']['posX'],
+                    'y': widget['position']['posY']
+                }
+            }
+
+            if 'name' in widget:
+                new_version['visualdescription']['components']['widget'][widget_id]['name'] = widget['name']
+
+    return new_version

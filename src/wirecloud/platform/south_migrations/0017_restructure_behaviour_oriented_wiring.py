@@ -2,114 +2,23 @@
 import json
 
 from south.v2 import DataMigration
+from wirecloud.platform.wiring.utils import parse_wiring_old_version
 
 
 class Migration(DataMigration):
 
-    def _need_to_upgrade(self, wiring_state):
-        return 'views' in wiring_state
-
-    def _get_endpoint_name(self, endpoint):
-        return "%s/%s/%s" % (endpoint['type'], endpoint['id'], endpoint['name'])
-
-    def _rename_component_type(self, component_type):
-        return component_type[1:] if component_type in ['iwidget', 'ioperator'] else "not_supported"
+    def _need_to_upgrade(self, wiring_status):
+        return 'views' in wiring_status
 
     def forwards(self, orm):
         for workspace in orm.Workspace.objects.all():
-            state = json.loads(workspace.wiringStatus)
+            wiring_status = json.loads(workspace.wiringStatus)
 
-            # check if this wiring state is old version (1.0) or is empty
-            if not self._need_to_upgrade(state):
+            # check if this wiring status is old version (1.0) or is empty
+            if not self._need_to_upgrade(wiring_status):
                 continue
 
-            # set the structure for version 2.0
-            new_version = {
-                'version': "2.0",
-                'connections': [],
-                'operators': {},
-                'visualdescription': {
-                    'behaviourenabled': True,
-                    'behaviours': [],
-                    'components': {
-                        'operator': {},
-                        'widget': {}
-                    },
-                    'connections': []
-                }
-            }
-
-            # set up business description
-
-            if 'operators' in state:
-                for operator_id, operator in state['operators'].items():
-                    new_version['operators'][operator_id] = operator
-
-            if 'connections' in state:
-                for connection in state['connections']:
-                    new_version['connections'].append({
-                        'readonly': connection['readOnly'],
-                        'source': {
-                            'type': self._rename_component_type(connection['source']['type']),
-                            'id': connection['source']['id'],
-                            'name': connection['source']['endpoint']
-                        },
-                        'target': {
-                            'type': self._rename_component_type(connection['target']['type']),
-                            'id': connection['target']['id'],
-                            'name': connection['target']['endpoint']
-                        }
-                    })
-
-            # set up visual description
-
-            if 'views' in state and len(state['views']) > 0:
-                old_view = state['views'][0]
-
-                # rebuild connections
-                connections_length = len(new_version['connections'])
-                for connection_index, connection_view in enumerate(old_view['connections']):
-                    if connection_index < connections_length:
-                        # get connection info from business part
-                        connection = new_version['connections'][connection_index]
-                        # set info into global behaviour
-                        new_version['visualdescription']['connections'].append({
-                            'sourcename': self._get_endpoint_name(connection['source']),
-                            'sourcehandle': connection_view['pullerStart'],
-                            'targetname': self._get_endpoint_name(connection['target']),
-                            'targethandle': connection_view['pullerEnd']
-                        })
-
-                # rebuild operators
-                for operator_id, operator in old_view['operators'].items():
-                    if operator_id in new_version['operators']:
-                        # set info into global behaviour
-                        new_version['visualdescription']['components']['operator'][operator_id] = {
-                            'collapsed': operator['minimized'],
-                            'endpoints': {
-                                'source': operator['endPointsInOuts']['sources'],
-                                'target': operator['endPointsInOuts']['targets']
-                            },
-                            'position': {
-                                'x': operator['position']['posX'],
-                                'y': operator['position']['posY']
-                            }
-                        }
-
-                # rebuild widgets
-                for widget_id, widget in old_view['iwidgets'].items():
-                    # set info into global behaviour
-                    new_version['visualdescription']['components']['widget'][widget_id] = {
-                        'name': widget['name'],
-                        'endpoints': {
-                            'source': widget['endPointsInOuts']['sources'],
-                            'target': widget['endPointsInOuts']['targets']
-                        },
-                        'position': {
-                            'x': widget['position']['posX'],
-                            'y': widget['position']['posY']
-                        }
-                    }
+            new_version = parse_wiring_old_version(wiring_status)
 
             workspace.wiringStatus = json.dumps(new_version)
             workspace.save()
