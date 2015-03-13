@@ -52,7 +52,7 @@
             }
         }
 
-        return entity[type][desc.endpoint];
+        return entity[type][desc.name];
     };
 
     restore_connections = function restore_connections(entity) {

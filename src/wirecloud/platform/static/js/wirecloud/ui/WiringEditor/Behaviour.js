@@ -374,13 +374,19 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         for (found = false, i = 0; !found && i < this.connections.length; i++) {
             if (this.connections[i].sourcename == connectionView.sourcename &&
                 this.connections[i].targetname == connectionView.targetname) {
-                this.connections[i] = connectionView;
+                this.connections[i] = {
+                    'sourcename': connectionView.sourcename,
+                    'targetname': connectionView.targetname
+                };
                 found = true;
             }
         }
 
         if (!found) {
-            this.connections.push(connectionView);
+            this.connections.push({
+                'sourcename': connectionView.sourcename,
+                'targetname': connectionView.targetname
+            });
         }
 
         updateCounterList.call(this);

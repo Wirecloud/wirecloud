@@ -326,18 +326,21 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @public
      * @function
      *
-     * @param {String} connectionId
-     * @returns {Object.<String, *>} The current view of the component given.
+     * @param {String} sourceName
+     * @param {String} targetName
+     * @returns {Object.<String, *>} The current view of the connection given.
      */
-    BehaviourEngine.prototype.getConnectionView = function getConnectionView(connectionId) {
-        var connectionView, found, i;
+    BehaviourEngine.prototype.getConnectionView = function getConnectionView(sourceName, targetName) {
+        var connection, connectionView, found, i;
 
         switch (this.currentViewpoint) {
             case BehaviourEngine.viewpoints.GLOBAL:
                 for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
-                    if (this.currentState.connections[i].id == connectionId) {
-                        connectionView = this.currentState.connections[i];
+                    connection = this.currentState.connections[i];
+
+                    if (connection.sourcename == sourceName && connection.targetname == targetName) {
                         found = true;
+                        connectionView = connection;
                     }
                 }
                 break;

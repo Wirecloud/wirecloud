@@ -464,7 +464,7 @@ Wirecloud.ui.WiringEditor = (function () {
         var iwidget_interface, iwidget, endPointPos, entity;
 
         switch (desc.type) {
-        case 'iwidget':
+        case WiringEditor.WIDGET_TYPE:
             if (this.components.widget[desc.id] != null) {
                 entity =  this.components.widget[desc.id];
             } else {
@@ -480,7 +480,7 @@ Wirecloud.ui.WiringEditor = (function () {
                 }
             }
             break;
-        case 'ioperator':
+        case WiringEditor.OPERATOR_TYPE:
             if (this.components.operator[desc.id] != null) {
                 entity = this.components.operator[desc.id];
             } else {
@@ -757,7 +757,7 @@ Wirecloud.ui.WiringEditor = (function () {
      * load wiring from status and workspace info
      */
     var loadWiring = function loadWiring(workspace, WiringStatus) {
-        var iwidgets, iwidget, reallyInUseOperators, connectionView,
+        var iwidgets, iwidget, reallyInUseOperators, connection, connectionView,
             multiconnectors, key, operators, k, i, availableOperators, state;
 
         this.targetsOn = true;
@@ -795,7 +795,7 @@ Wirecloud.ui.WiringEditor = (function () {
         this.gridFullWidth = parseFloat(this.layout.content.wrapperElement.style.width);
         this.fullHeaderHeight = LayoutManagerFactory.getInstance().mainLayout.getNorthContainer().wrapperElement.getBoundingClientRect().height;
         // Set 100% Zoom in grid
-        this.layout.content.wrapperElement.style.fontSize = '1em';
+        //this.layout.content.wrapperElement.style.fontSize = '1em';
 
         this.oldWiring = this.behaviourEngine.loadWiring(WiringStatus);
 
@@ -839,10 +839,15 @@ Wirecloud.ui.WiringEditor = (function () {
             generateOperator.call(this, key, operators[key], reallyInUseOperators, availableOperators);
         }
 
+        var sourceName, targetName;
+
         // Create connections
         for (i = 0; i < this.oldWiring.connections.length; i += 1) {
-            connectionView = this.behaviourEngine.getConnectionView(i);
-            this.generateConnection(workspace, this.oldWiring.connections[i], connectionView);
+            connection = this.oldWiring.connections[i];
+            sourceName = [connection.source.type, connection.source.id, connection.source.name].join('/');
+            targetName = [connection.target.type, connection.target.id, connection.target.name].join('/');
+            connectionView = this.behaviourEngine.getConnectionView(sourceName, targetName);
+            this.generateConnection(workspace, connection, connectionView);
         }
 
         this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
@@ -1199,7 +1204,7 @@ Wirecloud.ui.WiringEditor = (function () {
      * Saves the wiring state.
      */
     WiringEditor.prototype.serialize = function serialize() {
-        var wiringState, key, i, ioperator, arrow, pref;
+        var wiringState, key, i, ioperator, pref;
 
         wiringState = this.behaviourEngine.serialize();
 
@@ -1221,12 +1226,7 @@ Wirecloud.ui.WiringEditor = (function () {
         }
 
         for (i = 0; i < this.connections.length; i++) {
-            arrow = this.connections[i];
-            wiringState.connections.push({
-                'readonly': arrow.hasClassName('readonly'),
-                'source': arrow.startAnchor.serialize(),
-                'target': arrow.endAnchor.serialize()
-            });
+            wiringState.connections.push(this.connections[i].getBusinessInfo());
         }
 
         return wiringState;

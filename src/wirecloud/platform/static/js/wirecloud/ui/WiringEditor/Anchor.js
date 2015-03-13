@@ -322,15 +322,13 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
      * Serialize an Anchor
      */
     Anchor.prototype.serialize = function serialize() {
-        if (!this.context.iObject.isGhost) {
-            return this.context.data.serialize();
-        } else {
-            return {
-                'type': this.context.iObject.className,
-                'id': this.context.iObject[this.context.iObject.className].id,
-                'endpoint': this.context.data.name
-            };
-        }
+        var endpoint;
+
+        return {
+            'type': this.getComponent().componentType,
+            'id': this.getComponent().componentId,
+            'name': this.context.data.name
+        };
     };
 
     /**

@@ -587,6 +587,14 @@
         };
     };
 
+    Arrow.prototype.getBusinessInfo = function getBusinessInfo() {
+        return {
+            'readonly': this.readOnly,
+            'source': this.startAnchor.serialize(),
+            'target': this.endAnchor.serialize()
+        };
+    };
+
     /**
      * Hide the arrow
      */
