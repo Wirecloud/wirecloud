@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -21,7 +21,7 @@ import gevent
 import requests
 from requests.auth import HTTPBasicAuth
 from six.moves.urllib.error import URLError, HTTPError
-from six.moves.urllib.parse import urljoin, urlparse
+from six.moves.urllib.parse import urljoin, urlparse, urlunparse
 from lxml import etree
 
 from django.core.cache import cache
@@ -136,7 +136,11 @@ class MarketAdaptor(object):
     _stores = {}
 
     def __init__(self, marketplace_uri, user='demo1234', passwd='demo1234'):
-        self._marketplace_uri = marketplace_uri
+        url = urlparse(marketplace_uri)
+        if not bool(url.netloc and url.scheme):
+            raise ValueError("Your must provide an absolute Marketplace URL")
+
+        self._marketplace_uri = urlunparse((url.scheme, url.netloc, url.path.rstrip('/') + '/', '', '', ''))
         self._user = user
         self._passwd = passwd
 

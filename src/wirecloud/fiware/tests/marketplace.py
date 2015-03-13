@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -61,6 +61,25 @@ class MarketplaceTestCase(WirecloudTestCase):
         f.close()
 
         return contents
+
+    def test_marketplace_complain_about_relative_urls(self):
+
+        self.assertRaises(ValueError, MarketAdaptor, 'path')
+        self.assertRaises(ValueError, MarketAdaptor, '/path')
+        self.assertRaises(ValueError, MarketAdaptor, '//marketplace.example.com/path')
+
+    def test_marketplace_handle_url_trailing_slashes(self):
+
+        test_adaptor = MarketAdaptor('http://marketplace.example.com')
+        self.assertEqual(test_adaptor._marketplace_uri, 'http://marketplace.example.com/')
+
+        test_adaptor = MarketAdaptor('http://marketplace.example.com///')
+        self.assertEqual(test_adaptor._marketplace_uri, 'http://marketplace.example.com/')
+
+    def test_marketplace_must_ignore_params_query_and_framgent(self):
+
+        test_adaptor = MarketAdaptor('http://marketplace.example.com/?query=a#a')
+        self.assertEqual(test_adaptor._marketplace_uri, 'http://marketplace.example.com/')
 
     def test_marketplace_get_all_offerings_from_store(self):
 
