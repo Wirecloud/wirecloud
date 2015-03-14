@@ -246,13 +246,13 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
         base_bcr = baseElement.getBoundingClientRect();
 
         coordinates = {
-            posX: anchor_bcr.left - base_bcr.left + baseElement.scrollLeft,
-            posY: anchor_bcr.top - base_bcr.top + baseElement.scrollTop
+            x: anchor_bcr.left - base_bcr.left + baseElement.scrollLeft,
+            y: anchor_bcr.top - base_bcr.top + baseElement.scrollTop
         };
 
         return {
-            posX: Math.round(coordinates.posX + (this.wrapperElement.offsetWidth / 2)),
-            posY: Math.round(coordinates.posY + (this.wrapperElement.offsetWidth / 2))
+            x: Math.round(coordinates.x + (this.wrapperElement.offsetWidth / 2)),
+            y: Math.round(coordinates.y + (this.wrapperElement.offsetWidth / 2))
         };
     };
 

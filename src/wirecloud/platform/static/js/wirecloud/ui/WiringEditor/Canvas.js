@@ -80,6 +80,7 @@
 
         if (readOnly) {
             arrow.readOnly = true;
+            arrow.addClassName("readonly");
         }
         if (isGhost) {
             arrow.isGhost = true;

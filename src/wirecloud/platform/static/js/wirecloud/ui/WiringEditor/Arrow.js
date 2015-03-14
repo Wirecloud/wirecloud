@@ -135,7 +135,7 @@
                 data.refPos = data.arrow.getPullerStart();
             },
             function onDrag(e, draggable, data, x, y) {
-                data.arrow.setPullerStart({posX: data.refPos.posX + x, posY: data.refPos.posY + y});
+                data.arrow.setPullerStart({x: data.refPos.x + x, y: data.refPos.y + y});
                 data.arrow.redraw();
             },
             function onFinish(draggable, data) {
@@ -158,7 +158,7 @@
                 data.refPos = data.arrow.getPullerEnd();
             },
             function onDrag(e, draggable, data, x, y) {
-                data.arrow.setPullerEnd({posX: data.refPos.posX + x, posY: data.refPos.posY + y});
+                data.arrow.setPullerEnd({x: data.refPos.x + x, y: data.refPos.y + y});
                 data.arrow.redraw();
             },
             function onFinish(draggable, data) {
@@ -266,21 +266,21 @@
             return;
         }
         if (this.pullerStart == null) {
-            difX = Math.abs(from.posX - to.posX);
-            difY = Math.abs(from.posY - to.posY);
+            difX = Math.abs(from.x - to.x);
+            difY = Math.abs(from.y - to.y);
             if (difX > 150) {
                 difX = 150;
             }
             if (difX < 25) {
                 difX = 25;
             }
-            result = {posX: difX, posY: 0};
+            result = {x: difX, y: 0};
         } else {
             result = this.pullerStart;
         }
 
         if (absolute) {
-            return {posX: from.posX + result.posX, posY: from.posY + result.posY};
+            return {x: from.x + result.x, y: from.y + result.y};
         } else {
             return result;
         }
@@ -299,21 +299,21 @@
             return;
         }
         if (this.pullerEnd == null) {
-            difX = Math.abs(from.posX - to.posX);
-            difY = Math.abs(from.posY - to.posY);
+            difX = Math.abs(from.x - to.x);
+            difY = Math.abs(from.y - to.y);
             if (difX > 150) {
                 difX = 150;
             }
             if (difX < 25) {
                 difX = 25;
             }
-            result = {posX: -difX, posY: 0};
+            result = {x: -difX, y: 0};
         } else {
             result = this.pullerEnd;
         }
 
         if (absolute) {
-            return {posX: to.posX + result.posX, posY: to.posY + result.posY};
+            return {x: to.x + result.x, y: to.y + result.y};
         } else {
             return result;
         }
@@ -345,34 +345,34 @@
         // Start puller
         startPuller = this.getPullerStart(true);
         this.pullerStartLine.setAttribute("d",
-                "M " + from.posX + "," + from.posY + " " + startPuller.posX + "," + startPuller.posY);
-        this.pullerStartElement.setAttribute("cx", startPuller.posX);
-        this.pullerStartElement.setAttribute("cy", startPuller.posY);
+                "M " + from.x + "," + from.y + " " + startPuller.x + "," + startPuller.y);
+        this.pullerStartElement.setAttribute("cx", startPuller.x);
+        this.pullerStartElement.setAttribute("cy", startPuller.y);
 
         // End puller
         endPuller = this.getPullerEnd(true);
         this.pullerEndLine.setAttribute("d",
-                "M " + to.posX + "," + to.posY + " " + endPuller.posX + "," + endPuller.posY);
-        this.pullerEndElement.setAttribute("cx", endPuller.posX);
-        this.pullerEndElement.setAttribute("cy", endPuller.posY);
+                "M " + to.x + "," + to.y + " " + endPuller.x + "," + endPuller.y);
+        this.pullerEndElement.setAttribute("cx", endPuller.x);
+        this.pullerEndElement.setAttribute("cy", endPuller.y);
 
         this.arrowElementBorder.setAttribute("d",
-                "M " + from.posX + "," + from.posY + " " +
-                "C " + startPuller.posX + "," + startPuller.posY + " " + endPuller.posX + "," + endPuller.posY + " " +
-                to.posX + "," + to.posY
+                "M " + from.x + "," + from.y + " " +
+                "C " + startPuller.x + "," + startPuller.y + " " + endPuller.x + "," + endPuller.y + " " +
+                to.x + "," + to.y
         );
         this.arrowElement.setAttribute("d",
-                "M " + from.posX + "," + from.posY + " " +
-                "C " + startPuller.posX + "," + startPuller.posY + " " + endPuller.posX + "," + endPuller.posY + " " +
-                to.posX + "," + to.posY
+                "M " + from.x + "," + from.y + " " +
+                "C " + startPuller.x + "," + startPuller.y + " " + endPuller.x + "," + endPuller.y + " " +
+                to.x + "," + to.y
         );
 
         try {
             // Closer
             posCloser = this.calculateMid();
 
-            this.closerElement.setAttribute("cx", posCloser.posX);
-            this.closerElement.setAttribute("cy", posCloser.posY);
+            this.closerElement.setAttribute("cx", posCloser.x);
+            this.closerElement.setAttribute("cy", posCloser.y);
             this.closerElement.setAttribute("r", '0.65em');
         }
         catch (err) {
@@ -393,9 +393,9 @@
         B4 = function B4(t) { return (1 - t) * (1 - t) * (1 - t); };
 
         getBercier = function getBezier(percent, C1, C2, C3, C4) {
-            var X = C1.posX * B1(percent) + C2.posX * B2(percent) + C3.posX * B3(percent) + C4.posX * B4(percent);
-            var Y = C1.posY * B1(percent) + C2.posY * B2(percent) + C3.posY * B3(percent) + C4.posY * B4(percent);
-            return {posX : X, posY : Y};
+            var X = C1.x * B1(percent) + C2.x * B2(percent) + C3.x * B3(percent) + C4.x * B4(percent);
+            var Y = C1.y * B1(percent) + C2.y * B2(percent) + C3.y * B3(percent) + C4.y * B4(percent);
+            return {x : X, y : Y};
         };
 
         return getBercier(0.5, this.start, this.getPullerStart(true), this.getPullerEnd(true), this.end);
@@ -576,13 +576,13 @@
         return {
             'sourcename': this.sourceName,
             'sourcehandle': {
-                'x': sourcehandle.posX,
-                'y': sourcehandle.posY
+                'x': sourcehandle.x,
+                'y': sourcehandle.y
             },
             'targetname': this.targetName,
             'targethandle': {
-                'x': targethandle.posX,
-                'y': targethandle.posY
+                'x': targethandle.x,
+                'y': targethandle.y
             }
         };
     };

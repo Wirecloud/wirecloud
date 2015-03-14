@@ -243,8 +243,8 @@
     var getRelativeScreenPosition = function getRelativeScreenPosition(x, y, element) {
         var bounding_box = element.getBoundingClientRect();
         return {
-            posX: x - bounding_box.left + element.scrollLeft,
-            posY: y - bounding_box.top + element.scrollTop
+            x: x - bounding_box.left + element.scrollLeft,
+            y: y - bounding_box.top + element.scrollTop
         };
     };
 

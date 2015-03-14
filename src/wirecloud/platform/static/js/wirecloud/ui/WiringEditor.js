@@ -456,41 +456,6 @@ Wirecloud.ui.WiringEditor = (function () {
         }
     };
 
-    /**
-     * @Private
-     * finds anchors from the serialized string
-     */
-    var findAnchor = function findAnchor(desc, workspace) {
-        var iwidget_interface, iwidget, endPointPos, entity;
-
-        switch (desc.type) {
-        case WiringEditor.WIDGET_TYPE:
-            if (this.components.widget[desc.id] != null) {
-                entity =  this.components.widget[desc.id];
-            } else {
-                iwidget = workspace.getIWidget(desc.id);
-                if (iwidget != null) {
-                    endPointPos = {'sources': [], 'targets': []};
-                    iwidget_interface = this.addIWidget(this, iwidget, endPointPos);
-                    iwidget_interface.setPosition({posX: 0, posY: 0});
-                    this.componentManager.enableWidget(iwidget.id);
-                    entity = iwidget_interface;
-                } else {
-                    throw new Error('Widget not found');
-                }
-            }
-            break;
-        case WiringEditor.OPERATOR_TYPE:
-            if (this.components.operator[desc.id] != null) {
-                entity = this.components.operator[desc.id];
-            } else {
-                throw new Error('Operator not found. Id: ' + desc.id);
-            }
-            break;
-        }
-        return entity.getAnchor(desc.endpoint);
-    };
-
     var normalizeWiringStatus = function normalizeWiringStatus(WiringStatus) {
 
         var i;
@@ -847,7 +812,7 @@ Wirecloud.ui.WiringEditor = (function () {
             sourceName = [connection.source.type, connection.source.id, connection.source.name].join('/');
             targetName = [connection.target.type, connection.target.id, connection.target.name].join('/');
             connectionView = this.behaviourEngine.getConnectionView(sourceName, targetName);
-            this.generateConnection(workspace, connection, connectionView);
+            this.generateConnection(connection, connectionView);
         }
 
         this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
@@ -1102,65 +1067,34 @@ Wirecloud.ui.WiringEditor = (function () {
     /**
      * Create New Connection
      */
-    WiringEditor.prototype.generateConnection = function generateConnection (workspace, connection, connectionView) {
+    WiringEditor.prototype.generateConnection = function generateConnection(connection, connectionView) {
         var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget, entity, isGhost;
 
-        // Find start Anchor
-        startAnchor = findAnchor.call(this, connection.source, workspace);
-
-        // Find end Anchor
-        endAnchor = findAnchor.call(this, connection.target, workspace);
+        startAnchor = findEndpoint.call(this, connection.source);
+        endAnchor = findEndpoint.call(this, connection.target);
 
         if (startAnchor !== null && endAnchor !== null) {
             try {
                 if (connection.readonly) {
-                    // Set ReadOnly connection
-                    readOnly = true;
-                    extraclass = 'readonly';
                     // Increase ReadOnly connection count in each entity
-                    startAnchor.context.iObject.incReadOnlyConnectionsCount();
-                    endAnchor.context.iObject.incReadOnlyConnectionsCount();
-                } else {
-                    // Normal connection
-                    readOnly = false;
-                    extraclass = null;
+                    startAnchor.getComponent().incReadOnlyConnectionsCount();
+                    endAnchor.getComponent().incReadOnlyConnectionsCount();
                 }
 
                 // Create arrow
                 isGhost = startAnchor.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint;
                 arrow = this.connectionEngine.drawArrow(startAnchor.getCoordinates(this.layout.content.wrapperElement),
-                                              endAnchor.getCoordinates(this.layout.content.wrapperElement), extraclass, readOnly, isGhost);
+                                              endAnchor.getCoordinates(this.layout.content.wrapperElement), "connection", connection.readonly, isGhost);
 
                 // Set arrow anchors
-                arrow.startAnchor = startAnchor;
+                arrow.setStartAnchor(startAnchor);
                 startAnchor.addArrow(arrow);
-                arrow.endAnchor = endAnchor;
+                arrow.setEndAnchor(endAnchor);
                 endAnchor.addArrow(arrow);
-                arrow.addClassName('connection');
 
                 // Set arrow pullers
                 arrow.setPullerStart(connectionView.pullerStart);
                 arrow.setPullerEnd(connectionView.pullerEnd);
-
-                // Set connection with multiconnectors involved
-                if (connectionView.startMulti != null) {
-                    multi = this.multiconnectors[connectionView.startMulti];
-                    if (multi) {
-                        arrow.startMulti = connectionView.startMulti;
-                        pos = multi.getCoordinates(this.layout);
-                        arrow.setStart(pos);
-                        multi.addArrow(arrow);
-                    }
-                }
-                if (connectionView.endMulti != null) {
-                    multi = this.multiconnectors[connectionView.endMulti];
-                    if (multi) {
-                        arrow.endMulti = connectionView.endMulti;
-                        pos = multi.getCoordinates(this.layout);
-                        arrow.setEnd(pos);
-                        multi.addArrow(arrow);
-                    }
-                }
 
                 // Draw the arrow
                 arrow.redraw();
@@ -1178,7 +1112,7 @@ Wirecloud.ui.WiringEditor = (function () {
             if (!endAnchor) {
                 insertGhostEndpoint.call(this, connection, false);
             }
-            this.generateConnection(workspace, connection, connectionView);
+            this.generateConnection(connection, connectionView);
         }
     };
 
@@ -1917,6 +1851,35 @@ Wirecloud.ui.WiringEditor = (function () {
             this.multiconnectors[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
             this.multiconnectors[key].repaint();
         }
+    };
+
+    /**
+     * @private
+     * @function
+     *
+     * @param {Object.<String, *>} endpointView
+     * @returns {Endpoint}
+     */
+    var findEndpoint = function findEndpoint(endpointView) {
+        var component, wiringError;
+
+        if (WiringEditor.COMPONENT_TYPES.indexOf(endpointView.type) == -1) {
+            wiringError = new Error("Looking for the endpoint <" + endpointView.name + "> of a connection.");
+            wiringError.name = 'Type Unsupported';
+
+            throw wiringError;
+        }
+
+        if (!(endpointView.id in this.components[endpointView.type])) {
+            wiringError = new Error("Looking for the endpoint <" + endpointView.name + "> of a connection.");
+            wiringError.name = 'Component Not Found';
+
+            throw wiringError;
+        }
+
+        component = this.components[endpointView.type][endpointView.id];
+
+        return component.getAnchor(endpointView.name);
     };
 
     /**
