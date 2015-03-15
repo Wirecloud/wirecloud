@@ -245,10 +245,14 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.containsComponent = function containsComponent(componentType, componentId) {
         var i, found;
 
-        for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
-            if (this.behaviourList[i].containsComponent(componentType, componentId)) {
-                found = true;
+        if (this.behavioursEnabled) {
+            for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
+                if (this.behaviourList[i].containsComponent(componentType, componentId)) {
+                    found = true;
+                }
             }
+        } else {
+            found = componentId in this.currentState.components[componentType];
         }
 
         return found;
@@ -265,10 +269,14 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.containsConnection = function containsConnection(sourceName, targetName) {
         var found, i;
 
-        for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
-            if (this.behaviourList[i].containsConnection(sourceName, targetName)) {
-                found = true;
+        if (this.behavioursEnabled) {
+            for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
+                if (this.behaviourList[i].containsConnection(sourceName, targetName)) {
+                    found = true;
+                }
             }
+        } else {
+            found = this.getConnectionIndex(sourceName, targetName) != -1;
         }
 
         return found;
