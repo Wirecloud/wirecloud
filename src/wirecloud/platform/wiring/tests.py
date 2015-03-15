@@ -376,14 +376,18 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             myresources.uninstall_resource('TestOperator')
 
         with self.wiring_view as wiring:
-            operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperatorSelenium', all_steps=True)
-            self.assertIsNone(operator)
-
             collection = wiring.from_sidebar_get_all_components('operator')
             self.assertEqual(len(collection), 0)
 
+            operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperator', all_steps=True)
+            self.assertIsNone(operator)
+
             collection = wiring.from_diagram_get_all_components('operator')
-            self.assertEqual(len(collection), 0)
+            self.assertEqual(len(collection), 1)
+
+            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
+            self.assertIsNotNone(operator)
+            self.assertTrue(operator.is_missing)
     test_operator_not_available_after_being_uninstalled.tags = ('behaviour-oriented-wiring',)
 
     def check_operator_reinstall_behaviour(self, reload):
