@@ -493,13 +493,23 @@ class MACFieldTester(WalletTester):
         return None
 
 
-class WiringEntityTester(object):
+class WiringComponentTester(object):
 
-    def __init__(self, testcase, entity_id, element):
-
+    def __init__(self, testcase, component):
         self.testcase = testcase
-        self.element = element
-        self.id = entity_id
+        self.component = component
+
+    @property
+    def name(self):
+        return self.component.find_element_by_css_selector('.component-title > .component-name')
+
+    @property
+    def in_background(self):
+        return "on-background" in self.component.get_attribute('class').split()
+
+    @property
+    def is_missing(self):
+        return "missing" in self.component.get_attribute('class').split()
 
     def open_menu(self):
         button = self.testcase.wait_element_visible_by_css_selector('.editPos_button', element=self.element)
@@ -509,7 +519,7 @@ class WiringEntityTester(object):
         return PopupMenuTester(self.testcase, popup_menu_element, button)
 
 
-class WiringIOperatorTester(WiringEntityTester):
+class WiringOperatorTester(WiringComponentTester):
 
     def get_wiring_endpoint(self, endpoint_name, timeout=5):
 
@@ -539,7 +549,7 @@ class WiringIOperatorTester(WiringEntityTester):
         ''' % self.id)
 
 
-class WiringIWidgetTester(WiringEntityTester):
+class WiringIWidgetTester(WiringComponentTester):
 
     def get_wiring_endpoint(self, endpoint_name):
 
@@ -1227,6 +1237,15 @@ class WiringViewTester(object):
 
     def from_diagram_get_all_components(self, component_type):
         return self.section_diagram.find_elements_by_css_selector(".component-%s" % component_type)
+
+    def from_diagram_find_component_by_name(self, component_type, component_name):
+        collection = self.section_diagram.find_elements_by_css_selector(".component-%s" % component_type)
+
+        for component in collection:
+            if component.find_element_by_css_selector('.component-name').text == component_name:
+                return WiringOperatorTester(self.testcase, component)
+
+        return None
 
     def from_sidebar_get_all_components(self, component_type):
         return self.section_sidebar.find_elements_by_css_selector(".component-%s" % component_type)
