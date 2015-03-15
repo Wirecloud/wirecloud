@@ -146,6 +146,24 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         return data;
     };
 
+    Behaviour.prototype.cleanComponentGroup = function cleanComponentGroup(componentType, idList) {
+        var componentList, i, id;
+
+        componentList = Object.keys(this.components[componentType]);
+
+        for (i = 0; i < componentList.length; i++) {
+            id = componentList[i];
+
+            if (idList.indexOf(id) == -1) {
+                delete this.components[componentType][id];
+            }
+        }
+
+        updateCounterList.call(this);
+
+        return this;
+    };
+
     /**
      * @public
      * @function
