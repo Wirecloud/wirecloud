@@ -110,6 +110,9 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
 
     StyledElements.Utils.inherit(ComponentManager, StyledElements.StyledElement);
 
+    ComponentManager.OPERATOR_TYPE = 'operator';
+    ComponentManager.WIDGET_TYPE = 'widget';
+
     /**
      * Display the section chosen by default.
      * @function
@@ -153,6 +156,21 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
 
         this.btnWidgets.addClassName('active');
         this.sectionWidgets.removeClassName('hidden');
+
+        return this;
+    };
+
+    ComponentManager.prototype.addComponent = function addComponent(componentType, componentId, componentObj) {
+        switch (componentType) {
+        case ComponentManager.WIDGET_TYPE:
+            this.widgetGroup[componentId] = componentObj;
+            this.sectionWidgets.appendChild(componentObj);
+
+            if (!this.messageWidgets.classList.contains('hidden')) {
+                this.messageWidgets.classList.add('hidden');
+            }
+            break;
+        }
 
         return this;
     };
