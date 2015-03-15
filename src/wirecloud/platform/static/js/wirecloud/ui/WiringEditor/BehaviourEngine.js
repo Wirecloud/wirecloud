@@ -38,6 +38,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }, event);
         }.bind(this));
 
+        this.readonly = true;
         this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
     };
 
@@ -477,7 +478,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.removeComponent = function removeComponent(componentType, componentId, cascadeRemove) {
         var i;
 
-        if (this.currentViewpoint !== BehaviourEngine.viewpoints.GLOBAL) {
+        if (this.readonly || this.currentViewpoint !== BehaviourEngine.viewpoints.GLOBAL) {
             return BehaviourEngine.OPERATION_NOT_ALLOWED;
         }
 
@@ -521,7 +522,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.removeConnection = function removeConnection(sourceName, targetName, cascadeRemove) {
         var i, index;
 
-        if (this.currentViewpoint !== BehaviourEngine.viewpoints.GLOBAL) {
+        if (this.readonly || this.currentViewpoint !== BehaviourEngine.viewpoints.GLOBAL) {
             return BehaviourEngine.OPERATION_NOT_ALLOWED;
         }
 
@@ -591,6 +592,10 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.updateComponent = function updateComponent(componentType, componentId, componentView, updateOnly) {
         componentView = StyledElements.Utils.cloneObject(componentView);
 
+        if (this.readonly) {
+            return this;
+        }
+
         if (typeof updateOnly !== 'boolean') {
             updateOnly = false;
         }
@@ -623,6 +628,10 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      */
     BehaviourEngine.prototype.updateConnection = function updateConnection(connectionView, updateOnly) {
         var found, i, index;
+
+        if (this.readonly) {
+            return this;
+        }
 
         connectionView = StyledElements.Utils.cloneObject(connectionView);
 
