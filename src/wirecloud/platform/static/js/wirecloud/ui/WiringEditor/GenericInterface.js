@@ -80,7 +80,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         this.initialPos = null;
         this.isGhost = isGhost;
         this.readOnlyEndpoints = 0;
-        this.displayName = title;
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -175,19 +174,22 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 }
             });
 
-            // Ghost interface
-            if (isGhost) {
-                this.vendor = this.entity.name.split('/')[0];
-                this.name = this.entity.name.split('/')[1];
-                this.version = new Wirecloud.Version(this.entity.name.split('/')[2].trim());
-                this.wrapperElement.classList.add('misplaced');
-                ghostNotification = document.createElement("span");
-                ghostNotification.classList.add('ghostNotification');
-                msg = gettext('Warning: %(type)s not found!');
-                msg = interpolate(msg, {type: type}, true);
-                ghostNotification.textContent = msg;
-                this.header.appendChild(ghostNotification);
-            }
+            var is_missing = false;
+
+            Object.defineProperty(this, 'missing', {
+                'get': function get() {
+                    return is_missing;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean') {
+                        if ((is_missing=state)) {
+                            this.wrapperElement.classList.add('missing');
+                        } else {
+                            this.wrapperElement.classList.remove('missing');
+                        }
+                    }
+                }
+            });
 
             // Version Status
             if (type == 'operator' &&
@@ -212,7 +214,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
             var nameElement = document.createElement('span');
                 nameElement.className = 'component-name';
-                nameElement.textContent = this.displayName;
+                nameElement.textContent = this.name;
 
             var infoElement = document.createElement('span');
                 infoElement.className = 'component-subtitle';
@@ -221,13 +223,23 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
                 'element': headingElement,
 
-                'titlelement': titleElement,
+                'titleElement': titleElement,
 
                 'nameElement': titleElement.appendChild(nameElement),
 
                 'infoElement': titleElement.appendChild(infoElement)
 
             };
+
+            if (isGhost) {
+                this.vendor = this.entity.name.split('/')[0];
+                this.name = this.entity.name.split('/')[1];
+                this.version = new Wirecloud.Version(this.entity.name.split('/')[2].trim());
+
+                this.missing = true;
+                this.heading.nameElement.textContent = this.name;
+                this.heading.infoElement.textContent = "The component is misplaced";
+            }
 
             /* Application Heading - List of Options */
 
