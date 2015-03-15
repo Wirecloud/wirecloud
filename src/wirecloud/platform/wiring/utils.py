@@ -76,7 +76,7 @@ def parse_wiring_old_version(wiring_status):
         'connections': [],
         'operators': {},
         'visualdescription': {
-            'behaviourenabled': True,
+            'behavioursenabled': False,
             'behaviours': [],
             'components': {
                 'operator': {},

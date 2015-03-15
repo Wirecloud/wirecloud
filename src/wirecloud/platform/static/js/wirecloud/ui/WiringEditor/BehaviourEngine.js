@@ -82,7 +82,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             'connections': [],
             'operators': {},
             'visualdescription': {
-                'behaviourenabled': false,
+                'behavioursenabled': false,
                 'behaviours': [],
                 'components': {
                     'operator': {},
@@ -106,8 +106,8 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }
 
             if (typeof state.visualdescription === 'object') {
-                if (typeof state.visualdescription.behaviourenabled === 'boolean') {
-                    wiringState.visualdescription.behaviourenabled = state.visualdescription.behaviourenabled;
+                if (typeof state.visualdescription.behavioursenabled === 'boolean') {
+                    wiringState.visualdescription.behavioursenabled = state.visualdescription.behavioursenabled;
                 }
 
                 if (Array.isArray(state.visualdescription.behaviours)) {
@@ -364,6 +364,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         state = BehaviourEngine.normalizeWiring(state);
 
         this.empty();
+        this.behavioursEnabled = state.behavioursenabled;
         this.currentState = state.visualdescription;
 
         for (i = 0; i < this.currentState.behaviours.length; i++) {
@@ -545,6 +546,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         var wiringState, i;
 
         wiringState = BehaviourEngine.normalizeWiring();
+        wiringState.visualdescription.behavioursenabled = this.behavioursEnabled;
 
         wiringState.visualdescription.components = this.currentState.components;
         wiringState.visualdescription.connections = this.currentState.connections;

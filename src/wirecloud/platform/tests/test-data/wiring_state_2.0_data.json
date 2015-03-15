@@ -52,7 +52,7 @@
     },
     "version": "2.0",
     "visualdescription": {
-        "behaviourenabled": true,
+        "behavioursenabled": false,
         "connections": [
             {
                 "sourcename": "operator/0/output",
