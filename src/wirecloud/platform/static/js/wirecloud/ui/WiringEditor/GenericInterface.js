@@ -1270,7 +1270,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             endpointElement.classList.add('misplaced');
             endpointElement.setAttribute('title', gettext('Mismatch Endpoint') + ":" + label);
         } else {
-            if (!desc.length) {
+            if (typeof desc !== 'string' || !desc.length) {
                 desc = label;
             }
 
@@ -1338,7 +1338,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             endpointElement.classList.add('misplaced');
             endpointElement.setAttribute('title', gettext('Mismatch Endpoint') + ":" + label);
         } else {
-            if (!desc.length) {
+            if (typeof desc !== 'string' || !desc.length) {
                 desc = label;
             }
 

@@ -511,28 +511,6 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     /**
-     * @private
-     * @function
-     */
-    var addWidgetItem = function addWidgetItem(component) {
-        var widgetItem;
-
-        try {
-            widgetItem = new WiringEditor.WidgetInterface(this, component, this, true);
-        } catch (e){
-            throw new Error("Create widget in sidebar failed: " + e.message);
-        }
-
-        try {
-            this.componentManager.appendWidget(widgetItem);
-        } catch (e){
-            throw new Error("Append widget in sidebar failed: " + e.message);
-        }
-
-        return this;
-    };
-
-    /**
      * @Private
      * Create Mini Operator for menubar
      */
@@ -575,55 +553,6 @@ Wirecloud.ui.WiringEditor = (function () {
 
         } catch (e){
             throw new Error('WiringEditor error (critical). Creating MiniOperator: ' + e.message);
-        }
-    };
-
-    /**
-     * @Private
-     * Create New widget
-     */
-    var generateWidget = function generateWidget (iwidget, widgetView) {
-        var widget_interface;
-
-        try {
-            widget_interface = this.addIWidget(iwidget, widgetView.endpoints, widgetView.position);
-        } catch (e) {
-            throw new Error('WiringEditor error (critical). Creating Widget: ' + e.message);;
-        }
-    };
-
-    /**
-     * @Private
-     * Create a ghost widget
-     */
-    var generateGhostWidget = function generateGhostWidget (view, id) {
-        var ghostName, iwidget, widget_interface;
-
-        try {
-            // Widget Name, if is known...
-            if (view.iwidgets[id].name != null) {
-                ghostName = view.iwidgets[id].name;
-            } else {
-                ghostName = gettext("unknown name");
-            }
-            iwidget = {
-                'id': id,
-                'name': ghostName,
-                'ghost': true,
-                'widget': {
-                'id': view.iwidgets[id].name,
-                'uri': view.iwidgets[id].name
-                }
-            };
-            iwidget.meta = iwidget.widget;
-            widget_interface = this.addIWidget(this, iwidget, view.iwidgets[id].endPointsInOuts);
-
-            // Set position
-            if ('position' in view.iwidgets[id]) {
-                widget_interface.setPosition(view.iwidgets[id].position);
-            }
-        } catch (e) {
-            throw new Error('WiringEditor error (critical). Creating GhostWidget: [id: ' + id + '; name: ' + ghostName + '] ' + e.message);
         }
     };
 
@@ -722,20 +651,15 @@ Wirecloud.ui.WiringEditor = (function () {
      * load wiring from status and workspace info
      */
     var loadWiring = function loadWiring(workspace, WiringStatus) {
-        var iwidgets, iwidget, reallyInUseOperators, connection, connectionView,
-            multiconnectors, key, operators, k, i, availableOperators, state;
+        var availableOperatorGroup, componentId, componentObj, componentType,
+            connectionList, connection, i, operatorGroup, pk, sourceName,
+            status, targetName, widgetList;
 
         this.targetsOn = true;
         this.sourcesOn = true;
         this.targetAnchorList = [];
         this.sourceAnchorList = [];
-        this.arrows = [];
-        this.connections = [];
         this.multiconnectors = {};
-        this.components = {
-            'operator': {},
-            'widget': {}
-        };
         this.selectedOps = {};
         this.selectedOps.length = 0;
         this.selectedWids = {};
@@ -759,63 +683,106 @@ Wirecloud.ui.WiringEditor = (function () {
         this.gridFullHeight = parseFloat(this.layout.content.wrapperElement.style.height);
         this.gridFullWidth = parseFloat(this.layout.content.wrapperElement.style.width);
         this.fullHeaderHeight = LayoutManagerFactory.getInstance().mainLayout.getNorthContainer().wrapperElement.getBoundingClientRect().height;
-        // Set 100% Zoom in grid
-        //this.layout.content.wrapperElement.style.fontSize = '1em';
 
-        this.oldWiring = this.behaviourEngine.loadWiring(WiringStatus);
+        status = this.behaviourEngine.loadWiring(WiringStatus);
 
-        iwidgets = workspace.getIWidgets();
-        availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+        this.behaviourEngine.readonly = true;
+        this.components = {};
 
-        /* Generate Wiring Views */
+        // Loading the widgets that are being used in the workspace...
+        componentType = WiringEditor.WIDGET_TYPE;
+        this.components[componentType] = {};
 
-        // Create Widgets
-        for (i = 0; i < iwidgets.length; i++) {
-            // Create Menubar mini-widget
-            iwidget = iwidgets[i];
-            addWidgetItem.call(this, iwidget);
+        // Get all widgets available in the workspace.
+        widgetList = workspace.getIWidgets();
 
-            // Create widget
-            if (this.behaviourEngine.containsComponent(WiringEditor.WIDGET_TYPE, iwidget.id)) {
-                // Disable mini-widget
-                this.componentManager.getWidgetById(iwidget.id).disable();
-                // Add new Widget
-                generateWidget.call(this, iwidget, this.behaviourEngine.getComponentView('widget', iwidget.id));
+        for (i = 0; i < widgetList.length; i++) {
+            componentId = widgetList[i].id;
+
+            // Add the widget into panel of components.
+            componentObj = new WiringEditor.WidgetInterface(this, widgetList[i], this, true);
+            this.componentManager.addComponent(componentType, componentId, componentObj);
+
+            // If the widget is already available in the mashup's wiring...
+            if (this.behaviourEngine.containsComponent(componentType, componentId)) {
+                // it will be disabled from panel of components.
+                componentObj.disable();
+                // it will be added into wiring's diagram.
+                this.addComponent(componentType, componentId, widgetList[i]);
             }
         }
 
-        // Ghost Widgets!
-        for (key in this.behaviourEngine.currentState.components.widget) {
-            if (!this.components.widget[key]) {
-                // Add new Ghost Widget
-                generateGhostWidget.call(this, key, this.behaviourEngine.getComponentView('widget', key));
+        // Clean the reference of widgets that are misplaced.
+        this.behaviourEngine.cleanComponentGroup(componentType, Object.keys(this.components[componentType]));
+        // ...load completed.
+
+        // Loading the operators that are being used in the workspace...
+        componentType = WiringEditor.OPERATOR_TYPE;
+        this.components[componentType] = {};
+
+        // Get all operators available in the user's account.
+        availableOperatorGroup = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+
+        // Get all operators available in the workspace (trading description).
+        operatorGroup = workspace.wiring.ioperators;
+
+        // Add all operators into panel of components.
+        for (pk in availableOperatorGroup) {
+            generateMiniOperator.call(this, availableOperatorGroup[pk]);
+        }
+
+        // Add the operators in use into wiring's diagram.
+        for (componentId in operatorGroup) {
+            // If the operator has visual description...
+            if (this.behaviourEngine.containsComponent(componentType, componentId)) {
+                // it will be added into wiring's diagram.
+                this.addComponent(componentType, componentId, operatorGroup[componentId]);
+            }
+            // otherwise, the operator is misplaced.
+            else {
+                // TODO:
             }
         }
 
-        // Create Menuban mini-operators
-        for (key in availableOperators) {
-            generateMiniOperator.call(this, availableOperators[key]);
-        }
+        // Clean the reference of operators that are misplaced.
+        this.behaviourEngine.cleanComponentGroup(componentType, Object.keys(this.components[componentType]));
+        // ...load completed.
 
-        // Create operators and Ghost Operators
-        reallyInUseOperators = workspace.wiring.ioperators;
-        operators = this.behaviourEngine.currentState.components.operator;
-        for (key in operators) {
-            generateOperator.call(this, key, operators[key], reallyInUseOperators, availableOperators);
-        }
+        // Loading the connections established in the workspace...
+        this.connections = [];
 
-        var sourceName, targetName;
+        // Get the existing connections in the wiring's trading description.
+        connectionList = status.connections;
 
-        // Create connections
-        for (i = 0; i < this.oldWiring.connections.length; i += 1) {
-            connection = this.oldWiring.connections[i];
-            sourceName = [connection.source.type, connection.source.id, connection.source.name].join('/');
-            targetName = [connection.target.type, connection.target.id, connection.target.name].join('/');
-            connectionView = this.behaviourEngine.getConnectionView(sourceName, targetName);
-            this.generateConnection(connection, connectionView);
+        for (i = 0; i < connectionList.length; i++) {
+            connection = connectionList[i];
+            // Get the absolute name of each endpoint.
+            sourceName = getEndpointName.call(this, connection.source);
+            targetName = getEndpointName.call(this, connection.target);
+
+            // If the connection can be established...
+            if (connectionAvailable.call(this, connection)) {
+                // and if the connection has visual description...
+                if (this.behaviourEngine.containsConnection(sourceName, targetName)) {
+                    // it will be added into wiring's diagram.
+                    this.generateConnection(connection, sourceName, targetName);
+                }
+                // otherwise, the connection is misplaced.
+                else {
+                    // TODO:
+                }
+            }
+            // otherwise, the connection has an endpoint misplaced...
+            else {
+                // and it will remove of the behaviour engine.
+                this.behaviourEngine.removeConnection(sourceName, targetName, true);
+            }
         }
+        // ...load completed.
 
         this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
+
+        this.behaviourEngine.readonly = false;
         this.behaviourEngine.activateBehaviour();
         this.activateCtrlMultiSelect();
 
@@ -823,7 +790,8 @@ Wirecloud.ui.WiringEditor = (function () {
         if (this.entitiesNumber === 0) {
             this.alertEmptyWiring.show();
         }
-        this.recommendations.init(iwidgets, availableOperators);
+
+        this.recommendations.init(widgetList, availableOperatorGroup);
         this.removeClassName('disabled');
     };
 
@@ -1067,13 +1035,17 @@ Wirecloud.ui.WiringEditor = (function () {
     /**
      * Create New Connection
      */
-    WiringEditor.prototype.generateConnection = function generateConnection(connection, connectionView) {
+    WiringEditor.prototype.generateConnection = function generateConnection(connection, sourceName, targetName) {
         var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget, entity, isGhost;
+        var connectionView;
 
         startAnchor = findEndpoint.call(this, connection.source);
+
         endAnchor = findEndpoint.call(this, connection.target);
 
         if (startAnchor !== null && endAnchor !== null) {
+            connectionView = this.behaviourEngine.getConnectionView(sourceName, targetName);
+
             try {
                 if (connection.readonly) {
                     // Increase ReadOnly connection count in each entity
@@ -1387,6 +1359,43 @@ Wirecloud.ui.WiringEditor = (function () {
 
         if (componentType == WiringEditor.WIDGET_TYPE) {
             this.componentManager.enableWidget(componentId);
+        }
+
+        return this;
+    };
+
+    /**
+     * @public
+     * @function
+     *
+     * @param {String} componentType
+     * @param {Number} componentId
+     * @param {Object.<String *>} componentObj
+     * @returns {WiringEditor} The instance on which this function was called.
+     */
+    WiringEditor.prototype.addComponent = function addComponent(componentType, componentId, componentObj) {
+        var componentView, operatorId;
+
+        if (WiringEditor.COMPONENT_TYPES.indexOf(componentType) == -1) {
+            return this;
+        }
+
+        componentView = this.behaviourEngine.getComponentView(componentType, componentId);
+
+        switch (componentType) {
+        case WiringEditor.OPERATOR_TYPE:
+            operatorId = parseInt(componentId, 10);
+
+            if (this.nextOperatorId <= operatorId) {
+                // Make this.nextOperatorId is always greater than the highest of all operators
+                this.nextOperatorId = operatorId + 1;
+            }
+
+            this.addIOperator(componentObj, componentView.endpoints, componentView.position);
+            break;
+        case WiringEditor.WIDGET_TYPE:
+            this.addIWidget(componentObj, componentView.endpoints, componentView.position);
+            break;
         }
 
         return this;
@@ -1857,6 +1866,26 @@ Wirecloud.ui.WiringEditor = (function () {
      * @private
      * @function
      *
+     * @param {Object.<String, *>} connection
+     * @returns {Boolean}
+     */
+    var connectionAvailable = function connectionAvailable(connection) {
+        var sourceEndpoint, targetEndpoint;
+
+        try {
+            sourceEndpoint = findEndpoint.call(this, connection.source);
+            targetEndpoint = findEndpoint.call(this, connection.target);
+        } catch(e) {
+            return false;
+        }
+
+        return sourceEndpoint != null && targetEndpoint != null;
+    };
+
+    /**
+     * @private
+     * @function
+     *
      * @param {Object.<String, *>} endpointView
      * @returns {Endpoint}
      */
@@ -1880,6 +1909,17 @@ Wirecloud.ui.WiringEditor = (function () {
         component = this.components[endpointView.type][endpointView.id];
 
         return component.getAnchor(endpointView.name);
+    };
+
+    /**
+     * @private
+     * @function
+     *
+     * @param {Object.<String, *>} endpointView
+     * @returns {Endpoint}
+     */
+    var getEndpointName = function getEndpointName(endpointView) {
+        return [endpointView.type, endpointView.id, endpointView.name].join('/');
     };
 
     /**
