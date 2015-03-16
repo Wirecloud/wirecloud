@@ -130,7 +130,7 @@
             "name": "Test Mashup with Embedded Resources",
             "content_type": "application/x-mashup+mashable-application-component",
             "description": "Example of widget for the Wirecloud Plaftorm",
-            "link": "http://store2.example.com/resources/app_provider__Wirecloud_TestMashupEmbedded_1.0.wgt"
+            "link": "http://store2.example.com/mystore/resources/app_provider__Wirecloud_TestMashupEmbedded_1.0.wgt"
         }
     ]
 }
