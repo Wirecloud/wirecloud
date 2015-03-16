@@ -31,6 +31,7 @@ from whoosh import fields, index
 from wirecloud.commons.searchers import get_available_search_engines
 
 
+@patch('wirecloud.catalogue.management.commands.addtocatalogue.locale.getdefaultlocale', return_value=("en_US",))
 class AddToCatalogueCommandTestCase(TestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-addtocatalogue')
@@ -39,7 +40,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
         self.options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
 
-    def test_addtocatalogue_command_no_args(self):
+    def test_addtocatalogue_command_no_args(self, getdefaultlocale_mock):
 
         args = []
 
@@ -51,7 +52,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
-    def test_addtocatalogue_command_simplewgt_user(self):
+    def test_addtocatalogue_command_simplewgt_user(self, getdefaultlocale_mock):
 
         args = ['file.wgt']
         self.options['users'] = 'admin'
@@ -82,7 +83,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
-    def test_addtocatalogue_command_simplewgt_group(self):
+    def test_addtocatalogue_command_simplewgt_group(self, getdefaultlocale_mock):
 
         args = ['file.wgt']
         self.options['groups'] = 'group1'
@@ -113,7 +114,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
-    def test_addtocatalogue_command_simplewgt_public(self):
+    def test_addtocatalogue_command_simplewgt_public(self, getdefaultlocale_mock):
 
         args = ['file.wgt']
         self.options['public'] = True
@@ -144,7 +145,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
-    def test_addtocatalogue_command_simplewgt_no_action(self):
+    def test_addtocatalogue_command_simplewgt_no_action(self, getdefaultlocale_mock):
 
         args = ['file.wgt']
 
@@ -167,7 +168,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
-    def test_addtocatalogue_command_deploy_only(self):
+    def test_addtocatalogue_command_deploy_only(self, getdefaultlocale_mock):
 
         self.options['deploy_only'] = True
 
@@ -182,7 +183,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         except SystemExit:
             raise CommandError('')
 
-    def test_addtocatalogue_command_error_reading_file(self):
+    def test_addtocatalogue_command_error_reading_file(self, getdefaultlocale_mock):
 
         self.options['deploy_only'] = True
 
@@ -205,7 +206,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
-    def test_addtocatalogue_command_error_installing_mac(self):
+    def test_addtocatalogue_command_error_installing_mac(self, getdefaultlocale_mock):
 
         self.options['deploy_only'] = True
 
@@ -227,7 +228,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
-    def test_addtocatalogue_command_error_installing_mac_quiet(self):
+    def test_addtocatalogue_command_error_installing_mac_quiet(self, getdefaultlocale_mock):
 
         self.options['verbosity'] = '0'
         self.options['deploy_only'] = True

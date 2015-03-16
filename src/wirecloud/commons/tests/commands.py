@@ -25,11 +25,13 @@ from tempfile import mkdtemp
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
+from mock import patch
 from whoosh import fields, index
 
 from wirecloud.commons.searchers import get_available_search_engines
 
 
+@patch('wirecloud.commons.management.commands.resetsearchindexes.locale.getdefaultlocale', return_value=("en_US",))
 class ResetSearchIndexesCommandTestCase(TestCase):
 
     tags = ('wirecloud-commands', 'wirecloud-command-resetsearchindexes')
@@ -51,7 +53,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         self.options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
         shutil.rmtree(self.new_index_dir, ignore_errors=True)
 
-    def test_resetsearchindexes_command_using_args(self):
+    def test_resetsearchindexes_command_using_args(self, getdefaultlocale_mock):
 
         args = ['invalid_arg']
 
@@ -65,7 +67,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         self.assertEqual(self.options['stderr'].read(), '')
         self.assertFalse(os.path.exists(self.inexistent_index_dir))
 
-    def test_resetsearchindexes_command_existing_dir(self):
+    def test_resetsearchindexes_command_existing_dir(self, getdefaultlocale_mock):
         self.options["interactive"] = False
 
         os.mkdir(self.new_index_dir)
@@ -86,7 +88,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         for search_index in get_available_search_engines():
             self.assertTrue(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
 
-    def test_resetsearchindexes_command_existing_dir_other_indexes(self):
+    def test_resetsearchindexes_command_existing_dir_other_indexes(self, getdefaultlocale_mock):
         self.options["interactive"] = False
 
         os.mkdir(self.new_index_dir)
@@ -108,7 +110,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
         for search_index in get_available_search_engines():
             self.assertTrue(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
 
-    def test_resetsearchindexes_command_individual_index(self):
+    def test_resetsearchindexes_command_individual_index(self, getdefaultlocale_mock):
         self.options['indexes'] = 'user'
 
         with self.settings(WIRECLOUD_INDEX_DIR=self.new_index_dir):
@@ -123,7 +125,7 @@ class ResetSearchIndexesCommandTestCase(TestCase):
 
         self.assertTrue(index.exists_in(self.new_index_dir, indexname='user'))
 
-    def test_resetsearchindexes_command_multiple_index(self):
+    def test_resetsearchindexes_command_multiple_index(self, getdefaultlocale_mock):
         self.options['indexes'] = 'user,group'
 
         with self.settings(WIRECLOUD_INDEX_DIR=self.new_index_dir):

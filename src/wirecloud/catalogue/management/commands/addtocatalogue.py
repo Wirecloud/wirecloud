@@ -17,12 +17,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
+import locale
 from optparse import make_option
 
 from django.contrib.auth.models import User, Group
 from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
-from django.utils.translation import ugettext as _
+from django.utils.translation import override, ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import delete_resource
@@ -56,7 +59,7 @@ class Command(BaseCommand):
             default=False),
     )
 
-    def handle(self, *args, **options):
+    def _handle(self, *args, **options):
         if len(args) < 1:
             raise CommandError(_('Wrong number of arguments'))
 
@@ -110,6 +113,10 @@ class Command(BaseCommand):
                 self.log(_('Successfully imported %(name)s widget') % {'name': template.get_resource_name()}, level=1)
             except:
                 self.log(_('Failed to import widget from %(file_name)s') % {'file_name': file_name}, level=1)
+
+    def handle(self, *args, **options):
+        with override(locale.getdefaultlocale()[0][:2]):
+            return self._handle(*args, **options)
 
     def log(self, msg, level=2):
         """
