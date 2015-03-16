@@ -26,12 +26,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import TemplateDoesNotExist
 from django.utils.http import urlencode
+from django.views.decorators.cache import cache_page
+from django.views.i18n import javascript_catalog
 from user_agents import parse as ua_parse
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import build_error_response
 from wirecloud.platform.core.plugins import get_version_hash
-from wirecloud.platform.plugins import get_active_features_info
+from wirecloud.platform.plugins import get_active_features_info, get_plugins
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.workspace.utils import get_workspace_list
@@ -43,6 +45,16 @@ class FeatureCollection(Resource):
         features = get_active_features_info()
 
         return HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
+
+
+@cache_page(60 * 60 * 24, key_prefix='js18n-%s' % get_version_hash())
+def cached_javascript_catalog(request):
+    packages = ['wirecloud.commons', 'wirecloud.platform']
+
+    for plugin in get_plugins():
+        packages.append(plugin.__module__)
+
+    return javascript_catalog(request, "djangojs", packages)
 
 
 def render_root_page(request):
@@ -87,6 +99,7 @@ def render_workspace_view(request, owner, name):
             return redirect_to_login(request.get_full_path())
 
     return render_wirecloud(request)
+
 
 def get_default_view(request):
 
