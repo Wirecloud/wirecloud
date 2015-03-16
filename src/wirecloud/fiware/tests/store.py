@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -29,7 +29,7 @@ from wirecloud.fiware.storeclient import StoreClient
 
 class StoreTestCase(WirecloudTestCase):
 
-    tags = ('fiware', 'fiware-plugin', 'fiware-ut-13',)
+    tags = ('fiware', 'fiware-plugin', 'fiware-ut-13', 'wirecloud-fiware-store')
     servers = {
         'http': {
             'example.com': DynamicWebServer()
@@ -49,6 +49,25 @@ class StoreTestCase(WirecloudTestCase):
         f.close()
 
         return contents
+
+    def test_storeclient_complain_about_relative_urls(self):
+
+        self.assertRaises(ValueError, StoreClient, 'path')
+        self.assertRaises(ValueError, StoreClient, '/path')
+        self.assertRaises(ValueError, StoreClient, '//store.example.com/path')
+
+    def test_storeclient_handle_url_trailing_slashes(self):
+
+        test_client = StoreClient('http://store.example.com')
+        self.assertEqual(test_client._url, 'http://store.example.com/')
+
+        test_client = StoreClient('http://store.example.com///')
+        self.assertEqual(test_client._url, 'http://store.example.com/')
+
+    def test_storeclient_must_ignore_params_query_and_framgent(self):
+
+        test_client = StoreClient('http://store.example.com/?query=a#a')
+        self.assertEqual(test_client._url, 'http://store.example.com/')
 
     def test_offering_info_retreival(self):
 
