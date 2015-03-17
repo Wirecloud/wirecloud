@@ -56,8 +56,6 @@
 
     .styled_button {
         position: relative;
-        display: table-cell;
-        width: 1%;
         text-align: center;
         color: $anchor-primary-font-color;
         @include font-base($font-weight: bold);
@@ -80,6 +78,32 @@
             background-color: $btn-primary-active-background-color;
             border-radius: $border-radius-base;
         }
+    }
+}
+
+.wiring-sidebar .panel-components .panel-heading {
+
+    .styled_button {
+        display: table-cell;
+        width: 1%;
+    }
+}
+
+.wiring-sidebar .panel-behaviours .panel-heading {
+
+    .styled_button {
+        display: inline-block;
+        margin: 0px;
+    }
+
+    .opt-enable-behaviours {
+        float: left;
+        width: 50px;
+    }
+
+    .opt-viewpoint {
+        float: right;
+        width: 120px;
     }
 }
 

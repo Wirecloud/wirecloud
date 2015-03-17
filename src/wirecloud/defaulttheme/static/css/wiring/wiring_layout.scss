@@ -56,6 +56,21 @@
             text-shadow: $mousedover-anchor-base-font-shadow;
         }
     }
+
+    .alert {
+        padding: 10px;
+
+        .title {
+            margin-bottom: 5px;
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        .content {
+            font-size: 12px;
+            line-height: 20px;
+        }
+    }
 }
 
 // ============================================================================
