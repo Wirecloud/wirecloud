@@ -511,12 +511,26 @@ class WiringComponentTester(object):
     def is_missing(self):
         return "missing" in self.component.get_attribute('class').split()
 
-    def open_menu(self):
-        button = self.testcase.wait_element_visible_by_css_selector('.editPos_button', element=self.element)
-        button.click()
-        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
+    @property
+    def opt_preferences(self):
+        return self.component.find_element_by_css_selector(".option-preferences")
 
-        return PopupMenuTester(self.testcase, popup_menu_element, button)
+    def get_endpoint_by_name(self, endpoint_type, endpoint_name):
+        endpoints = self.component.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)
+
+        for endpoint in endpoints:
+            if endpoint.find_element_by_css_selector(".endpoint-label").text == endpoint_name:
+                return WiringEndpointTester(self.testcase, endpoint)
+
+        return None
+
+    def open_menu(self):
+        button = self.opt_preferences
+        button.click()
+
+        menu_prefs = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
+
+        return PopupMenuTester(self.testcase, menu_prefs, button)
 
 
 class WiringOperatorTester(WiringComponentTester):
@@ -569,6 +583,21 @@ class WiringIWidgetTester(WiringComponentTester):
             var ioperator = Wirecloud.activeWorkspace.getIWidget(%s);
             return ioperator.logManager.entries.map(function (entry) { return {date: entry.date.getTime(), level: entry.level, msg: entry.msg}; });
         ''' % self.id)
+
+
+class WiringEndpointTester(object):
+
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
+
+    @property
+    def anchor(self):
+        return self.element.find_element_by_css_selector('.endpoint-anchor')
+
+    @property
+    def name(self):
+        return self.element.find_element_by_css_selector(".endpoint-label").text
 
 
 class WorkspaceTabTester(object):
@@ -1269,7 +1298,7 @@ class WiringViewTester(object):
         return self
 
     def open_component_group(self, component_type):
-        self.section_sidebar.find_element_by_css_selector(".%s-group" % component_type).click()
+        self.section_sidebar.find_element_by_css_selector(".opt-%s-group" % component_type).click()
 
         return self
 

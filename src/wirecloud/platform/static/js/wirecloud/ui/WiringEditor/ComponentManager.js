@@ -51,6 +51,7 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
         // Add section of web operators
         this.btnOperators = new StyledElements.StyledButton({
             'plain': true,
+            'class': 'opt-operator-group',
             'text': gettext("Operators")
         });
         this.btnOperators.insertInto(headingElement);
@@ -79,6 +80,7 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
         // Add section of web widgets
         this.btnWidgets = new StyledElements.StyledButton({
             'plain': true,
+            'class': 'opt-widget-group',
             'text': gettext("Widgets")
         });
         this.btnWidgets.insertInto(headingElement);

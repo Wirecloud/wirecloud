@@ -404,11 +404,8 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
         with self.wiring_view as wiring:
-            ioperator = wiring.get_ioperators()[0]
-            ioperator.element.find_element_by_css_selector('.specialIcon').click()
-            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
-
-            ioperator.open_menu().click_entry('Settings')
+            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
+            operator.open_menu().click_entry('Settings')
 
             self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').click()  # disable exception_on_event
             self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
@@ -443,11 +440,10 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         # Check preference values has been restored to the values used before uninstalling the widget and not to the default ones
         with self.wiring_view as wiring:
-            ioperator = wiring.get_ioperators()[0]
-            ioperator_class_list = re.split('\s+', ioperator.element.get_attribute('class'))
-            self.assertNotIn('ghost', ioperator_class_list)
+            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
+            self.assertFalse(operator.is_missing)
 
-            ioperator.open_menu().click_entry('Settings')
+            operator.open_menu().click_entry('Settings')
 
             self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="prefix"]').get_attribute('value'), 'test_')
             self.assertFalse(self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').is_selected())
@@ -456,27 +452,26 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
     def test_operators_in_use_reinstall_behaviour(self):
-
         self.check_operator_reinstall_behaviour(False)
+    test_operators_in_use_reinstall_behaviour.tags = ('behaviour-oriented-wiring',)
 
     def test_operators_in_use_reinstall_behaviour_reload(self):
-
         self.check_operator_reinstall_behaviour(True)
+    test_operators_in_use_reinstall_behaviour_reload.tags = ('behaviour-oriented-wiring',)
 
     def test_operators_are_not_usable_after_being_deleted(self):
-
         self.login()
 
         with self.myresources_view as myresources:
             myresources.delete_resource('TestOperator')
 
         with self.wiring_view as wiring:
+            collection = wiring.from_sidebar_get_all_components('operator')
+            self.assertEqual(len(collection), 0)
 
-            wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
-            menubar = wiring_base_element.find_element_by_css_selector('.menubar')
-
-            menubar.find_element_by_xpath("//*[contains(@class, 'se-expander')]//*[contains(@class, 'title') and text()='Operators']").click()
-            self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
+            operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperator', all_steps=True)
+            self.assertIsNone(operator)
+    test_operators_are_not_usable_after_being_deleted.tags = ('behaviour-oriented-wiring',)
 
     def test_basic_wiring_editor_operations(self):
 
@@ -498,18 +493,27 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         iwidgets[2].rename('Test (3)')
 
         with self.wiring_view as wiring:
+            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (1)', all_steps=True)
+            self.assertIsNotNone(widget)
+            wiring.create_new_instance_of(widget, pos_x=-40, pos_y=-40)
 
-            grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (2)')
+            self.assertIsNotNone(widget)
+            wiring.create_new_instance_of(widget, pos_x=40, pos_y=40)
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release().perform()
+            widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test (1)')
+            self.assertIsNotNone(widget1)
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
+            widget2 = wiring.from_diagram_find_component_by_name('widget', 'Test (2)')
+            self.assertIsNotNone(widget2)
 
-            source = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('outputendpoint')
-            target = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('inputendpoint')
-            ActionChains(self.driver).drag_and_drop(source.element, target.element).perform()
+            source = widget1.get_endpoint_by_name('source', 'Output')
+            self.assertIsNotNone(source)
+
+            target = widget2.get_endpoint_by_name('target', 'Input')
+            self.assertIsNotNone(target)
+
+            ActionChains(self.driver).drag_and_drop(source.anchor, target.anchor).perform()
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -536,7 +540,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
-    test_basic_wiring_editor_operations.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
+    test_basic_wiring_editor_operations.tags = ('behaviour-oriented-wiring',)
 
     def test_wiring_editor_modify_arrow_endpoints(self):
 
