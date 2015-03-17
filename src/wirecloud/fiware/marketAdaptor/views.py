@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,8 +22,8 @@ import json
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
-from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.http import get_absolute_reverse_url
+from wirecloud.commons.baseviews import Resource, Service
+from wirecloud.commons.utils.http import authentication_required, get_absolute_reverse_url
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.platform.models import Market, MarketUserData
 
@@ -72,6 +72,7 @@ def get_market_user_data(user, market_user, market_name):
 
 class ServiceCollection(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name, store):
 
         adaptor = get_market_adaptor(market_user, market_name)
@@ -87,6 +88,7 @@ class ServiceCollection(Resource):
 
 class ServiceSearchCollection(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name, store='', search_string='widget'):
 
         adaptor = get_market_adaptor(market_user, market_name)
@@ -102,6 +104,7 @@ class ServiceSearchCollection(Resource):
 
 class ServiceEntry(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name, store, offering_id):
 
         adaptor = get_market_adaptor(market_user, market_name)
@@ -117,6 +120,7 @@ class ServiceEntry(Resource):
 
 class AllStoresServiceCollection(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name):
 
         adaptor = get_market_adaptor(market_user, market_name)
@@ -136,6 +140,7 @@ class AllStoresServiceCollection(Resource):
 
 class StoreCollection(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name):
 
         adaptor = get_market_adaptor(market_user, market_name)
@@ -148,17 +153,20 @@ class StoreCollection(Resource):
         return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
 
 
-def start_purchase(request, market_user, market_name, store):
+class StartPurchaseService(Service):
 
-    adaptor = get_market_adaptor(market_user, market_name)
-    user_data = get_market_user_data(request.user, market_user, market_name)
+    @authentication_required
+    def process(request, market_user, market_name, store):
 
-    data = json.loads(request.body)
+        adaptor = get_market_adaptor(market_user, market_name)
+        user_data = get_market_user_data(request.user, market_user, market_name)
 
-    redirect_uri = get_absolute_reverse_url('wirecloud.fiware.store_redirect_uri', request)
-    try:
-        result = adaptor.start_purchase(store, data['offering_url'], redirect_uri, **user_data)
-    except:
-        return HttpResponse(status=502)
+        data = json.loads(request.body)
 
-    return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
+        redirect_uri = get_absolute_reverse_url('wirecloud.fiware.store_redirect_uri', request)
+        try:
+            result = adaptor.start_purchase(store, data['offering_url'], redirect_uri, **user_data)
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
