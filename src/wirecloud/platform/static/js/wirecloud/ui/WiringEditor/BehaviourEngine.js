@@ -39,7 +39,24 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         }.bind(this));
 
         this.readonly = true;
+        this.behavioursEnabled = false;
         this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
+
+        this.btnEnable.addEventListener('click', function (event) {
+            if (this.behavioursEnabled) {
+                delete this.currentBehaviour;
+                this.emptyBehaviourList();
+                this.behavioursEnabled = false;
+            } else {
+                this.behavioursEnabled = true;
+                this.appendBehaviour(this.createBehaviour());
+            }
+            this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
+
+            this.dispatchEvent('enable')({
+                'isEnabled': this.behavioursEnabled
+            });
+        }.bind(this));
     };
 
     StyledElements.Utils.inherit(BehaviourEngine, null,
@@ -61,11 +78,11 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.CONNECTION_REMOVED = 1;
     BehaviourEngine.CONNECTION_REMOVED_FULLY = 0;
 
-    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeEmpty', 'create', 'remove'];
+    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeEmpty', 'create', 'enable', 'remove'];
 
     BehaviourEngine.viewpoints = {
         'GLOBAL': 0,
-        'INDEPENDENT': 1
+        'SINGLE': 1
     };
 
     /**
@@ -138,17 +155,19 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      * @returns {BehaviourEngine} The instance on which this function was called.
      */
     BehaviourEngine.prototype.activateBehaviour = function activateBehaviour(behaviour) {
-        this.dispatchEvent('beforeActivate')({
-            'behaviour': this.currentBehaviour,
-            'behaviourEngine': this
-        });
+        if (this.behavioursEnabled) {
+            this.dispatchEvent('beforeActivate')({
+                'behaviour': this.currentBehaviour,
+                'behaviourEngine': this
+            });
 
-        desactivateAllExcept.call(this, behaviour);
+            desactivateAllExcept.call(this, behaviour);
 
-        this.dispatchEvent('activate')({
-            'behaviour': this.currentBehaviour,
-            'behaviourEngine': this
-        });
+            this.dispatchEvent('activate')({
+                'behaviour': this.currentBehaviour,
+                'behaviourEngine': this
+            });
+        }
 
         return this;
     };
@@ -295,9 +314,11 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
         behaviourList = [];
 
-        for (i = 0; i < this.behaviourList.length; i++) {
-            if (this.behaviourList[i].containsComponent(componentType, componentId)) {
-                behaviourList.push(this.behaviourList[i]);
+        if (this.behavioursEnabled) {
+            for (i = 0; i < this.behaviourList.length; i++) {
+                if (this.behaviourList[i].containsComponent(componentType, componentId)) {
+                    behaviourList.push(this.behaviourList[i]);
+                }
             }
         }
 
@@ -315,12 +336,16 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.getComponentView = function getComponentView(componentType, componentId) {
         var componentView;
 
-        switch (this.currentViewpoint) {
-            case BehaviourEngine.viewpoints.GLOBAL:
-                componentView = this.currentState.components[componentType][componentId];
-                break;
-            default:
-                break;
+        if (this.behavioursEnabled) {
+            switch (this.currentViewpoint) {
+                case BehaviourEngine.viewpoints.GLOBAL:
+                    componentView = this.currentState.components[componentType][componentId];
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            componentView = this.currentState.components[componentType][componentId];
         }
 
         return componentView;
@@ -396,12 +421,14 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         this.behavioursEnabled = state.behavioursenabled;
         this.currentState = state.visualdescription;
 
-        for (i = 0; i < this.currentState.behaviours.length; i++) {
-            this.appendBehaviour(this.createBehaviour(this.currentState.behaviours[i]));
-        }
+        if (this.behavioursEnabled) {
+            for (i = 0; i < this.currentState.behaviours.length; i++) {
+                this.appendBehaviour(this.createBehaviour(this.currentState.behaviours[i]));
+            }
 
-        if (!this.hasBehaviours()) {
-            this.appendBehaviour(this.createBehaviour());
+            if (!this.hasBehaviours()) {
+                this.appendBehaviour(this.createBehaviour());
+            }
         }
 
         return state;
@@ -486,7 +513,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.removeComponent = function removeComponent(componentType, componentId, cascadeRemove) {
         var i;
 
-        if (this.readonly || this.currentViewpoint !== BehaviourEngine.viewpoints.GLOBAL) {
+        if (this.readonly) {
             return BehaviourEngine.OPERATION_NOT_ALLOWED;
         }
 
@@ -498,19 +525,21 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             return BehaviourEngine.COMPONENT_NOT_FOUND;
         }
 
-        if (cascadeRemove) {
-            for (i = 0; i < this.behaviourList.length; i++) {
-                this.behaviourList[i].removeComponent(componentType, componentId);
-            }
-        } else {
-            if (!this.currentBehaviour.containsComponent(componentType, componentId)) {
-                return BehaviourEngine.COMPONENT_UNREACHABLE;
-            }
+        if (this.behavioursEnabled && this.currentViewpoint == BehaviourEngine.viewpoints.GLOBAL) {
+            if (cascadeRemove) {
+                for (i = 0; i < this.behaviourList.length; i++) {
+                    this.behaviourList[i].removeComponent(componentType, componentId);
+                }
+            } else {
+                if (!this.currentBehaviour.containsComponent(componentType, componentId)) {
+                    return BehaviourEngine.COMPONENT_UNREACHABLE;
+                }
 
-            this.currentBehaviour.removeComponent(componentType, componentId);
+                this.currentBehaviour.removeComponent(componentType, componentId);
 
-            if (this.containsComponent(componentType, componentId)) {
-                return BehaviourEngine.COMPONENT_REMOVED;
+                if (this.containsComponent(componentType, componentId)) {
+                    return BehaviourEngine.COMPONENT_REMOVED;
+                }
             }
         }
 
@@ -530,7 +559,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.removeConnection = function removeConnection(sourceName, targetName, cascadeRemove) {
         var i, index;
 
-        if (this.readonly || this.currentViewpoint !== BehaviourEngine.viewpoints.GLOBAL) {
+        if (this.readonly) {
             return BehaviourEngine.OPERATION_NOT_ALLOWED;
         }
 
@@ -544,19 +573,21 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             return BehaviourEngine.CONNECTION_NOT_FOUND;
         }
 
-        if (cascadeRemove) {
-            for (i = 0; i < this.behaviourList.length; i++) {
-                this.behaviourList[i].removeConnection(sourceName, targetName);
-            }
-        } else {
-            if (!this.currentBehaviour.containsConnection(sourceName, targetName)) {
-                return BehaviourEngine.CONNECTION_UNREACHABLE;
-            }
+        if (this.behavioursEnabled && this.currentViewpoint == BehaviourEngine.viewpoints.GLOBAL) {
+            if (cascadeRemove) {
+                for (i = 0; i < this.behaviourList.length; i++) {
+                    this.behaviourList[i].removeConnection(sourceName, targetName);
+                }
+            } else {
+                if (!this.currentBehaviour.containsConnection(sourceName, targetName)) {
+                    return BehaviourEngine.CONNECTION_UNREACHABLE;
+                }
 
-            this.currentBehaviour.removeConnection(sourceName, targetName);
+                this.currentBehaviour.removeConnection(sourceName, targetName);
 
-            if (this.containsConnection(sourceName, targetName)) {
-                return BehaviourEngine.CONNECTION_REMOVED;
+                if (this.containsConnection(sourceName, targetName)) {
+                    return BehaviourEngine.CONNECTION_REMOVED;
+                }
             }
         }
 
@@ -580,8 +611,10 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         wiringState.visualdescription.components = this.currentState.components;
         wiringState.visualdescription.connections = this.currentState.connections;
 
-        for (i = 0; i < this.behaviourList.length; i++) {
-            wiringState.visualdescription.behaviours.push(this.behaviourList[i].serialize());
+        if (this.behavioursEnabled) {
+            for (i = 0; i < this.behaviourList.length; i++) {
+                wiringState.visualdescription.behaviours.push(this.behaviourList[i].serialize());
+            }
         }
 
         return StyledElements.Utils.cloneObject(wiringState);
@@ -608,19 +641,23 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             updateOnly = false;
         }
 
-        switch (this.currentViewpoint) {
-            case BehaviourEngine.viewpoints.GLOBAL:
-                if (updateOnly) {
-                    if (componentId in this.currentState.components[componentType]) {
+        if (this.behavioursEnabled) {
+            switch (this.currentViewpoint) {
+                case BehaviourEngine.viewpoints.GLOBAL:
+                    if (updateOnly) {
+                        if (componentId in this.currentState.components[componentType]) {
+                            this.currentState.components[componentType][componentId] = componentView;
+                        }
+                    } else {
                         this.currentState.components[componentType][componentId] = componentView;
+                        this.currentBehaviour.updateComponent(componentType, componentId);
                     }
-                } else {
-                    this.currentState.components[componentType][componentId] = componentView;
-                    this.currentBehaviour.updateComponent(componentType, componentId);
-                }
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            this.currentState.components[componentType][componentId] = componentView;
         }
 
         return this;
@@ -647,31 +684,45 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             updateOnly = false;
         }
 
-        switch (this.currentViewpoint) {
-            case BehaviourEngine.viewpoints.GLOBAL:
-                for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
-                    if (this.currentState.connections[i].sourcename == connectionView.sourcename &&
-                        this.currentState.connections[i].targetname == connectionView.targetname) {
-                        found = true;
-                        index = i;
+        if (this.behavioursEnabled) {
+            switch (this.currentViewpoint) {
+                case BehaviourEngine.viewpoints.GLOBAL:
+                    for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
+                        if (this.currentState.connections[i].sourcename == connectionView.sourcename &&
+                            this.currentState.connections[i].targetname == connectionView.targetname) {
+                            found = true;
+                            index = i;
+                        }
                     }
-                }
 
-                if (updateOnly) {
-                    if (found) {
-                        this.currentState.connections[index] = connectionView;
-                    }
-                } else {
-                    if (found) {
-                        this.currentState.connections[index] = connectionView;
+                    if (updateOnly) {
+                        if (found) {
+                            this.currentState.connections[index] = connectionView;
+                        }
                     } else {
-                        this.currentState.connections.push(connectionView);
+                        if (found) {
+                            this.currentState.connections[index] = connectionView;
+                        } else {
+                            this.currentState.connections.push(connectionView);
+                        }
+                        this.currentBehaviour.updateConnection(connectionView);
                     }
-                    this.currentBehaviour.updateConnection(connectionView);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
+                if (this.currentState.connections[i].sourcename == connectionView.sourcename &&
+                    this.currentState.connections[i].targetname == connectionView.targetname) {
+                    this.currentState.connections[i] = connectionView;
+                    found = true;
                 }
-                break;
-            default:
-                break;
+            }
+
+            if (!found) {
+                this.currentState.connections.push(connectionView);
+            }
         }
 
         return this;

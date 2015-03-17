@@ -37,6 +37,24 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         headingElement.className = "panel-heading";
         this.wrapperElement.appendChild(headingElement);
 
+        this.btnEnable = new StyledElements.StyledButton({
+            'plain': true,
+            'title': gettext("Disabled"),
+            'iconClass': 'icon-lock',
+            'class': "opt-enable-behaviours"
+        });
+        this.btnEnable.addClassName('active');
+        this.btnEnable.insertInto(headingElement);
+
+        this.btnViewpoint = new StyledElements.StyledButton({
+            'plain': true,
+            'text': gettext("Global"),
+            'title': gettext("Viewpoint"),
+            'class': "opt-viewpoint"
+        });
+        this.btnViewpoint.addClassName('active');
+        this.btnViewpoint.insertInto(headingElement);
+
         this.bodyElement = document.createElement('div');
         this.bodyElement.className = "panel-body";
         this.wrapperElement.appendChild(this.bodyElement);
@@ -57,6 +75,41 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         this.btnCreate.appendChild(iconElement);
 
         this.behaviourList = [];
+
+        var messageDisabled = document.createElement('div');
+            messageDisabled.className = "alert alert-info";
+            messageDisabled.innerHTML =
+            [
+                "<h4 class=\"title\">New behaviour-oriented wiring</h4>",
+                "<p class=\"content\">",
+                "Enable this section to enjoy with the new way to manage the wiring's connections through behaviours.",
+                "</p>"
+            ].join('');
+
+        var behavioursEnabled = false;
+
+        Object.defineProperty(this, 'behavioursEnabled', {
+            'get': function get() {
+                return behavioursEnabled;
+            },
+            'set': function set(state) {
+                if (typeof state === 'boolean') {
+                    if ((behavioursEnabled=state)) {
+                        this.btnEnable.toggleIconClass('icon-unlock', 'icon-lock');
+                        this.btnEnable.setTitle('Enabled');
+                        headingElement.appendChild(this.btnViewpoint.wrapperElement);
+                        this.bodyElement.appendChild(this.btnCreate);
+                        this.bodyElement.removeChild(messageDisabled);
+                    } else {
+                        this.btnEnable.toggleIconClass('icon-lock', 'icon-unlock');
+                        this.btnEnable.setTitle('Disabled');
+                        headingElement.removeChild(this.btnViewpoint.wrapperElement);
+                        this.bodyElement.removeChild(this.btnCreate);
+                        this.bodyElement.appendChild(messageDisabled);
+                    }
+                }
+            }
+        });
     };
 
     /**

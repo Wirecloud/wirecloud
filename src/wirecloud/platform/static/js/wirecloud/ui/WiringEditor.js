@@ -199,7 +199,11 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     WiringEditor.prototype.getToolbarButtons = function getToolbarButtons() {
-        return [this.btnComponents, this.btnBehaviours, this.btnEmptyBehaviour, this.btnRemoveBehaviour];
+        if (this.behaviourEngine.behavioursEnabled) {
+            return [this.btnComponents, this.btnBehaviours, this.btnEmptyBehaviour, this.btnRemoveBehaviour];
+        } else {
+            return [this.btnComponents, this.btnBehaviours];
+        }
     };
 
     // ==================================================================================
@@ -1228,11 +1232,13 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     var shareConnection = function shareConnection(connection) {
-        shareComponent.call(this, connection.sourceComponent);
-        shareComponent.call(this, connection.targetComponent);
+        if (this.behaviourEngine.behavioursEnabled) {
+            shareComponent.call(this, connection.sourceComponent);
+            shareComponent.call(this, connection.targetComponent);
 
-        this.behaviourEngine.updateConnection(connection.serialize());
-        connection.onbackground = false;
+            this.behaviourEngine.updateConnection(connection.serialize());
+            connection.onbackground = false;
+        }
 
         return this;
     };
