@@ -71,35 +71,65 @@ class PlatformSouthMigrationsTestCase(TestCase):
         }
         orm.__getitem__ = lambda self, model: available_models[model.lower()]
 
-    def test_initial_forwards(self):
-        migration = self._pick_migration('0001_initial')
+    def check_basic_migration_forwards(self, migration_name, **extra_mocks):
+        migration = self._pick_migration(migration_name)
         orm = Mock(autospec=migration.orm())
         self.fill_orm_external_models(orm)
-        with patch.multiple('wirecloud.platform.south_migrations.0001_initial', db=DEFAULT, models=DEFAULT, autospec=True):
+        with patch.multiple('wirecloud.platform.south_migrations.' + migration_name, db=DEFAULT, autospec=True, **extra_mocks):
             migration_instance = migration.migration_instance()
             with patch.object(migration_instance, 'gf', autospec=True):
                 migration_instance.forwards(orm)
 
-    def test_initial_backwards(self):
-        migration = self._pick_migration('0001_initial')
+    def check_basic_migration_backwards(self, migration_name, **extra_mocks):
+        migration = self._pick_migration(migration_name)
         orm = Mock(autospec=migration.prev_orm())
         self.fill_orm_external_models(orm)
-        with patch.multiple('wirecloud.platform.south_migrations.0001_initial', db=DEFAULT, models=DEFAULT, autospec=True):
+        with patch.multiple('wirecloud.platform.south_migrations.' + migration_name, db=DEFAULT, autospec=True, **extra_mocks):
             migration_instance = migration.migration_instance()
             with patch.object(migration_instance, 'gf', autospec=True):
                 migration_instance.backwards(orm)
 
+    def test_initial_forwards(self):
+        self.check_basic_migration_forwards('0001_initial', models=DEFAULT)
+
+    def test_initial_backwards(self):
+        self.check_basic_migration_backwards('0001_initial')
+
     def test_add_field_variabledef_readonly__add_field_variabledef_value_forwards(self):
-        migration = self._pick_migration('0002_auto__add_field_variabledef_readonly__add_field_variabledef_value')
-        orm = Mock(autospec=migration.orm())
-        with patch('wirecloud.platform.south_migrations.0002_auto__add_field_variabledef_readonly__add_field_variabledef_value.db', autospec=True):
-            migration.migration_instance().forwards(orm)
+        self.check_basic_migration_forwards('0002_auto__add_field_variabledef_readonly__add_field_variabledef_value')
 
     def test_add_field_variabledef_readonly__add_field_variabledef_value_backwards(self):
-        migration = self._pick_migration('0002_auto__add_field_variabledef_readonly__add_field_variabledef_value')
-        orm = Mock(autospec=migration.prev_orm())
-        with patch('wirecloud.platform.south_migrations.0002_auto__add_field_variabledef_readonly__add_field_variabledef_value.db', autospec=True):
-            migration.migration_instance().backwards(orm)
+        self.check_basic_migration_backwards('0002_auto__add_field_variabledef_readonly__add_field_variabledef_value')
+
+    def test_del_contextoption_forwards(self):
+        self.check_basic_migration_forwards('0006_auto__del_contextoption')
+
+    def test_del_contextoption_backwards(self):
+        self.check_basic_migration_backwards('0006_auto__del_contextoption')
+
+    def test_add_field_workspace_public_forwards(self):
+        self.check_basic_migration_forwards('0007_auto__add_field_workspace_public')
+
+    def test_add_field_workspace_public_backwards(self):
+        self.check_basic_migration_backwards('0007_auto__add_field_workspace_public')
+
+    def test_del_grouppublishedworkspace__del_publishedworkspace_forwards(self):
+        self.check_basic_migration_forwards('0008_auto__del_grouppublishedworkspace__del_publishedworkspace')
+
+    def test_add_field_variable_value_backwards(self):
+        self.check_basic_migration_backwards('0008_auto__del_grouppublishedworkspace__del_publishedworkspace')
+
+    def test_add_field_variable_value_forwards(self):
+        self.check_basic_migration_forwards('0009_add_field_variable_value')
+
+    def test_add_field_variable_value_backwards(self):
+        self.check_basic_migration_backwards('0009_add_field_variable_value')
+
+    def test_del_variablevalue__del_unique_variablevalue_variable_user_forwards(self):
+        self.check_basic_migration_forwards('0011_del_variablevalue__del_unique_variablevalue_variable_user')
+
+    def test_del_variablevalue__del_unique_variablevalue_variable_user_backwards(self):
+        self.check_basic_migration_backwards('0011_del_variablevalue__del_unique_variablevalue_variable_user')
 
     def test_remove_userprefoption_model_and_metadata_fields_backwards(self):
 
@@ -127,19 +157,17 @@ class PlatformSouthMigrationsTestCase(TestCase):
             with patch.object(migration_instance, 'gf', autospec=True):
                 migration_instance.backwards(orm)
 
-    def test_improve_workspace_metadata_backwards(self):
+    def test_improve_workspace_metadata_forwards(self):
+        self.check_basic_migration_forwards('0014_improve_workspace_metadata')
 
-        migration = self._pick_migration('0014_improve_workspace_metadata')
-        orm = Mock(autospec=migration.prev_orm())
-        with patch('wirecloud.platform.south_migrations.0014_improve_workspace_metadata.db', autospec=True):
-            migration.migration_instance().backwards(orm)
+    def test_improve_workspace_metadata_backwards(self):
+        self.check_basic_migration_backwards('0014_improve_workspace_metadata')
+
+    def test_rename_targetOrganizations_to_groups_forwards(self):
+        self.check_basic_migration_forwards('0015_rename_targetOrganizations_to_groups')
 
     def test_rename_targetOrganizations_to_groups_backwards(self):
-
-        migration = self._pick_migration('0015_rename_targetOrganizations_to_groups')
-        orm = Mock(autospec=migration.prev_orm())
-        with patch('wirecloud.platform.south_migrations.0015_rename_targetOrganizations_to_groups.db', autospec=True):
-            migration.migration_instance().backwards(orm)
+        self.check_basic_migration_backwards('0015_rename_targetOrganizations_to_groups')
 
     def test_restructure_layout_preferences_forwards(self):
 
