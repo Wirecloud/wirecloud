@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -110,18 +110,6 @@ class Variable(models.Model):
             new_value = encrypt_value(new_value)
 
         self.value = new_value
-
-    def get_variable_value(self):
-        value = self.value
-
-        if self.vardef.secure:
-            from wirecloud.platform.workspace.utils import decrypt_value
-            value = decrypt_value(value)
-
-        if self.vardef.type == 'B':
-            value = value.lower() == 'true'
-
-        return value
 
     class Meta:
         app_label = 'platform'
