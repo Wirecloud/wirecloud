@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -88,7 +88,7 @@ class IWidgetCollection(Resource):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_object_or_404(Tab, workspace__pk=workspace_id, pk=tab_id)
         if not request.user.is_superuser and tab.workspace.creator != request.user:
             msg = _('You have not enough permission for updating the iwidgets of this workspace')
             return build_error_response(request, 403, msg)

@@ -174,6 +174,18 @@ def check_post_bad_provided_data(self, url, data):
     self.assertTrue(isinstance(response_data, dict))
 
 
+def check_put_bad_request_content_type(self, url):
+
+    # Authenticate
+    self.client.login(username='user_with_workspaces', password='admin')
+
+    # Test bad json syntax
+    response = self.client.put(url, 'bad content type', content_type='bad/content-type; charset=UTF-8', HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 415)
+    response_data = json.loads(response.content)
+    self.assertTrue(isinstance(response_data, dict))
+
+
 def check_put_bad_request_syntax(self, url):
 
     # Authenticate
@@ -1279,6 +1291,24 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
         check_post_bad_request_syntax(self, url)
+
+    def test_iwidget_collection_put_requires_permission(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+        data = {
+            '1': {}
+        }
+        check_put_requires_permission(self, url, json.dumps(data))
+
+    def test_iwidget_collection_put_bad_request_content_type(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+        check_put_bad_request_content_type(self, url)
+
+    def test_iwidget_collection_put_bad_request_syntax(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+        check_put_bad_request_syntax(self, url)
 
     def test_widget_code_entry_get_operator(self):
 
