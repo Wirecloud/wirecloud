@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -41,10 +41,7 @@ if sys.version_info >= (2, 7):
 
         def encode(self, o):
             chunks = self.iterencode(o, True)
-            if self.ensure_ascii:
-                return ''.join(chunks)
-            else:
-                return ''.join(chunks)
+            return ''.join(chunks)
 
         def iterencode(self, o, _one_shot=False):
             chunks = super(LazyEncoderXHTML, self).iterencode(o, _one_shot)
@@ -59,10 +56,7 @@ else:
 
         def encode(self, o):
             chunks = self.iterencode(o)
-            if self.ensure_ascii:
-                return ''.join(chunks)
-            else:
-                return ''.join(chunks)
+            return ''.join(chunks)
 
         def iterencode(self, o):
             chunks = super(LazyEncoderXHTML, self).iterencode(o)
