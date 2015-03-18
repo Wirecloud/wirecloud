@@ -25,13 +25,11 @@ from django.shortcuts import get_object_or_404
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
-from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget
-from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Variable, Workspace
-from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
+from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget
+from wirecloud.platform.models import Widget, IWidget, Tab, Variable, Workspace
 from wirecloud.platform.workspace.utils import VariableValueCacheManager, get_iwidget_data
 
 
@@ -221,41 +219,5 @@ class IWidgetProperties(Resource):
         except Variable.DoesNotExist:
             msg = _('Invalid property: "%s"') % var_name
             return build_error_response(request, 422, msg)
-
-        return HttpResponse(status=204)
-
-
-class IWidgetVersion(Resource):
-
-    @authentication_required
-    @supported_request_mime_types(('application/json',))
-    @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, iwidget_id):
-
-        workspace = Workspace.objects.get(id=workspace_id)
-        if not request.user.is_superuser and workspace.creator != request.user:
-            raise Http403()
-
-        try:
-            data = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        iwidget_pk = data.get('id')
-
-        # get the iWidget object
-        iwidget = get_object_or_404(IWidget, pk=iwidget_pk)
-
-        new_version = data.get('newVersion')
-        if workspace.is_shared():
-            users = UserWorkspace.objects.filter(workspace=workspace).values_list('user', flat=True)
-        else:
-            users = [request.user]
-
-        if not 'source' in data or data.get('source') == 'catalogue':
-            widget = get_or_add_widget_from_catalogue(iwidget.widget.vendor, iwidget.widget.name, new_version, request.user, request, assign_to_users=users)
-
-        UpgradeIWidget(iwidget, request.user, widget)
 
         return HttpResponse(status=204)

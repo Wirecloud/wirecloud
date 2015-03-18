@@ -1,45 +1,13 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
-
-
-#
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.platform.models import IWidget, Position, Tab, Variable, VariableDef
+from wirecloud.platform.models import IWidget, Position, Tab, VariableDef
 
 
 def addIWidgetVariable(iwidget, varDef, initial_value=None):
-
-    if varDef.aspect not in ('PREF', 'PROP'):
-        return
 
     # Sets the default value of variable
     if varDef.readonly == False and initial_value:
@@ -52,38 +20,6 @@ def addIWidgetVariable(iwidget, varDef, initial_value=None):
         var_value = ''
 
     iwidget.variable_set.create(vardef=varDef, value=var_value)
-
-
-def UpgradeIWidget(iwidget, user, new_widget):
-    currentWidget = iwidget.widget
-
-    # get the workspace in which the iwidget is being added in order to
-    # check if it is shared
-    # workspaceId = iwidget.tab.workspace.id
-
-    #check equivalency and add the variables needed
-    newVariableDefs = VariableDef.objects.filter(widget=new_widget)
-    equivalentVarDefs = []
-    for varDef in newVariableDefs:
-        # search for an equivalent variableDef
-        equivalentVarDef = VariableDef.objects.filter(name=varDef.name, type=varDef.type, aspect=varDef.aspect, widget=currentWidget)
-        if equivalentVarDef:
-            equivalentVarDefs.append(varDef)
-            #reassign the variableDef of the Variable
-            var = Variable.objects.get(iwidget=iwidget, vardef=equivalentVarDef[0])
-            var.vardef = varDef
-            var.save()
-        else:
-            addIWidgetVariable(iwidget, varDef)
-
-    # check if the last version widget hasn't a super-set of the current version widget variableDefs
-    currentWidgetVarDefs = VariableDef.objects.filter(widget=currentWidget)
-    if len(currentWidgetVarDefs) > len(equivalentVarDefs):
-        #some of the current version widget variableDefs aren't in the last version widget
-        raise Exception(_("The widget cannot be automatically updated because it is incompatible with the last version."))
-
-    iwidget.widget = new_widget
-    iwidget.save()
 
 
 def SaveIWidget(iwidget, user, tab, initial_variable_values):

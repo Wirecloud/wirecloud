@@ -98,10 +98,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         iwidget_views.IWidgetProperties(permitted_methods=('POST',)),
         name='wirecloud.iwidget_properties'
     ),
-    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/version/?$',
-        iwidget_views.IWidgetVersion(permitted_methods=('PUT',)),
-        name='wirecloud.iwidget_version_entry'
-    ),
 
     # Preferences
     url(r'^api/preferences/platform/?$',
