@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,10 +20,12 @@
 from io import BytesIO
 import zipfile
 
+from django.http import UnreadablePostError
 from django.test import TestCase
-from mock import patch
+from mock import patch, Mock
 
 from wirecloud.commons.utils.html import clean_html
+from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.wgt import WgtFile
 
 
@@ -62,6 +64,32 @@ class HTMLCleanupTestCase(TestCase):
         initial_code = 'Example image: <img src="images/example.png"/>'
         expected_code = 'Example image: <img src="http://example.com/images/example.png"/>'
         self.assertEqual(clean_html(initial_code, base_url='http://example.com'), expected_code)
+
+
+class GeneralUtilsTestCase(TestCase):
+
+    tags = ('wirecloud-general-utils',)
+
+    def test_skipunreadableposts_filter(self):
+
+        record = Mock()
+        record.exc_info = (None, UnreadablePostError())
+        filter = SkipUnreadablePosts()
+        self.assertFalse(filter.filter(record))
+
+    def test_skipunreadableposts_filter_should_ignore_general_exceptions(self):
+
+        record = Mock()
+        record.exc_info = (None, Exception())
+        filter = SkipUnreadablePosts()
+        self.assertTrue(filter.filter(record))
+
+    def test_skipunreadableposts_filter_should_ignore_records_without_exc_info(self):
+
+        record = Mock()
+        record.exc_info = None
+        filter = SkipUnreadablePosts()
+        self.assertTrue(filter.filter(record))
 
 
 class WGTTestCase(TestCase):
