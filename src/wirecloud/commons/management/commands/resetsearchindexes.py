@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,12 +19,13 @@
 
 from __future__ import unicode_literals
 
+import locale
 import os
 from optparse import make_option
 
 from django.core.management.base import CommandError, NoArgsCommand
 from django.utils.six.moves import input
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import override, ugettext_lazy as _
 
 from wirecloud.commons.searchers import get_available_search_engines, get_search_engine, is_available
 
@@ -45,7 +46,7 @@ class Command(NoArgsCommand):
     update_success_message = _('The "%s" index was updated successfully')
     nonavailable_indexes_message = _('The following indexes are not available: %s')
 
-    def handle_noargs(self, **options):
+    def _handle_noargs(self, **options):
 
         self.interactive = options['interactive']
         self.verbosity = int(options.get('verbosity', 1))
@@ -98,6 +99,9 @@ class Command(NoArgsCommand):
 
             self.log(self.update_success_message % indexname)
 
+    def handle_noargs(self, **options):
+        with override(locale.getdefaultlocale()[0][:2]):
+            self._handle_noargs(**options)
 
     def log(self, msg, level=2):
         """

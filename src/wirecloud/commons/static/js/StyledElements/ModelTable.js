@@ -39,8 +39,11 @@
             }
 
             cell = document.createElement('div');
-            cell.className = 'cell';
-            if (column.width != null) {
+            cell.className = 'se-model-table-cell';
+            if (typeof column['class'] === 'string') {
+                cell.classList.add(column['class']);
+            }
+            if (column.width != null && column.width !== "css") {
                 cell.style.width = column.width;
             }
             cell.textContent = label;
@@ -87,7 +90,7 @@
             callback = this.pRowCallback.bind({control: this, item: item});
 
             row = document.createElement('div');
-            row.className = 'row';
+            row.className = 'se-model-table-row';
             if ((i % 2) === 1) {
                 row.classList.add('odd');
             }
@@ -96,9 +99,9 @@
                 column = this.columns[j];
 
                 cell = document.createElement('div');
-                cell.className = 'cell';
+                cell.className = 'se-model-table-cell';
                 this.columnsCells[j].push(cell);
-                if (typeof column.width === 'string') {
+                if (typeof column.width === 'string' && column.width !== "css") {
                     cell.style.width = column.width;
                 }
                 if (typeof column['class'] === 'string') {
@@ -174,14 +177,14 @@
 
         this.columns = columns;
 
-        this.layout = new StyledElements.BorderLayout({'class': 'model_table'});
+        this.layout = new StyledElements.BorderLayout({'class': 'se-model-table'});
         this.wrapperElement = this.layout.wrapperElement;
 
         /*
          * Header
          */
         this.header = this.layout.getNorthContainer();
-        this.header.addClassName('headrow');
+        this.header.addClassName('se-model-table-headrow');
 
         buildHeader.call(this);
 
@@ -191,13 +194,13 @@
         this.pComponents = [];
         this.pListeners = [];
         this.tableBody = this.layout.getCenterContainer();
-        this.tableBody.addClassName('tbody');
+        this.tableBody.addClassName('se-model-table-body');
 
         /*
          * Status bar
          */
         this.statusBar = this.layout.getSouthContainer();
-        this.statusBar.addClassName('statusrow');
+        this.statusBar.addClassName('se-model-table-statusrow');
 
         this.sortColumn = null;
         if (options.source != null) {
@@ -219,11 +222,14 @@
             this.source = new StyledElements.StaticPaginatedSource({pageSize: options.pageSize, sort_info: sort_info});
         }
         Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
-        this.paginationInterface = new StyledElements.PaginationInterface(this.source);
 
         this.pRefreshBody = this.reload.bind(this);
         this.source.addEventListener('requestEnd', this.pRefreshBody);
-        this.statusBar.appendChild(this.paginationInterface);
+
+        if (this.source.pOptions.pageSize !== 0) {
+            this.paginationInterface = new StyledElements.PaginationInterface(this.source);
+            this.statusBar.appendChild(this.paginationInterface);
+        }
 
         if (options.initialSortColumn === -1) {
             for (i = 0; i < this.columns.length; i += 1) {
@@ -448,8 +454,10 @@
         this.layout.destroy();
         this.layout = null;
 
-        this.paginationInterface.destroy();
-        this.paginationInterface = null;
+        if (this.paginationInterface) {
+            this.paginationInterface.destroy();
+            this.paginationInterface = null;
+        }
 
         this.source.destroy();
         this.source = null;

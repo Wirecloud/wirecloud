@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -100,8 +100,8 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
         template_contents = wgt_file.get_template()
         template = TemplateParser(template_contents)
 
-    if template.get_resource_type() == 'widget':
-        resource_info = template.get_resource_info()
+    resource_info = template.get_resource_info()
+    if resource_info['type'] == 'widget':
         code_url = resource_info['contents']['src']
         if not code_url.startswith(('http://', 'https://')):
 
@@ -139,33 +139,21 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
     f.close()
 
     if not deploy_only:
-        return add_resource_from_template(file_name, template, user, overrides=overrides)
-
-
-def add_resource_from_template(template_uri, template, user, overrides=None):
-
-    if isinstance(template, TemplateParser):
-        parser = template
-    else:
-        parser = TemplateParser(template, base=template_uri)
-
-    resource_info = parser.get_resource_info()
-    if overrides is not None:
         resource_info.update(overrides)
 
-    resource = CatalogueResource.objects.create(
-        short_name=resource_info['name'],
-        vendor=resource_info['vendor'],
-        version=resource_info['version'],
-        type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
-        creator=user,
-        template_uri=template_uri,
-        creation_date=now(),
-        popularity='0.0',
-        json_description=json.dumps(resource_info)
-    )
+        resource = CatalogueResource.objects.create(
+            short_name=resource_info['name'],
+            vendor=resource_info['vendor'],
+            version=resource_info['version'],
+            type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
+            creator=user,
+            template_uri=file_name,
+            creation_date=now(),
+            popularity='0.0',
+            json_description=json.dumps(resource_info)
+        )
 
-    return resource
+        return resource
 
 
 def delete_resource(resource, user):
@@ -250,6 +238,7 @@ def get_resource_data(resource, user, request=None):
         'uriTemplate': template_uri,
         'license': resource_info['license'],
         'licenseurl': resource_info['licenseurl'],
+        'issuetracker': resource_info['issuetracker'],
     }
 
 

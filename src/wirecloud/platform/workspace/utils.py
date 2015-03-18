@@ -263,37 +263,6 @@ def _workspace_cache_key(workspace, user):
     return '_workspace_global_data/%s/%s/%s' % (workspace.id, workspace.last_modified, user.id)
 
 
-def get_variable_value_from_varname(user, iwidget, var_name):
-
-    if isinstance(iwidget, IWidget):
-        iwidget_id = iwidget.id
-    elif 'id' in iwidget:
-        iwidget_id = iwidget.id
-        iwidget = IWidget.objects.get(id=iwidget_id)
-    else:
-        iwidget_id = int(iwidget)
-        iwidget = IWidget.objects.get(id=iwidget_id)
-
-    workspace = iwidget.tab.workspace
-    key = _variable_values_cache_key(workspace, user)
-    values = cache.get(key)
-    if values == None:
-        values = _populate_variables_values_cache(workspace, user, key)
-
-    entry = values['by_varname'][iwidget_id][var_name]
-    if entry['secure'] == True:
-        value = decrypt_value(entry['value'])
-    else:
-        value = entry['value']
-
-    if entry['type'] == 'B':
-        value = value.lower() == 'true'
-    elif entry['type'] == 'N':
-        value = float(value)
-
-    return value
-
-
 class VariableValueCacheManager():
 
     workspace = None
@@ -324,18 +293,25 @@ class VariableValueCacheManager():
 
     def get_variable_value_from_varname(self, iwidget, var_name):
 
-        if 'id' in iwidget:
+        if isinstance(iwidget, IWidget):
+            iwidget_id = iwidget.id
+        elif 'id' in iwidget:
             iwidget_id = iwidget.id
             iwidget = IWidget.objects.get(id=iwidget_id)
-        elif not isinstance(iwidget, IWidget):
+        else:
             iwidget_id = int(iwidget)
             iwidget = IWidget.objects.get(id=iwidget_id)
-        else:
-            iwidget_id = iwidget
 
         values = self.get_variable_values()
         entry = values['by_varname'][iwidget_id][var_name]
-        return self._process_entry(entry)
+        value = self._process_entry(entry)
+
+        if entry['type'] == 'B':
+            value = value.lower() == 'true'
+        elif entry['type'] == 'N':
+            value = float(value)
+
+        return value
 
     def get_variable_data(self, variable):
         values = self.get_variable_values()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -66,8 +66,9 @@ def build_selenium_test_cases(classes, namespace):
             )
 build_selenium_test_cases.__test__ = False
 
-WIRECLOUD_INSTANCE = 'https://wirecloud.testbed.fiware.org'
-STORE_INSTANCE = 'https://wstore.testbed.fiware.org'
+MARKETPLACE_NAME = 'testbed'
+WIRECLOUD_INSTANCE = 'https://mashup.testbed.fiware.org'
+STORE_INSTANCE = 'https://store.testbed.fiware.org'
 
 class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
 
@@ -81,14 +82,14 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
 
     def test_marketplace_integration(self):
 
-        self.change_marketplace('FI-WARE')
+        self.change_marketplace(MARKETPLACE_NAME)
         self.search_resource('Orion Context')
         resource = self.search_in_catalogue_results('Orion Context Broker')
         self.assertIsNotNone(resource, "FIWARE Marketplace searches doesn't work")
 
     def test_store_integration_buy(self):
 
-        self.change_marketplace('FI-WARE')
+        self.change_marketplace(MARKETPLACE_NAME)
         self.search_resource('Map Viewer')
         resource = self.search_in_catalogue_results('Map Viewer')
         resource.find_element_by_css_selector('.mainbutton').click()
@@ -150,7 +151,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
             self.uninstall_resource('Map Viewer')
 
         # Run the test
-        self.change_marketplace('FI-WARE')
+        self.change_marketplace(MARKETPLACE_NAME)
         self.search_resource('Map Viewer')
         resource = self.search_in_catalogue_results('Map Viewer')
         install_button = resource.find_element_by_css_selector('.mainbutton')

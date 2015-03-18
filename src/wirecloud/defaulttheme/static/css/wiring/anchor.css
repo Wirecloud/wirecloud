@@ -60,7 +60,7 @@
 }
 
 /* Ghost Anchor */
-.wiring_editor .grid .container .anchorDiv.ghost .anchor {
+.wiring_editor .grid .anchorDiv.ghost .anchor {
     color: rgba(255, 255, 255, 0.95);
     text-shadow: 0px 0px 7px rgb(167, 71, 71), 0px 0px 5px rgb(236, 0, 0);
 }

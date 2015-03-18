@@ -1,0 +1,135 @@
+{
+    "applications": [],
+    "rating": 0,
+    "related_images": [
+        "/media/CoNWeT__SmartCityLights__1.0/screenshot3.png",
+        "/media/CoNWeT__SmartCityLights__1.0/screenshot2.png",
+        "/media/CoNWeT__SmartCityLights__1.0/screenshot1.png"
+    ],
+    "description_url": "http://repository.example.com/CoNWeT/service2.rdf",
+    "creation_date": "2013-07-11 09:37:29.725000",
+    "owner_admin_user_id": "app_provider",
+    "publication_date": "2013-07-11 13:41:51.418000",
+    "open": false,
+    "owner_organization": "CoNWeT",
+    "name": "WeatherWidget",
+    "tags": [],
+    "comments": [],
+    "state": "published",
+    "version": "1.0",
+    "image_url": "/media/CoNWeT__SmartCityLights__1.0/smart_lights_icon.png",
+    "offering_description": {
+        "services_included": [
+            {
+                "uriImage": "http://130.206.82.145/media/images/smart_lights_icon.png",
+                "vendor": "CoNWeT",
+                "name": "Smart City Lights application",
+                "created": "2013-06-04T00:00",
+                "interactions": [],
+                "long_description": "Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FIWARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.",
+                "modified": "2012-11-19T00:00",
+                "legal": [
+                    {
+                        "clauses": [
+                            {
+                                "text": "The History Mod included in this application is free software you can redistribute and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
+                                "name": "History Mod Licence"
+                            },
+                            {
+                                "text": "The mashups included in this application are free software you can redistribute and/or modify them under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
+                                "name": "Mashups Licence"
+                            }
+                        ],
+                        "type": "http://www.linked-usdl.org/ns/usdl-legal#TermsAndConditions",
+                        "description": "",
+                        "label": "Terms and conditions"
+                    }
+                ],
+                "vcard": {
+                    "BEGIN": [
+                        {
+                            "properties": {},
+                            "value": "VCARD"
+                        }
+                    ],
+                    "TEL": [
+                        {
+                            "properties": {},
+                            "value": "+34913367394"
+                        }
+                    ],
+                    "END": [
+                        {
+                            "properties": {},
+                            "value": "VCARD"
+                        }
+                    ],
+                    "ADR": [
+                        {
+                            "properties": {},
+                            "value": "Campus de Montegancedo s/n;28660;Boadilla del Monte, Madrid;Spain"
+                        }
+                    ],
+                    "EMAIL": [
+                        {
+                            "properties": {},
+                            "value": "conwet@conwet.com"
+                        }
+                    ],
+                    "FN": [
+                        {
+                            "properties": {},
+                            "value": "CoNWeT"
+                        }
+                    ]
+                },
+                "parts": [
+                    {
+                        "name": "",
+                        "uri": ""
+                    }
+                ],
+                "version": "1.0",
+                "sla": [],
+                "short_description": "Smart City Lights is an application that allows the management and analysis of Smart City entities status.",
+                "page": "file:////"
+            }
+        ],
+        "pricing": {
+            "price_plans": [
+                {
+                    "description": "This price plan defines an initial payment and a pay-per-use model based on issues created",
+                    "price_components": [
+                        {
+                            "currency": "EUR",
+                            "unit": "single payment",
+                            "description": "",
+                            "value": "1000.0",
+                            "title": "Initial payment"
+                        },
+                        {
+                            "currency": "EUR",
+                            "unit": "issue",
+                            "description": "",
+                            "value": "0.1",
+                            "title": "Pay per issue"
+                        }
+                    ],
+                    "title": "Initial payment + pay per issue price plan"
+                }
+            ],
+            "valid_through": "2011-12-31",
+            "valid_from": "2011-12-01",
+            "description": "This offering includes the Santander City Lights application",
+            "title": "SmartCityLights"
+        }
+    },
+    "resources": [
+        {
+            "version": "1.0",
+            "name": "Weather Widget Example",
+            "content_type": "application/x-widget+mashable-application-component",
+            "description": "Example of widget for the Wirecloud Plaftorm"
+        }
+    ]
+}

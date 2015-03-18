@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,7 +23,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _
 from six import string_types
 
-from wirecloud.catalogue.utils import add_packaged_resource, add_resource_from_template
+from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.platform.localcatalogue.signals import resource_installed
 from wirecloud.platform.markets.utils import get_market_managers

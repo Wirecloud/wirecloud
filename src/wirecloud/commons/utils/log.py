@@ -20,8 +20,20 @@
 import logging
 
 from django.conf import settings
+from django.http import UnreadablePostError
 
 
 class RequireDebugTrue(logging.Filter):
+
     def filter(self, record):
-       return settings.DEBUG
+        return settings.DEBUG
+
+
+class SkipUnreadablePosts(logging.Filter):
+
+    def filter(self, record):
+        if record.exc_info:
+            exc_type, exc_value = record.exc_info[:2]
+            if isinstance(exc_value, UnreadablePostError):
+                return False
+        return True

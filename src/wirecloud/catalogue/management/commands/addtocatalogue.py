@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,18 +17,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
+import locale
 from optparse import make_option
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
-from django.utils.translation import ugettext as _
+from django.utils.translation import override, ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import delete_resource
 from wirecloud.catalogue.views import add_packaged_resource
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_group, install_resource_to_all_users
 
 
 class Command(BaseCommand):
@@ -39,19 +43,47 @@ class Command(BaseCommand):
             action='store_true',
             dest='deploy_only',
             default=False),
-        make_option('-r', '--reinstall',
+        make_option('-u', '--users',
+            action='store',
+            type='string',
+            dest='users',
+            default=''),
+        make_option('-g', '--groups',
+            action='store',
+            type='string',
+            dest='groups',
+            default=''),
+        make_option('-p', '--public',
             action='store_true',
-            dest='reinstall',
+            dest='public',
             default=False),
     )
 
-    def handle(self, *args, **options):
+    def _handle(self, *args, **options):
         if len(args) < 1:
             raise CommandError(_('Wrong number of arguments'))
 
-        user = None
+        self.verbosity = int(options.get('verbosity', 1))
+
+        users = []
+        groups = []
+        deploy_only = options['deploy_only']
+        public = options['public']
+        users_string = options['users'].strip()
+        groups_string = options['groups'].strip()
+
+        if deploy_only is False and public is False and users_string == '' and groups_string == '':
+            raise CommandError(_('You must use at least one of the following flags: --deploy_only, --users, --groups or --public '))
+
         if not options['deploy_only']:
-            user = User.objects.get(pk=1)
+
+            if users_string != '':
+                for username in users_string.split(','):
+                    users.append(User.objects.get(username=username))
+
+            if groups_string != '':
+                for groupname in groups_string.split(','):
+                    groups.append(Group.objects.get(name=groupname))
 
         for file_name in args:
             try:
@@ -64,30 +96,27 @@ class Command(BaseCommand):
             try:
                 template_contents = wgt_file.get_template()
                 template = TemplateParser(template_contents)
-                try:
-                    add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=options['deploy_only'])
-                except IntegrityError:
-                    if not options['reinstall']:
-                        raise
-                    else:
-                        old_resource = CatalogueResource.objects.get(vendor=template.get_resource_vendor(),
-                            short_name=template.get_resource_name(),
-                            version=template.get_resource_version()
-                        )
-                        delete_resource(old_resource, user)
-                        add_packaged_resource(f, user, wgt_file=wgt_file, template=template)
+                if options['deploy_only']:
+                    add_packaged_resource(f, None, wgt_file=wgt_file, template=template, deploy_only=True)
+                else:
+                    for user in users:
+                        install_resource_to_user(user, file_contents=wgt_file)
+
+                    for group in groups:
+                        install_resource_to_group(group, file_contents=wgt_file)
+
+                    if public:
+                        install_resource_to_all_users(file_contents=wgt_file)
 
                 wgt_file.close()
                 f.close()
                 self.log(_('Successfully imported %(name)s widget') % {'name': template.get_resource_name()}, level=1)
-            except IntegrityError:
-                self.log(_('Version %(version)s of the %(name)s widget (from %(vendor)s) already exists') % {
-                    'name': template.get_resource_name(),
-                    'version': template.get_resource_version(),
-                    'vendor': template.get_resource_vendor(),
-                }, level=1)
             except:
                 self.log(_('Failed to import widget from %(file_name)s') % {'file_name': file_name}, level=1)
+
+    def handle(self, *args, **options):
+        with override(locale.getdefaultlocale()[0][:2]):
+            return self._handle(*args, **options)
 
     def log(self, msg, level=2):
         """

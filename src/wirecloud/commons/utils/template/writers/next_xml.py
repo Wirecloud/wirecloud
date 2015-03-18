@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -155,7 +155,7 @@ def build_xml_document(options):
     template.set('version', options.get('version'))
 
     desc = etree.SubElement(template, 'details')
-    addElements(options, desc, ('title', 'email', 'image', 'smartphoneimage', 'description', 'longdescription', 'homepage', 'doc', 'license', 'licenseurl', 'changelog'))
+    addElements(options, desc, ('title', 'email', 'image', 'smartphoneimage', 'description', 'longdescription', 'homepage', 'doc', 'license', 'licenseurl', 'changelog', 'issuetracker'))
     addElements(options, desc, ('authors', 'contributors'), type='people')
 
     if len(options['requirements']) > 0:

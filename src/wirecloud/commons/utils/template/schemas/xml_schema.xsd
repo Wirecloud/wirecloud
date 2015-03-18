@@ -138,6 +138,13 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="issuetracker" minOccurs="0" maxOccurs="1" type="xs:anyURI">
+                <xs:annotation>
+                    <xs:documentation>
+                        URL pointing to the issue tracker of the mashable application component.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:all>
     </xs:complexType>
 
@@ -248,7 +255,7 @@
                 <xs:attribute name="value" type="macd:NonEmpty">
                     <xs:annotation>
                         <xs:documentation>
-                            Initial value. If not especified, the default value will be used as the initial value.
+                            Initial value. If not specified, the default value will be used as the initial value.
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -266,10 +273,7 @@
     <xs:complexType name="Preferences">
         <xs:annotation>
             <xs:documentation>
-                The user preferences, which may be changed
-                through the platform interface. It's a mandatory element,
-                consisting of one, several or even none preference
-                sub-elements
+                The user preferences, which may be changed through the platform interface. This element consisting of one, several or even none preference sub-elements
             </xs:documentation>
         </xs:annotation>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -280,10 +284,7 @@
     <xs:complexType name="MashupPreferences">
         <xs:annotation>
             <xs:documentation>
-                The user preferences, which may be changed
-                through the platform interface. It's a mandatory element,
-                consisting of one, several or even none preference
-                sub-elements
+                The user preferences, which may be changed through the platform interface. This element consisting of one, several or even none preference sub-elements
             </xs:documentation>
         </xs:annotation>
         <xs:choice minOccurs="0" maxOccurs="unbounded">

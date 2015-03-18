@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -28,7 +28,7 @@ from wirecloud.commons.utils.template.base import parse_contacts_info
 from wirecloud.commons.utils.template.writers import rdf
 from wirecloud.commons.utils.template.writers import xml
 from wirecloud.platform.models import IWidget
-from wirecloud.platform.workspace.utils import get_variable_value_from_varname
+from wirecloud.platform.workspace.utils import VariableValueCacheManager
 
 
 def get_iwidgets_description(included_iwidgets):
@@ -62,6 +62,8 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
     if iwidget_id in parametrization:
         iwidget_params = parametrization[iwidget_id]
 
+    cache_manager = VariableValueCacheManager(workspace, workspace.creator)
+
     # input and output endpoints
     for output_endpoint in widget_description['wiring']['outputs']:
         wiring['outputs'].append({
@@ -94,7 +96,7 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
                 # Do not issue a Preference element for this preference
                 continue
             elif source == 'current':
-                value = get_variable_value_from_varname(workspace.creator, iwidget, pref.name)
+                value = cache_manager.get_variable_value_from_varname(iwidget, pref.name)
             elif source == 'custom':
                 value = iwidget_param_desc['value']
             else:
@@ -102,7 +104,7 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
 
             status = iwidget_param_desc['status']
         else:
-            value = get_variable_value_from_varname(workspace.creator, iwidget, pref.name)
+            value = cache_manager.get_variable_value_from_varname(iwidget, pref.name)
 
         if pref.type == 'B':
             value = str(value).lower()
@@ -128,7 +130,7 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
             value = iwidget_param_desc['value']
             status = iwidget_param_desc['status']
         else:
-            value = get_variable_value_from_varname(workspace.creator, iwidget, prop.name)
+            value = cache_manager.get_variable_value_from_varname(iwidget, prop.name)
 
         properties[prop.name] = {
             'readonly': status != 'normal',

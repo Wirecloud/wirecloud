@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,13 +19,16 @@
 
 import json
 
-from django.http import HttpResponse
+from django.contrib import auth
+from django.contrib.auth.models import User
+from django.http import HttpResponse, Http404
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
-from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.searchers import get_search_engine, is_available
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.http import build_error_response, get_html_basic_error_response
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, supported_request_mime_types
 
 
 extra_formatters = {
@@ -67,3 +70,42 @@ class ResourceSearch(Resource):
         response = get_search_engine(indexname).search(querytext)
 
         return JsonResponse(response)
+
+
+class SwitchUserService(Service):
+
+    @authentication_required
+    @supported_request_mime_types(('application/json',))
+    def process(self, request):
+
+        if not request.user.is_superuser:
+            return build_error_response(request, 403, _("You don't have permission to switch current session user"))
+
+        try:
+            user_info = json.loads(request.body)
+        except ValueError as e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
+
+        if "username" not in user_info:
+            return build_error_response(request, 422, "Missing target user info")
+
+        user_id = get_object_or_404(User, username=user_info['username']).id
+        target_user = None
+        for backend in auth.get_backends():
+            try:
+                target_user = backend.get_user(user_id)
+            except:
+                continue
+            if target_user is None:
+                continue
+            # Annotate the user object with the path of the backend.
+            target_user.backend = "%s.%s" % (backend.__module__, backend.__class__.__name__)
+            break
+
+        if target_user is None:
+            raise Http404
+
+        auth.login(request, target_user)
+
+        return HttpResponse(status=204)

@@ -302,7 +302,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def _buy_offering(self):
         bought_response_text = read_response_file('responses', 'store2', 'service2_bought.json')
-        self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': bought_response_text})
+        self.network._servers['http']['store2.example.com'].add_response('GET', '/mystore/api/offering/offerings/service2.rdf', {'content': bought_response_text})
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Start']").click()
         WebDriverWait(self.driver, 10).until(lambda driver: len(driver.find_elements_by_css_selector('.window_menu')) == 1)
         self.wait_wirecloud_ready()
@@ -311,7 +311,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/search/offerings/fulltext/test', {'content': response_text})
-        self.network._servers['http']['store2.example.com'].add_response('POST', '/api/contracting/form', {'content': str('{"url": "' + self.live_server_url + '"}')})
+        self.network._servers['http']['store2.example.com'].add_response('POST', '/mystore/api/contracting/form', {'content': str('{"url": "' + self.live_server_url + '"}')})
         response_text = read_response_file('responses', 'marketplace', 'store2_weatherwidget_offering.xml')
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offering/WeatherWidget', {'content': response_text})
 
@@ -373,7 +373,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_install_store_offering(self):
 
         response_text = read_response_file('responses', 'store2', 'service2_bought.json')
-        self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': response_text})
+        self.network._servers['http']['store2.example.com'].add_response('GET', '/mystore/api/offering/offerings/service2.rdf', {'content': response_text})
         offering_name = 'Weather widget'
         resources = ('Weather Widget Example',)
 
@@ -389,7 +389,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_install_store_offering_embedded(self):
 
         response_text = read_response_file('responses', 'store2', 'service_embedded_bought.json')
-        self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': response_text})
+        self.network._servers['http']['store2.example.com'].add_response('GET', '/mystore/api/offering/offerings/service2.rdf', {'content': response_text})
         offering_name = 'Weather widget'
         resources = (
             'TestMashupEmbedded',

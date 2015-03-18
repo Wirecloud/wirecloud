@@ -27,7 +27,7 @@ from six.moves.urllib.parse import unquote
 from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
 
-from wirecloud.platform.workspace.utils import get_variable_value_from_varname
+from wirecloud.platform.workspace.utils import VariableValueCacheManager
 from wirecloud.proxy.utils import ValidationError
 
 
@@ -36,14 +36,14 @@ WIRECLOUD_SECURE_DATA_HEADER = 'x-wirecloud-secure-data'
 VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 
 
-def get_variable_value_by_ref(ref, user):
+def get_variable_value_by_ref(ref, cache_manager):
 
     result = VAR_REF_RE.match(ref)
     try:
         if result.group('iwidget_id') == 'c':
             return result.group('var_name')
         else:
-            return get_variable_value_from_varname(user, result.group('iwidget_id'), result.group('var_name'))
+            return cache_manager.get_variable_value_from_varname(result.group('iwidget_id'), result.group('var_name'))
     except:
         raise ValueError('Invalid variable reference: %s' % ref)
 
@@ -75,6 +75,7 @@ def check_invalid_refs(**kargs):
 def process_secure_data(text, request, ignore_errors=False):
 
     definitions = text.split('&')
+    cache_manager = VariableValueCacheManager(request['workspace'], request['user'])
     for definition in definitions:
         try:
             params = definition.split(',')
@@ -93,7 +94,7 @@ def process_secure_data(text, request, ignore_errors=False):
                 var_ref = options.get('var_ref', '')
                 check_empty_params(substr=substr, var_ref=var_ref)
 
-                value = get_variable_value_by_ref(var_ref, request['user'])
+                value = get_variable_value_by_ref(var_ref, cache_manager)
                 check_invalid_refs(var_ref=value)
 
                 encoding = options.get('encoding', 'none')
@@ -114,8 +115,8 @@ def process_secure_data(text, request, ignore_errors=False):
                 password_ref = options.get('pass_ref', '')
                 check_empty_params(user_ref=user_ref, password_ref=password_ref)
 
-                user_value = get_variable_value_by_ref(user_ref, request['user'])
-                password_value = get_variable_value_by_ref(password_ref, request['user'])
+                user_value = get_variable_value_by_ref(user_ref, cache_manager)
+                password_value = get_variable_value_by_ref(password_ref, cache_manager)
                 check_invalid_refs(user_ref=user_value, password_ref=password_value)
 
                 token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))[:-1]

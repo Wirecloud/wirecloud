@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -45,6 +45,7 @@ HOMEPAGE_URI_XPATH = 't:Homepage'
 DOC_URI_XPATH = 't:WikiURI'
 LICENCE_XPATH = 't:License'
 LICENCE_URL_XPATH = 't:LicenseURL'
+ISSUETRACKER_XPATH = 't:IssueTracker'
 CHANGE_LOG_XPATH = 't:ChangeLogURL'
 REQUIREMENTS_XPATH = 't:Requirements'
 
@@ -197,6 +198,7 @@ class WirecloudTemplateParser(object):
         self._info['doc'] = self._get_field(DOC_URI_XPATH, self._resource_description, required=False)
         self._info['license'] = self._get_field(LICENCE_XPATH, self._resource_description, required=False)
         self._info['licenseurl'] = self._get_field(LICENCE_URL_XPATH, self._resource_description, required=False)
+        self._info['issuetracker'] = self._get_field(ISSUETRACKER_XPATH, self._resource_description, required=False)
         self._info['changelog'] = self._get_field(CHANGE_LOG_XPATH, self._resource_description, required=False)
         self._parse_requirements()
 

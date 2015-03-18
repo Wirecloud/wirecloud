@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global Wirecloud*/
+/*global gettext, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -180,24 +180,6 @@
         return wiring_editor.getElementsByClassName('menubar')[0];
     };
 
-    var getMenuWorkspaceButton = function() {
-        return document.getElementById('wirecloud_breadcrum').getElementsByClassName('icon-menu')[0];
-    };
-
-    var getAdminButton = function() {
-        var header = document.getElementById('wirecloud_header');
-        var elements = header.getElementsByClassName('user_menu_wrapper');
-        if (elements.length == 0) {
-            elements = header.getElementsByClassName('nav pull-right');
-        }
-        return elements[0];
-    };
-
-    var get_close_buttons = function get_close_buttons() {
-        var workspace = document.getElementById('workspace');
-        return workspace.getElementsByClassName('icon-remove');
-    };
-
     var widget_menu = function widget_menu(index) {
         var iwidget = Wirecloud.activeWorkspace.getIWidgets()[index];
         return iwidget.element.getElementsByClassName('icon-cogs')[0];
@@ -226,23 +208,23 @@
 
     var get_endpoint = function get_endpoint(index, name) {
         var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
-        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName.wiring;
         return wiringEditor.iwidgets[widget_id].getAnchor(name).wrapperElement;
     };
 
     var get_full_endpoint = function get_endpoint(index, name) {
         var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
-        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName.wiring;
         return wiringEditor.iwidgets[widget_id].getAnchor(name).wrapperElement.parentElement;
     };
 
     var get_wiring_canvas = function get_wiring_canvas() {
-        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName.wiring;
         return wiringEditor.canvas;
     };
 
     var get_wiring = function get_wiring() {
-        return LayoutManagerFactory.getInstance().viewsByName["wiring"];
+        return LayoutManagerFactory.getInstance().viewsByName.wiring;
     };
 
     var input_box_input = function input_box_input() {
@@ -255,26 +237,24 @@
     };
 
     var windowForm = function(callback) {
-        var layoutManager, element, interval;
+        var interval;
 
-        layoutManager = LayoutManagerFactory.getInstance();
         interval = setInterval(function () {
-            if ('_current_form' in layoutManager.currentMenu) {
+            var currentWindowMenu = Wirecloud.UserInterfaceManager.currentWindowMenu;
+            if (currentWindowMenu != null && "_current_form" in currentWindowMenu) {
                 clearInterval(interval);
-                callback(layoutManager.currentMenu._current_form);
+                callback(currentWindowMenu._current_form);
             }
         }, 200);
     };
 
-    function getField(inputName) {
-        var layoutManager;
-
-        layoutManager = LayoutManagerFactory.getInstance();
-         return layoutManager.currentMenu._current_form.fieldInterfaces[inputName].inputElement.inputElement;
+    var getField = function getField(inputName) {
+        var currentWindowMenu = Wirecloud.UserInterfaceManager.currentWindowMenu;
+        return currentWindowMenu._current_form.fieldInterfaces[inputName].inputElement.inputElement;
     };
 
-    var isNotEmpty = function(input) {
-        return input.value != '';
+    var isNotEmpty = function isNotEmpty(input) {
+        return input.value !== '';
     };
 
     Wirecloud.TutorialCatalogue.add('basic-concepts', new Wirecloud.ui.Tutorial(gettext('Basic concepts'), [
@@ -362,7 +342,7 @@
                 'elemToApplyNextStepEvent': get_full_endpoint.bind(null, 0, 'keyword'), 'event': 'mouseup', 'secondPos': 'downLeft',
             },
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("Now it's time to test our creation.")},
-            {'type': 'userAction', 'msg': gettext("Click <em>Editor</em>"), 'elem': BS.back_button, 'pos': 'downLeft'},
+            {'type': 'userAction', 'msg': gettext("Click <em>Back</em>"), 'elem': BS.back_button, 'pos': 'downRight'},
             {'type': 'userAction', 'msg': gettext("Enter a search keyword and press Enter"), 'elem': input_box_input, 'pos': 'downLeft', 'event': 'keypress', 'eventFilterFunction': enter_keypress},
 
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext('<p><span class="label label-success">Congratulations!</span> you have finished your first <em>application mashup</em>.</p><p>As you can see, the <em>YouTube Browser</em> widget has been updated successfuly.</p>'), 'elem': widget.bind(null, 0)},

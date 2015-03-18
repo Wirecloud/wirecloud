@@ -36,13 +36,13 @@
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "border_layout");
+        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "se-border-layout");
 
-        this.north = new StyledElements.Container({'class': 'north_container'});
-        this.west = new StyledElements.Container({'class': 'west_container'});
-        this.center = new StyledElements.Container({'class': 'center_container'});
-        this.east = new StyledElements.Container({'class': 'east_container'});
-        this.south = new StyledElements.Container({'class': 'south_container'});
+        this.north = new StyledElements.Container({'class': 'se-bl-north-container'});
+        this.west = new StyledElements.Container({'class': 'se-bl-west-container'});
+        this.center = new StyledElements.Container({'class': 'se-bl-center-container'});
+        this.east = new StyledElements.Container({'class': 'se-bl-east-container'});
+        this.south = new StyledElements.Container({'class': 'se-bl-south-container'});
 
         this.north.insertInto(this.wrapperElement);
         this.west.insertInto(this.wrapperElement);

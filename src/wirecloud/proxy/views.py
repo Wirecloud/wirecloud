@@ -23,7 +23,7 @@ from six.moves.http_cookies import SimpleCookie
 import re
 import requests
 import socket
-from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import unquote, urlparse
 
 from django.conf import settings
 from django.core.urlresolvers import resolve, reverse
@@ -196,7 +196,7 @@ def proxy_request(request, protocol, domain, path):
             raise Exception()
 
         from wirecloud.platform.models import Workspace
-        workspace = Workspace.objects.get(creator__username=referer_view_info.kwargs['owner'], name=referer_view_info.kwargs['name'])
+        workspace = Workspace.objects.get(creator__username=unquote(referer_view_info.kwargs['owner']), name=unquote(referer_view_info.kwargs['name']))
         if not workspace.public and workspace.creator != request.user:
             raise Exception()
 

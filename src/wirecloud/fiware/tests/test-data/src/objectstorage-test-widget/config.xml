@@ -20,7 +20,7 @@
     </Catalog.ResourceDescription>
 
     <Platform.Preferences>
-        <Preference name="keystone_url" type="text" description="Keystone Server where the Object Storage server to use for testing the integration between Wirecloud and the Object Storage GE is registered" label="Keystone Server" default="http://cloud.lab.fi-ware.eu/keystone" />
+        <Preference name="keystone_url" type="text" description="Keystone Server where the Object Storage server to use for testing the integration between Wirecloud and the Object Storage GE is registered" label="Keystone Server" default="https://cloud.lab.fiware.org/keystone" />
     </Platform.Preferences>
 
     <Platform.Link>

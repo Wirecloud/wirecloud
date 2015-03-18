@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -21,7 +21,7 @@ import gevent
 import requests
 from requests.auth import HTTPBasicAuth
 from six.moves.urllib.error import URLError, HTTPError
-from six.moves.urllib.parse import urljoin, urlparse
+from six.moves.urllib.parse import urljoin, urlparse, urlunparse
 from lxml import etree
 
 from django.core.cache import cache
@@ -136,7 +136,11 @@ class MarketAdaptor(object):
     _stores = {}
 
     def __init__(self, marketplace_uri, user='demo1234', passwd='demo1234'):
-        self._marketplace_uri = marketplace_uri
+        url = urlparse(marketplace_uri)
+        if not bool(url.netloc and url.scheme):
+            raise ValueError("Your must provide an absolute Marketplace URL")
+
+        self._marketplace_uri = urlunparse((url.scheme, url.netloc, url.path.rstrip('/') + '/', '', '', ''))
         self._user = user
         self._passwd = passwd
 
@@ -196,13 +200,11 @@ class MarketAdaptor(object):
     def get_all_stores(self):
 
         url = urljoin(self._marketplace_uri, "registration/stores/")
-        try:
-            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
-        except HTTPError as e:
-            if e.code == 404:
-                return []
+        response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
 
-        if response.status_code != 200:
+        if response.status_code == 404:
+            return []
+        elif response.status_code != 200:
             raise HTTPError(response.url, response.status_code, response.reason, None, None)
 
         parsed_body = etree.fromstring(response.content)
@@ -217,10 +219,7 @@ class MarketAdaptor(object):
     def get_store_info(self, store):
 
         url = urljoin(self._marketplace_uri, "registration/store/" + urlquote(store))
-        try:
-            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
-        except HTTPError as e:
-            raise HTTPError(e.url, e.code, e.msg, None, None)
+        response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
 
         if response.status_code != 200:
             raise HTTPError(response.url, response.status_code, response.reason, None, None)
@@ -231,10 +230,7 @@ class MarketAdaptor(object):
     def get_all_services_from_store(self, store, **options):
 
         url = urljoin(self._marketplace_uri, "offering/store/" + urlquote(store) + "/offerings")
-        try:
-            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
-        except HTTPError as e:
-            raise HTTPError(e.url, e.code, e.msg, None, None)
+        response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
 
         if response.status_code != 200:
             raise HTTPError(response.url, response.status_code, response.reason, None, None)
@@ -264,10 +260,10 @@ class MarketAdaptor(object):
     def get_offering_info(self, store, id, options):
 
         url = urljoin(self._marketplace_uri, "offering/store/%(store)s/offering/%(offering_id)s" % {"store": urlquote(store), "offering_id": urlquote(id)})
-        try:
-            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
-        except HTTPError as e:
-            raise HTTPError(e.url, e.code, e.msg, None, None)
+        response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
+
+        if response.status_code != 200:
+            raise HTTPError(response.url, response.status_code, response.reason, None, None)
 
         parsed_body = etree.fromstring(response.content)
         url = parsed_body.xpath(URL_XPATH)[0].text
@@ -297,10 +293,7 @@ class MarketAdaptor(object):
     def full_text_search(self, store, search_string, options):
 
         url = urljoin(self._marketplace_uri, "search/offerings/fulltext/" + urlquote_plus(search_string))
-        try:
-            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
-        except HTTPError as e:
-            raise HTTPError(e.url, e.code, e.msg, None, None)
+        response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
 
         if response.status_code != 200:
             raise HTTPError(response.url, response.status_code, response.reason, None, None)

@@ -19,7 +19,7 @@
 
 import json
 import requests
-from six.moves.urllib.parse import urljoin
+from six.moves.urllib.parse import urljoin, urlparse, urlunparse
 
 
 class NotFound(Exception):
@@ -33,7 +33,11 @@ class UnexpectedResponse(Exception):
 class StoreClient(object):
 
     def __init__(self, url):
-        self._url = url
+        url = urlparse(url)
+        if not bool(url.netloc and url.scheme):
+            raise ValueError("Your must provide an absolute Store URL")
+
+        self._url = urlunparse((url.scheme, url.netloc, url.path.rstrip('/') + '/', '', '', ''))
 
     def get_offering_info(self, offering_id, token):
 
@@ -79,7 +83,7 @@ class StoreClient(object):
 
         return response.content
 
-    def upload_resource(self, name, version, filename, description, content_type, f, token):
+    def upload_resource(self, name, version, filename, description, content_type, f, token, open=True):
 
         headers = {
             'Authorization': 'Bearer ' + token,
@@ -90,6 +94,7 @@ class StoreClient(object):
                 'version': version,
                 'description': description,
                 'content_type': content_type,
+                'open': open
             })
         }
         # Rest file to ensure the full file is uploaded

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,6 +20,9 @@
 import json
 import os
 
+from django.core.urlresolvers import reverse
+from django.test import Client
+
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudTestCase
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 
@@ -27,6 +30,7 @@ from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 class MarketplaceTestCase(WirecloudTestCase):
 
     tags = ('fiware', 'fiware-plugin', 'fiware-ut-8', 'fiware-marketplace')
+    fixtures = ('initial_data', 'selenium_test_data', 'fiware_test_data')
     servers = {
         'http': {
             'marketplace.example.com': DynamicWebServer(),
@@ -61,6 +65,25 @@ class MarketplaceTestCase(WirecloudTestCase):
         f.close()
 
         return contents
+
+    def test_marketplace_complain_about_relative_urls(self):
+
+        self.assertRaises(ValueError, MarketAdaptor, 'path')
+        self.assertRaises(ValueError, MarketAdaptor, '/path')
+        self.assertRaises(ValueError, MarketAdaptor, '//marketplace.example.com/path')
+
+    def test_marketplace_handle_url_trailing_slashes(self):
+
+        test_adaptor = MarketAdaptor('http://marketplace.example.com')
+        self.assertEqual(test_adaptor._marketplace_uri, 'http://marketplace.example.com/')
+
+        test_adaptor = MarketAdaptor('http://marketplace.example.com///')
+        self.assertEqual(test_adaptor._marketplace_uri, 'http://marketplace.example.com/')
+
+    def test_marketplace_must_ignore_params_query_and_framgent(self):
+
+        test_adaptor = MarketAdaptor('http://marketplace.example.com/?query=a#a')
+        self.assertEqual(test_adaptor._marketplace_uri, 'http://marketplace.example.com/')
 
     def test_marketplace_get_all_offerings_from_store(self):
 
@@ -127,3 +150,57 @@ class MarketplaceTestCase(WirecloudTestCase):
         expected_result = json.loads(self.read_response_file('results', 'test_marketplace_get_store_info.json'))
 
         self.assertEqual(result, expected_result)
+
+    def test_marketadaptor_views_require_authentication(self):
+
+        client = Client()
+
+        urls = [
+            reverse('wirecloud.fiware.market_resource_collection', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware'}),
+            reverse('wirecloud.fiware.store_resource_collection', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'store': 'store1'}),
+            reverse('wirecloud.fiware.market_offering_entry', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'store': 'store1', 'offering_id': 'id'}),
+            reverse('wirecloud.fiware.market_full_search', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'search_string': 'test'}),
+            reverse('wirecloud.fiware.store_search', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'store': 'store1', 'search_string': 'test'}),
+            reverse('wirecloud.fiware.store_collection', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware'}),
+        ]
+
+        for url in urls:
+            response = client.get(url, HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 401)
+
+        url = reverse('wirecloud.fiware.store_start_purchase', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'store': 'store1'})
+        response = client.post(url, '{"offering_url": ""}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_marketadaptor_views_unexpected_response(self):
+
+        client = Client()
+        client.login(username='user_with_markets', password='admin')
+
+        self.network._servers['http']['marketplace.example.com'].clear()
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/registration/stores/', {'status_code': 503})
+
+        urls = [
+            reverse('wirecloud.fiware.market_resource_collection', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware'}),
+            reverse('wirecloud.fiware.store_resource_collection', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'store': 'store1'}),
+            reverse('wirecloud.fiware.market_offering_entry', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'store': 'store1', 'offering_id': 'id'}),
+            reverse('wirecloud.fiware.market_full_search', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'search_string': 'test'}),
+            reverse('wirecloud.fiware.store_search', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'store': 'store1', 'search_string': 'test'}),
+            reverse('wirecloud.fiware.store_collection', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware'}),
+        ]
+
+        for url in urls:
+            response = client.get(url, HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 502)
+
+        url = reverse('wirecloud.fiware.store_start_purchase', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware', 'store': 'store1'})
+        response = client.post(url, '{"offering_url": ""}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 502)
+
+    def test_marketplace_get_all_stores_emtpy(self):
+
+        self.network._servers['http']['marketplace.example.com'].clear()
+        url = reverse('wirecloud.fiware.store_collection', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware'})
+
+        response = self.market_adaptor.get_all_stores()
+        self.assertEqual(response, [])

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -31,14 +31,8 @@ WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
 FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
 RDF = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
 RDFS = rdflib.Namespace('http://www.w3.org/2000/01/rdf-schema#')
-MSM = rdflib.Namespace('http://cms-wg.sti2.org/ns/minimal-service-model#')
-OWL = rdflib.Namespace('http://www.w3.org/2002/07/owl#')
 DCTERMS = rdflib.Namespace('http://purl.org/dc/terms/')
 USDL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-core#')
-LEGAL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-legal#')
-PRICE = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-pricing#')
-SLA = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-sla#')
-BLUEPRINT = rdflib.Namespace('http://bizweb.sap.com/TR/blueprint#')
 VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
 XSD = rdflib.Namespace('http://www.w3.org/2001/XMLSchema#')
 CTAG = rdflib.Namespace('http://commontag.org/ns#')
@@ -375,6 +369,10 @@ def build_rdf_graph(template_info):
         if license_text not in (None, ''):
             graph.add((license, rdflib.RDF.type, DCTERMS['LicenseDocument']))
             graph.add((license, RDFS['label'], rdflib.Literal(license_text)))
+
+    issuetracker = template_info.get('issuetracker', None)
+    if issuetracker not in (None, ''):
+        graph.add((resource_uri, DOAP['bug-database'], rdflib.URIRef(issuetracker)))
 
     contact_email = template_info.get('email', None)
     if contact_email not in (None, ''):

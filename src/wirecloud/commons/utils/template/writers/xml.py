@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -123,6 +123,7 @@ def build_xml_document(options):
     etree.SubElement(desc, 'WikiURI').text = options.get('doc', '')
     etree.SubElement(desc, 'License').text = options.get('license', '')
     etree.SubElement(desc, 'LicenseURL').text = options.get('licenseurl', '')
+    etree.SubElement(desc, 'IssueTracker').text = options.get('issuetracker', '')
     etree.SubElement(desc, 'ChangeLogURL').text = options.get('changelog', '')
 
     if len(options['requirements']) > 0:

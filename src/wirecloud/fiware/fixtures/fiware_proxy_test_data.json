@@ -14,7 +14,7 @@
         "model": "social_auth.usersocialauth",
         "fields": {
             "uid": "user_with_workspaces",
-            "extra_data": "{\"access_token\": \"yLCdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y..uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPx6\", \"username\": \"user_with_workspaces\"}",
+            "extra_data": "{\"access_token\": \"rtHdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y..uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPx6\", \"username\": \"user_with_workspaces\"}",
             "user": 4,
             "provider": "fiware"
         }

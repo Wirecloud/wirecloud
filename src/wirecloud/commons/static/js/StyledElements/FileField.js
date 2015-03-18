@@ -114,7 +114,6 @@
         this._onblur = onblur.bind(this);
 
         this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._onclick, true);
         this.inputElement.addEventListener('change', this._onchange, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);

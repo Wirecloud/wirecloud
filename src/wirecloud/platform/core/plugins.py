@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -50,6 +50,7 @@ CATALOGUE_CSS = (
     'css/catalogue/emptyCatalogueBox.css',
     'css/catalogue/resource.scss',
     'css/catalogue/resource_details.scss',
+    'css/catalogue/upload_window_menu.scss',
 )
 
 WIRING_EDITOR_FILES = (
@@ -103,6 +104,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/GUIBuilder.js',
     'js/StyledElements/Tooltip.js',
     'js/StyledElements/Button.js',
+    'js/StyledElements/FileButton.js',
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',
     'js/StyledElements/DynamicMenuItems.js',
@@ -179,6 +181,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styled_elements_core.css',
     'css/styledelements/styled_addon.scss',
     'css/styledelements/styled_alternatives.scss',
+    'css/styledelements/styled_container.css',
     'css/styledelements/styled_button.scss',
     'css/styledelements/styled_checkbox.css',
     'css/styledelements/styled_pills.scss',
@@ -203,6 +206,10 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_expander.scss',
     'css/styledelements/styled_offcanvas_layout.scss',
 )
+
+
+def get_version_hash():
+    return sha1(json.dumps(get_active_features_info(), ensure_ascii=False, sort_keys=True).encode('utf8')).hexdigest()
 
 
 class WirecloudCorePlugin(WirecloudPlugin):
@@ -286,7 +293,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'mode': 'unknown',
             'theme': settings.THEME_ACTIVE,
             'version': wirecloud.platform.__version__,
-            'version_hash': sha1(json.dumps(get_active_features_info(), ensure_ascii=False, sort_keys=True).encode('utf8')).hexdigest(),
+            'version_hash': get_version_hash(),
         }
 
     def get_workspace_context_definitions(self):
@@ -451,9 +458,9 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/MarketplaceViewMenuItems.js',
                 'js/wirecloud/ui/ResourcePainter.js',
-                'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
-                'js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js',
                 'js/wirecloud/ui/WindowMenu.js',
+                'js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js',
+                'js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js',
                 'js/wirecloud/ui/AlertWindowMenu.js',
                 'js/wirecloud/ui/ExternalProcessWindowMenu.js',
                 'js/wirecloud/ui/HTMLWindowMenu.js',

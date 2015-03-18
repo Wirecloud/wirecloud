@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -43,7 +43,7 @@ urlpatterns = patterns('wirecloud.fiware.marketAdaptor.views',
         views.StoreCollection(permitted_methods=('GET',)),
         name='wirecloud.fiware.store_collection'),
     url(r'^marketplace/(?P<market_user>[\w -]+)/(?P<market_name>[\w -]+)/store/(?P<store>[\w -]+)/start_purchase/?$',
-        'start_purchase',
+        views.StartPurchaseService(),
         name='wirecloud.fiware.store_start_purchase'),
     url(r'^fiware/redirect_uri$',
         TemplateView.as_view(template_name='wirecloud/fiware/store/buy_success.html'),

@@ -37,11 +37,11 @@
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = StyledElements.Utils.appendWord(this.options['class'], "horizontal_layout");
+        this.wrapperElement.className = StyledElements.Utils.appendWord(this.options['class'], "se-horizontal-layout");
 
-        this.west = new StyledElements.Container({'class': 'west_container'});
-        this.center = new StyledElements.Container({'class': 'center_container'});
-        this.east = new StyledElements.Container({'class': 'east_container'});
+        this.west = new StyledElements.Container({'class': 'se-hl-west-container'});
+        this.center = new StyledElements.Container({'class': 'se-hl-center-container'});
+        this.east = new StyledElements.Container({'class': 'se-hl-east-container'});
 
         this.west.insertInto(this.wrapperElement);
         this.center.insertInto(this.wrapperElement);

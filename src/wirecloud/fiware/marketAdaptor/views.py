@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -18,12 +18,14 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+from six.moves.urllib.error import HTTPError
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from requests.exceptions import ConnectionError, ConnectTimeout
 
-from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.http import get_absolute_reverse_url
+from wirecloud.commons.baseviews import Resource, Service
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, supported_request_mime_types, supported_response_mime_types
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.platform.models import Market, MarketUserData
 
@@ -72,6 +74,7 @@ def get_market_user_data(user, market_user, market_name):
 
 class ServiceCollection(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name, store):
 
         adaptor = get_market_adaptor(market_user, market_name)
@@ -79,14 +82,18 @@ class ServiceCollection(Resource):
 
         try:
             result = adaptor.get_all_services_from_store(store, **user_data)
-        except:
-            return HttpResponse(status=502)
+        except HTTPError as e:
+            details = "%s" % e
+            return build_error_response(request, 502, "Unexpected response", details=details)
+        except (ConnectionError, ConnectTimeout):
+            return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
 
 class ServiceSearchCollection(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name, store='', search_string='widget'):
 
         adaptor = get_market_adaptor(market_user, market_name)
@@ -94,14 +101,18 @@ class ServiceSearchCollection(Resource):
 
         try:
             result = adaptor.full_text_search(store, search_string, user_data)
-        except:
-            return HttpResponse(status=502)
+        except HTTPError as e:
+            details = "%s" % e
+            return build_error_response(request, 502, "Unexpected response", details=details)
+        except (ConnectionError, ConnectTimeout):
+            return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
 
 
 class ServiceEntry(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name, store, offering_id):
 
         adaptor = get_market_adaptor(market_user, market_name)
@@ -109,14 +120,18 @@ class ServiceEntry(Resource):
 
         try:
             offering_info = adaptor.get_offering_info(store, offering_id, user_data)[0]
-        except:
-            return HttpResponse(status=502)
+        except HTTPError as e:
+            details = "%s" % e
+            return build_error_response(request, 502, "Unexpected response", details=details)
+        except (ConnectionError, ConnectTimeout):
+            return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(offering_info), content_type='application/json; charset=UTF-8')
 
 
 class AllStoresServiceCollection(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name):
 
         adaptor = get_market_adaptor(market_user, market_name)
@@ -128,37 +143,52 @@ class AllStoresServiceCollection(Resource):
             for store in stores:
                 store_services = adaptor.get_all_services_from_store(store['name'], **user_data)
                 result['resources'].extend(store_services['resources'])
-        except:
-            return HttpResponse(status=502)
+        except HTTPError as e:
+            details = "%s" % e
+            return build_error_response(request, 502, "Unexpected response", details=details)
+        except (ConnectionError, ConnectTimeout):
+            return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
 
 class StoreCollection(Resource):
 
+    @authentication_required
     def read(self, request, market_user, market_name):
 
         adaptor = get_market_adaptor(market_user, market_name)
 
         try:
             result = adaptor.get_all_stores()
-        except:
-            return HttpResponse(status=502)
+        except HTTPError as e:
+            details = "%s" % e
+            return build_error_response(request, 502, "Unexpected response", details=details)
+        except (ConnectionError, ConnectTimeout):
+            return build_error_response(request, 504, "Connection Error")
 
         return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
 
 
-def start_purchase(request, market_user, market_name, store):
+class StartPurchaseService(Service):
 
-    adaptor = get_market_adaptor(market_user, market_name)
-    user_data = get_market_user_data(request.user, market_user, market_name)
+    @authentication_required
+    @supported_request_mime_types(('application/json',))
+    @supported_response_mime_types(('application/json',))
+    def process(self, request, market_user, market_name, store):
 
-    data = json.loads(request.body)
+        adaptor = get_market_adaptor(market_user, market_name)
+        user_data = get_market_user_data(request.user, market_user, market_name)
 
-    redirect_uri = get_absolute_reverse_url('wirecloud.fiware.store_redirect_uri', request)
-    try:
-        result = adaptor.start_purchase(store, data['offering_url'], redirect_uri, **user_data)
-    except:
-        return HttpResponse(status=502)
+        data = json.loads(request.body)
 
-    return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
+        redirect_uri = get_absolute_reverse_url('wirecloud.fiware.store_redirect_uri', request)
+        try:
+            result = adaptor.start_purchase(store, data['offering_url'], redirect_uri, **user_data)
+        except HTTPError as e:
+            details = "%s" % e
+            return build_error_response(request, 502, "Unexpected response", details=details)
+        except (ConnectionError, ConnectTimeout):
+            return build_error_response(request, 504, "Connection Error")
+
+        return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,13 +19,12 @@
 
 from __future__ import unicode_literals
 
-import os
+import logging
 import random
 import regex
 from six import string_types
 from six.moves.urllib.parse import urlparse, urljoin
 
-from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache
 from django.db import models
@@ -33,7 +32,6 @@ from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from whoosh import index
 from whoosh import fields
 from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.query import And, Every, Or, Term
@@ -42,6 +40,10 @@ from whoosh.sorting import FieldFacet, FunctionFacet
 from wirecloud.commons.searchers import BaseSearcher, get_search_engine
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
+
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
@@ -109,9 +111,8 @@ class CatalogueResource(models.Model):
 
         from wirecloud.catalogue.utils import wgt_deployer
 
-        # Delete media resources if needed
-        if not self.template_uri.startswith(('http', 'https')):
-            wgt_deployer.undeploy(self.vendor, self.short_name, self.version)
+        # Undeploy the resource from the filesystem
+        wgt_deployer.undeploy(self.vendor, self.short_name, self.version)
 
         old_id = self.id
         super(CatalogueResource, self).delete(*args, **kwargs)
@@ -281,7 +282,7 @@ class Version(object):
                 compare = 1
 
             # case 4: both have prerelease: must compare them!
-            elif self.prerelease and other.prerelease:
+            else:
                 compare = cmp(self.prerelease, other.prerelease)
 
         return compare if not self.reverse else (compare * -1)
@@ -295,10 +296,12 @@ class Version(object):
     def __gt__(self, other):
         return self.__cmp__(other) > 0
 
-
 @receiver(post_save, sender=CatalogueResource)
 def update_catalogue_index(sender, instance, created, **kwargs):
-    get_search_engine('resource').add_resource(instance, created)
+    try:
+        get_search_engine('resource').add_resource(instance, created)
+    except:
+        logger.warning("Error adding %s into the catalogue search index" % instance.local_uri_part)
 
 
 @receiver(m2m_changed, sender=CatalogueResource.groups.through)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -18,11 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, include, url
-from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
-from django.views.i18n import javascript_catalog
 
-from wirecloud.commons.views import ResourceSearch
+from wirecloud.commons.views import ResourceSearch, SwitchUserService
 from wirecloud.platform import views
 from wirecloud.platform.context import views as context_views
 from wirecloud.platform.iwidget import views as iwidget_views
@@ -40,14 +38,14 @@ urlpatterns = patterns('wirecloud.platform.views',
 
     url(r'^$', 'render_root_page', name='wirecloud.root'),
 
-    url(r'^api/features/?$',
+    url(r'^api/features$',
         views.FeatureCollection(permitted_methods=('GET',)),
         name='wirecloud.features'),
 
     # i18n
     url(r'^api/i18n/', include('django.conf.urls.i18n')),
-    url(r'^api/i18n/js_catalogue/?$',
-        cache_page(60 * 60 * 24)(javascript_catalog), {'packages': ()},
+    url(r'^api/i18n/js_catalogue$',
+        views.cached_javascript_catalog,
         name="wirecloud.javascript_translation_catalogue"),
 
     # Context
@@ -92,7 +90,7 @@ urlpatterns = patterns('wirecloud.platform.views',
         iwidget_views.IWidgetEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
         name='wirecloud.iwidget_entry'
     ),
-    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/preferences/?$',
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/preferences$',
         iwidget_views.IWidgetPreferences(permitted_methods=('POST',)),
         name='wirecloud.iwidget_preferences'
     ),
@@ -187,6 +185,11 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^api/workspace/(?P<workspace_id>\d+)/publish/?$',
         workspace_views.WorkspacePublisherEntry(permitted_methods=('POST',)),
         name='wirecloud.workspace_publish'
+    ),
+
+    url(r'api/admin/switchuser$',
+        SwitchUserService(),
+        name='wirecloud.switch_user'
     ),
 
     url('^oauth2/default_redirect_uri$',

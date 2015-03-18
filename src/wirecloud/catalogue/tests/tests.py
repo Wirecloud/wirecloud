@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -29,7 +29,7 @@ from django.test import Client
 from django.test.utils import override_settings
 
 import wirecloud.catalogue.utils
-from wirecloud.catalogue.utils import add_resource_from_template, get_resource_data
+from wirecloud.catalogue.utils import get_resource_data
 from wirecloud.catalogue.models import CatalogueResource, Version
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.testcases import LocalFileSystemServer, WirecloudTestCase
@@ -281,14 +281,20 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertLess(Version('1.11.5.1'), Version('1.11.5.4'))
         self.assertLess(Version('1.11.5.4'), Version('1.100'))
 
+        self.assertGreater(Version('1.0'), Version('1.0a1'))
         self.assertGreater(Version('1.0', reverse=True), Version('1.11a1', reverse=True))
         self.assertGreater(Version('1.11b1', reverse=True), Version('1.11rc1', reverse=True))
 
+        self.assertEqual(Version('1'), '1.0.0')
+        self.assertEqual(Version('1.0'), '1.0.0')
         self.assertEqual(Version('1.0'), Version('1.0.0'))
         self.assertEqual(Version('1.0', reverse=True), Version('1.0.0', reverse=True))
 
         self.assertRaises(ValueError, Version, '-0')
         self.assertRaises(ValueError, Version, '0.a')
+        self.assertRaises(ValueError, Version('1.0').__eq__, None)
+        self.assertRaises(ValueError, Version('1.0').__eq__, 5)
+        self.assertRaises(ValueError, Version('1.0').__eq__, {})
 
     def test_basic_search_with_query_correction(self):
 
@@ -417,52 +423,6 @@ class CatalogueAPITestCase(WirecloudTestCase):
         self.assertTrue('resources' in result_json)
         self.assertEqual(len(result_json['resources']), 1)
         self.assertEqual(result_json['resources'][0]['lastVersion'], '1.10')
-
-
-class PublishTestCase(WirecloudTestCase):
-
-    tags = ('catalogue', 'fiware-ut-4')
-
-    def setUp(self):
-        super(PublishTestCase, self).setUp()
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
-
-    def read_template(self, *filename):
-        f = codecs.open(os.path.join(os.path.dirname(__file__), *filename), 'rb')
-        contents = f.read()
-        f.close()
-
-        return contents
-
-    def check_basic_mashup_info(self, mashup):
-        mashup_info = mashup.get_processed_info()
-
-        self.assertEqual(mashup.vendor, 'Wirecloud')
-        self.assertEqual(mashup.short_name, 'Test Mashup')
-        self.assertEqual(mashup.version, '1')
-
-        self.assertEqual(mashup_info['description'], 'This template defines an empty mashup')
-        self.assertEqual(mashup_info['authors'], [{'name': 'test'}])
-
-    def test_publish_empty_mashup_xml(self):
-        template_uri = "http://example.com/path/mashup.xml"
-        template = self.read_template('test-data', 'mt1.xml')
-
-        mashup = add_resource_from_template(template_uri, template, self.user)
-        self.check_basic_mashup_info(mashup)
-
-    def test_publish_empty_mashup_rdf(self):
-        template_uri = "http://example.com/path/mashup.rdf"
-        template = self.read_template('test-data', 'mt1.rdf')
-
-        mashup = add_resource_from_template(template_uri, template, self.user)
-        self.check_basic_mashup_info(mashup)
-
-    def test_publish_invalid_mashup(self):
-        template_uri = "http://example.com/path/mashup.rdf"
-        template = self.read_template('test-data', 'invalid-mt1.rdf')
-
-        self.assertRaises(TemplateParseException, add_resource_from_template, template_uri, template, self.user)
 
 
 class WGTDeploymentTestCase(WirecloudTestCase):

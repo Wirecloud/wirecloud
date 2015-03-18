@@ -65,7 +65,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         with self.myresources_view as myresources:
-            myresources.upload_resource('Wirecloud_Test_1.0.wgt', 'Test', shared=True, expect_error='Resource already exists.')
+            myresources.upload_resource('Wirecloud_Test_1.0.wgt', 'Test', shared=True, expect_error='Resource already exists')
 
     def test_upload_and_instantiate_widget(self):
 

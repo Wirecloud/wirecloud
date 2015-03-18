@@ -1,4 +1,4 @@
-.border_layout {
+.se-border-layout {
     position: absolute;
     top: 0;
     left: 0;
@@ -7,31 +7,36 @@
     overflow: hidden;
 }
 
-.border_layout > .north_container {
+.se-bl-north-container {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
+    box-sizing: border-box;
 }
 
-.border_layout > .west_container {
+.se-bl-west-container {
     position: absolute;
     left: 0;
     display: inline-block;
+    box-sizing: border-box;
 }
 
-.border_layout > .center_container {
+.se-bl-center-container {
     position: absolute;
     overflow: auto;
+    box-sizing: border-box;
 }
 
-.border_layout > .east_container {
+.se-bl-east-container {
     position: absolute;
     display: inline-block;
+    box-sizing: border-box;
 }
 
-.border_layout > .south_container {
+.se-bl-south-container {
     position: absolute;
     left: 0;
     right: 0;
+    box-sizing: border-box;
 }

@@ -165,8 +165,8 @@
         return true;
     };
 
-    WirecloudCatalogue.prototype.addPackagedResource = function addPackagedResource(data, options) {
-        var url, requestHeaders, task, onUploadProgress;
+    WirecloudCatalogue.prototype.addPackagedResource = function addPackagedResource(file, options) {
+        var url, parameters, requestHeaders, task, onUploadProgress;
 
         requestHeaders = {
             'Accept': 'application/json'
@@ -187,7 +187,13 @@
             }
         }
 
-        data.append('install_embedded_resources', 'true');
+        parameters = {
+            'install_embedded_resources': 'true'
+        };
+
+        if (options.force_create === true) {
+            parameters.force_create = "true";
+        }
 
         if (options.monitor) {
             task = options.monitor.nextSubtask(gettext('Uploading packaged resource'));
@@ -198,8 +204,10 @@
 
         Wirecloud.io.makeRequest(url, {
             method: 'POST',
+            contentType: 'application/octet-stream',
             requestHeaders: requestHeaders,
-            postBody: data,
+            postBody: file,
+            parameters: parameters,
             onSuccess: function (transport) {
                 var response_data = JSON.parse(transport.responseText);
 
@@ -209,12 +217,12 @@
                     } catch (e) {}
                 }
             }.bind(this),
-            onFailure: function (transport) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding packaged resource: %(errorMsg)s."), transport);
+            onFailure: function (response) {
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error uploading packaged resource: %(errorMsg)s."), response);
 
                 if (typeof options.onFailure === 'function') {
                     try {
-                        options.onFailure(msg);
+                        options.onFailure(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                     } catch (e) {}
                 }
             },

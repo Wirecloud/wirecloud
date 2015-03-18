@@ -2,7 +2,7 @@ $gray-darker:           lighten(#000, 13.5%);
 $gray-dark:             lighten(#000, 20%);
 $gray:                  lighten(#000, 33.5%);
 $gray-light:            #4E5D6C;
-$gray-lighter:          #EBEBEB;
+$gray-lighter:          #B8BDC1;
 
 $brand-default:         #FFFFFF;
 $brand-primary:         hsl(213, 31%, 49%);
@@ -13,7 +13,7 @@ $body-bg:               #2B3E50;
 $text-color-light:      $body-bg;
 $text-color-dark:       $gray-lighter;
 $panel-default-heading-bg: $gray-light;
-$panel-bg:              #979EA5;
+$panel-bg:              $gray-lighter;
 $panel-footer-bg:       $gray-light;
 
 $headings-font-weight:  normal;

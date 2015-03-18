@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -131,7 +131,7 @@ class JSONTemplateParser(object):
 
     def _init(self):
 
-        self._check_string_fields(('title', 'description', 'longdescription', 'email',  'homepage','doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl'))
+        self._check_string_fields(('title', 'description', 'longdescription', 'email',  'homepage','doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl', 'issuetracker'))
         self._check_contacts_fields(('authors', 'contributors'))
 
         # Normalize/check preferences and properties (only for widgets and operators)

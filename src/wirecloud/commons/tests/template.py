@@ -59,6 +59,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': '',
             'license': '',
             'licenseurl': '',
+            'issuetracker': '',
             'changelog': '',
             'requirements': [],
             'preferences': [],
@@ -92,6 +93,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'issuetracker': 'http://issuetracker.example.com',
             'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
@@ -218,6 +220,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'issuetracker': 'http://issuetracker.example.com',
             'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
@@ -431,6 +434,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': '',
             'license': '',
             'licenseurl': '',
+            'issuetracker': '',
             'changelog': '',
             'requirements': [],
             'params': [],
@@ -472,6 +476,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'issuetracker': 'http://issuetracker.example.com',
             'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
@@ -665,6 +670,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'issuetracker': 'http://issuetracker.example.com',
             'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
@@ -867,6 +873,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'issuetracker': 'http://issuetracker.example.com',
             'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
@@ -1002,6 +1009,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': '',
             'license': '',
             'licenseurl': '',
+            'issuetracker': '',
             'changelog': '',
             'requirements': [],
             'preferences': [],
@@ -1042,6 +1050,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'issuetracker': 'http://issuetracker.example.com',
             'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
@@ -1175,6 +1184,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': '',
             'license': '',
             'licenseurl': '',
+            'issuetracker': '',
             'changelog': '',
             'requirements': [],
             'preferences': [],
@@ -1247,6 +1257,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': '',
             'license': '',
             'licenseurl': '',
+            'issuetracker': '',
             'changelog': '',
             'requirements': [],
             'preferences': [
@@ -1299,6 +1310,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': '',
             'license': '',
             'licenseurl': '',
+            'issuetracker': '',
             'changelog': '',
             'requirements': [],
             'preferences': [],

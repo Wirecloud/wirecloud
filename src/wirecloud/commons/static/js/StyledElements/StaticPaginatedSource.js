@@ -60,6 +60,10 @@
         });
     };
 
+    var createFilterPattern = function createFilterPattern(keywords) {
+        return new RegExp(StyledElements.Utils.escapeRegExp(keywords), 'i');
+    };
+
     var filterElements = function filterElements(keywords) {
         var filteredElements, i, element;
 
@@ -68,11 +72,11 @@
             return;
         }
 
-        this._currentPattern = new RegExp(StyledElements.Utils.escapeRegExp(keywords), 'i');
+        var pattern = createFilterPattern(keywords);
         filteredElements = [];
         for (i = 0; i < this.elements.length; i += 1) {
             element = this.elements[i];
-            if (elementPassFilter.call(this, element, this._currentPattern)) {
+            if (elementPassFilter.call(this, element, pattern)) {
                 filteredElements.push(element);
             }
         }
@@ -158,18 +162,22 @@
     };
 
     var requestFunc = function requestFunc(index, options, onSuccess, onError) {
-        var page = index;
+        var elements, page = index;
 
         if (index > this.totalPages) {
             index = this.totalPages;
         }
         index -= 1;
 
-        var start = index * options.pageSize;
-        var end = start + options.pageSize;
+        if (options.pageSize > 0) {
+            var start = index * options.pageSize;
+            var end = start + options.pageSize;
+            elements = this.sortedElements.slice(start, end);
+        } else {
+            elements = this.sortedElements;
+        }
 
-        var elements = this.sortedElements.slice(start, end);
-        onSuccess(elements, {current_page: page, total_count: this.filteredElements.length});
+        onSuccess(elements, {current_page: page, total_count: this.sortedElements.length});
     };
 
     var StaticPaginatedSource = function StaticPaginatedSource(options) {
@@ -226,8 +234,16 @@
     StaticPaginatedSource.prototype.addElement = function addElement(newElement) {
         this.elements.push(newElement);
 
-        if (elementPassFilter.call(this, newElement, this._currentPattern)) {
-            this.filteredElements.push(newElement);
+        if (this.pOptions.keywords) {
+            var pattern = createFilterPattern(this.pOptions.keywords);
+            if (elementPassFilter.call(this, newElement, pattern)) {
+                this.filteredElements.push(newElement);
+                sortElements.call(this, this.pOptions.order);
+
+                this.refresh();
+            }
+        } else {
+            this.filteredElements = this.elements;
             sortElements.call(this, this.pOptions.order);
 
             this.refresh();

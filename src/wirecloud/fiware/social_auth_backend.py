@@ -54,12 +54,14 @@ class FiwareBackend(OAuthBackend):
     EXTRA_DATA = [
         ('nickName', 'username'),
         ('actorId', 'uid'),
+        ('refresh_token', 'refresh_token'),
+        ('expires_in', 'expires_in'),
     ]
 
     def get_user_id(self, details, response):
         """Return the user id, FIWARE IdM only provides username as a unique
         identifier"""
-        return response['nickName']
+        return response['actorId']
 
     def get_user_details(self, response):
         """Return user details from FIWARE account"""
