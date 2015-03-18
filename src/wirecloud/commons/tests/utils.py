@@ -26,6 +26,7 @@ from mock import patch, Mock
 
 from wirecloud.commons.utils.html import clean_html
 from wirecloud.commons.utils.log import SkipUnreadablePosts
+from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
 from wirecloud.commons.utils.wgt import WgtFile
 
 
@@ -90,6 +91,18 @@ class GeneralUtilsTestCase(TestCase):
         record.exc_info = None
         filter = SkipUnreadablePosts()
         self.assertTrue(filter.filter(record))
+
+    def test_mimeparser_parse_mime_type_should_accept_single_wildcard(self):
+
+        self.assertEqual(parse_mime_type('*;q=0.5'), ('*', '*', {'q': '0.5'}))
+
+    def test_mimeparser_best_match_should_ignore_blank_media_ranges(self):
+
+        self.assertEqual(best_match(['application/xbel+xml', 'text/xml'], 'text/*;q=0.5, , */*; q=0.1'), 'text/xml')
+
+    def test_mimeparser_best_match_should_ignore_blank_media_ranges(self):
+
+        self.assertEqual(best_match(['application/xbel+xml; a=1; b=2', 'application/xml'], 'application/*, application/xbel+xml; a=1; b=2'), 'application/xbel+xml; a=1; b=2')
 
 
 class WGTTestCase(TestCase):

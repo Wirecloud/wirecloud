@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -30,10 +30,6 @@ Contents:
  - parse_mime_type():   Parses a mime-type into its component parts.
  - parse_media_range(): Media-ranges are mime-types with wild-cards and a 'q'
                           quality parameter.
- - quality():           Determines the quality ('q') of a mime-type when
-                          compared against a list of media-ranges.
- - quality_parsed():    Just like quality() except the second parameter must be
-                          pre-parsed.
  - best_match():        Choose the mime-type with the highest quality ('q')
                           from a list of candidates.
 """
@@ -116,34 +112,6 @@ def fitness_and_quality_parsed(mime_type, parsed_ranges):
                 best_fit_q = params['q']
 
     return best_fitness, float(best_fit_q)
-
-
-def quality_parsed(mime_type, parsed_ranges):
-    """Find the best match for a mime-type amongst parsed media-ranges.
-
-    Find the best match for a given mime-type against a list of media_ranges
-    that have already been parsed by parse_media_range(). Returns the 'q'
-    quality parameter of the best match, 0 if no match was found. This function
-    bahaves the same as quality() except that 'parsed_ranges' must be a list of
-    parsed media ranges. """
-
-    return fitness_and_quality_parsed(mime_type, parsed_ranges)[1]
-
-
-def quality(mime_type, ranges):
-    """Return the quality ('q') of a mime-type against a list of media-ranges.
-
-    Returns the quality 'q' of a mime-type when compared against the
-    media-ranges in ranges. For example:
-
-    >>> quality('text/html','text/*;q=0.3, text/html;q=0.7,
-                  text/html;level=1, text/html;level=2;q=0.4, */*;q=0.5')
-    0.7
-
-    """
-    parsed_ranges = [parse_media_range(r) for r in ranges.split(',')]
-
-    return quality_parsed(mime_type, parsed_ranges)
 
 
 def best_match(supported, header):
