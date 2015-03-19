@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -287,9 +287,9 @@
         this.storeSelect.addEntries([{label: gettext('list not available'), value: ''}]);
     };
 
-    FiWareCatalogueView.prototype.addStoreInfo = function (store_info) {
+    FiWareCatalogueView.prototype.addStoreInfo = function addStoreInfo(store_info) {
         if (this.isVisible()) {
-            this.refresh_search_results();
+            this.refresh_if_needed();
         }
         this.store_info = store_info;
         this.number_of_stores = store_info.length;
