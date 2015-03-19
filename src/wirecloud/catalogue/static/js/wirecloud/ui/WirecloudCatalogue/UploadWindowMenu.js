@@ -65,6 +65,7 @@
                     msg = new StyledElements.Fragment([msg, details]);
                     (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                 }
+                this.mainview.viewsByName.search.refresh_if_needed();
             }
         };
 
@@ -78,7 +79,7 @@
                 monitor: monitor,
                 onSuccess: onUploadSuccess.bind(this),
                 onFailure: onUploadFailure.bind(this, entries[i]),
-                onComplete: onComplete
+                onComplete: onComplete.bind(this)
             });
         }
         this.fileTable.source.changeElements([]);
