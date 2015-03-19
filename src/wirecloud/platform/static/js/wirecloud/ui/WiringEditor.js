@@ -312,6 +312,36 @@ Wirecloud.ui.WiringEditor = (function () {
             }
         }.bind(this));
 
+        this.behaviourEngine.addEventListener('enable', function (eventTarget) {
+            var component, componentId, componentType, connection, i;
+
+            if (eventTarget.isEnabled) {
+                for (componentType in this.components) {
+                    for (componentId in this.components[componentType]) {
+                        component = this.components[componentType][componentId];
+                        this.behaviourEngine.updateComponent(componentType, componentId, component.serialize());
+                    }
+                }
+
+                for (i = 0; i < this.connections.length; i++) {
+                    connection = this.connections[i];
+                    this.behaviourEngine.updateConnection(connection.serialize());
+                }
+            } else {
+                for (componentType in this.components) {
+                    for (componentId in this.components[componentType]) {
+                        component = this.components[componentType][componentId];
+                        component.onbackground = false;
+                    }
+                }
+
+                for (i = 0; i < this.connections.length; i++) {
+                    connection = this.connections[i];
+                    connection.onbackground = false;
+                }
+            }
+        }.bind(this));
+
         this.behaviourEngine.addEventListener('remove', function (eventTarget) {
             this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
         }.bind(this));
