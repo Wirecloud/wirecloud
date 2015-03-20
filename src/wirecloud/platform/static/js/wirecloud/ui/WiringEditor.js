@@ -127,6 +127,7 @@ Wirecloud.ui.WiringEditor = (function () {
         }.bind(this));
 
         this.connectionEngine.addEventListener('unselectall', function () {
+            this.layout.slideUp();
             this.ChangeObjectEditing(null);
         }.bind(this));
 
@@ -747,7 +748,6 @@ Wirecloud.ui.WiringEditor = (function () {
         this.operatorVersions = {};
 
         this.componentManager.activeDefaultSection();
-        this.btnComponents.removeClassName('active');
 
         this.gridFullHeight = parseFloat(this.layout.content.wrapperElement.style.height);
         this.gridFullWidth = parseFloat(this.layout.content.wrapperElement.style.width);
@@ -1181,6 +1181,7 @@ Wirecloud.ui.WiringEditor = (function () {
     WiringEditor.prototype.serialize = function serialize() {
         var wiringState, key, i, ioperator, pref;
 
+        this.layout.slideUp(0);
         wiringState = this.behaviourEngine.serialize();
 
         for (key in this.components.operator) {
