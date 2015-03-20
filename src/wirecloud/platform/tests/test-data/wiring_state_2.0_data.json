@@ -57,25 +57,25 @@
             {
                 "sourcename": "operator/0/output",
                 "targethandle": {
-                    "posX": -150,
-                    "posY": 0
+                    "x": -150,
+                    "y": 0
                 },
                 "targetname": "widget/1/inputendpoint",
                 "sourcehandle": {
-                    "posX": 150,
-                    "posY": 0
+                    "x": 150,
+                    "y": 0
                 }
             },
             {
                 "sourcename": "widget/1/outputendpoint",
                 "targethandle": {
-                    "posX": -104,
-                    "posY": 0
+                    "x": -104,
+                    "y": 0
                 },
                 "targetname": "widget/3/inputendpoint",
                 "sourcehandle": {
-                    "posX": 104,
-                    "posY": 0
+                    "x": 104,
+                    "y": 0
                 }
             }
         ],

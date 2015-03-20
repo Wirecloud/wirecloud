@@ -125,9 +125,15 @@ def parse_wiring_old_version(wiring_status):
                 # set info into global behaviour
                 new_version['visualdescription']['connections'].append({
                     'sourcename': get_endpoint_name(connection['source']),
-                    'sourcehandle': connection_view['pullerStart'],
+                    'sourcehandle': {
+                        'x': connection_view['pullerStart']['posX'],
+                        'y': connection_view['pullerStart']['posY']
+                    },
                     'targetname': get_endpoint_name(connection['target']),
-                    'targethandle': connection_view['pullerEnd']
+                    'targethandle': {
+                        'x': connection_view['pullerEnd']['posX'],
+                        'y': connection_view['pullerEnd']['posY']
+                    },
                 })
 
         # rebuild operators
