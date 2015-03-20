@@ -70,10 +70,29 @@
             },
             'set': function set(state) {
                 if (typeof state === 'boolean') {
+                    this.hidden = false;
                     if ((onbackground=state)) {
                         this.wrapperElement.classList.add('on-background');
                     } else {
                         this.wrapperElement.classList.remove('on-background');
+                    }
+                }
+            }
+        });
+
+        var hidden = false;
+
+        Object.defineProperty(this, 'hidden', {
+            'get': function get() {
+                return hidden;
+            },
+            'set': function set(state) {
+                if (typeof state === 'boolean') {
+                    if ((hidden=state)) {
+                        this.wrapperElement.classList.add('hidden');
+                    } else {
+                        this.wrapperElement.classList.remove('hidden');
+                        this.redraw();
                     }
                 }
             }

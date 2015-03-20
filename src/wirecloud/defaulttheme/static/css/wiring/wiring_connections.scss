@@ -180,3 +180,7 @@
         stroke: $highlighted-connection-border-color;
     }
 }
+
+.wiring-diagram .connection.hidden {
+    display: none !important;
+}

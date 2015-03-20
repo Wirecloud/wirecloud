@@ -253,3 +253,7 @@
 .wiring-diagram .endpoint.disabled {
     opacity: 0.5;
 }
+
+.wiring-diagram .endpoint.hidden {
+    display: none !important;
+}

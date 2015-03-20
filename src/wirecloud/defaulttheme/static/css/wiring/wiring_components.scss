@@ -182,7 +182,11 @@
     }
 
     .styled_button.hidden {
-        display: none;
+        display: none !important;
+    }
+
+    .styled_button.invisible {
+        visibility: hidden !important;
     }
 }
 
