@@ -92,6 +92,8 @@
                         this.wrapperElement.classList.add('hidden');
                     } else {
                         this.wrapperElement.classList.remove('hidden');
+                        this.getSourceEndpoint().classList.remove('hidden');
+                        this.getTargetEndpoint().classList.remove('hidden');
                         this.redraw();
                     }
                 }
@@ -271,6 +273,14 @@
             this.targetComponent = this.endAnchor.getComponent();
         }
     };
+
+    Arrow.prototype.getSourceEndpoint = function getSourceEndpoint() {
+        return this.startAnchor.getEndpoint();
+    }
+
+    Arrow.prototype.getTargetEndpoint = function getTargetEndpoint() {
+        return this.endAnchor.getEndpoint();
+    }
 
     /**
      *  Get the Arrow pullerStart point.

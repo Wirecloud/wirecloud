@@ -274,6 +274,10 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
         return this.connectionArrows.length > 0;
     };
 
+    Anchor.prototype.getEndpoint = function getEndpoint() {
+        return this.wrapperElement.parentElement;
+    }
+
     /**
      * Add new Arrow to the Anchor
      */

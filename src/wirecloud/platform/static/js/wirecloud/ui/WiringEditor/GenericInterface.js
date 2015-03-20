@@ -215,28 +215,26 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                         if ((sleek=state)) {
                             this.onbackground = false;
                             this.hidden = false;
-                            this.options.optionPreferences.invisible = true;
-                            this.options.optionRemove.invisible = true;
+                            this.options.element.classList.add('hidden');
                             this.wrapperElement.classList.add('sleek');
 
                             for (name in this.sourceEndpoints) {
                                 context = this.sourceEndpoints[name];
+                                context.endpoint.classList.add('hidden');
 
-                                if (!context.endpointAnchor.hasConnections()) {
-                                    context.endpoint.classList.add('hidden');
-                                }
+                                //if (!context.endpointAnchor.hasConnections()) {}
                             }
 
                             for (name in this.targetEndpoints) {
                                 context = this.targetEndpoints[name];
+                                context.endpoint.classList.add('hidden');
 
-                                if (!context.endpointAnchor.hasConnections()) {
-                                    context.endpoint.classList.add('hidden');
-                                }
+                                //if (!context.endpointAnchor.hasConnections()) {}
                             }
                         } else {
-                            this.options.optionPreferences.invisible = false;
-                            this.options.optionRemove.invisible = false;
+                            this.options.element.classList.remove('hidden');
+                            //this.options.optionPreferences.invisible = false;
+                            //this.options.optionRemove.invisible = false;
                             this.wrapperElement.classList.remove('sleek');
 
                             for (name in this.sourceEndpoints) {

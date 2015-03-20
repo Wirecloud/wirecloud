@@ -247,6 +247,19 @@ Wirecloud.ui.WiringEditor = (function () {
                 }
             } else {
 
+                for (componentType in this.components) {
+                    for (componentId in this.components[componentType]) {
+                        component = this.components[componentType][componentId];
+
+                        if (eventTarget.behaviour.containsComponent(componentType, componentId)) {
+                            component.sleek = true;
+                            component.setVisualInfo(this.behaviourEngine.getComponentView(componentType, componentId));
+                        } else {
+                            component.hidden = true;
+                        }
+                    }
+                }
+
                 for (i = 0; i < this.connections.length; i++) {
                     connection = this.connections[i];
                     if (eventTarget.behaviour.containsConnection(connection.sourceName, connection.targetName)) {
@@ -261,10 +274,7 @@ Wirecloud.ui.WiringEditor = (function () {
                         component = this.components[componentType][componentId];
 
                         if (eventTarget.behaviour.containsComponent(componentType, componentId)) {
-                            component.sleek = true;
-                            component.setVisualInfo(this.behaviourEngine.getComponentView(componentType, componentId));
-                        } else {
-                            component.hidden = true;
+                            component.repaint();
                         }
                     }
                 }
