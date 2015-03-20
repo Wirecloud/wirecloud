@@ -52,12 +52,11 @@
         this._text = options.text;
         this._checkedText = options.checkedText;
 
-        var _active = null;
         Object.defineProperty(this, 'active', {
             set: function (active) {
                 active = !!active;
 
-                if (active === _active) {
+                if (this.active === active) {
                     return; // Nothing to do
                 }
 
@@ -81,7 +80,7 @@
                 _active = active;
             },
             get: function() {
-                return _active;
+                return this.wrapperElement.classList.contains('active');
             }
         });
 

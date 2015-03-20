@@ -403,7 +403,7 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     var buildWirecloudToolbar = function buildWirecloudToolbar() {
-        this.btnComponents = new StyledElements.StyledButton({
+        this.btnComponents = new StyledElements.ToggleButton({
             'iconClass': 'icon-archive',
             'stackedIconClass': 'icon-plus-sign',
             'stackedIconposition': 'bottom-right',
@@ -411,7 +411,7 @@ Wirecloud.ui.WiringEditor = (function () {
             'class': "opt-components"
         });
         this.btnComponents.addEventListener('click', function (styledElement) {
-            if (styledElement.hasClassName('active')) {
+            if (styledElement.active) {
                 this.layout.slideUp();
             } else {
                 this.componentManager.activeDefaultSection();
@@ -419,13 +419,13 @@ Wirecloud.ui.WiringEditor = (function () {
             }
         }.bind(this));
 
-        this.btnBehaviours = new StyledElements.StyledButton({
+        this.btnBehaviours = new StyledElements.ToggleButton({
             'iconClass': 'icon-sitemap',
             'title': gettext("Behaviours"),
             'class': "opt-behaviours"
         });
         this.btnBehaviours.addEventListener('click', function (styledElement) {
-            if (styledElement.hasClassName('active')) {
+            if (styledElement.active) {
                 this.layout.slideUp();
             } else {
                 this.layout.slideDown(1);
@@ -488,16 +488,16 @@ Wirecloud.ui.WiringEditor = (function () {
         startBehaviourEngine.call(this);
 
         this.layout.addEventListener('slideup', function () {
-            this.btnComponents.removeClassName('active');
-            this.btnBehaviours.removeClassName('active');
+            this.btnComponents.active = false;
+            this.btnBehaviours.active = false;
         }.bind(this));
         this.layout.addEventListener('slidedown', function (panelOpened) {
             if (panelOpened.wrapperElement.classList.contains('panel-components')) {
-                this.btnComponents.addClassName('active');
-                this.btnBehaviours.removeClassName('active');
+                this.btnComponents.active = true;
+                this.btnBehaviours.active = false;
             } else {
-                this.btnComponents.removeClassName('active');
-                this.btnBehaviours.addClassName('active');
+                this.btnComponents.active = false;
+                this.btnBehaviours.active = true;
             }
         }.bind(this));
     };
@@ -988,10 +988,6 @@ Wirecloud.ui.WiringEditor = (function () {
             this.multiconnectors[key].destroy();
         }
         this.deactivateCtrlMultiSelect();
-
-        if (this.btnComponents.hasClassName('active')) {
-            this.btnComponents.wrapperElement.click();
-        }
 
         this.connectionEngine.clear();
         this.componentManager.clear();
