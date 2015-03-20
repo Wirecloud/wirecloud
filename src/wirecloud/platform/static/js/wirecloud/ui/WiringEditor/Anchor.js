@@ -263,6 +263,10 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
         return this.arrows;
     };
 
+    Anchor.prototype.hasConnections = function hasConnections() {
+        return this.arrows.length != 0;
+    };
+
     /**
      * Return true when the Anchor has connected arrows
      */

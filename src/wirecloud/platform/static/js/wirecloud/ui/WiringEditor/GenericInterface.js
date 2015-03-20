@@ -109,11 +109,20 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             /* Component Properties */
 
             Object.defineProperty(this, 'position', {
-                get: function () {
+                'get': function get() {
                     return {
                         'x': parseInt(this.wrapperElement.style.left, 10),
                         'y': parseInt(this.wrapperElement.style.top, 10)
                     };
+                },
+                'set': function set(newPosition) {
+                    if ('x' in newPosition) {
+                        this.wrapperElement.style.left = newPosition.x + 'px';
+                    }
+                    if ('y' in newPosition) {
+                        this.wrapperElement.style.top = newPosition.y + 'px';
+                    }
+                    this.repaint();
                 }
             });
 
@@ -161,6 +170,8 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 },
                 'set': function set(state) {
                     if (typeof state === 'boolean') {
+                        this.hidden = false;
+                        this.sleek = false;
                         if ((onbackground=state)) {
                             this.options.optionRemove.hide();
                             this.options.optionShare.show();
@@ -169,6 +180,74 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                             this.options.optionRemove.show();
                             this.options.optionShare.hide();
                             this.wrapperElement.classList.remove('on-background');
+                        }
+                    }
+                }
+            });
+
+            var hidden = false;
+
+            Object.defineProperty(this, 'hidden', {
+                'get': function get() {
+                    return hidden;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean') {
+                        if ((hidden=state)) {
+                            this.wrapperElement.classList.add('hidden');
+                        } else {
+                            this.wrapperElement.classList.remove('hidden');
+                        }
+                    }
+                }
+            });
+
+            var sleek = false;
+
+            Object.defineProperty(this, 'sleek', {
+                'get': function get() {
+                    return sleek;
+                },
+                'set': function set(state) {
+                    var name, context;
+
+                    if (typeof state === 'boolean') {
+                        if ((sleek=state)) {
+                            this.onbackground = false;
+                            this.hidden = false;
+                            this.options.optionPreferences.invisible = true;
+                            this.options.optionRemove.invisible = true;
+                            this.wrapperElement.classList.add('sleek');
+
+                            for (name in this.sourceEndpoints) {
+                                context = this.sourceEndpoints[name];
+
+                                if (!context.endpointAnchor.hasConnections()) {
+                                    context.endpoint.classList.add('hidden');
+                                }
+                            }
+
+                            for (name in this.targetEndpoints) {
+                                context = this.targetEndpoints[name];
+
+                                if (!context.endpointAnchor.hasConnections()) {
+                                    context.endpoint.classList.add('hidden');
+                                }
+                            }
+                        } else {
+                            this.options.optionPreferences.invisible = false;
+                            this.options.optionRemove.invisible = false;
+                            this.wrapperElement.classList.remove('sleek');
+
+                            for (name in this.sourceEndpoints) {
+                                context = this.sourceEndpoints[name];
+                                context.endpoint.classList.remove('hidden');
+                            }
+
+                            for (name in this.targetEndpoints) {
+                                context = this.targetEndpoints[name];
+                                context.endpoint.classList.remove('hidden');
+                            }
                         }
                     }
                 }
@@ -323,6 +402,9 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 'sourcesElement': sourcesElement,
                 'targetsElement': targetsElement
             };
+
+            this.sourceEndpoints = {};
+            this.targetEndpoints = {};
         } else { // MiniInterface
             this.header = document.createElement("div");
             this.header.classList.add('component-heading');
@@ -423,6 +505,10 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     };
 
     StyledElements.Utils.inherit(GenericInterface, StyledElements.Container);
+
+    GenericInterface.prototype.setVisualInfo = function setVisualInfo(componentView) {
+        this.position = componentView.position;
+    };
 
     /*************************************************************************
      * Private methods
@@ -1316,6 +1402,12 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
             this.sourceAnchorsByName[name] = anchor;
             this.sourceAnchors.push(anchor);
+
+            this.sourceEndpoints[name] = {
+                'endpoint': endpointElement,
+                'endpointLabel': labelElement,
+                'endpointAnchor': anchor
+            };
         }
 
         this.endpoints.sourcesElement.appendChild(endpointElement);
@@ -1382,6 +1474,12 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
             this.targetAnchorsByName[name] = anchor;
             this.targetAnchors.push(anchor);
+
+            this.targetEndpoints[name] = {
+                'endpoint': endpointElement,
+                'endpointLabel': labelElement,
+                'endpointAnchor': anchor
+            };
         }
 
         this.endpoints.targetsElement.appendChild(endpointElement);

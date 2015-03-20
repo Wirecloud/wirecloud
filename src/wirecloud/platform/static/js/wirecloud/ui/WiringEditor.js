@@ -214,25 +214,60 @@ Wirecloud.ui.WiringEditor = (function () {
         this.behaviourEngine.addEventListener('activate', function (eventTarget) {
             var component, componentId, componentType, connection, i;
 
-            for (componentType in this.components) {
-                for (componentId in this.components[componentType]) {
-                    component = this.components[componentType][componentId];
+            if (eventTarget.globalViewpoint) {
 
-                    if (eventTarget.behaviour.containsComponent(componentType, componentId)) {
-                        component.onbackground = false;
+                for (i = 0; i < this.connections.length; i++) {
+                    connection = this.connections[i];
+                    if (eventTarget.behaviour.containsConnection(connection.sourceName, connection.targetName)) {
+                        connection.onbackground = false;
                     } else {
-                        component.onbackground = true;
+                        connection.onbackground = true;
                     }
                 }
-            }
 
-            for (i = 0; i < this.connections.length; i++) {
-                connection = this.connections[i];
-                if (eventTarget.behaviour.containsConnection(connection.sourceName, connection.targetName)) {
-                    connection.onbackground = false;
-                } else {
-                    connection.onbackground = true;
+                for (componentType in this.components) {
+                    for (componentId in this.components[componentType]) {
+                        component = this.components[componentType][componentId];
+                        component.setVisualInfo(this.behaviourEngine.getComponentView(componentType, componentId));
+
+                        if (eventTarget.behaviour.containsComponent(componentType, componentId)) {
+                            component.onbackground = false;
+                        } else {
+                            component.onbackground = true;
+                        }
+                    }
                 }
+
+                for (componentType in this.components) {
+                    for (componentId in this.components[componentType]) {
+                        component = this.components[componentType][componentId];
+                        component.repaint();
+                    }
+                }
+            } else {
+
+                for (i = 0; i < this.connections.length; i++) {
+                    connection = this.connections[i];
+                    if (eventTarget.behaviour.containsConnection(connection.sourceName, connection.targetName)) {
+                        connection.onbackground = false;
+                    } else {
+                        connection.hidden = true;
+                    }
+                }
+
+                for (componentType in this.components) {
+                    for (componentId in this.components[componentType]) {
+                        component = this.components[componentType][componentId];
+
+                        if (eventTarget.behaviour.containsComponent(componentType, componentId)) {
+                            component.sleek = true;
+                            component.setVisualInfo(this.behaviourEngine.getComponentView(componentType, componentId));
+                        } else {
+                            component.hidden = true;
+                        }
+                    }
+                }
+
             }
         }.bind(this));
 
@@ -1285,7 +1320,11 @@ Wirecloud.ui.WiringEditor = (function () {
             widget_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
             widget_interface.repaint();
 
-            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), widget_interface.onbackground);
+            if (this.behaviourEngine.globalViewpointActive()) {
+                this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), widget_interface.onbackground);
+            } else {
+                this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), true);
+            }
         }.bind(this));
 
         widget_interface.addEventListener('sortstop', function (eventTarget) {
@@ -1498,7 +1537,11 @@ Wirecloud.ui.WiringEditor = (function () {
             operator_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
             operator_interface.repaint();
 
-            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), operator_interface.onbackground);
+            if (this.behaviourEngine.globalViewpointActive()) {
+                this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), operator_interface.onbackground);
+            } else {
+                this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), true);
+            }
         }.bind(this));
 
         operator_interface.addEventListener('sortstop', function (eventTarget) {

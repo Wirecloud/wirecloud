@@ -371,7 +371,11 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
                 this.components[componentType][componentId] = {};
             }
         } else {
-            this.components[componentType][componentId] = componentView;
+            if ('position' in componentView) {
+                this.components[componentType][componentId] = {
+                    'position': componentView.position
+                };
+            }
         }
 
         updateCounterList.call(this);
