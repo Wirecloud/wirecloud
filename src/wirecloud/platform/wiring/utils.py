@@ -68,10 +68,8 @@ def get_endpoint_name(endpoint):
 def rename_component_type(component_type):
     return component_type[1:] if component_type in ['iwidget', 'ioperator'] else "not_supported"
 
-def parse_wiring_old_version(wiring_status):
-
-    # set the structure for version 2.0
-    new_version = {
+def get_wiring_skeleton():
+    return {
         'version': "2.0",
         'connections': [],
         'operators': {},
@@ -85,6 +83,11 @@ def parse_wiring_old_version(wiring_status):
             'connections': []
         }
     }
+
+def parse_wiring_old_version(wiring_status):
+
+    # set the structure for version 2.0
+    new_version = get_wiring_skeleton()
 
     # set up business description
 
