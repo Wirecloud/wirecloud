@@ -175,9 +175,11 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
                 if (this.currentViewpoint == BehaviourEngine.viewpoints.GLOBAL) {
                     this.currentViewpoint = BehaviourEngine.viewpoints.SINGLE;
                     this.btnViewpoint.setLabel("Single");
+                    this.btnEnable.hide();
                 } else {
                     this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
                     this.btnViewpoint.setLabel("Global");
+                    this.btnEnable.show();
                 }
             }
 

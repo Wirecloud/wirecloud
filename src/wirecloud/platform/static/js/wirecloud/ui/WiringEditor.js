@@ -201,7 +201,12 @@ Wirecloud.ui.WiringEditor = (function () {
 
     WiringEditor.prototype.getToolbarButtons = function getToolbarButtons() {
         if (this.behaviourEngine.behavioursEnabled) {
-            return [this.btnComponents, this.btnBehaviours, this.btnEmptyBehaviour, this.btnRemoveBehaviour];
+            if (this.behaviourEngine.globalViewpointActive()) {
+                this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
+                return [this.btnComponents, this.btnBehaviours, this.btnEmptyBehaviour, this.btnRemoveBehaviour];
+            } else {
+                return [this.btnBehaviours];
+            }
         } else {
             return [this.btnComponents, this.btnBehaviours];
         }
@@ -214,6 +219,8 @@ Wirecloud.ui.WiringEditor = (function () {
     var startBehaviourEngine = function startBehaviourEngine() {
         this.behaviourEngine.addEventListener('activate', function (eventTarget) {
             var component, componentId, componentType, connection, i;
+
+            LayoutManagerFactory.getInstance().header.refresh();
 
             if (eventTarget.globalViewpoint) {
 
@@ -360,6 +367,8 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.behaviourEngine.addEventListener('enable', function (eventTarget) {
             var component, componentId, componentType, connection, i;
+
+            LayoutManagerFactory.getInstance().header.refresh();
 
             if (eventTarget.isEnabled) {
                 for (componentType in this.components) {
