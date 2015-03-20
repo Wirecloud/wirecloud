@@ -104,34 +104,6 @@ class PopupMenuTester(object):
             self.button.click()
 
 
-
-class WiringEndpointTester(object):
-
-    def __init__(self, testcase, endpoint_name, element):
-
-        self.testcase = testcase
-        self.endpoint_name = endpoint_name
-        self.element = element
-
-    @property
-    def label(self):
-        return self.testcase.driver.execute_script('return arguments[0].parentElement;', self.element);
-
-    @property
-    def pos(self):
-        return self.testcase.driver.execute_script('''
-            var endpoint_element = arguments[0].parentElement.parentElement;
-            var endpointlist = Array.prototype.slice.call(arguments[0].parentElement.parentElement.parentElement.children);
-            return endpointlist.indexOf(endpoint_element);
-        ''', self.element);
-
-    def open_menu(self):
-        ActionChains(self.testcase.driver).context_click(self.element).perform()
-        popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
-
-        return PopupMenuTester(self.testcase, popup_menu_element)
-
-
 class IWidgetTester(object):
 
     def __init__(self, testcase, iwidget_id, element):
@@ -585,6 +557,24 @@ class WiringIWidgetTester(WiringComponentTester):
         ''' % self.id)
 
 
+class WiringConnectionTester(object):
+
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
+
+    @property
+    def in_background(self):
+        return 'on-background' in self.element.get_attribute('class').split()
+
+    @property
+    def selected(self):
+        return 'selected' in self.element.get_attribute('class').split()
+
+    def select(self):
+        self.element.find_element_by_css_selector('g').click()
+
+
 class WiringEndpointTester(object):
 
     def __init__(self, testcase, element):
@@ -598,6 +588,9 @@ class WiringEndpointTester(object):
     @property
     def name(self):
         return self.element.find_element_by_css_selector(".endpoint-label").text
+
+    def move(self, endpoint):
+        ActionChains(self.testcase.driver).drag_and_drop(self.anchor, endpoint.anchor).perform()
 
 
 class WorkspaceTabTester(object):
@@ -1260,8 +1253,10 @@ class WiringViewTester(object):
     def section_diagram(self):
         return self.testcase.driver.find_element_by_css_selector(self.CSS_SEC_DIAGRAM)
 
-    def create_new_instance_of(self, component, pos_x=-40, pos_y=-40):
-        ActionChains(self.testcase.driver).click_and_hold(component).move_to_element(self.section_diagram).move_by_offset(pos_x, pos_y).release().perform()
+    def create_new_instance_of(self, component, pos_x=0, pos_y=-0):
+        x = pos_x - 450
+        y = pos_y - 250
+        ActionChains(self.testcase.driver).click_and_hold(component).move_to_element(self.section_diagram).move_by_offset(x, y).release().perform()
 
         return self
 
@@ -1292,6 +1287,9 @@ class WiringViewTester(object):
                 return component
 
         return None
+
+    def get_all_connections(self):
+        return [WiringConnectionTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".connection")]
 
     def open_component_bar(self):
         self.testcase.driver.find_element_by_css_selector(self.CSS_OPT_COMPONENTS).click()

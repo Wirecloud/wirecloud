@@ -495,11 +495,11 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (1)', all_steps=True)
             self.assertIsNotNone(widget)
-            wiring.create_new_instance_of(widget, pos_x=-40, pos_y=-40)
+            wiring.create_new_instance_of(widget)
 
             widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (2)')
             self.assertIsNotNone(widget)
-            wiring.create_new_instance_of(widget, pos_x=40, pos_y=40)
+            wiring.create_new_instance_of(widget, pos_x=250)
 
             widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test (1)')
             self.assertIsNotNone(widget1)
@@ -552,21 +552,31 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
 
         with self.wiring_view as wiring:
+            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (1)', all_steps=True)
+            self.assertIsNotNone(widget)
+            wiring.create_new_instance_of(widget)
 
-            grid = self.driver.find_element_by_css_selector(".grid")
+            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (2)')
+            self.assertIsNotNone(widget)
+            wiring.create_new_instance_of(widget, pos_x=250)
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-100, -100).release().perform()
+            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (3)')
+            self.assertIsNotNone(widget)
+            wiring.create_new_instance_of(widget, pos_x=100, pos_y=150)
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(50, 40).release().perform()
+            widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test (1)')
+            self.assertIsNotNone(widget1)
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(80, 70).release().perform()
+            widget2 = wiring.from_diagram_find_component_by_name('widget', 'Test (2)')
+            self.assertIsNotNone(widget2)
 
-            source = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('outputendpoint')
-            target = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('inputendpoint')
-            ActionChains(self.driver).drag_and_drop(source.element, target.element).perform()
+            source = widget1.get_endpoint_by_name('source', 'Output')
+            self.assertIsNotNone(source)
+
+            target = widget2.get_endpoint_by_name('target', 'Input')
+            self.assertIsNotNone(target)
+
+            source.move(target)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -594,18 +604,32 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, '')
 
         with self.wiring_view as wiring:
+            widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test (1)')
+            self.assertIsNotNone(widget1)
 
-            source = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('outputendpoint')
-            target = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('inputendpoint')
-            target2 = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('inputendpoint')
-            arrows = grid.find_elements_by_css_selector('.arrow')
-            self.assertEqual(len(arrows), 1)
-            arrows[0].find_element_by_css_selector('g').click()
+            widget2 = wiring.from_diagram_find_component_by_name('widget', 'Test (2)')
+            self.assertIsNotNone(widget2)
 
-            ActionChains(self.driver).drag_and_drop(target.element, target2.element).perform()
+            widget3 = wiring.from_diagram_find_component_by_name('widget', 'Test (3)')
+            self.assertIsNotNone(widget2)
 
-            arrows = grid.find_elements_by_css_selector('.arrow')
-            self.assertEqual(len(arrows), 1)
+            source = widget1.get_endpoint_by_name('source', 'Output')
+            self.assertIsNotNone(source)
+
+            target1 = widget2.get_endpoint_by_name('target', 'Input')
+            self.assertIsNotNone(target1)
+
+            target2 = widget3.get_endpoint_by_name('target', 'Input')
+            self.assertIsNotNone(target1)
+
+            connections = wiring.get_all_connections()
+            self.assertEqual(len(connections), 1)
+            connections[0].select()
+
+            target1.move(target2)
+
+            connections = wiring.get_all_connections()
+            self.assertEqual(len(connections), 1)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -630,6 +654,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
+    test_wiring_editor_modify_arrow_endpoints.tags = ('behaviour-oriented-wiring',)
 
     def test_widget_preferences_in_wiring_editor(self):
 
@@ -644,8 +669,11 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
+            widget = wiring.from_diagram_find_component_by_name('widget', 'Test 1')
+            self.assertIsNotNone(widget)
+            widget.open_menu().click_entry('Settings')
+
             # Change widget settings
-            wiring.get_iwidget(iwidget).open_menu().click_entry('Settings')
 
             list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
             self.fill_form_input(list_input, '1')  # value1
@@ -663,6 +691,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
+    test_widget_preferences_in_wiring_editor.tags = ('behaviour-oriented-wiring',)
 
     def test_operator_preferences_in_wiring_editor(self):
 
@@ -671,12 +700,11 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            # Change operator settings
-            ioperator = wiring.get_ioperators()[0]
-            ioperator.element.find_element_by_css_selector('.specialIcon').click()
-            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
-            ioperator.open_menu().click_entry('Settings')
+            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
+            self.assertIsNotNone(operator)
+            operator.open_menu().click_entry('Settings')
 
+            # Change operator settings
             prefix_input = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
             self.fill_form_input(prefix_input, 'prefix: ')
 
@@ -708,6 +736,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'prefix: hello world!!')
+    test_operator_preferences_in_wiring_editor.tags = ('behaviour-oriented-wiring',)
 
     def check_input_endpoint_exceptions(self):
 
@@ -751,7 +780,9 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.assertTrue(error_badge.is_displayed())
         with self.wiring_view as wiring:
 
-            ioperator = wiring.get_ioperators()[0]
+            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
+            self.assertIsNotNone(operator)
+
             self.assertEqual(ioperator.error_count, 1)
             self.assertEqual(target_iwidget.error_count, 0)
 
@@ -775,6 +806,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         # Check exceptions
         self.check_input_endpoint_exceptions()
+    test_input_endpoint_exceptions.tags = ('behaviour-oriented-wiring',)
 
     def test_input_endpoint_no_handler_exceptions(self):
 

@@ -1319,6 +1319,8 @@ Wirecloud.ui.WiringEditor = (function () {
 
             this.behaviourEngine.updateConnection(connection.serialize());
             connection.onbackground = false;
+        } else {
+            this.behaviourEngine.updateConnection(connection.serialize());
         }
 
         return this;

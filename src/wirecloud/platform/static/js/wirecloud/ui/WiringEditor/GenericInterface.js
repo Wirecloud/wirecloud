@@ -31,11 +31,16 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
     var updateErrorInfo = function updateErrorInfo() {
         var label, errorCount = this.entity.logManager.getErrorCount();
-        this.options.optionNotify.setDisabled(errorCount === 0);
 
-        label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
-        label = interpolate(label, {errorCount: errorCount}, true);
-        this.options.optionNotify.setTitle(label);
+        if (errorCount == 0) {
+            this.options.optionNotify.hide().setTitle(gettext('No errors'));
+        } else {
+            label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
+            label = interpolate(label, {errorCount: errorCount}, true);
+
+            this.options.optionNotify.show().setTitle(label);
+        }
+
     };
 
     // ==================================================================================
@@ -315,7 +320,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
                 this.missing = true;
                 this.heading.nameElement.textContent = this.name;
-                this.heading.infoElement.textContent = "The component is misplaced";
+                this.heading.infoElement.textContent = "The component is missing";
             }
 
             /* Application Heading - List of Options */
