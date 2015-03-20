@@ -171,18 +171,18 @@
             }
         });
 
-        /* List of States - Visibility */
+        var hidden = false;
 
-        Object.defineProperty(this, 'visible', {
+        Object.defineProperty(this, 'hidden', {
             'get': function get() {
-                return !this.wrapperElement.classList.contains('hidden');
+                return hidden;
             },
             'set': function set(newState) {
                 if (typeof newState === 'boolean') {
-                    if (newState) {
-                        this.wrapperElement.classList.remove('hidden');
-                    } else {
+                    if ((hidden=newState)) {
                         this.wrapperElement.classList.add('hidden');
+                    } else {
+                        this.wrapperElement.classList.remove('hidden');
                     }
                 }
             }
@@ -200,6 +200,23 @@
                         this.wrapperElement.classList.add('active');
                     } else {
                         this.wrapperElement.classList.remove('active');
+                    }
+                }
+            }
+        });
+
+        var invisible = false;
+
+        Object.defineProperty(this, 'invisible', {
+            'get': function get() {
+                return invisible;
+            },
+            'set': function set(state) {
+                if (typeof state === 'boolean') {
+                    if ((invisible=state)) {
+                        this.wrapperElement.classList.add('invisible');
+                    } else {
+                        this.wrapperElement.classList.remove('invisible');
                     }
                 }
             }
@@ -329,8 +346,8 @@
      * @returns {StyledButton} The instance on which this function was called.
      */
     StyledButton.prototype.show = function show() {
-        if (!this.visible) {
-            this.visible = true;
+        if (this.hidden) {
+            this.hidden = false;
             this.events.show.dispatch(this);
         }
 
@@ -345,8 +362,8 @@
      * @returns {StyledButton} The instance on which this function was called.
      */
     StyledButton.prototype.hide = function hide() {
-        if (this.visible) {
-            this.visible = false;
+        if (!this.hidden) {
+            this.hidden = true;
             this.events.hide.dispatch(this);
         }
 
