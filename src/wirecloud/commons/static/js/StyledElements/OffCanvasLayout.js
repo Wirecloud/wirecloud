@@ -189,9 +189,13 @@ StyledElements.OffCanvasLayout = (function () {
      *
      * @returns {OffCanvasLayout} The instance on which this function was called.
      */
-    OffCanvasLayout.prototype.slideUp = function slideUp() {
+    OffCanvasLayout.prototype.slideUp = function slideUp(panelIndex) {
         this.wrapperElement.classList.remove('slipped');
         this.slipped = false;
+
+        if (this.panelList.length && typeof panelIndex !== 'undefined') {
+            this.lastestOpened = panelIndex;
+        }
 
         if (this.toLeft) {
             this.directionalIcon.className = this.iconRClassName;
