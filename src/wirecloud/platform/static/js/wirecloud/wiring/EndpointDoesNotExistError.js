@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,16 +25,16 @@
 
     "use strict";
 
-    var EndpointError = function EndpointError(message) {
-        this.name = "EndpointError";
+    var EndpointDoesNotExistError = function EndpointDoesNotExistError(message) {
+        this.name = "EndpointDoesNotExistError";
         this.message = message || "";
     };
-    EndpointError.prototype = new Error();
-    EndpointError.prototype.constructor = EndpointError;
+    EndpointDoesNotExistError.prototype = new Error();
+    EndpointDoesNotExistError.prototype.constructor = EndpointDoesNotExistError;
 
-    Object.freeze(EndpointError.prototype);
-    Object.freeze(EndpointError);
+    Object.freeze(EndpointDoesNotExistError.prototype);
+    Object.freeze(EndpointDoesNotExistError);
 
-    Wirecloud.wiring.EndpointError = EndpointError;
+    Wirecloud.wiring.EndpointDoesNotExistError = EndpointDoesNotExistError;
 
 })();

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,16 +25,16 @@
 
     "use strict";
 
-    var PreferenceError = function PreferenceError(message) {
-        this.name = "PreferenceError";
+    var PreferenceDoesNotExistError = function PreferenceDoesNotExistError(message) {
+        this.name = "PreferenceDoesNotExistError";
         this.message = message || "";
     };
-    PreferenceError.prototype = new Error();
-    PreferenceError.prototype.constructor = PreferenceError;
+    PreferenceDoesNotExistError.prototype = new Error();
+    PreferenceDoesNotExistError.prototype.constructor = PreferenceDoesNotExistError;
 
-    Object.freeze(PreferenceError.prototype);
-    Object.freeze(PreferenceError);
+    Object.freeze(PreferenceDoesNotExistError.prototype);
+    Object.freeze(PreferenceDoesNotExistError);
 
-    Wirecloud.PreferenceError = PreferenceError;
+    Wirecloud.PreferenceDoesNotExistError = PreferenceDoesNotExistError;
 
 })();

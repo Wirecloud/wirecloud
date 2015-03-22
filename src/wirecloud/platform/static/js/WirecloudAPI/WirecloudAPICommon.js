@@ -94,7 +94,7 @@
                 return resource.preferences[key].value;
             } else {
                 var exception_msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
-                throw new MashupPlatform.prefs.PreferenceError(exception_msg);
+                throw new MashupPlatform.prefs.PreferenceDoesNotExistError(exception_msg);
             }
         }
     });
@@ -113,13 +113,11 @@
                 resource.preferences[key].value = value;
             } else {
                 var exception_msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
-                throw new MashupPlatform.prefs.PreferenceError(exception_msg);
+                throw new MashupPlatform.prefs.PreferenceDoesNotExistError(exception_msg);
             }
         }
     });
-    Object.defineProperty(window.MashupPlatform.prefs, 'PreferenceError', {
-        value: platform.Wirecloud.PreferenceError
-    });
+    Object.defineProperty(window.MashupPlatform.prefs, 'PreferenceDoesNotExistError', {value: platform.Wirecloud.PreferenceDoesNotExistError});
     Object.preventExtensions(window.MashupPlatform.prefs);
 
     // Wiring Module
