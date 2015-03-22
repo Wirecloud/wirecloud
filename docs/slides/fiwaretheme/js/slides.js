@@ -577,5 +577,10 @@ function main() {
 
         showSlideNumbers();
 
+        window.addEventListener('hashchange', function (event) {
+            currentSlideNo = Number(window.location.hash.replace('#slide', ''));
+            updateSlideClasses(false);
+        }, false);
+
     })();
 }

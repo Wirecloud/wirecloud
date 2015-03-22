@@ -103,8 +103,9 @@ ul {
 .contents > h3:first-child {
     color: #60C1CF;
     margin-left: 20px;
-    margin-top: -40px;
-    margin-bottom: 50px;
+    margin-top: -46px;
+    margin-bottom: 15px;
+    font-weight: normal;
     position: relative;
 }
 
@@ -170,6 +171,42 @@ footer > .fiware-lab-ops-logo {
 }
 
 /*
+ *  Back cover pages
+ */
+
+.slide.back-cover > div {
+    position: absolute;
+    top: 107px;
+    left: 88px;
+    font-size: 52px;
+    line-height: 52px;
+    color: #60C1CF;
+}
+
+.slide.back-cover .fiware-contact {
+    width: 205px;
+    display: block;
+    position: absolute;
+    bottom: 90px;
+    left: 90px;
+}
+
+.slide.back-cover .fiware-logo {
+    width: 410px;
+    display: block;
+    position: absolute;
+    top: 235px;
+    left: 70px;
+}
+
+.slide.back-cover .fiware-lab-ops-logo {
+    width: 375px;
+    position: absolute;
+    top: 170px;
+    right: 17px;
+}
+
+/*
  * Section title pages
  */
 
@@ -188,6 +225,10 @@ footer > .fiware-lab-ops-logo {
     text-transform: uppercase;
     font-weight: bold;
     font-size: 50px;
+}
+
+.section-title-sm .section-title-header > h2 {
+    font-size: 42px;
 }
 
 .slide.far-past {

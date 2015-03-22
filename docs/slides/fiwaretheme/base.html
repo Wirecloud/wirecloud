@@ -91,6 +91,11 @@ Nicolas Perriault (nperriault@gmail.com)
                             <h2>{{ slide.header }}</h2>
                         </header>
 
+                        {% elif 'back-cover' in slide.classes %}
+                        <div>Thanks!</div>
+                        <img class="fiware-contact" src="fiwaretheme/images/FIWARE-contact.png"/>
+                        <img class="fiware-logo" src="fiwaretheme/images/FIWARE-full.png"/>
+                        <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
                         {% else %}
 
                         <header class="slide-header">{{ slide.header }}</header>
@@ -103,7 +108,7 @@ Nicolas Perriault (nperriault@gmail.com)
                             {% if slide.source %}
                             <aside class="source">Source: <a href="{{ slide.source.rel_path }}">{{ slide.source.rel_path }}</a></aside>
                             {% endif %}
-                            {% if 'cover' not in slide.classes and 'section-title' not in slide.classes %}
+                            {% if 'cover' not in slide.classes and 'section-title' not in slide.classes and 'back-cover' not in slide.classes %}
                             <aside class="page_number">
                             {{ slide.number }}/{{ num_slides }}
                             </aside>
