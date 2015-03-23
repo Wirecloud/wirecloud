@@ -77,7 +77,6 @@
                         this.label.textContent = this._text;
                     }
                 }
-                _active = active;
             },
             get: function() {
                 return this.wrapperElement.classList.contains('active');

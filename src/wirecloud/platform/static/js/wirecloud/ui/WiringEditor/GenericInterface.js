@@ -111,6 +111,8 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             this.componentType = className;
             this.componentId = this.entity.id;
 
+            this.wrapperElement.setAttribute('data-id', this.componentId);
+
             /* Component Properties */
 
             Object.defineProperty(this, 'position', {

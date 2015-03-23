@@ -472,6 +472,10 @@ class WiringComponentTester(object):
         self.component = component
 
     @property
+    def id(self):
+        return self.component.get_attribute('data-id')
+
+    @property
     def name(self):
         return self.component.find_element_by_css_selector('.component-title > .component-name')
 
@@ -482,6 +486,10 @@ class WiringComponentTester(object):
     @property
     def is_missing(self):
         return "missing" in self.component.get_attribute('class').split()
+
+    @property
+    def opt_notify(self):
+        return self.component.find_element_by_css_selector(".option-notify")
 
     @property
     def opt_preferences(self):
@@ -507,22 +515,6 @@ class WiringComponentTester(object):
 
 class WiringOperatorTester(WiringComponentTester):
 
-    def get_wiring_endpoint(self, endpoint_name, timeout=5):
-
-        def operator_in_wiring_editor(driver):
-            return driver.execute_script('''
-                 var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-                 return wiringEditor.currentlyInUseOperators[%(ioperator)s] != null;
-            ''' % {"ioperator": self.id, "endpoint": endpoint_name})
-
-        WebDriverWait(self.testcase.driver, timeout).until(operator_in_wiring_editor)
-
-        return WiringEndpointTester(self.testcase, endpoint_name, self.testcase.driver.execute_script('''
-             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-             return wiringEditor.currentlyInUseOperators['%(ioperator)s'].getAnchor("%(endpoint)s").wrapperElement;
-        ''' % {"ioperator": self.id, "endpoint": endpoint_name}
-        ))
-
     @property
     def error_count(self):
         return self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.wiring.ioperators[%s].logManager.errorCount' % self.id)
@@ -535,15 +527,7 @@ class WiringOperatorTester(WiringComponentTester):
         ''' % self.id)
 
 
-class WiringIWidgetTester(WiringComponentTester):
-
-    def get_wiring_endpoint(self, endpoint_name):
-
-        return WiringEndpointTester(self.testcase, endpoint_name, self.testcase.driver.execute_script('''
-             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-             return wiringEditor.iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
-        ''' % {"iwidget": self.id, "endpoint": endpoint_name}
-        ))
+class WiringWidgetTester(WiringComponentTester):
 
     @property
     def error_count(self):
@@ -1268,7 +1252,7 @@ class WiringViewTester(object):
 
         for component in collection:
             if component.find_element_by_css_selector('.component-name').text == component_name:
-                return WiringOperatorTester(self.testcase, component)
+                return WiringOperatorTester(self.testcase, component) if component_type == 'operator' else WiringWidgetTester(self.testcase, component)
 
         return None
 

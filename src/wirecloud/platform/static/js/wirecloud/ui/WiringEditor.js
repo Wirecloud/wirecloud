@@ -411,7 +411,7 @@ Wirecloud.ui.WiringEditor = (function () {
             'class': "opt-components"
         });
         this.btnComponents.addEventListener('click', function (styledElement) {
-            if (styledElement.active) {
+            if (!styledElement.active) {
                 this.layout.slideUp();
             } else {
                 this.componentManager.activeDefaultSection();
@@ -425,7 +425,7 @@ Wirecloud.ui.WiringEditor = (function () {
             'class': "opt-behaviours"
         });
         this.btnBehaviours.addEventListener('click', function (styledElement) {
-            if (styledElement.active) {
+            if (!styledElement.active) {
                 this.layout.slideUp();
             } else {
                 this.layout.slideDown(1);

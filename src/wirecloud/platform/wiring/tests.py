@@ -349,7 +349,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
 
     def test_operator_available_after_being_installed(self):
         self.login()
@@ -367,7 +367,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
             collection = wiring.from_diagram_get_all_components('operator')
             self.assertEqual(len(collection), 1)
-    test_operator_available_after_being_installed.tags = ('behaviour-oriented-wiring',)
 
     def test_operator_not_available_after_being_uninstalled(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
@@ -388,7 +387,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
             self.assertIsNotNone(operator)
             self.assertTrue(operator.is_missing)
-    test_operator_not_available_after_being_uninstalled.tags = ('behaviour-oriented-wiring',)
 
     def check_operator_reinstall_behaviour(self, reload):
         workspace = Workspace.objects.get(id=3)
@@ -453,11 +451,9 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_operators_in_use_reinstall_behaviour(self):
         self.check_operator_reinstall_behaviour(False)
-    test_operators_in_use_reinstall_behaviour.tags = ('behaviour-oriented-wiring',)
 
     def test_operators_in_use_reinstall_behaviour_reload(self):
         self.check_operator_reinstall_behaviour(True)
-    test_operators_in_use_reinstall_behaviour_reload.tags = ('behaviour-oriented-wiring',)
 
     def test_operators_are_not_usable_after_being_deleted(self):
         self.login()
@@ -471,7 +467,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
             operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperator', all_steps=True)
             self.assertIsNone(operator)
-    test_operators_are_not_usable_after_being_deleted.tags = ('behaviour-oriented-wiring',)
 
     def test_basic_wiring_editor_operations(self):
 
@@ -540,7 +535,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
-    test_basic_wiring_editor_operations.tags = ('behaviour-oriented-wiring',)
 
     def test_wiring_editor_modify_arrow_endpoints(self):
 
@@ -654,7 +648,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
-    test_wiring_editor_modify_arrow_endpoints.tags = ('behaviour-oriented-wiring',)
 
     def test_widget_preferences_in_wiring_editor(self):
 
@@ -691,7 +684,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
-    test_widget_preferences_in_wiring_editor.tags = ('behaviour-oriented-wiring',)
 
     def test_operator_preferences_in_wiring_editor(self):
 
@@ -736,7 +728,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'prefix: hello world!!')
-    test_operator_preferences_in_wiring_editor.tags = ('behaviour-oriented-wiring',)
 
     def check_input_endpoint_exceptions(self):
 
@@ -783,13 +774,15 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
             self.assertIsNotNone(operator)
 
-            self.assertEqual(ioperator.error_count, 1)
+            self.assertEqual(operator.error_count, 1)
             self.assertEqual(target_iwidget.error_count, 0)
 
-            ioperator.element.find_element_by_css_selector('.specialIcon').click()
-            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
-            ioperator.element.find_element_by_css_selector('.icon-warning-sign').click()
+            button = operator.opt_notify
+            button.click()
+
             self.wait_element_visible_by_css_selector('.window_menu.logwindowmenu')
+            error_list = self.driver.find_elements_by_css_selector(".logwindowmenu .alert-error")
+            self.assertEqual(len(error_list), 1)
             self.driver.find_element_by_xpath("//*[text()='Close']").click()
 
     def test_input_endpoint_exceptions(self):
@@ -806,15 +799,14 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         # Check exceptions
         self.check_input_endpoint_exceptions()
-    test_input_endpoint_exceptions.tags = ('behaviour-oriented-wiring',)
 
     def test_input_endpoint_no_handler_exceptions(self):
 
         # Update wiring connections to use the not handled input endpoints
         workspace = Workspace.objects.get(id=2)
         parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['connections'][0]['target']['endpoint'] = 'nothandled'
-        parsedStatus['connections'][1]['target']['endpoint'] = 'nothandled'
+        parsedStatus['connections'][0]['target']['name'] = 'nothandled'
+        parsedStatus['connections'][1]['target']['name'] = 'nothandled'
         workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
         workspace.save()
 
@@ -825,20 +817,19 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login(username='user_with_workspaces')
 
         with self.wiring_view as wiring:
+            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperator")
+            self.assertIsNotNone(operator)
 
-            ioperator = wiring.get_ioperators()[0]
-            self.assertEqual(ioperator.error_count, 0)
+            self.assertEqual(operator.error_count, 0)
 
             # Change operator settings
-            ioperator.element.find_element_by_css_selector('.specialIcon').click()
-            WebDriverWait(self.driver, timeout=5).until(element_be_still(ioperator.element))
-            ioperator.open_menu().click_entry('Settings')
+            operator.open_menu().click_entry('Settings')
 
             self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').click()
             self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
-            self.assertEqual(ioperator.error_count, 2)
-            self.assertEqual(len(ioperator.log_entries), 5)
+            self.assertEqual(operator.error_count, 2)
+            self.assertEqual(len(operator.log_entries), 5)
 
         with self.get_current_iwidgets()[0]:
             try:
