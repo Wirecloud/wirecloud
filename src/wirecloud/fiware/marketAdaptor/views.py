@@ -25,7 +25,7 @@ from django.shortcuts import get_object_or_404
 from requests.exceptions import ConnectionError, ConnectTimeout
 
 from wirecloud.commons.baseviews import Resource, Service
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, supported_request_mime_types, supported_response_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, consumes, produces
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.platform.models import Market, MarketUserData
 
@@ -173,8 +173,8 @@ class StoreCollection(Resource):
 class StartPurchaseService(Service):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
-    @supported_response_mime_types(('application/json',))
+    @consumes(('application/json',))
+    @produces(('application/json',))
     def process(self, request, market_user, market_name, store):
 
         adaptor = get_market_adaptor(market_user, market_name)

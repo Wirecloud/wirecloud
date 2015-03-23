@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -245,7 +245,7 @@ def authentication_required_cond(cond):
     return wrap
 
 
-def supported_response_mime_types(mime_types):
+def produces(mime_types):
 
     def wrap(func):
         def wrapper(self, request, *args, **kwargs):
@@ -262,7 +262,7 @@ def supported_response_mime_types(mime_types):
     return wrap
 
 
-def supported_request_mime_types(mime_types):
+def consumes(mime_types):
 
     def wrap(func):
         def wrapper(self, request, *args, **kwargs):

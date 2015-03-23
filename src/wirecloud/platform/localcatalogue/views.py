@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -37,7 +37,7 @@ from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.downloader import download_http_content
-from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, supported_request_mime_types, supported_response_mime_types
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, consumes, produces
 from wirecloud.commons.utils.template import TemplateParseException, UnsupportedFeature
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
@@ -64,7 +64,7 @@ def get_iwidgets_to_remove(resource, user):
 class ResourceCollection(Resource):
 
     @authentication_required
-    @supported_response_mime_types(('application/json',))
+    @produces(('application/json',))
     def read(self, request):
 
         process_urls = process_urls=request.GET.get('process_urls', 'true') == 'true'
@@ -77,8 +77,8 @@ class ResourceCollection(Resource):
         return HttpResponse(json.dumps(resources), content_type='application/json; chatset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json', 'multipart/form-data', 'application/octet-stream'))
-    @supported_response_mime_types(('application/json',))
+    @consumes(('application/x-www-form-urlencoded', 'application/json', 'multipart/form-data', 'application/octet-stream'))
+    @produces(('application/json',))
     @commit_on_http_success
     def create(self, request):
 

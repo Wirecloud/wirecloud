@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -30,7 +30,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.baseviews import Resource, Service
-from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
@@ -63,7 +63,7 @@ class MarketCollection(Resource):
         return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/json'))
+    @consumes(('application/json'))
     @commit_on_http_success
     def create(self, request):
 
@@ -113,7 +113,7 @@ class MarketEntry(Resource):
 class PublishService(Service):
 
     @authentication_required
-    @supported_request_mime_types(('application/json'))
+    @consumes(('application/json'))
     def process(self, request):
 
         try:

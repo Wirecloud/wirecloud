@@ -36,7 +36,7 @@ from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.downloader import download_http_content
-from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, supported_request_mime_types, supported_response_mime_types
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, consumes, produces
 from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
@@ -78,7 +78,7 @@ def setActiveWorkspace(user, workspace):
 
 class WorkspaceCollection(Resource):
 
-    @supported_response_mime_types(('application/json',))
+    @produces(('application/json',))
     @commit_on_http_success
     @no_cache
     def read(self, request):
@@ -89,8 +89,8 @@ class WorkspaceCollection(Resource):
         return HttpResponse(json.dumps(data_list), content_type='application/json; charset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
-    @supported_response_mime_types(('application/json',))
+    @consumes(('application/json',))
+    @produces(('application/json',))
     @commit_on_http_success
     def create(self, request):
 
@@ -191,7 +191,7 @@ class WorkspaceCollection(Resource):
 class WorkspaceEntry(Resource):
 
     @authentication_required_cond(ALLOW_ANONYMOUS_ACCESS)
-    @supported_response_mime_types(('application/json',))
+    @produces(('application/json',))
     def read(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
@@ -204,7 +204,7 @@ class WorkspaceEntry(Resource):
         return workspace_data.get_response()
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id):
 
@@ -262,8 +262,8 @@ class WorkspaceEntry(Resource):
 class TabCollection(Resource):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
-    @supported_response_mime_types(('application/json',))
+    @consumes(('application/json',))
+    @produces(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id):
 
@@ -296,7 +296,7 @@ class TabCollection(Resource):
 class TabOrderService(Service):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def process(self, request, workspace_id):
 
@@ -322,7 +322,7 @@ class TabOrderService(Service):
 class TabEntry(Resource):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
 
@@ -401,7 +401,7 @@ class TabEntry(Resource):
 class MashupMergeService(Service):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def process(self, request, to_ws_id):
 
@@ -482,7 +482,7 @@ def check_json_fields(json, fields):
 class WorkspacePublisherEntry(Resource):
 
     @authentication_required
-    @supported_request_mime_types(('application/json', 'multipart/form-data'))
+    @consumes(('application/json', 'multipart/form-data'))
     @commit_on_http_success
     def create(self, request, workspace_id):
 

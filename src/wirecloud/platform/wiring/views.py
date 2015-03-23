@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,7 +27,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import CacheableData
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, get_current_domain, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, get_current_domain, consumes
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_operator_cache_key
 
@@ -35,7 +35,7 @@ from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_op
 class WiringEntry(Resource):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     def update(self, request, workspace_id):
 
         wiring_status_string = request.body

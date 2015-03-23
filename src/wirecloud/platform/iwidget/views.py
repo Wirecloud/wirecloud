@@ -27,7 +27,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
-from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget
 from wirecloud.platform.models import Widget, IWidget, Tab, Variable, Workspace
 from wirecloud.platform.workspace.utils import VariableValueCacheManager, get_iwidget_data
@@ -48,7 +48,7 @@ class IWidgetCollection(Resource):
         return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id):
 
@@ -76,7 +76,7 @@ class IWidgetCollection(Resource):
             return build_error_response(request, 422, msg)
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
 
@@ -111,7 +111,7 @@ class IWidgetEntry(Resource):
         return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -153,7 +153,7 @@ class IWidgetEntry(Resource):
 class IWidgetPreferences(Resource):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -192,7 +192,7 @@ class IWidgetPreferences(Resource):
 class IWidgetProperties(Resource):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id, iwidget_id):
 

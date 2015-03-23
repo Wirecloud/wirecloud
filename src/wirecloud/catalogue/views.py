@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -46,7 +46,7 @@ from wirecloud.commons.utils.downloader import download_http_content, download_l
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types, force_trailing_slash
+from wirecloud.commons.utils.http import build_error_response, consumes, produces, force_trailing_slash
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 
@@ -74,7 +74,7 @@ class ResourceCollection(Resource):
 
     @method_decorator(login_required)
     @commit_on_http_success
-    @supported_request_mime_types(('application/x-www-form-urlencoded', 'multipart/form-data'))
+    @consumes(('application/x-www-form-urlencoded', 'multipart/form-data'))
     def create(self, request):
 
         try:
@@ -171,6 +171,7 @@ class ResourceEntry(Resource):
 
 class ResourceSuggestion(Resource):
 
+    @produces(('application/json',))
     def read(self, request):
 
         prefix = request.GET.get('p', '')
@@ -190,7 +191,7 @@ class ResourceSuggestion(Resource):
 
 class ResourceVersionCollection(Resource):
 
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     def create(self, request):
 
         try:

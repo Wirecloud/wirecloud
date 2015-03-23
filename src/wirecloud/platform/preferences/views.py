@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2008-2014 Universidad Politécnica de Madrid
+# Copyright 2008-2015 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,7 +27,7 @@ from django.utils.translation import gettext_lazy as _
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.plugins import get_tab_preferences, get_workspace_preferences
 from wirecloud.platform.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
@@ -187,7 +187,7 @@ class PlatformPreferencesCollection(Resource):
         return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def create(self, request):
         try:
@@ -220,7 +220,7 @@ class WorkspacePreferencesCollection(Resource):
         return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id):
 
@@ -261,7 +261,7 @@ class TabPreferencesCollection(Resource):
         return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id):
 

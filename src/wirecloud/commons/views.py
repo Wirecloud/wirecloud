@@ -28,7 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.searchers import get_search_engine, is_available
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, consumes
 
 
 extra_formatters = {
@@ -75,7 +75,7 @@ class ResourceSearch(Resource):
 class SwitchUserService(Service):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @consumes(('application/json',))
     def process(self, request):
 
         if not request.user.is_superuser:
