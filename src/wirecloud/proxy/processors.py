@@ -31,7 +31,6 @@ from wirecloud.platform.workspace.utils import VariableValueCacheManager
 from wirecloud.proxy.utils import ValidationError
 
 
-WIRECLOUD_SECURE_DATA_COOKIE = str('X-WireCloud-Secure-Data')
 WIRECLOUD_SECURE_DATA_HEADER = 'x-wirecloud-secure-data'
 VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 
@@ -45,7 +44,7 @@ def get_variable_value_by_ref(ref, cache_manager):
         else:
             return cache_manager.get_variable_value_from_varname(result.group('iwidget_id'), result.group('var_name'))
     except:
-        raise ValueError('Invalid variable reference: %s' % ref)
+        raise ValidationError('Invalid variable reference: %s' % ref)
 
 
 def check_empty_params(**kargs):
@@ -72,65 +71,56 @@ def check_invalid_refs(**kargs):
         raise ValidationError(msg % {'params': ', '.join(invalid_params)})
 
 
-def process_secure_data(text, request, ignore_errors=False):
+def process_secure_data(text, request):
 
     definitions = text.split('&')
     cache_manager = VariableValueCacheManager(request['workspace'], request['user'])
     for definition in definitions:
-        try:
-            params = definition.split(',')
-            if len(params) == 0:
-                continue
+        params = definition.split(',')
+        if len(params) == 0:
+            continue
 
-            options = {}
-            for pair in params:
-                tokens = pair.split('=')
-                option_name = unquote(tokens[0].strip())
-                options[option_name] = unquote(tokens[1].strip())
+        options = {}
+        for pair in params:
+            tokens = pair.split('=')
+            option_name = unquote(tokens[0].strip())
+            options[option_name] = unquote(tokens[1].strip())
 
-            action = options.get('action', 'data')
-            if action == 'data':
-                substr = options.get('substr', '')
-                var_ref = options.get('var_ref', '')
-                check_empty_params(substr=substr, var_ref=var_ref)
+        action = options.get('action', 'data')
+        if action == 'data':
+            substr = options.get('substr', '')
+            var_ref = options.get('var_ref', '')
+            check_empty_params(substr=substr, var_ref=var_ref)
 
-                value = get_variable_value_by_ref(var_ref, cache_manager)
-                check_invalid_refs(var_ref=value)
+            value = get_variable_value_by_ref(var_ref, cache_manager)
+            check_invalid_refs(var_ref=value)
 
-                encoding = options.get('encoding', 'none')
-                substr = substr.encode('utf8')
-                if encoding == 'url':
-                    value = urlquote(value).encode('utf8')
-                elif encoding == 'base64':
-                    value = base64.b64encode(value.encode('utf8'))[:-1]
-                else:
-                    value = value.encode('utf8')
+            encoding = options.get('encoding', 'none')
+            substr = substr.encode('utf8')
+            if encoding == 'url':
+                value = urlquote(value).encode('utf8')
+            elif encoding == 'base64':
+                value = base64.b64encode(value.encode('utf8'))[:-1]
+            else:
+                value = value.encode('utf8')
 
-                new_body = request['data'].read().replace(substr, value)
-                request['headers']['content-length'] = "%s" % len(new_body)
-                request['data'] = BytesIO(new_body)
+            new_body = request['data'].read().replace(substr, value)
+            request['headers']['content-length'] = "%s" % len(new_body)
+            request['data'] = BytesIO(new_body)
 
-            elif action == 'basic_auth':
-                user_ref = options.get('user_ref', '')
-                password_ref = options.get('pass_ref', '')
-                check_empty_params(user_ref=user_ref, password_ref=password_ref)
+        elif action == 'basic_auth':
+            user_ref = options.get('user_ref', '')
+            password_ref = options.get('pass_ref', '')
+            check_empty_params(user_ref=user_ref, password_ref=password_ref)
 
-                user_value = get_variable_value_by_ref(user_ref, cache_manager)
-                password_value = get_variable_value_by_ref(password_ref, cache_manager)
-                check_invalid_refs(user_ref=user_value, password_ref=password_value)
+            user_value = get_variable_value_by_ref(user_ref, cache_manager)
+            password_value = get_variable_value_by_ref(password_ref, cache_manager)
+            check_invalid_refs(user_ref=user_value, password_ref=password_value)
 
-                token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))[:-1]
-                request['headers']['Authorization'] = 'Basic ' + token.decode('ascii')
-
-        except ValidationError:
-
-            if not ignore_errors:
-                raise
-
-        except Exception as e:
-            # TODO logging?
-            if not ignore_errors:
-                raise ValidationError("%s" % e)
+            token = base64.b64encode((user_value + ':' + password_value).encode('utf8'))[:-1]
+            request['headers']['Authorization'] = 'Basic ' + token.decode('ascii')
+        else:
+            raise ValidationError('Unsupported action: %s' % action)
 
 
 class SecureDataProcessor(object):
@@ -140,12 +130,5 @@ class SecureDataProcessor(object):
         # Process secure data from the X-WireCloud-Secure-Data header
         if WIRECLOUD_SECURE_DATA_HEADER in request['headers']:
             secure_data_value = request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
-            process_secure_data(secure_data_value, request, ignore_errors=False)
+            process_secure_data(secure_data_value, request)
             del request['headers'][WIRECLOUD_SECURE_DATA_HEADER]
-
-        # Process secure data cookie
-        cookie_parser = request['cookies']
-
-        if cookie_parser is not None and WIRECLOUD_SECURE_DATA_COOKIE in cookie_parser:
-            process_secure_data(cookie_parser[WIRECLOUD_SECURE_DATA_COOKIE].value, request, ignore_errors=True)
-            del cookie_parser[WIRECLOUD_SECURE_DATA_COOKIE]
