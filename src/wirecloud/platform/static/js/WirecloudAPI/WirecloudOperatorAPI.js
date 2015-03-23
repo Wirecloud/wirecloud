@@ -49,12 +49,6 @@
     ioperator = platform.Wirecloud.activeWorkspace.wiring.ioperators[id];
     MashupPlatform.resource = ioperator;
 
-    // HTTP module
-    Object.defineProperty(window.MashupPlatform, 'http', {value: {}});
-    Object.defineProperty(window.MashupPlatform.http, 'buildProxyURL', {value: platform.Wirecloud.io.buildProxyURL});
-    Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {value: platform.Wirecloud.io.makeRequest});
-    Object.preventExtensions(window.MashupPlatform.http);
-
     // Operator Module
     Object.defineProperty(window.MashupPlatform, 'operator', {value: {}});
     Object.defineProperty(window.MashupPlatform.operator, 'id', {value: id});

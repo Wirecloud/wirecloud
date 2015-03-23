@@ -182,7 +182,7 @@ WIRECLOUD_PROXY = Proxy()
 def proxy_request(request, protocol, domain, path):
 
     # TODO improve proxy security
-
+    request_method = request.method.upper()
     try:
         if settings.SESSION_COOKIE_NAME not in request.COOKIES:
             raise Exception()
@@ -192,12 +192,21 @@ def proxy_request(request, protocol, domain, path):
             raise Exception()
 
         referer_view_info = resolve(parsed_referer.path)
-        if referer_view_info.url_name != 'wirecloud.workspace_view':
-            raise Exception()
+        if referer_view_info.url_name == 'wirecloud.workspace_view':
 
-        from wirecloud.platform.models import Workspace
-        workspace = Workspace.objects.get(creator__username=unquote(referer_view_info.kwargs['owner']), name=unquote(referer_view_info.kwargs['name']))
-        if not workspace.public and workspace.creator != request.user:
+            from wirecloud.platform.models import Workspace
+            workspace = Workspace.objects.get(creator__username=unquote(referer_view_info.kwargs['owner']), name=unquote(referer_view_info.kwargs['name']))
+            if not workspace.public and workspace.creator != request.user:
+                raise Exception()
+
+        elif referer_view_info.url_name == 'wirecloud.widget_code_entry' or referer_view_info.url_name == 'wirecloud|proxy':
+
+            if request_method not in ('GET', 'POST'):
+                raise Exception()
+
+            workspace = None
+
+        else:
             raise Exception()
 
     except:
@@ -208,7 +217,7 @@ def proxy_request(request, protocol, domain, path):
         url += '?' + request.GET.urlencode()
 
     try:
-        response = WIRECLOUD_PROXY.do_request(request, url, request.method.upper(), workspace)
+        response = WIRECLOUD_PROXY.do_request(request, url, request_method, workspace)
     except Exception as e:
         msg = _("Error processing proxy request: %s") % unicode(e)
         return build_error_response(request, 500, msg)

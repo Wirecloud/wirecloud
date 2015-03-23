@@ -29,6 +29,12 @@
     var resource = MashupPlatform.resource;
     var guibuilder = new platform.StyledElements.GUIBuilder();
 
+    // HTTP module
+    Object.defineProperty(window.MashupPlatform, 'http', {value: {}});
+    Object.defineProperty(window.MashupPlatform.http, 'buildProxyURL', {value: platform.Wirecloud.io.buildProxyURL});
+    Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {value: platform.Wirecloud.io.makeRequest});
+    Object.preventExtensions(window.MashupPlatform.http);
+
     // Platform context module
     Object.defineProperty(window.MashupPlatform, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.context, 'getAvailableContext', {

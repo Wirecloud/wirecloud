@@ -61,12 +61,6 @@
     // Temporal reference to the resource (in this case a widget) so other API files can make use of it. This attribute is removed in WirecloudAPIClosure.js
     MashupPlatform.resource = iwidget;
 
-    // HTTP module
-    Object.defineProperty(window.MashupPlatform, 'http', {value: {}});
-    Object.defineProperty(window.MashupPlatform.http, 'buildProxyURL', {value: platform.Wirecloud.io.buildProxyURL});
-    Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {value: platform.Wirecloud.io.makeRequest});
-    Object.preventExtensions(window.MashupPlatform.http);
-
     // Widget module
     Object.defineProperty(window.MashupPlatform, 'widget', {value: {}});
     Object.defineProperty(window.MashupPlatform.widget, 'id', {value: id});

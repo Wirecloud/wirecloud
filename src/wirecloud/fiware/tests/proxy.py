@@ -124,6 +124,22 @@ class ProxyTestCase(WirecloudTestCase):
         self.assertEqual(response.status_code, 422)
         json.loads(self.read_response(response))
 
+    def test_fiware_idm_processor_requires_valid_referer(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
+        proxied_url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+
+        client = Client()
+        client.login(username='admin', password='admin')
+        response = client.post(proxied_url, data='{}', content_type='application/json',
+                HTTP_ACCEPT='application/json',
+                HTTP_HOST='localhost',
+                HTTP_REFERER='http://localhost' + proxied_url,
+                HTTP_X_FI_WARE_OAUTH_TOKEN='true',
+                HTTP_X_FI_WARE_OAUTH_HEADER_NAME='X-Auth-Token')
+        self.assertEqual(response.status_code, 422)
+        json.loads(self.read_response(response))
+
     def test_fiware_idm_no_token_available(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)

@@ -110,7 +110,10 @@ class ProxyTests(ProxyTestsBase):
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://other.server.com')
         self.assertEqual(response.status_code, 403)
 
-        # Not access rights
+    def test_request_with_workspace_referer_requires_permission(self):
+
+        client = Client()
+
         client.login(username='test', password='test')
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test2/workspace')
         self.assertEqual(response.status_code, 403)
@@ -135,16 +138,43 @@ class ProxyTests(ProxyTestsBase):
         client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
         client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
 
-        self.check_basic_requests(client)
+        self.check_basic_requests(client, 'http://localhost/test/workspace')
 
     def test_basic_proxy_requests(self):
 
         client = Client()
         client.login(username='test', password='test')
 
-        self.check_basic_requests(client)
+        self.check_basic_requests(client, 'http://localhost/test/workspace')
 
-    def check_basic_requests(self, client):
+    def test_basic_proxy_requests_from_widget(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        widget_url = reverse('wirecloud.widget_code_entry', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0"})
+        self.check_basic_requests(client, 'http://localhost' + widget_url)
+
+    def test_basic_proxy_requests_from_widget_restricted_to_get_post(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        self.network._servers['http']['example.com'].add_response('PUT', '/path', {'content': 'data'})
+        widget_url = reverse('wirecloud.widget_code_entry', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0"})
+        response = client.put(self.basic_url, "{}", content_type="application/json", HTTP_HOST='localhost', HTTP_REFERER=widget_url)
+        self.assertEqual(response.status_code, 403)
+
+
+    def test_basic_proxy_requests_from_proxied_content(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        proxied_url = 'http://localhost' + reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+        self.check_basic_requests(client, proxied_url)
+
+    def check_basic_requests(self, client, referer):
         def echo_headers_response(method, url, *args, **kwargs):
             data = kwargs['data'].read()
             if method == 'GET':
@@ -168,22 +198,22 @@ class ProxyTests(ProxyTestsBase):
             }
 
         # Basic GET request
-        expected_response_headers = {
-            'Content-Type': 'application/json',
-            'Content-Length': '166',
-            'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
-        }
-
         expected_response_body = {
-            'referer': 'http://localhost/test/workspace',
+            'referer': referer,
             'via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
             'x-forwarded-for': '127.0.0.1',
             'x-forwarded-host': 'example.com'
         }
 
+        expected_response_headers = {
+            'Content-Type': 'application/json',
+            'Content-Length': "%s" % len(json.dumps(expected_response_body)),
+            'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
+        }
+
         self.network._servers['http']['example.com'].add_response('GET', '/path', echo_headers_response)
         # Using "request" to work around https://code.djangoproject.com/ticket/20596
-        response = client.request(PATH_INFO=self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = client.request(PATH_INFO=self.basic_url, HTTP_HOST='localhost', HTTP_REFERER=referer)
         self.assertEqual(response.status_code, 200)
         if 'reason_phrase' in response:
             self.assertEqual(response.reason_phrase, 'CUSTOM REASON')
@@ -191,30 +221,30 @@ class ProxyTests(ProxyTestsBase):
         self.assertEqual(json.loads(self.read_response(response).decode('utf8')), expected_response_body)
 
         # Basic POST request
-        expected_response_headers = {
-            'Content-Type': 'application/json',
-            'Content-Length': '223',
-            'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
-        }
-
         expected_response_body = {
             'content-length': 2,
             'content-type': 'application/json',
-            'referer': 'http://localhost/test/workspace',
+            'referer': referer,
             'via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
             'x-forwarded-for': '127.0.0.1',
             'x-forwarded-host': 'example.com'
         }
 
+        expected_response_headers = {
+            'Content-Type': 'application/json',
+            'Content-Length': "%s" % len(json.dumps(expected_response_body)),
+            'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
+        }
+
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_headers_response)
-        response = client.post(self.basic_url, data='{}', content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = client.post(self.basic_url, data='{}', content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER=referer)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.get_response_headers(response), expected_response_headers)
         self.assertEqual(json.loads(self.read_response(response).decode('utf8')), expected_response_body)
 
         # Http Error 404
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/non_existing_file.html'})
-        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER=referer)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(self.read_response(response), b'')
 

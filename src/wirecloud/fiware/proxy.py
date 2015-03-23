@@ -33,7 +33,9 @@ class IDMTokenProcessor(object):
             return
 
         if not IDM_SUPPORT_ENABLED:
-            raise ValidationError(_('IDM support not enabled'))
+            raise ValidationError(_('IdM support not enabled'))
+        elif request['workspace'] is None:
+            raise ValidationError(_('IdM tokens can only be inyected on Ajax requests coming from authorized widgets'))
 
         header_name = None
         source = 'user'
