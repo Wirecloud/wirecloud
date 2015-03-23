@@ -228,14 +228,20 @@ class PlatformSouthMigrationsTestCase(TestCase):
         json_fixtures = []
 
         for filename in args:
-            file_opened = open(os.path.join(testdir_path, filename))
+            file_opened = open(os.path.join(testdir_path, filename + '.json'))
             json_fixtures.append(json.loads(file_opened.read()))
             file_opened.close()
+
+        if len(json_fixtures) == 0:
+            return None
+
+        if len(json_fixtures) == 1:
+            return json_fixtures[0]
 
         return tuple(json_fixtures)
 
     def test_restructure_behaviour_oriented_wiring_forwards(self):
-        input_file, output_file = self._read_json_fixtures('wiring_state_1.0_data.json', 'wiring_state_2.0_data.json')
+        input_file, output_file = self._read_json_fixtures('wiringstatus_v1.0', 'wiringstatus_v2.0')
 
         empty_workspace = Mock()
         empty_workspace.wiringStatus = '{}'
@@ -250,15 +256,9 @@ class PlatformSouthMigrationsTestCase(TestCase):
 
         self.assertEqual(empty_workspace.save.call_count, 0)
         self.assertEqual(workspace.save.call_count, 1)
-
-        new_wiring_state = json.loads(workspace.wiringStatus)
-
-        self.assertEqual(new_wiring_state, output_file)
-    test_restructure_behaviour_oriented_wiring_forwards.tags = ('behaviour-oriented-wiring',)
+        self.assertEqual(json.loads(workspace.wiringStatus), output_file)
 
     def test_restructure_behaviour_oriented_wiring_backwards(self):
         migration = self._pick_migration('0017_restructure_behaviour_oriented_wiring')
         orm = Mock(autospec=migration.prev_orm())
-
         self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
-    test_restructure_behaviour_oriented_wiring_backwards.tags = ('behaviour-oriented-wiring',)
