@@ -27,6 +27,7 @@ from six.moves.urllib.parse import unquote
 from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
 
+from wirecloud.platform.models import IWidget
 from wirecloud.platform.workspace.utils import VariableValueCacheManager
 from wirecloud.proxy.utils import ValidationError
 
@@ -43,6 +44,8 @@ def get_variable_value_by_ref(ref, cache_manager):
             return result.group('var_name')
         else:
             return cache_manager.get_variable_value_from_varname(result.group('iwidget_id'), result.group('var_name'))
+    except (IWidget.DoesNotExist, KeyError):
+        return None
     except:
         raise ValidationError('Invalid variable reference: %s' % ref)
 
@@ -77,7 +80,7 @@ def process_secure_data(text, request):
     cache_manager = VariableValueCacheManager(request['workspace'], request['user'])
     for definition in definitions:
         params = definition.split(',')
-        if len(params) == 0:
+        if len(params) == 1 and params[0].strip() == '':
             continue
 
         options = {}

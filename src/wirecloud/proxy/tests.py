@@ -436,6 +436,44 @@ class ProxySecureDataTests(ProxyTestsBase):
         for ref in ('666/inexitent', 'adfasdf', 'a/b/c'):
             self.check_invalid_ref(ref)
 
+    def test_secure_data_ignore_empty_definitions(self):
+
+        self.client.login(username='test', password='test')
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'status_code': 200, 'content': kwargs['data'].read()}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+
+        # Secure data header using constants and empty actions
+        secure_data_header = 'action=data, substr=|password|, var_ref=c/test_password'
+        secure_data_header += '&&  &action=data, substr=|username|, var_ref=c/test_username'
+        response = self.client.post(self.basic_url,
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.read_response(response), b'username=test_username&password=test_password')
+
+    def test_secure_data_invalid_action(self):
+
+        self.client.login(username='test', password='test')
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', "content")
+        # Secure data header with empty parameters
+        secure_data_header = 'action=invalidaction, user_ref=asdf'
+        response = self.client.post(self.basic_url,
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost/test/workspace',
+                            HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
+
+        self.assertEqual(response.status_code, 422)
+
     def test_secure_data_missing_parameters(self):
 
         self.client.login(username='test', password='test')
