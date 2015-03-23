@@ -132,7 +132,7 @@
                 resource.inputs[inputName].callback = callback;
             } else {
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid input endpoint', {endpoint: inputName}, true);
-                throw new MashupPlatform.wiring.EndpointError(exception_msg);
+                throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
             }
         }
     });
@@ -142,7 +142,7 @@
                 resource.outputs[outputName].propagate(data, options);
             } else {
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
-                throw new MashupPlatform.wiring.EndpointError(exception_msg);
+                throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
             }
         }
     });
@@ -152,13 +152,11 @@
                 return resource.outputs[outputName].getFinalSlots();
             } else {
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
-                throw new MashupPlatform.wiring.EndpointError(exception_msg);
+                throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
             }
         }
     });
-    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointError', {
-        value: platform.Wirecloud.wiring.EndpointError
-    });
+    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointDoesNotExistError', {value: platform.Wirecloud.wiring.EndpointDoesNotExistError});
     Object.preventExtensions(window.MashupPlatform.wiring);
 
     // General error handler
