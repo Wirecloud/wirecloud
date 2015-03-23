@@ -357,6 +357,8 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.getComponentView = function getComponentView(componentType, componentId) {
         var componentView;
 
+        componentView = null;
+
         if (this.behavioursEnabled) {
             switch (this.currentViewpoint) {
             case BehaviourEngine.viewpoints.GLOBAL:
@@ -416,6 +418,8 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
      */
     BehaviourEngine.prototype.getConnectionView = function getConnectionView(sourceName, targetName) {
         var connection, connectionView, found, i;
+
+        connectionView = null;
 
         switch (this.currentViewpoint) {
             case BehaviourEngine.viewpoints.GLOBAL:

@@ -219,6 +219,9 @@
         this.multiId = null;
         this.readOnly = false;
         this.isGhost = false;
+
+        this.maxCoordX = 150;
+        this.minCoordX = 25;
     };
 
     /*************************************************************************
@@ -297,11 +300,11 @@
         if (this.pullerStart == null) {
             difX = Math.abs(from.x - to.x);
             difY = Math.abs(from.y - to.y);
-            if (difX > 150) {
-                difX = 150;
+            if (difX > this.maxCoordX) {
+                difX = this.maxCoordX;
             }
-            if (difX < 25) {
-                difX = 25;
+            if (difX < this.minCoordX) {
+                difX = this.minCoordX;
             }
             result = {x: difX, y: 0};
         } else {
@@ -330,11 +333,11 @@
         if (this.pullerEnd == null) {
             difX = Math.abs(from.x - to.x);
             difY = Math.abs(from.y - to.y);
-            if (difX > 150) {
-                difX = 150;
+            if (difX > this.maxCoordX) {
+                difX = this.maxCoordX;
             }
-            if (difX < 25) {
-                difX = 25;
+            if (difX < this.minCoordX) {
+                difX = this.minCoordX;
             }
             result = {x: -difX, y: 0};
         } else {
@@ -352,14 +355,22 @@
      *  Set the Arrow pullerStart point.
      */
     Arrow.prototype.setPullerStart = function setPullerStart(pStart) {
-        this.pullerStart = pStart;
+        if (pStart == null || pStart == 'auto') {
+            this.pullerStart = null;
+        } else {
+            this.pullerStart = pStart;
+        }
     };
 
     /**
      *  Set the Arrow pullerEnd point.
      */
     Arrow.prototype.setPullerEnd = function setPullerEnd(pEnd) {
-        this.pullerEnd = pEnd;
+        if (pEnd == null || pEnd == 'auto') {
+            this.pullerEnd = null;
+        } else {
+            this.pullerEnd = pEnd;
+        }
     };
 
     /**
@@ -599,20 +610,23 @@
     Arrow.prototype.serialize = function serialize() {
         var sourcehandle, targethandle;
 
-        sourcehandle = this.getPullerStart();
-        targethandle = this.getPullerEnd();
+        if (this.pullerStart == null) {
+            sourcehandle = 'auto';
+        } else {
+            sourcehandle = this.getPullerStart();
+        }
+
+        if (this.pullerEnd == null) {
+            targethandle = 'auto';
+        } else {
+            targethandle = this.getPullerEnd();
+        }
 
         return {
             'sourcename': this.sourceName,
-            'sourcehandle': {
-                'x': sourcehandle.x,
-                'y': sourcehandle.y
-            },
+            'sourcehandle': sourcehandle,
             'targetname': this.targetName,
-            'targethandle': {
-                'x': targethandle.x,
-                'y': targethandle.y
-            }
+            'targethandle': targethandle
         };
     };
 

@@ -736,6 +736,25 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     /**
+     * @private
+     * @function
+     */
+    var isConnectionEndpoint = function isConnectionEndpoint(type, id, connectionList) {
+        var found, i, source, target;
+
+        for (found = false, i = 0; !found && i < connectionList.length; i++) {
+            source = connectionList[i].source;
+            target = connectionList[i].target;
+
+            if (source.type == type && source.id == id || target.type == type && target.id == id) {
+                found = true;
+            }
+        }
+
+        return found;
+    };
+
+    /**
      * @Private
      * load wiring from status and workspace info
      */
@@ -776,6 +795,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.behaviourEngine.readonly = true;
         this.components = {};
+        this.componentsMissingCount = 0;
 
         // Loading the widgets that are being used in the workspace...
         componentType = WiringEditor.WIDGET_TYPE;
@@ -783,6 +803,9 @@ Wirecloud.ui.WiringEditor = (function () {
 
         // Get all widgets available in the workspace.
         widgetList = workspace.getIWidgets();
+
+        // Get the existing connections in the wiring's trading description.
+        connectionList = status.connections;
 
         for (i = 0; i < widgetList.length; i++) {
             componentId = widgetList[i].id;
@@ -797,6 +820,15 @@ Wirecloud.ui.WiringEditor = (function () {
                 componentObj.disable();
                 // it will be added into wiring's diagram.
                 this.addComponent(componentType, componentId, widgetList[i]);
+            }
+            // If the widget exists as connection endpoint
+            else if (isConnectionEndpoint.call(this, componentType, componentId, connectionList)) {
+                // it will be disabled from panel of components.
+                componentObj.disable();
+                // it will be added into wiring's diagram.
+                this.behaviourEngine.readonly = false;
+                this.addComponent(componentType, componentId, widgetList[i]);
+                this.behaviourEngine.readonly = true;
             }
         }
 
@@ -839,9 +871,6 @@ Wirecloud.ui.WiringEditor = (function () {
         // Loading the connections established in the workspace...
         this.connections = [];
 
-        // Get the existing connections in the wiring's trading description.
-        connectionList = status.connections;
-
         for (i = 0; i < connectionList.length; i++) {
             connection = connectionList[i];
             // Get the absolute name of each endpoint.
@@ -855,9 +884,11 @@ Wirecloud.ui.WiringEditor = (function () {
                     // it will be added into wiring's diagram.
                     this.generateConnection(connection, sourceName, targetName);
                 }
-                // otherwise, the connection is misplaced.
+                // otherwise, the connection does not have visual description.
                 else {
-                    // TODO:
+                    this.behaviourEngine.readonly = false;
+                    this.generateConnection(connection, sourceName, targetName);
+                    this.behaviourEngine.readonly = true;
                 }
             }
             // otherwise, the connection has an endpoint misplaced...
@@ -1131,7 +1162,7 @@ Wirecloud.ui.WiringEditor = (function () {
             connectionView = this.behaviourEngine.getConnectionView(sourceName, targetName);
 
             try {
-                if (connection.readonly) {
+                if ('readonly' in connection && connection.readonly) {
                     // Increase ReadOnly connection count in each entity
                     startAnchor.getComponent().incReadOnlyConnectionsCount();
                     endAnchor.getComponent().incReadOnlyConnectionsCount();
@@ -1149,12 +1180,23 @@ Wirecloud.ui.WiringEditor = (function () {
                 endAnchor.addArrow(arrow);
 
                 // Set arrow pullers
-                arrow.setPullerStart(connectionView.pullerStart);
-                arrow.setPullerEnd(connectionView.pullerEnd);
+                if (connectionView != null) {
+                    arrow.setPullerStart(connectionView.sourcehandle);
+                    arrow.setPullerEnd(connectionView.targethandle);
+                }
 
                 // Draw the arrow
                 arrow.redraw();
-                this.connections.push(arrow);
+
+                this.connectionEngine.events.establish.dispatch({
+                    'connection': arrow,
+                    'sourceComponent': arrow.sourceComponent,
+                    'sourceEndpoint': arrow.startAnchor,
+                    'sourceName': arrow.sourceName,
+                    'targetComponent': arrow.targetComponent,
+                    'targetEndpoint': arrow.endAnchor,
+                    'targetName': arrow.targetName
+                });
             } catch (e) {
                 // TODO: Warning remove view for this connection and redo
                 msg = 'Creating connection. betwen [' + startAnchor.context.data.id + '] and [' + endAnchor.context.data.id + ']. ';
@@ -1481,11 +1523,16 @@ Wirecloud.ui.WiringEditor = (function () {
                     'source': [],
                     'target': []
                 },
-                position: {
+                position: _correctComponentPosition({
                     'x': -1,
                     'y': -1
-                }
+                })
             };
+
+            componentView.position.x += (this.componentsMissingCount * 10);
+            componentView.position.y += (this.componentsMissingCount * 30);
+
+            this.componentsMissingCount += 1;
             // TODO: attach this error to wirecloud logger.
         }
 

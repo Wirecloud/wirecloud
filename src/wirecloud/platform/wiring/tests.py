@@ -846,69 +846,29 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wiring', 'wiring_editor', 'wiring-recovery')
 
+    def _read_json_fixtures(self, *args):
+        testdir_path = os.path.join(os.path.dirname(__file__), 'test-data')
+        json_fixtures = []
+
+        for filename in args:
+            file_opened = open(os.path.join(testdir_path, filename + '.json'))
+            json_fixtures.append(json.loads(file_opened.read()))
+            file_opened.close()
+
+        if len(json_fixtures) == 0:
+            return None
+
+        if len(json_fixtures) == 1:
+            return json_fixtures[0]
+
+        return tuple(json_fixtures)
+
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_recovers_from_invalid_views_data(self):
+        wiring_status = self._read_json_fixtures('wiringstatus_data1')
 
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps({
-            "views": [
-                {
-                    "label": "default",
-                    "iwidgets": {
-                        "1": None
-                    },
-                    "operators": {
-                        "0": None
-                    },
-                    "connections": []
-                }
-            ],
-            "operators": {
-                "0": {
-                    "name": "Wirecloud/TestOperator/1.0",
-                    "id": "0",
-                    "preferences": {}
-                }
-            },
-            "connections": [
-                {
-                    "source": {
-                        "type": "iwidget",
-                        "id": 1,
-                        "endpoint": "outputendpoint"
-                    },
-                    "target": {
-                        "type": "iwidget",
-                        "id": 2,
-                        "endpoint": "inputendpoint"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "iwidget",
-                        "id": 2,
-                        "endpoint": "outputendpoint"
-                    },
-                    "target": {
-                        "type": "ioperator",
-                        "id": 0,
-                        "endpoint": "input"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "ioperator",
-                        "id": 0,
-                        "endpoint": "output"
-                    },
-                    "target": {
-                        "type": "iwidget",
-                        "id": 1,
-                        "endpoint": "inputendpoint"
-                    }
-                }
-            ]
-        })
+        workspace.wiringStatus = json.dumps(wiring_status)
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -918,13 +878,21 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
         self.wiring_view.expect_error = True
         with self.wiring_view as wiring:
-            alert_dialog = self.wait_element_visible_by_css_selector('.wc-alert-dialog')
-            # Alert should display detailed info about the problem (currently using an expandable panel)
-            alert_dialog.find_elements_by_css_selector('se-expander')
-            alert_dialog.find_element_by_xpath("//*[text()='Yes']").click()
-            time.sleep(2)
-            window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
-            self.assertEqual(window_menus, 1)
+
+            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperator")
+            self.assertIsNotNone(operator)
+            self.assertFalse(operator.is_missing)
+
+            widget = wiring.from_diagram_find_component_by_name('widget', "Test 1")
+            self.assertIsNotNone(widget)
+            self.assertFalse(widget.is_missing)
+
+            widget = wiring.from_diagram_find_component_by_name('widget', "Test 2")
+            self.assertIsNotNone(widget)
+            self.assertFalse(widget.is_missing)
+
+            connections = wiring.get_all_connections()
+            self.assertEqual(len(connections), 3)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
