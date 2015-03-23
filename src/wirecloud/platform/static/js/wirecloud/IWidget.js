@@ -138,7 +138,7 @@
             if (iwidget_prop_info != null) {
                 this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, iwidget_prop_info.readonly, iwidget_prop_info.value);
             } else {
-                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].meta.default);
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], this.propertyCommiter, false, properties[i].default);
             }
             this.properties[properties[i].name] = this.propertyList[i];
         }
