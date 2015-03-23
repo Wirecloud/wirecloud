@@ -1405,19 +1405,21 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     var _correctComponentPosition = function _correctComponentPosition(position) {
+        var min_x_coord = 15, min_y_coord = 5;
+
         if (typeof position !== 'object') {
             position = {
-                'x': 15,
-                'y': 5
+                'x': min_x_coord,
+                'y': min_y_coord
             };
         }
 
-        if (position.x < 15) {
-            position.x = 15;
+        if (position.x < min_x_coord) {
+            position.x = min_x_coord;
         }
 
-        if (position.y < 5) {
-            position.y = 5;
+        if (position.y < min_y_coord) {
+            position.y = min_y_coord;
         }
 
         return position;
@@ -1473,7 +1475,19 @@ Wirecloud.ui.WiringEditor = (function () {
             return this;
         }
 
-        componentView = this.behaviourEngine.getComponentView(componentType, componentId);
+        if (!(componentView=this.behaviourEngine.getComponentView(componentType, componentId))) {
+            componentView = {
+                endpoints: {
+                    'source': [],
+                    'target': []
+                },
+                position: {
+                    'x': -1,
+                    'y': -1
+                }
+            };
+            // TODO: attach this error to wirecloud logger.
+        }
 
         switch (componentType) {
         case WiringEditor.OPERATOR_TYPE:

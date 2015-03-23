@@ -243,6 +243,7 @@ class WidgetWalletResourceTester(object):
         old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
 
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.element))
         self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
 
         tmp = {
@@ -573,8 +574,17 @@ class WiringEndpointTester(object):
     def name(self):
         return self.element.find_element_by_css_selector(".endpoint-label").text
 
-    def move(self, endpoint):
+    def get_all_connections(self):
+        return self.testcase.driver.find_elements_by_css_selector('.wiring-connections .connection')
+
+    def connect(self, endpoint, from_existing=False):
+        connections_expected = len(self.get_all_connections())
+
+        if not from_existing:
+            connections_expected = connections_expected + 1
+
         ActionChains(self.testcase.driver).drag_and_drop(self.anchor, endpoint.anchor).perform()
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: connections_expected == len(self.get_all_connections()))
 
 
 class WorkspaceTabTester(object):
@@ -1237,15 +1247,18 @@ class WiringViewTester(object):
     def section_diagram(self):
         return self.testcase.driver.find_element_by_css_selector(self.CSS_SEC_DIAGRAM)
 
-    def create_new_instance_of(self, component, pos_x=0, pos_y=-0):
-        x = pos_x - 450
-        y = pos_y - 250
-        ActionChains(self.testcase.driver).click_and_hold(component).move_to_element(self.section_diagram).move_by_offset(x, y).release().perform()
+    def add_component(self, component_type, component, pos_x=0, pos_y=-0):
+        x = pos_x + 50
+        y = pos_y + 30
+
+        old_components = len(self.from_diagram_get_all_components(component_type))
+        ActionChains(self.testcase.driver).click_and_hold(component).move_to_element_with_offset(self.section_diagram, x, y).release().perform()
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.from_diagram_get_all_components(component_type)))
 
         return self
 
     def from_diagram_get_all_components(self, component_type):
-        return self.section_diagram.find_elements_by_css_selector(".component-%s" % component_type)
+        return self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)
 
     def from_diagram_find_component_by_name(self, component_type, component_name):
         collection = self.section_diagram.find_elements_by_css_selector(".component-%s" % component_type)
@@ -1262,8 +1275,8 @@ class WiringViewTester(object):
     def from_sidebar_find_component_by_name(self, component_type, component_name, all_steps=False):
         if all_steps:
             self.open_component_bar()
-            self.open_component_group(component_type)
 
+        self.open_component_group(component_type)
         collection = self.section_sidebar.find_elements_by_css_selector(".component-%s" % component_type)
 
         for component in collection:
@@ -1281,6 +1294,7 @@ class WiringViewTester(object):
         return self
 
     def open_component_group(self, component_type):
+        WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.wiring-sidebar .opt-%s-group' % component_type)))
         self.section_sidebar.find_element_by_css_selector(".opt-%s-group" % component_type).click()
 
         return self

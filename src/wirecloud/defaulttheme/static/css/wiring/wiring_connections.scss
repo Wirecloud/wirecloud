@@ -40,9 +40,9 @@
     }
 }
 
-.wiring-diagram .connection:hover {
-    @include children-display((".option-remove"), inline);
-}
+//.wiring-diagram .connection:hover {
+//    @include children-display((".option-remove"), inline);
+//}
 
 // ============================================================================
 // WIRING DIAGRAM - CONNECTION OPTION REMOVE

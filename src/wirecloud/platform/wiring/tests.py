@@ -363,7 +363,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
             operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperatorSelenium', all_steps=True)
             self.assertIsNotNone(operator)
-            wiring.create_new_instance_of(operator)
+            wiring.add_component('operator', operator)
 
             collection = wiring.from_diagram_get_all_components('operator')
             self.assertEqual(len(collection), 1)
@@ -490,11 +490,11 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (1)', all_steps=True)
             self.assertIsNotNone(widget)
-            wiring.create_new_instance_of(widget)
+            wiring.add_component('widget', widget)
 
             widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (2)')
             self.assertIsNotNone(widget)
-            wiring.create_new_instance_of(widget, pos_x=250)
+            wiring.add_component('widget', widget, pos_x=400)
 
             widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test (1)')
             self.assertIsNotNone(widget1)
@@ -548,15 +548,15 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (1)', all_steps=True)
             self.assertIsNotNone(widget)
-            wiring.create_new_instance_of(widget)
+            wiring.add_component('widget', widget)
 
             widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (2)')
             self.assertIsNotNone(widget)
-            wiring.create_new_instance_of(widget, pos_x=250)
+            wiring.add_component('widget', widget, pos_x=400)
 
             widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (3)')
             self.assertIsNotNone(widget)
-            wiring.create_new_instance_of(widget, pos_x=100, pos_y=150)
+            wiring.add_component('widget', widget, pos_x=100, pos_y=200)
 
             widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test (1)')
             self.assertIsNotNone(widget1)
@@ -570,7 +570,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             target = widget2.get_endpoint_by_name('target', 'Input')
             self.assertIsNotNone(target)
 
-            source.move(target)
+            source.connect(target)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -620,7 +620,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(connections), 1)
             connections[0].select()
 
-            target1.move(target2)
+            target1.connect(target2, from_existing=True)
 
             connections = wiring.get_all_connections()
             self.assertEqual(len(connections), 1)

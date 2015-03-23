@@ -361,6 +361,10 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             switch (this.currentViewpoint) {
             case BehaviourEngine.viewpoints.GLOBAL:
                 componentView = this.currentState.components[componentType][componentId];
+
+                if (!hasComponentView.call(this, componentView)) {
+                    componentView = null;
+                }
                 break;
             case BehaviourEngine.viewpoints.SINGLE:
                 if (this.currentBehaviour.hasComponentView(componentType, componentId)) {
@@ -794,6 +798,14 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         this.currentBehaviour.active = true;
 
         return this;
+    };
+
+    /**
+     * @private
+     * @function
+     */
+    var hasComponentView = function hasComponentView(view) {
+        return typeof view === 'object' && view != null && Object.keys(view).length > 0;
     };
 
     return BehaviourEngine;
