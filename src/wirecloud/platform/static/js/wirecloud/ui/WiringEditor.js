@@ -858,9 +858,12 @@ Wirecloud.ui.WiringEditor = (function () {
                 // it will be added into wiring's diagram.
                 this.addComponent(componentType, componentId, operatorGroup[componentId]);
             }
-            // otherwise, the operator is misplaced.
+            // otherwise, the operator does not have visual description...
             else {
-                // TODO:
+                // it will be added into wiring's diagram.
+                this.behaviourEngine.readonly = false;
+                this.addComponent(componentType, componentId, operatorGroup[componentId]);
+                this.behaviourEngine.readonly = true;
             }
         }
 

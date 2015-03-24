@@ -118,34 +118,30 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             return wiringState;
         }
 
-        if (state.version === "2.0") {
-            if (Array.isArray(state.connections)) {
-                wiringState.connections = state.connections;
+        if (Array.isArray(state.connections)) {
+            wiringState.connections = state.connections;
+        }
+
+        if (typeof state.operators === 'object') {
+            wiringState.operators = state.operators;
+        }
+
+        if (typeof state.visualdescription === 'object') {
+            if (typeof state.visualdescription.behavioursenabled === 'boolean') {
+                wiringState.visualdescription.behavioursenabled = state.visualdescription.behavioursenabled;
             }
 
-            if (typeof state.operators === 'object') {
-                wiringState.operators = state.operators;
+            if (Array.isArray(state.visualdescription.behaviours)) {
+                wiringState.visualdescription.behaviours = state.visualdescription.behaviours;
             }
 
-            if (typeof state.visualdescription === 'object') {
-                if (typeof state.visualdescription.behavioursenabled === 'boolean') {
-                    wiringState.visualdescription.behavioursenabled = state.visualdescription.behavioursenabled;
-                }
-
-                if (Array.isArray(state.visualdescription.behaviours)) {
-                    wiringState.visualdescription.behaviours = state.visualdescription.behaviours;
-                }
-
-                if (typeof state.visualdescription.components === 'object') {
-                    wiringState.visualdescription.components = state.visualdescription.components;
-                }
-
-                if (Array.isArray(state.visualdescription.connections)) {
-                    wiringState.visualdescription.connections = state.visualdescription.connections;
-                }
+            if (typeof state.visualdescription.components === 'object') {
+                wiringState.visualdescription.components = state.visualdescription.components;
             }
-        } else {
-            //TODO: old version 1.0 supported?
+
+            if (Array.isArray(state.visualdescription.connections)) {
+                wiringState.visualdescription.connections = state.visualdescription.connections;
+            }
         }
 
         return StyledElements.Utils.cloneObject(wiringState);

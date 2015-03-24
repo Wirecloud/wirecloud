@@ -844,7 +844,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor', 'wiring-recovery')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
 
     def _read_json_fixtures(self, *args):
         testdir_path = os.path.join(os.path.dirname(__file__), 'test-data')
@@ -865,7 +865,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_recovers_from_invalid_views_data(self):
-        wiring_status = self._read_json_fixtures('wiringstatus_data1')
+        wiring_status = self._read_json_fixtures('wiringstatus_recoverabledata')
 
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps(wiring_status)
@@ -914,27 +914,10 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_allows_wiring_status_reset_on_unrecoverable_errors(self):
+        wiring_status = self._read_json_fixtures('wiringstatus_unrecoverabledata')
 
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps({
-            "views": [],
-            "operators": {
-                "0": {
-                    "name": "Wirecloud/TestOperator/1.0",
-                    "id": "0"
-                }
-            },
-            "connections": [
-                {
-                    "source": {},
-                    "target": {
-                        "type": "iwidget",
-                        "id": 2,
-                        "endpoint": "inputendpoint"
-                    }
-                }
-            ]
-        })
+        workspace.wiringStatus = json.dumps(wiring_status)
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -946,16 +929,18 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(error_badge.text, '1')
         self.assertTrue(error_badge.is_displayed())
         self.wiring_view.expect_error = True
-        with self.wiring_view as wiring:
 
-            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
-            time.sleep(0.2)
-            self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
-            time.sleep(0.2)
-            window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
-            self.assertEqual(window_menus, 1)
-            wiring_entities = self.driver.find_elements_by_css_selector('.grid > .ioperator, .grid > .iwidget')
-            self.assertEqual(len(wiring_entities), 0)
+        with self.wiring_view as wiring:
+            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperator")
+            self.assertIsNotNone(operator)
+            self.assertFalse(operator.is_missing)
+
+            widget = wiring.from_diagram_find_component_by_name('widget', "Test 2")
+            self.assertIsNotNone(widget)
+            self.assertFalse(widget.is_missing)
+
+            connections = wiring.get_all_connections()
+            self.assertEqual(len(connections), 0)
 
 
 class WiringGhostTestCase(WirecloudSeleniumTestCase):
