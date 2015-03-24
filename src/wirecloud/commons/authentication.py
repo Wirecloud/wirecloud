@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -35,5 +35,5 @@ def logout(request, next_page=getattr(settings, 'LOGOUT_REDIRECT_URL', None), te
     if next_page is None:
         return render(request, template_name, {'title': _('Logged out')})
     else:
-        # Redirect to this page until the session has been cleared.
+        # Go to the next page
         return HttpResponseRedirect(next_page)

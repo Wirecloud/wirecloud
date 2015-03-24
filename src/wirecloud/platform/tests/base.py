@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,7 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from io import BytesIO
+import json
 from lxml import etree
 
 from django.conf import settings
@@ -25,7 +28,9 @@ from django.core.urlresolvers import reverse
 from django.test.client import RequestFactory
 from django.test import Client
 from django.utils import unittest
+from mock import Mock, patch
 
+from wirecloud.commons.authentication import logout
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import WirecloudTestCase, WirecloudSeleniumTestCase
@@ -124,6 +129,72 @@ class BasicViewsAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response['Location'].startswith(self.login_url))
+
+    def test_logout_delete_session_data(self):
+
+        logout_url = reverse('logout')
+        context_url = reverse('wirecloud.platform_context_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+        old_cookies = self.client.cookies.values()
+
+        response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
+        response_data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_data['username']['value'], 'user_with_workspaces')
+
+        self.client.get(logout_url, HTTP_ACCEPT='application/xhtml+xml')
+        for cookie in old_cookies:
+            # Check session id has also changed
+            self.assertNotEqual(self.client.cookies[cookie.key].value, cookie.value)
+            self.client.cookies[cookie.key] = cookie.value
+
+        response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
+        response_data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_data['username']['value'], 'anonymous')
+
+    def test_logout_maintains_language_setting(self):
+
+        logout_url = reverse('logout')
+        context_url = reverse('wirecloud.platform_context_collection')
+        platform_prefs_url = reverse('wirecloud.platform_preferences')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Set the language
+        response = self.client.post(platform_prefs_url, b'{"language": {"value": "es"}}', content_type="application/json", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        # logout
+        self.client.get(logout_url, HTTP_ACCEPT='application/xhtml+xml')
+
+        # Check language after logout
+        response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
+        response_data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_data['language']['value'], 'es')
+
+    def test_logout_obey_next_page_parameter(self):
+
+        # logout without next_page
+        request = Mock()
+        request.session.get.return_value = None
+        with patch('wirecloud.commons.authentication.render') as render_mock:
+            response = logout(request, next_page=None)
+            self.assertTrue(render_mock.called)
+        self.assertTrue(request.session.flush.called)
+
+        # logout with next_page
+        request = Mock()
+        request.session.get.return_value = None
+        with patch('wirecloud.commons.authentication.render') as render_mock:
+            response = logout(request, next_page='newurl')
+            self.assertFalse(render_mock.called)
+        self.assertTrue(request.session.flush.called)
+        self.assertTrue(response['Location'], 'newurl')
 
 
 class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
