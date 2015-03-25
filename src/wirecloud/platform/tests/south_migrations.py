@@ -103,6 +103,36 @@ class PlatformSouthMigrationsTestCase(TestCase):
     def test_add_field_variabledef_readonly__add_field_variabledef_value_backwards(self):
         self.check_basic_migration_backwards('0002_auto__add_field_variabledef_readonly__add_field_variabledef_value')
 
+    def test_fix_operator_deployment_dir_forwards(self):
+
+        migration = self._pick_migration("0004_fix_operator_deployment_dir")
+
+        operator1 = Mock()
+        orm = Mock(autospec=migration.orm())
+        self.fill_orm_external_models(orm)
+        orm['catalogue.CatalogueResource'].objects.filter.return_value = TestQueryResult([operator1])
+
+        with patch.multiple('wirecloud.platform.south_migrations.0004_fix_operator_deployment_dir', catalogue_utils=DEFAULT, showcase_utils=DEFAULT, WgtFile=DEFAULT) as mocks:
+            wgt_file = Mock()
+            mocks['WgtFile'].return_value = wgt_file
+            migration.migration_instance().forwards(orm)
+            mocks['showcase_utils'].wgt_deployer.deploy.assert_called_once_with(wgt_file)
+
+    def test_fix_operator_deployment_dir_backwards(self):
+
+        migration = self._pick_migration("0004_fix_operator_deployment_dir")
+
+        operator1 = Mock()
+        orm = Mock(autospec=migration.prev_orm())
+        self.fill_orm_external_models(orm)
+        orm['catalogue.CatalogueResource'].objects.filter.return_value = TestQueryResult([operator1])
+
+        with patch.multiple('wirecloud.platform.south_migrations.0004_fix_operator_deployment_dir', catalogue_utils=DEFAULT, showcase_utils=DEFAULT, WgtFile=DEFAULT) as mocks:
+            wgt_file = Mock()
+            mocks['WgtFile'].return_value = wgt_file
+            migration.migration_instance().backwards(orm)
+            mocks['catalogue_utils'].wgt_deployer.deploy.assert_called_once_with(wgt_file)
+
     def test_update_wiring_status_operator_prefs_structure_forwards(self):
 
         migration = self._pick_migration("0005_update_wiring_status_operator_prefs_structure")

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,7 +20,9 @@ import os
 
 from south.v2 import DataMigration
 
+from wirecloud.catalogue import utils as catalogue_utils
 from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.platform.widget import utils as showcase_utils
 
 
 class Migration(DataMigration):
@@ -30,8 +32,6 @@ class Migration(DataMigration):
     )
 
     def forwards(self, orm):
-        from wirecloud.catalogue import utils as catalogue_utils
-        from wirecloud.platform.widget import utils as showcase_utils
 
         for resource in orm['catalogue.CatalogueResource'].objects.filter(type=2, fromWGT=True):
             base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
@@ -40,7 +40,6 @@ class Migration(DataMigration):
             showcase_utils.wgt_deployer.deploy(wgt_file)
 
     def backwards(self, orm):
-        from wirecloud.catalogue import utils as catalogue_utils
 
         for resource in orm['catalogue.CatalogueResource'].objects.filter(type=2, fromWGT=True):
             base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
