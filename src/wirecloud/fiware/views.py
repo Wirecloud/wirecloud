@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -47,6 +47,8 @@ def oauth_discovery(request):
 
     return HttpResponse(json.dumps(endpoints), content_type='application/json; charset=UTF-8')
 
+
+@require_GET
 def login(request):
 
     if request.user.is_authenticated():
@@ -57,21 +59,22 @@ def login(request):
     return HttpResponseRedirect(url)
 
 
+@require_GET
 def logout(request):
 
-    response = HttpResponse(status=204)
+    external_domain = 'HTTP_ORIGIN' in request.META
 
     # Check if the logout request is originated in a different domain
-    if 'HTTP_ORIGIN' in request.META:
+    if external_domain:
         origin = request.META['HTTP_ORIGIN']
 
-        if origin in ALLOWED_ORIGINS:
-            response['Access-Control-Allow-Origin'] = origin
-            response['Access-Control-Allow-Credentials'] =  'true'
-        else:
-            response = build_error_response(request, 403, '')
+        if origin not in ALLOWED_ORIGINS:
+            return build_error_response(request, 403, '')
 
-    if request.method == 'GET' and response.status_code == 204:
+        # Force not redirect by using next_url=None
+        response = wirecloud_logout(request, next_url=None)
+        response['Access-Control-Allow-Origin'] = origin
+        response['Access-Control-Allow-Credentials'] =  'true'
+        return response
+    else:
         return wirecloud_logout(request)
-
-    return response
