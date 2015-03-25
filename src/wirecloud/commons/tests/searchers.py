@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -28,7 +28,7 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 class UserSearcherTestCase(WirecloudTestCase):
 
     fixtures = ('user_search_test_data',)
-    tags = ('user-search',)
+    tags = ('wirecloud-search-api',)
 
     @classmethod
     def setUpClass(cls):
@@ -36,8 +36,20 @@ class UserSearcherTestCase(WirecloudTestCase):
         cls.url = reverse('wirecloud.resource_search')
 
     def test_simple_search(self):
-        response = self.client.get(self.url + '?namespace=user&q=li')
+        response = self.client.get(self.url + '?namespace=user&q=li', HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(result_json['results']), 3)
+
+    def test_missing_namespace_parameters(self):
+        response = self.client.get(self.url, HTTP_ACCEPT="application/json")
+
+        self.assertEqual(response.status_code, 400)
+        result_json = json.loads(response.content.decode('utf-8'))
+
+    def test_invalid_namespace_parameters(self):
+        response = self.client.get(self.url + '?namespace=invalid', HTTP_ACCEPT="application/json")
+
+        self.assertEqual(response.status_code, 422)
+        result_json = json.loads(response.content.decode('utf-8'))

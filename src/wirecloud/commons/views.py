@@ -28,7 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.searchers import get_search_engine, is_available
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, consumes
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, consumes, produces
 
 
 extra_formatters = {
@@ -47,29 +47,25 @@ def server_error(request):
     return build_error_response(request, 500, 'Internal Server Error', extra_formatters)
 
 
-class JsonResponse(HttpResponse):
-
-    def __init__(self, data, **kwargs):
-        kwargs.setdefault('content_type', 'application/json')
-        content = json.dumps(data)
-
-        HttpResponse.__init__(self, content=content, **kwargs)
-
-
 class ResourceSearch(Resource):
 
     @no_cache
+    @produces(('application/json',))
     def read(self, request):
         querytext = request.GET.get('q', '')
-        indexname = request.GET.get('namespace', '')
+        indexname = request.GET.get('namespace', '').strip()
 
-        if not indexname or not is_available(indexname):
-            message = _('A supported namespace is required.')
+        if indexname == '':
+            message = _('Missing namespace GET parameter providing a search namespace')
             return build_error_response(request, 400, message)
 
-        response = get_search_engine(indexname).search(querytext)
+        if not is_available(indexname):
+            message = _('Invalid search namespace: %s' % indexname)
+            return build_error_response(request, 422, message)
 
-        return JsonResponse(response)
+        result = get_search_engine(indexname).search(querytext)
+
+        return HttpResponse(json.dumps(result, ensure_ascii=False), status=200, content_type='application/json; charset=utf-8')
 
 
 class SwitchUserService(Service):
