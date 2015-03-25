@@ -103,6 +103,12 @@ class PlatformSouthMigrationsTestCase(TestCase):
     def test_add_field_variabledef_readonly__add_field_variabledef_value_backwards(self):
         self.check_basic_migration_backwards('0002_auto__add_field_variabledef_readonly__add_field_variabledef_value')
 
+    def test_chg_field_variabledef_action_label__chg_field_variabledef_label_forwards(self):
+        self.check_basic_migration_forwards('0003_auto__chg_field_variabledef_action_label__chg_field_variabledef_label_')
+
+    def test_chg_field_variabledef_action_label__chg_field_variabledef_label_backwards(self):
+        self.check_basic_migration_backwards('0003_auto__chg_field_variabledef_action_label__chg_field_variabledef_label_')
+
     def test_fix_operator_deployment_dir_forwards(self):
 
         migration = self._pick_migration("0004_fix_operator_deployment_dir")
