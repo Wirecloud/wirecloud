@@ -34,12 +34,13 @@ from wirecloud.commons.authentication import logout
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import WirecloudTestCase, WirecloudSeleniumTestCase
+from wirecloud.platform.preferences.models import update_session_lang
 
 
 class BasicViewsAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('base-views',)
+    tags = ('wirecloud-base-views',)
 
     def setUp(self):
         super(BasicViewsAPI, self).setUp()
@@ -195,6 +196,64 @@ class BasicViewsAPI(WirecloudTestCase):
             self.assertFalse(render_mock.called)
         self.assertTrue(request.session.flush.called)
         self.assertTrue(response['Location'], 'newurl')
+
+    def test_update_session_lang_not_user_preference(self):
+
+        request = Mock()
+        request.session = {}
+
+        user = Mock()
+        with self.settings(DEFAULT_LANGUAGE='invented'):
+            with patch('wirecloud.platform.preferences.models.PlatformPreference') as platform_preference_mock:
+                platform_preference_mock.objects.filter.return_value = []
+                update_session_lang(request, user)
+
+        self.assertEqual(request.session['django_language'], 'invented')
+
+    def test_update_session_lang_invalid_user_preference(self):
+
+        request = Mock()
+        request.session = {'django_language': 'es'}
+
+        user = Mock()
+        with self.settings(DEFAULT_LANGUAGE='invented', LANGUAGES=(('es', 'Spanish'),)):
+            with patch('wirecloud.platform.preferences.models.PlatformPreference') as platform_preference_mock:
+                lang_pref_mock = Mock()
+                lang_pref_mock.value = 'invalid'
+                platform_preference_mock.objects.filter.return_value = [lang_pref_mock]
+                update_session_lang(request, user)
+
+        self.assertEqual(request.session['django_language'], 'invented')
+
+    def test_update_session_lang_browser(self):
+
+        request = Mock()
+        request.session = {'django_language': 'en'}
+
+        user = Mock()
+        with self.settings(DEFAULT_LANGUAGE='en', LANGUAGES=(('en', 'English'),)):
+            with patch('wirecloud.platform.preferences.models.PlatformPreference') as platform_preference_mock:
+                lang_pref_mock = Mock()
+                lang_pref_mock.value = 'browser'
+                platform_preference_mock.objects.filter.return_value = [lang_pref_mock]
+                update_session_lang(request, user)
+
+        self.assertNotIn('django_language', request.session)
+
+    def test_update_session_lang_default_browser(self):
+
+        request = Mock()
+        request.session = {}
+
+        user = Mock()
+        with self.settings(DEFAULT_LANGUAGE='browser', LANGUAGES=(('en', 'English'),)):
+            with patch('wirecloud.platform.preferences.models.PlatformPreference') as platform_preference_mock:
+                lang_pref_mock = Mock()
+                lang_pref_mock.value = 'default'
+                platform_preference_mock.objects.filter.return_value = [lang_pref_mock]
+                update_session_lang(request, user)
+
+        self.assertNotIn('django_language', request.session)
 
 
 class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):

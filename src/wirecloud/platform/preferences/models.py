@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2008-2013 Universidad Politécnica de Madrid
+# Copyright 2008-2015 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -97,7 +97,4 @@ def update_session_lang(request, user):
 
 @receiver(user_logged_in)
 def setup_language_from_preferences(sender, **kwargs):
-    user = kwargs['user']
-    request = kwargs['request']
-
-    update_session_lang(request, user)
+    update_session_lang(kwargs['request'], kwargs['user'])
