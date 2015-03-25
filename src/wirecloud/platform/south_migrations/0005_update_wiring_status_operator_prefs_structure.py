@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -45,7 +45,7 @@ class Migration(DataMigration):
                                 'value': preference
                             }
                 else:
-                    wiring_status['preferences'] = {}
+                    operator['preferences'] = {}
 
             workspace.wiringStatus = json.dumps(wiring_status, ensure_ascii=False)
             workspace.save()
@@ -65,7 +65,7 @@ class Migration(DataMigration):
                         if isinstance(preference, dict):
                             operator['preferences'][preference_name] = operator['preferences'][preference_name]['value']
                 else:
-                    wiring_status['preferences'] = {}
+                    operator['preferences'] = {}
 
             workspace.wiringStatus = json.dumps(wiring_status, ensure_ascii=False)
             workspace.save()

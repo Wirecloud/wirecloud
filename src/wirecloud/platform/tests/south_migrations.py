@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django.test import TestCase
 from mock import Mock, patch, DEFAULT
 from south.migration import Migrations
@@ -100,6 +102,62 @@ class PlatformSouthMigrationsTestCase(TestCase):
 
     def test_add_field_variabledef_readonly__add_field_variabledef_value_backwards(self):
         self.check_basic_migration_backwards('0002_auto__add_field_variabledef_readonly__add_field_variabledef_value')
+
+    def test_update_wiring_status_operator_prefs_structure_forwards(self):
+
+        migration = self._pick_migration("0005_update_wiring_status_operator_prefs_structure")
+
+        workspace1 = Mock()
+        workspace1.wiringStatus = '{"operators": {"1": {"preferences": {"pref1": "val1"}}, "2": {}, "3": {"preferences": {}}}}'
+
+        workspace2 = Mock()
+        workspace2.wiringStatus = '{"operators": {}}'
+
+        workspace3 = Mock()
+        workspace3.wiringStatus = 'invalid_wiring'
+
+        orm = Mock(autospec=migration.orm())
+        orm.Workspace.objects.all.return_value = TestQueryResult([workspace1, workspace2, workspace3])
+        self.fill_orm_external_models(orm)
+
+        # Pass migration
+        migration.migration_instance().forwards(orm)
+
+        # Check the migration has gone well
+        self.assertEqual(json.loads(workspace1.wiringStatus), {"operators": {"1": {"preferences": {"pref1": {"readonly": False, "hidden": False, "value": "val1"}}}, "2": {"preferences": {}}, "3": {"preferences": {}}}})
+        self.assertTrue(workspace1.save.called)
+        self.assertEqual(workspace2.wiringStatus, '{"operators": {}}')
+        self.assertTrue(workspace2.save.called)
+        self.assertEqual(workspace3.wiringStatus, 'invalid_wiring')
+        self.assertFalse(workspace3.save.called)
+
+    def test_update_wiring_status_operator_prefs_structure_backwards(self):
+
+        migration = self._pick_migration("0005_update_wiring_status_operator_prefs_structure")
+
+        workspace1 = Mock()
+        workspace1.wiringStatus = '{"operators": {"1": {"preferences": {"pref1": {"readonly": false, "hidden": false, "value": "val1"}}}, "2": {}, "3": {"preferences": {}}}}'
+
+        workspace2 = Mock()
+        workspace2.wiringStatus = '{"operators": {}}'
+
+        workspace3 = Mock()
+        workspace3.wiringStatus = 'invalid_wiring'
+
+        orm = Mock(autospec=migration.prev_orm())
+        orm.Workspace.objects.all.return_value = TestQueryResult([workspace1, workspace2, workspace3])
+        self.fill_orm_external_models(orm)
+
+        # Pass migration
+        migration.migration_instance().backwards(orm)
+
+        # Check the migration has gone well
+        self.assertEqual(json.loads(workspace1.wiringStatus), {"operators": {"1": {"preferences": {"pref1": "val1"}}, "2": {"preferences": {}}, "3": {"preferences": {}}}})
+        self.assertTrue(workspace1.save.called)
+        self.assertEqual(workspace2.wiringStatus, '{"operators": {}}')
+        self.assertTrue(workspace2.save.called)
+        self.assertEqual(workspace3.wiringStatus, 'invalid_wiring')
+        self.assertFalse(workspace3.save.called)
 
     def test_del_contextoption_forwards(self):
         self.check_basic_migration_forwards('0006_auto__del_contextoption')
