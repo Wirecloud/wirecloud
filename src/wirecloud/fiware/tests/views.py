@@ -42,21 +42,19 @@ class FIWAREViewsTestCase(unittest.TestCase):
 
     def test_login_redirects_to_social_auth(self):
 
-        social_url = reverse('socialauth_begin', kwargs={'backend': 'fiware'}) + '?param=a&t=d'
-
         request = Mock()
         request.META = {}
         request.GET.urlencode.return_value = 'param=a&t=d'
         request.user.is_authenticated.return_value = False
         request.method = 'GET'
         request.session.get.return_value = None
-        response = login(request)
-        self.assertEqual(response['Location'], social_url)
+        with patch("wirecloud.fiware.views.reverse") as reverse_mock:
+            reverse_mock.return_value = '/login/fiware'
+            response = login(request)
+        self.assertEqual(response['Location'], '/login/fiware?param=a&t=d')
         self.assertEqual(response.status_code, 302)
 
     def test_login_redirects_authenticated_users_to_the_landing_page(self):
-
-        social_url = reverse('socialauth_begin', kwargs={'backend': 'fiware'}) + '?param=a&t=d'
 
         request = Mock()
         request.META = {}
