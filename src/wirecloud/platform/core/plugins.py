@@ -87,6 +87,7 @@ TUTORIAL_FILES = (
     'js/wirecloud/ui/Tutorial/FormAction.js',
     'js/wirecloud/ui/Tutorial/AutoAction.js',
     'js/wirecloud/Tutorials/BasicConcepts.js',
+    'js/wirecloud/Tutorials/MashupWiringDesign.js',
 )
 
 STYLED_ELEMENTS_FILES = (
