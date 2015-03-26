@@ -239,8 +239,7 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
      * @param {HTMLElement} baseElement element of reference.
      */
     Anchor.prototype.getCoordinates = function getCoordinates(baseElement) {
-
-        var anchor_bcr, base_bcr, coordinates;
+        var anchor_bcr, base_bcr, coordinates, anchorWidth;
 
         anchor_bcr = this.wrapperElement.getBoundingClientRect();
         base_bcr = baseElement.getBoundingClientRect();
@@ -250,9 +249,15 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
             y: anchor_bcr.top - base_bcr.top + baseElement.scrollTop
         };
 
+        if (this.type == 'source') {
+            anchorWidth = this.wrapperElement.offsetWidth;
+        } else {
+            anchorWidth = 0;
+        }
+
         return {
-            x: Math.round(coordinates.x + (this.wrapperElement.offsetWidth / 2)),
-            y: Math.round(coordinates.y + (this.wrapperElement.offsetWidth / 2))
+            x: Math.round(coordinates.x + anchorWidth - 1),
+            y: Math.round(coordinates.y + (this.wrapperElement.offsetHeight / 2) -1)
         };
     };
 

@@ -42,6 +42,8 @@
             this.isSubAnchor = false;
             this.subAnchors = null;
         }
+
+        this.type = 'source';
     };
     SourceAnchor.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
 

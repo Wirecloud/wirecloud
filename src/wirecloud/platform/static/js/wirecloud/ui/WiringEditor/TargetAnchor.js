@@ -35,6 +35,7 @@
         this.context = context;
         Wirecloud.ui.WiringEditor.Anchor.call(this, false, arrowCreator, isGhost);
         this.arrowCreator = arrowCreator;
+        this.type = 'target';
     };
     TargetAnchor.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
 
