@@ -75,19 +75,14 @@ class TabPreference(models.Model):
 
 def update_session_lang(request, user):
     lang_code = None
-    pref_exists = True
     lang_prefs = PlatformPreference.objects.filter(user=user, name="language")
     if len(lang_prefs) != 0:
         lang_pref = lang_prefs[0]
         if lang_pref.value in ('default', 'browser') or check_for_language(lang_pref.value):
             lang_code = lang_pref.value
-    else:
-        pref_exists = False
 
     if lang_code in (None, 'default'):
         lang_code = settings.DEFAULT_LANGUAGE
-        if not pref_exists:
-            PlatformPreference.objects.create(user=user, name="language", value=lang_code)
 
     if lang_code != 'browser':
         request.session['django_language'] = lang_code
