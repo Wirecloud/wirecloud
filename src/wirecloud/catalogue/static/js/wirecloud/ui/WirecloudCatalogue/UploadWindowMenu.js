@@ -262,7 +262,6 @@
 
     UploadWindowMenu.prototype.show = function show() {
         Wirecloud.ui.WindowMenu.prototype.show.apply(this, arguments);
-        this.fileButton.clear();
         this.fileTable.repaint();
         updateEmptyStatus.call(this);
     };

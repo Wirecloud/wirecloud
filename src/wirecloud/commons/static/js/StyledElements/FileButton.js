@@ -28,7 +28,10 @@
     var FileButton, onchange;
 
     onchange = function onchange() {
-        this.events.fileselect.dispatch(this, this.getValue());
+        if (this.inputElement.files) {
+            this.events.fileselect.dispatch(this, this.inputElement.files);
+            this.inputElement.value = '';
+        }
     };
 
     FileButton = function FileButton(options) {
@@ -53,16 +56,6 @@
         this.inputElement.addEventListener('change', this._onchange, true);
     };
     FileButton.prototype = new StyledElements.StyledButton();
-
-    FileButton.prototype.clear = function clear() {
-        this.inputElement.value = '';
-
-        return this;
-    };
-
-    FileButton.prototype.getValue = function getValue() {
-        return this.inputElement.files;
-    };
 
     FileButton.prototype.destroy = function destroy() {
 
