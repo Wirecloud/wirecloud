@@ -24,11 +24,8 @@ from optparse import make_option
 
 from django.contrib.auth.models import User, Group
 from django.core.management.base import BaseCommand, CommandError
-from django.db import IntegrityError
 from django.utils.translation import override, ugettext as _
 
-from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.catalogue.utils import delete_resource
 from wirecloud.catalogue.views import add_packaged_resource
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
@@ -37,25 +34,29 @@ from wirecloud.platform.localcatalogue.utils import install_resource_to_user, in
 
 class Command(BaseCommand):
     args = '<file.wgt>...'
-    help = 'Adds a packaged resource into the catalogue'
+    help = 'Adds one or more packaged mashable application components into the catalogue'
     option_list = BaseCommand.option_list + (
-        make_option('-d', '--deploy-only',
+        make_option('--redeploy',
             action='store_true',
-            dest='deploy_only',
+            dest='redeploy',
+            help='Replace mashable application components files with the new ones.',
             default=False),
         make_option('-u', '--users',
             action='store',
             type='string',
             dest='users',
+            help='Comma separated list of users that will obtain access to the uploaded mashable application components',
             default=''),
         make_option('-g', '--groups',
             action='store',
             type='string',
             dest='groups',
+            help='Comma separated list of groups that will obtain access rights to the uploaded mashable application components',
             default=''),
         make_option('-p', '--public',
             action='store_true',
             dest='public',
+            help='Allow any user to access the mashable application components.',
             default=False),
     )
 
@@ -67,15 +68,15 @@ class Command(BaseCommand):
 
         users = []
         groups = []
-        deploy_only = options['deploy_only']
+        redeploy = options['redeploy']
         public = options['public']
         users_string = options['users'].strip()
         groups_string = options['groups'].strip()
 
-        if deploy_only is False and public is False and users_string == '' and groups_string == '':
-            raise CommandError(_('You must use at least one of the following flags: --deploy_only, --users, --groups or --public '))
+        if redeploy is False and public is False and users_string == '' and groups_string == '':
+            raise CommandError(_('You must use at least one of the following flags: --redeploy, --users, --groups or --public '))
 
-        if not options['deploy_only']:
+        if not options['redeploy']:
 
             if users_string != '':
                 for username in users_string.split(','):
@@ -96,7 +97,7 @@ class Command(BaseCommand):
             try:
                 template_contents = wgt_file.get_template()
                 template = TemplateParser(template_contents)
-                if options['deploy_only']:
+                if options['redeploy']:
                     add_packaged_resource(f, None, wgt_file=wgt_file, template=template, deploy_only=True)
                 else:
                     for user in users:
@@ -110,9 +111,9 @@ class Command(BaseCommand):
 
                 wgt_file.close()
                 f.close()
-                self.log(_('Successfully imported %(name)s widget') % {'name': template.get_resource_name()}, level=1)
+                self.log(_('Successfully imported \"%(name)s\" from \"%(file_name)s\"') % {'name': template.get_resource_processed_info()['title'], 'file_name': file_name}, level=1)
             except:
-                self.log(_('Failed to import widget from %(file_name)s') % {'file_name': file_name}, level=1)
+                self.log(_('Failed to import the mashable application component from %(file_name)s') % {'file_name': file_name}, level=1)
 
     def handle(self, *args, **options):
         with override(locale.getdefaultlocale()[0][:2]):
