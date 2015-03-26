@@ -20,6 +20,7 @@
 from __future__ import unicode_literals
 
 import logging
+import operator
 import random
 import regex
 from six import string_types
@@ -426,19 +427,20 @@ def search_page(search_result, hits, pagenum, maxresults):
     return search_result
 
 
-def suggest(request, prefix='', number=30):
+def suggest(request, prefix='', limit=30):
 
     reader = get_search_engine('resource').open_index().reader()
-    filenames = ['title', 'vendor', 'description']
-    result_suggestion = {}
-    frequent_terms = []
+    frequent_terms = {}
 
-    for fn in filenames:
-        frequent_terms += [t for f, t in reader.most_frequent_terms(fn, number, prefix)]
+    for fieldname in ['title', 'vendor', 'description']:
+        for frequency, term in reader.most_frequent_terms(fieldname, limit, prefix):
+            if term in frequent_terms:
+                frequent_terms[term] += frequency
+            else:
+                frequent_terms[term] = frequency
 
-    result_suggestion['terms'] = list(set(frequent_terms))
-
-    return result_suggestion
+    # flatten terms
+    return [term for term, frequency in sorted(frequent_terms.items(), key=operator.itemgetter(1), reverse=True)[:limit]]
 
 
 def order_by_version(searcher, docnum):

@@ -118,13 +118,13 @@ class ResourceCollection(Resource):
         }
 
         if not filters['orderby'].replace('-', '', 1) in ['creation_date', 'name', 'vendor']:
-            return build_error_response(request, 400, _('Orderby not supported'))
+            return build_error_response(request, 400, _('Orderby value not supported: %s') % filters['orderby'])
 
         if filters['scope']:
             filters['scope'] = set(filters['scope'].split(','))
             for scope in filters['scope']:
                 if scope not in ['mashup', 'operator', 'widget']:
-                    return build_error_response(request, 400, _('Scope not supported: %s') % scope)
+                    return build_error_response(request, 400, _('Scope value not supported: %s') % scope)
 
         if filters['staff'] and not request.user.is_staff:
             return build_error_response(request, 403, _('Forbidden'))
@@ -175,18 +175,21 @@ class ResourceSuggestion(Resource):
     def read(self, request):
 
         prefix = request.GET.get('p', '')
-        number = request.GET.get('top', '30')
+        number = request.GET.get('limit', '30')
 
         if prefix.find(' ') != -1:
-            return build_error_response(request, 400, _('Invalid prefix text'))
+            return build_error_response(request, 422, _('Invalid prefix value (it cannot contain spaces)'))
 
-        if not number.isdigit():
-            return build_error_response(request, 400, _('Invalid top number'))
+        try:
+            limit = int(number)
+            if limit < 0:
+                raise ValueError()
+        except:
+            return build_error_response(request, 422, _('Invalid limit value (it must be positive integer)'))
 
-        number = int(number)
-        response_json = suggest(request, prefix, number)
+        response = {'terms': suggest(request, prefix, limit)}
 
-        return HttpResponse(json.dumps(response_json), content_type='application/json')
+        return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 class ResourceVersionCollection(Resource):

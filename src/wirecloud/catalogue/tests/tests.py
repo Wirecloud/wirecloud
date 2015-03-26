@@ -347,10 +347,11 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
+
 class CatalogueSuggestionTestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_search_data',)
-    tags = ('catalogue', 'catalogue-suggestion')
+    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-suggestions')
 
     @classmethod
     def setUpClass(cls):
@@ -362,31 +363,40 @@ class CatalogueSuggestionTestCase(WirecloudTestCase):
 
         super(CatalogueSuggestionTestCase, self).setUp()
         self.client = Client()
+        self.client.login(username='admin', password='admin')
 
     def test_basic_suggestion(self):
-
-        self.client.login(username='admin', password='admin')
 
         response = self.client.get(self.base_url)
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(result_json['terms']), 50)
+        self.assertEqual(len(result_json['terms']), 30)
 
-        response = self.client.get(self.base_url + '?top=20')
+    def test_suggestion_limit(self):
+
+        response = self.client.get(self.base_url + '?limit=20')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(result_json['terms']), 40)
+        self.assertEqual(len(result_json['terms']), 20)
+
+    def test_suggestions_invalid_prefix(self):
 
         response = self.client.get(self.base_url + '?p=double+prefix')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 422)
 
-        response = self.client.get(self.base_url + '?top=fail')
-        self.assertEqual(response.status_code, 400)
+    def test_suggestions_invalid_limit(self):
+
+        response = self.client.get(self.base_url + '?limit=fail')
+        self.assertEqual(response.status_code, 422)
+
+    def test_basic_suggestion_using_prefix(self):
 
         response = self.client.get(self.base_url + '?p=wire')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(result_json['terms']), 8)
+        for term in result_json['terms']:
+            self.assertTrue(term.startswith('wire'))
 
 
 class CatalogueAPITestCase(WirecloudTestCase):
