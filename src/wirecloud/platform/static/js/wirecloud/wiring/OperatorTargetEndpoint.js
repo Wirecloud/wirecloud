@@ -64,8 +64,8 @@
     OperatorTargetEndpoint.prototype.getFinalSlots = function getFinalSlots() {
         var action_label = this.meta.action_label, result;
         if (!action_label || action_label === '') {
-            action_label = gettext('Use in %(slotName)s');
-            action_label = interpolate(action_label, {slotName: this.meta.label}, true);
+            action_label = gettext('Use in %(endpointName)s');
+            action_label = interpolate(action_label, {endpointName: this.meta.label}, true);
         }
 
         result = this.serialize();

@@ -1,0 +1,127 @@
+# Spanish/Spain translation of WireCloud.
+# Copyright (C) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# This file is distributed under the same license as the WireCloud package.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WireCloud 0.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-03-27 11:31+0100\n"
+"PO-Revision-Date: 2015-03-27 11:31+0100\n"
+"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"Language-Team: Español/España\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.7.5\n"
+
+#: static/js/wirecloud/WirecloudCatalogue.js:60
+msgid "Error deleting resource: %(errorMsg)s."
+msgstr "Error borrando el recurso: %(errorMsg)s."
+
+#: static/js/wirecloud/WirecloudCatalogue.js:199
+msgid "Uploading packaged resource"
+msgstr "Subiendo el recurso empaquetado"
+
+#: static/js/wirecloud/WirecloudCatalogue.js:221
+msgid "Error uploading packaged resource: %(errorMsg)s."
+msgstr "Error subiendo el recurso empaquetado: %(errorMsg)s."
+
+#: static/js/wirecloud/WirecloudCatalogue.js:255
+msgid "Error adding resource from URL: %(errorMsg)s."
+msgstr "Error añadiendo el recurso desde la URL: %(errorMsg)s."
+
+#: static/js/wirecloud/ui/ResourcePainter.js:122
+msgid "Home page"
+msgstr "Página web"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:140
+msgid "Issue tracker"
+msgstr "Seguimiento de incidencias"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:159
+msgid "License details"
+msgstr "Detalles de la licencia"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:216
+msgid "Download"
+msgstr "Descargar"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:225
+msgid "Add to workspace"
+msgstr "Añadir al entorno de trabajo"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:237
+msgid "Publish"
+msgstr "Publicar"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:247
+msgid "Uninstall"
+msgstr "Desinstalar"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:256
+msgid "Uninstall all versions"
+msgstr "Desinstalar todas las versiones"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:265
+msgid "Delete"
+msgstr "Borrar"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:274
+msgid "Delete all versions"
+msgstr "Borrar todas las versiones"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:326
+msgid "N/A"
+msgstr "N/A"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:74
+msgid "Main Info"
+msgstr "General"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:78
+msgid "Documentation"
+msgstr "Documentación"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:99
+msgid "Change Log"
+msgstr "Registro de cambios"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:41
+msgid "Uploading packaged components"
+msgstr "Subiendo los componentes empaquetados"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:52
+msgid "Error uploading the following components:"
+msgstr "Error subiendo los siguientes componentes:"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:111
+msgid "Upload mashable application components"
+msgstr "Subir componentes de aplicación mashable"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:116
+msgid "Select files from your computer"
+msgstr "Selecionar archivos del equipo"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:131
+msgid "Name"
+msgstr "Nombre"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:136
+msgid "Size"
+msgstr "Tamaño"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:155
+msgid "Add more files"
+msgstr "Añadir más ficheros"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:165
+msgid "Upload"
+msgstr "Subir"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:179
+msgid "Cancel"
+msgstr "Cancelar"

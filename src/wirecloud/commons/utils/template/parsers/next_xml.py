@@ -504,18 +504,18 @@ class ApplicationMashupTemplateParser(object):
             self._info['translations'][translation.get('lang')] = current_catalogue
 
         if self._info['default_lang'] not in self._info['translations']:
-            raise TemplateParseException(_("ERROR: There isn't a translation element for the default translation language: (%(default_lang)s)") % {'default_lang': self._info['default_lang']})
+            raise TemplateParseException(_("There isn't a translation element for the default translation language: (%(default_lang)s)") % {'default_lang': self._info['default_lang']})
 
         for index in self._translation_indexes:
             if index not in self._info['translations'][self._info['default_lang']]:
                 missing_translations.append(index)
 
         if len(missing_translations) > 0:
-            msg = _("ERROR: the following translation indexes need a default value: %(indexes)s.")
+            msg = _("The following translation indexes need a default value: %(indexes)s.")
             raise TemplateParseException(msg % {'indexes': ', '.join(missing_translations)})
 
         if len(extra_translations) > 0:
-            msg = _("ERROR: the following translation indexes are not used: %(indexes)s.")
+            msg = _("The following translation indexes are not used: %(indexes)s.")
             raise TemplateParseException(msg % {'indexes': ', '.join(extra_translations)})
 
         self._info['translation_index_usage'] = self._translation_indexes
@@ -533,7 +533,7 @@ class ApplicationMashupTemplateParser(object):
         if typeText in mapping:
             return mapping[typeText]
         else:
-            raise TemplateParseException(_("ERROR: unkown TEXT TYPE ") + typeText)
+            raise TemplateParseException(_("Invalid type: %s") % typeText)
 
     def get_contents(self):
         return etree.tostring(self._doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)

@@ -66,7 +66,7 @@
                 "defaultValue":  3,
                 "label":         gettext("Vertical Margin between widgets (in pixels)"),
                 "type":          "number",
-                "description":   gettext("Vertical margin between widgets. Must be specified in pixel units. (default: 3px)")
+                "description":   gettext("Vertical Margin between widgets. Must be specified in pixel units. (default: 3px)")
             }
         ],
         'gridlayout': [
@@ -77,16 +77,16 @@
                 "defaultValue":  20,
                 "label":         gettext("Columns"),
                 "type":          "number",
-                "description":   gettext("Grid columns. (default: 12 columns)")
+                "description":   gettext("Grid columns. (default: 20 columns)")
             },
             {
                 "name":          "rows",
                 "min":           1,
                 "max":           200,
-                "defaultValue":  6,
+                "defaultValue":  12,
                 "label":         gettext("Rows"),
                 "type":          "number",
-                "description":   gettext("Grid rows (default: 6 rows)")
+                "description":   gettext("Grid rows. (default: 12 rows)")
             },
             {
                 "name":          "horizontalmargin",

@@ -13,19 +13,19 @@
         <div class="grid-box width25">
             <div class="panel module">
                 <p class="img"> <img src="{{ STATIC_URL }}images/innovation3.png" alt="Innovation"/> </p>
-                <h3> Innovation </h3>
-                        <p> Innovate through experimentation by choosing the best suited widgets and prefab mashup-lets for your devised mashup from a vast, ever-growing distributed catalogue </p>
-                </div>
+                <h3>{% trans "Innovation" %}</h3>
+                <p>{% trans "Innovate through experimentation by choosing the best suited widgets and prefab mashup-lets for your devised mashup from a vast, ever-growing distributed catalogue" %}</p>
             </div>
+        </div>
 
         <div class="grid-box width25">
             <div class="panel module">
                 <p class="img"> <img src="{{ STATIC_URL }}images/features.png" alt="Features"/> </p>
-                <h3> Generic Features </h3>
+                <h3>{% trans "Generic Features" %}</h3>
                 <ul>
-                    <li>JavaScript pub/sub API for event-driven widgets</li>
-                    <li>NGSI API compatible with FIWARE's Orion Context Broker Generic Enabler</li>
-                    <li>Server-side state persistence for widgets and mashups</li>
+                    <li>{% trans "JavaScript pub/sub API for event-driven widgets" %}</li>
+                    <li>{% trans "NGSI API compatible with FIWARE's Orion Context Broker Generic Enabler" %}</li>
+                    <li>{% trans "Server-side state persistence for widgets and mashups" %}</li>
                 </ul>
             </div>
         </div>
@@ -33,20 +33,20 @@
         <div class="grid-box width25">
             <div class="panel module">
                 <p class="img"> <img src="{{ STATIC_URL }}images/piping.png" alt="Wiring &amp; Piping"/> </p>
-                <h3> Wiring &amp; Piping </h3>
-                <p> Wiring allows you to easily connect widgets in a mashup to create a full-fledged dashboard with RIA functionality. </p>
-                <p> Piping links your widgets to back-end services or data sources through an extendable set of operators, including filters, aggregators, adapters, etc. </p>
+                <h3>{% trans "Wiring &amp; Piping" %}</h3>
+                <p>{% trans "Wiring allows you to easily connect widgets in a mashup to create a full-fledged dashboard with RIA functionality." %}</p>
+                <p>{% trans "Piping links your widgets to back-end services or data sources through an extendable set of operators, including filters, aggregators, adapters, etc." %}</p>
             </div>
         </div>
 
         <div class="grid-box width25">
             <div class="panel module">
                 <p class="img"> <img src="{{ STATIC_URL }}images/fiware2.png" alt="Fiware" /></p>
-                <h3>100% FIWARE</h3>
+                <h3>{% trans "100% FIWARE" %}</h3>
                 <ul>
-                    <li>1st OSS reference implementation of the Application Mashup GE</li>
-                    <li>Support for linked-USDL</li>
-                    <li>Full integration with FIWARE's:
+                    <li>{% trans "1st OSS reference implementation of the Application Mashup GE" %}</li>
+                    <li>{% trans "Support for linked-USDL" %}</li>
+                    <li>{% trans "Full integration with FIWARE's:" %}
                         <ul>
                             <li>Marketplace</li>
                             <li>Store</li>

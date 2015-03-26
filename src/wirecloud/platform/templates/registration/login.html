@@ -5,7 +5,7 @@
       lang="{{ LANGUAGE_CODE }}">
 
 <head>
-    <title>Wirecloud Platform - Sign in</title>
+    <title>{% trans "WireCloud Platform - Sign in" %}</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
     {% platform_css "index" %}
@@ -26,7 +26,7 @@
 
         <div id="unsupported-browser-msg" class="alert alert-error" style="display: none; text-align: left;">
             <h4>{% trans "Your browser seems to lack some required features" %}</h4>
-            <p>{% blocktrans %}We recommend you to upgrade your browser to the newest version of either <a href="https://www.mozilla.org/firefox">Firefox</a> or <a href="www.google.com/chrome">Google Chrome</a> as these are the browsers currently supported by Wirecloud.{% endblocktrans %}</p>
+            <p>{% blocktrans %}We recommend you to upgrade your browser to the newest version of either <a href="https://www.mozilla.org/firefox">Firefox</a> or <a href="www.google.com/chrome">Google Chrome</a> as these are the browsers currently supported by WireCloud.{% endblocktrans %}</p>
         </div>
 
         <form class="formee" style="text-align: left;width: 400px" method="post">

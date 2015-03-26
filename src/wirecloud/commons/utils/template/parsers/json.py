@@ -228,12 +228,12 @@ class JSONTemplateParser(object):
     def get_resource_info(self):
 
         if not is_valid_vendor(self._info['vendor']):
-            raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
+            raise TemplateParseException(_('The format of the vendor is invalid.'))
 
         if not is_valid_name(self._info['name']):
-            raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
+            raise TemplateParseException(_('The format of the name is invalid.'))
 
         if not is_valid_version(self._info['version']):
-            raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
+            raise TemplateParseException(_('The format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
 
         return dict(self._info)

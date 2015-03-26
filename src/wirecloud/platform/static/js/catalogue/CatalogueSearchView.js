@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,29 +25,24 @@
 
     "use strict";
 
-    var initEmptyCatalogueInfoBox = function initEmptyCatalogueInfoBox() {
-        // Tutorial layer for empty catalogues
-        this.emptyBox = document.createElement('div');
-        this.emptyBox.className = 'catalogueEmptyBox';
+    var builder = new StyledElements.GUIBuilder();
 
-        var wrapper = document.createElement('div');
-        wrapper.className = 'alert alert-info';
+    var initEmptyCatalogueInfoBox = function initEmptyCatalogueInfoBox(title, message) {
 
-        // Title
-        var pTitle = document.createElement('h4');
-        pTitle.textContent = gettext("Empty Marketplace!");
-        wrapper.appendChild(pTitle);
+        // Build the message box used when there are no resources in the catalogue
+        var layer = builder.DEFAULT_OPENING + '<div class="catalogueEmptyBox"><div class="alert alert-info"><h4><t:title/></h4><p><t:message/></p></div></div>' + builder.DEFAULT_CLOSING;
 
-        // Message
-        var message = document.createElement('p');
-        message.innerHTML = gettext("This is an empty Marketplace. You can upload widgets or operators using the button to the right of the name of the marketplace");
-        wrapper.appendChild(message);
-
-        this.emptyBox.appendChild(wrapper);
+        this.emptyBox = builder.parse(layer, {title: title, message: message}).elements[0];
     };
 
     var CatalogueSearchView = function CatalogueSearchView(id, options) {
-        var builder, context, extra_context, resource_template;
+        var context, extra_context, resource_template;
+
+        options = Wirecloud.Utils.merge({
+            // Default options
+            emptyTitle: gettext("Empty Marketplace!"),
+            emptyMessage: gettext("This marketplace is empty, that is, it does not provide any resource at this time.")
+        }, options);
 
         options['class'] = 'search_interface loading';
         this.catalogue = options.catalogue;
@@ -56,8 +51,6 @@
         if (options.gui_template == null) {
             options.gui_template = 'wirecloud_catalogue_search_interface';
         }
-
-        builder = new StyledElements.GUIBuilder();
         this.source = new StyledElements.PaginatedSource({
             'pageSize': 30,
             'order_by': '-creation_date',
@@ -98,13 +91,7 @@
             if (pagination.totalCount === 0 && pagination.pOptions.keywords.trim() === "" && pagination.pOptions.scope === 'all') {
                 this.resource_list.appendChild(this.emptyBox);
             } else if (pagination.totalCount === 0) {
-                msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p>" +
-                    "<p>Suggestions:</p>" +
-                    "<ul>" +
-                    "<li>Make sure all words are spelled correctly.</li>" +
-                    "<li>Try different keywords.</li>" +
-                    "<li>Try more general keywords.</li>" +
-                    "</ul>");
+                msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
                 msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(pagination.pOptions.keywords.trim())}, true);
                 this.resource_painter.setError(new StyledElements.Fragment(msg));
             }
@@ -112,7 +99,7 @@
             this.enable();
         }.bind(this));
         this.resource_list = new StyledElements.Container({'class': 'resource_list'});
-        this.simple_search_input = new StyledElements.StyledTextField({'class': 'simple_search_text', 'placeholder': 'Keywords...'});
+        this.simple_search_input = new StyledElements.StyledTextField({'class': 'simple_search_text', 'placeholder': gettext('Keywords...')});
         this.simple_search_input.inputElement.addEventListener('keypress', this._onSearchInputKeyPress.bind(this));
         this.simple_search_input.addEventListener('change', onSearchInput.bind(this));
 
@@ -187,7 +174,7 @@
         );
 
         this.addEventListener('show', this.refresh_if_needed.bind(this));
-        initEmptyCatalogueInfoBox.call(this);
+        initEmptyCatalogueInfoBox.call(this, options.emptyTitle, options.emptyMessage);
     };
     CatalogueSearchView.prototype = new StyledElements.Alternative();
 

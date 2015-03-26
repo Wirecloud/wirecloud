@@ -125,7 +125,7 @@
 
     Widget.prototype.getInfoString = function getInfoString() {
         var transObj = {vendor: this.vendor, name: this.name, version: this.version};
-        var msg = gettext("[WidgetVendor: %(vendor)s, WidgetName: %(name)s, WidgetVersion: %(version)s]");
+        var msg = gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
         return interpolate(msg, transObj, true);
     };
 

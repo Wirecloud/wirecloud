@@ -78,6 +78,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         'django.contrib.staticfiles',
         'django.contrib.admin',
         'wirecloud.commons',
+        'wirecloud.defaulttheme',
         'south',
         'compressor',
     )

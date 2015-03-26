@@ -35,8 +35,15 @@
         this.alternatives = new StyledElements.StyledAlternatives();
         this.appendChild(this.alternatives);
 
+        var search_options = {
+            catalogue: this,
+            resource_painter: Wirecloud.ui.ResourcePainter,
+            resource_extra_context: resource_extra_context,
+            emptyTitle: gettext('Empty resource list'),
+            emptyMessage: gettext('Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button.')
+        };
         this.viewsByName = {
-            'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter, resource_extra_context: resource_extra_context}}),
+            'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: search_options}),
             'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -108,25 +108,25 @@
      * Converts
      */
     DragboardLayout.prototype.adaptColumnOffset = function adaptColumnOffset(pixels) {
-        var msg = gettext("method \"%(method)s\" must be implemented.");
+        var msg = "method \"%(method)s\" must be implemented.";
         msg = interpolate(msg, {method: "adaptColumnOffset"}, true);
         throw new Error(msg);
     };
 
     DragboardLayout.prototype.adaptRowOffset = function adaptRowOffset(pixels) {
-        var msg = gettext("method \"%(method)s\" must be implemented.");
+        var msg = "method \"%(method)s\" must be implemented.";
         msg = interpolate(msg, {method: "adaptRowOffset"}, true);
         throw new Error(msg);
     };
 
     DragboardLayout.prototype.adaptHeight = function adaptHeight(contentHeight, fullSize, oldLayout) {
-        var msg = gettext("method \"%(method)s\" must be implemented.");
+        var msg = "method \"%(method)s\" must be implemented.";
         msg = interpolate(msg, {method: "adaptHeight"}, true);
         throw new Error(msg);
     };
 
     DragboardLayout.prototype.adaptWidth = function adaptWidth(contentWidth, fullSize, oldLayout) {
-        var msg = gettext("method \"%(method)s\" must be implemented.");
+        var msg = "method \"%(method)s\" must be implemented.";
         msg = interpolate(msg, {method: "adaptWidth"}, true);
         throw new Error(msg);
     };

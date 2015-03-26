@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2014 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -43,7 +43,7 @@
                     {name: 'version', label: gettext('Version'), type: 'version',  required: true},
                     {name: 'email', label: gettext('Email'), type: 'text',  required: true},
                     {name: 'description', label: gettext('Description'), type: 'longtext'},
-                    {name: 'doc', label: gettext('Homepage'), type: 'text'},
+                    {name: 'doc', label: gettext('Home page'), type: 'text'},
                     {name: 'authors', label: gettext('Author'), type: 'text',  initialValue: user_name, defaultValue: user_name}
                 ]
             },
@@ -71,7 +71,7 @@
 
         // Disable preference and property parametrization for now
         //this._addVariableParametrization(workspace, fields);
-        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Upload workspace to local catalogue'), 'publish_workspace', {autoHide: false});
+        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Upload workspace to my resources'), 'publish_workspace', {autoHide: false});
 
         //fill a warning message
         var warning = document.createElement('div');
@@ -135,7 +135,7 @@
             }
             if (prop_params.length !== 0) {
                 var_elements.props = {
-                    label: gettext('Properties'),
+                    label: gettext('Persistent variables'),
                     type: 'fieldset',
                     fields: prop_params.sort(this._sortVariables)
                 };

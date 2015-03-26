@@ -91,7 +91,7 @@ class ResourceCollection(Resource):
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
             install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
             if not 'file' in request.FILES:
-                return build_error_response(request, 400, _('Missing file to upload'))
+                return build_error_response(request, 400, _('Missing component file in the request'))
 
             downloaded_file = request.FILES['file']
             try:

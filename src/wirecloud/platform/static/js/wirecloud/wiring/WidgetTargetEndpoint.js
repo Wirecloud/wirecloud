@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -66,8 +66,8 @@
         var result, action_label = this.meta.action_label;
 
         if (!action_label || action_label === '') {
-            action_label = gettext('Use in %(slotName)s');
-            action_label = interpolate(action_label, {slotName: this.meta.label}, true);
+            action_label = gettext('Use in %(endpointName)s');
+            action_label = interpolate(action_label, {endpointName: this.meta.label}, true);
         }
 
         result = this.serialize();

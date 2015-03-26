@@ -1,152 +1,166 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Spanish/Spain translation of WireCloud.
+# Copyright (C) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# This file is distributed under the same license as the WireCloud package.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: WireCloud 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-07 13:03+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2015-03-27 11:31+0100\n"
+"PO-Revision-Date: 2015-03-26 20:31+0100\n"
+"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"Language-Team: Español/España\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.7.5\n"
 
-#: models.py:56
+#: models.py:61
+msgid "Vendor"
+msgstr "Distribuidor"
+
+#: models.py:62
 msgid "Name"
 msgstr "Nombre"
 
-#: models.py:57
-msgid "Display Name"
-msgstr ""
-
-#: models.py:58
-msgid "Vendor"
-msgstr ""
-
-#: models.py:59
+#: models.py:63
 msgid "Version"
 msgstr "Versión"
 
-#: models.py:60
+#: models.py:64
 msgid "Type"
 msgstr "Tipo"
 
-#: models.py:62
-msgid "Author"
-msgstr ""
-
-#: models.py:63
-msgid "Mail"
-msgstr ""
-
-#: models.py:67
+#: models.py:68
 msgid "Available to all users"
 msgstr "Disponible para todos los usuarios"
 
-#: models.py:68
+#: models.py:69
 msgid "Users"
 msgstr "Usuarios"
 
-#: models.py:69
+#: models.py:70
 msgid "Groups"
 msgstr "Grupos"
 
-#: models.py:71
-msgid "Description"
-msgstr "Descripción"
-
-#: models.py:72
-msgid "License"
-msgstr "Licencia"
+#: models.py:73
+msgid "templateURI"
+msgstr "templateURI"
 
 #: models.py:75
-msgid "imageURI"
-msgstr ""
-
-#: models.py:76
-msgid "iPhoneImageURI"
-msgstr ""
+msgid "popularity"
+msgstr "popularidad"
 
 #: models.py:77
-msgid "wikiURI"
-msgstr ""
-
-#: models.py:78
-msgid "templateURI"
-msgstr ""
-
-#: models.py:80
-msgid "popularity"
-msgstr ""
-
-#: models.py:81
-msgid "fromWGT"
-msgstr ""
-
-#: models.py:83
 msgid "JSON description"
-msgstr ""
+msgstr "Descripción en JSON"
 
-#: models.py:158
-msgid "Friend code"
-msgstr ""
+#: utils.py:111
+#, python-format
+msgid "Missing contents file: %(file_name)s."
+msgstr "Falta el fichero con los contenidos: %(file_name)s."
 
-#: models.py:159
-msgid "Wiring"
-msgstr ""
-
-#: utils.py:98
+#: utils.py:117
 #, python-format
 msgid ""
 "%(file_name)s was not encoded using the specified charset (%(charset)s "
 "according to the widget descriptor file)."
 msgstr ""
+"El fichero %(file_name)s no está codificado usando el conjunto de caracteres "
+"indicado (%(charset)s según el fichero de descripción del widget)."
 
-#: utils.py:200
+#: utils.py:163
 #, python-format
 msgid "user %(username)s is not the owner of the resource %(resource_id)s"
-msgstr ""
+msgstr "el usuario %(username)s no es el dueño del recurso %(resource_id)s"
 
-#: views.py:115
+#: views.py:94
 msgid "Missing parameter: template_uri or file"
 msgstr "Faltan el parámetro template_uri o file"
 
-#: views.py:123
+#: views.py:102
 msgid "Resource already exists"
-msgstr ""
+msgstr "Ya existe el recurso"
 
-#: views.py:284 views.py:344 views.py:390 views.py:416
+#: views.py:121
+#, python-format
+msgid "Orderby value not supported: %s"
+msgstr "Valor para el parámetro orderby no soportado: %s"
+
+#: views.py:127
+#, python-format
+msgid "Scope value not supported: %s"
+msgstr "Valor para el parámetro scope no soportado: %s"
+
+#: views.py:130
+msgid "Forbidden"
+msgstr "Prohibido"
+
+#: views.py:181
+msgid "Invalid prefix value (it cannot contain spaces)"
+msgstr "Valor inválido para el parámetro limit (no puede contener espacios)"
+
+#: views.py:188
+msgid "Invalid limit value (it must be positive integer)"
+msgstr ""
+"Valor inválido para el parámetro limit (tiene que ser un entero positivo)"
+
+#: views.py:203
 #, python-format
 msgid "malformed json data: %s"
 msgstr "datos json malformados: %s"
 
-#: management/commands/addtocatalogue.py:50
+#: views.py:238
+msgid "Error opening the changelog file"
+msgstr "Error abriendo el fichero de registro de cambios"
+
+#: views.py:258
+#, python-format
+msgid ""
+"You can find the documentation of this resource in this external <a target="
+"\"_blank\" href=\"%s\">link</a>"
+msgstr ""
+"Puedes encontrar la documentación de este recurso in este <a target=\"_blank"
+"\" href=\"%s\">enlace externo</a>."
+
+#: views.py:274
+msgid "Error opening the documentation file"
+msgstr "Error abriendo el fichero de documentación"
+
+#: management/commands/addtocatalogue.py:65
 msgid "Wrong number of arguments"
 msgstr "Número de argumentos incorrecto"
 
-#: management/commands/addtocatalogue.py:61
+#: management/commands/addtocatalogue.py:77
+msgid ""
+"You must use at least one of the following flags: --redeploy, --users, --"
+"groups or --public "
+msgstr ""
+"Al menos una de las siguientes opciones tiene que ser usada: --redeploy, --"
+"users, --groups ó --public"
+
+#: management/commands/addtocatalogue.py:94
 #, python-format
 msgid "Failed to read from %(file_name)s"
-msgstr ""
+msgstr "Error al leer desde el fichero %(file_name)s"
 
-#: management/commands/addtocatalogue.py:82
+#: management/commands/addtocatalogue.py:114
 #, python-format
-msgid "Successfully imported %(name)s widget"
-msgstr ""
+msgid "Successfully imported \"%(name)s\" from \"%(file_name)s\""
+msgstr "Importado \"%(name)s\" desde \"%(file_name)s\" de forma correcta"
 
-#: management/commands/addtocatalogue.py:84
+#: management/commands/addtocatalogue.py:116
 #, python-format
-msgid ""
-"Version %(version)s of the %(name)s widget (from %(vendor)s) already exists"
+msgid "Failed to import the mashable application component from %(file_name)s"
 msgstr ""
+"Fallo la importación del componente de aplicación mashable desde "
+"%(file_name)s"
 
-#: management/commands/addtocatalogue.py:90
-#, python-format
-msgid "Failed to import widget from %(file_name)s"
-msgstr ""
+#~ msgid "Description"
+#~ msgstr "Descripción"
+
+#~ msgid "License"
+#~ msgstr "Licencia"

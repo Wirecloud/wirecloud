@@ -1,0 +1,775 @@
+# Spanish/Spain translation of WireCloud.
+# Copyright (C) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# This file is distributed under the same license as the WireCloud package.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WireCloud 0.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-03-30 14:06+0200\n"
+"PO-Revision-Date: 2015-03-30 14:51+0100\n"
+"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"Language-Team: Español/España\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.7.5\n"
+
+#: admin.py:75
+msgid "Edit"
+msgstr "Editar"
+
+#: context/models.py:28
+msgid "Concept"
+msgstr "Concepto"
+
+#: context/models.py:29 iwidget/models.py:98 markets/models.py:50
+#: preferences/models.py:34 preferences/models.py:50 preferences/models.py:66
+#: widget/models.py:145
+msgid "Value"
+msgstr "Valor"
+
+#: core/plugins.py:215
+msgid "Language"
+msgstr "Idioma"
+
+#: core/plugins.py:216
+msgid "Current language used in the platform"
+msgstr "Idioma actualmente utilizado en la plataforma"
+
+#: core/plugins.py:219 templates/registration/login.html:42
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: core/plugins.py:220
+msgid "User name of the current logged user"
+msgstr "Nombre de usuario del usuario actual"
+
+#: core/plugins.py:223
+msgid "Full name"
+msgstr "Nombre completo"
+
+#: core/plugins.py:224
+msgid "Full name of the logged user"
+msgstr "Nombre completo del usuario actual"
+
+#: core/plugins.py:227
+msgid "Is Anonymous"
+msgstr "Es anónimo"
+
+#: core/plugins.py:228
+msgid "Boolean. Designates whether current user is logged in the system."
+msgstr ""
+"Boleano. Indica cuando hay un usuario registrado actualmente en el sistema."
+
+#: core/plugins.py:231
+msgid "Is Staff"
+msgstr "Es personal"
+
+#: core/plugins.py:232
+msgid "Boolean. Designates whether current user can access the admin site."
+msgstr ""
+"Boleano. Indica cuando el usuario actual puede acceder al panel de "
+"administración."
+
+#: core/plugins.py:235
+msgid "Is Superuser"
+msgstr "Es superusuario"
+
+#: core/plugins.py:236
+msgid "Boolean. Designates whether current user is a super user."
+msgstr ""
+"Booleano. Indica cuando el usuario actualmente registrado es un super usuario"
+
+#: core/plugins.py:239
+msgid "Mode"
+msgstr "Modo"
+
+#: core/plugins.py:240
+msgid ""
+"Rendering mode used by the platform (available modes: classic, smartphone "
+"and embedded)"
+msgstr ""
+"Modo de funcionamiento usado por la plataforma (modos disponibles: classic, "
+"smartphone y embedded)"
+
+#: core/plugins.py:243
+msgid "Orientation"
+msgstr "Orientación"
+
+#: core/plugins.py:244
+msgid "Current screen orientation"
+msgstr "Orientación actual de la plataforma"
+
+#: core/plugins.py:247
+msgid "Theme"
+msgstr "Estilo"
+
+#: core/plugins.py:248
+msgid "Name of the theme used by the platform"
+msgstr "Nombre del estilo usado por la plataforma"
+
+#: core/plugins.py:251 core/plugins.py:255
+#: templates/wirecloud/catalogue/resource_details.html:24
+msgid "Version"
+msgstr "Versión"
+
+#: core/plugins.py:252 core/plugins.py:256
+msgid "Version of the platform"
+msgstr "Versión de la plataforma"
+
+#: core/plugins.py:259
+msgid "Version Hash"
+msgstr "Hash de la versión"
+
+#: core/plugins.py:260
+msgid ""
+"Hash for the current version of the platform. This hash changes when the "
+"platform is updated or when an addon is added or removed"
+msgstr ""
+"Hash asignado a la versión actual de la plataforma. Este bash cambia cuando "
+"la plataforma se actualiza o cuando un adán es activado o desactivado."
+
+#: core/plugins.py:272
+msgid "Anonymous"
+msgstr "Anónimo"
+
+#: core/plugins.py:291 iwidget/models.py:52 markets/models.py:29
+#: markets/models.py:49 preferences/models.py:33 preferences/models.py:48
+#: preferences/models.py:64 widget/models.py:127 workspace/models.py:36
+#: workspace/models.py:98
+msgid "Name"
+msgstr "Nombre"
+
+#: core/plugins.py:292
+msgid "Current name of the workspace"
+msgstr "Nombre actual del entorno de trabajo"
+
+#: core/plugins.py:295
+msgid "Owner"
+msgstr "Dueño"
+
+#: core/plugins.py:296
+msgid "Workspace's owner username"
+msgstr "Nombre de usuario del dueño del entorno de trabajo"
+
+#: core/plugins.py:311
+msgid "Public"
+msgstr "Público"
+
+#: core/plugins.py:313
+msgid ""
+"Allows other users to open this workspace (in read-only mode). (default: "
+"disabled)"
+msgstr ""
+"Indica si se permite a cualquier usuario a abrir este entorno de trabajo (en "
+"modo de sólo lectura). (deshabilitado por defecto)."
+
+#: core/plugins.py:318
+msgid "Default layout"
+msgstr "Esquema por defecto"
+
+#: core/plugins.py:321
+msgid "Base"
+msgstr "Base"
+
+#: core/plugins.py:322
+msgid "Free"
+msgstr "Libre"
+
+#: core/plugins.py:324
+msgid "Default layout for the new widgets."
+msgstr "Distribución por defecto para los nuevos widgets."
+
+#: core/plugins.py:336
+msgid "Base layout"
+msgstr "Distribución base"
+
+#: iwidget/models.py:33
+msgid "PositionX"
+msgstr "PosiciónX"
+
+#: iwidget/models.py:34
+msgid "PositionY"
+msgstr "PosiciónY"
+
+#: iwidget/models.py:35
+msgid "PositionZ"
+msgstr "PosiciónZ"
+
+#: iwidget/models.py:36 widget/models.py:83
+msgid "Height"
+msgstr "Ato"
+
+#: iwidget/models.py:37 widget/models.py:82
+msgid "Width"
+msgstr "Ancho"
+
+#: iwidget/models.py:38
+msgid "Minimized"
+msgstr "Minimizado"
+
+#: iwidget/models.py:39
+msgid "Fulldragboard"
+msgstr "Panel completo"
+
+#: iwidget/models.py:53
+msgid "Widget"
+msgstr "Widget"
+
+#: iwidget/models.py:54 workspace/utils.py:486 workspace/views.py:68
+msgid "Tab"
+msgstr "Pestaña"
+
+#: iwidget/models.py:55
+msgid "Layout"
+msgstr "Distribución"
+
+#: iwidget/models.py:56
+msgid "Position"
+msgstr "Posición"
+
+#: iwidget/models.py:57
+msgid "Icon Position"
+msgstr "Posición del icono"
+
+#: iwidget/models.py:58
+msgid "Refused Version"
+msgstr "Versión rechazada"
+
+#: iwidget/models.py:59 widget/models.py:143
+msgid "Read Only"
+msgstr "Sólo lectura"
+
+#: iwidget/models.py:96
+msgid "Variable definition"
+msgstr "Definición de variable"
+
+#: iwidget/models.py:97
+msgid "IWidget"
+msgstr "IWidget"
+
+#: iwidget/utils.py:83 iwidget/utils.py:116 iwidget/utils.py:122
+#: iwidget/utils.py:128 iwidget/utils.py:134 iwidget/utils.py:140
+#: iwidget/utils.py:146 iwidget/utils.py:152
+msgid "Malformed iWidget JSON"
+msgstr "JSON de iWidget mal formado"
+
+#: iwidget/views.py:58 iwidget/views.py:86 iwidget/views.py:121
+#: iwidget/views.py:168 iwidget/views.py:207 localcatalogue/views.py:120
+#: markets/views.py:73 markets/views.py:122 preferences/views.py:196
+#: preferences/views.py:235 preferences/views.py:276 wiring/views.py:45
+#: workspace/views.py:100 workspace/views.py:214 workspace/views.py:274
+#: workspace/views.py:310 workspace/views.py:340 workspace/views.py:411
+#: workspace/views.py:504
+#, python-format
+msgid "malformed json data: %s"
+msgstr "datos json malformados: %s"
+
+#: iwidget/views.py:66
+msgid "You have not enough permission for adding iwidgets to the workspace"
+msgstr ""
+"No tienes permisos suficientes para añadir nuevos widgets en el workspace"
+
+#: iwidget/views.py:75
+#, python-format
+msgid "refered widget %(widget_uri)s does not exist."
+msgstr "el widget referenciado %(widget_uri)s no existe."
+
+#: iwidget/views.py:91
+msgid ""
+"You have not enough permission for updating the iwidgets of this workspace"
+msgstr ""
+"No tienes suficientes permisos para actualizar las instancias de los widgets "
+"de este entorno de trabajo"
+
+#: iwidget/views.py:126
+msgid "You have not enough permission for updating the iwidget"
+msgstr ""
+"No tienes suficientes permisos para actualizar está instancia de widget"
+
+#: iwidget/views.py:141
+msgid "You have not enough permission for removing iwidgets from the workspace"
+msgstr ""
+"No tienes suficientes permisos para eliminar widgets del entorno de trabajo"
+
+#: iwidget/views.py:145
+msgid "IWidget cannot be deleted"
+msgstr "El Widget no puede ser borrado"
+
+#: iwidget/views.py:162
+msgid ""
+"You have not enough permission for updating the preferences of the iwidget"
+msgstr ""
+"No tienes suficientes permisos para actualizar las preferencias del widget"
+
+#: iwidget/views.py:180
+#, python-format
+msgid "\"%s\" preference is read only."
+msgstr "La preferencia \"%s\" es de sólo lectura."
+
+#: iwidget/views.py:186
+#, python-format
+msgid "Invalid preference: \"%s\""
+msgstr "Preferencia inválida: \"%s\""
+
+#: iwidget/views.py:201
+msgid ""
+"You have not enough permission for updating the persistent variables of this "
+"widget"
+msgstr ""
+"No tienes permisos suficientes para actualizar la variable persistente del "
+"widget"
+
+#: iwidget/views.py:220
+#, python-format
+msgid "Invalid persistent variable: \"%s\""
+msgstr "Variable persistente inválida: \"%s\""
+
+#: localcatalogue/utils.py:68
+#, python-format
+msgid "Resource already exists %(resource_id)s"
+msgstr "El recurso ya existe (%(resource_id)s)"
+
+#: localcatalogue/views.py:94
+msgid "Missing component file in the request"
+msgstr "Falta el fichero del componente en la petición"
+
+#: localcatalogue/views.py:100 localcatalogue/views.py:108
+msgid "The uploaded file is not a zip file"
+msgstr "El fichero subido no es un fichero zip"
+
+#: localcatalogue/views.py:136
+msgid "Missing market name"
+msgstr "Falta el nombre del marketplace"
+
+#: localcatalogue/views.py:142
+#, python-format
+msgid "Unknown market: %s"
+msgstr "Marketplace desconocido: %s"
+
+#: localcatalogue/views.py:152
+msgid "Content cannot be downloaded from the marketplace"
+msgstr "El contenido no se puede descarga desde el marketplace"
+
+#: localcatalogue/views.py:160
+msgid "The file downloaded from the marketplace is not a zip file"
+msgstr "El fichero descargado desde el marketplace no es un fichero zip"
+
+#: localcatalogue/views.py:169
+msgid ""
+"Error writing the resource into the filesystem. Please, contact the server "
+"administrator."
+msgstr ""
+"Error escribiendo el recurso en el sistema de ficheros. Por favor, contacte "
+"con el administrador del servidor."
+
+#: localcatalogue/views.py:186
+msgid "Resource already exists"
+msgstr "El recurso ya existía"
+
+#: localcatalogue/views.py:220
+msgid "You are not allowed to retrieve info about this resource"
+msgstr "No tienes permisos para obtener la información sobre este recurso"
+
+#: localcatalogue/views.py:303
+msgid "You don't have access to this workspace"
+msgstr "No tienes acceso a este entorno de trabajo"
+
+#: markets/models.py:28 markets/models.py:48
+msgid "User"
+msgstr "Usuario"
+
+#: markets/models.py:30
+msgid "Options"
+msgstr "Opciones"
+
+#: markets/models.py:47
+msgid "Market"
+msgstr "Marketplace"
+
+#: markets/views.py:84
+msgid "You don't have permissions for adding public marketplaces"
+msgstr "No tienes permisos suficientes para añadir marketplaces públicos"
+
+#: markets/views.py:103 markets/views.py:106 markets/views.py:129
+msgid "You are not allowed to delete this market"
+msgstr "No tienes permisos para eliminar este marketplace"
+
+#: markets/views.py:146 markets/views.py:148
+msgid "Something went wrong (see details for more info)"
+msgstr "Algo ha ido mal (mira los detalles para más información)"
+
+#: preferences/models.py:49 preferences/models.py:65
+msgid "Inherit"
+msgstr "Heredar"
+
+#: preferences/views.py:216 preferences/views.py:257
+msgid "You are not allowed to read this workspace"
+msgstr "No tienes permisos para leer este entorno de trabajo"
+
+#: preferences/views.py:230 preferences/views.py:271 wiring/views.py:50
+#: workspace/views.py:219 workspace/views.py:331 workspace/views.py:335
+#: workspace/views.py:424
+msgid "You are not allowed to update this workspace"
+msgstr "No tienes permisos para actualizar este entorno de trabajo"
+
+#: templates/registration/login.html:8
+msgid "WireCloud Platform - Sign in"
+msgstr "WireCloud Platform - Iniciar sesión"
+
+#: templates/registration/login.html:28
+msgid "Your browser seems to lack some required features"
+msgstr "Tú navegador parece carecer de algunas de las funcionalidad requeridas"
+
+#: templates/registration/login.html:29
+msgid ""
+"We recommend you to upgrade your browser to the newest version of either <a "
+"href=\"https://www.mozilla.org/firefox\">Firefox</a> or <a href=\"www.google."
+"com/chrome\">Google Chrome</a> as these are the browsers currently supported "
+"by WireCloud."
+msgstr ""
+"Te recomendamos actualizar tu navegador a la versión más reciente tanto de "
+"<a href=\"https://www.mozilla.org/firefox\">Firefox</a> como de <a href="
+"\"www.google.com/chrome\">Google Chrome</a> dado que estos navegadores son "
+"los que actualmente soporta WireCloud."
+
+#: templates/registration/login.html:36
+msgid "Your username and password didn't match.<br /> Please try again."
+msgstr ""
+"El usuario y la contraseña no coinciden.<br /> Por favor, prueba de nuevo."
+
+#: templates/registration/login.html:45 widget/models.py:133
+msgid "Password"
+msgstr "Contraseña"
+
+#: templates/registration/login.html:48
+msgid "Log in"
+msgstr "Entrar"
+
+#: templates/wirecloud/catalogue/developers.html:6
+msgid ""
+"Do you have a widget, operator or mashup stored in a wgt file? Then you can "
+"upload it to the catalogue by means of this dialog."
+msgstr ""
+"¿Tienes un widget, operador o mashup empaquetado en un fichero wat? En tal "
+"caso, puede subirlo al catálogo usando esta ventana."
+
+#: templates/wirecloud/catalogue/developers.html:8
+msgid "Drag files here"
+msgstr "Arrastra ficheros aquí"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:3
+#: workspace/models.py:44
+msgid "Description"
+msgstr "Descripción"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:6
+msgid "Tags"
+msgstr "Etiquetas"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:9
+msgid "Detailed data"
+msgstr "Datos detallados"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:11
+msgid "Internal ID"
+msgstr "ID interno"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:13
+msgid "Author(s)"
+msgstr "Autor(es)"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:15
+msgid "Contributor(s)"
+msgstr "Contribuyente(s)"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:17
+msgid "Size"
+msgstr "Tamaño"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:21
+msgid "Advanced operations"
+msgstr "Operaciones avanzadas"
+
+#: templates/wirecloud/catalogue/order_by_template.html:3
+msgid "Popularity"
+msgstr "Popularidad"
+
+#: templates/wirecloud/catalogue/order_by_template.html:4
+msgid "Creation date"
+msgstr "Fecha de creación"
+
+#: templates/wirecloud/catalogue/order_by_template.html:5
+msgid "Short name"
+msgstr "Nombre"
+
+#: templates/wirecloud/catalogue/order_by_template.html:6
+#: templates/wirecloud/catalogue/resource_details.html:22
+msgid "Vendor"
+msgstr "Distribuidor"
+
+#: templates/wirecloud/catalogue/resource_details.html:26
+msgid "License"
+msgstr "Licencia"
+
+#: templates/wirecloud/catalogue/resource_details.html:28
+msgid "Last Updated"
+msgstr "Última actualización"
+
+#: templates/wirecloud/catalogue/search_interface.html:18
+msgid "Keywords:"
+msgstr "Términos:"
+
+#: templates/wirecloud/catalogue/search_interface.html:23
+msgid "Type:"
+msgstr "Tipo:"
+
+#: widget/models.py:37
+msgid "URI"
+msgstr "URI"
+
+#: widget/models.py:38
+msgid "Code"
+msgstr "Código"
+
+#: widget/models.py:39
+msgid "Cache timestamp"
+msgstr "Marca de tiempo de la cache"
+
+#: widget/models.py:40
+msgid "URL"
+msgstr "URL"
+
+#: widget/models.py:41
+msgid "Content type"
+msgstr "Tipo de contenido"
+
+#: widget/models.py:42
+msgid "Uses platform style"
+msgstr "Utiliza el estilo de la plataforma"
+
+#: widget/models.py:43
+msgid "Cacheable"
+msgstr "Cacheable"
+
+#: widget/models.py:129
+msgid "Number"
+msgstr "Número"
+
+#: widget/models.py:130
+msgid "String"
+msgstr "Cadena de texto"
+
+#: widget/models.py:131
+msgid "Date"
+msgstr "Fecha"
+
+#: widget/models.py:132
+msgid "Boolean"
+msgstr "Boleado"
+
+#: widget/models.py:134
+msgid "List"
+msgstr "Lista"
+
+#: widget/models.py:136
+msgid "Type"
+msgstr "Tipo"
+
+#: widget/models.py:138
+msgid "Preference"
+msgstr "Preferencia"
+
+#: widget/models.py:139
+msgid "Property"
+msgstr "Variable persistente"
+
+#: widget/models.py:141
+msgid "Secure"
+msgstr "Seguro"
+
+#: widget/models.py:142
+msgid "Aspect"
+msgstr "Aspecto"
+
+#: widget/models.py:144
+msgid "Default value"
+msgstr "Valor por defecto"
+
+#: widget/views.py:100
+msgid "(X)HTML code is not accessible"
+msgstr "El código (X)HTML no está accesible"
+
+#: widget/views.py:109 widget/views.py:122
+#, python-format
+msgid ""
+"Widget code was not encoded using the specified charset (%(charset)s as "
+"stated in the widget description file)."
+msgstr ""
+"El código del widget no ha sido codificado usando el juego de caracteres "
+"indicado (%(charset)s según el descripto del widget)."
+
+#: widget/views.py:125
+msgid "Error processing widget code"
+msgstr "Error procesando el código del widget"
+
+#: wiring/views.py:64 wiring/views.py:68
+msgid "You are not allowed to remove read only connections"
+msgstr "No tienes permisos para eliminar conexiones de solo lectura"
+
+#: workspace/mashupTemplateParser.py:71
+msgid "Missing dependencies"
+msgstr "Dependencias incumplidas"
+
+#: workspace/models.py:37
+msgid "Creator"
+msgstr "Creador"
+
+#: workspace/models.py:38
+msgid "Creation Date"
+msgstr "Fecha de creación"
+
+#: workspace/models.py:39
+msgid "Last Modification Date"
+msgstr "Fecha de última modificación"
+
+#: workspace/models.py:41
+msgid "Available to all users"
+msgstr "Disponible para todos los usuarios"
+
+#: workspace/models.py:42
+msgid "Users"
+msgstr "Usuarios"
+
+#: workspace/models.py:43
+msgid "Groups"
+msgstr "Grupos"
+
+#: workspace/models.py:45
+msgid "Long description"
+msgstr "Descripción larga"
+
+#: workspace/models.py:83
+msgid "Active"
+msgstr "Activo"
+
+#: workspace/models.py:84
+msgid "Manager"
+msgstr "Gestor"
+
+#: workspace/models.py:85
+msgid "Reason Ref"
+msgstr "Ref.  de razón"
+
+#: workspace/models.py:85
+msgid ""
+"Reference to the reason why it was added. Used by Workspace Managers to sync "
+"workspaces"
+msgstr ""
+"Referencia a la razón por la que fue añadido. Este campo es usado por los "
+"gestores de entornos de trabajo para sincronizar los entornos de trabajo"
+
+#: workspace/models.py:99
+msgid "Visible"
+msgstr "Visible"
+
+#: workspace/models.py:101
+msgid "Workspace"
+msgstr "Entorno de trabajo"
+
+#: workspace/views.py:113
+msgid "Missing name parameter"
+msgstr "Falta el parámetro name"
+
+#: workspace/views.py:115 workspace/views.py:420
+msgid "Workspace and mashup parameters cannot be used at the same time"
+msgstr "No se pueden usar los parámetros workspace y mashup al mismo tiempo"
+
+#: workspace/views.py:120
+msgid "invalid workspace name"
+msgstr "nombre de entorno de trabajo inválido"
+
+#: workspace/views.py:128 workspace/views.py:183
+msgid "A workspace with the given name already exists"
+msgstr "Ya existe un entorno de trabajo con el nombre indicado."
+
+#: workspace/views.py:135 workspace/views.py:429
+msgid "invalid mashup id"
+msgstr "identificador de mashup inválido"
+
+#: workspace/views.py:143 workspace/views.py:437
+#, python-format
+msgid "Mashup not found: %(mashup_id)s"
+msgstr "Mashup no encontrado: %(mashup_id)s"
+
+#: workspace/views.py:153 workspace/views.py:447
+#, python-format
+msgid "You are not allowed to read from workspace %s"
+msgstr "No tienes permisos para leer desde el entorno de trabajo %s"
+
+#: workspace/views.py:200
+msgid "You don't have permission to access this workspace"
+msgstr "No tienes permisos para acceder a este entorno de trabajo"
+
+#: workspace/views.py:248
+msgid "You are not allowed to delete this workspace"
+msgstr "No tienes permisos para borrar este entorno de trabajo"
+
+#: workspace/views.py:278
+msgid "Malformed tab JSON: expecting tab name."
+msgstr "JSON mal formado: se esperaba el nombre de la pestaña."
+
+#: workspace/views.py:282 workspace/views.py:305
+msgid "You are not allowed to create new tabs for this workspace"
+msgstr ""
+"No tienes permisos para crear nuevas pestañas para este entorno de trabajo"
+
+#: workspace/views.py:287
+msgid "A tab with the given name already exists for the workspace"
+msgstr ""
+"Una pestaña con el nombre indicado ya existe para el entorno de trabajo"
+
+#: workspace/views.py:348 workspace/views.py:351
+msgid "Invalid visible value"
+msgstr "Valor de visibilidad inválido"
+
+#: workspace/views.py:373
+msgid "You are not allowed to remove this tab"
+msgstr "No tienes permiso para eliminar esta pestaña"
+
+#: workspace/views.py:377
+msgid "Tab cannot be deleted as workspaces need at least one tab"
+msgstr ""
+"La pestaña no se puede borra dado que el entorno de trabajo necesita como "
+"mínimo una pestaña"
+
+#: workspace/views.py:381
+msgid "Tab cannot be deleted as it contains widgets that cannot be deleted"
+msgstr ""
+"La pestaña no se puede borrar ya que contiene widgets que no pueden ser "
+"borrados"
+
+#: workspace/views.py:418
+msgid "Missing workspace or mashup parameter"
+msgstr "Falta o el parámetro workspace o el parámetro mashup"
+
+#: workspace/views.py:509
+#, python-format
+msgid "Malformed JSON. The following field(s) are missing: %(fields)s."
+msgstr "JSON mal formado. Faltan los siguientes campos: %(fields)s."
+
+#: workspace/views.py:512
+msgid "Invalid vendor"
+msgstr "Distribuidor inválido"
+
+#: workspace/views.py:515
+msgid "Invalid name"
+msgstr "Nombre inválido"
+
+#: workspace/views.py:518
+msgid "Invalid version number"
+msgstr "Número de versión inválido"

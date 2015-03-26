@@ -211,7 +211,6 @@ class FiWarePlugin(WirecloudPlugin):
                 "sla_variable_template": "wirecloud/fiware/marketplace/sla/sla_variable_template.html",
                 "pricing_template": "wirecloud/fiware/marketplace/pricing/pricing_template.html",
                 "price_component_template": "wirecloud/fiware/marketplace/pricing/price_component_template.html",
-                "fiware_catalogue_publish_interface": "wirecloud/fiware/marketplace/publish_template.html",
             }
         else:
             return {}

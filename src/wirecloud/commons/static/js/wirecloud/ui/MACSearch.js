@@ -64,13 +64,7 @@
                         this.resource_painter.paint(widgets[i]).insertInto(this._list);
                     }
                 } else {
-                    msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p>" +
-                        "<p>Suggestions:</p>" +
-                        "<ul>" +
-                        "<li>Make sure all words are spelled correctly.</li>" +
-                        "<li>Try different keywords.</li>" +
-                        "<li>Try more general keywords.</li>" +
-                        "</ul>");
+                    msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
                     msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(keywords.trim())}, true);
                     this.resource_painter.paintError(new StyledElements.Fragment(msg)).insertInto(this._list);
                 }
@@ -128,7 +122,7 @@
         var template = Wirecloud.currentTheme.templates[options.template];
         this.wrapperElement = builder.parse(template, Wirecloud.Utils.merge({
             searchinput: function () {
-                input = new StyledElements.StyledTextField({'placeholder': 'Keywords...'});
+                input = new StyledElements.StyledTextField({'placeholder': gettext('Keywords...')});
                 input.inputElement.addEventListener('keypress', _onSearchInputKeyPress.bind(this, input));
                 input.addEventListener('change', _onSearchInput.bind(this));
                 return input;

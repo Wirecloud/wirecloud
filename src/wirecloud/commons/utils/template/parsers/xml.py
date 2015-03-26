@@ -172,11 +172,11 @@ class WirecloudTemplateParser(object):
 
         self._info['vendor'] = self._get_field(VENDOR_XPATH, self._resource_description).strip()
         if not is_valid_vendor(self._info['vendor']):
-            raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
+            raise TemplateParseException(_('The format of the vendor is invalid.'))
 
         self._info['name'] = self._get_field(NAME_XPATH, self._resource_description).strip()
         if not is_valid_name(self._info['name']):
-            raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
+            raise TemplateParseException(_('The format of the name is invalid.'))
 
         self._info['version'] = self._get_field(VERSION_XPATH, self._resource_description).strip()
         if not is_valid_version(self._info['version']):

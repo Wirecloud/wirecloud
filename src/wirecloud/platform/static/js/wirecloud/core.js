@@ -129,8 +129,8 @@
             // Init Layout Manager
             var layoutManager = LayoutManagerFactory.getInstance();
             layoutManager.resizeWrapper();
-            options.monitor = layoutManager._startComplexTask(gettext('Loading Wirecloud Platform'), 4);
-            layoutManager.logSubTask(gettext('Retrieving Wirecloud code'));
+            options.monitor = layoutManager._startComplexTask(gettext('Loading WireCloud Platform'), 4);
+            layoutManager.logSubTask(gettext('Retrieving WireCloud code'));
             layoutManager.logStep('');
             layoutManager.logSubTask(gettext('Retrieving initial data'), 4);
         } else if (!(options.monitor instanceof Wirecloud.TaskMonitorModel)) {

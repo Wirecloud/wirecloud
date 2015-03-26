@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -41,7 +41,7 @@
                 "type": "select",
                 "initialEntries": [
                     {value: 'default', label: gettext('Default setting')},
-                    {value: 'browser', label: gettext('Browser detect')}
+                    {value: 'browser', label: gettext('Detect browser language')}
                 ]
             }
         ];

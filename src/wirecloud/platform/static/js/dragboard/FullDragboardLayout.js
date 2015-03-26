@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, IWidget, Wirecloud */
+/*global IWidget, Wirecloud */
 
 (function () {
 
@@ -134,7 +134,7 @@
     FullDragboardLayout.prototype.initializeMove = function initializeMove(iwidget, draggable) {
         // Check for pendings moves
         if (this.iwidgetToMove !== null) {
-            var msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
+            var msg = "Dragboard: There was a pending move that was cancelled because initializedMove function was called before it was finished.";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             this.cancelMove();
         }
@@ -144,7 +144,7 @@
 
     FullDragboardLayout.prototype.moveTemporally = function moveTemporally(x, y) {
         if (!(this.iwidgetToMove instanceof IWidget)) {
-            var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
+            var msg = "Dragboard: You must call initializeMove function before calling to this function (moveTemporally).";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             return;
         }
@@ -152,7 +152,7 @@
 
     FullDragboardLayout.prototype.acceptMove = function acceptMove() {
         if (!(this.iwidgetToMove instanceof IWidget)) {
-            var msg = gettext("Function acceptMove called when there is not an started iwidget move.");
+            var msg = "Dragboard: Function acceptMove called when there is not an started iwidget move.";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             return;
         }
@@ -162,7 +162,7 @@
 
     FullDragboardLayout.prototype.cancelMove = function cancelMove() {
         if (!(this.iwidgetToMove instanceof IWidget)) {
-            var msg = gettext("Trying to cancel an inexistant temporal move.");
+            var msg = "Trying to cancel an inexistant temporal move.";
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             return;
         }

@@ -160,7 +160,7 @@ function Workspace(workspaceState, resources) {
 
         // Title
         var pTitle = document.createElement('h4');
-        pTitle.textContent = gettext("Hey! Welcome to Wirecloud! This is an empty workspace");
+        pTitle.textContent = gettext("Hey! Welcome to WireCloud! This is an empty workspace");
         subBox.appendChild(pTitle);
 
         // Message
@@ -273,7 +273,7 @@ function Workspace(workspaceState, resources) {
     };
 
     var createTabError = function(transport, e) {
-        Wirecloud.GlobalLogManager.formatAndLog(gettext("Error creating a tab: %(errorMsg)s."), transport, e);
+        Wirecloud.GlobalLogManager.formatAndLog(gettext("Error creating tab: %(errorMsg)s."), transport, e);
     };
 
     var iwidget_removed = function iwidget_removed(iwidget) {

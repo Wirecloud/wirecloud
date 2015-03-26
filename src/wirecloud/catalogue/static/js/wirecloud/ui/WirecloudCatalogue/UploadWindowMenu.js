@@ -128,12 +128,12 @@
         this.fileTable = new StyledElements.ModelTable([
             {
                 "field": "name",
-                "label": "Name"
+                "label": Wirecloud.Utils.gettext("Name")
             },
             {
                 "field": "size",
                 "type": "number",
-                "label": "Size",
+                "label": Wirecloud.Utils.gettext("Size"),
                 "width": "css",
                 "class": "wc-upload-mac-size-column",
                 "contentBuilder": function (file) {return Wirecloud.Utils.formatSize(file.size);}

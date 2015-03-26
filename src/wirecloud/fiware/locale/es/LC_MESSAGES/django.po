@@ -1,0 +1,179 @@
+# Spanish/Spain translation of WireCloud.
+# Copyright (C) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# This file is distributed under the same license as the WireCloud package.
+# Álvaro Arranz García <aarranz@fi.upm.es>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WireCloud 0.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-03-30 17:59+0200\n"
+"PO-Revision-Date: 2015-03-30 18:00+0100\n"
+"Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
+"Language-Team: Español/España\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.7.5\n"
+
+#: plugins.py:164
+msgid "FIWARE version"
+msgstr "Versión de FIWARE"
+
+#: plugins.py:165
+msgid "FIWARE version of the platform"
+msgstr "La versión de FIWARE de la plataforma"
+
+#: plugins.py:168
+msgid "FIWARE token available"
+msgstr "Token de FIWARE disponible"
+
+#: plugins.py:169
+msgid ""
+"Indicates if the current user has associated a FIWARE auth token that can be "
+"used for accessing other FIWARE resources"
+msgstr ""
+"Indica si el usuario actual tiene asociado un token de autenticación de "
+"FIWARE que puede ser usado para acceder a otros servicios de FIWARE"
+
+#: proxy.py:36
+msgid "IdM support not enabled"
+msgstr "Integración con el IdM no activado"
+
+#: proxy.py:38
+msgid ""
+"IdM tokens can only be inyected on Ajax requests coming from authorized "
+"widgets"
+msgstr ""
+"Los tokens del IdM solo pueden ser inyectados en las peticiones Ajax que "
+"venga de widget autorizados"
+
+#: proxy.py:50
+msgid "Current user has not an active FIWARE profile"
+msgstr "El usuario actual no tiene un perfil de FIWARE activo"
+
+#: proxy.py:55
+msgid "Workspace owner has not an active FIWARE profile"
+msgstr "El dueño del entorno de trabajo no tiene un perfil de FIWARE activo"
+
+#: proxy.py:57
+msgid "Invalid FIWARE OAuth token source"
+msgstr "Token OAuth de FIWARE inválido"
+
+#: marketAdaptor/usdlParser.py:76
+msgid "Error the document has not a valid rdf format"
+msgstr "Error - El documento no tiene un formato RDF válido"
+
+#: marketAdaptor/usdlParser.py:82
+#, python-format
+msgid "Error parsing rdf document: %s"
+msgstr "Error pareando el documento RDF: %s"
+
+#: marketAdaptor/usdlParser.py:91
+msgid "Error the document is not a valid usdl document"
+msgstr "Error - el documento no es un documento USDL válido"
+
+#: templates/wirecloud/fiware/marketplace/main_resource_details.html:3
+#: templates/wirecloud/fiware/marketplace/resource.html:14
+msgid "Description"
+msgstr "Descripción"
+
+#: templates/wirecloud/fiware/marketplace/resource.html:12
+#: templates/wirecloud/fiware/marketplace/resource_details.html:13
+msgid "Store"
+msgstr "Tienda"
+
+#: templates/wirecloud/fiware/marketplace/resource_details.html:15
+msgid "Owner"
+msgstr "Dueño"
+
+#: templates/wirecloud/fiware/marketplace/resource_details.html:17
+msgid "Version"
+msgstr "Versión"
+
+#: templates/wirecloud/fiware/marketplace/resource_details.html:19
+msgid "Publication date"
+msgstr "Fecha de publicación"
+
+#: templates/wirecloud/fiware/marketplace/resource_parts.html:4
+msgid "Part:"
+msgstr "Parte:"
+
+#: templates/wirecloud/fiware/marketplace/resource_parts.html:5
+msgid "Name:"
+msgstr "Nombre:"
+
+#: templates/wirecloud/fiware/marketplace/resource_parts.html:7
+msgid "URI:"
+msgstr "URI:"
+
+#: templates/wirecloud/fiware/marketplace/search_interface.html:11
+msgid "Keywords:"
+msgstr "Palabras clave:"
+
+#: templates/wirecloud/fiware/marketplace/search_interface.html:16
+msgid "Store:"
+msgstr "Tienda:"
+
+#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:3
+msgid "Legal Conditions"
+msgstr "Condiciones legales"
+
+#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:5
+#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:6
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:6
+#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:7
+#: templates/wirecloud/fiware/marketplace/sla/sla_expresion_template.html:4
+msgid "Description:"
+msgstr "Descripción"
+
+#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:8
+msgid "Clauses:"
+msgstr "Clausulas:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:3
+msgid "Price element:"
+msgstr "Precio:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:4
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:4
+msgid "Title:"
+msgstr "Titulo:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:8
+msgid "Value:"
+msgstr "Valor:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:3
+msgid "Price plan:"
+msgstr "Plan de precios:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:8
+msgid "Price components:"
+msgstr "Componentes del precio:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:10
+msgid "Taxes:"
+msgstr "Tasas:"
+
+#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:3
+msgid "Service level:"
+msgstr "Nivel de servicio:"
+
+#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:5
+msgid "Obligated party:"
+msgstr "Parte obligada:"
+
+#: templates/wirecloud/fiware/marketplace/sla/sla_variable_template.html:5
+msgid "value:"
+msgstr "Valor:"
+
+#: templates/wirecloud/fiware/store/buy_success.html:4
+msgid ""
+"The buying process has finished successfully. The process flow should return "
+"automatically to Wirecloud. You can close this window."
+msgstr ""
+"El proceso de compra ha terminado correctamente. El control del proceso "
+"debería volver automáticamente a WireCloud. Puedes cerrar esta ventana."

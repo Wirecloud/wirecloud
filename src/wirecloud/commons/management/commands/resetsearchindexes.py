@@ -32,7 +32,7 @@ from wirecloud.commons.searchers import get_available_search_engines, get_search
 
 class Command(NoArgsCommand):
 
-    help = 'Resets search indexes'
+    help = 'Resets WireCloud search indexes'
     option_list = NoArgsCommand.option_list + (
         make_option('--indexes',
             action='store', dest='indexes', default='', type="string",

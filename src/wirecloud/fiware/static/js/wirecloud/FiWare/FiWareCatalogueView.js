@@ -367,7 +367,7 @@
                     var dialog = new Wirecloud.ui.ExternalProcessWindowMenu(
                         interpolate(gettext('Buying %(offering)s'), {offering: offering.getDisplayName()}, true),
                         data.url,
-                        gettext('The buying process will continue in a separate window. This window will be controled by the store where the offering is hosted. After finishing the buying process, the control will return to Wirecloud.'),
+                        gettext('The buying process will continue in a separate window. This window will be controled by the store where the offering is hosted. After finishing the buying process, the control will return to WireCloud.'),
                         {
                             onSuccess: onBuySuccess.bind(this, offering, offering_entry)
                         }

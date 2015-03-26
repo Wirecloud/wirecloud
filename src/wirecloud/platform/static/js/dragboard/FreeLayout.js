@@ -169,7 +169,7 @@ FreeLayout.prototype.initializeMove = function (iwidget, draggable) {
 
     // Check for pendings moves
     if (this.iwidgetToMove !== null) {
-        msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
+        msg = "Dragboard: There was a pending move that was cancelled because initializedMove function was called before it was finished.";
         Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
         this.cancelMove();
     }
@@ -185,7 +185,7 @@ FreeLayout.prototype.initializeMove = function (iwidget, draggable) {
 
 FreeLayout.prototype.moveTemporally = function (x, y) {
     if (!(this.iwidgetToMove instanceof IWidget)) {
-        var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
+        var msg = "Dragboard: You must call initializeMove function before calling to this function (moveTemporally).";
         Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
         return;
     }
@@ -196,7 +196,7 @@ FreeLayout.prototype.moveTemporally = function (x, y) {
 
 FreeLayout.prototype.acceptMove = function () {
     if (!(this.iwidgetToMove instanceof IWidget)) {
-        var msg = gettext("Function acceptMove called when there is not an started iwidget move.");
+        var msg = "Dragboard: Function acceptMove called when there is not an started iwidget move.";
         Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
         return;
     }
@@ -223,7 +223,7 @@ FreeLayout.prototype.cancelMove = function () {
     var msg;
 
     if (!(this.iwidgetToMove instanceof IWidget)) {
-        msg = gettext("Trying to cancel an inexistant temporal move.");
+        msg = "Trying to cancel an inexistant temporal move.";
         Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
         return;
     }

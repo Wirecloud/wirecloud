@@ -49,7 +49,7 @@ class FeatureCollection(Resource):
 
 @cache_page(60 * 60 * 24, key_prefix='js18n-%s' % get_version_hash())
 def cached_javascript_catalog(request):
-    packages = ['wirecloud.commons', 'wirecloud.platform']
+    packages = ['wirecloud.commons', 'wirecloud.catalogue', 'wirecloud.platform']
 
     for plugin in get_plugins():
         packages.append(plugin.__module__)

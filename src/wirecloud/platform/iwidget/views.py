@@ -72,7 +72,7 @@ class IWidgetCollection(Resource):
 
             return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8')
         except (CatalogueResource.DoesNotExist, Widget.DoesNotExist) as e:
-            msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
+            msg = _('refered widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
             return build_error_response(request, 422, msg)
 
     @authentication_required
@@ -198,7 +198,7 @@ class IWidgetProperties(Resource):
 
         workspace = Workspace.objects.get(id=workspace_id)
         if not request.user.is_superuser and workspace.creator != request.user:
-            msg = _('You have not enough permission for updating the properties of the iwidget')
+            msg = _('You have not enough permission for updating the persistent variables of this widget')
             return build_error_response(request, 403, msg)
 
         try:
@@ -217,7 +217,7 @@ class IWidgetProperties(Resource):
                 variable.set_variable_value(new_values[var_name])
                 variable.save()
         except Variable.DoesNotExist:
-            msg = _('Invalid property: "%s"') % var_name
+            msg = _('Invalid persistent variable: "%s"') % var_name
             return build_error_response(request, 422, msg)
 
         return HttpResponse(status=204)

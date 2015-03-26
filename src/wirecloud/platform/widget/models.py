@@ -140,7 +140,7 @@ class VariableDef(models.Model):
     )
     secure = models.BooleanField(_('Secure'), default=False)
     aspect = models.CharField(_('Aspect'), max_length=4, choices=ASPECTS)
-    readonly = models.BooleanField(_('Read only'), default=False)
+    readonly = models.BooleanField(_('Read Only'), default=False)
     default_value = models.TextField(_('Default value'), blank=True, null=True)
     value = models.TextField(_('Value'), blank=True, null=True)
     widget = models.ForeignKey(Widget)
