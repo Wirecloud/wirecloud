@@ -416,10 +416,6 @@
             this.iWidgets[iWidget.id] = iWidget;
         };
 
-        Dragboard.prototype.fillFloatingWidgetsMenu = function fillFloatingWidgetsMenu(menu) {
-            this.freeLayout.fillFloatingWidgetsMenu(menu);
-        };
-
         Dragboard.prototype.lowerToBottom = function lowerToBottom(iWidget) {
             var zPos = iWidget.getZPosition();
             this.orderList.splice(zPos, 1);

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, IWidget, LayoutManagerFactory*/
+/*global IWidget*/
 
 /////////////////////////////////////
 // FreeLayout
@@ -236,20 +236,4 @@ FreeLayout.prototype.cancelMove = function () {
 FreeLayout.prototype._raiseIWidgetCallback = function () {
     this.iwidget.setMinimizeStatus(false);
     this.iwidget.layout.dragboard.raiseToTop(this.iwidget);
-};
-
-FreeLayout.prototype.fillFloatingWidgetsMenu = function (menu) {
-    var i, iwidgetKeys, curIWidget, key;
-
-    iwidgetKeys = this.iWidgets.keys();
-    if (iwidgetKeys.length > 0) {
-        for (i = 0; i < iwidgetKeys.length; i++) {
-            key = iwidgetKeys[i];
-            curIWidget = this.iWidgets[key];
-
-            menu.addOption(null, curIWidget.name, this._raiseIWidgetCallback.bind({"iwidget": curIWidget}), i);
-        }
-    } else {
-        menu.addOption(null, gettext("No Floating Widgets"), function () {}, 0);
-    }
 };
