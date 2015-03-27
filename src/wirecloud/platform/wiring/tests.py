@@ -1929,112 +1929,67 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, 'hello world!!')
 
 
-class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
+class BasicRecommendationSystemTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wiring', 'wiring_editor')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
 
     @classmethod
     def setUpClass(cls):
-
-        super(SimpleRecommendationsTestCase, cls).setUpClass()
+        super(BasicRecommendationSystemTestCase, cls).setUpClass()
 
         if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
             cls.tearDownClass()
-            raise unittest.SkipTest('Simple recommendation tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('BasicRecommendationSystemTestCase needs to use native events supported on Selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
-    def test_wiring_recommendations_basic_mouseon(self):
-
+    def test_highlighted_endpoints_when_endpoint_is_mousedover(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
-
-        iwidgets = self.get_current_iwidgets()
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_css_selector(".grid")
+            widget1 = wiring.add_component_by_name('widget', 'Test (1)')
+            target1 = widget1.get_endpoint_by_name('target', 'Input')
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
+            widget2 = wiring.add_component_by_name('widget', 'Test (2)', x=400)
+            source2 = widget2.get_endpoint_by_name('source', 'Output')
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
+            widget3 = wiring.add_component_by_name('widget', 'Test (3)', x=100, y=200)
+            target3 = widget3.get_endpoint_by_name('target', 'Input')
+            source3 = widget3.get_endpoint_by_name('source', 'Output')
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
+            source2.mouse_over()
+            self.assertTrue(source2.is_highlighted)
+            self.assertTrue(target1.is_highlighted)
+            self.assertTrue(target3.is_highlighted)
 
-            target = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('inputendpoint')
-            source1 = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('outputendpoint')
-            source2 = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('outputendpoint')
-            source2b = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('inputendpoint')
+            target1.mouse_over()
+            self.assertTrue(target1.is_highlighted)
+            self.assertTrue(source2.is_highlighted)
+            self.assertTrue(source3.is_highlighted)
 
-            # Activate Recommendations mouseon anchors
-            ActionChains(self.driver).move_to_element(source1.element).perform();
-            time.sleep(2)
-            self.assertTrue('highlight' in target.label.get_attribute('class'))
-            self.assertTrue('highlight' in source1.label.get_attribute('class'))
-            self.assertTrue('highlight' in source2b.label.get_attribute('class'))
-            self.assertFalse('highlight' in source2.label.get_attribute('class'))
-
-            # Activate Invert Recommendations mouseon anchors
-            ActionChains(self.driver).move_to_element(target.element).perform();
-            time.sleep(2)
-            self.assertTrue('highlight' in target.label.get_attribute('class'))
-            self.assertTrue('highlight' in source1.label.get_attribute('class'))
-            self.assertTrue('highlight' in source2.label.get_attribute('class'))
-            self.assertFalse('highlight' in source2b.label.get_attribute('class'))
-
-            # Activate Recommendations mouseon labels
-            ActionChains(self.driver).move_to_element(source1.label).perform();
-            time.sleep(2)
-            self.assertTrue('highlight' in target.label.get_attribute('class'))
-            self.assertTrue('highlight' in source1.label.get_attribute('class'))
-            self.assertTrue('highlight' in source2b.label.get_attribute('class'))
-            self.assertFalse('highlight' in source2.label.get_attribute('class'))
-
-            # Activate Invert Recommendations mouseon labels
-            ActionChains(self.driver).move_to_element(target.label).perform();
-            time.sleep(2)
-            self.assertTrue('highlight' in target.label.get_attribute('class'))
-            self.assertTrue('highlight' in source1.label.get_attribute('class'))
-            self.assertTrue('highlight' in source2.label.get_attribute('class'))
-            self.assertFalse('highlight' in source2b.label.get_attribute('class'))
-
-
-    def test_wiring_recommendations_creating_arrows(self):
-
+    def test_highlighted_endpoints_when_connection_is_dragging(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
-
-        iwidgets = self.get_current_iwidgets()
 
         with self.wiring_view as wiring:
 
-            grid = self.driver.find_element_by_css_selector(".grid")
+            widget1 = wiring.add_component_by_name('widget', 'Test (1)')
+            target1 = widget1.get_endpoint_by_name('target', 'Input')
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
+            widget2 = wiring.add_component_by_name('widget', 'Test (2)', x=400)
+            source2 = widget2.get_endpoint_by_name('source', 'Output')
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
+            widget3 = wiring.add_component_by_name('widget', 'Test (3)', x=100, y=200)
+            target3 = widget3.get_endpoint_by_name('target', 'Input')
+            source3 = widget3.get_endpoint_by_name('source', 'Output')
 
-            source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-            ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
+            source2.drag_connection(80, 80)
+            self.assertTrue(source2.is_highlighted)
+            self.assertTrue(target1.is_highlighted)
+            self.assertTrue(target3.is_highlighted)
+            source2.drop_connection()
 
-            target = wiring.get_iwidget(iwidgets[0]).get_wiring_endpoint('inputendpoint')
-            source1 = wiring.get_iwidget(iwidgets[1]).get_wiring_endpoint('outputendpoint')
-            source2 = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('outputendpoint')
-            source2b = wiring.get_iwidget(iwidgets[2]).get_wiring_endpoint('inputendpoint')
-
-            # Activate Recommendations while arrow is being created
-            ActionChains(self.driver).click_and_hold(source1.element).move_by_offset(80, 80).perform()
-            self.assertTrue('highlight' in target.label.get_attribute('class'))
-            self.assertTrue('highlight' in source1.label.get_attribute('class'))
-            self.assertTrue('highlight' in source2b.label.get_attribute('class'))
-            self.assertFalse('highlight' in source2.label.get_attribute('class'))
-            ActionChains(self.driver).release().perform()
-
-            # Activate Invert Recommendations while arrow is being created
-            ActionChains(self.driver).click_and_hold(target.element).move_by_offset(80, 80).perform()
-            self.assertTrue('highlight' in target.label.get_attribute('class'))
-            self.assertTrue('highlight' in source1.label.get_attribute('class'))
-            self.assertTrue('highlight' in source2.label.get_attribute('class'))
-            self.assertFalse('highlight' in source2b.label.get_attribute('class'))
+            target1.drag_connection(80, 80)
+            self.assertTrue(target1.is_highlighted)
+            self.assertTrue(source2.is_highlighted)
+            self.assertTrue(source3.is_highlighted)
+            target1.drop_connection()

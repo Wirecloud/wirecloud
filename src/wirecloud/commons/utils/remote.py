@@ -574,8 +574,21 @@ class WiringEndpointTester(object):
     def name(self):
         return self.element.find_element_by_css_selector(".endpoint-label").text
 
+    @property
+    def is_highlighted(self):
+        return 'highlighted' in self.element.get_attribute('class').split()
+
     def get_all_connections(self):
         return self.testcase.driver.find_elements_by_css_selector('.wiring-connections .connection')
+
+    def drag_connection(self, x, y):
+        ActionChains(self.testcase.driver).click_and_hold(self.anchor).move_by_offset(x, y).perform()
+
+    def drop_connection(self):
+        ActionChains(self.testcase.driver).release().perform()
+
+    def mouse_over(self):
+        ActionChains(self.testcase.driver).move_to_element(self.element).perform();
 
     def connect(self, endpoint, from_existing=False):
         connections_expected = len(self.get_all_connections())
@@ -1256,6 +1269,33 @@ class WiringViewTester(object):
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.from_diagram_get_all_components(component_type)))
 
         return self
+
+    def add_component_by_name(self, component_type, component_name, x=0, y=-0):
+        x = x + 50
+        y = y + 30
+
+        opt = self.testcase.driver.find_element_by_css_selector(".wirecloud_toolbar .opt-components")
+
+        if 'active' not in opt.get_attribute('class').split():
+            opt.click()
+
+        self.open_component_group(component_type)
+        collection = self.section_sidebar.find_elements_by_css_selector(".component-%s" % component_type)
+
+        component = None
+
+        for element in collection:
+            if element.text == component_name:
+                component = element
+                break
+
+        self.testcase.assertIsNotNone(component)
+
+        old_components = len(self.from_diagram_get_all_components(component_type))
+        ActionChains(self.testcase.driver).click_and_hold(component).move_to_element_with_offset(self.section_diagram, x, y).release().perform()
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.from_diagram_get_all_components(component_type)))
+
+        return self.from_diagram_find_component_by_name(component_type, component_name)
 
     def from_diagram_get_all_components(self, component_type):
         return self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)
