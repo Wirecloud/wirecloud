@@ -22,16 +22,6 @@
 
     "use strict";
 
-    var installVCardToPOI = function installVCardToPOI(autoAction) {
-        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/vcard-to-poi/0.0.2')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_input-box_1.0.wgt'), {
-                onSuccess: autoAction.nextHandler.bind(autoAction)
-            });
-        } else {
-            autoAction.nextHandler();
-        }
-    };
-
     var getWidgetAvailable = function getWidgetAvailable(index, openPanel) {
         var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
         var wiringView = LayoutManagerFactory.getInstance().viewsByName.wiring;
@@ -181,12 +171,6 @@
         return;
     };
 
-    var sleep = function sleep(milliseconds, autoAction) {
-        setTimeout(function () {
-            autoAction.nextHandler();
-        }, milliseconds * 1000);
-    };
-
     var autoSelect = function autoSelect(milliseconds, autoAction, element) {
         setTimeout(function () {
             element.click();
@@ -218,6 +202,14 @@
         }
 
         return;
+    };
+
+    var header = {
+
+        'getOption': function getOption(optionName) {
+            return document.querySelector('.wirecloud_toolbar .' + optionName);
+        }
+
     };
 
     var wiringView = {
@@ -269,6 +261,10 @@
             }
 
             return;
+        },
+
+        'enableBehaviours': function enableBehaviours() {
+            return document.querySelector('.wiring-sidebar .panel-behaviours .opt-enable-behaviours');
         }
 
     };
@@ -284,6 +280,12 @@
 
     var BS = Wirecloud.ui.Tutorial.utils.basic_selectors;
     var BA = Wirecloud.ui.Tutorial.utils.basic_actions;
+
+    var sleep = function sleep(milliseconds, autoAction) {
+        setTimeout(function () {
+            autoAction.nextHandler();
+        }, milliseconds * 1000);
+    };
 
     /**
      * @function
@@ -311,7 +313,7 @@
      * @function
      * @private
      */
-    var createWorkspace = function createWorkspace(name, mashup, autoAction) {
+    var createWorkspaceFromMashup = function createWorkspaceFromMashup(name, mashup, autoAction) {
         LayoutManagerFactory.getInstance().changeCurrentView('workspace');
 
         Wirecloud.createWorkspace({
@@ -342,6 +344,16 @@
 
     };
 
+    var uploadComponent = function uploadComponent(id, filename, autoAction) {
+        if (!Wirecloud.LocalCatalogue.resourceExistsId(id)) {
+            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/' + filename), {
+                onSuccess: autoAction.nextHandler.bind(autoAction)
+            });
+        } else {
+            autoAction.nextHandler();
+        }
+    };
+
     Wirecloud.TutorialCatalogue.add('mashup-wiring-design', new Wirecloud.ui.Tutorial(gettext("Mashup Wiring Design"), [
 
         // Step 0: get ready the workspace
@@ -358,7 +370,14 @@
                 "<p>First, a new workspace will be created for this tutorial and to this end, " +
                 "a predefined mashup is going to be used as template.</p>")
         },
-
+        {
+            type: 'autoAction',
+            action: createWorkspaceFromMashup.bind(null, 'MWD Tutorial', 'CoNWeT/Mashup-Wiring-Design-Tutorial/0.0.1')
+        },
+        {
+            type: 'autoAction',
+            action: uploadComponent.bind(null, 'CoNWeT/technical-service/0.0.3', 'CoNWeT_technical-service_0.0.3.wgt')
+        },
         {
             type: 'simpleDescription',
             title: gettext("Mashup Wiring Design Tutorial"),
@@ -366,36 +385,81 @@
                 "<p>Great! As you can see, the <strong>Mashup Wiring Design Tutorial</strong> " +
                 "was installed and applied successfully.</p>" +
 
-                "<p>Completed this, let's start with understanding the different behaviours " +
-                "you will find in this mashup.</p>")
+                "<div class=\"alert alert-info\">" +
+                "<p><strong>NOTE:</strong> In addition to installing the mashup above, " +
+                "the operator <strong>Technician Service</strong> was installed too.</p>" +
+                "</div>")
         },
 
         // Step 1: identify the behaviours
 
         {
             type: 'simpleDescription',
-            title: gettext("Step 1 - Identification of the behaviours"),
+            title: gettext("Step 1: identify the behaviours"),
             msg: gettext(
-                "<p>For example, a behaviour would be if you want to find a technician " +
-                "from a given name in a list of technicians.</p>")
+                "<p>Completed the above, let's start with understanding the different behaviours " +
+                "you will find in this mashup.</p>")
         },
 
         {
-            type: 'simpleDescription',
-            title: gettext("Step 1 - Identification of the behaviours"),
-            msg: gettext(
-                "<p>Another behaviour would be if you want to know the current location " +
-                "of a technician after selecting one.</p>")
+            type: 'autoAction',
+            msg: gettext("A <strong>behaviour (1)</strong> would be to type the technician name..."),
+            elem: workspaceView.getWidgetByName.bind(null, 'Search for'),
+            pos: 'topRight',
+            action: sleep.bind(null, 4)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("...and the technician is found here."),
+            elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
+            pos: 'topRight',
+            action: sleep.bind(null, 4)
         },
 
         {
-            type: 'simpleDescription',
-            title: gettext("Step 1 - Identify behaviors"),
-            msg: gettext(
-                "<p>The last behaviour would be if you want to make a video call " +
-                "the technician selected after watching their availability.</p>")
+            type: 'autoAction',
+            msg: gettext("Another <strong>behaviour (2)</strong> would be to select a technician..."),
+            elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
+            pos: 'topRight',
+            action: sleep.bind(null, 4)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("...and their vCard is displayed here."),
+            elem: workspaceView.getWidgetByName.bind(null, 'Technician vCard'),
+            pos: 'topRight',
+            action: sleep.bind(null, 4)
         },
 
+        {
+            type: 'autoAction',
+            msg: gettext("Another <strong>behaviour (3)</strong> would be to select a technician..."),
+            elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
+            pos: 'topRight',
+            action: sleep.bind(null, 4)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("...and their current location is displayed here."),
+            elem: workspaceView.getWidgetByName.bind(null, 'Map Viewer'),
+            pos: 'topRight',
+            action: sleep.bind(null, 4)
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("The last <strong>behaviour (4)</strong> would be to select a technician..."),
+            elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
+            pos: 'topRight',
+            action: sleep.bind(null, 4)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("...and the video call is enabled."),
+            elem: workspaceView.getWidgetByName.bind(null, 'Video Call'),
+            pos: 'topLeft',
+            action: sleep.bind(null, 4)
+        },
         {
             type: 'simpleDescription',
             title: gettext("Mashup Wiring Design Tutorial"),
@@ -403,7 +467,7 @@
         },
         {
             type: 'userAction',
-            msg: gettext("Click here to continue"),
+            msg: gettext("<strong>You:</strong> click here to continue"),
             elem: BS.toolbar_button.bind(null, 'icon-puzzle-piece'),
             pos: 'downLeft'
         },
@@ -412,17 +476,93 @@
 
         {
             type: 'simpleDescription',
-            title: gettext("Step 2 - Design the identified behaviours"),
+            title: gettext("Step 2 - design the behaviours identified"),
             msg: gettext(
-                "<p>At this point you are going to perform basic actions like:</p>" +
-                "<p>- adding a web application as wiring component.</p>" +
-                "<p>- connect two different components through their endpoints</p>" +
-                "<p>- create a new empty behaviour</p>" +
-                "<p>- update the basic information of a behaviour</p>" +
-                "<p>- and share a component or connection between the behaviours.</p>" +
+                "<p>At this point you are going to perform basic actions as well as to:</p>" +
+                "<p> - Create a behaviour and update its basic information.</p>" +
+                "<p> - Connect two components (widget/operator) through their endpoints.</p>" +
+                "<p> - Share components and connections between the behaviours.</p>" +
                 "<div class=\"alert alert-info\">" +
                 "<p><strong>NOTE:</strong> The repetitive actions will be performed by the platform to make the tutorial faster.</p>" +
                 "</div>")
+        },
+        // Step 2 - Design the first behavior
+        {
+            type: 'simpleDescription',
+            title: gettext("Step 2 - design the behaviours identified"),
+            msg: gettext("<p>First of all, let's enable the behaviours.</p>")
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("Open <em>behaviours identified</em>"),
+            elem: header.getOption.bind(null, 'opt-behaviours'),
+            pos: 'downLeft',
+            action: autoSelect.bind(null, 1)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("Enable <em>behaviours</em>"),
+            elem: wiringView.enableBehaviours.bind(null),
+            pos: 'downLeft',
+            action: autoSelect.bind(null, 1)
+        },
+
+        {
+            type: 'simpleDescription',
+            title: gettext("Step 2 - design the behaviours identified"),
+            msg: gettext("<p>First, we will add the web applications which are necessary for this behavior.</p>")
+        },
+
+        // Step 2 - Design the first behavior - Add web apps
+        {
+            type: 'autoAction',
+            msg: gettext("Open <em>Apps Panel</em>"),
+            elem: wiringView.getToolBarOption.bind(null, 'show-panel-apps'),
+            pos: 'topRight',
+            action: autoSelect.bind(null, 1)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("Open <em>Widgets Section</em>"),
+            elem: wiringView.getWidgetOption.bind(null),
+            pos: 'topRight',
+            action: autoSelect.bind(null, 1)
+        },
+        {
+            type: 'userAction',
+            msg: gettext("<strong>You:</strong> Drag &amp; drop the web app to continue"),
+            elem: wiringView.getWidgetByName.bind(null, 'Text-oriented Field'),
+            pos: 'downRight',
+            'restartHandlers': [
+                {'element': get_wiring, 'event': 'widgetaddfail'},
+            ],
+            'event': 'widgetadded',
+            'eventToDeactivateLayer': 'mousedown',
+            'elemToApplyNextStepEvent': get_wiring,
+        },
+
+        /*{
+            type: 'simpleDescription',
+            title: gettext("Step 1 - Identification of the behaviours"),
+            msg: gettext(
+                "<p>For example, a behaviour would be if you want to find a technician " +
+                "from a given name in a list of technicians.</p>")
+        },*/
+
+        /*{
+            type: 'simpleDescription',
+            title: gettext("Step 1 - Identification of the behaviours"),
+            msg: gettext(
+                "<p>Another behaviour would be if you want to know the current location " +
+                "of a technician after selecting one.</p>")
+        },*/
+
+        {
+            type: 'simpleDescription',
+            title: gettext("Step 1 - Identify behaviors"),
+            msg: gettext(
+                "<p>The last behaviour would be if you want to make a video call " +
+                "the technician selected after watching their availability.</p>")
         },
 
         {

@@ -298,7 +298,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
             var nameElement = document.createElement('span');
                 nameElement.className = 'component-name';
-                nameElement.textContent = this.name;
+                nameElement.textContent = this.title;
 
             var infoElement = document.createElement('span');
                 infoElement.className = 'component-subtitle';
