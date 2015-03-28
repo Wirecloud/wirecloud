@@ -35,7 +35,7 @@
     cursor: pointer;
     clear: both;
     max-width: $endpoint-max-width;
-    margin: $endpoint-margin-vertical 0px;
+    margin: 0px 0px $endpoint-margin-vertical;
     @include user-select();
 
     .endpoint-label {
@@ -51,6 +51,10 @@
         top: 0px;
         padding: $endpoint-anchor-padding-vertical $endpoint-anchor-padding-horizontal;
     }
+}
+
+.wiring-diagram .endpoints .endpoint:first-child {
+    margin-top: 5px;
 }
 
 // ============================================================================
