@@ -572,14 +572,14 @@
         },
         {
             type: 'autoAction',
-            msg: gettext("Go to <strong>Open behaviours identified</strong>"),
+            msg: gettext("Go to open <strong>behaviours</strong>"),
             elem: header.getOption.bind(null, 'opt-behaviours'),
             pos: 'downLeft',
             action: autoSelect.bind(null, 1.5)
         },
         {
             type: 'autoAction',
-            msg: gettext("Go to <strong>Enable behaviours</strong>"),
+            msg: gettext("Go to enable <strong>behaviours</strong>"),
             elem: wiringView.enableBehaviours.bind(null),
             pos: 'downRight',
             action: autoSelect.bind(null, 1.5)
@@ -607,7 +607,7 @@
         },
         {
             type: 'autoAction',
-            msg: gettext("These are connections, operators and widgets."),
+            msg: gettext("These are the connections, operators and widgets."),
             elem: wiringView.getBehaviourElements.bind(null, 0),
             pos: 'downRight',
             action: autoSelect.bind(null, 2)
@@ -617,14 +617,14 @@
             type: 'simpleDescription',
             title: gettext("Step 2 - design the behaviours identified"),
             msg: gettext(
-                "<p>With already option behaviours enabled, let's design " +
+                "<p>With the option behaviours already enabled, let's design " +
                 "the first behaviour identified.</p>" +
                 "<p>Firstly, the basic information (title and description) " +
-                "of the behaviour 'New Behaviour 0' will be modified.</p>")
+                "of the behaviour <strong>New Behaviour 0</strong> will be modified.</p>")
         },
         {
             type: 'autoAction',
-            msg: gettext("Go to <strong>Open behaviour update form</strong>."),
+            msg: gettext("Go to open <strong>behaviour update form</strong>."),
             elem: wiringView.getBehaviourTitle.bind(null, 0),
             pos: 'downRight',
             action: autoSelect.bind(null, 2)
@@ -632,14 +632,14 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Put a great title."),
+            msg: gettext("Go to set a <strong>title</strong>."),
             elem: getBehaviourUpdateFormTitle.bind(null, "Search for a technician"),
             pos: 'downLeft',
             action: autoMouseOver.bind(null, 2)
         },
         {
             type: 'autoAction',
-            msg: gettext("Put a great description."),
+            msg: gettext("Go to set a <strong>description</strong>."),
             elem: getBehaviourUpdateFormDescription.bind(null, "Allow find a technician from a given name in the list of technicians."),
             pos: 'downLeft',
             action: autoMouseOver.bind(null, 2)
@@ -652,7 +652,7 @@
         },
         {
             type: 'autoAction',
-            msg: gettext("Look! The behaviour was updated."),
+            msg: gettext("<strong>Look!</strong> The first behaviour was updated."),
             elem: wiringView.getBehaviour.bind(null, 0),
             pos: 'downRight',
             action: autoMouseOver.bind(null, 2)
@@ -667,7 +667,7 @@
         },
         {
             type: 'autoAction',
-            msg: gettext("Go to <strong>Open components available</strong>"),
+            msg: gettext("Go to open <strong>components</strong>"),
             elem: header.getOption.bind(null, 'opt-components'),
             pos: 'downLeft',
             action: autoSelect.bind(null, 1.5)
@@ -675,7 +675,7 @@
 
         {
             type: 'userAction',
-            msg: gettext("<strong>You:</strong> drag and drop this operator"),
+            msg: gettext("<strong>You:</strong> drag and drop the operator <strong>Technical Service</strong>"),
             elem: wiringView.getOperatorByName.bind(null, 'Technical Service'),
             pos: 'downRight',
             'restartHandlers': [
@@ -710,16 +710,15 @@
 
         {
             type: 'userAction',
-            msg: gettext("<strong>You:</strong> Drag the output-endpoint..."),
+            msg: gettext("<strong>You:</strong> Drag the output-endpoint <strong>Technician</strong>..."),
             elem: getSourceEndpoint.bind(null, 'operator', 'Technical Service', 'Technician'),
             pos: 'downRight',
             'eventToDeactivateLayer': 'mousedown',
             'restartHandlers': [
-                {'element': get_wiring_canvas, 'event': 'establish'},
                 {'element': get_wiring_canvas, 'event': 'detach'}
             ],
             'disableElems': [],
-            nextStepMsg: gettext("...and drop in this input-endpoint."),
+            nextStepMsg: gettext("...and drop in this input-endpoint <strong>Technician</strong>."),
             elemToApplyNextStepEvent: getTargetEndpoint.bind(null, 'widget', 'Technicians', 'Technician'),
             'event': 'mouseup',
             secondPos: 'downLeft',
@@ -727,7 +726,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Connect 'Search for'-'Query' to 'Technicians'-'Query' similarly."),
+            msg: gettext("Connect <strong>Search for - Query</strong> to <strong>Technicians - Query</strong> similarly."),
             elem: wiringView.connect.bind(null, {
                 'type': 'widget',
                 'name': 'Search for',
@@ -745,13 +744,12 @@
             type: 'simpleDescription',
             title: gettext("Step 2 - design the behaviours identified"),
             msg: gettext(
-                "<p>The first behaviour is finished. Then, let's create " +
-                "a new behaviour to the second behaviour identified.</p>")
+                "<p>The first behaviour is finished. Then, let's create the second behaviour identified.</p>")
         },
 
         {
             type: 'autoAction',
-            msg: gettext("Go to <strong>Open behaviours identified</strong>"),
+            msg: gettext("Go to open <strong>behaviours</strong> again"),
             elem: header.getOption.bind(null, 'opt-behaviours'),
             pos: 'downLeft',
             action: autoSelect.bind(null, 1.5)
@@ -759,7 +757,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Go to <strong>Open behaviour registration form</strong>"),
+            msg: gettext("Go to open <strong>behaviour registration form</strong>"),
             elem: wiringView.openBehaviourRegistrationForm.bind(null),
             pos: 'topRight',
             action: autoSelect.bind(null, 1.5)
@@ -767,14 +765,14 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Put a great title."),
+            msg: gettext("Go to set a <strong>title</strong>."),
             elem: getBehaviourRegistrationFormTitle.bind(null, "View technician profile"),
             pos: 'downLeft',
             action: autoMouseOver.bind(null, 2)
         },
         {
             type: 'autoAction',
-            msg: gettext("Put a great description."),
+            msg: gettext("Go to set a <strong>description</strong>."),
             elem: getBehaviourRegistrationFormDescription.bind(null, "Allow view the vCard of a technician selected."),
             pos: 'downLeft',
             action: autoMouseOver.bind(null, 2)
@@ -806,7 +804,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Active the <strong>second behaviour</strong>."),
+            msg: gettext("Activate the <strong>second behaviour</strong>."),
             elem: wiringView.activateBehaviour.bind(null, 1),
             pos: 'downRight',
             action: autoSelect.bind(null, 2)
@@ -814,7 +812,7 @@
 
         {
             type: 'userAction',
-            msg: gettext("<strong>You:</strong> click here to share"),
+            msg: gettext("<strong>You:</strong> click here to share connection"),
             elem: shareConnection.bind(null, 0),
             pos: 'topRight'
         },
@@ -829,7 +827,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Connect 'Technicians'-'vCard' to 'Technician vCard'-'vCard' similarly."),
+            msg: gettext("Connect <strong>Technicians - vCard</strong> to <strong>Technician vCard - vCard</strong> similarly."),
             elem: wiringView.connect.bind(null, {
                 'type': 'widget',
                 'name': 'Technicians',
@@ -858,7 +856,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("The <strong>thrid behaviour</strong> was created quickly."),
+            msg: gettext("The <strong>thrid behaviour</strong> was created."),
             elem: addBehaviour.bind(null, 'Make a video call', 'Allow make a video call to the technician selected.'),
             pos: 'topRight',
             action: autoMouseOver.bind(null, 2)
@@ -866,7 +864,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Active the <strong>thrid behaviour</strong>."),
+            msg: gettext("Activate the <strong>thrid behaviour</strong>."),
             elem: wiringView.activateBehaviour.bind(null, 2),
             pos: 'downRight',
             action: autoSelect.bind(null, 2)
@@ -874,7 +872,7 @@
 
         {
             type: 'userAction',
-            msg: gettext("<strong>You:</strong> click here to share"),
+            msg: gettext("<strong>You:</strong> click here to share connection"),
             elem: shareConnection.bind(null, 0),
             pos: 'topRight'
         },
@@ -889,7 +887,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Connect 'Technicians'-'Username' to 'Video Call'-'User Id'."),
+            msg: gettext("Connect <strong>Technicians - Username</strong> to <strong>Video Call - User Id</strong>."),
             elem: wiringView.connect.bind(null, {
                 'type': 'widget',
                 'name': 'Technicians',
@@ -905,7 +903,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("The <strong>last behaviour</strong> was created quickly."),
+            msg: gettext("The <strong>last behaviour</strong> was created."),
             elem: addBehaviour.bind(null, 'Locate the technician', 'Allow display the current location of the technician selected.'),
             pos: 'topRight',
             action: autoMouseOver.bind(null, 2)
@@ -913,7 +911,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Active the <strong>last behaviour</strong>."),
+            msg: gettext("Activate the <strong>last behaviour</strong>."),
             elem: wiringView.activateBehaviour.bind(null, 3),
             pos: 'downRight',
             action: autoSelect.bind(null, 2)
@@ -921,7 +919,7 @@
 
         {
             type: 'userAction',
-            msg: gettext("<strong>You:</strong> click here to share"),
+            msg: gettext("<strong>You:</strong> click here to share connection"),
             elem: shareConnection.bind(null, 0),
             pos: 'topRight'
         },
@@ -936,7 +934,7 @@
 
         {
             type: 'autoAction',
-            msg: gettext("Connect 'Technicians'-'PoI' to 'Map Viewer'-'Insert/Update Centered PoI'."),
+            msg: gettext("Connect <strong>Technicians - PoI</strong> to <strong>Map Viewer - Insert/Update Centered PoI</strong>."),
             elem: wiringView.connect.bind(null, {
                 'type': 'widget',
                 'name': 'Technicians',
@@ -957,7 +955,7 @@
         },
         {
             type: 'userAction',
-            msg: gettext("Click <em>Back</em> to continue"),
+            msg: gettext("Click <strong>back</strong> to continue"),
             elem: BS.back_button, 
             pos: 'downRight'
         }
