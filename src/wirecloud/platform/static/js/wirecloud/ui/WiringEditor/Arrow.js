@@ -413,7 +413,7 @@
 
             this.closerElement.setAttribute("cx", posCloser.x);
             this.closerElement.setAttribute("cy", posCloser.y);
-            this.closerElement.setAttribute("r", '0.65em');
+            this.closerElement.setAttribute("r", '6px');
         }
         catch (err) {
             //TODO: error msg

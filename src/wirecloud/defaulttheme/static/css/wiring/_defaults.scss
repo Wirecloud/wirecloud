@@ -162,11 +162,11 @@ $connection-controller-border-color:                rgba(46, 109, 164, $highligh
 $connection-mousedover-controller-background-color: rgba(40, 96, 144, $highlighted-connection-opacity);
 $connection-mousedover-controller-border-color:     rgba(32, 77, 116, $highlighted-connection-opacity);
 
-$connection-onbackground-background-color: rgba(250, 250, 240, 0.75);
-$connection-onbackground-border-color: rgba(220, 220, 230, 0.75);
+$connection-onbackground-background-color: rgba(250, 250, 250, 0.8);
+$connection-onbackground-border-color: rgba(220, 220, 220, 0.5);
 
-$connection-bg-optrm-background-color: rgba(90, 190, 220, 0.8);
-$connection-bg-optrm-border-color: rgba(70, 180, 220, 0.8);
+$connection-bg-optrm-background-color: rgba(245, 245, 245, 0.8);
+$connection-bg-optrm-border-color: rgba(220, 220, 220, 0.8);
 
 $connection-bg-optrm-mousedover-background-color: rgba(50, 175, 210, 1.0);
 $connection-bg-optrm-mousedover-border-color: rgba(40, 150, 190, 1.0);
