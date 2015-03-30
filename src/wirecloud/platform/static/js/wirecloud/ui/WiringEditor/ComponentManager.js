@@ -244,16 +244,16 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
      * @param {String} operatorTitle
      * @returns {Object} The ioperator found.
      */
-    ComponentManager.prototype.getOperatorByTitle = function getOperatorByTitle(operatorTitle) {
+    ComponentManager.prototype.getOperatorByName = function getOperatorByName(name) {
         var id;
 
         for (id in this.operatorGroup) {
-            if (this.operatorGroup[id].wrapperElement.textContent == operatorTitle) {
+            if (this.operatorGroup[id].title == name) {
                 return this.operatorGroup[id];
             }
         }
 
-        return;
+        return null;
     };
 
     ComponentManager.prototype.getWidgetById = function getWidgetById(widgetId) {
@@ -276,16 +276,16 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
      * @param {Object} widgetTitle
      * @returns {Object} The iwidget found.
      */
-    ComponentManager.prototype.getWidgetByTitle = function getWidgetByTitle(widgetTitle) {
+    ComponentManager.prototype.getWidgetByName = function getWidgetByName(name) {
         var id;
 
         for (id in this.widgetGroup) {
-            if (this.widgetGroup[id].wrapperElement.textContent == widgetTitle) {
+            if (this.widgetGroup[id].title == name) {
                 return this.widgetGroup[id];
             }
         }
 
-        return;
+        return null;
     };
 
     ComponentManager.prototype.hide = function hide() {

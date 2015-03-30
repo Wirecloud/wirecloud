@@ -893,6 +893,25 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         }
     };
 
+    GenericInterface.prototype.getEndpointByName = function getEndpointByName(type, displayName) {
+        var endpoint, endpoints, name;
+
+        if (type == 'source') {
+            endpoints = this.sourceEndpoints;
+        } else {
+            endpoints = this.targetEndpoints;
+        }
+
+        for (name in endpoints) {
+            if (endpoints[name].displayName == displayName) {
+                endpoint = endpoints[name];
+                break;
+            }
+        }
+
+        return endpoint;
+    };
+
     /**
      * Add Ghost Endpoint
      */
@@ -1410,6 +1429,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
             this.sourceEndpoints[name] = {
                 'endpoint': endpointElement,
+                'displayName': label,
                 'endpointLabel': labelElement,
                 'endpointAnchor': anchor
             };
@@ -1482,6 +1502,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
             this.targetEndpoints[name] = {
                 'endpoint': endpointElement,
+                'displayName': label,
                 'endpointLabel': labelElement,
                 'endpointAnchor': anchor
             };

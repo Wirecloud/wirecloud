@@ -309,7 +309,7 @@ Wirecloud.ui.WiringEditor = (function () {
                         {name: 'description', label: gettext("Description"), type: 'longtext'}
                     ],
                     gettext("Information of the behaviour"),
-                    'form-update-behaviour',
+                    'behaviour-update-form',
                     {
                         acceptButton: btnSave
                     });
@@ -334,7 +334,7 @@ Wirecloud.ui.WiringEditor = (function () {
                     {name: 'description', label: gettext("Description"), type: 'longtext'}
                 ],
                 gettext("Create a new behaviour"),
-                'form-create-behaviour',
+                'behaviour-registration-form',
                 {
                     acceptButton: btnSave
                 });
@@ -1504,6 +1504,65 @@ Wirecloud.ui.WiringEditor = (function () {
         return this;
     };
 
+    WiringEditor.prototype.connectComponents = function connectComponents(sourceEndpoint, targetEndpoint) {
+        var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget, entity, isGhost;
+        var connectionView;
+
+        startAnchor = findComponent.call(this, sourceEndpoint.type, sourceEndpoint.name).getEndpointByName('source', sourceEndpoint.endpointName).endpointAnchor;
+        endAnchor = findComponent.call(this, targetEndpoint.type, targetEndpoint.name).getEndpointByName('target', targetEndpoint.endpointName).endpointAnchor;
+
+        arrow = this.connectionEngine.drawArrow(startAnchor.getCoordinates(this.layout.content.wrapperElement),
+            endAnchor.getCoordinates(this.layout.content.wrapperElement), "connection", false, false);
+
+        // Set arrow anchors
+        arrow.setStartAnchor(startAnchor);
+        startAnchor.addArrow(arrow);
+        arrow.setEndAnchor(endAnchor);
+        endAnchor.addArrow(arrow);
+
+        // Draw the arrow
+        arrow.redraw();
+
+        this.connectionEngine.events.establish.dispatch({
+            'connection': arrow,
+            'sourceComponent': arrow.sourceComponent,
+            'sourceEndpoint': arrow.startAnchor,
+            'sourceName': arrow.sourceName,
+            'targetComponent': arrow.targetComponent,
+            'targetEndpoint': arrow.endAnchor,
+            'targetName': arrow.targetName
+        });
+
+        return arrow;
+    };
+
+    WiringEditor.prototype.addComponentByName = function addComponentByName(type, name, x, y) {
+        var component, obj, endpoints, position;
+
+        endpoints = {
+            'source': [],
+            'target': []
+        };
+        position = {
+            'x': x,
+            'y': y
+        };
+
+        switch (type) {
+        case WiringEditor.OPERATOR_TYPE:
+            obj = this.componentManager.getOperatorByName(name);
+            component = this.addIOperator(obj.ioperator, endpoints, position);
+            break;
+        case WiringEditor.WIDGET_TYPE:
+            obj = this.componentManager.getWidgetByName(name);
+            component = this.addIWidget(obj.iwidget, endpoints, position);
+            obj.disable();
+            break;
+        }
+
+        return component;
+    };
+
     /**
      * @public
      * @function
@@ -2070,6 +2129,18 @@ Wirecloud.ui.WiringEditor = (function () {
         component = this.components[endpointView.type][endpointView.id];
 
         return component.getAnchor(endpointView.name);
+    };
+
+    var findComponent = function findComponent(type, name) {
+        var id, component = null;
+
+        for (id in this.components[type]) {
+            if (this.components[type][id].title == name) {
+                return this.components[type][id];
+            }
+        }
+
+        return null;
     };
 
     /**
