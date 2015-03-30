@@ -35,18 +35,17 @@
     };
 
     var getOperatorByName = function getOperatorByName(operatorName) {
-        document.querySelectorAll('.wiring_editor .menubar .resource-item')[0].click();
-        document.querySelectorAll('.wiring_editor .menubar .panel-components .panel-options .option')[0].click();
+        document.querySelector('.wiring-sidebar .opt-operator-group').click();
 
-        var operators = document.querySelectorAll('.wiring_editor .menubar .panel-components .ioperator');
+        var operators = document.querySelectorAll('.wiring-sidebar .panel-components .component-operator');
 
         for (var i = 0; i < operators.length; i++) {
-            if (operators[i].querySelector('.header span').textContent == operatorName) {
+            if (operators[i].querySelector('.component-heading span').textContent == operatorName) {
                 return operators[i];
             }
         }
 
-        return;
+        return null;
     };
 
     var get_wiring = function get_wiring() {
@@ -80,50 +79,87 @@
         return document.querySelectorAll('.wiring_editor .menubar .panel-components .panel-options .option')[1];
     };
 
-    var getSourceEndpoint = function getSourceEndpoint(instance_type, instance_name, endpoint_name) {
-        var instances = document.querySelectorAll('.wiring_editor .grid .' + instance_type);
-        var iSource;
+    var getSourceEndpoint = function getSourceEndpoint(type, name, endpoint_name) {
+        var instances = document.querySelectorAll('.wiring-diagram .component-' + type);
+        var iSource = null;
 
         for (var i = 0; i < instances.length; i++) {
-            if (instances[i].querySelector('.header span[title]').getAttribute('title') == instance_name) {
+            if (instances[i].querySelector('.component-name').textContent == name) {
                 iSource = instances[i];
                 break;
             }
         }
 
-        if (typeof iSource !== 'undefined') {
-            var endpoints = iSource.querySelectorAll('.sources .labelDiv');
+        if (iSource != null) {
+            var endpoints = iSource.querySelectorAll('.source-endpoints .endpoint');
 
             for (var i = 0; i < endpoints.length; i++) {
                 if (endpoints[i].textContent == endpoint_name) {
-                    return endpoints[i].querySelector('.anchor');
+                    return endpoints[i].querySelector('.endpoint-anchor');
                 }
             }
         }
 
-        return;
+        return null;
     };
 
-    var createBehavior = function createBehavior(title, description) {
-        var ModalCreation = document.querySelector('.behaviour_form');
-        var fieldTitle = ModalCreation.querySelector('input[name="title"]');
-        var fieldDescription = ModalCreation.querySelector('textarea[name="description"]');
+    var addBehaviour = function addBehaviour(title, description) {
+        var behaviour = get_wiring().behaviourEngine.createBehaviour({
+            'title': title,
+            'description': description
+        });
+
+        get_wiring().behaviourEngine.appendBehaviour(behaviour);
+
+        return behaviour.wrapperElement;
+    };
+
+    var updateBehaviour = function updateBehaviour() {
+        var form = document.querySelector('.behaviour-update-form');
+
+        return form.querySelectorAll('.window_bottom .styled_button')[0];
+    };
+
+    var getBehaviourUpdateFormTitle = function getBehaviourUpdateFormTitle(title) {
+        var form = document.querySelector('.behaviour-update-form');
+        var fieldTitle = form.querySelector('input[name="title"]');
 
         fieldTitle.value = title;
+
+        return fieldTitle;
+    };
+
+    var getBehaviourUpdateFormDescription = function getBehaviourUpdateFormDescription(description) {
+        var form = document.querySelector('.behaviour-update-form');
+        var fieldDescription = form.querySelector('textarea[name="description"]');
+
         fieldDescription.value = description;
 
-        return ModalCreation.querySelectorAll('.window_bottom .styled_button')[0];
+        return fieldDescription;
     };
 
-    var updateBehavior = function updateBehavior(title, description) {
-        var ModalCreation = document.querySelector('.behaviour_form');
-        var fieldTitle = ModalCreation.querySelector('input[name="title"]');
-        var fieldDescription = ModalCreation.querySelector('textarea[name="description"]');
+    var createBehaviour = function createBehaviour() {
+        var form = document.querySelector('.behaviour-registration-form');
+
+        return form.querySelectorAll('.window_bottom .styled_button')[0];
+    };
+
+    var getBehaviourRegistrationFormTitle = function getBehaviourRegistrationFormTitle(title) {
+        var form = document.querySelector('.behaviour-registration-form');
+        var fieldTitle = form.querySelector('input[name="title"]');
 
         fieldTitle.value = title;
-   fieldDescription.value = description;
 
-        return ModalCreation.querySelectorAll('.window_bottom .styled_button')[0];
+        return fieldTitle;
+    };
+
+    var getBehaviourRegistrationFormDescription = function getBehaviourRegistrationFormDescription(description) {
+        var form = document.querySelector('.behaviour-registration-form');
+        var fieldDescription = form.querySelector('textarea[name="description"]');
+
+        fieldDescription.value = description;
+
+        return fieldDescription;
     };
 
     var getOptionShare = function getOptionShare(type, name) {
@@ -140,35 +176,33 @@
     };
 
     var shareConnection = function shareConnection(connectionIndex) {
-        var connections = document.querySelectorAll('.wiring_editor .grid .canvas .arrow.on-background');
+        var connections = document.querySelectorAll('.wiring-connections .connection.on-background');
 
-        //connections[connectionIndex].classList.add('emphasize');
-
-        return connections[connectionIndex]; //.querySelector('circle');
+        return connections[connectionIndex].querySelector('.option-remove');
     };
 
-    var getTargetEndpoint = function getTargetEndpoint(instance_type, instance_name, endpoint_name) {
-        var instances = document.querySelectorAll('.wiring_editor .grid .' + instance_type);
-        var iSource;
+    var getTargetEndpoint = function getTargetEndpoint(type, name, endpoint_name) {
+        var instances = document.querySelectorAll('.wiring-diagram .component-' + type);
+        var iSource = null;
 
         for (var i = 0; i < instances.length; i++) {
-            if (instances[i].querySelector('.header span[title]').getAttribute('title') == instance_name) {
+            if (instances[i].querySelector('.component-name').textContent == name) {
                 iSource = instances[i];
                 break;
             }
         }
 
-        if (typeof iSource !== 'undefined') {
-            var endpoints = iSource.querySelectorAll('.targets .labelDiv');
+        if (iSource != null) {
+            var endpoints = iSource.querySelectorAll('.target-endpoints .endpoint');
 
             for (var i = 0; i < endpoints.length; i++) {
                 if (endpoints[i].textContent == endpoint_name) {
-                    return endpoints[i].querySelector('.anchor');
+                    return endpoints[i].querySelector('.endpoint-anchor');
                 }
             }
         }
 
-        return;
+        return null;
     };
 
     var autoSelect = function autoSelect(milliseconds, autoAction, element) {
@@ -177,7 +211,11 @@
             autoAction.nextHandler();
         }, milliseconds * 1000);
     };
-
+    var autoMouseOver = function autoMouseOver(milliseconds, autoAction, element) {
+        setTimeout(function () {
+            autoAction.nextHandler();
+        }, milliseconds * 1000);
+    };
     var showBehaviorUpdateForm = function showBehaviorUpdateForm(behaviorIndex) {
         var behaviors = document.querySelectorAll('.wiring_editor .behaviour-group .behaviour');
 
@@ -186,7 +224,7 @@
 
     var get_wiring_canvas = function get_wiring_canvas() {
         var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-        return wiringEditor.canvas;
+        return wiringEditor.connectionEngine;
     };
 
     var getWidgetByName = function getWidgetByName(widgetName) {
@@ -214,6 +252,24 @@
 
     var wiringView = {
 
+        'addComponent': function addComponent(type, name, x , y) {
+            document.querySelector('.wiring-sidebar .opt-' + type + '-group').click();
+
+            var component = get_wiring().addComponentByName(type, name, x, y);
+
+            return component.wrapperElement;
+        },
+
+        'openBehaviourRegistrationForm': function openBehaviourRegistrationForm() {
+            return document.querySelector('.wiring-sidebar .panel-behaviours .btn-create');
+        },
+
+        'connect': function connect(sourceEndpoint, targetEndpoint) {
+            var connect = get_wiring().connectComponents(sourceEndpoint, targetEndpoint);
+
+            return connect.wrapperElement;
+        },
+
         'getToolBarOption': function getToolBarOption(optionName) {
             var options = document.querySelectorAll('.wiring_editor .menubar .resource-item');
 
@@ -240,15 +296,17 @@
         },
 
         'getOperatorByName': function getOperatorByName(operatorName) {
-            var operators = document.querySelectorAll('.wiring_editor .menubar .panel-components .ioperator');
+            document.querySelector('.wiring-sidebar .opt-operator-group').click();
+
+            var operators = document.querySelectorAll('.wiring-sidebar .panel-components .component-operator');
 
             for (var i = 0; i < operators.length; i++) {
-                if (operators[i].querySelector('.header span').textContent == operatorName) {
+                if (operators[i].querySelector('.component-heading span').textContent == operatorName) {
                     return operators[i];
                 }
             }
 
-            return;
+            return null;
         },
 
         'getWidgetByName': function getWidgetByName(widgetName) {
@@ -265,6 +323,26 @@
 
         'enableBehaviours': function enableBehaviours() {
             return document.querySelector('.wiring-sidebar .panel-behaviours .opt-enable-behaviours');
+        },
+
+        'getBehaviour': function getBehaviour(index) {
+            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index];
+        },
+
+        'activateBehaviour': function activateBehaviour(index) {
+            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index].querySelector('.opt-activate');
+        },
+
+        'getBehaviourTitle': function getBehaviourTitle(index) {
+            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index].querySelector('.behaviour-title');
+        },
+
+        'getBehaviourDescription': function getBehaviourDescription(index) {
+            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index].querySelector('.behaviour-description');
+        },
+
+        'getBehaviourElements': function getBehaviourElements(index) {
+            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index].querySelector('.behaviour-elements');
         }
 
     };
@@ -406,14 +484,14 @@
             msg: gettext("A <strong>behaviour (1)</strong> would be to type the technician name..."),
             elem: workspaceView.getWidgetByName.bind(null, 'Search for'),
             pos: 'topRight',
-            action: sleep.bind(null, 4)
+            action: sleep.bind(null, 3)
         },
         {
             type: 'autoAction',
             msg: gettext("...and the technician is found here."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
             pos: 'topRight',
-            action: sleep.bind(null, 4)
+            action: sleep.bind(null, 3)
         },
 
         {
@@ -421,14 +499,14 @@
             msg: gettext("Another <strong>behaviour (2)</strong> would be to select a technician..."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
             pos: 'topRight',
-            action: sleep.bind(null, 4)
+            action: sleep.bind(null, 3)
         },
         {
             type: 'autoAction',
             msg: gettext("...and their vCard is displayed here."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technician vCard'),
             pos: 'topRight',
-            action: sleep.bind(null, 4)
+            action: sleep.bind(null, 3)
         },
 
         {
@@ -436,14 +514,14 @@
             msg: gettext("Another <strong>behaviour (3)</strong> would be to select a technician..."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
             pos: 'topRight',
-            action: sleep.bind(null, 4)
+            action: sleep.bind(null, 3)
         },
         {
             type: 'autoAction',
             msg: gettext("...and their current location is displayed here."),
             elem: workspaceView.getWidgetByName.bind(null, 'Map Viewer'),
             pos: 'topRight',
-            action: sleep.bind(null, 4)
+            action: sleep.bind(null, 3)
         },
 
         {
@@ -451,14 +529,14 @@
             msg: gettext("The last <strong>behaviour (4)</strong> would be to select a technician..."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
             pos: 'topRight',
-            action: sleep.bind(null, 4)
+            action: sleep.bind(null, 3)
         },
         {
             type: 'autoAction',
             msg: gettext("...and the video call is enabled."),
             elem: workspaceView.getWidgetByName.bind(null, 'Video Call'),
             pos: 'topLeft',
-            action: sleep.bind(null, 4)
+            action: sleep.bind(null, 3)
         },
         {
             type: 'simpleDescription',
@@ -494,75 +572,382 @@
         },
         {
             type: 'autoAction',
-            msg: gettext("Open <em>behaviours identified</em>"),
+            msg: gettext("Go to <strong>Open behaviours identified</strong>"),
             elem: header.getOption.bind(null, 'opt-behaviours'),
             pos: 'downLeft',
-            action: autoSelect.bind(null, 1)
+            action: autoSelect.bind(null, 1.5)
         },
         {
             type: 'autoAction',
-            msg: gettext("Enable <em>behaviours</em>"),
+            msg: gettext("Go to <strong>Enable behaviours</strong>"),
             elem: wiringView.enableBehaviours.bind(null),
-            pos: 'downLeft',
-            action: autoSelect.bind(null, 1)
+            pos: 'downRight',
+            action: autoSelect.bind(null, 1.5)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("This item represents a behaviour."),
+            elem: wiringView.getBehaviour.bind(null, 0),
+            pos: 'downRight',
+            action: autoMouseOver.bind(null, 2)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("This is the title."),
+            elem: wiringView.getBehaviourTitle.bind(null, 0),
+            pos: 'downRight',
+            action: autoMouseOver.bind(null, 2)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("This is the description."),
+            elem: wiringView.getBehaviourDescription.bind(null, 0),
+            pos: 'downRight',
+            action: autoSelect.bind(null, 2)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("These are connections, operators and widgets."),
+            elem: wiringView.getBehaviourElements.bind(null, 0),
+            pos: 'downRight',
+            action: autoSelect.bind(null, 2)
         },
 
         {
             type: 'simpleDescription',
             title: gettext("Step 2 - design the behaviours identified"),
-            msg: gettext("<p>First, we will add the web applications which are necessary for this behavior.</p>")
+            msg: gettext(
+                "<p>With already option behaviours enabled, let's design " +
+                "the first behaviour identified.</p>" +
+                "<p>Firstly, the basic information (title and description) " +
+                "of the behaviour 'New Behaviour 0' will be modified.</p>")
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("Go to <strong>Open behaviour update form</strong>."),
+            elem: wiringView.getBehaviourTitle.bind(null, 0),
+            pos: 'downRight',
+            action: autoSelect.bind(null, 2)
         },
 
-        // Step 2 - Design the first behavior - Add web apps
         {
             type: 'autoAction',
-            msg: gettext("Open <em>Apps Panel</em>"),
-            elem: wiringView.getToolBarOption.bind(null, 'show-panel-apps'),
-            pos: 'topRight',
-            action: autoSelect.bind(null, 1)
+            msg: gettext("Put a great title."),
+            elem: getBehaviourUpdateFormTitle.bind(null, "Search for a technician"),
+            pos: 'downLeft',
+            action: autoMouseOver.bind(null, 2)
         },
         {
             type: 'autoAction',
-            msg: gettext("Open <em>Widgets Section</em>"),
-            elem: wiringView.getWidgetOption.bind(null),
-            pos: 'topRight',
-            action: autoSelect.bind(null, 1)
+            msg: gettext("Put a great description."),
+            elem: getBehaviourUpdateFormDescription.bind(null, "Allow find a technician from a given name in the list of technicians."),
+            pos: 'downLeft',
+            action: autoMouseOver.bind(null, 2)
         },
         {
             type: 'userAction',
-            msg: gettext("<strong>You:</strong> Drag &amp; drop the web app to continue"),
-            elem: wiringView.getWidgetByName.bind(null, 'Text-oriented Field'),
+            msg: gettext("<strong>You:</strong> click here to update"),
+            elem: updateBehaviour.bind(null),
+            pos: 'downLeft'
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("Look! The behaviour was updated."),
+            elem: wiringView.getBehaviour.bind(null, 0),
+            pos: 'downRight',
+            action: autoMouseOver.bind(null, 2)
+        },
+
+        {
+            type: 'simpleDescription',
+            title: gettext("Step 2 - design the behaviours identified"),
+            msg: gettext(
+                "<p>Completed the above, let's add the components " +
+                "belonging to this behaviour.</p>")
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("Go to <strong>Open components available</strong>"),
+            elem: header.getOption.bind(null, 'opt-components'),
+            pos: 'downLeft',
+            action: autoSelect.bind(null, 1.5)
+        },
+
+        {
+            type: 'userAction',
+            msg: gettext("<strong>You:</strong> drag and drop this operator"),
+            elem: wiringView.getOperatorByName.bind(null, 'Technical Service'),
             pos: 'downRight',
             'restartHandlers': [
-                {'element': get_wiring, 'event': 'widgetaddfail'},
+                {'element': get_wiring, 'event': 'operatoraddfail'},
             ],
-            'event': 'widgetadded',
+            'event': 'operatoradded',
             'eventToDeactivateLayer': 'mousedown',
             'elemToApplyNextStepEvent': get_wiring,
         },
 
-        /*{
-            type: 'simpleDescription',
-            title: gettext("Step 1 - Identification of the behaviours"),
-            msg: gettext(
-                "<p>For example, a behaviour would be if you want to find a technician " +
-                "from a given name in a list of technicians.</p>")
-        },*/
+        {
+            type: 'autoAction',
+            msg: gettext("Add the widget <strong>Search for</strong> similarly."),
+            elem: wiringView.addComponent.bind(null, 'widget', 'Search for', 20, 20),
+            pos: 'topRight',
+            action: autoMouseOver.bind(null, 2)
+        },
 
-        /*{
+        {
+            type: 'autoAction',
+            msg: gettext("Add the widget <strong>Technicians</strong> similarly."),
+            elem: wiringView.addComponent.bind(null, 'widget', 'Technicians', 250, 20),
+            pos: 'topRight',
+            action: autoMouseOver.bind(null, 2)
+        },
+        {
             type: 'simpleDescription',
-            title: gettext("Step 1 - Identification of the behaviours"),
+            title: gettext("Step 2 - design the behaviours identified"),
             msg: gettext(
-                "<p>Another behaviour would be if you want to know the current location " +
-                "of a technician after selecting one.</p>")
-        },*/
+                "<p>Now, the components of this behaviour will be connected.</p>")
+        },
+
+        {
+            type: 'userAction',
+            msg: gettext("<strong>You:</strong> Drag the output-endpoint..."),
+            elem: getSourceEndpoint.bind(null, 'operator', 'Technical Service', 'Technician'),
+            pos: 'downRight',
+            'eventToDeactivateLayer': 'mousedown',
+            'restartHandlers': [
+                {'element': get_wiring_canvas, 'event': 'establish'},
+                {'element': get_wiring_canvas, 'event': 'detach'}
+            ],
+            'disableElems': [],
+            nextStepMsg: gettext("...and drop in this input-endpoint."),
+            elemToApplyNextStepEvent: getTargetEndpoint.bind(null, 'widget', 'Technicians', 'Technician'),
+            'event': 'mouseup',
+            secondPos: 'downLeft',
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Connect 'Search for'-'Query' to 'Technicians'-'Query' similarly."),
+            elem: wiringView.connect.bind(null, {
+                'type': 'widget',
+                'name': 'Search for',
+                'endpointName': 'Query'
+            }, {
+                'type': 'widget',
+                'name': 'Technicians',
+                'endpointName': 'Query'
+            }),
+            pos: 'topRight',
+            action: autoMouseOver.bind(null, 2)
+        },
 
         {
             type: 'simpleDescription',
-            title: gettext("Step 1 - Identify behaviors"),
+            title: gettext("Step 2 - design the behaviours identified"),
             msg: gettext(
-                "<p>The last behaviour would be if you want to make a video call " +
-                "the technician selected after watching their availability.</p>")
+                "<p>The first behaviour is finished. Then, let's create " +
+                "a new behaviour to the second behaviour identified.</p>")
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Go to <strong>Open behaviours identified</strong>"),
+            elem: header.getOption.bind(null, 'opt-behaviours'),
+            pos: 'downLeft',
+            action: autoSelect.bind(null, 1.5)
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Go to <strong>Open behaviour registration form</strong>"),
+            elem: wiringView.openBehaviourRegistrationForm.bind(null),
+            pos: 'topRight',
+            action: autoSelect.bind(null, 1.5)
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Put a great title."),
+            elem: getBehaviourRegistrationFormTitle.bind(null, "View technician profile"),
+            pos: 'downLeft',
+            action: autoMouseOver.bind(null, 2)
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("Put a great description."),
+            elem: getBehaviourRegistrationFormDescription.bind(null, "Allow view the vCard of a technician selected."),
+            pos: 'downLeft',
+            action: autoMouseOver.bind(null, 2)
+        },
+        {
+            type: 'userAction',
+            msg: gettext("<strong>You:</strong> click here to create"),
+            elem: createBehaviour.bind(null),
+            pos: 'downLeft'
+        },
+        {
+            type: 'autoAction',
+            msg: gettext("Look! The second behaviour was created."),
+            elem: wiringView.getBehaviour.bind(null, 1),
+            pos: 'downRight',
+            action: autoMouseOver.bind(null, 2)
+        },
+
+        {
+            type: 'simpleDescription',
+            title: gettext("Step 2 - design the behaviours identified"),
+            msg: gettext(
+                "<p>At this point, let's add the components <strong>Technician vCard</strong>, " +
+                "<strong>Technical Service</strong> and <strong>Technicians</strong> " +
+                "and connect them each other.</p>" +
+                "<p>The <strong>Technician vCard</strong> will added " +
+                "from 'panel of components' and the others sharing the connection.</p>")
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Active the <strong>second behaviour</strong>."),
+            elem: wiringView.activateBehaviour.bind(null, 1),
+            pos: 'downRight',
+            action: autoSelect.bind(null, 2)
+        },
+
+        {
+            type: 'userAction',
+            msg: gettext("<strong>You:</strong> click here to share"),
+            elem: shareConnection.bind(null, 0),
+            pos: 'topRight'
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Add the widget <strong>Technician vCard</strong> similarly."),
+            elem: wiringView.addComponent.bind(null, 'widget', 'Technician vCard', 470, 170),
+            pos: 'topRight',
+            action: autoMouseOver.bind(null, 2)
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Connect 'Technicians'-'vCard' to 'Technician vCard'-'vCard' similarly."),
+            elem: wiringView.connect.bind(null, {
+                'type': 'widget',
+                'name': 'Technicians',
+                'endpointName': 'vCard'
+            }, {
+                'type': 'widget',
+                'name': 'Technician vCard',
+                'endpointName': 'vCard'
+            }),
+            pos: 'topRight',
+            action: autoMouseOver.bind(null, 2)
+        },
+
+        {
+            type: 'simpleDescription',
+            title: gettext("Step 2 - design the behaviours identified"),
+            msg: gettext("<p>The second behavior is completed. The following " +
+                "<strong>behaviours (2 y 3)</strong> will be created in the same way.</p>" +
+
+                "<div class=\"alert alert-info\">" +
+                "<p><strong>NOTE:</strong> To speed up this tutorial, the next actions " +
+                "will be managed by the platform because that actions was " +
+                "already performed previously.</p>" +
+                "</div>")
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("The <strong>thrid behaviour</strong> was created quickly."),
+            elem: addBehaviour.bind(null, 'Make a video call', 'Allow make a video call to the technician selected.'),
+            pos: 'topRight',
+            action: autoMouseOver.bind(null, 2)
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Active the <strong>thrid behaviour</strong>."),
+            elem: wiringView.activateBehaviour.bind(null, 2),
+            pos: 'downRight',
+            action: autoSelect.bind(null, 2)
+        },
+
+        {
+            type: 'userAction',
+            msg: gettext("<strong>You:</strong> click here to share"),
+            elem: shareConnection.bind(null, 0),
+            pos: 'topRight'
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Add the widget <strong>Video Call</strong>."),
+            elem: wiringView.addComponent.bind(null, 'widget', 'Video Call', 470, 20),
+            pos: 'topLeft',
+            action: autoMouseOver.bind(null, 2)
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Connect 'Technicians'-'Username' to 'Video Call'-'User Id'."),
+            elem: wiringView.connect.bind(null, {
+                'type': 'widget',
+                'name': 'Technicians',
+                'endpointName': 'Username'
+            }, {
+                'type': 'widget',
+                'name': 'Video Call',
+                'endpointName': 'User Id'
+            }),
+            pos: 'topLeft',
+            action: autoMouseOver.bind(null, 2)
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("The <strong>last behaviour</strong> was created quickly."),
+            elem: addBehaviour.bind(null, 'Locate the technician', 'Allow display the current location of the technician selected.'),
+            pos: 'topRight',
+            action: autoMouseOver.bind(null, 2)
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Active the <strong>last behaviour</strong>."),
+            elem: wiringView.activateBehaviour.bind(null, 3),
+            pos: 'downRight',
+            action: autoSelect.bind(null, 2)
+        },
+
+        {
+            type: 'userAction',
+            msg: gettext("<strong>You:</strong> click here to share"),
+            elem: shareConnection.bind(null, 0),
+            pos: 'topRight'
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Add the widget <strong>Map Viewer</strong>."),
+            elem: wiringView.addComponent.bind(null, 'widget', 'Map Viewer', 720, 20),
+            pos: 'topLeft',
+            action: autoMouseOver.bind(null, 2)
+        },
+
+        {
+            type: 'autoAction',
+            msg: gettext("Connect 'Technicians'-'PoI' to 'Map Viewer'-'Insert/Update Centered PoI'."),
+            elem: wiringView.connect.bind(null, {
+                'type': 'widget',
+                'name': 'Technicians',
+                'endpointName': 'PoI'
+            }, {
+                'type': 'widget',
+                'name': 'Map Viewer',
+                'endpointName': 'Insert/Update Centered PoI'
+            }),
+            pos: 'topLeft',
+            action: autoMouseOver.bind(null, 2)
         },
 
         {
