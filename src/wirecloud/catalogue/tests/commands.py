@@ -63,7 +63,7 @@ class AddToCatalogueCommandTestCase(TestCase):
                         add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
                     parser = Mock()
-                    parser.get_resource_name.return_value = "MashableApplicationComponent1"
+                    parser.get_resource_processed_info.return_value = {'title': "Mashable Application Component1"}
                     context['TemplateParser'].return_value = parser
 
                     # Make the call to addtocatalogue
@@ -79,7 +79,7 @@ class AddToCatalogueCommandTestCase(TestCase):
             raise CommandError('')
 
         self.options['stdout'].seek(0)
-        self.assertTrue("MashableApplicationComponent1" in self.options['stdout'].read())
+        self.assertTrue("Mashable Application Component1" in self.options['stdout'].read())
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
@@ -94,7 +94,7 @@ class AddToCatalogueCommandTestCase(TestCase):
                         add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
                     parser = Mock()
-                    parser.get_resource_name.return_value = "MashableApplicationComponent1"
+                    parser.get_resource_processed_info.return_value = {'title': "Mashable Application Component1"}
                     context['TemplateParser'].return_value = parser
 
                     # Make the call to addtocatalogue
@@ -110,7 +110,7 @@ class AddToCatalogueCommandTestCase(TestCase):
             raise CommandError('')
 
         self.options['stdout'].seek(0)
-        self.assertTrue("MashableApplicationComponent1" in self.options['stdout'].read())
+        self.assertTrue("Mashable Application Component1" in self.options['stdout'].read())
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
@@ -125,7 +125,7 @@ class AddToCatalogueCommandTestCase(TestCase):
                         add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
                     parser = Mock()
-                    parser.get_resource_name.return_value = "MashableApplicationComponent1"
+                    parser.get_resource_processed_info.return_value = {'title': "Mashable Application Component1"}
                     context['TemplateParser'].return_value = parser
 
                     # Make the call to addtocatalogue
@@ -141,7 +141,7 @@ class AddToCatalogueCommandTestCase(TestCase):
             raise CommandError('')
 
         self.options['stdout'].seek(0)
-        self.assertTrue("MashableApplicationComponent1" in self.options['stdout'].read())
+        self.assertTrue("Mashable Application Component1" in self.options['stdout'].read())
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
@@ -170,7 +170,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
     def test_addtocatalogue_command_deploy_only(self, getdefaultlocale_mock):
 
-        self.options['deploy_only'] = True
+        self.options['redeploy'] = True
 
         args = ['file1.wgt', 'file2.wgt']
         try:
@@ -185,7 +185,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
     def test_addtocatalogue_command_error_reading_file(self, getdefaultlocale_mock):
 
-        self.options['deploy_only'] = True
+        self.options['redeploy'] = True
 
         args = ['file1.wgt', 'file2.wgt']
         try:
@@ -208,7 +208,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
     def test_addtocatalogue_command_error_installing_mac(self, getdefaultlocale_mock):
 
-        self.options['deploy_only'] = True
+        self.options['redeploy'] = True
 
         args = ['file1.wgt', 'file2.wgt']
         try:
@@ -231,7 +231,7 @@ class AddToCatalogueCommandTestCase(TestCase):
     def test_addtocatalogue_command_error_installing_mac_quiet(self, getdefaultlocale_mock):
 
         self.options['verbosity'] = '0'
-        self.options['deploy_only'] = True
+        self.options['redeploy'] = True
 
         args = ['file1.wgt', 'file2.wgt']
         try:
