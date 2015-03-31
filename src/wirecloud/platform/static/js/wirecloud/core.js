@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud, Workspace*/
+/*global gettext, LayoutManagerFactory, StyledElements, Wirecloud, Workspace*/
 /*jshint -W002 */
 
 (function () {
@@ -177,7 +177,7 @@
             onSuccess: function (response) {
                 var url;
 
-                options.monitor.nextSubtask('Processing initial context data');
+                options.monitor.nextSubtask(gettext('Processing initial context data'));
                 Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, JSON.parse(response.responseText));
                 Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
                 LayoutManagerFactory.getInstance().header._initUserMenu();
@@ -297,7 +297,7 @@
             Wirecloud.HistoryManager.pushState(state);
         }
 
-        msg = interpolate(gettext("Downloading workspace (%(name)s) data"), {name: workspace_full_name}, true);
+        msg = Wirecloud.Utils.interpolate(gettext("Downloading workspace (%(name)s) data"), {name: workspace_full_name}, true);
         LayoutManagerFactory.getInstance().logSubTask(msg, 1);
         new Wirecloud.WorkspaceCatalogue(workspace.id, {
             onSuccess: function (workspace_resources) {

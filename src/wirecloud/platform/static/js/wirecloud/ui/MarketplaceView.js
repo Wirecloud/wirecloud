@@ -49,12 +49,7 @@
         if (market_names.length > 0) {
             this.alternatives.showAlternative(this.viewsByName[market_names[0]]);
         } else {
-            var msg = gettext("<p>WireCloud is not connected with any marketplace.</p>" +
-                "<p>Suggestions:</p>" +
-                "<ul>" +
-                "<li>Connect WireCloud with a new marketplace.</li>" +
-                "<li>Go to the my resources view instead</li>" +
-                "</ul>");
+            var msg = gettext("<p>WireCloud is not connected with any marketplace.</p><p>Suggestions:</p><ul><li>Connect WireCloud with a new marketplace.</li><li>Go to the my resources view instead</li></ul>");
             notifyError.call(this, msg);
         }
     };

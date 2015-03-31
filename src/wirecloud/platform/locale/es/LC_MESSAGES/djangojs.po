@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-30 14:06+0200\n"
-"PO-Revision-Date: 2015-03-30 13:16+0100\n"
+"POT-Creation-Date: 2015-03-31 12:37+0200\n"
+"PO-Revision-Date: 2015-03-31 12:40+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -131,7 +131,7 @@ msgstr "Desinstalar"
 
 #: static/js/catalogue/CatalogueView.js:58
 msgid "Install"
-msgstr "Installar"
+msgstr "Instalar"
 
 #: static/js/catalogue/CatalogueView.js:175
 #: static/js/wirecloud/ui/MyResourcesView.js:191
@@ -811,6 +811,10 @@ msgstr "Obteniendo datos iniciales"
 msgid "Workspace"
 msgstr "Entorno de trabajo"
 
+#: static/js/wirecloud/core.js:180
+msgid "Processing initial context data"
+msgstr "Procesando los datos contexto iniciales"
+
 #: static/js/wirecloud/core.js:201
 msgid "Error retrieving available resources: %(errorMsg)s."
 msgstr "Error obteniendo los recursos disponibles: %(errorMsg)s."
@@ -1286,31 +1290,37 @@ msgid "Get more resources"
 msgstr "Obtener más recursos"
 
 #: static/js/wirecloud/ui/MarketplaceView.js:52
-msgid "<p>WireCloud is not connected with any marketplace.</p>"
-msgstr "<p>WireCloud no está conectado con ningún marketplace.</p>"
+msgid ""
+"<p>WireCloud is not connected with any marketplace.</p><p>Suggestions:</"
+"p><ul><li>Connect WireCloud with a new marketplace.</li><li>Go to the my "
+"resources view instead</li></ul>"
+msgstr ""
+"<p>WireCloud no está conectado con ningún marketplace.</p><p>Sugerencias:</"
+"p><ul><li>Conecta WireCloud con un nuevo marketplace.</li><li>Ve a la vista "
+"de Mis Recursos.</li></ul>"
 
-#: static/js/wirecloud/ui/MarketplaceView.js:182
+#: static/js/wirecloud/ui/MarketplaceView.js:177
 #: static/js/wirecloud/ui/MyResourcesView.js:128
 #: static/js/wirecloud/ui/MyResourcesView.js:146
 #: static/js/wirecloud/ui/WorkspaceView.js:58
 msgid "My Resources"
 msgstr "Mis recursos"
 
-#: static/js/wirecloud/ui/MarketplaceView.js:245
+#: static/js/wirecloud/ui/MarketplaceView.js:240
 msgid "loading marketplace view..."
 msgstr "cargando la vista de marketplace..."
 
-#: static/js/wirecloud/ui/MarketplaceView.js:247
+#: static/js/wirecloud/ui/MarketplaceView.js:242
 msgid "marketplace list not available"
 msgstr "lista de marketplaces no disponible"
 
-#: static/js/wirecloud/ui/MarketplaceView.js:271
+#: static/js/wirecloud/ui/MarketplaceView.js:266
 #: static/js/wirecloud/ui/MyResourcesView.js:62
 #: static/js/wirecloud/ui/WorkspaceView.js:66
 msgid "Marketplace"
 msgstr "Marketplace"
 
-#: static/js/wirecloud/ui/MarketplaceView.js:278
+#: static/js/wirecloud/ui/MarketplaceView.js:273
 msgid "Marketplace - %(marketname)s"
 msgstr "Marketplace - %(marketname)s"
 
