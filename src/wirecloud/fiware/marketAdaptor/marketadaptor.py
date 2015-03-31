@@ -75,11 +75,17 @@ def parse_resource_info(offering_resource):
         'name': offering_resource['name'],
         'description': offering_resource['description'],
     }
+
+    if 'metadata' in offering_resource:
+        resource_info['metadata'] = offering_resource['metadata']
+
     if 'link' in offering_resource:
         resource_info['url'] = offering_resource['link']
 
     if offering_resource['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
-        if 'link' in offering_resource:
+        if 'metadata' in resource_info:
+            resource_info['id'] = '/'.join((resource_info['metadata']['vendor'], resource_info['metadata']['name'], resource_info['metadata']['version']))
+        elif 'link' in offering_resource:
             resource_info['id'] = offering_resource['link'].rsplit('__', 1)[1].rsplit('.', 1)[0].replace('_', '/')
 
     return resource_info

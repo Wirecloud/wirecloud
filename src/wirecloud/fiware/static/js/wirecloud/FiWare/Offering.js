@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -61,6 +61,10 @@
     var installed = function installed() {
         var i, resource;
 
+        if (this.wirecloudresources.length == 0) {
+            return false;
+        }
+
         for (i = 0; i < this.resources.length; i++) {
             resource = this.resources[i];
             if ('type' in resource && !Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
@@ -120,6 +124,7 @@
             'store': {value: resourceJSON_.store},
             'usdl_url': {value: resourceJSON_.usdl_url},
             'resources': {value: resourceJSON_.resources},
+            'wirecloudresources': {value: []},
             'publicationdate': {value: publicationdate},
             'installed': {get: installed}
         });
@@ -137,6 +142,7 @@
                         resource.uri = resource.id;
                         resource.type = MAC_TYPES[MAC_MIMETYPES.indexOf(resource.content_type)];
                         resource.install = installResource.bind(this, resource);
+                        this.wirecloudresources.push(resource);
                     } catch (error) {
                         delete resource.version;
                         delete resource.vendor;
@@ -146,10 +152,13 @@
                 }
             }
         }
+
+        Object.freeze(this.resources);
+        Object.freeze(this.wirecloudresources);
     };
 
     Offering.prototype.install = function install(options) {
-        var i, subtask, onComplete = null, onSuccess, count = this.resources.length, msg;
+        var i, subtask, onComplete = null, onSuccess, onFailure, count = this.resources.length, msg;
 
         if (options == null) {
             options = {};
@@ -176,14 +185,23 @@
                     onSuccess = options.onResourceSuccess.bind(null, this.resources[i]);
                 }
 
+                if (typeof options.onResourceFailure === 'function') {
+                    onFailure = options.onResourceFailure.bind(null, this.resources[i]);
+                }
+
                 this.resources[i].install({
                     monitor: subtask,
                     onSuccess: onSuccess,
+                    onFailure: onFailure,
                     onComplete: onComplete
                 });
             } else {
                 count -= 1;
             }
+        }
+
+        if (count == 0) {
+            options.onComplete(options);
         }
     };
 

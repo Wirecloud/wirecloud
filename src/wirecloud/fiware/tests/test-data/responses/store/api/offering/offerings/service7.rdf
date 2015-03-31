@@ -1,0 +1,82 @@
+{
+    "rating": 5,
+    "related_images": [
+        "/media/CoNWeT__Invalid Resources__1.0.1/screenshot4.png",
+        "/media/CoNWeT__Invalid Resources__1.0.1/screenshot3.png",
+        "/media/CoNWeT__Invalid Resources__1.0.1/screenshot2.png",
+        "/media/CoNWeT__Invalid Resources__1.0.1/screenshot1.png"
+    ],
+    "description_url": "http://repository.example.com/CoNWeT/service5.rdf",
+    "creation_date": "2013-10-09 02:31:13.760000",
+    "owner_admin_user_id": "pedro-martinez-garcia-1",
+    "applications": [],
+    "publication_date": "2013-10-08 21:33:10.429000",
+    "open": false,
+    "owner_organization": "CoNWeT",
+    "name": "Invalid Resources",
+    "tags": [],
+    "comments": [
+        {
+            "comment": "Nice widgets for accessing multimedia social network such as Flickr or Youtube.\n\nThx!!",
+            "timestamp": "2013-10-22 12:21:58.655645",
+            "rating": 5,
+            "user": "sblanco",
+            "title": "Awesome!!"
+        }
+    ],
+    "state": "purchased",
+    "version": "1.0.1",
+    "image_url": "/media/CoNWeT__Invalid Resources__1.0.1/multimedia.jpg",
+    "offering_description": {
+        "services_included": [
+            {
+                "uriImage": "https://store.lab.fiware.org/media/CoNWeT__Invalid Resources__1.0.1/multimedia.jpg",
+                "vendor": "",
+                "name": "Invalid Resources",
+                "created": "2013-10-08 11:31:13.686311",
+                "interactions": [],
+                "modified": "2013-10-08 11:31:13.686311",
+                "legal": [],
+                "parts": [
+                    {
+                        "name": "",
+                        "uri": ""
+                    }
+                ],
+                "version": "",
+                "sla": [],
+                "short_description": "A pack of multimedia Wirecloud widgets",
+                "long_description": "A pack of multimedia Wirecloud widgets",
+                "page": ""
+            }
+        ],
+        "pricing": {
+            "price_plans": [
+                {
+                    "description": "This offering can be acquired for free",
+                    "title": "Free use"
+                }
+            ],
+            "valid_through": "",
+            "valid_from": "",
+            "description": "A pack of multimedia Wirecloud widgets",
+            "title": "Invalid Resources"
+        }
+    },
+    "resources": [
+        {
+            "version": "2.99.0",
+            "link": "http://static.example.com/CoNWeT__Youtube Browser Widget__2.99.0__invalidfilename.wgt",
+            "name": "Youtube Browser Widget",
+            "content_type": "application/x-widget+mashable-application-component",
+            "description": "A widget for browsing Youtube"
+        },
+        {
+            "version": "1.0.1",
+            "link": "http://static.example.com/CoNWeT__Input Box Widget__1.0__CoNWeT_invalidfilename2.wgt",
+            "name": "Input Box Widget",
+            "content_type": "application/x-widget+mashable-application-component",
+            "description": "A widget for viewing photos and videos"
+        }
+    ]
+}

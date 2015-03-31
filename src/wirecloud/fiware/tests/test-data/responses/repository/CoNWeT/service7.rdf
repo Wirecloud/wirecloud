@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:msm="http://cms-wg.sti2.org/ns/minimal-service-model#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:usdl="http://www.linked-usdl.org/ns/usdl-core#"
+    xmlns:legal="http://www.linked-usdl.org/ns/usdl-legal#"
+    xmlns:price="http://www.linked-usdl.org/ns/usdl-pricing#"
+    xmlns:sla="http://www.linked-usdl.org/ns/usdl-sla#"
+    xmlns:sec="http://www.linked-usdl.org/ns/usdl-sec#"
+    xmlns:blueprint="http://bizweb.sap.com/TR/blueprint#"
+    xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ctag="http://commontag.org/ns#"
+    xmlns:org="http://www.w3.org/ns/org#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:time="http://www.w3.org/2006/time#"
+    xmlns:gr="http://purl.org/goodrelations/v1#"
+    xmlns:doap="http://usefulinc.com/ns/doap#">
+
+    <skos:Concept xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="ba0">
+        <skos:inScheme rdf:resource="http://bizweb.sap.com/TR/blueprint#SolutionType"/>
+        <rdfs:label>Business Solution</rdfs:label>
+    </skos:Concept>
+
+    <usdl:Service xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/service7.rdf#bUvq9oTgNStSwDnuT">
+        <dcterms:subject rdf:nodeID="ba0"/>
+        <dcterms:subject rdf:nodeID="ba1"/>
+        <dcterms:subject rdf:nodeID="ba2"/>
+        <dcterms:subject rdf:nodeID="ba3"/>
+        <foaf:depiction rdf:resource="https://static.example.com/multimedia.jpg"/>
+        <dcterms:title xml:lang="en">Invalid Resources</dcterms:title>
+        <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2013-10-08 11:31:13.686311</dcterms:created>
+        <dcterms:abstract xml:lang="en">A pack of multimedia Wirecloud widgets</dcterms:abstract>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2013-10-08 11:31:13.686311</dcterms:modified>
+        <dcterms:description xml:lang="en">A pack of multimedia Wirecloud widgets</dcterms:description>
+
+        <foaf:thumbnail rdf:resource="https://static.example.com/multimedia.jpg" />
+        <usdl:versionInfo>1.0.1</usdl:versionInfo>
+    </usdl:Service>
+
+    <skos:Concept xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="ba1">
+        <skos:inScheme rdf:resource="http://bizweb.sap.com/TR/blueprint#PlatformType"/>
+        <rdfs:label>Android</rdfs:label>
+    </skos:Concept>
+
+    <skos:Concept xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="ba2">
+        <skos:inScheme rdf:resource="http://bizweb.sap.com/TR/blueprint#BusinessArea"/>
+        <rdfs:label>Services</rdfs:label>
+    </skos:Concept>
+
+    <skos:Concept xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="ba3">
+        <skos:inScheme rdf:resource="http://bizweb.sap.com/TR/blueprint#Industry"/>
+        <rdfs:label>Other services</rdfs:label>
+    </skos:Concept>
+
+    <usdl:ServiceOffering xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/service7.rdf#Xo9ZQS2Qa3yX8fDfm">
+        <dcterms:description xml:lang="en">A pack of multimedia Wirecloud widgets</dcterms:description>
+        <usdl:validFrom rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime"></usdl:validFrom>
+        <usdl:validThrough rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime"></usdl:validThrough>
+        <usdl:includes rdf:resource="http://repository.example.com/CoNWeT/service7.rdf#bUvq9oTgNStSwDnuT"/>
+        <dcterms:title xml:lang="en">Invalid Resources</dcterms:title>
+        <usdl:hasPricePlan rdf:resource="http://repository.example.com/CoNWeT/service7.rdf#NMTecgiP49qlfU90V"/>
+        <usdl:hasServiceLevelProfile rdf:resource="http://repository.example.com/CoNWeT/service7.rdf#KmhtiqmYXHT7L0vlu"/>
+    </usdl:ServiceOffering>
+
+    <price:PricePlan xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/service7.rdf#NMTecgiP49qlfU90V">
+        <dcterms:title xml:lang="en">Free use</dcterms:title>
+        <dcterms:description xml:lang="en">This offering can be acquired for free</dcterms:description>
+    </price:PricePlan>
+
+</rdf:RDF>

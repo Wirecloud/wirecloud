@@ -223,6 +223,10 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             button = arbitrary_offering.element.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Details')
 
+            invalid_offering = marketplace.search_in_results('Invalid Resources')
+            button = invalid_offering.element.find_element_by_css_selector('.mainbutton')
+            self.assertEqual(button.text, 'Details')
+
             # Purchased offerings
             pack_offering = marketplace.search_in_results('MultimediaPack')
             button = pack_offering.element.find_element_by_css_selector('.mainbutton')

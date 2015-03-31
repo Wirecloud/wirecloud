@@ -231,7 +231,7 @@
                 continue;
             }
 
-            if (['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
+            if (this.offering.wirecloudresources.length > 0) {
                 if (!this.offering.installed) {
                     button.addClassName('btn-primary').setLabel(gettext('Install'));
                     button.addEventListener('click', onInstallClick.bind(this, this.offering, this.painter.catalogue_view));
