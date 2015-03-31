@@ -76,8 +76,12 @@
             }.bind(this)
         });
         this.source.addEventListener('optionsChanged', function (source, options) {
-            this.scopeSelect.setValue(options.scope);
-            this.simple_search_input.setValue(options.keywords);
+            if (this.scopeSelect) {
+                this.scopeSelect.setValue(options.scope);
+            }
+            if (this.simple_search_input) {
+                this.simple_search_input.setValue(options.keywords);
+            }
             update_resetbutton.call(this, options);
         }.bind(this));
         this.source.addEventListener('requestStart', this.disable.bind(this));
