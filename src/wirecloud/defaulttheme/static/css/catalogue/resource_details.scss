@@ -7,10 +7,6 @@
     border-radius: 4px;
 }
 
-.resource_details .se-bl-north-container {
-    padding: 0 3ex;
-}
-
 .resource_details .panel {
     text-align: center;
     margin: 0 3ex;
@@ -44,4 +40,8 @@
 .markdown-body h6
 {
     color: rgb(85, 85, 85);
+}
+
+.wc-fiware-offering-resources-buttons-column {
+    width: 200px;
 }

@@ -134,6 +134,8 @@ def update_offering_info(ser, store_client, offering_id, token):
     ser['open'] = offering_info['open']
     ser['state'] = offering_info['state']
     ser['rating'] = offering_info['rating']
+    ser['vendor'] = offering_info['owner_organization']
+    ser['version'] = offering_info['version']
 
 
 class MarketAdaptor(object):
@@ -276,6 +278,7 @@ class MarketAdaptor(object):
 
         parsed_usdl = parse_usdl_from_url(url)
 
+        self.get_store(store)
         offerings, jobs = self._parse_offering(id, url, parsed_usdl, store, options)
         gevent.joinall(jobs)
 

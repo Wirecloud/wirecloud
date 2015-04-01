@@ -69,7 +69,7 @@
         layoutManager._startComplexTask(gettext("Uninstalling resource from local repository"), 3);
         layoutManager.logSubTask(gettext('Uninstalling resource'));
 
-        local_catalogue_view.catalogue.uninstallResource(resource, {
+        local_catalogue_view.catalogue.uninstallResource(resource.wirecloud, {
             onSuccess: function () {
                 LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uninstalled successfully'));
                 LayoutManagerFactory.getInstance().logStep('');
@@ -91,43 +91,72 @@
     };
 
     OfferingResourcePainter.prototype.paint = function paint(offering, dom_element, catalogue, offering_entry) {
-        var i, resource, wrapper, li, btn_group, button, details_button;
+        var i, resource, btn_group, button, details_button, resource_entry;
 
-        wrapper = document.createElement('ul');
-        wrapper.className = 'offering_resource_list';
-        dom_element.appendChild(wrapper);
+        offering_entry.resources = new StyledElements.ModelTable([
+                {
+                    "field": ["resource", "name"],
+                    "label": Wirecloud.Utils.gettext('Name'),
+                    "contentBuilder": function (entry) {
+                        var fragment = new StyledElements.Fragment();
+
+                        var title = document.createElement('h5');
+                        title.textContent = entry.resource.name;
+                        fragment.appendChild(title);
+                        if ('type' in resource && !('install' in resource)) {
+                            var error_label = document.createElement('span');
+                            error_label.className = 'label label-danger';
+                            error_label.textContent = Wirecloud.Utils.gettext('missing WireCloud metadata');
+                            title.appendChild(error_label);
+                        }
+                        var description = document.createTextNode(entry.resource.description);
+                        fragment.appendChild(description);
+                        return fragment;
+                    }
+                },
+                {
+                    "label": Wirecloud.Utils.gettext('Actions'),
+                    "width": "css",
+                    "class": "wc-fiware-offering-resources-buttons-column",
+                    "sortable": false,
+                    "contentBuilder": function (entry) {
+                        var resource = entry.resource;
+
+                        if (entry.install_button != null) {
+                            entry.install_button.clearClassName().clearEventListeners('click');
+                            if (Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
+                                entry.install_button.addClassName('btn-danger').setLabel(gettext('Uninstall'));
+                                entry.install_button.addEventListener('click', onUninstallClick.bind(null, resource, catalogue, offering_entry));
+                                entry.details_button.enable();
+                            } else {
+                                entry.install_button.addClassName('btn-primary').setLabel(gettext('Install'));
+                                entry.install_button.addEventListener('click', onInstallClick.bind(null, resource, catalogue, offering_entry));
+                                entry.details_button.disable();
+                            }
+                        }
+                        return entry.buttons;
+                    }
+                }
+            ], {
+                pageSize: 0,
+                'class': 'offering_resource_list'
+            }
+        );
+        dom_element.appendChild(offering_entry.resources);
 
         offering_entry.update_resource_buttons = function update_resource_buttons() {
-            for (var key in this.resource_buttons) {
-                var button_info = this.resource_buttons[key];
-                var button = button_info.button;
-                var resource = button_info.resource;
-
-                button.clearClassName().clearEventListeners('click');
-                if (Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
-                    button.addClassName('btn-danger').setLabel(gettext('Uninstall'));
-                    button.addEventListener('click', onUninstallClick.bind(null, resource, catalogue, offering_entry));
-                    button_info.details_button.enable();
-                } else {
-                    button.addClassName('btn-primary').setLabel(gettext('Install'));
-                    button.addEventListener('click', onInstallClick.bind(null, resource, catalogue, offering_entry));
-                    button_info.details_button.disable();
-                }
-            }
+            this.resources.source.refresh();
         };
 
         for (i = 0; i < offering.resources.length; i += 1) {
+            btn_group = document.createElement('div');
+            btn_group.className = 'btn-group';
             resource = offering.resources[i];
+            resource_entry = {resource: resource, buttons: btn_group};
 
-            li = document.createElement('li');
-            li.className = 'offering_resource';
-            li.textContent = resource.name;
             if ('url' in resource) {
-                btn_group = document.createElement('div');
-                btn_group.className = 'btn-group';
-                li.appendChild(btn_group);
 
-                if ('type' in resource) {
+                if ('install' in resource) {
 
                     button = new StyledElements.StyledButton({text: ''});
                     button.insertInto(btn_group);
@@ -137,14 +166,15 @@
                         myresources_view.createUserCommand('showDetails', this, {version: this.version})();
                     }.bind(resource));
                     details_button.insertInto(btn_group);
-                    offering_entry.resource_buttons[resource.id] = {resource: resource, button: button, details_button: details_button};
+                    resource_entry.install_button = button;
+                    resource_entry.details_button = details_button;
 
                 } else {
                     button = new StyledElements.StyledButton({'class': 'btn-info', text: gettext('Download')});
                     button.insertInto(btn_group);
                 }
             }
-            wrapper.appendChild(li);
+            offering_entry.resources.source.addElement(resource_entry);
         }
     };
 

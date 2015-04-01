@@ -57,7 +57,7 @@
         local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
         monitor = layoutManager._startComplexTask(gettext("Uninstalling offering resources"), 1);
 
-        count = offering.resources.length;
+        count = offering.wirecloudresources.length;
         callbacks = {
             onSuccess: function () {
                 local_catalogue_view.viewsByName.search.mark_outdated();
@@ -71,12 +71,8 @@
             }.bind(this)
         };
 
-        for (i = 0; i < offering.resources.length; i++) {
-            if ('type' in offering.resources[i]) {
-                local_catalogue_view.catalogue.uninstallResource(offering.resources[i], callbacks);
-            } else {
-                count -= 1;
-            }
+        for (i = 0; i < offering.wirecloudresources.length; i++) {
+            local_catalogue_view.catalogue.uninstallResource(offering.wirecloudresources[i].wirecloud, callbacks);
         }
     };
 
@@ -242,6 +238,7 @@
             } else {
                 button.addClassName('btn-info').setLabel(gettext('Details'));
                 button.addEventListener('click', this.painter.catalogue_view.createUserCommand('showDetails', this.offering));
+                button.setDisabled(this.painter.is_details_view);
             }
         }
 

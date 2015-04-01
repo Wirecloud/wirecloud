@@ -59,7 +59,7 @@ msgstr "Obteniendo información de la oferta"
 msgid "Error retrieving offering info: %(errorMsg)s."
 msgstr "Error obtenido la información de la oferta: %(errorMsg)s."
 
-#: static/js/wirecloud/FiWare/Offering.js:171
+#: static/js/wirecloud/FiWare/Offering.js:179
 msgid "Installing \"%(resource_name)s\" from the offering"
 msgstr "Instalando \"%(resource_name)s\" desde la oferta"
 
@@ -101,30 +101,30 @@ msgstr "Recursos"
 msgid "Uninstalling offering resources"
 msgstr "Desinstalando los recursos de la oferta"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:158
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:154
 msgid "N/A"
 msgstr "N/A"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:224
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:220
 msgid "Free"
 msgstr "Gratis"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:228
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:224
 msgid "Purchase"
 msgstr "Comprar"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:236
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:112
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:232
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:132
 msgid "Install"
 msgstr "Instalar"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:239
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:108
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:235
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:128
 msgid "Uninstall"
 msgstr "Desinstalar"
 
-#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:243
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:134
+#: static/js/wirecloud/FiWare/ui/OfferingPainter.js:239
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:163
 msgid "Details"
 msgstr "Detalles"
 
@@ -152,6 +152,18 @@ msgstr "Desinstalando el recurso"
 msgid "Resource uninstalled successfully"
 msgstr "Recurso desinstalado correctamente"
 
-#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:143
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:99
+msgid "Name"
+msgstr "Nombre"
+
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:109
+msgid "missing WireCloud metadata"
+msgstr "faltan los metadatos de WireCloud"
+
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:118
+msgid "Actions"
+msgstr "Acciones"
+
+#: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:173
 msgid "Download"
 msgstr "Descargar"

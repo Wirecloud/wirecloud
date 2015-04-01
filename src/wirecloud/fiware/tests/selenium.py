@@ -477,8 +477,8 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
                     if tab.text == 'Resources':
                         self.scroll_and_click(tab)
                         break
-                resources = free_offering.details.find_elements_by_css_selector('.offering_resource_list .offering_resource')
-                resource = resources[0]
+                resources = free_offering.details.find_elements_by_css_selector('.offering_resource_list .se-model-table-row')
+                resource = resources[1]
                 button = resource.find_element_by_css_selector('.styled_button')
                 self.assertEqual(button.text, 'Install')
                 button.click()

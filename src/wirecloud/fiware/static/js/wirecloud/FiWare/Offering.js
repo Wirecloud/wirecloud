@@ -65,9 +65,9 @@
             return false;
         }
 
-        for (i = 0; i < this.resources.length; i++) {
-            resource = this.resources[i];
-            if ('type' in resource && !Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
+        for (i = 0; i < this.wirecloudresources.length; i++) {
+            resource = this.wirecloudresources[i];
+            if (!Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
                 return false;
             }
         }
@@ -134,20 +134,20 @@
                 var resource = this.resources[i];
                 resource.offering = this;
                 if (is_mac_mimetype(resource.content_type)) {
+                    resource.type = MAC_TYPES[MAC_MIMETYPES.indexOf(resource.content_type)];
                     try {
                         var parts = resource.id.split('/');
-                        resource.version = new Wirecloud.Version(parts[2], 'catalogue');
-                        resource.vendor = parts[0];
-                        resource.name = parts[1];
                         resource.uri = resource.id;
-                        resource.type = MAC_TYPES[MAC_MIMETYPES.indexOf(resource.content_type)];
+                        resource.wirecloud = {
+                            vendor: parts[0],
+                            name: parts[1],
+                            version: new Wirecloud.Version(parts[2], 'catalogue')
+                        };
                         resource.install = installResource.bind(this, resource);
                         this.wirecloudresources.push(resource);
                     } catch (error) {
-                        delete resource.version;
-                        delete resource.vendor;
-                        delete resource.name;
-                        delete resource.type;
+                        delete resource.uri;
+                        delete resource.wirecloud;
                     }
                 }
             }
@@ -158,7 +158,7 @@
     };
 
     Offering.prototype.install = function install(options) {
-        var i, subtask, onComplete = null, onSuccess, onFailure, count = this.resources.length, msg;
+        var i, subtask, onComplete = null, onSuccess, onFailure, count = this.wirecloudresources.length, msg;
 
         if (options == null) {
             options = {};
@@ -174,30 +174,26 @@
             };
         }
 
-        for (i = 0; i < this.resources.length; i++) {
-            if ('type' in this.resources[i]) {
-                if (options.monitor) {
-                    msg = gettext('Installing "%(resource_name)s" from the offering');
-                    subtask = options.monitor.nextSubtask(Wirecloud.Utils.interpolate(msg, {resource_name: this.resources[i].name}, true));
-                }
-
-                if (typeof options.onResourceSuccess === 'function') {
-                    onSuccess = options.onResourceSuccess.bind(null, this.resources[i]);
-                }
-
-                if (typeof options.onResourceFailure === 'function') {
-                    onFailure = options.onResourceFailure.bind(null, this.resources[i]);
-                }
-
-                this.resources[i].install({
-                    monitor: subtask,
-                    onSuccess: onSuccess,
-                    onFailure: onFailure,
-                    onComplete: onComplete
-                });
-            } else {
-                count -= 1;
+        for (i = 0; i < this.wirecloudresources.length; i++) {
+            if (options.monitor) {
+                msg = gettext('Installing "%(resource_name)s" from the offering');
+                subtask = options.monitor.nextSubtask(Wirecloud.Utils.interpolate(msg, {resource_name: this.wirecloudresources[i].name}, true));
             }
+
+            if (typeof options.onResourceSuccess === 'function') {
+                onSuccess = options.onResourceSuccess.bind(null, this.wirecloudresources[i]);
+            }
+
+            if (typeof options.onResourceFailure === 'function') {
+                onFailure = options.onResourceFailure.bind(null, this.wirecloudresources[i]);
+            }
+
+            this.wirecloudresources[i].install({
+                monitor: subtask,
+                onSuccess: onSuccess,
+                onFailure: onFailure,
+                onComplete: onComplete
+            });
         }
 
         if (count == 0) {

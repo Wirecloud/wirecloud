@@ -164,8 +164,17 @@
         this.resizeColumns();
     };
 
+    /**
+     * Each column must provide the following options:
+     * * `field` (String): name of the attribute
+     * * `type` (String): date, number, string, boolean
+     *
+     * And can provide these other optional options:
+     * * `label` (String, default: null): . If not provided, the value of the `field` option will be used as label for this columns
+     * * `sortable`: `false` by default.
+     */
     var ModelTable = function ModelTable(columns, options) {
-        var i, column, sort_info, sort_id, defaultOptions;
+        var className, i, column, sort_info, sort_id, defaultOptions;
 
         defaultOptions = {
             'initialSortColumn': -1,
@@ -177,7 +186,12 @@
 
         this.columns = columns;
 
-        this.layout = new StyledElements.BorderLayout({'class': 'se-model-table'});
+        if (options['class'] != null) {
+            className = Wirecloud.Utils.appendWord('se-model-table', options['class']);
+        } else {
+            className = 'se-model-table';
+        }
+        this.layout = new StyledElements.BorderLayout({'class': className});
         this.wrapperElement = this.layout.wrapperElement;
 
         /*
