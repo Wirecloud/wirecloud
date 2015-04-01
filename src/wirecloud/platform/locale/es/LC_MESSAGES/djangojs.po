@@ -1411,7 +1411,7 @@ msgid ""
 "using the Marketplace view or by uploading components manually using the "
 "Upload button."
 msgstr ""
-"Actualmente no tienes acceso a ninguna componente. Puedes obtener "
+"Actualmente no tienes acceso a ningún componente. Puedes obtener "
 "componentes usando la vista de Marketplace o subiendo recursos de forma "
 "manual usando el botón Subir."
 

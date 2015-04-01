@@ -104,9 +104,40 @@ msgstr "Buscar"
 msgid "<p>Showing results for <b><t:corrected_query/></b></p>"
 msgstr "<p>Mostrando los resultados para <b><t:corrected_query/></b></p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:67
-msgid "<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p>"
-msgstr "<p>No hemos podido encontrar nada para tu búsqueda - <b>%(keywords)s.</b></p>"
+#: static/js/wirecloud/ui/MACSearch.js:68
+msgid ""
+"<p>We couldn't find anything for your search - <b>%(keywords)s.</b></"
+"p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</"
+"li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>"
+msgstr ""
+"<p>No hemos podido encontrar resultados que coincidan con tu búsqueda (<b>"
+"%(keywords)s</b>).</p><p>Sugerencias:</p><ul><li>Asegúrate de que todas las "
+"palabras estén escritas correctamente.</li><li>Prueba con otras palabras "
+"clave.</li><li>Inténtalo con palabras clave más generales.</li></ul>"
+
+#: static/js/wirecloud/ui/MACSearch.js:71
+msgid ""
+"<p>Currently, you do not have access to any %(scope)s component. You can get "
+"components using the Marketplace view or by uploading components manually "
+"using the Upload button on the My Resources view.</p>"
+msgstr ""
+"<p>Actualmente no tienes acceso a ningún componente de tipo %(cope)s. Puedes "
+"obtener componentes usando la vista de Marketplace o subiendo recursos de "
+"forma manual usando el botón Subir en la vista de Mis Recursos.</p>"
+
+#: static/js/wirecloud/ui/MACSearch.js:74
+msgid ""
+"<p>Currently, you do not have access to any component. You can get "
+"components using the Marketplace view or by uploading components manually "
+"using the Upload button on the My Resources view.</p>"
+msgstr ""
+"<p>Actualmente no tienes acceso a ningún componente. Puedes obtener "
+"componentes usando la vista de Marketplace o subiendo recursos de forma "
+"manual usando el botón Subir en la vista de Mis Recursos.</p>"
+
+#: static/js/wirecloud/ui/MACSearch.js:132
+msgid "Keywords..."
+msgstr "Texto de búsqueda"
 
 #: static/js/wirecloud/ui/TutorialCatalogue.js:51
 msgid "If you prefer, you can follow some of these tutorials:"

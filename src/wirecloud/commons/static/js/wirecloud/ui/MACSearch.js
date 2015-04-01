@@ -64,8 +64,15 @@
                         this.resource_painter.paint(widgets[i]).insertInto(this._list);
                     }
                 } else {
-                    msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
-                    msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(keywords.trim())}, true);
+                    if (keywords != "") {
+                        msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
+                        msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(keywords.trim())}, true);
+                    } else if (this.search_scope != '') {
+                        msg = gettext("<p>Currently, you do not have access to any %(scope)s component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
+                        msg = interpolate(msg, {scope: this.search_scope}, true);
+                    } else {
+                        msg = gettext("<p>Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
+                    }
                     this.resource_painter.paintError(new StyledElements.Fragment(msg)).insertInto(this._list);
                 }
             }.bind(this),
