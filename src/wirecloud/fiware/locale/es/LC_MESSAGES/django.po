@@ -109,6 +109,10 @@ msgstr "Nombre:"
 msgid "URI:"
 msgstr "URI:"
 
+#: templates/wirecloud/fiware/marketplace/search_interface.html:8
+msgid "Filtering"
+msgstr "Filtrado"
+
 #: templates/wirecloud/fiware/marketplace/search_interface.html:11
 msgid "Keywords:"
 msgstr "Palabras clave:"
