@@ -200,10 +200,12 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         this._appendBehaviour(behaviour);
 
         behaviour.btnActivate.addEventListener('click', function (event) {
-            behaviour.dispatchEvent('activate')({
-                'behaviour': behaviour,
-                'behaviourEngine': this,
-            }, event);
+            if (!behaviour.active) {
+                behaviour.dispatchEvent('activate')({
+                    'behaviour': behaviour,
+                    'behaviourEngine': this,
+                }, event);
+            }
         }.bind(this));
 
         behaviour.btnActivate.addEventListener('dblclick', function (event) {
@@ -448,7 +450,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         state = BehaviourEngine.normalizeWiring(state);
 
         this.empty();
-        this.behavioursEnabled = state.behavioursenabled;
+        this.behavioursEnabled = state.visualdescription.behavioursenabled;
         this.currentState = state.visualdescription;
 
         if (this.behavioursEnabled) {

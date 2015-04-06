@@ -31,7 +31,7 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @param {Object.<String, *>} [options]
      */
     var Behaviour = function Behaviour(data, index, options) {
-        var iconActivate, countersElement;
+        var countersElement;
 
         StyledElements.EventManagerMixin.call(this, Behaviour.events);
         data = Behaviour.normalize(data, index);
@@ -72,12 +72,11 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         countersElement.appendChild(this.widgetsElement);
 
         this.btnActivate = new StyledElements.StyledButton({
+            'title': gettext("Activate"),
             'class': 'opt-activate btn-primary',
-            'iconClass': 'icon-eye-open',
-            'title': gettext("Activate")
+            'iconClass': 'icon-eye-close'
         });
         this.btnActivate.insertInto(this.wrapperElement);
-        iconActivate = this.btnActivate.icon;
 
         Object.defineProperty(this, 'active', {
             'get': function get() {
@@ -87,11 +86,11 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
                 if (typeof state === 'boolean') {
                     if (state) {
                         this.wrapperElement.classList.add('active');
-                        this.btnActivate.active = true;
+                        this.btnActivate.addClassName('active');
                         this.btnActivate.toggleIconClass('icon-eye-open', 'icon-eye-close');
                     } else {
                         this.wrapperElement.classList.remove('active');
-                        this.btnActivate.active = false;
+                        this.btnActivate.removeClassName('active');
                         this.btnActivate.toggleIconClass('icon-eye-close', 'icon-eye-open');
                     }
                 }
