@@ -52,20 +52,20 @@
     GhostEntity.prototype.fillFromViewInfo = function fillFromViewInfo(data) {
         var i, endpoint;
 
-        if (!('endPointsInOuts' in data)) {
+        if (!('endpoints' in data)) {
             return;
         }
 
-        if ('sources' in data.endPointsInOuts) {
-            for (i = 0; i < data.endPointsInOuts.sources.length; i++) {
-                endpoint = new Wirecloud.wiring.GhostSourceEndpoint(this, data.endPointsInOuts.sources[i]);
+        if ('source' in data.endpoints) {
+            for (i = 0; i < data.endpoints.source.length; i++) {
+                endpoint = new Wirecloud.wiring.GhostSourceEndpoint(this, data.endpoints.source[i]);
                 this.outputs[endpoint.name] = endpoint;
             }
         }
 
-        if ('targets' in data.endPointsInOuts) {
-            for (i = 0; i < data.endPointsInOuts.targets.length; i++) {
-                endpoint = new Wirecloud.wiring.GhostTargetEndpoint(this, data.endPointsInOuts.targets[i]);
+        if ('target' in data.endpoints) {
+            for (i = 0; i < data.endpoints.target.length; i++) {
+                endpoint = new Wirecloud.wiring.GhostTargetEndpoint(this, data.endpoints.target[i]);
                 this.inputs[endpoint.name] = endpoint;
             }
         }

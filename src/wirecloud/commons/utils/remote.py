@@ -493,8 +493,17 @@ class WiringComponentTester(object):
         return self.component.find_element_by_css_selector(".option-notify")
 
     @property
+    def opt_remove(self):
+        return self.component.find_element_by_css_selector(".option-remove")
+
+    @property
     def opt_preferences(self):
         return self.component.find_element_by_css_selector(".option-preferences")
+
+    def get_all_endpoints(self, endpoint_type):
+        endpoints = self.component.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)
+
+        return [WiringEndpointTester(self.testcase, element) for element in endpoints]
 
     def get_endpoint_by_name(self, endpoint_type, endpoint_name):
         endpoints = self.component.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)
@@ -551,6 +560,10 @@ class WiringConnectionTester(object):
     @property
     def in_background(self):
         return 'on-background' in self.element.get_attribute('class').split()
+
+    @property
+    def opt_remove(self):
+        return self.element.find_element_by_css_selector('.option-remove')
 
     @property
     def selected(self):
@@ -1349,8 +1362,16 @@ class WiringViewTester(object):
 
         return None
 
-    def get_all_connections(self):
-        return [WiringConnectionTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".connection")]
+    def get_all_connections(self, missing=False, readonly=False):
+        css_selector = [".connection"]
+
+        if missing:
+            css_selector.append("missing")
+
+        if readonly:
+            css_selector.append("readonly")
+
+        return [WiringConnectionTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".".join(css_selector))]
 
     def open_component_bar(self):
         self.testcase.driver.find_element_by_css_selector(self.CSS_OPT_COMPONENTS).click()

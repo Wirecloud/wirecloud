@@ -943,7 +943,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(connections), 0)
 
 
-class WiringGhostTestCase(WirecloudSeleniumTestCase):
+class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
@@ -966,7 +966,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         return tuple(json_fixtures)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
-    def test_widget_with_complete_view_reference_is_not_in_workspace(self):
+    def test_widget_with_visual_info_is_not_in_workspace(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_widget_missingtradeinfo'))
         workspace.save()
@@ -987,129 +987,9 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
             self.assertTrue(widget.is_missing)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
-    def test_wiring_show_invisible_widget_with_connections(self):
+    def test_widget_with_visualinfo_and_connections_is_not_in_workspace(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps({
-            "views": [
-                {
-                    "label": "default",
-                    "iwidgets": {
-                        "1": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 44
-                            },
-                            "endPointsInOuts": {
-                                "sources": ["outputendpoint"],
-                                "targets": ["inputendpoint"]
-                            },
-                            "name": "Wirecloud/Test/1.0",
-                        },
-                        "2": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 153
-                            },
-                            "endPointsInOuts": {
-                                "sources": ["outputendpoint"],
-                                "targets": ["inputendpoint"]
-                            },
-                            "name": "Wirecloud/Test/1.0",
-                        },
-                        "3": {
-                            "position": {
-                                "posX": 200,
-                                "posY": 100
-                            },
-                            "endPointsInOuts": {
-                                "sources": ["outputendpoint"],
-                                "targets": ["inputendpoint"]
-                            },
-                            "name": "Wirecloud/Test/1.0",
-                        }
-                    },
-                    "operators": {
-                        "0": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 256
-                            }
-                        }
-                    },
-                    "connections": []
-                }
-            ],
-            "operators": {
-                "0": {
-                    "name": "Wirecloud/TestOperator/1.0",
-                    "id": "0",
-                    "preferences": {
-                    }
-                }
-            },
-            "connections": [
-                {
-                    "source": {
-                        "type": "iwidget",
-                        "id": 1,
-                        "endpoint": "outputendpoint"
-                    },
-                    "target": {
-                        "type": "iwidget",
-                        "id": 2,
-                        "endpoint": "inputendpoint"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "iwidget",
-                        "id": 2,
-                        "endpoint": "outputendpoint"
-                    },
-                    "target": {
-                        "type": "ioperator",
-                        "id": 0,
-                        "endpoint": "input"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "ioperator",
-                        "id": 0,
-                        "endpoint": "output"
-                    },
-                    "target": {
-                        "type": "iwidget",
-                        "id": 1,
-                        "endpoint": "inputendpoint"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "ioperator",
-                        "id": 0,
-                        "endpoint": "output"
-                    },
-                    "target": {
-                        "type": "iwidget",
-                        "id": 3,
-                        "endpoint": "inputendpoint"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "iwidget",
-                        "id": 1,
-                        "endpoint": "outputendpoint"
-                    },
-                    "target": {
-                        "type": "iwidget",
-                        "id": 3,
-                        "endpoint": "inputendpoint"
-                    }
-                }
-            ]
-        })
+        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_widget_missingtradeinfo_with_connections'))
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -1117,85 +997,22 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
-        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_app_bar .icon-puzzle-piece + .badge")
+        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
         self.assertTrue(wiring_error_badge.is_displayed())
         self.assertEqual(wiring_error_badge.text, '2')
 
         with self.wiring_view as wiring:
 
-            ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
-            self.assertEqual(len(ghostWidget), 1)
-            # 5 connections
-            connections = self.driver.find_elements_by_css_selector('.wiring_editor .arrow')
-            self.assertEqual(len(connections), 5, "Fail in ghost Widget connections")
+            widget = wiring.from_diagram_find_component_by_name('widget', "Test")
+            self.assertTrue(widget.is_missing)
+
+            connections = wiring.get_all_connections()
+            self.assertEqual(len(connections), 5)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
-    def test_wiring_show_invisible_operator(self):
+    def test_operator_uninstalled_with_tradeinfo(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps({
-            "views": [
-                {
-                    "label": "default",
-                    "iwidgets": {
-                        "1": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 44
-                            },
-                            "endPointsInOuts": {
-                                "sources": ["outputendpoint"],
-                                "targets": ["inputendpoint"]
-                            },
-                            "name": "Wirecloud/Test/1.0",
-                        },
-                        "2": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 153
-                            },
-                            "endPointsInOuts": {
-                                "sources": ["outputendpoint"],
-                                "targets": ["inputendpoint"]
-                            },
-                            "name": "Wirecloud/Test/1.0",
-                        }
-                    },
-                    "operators": {
-                        "0": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 256
-                            }
-                        },
-                        "1": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 400
-                            },
-                            "endPointsInOuts": {
-                                "sources": ["in"],
-                                "targets": ["out"]
-                            },
-                            "minimized": False
-                        }
-                    },
-                    "connections": []
-                }
-            ],
-            "operators": {
-                "0": {
-                    "name": "Wirecloud/TestOperator/1.0",
-                    "id": "0",
-                    "preferences": {}
-                },
-                "1": {
-                    "name": "Wirecloud/TestOperatorDePalo/1.0",
-                    "id": "1",
-                    "preferences": {}
-                }
-            },
-            "connections": []
-        })
+        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo'))
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -1203,154 +1020,30 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
-        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_app_bar .icon-puzzle-piece + .badge")
+        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
         self.assertTrue(wiring_error_badge.is_displayed())
         self.assertEqual(wiring_error_badge.text, '1')
 
         with self.wiring_view as wiring:
 
-            ghostWidget = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
-            ghostEndpointsLabelsFirst1 = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')[0].text
-            ghostEndpointsLabelsFirst2 = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')[1].text
-            # Ghost
-            self.assertEqual(len(ghostWidget), 1, "The ghost Operator has not been painted in the first access to Wiring Editor")
+            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperatorDePalo")
+            self.assertTrue(operator.is_missing)
+
+            self.assertEqual(len(operator.get_all_endpoints('source')), 1)
+            self.assertEqual(len(operator.get_all_endpoints('target')), 1)
 
         with self.wiring_view as wiring:
 
-            ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
-            self.assertEqual(len(ghostOperator), 1, "The ghost Operator has not been painted in the second access to Wiring Editor")
-            ghostEndpointsLabelsSecond = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')
-            # compare labels
-            self.assertEqual(ghostEndpointsLabelsFirst1, ghostEndpointsLabelsSecond[0].text, "The ghost Operator has change the endpoints label in the second access to Wiring Editor")
-            self.assertEqual(ghostEndpointsLabelsFirst2, ghostEndpointsLabelsSecond[1].text, "The ghost Operator has change the endpoints label in the second access to Wiring Editor")
+            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperatorDePalo")
+            self.assertTrue(operator.is_missing)
+
+            self.assertEqual(len(operator.get_all_endpoints('source')), 1)
+            self.assertEqual(len(operator.get_all_endpoints('target')), 1)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
-    def test_wiring_show_invisible_operator_with_connections(self):
+    def test_operator_uninstalled_with_tradeinfo_and_connections(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps({
-            "views": [
-                {
-                    "label": "default",
-                    "iwidgets": {
-                        "1": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 44
-                            },
-                            "endPointsInOuts": {
-                                "sources": ["outputendpoint"],
-                                "targets": ["inputendpoint"]
-                            },
-                            "name": "Wirecloud/Test/1.0",
-                        },
-                        "2": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 153
-                            },
-                            "endPointsInOuts": {
-                                "sources": ["outputendpoint"],
-                                "targets": ["inputendpoint"]
-                            },
-                            "name": "Wirecloud/Test/1.0",
-                        }
-                    },
-                    "operators": {
-                        "0": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 256
-                            }
-                        },
-                        "1": {
-                            "position": {
-                                "posX": 84,
-                                "posY": 400
-                            },
-                            "endPointsInOuts": {
-                                "sources": ["out"],
-                                "targets": ["in"]
-                            }
-                        }
-                    },
-                    "connections": []
-                }
-            ],
-            "operators": {
-                "0": {
-                    "name": "Wirecloud/TestOperator/1.0",
-                    "id": "0",
-                    "preferences": {}
-                },
-                "1": {
-                    "name": "Wirecloud/TestOperatorDePalo/1.0",
-                    "id": "1",
-                    "preferences": {}
-                }
-            },
-            "connections": [
-                {
-                    "source": {
-                        "type": "iwidget",
-                        "id": 1,
-                        "endpoint": "outputendpoint"
-                    },
-                    "target": {
-                        "type": "iwidget",
-                        "id": 2,
-                        "endpoint": "inputendpoint"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "iwidget",
-                        "id": 2,
-                        "endpoint": "outputendpoint"
-                    },
-                    "target": {
-                        "type": "ioperator",
-                        "id": 0,
-                        "endpoint": "input"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "ioperator",
-                        "id": 1,
-                        "endpoint": "out"
-                    },
-                    "target": {
-                        "type": "iwidget",
-                        "id": 1,
-                        "endpoint": "inputendpoint"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "ioperator",
-                        "id": 0,
-                        "endpoint": "output"
-                    },
-                    "target": {
-                        "type": "ioperator",
-                        "id": 1,
-                        "endpoint": "in"
-                    }
-                },
-                {
-                    "source": {
-                        "type": "iwidget",
-                        "id": 1,
-                        "endpoint": "outputendpoint"
-                    },
-                    "target": {
-                        "type": "ioperator",
-                        "id": 1,
-                        "endpoint": "in"
-                    }
-                }
-            ]
-        })
+        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo_and_connections'))
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -1358,97 +1051,36 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
-        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_app_bar .icon-puzzle-piece + .badge")
+        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
         self.assertTrue(wiring_error_badge.is_displayed())
         self.assertEqual(wiring_error_badge.text, '1')
 
         with self.wiring_view as wiring:
 
-            # 1 ghost operator
-            ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
-            self.assertEqual(len(ghostOperator), 1)
+            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperatorDePalo")
+            self.assertTrue(operator.is_missing)
 
-            # 5 connections
-            connections = self.driver.find_elements_by_css_selector('.wiring_editor .arrow')
-            self.assertEqual(len(connections), 5, "Missing connections")
+            self.assertEqual(len(operator.get_all_endpoints('source')), 1)
+            self.assertEqual(len(operator.get_all_endpoints('target')), 1)
 
-            # of which 3 are ghost ones
-            connections = self.driver.find_elements_by_css_selector('.wiring_editor .arrow.ghost')
-            self.assertEqual(len(connections), 3, "Invalid number of ghost connections")
+            connections = wiring.get_all_connections()
+            self.assertEqual(len(connections), 5)
 
-    def test_read_only_connections_cannot_be_deleted_in_WiringEditor(self):
+            connections = wiring.get_all_connections(missing=True)
+            self.assertEqual(len(connections), 3)
+
+
+class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+
+    def test_readonly_connection_cannot_be_deleted(self):
 
         workspace = Workspace.objects.get(id=2)
-        parsedStatus = json.loads(workspace.wiringStatus)
-
-        parsedStatus['views'] = [
-            {
-                "label": "default",
-                "iwidgets": {
-                    "1": {
-                        "position": {
-                            "posX": 84,
-                            "posY": 44
-                        },
-                        "endPointsInOuts": {
-                            "sources": ["outputendpoint"],
-                            "targets": ["inputendpoint"]
-                        },
-                        "name": "Wirecloud/Test/1.0",
-                    },
-                    "2": {
-                        "position": {
-                            "posX": 350,
-                            "posY": 64
-                        },
-                        "endPointsInOuts": {
-                            "sources": ["outputendpoint"],
-                            "targets": ["inputendpoint"]
-                        },
-                        "name": "Wirecloud/Test/1.0",
-                    }
-                },
-                "operators": {
-                    "0": {
-                        "position": {
-                            "posX": 84,
-                            "posY": 256
-                        },
-                        "minimized": False
-                    },
-                },
-                "connections": []
-            }
-        ]
-        parsedStatus['connections'] = [
-            {
-                "readOnly": True,
-                "source":{
-                    "type":"iwidget",
-                    "id":1,
-                    "endpoint":"outputendpoint"
-                },
-                "target":{
-                    "type":"iwidget",
-                    "id":2,
-                    "endpoint":"inputendpoint"
-                }
-            },
-            {
-                "readOnly": False,
-                "source":{
-                    "type":"iwidget",
-                    "id":1,
-                    "endpoint":"outputendpoint"
-                },
-                "target":{
-                    "type":"ioperator",
-                    "id":0,
-                    "endpoint":"input"
-                }
-            }
-        ]
-        workspace.wiringStatus = json.dumps(parsedStatus)
+        wiring_status = json.loads(workspace.wiringStatus)
+        wiring_status['connections'][0]['readonly'] = True
+        workspace.wiringStatus = json.dumps(wiring_status)
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -1458,86 +1090,22 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            arrows = self.driver.find_elements_by_css_selector('.wiring_editor .arrow')
-            self.assertEqual(len(arrows), 2)
-            # The find_element_by_css_selector is needed to work around a bug in the firefox driver
-            arrows[0].find_element_by_css_selector('g').click()
-            self.wait_element_visible_by_css_selector('.closer', element=arrows[0]).click()
-            arrows = self.driver.find_elements_by_css_selector('.wiring_editor .arrow')
-            self.assertEqual(len(arrows), 2)
+            connections = wiring.get_all_connections()
+            self.assertEqual(len(connections), 3)
 
-    def test_widget_and_operator_with_read_only_connections_cannot_be_deleted_in_WiringEditor(self):
+            connections = wiring.get_all_connections(readonly=True)
+            self.assertEqual(len(connections), 1)
+
+            readonly_connection = connections[0]
+            readonly_connection.select()
+            self.assertFalse(readonly_connection.opt_remove.is_displayed())
+
+    def test_widget_or_operator_with_readonly_connections_cannot_be_deleted(self):
 
         workspace = Workspace.objects.get(id=2)
-        parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['views'] = [
-            {
-                "label": "default",
-                "iwidgets": {
-                    "1": {
-                        "position": {
-                            "posX": 84,
-                            "posY": 44
-                        },
-                        "endPointsInOuts": {
-                            "sources": ["outputendpoint"],
-                            "targets": ["inputendpoint"]
-                        },
-                        "name": "Wirecloud/Test/1.0",
-                    },
-                    "2": {
-                        "position": {
-                            "posX": 350,
-                            "posY": 64
-                        },
-                        "endPointsInOuts": {
-                            "sources": ["outputendpoint"],
-                            "targets": ["inputendpoint"]
-                        },
-                        "name": "Wirecloud/Test/1.0",
-                    }
-                },
-                "operators": {
-                    "0": {
-                        "position": {
-                            "posX": 84,
-                            "posY": 256
-                        },
-                        "minimized": False
-                    }
-                },
-                "connections": []
-            }
-        ]
-        parsedStatus['connections'] = [
-            {
-                "readOnly": False,
-                "source": {
-                    "type": "iwidget",
-                    "id": 1,
-                    "endpoint": "outputendpoint"
-                },
-                "target": {
-                    "type": "iwidget",
-                    "id": 2,
-                    "endpoint": "inputendpoint"
-                }
-            },
-            {
-                "readOnly": True,
-                "source": {
-                    "type": "iwidget",
-                    "id": 1,
-                    "endpoint": "outputendpoint"
-                },
-                "target":{
-                    "type": "ioperator",
-                    "id": 0,
-                    "endpoint": "input"
-                }
-            }
-        ]
-        workspace.wiringStatus = json.dumps(parsedStatus)
+        wiring_status = json.loads(workspace.wiringStatus)
+        wiring_status['connections'][1]['readonly'] = True
+        workspace.wiringStatus = json.dumps(wiring_status)
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -1547,16 +1115,14 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
 
-            widget = self.driver.find_elements_by_css_selector('.grid > .iwidget')[0]
-            operator = self.driver.find_elements_by_css_selector('.grid > .ioperator')[0]
-            widget.click()
-            widget.find_element_by_css_selector('.closebutton').click()
-            operator.click()
-            self.wait_element_visible_by_css_selector('.closebutton', element=operator).click()
-            widgets = self.driver.find_elements_by_css_selector('.grid > .iwidget')
-            operators = self.driver.find_elements_by_css_selector('.grid > .ioperator')
-            self.assertEqual(len(widgets), 2)
-            self.assertEqual(len(operators), 1)
+            connections = wiring.get_all_connections(readonly=True)
+            self.assertEqual(len(connections), 1)
+
+            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperator")
+            self.assertFalse(operator.opt_remove.is_displayed())
+
+            widget = wiring.from_diagram_find_component_by_name('widget', "Test 2")
+            self.assertFalse(widget.opt_remove.is_displayed())
 
 
 class EndpointSortingTestCase(WirecloudSeleniumTestCase):

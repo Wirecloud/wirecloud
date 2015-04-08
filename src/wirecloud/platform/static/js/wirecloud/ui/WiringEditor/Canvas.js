@@ -84,7 +84,7 @@
         }
         if (isGhost) {
             arrow.isGhost = true;
-            arrow.addClassName('misplaced');
+            arrow.addClassName('missing');
         }
         arrow.setStart(from);
         arrow.setEnd(to);

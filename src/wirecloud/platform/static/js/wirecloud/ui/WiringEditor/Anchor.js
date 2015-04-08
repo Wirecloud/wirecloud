@@ -182,7 +182,7 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
                             this.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint) {
                             //Ghost Arrow
                             arrowCreator.theArrow.isGhost = true;
-                            arrowCreator.theArrow.addClassName('misplaced');
+                            arrowCreator.theArrow.addClassName('missing');
                         }
                     } else {
                         arrowCreator.theArrow.setStart(pos);
@@ -190,7 +190,7 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
                             this.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint) {
                             //Ghost Arrow
                             arrowCreator.theArrow.isGhost = true;
-                            arrowCreator.theArrow.addClassName('misplaced');
+                            arrowCreator.theArrow.addClassName('missing');
                         }
                     }
                     arrowCreator.theArrow.redraw();
@@ -214,7 +214,7 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
                         !(initEndpoint instanceof Wirecloud.wiring.GhostSourceEndpoint || initEndpoint instanceof Wirecloud.wiring.GhostTargetEndpoint)) {
                         //Clean Ghost Arrow
                         arrowCreator.theArrow.isGhost = false;
-                        arrowCreator.theArrow.removeClassName('misplaced');
+                        arrowCreator.theArrow.removeClassName('missing');
                     }
                 }
             }
