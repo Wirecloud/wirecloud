@@ -3,12 +3,12 @@ WireCloud Installation and Administration Guide
 
 ## Introduction
 
-This Installation and Administration Guide covers WireCloud version 0.7 (starting from FIWARE release 4.2). Any feedback on this document is highly welcomed, including bugs, typos or things you think should be included but aren't. Please send it to the "Contact Person" email that appears in the [Catalogue page for this GEi](http://catalogue.fiware.org/enablers/application-mashup-wirecloud).
+This Installation and Administration Guide covers WireCloud version 0.7 (starting from FIWARE release 4.2). Any feedback on this document is highly welcomed, including bugs, typos or things you think should be included but are not. Please send it to the "Contact Person" email that appears in the [Catalogue page for this GEi](http://catalogue.fiware.org/enablers/application-mashup-wirecloud).
 
 
 ## Installation
 
-This page contains the Installation and Administration Guide for the WireCloud Mashup Platform, a reference implementation of the Application Mashup Generic Enabler, based on the [WireCloud](http://conwet.fi.upm.es/wirecloud) Open Source project. The corresponding [online documentation](https://wirecloud.conwet.fi.upm.es/docs/) is continuously updated and improved, and provides the most appropriate source to get the most up-to-date information on installation and administration. Both WireCloud users and developers have the option to create tickets though the [github's issue tracker](https://github.com/Wirecloud/wirecloud/issues) of the project.
+This page contains the Installation and Administration Guide for the WireCloud Mashup Platform, a reference implementation of the Application Mashup Generic Enabler, based on the [WireCloud](https://conwet.fi.upm.es/wirecloud) Open Source project. The corresponding [online documentation](https://wirecloud.conwet.fi.upm.es/docs/) is continuously updated and improved, and provides the most appropriate source to get the most up-to-date information on installation and administration. Both WireCloud users and developers have the option to create tickets though the [github's issue tracker](https://github.com/Wirecloud/wirecloud/issues) of the project.
 
 
 ### Requirements
@@ -117,11 +117,11 @@ To delete a virtual environment, just delete its folder.
 
 ### Installing WireCloud using pip
 
-WireCloud can be easily installed using [pip](http://www.pip-installer.org/en/latest/installing.html). To install WireCloud from a FIWARE release, download the desired version from the [FIWARE PPP Public Files area](https://forge.fi-ware.eu/frs/?group_id=7).
+WireCloud can be easily installed using [pip](http://www.pip-installer.org/en/latest/installing.html). To install WireCloud from a FIWARE release, download the desired version from the [FIWARE PPP Public Files area](https://forge.fiware.org/frs/?group_id=7).
 
-Once downloaded, you can install it using the following command (assuming you downloaded APPS-Application-Mashup-Wirecloud-3.3.1.tar.gz):
+Once downloaded, you can install it using the following command (assuming you downloaded APPS-Application-Mashup-Wirecloud-4.2.3.tar.gz):
 
-    $ sudo pip install APPS-Application-Mashup-Wirecloud-3.3.1.tar.gz
+    $ sudo pip install APPS-Application-Mashup-Wirecloud-4.2.3.tar.gz
 
 You can always install the latest version of WireCloud from PyPI using the following command:
 
@@ -134,10 +134,12 @@ The WireCloud source code is available from the [GitHub WireCloud repository](ht
 
 To get the latest development version of the code, you can choose between two options:
 
-- Go to the WireCloud repository on GitHub and click on the ZIP button to download the repository as a zip file, or just click on this [link](https://github.com/Wirecloud/wirecloud/zipball/0.7.x). Unzip it.
+- Go to the WireCloud repository on GitHub, switch to the 0.7.x branch (or select a specific 0.7.x tag) and click on the ZIP button to download the repository as a zip file, or just click on this [link](https://github.com/Wirecloud/wirecloud/zipball/0.7.x). Unzip it.
 - Or use a [GIT](http://git-scm.com/) client to get the latest development version via Git:
 
         $ git clone git://github.com/Wirecloud/wirecloud.git
+        $ cd wirecloud
+        $ git checkout 0.7.x
 
 Once downloaded the source code, you can install WireCloud using the `setup.py` script (this step requires root privileges):
 
@@ -158,7 +160,7 @@ Then, create a new instance directory using the `startproject` command. This wil
     $ cd /opt
     $ wirecloud-admin startproject wirecloud_instance
 
-After creating the new instance, you have to configure it choosing a database, populating it and performing final django configurations. These steps can be skiped using the `--quick-start` option. This will configure the instance to use SQLite3 with a default admin user (password:admin). This method is very useful for creating a WireCloud instance for testing:
+After creating the new instance, you have to configure it choosing a database, populating it and performing final DJango configurations. These steps can be skipped using the `--quick-start` option. This will configure the instance to use SQLite3 with a default admin user (password:admin). This method is very useful for creating a WireCloud instance for testing:
 
     $ cd /opt
     $ wirecloud-admin startproject wirecloud_instance --quick-start
