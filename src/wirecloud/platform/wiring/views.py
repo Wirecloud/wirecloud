@@ -52,12 +52,12 @@ class WiringEntry(Resource):
         old_wiring_status = json.loads(workspace.wiringStatus)
         old_read_only_connections = []
         for connection in old_wiring_status['connections']:
-            if connection.get('readOnly', False):
+            if connection.get('readonly', False):
                 old_read_only_connections.append(connection)
 
         read_only_connections = []
         for connection in wiring_status['connections']:
-            if connection.get('readOnly', False):
+            if connection.get('readonly', False):
                 read_only_connections.append(connection)
 
         if len(old_read_only_connections) > len(read_only_connections):

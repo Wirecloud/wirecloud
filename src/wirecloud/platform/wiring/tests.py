@@ -56,7 +56,7 @@ def selenium_supports_draganddrop(driver):
 class WiringTestCase(WirecloudTestCase):
 
     fixtures = ('test_data',)
-    tags = ('wiring',)
+    tags = ('wirecloud-wiring',)
 
     def setUp(self):
 
@@ -83,14 +83,14 @@ class WiringTestCase(WirecloudTestCase):
             'connections': [
                 {
                     'source': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'event',
+                        'name': 'event',
                     },
                     'target': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'slot',
+                        'name': 'slot',
                     },
                 },
             ],
@@ -101,7 +101,6 @@ class WiringTestCase(WirecloudTestCase):
         workspace = Workspace.objects.get(id=self.workspace_id)
         workspace_wiring = json.loads(workspace.wiringStatus)
         self.assertEqual(workspace_wiring, new_wiring)
-    test_save_basic_wiring_connection.tags = ('wiring', 'fiware-ut-6')
 
     def test_basic_wiring_operations_with_read_only_connections(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
@@ -109,16 +108,16 @@ class WiringTestCase(WirecloudTestCase):
             'operators': [],
             'connections': [
                 {
-                    'readOnly': True,
+                    'readonly': True,
                     'source': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'event',
+                        'name': 'event',
                     },
                     'target': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'slot',
+                        'name': 'slot',
                     },
                 },
             ],
@@ -132,28 +131,28 @@ class WiringTestCase(WirecloudTestCase):
             'operators': [],
             'connections': [
                 {
-                    'readOnly': True,
+                    'readonly': True,
                     'source': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'event',
+                        'name': 'event',
                     },
                     'target': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'slot',
+                        'name': 'slot',
                     },
                 },
                 {
                     'source': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'event',
+                        'name': 'event',
                     },
                     'target': {
                         'type': 'iwidget',
                         'id': 2,
-                        'endpoint': 'slot',
+                        'name': 'slot',
                     },
                 },
             ],
@@ -172,16 +171,16 @@ class WiringTestCase(WirecloudTestCase):
             'operators': [],
             'connections': [
                 {
-                    'readOnly': True,
+                    'readonly': True,
                     'source': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'event',
+                        'name': 'event',
                     },
                     'target': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'slot',
+                        'name': 'slot',
                     },
                 },
             ],
@@ -205,16 +204,16 @@ class WiringTestCase(WirecloudTestCase):
             'operators': [],
             'connections': [
                 {
-                    'readOnly': True,
+                    'readonly': True,
                     'source': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'event',
+                        'name': 'event',
                     },
                     'target': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'slot',
+                        'name': 'slot',
                     },
                 },
             ],
@@ -230,14 +229,14 @@ class WiringTestCase(WirecloudTestCase):
                 {
                     'readOnly': True,
                     'source': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'event',
+                        'name': 'event',
                     },
                     'target': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 2,
-                        'endpoint': 'slot',
+                        'name': 'slot',
                     },
                 },
             ],
@@ -253,14 +252,14 @@ class WiringTestCase(WirecloudTestCase):
             'connections': [
                 {
                     'source': {
-                        'type': 'iwidget',
+                        'type': 'widget',
                         'id': 1,
-                        'endpoint': 'event',
+                        'name': 'event',
                     },
                     'target': {
-                        'type': 'iwidget',
-                        'id': 1,
-                        'endpoint': 'slot',
+                        'type': 'widget',
+                        'id': 2,
+                        'name': 'slot',
                     },
                 },
             ],
