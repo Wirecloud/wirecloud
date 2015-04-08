@@ -23,24 +23,37 @@ from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.platform.plugins import get_operator_api_extensions
 
 
+def has_component(endpoint, component_id, component_type):
+    c_type, c_id, e_name = tuple(endpoint.split('/'))
+
+    return c_type == component_type and c_id == component_id
+
+
+def is_component(connection, endpoint_type, component_type, component_id):
+    return connection[endpoint_type]['type'] == component_type and connection[endpoint_type]['id'] == component_id
+
+
 def remove_related_iwidget_connections(wiring, iwidget):
 
-    connections_to_remove = []
+    removed_connections = []
 
-    for index, connection in enumerate(wiring['connections']):
-        if (connection['source']['type'] == 'iwidget' and connection['source']['id'] == iwidget.id) or (connection['target']['type'] == 'iwidget' and connection['target']['id'] == iwidget.id):
-            connection['index'] = index
-            connections_to_remove.append(connection)
+    for i, connection in enumerate(wiring['connections']):
+        if is_component(connection, 'source', 'widget', iwidget.id) or is_component(connection, 'target', 'widget', iwidget.id):
+            removed_connections.append(connection)
 
-    view_available = 'views' in wiring and len(wiring['views']) > 0
-    if view_available and ('iwidgets' in wiring['views'][0]) and (iwidget.id in wiring['views'][0]['iwidgets']):
-        del wiring['views'][0]['iwidgets'][iwidget.id]
+    if 'visualdescription' in wiring:
+        if 'connections' in wiring['visualdescription']:
+            removed_visual_connections = []
 
-    connection_view_available = view_available and 'connections' in wiring['views'][0]
-    for connection in connections_to_remove:
+            for connection in wiring['visualdescription']['connections']:
+                if has_component(connection['sourcename'], iwidget.id, 'widget') or has_component(connection['targetname'], iwidget.id, 'widget'):
+                    removed_visual_connections.append(connection)
+
+            for connection in removed_visual_connections:
+                wiring['visualdescription']['connections'].remove(connection)
+
+    for connection in removed_connections:
         wiring['connections'].remove(connection)
-        if connection_view_available and len(wiring['views'][0]['connections']) > connection['index']:
-            del wiring['views'][0]['connections'][connection['index']]
 
 
 def get_operator_cache_key(operator, domain, mode):
