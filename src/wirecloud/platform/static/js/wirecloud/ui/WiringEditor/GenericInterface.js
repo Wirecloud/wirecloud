@@ -856,6 +856,15 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                         context.iObjectClon.parentNode.removeChild(context.iObjectClon);
                     }
                     context.iObjectClon = null;
+
+                    var i;
+
+                    for (i = 0; i < context.genInterface.endpoints.sourcesElement.childNodes.length; i++) {
+                        context.genInterface.endpoints.sourcesElement.childNodes[i].setAttribute('data-index', i + 1);
+                    }
+                    for (i = 0; i < context.genInterface.endpoints.targetsElement.childNodes.length; i++) {
+                        context.genInterface.endpoints.targetsElement.childNodes[i].setAttribute('data-index', i + 1);
+                    }
                 },
                 function () {return true; }
         );
@@ -1427,6 +1436,10 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             this.sourceAnchorsByName[name] = anchor;
             this.sourceAnchors.push(anchor);
 
+            var endpointsLength = Object.keys(this.sourceEndpoints).length;
+
+            endpointElement.setAttribute('data-index', endpointsLength + 1);
+
             this.sourceEndpoints[name] = {
                 'endpoint': endpointElement,
                 'displayName': label,
@@ -1499,6 +1512,10 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
             this.targetAnchorsByName[name] = anchor;
             this.targetAnchors.push(anchor);
+
+            var endpointsLength = Object.keys(this.targetEndpoints).length;
+
+            endpointElement.setAttribute('data-index', endpointsLength + 1);
 
             this.targetEndpoints[name] = {
                 'endpoint': endpointElement,

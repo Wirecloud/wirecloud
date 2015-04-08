@@ -140,17 +140,18 @@ def parse_wiring_old_version(wiring_status):
         for operator_id, operator in old_view['operators'].items():
             if operator_id in new_version['operators']:
                 # set info into global behaviour
-                new_version['visualdescription']['components']['operator'][operator_id] = {
-                    'collapsed': operator['minimized'] if 'minimized' in operator else False,
-                    'endpoints': {
+                visualInfo = {}
+                visualInfo['collapsed'] = operator['minimized'] if 'minimized' in operator else False
+                visualInfo['position'] = {
+                    'x': operator['position']['posX'],
+                    'y': operator['position']['posY']
+                }
+                if 'endPointsInOuts' in operator:
+                    visualInfo['endpoints'] = {
                         'source': operator['endPointsInOuts']['sources'],
                         'target': operator['endPointsInOuts']['targets']
-                    },
-                    'position': {
-                        'x': operator['position']['posX'],
-                        'y': operator['position']['posY']
                     }
-                }
+                new_version['visualdescription']['components']['operator'][operator_id] = visualInfo
 
         # rebuild widgets
         for widget_id, widget in old_view['iwidgets'].items():

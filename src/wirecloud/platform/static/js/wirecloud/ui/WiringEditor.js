@@ -832,8 +832,14 @@ Wirecloud.ui.WiringEditor = (function () {
             }
         }
 
-        // Clean the reference of widgets that are misplaced.
-        this.behaviourEngine.cleanComponentGroup(componentType, Object.keys(this.components[componentType]));
+        var currentComponents = Object.keys(this.components[componentType]);
+
+        // Paint the reference of widgets that are missing.
+        for (pk in this.behaviourEngine.currentState.components[componentType]) {
+            if (currentComponents.indexOf(pk) == -1) {
+                addMissingWidget.call(this, pk, this.behaviourEngine.getComponentView(componentType, pk));
+            }
+        }
         // ...load completed.
 
         // Loading the operators that are being used in the workspace...
@@ -1598,6 +1604,13 @@ Wirecloud.ui.WiringEditor = (function () {
             // TODO: attach this error to wirecloud logger.
         }
 
+        if (!('endpoints' in componentView)) {
+            componentView.endpoints = {
+                'source': [],
+                'target': []
+            };
+        }
+
         switch (componentType) {
         case WiringEditor.OPERATOR_TYPE:
             operatorId = parseInt(componentId, 10);
@@ -2079,6 +2092,39 @@ Wirecloud.ui.WiringEditor = (function () {
             this.multiconnectors[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
             this.multiconnectors[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
             this.multiconnectors[key].repaint();
+        }
+    };
+
+    var addMissingWidget = function addMissingWidget(componentId, componentView) {
+        var name, endpoints, componentObj;
+
+        if ('name' in componentView) {
+            name = componentView.name;
+        } else {
+            name = gettext('Unknown Name');
+        }
+
+        if (!('endpoints' in componentView)) {
+            componentView.endpoints = {
+                'source': [],
+                'target': []
+            };
+        }
+
+        try {
+            componentObj = {
+                'id': componentId,
+                'name': name,
+                'ghost': true,
+                'widget': {
+                    'id': name,
+                    'uri': name
+                }
+            };
+            componentObj.meta = componentObj.widget;
+            this.addIWidget(componentObj, componentView.endpoints, componentView.position);
+        } catch (e) {
+            throw new Error('WiringEditor error (critical). Creating GhostWidget: [id: ' + componentId + '; name: ' + name + '] ' + e.message);
         }
     };
 

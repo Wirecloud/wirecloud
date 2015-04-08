@@ -567,12 +567,20 @@ class WiringEndpointTester(object):
         self.element = element
 
     @property
+    def label(self):
+        return self.element.find_element_by_css_selector(".endpoint-label")
+
+    @property
     def anchor(self):
         return self.element.find_element_by_css_selector('.endpoint-anchor')
 
     @property
+    def position(self):
+        return int(self.element.get_attribute('data-index'))
+
+    @property
     def name(self):
-        return self.element.find_element_by_css_selector(".endpoint-label").text
+        return self.label.text
 
     @property
     def is_highlighted(self):
@@ -587,16 +595,32 @@ class WiringEndpointTester(object):
     def drop_connection(self):
         ActionChains(self.testcase.driver).release().perform()
 
+    def move_down(self, steps):
+        ActionChains(self.testcase.driver).click_and_hold(self.label).move_by_offset(0, 50 * steps).perform()
+
+    def set_position_of(self, endpoint):
+        new_position = endpoint.position
+
+        actions = ActionChains(self.testcase.driver).click_and_hold(self.label)
+
+        for i in range(abs(new_position - self.position)):
+            actions.move_to_element(endpoint.label)
+
+        actions.release().perform()
+        self.testcase.assertEqual(self.position, new_position)
+
     def mouse_over(self):
         ActionChains(self.testcase.driver).move_to_element(self.element).perform();
 
-    def connect(self, endpoint, from_existing=False):
+    def connect(self, endpoint, from_existing=False, sticky_effect=False):
         connections_expected = len(self.get_all_connections())
 
         if not from_existing:
             connections_expected = connections_expected + 1
 
-        ActionChains(self.testcase.driver).drag_and_drop(self.anchor, endpoint.anchor).perform()
+        target = endpoint.label if sticky_effect else endpoint.anchor
+
+        ActionChains(self.testcase.driver).drag_and_drop(self.anchor, target).perform()
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: connections_expected == len(self.get_all_connections()))
 
 

@@ -97,15 +97,27 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
                     if ((behavioursEnabled=state)) {
                         this.btnEnable.toggleIconClass('icon-unlock', 'icon-lock');
                         this.btnEnable.setTitle('Enabled');
-                        headingElement.appendChild(this.btnViewpoint.wrapperElement);
-                        this.bodyElement.appendChild(this.btnCreate);
-                        this.bodyElement.removeChild(messageDisabled);
+                        if (!this.btnViewpoint.wrapperElement.parentNode) {
+                            headingElement.appendChild(this.btnViewpoint.wrapperElement);
+                        }
+                        if (!this.btnCreate.parentNode) {
+                            this.bodyElement.appendChild(this.btnCreate);
+                        }
+                        if (messageDisabled.parentNode) {
+                            this.bodyElement.removeChild(messageDisabled);
+                        }
                     } else {
                         this.btnEnable.toggleIconClass('icon-lock', 'icon-unlock');
                         this.btnEnable.setTitle('Disabled');
-                        headingElement.removeChild(this.btnViewpoint.wrapperElement);
-                        this.bodyElement.removeChild(this.btnCreate);
-                        this.bodyElement.appendChild(messageDisabled);
+                        if (this.btnViewpoint.wrapperElement.parentNode) {
+                            headingElement.removeChild(this.btnViewpoint.wrapperElement);
+                        }
+                        if (this.btnCreate.parentNode) {
+                            this.bodyElement.removeChild(this.btnCreate);
+                        }
+                        if (!messageDisabled.parentNode) {
+                            this.bodyElement.appendChild(messageDisabled);
+                        }
                     }
                 }
             }
