@@ -121,7 +121,7 @@ msgid ""
 "components using the Marketplace view or by uploading components manually "
 "using the Upload button on the My Resources view.</p>"
 msgstr ""
-"<p>Actualmente no tienes acceso a ningún componente de tipo %(cope)s. Puedes "
+"<p>Actualmente no tienes acceso a ningún componente de tipo %(scope)s. Puedes "
 "obtener componentes usando la vista de Marketplace o subiendo recursos de "
 "forma manual usando el botón Subir en la vista de Mis Recursos.</p>"
 

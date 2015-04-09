@@ -1808,7 +1808,7 @@ msgid ""
 "\"%(inputendpoint)s\" input endpoint"
 msgstr ""
 "Excepción capturada mientras se procesaba un evento que llego al endpoint de "
-"entrada \"(inputendpoint)s\""
+"entrada \"%(inputendpoint)s\""
 
 #: static/js/wirecloud/wiring/OperatorTargetEndpoint.js:85
 msgid "Operator has not registered a callback for this input endpoint"
