@@ -122,8 +122,11 @@
             if (options.text != null) {
                 this.label.appendChild(document.createTextNode(options.text));
             }
-            if (options.iconClass != null) {
-                this.label.classList.add(options.iconClass);
+            if (typeof options.iconClass === "string" && options.iconClass !== "") {
+                var classes = options.iconClass.trim().split(/\s+/);
+                for (var i = 0; i < classes.length; i++) {
+                    this.label.classList.add(classes[i]);
+                }
             }
             this.wrapperElement.appendChild(this.label);
         }

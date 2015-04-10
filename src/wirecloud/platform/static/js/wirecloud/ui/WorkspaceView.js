@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2014 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -37,13 +37,7 @@
         this.wsMenu.append(new Wirecloud.ui.WorkspaceViewItems(this));
 
         this.wallet = new Wirecloud.ui.MACWallet();
-        this.walletButton = new StyledElements.StyledButton({
-            'iconClass': 'icon-plus',
-            'title': gettext('Add widget')
-        });
-        this.walletButton.addEventListener('click', function () {
-            this.wallet.show();
-        }.bind(this));
+        this.walletButton = this.buildAddWidgetButton();
 
         this.wiringButton = new StyledElements.StyledButton({
             'iconClass': 'icon-puzzle-piece',
@@ -95,6 +89,19 @@
     WorkspaceView.prototype = new StyledElements.Alternative();
 
     WorkspaceView.prototype.view_name = 'workspace';
+
+    WorkspaceView.prototype.buildAddWidgetButton = function buildAddWidgetButton() {
+        var button = new StyledElements.StyledButton({
+            'class': 'btn-primary',
+            'iconClass': 'icon-plus',
+            'title': gettext('Add widget')
+        });
+        button.addEventListener('click', function () {
+            this.wallet.show();
+        }.bind(this));
+
+        return button;
+    };
 
     WorkspaceView.prototype.buildStateData = function buildStateData() {
         var currentState = Wirecloud.HistoryManager.getCurrentState();
