@@ -38,6 +38,7 @@ build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringRecoveringTest
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.ComponentMissingTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.ConnectionReadOnlyTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.markets.tests.MarketManagementSeleniumTestCase',), locals())
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointCollapsedTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointSortingTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointStickyEffectTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointBasicRecommendationTestCase',), locals())

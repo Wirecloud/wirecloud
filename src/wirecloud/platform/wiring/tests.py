@@ -1124,6 +1124,82 @@ class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
             self.assertFalse(widget.opt_remove.is_displayed())
 
 
+class EndpointCollapsedTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+
+    @classmethod
+    def setUpClass(cls):
+        super(EndpointCollapsedTestCase, cls).setUpClass()
+
+        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
+            cls.tearDownClass()
+            raise unittest.SkipTest('EndpointCollapsedTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
+
+    def test_to_collapse_and_expand_component_endpoints(self):
+
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+
+            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
+            self.assertFalse(operator.is_collapsed)
+
+            operator.collapse_endpoints()
+            self.assertTrue(operator.is_collapsed)
+
+        with self.wiring_view as wiring:
+
+            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
+            self.assertTrue(operator.is_collapsed)
+
+            operator.expand_endpoints()
+            self.assertFalse(operator.is_collapsed)
+
+    def test_endpoints_collapsed_will_be_expanded_when_a_connection_is_creating(self):
+
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+
+            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
+            operator.collapse_endpoints()
+            self.assertTrue(operator.is_collapsed)
+
+            widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test 1')
+            widget1.collapse_endpoints()
+            self.assertTrue(widget1.is_collapsed)
+
+            widget2 = wiring.from_diagram_find_component_by_name('widget', 'Test 2')
+            self.assertFalse(widget2.is_collapsed)
+
+            source = widget2.get_endpoint_by_name('source', 'Output')
+            source.drag_connection(80, 80)
+
+            self.assertFalse(operator.is_collapsed)
+            self.assertFalse(widget1.is_collapsed)
+
+    @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
+    def test_component_with_endpoints_collapsed_cannot_display_option_sort_endpoints(self):
+
+        self.login()
+
+        with self.wiring_view as wiring:
+
+            operator = wiring.add_component_by_name('operator', 'TestOp. Multiendpoint')
+
+            menu_dropdown = operator.open_menu()
+            self.assertIsNotNone(menu_dropdown.get_entry('Sort endpoints'))
+            menu_dropdown.close()
+
+            operator.collapse_endpoints()
+            self.assertTrue(operator.is_collapsed)
+
+            menu_dropdown = operator.open_menu()
+            self.assertIsNone(menu_dropdown.get_entry('Sort endpoints'))
+
+
 class EndpointSortingTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')

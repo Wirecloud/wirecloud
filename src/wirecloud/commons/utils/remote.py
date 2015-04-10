@@ -489,8 +489,16 @@ class WiringComponentTester(object):
         return "missing" in self.component.get_attribute('class').split()
 
     @property
+    def is_collapsed(self):
+        return "collapsed" in self.component.get_attribute('class').split()
+
+    @property
     def opt_notify(self):
         return self.component.find_element_by_css_selector(".option-notify")
+
+    @property
+    def opt_collapse(self):
+        return self.component.find_element_by_css_selector(".option-collapse")
 
     @property
     def opt_remove(self):
@@ -499,6 +507,14 @@ class WiringComponentTester(object):
     @property
     def opt_preferences(self):
         return self.component.find_element_by_css_selector(".option-preferences")
+
+    def collapse_endpoints(self):
+        if not self.is_collapsed:
+            self.opt_collapse.click()
+
+    def expand_endpoints(self):
+        if self.is_collapsed:
+            self.opt_collapse.click()
 
     def get_all_endpoints(self, endpoint_type):
         endpoints = self.component.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)
