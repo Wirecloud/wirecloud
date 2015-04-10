@@ -115,6 +115,7 @@
 
             if (!this.sourceAnchors.length && !this.targetAnchors.length) {
                 this.wrapperElement.classList.add('no-endpoints');
+                this.options.optionCollapse.hide();
             }
         }
     };
