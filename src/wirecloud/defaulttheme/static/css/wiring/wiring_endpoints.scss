@@ -154,6 +154,31 @@
     .component-body {
         display: none;
     }
+
+    .endpoints {
+        position: absolute;
+    }
+
+    .target-endpoints {
+        left: 0px;
+    }
+
+    .source-endpoints {
+        right: 0px;
+    }
+
+    .endpoint {
+        position: absolute;
+        margin: 0px;
+
+        .endpoint-label {
+            display: none;
+        }
+
+        .endpoint-anchor {
+            pointer-events: none;
+        }
+    }
 }
 
 // ============================================================================

@@ -164,6 +164,7 @@
     .styled_button {
         margin: 0px 0px 0px $component-options-margin-horizontal;
         @include font-base($font-weight: bold);
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
         opacity: 1;
 
         &:hover,

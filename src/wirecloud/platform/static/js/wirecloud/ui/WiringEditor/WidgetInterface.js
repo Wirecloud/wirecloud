@@ -183,6 +183,7 @@
     WidgetInterface.prototype.serialize = function serialize() {
         return {
             'name': this.iwidget.widget.id,
+            'collapsed': this.collapsed,
             'endpoints': this.getInOutPositions(),
             'position': this.position
         };

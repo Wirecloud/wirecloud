@@ -88,7 +88,7 @@ Wirecloud.ui.WiringEditor.ComponentPreferences = (function () {
     };
 
     var displayItemSortEndpoints = function displayItemSortEndpoints() {
-        return !this.component.onbackground && (this.component.sourceAnchors.length > 1 || this.component.targetAnchors.length > 1);
+        return !this.component.onbackground && !this.component.collapsed && (this.component.sourceAnchors.length > 1 || this.component.targetAnchors.length > 1);
     };
 
     var displayItemSettings = function displayItemSettings() {

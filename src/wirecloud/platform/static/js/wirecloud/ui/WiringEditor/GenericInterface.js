@@ -57,7 +57,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'optremove', 'optshare', 'sortstop']);
+        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'optremove', 'optshare', 'sortstop', 'collapse', 'expand']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -159,11 +159,11 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                     return collapsed;
                 },
                 'set': function set(state) {
-                    if (typeof state === 'boolean') {
+                    if (typeof state === 'boolean' && collapsed != state) {
                         if ((collapsed=state)) {
-                            this.wrapperElement.classList.add('collapsed');
+                            collapseEndpoints.call(this);
                         } else {
-                            this.wrapperElement.classList.remove('collapsed');
+                            expandEndpoints.call(this);
                         }
                     }
                 }
@@ -339,6 +339,13 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                     'plain': true
                 }),
 
+                'optionCollapse': new StyledElements.StyledButton({
+                    'title': gettext("Collapse"),
+                    'class': 'option-collapse',
+                    'iconClass': 'icon-collapse',
+                    'plain': true
+                }),
+
                 'optionPreferences': new StyledElements.PopupButton({
                     'class': 'icon-cog option-preferences',
                     'title': gettext("Preferences"),
@@ -369,6 +376,11 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 updateErrorInfo.call(this);
                 this.entity.logManager.addEventListener('newentry', updateErrorInfo.bind(this));
             }
+
+            optionsElement.appendChild(this.options.optionCollapse.wrapperElement);
+            this.options.optionCollapse.addEventListener('click', function (originalEvent) {
+                this.collapsed = !this.collapsed;
+            }.bind(this));
 
             optionsElement.appendChild(this.options.optionPreferences.wrapperElement);
             this.options.optionPreferences.popup_menu.append(new Wirecloud.ui.WiringEditor.ComponentPreferences(this));
@@ -1938,6 +1950,64 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 this.potentialArrow.setEnd(this.potentialArrow.endAnchor.getCoordinates(layer));
             }
         }
+    };
+
+    var collapseEndpoints = function collapseEndpoints() {
+        var collapsedWidth, originalWidth;
+
+        originalWidth = this.wrapperElement.offsetWidth;
+
+        this.wrapperElement.classList.add('collapsed');
+
+        collapsedWidth = this.wrapperElement.offsetWidth;
+
+        if (originalWidth - collapsedWidth > 0) {
+            this.wrapperElement.style.left = parseInt(this.wrapperElement.style.left, 10) + ((originalWidth - collapsedWidth) / 2) + 'px';
+        }
+
+        this.endpoints.element.removeChild(this.endpoints.targetsElement);
+        this.endpoints.element.removeChild(this.endpoints.sourcesElement);
+
+        this.heading.element.appendChild(this.endpoints.targetsElement);
+        this.heading.element.appendChild(this.endpoints.sourcesElement);
+
+        this.options.optionCollapse.toggleIconClass('icon-collapse-top', 'icon-collapse');
+        this.options.optionCollapse.setTitle(gettext("Expand"));
+
+        this.events.collapse.dispatch({
+            'id': this.getId()
+        });
+
+        this.repaint();
+    };
+
+    var expandEndpoints = function expandEndpoints() {
+        var collapsedWidth, originalWidth;
+
+        collapsedWidth = this.wrapperElement.offsetWidth;
+
+        this.wrapperElement.classList.remove('collapsed');
+
+        this.heading.element.removeChild(this.endpoints.targetsElement);
+        this.heading.element.removeChild(this.endpoints.sourcesElement);
+
+        this.endpoints.element.appendChild(this.endpoints.targetsElement);
+        this.endpoints.element.appendChild(this.endpoints.sourcesElement);
+
+        originalWidth = this.wrapperElement.offsetWidth;
+
+        if (originalWidth - collapsedWidth > 0) {
+            this.wrapperElement.style.left = parseInt(this.wrapperElement.style.left, 10) - ((originalWidth - collapsedWidth) / 2) + 'px';
+        }
+
+        this.options.optionCollapse.toggleIconClass('icon-collapse', 'icon-collapse-top');
+        this.options.optionCollapse.setTitle(gettext("Collapse"));
+
+        this.events.expand.dispatch({
+            'id': this.getId()
+        });
+
+        this.repaint();
     };
 
     return GenericInterface;

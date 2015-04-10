@@ -140,8 +140,24 @@ Wirecloud.ui.WiringEditor = (function () {
         this.enableAnchors = this.enableAnchors.bind(this);
         this.disableAnchors = this.disableAnchors.bind(this);
 
+        this.componentsCollapsed = [];
+
         this.arrowCreator = new Wirecloud.ui.WiringEditor.ArrowCreator(this.connectionEngine, this,
-            function () {},
+            function () {
+                var component, componentId, componentType;
+
+                this.componentsCollapsed = [];
+
+                for (componentType in this.components) {
+                    for (componentId in this.components[componentType]) {
+                        component = this.components[componentType][componentId];
+                        if (component.collapsed) {
+                            component.collapsed = false;
+                            this.componentsCollapsed.push(component);
+                        }
+                    }
+                }
+            }.bind(this),
             function () {},
             this.enableAnchors
         );
@@ -1380,7 +1396,7 @@ Wirecloud.ui.WiringEditor = (function () {
     /**
      * add IWidget.
      */
-    WiringEditor.prototype.addIWidget = function addIWidget(iwidget, enpPointPos, position) {
+    WiringEditor.prototype.addIWidget = function addIWidget(iwidget, enpPointPos, position, collapsed) {
         var widget_interface, i, anchor;
 
         widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(this, iwidget, this.arrowCreator, false, enpPointPos);
@@ -1394,6 +1410,14 @@ Wirecloud.ui.WiringEditor = (function () {
             } else {
                 this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), true);
             }
+        }.bind(this));
+
+        widget_interface.addEventListener('collapse', function (componentInfo) {
+            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize());
+        }.bind(this));
+
+        widget_interface.addEventListener('expand', function (componentInfo) {
+            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize());
         }.bind(this));
 
         widget_interface.addEventListener('sortstop', function (eventTarget) {
@@ -1428,6 +1452,10 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.layout.content.appendChild(widget_interface);
         widget_interface.setPosition(_correctComponentPosition.call(this, position));
+
+        if (typeof collapsed == 'boolean') {
+            widget_interface.collapsed = collapsed;
+        }
 
         this.events.widgetadded.dispatch();
 
@@ -1587,6 +1615,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         if (!(componentView=this.behaviourEngine.getComponentView(componentType, componentId))) {
             componentView = {
+                collapsed: false,
                 endpoints: {
                     'source': [],
                     'target': []
@@ -1611,6 +1640,10 @@ Wirecloud.ui.WiringEditor = (function () {
             };
         }
 
+        if (!('collapsed' in componentView)) {
+            componentView.collapsed = false;
+        }
+
         switch (componentType) {
         case WiringEditor.OPERATOR_TYPE:
             operatorId = parseInt(componentId, 10);
@@ -1620,10 +1653,10 @@ Wirecloud.ui.WiringEditor = (function () {
                 this.nextOperatorId = operatorId + 1;
             }
 
-            this.addIOperator(componentObj, componentView.endpoints, componentView.position);
+            this.addIOperator(componentObj, componentView.endpoints, componentView.position, componentView.collapsed);
             break;
         case WiringEditor.WIDGET_TYPE:
-            this.addIWidget(componentObj, componentView.endpoints, componentView.position);
+            this.addIWidget(componentObj, componentView.endpoints, componentView.position, componentView.collapsed);
             break;
         }
 
@@ -1675,7 +1708,7 @@ Wirecloud.ui.WiringEditor = (function () {
     /**
      * add IOperator.
      */
-    WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos, position) {
+    WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos, position, collapsed) {
         var instantiated_operator, operator_interface, i, anchor;
 
         if (ioperator instanceof Wirecloud.wiring.OperatorMeta) {
@@ -1686,6 +1719,14 @@ Wirecloud.ui.WiringEditor = (function () {
         }
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
+
+        operator_interface.addEventListener('collapse', function (componentInfo) {
+            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, componentInfo.id, operator_interface.serialize());
+        }.bind(this));
+
+        operator_interface.addEventListener('expand', function (componentInfo) {
+            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, componentInfo.id, operator_interface.serialize());
+        }.bind(this));
 
         operator_interface.addEventListener('dragstop', function (eventTarget) {
             operator_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
@@ -1730,6 +1771,10 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.layout.content.appendChild(operator_interface);
         operator_interface.setPosition(_correctComponentPosition.call(this, position));
+
+        if (typeof collapsed == 'boolean') {
+            operator_interface.collapsed = collapsed;
+        }
 
         this.events.operatoradded.dispatch();
 
@@ -1960,6 +2005,12 @@ Wirecloud.ui.WiringEditor = (function () {
                 this.targetsOn = true;
             }
         }
+
+        for (i = 0; i < this.componentsCollapsed.length; i++) {
+            this.componentsCollapsed[i].collapsed = true;
+        }
+
+        this.componentsCollapsed = [];
     };
 
     /**
