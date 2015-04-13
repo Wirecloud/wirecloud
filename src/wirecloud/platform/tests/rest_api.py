@@ -1321,6 +1321,44 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 404)
 
+    def test_widget_code_entry_cached(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
+        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+
+        CACHED_CODE = "<html><head></head><body>cached hello world!</body></html>"
+        xhtml = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0').widget.xhtml
+        xhtml.cacheable = True
+        xhtml.code = CACHED_CODE
+        xhtml.save()
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("cached hello world!", response.content)
+
+    def test_widget_code_absolute_url(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
+        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+
+        HTML_CODE = "<html><head></head><body>absolute hello world!</body></html>"
+        self.network._servers['http']['example.com'].add_response('GET', '/html', {'content': HTML_CODE})
+        xhtml = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0').widget.xhtml
+        xhtml.url = "http://example.com/html"
+        xhtml.cacheable = True
+        xhtml.code = ""
+        xhtml.save()
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("absolute hello world!", response.content)
+
     def test_widget_code_entry_get_bad_encoding(self):
 
         widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
