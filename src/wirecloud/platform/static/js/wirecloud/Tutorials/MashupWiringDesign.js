@@ -74,14 +74,6 @@
         return;
     };
 
-    var openPanelApps = function openPanelApps() {
-        return document.querySelectorAll('.wiring_editor .menubar .resource-item')[0];
-    };
-
-    var displayWidgetSection = function displayWidgetSection() {
-        return document.querySelectorAll('.wiring_editor .menubar .panel-components .panel-options .option')[1];
-    };
-
     var getSourceEndpoint = function getSourceEndpoint(type, name, endpoint_name) {
         var instances = document.querySelectorAll('.wiring-diagram .component-' + type);
         var iSource = null;
@@ -208,17 +200,6 @@
         return null;
     };
 
-    var autoSelect = function autoSelect(milliseconds, autoAction, element) {
-        setTimeout(function () {
-            element.click();
-            autoAction.nextHandler();
-        }, milliseconds * 1000);
-    };
-    var autoMouseOver = function autoMouseOver(milliseconds, autoAction, element) {
-        setTimeout(function () {
-            autoAction.nextHandler();
-        }, milliseconds * 1000);
-    };
     var showBehaviorUpdateForm = function showBehaviorUpdateForm(behaviorIndex) {
         var behaviors = document.querySelectorAll('.wiring_editor .behaviour-group .behaviour');
 
@@ -350,21 +331,6 @@
 
     };
 
-    var getTextField = function getTextField() {
-        return document.getElementById('user-query');
-    }
-
-    var deploy_tutorial_menu = function deploy_tutorial_menu(autoAction) {
-        getOptionShare('ioperator', 'Technical Service').click();
-        autoAction.nextHandler();
-    };
-
-    var sleep = function sleep(milliseconds, autoAction) {
-        setTimeout(function () {
-            autoAction.nextHandler();
-        }, milliseconds * 1000);
-    };
-
     /**
      * @function
      * @private
@@ -422,15 +388,6 @@
 
     };
 
-    var uploadComponent = function uploadComponent(id, filename, autoAction) {
-        if (!Wirecloud.LocalCatalogue.resourceExistsId(id)) {
-            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/' + filename), {
-                onSuccess: autoAction.nextHandler.bind(autoAction)
-            });
-        } else {
-            autoAction.nextHandler();
-        }
-    };
 
     Wirecloud.TutorialCatalogue.add('mashup-wiring-design', new Wirecloud.ui.Tutorial(gettext("Mashup Wiring Design"), [
 
@@ -450,11 +407,15 @@
         },
         {
             type: 'autoAction',
-            action: createWorkspaceFromMashup.bind(null, 'MWD Tutorial', 'CoNWeT/Mashup-Wiring-Design-Tutorial/0.0.1')
+            action: BA.uploadComponent('CoNWeT/Mashup-Wiring-Design-Tutorial/0.0.1')
         },
         {
             type: 'autoAction',
-            action: uploadComponent.bind(null, 'CoNWeT/technical-service/0.0.3', 'CoNWeT_technical-service_0.0.3.wgt')
+            action: BA.uploadComponent('CoNWeT/technical-service/0.0.3')
+        },
+        {
+            type: 'autoAction',
+            action: createWorkspaceFromMashup.bind(null, 'MWD Tutorial', 'CoNWeT/Mashup-Wiring-Design-Tutorial/0.0.1')
         },
         {
             type: 'simpleDescription',
@@ -470,7 +431,6 @@
         },
 
         // Step 1: identify the behaviours
-
         {
             type: 'simpleDescription',
             title: gettext("Step 1: identify the behaviours"),
@@ -484,14 +444,14 @@
             msg: gettext("A <strong>behaviour (1)</strong> would be to type the technician name..."),
             elem: workspaceView.getWidgetByName.bind(null, 'Search for'),
             pos: 'topRight',
-            action: sleep.bind(null, 3)
+            action: BA.sleep(3000)
         },
         {
             type: 'autoAction',
             msg: gettext("...and the technician is found here."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
             pos: 'topRight',
-            action: sleep.bind(null, 3)
+            action: BA.sleep(3000)
         },
 
         {
@@ -499,14 +459,14 @@
             msg: gettext("Another <strong>behaviour (2)</strong> would be to select a technician..."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
             pos: 'topRight',
-            action: sleep.bind(null, 3)
+            action: BA.sleep(3000)
         },
         {
             type: 'autoAction',
             msg: gettext("...and their vCard is displayed here."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technician vCard'),
             pos: 'topRight',
-            action: sleep.bind(null, 3)
+            action: BA.sleep(3000)
         },
 
         {
@@ -514,14 +474,14 @@
             msg: gettext("Another <strong>behaviour (3)</strong> would be to select a technician..."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
             pos: 'topRight',
-            action: sleep.bind(null, 3)
+            action: BA.sleep(3000)
         },
         {
             type: 'autoAction',
             msg: gettext("...and their current location is displayed here."),
             elem: workspaceView.getWidgetByName.bind(null, 'Map Viewer'),
             pos: 'topRight',
-            action: sleep.bind(null, 3)
+            action: BA.sleep(3000)
         },
 
         {
@@ -529,14 +489,14 @@
             msg: gettext("The last <strong>behaviour (4)</strong> would be to select a technician..."),
             elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
             pos: 'topRight',
-            action: sleep.bind(null, 3)
+            action: BA.sleep(3000)
         },
         {
             type: 'autoAction',
             msg: gettext("...and the video call is enabled."),
             elem: workspaceView.getWidgetByName.bind(null, 'Video Call'),
             pos: 'topLeft',
-            action: sleep.bind(null, 3)
+            action: BA.sleep(3000)
         },
         {
             type: 'simpleDescription',
@@ -575,42 +535,42 @@
             msg: gettext("Go to open <strong>behaviours</strong>"),
             elem: header.getOption.bind(null, 'opt-behaviours'),
             pos: 'downLeft',
-            action: autoSelect.bind(null, 1.5)
+            action: BA.click(1500)
         },
         {
             type: 'autoAction',
             msg: gettext("Go to enable <strong>behaviours</strong>"),
             elem: wiringView.enableBehaviours.bind(null),
             pos: 'downRight',
-            action: autoSelect.bind(null, 1.5)
+            action: BA.click(1500)
         },
         {
             type: 'autoAction',
             msg: gettext("This item represents a behaviour."),
             elem: wiringView.getBehaviour.bind(null, 0),
             pos: 'downRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
         {
             type: 'autoAction',
             msg: gettext("This is the title."),
             elem: wiringView.getBehaviourTitle.bind(null, 0),
             pos: 'downRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
         {
             type: 'autoAction',
             msg: gettext("This is the description."),
             elem: wiringView.getBehaviourDescription.bind(null, 0),
             pos: 'downRight',
-            action: autoSelect.bind(null, 2)
+            action: BA.click(2000)
         },
         {
             type: 'autoAction',
             msg: gettext("These are the connections, operators and widgets."),
             elem: wiringView.getBehaviourElements.bind(null, 0),
             pos: 'downRight',
-            action: autoSelect.bind(null, 2)
+            action: BA.click(2000)
         },
 
         {
@@ -627,7 +587,7 @@
             msg: gettext("Go to open <strong>behaviour update form</strong>."),
             elem: wiringView.getBehaviourTitle.bind(null, 0),
             pos: 'downRight',
-            action: autoSelect.bind(null, 2)
+            action: BA.click(2000)
         },
 
         {
@@ -635,14 +595,14 @@
             msg: gettext("Go to set a <strong>title</strong>."),
             elem: getBehaviourUpdateFormTitle.bind(null, "Search for a technician"),
             pos: 'downLeft',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
         {
             type: 'autoAction',
             msg: gettext("Go to set a <strong>description</strong>."),
             elem: getBehaviourUpdateFormDescription.bind(null, "Allow find a technician from a given name in the list of technicians."),
             pos: 'downLeft',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
         {
             type: 'userAction',
@@ -655,7 +615,7 @@
             msg: gettext("<strong>Look!</strong> The first behaviour was updated."),
             elem: wiringView.getBehaviour.bind(null, 0),
             pos: 'downRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -670,7 +630,7 @@
             msg: gettext("Go to open <strong>components</strong>"),
             elem: header.getOption.bind(null, 'opt-components'),
             pos: 'downLeft',
-            action: autoSelect.bind(null, 1.5)
+            action: BA.click(1500)
         },
 
         {
@@ -691,7 +651,7 @@
             msg: gettext("Add the widget <strong>Search for</strong> similarly."),
             elem: wiringView.addComponent.bind(null, 'widget', 'Search for', 20, 20),
             pos: 'topRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -699,7 +659,7 @@
             msg: gettext("Add the widget <strong>Technicians</strong> similarly."),
             elem: wiringView.addComponent.bind(null, 'widget', 'Technicians', 250, 20),
             pos: 'topRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
         {
             type: 'simpleDescription',
@@ -737,7 +697,7 @@
                 'endpointName': 'Query'
             }),
             pos: 'topRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -752,7 +712,7 @@
             msg: gettext("Go to open <strong>behaviours</strong> again"),
             elem: header.getOption.bind(null, 'opt-behaviours'),
             pos: 'downLeft',
-            action: autoSelect.bind(null, 1.5)
+            action: BA.click(1500)
         },
 
         {
@@ -760,7 +720,7 @@
             msg: gettext("Go to open <strong>behaviour registration form</strong>"),
             elem: wiringView.openBehaviourRegistrationForm.bind(null),
             pos: 'topRight',
-            action: autoSelect.bind(null, 1.5)
+            action: BA.click(1500)
         },
 
         {
@@ -768,14 +728,14 @@
             msg: gettext("Go to set a <strong>title</strong>."),
             elem: getBehaviourRegistrationFormTitle.bind(null, "View technician profile"),
             pos: 'downLeft',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
         {
             type: 'autoAction',
             msg: gettext("Go to set a <strong>description</strong>."),
             elem: getBehaviourRegistrationFormDescription.bind(null, "Allow view the vCard of a technician selected."),
             pos: 'downLeft',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
         {
             type: 'userAction',
@@ -788,7 +748,7 @@
             msg: gettext("Look! The second behaviour was created."),
             elem: wiringView.getBehaviour.bind(null, 1),
             pos: 'downRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -807,7 +767,7 @@
             msg: gettext("Activate the <strong>second behaviour</strong>."),
             elem: wiringView.activateBehaviour.bind(null, 1),
             pos: 'downRight',
-            action: autoSelect.bind(null, 2)
+            action: BA.click(2000)
         },
 
         {
@@ -822,7 +782,7 @@
             msg: gettext("Add the widget <strong>Technician vCard</strong> similarly."),
             elem: wiringView.addComponent.bind(null, 'widget', 'Technician vCard', 470, 170),
             pos: 'topRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -838,7 +798,7 @@
                 'endpointName': 'vCard'
             }),
             pos: 'topRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -859,7 +819,7 @@
             msg: gettext("The <strong>thrid behaviour</strong> was created."),
             elem: addBehaviour.bind(null, 'Make a video call', 'Allow make a video call to the technician selected.'),
             pos: 'topRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -867,7 +827,7 @@
             msg: gettext("Activate the <strong>thrid behaviour</strong>."),
             elem: wiringView.activateBehaviour.bind(null, 2),
             pos: 'downRight',
-            action: autoSelect.bind(null, 2)
+            action: BA.click(2000)
         },
 
         {
@@ -882,7 +842,7 @@
             msg: gettext("Add the widget <strong>Video Call</strong>."),
             elem: wiringView.addComponent.bind(null, 'widget', 'Video Call', 470, 20),
             pos: 'topLeft',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -898,7 +858,7 @@
                 'endpointName': 'User Id'
             }),
             pos: 'topLeft',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -906,7 +866,7 @@
             msg: gettext("The <strong>last behaviour</strong> was created."),
             elem: addBehaviour.bind(null, 'Locate the technician', 'Allow display the current location of the technician selected.'),
             pos: 'topRight',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -914,7 +874,7 @@
             msg: gettext("Activate the <strong>last behaviour</strong>."),
             elem: wiringView.activateBehaviour.bind(null, 3),
             pos: 'downRight',
-            action: autoSelect.bind(null, 2)
+            action: BA.click(2000)
         },
 
         {
@@ -929,7 +889,7 @@
             msg: gettext("Add the widget <strong>Map Viewer</strong>."),
             elem: wiringView.addComponent.bind(null, 'widget', 'Map Viewer', 720, 20),
             pos: 'topLeft',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {
@@ -945,7 +905,7 @@
                 'endpointName': 'Insert/Update Centered PoI'
             }),
             pos: 'topLeft',
-            action: autoMouseOver.bind(null, 2)
+            action: BA.sleep(2000)
         },
 
         {

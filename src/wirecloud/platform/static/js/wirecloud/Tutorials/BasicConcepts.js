@@ -28,14 +28,6 @@
     var BS = Wirecloud.ui.Tutorial.Utils.basic_selectors;
     var BA = Wirecloud.ui.Tutorial.Utils.basic_actions;
 
-    var anchor_element = document.createElement('a');
-    anchor_element.href = Wirecloud.URLs.LOCAL_REPOSITORY;
-    var base_url = anchor_element.href;
-    if (base_url[base_url.length - 1] !== '/') {
-        base_url += '/';
-    }
-    base_url += 'static/';
-
     var create_workspace = function create_workspace(autoAction) {
         LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         Wirecloud.createWorkspace({
@@ -52,30 +44,6 @@
                 });
             }
         });
-    };
-
-    var build_static_url = function build_static_url(path) {
-        return base_url + path;
-    };
-
-    var install_input_box = function install_input_box(autoAction) {
-        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/input-box/1.0')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_input-box_1.0.wgt'), {
-                onSuccess: autoAction.nextHandler.bind(autoAction)
-            });
-        } else {
-            autoAction.nextHandler();
-        }
-    };
-
-    var install_youtubebrowser = function install_youtubebrowser(autoAction) {
-        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/youtube-browser/2.99.0')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_youtube-browser_2.99.0.wgt'), {
-                onSuccess: autoAction.nextHandler.bind(autoAction)
-            });
-        } else {
-            autoAction.nextHandler();
-        }
     };
 
     var ResizeButton = function() {
@@ -108,10 +76,6 @@
 
     var wirecloud_header = function wirecloud_header() {
         return document.getElementById('wirecloud_header');
-    };
-
-    var append_character = function append_character(element, character) {
-        element.value += character;
     };
 
     var get_menubar = function get_menubar() {
@@ -203,11 +167,11 @@
             {type: 'simpleDescription', title: gettext('WireCloud Basic Tutorial'), msg: gettext('<p>This is the <em>Editor</em> view. In this view, you can use and modify your workspaces. Currently you are in a newly created workspace: <em>Basic concepts tutorial</em>. This workspace is empty, so the first step is to add some widgets.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you in the catalogue. You can safetly uninstall these widgets after finishing the tutorial.</p></div>')},
 
             // Marketplace
-            {'type': 'autoAction', 'action': install_input_box},
-            {'type': 'autoAction', 'action': install_youtubebrowser},
+            {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/input-box/1.0')},
+            {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/youtube-browser/2.99.0')},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace.</p>")},
             {'type': 'userAction', 'msg': gettext("Click the <em>add widget button</em>"), 'elem': BS.toolbar_button.bind(null, 'icon-plus'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'action': BA.sleep.bind(null, 0.5)},
+            {'type': 'autoAction', 'action': BA.sleep(0.5)},
             {'type': 'autoAction', 'msg': gettext('Typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input, 'pos': 'downRight', 'action': BA.input.bind(null, 'browser')},
             {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton.bind(null, "YouTube Browser"), 'pos': 'downRight'},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p><span class=\"label label-success\">Great!</span> That was easy, wasn't it?.</p><p>Let's continue adding the <em>Input Box</em> widget.</p>"), 'elem': null},

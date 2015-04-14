@@ -23,41 +23,81 @@
 
     "use strict";
 
+    var anchor_element = document.createElement('a');
+    anchor_element.href = Wirecloud.URLs.LOCAL_REPOSITORY;
+    var base_url = anchor_element.href;
+    if (base_url[base_url.length - 1] !== '/') {
+        base_url += '/';
+    }
+    base_url += 'static/';
+
+    var build_static_url = function build_static_url(path) {
+        return base_url + path;
+    };
+
+    var append_character = function append_character(element, character) {
+        element.value += character;
+    };
+
     Wirecloud.ui.Tutorial.Utils = {
         basic_actions: {
-            sleep: function sleep(milliseconds, autoAction) {
-                setTimeout(function () {
-                    autoAction.nextHandler();
-                }, milliseconds);
+            sleep: function sleep(milliseconds) {
+                return function (autoAction, element) {
+                    setTimeout(function () {
+                        autoAction.nextHandler();
+                    }, milliseconds);
+                }
             },
-            input: function input(text, autoAction, element) {
-                var timeout, i;
-
-                if (element.tagName !== 'input') {
-                    element = element.querySelector('input');
+            click: function click(milliseconds) {
+                return function (autoAction, element) {
+                    setTimeout(function () {
+                        element.click();
+                        autoAction.nextHandler();
+                    }, milliseconds);
                 }
+            },
+            input: function input(text) {
+                return function (autoAction, element) {
+                    var timeout, i;
 
-                element.value = "";
-                timeout = 0;
-                for (i = 0; i < text.length; i++) {
-                    timeout += 300;
-                    setTimeout(append_character.bind(null, element, text[i]), timeout);
-                }
-                setTimeout(function () {
-                    var evt = document.createEvent("KeyboardEvent");
-                    if (evt.initKeyEvent != null) {
-                        evt.initKeyEvent("keypress", true, true, window, false, false, false, false, 13, 0);
-                    } else {
-                        Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
-                        evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
+                    if (element.tagName !== 'input') {
+                        element = element.querySelector('input');
                     }
-                    element.dispatchEvent(evt);
-                }, timeout);
 
-                timeout += 1600;
-                setTimeout(function() {
-                    autoAction.nextHandler();
-                }, timeout);
+                    element.value = "";
+                    timeout = 0;
+                    for (i = 0; i < text.length; i++) {
+                        timeout += 300;
+                        setTimeout(append_character.bind(null, element, text[i]), timeout);
+                    }
+                    setTimeout(function () {
+                        var evt = document.createEvent("KeyboardEvent");
+                        if (evt.initKeyEvent != null) {
+                            evt.initKeyEvent("keypress", true, true, window, false, false, false, false, 13, 0);
+                        } else {
+                            Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
+                            evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
+                        }
+                        element.dispatchEvent(evt);
+                    }, timeout);
+
+                    timeout += 1600;
+                    setTimeout(function() {
+                        autoAction.nextHandler();
+                    }, timeout);
+                }
+            },
+            uploadComponent: function uploadComponent(id) {
+                return function (autoAction, element) {
+                    if (!Wirecloud.LocalCatalogue.resourceExistsId(id)) {
+                        Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/' + id.split('/').join('_') + '.wgt'), {
+                            onSuccess: autoAction.nextHandler.bind(autoAction)/*,
+                            onFailure: autoAction.errorHandler.bind(autoAction)*/
+                        });
+                    } else {
+                        autoAction.nextHandler();
+                    }
+                };
             }
         },
         basic_selectors: {
