@@ -25,6 +25,9 @@
 
     "use strict";
 
+    var BS = Wirecloud.ui.Tutorial.Utils.basic_selectors;
+    var BA = Wirecloud.ui.Tutorial.Utils.basic_actions;
+
     var anchor_element = document.createElement('a');
     anchor_element.href = Wirecloud.URLs.LOCAL_REPOSITORY;
     var base_url = anchor_element.href;
@@ -110,70 +113,6 @@
     var append_character = function append_character(element, character) {
         element.value += character;
     };
-
-    Wirecloud.ui.Tutorial.utils = {
-        basic_actions: {
-            sleep: function sleep(milliseconds, autoAction) {
-                setTimeout(function () {
-                    autoAction.nextHandler();
-                }, milliseconds);
-            },
-            input: function input(text, autoAction, element) {
-                var timeout, i;
-
-                if (element.tagName !== 'input') {
-                    element = element.querySelector('input');
-                }
-
-                element.value = "";
-                timeout = 0;
-                for (i = 0; i < text.length; i++) {
-                    timeout += 300;
-                    setTimeout(append_character.bind(null, element, text[i]), timeout);
-                }
-                setTimeout(function () {
-                    var evt = document.createEvent("KeyboardEvent");
-                    if (evt.initKeyEvent != null) {
-                        evt.initKeyEvent("keypress", true, true, window, false, false, false, false, 13, 0);
-                    } else {
-                        Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
-                        evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
-                    }
-                    element.dispatchEvent(evt);
-                }, timeout);
-
-                timeout += 1600;
-                setTimeout(function() {
-                    autoAction.nextHandler();
-                }, timeout);
-            }
-        },
-        basic_selectors: {
-            back_button: function back_button() {
-                return document.querySelector("#wirecloud_header .icon-caret-left").parentElement;
-            },
-            toolbar_button: function toolbar_button(button_class) {
-                return document.querySelector("#wirecloud_header .wirecloud_toolbar").getElementsByClassName(button_class)[0].parentElement;
-            },
-            mac_wallet_close_button: function mac_wallet_close_button() {
-                return document.querySelector('.widget_wallet .icon-remove');
-            },
-            mac_wallet_input: function mac_wallet_input() {
-                return document.querySelector('.widget_wallet .se-text-field');
-            },
-            mac_wallet_resource_mainbutton: function mac_wallet_resource_mainbutton(resource_title) {
-                var resources, widget, element;
-
-                resources = document.querySelectorAll('.widget_wallet .widget_wallet_list .resource_name');
-                widget = findElementByTextContent(resources, resource_title);
-                element = widget.parentNode.getElementsByClassName("mainbutton")[0];
-
-                return element;
-            }
-        }
-    };
-    var BS = Wirecloud.ui.Tutorial.utils.basic_selectors;
-    var BA = Wirecloud.ui.Tutorial.utils.basic_actions;
 
     var get_menubar = function get_menubar() {
         var wiring_editor = document.getElementsByClassName('wiring_editor')[0];

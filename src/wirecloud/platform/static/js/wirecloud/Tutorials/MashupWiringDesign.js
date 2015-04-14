@@ -22,6 +22,9 @@
 
     "use strict";
 
+    var BS = Wirecloud.ui.Tutorial.Utils.basic_selectors;
+    var BA = Wirecloud.ui.Tutorial.Utils.basic_actions;
+
     var getWidgetAvailable = function getWidgetAvailable(index, openPanel) {
         var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
         var wiringView = LayoutManagerFactory.getInstance().viewsByName.wiring;
@@ -355,9 +358,6 @@
         getOptionShare('ioperator', 'Technical Service').click();
         autoAction.nextHandler();
     };
-
-    var BS = Wirecloud.ui.Tutorial.utils.basic_selectors;
-    var BA = Wirecloud.ui.Tutorial.utils.basic_actions;
 
     var sleep = function sleep(milliseconds, autoAction) {
         setTimeout(function () {

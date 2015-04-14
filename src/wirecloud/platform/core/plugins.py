@@ -79,6 +79,7 @@ WIRING_EDITOR_FILES = (
 
 TUTORIAL_FILES = (
     'js/wirecloud/ui/Tutorial.js',
+    'js/wirecloud/ui/Tutorial/Utils.js',
     'js/wirecloud/ui/TutorialCatalogue.js',
     'js/wirecloud/ui/TutorialSubMenu.js',
     'js/wirecloud/ui/Tutorial/PopUp.js',
