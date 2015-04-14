@@ -335,28 +335,6 @@
      * @function
      * @private
      */
-    var workspaceView = {
-
-        'getWidgetByName': function getWidgetByName(name) {
-            var i, widgetList;
-
-            widgetList = document.querySelectorAll('.workspace .iwidget');
-
-            for (i = 0; i < widgetList.length; i++) {
-                if (widgetList[i].querySelector('.widget_menu span').textContent == name) {
-                    return widgetList[i];
-                }
-            }
-
-            return null;
-        }
-
-    };
-
-    /**
-     * @function
-     * @private
-     */
     var createWorkspaceFromMashup = function createWorkspaceFromMashup(name, mashup, autoAction) {
         LayoutManagerFactory.getInstance().changeCurrentView('workspace');
 
@@ -442,14 +420,14 @@
         {
             type: 'autoAction',
             msg: gettext("A <strong>behaviour (1)</strong> would be to type the technician name..."),
-            elem: workspaceView.getWidgetByName.bind(null, 'Search for'),
+            elem: BS.workspaceView.widget_by_title('Search for'),
             pos: 'topRight',
             action: BA.sleep(3000)
         },
         {
             type: 'autoAction',
             msg: gettext("...and the technician is found here."),
-            elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
+            elem: BS.workspaceView.widget_by_title('Technicians'),
             pos: 'topRight',
             action: BA.sleep(3000)
         },
@@ -457,14 +435,14 @@
         {
             type: 'autoAction',
             msg: gettext("Another <strong>behaviour (2)</strong> would be to select a technician..."),
-            elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
+            elem: BS.workspaceView.widget_by_title('Technicians'),
             pos: 'topRight',
             action: BA.sleep(3000)
         },
         {
             type: 'autoAction',
             msg: gettext("...and their vCard is displayed here."),
-            elem: workspaceView.getWidgetByName.bind(null, 'Technician vCard'),
+            elem: BS.workspaceView.widget_by_title('Technician vCard'),
             pos: 'topRight',
             action: BA.sleep(3000)
         },
@@ -472,14 +450,14 @@
         {
             type: 'autoAction',
             msg: gettext("Another <strong>behaviour (3)</strong> would be to select a technician..."),
-            elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
+            elem: BS.workspaceView.widget_by_title('Technicians'),
             pos: 'topRight',
             action: BA.sleep(3000)
         },
         {
             type: 'autoAction',
             msg: gettext("...and their current location is displayed here."),
-            elem: workspaceView.getWidgetByName.bind(null, 'Map Viewer'),
+            elem: BS.workspaceView.widget_by_title('Map Viewer'),
             pos: 'topRight',
             action: BA.sleep(3000)
         },
@@ -487,14 +465,14 @@
         {
             type: 'autoAction',
             msg: gettext("The last <strong>behaviour (4)</strong> would be to select a technician..."),
-            elem: workspaceView.getWidgetByName.bind(null, 'Technicians'),
+            elem: BS.workspaceView.widget_by_title('Technicians'),
             pos: 'topRight',
             action: BA.sleep(3000)
         },
         {
             type: 'autoAction',
             msg: gettext("...and the video call is enabled."),
-            elem: workspaceView.getWidgetByName.bind(null, 'Video Call'),
+            elem: BS.workspaceView.widget_by_title('Video Call'),
             pos: 'topLeft',
             action: BA.sleep(3000)
         },

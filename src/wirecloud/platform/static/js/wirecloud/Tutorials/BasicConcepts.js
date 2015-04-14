@@ -50,11 +50,6 @@
         return document.getElementsByClassName("rightResizeHandle")[0];
     };
 
-    var widget = function(index) {
-        var widget = Wirecloud.activeWorkspace.getIWidgets()[index];
-        return widget.element;
-    };
-
     var widget_title = function(index) {
         var widget = Wirecloud.activeWorkspace.getIWidgets()[index];
         return widget.element.getElementsByClassName("widget_menu")[0].getElementsByTagName('span')[0];
@@ -248,7 +243,7 @@
             {'type': 'userAction', 'msg': gettext("Click <em>Back</em>"), 'elem': BS.back_button, 'pos': 'downRight'},
             {'type': 'userAction', 'msg': gettext("Enter a search keyword and press Enter"), 'elem': input_box_input, 'pos': 'downLeft', 'event': 'keypress', 'eventFilterFunction': enter_keypress},
 
-            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext('<p><span class="label label-success">Congratulations!</span> you have finished your first <em>application mashup</em>.</p><p>As you can see, the <em>YouTube Browser</em> widget has been updated successfuly.</p>'), 'elem': widget.bind(null, 0)},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext('<p><span class="label label-success">Congratulations!</span> you have finished your first <em>application mashup</em>.</p><p>As you can see, the <em>YouTube Browser</em> widget has been updated successfuly.</p>'), 'elem': BS.workspaceView.widget_by_title('YouTube Browser')},
             {'type': 'autoAction', 'action': deploy_tutorial_menu},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext('<p>This is the end of this tutorial. Remember that you can always go to the Tutorial menu for others.</p>'), 'elem': get_menu_item.bind(null, 'Tutorials')},
     ]));

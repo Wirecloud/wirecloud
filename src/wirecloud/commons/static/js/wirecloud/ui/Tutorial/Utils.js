@@ -121,6 +121,23 @@
                 element = widget.parentNode.getElementsByClassName("mainbutton")[0];
 
                 return element;
+            },
+            workspaceView: {
+                widget_by_title: function widget_by_title(title) {
+                    return function() {
+                        var i, widgetList;
+
+                        widgetList = document.querySelectorAll('.workspace .iwidget');
+
+                        for (i = 0; i < widgetList.length; i++) {
+                            if (widgetList[i].querySelector('.widget_menu span').textContent === title) {
+                                return widgetList[i];
+                            }
+                        }
+
+                        return null;
+                    };
+                }
             }
         }
     };
