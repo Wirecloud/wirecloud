@@ -121,6 +121,10 @@ ul ul ul > li:before {
     line-height: 1.4;
 }
 
+.slide.font-size-small > .contents {
+    font-size: 19px;
+}
+
 .contents > h3:first-child {
     color: #60C1CF;
     margin-left: 20px;
