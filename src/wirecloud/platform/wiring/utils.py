@@ -76,7 +76,7 @@ def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode
     return xhtml
 
 def get_endpoint_name(endpoint):
-    return "%s/%s/%s" % (endpoint['type'], endpoint['id'], endpoint['name'])
+    return "%s/%s/%s" % (endpoint['type'], endpoint['id'], endpoint['endpoint'])
 
 def rename_component_type(component_type):
     return component_type[1:] if component_type in ['iwidget', 'ioperator'] else "not_supported"
@@ -115,12 +115,12 @@ def parse_wiring_old_version(wiring_status):
                 'source': {
                     'type': rename_component_type(connection['source']['type']),
                     'id': connection['source']['id'],
-                    'name': connection['source']['endpoint']
+                    'endpoint': connection['source']['endpoint']
                 },
                 'target': {
                     'type': rename_component_type(connection['target']['type']),
                     'id': connection['target']['id'],
-                    'name': connection['target']['endpoint']
+                    'endpoint': connection['target']['endpoint']
                 }
             })
 

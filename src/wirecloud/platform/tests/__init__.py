@@ -33,12 +33,22 @@ from wirecloud.commons.utils.testcases import build_selenium_test_cases
 build_selenium_test_cases(('wirecloud.platform.tests.selenium_tests.BasicSeleniumTests',), locals())
 build_selenium_test_cases(('wirecloud.platform.tests.base.BasicViewsSeleniumTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.localcatalogue.tests.LocalCatalogueSeleniumTests',), locals())
-build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringSeleniumTestCase',), locals())
-build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringRecoveringTestCase',), locals())
-build_selenium_test_cases(('wirecloud.platform.wiring.tests.ComponentMissingTestCase',), locals())
-build_selenium_test_cases(('wirecloud.platform.wiring.tests.ConnectionReadOnlyTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.markets.tests.MarketManagementSeleniumTestCase',), locals())
+
+# list of wiring tests
+
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringBasicOperationTestCase',), locals())
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringRecoveringTestCase',), locals())
+
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.ComponentOperatorTestCase',), locals())
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.ComponentMissingTestCase',), locals())
+
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.ConnectionReadOnlyTestCase',), locals())
+
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointMissingTestCase',), locals())
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointBasicRecommendationTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointCollapsedTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointSortingTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointStickyEffectTestCase',), locals())
-build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointBasicRecommendationTestCase',), locals())
+
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.BehaviourManagementTestCase',), locals())

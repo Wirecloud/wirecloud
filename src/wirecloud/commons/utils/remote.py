@@ -466,77 +466,219 @@ class MACFieldTester(WalletTester):
         return None
 
 
+class ButtonTester(object):
+
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
+
+    @property
+    def active(self):
+        return "active" in self.class_list
+
+    @property
+    def class_list(self):
+        return self.element.get_attribute('class').split()
+
+    @property
+    def displayed(self):
+        return self.element.is_displayed()
+
+    @property
+    def badge(self):
+        return self.element.find_element_by_css_selector(".badge")
+
+    def containsIcon(self, icon):
+        return icon in self.element.find_element_by_css_selector(".se-icon").get_attribute('class').split()
+
+    def click(self):
+        self.element.click()
+
+    def check_badge_text(self, badge_text):
+        badge = self.badge
+        self.testcase.assertTrue(badge.is_displayed())
+        self.testcase.assertEqual(badge.text, badge_text)
+
+
+class BaseModalTester(object):
+
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
+
+    @property
+    def content(self):
+        return self.element.find_element_by_css_selector(".window_content")
+
+    @property
+    def bottom(self):
+        return self.element.find_element_by_css_selector(".window_bottom")
+
+    @property
+    def btn_accept(self):
+        return ButtonTester(self.testcase, self.bottom.find_element_by_css_selector(".btn-primary"))
+
+    def find_alerts(self):
+        return self.content.find_elements_by_css_selector(".alert")
+
+    def filter_alerts_by_type(self, alert_type):
+        return self.content.find_elements_by_css_selector(".alert-%s" % alert_type)
+
+    def accept(self):
+        self.btn_accept.click()
+
+        return self
+
+
+class FormModalTester(BaseModalTester):
+
+    def get_field(self, name, tagname='input'):
+        return self.element.find_element_by_css_selector('%s[name="%s"]' % (tagname, name))
+
+    def get_field_value(self, name, tagname='input'):
+        return self.get_field(name, tagname).get_attribute('value')
+
+    def set_field_value(self, name, value, tagname='input'):
+        field = self.get_field(name, tagname)
+
+        if tagname in ['input', 'textarea']:
+            field.clear()
+            field.send_keys(value)
+
+        if tagname in ['select']:
+            field.find_element_by_css_selector('option[value="%s"]' % value).click()
+
+        return self
+
+
+class WiringComponentItemTester(object):
+
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
+
+    @property
+    def title(self):
+        return self.element.find_element_by_css_selector('.component-heading .component-title').text
+
+
 class WiringComponentTester(object):
+
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
+
+    @property
+    def id(self):
+        return int(self.element.get_attribute('data-id'))
+
+    @property
+    def background(self):
+        return "background" in self.class_list
+
+    @property
+    def btn_collapse_endpoints(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".option-collapse"))
+
+    @property
+    def btn_display_preferences(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".option-preferences"))
+
+    @property
+    def btn_notify(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".option-notify"))
+
+    @property
+    def btn_remove(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".option-remove"))
+
+    @property
+    def class_list(self):
+        return self.element.get_attribute('class').split()
+
+    @property
+    def collapsed(self):
+        return "collapsed" in self.class_list
+
+    @property
+    def missing(self):
+        return "missing" in self.class_list
+
+    @property
+    def sort_endpoints(self):
+        return WiringComponentEditableTester(self.testcase, self)
+
+    @property
+    def title(self):
+        return self.element.find_element_by_css_selector('.component-title > .component-name').text
+
+    def collapse_endpoints(self):
+        self.testcase.assertFalse(self.collapsed)
+        self.btn_collapse_endpoints.click()
+        self.testcase.assertTrue(self.collapsed)
+
+        return self
+
+    def expand_endpoints(self):
+        self.testcase.assertTrue(self.collapsed)
+        self.btn_collapse_endpoints.click()
+        self.testcase.assertFalse(self.collapsed)
+
+        return self
+
+    def get_all_endpoints(self, endpoint_type):
+        endpoints = self.element.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)
+
+        return [WiringEndpointTester(self.testcase, element) for element in endpoints]
+
+    def filter_endpoints_by_type(self, endpoint_type):
+        return [WiringEndpointTester(self.testcase, e) for e in self.element.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)]
+
+    def find_endpoint_by_title(self, endpoint_type, endpoint_title):
+        for endpoint in self.filter_endpoints_by_type(endpoint_type):
+            if endpoint.title == endpoint_title:
+                return endpoint
+
+        return None
+
+    def display_preferences(self):
+        button = self.btn_display_preferences
+        button.click()
+
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.se-popup-menu'), button)
+
+    def show_logger_modal(self):
+        self.btn_notify.click()
+
+        return BaseModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".component-logger"))
+
+    def show_settings_modal(self):
+        self.display_preferences().click_entry('Settings')
+
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".component-settings-form"))
+
+
+class WiringComponentEditableTester(object):
 
     def __init__(self, testcase, component):
         self.testcase = testcase
         self.component = component
 
-    @property
-    def id(self):
-        return self.component.get_attribute('data-id')
+    def __enter__(self):
+        self.component.display_preferences().click_entry("Sort endpoints")
 
-    @property
-    def name(self):
-        return self.component.find_element_by_css_selector('.component-title > .component-name')
+        return self
 
-    @property
-    def in_background(self):
-        return "on-background" in self.component.get_attribute('class').split()
+    def __exit__(self, type, value, traceback):
+        self.component.display_preferences().click_entry("Stop sorting")
 
-    @property
-    def is_missing(self):
-        return "missing" in self.component.get_attribute('class').split()
+    def move_endpoint(self, endpoint_type, endpoint_start_title, endpoint_end_title):
+        endpoint_start = self.component.find_endpoint_by_title(endpoint_type, endpoint_start_title)
+        endpoint_end = self.component.find_endpoint_by_title(endpoint_type, endpoint_end_title)
 
-    @property
-    def is_collapsed(self):
-        return "collapsed" in self.component.get_attribute('class').split()
+        endpoint_start.set_position(endpoint_end)
 
-    @property
-    def opt_notify(self):
-        return self.component.find_element_by_css_selector(".option-notify")
-
-    @property
-    def opt_collapse(self):
-        return self.component.find_element_by_css_selector(".option-collapse")
-
-    @property
-    def opt_remove(self):
-        return self.component.find_element_by_css_selector(".option-remove")
-
-    @property
-    def opt_preferences(self):
-        return self.component.find_element_by_css_selector(".option-preferences")
-
-    def collapse_endpoints(self):
-        if not self.is_collapsed:
-            self.opt_collapse.click()
-
-    def expand_endpoints(self):
-        if self.is_collapsed:
-            self.opt_collapse.click()
-
-    def get_all_endpoints(self, endpoint_type):
-        endpoints = self.component.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)
-
-        return [WiringEndpointTester(self.testcase, element) for element in endpoints]
-
-    def get_endpoint_by_name(self, endpoint_type, endpoint_name):
-        endpoints = self.component.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)
-
-        for endpoint in endpoints:
-            if endpoint.find_element_by_css_selector(".endpoint-label").text == endpoint_name:
-                return WiringEndpointTester(self.testcase, endpoint)
-
-        return None
-
-    def open_menu(self):
-        button = self.opt_preferences
-        button.click()
-
-        menu_prefs = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
-
-        return PopupMenuTester(self.testcase, menu_prefs, button)
+        return self
 
 
 class WiringOperatorTester(WiringComponentTester):
@@ -574,19 +716,36 @@ class WiringConnectionTester(object):
         self.element = element
 
     @property
-    def in_background(self):
-        return 'on-background' in self.element.get_attribute('class').split()
+    def background(self):
+        return "background" in self.class_list
 
     @property
-    def opt_remove(self):
-        return self.element.find_element_by_css_selector('.option-remove')
+    def btn_remove(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".option-remove"))
+
+    @property
+    def class_list(self):
+        return self.element.get_attribute('class').split()
+
+    @property
+    def missing(self):
+        return "missing" in self.class_list
+
+    @property
+    def readonly(self):
+        return "readonly" in self.class_list
 
     @property
     def selected(self):
-        return 'selected' in self.element.get_attribute('class').split()
+        return "selected" in self.class_list
 
-    def select(self):
+    def click(self):
         self.element.find_element_by_css_selector('g').click()
+
+        if self.readonly:
+            self.testcase.assertFalse(self.btn_remove.displayed)
+
+        return self
 
 
 class WiringEndpointTester(object):
@@ -596,27 +755,27 @@ class WiringEndpointTester(object):
         self.element = element
 
     @property
-    def label(self):
-        return self.element.find_element_by_css_selector(".endpoint-label")
-
-    @property
     def anchor(self):
         return self.element.find_element_by_css_selector('.endpoint-anchor')
+
+    @property
+    def highlighted(self):
+        return 'highlighted' in self.element.get_attribute('class').split()
+
+    @property
+    def label(self):
+        return self.element.find_element_by_css_selector(".endpoint-label")
 
     @property
     def position(self):
         return int(self.element.get_attribute('data-index'))
 
     @property
-    def name(self):
+    def title(self):
         return self.label.text
 
-    @property
-    def is_highlighted(self):
-        return 'highlighted' in self.element.get_attribute('class').split()
-
-    def get_all_connections(self):
-        return self.testcase.driver.find_elements_by_css_selector('.wiring-connections .connection')
+    def connect(self, endpoint, sticky_effect=False):
+        ActionChains(self.testcase.driver).drag_and_drop(self.anchor, endpoint.label if sticky_effect else endpoint.anchor).perform()
 
     def drag_connection(self, x, y):
         ActionChains(self.testcase.driver).click_and_hold(self.anchor).move_by_offset(x, y).perform()
@@ -624,10 +783,7 @@ class WiringEndpointTester(object):
     def drop_connection(self):
         ActionChains(self.testcase.driver).release().perform()
 
-    def move_down(self, steps):
-        ActionChains(self.testcase.driver).click_and_hold(self.label).move_by_offset(0, 50 * steps).perform()
-
-    def set_position_of(self, endpoint):
+    def set_position(self, endpoint):
         new_position = endpoint.position
 
         actions = ActionChains(self.testcase.driver).click_and_hold(self.label)
@@ -641,16 +797,37 @@ class WiringEndpointTester(object):
     def mouse_over(self):
         ActionChains(self.testcase.driver).move_to_element(self.element).perform();
 
-    def connect(self, endpoint, from_existing=False, sticky_effect=False):
-        connections_expected = len(self.get_all_connections())
 
-        if not from_existing:
-            connections_expected = connections_expected + 1
+class WiringBehaviourTester(object):
 
-        target = endpoint.label if sticky_effect else endpoint.anchor
+    def __init__(self, testcase, element):
+        self.testcase = testcase
+        self.element = element
 
-        ActionChains(self.testcase.driver).drag_and_drop(self.anchor, target).perform()
-        WebDriverWait(self.testcase.driver, 5).until(lambda driver: connections_expected == len(self.get_all_connections()))
+    @property
+    def active(self):
+        return 'active' in self.element.get_attribute('class').split()
+
+    @property
+    def heading(self):
+        return self.element.find_element_by_css_selector(".behaviour-title")
+
+    @property
+    def title(self):
+        return self.heading.text
+
+    @property
+    def description(self):
+        return self.element.find_element_by_css_selector(".behaviour-description").text
+
+    def check_basic_info(self, title=None, description=None):
+        if title is not None:
+            self.testcase.assertEqual(self.title, self.title if not title else title)
+
+        if description is not None:
+            self.testcase.assertEqual(self.description, self.description if not description else description)
+
+        return self
 
 
 class WorkspaceTabTester(object):
@@ -752,6 +929,9 @@ class WirecloudRemoteTestCase(RemoteTestCase):
     def tearDown(self):
 
         self.driver.delete_all_cookies()
+
+    def find_navbar_button(self, classname):
+        return ButtonTester(self, self.driver.find_element_by_css_selector(".wirecloud-navbar .btn-%s" % classname))
 
     def scroll_and_click(self, element):
 
@@ -1271,134 +1451,247 @@ class MyResourcesViewTester(MarketplaceViewTester):
             self.testcase.assertIsNotNone(resource)
 
 
-BACK_BUTTON = ".wirecloud_header_nav .icon-caret-left"
-WORKSPACE_OPT_WIRING = ".wirecloud_toolbar .icon-puzzle-piece"
-
-
-class WiringViewTester(object):
-
-    CSS_VIEW = ".wiring-view"
-
-    CSS_OPT_BEHAVIOURS = ".wirecloud_toolbar .opt-behaviours"
-    CSS_OPT_COMPONENTS = ".wirecloud_toolbar .opt-components"
-
-    CSS_SEC_SIDEBAR = ".wiring-view .wiring-sidebar"
-    CSS_SEC_DIAGRAM = ".wiring-view .wiring-diagram"
+class BaseWiringViewTester(object):
 
     def __init__(self, testcase):
         self.expect_error = False
         self.testcase = testcase
 
+    @property
+    def btn_back(self):
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .btn-back"))
+
+    @property
+    def btn_list_behaviours(self):
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud-navbar .btn-list-behaviours"))
+
+    @property
+    def btn_list_components(self):
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud-navbar .btn-list-components"))
+
+    @property
+    def layout(self):
+        return self.testcase.driver.find_element_by_css_selector(".wiring-view")
+
+    @property
+    def section_diagram(self):
+        return self.testcase.driver.find_element_by_css_selector(".wiring-view .wiring-diagram")
+
+    @property
+    def section_sidebar(self):
+        return self.testcase.driver.find_element_by_css_selector(".wiring-view .wiring-sidebar")
+
+    def _build_component(self, component_type, element):
+        return WiringWidgetTester(self.testcase, element) if component_type == 'widget' else WiringOperatorTester(self.testcase, element)
+
+
+class WiringBehaviourSidebarTester(BaseWiringViewTester):
+
     def __enter__(self):
-        self.testcase.wait_element_visible_by_css_selector(WORKSPACE_OPT_WIRING).click()
+        button = self.btn_list_behaviours
+
+        if not button.active:
+            button.click()
+
+        return self
+
+    def __exit__(self, type, value, traceback):
+        button = self.btn_list_behaviours
+
+        if button.active:
+            button.click()
+
+    @property
+    def active_behaviour(self):
+        for behaviour in self.behaviour_list:
+            if behaviour.active:
+                return behaviour
+
+        return None
+
+    @property
+    def behaviour_list(self):
+        return [WiringBehaviourTester(self.testcase, e) for e in self.panel.find_elements_by_css_selector(".behaviour")]
+
+    @property
+    def btn_create_behaviour(self):
+        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-create-behaviour"))
+
+    @property
+    def btn_enable_behaviour_engine(self):
+        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-enable-behaviour-engine"))
+
+    @property
+    def disabled(self):
+        return self.btn_enable_behaviour_engine.containsIcon("icon-lock")
+
+    @property
+    def panel(self):
+        return self.section_sidebar.find_element_by_css_selector(".behaviour-panel")
+
+    def create_behaviour(self, title=None, description=None):
+        old_behaviour_list_length = len(self.behaviour_list)
+
+        self.btn_create_behaviour.click()
+        form = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".behaviour-registration-form"))
+
+        if title is not None:
+            form.set_field_value('title', title)
+            self.testcase.assertEqual(form.get_field_value('title'), title)
+
+        if description is not None:
+            form.set_field_value('description', description, 'textarea')
+            self.testcase.assertEqual(form.get_field_value('description', 'textarea'), description)
+
+        form.accept()
+
+        new_behaviour_list = self.behaviour_list
+        self.testcase.assertEqual(len(new_behaviour_list), old_behaviour_list_length + 1)
+
+        last_behaviour = new_behaviour_list[-1]
+
+        self.testcase.assertEqual(last_behaviour.title, title if title is not None and title else "New behaviour %d" % (len(new_behaviour_list) -1))
+        self.testcase.assertEqual(last_behaviour.description, description if description is not None and description else "No description provided.")
+
+        return self
+
+    def enable(self):
+        if self.disabled:
+            self.btn_enable_behaviour_engine.click()
+
+        return self
+
+    def update_behaviour(self, behaviour, title=None, description=None):
+        behaviour.heading.click()
+        form = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".behaviour-update-form"))
+
+        if title is not None:
+            form.set_field_value('title', title)
+            self.testcase.assertEqual(form.get_field_value('title'), title)
+
+        if description is not None:
+            form.set_field_value('description', description, 'textarea')
+            self.testcase.assertEqual(form.get_field_value('description', 'textarea'), description)
+
+        form.accept()
+        behaviour.check_basic_info(title=title, description=description)
+
+        return self
+
+
+class WiringComponentSidebarTester(BaseWiringViewTester):
+
+    def __enter__(self):
+        button = self.btn_list_components
+
+        if not button.active:
+            button.click()
+
+        return self
+
+    def __exit__(self, type, value, traceback):
+        button = self.btn_list_components
+
+        if button.active:
+            button.click()
+
+    @property
+    def panel(self):
+        return self.section_sidebar.find_element_by_css_selector(".component-panel")
+
+    def _filter_components_by_type(self, component_type):
+        return [self._build_component(component_type, e) for e in self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)]
+
+    def _find_component_by_title(self, component_type, component_title):
+
+        for component in self._filter_components_by_type(component_type):
+            if component.title == component_title:
+                return component
+
+        return None
+
+
+    def add_component(self, component_type, component_title, x=0, y=-0):
+
+        component = self.find_component_by_title(component_type, component_title)
+        self.testcase.assertIsNotNone(component)
+
+        x, y = (x + 50, y + 30,)
+        old_components = len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type))
+        ActionChains(self.testcase.driver).click_and_hold(component.element).move_to_element_with_offset(self.section_diagram, x, y).release().perform()
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)))
+
+        return self._find_component_by_title(component_type, component_title)
+
+    def display_component_group(self, component_type):
+        button = ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-display-%s-group" % component_type))
+
+        if not button.active:
+            WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".wiring-sidebar .component-panel .btn-display-%s-group" % component_type)))
+            button.click()
+
+        return self
+
+    def filter_components_by_type(self, component_type):
+        self.display_component_group(component_type)
+
+        return [WiringComponentItemTester(self.testcase, e) for e in self.panel.find_elements_by_css_selector(".component-%s" % component_type)]
+
+    def find_component_by_title(self, component_type, component_title):
+        self.display_component_group(component_type)
+
+        for component in self.filter_components_by_type(component_type):
+            if component.title == component_title:
+                return component
+
+        return None
+
+
+class WiringViewTester(BaseWiringViewTester):
+
+    def __enter__(self):
+        self.testcase.wait_element_visible_by_css_selector(".wirecloud-navbar .btn-display-wiring-view").click()
 
         if self.expect_error is False:
-            wiring_loaded = lambda driver: self.testcase.get_current_view() == 'wiring' and 'disabled' not in driver.find_element_by_css_selector(self.CSS_VIEW).get_attribute('class')
-            WebDriverWait(self.testcase.driver, 10).until(wiring_loaded)
+            WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'wiring' and not self.disabled)
 
         return self
 
     def __exit__(self, type, value, traceback):
         if self.expect_error is False or self.testcase.get_current_view() == 'wiring':
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, BACK_BUTTON), parent=True)).click()
+            self.btn_back.click()
             WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'workspace')
 
         self.expect_error = False
 
     @property
-    def section_sidebar(self):
-        return self.testcase.driver.find_element_by_css_selector(self.CSS_SEC_SIDEBAR)
+    def behaviour_sidebar(self):
+        return WiringBehaviourSidebarTester(self.testcase)
 
     @property
-    def section_diagram(self):
-        return self.testcase.driver.find_element_by_css_selector(self.CSS_SEC_DIAGRAM)
+    def component_sidebar(self):
+        return WiringComponentSidebarTester(self.testcase)
 
-    def add_component(self, component_type, component, pos_x=0, pos_y=-0):
-        x = pos_x + 50
-        y = pos_y + 30
+    @property
+    def disabled(self):
+        return "disabled" in self.layout.get_attribute('class').split()
 
-        old_components = len(self.from_diagram_get_all_components(component_type))
-        ActionChains(self.testcase.driver).click_and_hold(component).move_to_element_with_offset(self.section_diagram, x, y).release().perform()
-        WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.from_diagram_get_all_components(component_type)))
+    def filter_components_by_type(self, component_type):
+        return [self._build_component(component_type, e) for e in self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)]
 
-        return self
+    def filter_connections_by_properties(self, *args):
+        return [c for c in self.find_connections() for p in args if hasattr(c, p) and getattr(c, p)]
 
-    def add_component_by_name(self, component_type, component_name, x=0, y=-0):
-        x = x + 50
-        y = y + 30
+    def find_component_by_title(self, component_type, component_title):
 
-        opt = self.testcase.driver.find_element_by_css_selector(".wirecloud_toolbar .opt-components")
-
-        if 'active' not in opt.get_attribute('class').split():
-            opt.click()
-
-        self.open_component_group(component_type)
-        collection = self.section_sidebar.find_elements_by_css_selector(".component-%s" % component_type)
-
-        component = None
-
-        for element in collection:
-            if element.text == component_name:
-                component = element
-                break
-
-        self.testcase.assertIsNotNone(component)
-
-        old_components = len(self.from_diagram_get_all_components(component_type))
-        ActionChains(self.testcase.driver).click_and_hold(component).move_to_element_with_offset(self.section_diagram, x, y).release().perform()
-        WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.from_diagram_get_all_components(component_type)))
-
-        return self.from_diagram_find_component_by_name(component_type, component_name)
-
-    def from_diagram_get_all_components(self, component_type):
-        return self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)
-
-    def from_diagram_find_component_by_name(self, component_type, component_name):
-        collection = self.section_diagram.find_elements_by_css_selector(".component-%s" % component_type)
-
-        for component in collection:
-            if component.find_element_by_css_selector('.component-name').text == component_name:
-                return WiringOperatorTester(self.testcase, component) if component_type == 'operator' else WiringWidgetTester(self.testcase, component)
-
-        return None
-
-    def from_sidebar_get_all_components(self, component_type):
-        return self.section_sidebar.find_elements_by_css_selector(".component-%s" % component_type)
-
-    def from_sidebar_find_component_by_name(self, component_type, component_name, all_steps=False):
-        if all_steps:
-            self.open_component_bar()
-
-        self.open_component_group(component_type)
-        collection = self.section_sidebar.find_elements_by_css_selector(".component-%s" % component_type)
-
-        for component in collection:
-            if component.text == component_name:
+        for component in self.filter_components_by_type(component_type):
+            if component.title == component_title:
                 return component
 
         return None
 
-    def get_all_connections(self, missing=False, readonly=False):
-        css_selector = [".connection"]
-
-        if missing:
-            css_selector.append("missing")
-
-        if readonly:
-            css_selector.append("readonly")
-
-        return [WiringConnectionTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".".join(css_selector))]
-
-    def open_component_bar(self):
-        self.testcase.driver.find_element_by_css_selector(self.CSS_OPT_COMPONENTS).click()
-
-        return self
-
-    def open_component_group(self, component_type):
-        WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.wiring-sidebar .opt-%s-group' % component_type)))
-        self.section_sidebar.find_element_by_css_selector(".opt-%s-group" % component_type).click()
-
-        return self
+    def find_connections(self):
+        return [WiringConnectionTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".connection")]
 
 
 class MobileWirecloudRemoteTestCase(RemoteTestCase):

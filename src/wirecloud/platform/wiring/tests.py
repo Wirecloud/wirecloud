@@ -85,12 +85,12 @@ class WiringTestCase(WirecloudTestCase):
                     'source': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'event',
+                        'endpoint': 'event',
                     },
                     'target': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'slot',
+                        'endpoint': 'slot',
                     },
                 },
             ],
@@ -112,12 +112,12 @@ class WiringTestCase(WirecloudTestCase):
                     'source': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'event',
+                        'endpoint': 'event',
                     },
                     'target': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'slot',
+                        'endpoint': 'slot',
                     },
                 },
             ],
@@ -135,24 +135,24 @@ class WiringTestCase(WirecloudTestCase):
                     'source': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'event',
+                        'endpoint': 'event',
                     },
                     'target': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'slot',
+                        'endpoint': 'slot',
                     },
                 },
                 {
                     'source': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'event',
+                        'endpoint': 'event',
                     },
                     'target': {
                         'type': 'iwidget',
                         'id': 2,
-                        'name': 'slot',
+                        'endpoint': 'slot',
                     },
                 },
             ],
@@ -175,12 +175,12 @@ class WiringTestCase(WirecloudTestCase):
                     'source': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'event',
+                        'endpoint': 'event',
                     },
                     'target': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'slot',
+                        'endpoint': 'slot',
                     },
                 },
             ],
@@ -208,12 +208,12 @@ class WiringTestCase(WirecloudTestCase):
                     'source': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'event',
+                        'endpoint': 'event',
                     },
                     'target': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'slot',
+                        'endpoint': 'slot',
                     },
                 },
             ],
@@ -231,12 +231,12 @@ class WiringTestCase(WirecloudTestCase):
                     'source': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'event',
+                        'endpoint': 'event',
                     },
                     'target': {
                         'type': 'widget',
                         'id': 2,
-                        'name': 'slot',
+                        'endpoint': 'slot',
                     },
                 },
             ],
@@ -254,12 +254,12 @@ class WiringTestCase(WirecloudTestCase):
                     'source': {
                         'type': 'widget',
                         'id': 1,
-                        'name': 'event',
+                        'endpoint': 'event',
                     },
                     'target': {
                         'type': 'widget',
                         'id': 2,
-                        'name': 'slot',
+                        'endpoint': 'slot',
                     },
                 },
             ],
@@ -280,7 +280,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
 
     XML_NORMALIZATION_RE = re.compile(r'>\s+<')
     fixtures = ('selenium_test_data',)
-    tags = ('wiring',)
+    tags = ('wirecloud-wiring',)
 
     @classmethod
     def setUpClass(cls):
@@ -345,127 +345,10 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
         self.assertEqual(final_code, expected_code)
 
 
-class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
+class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
-
-    def test_operator_available_after_being_installed(self):
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.upload_resource('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
-
-        with self.wiring_view as wiring:
-            collection = wiring.from_sidebar_get_all_components('operator')
-            self.assertEqual(len(collection), 2)
-
-            operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperatorSelenium', all_steps=True)
-            self.assertIsNotNone(operator)
-            wiring.add_component('operator', operator)
-
-            collection = wiring.from_diagram_get_all_components('operator')
-            self.assertEqual(len(collection), 1)
-
-    def test_operator_not_available_after_being_uninstalled(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
-
-        with self.myresources_view as myresources:
-            myresources.uninstall_resource('TestOperator')
-
-        with self.wiring_view as wiring:
-            collection = wiring.from_sidebar_get_all_components('operator')
-            self.assertEqual(len(collection), 0)
-
-            operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperator', all_steps=True)
-            self.assertIsNone(operator)
-
-            collection = wiring.from_diagram_get_all_components('operator')
-            self.assertEqual(len(collection), 1)
-
-            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
-            self.assertIsNotNone(operator)
-            self.assertTrue(operator.is_missing)
-
-    def check_operator_reinstall_behaviour(self, reload):
-        workspace = Workspace.objects.get(id=3)
-        parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['operators']['0']['preferences'] = {
-            'prefix': { "readOnly": False, "hidden": False, "value": 'test_' },
-            'exception_on_event': { "readOnly": False, "hidden": False, "value": 'true' },
-            'test_logging': { "readOnly": False, "hidden": False, "value": 'true' }
-        }
-        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
-        workspace.save()
-
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
-
-        with self.wiring_view as wiring:
-            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
-            operator.open_menu().click_entry('Settings')
-
-            self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').click()  # disable exception_on_event
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-        with self.myresources_view as myresources:
-            myresources.uninstall_resource('TestOperator')
-
-        if reload is True:
-            self.driver.refresh()
-
-        # Reinstall the operator
-        with self.myresources_view as myresources:
-            myresources.upload_resource('Wirecloud_TestOperator_1.0.zip', 'TestOperator', shared=True)
-
-        # Check the operator leaves ghost mode
-        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
-        self.assertFalse(error_badge.is_displayed())
-
-        # Check operator connections are restored sucessfully
-        tab = self.get_workspace_tab_by_name('Tab 2')
-        tab.element.click()
-        (target_iwidget, source_iwidget) = self.get_current_iwidgets()
-        with source_iwidget:
-            text_input = self.driver.find_element_by_tag_name('input')
-            self.fill_form_input(text_input, 'hello world!!')
-            # Work around hang when using Firefox Driver
-            self.driver.execute_script('sendEvent();')
-            #self.driver.find_element_by_id('b1').click()
-
-        with target_iwidget:
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('wiringOut').text != 'hello world!!')
-
-        # Check preference values has been restored to the values used before uninstalling the widget and not to the default ones
-        with self.wiring_view as wiring:
-            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
-            self.assertFalse(operator.is_missing)
-
-            operator.open_menu().click_entry('Settings')
-
-            self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="prefix"]').get_attribute('value'), 'test_')
-            self.assertFalse(self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').is_selected())
-            self.assertTrue(self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').is_selected())
-
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
-    def test_operators_in_use_reinstall_behaviour(self):
-        self.check_operator_reinstall_behaviour(False)
-
-    def test_operators_in_use_reinstall_behaviour_reload(self):
-        self.check_operator_reinstall_behaviour(True)
-
-    def test_operators_are_not_usable_after_being_deleted(self):
-        self.login()
-
-        with self.myresources_view as myresources:
-            myresources.delete_resource('TestOperator')
-
-        with self.wiring_view as wiring:
-            collection = wiring.from_sidebar_get_all_components('operator')
-            self.assertEqual(len(collection), 0)
-
-            operator = wiring.from_sidebar_find_component_by_name('operator', 'TestOperator', all_steps=True)
-            self.assertIsNone(operator)
 
     def test_basic_wiring_editor_operations(self):
 
@@ -487,27 +370,13 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         iwidgets[2].rename('Test (3)')
 
         with self.wiring_view as wiring:
-            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (1)', all_steps=True)
-            self.assertIsNotNone(widget)
-            wiring.add_component('widget', widget)
+            with wiring.component_sidebar as sidebar:
+                widget1 = sidebar.add_component('widget', "Test (1)")
+                widget2 = sidebar.add_component('widget', "Test (2)", x=400)
 
-            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (2)')
-            self.assertIsNotNone(widget)
-            wiring.add_component('widget', widget, pos_x=400)
-
-            widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test (1)')
-            self.assertIsNotNone(widget1)
-
-            widget2 = wiring.from_diagram_find_component_by_name('widget', 'Test (2)')
-            self.assertIsNotNone(widget2)
-
-            source = widget1.get_endpoint_by_name('source', 'Output')
-            self.assertIsNotNone(source)
-
-            target = widget2.get_endpoint_by_name('target', 'Input')
-            self.assertIsNotNone(target)
-
-            ActionChains(self.driver).drag_and_drop(source.anchor, target.anchor).perform()
+            source = widget1.find_endpoint_by_title('source', "Output")
+            target = widget2.find_endpoint_by_title('target', "Input")
+            source.connect(target)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -545,30 +414,14 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
 
         with self.wiring_view as wiring:
-            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (1)', all_steps=True)
-            self.assertIsNotNone(widget)
-            wiring.add_component('widget', widget)
 
-            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (2)')
-            self.assertIsNotNone(widget)
-            wiring.add_component('widget', widget, pos_x=400)
+            with wiring.component_sidebar as sidebar:
+                widget1 = sidebar.add_component('widget', "Test (1)")
+                widget2 = sidebar.add_component('widget', "Test (2)", x=400)
+                widget3 = sidebar.add_component('widget', "Test (3)", x=100, y=200)
 
-            widget = wiring.from_sidebar_find_component_by_name('widget', 'Test (3)')
-            self.assertIsNotNone(widget)
-            wiring.add_component('widget', widget, pos_x=100, pos_y=200)
-
-            widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test (1)')
-            self.assertIsNotNone(widget1)
-
-            widget2 = wiring.from_diagram_find_component_by_name('widget', 'Test (2)')
-            self.assertIsNotNone(widget2)
-
-            source = widget1.get_endpoint_by_name('source', 'Output')
-            self.assertIsNotNone(source)
-
-            target = widget2.get_endpoint_by_name('target', 'Input')
-            self.assertIsNotNone(target)
-
+            source = widget1.find_endpoint_by_title('source', "Output")
+            target = widget2.find_endpoint_by_title('target', "Input")
             source.connect(target)
 
         with iwidgets[0]:
@@ -597,32 +450,20 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, '')
 
         with self.wiring_view as wiring:
-            widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test (1)')
-            self.assertIsNotNone(widget1)
 
-            widget2 = wiring.from_diagram_find_component_by_name('widget', 'Test (2)')
-            self.assertIsNotNone(widget2)
+            widget2 = wiring.find_component_by_title('widget', "Test (2)")
+            widget3 = wiring.find_component_by_title('widget', "Test (3)")
 
-            widget3 = wiring.from_diagram_find_component_by_name('widget', 'Test (3)')
-            self.assertIsNotNone(widget2)
+            target1 = widget2.find_endpoint_by_title('target', "Input")
+            target2 = widget3.find_endpoint_by_title('target', "Input")
 
-            source = widget1.get_endpoint_by_name('source', 'Output')
-            self.assertIsNotNone(source)
+            connections = wiring.find_connections()
+            connection = connections[0]
+            connection.click()
+            connections_length = len(connections)
 
-            target1 = widget2.get_endpoint_by_name('target', 'Input')
-            self.assertIsNotNone(target1)
-
-            target2 = widget3.get_endpoint_by_name('target', 'Input')
-            self.assertIsNotNone(target1)
-
-            connections = wiring.get_all_connections()
-            self.assertEqual(len(connections), 1)
-            connections[0].select()
-
-            target1.connect(target2, from_existing=True)
-
-            connections = wiring.get_all_connections()
-            self.assertEqual(len(connections), 1)
+            target1.connect(target2)
+            self.assertEqual(len(wiring.find_connections()), connections_length)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -660,23 +501,16 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
 
         with self.wiring_view as wiring:
+            widget = wiring.find_component_by_title('widget', "Test 1")
 
-            widget = wiring.from_diagram_find_component_by_name('widget', 'Test 1')
-            self.assertIsNotNone(widget)
-            widget.open_menu().click_entry('Settings')
+            modal = widget.show_settings_modal()
 
-            # Change widget settings
+            modal.set_field_value("list", "1", tagname="select")
+            modal.set_field_value("text", "test")
+            modal.get_field("boolean").click()
+            modal.set_field_value("password", "password")
 
-            list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
-            self.fill_form_input(list_input, '1')  # value1
-            text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
-            self.fill_form_input(text_input, 'test')
-            boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="boolean"]')
-            boolean_input.click()
-            password_input = self.driver.find_element_by_css_selector('.window_menu [name="password"]')
-            self.fill_form_input(password_input, 'password')
-
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+            modal.accept()
 
         with iwidget:
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
@@ -690,16 +524,11 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
 
         with self.wiring_view as wiring:
+            operator = wiring.find_component_by_title('operator', "TestOperator")
 
-            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
-            self.assertIsNotNone(operator)
-            operator.open_menu().click_entry('Settings')
-
-            # Change operator settings
-            prefix_input = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
-            self.fill_form_input(prefix_input, 'prefix: ')
-
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+            modal = operator.show_settings_modal()
+            modal.set_field_value("prefix", "prefix: ")
+            modal.accept()
 
         with iwidgets[0]:
             try:
@@ -728,104 +557,17 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'prefix: hello world!!')
 
-    def check_input_endpoint_exceptions(self):
-
-        self.login(username='user_with_workspaces')
-
-        iwidgets = self.get_current_iwidgets()
-        source_iwidget = iwidgets[0]
-        target_iwidget = iwidgets[1]
-        self.assertIsNotNone(source_iwidget.element)
-        self.assertIsNotNone(target_iwidget.element)
-
-        self.assertEqual(source_iwidget.error_count, 0)
-        self.assertEqual(target_iwidget.error_count, 0)
-        with source_iwidget:
-            text_input = self.driver.find_element_by_tag_name('input')
-            self.fill_form_input(text_input, 'hello world!!')
-            # Work around hang when using Firefox Driver
-            self.driver.execute_script('sendEvent();')
-            #self.driver.find_element_by_id('b1').click()
-
-        WebDriverWait(self.driver, timeout=10).until(lambda driver: target_iwidget.error_count == 1)
-        self.assertEqual(source_iwidget.error_count, 0)
-
-        with target_iwidget:
-            text_div = self.driver.find_element_by_id('wiringOut')
-            self.assertEqual(text_div.text, '')
-
-        # Test exception on the operator input endpoint
-        source_iwidget = iwidgets[1]
-        target_iwidget = iwidgets[0]
-
-        with source_iwidget:
-            text_input = self.driver.find_element_by_tag_name('input')
-            self.fill_form_input(text_input, 'hello world!!')
-            # Work around hang when using Firefox Driver
-            self.driver.execute_script('sendEvent();')
-            #self.driver.find_element_by_id('b1').click()
-
-        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
-        self.assertEqual(error_badge.text, '1')
-        self.assertTrue(error_badge.is_displayed())
-        with self.wiring_view as wiring:
-
-            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
-            self.assertIsNotNone(operator)
-
-            self.assertEqual(operator.error_count, 1)
-            self.assertEqual(target_iwidget.error_count, 0)
-
-            button = operator.opt_notify
-            button.click()
-
-            self.wait_element_visible_by_css_selector('.window_menu.logwindowmenu')
-            error_list = self.driver.find_elements_by_css_selector(".logwindowmenu .alert-error")
-            self.assertEqual(len(error_list), 1)
-            self.driver.find_element_by_xpath("//*[text()='Close']").click()
-
-    def test_input_endpoint_exceptions(self):
-
-        # Enable widget exceptions
-        set_variable_value(9, 'true')
-
-        # Enable operator exceptions
-        workspace = Workspace.objects.get(id=2)
-        parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['operators']['0']['preferences']['exception_on_event'] = { "readOnly": False, "hidden": False, "value": 'true' }
-        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
-        workspace.save()
-
-        # Check exceptions
-        self.check_input_endpoint_exceptions()
-
-    def test_input_endpoint_no_handler_exceptions(self):
-
-        # Update wiring connections to use the not handled input endpoints
-        workspace = Workspace.objects.get(id=2)
-        parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['connections'][0]['target']['name'] = 'nothandled'
-        parsedStatus['connections'][1]['target']['name'] = 'nothandled'
-        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
-        workspace.save()
-
-        self.check_input_endpoint_exceptions()
-
     def test_operator_logging_support(self):
 
         self.login(username='user_with_workspaces')
 
         with self.wiring_view as wiring:
-            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperator")
-            self.assertIsNotNone(operator)
-
+            operator = wiring.find_component_by_title('operator', "TestOperator")
             self.assertEqual(operator.error_count, 0)
 
-            # Change operator settings
-            operator.open_menu().click_entry('Settings')
-
-            self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').click()
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+            modal = operator.show_settings_modal()
+            modal.get_field("test_logging").click()
+            modal.accept()
 
             self.assertEqual(operator.error_count, 2)
             self.assertEqual(len(operator.log_entries), 5)
@@ -864,34 +606,21 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_recovers_from_invalid_views_data(self):
-        wiring_status = self._read_json_fixtures('wiringstatus_recoverabledata')
-
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps(wiring_status)
+        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_recoverabledata'))
         workspace.save()
 
         self.login(username='user_with_workspaces')
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
-
         self.wiring_view.expect_error = True
+
         with self.wiring_view as wiring:
-
-            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperator")
-            self.assertIsNotNone(operator)
-            self.assertFalse(operator.is_missing)
-
-            widget = wiring.from_diagram_find_component_by_name('widget', "Test 1")
-            self.assertIsNotNone(widget)
-            self.assertFalse(widget.is_missing)
-
-            widget = wiring.from_diagram_find_component_by_name('widget', "Test 2")
-            self.assertIsNotNone(widget)
-            self.assertFalse(widget.is_missing)
-
-            connections = wiring.get_all_connections()
-            self.assertEqual(len(connections), 3)
+            self.assertFalse(wiring.find_component_by_title('operator', "TestOperator").missing)
+            self.assertFalse(wiring.find_component_by_title('widget', "Test 1").missing)
+            self.assertFalse(wiring.find_component_by_title('widget', "Test 2").missing)
+            self.assertEqual(len(wiring.find_connections()), 3)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -913,33 +642,18 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_allows_wiring_status_reset_on_unrecoverable_errors(self):
-        wiring_status = self._read_json_fixtures('wiringstatus_unrecoverabledata')
-
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps(wiring_status)
+        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_unrecoverabledata'))
         workspace.save()
 
         self.login(username='user_with_workspaces')
-
-        iwidgets = self.get_current_iwidgets()
-        self.assertEqual(len(iwidgets), 2)
-
-        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
-        self.assertEqual(error_badge.text, '1')
-        self.assertTrue(error_badge.is_displayed())
+        self.find_navbar_button("display-wiring-view").check_badge_text("1")
         self.wiring_view.expect_error = True
 
         with self.wiring_view as wiring:
-            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperator")
-            self.assertIsNotNone(operator)
-            self.assertFalse(operator.is_missing)
-
-            widget = wiring.from_diagram_find_component_by_name('widget', "Test 2")
-            self.assertIsNotNone(widget)
-            self.assertFalse(widget.is_missing)
-
-            connections = wiring.get_all_connections()
-            self.assertEqual(len(connections), 0)
+            self.assertFalse(wiring.find_component_by_title('operator', "TestOperator").missing)
+            self.assertFalse(wiring.find_component_by_title('widget', "Test 2").missing)
+            self.assertEqual(len(wiring.find_connections()), 0)
 
 
 class ComponentMissingTestCase(WirecloudSeleniumTestCase):
@@ -972,18 +686,11 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces')
 
-        iwidgets = self.get_current_iwidgets()
-        self.assertEqual(len(iwidgets), 2)
+        with self.wiring_view as wiring:
+            self.assertTrue(wiring.find_component_by_title('widget', "Test").missing)
 
         with self.wiring_view as wiring:
-
-            widget = wiring.from_diagram_find_component_by_name('widget', "Test")
-            self.assertTrue(widget.is_missing)
-
-        with self.wiring_view as wiring:
-
-            widget = wiring.from_diagram_find_component_by_name('widget', "Test")
-            self.assertTrue(widget.is_missing)
+            self.assertTrue(wiring.find_component_by_title('widget', "Test").missing)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_widget_with_visualinfo_and_connections_is_not_in_workspace(self):
@@ -992,21 +699,11 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         workspace.save()
 
         self.login(username='user_with_workspaces')
-
-        iwidgets = self.get_current_iwidgets()
-        self.assertEqual(len(iwidgets), 2)
-
-        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
-        self.assertTrue(wiring_error_badge.is_displayed())
-        self.assertEqual(wiring_error_badge.text, '2')
+        self.find_navbar_button("display-wiring-view").check_badge_text("2")
 
         with self.wiring_view as wiring:
-
-            widget = wiring.from_diagram_find_component_by_name('widget', "Test")
-            self.assertTrue(widget.is_missing)
-
-            connections = wiring.get_all_connections()
-            self.assertEqual(len(connections), 5)
+            self.assertTrue(wiring.find_component_by_title('widget', "Test").missing)
+            self.assertEqual(len(wiring.find_connections()), 5)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_operator_uninstalled_with_tradeinfo(self):
@@ -1015,29 +712,21 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         workspace.save()
 
         self.login(username='user_with_workspaces')
-
-        iwidgets = self.get_current_iwidgets()
-        self.assertEqual(len(iwidgets), 2)
-
-        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
-        self.assertTrue(wiring_error_badge.is_displayed())
-        self.assertEqual(wiring_error_badge.text, '1')
+        self.find_navbar_button("display-wiring-view").check_badge_text("1")
 
         with self.wiring_view as wiring:
+            operator = wiring.find_component_by_title('operator', "TestOperatorDePalo")
 
-            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperatorDePalo")
-            self.assertTrue(operator.is_missing)
-
-            self.assertEqual(len(operator.get_all_endpoints('source')), 1)
-            self.assertEqual(len(operator.get_all_endpoints('target')), 1)
+            self.assertTrue(operator.missing)
+            self.assertEqual(len(operator.filter_endpoints_by_type('source')), 1)
+            self.assertEqual(len(operator.filter_endpoints_by_type('target')), 1)
 
         with self.wiring_view as wiring:
+            operator = wiring.find_component_by_title('operator', "TestOperatorDePalo")
 
-            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperatorDePalo")
-            self.assertTrue(operator.is_missing)
-
-            self.assertEqual(len(operator.get_all_endpoints('source')), 1)
-            self.assertEqual(len(operator.get_all_endpoints('target')), 1)
+            self.assertTrue(operator.missing)
+            self.assertEqual(len(operator.filter_endpoints_by_type('source')), 1)
+            self.assertEqual(len(operator.filter_endpoints_by_type('target')), 1)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_operator_uninstalled_with_tradeinfo_and_connections(self):
@@ -1046,27 +735,120 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         workspace.save()
 
         self.login(username='user_with_workspaces')
-
-        iwidgets = self.get_current_iwidgets()
-        self.assertEqual(len(iwidgets), 2)
-
-        wiring_error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
-        self.assertTrue(wiring_error_badge.is_displayed())
-        self.assertEqual(wiring_error_badge.text, '1')
+        self.find_navbar_button("display-wiring-view").check_badge_text("1")
 
         with self.wiring_view as wiring:
+            operator = wiring.find_component_by_title('operator', "TestOperatorDePalo")
+            self.assertTrue(operator.missing)
 
-            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperatorDePalo")
-            self.assertTrue(operator.is_missing)
+            self.assertEqual(len(operator.filter_endpoints_by_type('source')), 1)
+            self.assertEqual(len(operator.filter_endpoints_by_type('target')), 1)
 
-            self.assertEqual(len(operator.get_all_endpoints('source')), 1)
-            self.assertEqual(len(operator.get_all_endpoints('target')), 1)
+            self.assertEqual(len(wiring.find_connections()), 5)
+            self.assertEqual(len(wiring.filter_connections_by_properties("missing")), 3)
 
-            connections = wiring.get_all_connections()
-            self.assertEqual(len(connections), 5)
 
-            connections = wiring.get_all_connections(missing=True)
-            self.assertEqual(len(connections), 3)
+class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+
+    def test_operator_available_after_being_installed(self):
+        self.login()
+
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                sidebar.add_component('operator', "TestOperatorSelenium")
+
+    def test_operator_not_available_after_being_uninstalled(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource("TestOperator")
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                components = sidebar.filter_components_by_type('operator')
+                self.assertEqual(len(components), 0)
+
+            self.assertTrue(wiring.find_component_by_title('operator', "TestOperator").missing)
+
+    def check_operator_reinstall_behaviour(self, reload):
+        workspace = Workspace.objects.get(id=3)
+        parsedStatus = json.loads(workspace.wiringStatus)
+        parsedStatus['operators']['0']['preferences'] = {
+            'prefix': { "readOnly": False, "hidden": False, "value": 'test_' },
+            'exception_on_event': { "readOnly": False, "hidden": False, "value": 'true' },
+            'test_logging': { "readOnly": False, "hidden": False, "value": 'true' }
+        }
+        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
+        workspace.save()
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
+
+        with self.wiring_view as wiring:
+            operator = wiring.find_component_by_title('operator', "TestOperator")
+
+            modal = operator.show_settings_modal()
+            modal.get_field("exception_on_event").click()
+            modal.accept()
+
+        with self.myresources_view as myresources:
+            myresources.uninstall_resource('TestOperator')
+
+        if reload is True:
+            self.driver.refresh()
+
+        # Reinstall the operator
+        with self.myresources_view as myresources:
+            myresources.upload_resource('Wirecloud_TestOperator_1.0.zip', 'TestOperator', shared=True)
+
+        # Check the operator leaves ghost mode
+        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
+        self.assertFalse(error_badge.is_displayed())
+
+        # Check operator connections are restored sucessfully
+        tab = self.get_workspace_tab_by_name('Tab 2')
+        tab.element.click()
+        (target_iwidget, source_iwidget) = self.get_current_iwidgets()
+        with source_iwidget:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        with target_iwidget:
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('wiringOut').text != 'hello world!!')
+
+        # Check preference values has been restored to the values used before uninstalling the widget and not to the default ones
+        with self.wiring_view as wiring:
+            operator = wiring.find_component_by_title('operator', "TestOperator")
+
+            modal = operator.show_settings_modal()
+            self.assertEqual(modal.get_field_value("prefix"), "test_")
+            self.assertFalse(modal.get_field("exception_on_event").is_selected())
+            self.assertTrue(modal.get_field("test_logging").is_selected())
+            modal.accept()
+
+    def test_operators_in_use_reinstall_behaviour(self):
+        self.check_operator_reinstall_behaviour(False)
+
+    def test_operators_in_use_reinstall_behaviour_reload(self):
+        self.check_operator_reinstall_behaviour(True)
+
+    def test_operators_are_not_usable_after_being_deleted(self):
+        self.login()
+
+        with self.myresources_view as myresources:
+            myresources.delete_resource('TestOperator')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                self.assertEqual(len(wiring.filter_components_by_type('operator')), 0)
 
 
 class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
@@ -1074,54 +856,102 @@ class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
 
+    def _set_connection_readonly(self, workspace_id, connection_index):
+        workspace = Workspace.objects.get(id=workspace_id)
+        wiring_status = json.loads(workspace.wiringStatus)
+        wiring_status['connections'][connection_index]['readonly'] = True
+        workspace.wiringStatus = json.dumps(wiring_status)
+        workspace.save()
+
     def test_readonly_connection_cannot_be_deleted(self):
-
-        workspace = Workspace.objects.get(id=2)
-        wiring_status = json.loads(workspace.wiringStatus)
-        wiring_status['connections'][0]['readonly'] = True
-        workspace.wiringStatus = json.dumps(wiring_status)
-        workspace.save()
-
+        self._set_connection_readonly(2, 1)
         self.login(username='user_with_workspaces')
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
         with self.wiring_view as wiring:
-
-            connections = wiring.get_all_connections()
-            self.assertEqual(len(connections), 3)
-
-            connections = wiring.get_all_connections(readonly=True)
+            connections = wiring.filter_connections_by_properties("readonly")
             self.assertEqual(len(connections), 1)
 
-            readonly_connection = connections[0]
-            readonly_connection.select()
-            self.assertFalse(readonly_connection.opt_remove.is_displayed())
+            connection = connections[0]
+            connection.click()
 
-    def test_widget_or_operator_with_readonly_connections_cannot_be_deleted(self):
-
-        workspace = Workspace.objects.get(id=2)
-        wiring_status = json.loads(workspace.wiringStatus)
-        wiring_status['connections'][1]['readonly'] = True
-        workspace.wiringStatus = json.dumps(wiring_status)
-        workspace.save()
-
+    def test_component_with_readonly_connections_cannot_be_deleted(self):
+        self._set_connection_readonly(2, 1)
         self.login(username='user_with_workspaces')
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
 
         with self.wiring_view as wiring:
+            self.assertEqual(len(wiring.filter_connections_by_properties("readonly")), 1)
+            self.assertFalse(wiring.find_component_by_title('operator', "TestOperator").btn_remove.displayed)
+            self.assertFalse(wiring.find_component_by_title('widget', "Test 2").btn_remove.displayed)
 
-            connections = wiring.get_all_connections(readonly=True)
-            self.assertEqual(len(connections), 1)
 
-            operator = wiring.from_diagram_find_component_by_name('operator', "TestOperator")
-            self.assertFalse(operator.opt_remove.is_displayed())
+class EndpointBasicRecommendationTestCase(WirecloudSeleniumTestCase):
 
-            widget = wiring.from_diagram_find_component_by_name('widget', "Test 2")
-            self.assertFalse(widget.opt_remove.is_displayed())
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+
+    @classmethod
+    def setUpClass(cls):
+        super(EndpointBasicRecommendationTestCase, cls).setUpClass()
+
+        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
+            cls.tearDownClass()
+            raise unittest.SkipTest('EndpointBasicRecommendationTestCase needs to use native events supported on Selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
+
+    def test_highlighted_endpoints_when_endpoint_is_mousedover(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                widget1 = sidebar.add_component('widget', 'Test (1)')
+                widget2 = sidebar.add_component('widget', 'Test (2)', x=400)
+                widget3 = sidebar.add_component('widget', 'Test (3)', x=100, y=200)
+
+            target1 = widget1.find_endpoint_by_title('target', 'Input')
+            source2 = widget2.find_endpoint_by_title('source', 'Output')
+            target3 = widget3.find_endpoint_by_title('target', 'Input')
+            source3 = widget3.find_endpoint_by_title('source', 'Output')
+
+            source2.mouse_over()
+            self.assertTrue(source2.highlighted)
+            self.assertTrue(target1.highlighted)
+            self.assertTrue(target3.highlighted)
+
+            target1.mouse_over()
+            self.assertTrue(target1.highlighted)
+            self.assertTrue(source2.highlighted)
+            self.assertTrue(source3.highlighted)
+
+    def test_highlighted_endpoints_when_connection_is_dragging(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                widget1 = sidebar.add_component('widget', 'Test (1)')
+                widget2 = sidebar.add_component('widget', 'Test (2)', x=400)
+                widget3 = sidebar.add_component('widget', 'Test (3)', x=100, y=200)
+
+            target1 = widget1.find_endpoint_by_title('target', 'Input')
+            source2 = widget2.find_endpoint_by_title('source', 'Output')
+            target3 = widget3.find_endpoint_by_title('target', 'Input')
+            source3 = widget3.find_endpoint_by_title('source', 'Output')
+
+            source2.drag_connection(80, 80)
+            self.assertTrue(source2.highlighted)
+            self.assertTrue(target1.highlighted)
+            self.assertTrue(target3.highlighted)
+            source2.drop_connection()
+
+            target1.drag_connection(80, 80)
+            self.assertTrue(target1.highlighted)
+            self.assertTrue(source2.highlighted)
+            self.assertTrue(source3.highlighted)
+            target1.drop_connection()
 
 
 class EndpointCollapsedTestCase(WirecloudSeleniumTestCase):
@@ -1137,67 +967,138 @@ class EndpointCollapsedTestCase(WirecloudSeleniumTestCase):
             cls.tearDownClass()
             raise unittest.SkipTest('EndpointCollapsedTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
-    def test_to_collapse_and_expand_component_endpoints(self):
-
+    def test_component_endpoints_can_be_collapsed_and_expanded(self):
         self.login(username='user_with_workspaces')
 
         with self.wiring_view as wiring:
-
-            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
-            self.assertFalse(operator.is_collapsed)
-
+            operator = wiring.find_component_by_title('operator', "TestOperator")
+            self.assertFalse(operator.collapsed)
             operator.collapse_endpoints()
-            self.assertTrue(operator.is_collapsed)
 
         with self.wiring_view as wiring:
-
-            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
-            self.assertTrue(operator.is_collapsed)
-
+            operator = wiring.find_component_by_title('operator', "TestOperator")
+            self.assertTrue(operator.collapsed)
             operator.expand_endpoints()
-            self.assertFalse(operator.is_collapsed)
 
     def test_endpoints_collapsed_will_be_expanded_when_a_connection_is_creating(self):
-
         self.login(username='user_with_workspaces')
 
         with self.wiring_view as wiring:
-
-            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOperator')
+            operator = wiring.find_component_by_title('operator', "TestOperator")
             operator.collapse_endpoints()
-            self.assertTrue(operator.is_collapsed)
 
-            widget1 = wiring.from_diagram_find_component_by_name('widget', 'Test 1')
+            widget1 = wiring.find_component_by_title('widget', "Test 1")
             widget1.collapse_endpoints()
-            self.assertTrue(widget1.is_collapsed)
 
-            widget2 = wiring.from_diagram_find_component_by_name('widget', 'Test 2')
-            self.assertFalse(widget2.is_collapsed)
+            widget2 = wiring.find_component_by_title('widget', "Test 2")
+            self.assertFalse(widget2.collapsed)
 
-            source = widget2.get_endpoint_by_name('source', 'Output')
+            source = widget2.find_endpoint_by_title('source', "Output")
             source.drag_connection(80, 80)
 
-            self.assertFalse(operator.is_collapsed)
-            self.assertFalse(widget1.is_collapsed)
+            self.assertFalse(operator.collapsed)
+            self.assertFalse(widget1.collapsed)
+
+            source.drop_connection()
 
     @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
     def test_component_with_endpoints_collapsed_cannot_display_option_sort_endpoints(self):
-
         self.login()
 
         with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                operator = sidebar.add_component('operator', "TestOp. Multiendpoint")
 
-            operator = wiring.add_component_by_name('operator', 'TestOp. Multiendpoint')
-
-            menu_dropdown = operator.open_menu()
+            menu_dropdown = operator.display_preferences()
             self.assertIsNotNone(menu_dropdown.get_entry('Sort endpoints'))
             menu_dropdown.close()
 
             operator.collapse_endpoints()
-            self.assertTrue(operator.is_collapsed)
 
-            menu_dropdown = operator.open_menu()
+            menu_dropdown = operator.display_preferences()
             self.assertIsNone(menu_dropdown.get_entry('Sort endpoints'))
+
+
+class EndpointMissingTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+
+    def check_input_endpoint_exceptions(self):
+
+        self.login(username='user_with_workspaces')
+
+        iwidgets = self.get_current_iwidgets()
+        source_iwidget = iwidgets[0]
+        target_iwidget = iwidgets[1]
+        self.assertIsNotNone(source_iwidget.element)
+        self.assertIsNotNone(target_iwidget.element)
+
+        self.assertEqual(source_iwidget.error_count, 0)
+        self.assertEqual(target_iwidget.error_count, 0)
+        with source_iwidget:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: target_iwidget.error_count == 1)
+        self.assertEqual(source_iwidget.error_count, 0)
+
+        with target_iwidget:
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, '')
+
+        # Test exception on the operator input endpoint
+        source_iwidget = iwidgets[1]
+        target_iwidget = iwidgets[0]
+
+        with source_iwidget:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        self.find_navbar_button("display-wiring-view").check_badge_text("1")
+
+        with self.wiring_view as wiring:
+
+            operator = wiring.find_component_by_title('operator', "TestOperator")
+            self.assertEqual(operator.error_count, 1)
+            self.assertEqual(target_iwidget.error_count, 0)
+
+            modal = operator.show_logger_modal()
+            self.assertEqual(len(modal.filter_alerts_by_type("error")), 1)
+            modal.accept()
+
+    def test_input_endpoint_exceptions(self):
+
+        # Enable widget exceptions
+        set_variable_value(9, 'true')
+
+        # Enable operator exceptions
+        workspace = Workspace.objects.get(id=2)
+        parsedStatus = json.loads(workspace.wiringStatus)
+        parsedStatus['operators']['0']['preferences']['exception_on_event'] = { "readOnly": False, "hidden": False, "value": 'true' }
+        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
+        workspace.save()
+
+        # Check exceptions
+        self.check_input_endpoint_exceptions()
+
+    def test_input_endpoint_no_handler_exceptions(self):
+
+        # Update wiring connections to use the not handled input endpoints
+        workspace = Workspace.objects.get(id=2)
+        parsedStatus = json.loads(workspace.wiringStatus)
+        parsedStatus['connections'][0]['target']['endpoint'] = 'nothandled'
+        parsedStatus['connections'][1]['target']['endpoint'] = 'nothandled'
+        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
+        workspace.save()
+
+        self.check_input_endpoint_exceptions()
 
 
 class EndpointSortingTestCase(WirecloudSeleniumTestCase):
@@ -1218,29 +1119,12 @@ class EndpointSortingTestCase(WirecloudSeleniumTestCase):
         self.login()
 
         with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                operator = sidebar.add_component('operator', "TestOp. Multiendpoint")
 
-            operator = wiring.add_component_by_name('operator', 'TestOp. Multiendpoint')
-            operator.open_menu().click_entry('Sort endpoints')
-
-            source1 = operator.get_endpoint_by_name('source', 'output1')
-            source2 = operator.get_endpoint_by_name('source', 'output2')
-            source1.set_position_of(source2)
-
-            target1 = operator.get_endpoint_by_name('target', 'input1')
-            target3 = operator.get_endpoint_by_name('target', 'input3')
-            target3.set_position_of(target1)
-
-            operator.open_menu().click_entry('Stop sorting')
-
-        with self.wiring_view as wiring:
-
-            operator = wiring.from_diagram_find_component_by_name('operator', 'TestOp. Multiendpoint')
-
-            source = operator.get_endpoint_by_name('source', 'output1')
-            self.assertEqual(source.position, 2)
-
-            target = operator.get_endpoint_by_name('target', 'input3')
-            self.assertEqual(target.position, 1)
+            with operator.sort_endpoints as component_editable:
+                component_editable.move_endpoint('source', "output1", "output2")
+                component_editable.move_endpoint('target', "input1", "input3")
 
     @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
     def test_endpoint_sorting_in_widgets(self):
@@ -1248,29 +1132,12 @@ class EndpointSortingTestCase(WirecloudSeleniumTestCase):
         iwidget = self.add_widget_to_mashup('Test_Multiendpoint')
 
         with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                widget = sidebar.add_component('widget', "Test_Multiendpoint")
 
-            widget = wiring.add_component_by_name('widget', 'Test_Multiendpoint')
-            widget.open_menu().click_entry('Sort endpoints')
-
-            source1 = widget.get_endpoint_by_name('source', 'output1')
-            source2 = widget.get_endpoint_by_name('source', 'output2')
-            source1.set_position_of(source2)
-
-            target1 = widget.get_endpoint_by_name('target', 'input1')
-            target3 = widget.get_endpoint_by_name('target', 'input3')
-            target3.set_position_of(target1)
-
-            widget.open_menu().click_entry('Stop sorting')
-
-        with self.wiring_view as wiring:
-
-            widget = wiring.from_diagram_find_component_by_name('widget', 'Test_Multiendpoint')
-
-            source = widget.get_endpoint_by_name('source', 'output1')
-            self.assertEqual(source.position, 2)
-
-            target = widget.get_endpoint_by_name('target', 'input3')
-            self.assertEqual(target.position, 1)
+            with widget.sort_endpoints as component_editable:
+                component_editable.move_endpoint('source', "output1", "output2")
+                component_editable.move_endpoint('target', "input1", "input3")
 
 
 class EndpointStickyEffectTestCase(WirecloudSeleniumTestCase):
@@ -1291,14 +1158,15 @@ class EndpointStickyEffectTestCase(WirecloudSeleniumTestCase):
         iwidget = self.add_widget_to_mashup('Test', new_name='Test 1')
 
         with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                operator = sidebar.add_component('operator', "TestOperator")
+                widget = sidebar.add_component('widget', "Test 1", x=400)
 
-            operator = wiring.add_component_by_name('operator', 'TestOperator')
-            target1 = operator.get_endpoint_by_name('target', 'input')
-            source1 = operator.get_endpoint_by_name('source', 'output')
+            target1 =  operator.find_endpoint_by_title('target', "input")
+            source1 = operator.find_endpoint_by_title('source', "output")
 
-            widget = wiring.add_component_by_name('widget', 'Test 1', x=400)
-            target2 = widget.get_endpoint_by_name('target', 'Input')
-            source2 = widget.get_endpoint_by_name('source', 'Output')
+            target2 = widget.find_endpoint_by_title('target', "Input")
+            source2 = widget.find_endpoint_by_title('source', "Output")
 
             source1.connect(target2, sticky_effect=True)
             source2.connect(target1, sticky_effect=True)
@@ -1314,67 +1182,104 @@ class EndpointStickyEffectTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, 'hello world!!')
 
 
-class EndpointBasicRecommendationTestCase(WirecloudSeleniumTestCase):
+class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
 
     @classmethod
     def setUpClass(cls):
-        super(EndpointBasicRecommendationTestCase, cls).setUpClass()
+        super(BehaviourManagementTestCase, cls).setUpClass()
 
         if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
             cls.tearDownClass()
-            raise unittest.SkipTest('EndpointBasicRecommendationTestCase needs to use native events supported on Selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('BehaviourManagementTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
-    def test_highlighted_endpoints_when_endpoint_is_mousedover(self):
+    def _enable_behaviour_engine_in_workspace(self, workspace_id):
+        workspace = Workspace.objects.get(id=workspace_id)
+        wiring_status = json.loads(workspace.wiringStatus)
+        wiring_status['visualdescription']['behavioursenabled'] = True
+        workspace.wiringStatus = json.dumps(wiring_status)
+        workspace.save()
+
+    def test_behaviour_engine_is_disabled_by_default(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
         with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                sidebar.enable()
+                self.assertEqual(len(sidebar.behaviour_list), 1)
+                sidebar.active_behaviour.check_basic_info("New behaviour 0", "No description provided.")
 
-            widget1 = wiring.add_component_by_name('widget', 'Test (1)')
-            target1 = widget1.get_endpoint_by_name('target', 'Input')
+            with wiring.behaviour_sidebar as sidebar:
+                self.assertFalse(sidebar.disabled)
+                self.assertEqual(len(sidebar.behaviour_list), 1)
+                sidebar.active_behaviour.check_basic_info("New behaviour 0", "No description provided.")
 
-            widget2 = wiring.add_component_by_name('widget', 'Test (2)', x=400)
-            source2 = widget2.get_endpoint_by_name('source', 'Output')
-
-            widget3 = wiring.add_component_by_name('widget', 'Test (3)', x=100, y=200)
-            target3 = widget3.get_endpoint_by_name('target', 'Input')
-            source3 = widget3.get_endpoint_by_name('source', 'Output')
-
-            source2.mouse_over()
-            self.assertTrue(source2.is_highlighted)
-            self.assertTrue(target1.is_highlighted)
-            self.assertTrue(target3.is_highlighted)
-
-            target1.mouse_over()
-            self.assertTrue(target1.is_highlighted)
-            self.assertTrue(source2.is_highlighted)
-            self.assertTrue(source3.is_highlighted)
-
-    def test_highlighted_endpoints_when_connection_is_dragging(self):
+    def test_behaviour_basic_info_can_be_updated(self):
+        self._enable_behaviour_engine_in_workspace(5)
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
         with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                behaviour = sidebar.active_behaviour
+                sidebar.update_behaviour(behaviour, title="Title for behaviour 0", description="Description for behaviour 0")
 
-            widget1 = wiring.add_component_by_name('widget', 'Test (1)')
-            target1 = widget1.get_endpoint_by_name('target', 'Input')
+    def test_behaviour_title_can_be_updated_alone(self):
+        self._enable_behaviour_engine_in_workspace(5)
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
-            widget2 = wiring.add_component_by_name('widget', 'Test (2)', x=400)
-            source2 = widget2.get_endpoint_by_name('source', 'Output')
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                behaviour = sidebar.active_behaviour
+                sidebar.update_behaviour(behaviour, title="Title for behaviour 0")
 
-            widget3 = wiring.add_component_by_name('widget', 'Test (3)', x=100, y=200)
-            target3 = widget3.get_endpoint_by_name('target', 'Input')
-            source3 = widget3.get_endpoint_by_name('source', 'Output')
+    def test_behaviour_description_can_be_updated_alone(self):
+        self._enable_behaviour_engine_in_workspace(5)
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
-            source2.drag_connection(80, 80)
-            self.assertTrue(source2.is_highlighted)
-            self.assertTrue(target1.is_highlighted)
-            self.assertTrue(target3.is_highlighted)
-            source2.drop_connection()
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                behaviour = sidebar.active_behaviour
+                sidebar.update_behaviour(behaviour, description="Description for behaviour 0")
 
-            target1.drag_connection(80, 80)
-            self.assertTrue(target1.is_highlighted)
-            self.assertTrue(source2.is_highlighted)
-            self.assertTrue(source3.is_highlighted)
-            target1.drop_connection()
+    def test_behaviour_title_and_description_cannot_be_emptied(self):
+        self._enable_behaviour_engine_in_workspace(5)
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                behaviour = sidebar.active_behaviour
+                sidebar.update_behaviour(behaviour, title="", description="")
+
+    def test_behaviour_can_be_created_with_no_basic_info(self):
+        self._enable_behaviour_engine_in_workspace(5)
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                sidebar.create_behaviour()
+
+    def test_behaviour_can_be_created_with_only_title(self):
+        self._enable_behaviour_engine_in_workspace(5)
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                sidebar.create_behaviour(title="Title for behaviour 1")
+
+    def test_behaviour_can_be_created_with_only_description(self):
+        self._enable_behaviour_engine_in_workspace(5)
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                sidebar.create_behaviour(description="Description for behaviour 1")
+
+    def test_behaviour_can_be_created_with_title_and_description(self):
+        self._enable_behaviour_engine_in_workspace(5)
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                sidebar.create_behaviour(title="Title for behaviour 1", description="Description for behaviour 1")
