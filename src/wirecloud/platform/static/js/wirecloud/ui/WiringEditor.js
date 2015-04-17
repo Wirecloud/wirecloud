@@ -2210,14 +2210,14 @@ Wirecloud.ui.WiringEditor = (function () {
         var component, wiringError;
 
         if (WiringEditor.COMPONENT_TYPES.indexOf(endpointView.type) == -1) {
-            wiringError = new Error("Looking for the endpoint <" + endpointView.name + "> of a connection.");
+            wiringError = new Error("Looking for the endpoint <" + endpointView.endpoint + "> of a connection.");
             wiringError.name = 'Type Unsupported';
 
             throw wiringError;
         }
 
         if (!(endpointView.id in this.components[endpointView.type])) {
-            wiringError = new Error("Looking for the endpoint <" + endpointView.name + "> of a connection.");
+            wiringError = new Error("Looking for the endpoint <" + endpointView.endpoint + "> of a connection.");
             wiringError.name = 'Component Not Found';
 
             throw wiringError;
@@ -2225,7 +2225,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         component = this.components[endpointView.type][endpointView.id];
 
-        return component.getAnchor(endpointView.name);
+        return component.getAnchor(endpointView.endpoint);
     };
 
     var findComponent = function findComponent(type, name) {
@@ -2248,7 +2248,7 @@ Wirecloud.ui.WiringEditor = (function () {
      * @returns {Endpoint}
      */
     var getEndpointName = function getEndpointName(endpointView) {
-        return [endpointView.type, endpointView.id, endpointView.name].join('/');
+        return [endpointView.type, endpointView.id, endpointView.endpoint].join('/');
     };
 
     /**

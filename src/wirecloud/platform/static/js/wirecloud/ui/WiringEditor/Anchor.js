@@ -340,7 +340,7 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
         return {
             'type': this.getComponent().componentType,
             'id': this.getComponent().componentId,
-            'name': this.context.data.name
+            'endpoint': this.context.data.name
         };
     };
 

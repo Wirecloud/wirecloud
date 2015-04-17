@@ -45,14 +45,14 @@
         if (entity instanceof Wirecloud.wiring.GhostEntity) {
             if (!(desc.endpoint in entity[type])) {
                 if (type === 'outputs') {
-                    entity[type][desc.name] = new Wirecloud.wiring.GhostSourceEndpoint(entity, desc.name);
+                    entity[type][desc.endpoint] = new Wirecloud.wiring.GhostSourceEndpoint(entity, desc.endpoint);
                 } else {
-                    entity[type][desc.name] = new Wirecloud.wiring.GhostTargetEndpoint(entity, desc.name);
+                    entity[type][desc.endpoint] = new Wirecloud.wiring.GhostTargetEndpoint(entity, desc.endpoint);
                 }
             }
         }
 
-        return entity[type][desc.name];
+        return entity[type][desc.endpoint];
     };
 
     restore_connections = function restore_connections(entity) {

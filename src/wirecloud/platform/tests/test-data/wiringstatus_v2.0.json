@@ -4,26 +4,26 @@
             "source": {
                 "type": "operator",
                 "id": "0",
-                "name": "output"
+                "endpoint": "output"
             },
             "readonly": false,
             "target": {
                 "type": "widget",
                 "id": 1,
-                "name": "inputendpoint"
+                "endpoint": "inputendpoint"
             }
         },
         {
             "source": {
                 "type": "widget",
                 "id": 1,
-                "name": "outputendpoint"
+                "endpoint": "outputendpoint"
             },
             "readonly": false,
             "target": {
                 "type": "widget",
                 "id": 3,
-                "name": "inputendpoint"
+                "endpoint": "inputendpoint"
             }
         }
     ],

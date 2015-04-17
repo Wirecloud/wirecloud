@@ -11,7 +11,7 @@
             "target": {
                 "type": "widget",
                 "id": 2,
-                "name": "inputendpoint"
+                "endpoint": "inputendpoint"
             }
         }
     ]
