@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,10 +23,13 @@ import os.path
 import re
 
 from django.conf import settings
-from django.utils.unittest import TestCase
+from django.http import Http404
+from django.test import TestCase
+from mock import Mock, patch
 
 from wirecloud.platform import plugins
 from wirecloud.platform.widget.utils import fix_widget_code
+from wirecloud.platform.widget.views import serve_showcase_media
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -35,7 +38,7 @@ __test__ = False
 
 class CodeTransformationTestCase(TestCase):
 
-    tags = ('widget_code_transformation')
+    tags = ('wirecloud-widget-module', 'widget_code_transformation')
 
     XML_NORMALIZATION_RE = re.compile(r'>\s+<')
 
@@ -158,3 +161,97 @@ class CodeTransformationTestCase(TestCase):
         final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False, {}, False, 'classic')) + b'\n'
         expected_code = self.read_file('test-data/xhtml3-expected.html')
         self.assertEqual(final_code, expected_code)
+
+
+class WidgetModuleTestCase(TestCase):
+
+    tags = ('wirecloud-widget-module',)
+
+    def build_mocks(self, resource_type='widget'):
+
+        get_object_or_404_mock = Mock()
+        resource_mock = Mock()
+        resource_mock.resource_type.return_value = resource_type
+        get_object_or_404_mock.return_value = resource_mock
+
+        request_mock = Mock()
+        request_mock.method = 'GET'
+
+        return request_mock, get_object_or_404_mock, Mock(), Mock()
+
+    def test_mashup_path(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks('mashup')
+
+        with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock, build_sendfile_response=build_sendfile_response_mock, serve=serve_mock):
+            self.assertRaises(Http404, serve_showcase_media, request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
+            self.assertEqual(build_sendfile_response_mock.call_count, 0)
+            self.assertEqual(serve_mock.call_count, 0)
+
+    def test_path_file_found(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        response_mock = Mock()
+        response_mock.status_code = 200
+        serve_mock.return_value = response_mock
+
+        with self.settings(USE_XSENDFILE=False):
+            with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock, serve=serve_mock):
+                response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
+                self.assertEqual(response, response_mock)
+
+    def test_path_file_not_found(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        serve_mock.side_effect = Http404()
+
+        with self.settings(USE_XSENDFILE=False):
+            with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock, serve=serve_mock):
+                self.assertRaises(Http404, serve_showcase_media, request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
+                self.assertEqual(serve_mock.call_count, 1)
+
+    def test_path_outside_widget_folder(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        with self.settings(USE_XSENDFILE=False):
+            with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock):
+                response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'test/../../../../../../manage.py')
+                self.assertEqual(response.status_code, 302)
+                self.assertNotIn('..', response['Location'])
+
+    def test_path_file_found_sendfile(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        response_mock = Mock()
+        response_mock.status_code = 200
+        build_sendfile_response_mock.return_value = response_mock
+
+        with self.settings(USE_XSENDFILE=True):
+            with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock, build_sendfile_response=build_sendfile_response_mock):
+                response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
+                self.assertEqual(response, response_mock)
+
+    def test_path_file_not_found_sendfile(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        build_sendfile_response_mock.side_effect = Http404()
+
+        with self.settings(USE_XSENDFILE=True):
+            with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock, build_sendfile_response=build_sendfile_response_mock):
+                self.assertRaises(Http404, serve_showcase_media, request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
+                self.assertEqual(build_sendfile_response_mock.call_count, 1)
+
+    def test_path_outside_widget_folder_sendfile(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        with self.settings(USE_XSENDFILE=True):
+            with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock):
+                response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'test//../../../../../../manage.py')
+                self.assertEqual(response.status_code, 302)
+                self.assertNotIn('..', response['Location'])

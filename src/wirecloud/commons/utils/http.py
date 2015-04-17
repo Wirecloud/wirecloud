@@ -17,12 +17,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import json
+import os
+import posixpath
 import socket
-from six.moves.urllib.parse import urljoin
+from six.moves.urllib.parse import urljoin, unquote
 
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from lxml import etree
 from six import string_types
@@ -337,3 +342,29 @@ def normalize_boolean_param(name, value):
         return TypeError(_('Invalid %(parameter) type') % name)
 
     return value
+
+
+def build_sendfile_response(file_path, document_root):
+    path = posixpath.normpath(unquote(file_path))
+    path = path.lstrip('/')
+    newpath = ''
+    for part in path.split('/'):
+        if not part:
+            # Strip empty path components.
+            continue
+        drive, part = os.path.splitdrive(part)
+        head, part = os.path.split(part)
+        if part in (os.curdir, os.pardir):
+            # Strip '.' and '..' in path.
+            continue
+        newpath = os.path.join(newpath, part).replace('\\', '/')
+    if newpath and path != newpath:
+        return HttpResponseRedirect(newpath)
+    fullpath = os.path.join(document_root, newpath)
+
+    if not os.path.isfile(fullpath):
+        raise Http404(_('"%(path)s" does not exist') % {'path': fullpath})
+
+    response = HttpResponse()
+    response['X-Sendfile'] = smart_str(fullpath)
+    return response
