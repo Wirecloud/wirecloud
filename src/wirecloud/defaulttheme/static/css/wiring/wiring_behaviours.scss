@@ -23,7 +23,7 @@
 // WIRING SIDEBAR - BEHAVIOUR
 // ============================================================================
 
-.wiring-sidebar .panel-behaviours .behaviour {
+.wiring-sidebar .behaviour-panel .behaviour {
     position: relative;
     display: block;
     margin: 0px 0px $panel-components-component-margin-vertical;
@@ -46,8 +46,8 @@
     }
 }
 
-.wiring-sidebar .panel-behaviours .behaviour-title,
-.wiring-sidebar .panel-behaviours .behaviour-description {
+.wiring-sidebar .behaviour-panel .behaviour-title,
+.wiring-sidebar .behaviour-panel .behaviour-description {
     position: relative;
     display: block;
     padding: 4px 8px;
@@ -58,7 +58,7 @@
     box-sizing: border-box;
 }
 
-.wiring-sidebar .panel-behaviours .behaviour-title {
+.wiring-sidebar .behaviour-panel .behaviour-title {
     cursor: pointer;
     padding-bottom: 0px;
     font-weight: bold;
@@ -71,7 +71,7 @@
     }
 }
 
-.wiring-sidebar .panel-behaviours .behaviour-description {
+.wiring-sidebar .behaviour-panel .behaviour-description {
     font-size: 13px;
     border-radius: 0px;
     border-top-width: 0px;
@@ -81,7 +81,7 @@
     overflow-y: hidden;
 }
 
-.wiring-sidebar .panel-behaviours .behaviour-elements {
+.wiring-sidebar .behaviour-panel .behaviour-elements {
     width: 100%;
     display: block;
     text-align: center;

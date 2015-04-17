@@ -32,7 +32,10 @@
         this.app_bar = this.wrapperElement.querySelector('.wirecloud_app_bar');
         this.breadcrum = document.getElementById('wirecloud_breadcrum');
 
-        this.backButton = new StyledElements.StyledButton({'class': 'btn-large', 'iconClass': 'icon-caret-left'});
+        this.backButton = new StyledElements.StyledButton({
+            'class': 'btn-large btn-back',
+            'iconClass': 'icon-caret-left'
+        });
         this.backButton.addEventListener('click', function () {
             this.currentView.goUp();
         }.bind(this));
@@ -44,7 +47,7 @@
         this.menuButton.insertInto(this.breadcrum.parentNode);
 
         this.toolbar = document.createElement('div');
-        this.toolbar.className = 'btn-group wirecloud_toolbar';
+        this.toolbar.className = 'btn-group wirecloud_toolbar wirecloud-navbar';
         this.app_bar.appendChild(this.toolbar);
 
         menu_wrapper = document.createElement('div');

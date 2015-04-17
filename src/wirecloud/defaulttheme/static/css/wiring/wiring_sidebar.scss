@@ -35,8 +35,7 @@
 // WIRING SIDEBAR - PANEL COMPONENTS
 // ============================================================================
 
-.wiring-sidebar .panel-behaviours,
-.wiring-sidebar .panel-components {
+.wiring-sidebar .panel {
     background-color: $panel-primary-heading-background-color;
     border-color: $panel-primary-border-color;
 }
@@ -45,8 +44,7 @@
 // WIRING SIDEBAR - PANEL COMPONENTS HEADING
 // ============================================================================
 
-.wiring-sidebar .panel-behaviours .panel-heading,
-.wiring-sidebar .panel-components .panel-heading {
+.wiring-sidebar .panel .panel-heading {
     @include position-absolute(0, 0, 0);
     height: $panel-components-heading-height;
     padding: $panel-base-padding-vertical $panel-base-padding-horizontal;
@@ -81,7 +79,7 @@
     }
 }
 
-.wiring-sidebar .panel-components .panel-heading {
+.wiring-sidebar .component-panel .panel-heading {
 
     .styled_button {
         display: table-cell;
@@ -89,19 +87,19 @@
     }
 }
 
-.wiring-sidebar .panel-behaviours .panel-heading {
+.wiring-sidebar .behaviour-panel .panel-heading {
 
     .styled_button {
         display: inline-block;
         margin: 0px;
     }
 
-    .opt-enable-behaviours {
+    .btn-enable-behaviour-engine {
         float: left;
         width: 50px;
     }
 
-    .opt-viewpoint {
+    .btn-switch-viewpoint {
         float: right;
         width: 120px;
     }
@@ -111,8 +109,7 @@
 // WIRING SIDEBAR - PANEL COMPONENTS BODY
 // ============================================================================
 
-.wiring-sidebar .panel-behaviours .panel-body,
-.wiring-sidebar .panel-components .panel-body {
+.wiring-sidebar .panel .panel-body {
     @include position-absolute(0, $panel-components-heading-height, $panel-base-padding-horizontal, 0);
     padding: $panel-base-padding-vertical $panel-base-padding-horizontal;
     background-color: $wiring-view-panel-background-color;
@@ -131,7 +128,7 @@
     }
 }
 
-.wiring-sidebar .panel-behaviours .btn-create {
+.wiring-sidebar .behaviour-panel .btn-create-behaviour {
     position: relative;
     display: block;
     cursor: pointer;
@@ -144,7 +141,7 @@
     box-sizing: border-box;
 }
 
-.wiring-sidebar .panel-behaviours .btn-create:hover {
+.wiring-sidebar .behaviour-panel .btn-create-behaviour:hover {
     background-color: $panel-components-mousedover-component-background-color;
     border-color: $panel-components-mousedover-component-border-color;
     z-index: 5;

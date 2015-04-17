@@ -370,6 +370,8 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             if (!isGhost) {
                 this.options.optionNotify.addEventListener('click', function (event) {
                     var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
+
+                        dialog.htmlElement.classList.add("component-logger");
                         dialog.show();
                 }.bind(this));
 
@@ -424,11 +426,12 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             this.targetEndpoints = {};
         } else { // MiniInterface
             this.header = document.createElement("div");
-            this.header.classList.add('component-heading');
+            this.header.className = "component-heading";
             this.wrapperElement.appendChild(this.header);
 
             // MiniInterface name
             this.nameElement = document.createElement("span");
+            this.nameElement.className = "component-title";
             this.nameElement.textContent = title;
             this.header.appendChild(this.nameElement);
 

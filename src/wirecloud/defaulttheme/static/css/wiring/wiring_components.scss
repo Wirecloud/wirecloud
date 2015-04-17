@@ -23,7 +23,7 @@
 // WIRING LEFTSIDE-BAR - COMPONENT
 // ============================================================================
 
-.wiring-sidebar .panel-components .component {
+.wiring-sidebar .component-panel .component {
     position: relative;
     cursor: move;
     margin: 0px 0px $panel-components-component-margin-vertical;
@@ -42,7 +42,7 @@
     }
 }
 
-.wiring-sidebar .panel-components .section {
+.wiring-sidebar .component-panel .section {
 
     .component:last-child {
         margin-bottom: 0px;
@@ -53,7 +53,7 @@
 // WIRING LEFTSIDE-BAR - MOUSEDOVER-COMPONENT
 // ============================================================================
 
-.wiring-sidebar .panel-components .component:hover {
+.wiring-sidebar .component-panel .component:hover {
     background-color: $panel-components-mousedover-component-background-color;
     border-color: $panel-components-mousedover-component-border-color;
 }
@@ -62,7 +62,7 @@
 // WIRING LEFTSIDE-BAR - DISABLED-COMPONENT
 // ============================================================================
 
-.wiring-sidebar .panel-components .component.disabled {
+.wiring-sidebar .component-panel .component.disabled {
     pointer-events: none;
     cursor: not-allowed;
     background-color: $panel-components-disabled-component-background-color;

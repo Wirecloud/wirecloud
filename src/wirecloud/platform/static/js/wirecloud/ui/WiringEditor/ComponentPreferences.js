@@ -80,6 +80,8 @@ Wirecloud.ui.WiringEditor.ComponentPreferences = (function () {
                     dropdownMenu = new Wirecloud.Widget.PreferencesWindowMenu();
                 }
 
+                dropdownMenu.htmlElement.classList.add("component-settings-form");
+
                 dropdownMenu.show(this.application);
             }.bind(this)));
         }

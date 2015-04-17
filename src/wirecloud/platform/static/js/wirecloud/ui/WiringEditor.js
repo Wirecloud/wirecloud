@@ -424,7 +424,7 @@ Wirecloud.ui.WiringEditor = (function () {
             'stackedIconClass': 'icon-plus-sign',
             'stackedIconposition': 'bottom-right',
             'title': gettext("Components"),
-            'class': "opt-components"
+            'class': "btn-list-components"
         });
         this.btnComponents.addEventListener('click', function (styledElement) {
             if (!styledElement.active) {
@@ -438,7 +438,7 @@ Wirecloud.ui.WiringEditor = (function () {
         this.btnBehaviours = new StyledElements.ToggleButton({
             'iconClass': 'icon-sitemap',
             'title': gettext("Behaviours"),
-            'class': "opt-behaviours"
+            'class': "btn-list-behaviours"
         });
         this.btnBehaviours.addEventListener('click', function (styledElement) {
             if (!styledElement.active) {
@@ -451,7 +451,7 @@ Wirecloud.ui.WiringEditor = (function () {
         this.btnEmptyBehaviour = new StyledElements.StyledButton({
             'iconClass': 'icon-eraser',
             'title': gettext("Empty behaviour"),
-            'class': "opt-empty-behaviour"
+            'class': "btn-empty-behaviour"
         });
         this.btnEmptyBehaviour.addEventListener('click', function (styledElement) {
             var dialog, message;
@@ -473,7 +473,7 @@ Wirecloud.ui.WiringEditor = (function () {
         this.btnRemoveBehaviour = new StyledElements.StyledButton({
             'iconClass': 'icon-trash',
             'title': gettext("Remove behaviour"),
-            'class': "opt-remove-behaviour btn-danger"
+            'class': "btn-remove-behaviour btn-danger"
         });
         this.btnRemoveBehaviour.addEventListener('click', function (styledElement) {
             var dialog, message;

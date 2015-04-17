@@ -31,7 +31,7 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         var iconElement, headingElement, minLength;
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = "panel panel-behaviours";
+        this.wrapperElement.className = "panel behaviour-panel";
 
         headingElement = document.createElement('div');
         headingElement.className = "panel-heading";
@@ -41,7 +41,7 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
             'plain': true,
             'title': gettext("Disabled"),
             'iconClass': 'icon-lock',
-            'class': "opt-enable-behaviours"
+            'class': "btn-enable-behaviour-engine"
         });
         this.btnEnable.addClassName('active');
         this.btnEnable.insertInto(headingElement);
@@ -50,7 +50,7 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
             'plain': true,
             'text': gettext("Global"),
             'title': gettext("Viewpoint"),
-            'class': "opt-viewpoint"
+            'class': "btn-switch-viewpoint"
         });
         this.btnViewpoint.addClassName('active');
         this.btnViewpoint.insertInto(headingElement);
@@ -67,7 +67,7 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         });
 
         this.btnCreate = document.createElement('div');
-        this.btnCreate.className = "btn btn-default btn-create";
+        this.btnCreate.className = "btn btn-default btn-create-behaviour";
         this.bodyElement.appendChild(this.btnCreate);
 
         iconElement = document.createElement('span');

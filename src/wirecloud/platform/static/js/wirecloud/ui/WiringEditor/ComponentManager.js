@@ -38,7 +38,7 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
 
         // Build structure of the default panel
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = "panel panel-components";
+        this.wrapperElement.className = "panel component-panel";
 
         var headingElement = document.createElement('div');
         headingElement.className = "panel-heading";
@@ -51,7 +51,7 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
         // Add section of web operators
         this.btnOperators = new StyledElements.StyledButton({
             'plain': true,
-            'class': 'opt-operator-group',
+            'class': 'btn-display-operator-group',
             'text': gettext("Operators")
         });
         this.btnOperators.insertInto(headingElement);
@@ -80,7 +80,7 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
         // Add section of web widgets
         this.btnWidgets = new StyledElements.StyledButton({
             'plain': true,
-            'class': 'opt-widget-group',
+            'class': 'btn-display-widget-group',
             'text': gettext("Widgets")
         });
         this.btnWidgets.insertInto(headingElement);
