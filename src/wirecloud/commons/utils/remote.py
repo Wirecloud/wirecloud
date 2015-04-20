@@ -740,7 +740,7 @@ class WiringConnectionTester(object):
         return "selected" in self.class_list
 
     def click(self):
-        self.element.find_element_by_css_selector('g').click()
+        self.element.find_element_by_css_selector(".connection-body").click()
 
         if self.readonly:
             self.testcase.assertFalse(self.btn_remove.displayed)
