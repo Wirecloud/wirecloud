@@ -27,6 +27,7 @@ from six.moves.urllib.request import url2pathname
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.http import urlunquote
@@ -155,6 +156,11 @@ def serve_showcase_media(request, vendor, name, version, file_path):
     base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
 
     if not getattr(settings, 'USE_XSENDFILE', False):
-        return serve(request, file_path, document_root=base_dir)
+        response = serve(request, file_path, document_root=base_dir)
     else:
-        return build_sendfile_response(file_path, base_dir)
+        response = build_sendfile_response(file_path, base_dir)
+
+    if response.status_code == 302:
+        response['Location'] = reverse('wirecloud_catalogue.media', kwargs= {"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
+
+    return response

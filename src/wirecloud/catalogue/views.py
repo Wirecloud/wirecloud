@@ -27,6 +27,7 @@ from six.moves.urllib.request import pathname2url, url2pathname
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404, HttpResponse
@@ -57,9 +58,14 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
     base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
 
     if not getattr(settings, 'USE_XSENDFILE', False):
-        return serve(request, file_path, document_root=base_dir)
+        response = serve(request, file_path, document_root=base_dir)
     else:
-        return build_sendfile_response(file_path, base_dir)
+        response = build_sendfile_response(file_path, base_dir)
+
+    if response.status_code == 302:
+        response['Location'] = reverse('wirecloud_catalogue.media', kwargs= {"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
+
+    return response
 
 
 class ResourceCollection(Resource):

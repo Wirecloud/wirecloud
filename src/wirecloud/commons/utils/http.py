@@ -349,9 +349,6 @@ def build_sendfile_response(file_path, document_root):
     path = path.lstrip('/')
     newpath = ''
     for part in path.split('/'):
-        if not part:
-            # Strip empty path components.
-            continue
         drive, part = os.path.splitdrive(part)
         head, part = os.path.split(part)
         if part in (os.curdir, os.pardir):

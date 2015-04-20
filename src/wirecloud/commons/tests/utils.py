@@ -20,11 +20,12 @@
 from io import BytesIO
 import zipfile
 
-from django.http import UnreadablePostError
+from django.http import Http404, UnreadablePostError
 from django.test import TestCase
 from mock import patch, Mock
 
 from wirecloud.commons.utils.html import clean_html
+from wirecloud.commons.utils.http import build_sendfile_response
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
 from wirecloud.commons.utils.wgt import WgtFile
@@ -196,3 +197,34 @@ class WGTTestCase(TestCase):
                 self.assertEqual(os_mock.makedirs.call_count, 0)
                 self.assertEqual(os_mock.mkdir.call_count, 0)
                 self.assertEqual(open_mock.call_count, 0)
+
+
+class HTTPUtilsTestCase(TestCase):
+
+    tags = ('wirecloud-http-utils',)
+
+    def test_build_sendfile_response(self):
+
+        with patch('wirecloud.commons.utils.http.os.path.isfile', return_value=True):
+            response = build_sendfile_response('file.js', '/folder')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response['X-Sendfile'], '/folder/file.js')
+
+    def test_build_sendfile_response_remove_extra_path_separators(self):
+
+        with patch('wirecloud.commons.utils.http.os.path.isfile', return_value=True) as isfile_mock:
+            response = build_sendfile_response('js///file.js', '/folder')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response['X-Sendfile'], '/folder/js/file.js')
+            isfile_mock.assert_called_once_with('/folder/js/file.js')
+
+    def test_build_sendfile_response_not_found(self):
+
+        with patch('wirecloud.commons.utils.http.os.path.isfile', return_value=False) as isfile_mock:
+            self.assertRaises(Http404, build_sendfile_response, 'js/notfound.js', '/folder')
+
+    def test_build_sendfile_response_redirect_on_invalid_path(self):
+
+        response = build_sendfile_response('../a/../file.js', '/folder')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], 'file.js')
