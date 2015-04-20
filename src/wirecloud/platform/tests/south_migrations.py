@@ -25,6 +25,10 @@ from south.migration import Migrations
 import six
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
+__test__ = False
+
+
 class TestQueryResult(object):
 
     def __init__(self, result):

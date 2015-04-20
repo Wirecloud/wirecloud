@@ -26,6 +26,10 @@ from wirecloud.catalogue.utils import update_resource_catalogue_cache
 from wirecloud.commons.utils.template import TemplateParseException
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)
+__test__ = False
+
+
 class TestQueryResult(object):
 
     def __init__(self, result):

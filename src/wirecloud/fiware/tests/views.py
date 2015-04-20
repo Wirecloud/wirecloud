@@ -27,6 +27,10 @@ from mock import Mock, patch, DEFAULT
 from wirecloud.fiware.views import login, logout
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
+__test__ = False
+
+
 class FIWAREViewsTestCase(unittest.TestCase):
 
     tags = ('wirecloud-fiware-views',)

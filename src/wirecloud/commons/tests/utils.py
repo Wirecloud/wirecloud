@@ -32,6 +32,10 @@ from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
 from wirecloud.commons.utils.wgt import WgtFile
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
+__test__ = False
+
+
 class HTMLCleanupTestCase(TestCase):
 
     tags = ('wirecloud-html-cleanup',)

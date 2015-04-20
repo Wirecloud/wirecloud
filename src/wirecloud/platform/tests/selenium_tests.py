@@ -36,6 +36,10 @@ from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
+__test__ = False
+
+
 def check_default_settings_values(test):
 
     test.assertEqual(test.driver.find_element_by_id('listPref').text, 'default')

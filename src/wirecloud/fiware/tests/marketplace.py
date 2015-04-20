@@ -27,6 +27,10 @@ from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemS
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
+__test__ = False
+
+
 class MarketplaceTestCase(WirecloudTestCase):
 
     tags = ('fiware', 'fiware-plugin', 'fiware-ut-8', 'fiware-marketplace')

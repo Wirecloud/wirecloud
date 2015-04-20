@@ -37,6 +37,10 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase, WirecloudSeleni
 from wirecloud.platform.preferences.models import update_session_lang
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
+__test__ = False
+
+
 class BasicViewsAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')

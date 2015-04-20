@@ -26,6 +26,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, uses_extra_resources, WirecloudSeleniumTestCase
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
 __test__ = False
 
 

@@ -29,6 +29,10 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
+__test__ = False
+
+
 TEST_TOKEN = 'yLCdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y__uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPXg'
 TEST_WORKSPACE_TOKEN = 'rtHdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y..uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPx6'
 

@@ -36,7 +36,7 @@ from wirecloud.catalogue.views import serve_catalogue_media
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 
-# Avoid nose to repeat these tests (they are run through __init__.py)
+# Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)
 __test__ = False
 
 

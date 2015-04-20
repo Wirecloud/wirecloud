@@ -43,7 +43,8 @@ from wirecloud.platform.workspace.models import Workspace
 from wirecloud.platform.workspace.utils import set_variable_value
 
 
-# Avoid nose to repeat these tests (they are run through wirecloud/tests.py)
+
+# Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
 __test__ = False
 
 SELENIUM_VERSION = tuple(selenium.__version__.split('.'))

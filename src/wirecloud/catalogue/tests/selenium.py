@@ -19,6 +19,8 @@
 
 from wirecloud.commons.utils.testcases import WirecloudSeleniumTestCase
 
+
+# Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)
 __test__ = False
 
 

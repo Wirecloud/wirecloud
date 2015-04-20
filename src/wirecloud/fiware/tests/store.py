@@ -27,6 +27,10 @@ from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCas
 from wirecloud.fiware.storeclient import StoreClient
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
+__test__ = False
+
+
 class StoreTestCase(WirecloudTestCase):
 
     tags = ('fiware', 'fiware-plugin', 'fiware-ut-13', 'wirecloud-fiware-store')
