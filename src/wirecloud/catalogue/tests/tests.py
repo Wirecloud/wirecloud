@@ -19,20 +19,21 @@
 
 from __future__ import unicode_literals
 
-import codecs
 import json
 import os
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import Client
+from django.http import Http404
+from django.test import Client, TestCase
 from django.test.utils import override_settings
+from mock import Mock, patch
 
 import wirecloud.catalogue.utils
-from wirecloud.catalogue.utils import get_resource_data
 from wirecloud.catalogue.models import CatalogueResource, Version
-from wirecloud.commons.utils.template import TemplateParseException
-from wirecloud.commons.utils.testcases import LocalFileSystemServer, WirecloudTestCase
+from wirecloud.catalogue.utils import get_resource_data
+from wirecloud.catalogue.views import serve_catalogue_media
+from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 
 # Avoid nose to repeat these tests (they are run through __init__.py)
@@ -42,7 +43,7 @@ __test__ = False
 class CatalogueSearchTestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_search_data',)
-    tags = ('catalogue', 'catalogue-search')
+    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-search')
 
     @classmethod
     def setUpClass(cls):
@@ -402,7 +403,7 @@ class CatalogueSuggestionTestCase(WirecloudTestCase):
 class CatalogueAPITestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_test_data',)
-    tags = ('catalogue',)
+    tags = ('wirecloud-catalogue',)
 
     @classmethod
     def setUpClass(cls):
@@ -437,7 +438,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
 
 class WGTDeploymentTestCase(WirecloudTestCase):
 
-    tags = ('catalogue',)
+    tags = ('wirecloud-catalogue',)
 
     def setUp(self):
         super(WGTDeploymentTestCase, self).setUp()
@@ -531,3 +532,140 @@ class WGTDeploymentTestCase(WirecloudTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(os.path.exists(operator_path), False)
+
+
+class CatalogueMediaTestCase(TestCase):
+
+    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-media')
+
+    def build_mocks(self, resource_type='widget'):
+
+        get_object_or_404_mock = Mock()
+        resource_mock = Mock()
+        resource_mock.resource_type.return_value = resource_type
+        get_object_or_404_mock.return_value = resource_mock
+
+        request_mock = Mock()
+        request_mock.method = 'GET'
+
+        return request_mock, get_object_or_404_mock, Mock(), Mock()
+
+    def test_path_file_found_mashup(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks('mashup')
+
+        response_mock = Mock()
+        response_mock.status_code = 200
+        serve_mock.return_value = response_mock
+
+        with self.settings(USE_XSENDFILE=False):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock, serve=serve_mock):
+                response = serve_catalogue_media(request, 'Wirecloud', 'Test', '1.0', 'image/catalogue.png')
+                self.assertEqual(response, response_mock)
+
+    def test_path_file_found_operator(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks('operator')
+
+        response_mock = Mock()
+        response_mock.status_code = 200
+        serve_mock.return_value = response_mock
+
+        with self.settings(USE_XSENDFILE=False):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock, serve=serve_mock):
+                response = serve_catalogue_media(request, 'Wirecloud', 'Test', '1.0', 'image/catalogue.png')
+                self.assertEqual(response, response_mock)
+
+    def test_path_file_found_widget(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks('widget')
+
+        response_mock = Mock()
+        response_mock.status_code = 200
+        serve_mock.return_value = response_mock
+
+        with self.settings(USE_XSENDFILE=False):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock, serve=serve_mock):
+                response = serve_catalogue_media(request, 'Wirecloud', 'Test', '1.0', 'image/catalogue.png')
+                self.assertEqual(response, response_mock)
+
+    def test_path_file_not_found(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        serve_mock.side_effect = Http404()
+
+        with self.settings(USE_XSENDFILE=False):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock, serve=serve_mock):
+                self.assertRaises(Http404, serve_catalogue_media, request, 'Wirecloud', 'Test', '1.0', 'notfound.png')
+                self.assertEqual(serve_mock.call_count, 1)
+
+    def test_path_outside_widget_folder(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        with self.settings(USE_XSENDFILE=False):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock):
+                response = serve_catalogue_media(request, 'Wirecloud', 'Test', '1.0', 'test/../../../../../../manage.py')
+                self.assertEqual(response.status_code, 302)
+                self.assertNotIn('..', response['Location'])
+
+    def test_path_file_found_mashup_sendfile(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks('mashup')
+
+        response_mock = Mock()
+        response_mock.status_code = 200
+        build_sendfile_response_mock.return_value = response_mock
+
+        with self.settings(USE_XSENDFILE=True):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock, build_sendfile_response=build_sendfile_response_mock):
+                response = serve_catalogue_media(request, 'Wirecloud', 'Test', '1.0', 'image/catalogue.png')
+                self.assertEqual(response, response_mock)
+
+    def test_path_file_found_operator_sendfile(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks('operator')
+
+        response_mock = Mock()
+        response_mock.status_code = 200
+        build_sendfile_response_mock.return_value = response_mock
+
+        with self.settings(USE_XSENDFILE=True):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock, build_sendfile_response=build_sendfile_response_mock):
+                response = serve_catalogue_media(request, 'Wirecloud', 'Test', '1.0', 'image/catalogue.png')
+                self.assertEqual(response, response_mock)
+
+    def test_path_file_found_sendfile(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks('widget')
+
+        response_mock = Mock()
+        response_mock.status_code = 200
+        build_sendfile_response_mock.return_value = response_mock
+
+        with self.settings(USE_XSENDFILE=True):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock, build_sendfile_response=build_sendfile_response_mock):
+                response = serve_catalogue_media(request, 'Wirecloud', 'Test', '1.0', 'image/catalogue.png')
+                self.assertEqual(response, response_mock)
+
+    def test_path_file_not_found_sendfile(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        build_sendfile_response_mock.side_effect = Http404()
+
+        with self.settings(USE_XSENDFILE=True):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock, build_sendfile_response=build_sendfile_response_mock):
+                self.assertRaises(Http404, serve_catalogue_media, request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
+                self.assertEqual(build_sendfile_response_mock.call_count, 1)
+
+    def test_path_outside_widget_folder_sendfile(self):
+
+        request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks()
+
+        with self.settings(USE_XSENDFILE=True):
+            with patch.multiple('wirecloud.catalogue.views', get_object_or_404=get_object_or_404_mock):
+                response = serve_catalogue_media(request, 'Wirecloud', 'Test', '1.0', 'test//../../../../../../manage.py')
+                self.assertEqual(response.status_code, 302)
+                self.assertNotIn('..', response['Location'])

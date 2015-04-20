@@ -184,7 +184,7 @@ class WidgetModuleTestCase(TestCase):
         request, get_object_or_404_mock, build_sendfile_response_mock, serve_mock = self.build_mocks('mashup')
 
         with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock, build_sendfile_response=build_sendfile_response_mock, serve=serve_mock):
-            self.assertRaises(Http404, serve_showcase_media, request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
+            self.assertRaises(Http404, serve_showcase_media, request, 'Wirecloud', 'Test', '1.0', 'js/file.js')
             self.assertEqual(build_sendfile_response_mock.call_count, 0)
             self.assertEqual(serve_mock.call_count, 0)
 
@@ -198,7 +198,7 @@ class WidgetModuleTestCase(TestCase):
 
         with self.settings(USE_XSENDFILE=False):
             with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock, serve=serve_mock):
-                response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
+                response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'js/file.js')
                 self.assertEqual(response, response_mock)
 
     def test_path_file_not_found(self):
@@ -232,7 +232,7 @@ class WidgetModuleTestCase(TestCase):
 
         with self.settings(USE_XSENDFILE=True):
             with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock, build_sendfile_response=build_sendfile_response_mock):
-                response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
+                response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'js/file.js')
                 self.assertEqual(response, response_mock)
 
     def test_path_file_not_found_sendfile(self):
