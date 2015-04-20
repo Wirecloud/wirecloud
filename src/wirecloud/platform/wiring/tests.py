@@ -342,6 +342,34 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
         self.assertEqual(final_code, expected_code)
 
 
+class WiringLayoutTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+
+    def test_user_with_behaviour_engine_disabled(self):
+
+        self.login()
+
+        with self.wiring_view as wiring:
+            self.assertTrue(wiring.is_emptied)
+
+            with wiring.component_sidebar as sidebar:
+                self.assertTrue(sidebar.has_components('operator'))
+                self.assertFalse(sidebar.has_components('widget'))
+
+            with wiring.latest_sidebar as sidebar:
+                self.assertTrue(sidebar.panel.is_displayed())
+                self.assertTrue(sidebar.btn_show_widget_group.displayed)
+                self.assertTrue(sidebar.btn_show_widget_group.active)
+
+            with wiring.behaviour_sidebar as sidebar:
+                self.assertFalse(sidebar.has_behaviours())
+
+            with wiring.latest_sidebar as sidebar:
+                self.assertTrue(sidebar.panel.is_displayed())
+
+
 class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')

@@ -37,6 +37,7 @@ build_selenium_test_cases(('wirecloud.platform.markets.tests.MarketManagementSel
 
 # list of wiring tests
 
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringLayoutTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringBasicOperationTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringRecoveringTestCase',), locals())
 

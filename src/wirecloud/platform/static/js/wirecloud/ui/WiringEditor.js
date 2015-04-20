@@ -508,7 +508,7 @@ Wirecloud.ui.WiringEditor = (function () {
             this.btnBehaviours.active = false;
         }.bind(this));
         this.layout.addEventListener('slidedown', function (panelOpened) {
-            if (panelOpened.wrapperElement.classList.contains('panel-components')) {
+            if (panelOpened.wrapperElement.classList.contains('component-panel')) {
                 this.btnComponents.active = true;
                 this.btnBehaviours.active = false;
             } else {
