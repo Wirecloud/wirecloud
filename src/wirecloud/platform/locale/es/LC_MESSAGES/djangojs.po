@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-31 12:37+0200\n"
-"PO-Revision-Date: 2015-03-31 12:40+0100\n"
+"POT-Creation-Date: 2015-04-20 16:12+0200\n"
+"PO-Revision-Date: 2015-04-10 23:08+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -221,8 +221,8 @@ msgstr "Error renombrando la pestaña: %(errorMsg)s."
 msgid "Tab deleted successfully"
 msgstr "Pestaña eliminada correctamente"
 
-#: static/js/opManager/Tab.js:75 static/js/opManager/Workspace.js:501
-#: static/js/opManager/Workspace.js:506
+#: static/js/opManager/Tab.js:75 static/js/opManager/Workspace.js:499
+#: static/js/opManager/Workspace.js:504
 msgid "Error removing tab: %(errorMsg)s."
 msgstr "Error elimnando la pestaña: %(errorMsg)s."
 
@@ -306,127 +306,125 @@ msgstr ""
 msgid "Unusable Tab"
 msgstr "Pestaña no-usable"
 
-#: static/js/opManager/Workspace.js:163
-msgid "Hey! Welcome to WireCloud! This is an empty workspace"
-msgstr "¡Ey! ¡Bienvenido a WireCloud! Este es un entorno de trabajo vacío"
-
-#: static/js/opManager/Workspace.js:168
-msgid ""
-"To create really impressive mashup applications, the first step to take is "
-"always to add widgets in this area. To do so, please surf the "
-"<strong>Marketplace</strong> the place where resources are all in there, by "
-"clicking on the proper button up in the right corner!"
-msgstr ""
-"Para crear aplicaciones composicionales, el primer paso siempre es añadir "
-"widget en este área. Para hacer esto, "
-
-#: static/js/opManager/Workspace.js:185
+#: static/js/opManager/Workspace.js:161
 msgid "Error renaming workspace: %(errorMsg)s."
 msgstr "Error renombrando el entorno de trabajo: %(errorMsg)s."
 
-#: static/js/opManager/Workspace.js:191
+#: static/js/opManager/Workspace.js:167
 msgid "Workspace removed successfully"
 msgstr "Entorno de trabajo eliminado correctamente"
 
-#: static/js/opManager/Workspace.js:196
+#: static/js/opManager/Workspace.js:172
 msgid "Error removing workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
 "Error eliminando el entorno de trabajo, los cambios no serán cambiados: "
 "%(errorMsg)s."
 
-#: static/js/opManager/Workspace.js:206
+#: static/js/opManager/Workspace.js:182
 msgid "Workspace published successfully"
 msgstr "Entorno de trabajo publicado correctamente"
 
-#: static/js/opManager/Workspace.js:225
+#: static/js/opManager/Workspace.js:201
 msgid "Error publishing workspace: %(errorMsg)s."
 msgstr "Error publicando el entorno de trabajo: %(errorMsg)s."
 
-#: static/js/opManager/Workspace.js:248
+#: static/js/opManager/Workspace.js:224
 msgid "Error merging workspaces: %(errorMsg)s."
 msgstr "Error mezclando los entornos de trabajo: %(errorMsg)s."
 
-#: static/js/opManager/Workspace.js:271
+#: static/js/opManager/Workspace.js:247
 msgid "Tab added successfully"
 msgstr "Pestaña añadida correctamente"
 
-#: static/js/opManager/Workspace.js:276
+#: static/js/opManager/Workspace.js:252
 msgid "Error creating tab: %(errorMsg)s."
 msgstr "Error creando la pestaña: %(errorMsg)s."
 
-#: static/js/opManager/Workspace.js:306 static/js/wirecloud/Workspace.js:23
+#: static/js/opManager/Workspace.js:282 static/js/wirecloud/Workspace.js:23
 msgid "Invalid workspace name"
 msgstr "Nombre de entorno de trabajo inválido"
 
-#: static/js/opManager/Workspace.js:315
+#: static/js/opManager/Workspace.js:291
 msgid "Renaming workspace"
 msgstr "Renombrando el entorno de trabajo"
 
-#: static/js/opManager/Workspace.js:316
+#: static/js/opManager/Workspace.js:292
 msgid "Renaming \"%(workspacename)s\" to \"%(newname)s\""
 msgstr "Renombrado \"%(workspacename)s\" a \"%(newname)s\""
 
-#: static/js/opManager/Workspace.js:340 static/js/wirecloud/Workspace.js:46
+#: static/js/opManager/Workspace.js:316 static/js/wirecloud/Workspace.js:46
 msgid "Workspace renamed successfully"
 msgstr "Entorno de trabajo renombrado correctamente"
 
-#: static/js/opManager/Workspace.js:355
+#: static/js/opManager/Workspace.js:331
 msgid "Removing workspace"
 msgstr "Eliminando el entorno de trabajo"
 
-#: static/js/opManager/Workspace.js:356
+#: static/js/opManager/Workspace.js:332
 msgid "Removing \"%(workspacename)s\""
 msgstr "Eliminando \"%(workspacename)s\""
 
-#: static/js/opManager/Workspace.js:386 static/js/opManager/Workspace.js:397
+#: static/js/opManager/Workspace.js:369
+msgid ""
+"<h4>Hey! Welcome to WireCloud! This is an empty workspace</h4><p>The first "
+"step for creating impressive mashup applications is to add widgets into this "
+"area. To do so, click on the add widget button (<t:addwidgetbutton/>) "
+"available on the top right part of the user interface.</p>"
+msgstr ""
+"<h4>¡Ey! ¡Bienvenido a WireCloud! Este es un entorno de trabajo vacío</"
+"h4><p>Para crear aplicaciones composicionales interesantes, el primer paso "
+"siempre es añadir widgets en este área. Puedes añadir widgets usando el "
+"botón añadir widgets que hay arriba a la derecha (<t:addwidgetbutton/>).</p>"
+
+#: static/js/opManager/Workspace.js:384 static/js/opManager/Workspace.js:395
 msgid "Full screen"
 msgstr "Ver a pantalla completa"
 
-#: static/js/opManager/Workspace.js:393
+#: static/js/opManager/Workspace.js:391
 msgid "Exit full screen"
 msgstr "Salir de pantalla completa"
 
-#: static/js/opManager/Workspace.js:469
+#: static/js/opManager/Workspace.js:467
 msgid "Adding a tab to the workspace"
 msgstr "Añadiendo una pestaña al entorno de trabajo"
 
-#: static/js/opManager/Workspace.js:470
+#: static/js/opManager/Workspace.js:468
 msgid "Adding tab to \"%(workspacename)s\""
 msgstr "Añadiendo pestaña a \"%(workspacename)s\""
 
-#: static/js/opManager/Workspace.js:475
+#: static/js/opManager/Workspace.js:473
 msgid "Tab"
 msgstr "Pestaña"
 
-#: static/js/opManager/Workspace.js:500
+#: static/js/opManager/Workspace.js:498
 msgid "there must be one tab at least"
 msgstr "tiene que haber una pestaña como mínimo"
 
-#: static/js/opManager/Workspace.js:505
+#: static/js/opManager/Workspace.js:503
 msgid "it contains some widgets that cannot be removed"
 msgstr "contiene widgets y no puede ser eliminado"
 
-#: static/js/opManager/Workspace.js:525
+#: static/js/opManager/Workspace.js:523
 msgid "Unloading current workspace"
 msgstr "Descargando el entorno de trabajo actual"
 
-#: static/js/opManager/Workspace.js:551
+#: static/js/opManager/Workspace.js:549
 msgid "workspace unloaded"
 msgstr "entorno de trabajo descargado"
 
-#: static/js/opManager/Workspace.js:587
+#: static/js/opManager/Workspace.js:585
 msgid "Publishing current workspace"
 msgstr "Publicando el entorno de trabajo actual"
 
-#: static/js/opManager/Workspace.js:619
+#: static/js/opManager/Workspace.js:617
 msgid "Merging workspaces"
 msgstr "Mezclando entornos de trabajo"
 
-#: static/js/opManager/Workspace.js:620
+#: static/js/opManager/Workspace.js:618
 msgid "Merging \"%(srcworkspace)s\" into \"%(dstworkspace)s\""
 msgstr "Mezclando \"%(srcworkspace)s\" con \"%(dstworkspace)s\""
 
-#: static/js/opManager/Workspace.js:733
+#: static/js/opManager/Workspace.js:731
 msgid ""
 "Error marking as first active workspace, changes will not be saved: "
 "%(errorMsg)s."
@@ -1302,7 +1300,7 @@ msgstr ""
 #: static/js/wirecloud/ui/MarketplaceView.js:177
 #: static/js/wirecloud/ui/MyResourcesView.js:128
 #: static/js/wirecloud/ui/MyResourcesView.js:146
-#: static/js/wirecloud/ui/WorkspaceView.js:58
+#: static/js/wirecloud/ui/WorkspaceView.js:52
 msgid "My Resources"
 msgstr "Mis recursos"
 
@@ -1316,7 +1314,7 @@ msgstr "lista de marketplaces no disponible"
 
 #: static/js/wirecloud/ui/MarketplaceView.js:266
 #: static/js/wirecloud/ui/MyResourcesView.js:62
-#: static/js/wirecloud/ui/WorkspaceView.js:66
+#: static/js/wirecloud/ui/WorkspaceView.js:60
 msgid "Marketplace"
 msgstr "Marketplace"
 
@@ -1411,9 +1409,9 @@ msgid ""
 "using the Marketplace view or by uploading components manually using the "
 "Upload button."
 msgstr ""
-"Actualmente no tienes acceso a ningún componente. Puedes obtener "
-"componentes usando la vista de Marketplace o subiendo recursos de forma "
-"manual usando el botón Subir."
+"Actualmente no tienes acceso a ningún componente. Puedes obtener componentes "
+"usando la vista de Marketplace o subiendo recursos de forma manual usando el "
+"botón Subir."
 
 #: static/js/wirecloud/ui/MyResourcesView.js:143
 msgid "My Resources - %(resource)s"
@@ -1706,20 +1704,20 @@ msgstr "%(workspace_title)s - Wiring"
 msgid "Empty workspace list"
 msgstr "Lista de entornos de trabajo vacía"
 
-#: static/js/wirecloud/ui/WorkspaceView.js:42
-msgid "Add widget"
-msgstr "Añadir widget"
-
-#: static/js/wirecloud/ui/WorkspaceView.js:50
+#: static/js/wirecloud/ui/WorkspaceView.js:44
 msgid "Wiring"
 msgstr "Wiring"
 
-#: static/js/wirecloud/ui/WorkspaceView.js:122
-#: static/js/wirecloud/ui/WorkspaceView.js:134
+#: static/js/wirecloud/ui/WorkspaceView.js:97
+msgid "Add widget"
+msgstr "Añadir widget"
+
+#: static/js/wirecloud/ui/WorkspaceView.js:129
+#: static/js/wirecloud/ui/WorkspaceView.js:141
 msgid "loading..."
 msgstr "cargando..."
 
-#: static/js/wirecloud/ui/WorkspaceView.js:171
+#: static/js/wirecloud/ui/WorkspaceView.js:178
 msgid "The requested workspace is no longer available (it was deleted)."
 msgstr ""
 "El entorno de trabajo solicitado ya no está disponible (ha sido borrado)."
