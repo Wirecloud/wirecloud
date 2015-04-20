@@ -681,6 +681,20 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(wiring.find_connections()), 0)
 
 
+class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+
+    def test_component_added_outside_of_diagram(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                sidebar.add_component('operator', "TestOperator", y=-150)
+                sidebar.add_component('widget', "Test (1)", x=-150)
+
+
 class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')

@@ -1645,7 +1645,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
         return None
 
-    def add_component(self, component_type, component_title, x=0, y=-0):
+    def add_component(self, component_type, component_title, x=0, y=0):
 
         component = self.find_component_by_title(component_type, component_title)
         self.testcase.assertIsNotNone(component)

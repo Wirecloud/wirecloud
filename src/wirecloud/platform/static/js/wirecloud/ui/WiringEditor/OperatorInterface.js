@@ -109,12 +109,6 @@
         position.x += scrollX;
         position.y += scrollY;
 
-        if (!this.wiringEditor.withinGrid(e)) {
-            this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
-            this.wiringEditor.events.operatoraddfail.dispatch();
-            return;
-        }
-
         endPointPos = {'source': [], 'target': []};
         position.x -= this.wiringEditor.getGridElement().getBoundingClientRect().left;
 

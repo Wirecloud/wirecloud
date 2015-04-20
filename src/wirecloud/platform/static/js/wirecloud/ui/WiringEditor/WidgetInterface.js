@@ -131,12 +131,6 @@
         position = {'x': 0, 'y': 0};
         position = data.iObjectClon.getPosition();
 
-        if (!this.wiringEditor.withinGrid(e)) {
-            this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
-            this.wiringEditor.events.widgetaddfail.dispatch();
-            return;
-        }
-
         //scroll correction
         oc = this.wiringEditor.layout.content;
         scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);

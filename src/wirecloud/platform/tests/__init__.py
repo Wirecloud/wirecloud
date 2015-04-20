@@ -41,6 +41,7 @@ build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringLayoutTestCase
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringBasicOperationTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringRecoveringTestCase',), locals())
 
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.ComponentDraggableTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.ComponentOperatorTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.ComponentMissingTestCase',), locals())
 
