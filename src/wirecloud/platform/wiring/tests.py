@@ -32,11 +32,8 @@ from django.db import transaction
 from django.test import Client
 from django.utils import unittest
 import selenium
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.utils.expected_conditions import element_be_still
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase
 from wirecloud.platform import plugins
 from wirecloud.platform.workspace.models import Workspace
@@ -780,9 +777,9 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
         workspace = Workspace.objects.get(id=3)
         parsedStatus = json.loads(workspace.wiringStatus)
         parsedStatus['operators']['0']['preferences'] = {
-            'prefix': { "readOnly": False, "hidden": False, "value": 'test_' },
-            'exception_on_event': { "readOnly": False, "hidden": False, "value": 'true' },
-            'test_logging': { "readOnly": False, "hidden": False, "value": 'true' }
+            'prefix': {"readOnly": False, "hidden": False, "value": 'test_'},
+            'exception_on_event': {"readOnly": False, "hidden": False, "value": 'true'},
+            'test_logging': {"readOnly": False, "hidden": False, "value": 'true'}
         }
         workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
         workspace.save()
@@ -847,7 +844,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
             myresources.delete_resource('TestOperator')
 
         with self.wiring_view as wiring:
-            with wiring.component_sidebar as sidebar:
+            with wiring.component_sidebar:
                 self.assertEqual(len(wiring.filter_components_by_type('operator')), 0)
 
 
@@ -1081,7 +1078,7 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
         # Enable operator exceptions
         workspace = Workspace.objects.get(id=2)
         parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['operators']['0']['preferences']['exception_on_event'] = { "readOnly": False, "hidden": False, "value": 'true' }
+        parsedStatus['operators']['0']['preferences']['exception_on_event'] = {"readOnly": False, "hidden": False, "value": 'true'}
         workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
         workspace.save()
 
@@ -1129,7 +1126,7 @@ class EndpointSortingTestCase(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
     def test_endpoint_sorting_in_widgets(self):
         self.login()
-        iwidget = self.add_widget_to_mashup('Test_Multiendpoint')
+        self.add_widget_to_mashup('Test_Multiendpoint')
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
@@ -1162,7 +1159,7 @@ class EndpointStickyEffectTestCase(WirecloudSeleniumTestCase):
                 operator = sidebar.add_component('operator', "TestOperator")
                 widget = sidebar.add_component('widget', "Test 1", x=400)
 
-            target1 =  operator.find_endpoint_by_title('target', "input")
+            target1 = operator.find_endpoint_by_title('target', "input")
             source1 = operator.find_endpoint_by_title('source', "output")
 
             target2 = widget.find_endpoint_by_title('target', "Input")
