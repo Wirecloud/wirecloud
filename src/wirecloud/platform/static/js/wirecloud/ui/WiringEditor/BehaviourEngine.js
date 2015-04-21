@@ -104,7 +104,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             'connections': [],
             'operators': {},
             'visualdescription': {
-                'behavioursenabled': false,
                 'behaviours': [],
                 'components': {
                     'operator': {},
@@ -127,9 +126,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         }
 
         if (typeof state.visualdescription === 'object') {
-            if (typeof state.visualdescription.behavioursenabled === 'boolean') {
-                wiringState.visualdescription.behavioursenabled = state.visualdescription.behavioursenabled;
-            }
 
             if (Array.isArray(state.visualdescription.behaviours)) {
                 wiringState.visualdescription.behaviours = state.visualdescription.behaviours;
@@ -450,8 +446,8 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         state = BehaviourEngine.normalizeWiring(state);
 
         this.empty();
-        this.behavioursEnabled = state.visualdescription.behavioursenabled;
         this.currentState = state.visualdescription;
+        this.behavioursEnabled = this.currentState.behaviours.length > 0;
 
         if (this.behavioursEnabled) {
             this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
@@ -641,15 +637,12 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         var wiringState, i;
 
         wiringState = BehaviourEngine.normalizeWiring();
-        wiringState.visualdescription.behavioursenabled = this.behavioursEnabled;
 
         wiringState.visualdescription.components = this.currentState.components;
         wiringState.visualdescription.connections = this.currentState.connections;
 
-        if (this.behavioursEnabled) {
-            for (i = 0; i < this.behaviourList.length; i++) {
-                wiringState.visualdescription.behaviours.push(this.behaviourList[i].serialize());
-            }
+        for (i = 0; i < this.behaviourList.length; i++) {
+            wiringState.visualdescription.behaviours.push(this.behaviourList[i].serialize());
         }
 
         return StyledElements.Utils.cloneObject(wiringState);

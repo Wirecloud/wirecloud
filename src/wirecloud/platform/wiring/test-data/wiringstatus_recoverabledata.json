@@ -46,7 +46,6 @@
         }
     },
     "visualdescription": {
-        "behavioursenabled": false,
         "behaviours": [],
         "components": {
             "operator": {

@@ -1601,11 +1601,6 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
         if not button.active:
             button.click()
-            self.testcase.assertTrue(self.btn_show_operator_group.displayed)
-            self.testcase.assertTrue(self.btn_show_operator_group.active)
-
-            self.testcase.assertTrue(self.btn_show_widget_group.displayed)
-            self.testcase.assertFalse(self.btn_show_widget_group.active)
 
         return self
 

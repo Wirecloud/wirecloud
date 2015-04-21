@@ -75,11 +75,14 @@ def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode
 
     return xhtml
 
+
 def get_endpoint_name(endpoint):
     return "%s/%s/%s" % (endpoint['type'], endpoint['id'], endpoint['endpoint'])
 
+
 def rename_component_type(component_type):
     return component_type[1:] if component_type in ['iwidget', 'ioperator'] else "not_supported"
+
 
 def get_wiring_skeleton():
     return {
@@ -87,7 +90,6 @@ def get_wiring_skeleton():
         'connections': [],
         'operators': {},
         'visualdescription': {
-            'behavioursenabled': False,
             'behaviours': [],
             'components': {
                 'operator': {},

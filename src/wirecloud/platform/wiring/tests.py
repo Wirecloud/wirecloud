@@ -1234,10 +1234,21 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
             cls.tearDownClass()
             raise unittest.SkipTest('BehaviourManagementTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
+    def _build_simple_behaviour(self):
+        return {
+            'title': "New behaviour 0",
+            'description': "No description provided.",
+            'components': {
+                'operator': {},
+                'widget': {}
+            },
+            'connections': []
+        }
+
     def _enable_behaviour_engine_in_workspace(self, workspace_id):
         workspace = Workspace.objects.get(id=workspace_id)
         wiring_status = json.loads(workspace.wiringStatus)
-        wiring_status['visualdescription']['behavioursenabled'] = True
+        wiring_status['visualdescription']['behaviours'].append(self._build_simple_behaviour())
         workspace.wiringStatus = json.dumps(wiring_status)
         workspace.save()
 

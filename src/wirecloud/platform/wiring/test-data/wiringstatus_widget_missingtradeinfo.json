@@ -10,7 +10,6 @@
     "version": "2.0",
     "visualdescription": {
         "connections": [],
-        "behavioursenabled": false,
         "behaviours": [],
         "components": {
             "operator": {
