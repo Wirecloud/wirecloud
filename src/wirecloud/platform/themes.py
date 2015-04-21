@@ -71,7 +71,9 @@ def get_template_sources(template_name, template_dirs=None):
     if active_theme_source:
         yield active_theme_source
 
-    yield try_template(get_theme_dir(DEFAULT_THEME, 'templates'))
+    default_theme_location = try_template(get_theme_dir(DEFAULT_THEME, 'templates'))
+    if default_theme_location:
+        yield default_theme_location
 
 
 def load_template_source(template_name, template_dirs=None):
