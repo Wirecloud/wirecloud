@@ -23,7 +23,7 @@ import os
 
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
-from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, uses_extra_resources, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
@@ -38,6 +38,7 @@ def read_response_file(*response):
     return contents
 
 
+@wirecloud_selenium_test_case
 class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'fiware_test_data')

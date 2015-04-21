@@ -33,7 +33,7 @@ from mock import Mock, patch
 from wirecloud.commons.authentication import logout
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.remote import PopupMenuTester
-from wirecloud.commons.utils.testcases import WirecloudTestCase, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import WirecloudTestCase, wirecloud_selenium_test_case, WirecloudSeleniumTestCase
 from wirecloud.platform.preferences.models import update_session_lang
 
 
@@ -260,6 +260,7 @@ class BasicViewsAPI(WirecloudTestCase):
         self.assertNotIn('django_language', request.session)
 
 
+@wirecloud_selenium_test_case
 class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
 
     tags = ('base-views', 'base-views-selenium')

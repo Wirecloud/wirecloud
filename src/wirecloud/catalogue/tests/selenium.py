@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,13 +17,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from wirecloud.commons.utils.testcases import WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)
 __test__ = False
 
 
+@wirecloud_selenium_test_case
 class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     tags = ('wirecloud-selenium', 'catalogue', 'catalogue-selenium')

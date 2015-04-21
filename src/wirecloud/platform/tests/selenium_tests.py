@@ -49,6 +49,7 @@ def check_default_settings_values(test):
     test.assertEqual(test.driver.find_element_by_id('passwordPref').text, 'default')
 
 
+@wirecloud_selenium_test_case
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
