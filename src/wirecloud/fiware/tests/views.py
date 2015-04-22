@@ -103,7 +103,7 @@ class FIWAREViewsTestCase(unittest.TestCase):
         with patch.multiple('wirecloud.fiware.views', wirecloud_logout=DEFAULT, ALLOWED_ORIGINS=('http://valid_domain',)) as mocks:
             mocks['wirecloud_logout'].return_value = HttpResponse(status=204)
             response = logout(request)
-            mocks['wirecloud_logout'].assert_called_with(request, next_url=None)
+            mocks['wirecloud_logout'].assert_called_with(request, next_page=None)
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response['Access-Control-Allow-Origin'], 'http://valid_domain')
         self.assertEqual(response['Access-Control-Allow-Credentials'], 'true')

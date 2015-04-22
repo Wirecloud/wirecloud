@@ -71,8 +71,8 @@ def logout(request):
         if origin not in ALLOWED_ORIGINS:
             return build_error_response(request, 403, '')
 
-        # Force not redirect by using next_url=None
-        response = wirecloud_logout(request, next_url=None)
+        # Force not redirect by using next_page=None
+        response = wirecloud_logout(request, next_page=None)
         response['Access-Control-Allow-Origin'] = origin
         response['Access-Control-Allow-Credentials'] =  'true'
         return response
