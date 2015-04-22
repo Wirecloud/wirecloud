@@ -33,7 +33,6 @@ from wirecloud.platform.models import Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_xml_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-import wirecloud.platform.workspace.utils
 from wirecloud.platform.workspace.utils import get_global_workspace_data, set_variable_value
 from wirecloud.platform.workspace.views import createEmptyWorkspace
 
@@ -658,7 +657,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         wiring_status = json.loads(workspace.wiringStatus)
 
         self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readOnly'], False)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
 
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         self.assertEqual(workspace.name, 'Test Mashup')
@@ -705,7 +704,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         self.assertEqual(workspace_data['extra_prefs'], [{'name': 'param', 'type': 'text', 'inheritable': False, 'label': 'Parameter'}])
 
-        update_workspace_preferences(workspace, {'param': {'value': 'world'}});
+        update_workspace_preferences(workspace, {'param': {'value': 'world'}})
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         iwidget1 = None
@@ -795,15 +794,15 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readOnly'], True)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
 
-    def test_bloqued_connections_rdf(self):
+    def test_blocked_connections_rdf(self):
         template = self.read_template('wt2.rdf')
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readOnly'], True)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
 
     def check_complex_workspace_data(self, data):
 
@@ -830,9 +829,9 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(wiring_status['operators']['1']['preferences']['hidden_pref']['value'], 'value3')
 
         self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['source']['type'], 'iwidget')
+        self.assertEqual(wiring_status['connections'][0]['source']['type'], 'widget')
         self.assertEqual(wiring_status['connections'][0]['source']['endpoint'], 'event')
-        self.assertEqual(wiring_status['connections'][0]['target']['type'], 'iwidget')
+        self.assertEqual(wiring_status['connections'][0]['target']['type'], 'widget')
         self.assertEqual(wiring_status['connections'][0]['target']['endpoint'], 'slot')
 
     def test_complex_workspaces(self):

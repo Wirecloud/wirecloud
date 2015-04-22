@@ -448,11 +448,19 @@ class TemplateUtilsTestCase(TestCase):
                 }
             ],
             'wiring': {
+                'version': '2.0',
                 'inputs': [],
                 'outputs': [],
                 'operators': {},
                 'connections': [],
-                'views': []
+                'visualdescription': {
+                    "behaviours": [],
+                    "components": {
+                        "operator": {},
+                        "widget": {}
+                    },
+                    "connections": []
+                }
             },
             'default_lang': 'en',
             'translations': {},
@@ -563,6 +571,7 @@ class TemplateUtilsTestCase(TestCase):
                 },
             ],
             'wiring': {
+                'version': '2.0',
                 'inputs': [
                     {
                         'name': 'input1',
@@ -646,7 +655,14 @@ class TemplateUtilsTestCase(TestCase):
                         "readonly": False
                     }
                 ],
-                'views': []
+                'visualdescription': {
+                    "behaviours": [],
+                    "components": {
+                        "operator": {},
+                        "widget": {}
+                    },
+                    "connections": []
+                }
             },
             'default_lang': 'en',
             'translations': {},
@@ -754,6 +770,7 @@ class TemplateUtilsTestCase(TestCase):
                 },
             ],
             'wiring': {
+                'version': '2.0',
                 'inputs': [
                     {
                         'name': 'input1',
@@ -837,7 +854,14 @@ class TemplateUtilsTestCase(TestCase):
                         "readonly": False
                     }
                 ],
-                'views': []
+                'visualdescription': {
+                    "behaviours": [],
+                    "components": {
+                        "operator": {},
+                        "widget": {}
+                    },
+                    "connections": []
+                }
             },
             'default_lang': 'en',
             'translations': {
@@ -960,6 +984,7 @@ class TemplateUtilsTestCase(TestCase):
                 },
             ],
             'wiring': {
+                'version': '2.0',
                 'inputs': [],
                 'outputs': [],
                 'operators': {
@@ -985,7 +1010,14 @@ class TemplateUtilsTestCase(TestCase):
                     }
                 },
                 'connections': [],
-                'views': []
+                'visualdescription': {
+                    "behaviours": [],
+                    "components": {
+                        "operator": {},
+                        "widget": {}
+                    },
+                    "connections": []
+                }
             },
             'default_lang': 'en',
             'translations': {},

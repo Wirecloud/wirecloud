@@ -30,6 +30,7 @@ from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.preferences.views import update_tab_preferences, update_workspace_preferences
 from wirecloud.platform.models import Workspace, UserWorkspace
+from wirecloud.platform.wiring.utils import get_wiring_skeleton, get_endpoint_name, is_empty_wiring
 from wirecloud.platform.workspace.utils import createTab, TemplateValueProcessor
 
 
@@ -92,6 +93,71 @@ def check_mashup_dependencies(template, user):
         raise MissingDependencies(list(missing_dependencies))
 
 
+def map_id(endpoint_view, id_mapping):
+    old_id = str(endpoint_view['id'])
+    if endpoint_view['type'] == 'widget':
+        return id_mapping['widget'][old_id].id
+    elif endpoint_view['type'] == 'operator':
+        return id_mapping['operator'][old_id]
+
+    raise ValueError("Invalid endpoint type: %s" % endpoint_view['type'])
+
+
+def _remap_component_ids(id_mapping, components_description):
+
+    operators = {}
+    for key, operator in six.iteritems(components_description['operator']):
+        new_id = id_mapping['operator'][key]
+        operators[new_id] = operator
+    components_description['operator'] = operators
+
+    widgets = {}
+    for key, widget in six.iteritems(components_description['widget']):
+        new_id = id_mapping['widget'][key].id
+        widgets[new_id] = widget
+    components_description['widget'] = widgets
+
+
+def _create_new_behaviour(mashup_description, title, description):
+
+    operators = {}
+    for key, operator in six.iteritems(mashup_description['components']['operator']):
+        operators[key] = {}
+
+    widgets = {}
+    for key, widget in six.iteritems(mashup_description['components']['widget']):
+        widgets[key] = {}
+
+    connections = []
+    for connection in mashup_description['connections']:
+        connections.append({
+            'sourcename': connection['sourcename'],
+            'targetname': connection['targetname']
+        })
+
+    mashup_description['behaviours'].append({
+        'title': title,
+        'description': description,
+        'components': {
+            'operator': operators,
+            'widget': widgets,
+        },
+        'connections': connections,
+    })
+
+
+def _remap_connection_endpoints(source_mapping, target_mapping, description):
+    connections = []
+
+    for connection in description['connections']:
+        new_connection = connection
+        new_connection['sourcename'] = source_mapping[connection['sourcename']]
+        new_connection['targetname'] = target_mapping[connection['targetname']]
+        connections.append(new_connection)
+
+    description['connections'] = connections
+
+
 def fillWorkspaceUsingTemplate(workspace, template):
 
     if not isinstance(template, TemplateParser):
@@ -105,14 +171,17 @@ def fillWorkspaceUsingTemplate(workspace, template):
     context_values = get_context_values(workspace, workspace.creator)
     processor = TemplateValueProcessor({'user': user, 'context': context_values})
 
-    workspace_info = template.get_resource_info()
+    mashup_description = template.get_resource_info()
 
     new_values = {}
-    iwidget_id_mapping = {}
-    for preference_name in workspace_info['preferences']:
+    id_mapping = {
+        'operator': {},
+        'widget': {},
+    }
+    for preference_name in mashup_description['preferences']:
         new_values[preference_name] = {
             'inherit': False,
-            'value': workspace_info['preferences'][preference_name],
+            'value': mashup_description['preferences'][preference_name],
         }
 
     if len(new_values) > 0:
@@ -123,7 +192,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         'iwidget': {},
         'ioperator': {},
     }
-    for param in workspace_info['params']:
+    for param in mashup_description['params']:
         new_forced_values['extra_prefs'].append({
             'name': param['name'],
             'inheritable': False,
@@ -131,7 +200,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             'type': param.get('type'),
         })
 
-    for tab_entry in workspace_info['tabs']:
+    for tab_entry in mashup_description['tabs']:
         tab = createTab(tab_entry.get('name'), workspace, allow_renaming=True)
 
         new_values = {}
@@ -190,39 +259,26 @@ def fillWorkspaceUsingTemplate(workspace, template):
             if len(iwidget_forced_values) > 0:
                 new_forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
 
-            iwidget_id_mapping[resource.get('id')] = iwidget
+            id_mapping['widget'][resource.get('id')] = iwidget
 
     # wiring
     if workspace.wiringStatus != '':
         workspace_wiring_status = json.loads(workspace.wiringStatus)
     else:
-        workspace_wiring_status = {
-            'operators': {},
-            'connections': [],
-            'views': []
-        }
-
-    if 'views' not in workspace_wiring_status:
-        workspace_wiring_status['views'] = []
+        workspace_wiring_status = get_wiring_skeleton()
 
     max_id = 0
-    ioperator_id_mapping = {}
 
     for id_ in workspace_wiring_status['operators'].keys():
         if int(id_) > max_id:
             max_id = int(id_)
 
-    wiring_status = {
-        'operators': workspace_wiring_status['operators'],
-        'connections': workspace_wiring_status['connections'],
-    }
-
     # Process operators info
-    for operator_id, operator in six.iteritems(workspace_info['wiring']['operators']):
+    for operator_id, operator in six.iteritems(mashup_description['wiring']['operators']):
         max_id += 1
         new_id = unicode(max_id)
-        ioperator_id_mapping[operator_id] = new_id
-        wiring_status['operators'][new_id] = {
+        id_mapping['operator'][operator_id] = new_id
+        workspace_wiring_status['operators'][new_id] = {
             'id': new_id,
             'name': operator['name'],
             'preferences': operator['preferences'],
@@ -236,55 +292,51 @@ def fillWorkspaceUsingTemplate(workspace, template):
         if len(ioperator_forced_values) > 0:
             new_forced_values['ioperator'][new_id] = ioperator_forced_values
 
-    for connection in workspace_info['wiring']['connections']:
-        source_id = str(connection['source']['id'])
-        target_id = str(connection['target']['id'])
+    # Remap connection ids
+    source_mapping = {}
+    target_mapping = {}
 
-        if connection['source']['type'] == 'iwidget':
-            source_id = iwidget_id_mapping[source_id].id
-        elif connection['source']['type'] == 'ioperator':
-            source_id = ioperator_id_mapping[source_id]
+    for connection in mashup_description['wiring']['connections']:
+        old_source_name = get_endpoint_name(connection['source'])
+        old_target_name = get_endpoint_name(connection['target'])
 
-        if connection['target']['type'] == 'iwidget':
-            target_id = iwidget_id_mapping[target_id].id
-        elif connection['target']['type'] == 'ioperator':
-            target_id = ioperator_id_mapping[target_id]
+        connection['source']['id'] = map_id(connection['source'], id_mapping)
+        connection['target']['id'] = map_id(connection['target'], id_mapping)
 
-        wiring_status['connections'].append({
-            'readOnly': connection['readonly'],
-            'source': {
-                'id': source_id,
-                'type': connection['source']['type'],
-                'endpoint': connection['source']['endpoint'],
-            },
-            'target': {
-                'id': target_id,
-                'type': connection['target']['type'],
-                'endpoint': connection['target']['endpoint'],
-            },
-        })
+        source_mapping[old_source_name] = get_endpoint_name(connection['source'])
+        target_mapping[old_target_name] = get_endpoint_name(connection['target'])
 
-    wiring_status['views'] = workspace_wiring_status['views']
+    # Add new connections
+    workspace_wiring_status['connections'] += mashup_description['wiring']['connections']
 
-    if 'views' in workspace_info['wiring']:
-        for wiring_view in workspace_info['wiring']['views']:
-            iwidgets_views = {}
-            for key, widget in six.iteritems(wiring_view['iwidgets']):
-                iwidgets_views[iwidget_id_mapping[key].id] = widget
+    # Merging visual description...
 
-            operators_views = {}
-            for key, operator in six.iteritems(wiring_view['operators']):
-                operators_views[ioperator_id_mapping[key]] = operator
+    _remap_component_ids(id_mapping, mashup_description['wiring']['visualdescription']['components'])
+    _remap_connection_endpoints(source_mapping, target_mapping, mashup_description['wiring']['visualdescription'])
 
-            wiring_status['views'].append({
-                'iwidgets': iwidgets_views,
-                'operators': operators_views,
-                'label': wiring_view['label'],
-                'multiconnectors': {},
-                'connections': []
-            })
+    # Remap mashup description behaviours' ids
+    if len(mashup_description['wiring']['visualdescription']['behaviours']) != 0:
+        for behaviour in mashup_description['wiring']['visualdescription']['behaviours']:
+            _remap_component_ids(id_mapping, behaviour['components'])
+            _remap_connection_endpoints(source_mapping, target_mapping, behaviour)
 
-    workspace.wiringStatus = json.dumps(wiring_status)
+    if len(workspace_wiring_status['visualdescription']['behaviours']) != 0 or len(mashup_description['wiring']['visualdescription']['behaviours']) != 0:
+        if len(workspace_wiring_status['visualdescription']['behaviours']) == 0 and not is_empty_wiring(workspace_wiring_status['visualdescription']):
+            # *TODO* flag to check if the user really want to merge both workspaces.
+            _create_new_behaviour(workspace_wiring_status['visualdescription'], _("Original wiring"), _("This is the wiring description of the original workspace"))
+
+        if len(mashup_description['wiring']['visualdescription']['behaviours']) == 0:
+            _create_new_behaviour(mashup_description['wiring']['visualdescription'], _("Merged wiring"), _("This is the wiring descriptoin of the merged mashup."))
+
+        workspace_wiring_status['visualdescription']['behaviours'] += mashup_description['wiring']['visualdescription']['behaviours']
+
+    # Merge global behaviour components and connections
+    workspace_wiring_status['visualdescription']['components']['operator'].update(mashup_description['wiring']['visualdescription']['components']['operator'])
+    workspace_wiring_status['visualdescription']['components']['widget'].update(mashup_description['wiring']['visualdescription']['components']['widget'])
+    workspace_wiring_status['visualdescription']['connections'] += mashup_description['wiring']['visualdescription']['connections']
+
+    # save new wiring status
+    workspace.wiringStatus = json.dumps(workspace_wiring_status)
 
     # Forced values
     if workspace.forcedValues is not None and workspace.forcedValues != '':

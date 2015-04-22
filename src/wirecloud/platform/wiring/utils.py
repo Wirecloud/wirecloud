@@ -99,6 +99,11 @@ def get_wiring_skeleton():
         }
     }
 
+
+def is_empty_wiring(visualInfo):
+    return len(visualInfo['connections']) == 0 and len(visualInfo['components']['operator']) == 0 and len(visualInfo['components']['widget']) == 0
+
+
 def parse_wiring_old_version(wiring_status):
 
     # set the structure for version 2.0
@@ -113,7 +118,7 @@ def parse_wiring_old_version(wiring_status):
     if 'connections' in wiring_status:
         for connection in wiring_status['connections']:
             new_version['connections'].append({
-                'readonly': connection['readOnly'] if 'readOnly' in connection else False,
+                'readonly': connection.get('readonly', connection.get('readOnly', False)),
                 'source': {
                     'type': rename_component_type(connection['source']['type']),
                     'id': connection['source']['id'],

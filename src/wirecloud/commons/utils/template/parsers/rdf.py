@@ -27,6 +27,7 @@ from six import text_type
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
 from wirecloud.commons.utils.http import parse_mime_type
+from wirecloud.platform.wiring.utils import parse_wiring_old_version
 
 # Namespaces used by rdflib
 WIRE = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/widget#")
@@ -282,7 +283,7 @@ class RDFTemplateParser(object):
                     'name': self._get_field(RDFS, 'label', wrequirement, required=True),
                 })
 
-    def _parse_wiring_info(self, wiring_property='hasPlatformWiring', parse_connections=False):
+    def _parse_wiring_info(self, wiring_property='hasPlatformWiring'):
 
         self._info['wiring'] = {
             'inputs': [],
@@ -291,12 +292,11 @@ class RDFTemplateParser(object):
 
         # method self._graph.objects always returns an iterable object not subscriptable,
         # althought only exits one instance
-        wiring_type = WIRE
+        wiring_type = WIRE_M if self._info['type'] == 'mashup' else WIRE
+        wiring_element = self._get_field(wiring_type, wiring_property, self._rootURI, id_=True, required=False)
 
         if self._info['type'] == 'mashup':
-            wiring_type = WIRE_M
-
-        wiring_element = self._get_field(wiring_type, wiring_property, self._rootURI, id_=True, required=False)
+            self._info['wiring']['version'] = self._get_field(USDL, 'versionInfo', wiring_element, default="1.0", required=False)
 
         sorted_inputs = sorted(self._graph.objects(wiring_element, WIRE['hasInputEndpoint']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source, required=False)))
 
@@ -323,10 +323,22 @@ class RDFTemplateParser(object):
                 'friendcode': self._get_field(WIRE, 'friendcode', output_endpoint, required=False),
             })
 
-        if parse_connections:
+        if self._info['type'] == 'mashup':
             self._parse_wiring_connection_info(wiring_element)
             self._parse_wiring_operator_info(wiring_element)
-            self._parse_wiring_views(wiring_element)
+
+            if self._info['wiring']['version'] == '1.0':
+                self._parse_wiring_views(wiring_element)
+
+                # TODO: update to the new wiring format
+                inputs = self._info['wiring']['inputs']
+                outputs = self._info['wiring']['outputs']
+                self._info['wiring'] = parse_wiring_old_version(self._info['wiring'])
+                self._info['wiring']['inputs'] = inputs
+                self._info['wiring']['outputs'] = outputs
+                # END TODO
+            else:
+                self._parse_wiring_behaviours(wiring_element)
 
     def _parse_wiring_connection_info(self, wiring_element):
 
@@ -381,6 +393,103 @@ class RDFTemplateParser(object):
                 }
 
             self._info['wiring']['operators'][operator_info['id']] = operator_info
+
+    def _parse_wiring_components(self, element, behaviour, globalView=False):
+
+        behaviour['components'] = {
+            'operator': {},
+            'widget': {}
+        }
+
+        for entity_view in self._graph.objects(element, WIRE_M['hasView']):
+
+            type_ = self._get_field(WIRE, 'type', entity_view)
+            id_ = self._get_field(WIRE, 'id', entity_view)
+
+            component_view_description = behaviour['components'][type_][id_] = {}
+
+            if type == 'widget' and globalView:
+                import ipdb;
+                component_view_description['name'] = self._get_field(WIRE, 'name', entity_view)
+
+            sorted_sources = sorted(self._graph.objects(entity_view, WIRE_M['hasSource']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source, required=False)))
+            sorted_targets = sorted(self._graph.objects(entity_view, WIRE_M['hasTarget']), key=lambda target: possible_int(self._get_field(WIRE, 'index', target, required=False)))
+
+            if len(sorted_sources) > 0 or len(sorted_targets) > 0:
+                component_view_description['endpoints'] = {}
+                component_view_description['endpoints']['source'] = [self._get_field(RDFS, 'label', sourc) for sourc in sorted_sources]
+                component_view_description['endpoints']['target'] = [self._get_field(RDFS, 'label', targ) for targ in sorted_targets]
+
+            position = self._parse_position(entity_view)
+            if position is not None:
+                component_view_description['position'] = position
+
+    def _parse_position(self, node, relation_name='hasPosition'):
+            position_node = self._get_field(WIRE_M, relation_name, node, id_=True, default=None, required=False)
+            if position_node is not None:
+                return {
+                    'x': int(self._get_field(WIRE_M, 'x', position_node)),
+                    'y': int(self._get_field(WIRE_M, 'y', position_node))
+                }
+
+            return None
+
+    def _join_endpoint_name(self, endpointView):
+        endpoint = {
+            'id': self._get_field(WIRE_M, 'id', endpointView),
+            'endpoint': self._get_field(WIRE_M, 'endpoint', endpointView),
+            'type': self._get_field(WIRE, 'type', endpointView),
+        }
+
+        return "%s/%s/%s" % (endpoint['type'], endpoint['id'], endpoint['endpoint'])
+
+    def _parse_wiring_connections(self, element, behaviour):
+
+        behaviour['connections'] = []
+
+        for connection in self._graph.objects(element, WIRE_M['hasConnectionView']):
+            connection_info = {}
+
+            for source in self._graph.objects(connection, WIRE_M['hasSourceEndpoint']):
+                connection_info['sourcename'] = self._join_endpoint_name(source)
+                break
+            else:
+                raise TemplateParseException(_('missing required field: hasSourceEndpoint'))
+
+            connection_info['sourcehandle'] = self._parse_position(connection, relation_name='hasSourcePosition')
+
+            for target in self._graph.objects(connection, WIRE_M['hasTargetEndpoint']):
+                connection_info['targetname'] = self._join_endpoint_name(target)
+                break
+            else:
+                raise TemplateParseException(_('missing required field: hasTargetEndpoint'))
+
+            connection_info['targethandle'] = self._parse_position(connection, relation_name='hasTargetPosition')
+
+            behaviour['connections'].append(connection_info)
+
+    def _parse_wiring_behaviours(self, wiring_element):
+
+        visualdescription = {
+            'behaviours': [],
+        }
+
+        self._parse_wiring_components(wiring_element, visualdescription)
+        self._parse_wiring_connections(wiring_element, visualdescription)
+
+        sorted_behaviours = sorted(self._graph.objects(wiring_element, WIRE_M['hasWiringBehaviour']), key=lambda behaviour: possible_int(self._get_field(WIRE, 'index', behaviour, required=False)))
+        for view in sorted_behaviours:
+            behaviour = {
+                'title': self._get_field(RDFS, 'label', view),
+                'description': self._get_field(RDFS, 'label', view),
+            }
+
+            self._parse_wiring_components(view, behaviour)
+            self._parse_wiring_connections(view, behaviour)
+
+            visualdescription['behaviours'].append(behaviour)
+
+        self._info['wiring']['visualdescription'] = visualdescription
 
     def _parse_wiring_views(self, wiring_element):
 
@@ -621,7 +730,7 @@ class RDFTemplateParser(object):
 
         self._info['tabs'] = tabs
 
-        self._parse_wiring_info(wiring_property='hasMashupWiring', parse_connections=True)
+        self._parse_wiring_info(wiring_property='hasMashupWiring')
         #wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
 
     def typeText2typeCode(self, typeText):

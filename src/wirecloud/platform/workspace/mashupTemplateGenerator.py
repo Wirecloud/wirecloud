@@ -28,6 +28,7 @@ from wirecloud.commons.utils.template.base import parse_contacts_info
 from wirecloud.commons.utils.template.writers import rdf
 from wirecloud.commons.utils.template.writers import xml
 from wirecloud.platform.models import IWidget
+from wirecloud.platform.wiring.utils import get_wiring_skeleton, parse_wiring_old_version
 from wirecloud.platform.workspace.utils import VariableValueCacheManager
 
 
@@ -232,11 +233,13 @@ def build_json_template_from_workspace(options, workspace, user):
     try:
         wiring_status = json.loads(workspace.wiringStatus)
     except:
-        wiring_status = {
-            "operators": {},
-            "connections": [],
-        }
+        wiring_status = get_wiring_skeleton()
 
+    # Set the wiring status' version
+    if wiring_status.get('version', '1.0') == '1.0':
+        wiring_status = parse_wiring_old_version(wiring_status)
+
+    options['wiring']['version'] = '2.0'
     options['wiring']['operators'] = {}
     for id_, operator in six.iteritems(wiring_status['operators']):
         operator_data = {
@@ -286,7 +289,7 @@ def build_json_template_from_workspace(options, workspace, user):
             'readonly': readOnlyConnectables,
         })
 
-    options['wiring']['views'] = wiring_status.get('views', ())
+    options['wiring']['visualdescription'] = wiring_status['visualdescription']
 
     embedded = options['embedded']
     options['embedded'] = []
