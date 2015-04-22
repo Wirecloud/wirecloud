@@ -666,6 +666,7 @@ class WiringComponentEditableTester(object):
 
     def __enter__(self):
         self.component.display_preferences().click_entry("Sort endpoints")
+        WebDriverWait(self.testcase.driver, 2).until(lambda driver: len(driver.find_elements_by_css_selector('.endpoints.endpoint-sorting')) > 0)
 
         return self
 
@@ -740,7 +741,10 @@ class WiringConnectionTester(object):
         return "selected" in self.class_list
 
     def click(self):
-        self.element.find_element_by_css_selector(".connection-body").click()
+        if self.element.is_displayed():
+            self.element.find_element_by_css_selector(".connection-body").click()
+        else:
+            ActionChains(self.testcase.driver).click(self.element).perform()
 
         if self.readonly:
             self.testcase.assertFalse(self.btn_remove.displayed)
@@ -1496,13 +1500,14 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
         if not button.active:
             button.click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.panel))
 
         return self
 
     def __exit__(self, type, value, traceback):
         button = self.btn_list_behaviours
-        self.testcase.assertTrue(button.active)
         button.click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.panel))
 
     @property
     def active_behaviour(self):
@@ -1601,13 +1606,14 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
         if not button.active:
             button.click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.panel))
 
         return self
 
     def __exit__(self, type, value, traceback):
         button = self.btn_list_components
-        self.testcase.assertTrue(button.active)
         button.click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.panel))
 
     @property
     def btn_show_operator_group(self):
@@ -1650,7 +1656,9 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         ActionChains(self.testcase.driver).click_and_hold(component.element).move_to_element_with_offset(self.section_diagram, x, y).release().perform()
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)))
 
-        return self._find_component_by_title(component_type, component_title)
+        new_component = self._find_component_by_title(component_type, component_title)
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(new_component.element))
+        return new_component
 
     def display_component_group(self, component_type):
         button = getattr(self, "btn_show_%s_group" % component_type)
