@@ -36,8 +36,7 @@ from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
 from django.test.client import Client
 from django.utils import translation
-from django.utils.importlib import import_module
-from six import string_types, text_type
+from six import text_type
 
 from wirecloud.platform.localcatalogue.utils import install_resource
 from wirecloud.platform.widget import utils as showcase
@@ -689,47 +688,32 @@ def get_configured_browsers():
     return getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', DEFAULT_BROWSER_CONF)
 
 
-def wirecloud_selenium_test_case(classes, namespace=None, browsers=None):
+def wirecloud_selenium_test_case(klass_instance, browsers=None):
 
     if browsers is None:
         browsers = get_configured_browsers()
 
-    try:
-        iter(classes)
-    except TypeError:
-        classes = (classes,)
+    for browser_name in browsers:
+        browser = browsers[browser_name]
+        tests_class_name = browser_name + klass_instance.__name__
 
-    for class_name in classes:
-        for browser_name in browsers:
-            browser = browsers[browser_name]
+        new_klass = type(
+            tests_class_name,
+            (klass_instance,),
+            {
+                '__test__': True,
+                '_webdriver_class': browser['CLASS'],
+                '_webdriver_args': browser.get('ARGS', None),
+            }
+        )
 
-            if isinstance(class_name, string_types):
-                module_name, klass_name = class_name.rsplit('.', 1)
-                tests_class_name = browser_name + klass_name
-                module = import_module(module_name)
-                klass_instance = getattr(module, klass_name)
-            else:
-                tests_class_name = browser_name + class_name.__name__
-                klass_instance = class_name
+        klass_namespace = sys.modules[klass_instance.__module__]
 
-            new_klass = type(
-                tests_class_name,
-                (klass_instance,),
-                {
-                    '__test__': True,
-                    '_webdriver_class': browser['CLASS'],
-                    '_webdriver_args': browser.get('ARGS', None),
-                }
-            )
+        try:
+            setattr(klass_namespace, tests_class_name, new_klass)
+        except AttributeError:
+            klass_namespace[tests_class_name] = new_klass
 
-            if namespace is not None:
-                klass_namespace = namespace
-            else:
-                klass_namespace = sys.modules[klass_instance.__module__]
+    return klass_instance
 
-            try:
-                setattr(klass_namespace, tests_class_name, new_klass)
-            except AttributeError:
-                klass_namespace[tests_class_name] = new_klass
 wirecloud_selenium_test_case.__test__ = False
-build_selenium_test_cases = wirecloud_selenium_test_case

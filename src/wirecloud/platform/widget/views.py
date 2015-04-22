@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,9 +27,9 @@ from six.moves.urllib.request import url2pathname
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
-from django.utils.encoding import smart_str
 from django.utils.http import urlunquote
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET
@@ -39,7 +39,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
-from wirecloud.commons.utils.http import build_response, get_absolute_reverse_url, get_current_domain
+from wirecloud.commons.utils.http import build_response, build_sendfile_response, get_absolute_reverse_url, get_current_domain
 import wirecloud.platform.widget.utils as showcase_utils
 from wirecloud.platform.widget.utils import WIDGET_ERROR_FORMATTERS, fix_widget_code
 
@@ -146,19 +146,21 @@ class WidgetCodeEntry(Resource):
 def serve_showcase_media(request, vendor, name, version, file_path):
 
     resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
+    if resource.resource_type() not in ['widget', 'operator']:
+        raise Http404()
+
     # For now, all widgets are freely accessible/distributable
     #if not resource.is_available_for(request.user):
     #    return build_error_response(request, 403, "Forbidden")
 
     base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
-    local_path = os.path.join(base_dir, url2pathname(file_path))
-
-    if not os.path.isfile(local_path):
-        return HttpResponse(status=404)
 
     if not getattr(settings, 'USE_XSENDFILE', False):
-        return serve(request, file_path, document_root=base_dir)
+        response = serve(request, file_path, document_root=base_dir)
     else:
-        response = HttpResponse()
-        response['X-Sendfile'] = smart_str(local_path)
-        return response
+        response = build_sendfile_response(file_path, base_dir)
+
+    if response.status_code == 302:
+        response['Location'] = reverse('wirecloud_catalogue.media', kwargs= {"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
+
+    return response

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -37,13 +37,14 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.commons.utils.expected_conditions import element_be_still
-from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 from wirecloud.platform import plugins
 from wirecloud.platform.workspace.models import Workspace
 from wirecloud.platform.workspace.utils import set_variable_value
 
 
-# Avoid nose to repeat these tests (they are run through wirecloud/tests.py)
+
+# Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
 __test__ = False
 
 SELENIUM_VERSION = tuple(selenium.__version__.split('.'))
@@ -346,6 +347,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
         self.assertEqual(final_code, expected_code)
 
 
+@wirecloud_selenium_test_case
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
@@ -816,6 +818,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, 'preferences changed: test_logging')
 
 
+@wirecloud_selenium_test_case
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
@@ -965,6 +968,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(wiring_entities), 0)
 
 
+@wirecloud_selenium_test_case
 class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
@@ -1630,6 +1634,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(operators), 1)
 
 
+@wirecloud_selenium_test_case
 class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
@@ -1728,6 +1733,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(ioperator.get_wiring_endpoint('input1').pos, 1)
 
 
+@wirecloud_selenium_test_case
 class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
@@ -1895,6 +1901,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, 'second hello world!!')
 
 
+@wirecloud_selenium_test_case
 class StickyEffectTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
@@ -1951,6 +1958,7 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, 'hello world!!')
 
 
+@wirecloud_selenium_test_case
 class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')

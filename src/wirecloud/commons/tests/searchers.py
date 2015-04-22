@@ -25,6 +25,10 @@ from django.core.urlresolvers import reverse
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
+__test__ = False
+
+
 class UserSearcherTestCase(WirecloudTestCase):
 
     fixtures = ('user_search_test_data',)

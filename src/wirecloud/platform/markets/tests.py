@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,12 +22,13 @@ import os
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.platform.models import Market
-from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
 __test__ = False
 
 
+@wirecloud_selenium_test_case
 class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
 
     servers = {

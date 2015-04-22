@@ -18,16 +18,22 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from io import BytesIO
+import os
 import zipfile
 
-from django.http import UnreadablePostError
+from django.http import Http404, UnreadablePostError
 from django.test import TestCase
 from mock import patch, Mock
 
 from wirecloud.commons.utils.html import clean_html
+from wirecloud.commons.utils.http import build_sendfile_response
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
 from wirecloud.commons.utils.wgt import WgtFile
+
+
+# Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
+__test__ = False
 
 
 class HTMLCleanupTestCase(TestCase):
@@ -124,6 +130,7 @@ class WGTTestCase(TestCase):
 
         with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
             with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                os_mock.path.normpath = os.path.normpath
                 wgt_file = self.build_simple_wgt()
                 self.assertRaises(KeyError, wgt_file.extract_dir, 'doc', '/tmp/test')
                 self.assertEqual(os_mock.makedirs.call_count, 0)
@@ -134,6 +141,7 @@ class WGTTestCase(TestCase):
 
         with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
             with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                os_mock.path.normpath = os.path.normpath
                 os_mock.path.exists.return_value = False
                 wgt_file = self.build_simple_wgt(other_files=('doc/',))
                 wgt_file.extract_dir('doc', '/tmp/test')
@@ -146,6 +154,7 @@ class WGTTestCase(TestCase):
 
         with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
             with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                os_mock.path.normpath = os.path.normpath
                 os_mock.path.exists.return_value = True
                 wgt_file = self.build_simple_wgt(other_files=('doc/',))
                 wgt_file.extract_dir('doc', '/tmp/test')
@@ -167,6 +176,7 @@ class WGTTestCase(TestCase):
         with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
             with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
 
+                os_mock.path.normpath = os.path.normpath
                 os_mock.path.exists.side_effect = exists_side_effect
                 os_mock.sep = '/'
                 wgt_file = self.build_simple_wgt(other_files=('doc/folder1/', 'doc/folder1/file1', 'doc/folder1/file2', 'doc/folder2/folder3/file3'))
@@ -180,6 +190,7 @@ class WGTTestCase(TestCase):
 
         with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
             with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                os_mock.path.normpath = os.path.normpath
                 os_mock.path.exists.return_value = False
                 os_mock.sep = '/'
                 wgt_file = self.build_simple_wgt(other_files=('folder1/', 'folder2/'))
@@ -191,8 +202,51 @@ class WGTTestCase(TestCase):
 
         with patch('wirecloud.commons.utils.wgt.os', autospec=True) as os_mock:
             with patch('wirecloud.commons.utils.wgt.open', create=True) as open_mock:
+                os_mock.path.normpath = os.path.normpath
                 wgt_file = self.build_simple_wgt()
                 self.assertRaises(KeyError, wgt_file.extract_file, 'doc/index.md', '/tmp/test')
                 self.assertEqual(os_mock.makedirs.call_count, 0)
                 self.assertEqual(os_mock.mkdir.call_count, 0)
                 self.assertEqual(open_mock.call_count, 0)
+
+    def test_invalid_file(self):
+
+        with self.assertRaises(ValueError):
+            self.build_simple_wgt(other_files=('../../invalid1.html',))
+
+        with self.assertRaises(ValueError):
+            self.build_simple_wgt(other_files=('folder1/../../invalid2.html',))
+
+        with self.assertRaises(ValueError):
+            self.build_simple_wgt(other_files=('/invalid3.html',))
+
+
+class HTTPUtilsTestCase(TestCase):
+
+    tags = ('wirecloud-http-utils',)
+
+    def test_build_sendfile_response(self):
+
+        with patch('wirecloud.commons.utils.http.os.path.isfile', return_value=True):
+            response = build_sendfile_response('file.js', '/folder')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response['X-Sendfile'], '/folder/file.js')
+
+    def test_build_sendfile_response_remove_extra_path_separators(self):
+
+        with patch('wirecloud.commons.utils.http.os.path.isfile', return_value=True) as isfile_mock:
+            response = build_sendfile_response('js///file.js', '/folder')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response['X-Sendfile'], '/folder/js/file.js')
+            isfile_mock.assert_called_once_with('/folder/js/file.js')
+
+    def test_build_sendfile_response_not_found(self):
+
+        with patch('wirecloud.commons.utils.http.os.path.isfile', return_value=False) as isfile_mock:
+            self.assertRaises(Http404, build_sendfile_response, 'js/notfound.js', '/folder')
+
+    def test_build_sendfile_response_redirect_on_invalid_path(self):
+
+        response = build_sendfile_response('../a/../file.js', '/folder')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], 'file.js')

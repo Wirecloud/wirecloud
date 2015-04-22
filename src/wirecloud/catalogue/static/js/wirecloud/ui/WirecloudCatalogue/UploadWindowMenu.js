@@ -210,6 +210,12 @@
                 has_files = e.dataTransfer.types.indexOf('Files') != -1;
             }
             if (has_files) {
+
+                // Support drag and drop from the Chrome's downloads bar
+                var effectAllowed = e.dataTransfer.effectAllowed;
+                e.dataTransfer.dropEffect = ('move' === effectAllowed || 'linkMove' === effectAllowed) ? 'move' : 'copy';
+
+                // Allow drop
                 this.htmlElement.classList.add('drag-hover');
                 this.htmlElement.removeEventListener('dragover', activate_listener, true);
                 document.addEventListener('dragover', Wirecloud.Utils.preventDefaultListener, true);

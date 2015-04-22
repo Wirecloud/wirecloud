@@ -27,13 +27,14 @@ from six.moves.urllib.request import pathname2url, url2pathname
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.db.models import Q
-from django.http import Http404, HttpResponse, HttpResponseNotAllowed
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils.decorators import method_decorator
-from django.utils.encoding import smart_str
 from django.utils.translation import get_language, ugettext as _
+from django.views.decorators.http import require_GET
 from django.views.static import serve
 import markdown
 
@@ -46,28 +47,25 @@ from wirecloud.commons.utils.downloader import download_http_content, download_l
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import build_error_response, consumes, produces, force_trailing_slash
+from wirecloud.commons.utils.http import build_error_response, build_sendfile_response, consumes, produces, force_trailing_slash
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 
 
+@require_GET
 def serve_catalogue_media(request, vendor, name, version, file_path):
 
-    if request.method != 'GET':
-        return HttpResponseNotAllowed(('GET',))
-
     base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
-    local_path = os.path.normpath(os.path.join(base_dir, url2pathname(file_path)))
-
-    if not os.path.isfile(local_path):
-        return HttpResponse(status=404)
 
     if not getattr(settings, 'USE_XSENDFILE', False):
-        return serve(request, file_path, document_root=base_dir)
+        response = serve(request, file_path, document_root=base_dir)
     else:
-        response = HttpResponse()
-        response['X-Sendfile'] = smart_str(local_path)
-        return response
+        response = build_sendfile_response(file_path, base_dir)
+
+    if response.status_code == 302:
+        response['Location'] = reverse('wirecloud_catalogue.media', kwargs= {"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
+
+    return response
 
 
 class ResourceCollection(Resource):

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -47,8 +47,8 @@
     });
     Object.defineProperty(TutorialCatalogue, 'buildTutorialReferences', {
         value: function buildTutorialReferences(tutorial_list) {
-            var wrapper_text = document.createElement('p');
-            wrapper_text.textContent = gettext('If you prefer, you can follow some of these tutorials:');
+            var description = document.createElement('p');
+            description.textContent = gettext('If you prefer, you can follow some of these tutorials:');
 
             var list = document.createElement('ul');
             for (var i = 0; i < tutorial_list.length; i++) {
@@ -64,8 +64,7 @@
                 item.appendChild(link);
                 list.appendChild(item);
             }
-            wrapper_text.appendChild(list);
-            return wrapper_text;
+            return new StyledElements.Fragment([description, list]);
         }
     });
     Object.freeze(TutorialCatalogue);

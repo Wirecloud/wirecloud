@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,7 +19,6 @@
 
 import os
 
-from django.core.cache import cache
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
@@ -52,6 +51,8 @@ def undeploy_operators_on_resource_deletion(sender, instance, **kwargs):
     if resource.resource_type() != 'operator':
         return
 
-    showcase_utils.wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
-    key = '_operator/' + resource.local_uri_part
-    cache.delete(key)
+    try:
+        showcase_utils.wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
+    except:
+        # TODO log this error
+        pass # ignore errors

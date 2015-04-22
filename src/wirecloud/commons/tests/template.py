@@ -32,6 +32,10 @@ from wirecloud.commons.utils.template.writers.xml import write_xml_description
 from wirecloud.commons.utils.template.writers.next_xml import write_xml_description as write_next_xml_description
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
+__test__ = False
+
+
 class TemplateUtilsTestCase(TestCase):
 
     tags = ('template',)

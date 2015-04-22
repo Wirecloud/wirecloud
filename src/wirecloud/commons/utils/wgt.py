@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -36,6 +36,12 @@ class WgtFile(object):
 
     def __init__(self, _file):
         self._zip = zipfile.ZipFile(_file)
+        for filename in self._zip.namelist():
+            normalized_filename = os.path.normpath(filename)
+            if normalized_filename.startswith('../'):
+                raise ValueError('Invalid file name: %s', filename)
+            if normalized_filename.startswith('/'):
+                raise ValueError('Invalid absolute file name: %s', filename)
 
     def get_underlying_file(self):
         return self._zip.fp

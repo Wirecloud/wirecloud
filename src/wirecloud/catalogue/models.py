@@ -82,13 +82,23 @@ class CatalogueResource(models.Model):
         return self.vendor + '/' + self.short_name + '/' + self.version
 
     @property
+    def cache_version_key(self):
+        return '_catalogue_resource_version/%s' % self.id
+
+    @property
     def cache_version(self):
-        version = cache.get('_catalogue_resource_version/' + str(self.id))
+        version = cache.get(self.cache_version_key)
         if version is None:
             version = random.randrange(1, 100000)
-            cache.set('_catalogue_resource_version/' + str(self.id), version)
+            cache.set(self.cache_version_key, version)
 
         return version
+
+    def invalidate_cache(self):
+        try:
+            cache.incr(self.cache_version_key)
+        except ValueError:
+            pass
 
     def is_available_for(self, user):
 
@@ -112,17 +122,21 @@ class CatalogueResource(models.Model):
 
         from wirecloud.catalogue.utils import wgt_deployer
 
-        # Undeploy the resource from the filesystem
-        wgt_deployer.undeploy(self.vendor, self.short_name, self.version)
-
         old_id = self.id
         super(CatalogueResource, self).delete(*args, **kwargs)
 
-        # Remove cache for this resource
+        # Preserve the id attribute a bit more so CatalogueResource methods can use it
+        self.id = old_id
+
+        # Undeploy the resource from the filesystem
         try:
-            cache.incr('_catalogue_resource_version/' + str(old_id))
-        except ValueError:
-            pass
+            wgt_deployer.undeploy(self.vendor, self.short_name, self.version)
+        except:
+            # TODO log this error
+            pass  # ignore errors
+
+        # Remove cache for this resource
+        self.invalidate_cache()
 
         # Remove document from search indexes
         try:
@@ -130,6 +144,9 @@ class CatalogueResource(models.Model):
                 writer.delete_by_term('pk', '%s' % old_id)
         except:
             pass  # ignore errors
+
+        # Remove id attribute definetly
+        self.id = None
 
     def resource_type(self):
         return self.RESOURCE_TYPES[self.type]

@@ -98,7 +98,16 @@ Nicolas Perriault (nperriault@gmail.com)
                         <img class="fiware-lab-ops-logo" src="fiwaretheme/images/FIWARE-lab-ops-full.png"/>
                         {% else %}
 
-                        <header class="slide-header">{{ slide.header }}</header>
+                        {% if 'tutorialhard' in slide.classes %}
+                        <div class="tutorial-level">Hard</div>
+                        {% elif 'tutorialmedium' in slide.classes %}
+                        <div class="tutorial-level">Medium</div>
+                        {% elif 'tutorialeasy' in slide.classes %}
+                        <div class="tutorial-level">Easy</div>
+                        {% endif %}
+                        <header class="slide-header">
+                            {{ slide.header }}
+                        </header>
                         {% if slide.content %}
                         <div class="contents">{{ slide.content }}</div>
                         {% endif %}

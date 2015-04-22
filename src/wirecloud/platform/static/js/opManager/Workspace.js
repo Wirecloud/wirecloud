@@ -151,30 +151,6 @@ function Workspace(workspaceState, resources) {
 
         layoutManager.logStep('');
         Wirecloud.GlobalLogManager.log(gettext('Workspace loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
-
-        // tutorial layer for empty workspaces
-        this.emptyWorkspaceInfoBox = document.createElement('div');
-        this.emptyWorkspaceInfoBox.className = 'emptyWorkspaceInfoBox';
-        var subBox = document.createElement('div');
-        subBox.className = 'alert alert-info alert-block';
-
-        // Title
-        var pTitle = document.createElement('h4');
-        pTitle.textContent = gettext("Hey! Welcome to WireCloud! This is an empty workspace");
-        subBox.appendChild(pTitle);
-
-        // Message
-        var message = document.createElement('p');
-        message.innerHTML = gettext("To create really impressive mashup applications, the first step to take is always to add widgets in this area. To do so, please surf the <strong>Marketplace</strong> the place where resources are all in there, by clicking on the proper button up in the right corner!");
-        subBox.appendChild(message);
-
-        subBox.appendChild(Wirecloud.TutorialCatalogue.buildTutorialReferences(['basic-concepts']));
-
-        this.emptyWorkspaceInfoBox.appendChild(subBox);
-        this.notebook.getTabByIndex(0).wrapperElement.appendChild(this.emptyWorkspaceInfoBox);
-        if (this.getIWidgets().length !== 0) {
-            this.emptyWorkspaceInfoBox.classList.add('hidden');
-        }
     }
 
     var onError = function (transport, e) {
@@ -373,13 +349,35 @@ function Workspace(workspaceState, resources) {
 
     Workspace.prototype.initGUI = function initGUI() {
 
+        var workspace_view = LayoutManagerFactory.getInstance().viewsByName.workspace;
+
         this.notebook.addEventListener("tabDeletion", function (notebook, tab) {
             delete this.tabInstances[tab.id];
             delete this.tabsByName[tab.getName()];
         }.bind(this));
 
+        // tutorial layer for empty workspaces
+        this.emptyWorkspaceInfoBox = document.createElement('div');
+        this.emptyWorkspaceInfoBox.className = 'emptyWorkspaceInfoBox';
+        var subBox = document.createElement('div');
+        subBox.className = 'alert alert-info alert-block';
+        var builder = new StyledElements.GUIBuilder();
+
         if (this.isAllowed('edit')) {
             this.notebook.addEventListener('newTab', this.addTab.bind(this));
+
+            var message = gettext("<h4>Hey! Welcome to WireCloud! This is an empty workspace</h4><p>The first step for creating impressive mashup applications is to add widgets into this area. To do so, click on the add widget button (<t:addwidgetbutton/>) available on the top right part of the user interface.</p>");
+            var message_fragment = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, {addwidgetbutton: workspace_view.buildAddWidgetButton.bind(workspace_view)});
+            message_fragment.insertInto(subBox);
+
+            var references = Wirecloud.TutorialCatalogue.buildTutorialReferences(['basic-concepts']);
+            references.insertInto(subBox);
+
+            this.emptyWorkspaceInfoBox.appendChild(subBox);
+            this.notebook.getTabByIndex(0).wrapperElement.appendChild(this.emptyWorkspaceInfoBox);
+            if (this.getIWidgets().length !== 0) {
+                this.emptyWorkspaceInfoBox.classList.add('hidden');
+            }
         }
 
         if (Wirecloud.Utils.isFullscreenSupported()) {
@@ -424,7 +422,7 @@ function Workspace(workspaceState, resources) {
             this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://conwet.fi.upm.es/wirecloud/', '_blank')});
         }
 
-        LayoutManagerFactory.getInstance().viewsByName.workspace.repaint();
+        workspace_view.repaint();
     };
 
     Workspace.prototype.getIWidget = function(iwidgetId) {

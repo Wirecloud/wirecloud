@@ -36,6 +36,10 @@ from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
+__test__ = False
+
+
 def check_default_settings_values(test):
 
     test.assertEqual(test.driver.find_element_by_id('listPref').text, 'default')
@@ -45,6 +49,7 @@ def check_default_settings_values(test):
     test.assertEqual(test.driver.find_element_by_id('passwordPref').text, 'default')
 
 
+@wirecloud_selenium_test_case
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
@@ -1191,7 +1196,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             old_width_from_context = int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text)
             self.assertEqual(old_width_from_context, 6)
 
-        # Change layout type (to gridlayout)
+        # Change columns to 10
         self.open_menu().click_entry('Settings')
         workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.window_menu.workspace_preferences')
 
@@ -1233,6 +1238,45 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             )
 
         return size_from_context, size_in_pixels_from_context
+
+    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.0.wgt', shared=True)
+    def test_basic_layout_parameter_change_several_widgets(self):
+
+        self.login(username="admin", next="/admin/GridLayoutTests")
+
+        iwidgets = self.get_current_iwidgets()
+        old_size_from_context1, old_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0])
+        old_size_from_context2, old_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
+
+        # Change columns to 10
+        self.open_menu().click_entry('Settings')
+        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.window_menu.workspace_preferences')
+
+        workspace_preferences_dialog.find_element_by_css_selector('.icon-cogs').click()
+        layout_settings_dialog = self.wait_element_visible_by_css_selector('.window_menu.layout_settings')
+        columns_input = layout_settings_dialog.find_element_by_css_selector('[name="columns"]')
+        self.fill_form_input(columns_input, '10')
+        layout_settings_dialog.find_element_by_xpath("//*[text()='Accept']").click()
+
+        workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
+
+        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(iwidgets[0].element))
+
+        # Check new widget 1 sizes
+        new_size_from_context1, new_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0])
+        self.assertNotEqual(new_size_from_context1[0], old_size_from_context1[0])
+        self.assertEqual(new_size_from_context1[1], old_size_from_context1[1])
+        self.assertNotEqual(new_size_in_pixels_from_context1[0], old_size_in_pixels_from_context1[0])
+        #self.assertEqual(new_size_in_pixels_from_context1[1], old_size_in_pixels_from_context1[1])
+
+        # Check new widget 1 sizes
+        new_size_from_context2, new_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
+        self.assertNotEqual(new_size_from_context2[0], old_size_from_context2[0])
+        self.assertEqual(new_size_from_context2[1], old_size_from_context2[1])
+        self.assertNotEqual(new_size_in_pixels_from_context2[0], old_size_in_pixels_from_context2[0])
+        #self.assertEqual(new_size_in_pixels_from_context2[1], old_size_in_pixels_from_context2[1])
+    test_basic_layout_parameter_change_several_widgets.tags = ('wirecloud-selenium', 'dragboard')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_layout_type_change(self):

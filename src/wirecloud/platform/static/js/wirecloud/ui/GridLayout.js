@@ -151,7 +151,7 @@
         oldLayout = oldLayout ? oldLayout : this;
         fullSize = oldLayout.padWidth(fullSize);
 
-        var paddedFullSizeInCells = Math.ceil(this.fromPixelsToHCells(fullSize));
+        var paddedFullSizeInCells = Math.round(this.fromPixelsToHCells(fullSize));
         var paddedFullSize = this.fromHCellsToPixels(paddedFullSizeInCells);
 
         return new Wirecloud.ui.MultiValuedSize(contentWidth + (paddedFullSize - fullSize), paddedFullSizeInCells);

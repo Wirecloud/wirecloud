@@ -303,7 +303,7 @@
     ObjectStorageAPI.prototype.listContainer = function listContainer(container, options) {
         var url, headers;
 
-        url = this.url + encodeURIComponent(container);
+        url = this.url + encodeURIComponent(container) + '/';
 
         options = merge({
             token: this.token

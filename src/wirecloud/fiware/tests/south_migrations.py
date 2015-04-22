@@ -26,6 +26,10 @@ import six
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
+__test__ = False
+
+
 class TestQueryResult(object):
 
     def __init__(self, result):

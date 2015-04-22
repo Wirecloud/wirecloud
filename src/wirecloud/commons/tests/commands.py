@@ -31,6 +31,10 @@ from whoosh import fields, index
 from wirecloud.commons.searchers import get_available_search_engines
 
 
+# Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
+__test__ = False
+
+
 @patch('wirecloud.commons.management.commands.resetsearchindexes.locale.getdefaultlocale', return_value=("en_US",))
 class ResetSearchIndexesCommandTestCase(TestCase):
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -16,6 +16,8 @@
 
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import unicode_literals
 
 import os
 import random
@@ -46,18 +48,18 @@ class XHTML(models.Model):
         return self.uri
 
     def get_cache_key(self, domain, mode):
-        version = cache.get('_widget_xhtml_version/' + str(self.id))
+        version = cache.get('_widget_xhtml_version/%s' % self.id)
         if version is None:
             version = random.randrange(1, 100000)
-            cache.set('_widget_xhtml_version/' + str(self.id), version)
+            cache.set('_widget_xhtml_version/%s' % self.id, version)
 
-        return '_widget_xhtml/' + str(version) + '/' + domain + '/' + str(self.id) + '?mode=' + mode
+        return '_widget_xhtml/%s/%s/%s?mode=%s' % (version, domain, self.id, mode)
 
     def delete(self, *args, **kwargs):
         old_id = self.id
         super(XHTML, self).delete(*args, **kwargs)
         try:
-            cache.incr('_widget_xhtml_version/' + str(old_id))
+            cache.incr('_widget_xhtml_version/%s' % old_id)
         except ValueError:
             pass
 
@@ -157,7 +159,7 @@ class VariableDef(models.Model):
 def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs):
 
     from wirecloud.catalogue import utils as catalogue
-    from wirecloud.platform.widget.utils import create_widget_from_template, create_widget_from_wgt
+    from wirecloud.platform.widget.utils import create_widget_from_wgt
 
     if not created or raw:
         return

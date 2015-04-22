@@ -54,7 +54,7 @@
             if (key === 'workspace_name' || key === 'workspace_creator') {
                 continue;
             }
-            hash += '&' + encodeURI(key) + '=' + encodeURI(data[key]);
+            hash += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
         }
 
         return window.location.protocol + "//" +
