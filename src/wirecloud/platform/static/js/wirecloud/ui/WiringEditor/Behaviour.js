@@ -366,15 +366,15 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      */
     Behaviour.prototype.updateComponent = function updateComponent(componentType, componentId, componentView) {
         if (typeof componentView === 'undefined') {
-            if (!this.containsComponent(componentType, componentId)) {
-                this.components[componentType][componentId] = {};
+            componentView = {};
+        }
+
+        if (this.containsComponent(componentType, componentId) && this.hasComponentView(componentType, componentId)) {
+            if (Object.keys(componentView).length > 0) {
+                this.components[componentType][componentId] = componentView;
             }
         } else {
-            if ('position' in componentView) {
-                this.components[componentType][componentId] = {
-                    'position': componentView.position
-                };
-            }
+            this.components[componentType][componentId] = componentView;
         }
 
         updateCounterList.call(this);

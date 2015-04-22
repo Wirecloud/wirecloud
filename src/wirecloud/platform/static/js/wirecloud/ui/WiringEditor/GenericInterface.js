@@ -222,26 +222,20 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                         if ((sleek=state)) {
                             this.onbackground = false;
                             this.hidden = false;
-                            this.options.element.classList.add('hidden');
+                            this.options.optionRemove.hide();
                             this.wrapperElement.classList.add('sleek');
 
                             for (name in this.sourceEndpoints) {
                                 context = this.sourceEndpoints[name];
                                 context.endpoint.classList.add('hidden');
-
-                                //if (!context.endpointAnchor.hasConnections()) {}
                             }
 
                             for (name in this.targetEndpoints) {
                                 context = this.targetEndpoints[name];
                                 context.endpoint.classList.add('hidden');
-
-                                //if (!context.endpointAnchor.hasConnections()) {}
                             }
                         } else {
-                            this.options.element.classList.remove('hidden');
-                            //this.options.optionPreferences.invisible = false;
-                            //this.options.optionRemove.invisible = false;
+                            this.options.optionRemove.show();
                             this.wrapperElement.classList.remove('sleek');
 
                             for (name in this.sourceEndpoints) {
@@ -527,7 +521,10 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     StyledElements.Utils.inherit(GenericInterface, StyledElements.Container);
 
     GenericInterface.prototype.setVisualInfo = function setVisualInfo(componentView) {
+        this.collapsed = componentView.collapsed;
         this.position = componentView.position;
+
+        return this;
     };
 
     /*************************************************************************
@@ -1965,7 +1962,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         collapsedWidth = this.wrapperElement.offsetWidth;
 
         if (originalWidth - collapsedWidth > 0) {
-            this.wrapperElement.style.left = parseInt(this.wrapperElement.style.left, 10) + ((originalWidth - collapsedWidth) / 2) + 'px';
+            this.wrapperElement.style.left = parseInt(parseInt(this.wrapperElement.style.left, 10) + ((originalWidth - collapsedWidth) / 2), 10) + 'px';
         }
 
         this.endpoints.element.removeChild(this.endpoints.targetsElement);
@@ -1977,11 +1974,11 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         this.options.optionCollapse.toggleIconClass('icon-collapse-top', 'icon-collapse');
         this.options.optionCollapse.setTitle(gettext("Expand"));
 
+        this.repaint();
+
         this.events.collapse.dispatch({
             'id': this.getId()
         });
-
-        this.repaint();
     };
 
     var expandEndpoints = function expandEndpoints() {
@@ -2000,17 +1997,16 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         originalWidth = this.wrapperElement.offsetWidth;
 
         if (originalWidth - collapsedWidth > 0) {
-            this.wrapperElement.style.left = parseInt(this.wrapperElement.style.left, 10) - ((originalWidth - collapsedWidth) / 2) + 'px';
+            this.wrapperElement.style.left = parseInt(parseInt(this.wrapperElement.style.left, 10) - ((originalWidth - collapsedWidth) / 2), 10) + 'px';
         }
 
         this.options.optionCollapse.toggleIconClass('icon-collapse', 'icon-collapse-top');
         this.options.optionCollapse.setTitle(gettext("Collapse"));
+        this.repaint();
 
         this.events.expand.dispatch({
             'id': this.getId()
         });
-
-        this.repaint();
     };
 
     return GenericInterface;

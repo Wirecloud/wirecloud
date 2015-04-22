@@ -1413,11 +1413,11 @@ Wirecloud.ui.WiringEditor = (function () {
         }.bind(this));
 
         widget_interface.addEventListener('collapse', function (componentInfo) {
-            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize());
+            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize(), true);
         }.bind(this));
 
         widget_interface.addEventListener('expand', function (componentInfo) {
-            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize());
+            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize(), true);
         }.bind(this));
 
         widget_interface.addEventListener('sortstop', function (eventTarget) {
@@ -1451,11 +1451,12 @@ Wirecloud.ui.WiringEditor = (function () {
         }.bind(this));
 
         this.layout.content.appendChild(widget_interface);
-        widget_interface.setPosition(_correctComponentPosition.call(this, position));
 
         if (typeof collapsed == 'boolean') {
             widget_interface.collapsed = collapsed;
         }
+
+        widget_interface.setPosition(_correctComponentPosition.call(this, position));
 
         this.events.widgetadded.dispatch();
 
@@ -1770,11 +1771,12 @@ Wirecloud.ui.WiringEditor = (function () {
         }.bind(this));
 
         this.layout.content.appendChild(operator_interface);
-        operator_interface.setPosition(_correctComponentPosition.call(this, position));
 
         if (typeof collapsed == 'boolean') {
             operator_interface.collapsed = collapsed;
         }
+
+        operator_interface.setPosition(_correctComponentPosition.call(this, position));
 
         this.events.operatoradded.dispatch();
 
