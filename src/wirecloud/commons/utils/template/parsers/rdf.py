@@ -481,7 +481,7 @@ class RDFTemplateParser(object):
         for view in sorted_behaviours:
             behaviour = {
                 'title': self._get_field(RDFS, 'label', view),
-                'description': self._get_field(RDFS, 'label', view),
+                'description': self._get_field(DCTERMS, 'description', view),
             }
 
             self._parse_wiring_components(view, behaviour)

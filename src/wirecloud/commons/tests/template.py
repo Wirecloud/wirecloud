@@ -1383,6 +1383,29 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+    def compare_rdf_input_and_output_mashup(self, filename):
+
+        mashup_data = self.read_json_fixtures(filename)
+        template = TemplateParser(write_rdf_description(mashup_data))
+        self.check_full_mashup(template.get_resource_info(), mashup_data)
+
+    def read_json_fixtures(self, *args):
+        testdir_path = os.path.join(os.path.dirname(__file__), 'test-data')
+        json_fixtures = []
+
+        for filename in args:
+            file_opened = open(os.path.join(testdir_path, filename + '.json'))
+            json_fixtures.append(json.loads(file_opened.read()))
+            file_opened.close()
+
+        if len(json_fixtures) == 0:
+            return None
+
+        if len(json_fixtures) == 1:
+            return json_fixtures[0]
+
+        return tuple(json_fixtures)
+
     def read_template(self, *filename):
         f = open(os.path.join(os.path.dirname(__file__), '..', 'test-data', *filename), 'rb')
         contents = f.read()
@@ -1403,6 +1426,15 @@ class TemplateUtilsTestCase(TestCase):
         self.assertItemsEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
         del processed_info['wiring']['connections']
         del mashup_info['wiring']['connections']
+
+        self.assertItemsEqual(processed_info['wiring']['visualdescription']['connections'], mashup_info['wiring']['visualdescription']['connections'])
+        del processed_info['wiring']['visualdescription']['connections']
+        del mashup_info['wiring']['visualdescription']['connections']
+
+        for behaviour1, behaviour2 in zip(processed_info['wiring']['visualdescription']['behaviours'], mashup_info['wiring']['visualdescription']['behaviours']):
+            self.assertItemsEqual(behaviour1['connections'], behaviour2['connections'])
+            del behaviour1['connections']
+            del behaviour2['connections']
 
         self.assertItemsEqual(processed_info['requirements'], mashup_info['requirements'])
         del processed_info['requirements']
@@ -1545,6 +1577,9 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.basic_mashup_info)
     test_rdf_parser_writer_basic_mashup.tags = ('template', 'fiware-ut-14')
+
+    def test_rdf_parser_writer_mashup_with_behaviours(self):
+        self.compare_rdf_input_and_output_mashup("mashup_with_behaviours_data")
 
     def test_rdf_parser_writer_mashup(self):
 
