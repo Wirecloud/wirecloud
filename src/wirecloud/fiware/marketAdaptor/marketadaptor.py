@@ -17,15 +17,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import gevent
+import concurrent.futures
+
+from django.core.cache import cache
+from django.utils.http import urlquote, urlquote_plus
 import requests
 from requests.auth import HTTPBasicAuth
 from six.moves.urllib.error import URLError, HTTPError
 from six.moves.urllib.parse import urljoin, urlparse, urlunparse
 from lxml import etree
-
-from django.core.cache import cache
-from django.utils.http import urlquote, urlquote_plus
 
 from wirecloud.commons.utils.http import parse_mime_type
 from wirecloud.fiware.marketAdaptor.usdlParser import USDLParseException, USDLParser
@@ -91,8 +91,7 @@ def parse_resource_info(offering_resource):
     return resource_info
 
 
-def update_offering_info(ser, store_client, offering_id, token):
-
+def _parse_offering_store_info(ser, store_client, offering_id, token):
     try:
         offering_info = store_client.get_offering_info(offering_id, token)
     except:
@@ -138,6 +137,38 @@ def update_offering_info(ser, store_client, offering_id, token):
     ser['version'] = offering_info['version']
 
 
+def update_offering_info(ser, adaptor, store, name, url, options):
+
+    ser['store'] = store
+    ser['id'] = name
+
+    if ser['uriTemplate'] == '':
+        ser['uriTemplate'] = url
+
+    ser['usdl_url'] = url
+    ser['type'] = 'unknown'
+    ser['resources'] = []
+
+    try:
+
+        offering_parsed_url = urlparse(url)
+        offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
+
+        store_client = adaptor.get_store(store)
+        store_token_key = store + '/token'
+        if store_token_key in options:
+            token = options[store_token_key]
+        else:
+            token = options['idm_token']
+
+        _parse_offering_store_info(ser, store_client, offering_id, token)
+
+    except:
+        pass
+
+    return ser
+
+
 class MarketAdaptor(object):
 
     _marketplace_uri = None
@@ -164,9 +195,8 @@ class MarketAdaptor(object):
 
         return result
 
-    def _parse_offering(self, name, url, parsed_usdl, store, options):
+    def _parse_offering(self, name, url, parsed_usdl, store, options, executor):
 
-        offerings = []
         jobs = []
 
         if isinstance(parsed_usdl, dict):
@@ -174,36 +204,9 @@ class MarketAdaptor(object):
 
         for ser in parsed_usdl:
 
-            ser['store'] = store
-            ser['id'] = name
+            jobs.append(executor.submit(update_offering_info, ser, self, store, name, url, options))
 
-            if ser['uriTemplate'] == '':
-                ser['uriTemplate'] = url
-
-            ser['usdl_url'] = url
-            ser['type'] = 'unknown'
-            ser['resources'] = []
-
-            try:
-
-                offering_parsed_url = urlparse(url)
-                offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
-
-                store_client = self._stores[store]
-                store_token_key = store + '/token'
-                if store_token_key in options:
-                    token = options[store_token_key]
-                else:
-                    token = options['idm_token']
-
-                jobs.append(gevent.spawn(update_offering_info, ser, store_client, offering_id, token))
-
-            except:
-                pass
-
-            offerings.append(ser)
-
-        return offerings, jobs
+        return jobs
 
     def get_all_stores(self):
 
@@ -245,25 +248,23 @@ class MarketAdaptor(object):
 
         parsed_body = etree.fromstring(response.content)
 
-        offerings = []
         jobs = []
 
-        for res in parsed_body.xpath(RESOURCE_XPATH):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            for res in parsed_body.xpath(RESOURCE_XPATH):
 
-            url = res.xpath(URL_XPATH)[0].text
+                url = res.xpath(URL_XPATH)[0].text
 
-            try:
-                parsed_usdl = parse_usdl_from_url(url)
-            except:
-                continue
+                try:
+                    parsed_usdl = parse_usdl_from_url(url)
+                except:
+                    continue
 
-            usdl_offerings, usdl_jobs = self._parse_offering(res.get('name'), url, parsed_usdl, store, options)
-            offerings += usdl_offerings
-            jobs += usdl_jobs
+                jobs += self._parse_offering(res.get('name'), url, parsed_usdl, store, options, executor)
 
-        gevent.joinall(jobs)
+            concurrent.futures.wait(jobs)
 
-        return {'resources': offerings}
+        return {'resources': tuple(job.result() for job in jobs)}
 
     def get_offering_info(self, store, id, options):
 
@@ -279,10 +280,11 @@ class MarketAdaptor(object):
         parsed_usdl = parse_usdl_from_url(url)
 
         self.get_store(store)
-        offerings, jobs = self._parse_offering(id, url, parsed_usdl, store, options)
-        gevent.joinall(jobs)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            jobs = self._parse_offering(id, url, parsed_usdl, store, options, executor)
+            concurrent.futures.wait(jobs)
 
-        return offerings
+        return tuple(job.result() for job in jobs)
 
     def get_store(self, name):
         if name not in self._stores:
@@ -309,25 +311,21 @@ class MarketAdaptor(object):
 
         parsed_body = etree.fromstring(response.content)
 
-        offerings = []
         jobs = []
-        for res in parsed_body.xpath(SEARCH_RESULT_XPATH):
-            service = res.xpath(SEARCH_SERVICE_XPATH)[0]
-            url = service.xpath(URL_XPATH)[0].text
-            service_store = res.xpath(SEARCH_STORE_XPATH)[0].get('name')
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            for res in parsed_body.xpath(SEARCH_RESULT_XPATH):
+                service = res.xpath(SEARCH_SERVICE_XPATH)[0]
+                url = service.xpath(URL_XPATH)[0].text
+                service_store = res.xpath(SEARCH_STORE_XPATH)[0].get('name')
 
-            if store != '' and store != service_store:
-                continue
+                if store != '' and store != service_store:
+                    continue
 
-            try:
-                parsed_usdl = parse_usdl_from_url(url)
-            except:
-                continue
+                try:
+                    parsed_usdl = parse_usdl_from_url(url)
+                except:
+                    continue
 
-            usdl_offerings, usdl_jobs = self._parse_offering(res.get('name'), url, parsed_usdl, service_store, options)
-            offerings += usdl_offerings
-            jobs += usdl_jobs
+                jobs += self._parse_offering(res.get('name'), url, parsed_usdl, service_store, options, executor)
 
-        gevent.joinall(jobs)
-
-        return {'resources': offerings}
+        return {'resources': tuple(job.result() for job in jobs)}

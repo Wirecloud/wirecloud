@@ -18,10 +18,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from distutils.command.install import INSTALL_SCHEMES
 import os
 from setuptools import setup
 from setuptools.command.install import install
-from distutils.command.install import INSTALL_SCHEMES
+import sys
 
 import wirecloud.platform
 
@@ -79,6 +80,12 @@ def include_data_files(path):
 data_files.append(['wirecloud', ['LICENSE']])
 include_data_files('wirecloud')
 
+
+extra_requirements = ()
+if sys.version_info < (3, 2):
+    extra_requirements = ('futures>=2.1.3',)
+
+
 setup(
     name='wirecloud',
     version=wirecloud.platform.__version__,
@@ -103,7 +110,6 @@ setup(
         'django_compressor>=1.4',
         'rdflib>=3.2.0',
         'requests>=2.1.0',
-        'gevent>=1.0.0,<2.0.0',
         'selenium>=2.41',
         'pytz',
         'django_relatives',
@@ -114,7 +120,7 @@ setup(
         'pycrypto',
         'pyScss>=1.3.4,<2.0',
         'Pygments'
-    ),
+    ) + extra_requirements,
     tests_require=(
         'django-nose',
         'mock>=1.0,<2.0',
