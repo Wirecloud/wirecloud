@@ -237,6 +237,7 @@ Wirecloud.ui.WiringEditor = (function () {
             var component, componentId, componentType, connection, i;
 
             LayoutManagerFactory.getInstance().header.refresh();
+            this.connectionEngine.unselectArrow();
 
             if (eventTarget.globalViewpoint) {
 
@@ -385,6 +386,7 @@ Wirecloud.ui.WiringEditor = (function () {
             var component, componentId, componentType, connection, i;
 
             LayoutManagerFactory.getInstance().header.refresh();
+            this.connectionEngine.unselectArrow();
 
             if (eventTarget.isEnabled) {
                 for (componentType in this.components) {
@@ -1412,6 +1414,18 @@ Wirecloud.ui.WiringEditor = (function () {
             }
         }.bind(this));
 
+        widget_interface.addEventListener('dragstart', function (eventTarget) {
+            var connection;
+
+            if (this.connectionEngine.hasSelected()) {
+                connection = this.connectionEngine.getSelected();
+
+                //if (connection.)
+                this.connectionEngine.unselectArrow();
+
+            }
+        }.bind(this));
+
         widget_interface.addEventListener('collapse', function (componentInfo) {
             this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize(), true);
         }.bind(this));
@@ -1727,6 +1741,10 @@ Wirecloud.ui.WiringEditor = (function () {
 
         operator_interface.addEventListener('expand', function (componentInfo) {
             this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, componentInfo.id, operator_interface.serialize());
+        }.bind(this));
+
+        operator_interface.addEventListener('dragstart', function (eventTarget) {
+            this.connectionEngine.unselectArrow();
         }.bind(this));
 
         operator_interface.addEventListener('dragstop', function (eventTarget) {

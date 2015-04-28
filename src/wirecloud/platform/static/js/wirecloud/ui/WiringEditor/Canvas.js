@@ -161,6 +161,10 @@
         this.canvasElement.style.left = scrollX + 'px';
     };
 
+    Canvas.prototype.hasConnectionSelected = function hasConnectionSelected() {
+        return this.selectedArrow !== null;
+    };
+
     /*************************************************************************
      * Make Canvas public
      *************************************************************************/

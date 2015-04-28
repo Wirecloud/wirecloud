@@ -57,7 +57,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstop', 'optremove', 'optshare', 'sortstop', 'collapse', 'expand']);
+        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstart', 'dragstop', 'optremove', 'optshare', 'sortstop', 'collapse', 'expand']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -746,6 +746,11 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 context.preselected = context.iObject.selected;
                 context.iObject.select(true);
                 context.iObject.wiringEditor.onStarDragSelected();
+
+                context.iObject.events.dragstart.dispatch({
+                    'componentId': context.iObject.getId(),
+                    'componentPosition': context.iObject.position
+                });
             },
             function onDrag(e, draggable, context, xDelta, yDelta) {
                 context.iObject.setPosition({'x': context.x + xDelta, 'y': context.y + yDelta});
