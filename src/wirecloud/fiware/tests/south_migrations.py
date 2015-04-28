@@ -112,7 +112,8 @@ class FIWARESouthMigrationsTestCase(TestCase):
         orm = self.prepare_orm(migration.orm())
         orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
         with self.settings(INSTALLED_APPS=('social_auth',)):
-            migration.migration_instance().forwards(orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=True):
+                migration.migration_instance().forwards(orm)
 
         self.check_users_after_execution(True, 'uid', users)
 
@@ -124,7 +125,8 @@ class FIWARESouthMigrationsTestCase(TestCase):
         orm = self.prepare_orm(migration.orm())
         orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
         with self.settings(INSTALLED_APPS=('social_auth',)):
-            self.assertRaises(Exception, migration.migration_instance().forwards, orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=True):
+                self.assertRaises(Exception, migration.migration_instance().forwards, orm)
 
         self.check_users_after_execution(False, 'username', users)
 
@@ -137,7 +139,8 @@ class FIWARESouthMigrationsTestCase(TestCase):
         orm = self.prepare_orm(migration.orm())
         orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
         with self.settings(INSTALLED_APPS=('social_auth',), WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS=False):
-            self.assertRaises(Exception, migration.migration_instance().forwards, orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=True):
+                self.assertRaises(Exception, migration.migration_instance().forwards, orm)
 
         self.check_users_after_execution(False, 'username', users)
 
@@ -152,7 +155,8 @@ class FIWARESouthMigrationsTestCase(TestCase):
         orm = self.prepare_orm(migration.orm())
         orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
         with self.settings(INSTALLED_APPS=('social_auth',), WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS=True):
-            migration.migration_instance().forwards(orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=True):
+                migration.migration_instance().forwards(orm)
 
         self.assertTrue(user_to_be_removed.user.delete.called)
         self.assertFalse(user_to_be_removed.delete.called)
@@ -169,7 +173,8 @@ class FIWARESouthMigrationsTestCase(TestCase):
         orm = self.prepare_orm(migration.orm())
         orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
         with self.settings(INSTALLED_APPS=('social_auth',), WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS="disconnect"):
-            migration.migration_instance().forwards(orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=True):
+                migration.migration_instance().forwards(orm)
 
         self.assertFalse(user_to_be_removed.user.delete.called)
         self.assertTrue(user_to_be_removed.delete.called)
@@ -180,7 +185,18 @@ class FIWARESouthMigrationsTestCase(TestCase):
         migration = self._pick_migration('0001_switch_to_actorId')
         orm = self.prepare_orm(migration.orm())
         with self.settings(INSTALLED_APPS=()):
-            migration.migration_instance().forwards(orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=False):
+                migration.migration_instance().forwards(orm)
+
+        self.assertFalse(orm['social_auth.UserSocialAuth'].objects.all.called)
+
+    def test_switch_to_actorId_forwards_before_social_auth(self):
+
+        migration = self._pick_migration('0001_switch_to_actorId')
+        orm = self.prepare_orm(migration.orm())
+        with self.settings(INSTALLED_APPS=('social_auth')):
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=False):
+                migration.migration_instance().forwards(orm)
 
         self.assertFalse(orm['social_auth.UserSocialAuth'].objects.all.called)
 
@@ -191,7 +207,8 @@ class FIWARESouthMigrationsTestCase(TestCase):
         orm = self.prepare_orm(migration.prev_orm())
         orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
         with self.settings(INSTALLED_APPS=('social_auth',)):
-            migration.migration_instance().backwards(orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=True):
+                migration.migration_instance().backwards(orm)
 
         self.check_users_after_execution(True, 'username', users)
 
@@ -203,7 +220,8 @@ class FIWARESouthMigrationsTestCase(TestCase):
         orm = self.prepare_orm(migration.prev_orm())
         orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
         with self.settings(INSTALLED_APPS=('social_auth',)):
-            self.assertRaises(Exception, migration.migration_instance().backwards, orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=True):
+                self.assertRaises(Exception, migration.migration_instance().backwards, orm)
 
         self.check_users_after_execution(False, 'uid', users)
 
@@ -216,7 +234,8 @@ class FIWARESouthMigrationsTestCase(TestCase):
         orm = self.prepare_orm(migration.prev_orm())
         orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
         with self.settings(INSTALLED_APPS=('social_auth',), WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS=False):
-            self.assertRaises(Exception, migration.migration_instance().backwards, orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=True):
+                self.assertRaises(Exception, migration.migration_instance().backwards, orm)
 
         self.check_users_after_execution(False, 'uid', users)
 
@@ -225,6 +244,17 @@ class FIWARESouthMigrationsTestCase(TestCase):
         migration = self._pick_migration('0001_switch_to_actorId')
         orm = self.prepare_orm(migration.prev_orm())
         with self.settings(INSTALLED_APPS=()):
-            migration.migration_instance().backwards(orm)
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=False):
+                migration.migration_instance().backwards(orm)
+
+        self.assertFalse(orm['social_auth.UserSocialAuth'].objects.all.called)
+
+    def test_switch_to_actorId_backwards_before_social_auth(self):
+
+        migration = self._pick_migration('0001_switch_to_actorId')
+        orm = self.prepare_orm(migration.prev_orm())
+        with self.settings(INSTALLED_APPS=('social_auth')):
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=False):
+                migration.migration_instance().backwards(orm)
 
         self.assertFalse(orm['social_auth.UserSocialAuth'].objects.all.called)

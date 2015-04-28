@@ -23,16 +23,23 @@ from django.conf import settings
 from south.v2 import DataMigration
 
 
-class Migration(DataMigration):
+def db_table_exists(table):
 
-    if 'social_auth' in settings.INSTALLED_APPS:
-        depends_on = (
-            ("social_auth", "0002_auto__add_unique_nonce_timestamp_salt_server_url__add_unique_associati"),
-        )
+    try:
+        from django.db import connection
+        cursor = connection.cursor()
+        table_names = connection.introspection.get_table_list(cursor)
+    except:
+        raise Exception("unable to determine if the table '%s' exists" % table)
+    else:
+        return table in table_names
+
+
+class Migration(DataMigration):
 
     def forwards(self, orm):
 
-        if 'social_auth' not in settings.INSTALLED_APPS:
+        if 'social_auth' not in settings.INSTALLED_APPS or not db_table_exists('social_auth_usersocialauth'):
             return
 
         ids = set()
@@ -68,7 +75,7 @@ class Migration(DataMigration):
 
     def backwards(self, orm):
 
-        if 'social_auth' not in settings.INSTALLED_APPS:
+        if 'social_auth' not in settings.INSTALLED_APPS or not db_table_exists('social_auth_usersocialauth'):
             return
 
         ids = set()
