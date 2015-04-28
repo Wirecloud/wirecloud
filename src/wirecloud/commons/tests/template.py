@@ -34,7 +34,7 @@ from wirecloud.commons.utils.template.writers.next_xml import write_xml_descript
 
 class TemplateUtilsTestCase(TestCase):
 
-    tags = ('template',)
+    tags = ('wirecloud-template',)
     maxDiff = None
 
     @classmethod
@@ -1549,7 +1549,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_operator_info)
-    test_rdf_parser_writer_basic_operator.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_basic_operator.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_operator(self):
 
@@ -1558,7 +1558,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.operator_info)
-    test_rdf_parser_writer_operator.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_operator.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_operator_with_translations(self):
 
@@ -1567,7 +1567,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.operator_with_translation_info)
-    test_rdf_parser_writer_operator_with_translations.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_operator_with_translations.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_basic_mashup(self):
 
@@ -1576,7 +1576,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_mashup_info)
-    test_rdf_parser_writer_basic_mashup.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_basic_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_behaviours(self):
         self.compare_rdf_input_and_output_mashup("mashup_with_behaviours_data")
@@ -1588,7 +1588,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_info)
-    test_rdf_parser_writer_mashup.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_translations(self):
 
@@ -1597,7 +1597,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
-    test_rdf_parser_writer_mashup_with_translations.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_params(self):
 
@@ -1606,7 +1606,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_params)
-    test_rdf_parser_writer_mashup_with_params.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_basic_widget(self):
 
@@ -1615,7 +1615,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_widget_info)
-    test_rdf_parser_writer_basic_widget.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_basic_widget.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_widget(self):
 
@@ -1624,7 +1624,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.widget_info)
-    test_rdf_parser_writer_widget.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_widget.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_minimal_endpoint_info(self):
 
@@ -1657,7 +1657,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_mashup_info)
-    test_xml_parser_writer_basic_mashup.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_basic_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup(self):
 
@@ -1666,7 +1666,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_info)
-    test_xml_parser_writer_mashup.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup_with_translations(self):
 
@@ -1675,7 +1675,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
-    test_xml_parser_writer_mashup_with_translations.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup_with_params(self):
 
@@ -1684,7 +1684,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_params)
-    test_xml_parser_writer_mashup_with_params.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_basic_widget(self):
 
@@ -1693,7 +1693,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_widget_info)
-    test_xml_parser_writer_basic_widget.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_basic_widget.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_widget(self):
 
@@ -1702,7 +1702,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.widget_info)
-    test_xml_parser_writer_widget.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_widget.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_next_xml_parser_writer_basic_operator(self):
 

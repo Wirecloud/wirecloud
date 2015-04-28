@@ -199,7 +199,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
     VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
 
     fixtures = ('test_data',)
-    tags = ('fiware-ut-1',)
+    tags = ('fiware-ut-1', 'wirecloud-template', 'wirecloud-workspace-write')
 
     @classmethod
     def setUpClass(cls):
@@ -634,7 +634,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('fiware-ut-2',)
+    tags = ('fiware-ut-2', 'wirecloud-template', 'wirecloud-workspace-parse')
 
     base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')
 
