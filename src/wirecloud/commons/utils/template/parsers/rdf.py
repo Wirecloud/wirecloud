@@ -27,7 +27,7 @@ from six import text_type
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
 from wirecloud.commons.utils.http import parse_mime_type
-from wirecloud.platform.wiring.utils import parse_wiring_old_version
+from wirecloud.platform.wiring.utils import parse_wiring_old_version, get_wiring_skeleton
 
 # Namespaces used by rdflib
 WIRE = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/widget#")
@@ -285,10 +285,13 @@ class RDFTemplateParser(object):
 
     def _parse_wiring_info(self, wiring_property='hasPlatformWiring'):
 
-        self._info['wiring'] = {
-            'inputs': [],
-            'outputs': [],
-        }
+        if self._info['type'] == 'mashup':
+            self._info['wiring'] = get_wiring_skeleton()
+        else:
+            self._info['wiring'] = {}
+
+        self._info['wiring']['inputs'] = []
+        self._info['wiring']['outputs'] = []
 
         # method self._graph.objects always returns an iterable object not subscriptable,
         # althought only exits one instance
@@ -329,14 +332,6 @@ class RDFTemplateParser(object):
 
             if self._info['wiring']['version'] == '1.0':
                 self._parse_wiring_views(wiring_element)
-
-                # TODO: update to the new wiring format
-                inputs = self._info['wiring']['inputs']
-                outputs = self._info['wiring']['outputs']
-                self._info['wiring'] = parse_wiring_old_version(self._info['wiring'])
-                self._info['wiring']['inputs'] = inputs
-                self._info['wiring']['outputs'] = outputs
-                # END TODO
             else:
                 self._parse_wiring_behaviours(wiring_element)
 
@@ -409,7 +404,6 @@ class RDFTemplateParser(object):
             component_view_description = behaviour['components'][type_][id_] = {}
 
             if type == 'widget' and globalView:
-                import ipdb;
                 component_view_description['name'] = self._get_field(WIRE, 'name', entity_view)
 
             sorted_sources = sorted(self._graph.objects(entity_view, WIRE_M['hasSource']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source, required=False)))
@@ -538,6 +532,14 @@ class RDFTemplateParser(object):
 
             wiring_views.append(element_view)
         self._info['wiring']['views'] = wiring_views
+
+        # TODO: update to the new wiring format
+        inputs = self._info['wiring']['inputs']
+        outputs = self._info['wiring']['outputs']
+        self._info['wiring'] = parse_wiring_old_version(self._info['wiring'])
+        self._info['wiring']['inputs'] = inputs
+        self._info['wiring']['outputs'] = outputs
+        # END TODO
 
     def _parse_widget_info(self):
 

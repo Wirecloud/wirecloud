@@ -127,9 +127,12 @@ def write_mashup_tree(doc, resources, options):
                     element.set('readonly', 'true')
 
 
-def write_mashup_wiring_tree(resources, options):
+def write_mashup_wiring_tree(mashup, options):
 
-    wiring = etree.SubElement(resources, 'wiring')
+    wiring = etree.SubElement(mashup, 'wiring')
+
+    wiring.set('version', options['wiring']['version'])
+
     for op_id, operator in six.iteritems(options['wiring']['operators']):
         (vendor, name, version) = operator['name'].split('/')
         operator_element = etree.SubElement(wiring, 'operator', id=op_id, vendor=vendor, name=name, version=version)
@@ -142,6 +145,65 @@ def write_mashup_wiring_tree(resources, options):
 
         etree.SubElement(element, 'source', type=connection['source']['type'], id=str(connection['source']['id']), endpoint=connection['source']['endpoint'])
         etree.SubElement(element, 'target', type=connection['target']['type'], id=str(connection['target']['id']), endpoint=connection['target']['endpoint'])
+
+    visual_description = etree.SubElement(wiring, 'visualdescription')
+    write_mashup_wiring_visualdescription_tree(visual_description, options['wiring']['visualdescription'])
+
+
+def write_mashup_wiring_visualdescription_tree(target, visualdescription):
+
+    write_mashup_wiring_components_tree(target, 'operator', visualdescription['components'])
+    write_mashup_wiring_components_tree(target, 'widget', visualdescription['components'])
+    write_mashup_wiring_connections_tree(target, visualdescription['connections'])
+
+    behaviours = etree.SubElement(target, 'behaviours')
+
+    for behaviour in visualdescription['behaviours']:
+        write_mashup_wiring_behaviour_tree(behaviours, behaviour)
+
+
+def write_mashup_wiring_behaviour_tree(target, behaviour):
+
+    behaviour_element = etree.SubElement(target, 'behaviour', title=behaviour['title'], description=behaviour['description'])
+
+    write_mashup_wiring_components_tree(behaviour_element, 'operator', behaviour['components'])
+    write_mashup_wiring_components_tree(behaviour_element, 'widget', behaviour['components'])
+    write_mashup_wiring_connections_tree(behaviour_element, behaviour['connections'])
+
+
+def write_mashup_wiring_connections_tree(target, connections):
+
+    for connection in connections:
+        componentview = etree.SubElement(target, 'connectionview', sourcename=connection['sourcename'], targetname=connection['targetname'])
+
+        if connection.get('sourcehandle', None) is not None:
+            etree.SubElement(componentview, 'sourcehandle', x=str(connection['sourcehandle']['x']), y=str(connection['sourcehandle']['y']))
+
+        if connection.get('targethandle', None) is not None:
+            etree.SubElement(componentview, 'targethandle', x=str(connection['targethandle']['x']), y=str(connection['targethandle']['y']))
+
+
+def write_mashup_wiring_components_tree(target, type, components):
+
+    for c_id, component in six.iteritems(components[type]):
+        componentview = etree.SubElement(target, 'componentview', id=str(c_id), type=type)
+
+        if component.get('collapsed', False):
+            componentview.set('collapse', 'true')
+
+        if len(component['endpoints']['source']) > 0:
+            sources = etree.SubElement(componentview, 'sources')
+
+            for endpointname in component['endpoints']['source']:
+                endpoint = etree.SubElement(sources, 'endpoint')
+                endpoint.text = endpointname
+
+        if len(component['endpoints']['target']) > 0:
+            targets = etree.SubElement(componentview, 'targets')
+
+            for endpointname in component['endpoints']['target']:
+                endpoint = etree.SubElement(targets, 'endpoint')
+                endpoint.text = endpointname
 
 
 def build_xml_document(options):
@@ -203,7 +265,7 @@ def build_xml_document(options):
         addAttributes(output_endpoint, endpoint, ('type', 'label', 'description', 'friendcode'))
 
     for input_endpoint in options['wiring']['inputs']:
-        endpoint = etree.SubElement(wiring, 'inputendpoint', name=input_endpoint['name']) 
+        endpoint = etree.SubElement(wiring, 'inputendpoint', name=input_endpoint['name'])
         addAttributes(input_endpoint, endpoint, ('type', 'label', 'description', 'actionlabel', 'friendcode'))
 
     if options['type'] == 'mashup':

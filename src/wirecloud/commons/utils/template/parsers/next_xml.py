@@ -28,6 +28,7 @@ from six import text_type
 
 from wirecloud.commons.utils.template.base import parse_contacts_info, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
+from wirecloud.platform.wiring.utils import get_behaviour_skeleton, get_wiring_skeleton, parse_wiring_old_version
 
 
 XMLSCHEMA_FILE = codecs.open(os.path.join(os.path.dirname(__file__), '../schemas/xml_schema.xsd'), 'rb')
@@ -82,6 +83,16 @@ IOPERATOR_XPATH = 't:operator'
 SOURCE_XPATH = 't:source'
 TARGET_XPATH = 't:target'
 
+VISUALDESCRIPTION_XPATH = 't:visualdescription'
+CONNECTIONVIEW_XPATH = 't:connectionview'
+
+COMPONENTVIEW_XPATH = 't:componentview'
+COMPONENTSOURCES_XPATH = 't:sources/t:endpoint'
+COMPONENTTARGETS_XPATH = 't:targets/t:endpoint'
+SOURCEHANDLE_XPATH = 't:sourcehandle'
+TARGETHANDLE_XPATH = 't:targethandle'
+BEHAVIOURSVIEW_XPATH = 't:behaviours/t:behaviour'
+
 TRANSLATIONS_XPATH = 't:translations'
 TRANSLATION_XPATH = 't:translation'
 MSG_XPATH = 't:msg'
@@ -132,13 +143,15 @@ class ApplicationMashupTemplateParser(object):
     def _xpath(self, query, element):
         return element.xpath(query, namespaces={'t': self._namespace})
 
-    def get_xpath(self, query, element):
+    def get_xpath(self, query, element, required=True):
         elements = self._xpath(query, element)
 
-        if len(elements) == 0:
+        if len(elements) == 0 and required:
             raise TemplateParseException('Missing %s element' % query.replace('t:', ''))
-        else:
+        elif len(elements) > 0:
             return elements[0]
+        else:
+            return None
 
     def _add_translation_index(self, value, **kwargs):
         index = get_trans_index(value)
@@ -213,12 +226,79 @@ class ApplicationMashupTemplateParser(object):
                 'name': requirement.get('name').strip()
             })
 
-    def _parse_wiring_info(self, parse_connections=False):
+    def _parse_visualdescription_info(self, visualdescription_element):
 
-        self._info['wiring'] = {
-            'inputs': [],
-            'outputs': [],
-        }
+        self._parse_wiring_component_view_info(self._info['wiring']['visualdescription'], visualdescription_element)
+        self._parse_wiring_connection_view_info(self._info['wiring']['visualdescription'], visualdescription_element)
+
+        for behaviour in self._xpath(BEHAVIOURSVIEW_XPATH, visualdescription_element):
+            self._parse_wiring_behaviour_view_info(behaviour)
+
+    def _parse_wiring_behaviour_view_info(self, behaviour_element):
+
+        behaviour = get_behaviour_skeleton()
+
+        behaviour['title'] = behaviour_element['title']
+        behaviour['description'] = behaviour_element['description']
+
+        self._parse_wiring_component_view_info(behaviour, behaviour_element)
+        self._parse_wiring_connection_view_info(behaviour, behaviour_element)
+
+        self._info['wiring']['visualdescription']['behaviours'].append(behaviour)
+
+    def _parse_wiring_component_view_info(self, target, components_element):
+
+        for component in self._xpath(COMPONENTVIEW_XPATH, components_element):
+            component_info = {
+                'collapsed': component.get('collapsed', 'false').strip().lower() == 'true',
+                'endpoints': {
+                    'source': [endpoint.text for endpoint in self._xpath(COMPONENTSOURCES_XPATH, component)],
+                    'target': [endpoint.text for endpoint in self._xpath(COMPONENTTARGETS_XPATH, component)]
+                }
+            }
+
+            position = self.get_xpath(POSITION_XPATH, component, required=False)
+            if position is not None:
+                component_info['position'] = {
+                    'x': int(position['x']),
+                    'y': int(position['y'])
+                }
+
+            target['components'][component['type']][component['id']] = component_info
+
+    def _parse_wiring_connection_view_info(self, target, connections_element):
+
+        for connection in self._xpath(CONNECTIONVIEW_XPATH, connections_element):
+
+            sourcehandle_element = self.get_xpath(SOURCEHANDLE_XPATH, connection, required=False)
+            targethandle_element = self.get_xpath(TARGETHANDLE_XPATH, connection, required=False)
+
+            connection_info = {
+                'sourcename': connection['sourcename'],
+                'targetname': connection['targetname'],
+            }
+
+            if sourcehandle_element is not None:
+                connection_info['sourcehandle'] = {
+                    'x': int(sourcehandle_element['x']),
+                    'y': int(sourcehandle_element['y'])
+                }
+
+            if targethandle_element is not None:
+                connection_info['targethandle'] = {
+                    'x': int(targethandle_element['x']),
+                    'y': int(targethandle_element['y'])
+                }
+
+    def _parse_wiring_info(self):
+
+        if self._info['type'] == 'mashup':
+            self._info['wiring'] = get_wiring_skeleton()
+        else:
+            self._info['wiring'] = {}
+
+        self._info['wiring']['inputs'] = []
+        self._info['wiring']['outputs'] = []
 
         wiring_elements = self._xpath(WIRING_XPATH, self._doc)
         if len(wiring_elements) != 0:
@@ -248,17 +328,32 @@ class ApplicationMashupTemplateParser(object):
                     'friendcode': event.get('friendcode', ''),
                 })
 
-        if parse_connections:
-            self._info['wiring']['connections'] = []
-            self._info['wiring']['operators'] = []
-            self._info['wiring']['views'] = []
+        if self._info['type'] == "mashup":
 
-            mashup_wiring_elements = self._xpath(MASHUP_WIRING_XPATH, self._doc)
-            if len(mashup_wiring_elements) == 0:
+            mashup_wiring_element = self.get_xpath(MASHUP_WIRING_XPATH, self._doc, required=False)
+            if mashup_wiring_element is None:
                 return
 
-            self._parse_wiring_connection_info(mashup_wiring_elements[0])
-            self._parse_wiring_operator_info(mashup_wiring_elements[0])
+            self._info['wiring']['version'] = mashup_wiring_element.get('version', "1.0")
+
+            self._parse_wiring_connection_info(mashup_wiring_element)
+            self._parse_wiring_operator_info(mashup_wiring_element)
+
+            if self._info['wiring']['version'] == '1.0':
+                # TODO: update to the new wiring format
+                inputs = self._info['wiring']['inputs']
+                outputs = self._info['wiring']['outputs']
+                self._info['wiring'] = parse_wiring_old_version(self._info['wiring'])
+                self._info['wiring']['inputs'] = inputs
+                self._info['wiring']['outputs'] = outputs
+                # END TODO
+            elif self._info['wiring']['version'] == '2.0':
+                visualdescription_element = self.get_xpath(VISUALDESCRIPTION_XPATH, mashup_wiring_element, required=False)
+                if visualdescription_element is not None:
+                    self._parse_visualdescription_info(visualdescription_element)
+            else:
+                # TODO raise unsupported version exception
+                pass
 
     def _parse_wiring_connection_info(self, wiring_element):
 
@@ -473,7 +568,7 @@ class ApplicationMashupTemplateParser(object):
             tabs.append(tab_info)
 
         self._info['tabs'] = tabs
-        self._parse_wiring_info(parse_connections=True)
+        self._parse_wiring_info()
 
     def _parse_translation_catalogue(self):
 

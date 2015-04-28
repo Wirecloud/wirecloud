@@ -24,6 +24,7 @@ from six import text_type
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, parse_contacts_info, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
+from wirecloud.platform.wiring.utils import get_wiring_skeleton
 
 
 WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/template#'
@@ -220,10 +221,13 @@ class WirecloudTemplateParser(object):
 
     def _parse_wiring_info(self, parse_connections=False):
 
-        self._info['wiring'] = {
-            'inputs': [],
-            'outputs': [],
-        }
+        if self._info['type'] == 'mashup':
+            self._info['wiring'] = get_wiring_skeleton()
+        else:
+            self._info['wiring'] = {}
+
+        self._info['wiring']['inputs'] = []
+        self._info['wiring']['outputs'] = []
 
         wiring_elements = self._xpath(WIRING_XPATH, self._doc)
         if len(wiring_elements) < 1:
@@ -257,7 +261,6 @@ class WirecloudTemplateParser(object):
         if parse_connections:
             self._parse_wiring_connection_info(wiring_element)
             self._parse_wiring_operator_info(wiring_element)
-            self._info['wiring']['views'] = []
 
     def _parse_wiring_connection_info(self, wiring_element):
 
@@ -275,15 +278,18 @@ class WirecloudTemplateParser(object):
             else:
                 raise TemplateParseException(_('Missing required field: target'))
 
+            source_type = source_element.get('type')
+            target_type = target_element.get('type')
+
             connection_info = {
                 'readonly': connection.get('readonly', 'false').lower() == 'true',
                 'source': {
-                    'type': source_element.get('type'),
+                    'type': source_type[1:] if source_type in ['iwidget', 'ioperator'] else source_type,
                     'endpoint': source_element.get('endpoint'),
                     'id': source_element.get('id'),
                 },
                 'target': {
-                    'type': target_element.get('type'),
+                    'type': target_type[1:] if target_type in ['iwidget', 'ioperator'] else target_type,
                     'endpoint': target_element.get('endpoint'),
                     'id': target_element.get('id'),
                 }

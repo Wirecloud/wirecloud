@@ -650,7 +650,7 @@ class TemplateUtilsTestCase(TestCase):
                         "readonly": True
                     },
                     {
-                        "source": {"type": "iwidget", 'id': '1', 'endpoint': 'output1'},
+                        "source": {"type": "widget", 'id': '1', 'endpoint': 'output1'},
                         "target": {"type": "operator", 'id': '1', 'endpoint': 'input1'},
                         "readonly": False
                     }
@@ -849,7 +849,7 @@ class TemplateUtilsTestCase(TestCase):
                         "readonly": True
                     },
                     {
-                        "source": {"type": "iwidget", 'id': '1', 'endpoint': 'output1'},
+                        "source": {"type": "widget", 'id': '1', 'endpoint': 'output1'},
                         "target": {"type": "operator", 'id': '1', 'endpoint': 'input1'},
                         "readonly": False
                     }

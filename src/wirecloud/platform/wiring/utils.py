@@ -84,6 +84,18 @@ def rename_component_type(component_type):
     return component_type[1:] if component_type in ['iwidget', 'ioperator'] else "not_supported"
 
 
+def get_behaviour_skeleton():
+    return {
+        'title': None,
+        'description': None,
+        'components': {
+            'operator': {},
+            'widget': {}
+        },
+        'connections': []
+    }
+
+
 def get_wiring_skeleton():
     return {
         'version': "2.0",

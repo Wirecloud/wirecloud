@@ -34,10 +34,10 @@ def write_mashup_tree(resources, options):
         embedded_element = etree.SubElement(resources, 'Embedded')
         for resource in options['embedded']:
             etree.SubElement(embedded_element, 'Resource',
-                    vendor=resource['vendor'],
-                    name=resource['name'],
-                    version=resource['version'],
-                    src=resource['src'])
+                vendor=resource['vendor'],
+                name=resource['name'],
+                version=resource['version'],
+                src=resource['src'])
 
     # Tabs & resources
     for tab_index, tab in enumerate(options['tabs']):
@@ -92,8 +92,11 @@ def write_mashup_wiring_tree(wiring, options):
         if connection.get('readonly', False):
             element.set('readonly', 'true')
 
-        etree.SubElement(element, 'Source', type=connection['source']['type'], id=str(connection['source']['id']), endpoint=connection['source']['endpoint'])
-        etree.SubElement(element, 'Target', type=connection['target']['type'], id=str(connection['target']['id']), endpoint=connection['target']['endpoint'])
+        source_type = "iwidget" if connection['source']['type'] == 'widget' else 'operator'
+        target_type = "iwidget" if connection['target']['type'] == 'widget' else 'operator'
+
+        etree.SubElement(element, 'Source', type=source_type, id=str(connection['source']['id']), endpoint=connection['source']['endpoint'])
+        etree.SubElement(element, 'Target', type=target_type, id=str(connection['target']['id']), endpoint=connection['target']['endpoint'])
 
 
 def build_xml_document(options):
