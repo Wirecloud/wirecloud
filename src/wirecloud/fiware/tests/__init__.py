@@ -4,3 +4,4 @@ from wirecloud.fiware.tests.proxy import ProxyTestCase
 from wirecloud.fiware.tests.south_migrations import FIWARESouthMigrationsTestCase
 from wirecloud.fiware.tests.views import FIWAREViewsTestCase
 from wirecloud.fiware.tests.selenium import *
+from wirecloud.fiware.tests.social_backend import *

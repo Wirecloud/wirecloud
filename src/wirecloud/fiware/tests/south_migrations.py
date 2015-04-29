@@ -258,3 +258,43 @@ class FIWARESouthMigrationsTestCase(TestCase):
                 migration.migration_instance().backwards(orm)
 
         self.assertFalse(orm['social_auth.UserSocialAuth'].objects.all.called)
+
+    def test_switch_to_username_forwards(self):
+
+        users = self.prepare_basic_data('uid', False)
+        migration = self._pick_migration('0002_switch_to_username')
+        orm = self.prepare_orm(migration.orm())
+        orm['social_auth.UserSocialAuth'].objects.all.return_value = TestQueryResult(users)
+        with self.settings(INSTALLED_APPS=('social_auth',)):
+            # db_table_exists is used from 0001_switch_to_actorId in this case
+            with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.db_table_exists', return_value=True):
+                migration.migration_instance().forwards(orm)
+
+        self.check_users_after_execution(True, 'username', users)
+
+    def test_switch_to_username_backwards_social_auth_enabled(self):
+
+        migration = self._pick_migration('0002_switch_to_username')
+        orm = self.prepare_orm(migration.orm())
+
+        with self.settings(INSTALLED_APPS=('social_auth',)):
+            with patch('wirecloud.fiware.south_migrations.0002_switch_to_username.db_table_exists', return_value=True):
+                self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
+
+    def test_switch_to_username_backwards_social_auth_disabled(self):
+
+        migration = self._pick_migration('0002_switch_to_username')
+        orm = self.prepare_orm(migration.orm())
+
+        with self.settings(INSTALLED_APPS=()):
+            with patch('wirecloud.fiware.south_migrations.0002_switch_to_username.db_table_exists', return_value=True):
+                migration.migration_instance().forwards(orm)
+
+    def test_switch_to_username_backwards_social_auth_no_tables(self):
+
+        migration = self._pick_migration('0002_switch_to_username')
+        orm = self.prepare_orm(migration.orm())
+
+        with self.settings(INSTALLED_APPS=()):
+            with patch('wirecloud.fiware.south_migrations.0002_switch_to_username.db_table_exists', return_value=True):
+                migration.migration_instance().forwards(orm)

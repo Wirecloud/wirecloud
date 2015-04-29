@@ -16,86 +16,28 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from __future__ import unicode_literals
-
 from django.conf import settings
 from south.v2 import DataMigration
 
-
-def db_table_exists(table):
-
-    try:
-        from django.db import connection
-        cursor = connection.cursor()
-        table_names = connection.introspection.get_table_list(cursor)
-    except:
-        raise Exception("unable to determine if the table '%s' exists" % table)
-    else:
-        return table in table_names
-
-
-def swith_to_username(orm, purge_extra_data=False):
-
-    if 'social_auth' not in settings.INSTALLED_APPS or not db_table_exists('social_auth_usersocialauth'):
-        return
-
-    ids = set()
-    for user in orm['social_auth.UserSocialAuth'].objects.all():
-        if user.extra_data['username'] in ids:
-            raise Exception('Duplicated username: %s' % user.extra_data['username'])
-
-        ids.add(user.extra_data['username'])
-
-    for user in orm['social_auth.UserSocialAuth'].objects.all():
-        user.uid = user.extra_data['username']
-
-        if purge_extra_data:
-            user.ext
-        user.save()
+# from wirecloud.fiware.south_migrations.0001_switch_to_actorId import swith_to_username
+swith_to_actorId_module = __import__('wirecloud.fiware.south_migrations.0001_switch_to_actorId', globals(), locals(), ['swith_to_username', 'db_table_exists'], -1)
+swith_to_username = swith_to_actorId_module.swith_to_username
+db_table_exists = swith_to_actorId_module.db_table_exists
 
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
 
-        if 'social_auth' not in settings.INSTALLED_APPS or not db_table_exists('social_auth_usersocialauth'):
-            return
-
-        ids = set()
-        users_to_remove = []
-        last_login_date = None
-        for user in orm['social_auth.UserSocialAuth'].objects.all():
-            if user.extra_data.get('uid', None) is None:
-                users_to_remove.append(user)
-
-                if last_login_date is None or user.user.last_login > last_login_date:
-                    last_login_date = user.user.last_login
-
-                continue
-
-            if user.extra_data['uid'] in ids:
-                raise Exception('Duplicated uid: %s' % user.extra_data['uid'])
-
-            ids.add(user.extra_data['uid'])
-
-        remove_users = getattr(settings, 'WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS', False)
-        if remove_users is True:
-            for user in users_to_remove:
-                user.user.delete()
-        elif remove_users == "disconnect":
-            for user in users_to_remove:
-                user.delete()
-        elif len(users_to_remove) > 0:
-            raise Exception('User without uid information (using username as uid). FIWARE integration now relies on uids (actorId), so we cannot migrate it. Users can fill this information signing in again using their FIWARE account, alternativelly, you can make use of the WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS=True setting for automatically remove those users or WIRECLOUD_REMOVE_UNSUPPORTED_FIWARE_USERS="disconnect" for disconnecting those users from their FIWARE accounts\n\n%s users without actorId info: %s\n\nLast login date: %s' % (len(users_to_remove), list(user.username for user in users_to_remove), last_login_date))
-
-        for user in orm['social_auth.UserSocialAuth'].objects.all():
-            user.uid = "%s" % user.extra_data['uid']
-            user.save()
+        swith_to_username(orm)
 
     def backwards(self, orm):
 
-        swith_to_username(orm)
+        if 'social_auth' not in settings.INSTALLED_APPS or not db_table_exists('social_auth_usersocialauth'):
+            return
+
+        raise RuntimeError('Backwards migration unavailable due to missing data')
+
 
     models = {
         u'auth.group': {
