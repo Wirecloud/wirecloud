@@ -20,13 +20,13 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.db import connection
 from south.v2 import DataMigration
 
 
 def db_table_exists(table):
 
     try:
-        from django.db import connection
         cursor = connection.cursor()
         table_names = connection.introspection.get_table_list(cursor)
     except:
@@ -35,7 +35,7 @@ def db_table_exists(table):
         return table in table_names
 
 
-def swith_to_username(orm, purge_extra_data=False):
+def swith_to_username(orm):
 
     if 'social_auth' not in settings.INSTALLED_APPS or not db_table_exists('social_auth_usersocialauth'):
         return
@@ -50,8 +50,6 @@ def swith_to_username(orm, purge_extra_data=False):
     for user in orm['social_auth.UserSocialAuth'].objects.all():
         user.uid = user.extra_data['username']
 
-        if purge_extra_data:
-            user.ext
         user.save()
 
 

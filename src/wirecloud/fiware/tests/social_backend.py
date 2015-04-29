@@ -43,7 +43,9 @@ class TestSocialAuthBackend(TestCase):
 
     OLD_RESPONSE = '{"schemas":["urn:scim:schemas:core:2.0:User"],"id":1,"actorId":1,"nickName":"demo","displayName":"Demo user","email":"demo@fiware.org","roles":[{"id":1,"name":"Manager"},{"id":7,"name":"Ticket manager"}],"organizations":[{"id":1,"actorId":2,"displayName":"Universidad Politecnica de Madrid","roles":[{"id":14,"name":"Admin"}]}]}'
     NEW_RESPONSE = '{"id":"demo","displayName":"Demo user","email":"demo@fiware.org","roles":[{"id":"1","name":"Manager"},{"id":"7","name":"Ticket manager"}],"organizations":[{"id":"00000000000000000000000000000001","displayName":"Universidad Politecnica de Madrid","roles":[{"id":14,"name":"Admin"}]}]}'
+    RESPONSE_NO_LAST_NAME = '{"id":"demo","username":"demo","displayName":"Demo","email":"demo@fiware.org","roles":[{"id":"1","name":"Manager"},{"id":"7","name":"Ticket manager"}],"organizations":[{"id":"00000000000000000000000000000001","displayName":"Universidad Politecnica de Madrid","roles":[{"id":14,"name":"Admin"}]}]}'
     USER_DATA = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo user", "first_name": "Demo", "last_name": "user"}
+    USER_DATA_NO_LAST_NAME = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo", "first_name": "Demo", "last_name": ""}
 
     def setUp(self):
         self.social_auth = MagicMock()
@@ -120,3 +122,10 @@ class TestSocialAuthBackend(TestCase):
 
         self.assertEqual(data, self.USER_DATA)
 
+    def test_get_user_details_no_last_name(self):
+
+        instance = self.fiwarebackend_module()
+        response = json.loads(self.RESPONSE_NO_LAST_NAME)
+        data = instance.get_user_details(response)
+
+        self.assertEqual(data, self.USER_DATA_NO_LAST_NAME)

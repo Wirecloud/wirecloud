@@ -25,6 +25,8 @@ import six
 
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 
+# from wirecloud.fiware.south_migrations.0001_switch_to_actorId import db_table_exists
+db_table_exists = __import__('wirecloud.fiware.south_migrations.0001_switch_to_actorId', globals(), locals(), ['db_table_exists'], -1).db_table_exists
 
 # Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
 __test__ = False
@@ -46,7 +48,7 @@ class TestQueryResult(object):
 
 class FIWARESouthMigrationsTestCase(TestCase):
 
-    tags = ('wirecloud-migrations', 'fiware-migrations')
+    tags = ('wirecloud-migrations', 'wirecloud-fiware-migrations')
 
     def _pick_migration(self, migration_name):
         """
@@ -63,13 +65,14 @@ class FIWARESouthMigrationsTestCase(TestCase):
 
         users = []
 
-        for user_id in (1, 67, 100):
+        for user_id in (1, 67, 100, 80):
             user = Mock()
             user.extra_data = {
                 "username": 'test%s' % user_id,
                 "uid": user_id
             }
             user.uid = "%s" % user.extra_data[uid_field]
+            user.user.last_login_date = user_id
             users.append(user)
 
         if repeated:
@@ -104,6 +107,16 @@ class FIWARESouthMigrationsTestCase(TestCase):
             self.assertEqual(auth_user.uid, "%s" % auth_user.extra_data[uid_field])
             self.assertFalse(auth_user.delete.called)
             self.assertFalse(auth_user.user.delete.called)
+
+    def test_db_table_exists(self):
+        with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.connection') as connection_mock:
+            connection_mock.introspection.get_table_list.return_value = ('other_table', 'social_auth_usersocialauth')
+            self.assertTrue(db_table_exists('social_auth_usersocialauth'))
+
+    def test_db_table_exists_exception(self):
+        with patch('wirecloud.fiware.south_migrations.0001_switch_to_actorId.connection') as connection_mock:
+            connection_mock.cursor.side_effect = Exception()
+            self.assertRaises(Exception, db_table_exists, 'social_auth_usersocialauth')
 
     def test_switch_to_actorId_forwards(self):
 
@@ -288,7 +301,7 @@ class FIWARESouthMigrationsTestCase(TestCase):
 
         with self.settings(INSTALLED_APPS=()):
             with patch('wirecloud.fiware.south_migrations.0002_switch_to_username.db_table_exists', return_value=True):
-                migration.migration_instance().forwards(orm)
+                migration.migration_instance().backwards(orm)
 
     def test_switch_to_username_backwards_social_auth_no_tables(self):
 
@@ -297,4 +310,4 @@ class FIWARESouthMigrationsTestCase(TestCase):
 
         with self.settings(INSTALLED_APPS=()):
             with patch('wirecloud.fiware.south_migrations.0002_switch_to_username.db_table_exists', return_value=True):
-                migration.migration_instance().forwards(orm)
+                migration.migration_instance().backwards(orm)
