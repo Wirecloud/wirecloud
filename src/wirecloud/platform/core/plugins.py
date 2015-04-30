@@ -207,6 +207,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         'Wirecloud': wirecloud.platform.__version__,
         'ApplicationMashup': '1.0',
         'StyledElements': '0.5',
+        'FullscreenWidget': '0.5',
     }
 
     def get_platform_context_definitions(self):

@@ -81,6 +81,10 @@
         this.default_width = data.widget_width;
         this.default_height = data.widget_height;
 
+        // Requirements
+        this.requirements = data.requirements;
+        Object.freeze(this.requirements);
+
         /* FIXME */
         this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
         this.getIPhoneImageURI = this.getIcon;
