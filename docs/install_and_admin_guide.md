@@ -449,7 +449,7 @@ Create a new Application using the IdM server to use (for example: `https://acco
         - Remove: `url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),`
         - Add: `url(r'^login/?$', 'wirecloud.fiware.views.login', name="login"),`
     - Add social-auth url endpoints at the end of the pattern list: `url(r'', include('social_auth.urls'))`,
-5. Run `python manage syncdb --migrate; python manage.py collectstatic --noinput; python manage.py compress --force`
+5. Run `python manage.py syncdb --migrate; python manage.py collectstatic --noinput; python manage.py compress --force`
 
 <a id="running_wirecloud" />
 ### Running WireCloud
@@ -792,3 +792,87 @@ Rebuilds whoosh indexes used by the search engine of WireCloud. Some commonly us
 Example usage:
 
 	$ python manage.py --noinput --indexes=user,group
+
+
+### Creating WireCloud backups and restoring them
+
+    1. Create a backup of your instance folder. For example:
+
+        $ tar -cvjf wirecloud-backup.tar.bz2 -C /path/to/your/instance .
+
+    There are several ways for creating backups of the data stored in the
+    database used by WireCloud, each of them with its advantages and
+    disadvantages.
+
+    > **NOTE:** Always stop WireCloud before creating a backup for ensuring data
+    > consistency.
+
+#### Database backups using Django
+
+    Django provides the `dumpdata` and `loaddata` commands that can be used for
+    creating and restoring backups. Those commands can be used independently of
+    the database engine used. Moreover, you can create those backups using a
+    given database engine and restore them using a different one.
+
+    $ python manage.py dumpdata > wirecloud.backup
+
+    For restoring the backup you only have to run the `loaddata` command, using
+    a clean database:
+
+    $ python manage.py loaddata wirecloud.backup
+
+    > **Note**: Backups created using `dumpdata` can only be restored using the
+    > same WireCloud version used for creating the backup. If you need to use a
+    > different version, restore the backup using the original version and then
+    > upgrade/downgrade it.
+
+
+#### SQLite3 database backups
+
+    Creating a backup of a SQLite3 database is as easy as creating a copy of the
+    file where the database is stored. The only thing to take into account is to
+    stop WireCloud before creating the copy to avoid possible inconsistences.
+
+    The restoration procedure is as easy as the creation, you only have to make
+    WireCloud use the copied database file by editing the `settings.py` file or
+    by moving the copied database file to the place expected by WireCloud.
+
+    > **NOTE**: Take into account that this means that if you are making a full
+    > backup of your WireCloud instance, you don't need an extra step for
+    > backing up the database, this backup is already performed by backing up
+    > the instance directory.
+
+#### PostgreSQL database backups
+
+    You can find more informatio about how to create PostgreSQL backups in this
+    [page](http://www.postgresql.org/docs/9.1/static/backup-dump.html).
+    Basically, you have to run the following command:
+
+    $ pg_dump <dbname> > wirecloud.backup
+
+    > Make sure WireCloud is not running before making the backup
+
+    You can restore the backup using the following command:
+
+    $ psql <dbname> < wirecloud.backup
+
+
+### Upgrading from previous versions
+
+    1. Install the new version of WireCloud
+    2. Migrate the database, collect the new static files and create the
+    compressed versions of the JavaScript and CSS files by running the following
+    command:
+
+        $ python manage.py syncdb --migrate; python manage.py collectstatic --noinput; python manage.py compress --force
+
+    3. Reload WireCloud (e.g. `$ service apache2 restart`)
+
+### From 0.6.x to 0.7.x
+
+    WireCloud 0.7.x adds support for using Whoosh indexes for searching, as
+    WireCloud 0.6.x didn't use Whoosh, you need to run an extra step when
+    migrating from 0.6.x to 0.7.x for creating a initial version of those
+    indexes:
+
+    $ python manage.py resetsearchindexes
