@@ -25,53 +25,8 @@
     var BS = Wirecloud.ui.Tutorial.Utils.basic_selectors;
     var BA = Wirecloud.ui.Tutorial.Utils.basic_actions;
 
-    var getWidgetAvailable = function getWidgetAvailable(index, openPanel) {
-        var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
-        var wiringView = LayoutManagerFactory.getInstance().viewsByName.wiring;
-
-        if (openPanel) {
-            document.querySelectorAll('.wiring_editor .menubar .resource-item')[0].classList.add('active');
-            document.querySelectorAll('.wiring_editor .menubar .panel-components')[0].style.display = 'block';
-        }
-
-        return wiringView.mini_widgets[widget_id].wrapperElement;
-    };
-
-    var getOperatorByName = function getOperatorByName(operatorName) {
-        document.querySelector('.wiring-sidebar .opt-operator-group').click();
-
-        var operators = document.querySelectorAll('.wiring-sidebar .panel-components .component-operator');
-
-        for (var i = 0; i < operators.length; i++) {
-            if (operators[i].querySelector('.component-heading span').textContent == operatorName) {
-                return operators[i];
-            }
-        }
-
-        return null;
-    };
-
     var get_wiring = function get_wiring() {
         return LayoutManagerFactory.getInstance().viewsByName["wiring"];
-    };
-
-    var getToolBarOption = function getToolBarOption(option_name) {
-        var options = document.querySelectorAll('.wiring_editor .menubar .resource-item');
-
-        switch (option_name) {
-            case 'show-panel-apps':
-                return options[0];
-            case 'show-panel-behaviors':
-                return options[2];
-            case 'create-behavior':
-                return options[1];
-            case 'switch-view':
-                return options[3];
-            default:
-                break;
-        }
-
-        return;
     };
 
     var getSourceEndpoint = function getSourceEndpoint(type, name, endpoint_name) {
@@ -157,19 +112,6 @@
         return fieldDescription;
     };
 
-    var getOptionShare = function getOptionShare(type, name) {
-        var instances = document.querySelectorAll('.wiring_editor .grid .' + type + '.on-background');
-
-        for (var i = 0; i < instances.length; i++) {
-            if (instances[i].querySelector('.header span[title]').getAttribute('title') == name) {
-                instances[i].classList.add('selected');
-                return instances[i].querySelector('.header .closebutton');
-            }
-        }
-
-        return;
-    };
-
     var shareConnection = function shareConnection(connectionIndex) {
         var connections = document.querySelectorAll('.wiring-connections .connection.on-background');
 
@@ -200,30 +142,9 @@
         return null;
     };
 
-    var showBehaviorUpdateForm = function showBehaviorUpdateForm(behaviorIndex) {
-        var behaviors = document.querySelectorAll('.wiring_editor .behaviour-group .behaviour');
-
-        return behaviors[behaviorIndex].querySelector('.behaviour-header .option');
-    };
-
     var get_wiring_canvas = function get_wiring_canvas() {
         var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
         return wiringEditor.connectionEngine;
-    };
-
-    var getWidgetByName = function getWidgetByName(widgetName) {
-        getToolBarOption('show-panel-apps').click();
-        document.querySelectorAll('.wiring_editor .menubar .panel-components .panel-options .option')[1].click();
-
-        var widgets = document.querySelectorAll('.wiring_editor .menubar .panel-components .iwidget');
-
-        for (var i = 0; i < widgets.length; i++) {
-            if (widgets[i].querySelector('.header span').textContent == widgetName) {
-                return widgets[i];
-            }
-        }
-
-        return;
     };
 
     var header = {
@@ -237,7 +158,7 @@
     var wiringView = {
 
         'addComponent': function addComponent(type, name, x , y) {
-            document.querySelector('.wiring-sidebar .opt-' + type + '-group').click();
+            document.querySelector('.wiring-sidebar .btn-display-' + type + '-group').click();
 
             var component = get_wiring().addComponentByName(type, name, x, y);
 
@@ -245,7 +166,7 @@
         },
 
         'openBehaviourRegistrationForm': function openBehaviourRegistrationForm() {
-            return document.querySelector('.wiring-sidebar .panel-behaviours .btn-create');
+            return document.querySelector('.wiring-sidebar .behaviour-panel .btn-create-behaviour');
         },
 
         'connect': function connect(sourceEndpoint, targetEndpoint) {
@@ -254,38 +175,13 @@
             return connect.wrapperElement;
         },
 
-        'getToolBarOption': function getToolBarOption(optionName) {
-            var options = document.querySelectorAll('.wiring_editor .menubar .resource-item');
-
-            switch (optionName) {
-                case 'show-panel-apps':
-                    return options[0];
-                case 'create-behavior':
-                    return options[1];
-                case 'show-panel-behaviors':
-                    return options[2];
-                default:
-                    break;
-            }
-
-            return options[3];
-        },
-
-        'getOperatorOption': function getOperatorOption() {
-            return document.querySelectorAll('.wiring_editor .menubar .panel-components .panel-options .option')[0];
-        },
-
-        'getWidgetOption': function getWidgetOption() {
-            return document.querySelectorAll('.wiring_editor .menubar .panel-components .panel-options .option')[1];
-        },
-
         'getOperatorByName': function getOperatorByName(operatorName) {
-            document.querySelector('.wiring-sidebar .opt-operator-group').click();
+            document.querySelector('.wiring-sidebar .btn-display-operator-group').click();
 
-            var operators = document.querySelectorAll('.wiring-sidebar .panel-components .component-operator');
+            var operators = document.querySelectorAll('.wiring-sidebar .component-panel .component-operator');
 
             for (var i = 0; i < operators.length; i++) {
-                if (operators[i].querySelector('.component-heading span').textContent == operatorName) {
+                if (operators[i].querySelector('.component-title').textContent == operatorName) {
                     return operators[i];
                 }
             }
@@ -293,40 +189,28 @@
             return null;
         },
 
-        'getWidgetByName': function getWidgetByName(widgetName) {
-            var widgets = document.querySelectorAll('.wiring_editor .menubar .panel-components .iwidget');
-
-            for (var i = 0; i < widgets.length; i++) {
-                if (widgets[i].querySelector('.header span').textContent == widgetName) {
-                    return widgets[i];
-                }
-            }
-
-            return;
-        },
-
         'enableBehaviours': function enableBehaviours() {
-            return document.querySelector('.wiring-sidebar .panel-behaviours .opt-enable-behaviours');
+            return document.querySelector('.wiring-sidebar .behaviour-panel .btn-enable-behaviour-engine');
         },
 
         'getBehaviour': function getBehaviour(index) {
-            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index];
+            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index];
         },
 
         'activateBehaviour': function activateBehaviour(index) {
-            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index].querySelector('.opt-activate');
+            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.opt-activate');
         },
 
         'getBehaviourTitle': function getBehaviourTitle(index) {
-            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index].querySelector('.behaviour-title');
+            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.behaviour-title');
         },
 
         'getBehaviourDescription': function getBehaviourDescription(index) {
-            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index].querySelector('.behaviour-description');
+            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.behaviour-description');
         },
 
         'getBehaviourElements': function getBehaviourElements(index) {
-            return document.querySelectorAll('.wiring-sidebar .panel-behaviours .behaviour')[index].querySelector('.behaviour-elements');
+            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.behaviour-elements');
         }
 
     };
@@ -511,7 +395,7 @@
         {
             type: 'autoAction',
             msg: gettext("Go to open <strong>behaviours</strong>"),
-            elem: header.getOption.bind(null, 'opt-behaviours'),
+            elem: header.getOption.bind(null, 'btn-list-behaviours'),
             pos: 'downLeft',
             action: BA.click(1500)
         },
@@ -606,7 +490,7 @@
         {
             type: 'autoAction',
             msg: gettext("Go to open <strong>components</strong>"),
-            elem: header.getOption.bind(null, 'opt-components'),
+            elem: header.getOption.bind(null, 'btn-list-components'),
             pos: 'downLeft',
             action: BA.click(1500)
         },
@@ -688,7 +572,7 @@
         {
             type: 'autoAction',
             msg: gettext("Go to open <strong>behaviours</strong> again"),
-            elem: header.getOption.bind(null, 'opt-behaviours'),
+            elem: header.getOption.bind(null, 'btn-list-behaviours'),
             pos: 'downLeft',
             action: BA.click(1500)
         },
