@@ -26,6 +26,8 @@ import sys
 from django.test import TestCase
 from mock import patch, MagicMock
 
+from wirecloud.fiware.plugins import auth_fiware_token
+
 
 class BasicClass(object):
 
@@ -52,6 +54,7 @@ class TestSocialAuthBackend(TestCase):
         modules = {
             'social_auth': self.social_auth,
             'social_auth.backends': self.social_auth.backends,
+            'social_auth.models': self.social_auth.models,
             'social_auth.utils': self.social_auth.utils,
         }
         self.social_auth.backends.BaseOAuth2 = BasicClass
@@ -129,3 +132,15 @@ class TestSocialAuthBackend(TestCase):
         data = instance.get_user_details(response)
 
         self.assertEqual(data, self.USER_DATA_NO_LAST_NAME)
+
+    def test_api_authentication_using_idm(self):
+
+        auth_user_mock = MagicMock()
+        def get_social_auth(provider, uid):
+            if provider == 'fiware' and uid == 'demo':
+                return auth_user_mock
+        self.social_auth.models.UserSocialAuth.objects.get.side_effect = get_social_auth
+
+        with patch('wirecloud.fiware.plugins.FIWARE_SOCIAL_AUTH_BACKEND', create=True) as backend_mock:
+            backend_mock._user_data.return_value = self.USER_DATA
+            self.assertEqual(auth_fiware_token('Bearer', 'token'), auth_user_mock.user)

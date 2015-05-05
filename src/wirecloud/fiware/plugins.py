@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -41,7 +41,7 @@ def auth_fiware_token(auth_type, token):
 
     from social_auth.models import UserSocialAuth
     user_data = FIWARE_SOCIAL_AUTH_BACKEND._user_data(token)
-    return UserSocialAuth.objects.get(provider='fiware', uid=user_data['nickName']).user
+    return UserSocialAuth.objects.get(provider='fiware', uid=user_data['username']).user
 
 
 class FiWareMarketManager(MarketManager):
