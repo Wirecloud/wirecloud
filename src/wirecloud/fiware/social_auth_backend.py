@@ -41,7 +41,7 @@ from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend
 
 
-FILAB_IDM_SERVER = 'https://account.lab.fiware.org'
+FIWARE_LAB_IDM_SERVER = 'https://account.lab.fiware.org'
 
 FIWARE_AUTHORIZATION_ENDPOINT = 'oauth2/authorize'
 FIWARE_ACCESS_TOKEN_ENDPOINT = 'oauth2/token'
@@ -78,9 +78,9 @@ class FiwareBackend(OAuthBackend):
 
 class FiwareAuth(BaseOAuth2):
     """FIWARE OAuth2 mechanism"""
-    AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
-    ACCESS_TOKEN_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_ACCESS_TOKEN_ENDPOINT)
-    USER_DATA_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_USER_DATA_ENDPOINT)
+    AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
+    ACCESS_TOKEN_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_ACCESS_TOKEN_ENDPOINT)
+    USER_DATA_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_USER_DATA_ENDPOINT)
     AUTH_BACKEND = FiwareBackend
     REDIRECT_STATE = False
     STATE_PARAMETER = False
