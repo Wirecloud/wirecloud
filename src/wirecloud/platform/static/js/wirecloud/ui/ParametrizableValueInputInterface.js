@@ -34,7 +34,7 @@
             this.inputElement.setValue('');
             break;
         case 'current':
-            this.inputElement.setValue(StyledElements.ParametrizedTextInputInterface.prototype.escapeValue(this.variable.value));
+            this.inputElement.setValue(Wirecloud.ui.ParametrizedTextInputInterface.prototype.escapeValue(this.variable.value));
             break;
         case 'custom':
             this.inputElement.setValue(this.value);

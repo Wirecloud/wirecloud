@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, ValidationErrorManager*/
+/*global StyledElements*/
 
 (function () {
 
@@ -420,7 +420,7 @@
     Form.prototype.is_valid = function () {
         // Validate input fields
         var fieldId, extraErrorMsgs, errorMsgs,
-            validationManager = new ValidationErrorManager();
+            validationManager = new StyledElements.ValidationErrorManager();
         for (fieldId in this.fieldInterfaces) {
             if (this.fieldInterfaces.hasOwnProperty(fieldId)) {
                 validationManager.validate(this.fieldInterfaces[fieldId]);
