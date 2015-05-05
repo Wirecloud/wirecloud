@@ -1,4 +1,4 @@
-/*global gettext, StyledElements, ValidationErrorManager, Wirecloud*/
+/*global gettext, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -134,7 +134,7 @@
 
     var _executeOperation = function _executeOperation() {
         // Validate input fields
-        var validationManager = new ValidationErrorManager();
+        var validationManager = new StyledElements.ValidationErrorManager();
         for (var pref_name in this.manager.preferences) {
             validationManager.validate(this.interfaces[pref_name].base);
         }

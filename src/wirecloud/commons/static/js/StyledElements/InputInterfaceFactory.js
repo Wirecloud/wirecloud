@@ -26,21 +26,21 @@
     "use strict";
 
     var default_mapping = {
-        'boolean': BooleanInputInterface,
-        'text': TextInputInterface,
+        'boolean': StyledElements.BooleanInputInterface,
+        'text': StyledElements.TextInputInterface,
         'version': StyledElements.VersionInputInterface,
-        'password': PasswordInputInterface,
-        'hidden': HiddenInputInterface,
-        'list': ListInputInterface,
-        'number': NumberInputInterface,
-        'longtext': LongTextInputInterface,
-        'url': URLInputInterface,
-        'email': EMailInputInterface,
-        'select': SelectInputInterface,
-        'buttons': ButtonGroupInputInterface,
-        'file': FileInputInterface,
-        'fieldset': FieldSetInterface,
-        'multivalued': MultivaluedInputInterface
+        'password': StyledElements.PasswordInputInterface,
+        'hidden': StyledElements.HiddenInputInterface,
+        'list': StyledElements.ListInputInterface,
+        'number': StyledElements.NumberInputInterface,
+        'longtext': StyledElements.LongTextInputInterface,
+        'url': StyledElements.URLInputInterface,
+        'email': StyledElements.EMailInputInterface,
+        'select': StyledElements.SelectInputInterface,
+        'buttons': StyledElements.ButtonGroupInputInterface,
+        'file': StyledElements.FileInputInterface,
+        'fieldset': StyledElements.FieldSetInterface,
+        'multivalued': StyledElements.MultivaluedInputInterface
     };
 
     var InputInterfaceFactory = function InputInterfaceFactory() {

@@ -19,7 +19,7 @@
  *
  */
 
-/*global InputValidationError, StyledElements*/
+/*global StyledElements*/
 
 (function () {
 
@@ -128,7 +128,7 @@
      * value is empty but required is out of scope of this method.
      */
     InputInterface.prototype._checkValue = function _checkValue(newValue) {
-        return InputValidationError.NO_ERROR;
+        return StyledElements.InputValidationError.NO_ERROR;
     };
 
     /**
@@ -142,13 +142,13 @@
             newValue = this._normalize(newValue);
         }
 
-        if (!(this instanceof SelectInputInterface)) {
+        if (!(this instanceof StyledElements.SelectInputInterface)) {
             if (this.required && this._isEmptyValue(newValue)) {
-                return InputValidationError.REQUIRED_ERROR;
+                return StyledElements.InputValidationError.REQUIRED_ERROR;
             }
 
             if (!this.required && this._isEmptyValue(newValue)) {
-                return InputValidationError.NO_ERROR;
+                return StyledElements.InputValidationError.NO_ERROR;
             }
         }
 
@@ -161,7 +161,7 @@
      * @retuns {Boolean}
      */
     InputInterface.prototype.isValidValue = function isValidValue(newValue) {
-        return this.checkValue(newValue) === InputValidationError.NO_ERROR;
+        return this.checkValue(newValue) === StyledElements.InputValidationError.NO_ERROR;
     };
 
     /**
