@@ -20,6 +20,7 @@
 import os
 import sys
 
+import django
 from django.core.urlresolvers import reverse_lazy
 
 
@@ -79,9 +80,11 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         'django.contrib.admin',
         'wirecloud.commons',
         'wirecloud.defaulttheme',
-        'south',
         'compressor',
     )
+
+    if django.VERSION[1] < 7:
+        settings['INSTALLED_APPS'] += ('south',)
 
     if instance_type == 'catalogue':
         settings['INSTALLED_APPS'] += (
