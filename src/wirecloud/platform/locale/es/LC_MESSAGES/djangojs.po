@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-20 16:12+0200\n"
+"POT-Creation-Date: 2015-05-06 20:30+0200\n"
 "PO-Revision-Date: 2015-04-10 23:08+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -277,8 +277,8 @@ msgid "Mark as Visible"
 msgstr "Marcar como Visible"
 
 #: static/js/opManager/TabMenuItems.js:68
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:51
 #: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:150
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:51
 msgid "Remove"
 msgstr "Eliminar"
 
@@ -286,8 +286,8 @@ msgstr "Eliminar"
 #: static/js/wirecloud/Tutorials/BasicConcepts.js:287
 #: static/js/wirecloud/ui/IWidgetMenuItems.js:51
 #: static/js/wirecloud/ui/WirecloudHeader.js:92
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:45
 #: static/js/wirecloud/ui/WiringEditor/GenericInterfaceSettingsMenuItems.js:49
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:45
 msgid "Settings"
 msgstr "Configurar"
 
@@ -606,243 +606,6 @@ msgstr "Detectar el idioma del navegador"
 msgid "Tab preferences (%(tabName)s)"
 msgstr "Preferencias de la pestaña (%(tabName)s)"
 
-#: static/js/wirecloud/Widget.js:128
-msgid "[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]"
-msgstr ""
-"[Widget; Distribuidor: %(vendor)s, Nombre: %(name)s, Versión: %(versión)s]"
-
-#: static/js/wirecloud/Wiring.js:73 static/js/wirecloud/Wiring.js.c:87
-msgid ""
-"The connection between %(source)s and %(target)s could not be established"
-msgstr "La conexión entre %(source)s y %(target)s no se ha podido crear"
-
-#: static/js/wirecloud/Wiring.js:124
-msgid ""
-"Error adding iWidget into the wiring module of the workspace: Widget "
-"instance already exists."
-msgstr ""
-"Error añadiendo la instancia de widget al módulo de conexiones del entorno "
-"de trabajo: la instancia de widget ya existe."
-
-#: static/js/wirecloud/Wiring.js:137
-msgid "Error: trying to remove an inexistant iWidget from the wiring module."
-msgstr ""
-"Error: intentando eliminar un iWidget inexistente del modulo de wiring."
-
-#: static/js/wirecloud/Wiring.js:213
-msgid ""
-"operator instance %(ioperator_id)s was unloaded as %(operator)s operator has "
-"been uninstalled"
-msgstr ""
-"La instancia de operator %(ioperator_id)s ha sido descargada dado que el "
-"operador %(operator)s ha sido desinstaladlo"
-
-#: static/js/wirecloud/Wiring.js:286 static/js/wirecloud/Wiring.js.c:304
-msgid "%(operator)s operator is not available for this account"
-msgstr "El operador %(operator)s no está disponible para esta cuenta"
-
-#: static/js/wirecloud/Wiring.js:295 static/js/wirecloud/Wiring.js.c:368
-msgid "Error instantiating the %(operator)s operator"
-msgstr "Error instanciando el operador %(operator)s"
-
-#: static/js/wirecloud/WorkspacePreferences.js:37
-msgid "Workspace preferences (%(workspaceName)s)"
-msgstr "Preferencias del entorno de trabajo (%(workspaceName)s)"
-
-#: static/js/wirecloud/constants.js:35
-msgid "Connection Refused"
-msgstr "Conexión rechazada"
-
-#: static/js/wirecloud/constants.js:36
-msgid "Bad Request"
-msgstr "Solicitud incorrecta"
-
-#: static/js/wirecloud/constants.js:37
-msgid "Unauthorized"
-msgstr "No autorizado"
-
-#: static/js/wirecloud/constants.js:38
-msgid "Payment Required"
-msgstr "Pago requerido"
-
-#: static/js/wirecloud/constants.js:39
-msgid "Forbidden"
-msgstr "Prohibido"
-
-#: static/js/wirecloud/constants.js:40
-msgid "Not Found"
-msgstr "No encontrado"
-
-#: static/js/wirecloud/constants.js:41
-msgid "Method Not Allowed"
-msgstr "Método no permitido"
-
-#: static/js/wirecloud/constants.js:42
-msgid "Not Acceptable"
-msgstr "No aceptable"
-
-#: static/js/wirecloud/constants.js:43
-msgid "Proxy Authentication Required"
-msgstr "Se requiere autenticación de proxy"
-
-#: static/js/wirecloud/constants.js:44
-msgid "Request Timeout"
-msgstr "Tiempo de espera superado"
-
-#: static/js/wirecloud/constants.js:45
-msgid "Conflict"
-msgstr "Conflicto"
-
-#: static/js/wirecloud/constants.js:46
-msgid "Gone"
-msgstr "Ya no existe"
-
-#: static/js/wirecloud/constants.js:47
-msgid "Length Required"
-msgstr "Se requiere longitud"
-
-#: static/js/wirecloud/constants.js:48
-msgid "Precondition Failed"
-msgstr "Precondición fallida"
-
-#: static/js/wirecloud/constants.js:49
-msgid "Request Entity Too Large"
-msgstr "Entidad de solicitud demasiado larga"
-
-#: static/js/wirecloud/constants.js:50
-msgid "Request-URI Too Long"
-msgstr "URL de solicitud demasiado larga"
-
-#: static/js/wirecloud/constants.js:51
-msgid "Unsupported Media Type"
-msgstr "Tipo de medio no soportado"
-
-#: static/js/wirecloud/constants.js:52
-msgid "Requested Range Not Satisfiable"
-msgstr "El rango solicitado no puede ser satisfecho"
-
-#: static/js/wirecloud/constants.js:53
-msgid "Expectation Failed"
-msgstr "Expectativa fallida"
-
-#: static/js/wirecloud/constants.js:54
-msgid "Unprocessable Entity"
-msgstr "Entidad no procesable"
-
-#: static/js/wirecloud/constants.js:55
-msgid "Locked"
-msgstr "Bloqueado"
-
-#: static/js/wirecloud/constants.js:56
-msgid "Failed Dependency"
-msgstr "Falló dependencia"
-
-#: static/js/wirecloud/constants.js:57
-msgid "Upgrade Required"
-msgstr "Actualización requerida"
-
-#: static/js/wirecloud/constants.js:58
-msgid "Internal Server Error"
-msgstr "Error interno del servidor"
-
-#: static/js/wirecloud/constants.js:59
-msgid "Not Implemented"
-msgstr "No implementado"
-
-#: static/js/wirecloud/constants.js:60
-msgid "Bad Gateway"
-msgstr "Puerta de enlace incorrecta"
-
-#: static/js/wirecloud/constants.js:61
-msgid "Service Unavailable"
-msgstr "Servicio no disponible"
-
-#: static/js/wirecloud/constants.js:62
-msgid "Gateway Timeout"
-msgstr "Tiempo de espera de gateway superado"
-
-#: static/js/wirecloud/constants.js:63
-msgid "HTTP Version Not Supported"
-msgstr "Versión de HTTP no soportada"
-
-#: static/js/wirecloud/constants.js:64
-msgid "Variant Also Negotiates"
-msgstr "Variante también negocia"
-
-#: static/js/wirecloud/constants.js:65
-msgid "Insufficient Storage"
-msgstr "Almacenamiento insuficiente"
-
-#: static/js/wirecloud/constants.js:66
-msgid "Loop Detected"
-msgstr "Detectado bucle"
-
-#: static/js/wirecloud/constants.js:67
-msgid "Not Extended"
-msgstr "No extendido"
-
-#: static/js/wirecloud/constants.js:70
-msgid "Unknown status code"
-msgstr "Código de error desconocido"
-
-#: static/js/wirecloud/core.js:68
-msgid "Error adding the workspace: %(errorMsg)s."
-msgstr "Error añadiendo el entorno de trabajo: %(errorMsg)s."
-
-#: static/js/wirecloud/core.js:100
-msgid "Error merging the mashup: %(errorMsg)s."
-msgstr "Error mezclando el mashup: %(errorMsg)s."
-
-#: static/js/wirecloud/core.js:132
-msgid "Loading WireCloud Platform"
-msgstr "Descargando la plataforma WireCloud"
-
-#: static/js/wirecloud/core.js:133
-msgid "Retrieving WireCloud code"
-msgstr "Obteniendo el código de WireCloud"
-
-#: static/js/wirecloud/core.js:135
-msgid "Retrieving initial data"
-msgstr "Obteniendo datos iniciales"
-
-#: static/js/wirecloud/core.js:151
-msgid "Workspace"
-msgstr "Entorno de trabajo"
-
-#: static/js/wirecloud/core.js:180
-msgid "Processing initial context data"
-msgstr "Procesando los datos contexto iniciales"
-
-#: static/js/wirecloud/core.js:201
-msgid "Error retrieving available resources: %(errorMsg)s."
-msgstr "Error obteniendo los recursos disponibles: %(errorMsg)s."
-
-#: static/js/wirecloud/core.js:219
-msgid "Error retrieving platform preferences data: %(errorMsg)s"
-msgstr ""
-"Error obteniendo los datos de las preferencias de la plataforma: "
-"%(errorMsg)s."
-
-#: static/js/wirecloud/core.js:248
-msgid "Error retrieving workspace list"
-msgstr "Error obteniendo la lista de entornos de trabajo"
-
-#: static/js/wirecloud/core.js:259
-msgid "Unloading Wirecloud Platform"
-msgstr "Descargando la plataforma WireCloud"
-
-#: static/js/wirecloud/core.js:278
-msgid "Changing current workspace"
-msgstr "Cambiando el entorno de trabajo actual"
-
-#: static/js/wirecloud/core.js:300
-msgid "Downloading workspace (%(name)s) data"
-msgstr "Descargando los datos del entorno de trabajo (%(name)s)"
-
-#: static/js/wirecloud/core.js:407
-msgid "Merging mashup"
-msgstr "Mezclando el mashup"
-
 #: static/js/wirecloud/Tutorials/BasicConcepts.js:260
 msgid "Basic concepts"
 msgstr "Conceptos básicos"
@@ -1118,6 +881,11 @@ msgstr ""
 msgid "Click <em>Upload to my resources</em>"
 msgstr "Haz click en <em>Subir a mis recursos</em>"
 
+#: static/js/wirecloud/Widget.js:132
+msgid "[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]"
+msgstr ""
+"[Widget; Distribuidor: %(vendor)s, Nombre: %(name)s, Versión: %(versión)s]"
+
 #: static/js/wirecloud/Widget/LogManager.js:56
 msgid "%(iwidget_name)s's logs"
 msgstr "Registros de %(iwidget_name)s"
@@ -1131,6 +899,238 @@ msgstr "Configuración del Widget"
 msgid "Exception catched while processing preference changes"
 msgstr ""
 "Excepción capturada mientras se procesaba los cambios en las preferencias"
+
+#: static/js/wirecloud/Wiring.js:73 static/js/wirecloud/Wiring.js.c:87
+msgid ""
+"The connection between %(source)s and %(target)s could not be established"
+msgstr "La conexión entre %(source)s y %(target)s no se ha podido crear"
+
+#: static/js/wirecloud/Wiring.js:124
+msgid ""
+"Error adding iWidget into the wiring module of the workspace: Widget "
+"instance already exists."
+msgstr ""
+"Error añadiendo la instancia de widget al módulo de conexiones del entorno "
+"de trabajo: la instancia de widget ya existe."
+
+#: static/js/wirecloud/Wiring.js:137
+msgid "Error: trying to remove an inexistant iWidget from the wiring module."
+msgstr ""
+"Error: intentando eliminar un iWidget inexistente del modulo de wiring."
+
+#: static/js/wirecloud/Wiring.js:213
+msgid ""
+"operator instance %(ioperator_id)s was unloaded as %(operator)s operator has "
+"been uninstalled"
+msgstr ""
+"La instancia de operator %(ioperator_id)s ha sido descargada dado que el "
+"operador %(operator)s ha sido desinstaladlo"
+
+#: static/js/wirecloud/Wiring.js:286 static/js/wirecloud/Wiring.js.c:304
+msgid "%(operator)s operator is not available for this account"
+msgstr "El operador %(operator)s no está disponible para esta cuenta"
+
+#: static/js/wirecloud/Wiring.js:295 static/js/wirecloud/Wiring.js.c:368
+msgid "Error instantiating the %(operator)s operator"
+msgstr "Error instanciando el operador %(operator)s"
+
+#: static/js/wirecloud/WorkspacePreferences.js:37
+msgid "Workspace preferences (%(workspaceName)s)"
+msgstr "Preferencias del entorno de trabajo (%(workspaceName)s)"
+
+#: static/js/wirecloud/constants.js:35
+msgid "Connection Refused"
+msgstr "Conexión rechazada"
+
+#: static/js/wirecloud/constants.js:36
+msgid "Bad Request"
+msgstr "Solicitud incorrecta"
+
+#: static/js/wirecloud/constants.js:37
+msgid "Unauthorized"
+msgstr "No autorizado"
+
+#: static/js/wirecloud/constants.js:38
+msgid "Payment Required"
+msgstr "Pago requerido"
+
+#: static/js/wirecloud/constants.js:39
+msgid "Forbidden"
+msgstr "Prohibido"
+
+#: static/js/wirecloud/constants.js:40
+msgid "Not Found"
+msgstr "No encontrado"
+
+#: static/js/wirecloud/constants.js:41
+msgid "Method Not Allowed"
+msgstr "Método no permitido"
+
+#: static/js/wirecloud/constants.js:42
+msgid "Not Acceptable"
+msgstr "No aceptable"
+
+#: static/js/wirecloud/constants.js:43
+msgid "Proxy Authentication Required"
+msgstr "Se requiere autenticación de proxy"
+
+#: static/js/wirecloud/constants.js:44
+msgid "Request Timeout"
+msgstr "Tiempo de espera superado"
+
+#: static/js/wirecloud/constants.js:45
+msgid "Conflict"
+msgstr "Conflicto"
+
+#: static/js/wirecloud/constants.js:46
+msgid "Gone"
+msgstr "Ya no existe"
+
+#: static/js/wirecloud/constants.js:47
+msgid "Length Required"
+msgstr "Se requiere longitud"
+
+#: static/js/wirecloud/constants.js:48
+msgid "Precondition Failed"
+msgstr "Precondición fallida"
+
+#: static/js/wirecloud/constants.js:49
+msgid "Request Entity Too Large"
+msgstr "Entidad de solicitud demasiado larga"
+
+#: static/js/wirecloud/constants.js:50
+msgid "Request-URI Too Long"
+msgstr "URL de solicitud demasiado larga"
+
+#: static/js/wirecloud/constants.js:51
+msgid "Unsupported Media Type"
+msgstr "Tipo de medio no soportado"
+
+#: static/js/wirecloud/constants.js:52
+msgid "Requested Range Not Satisfiable"
+msgstr "El rango solicitado no puede ser satisfecho"
+
+#: static/js/wirecloud/constants.js:53
+msgid "Expectation Failed"
+msgstr "Expectativa fallida"
+
+#: static/js/wirecloud/constants.js:54
+msgid "Unprocessable Entity"
+msgstr "Entidad no procesable"
+
+#: static/js/wirecloud/constants.js:55
+msgid "Locked"
+msgstr "Bloqueado"
+
+#: static/js/wirecloud/constants.js:56
+msgid "Failed Dependency"
+msgstr "Falló dependencia"
+
+#: static/js/wirecloud/constants.js:57
+msgid "Upgrade Required"
+msgstr "Actualización requerida"
+
+#: static/js/wirecloud/constants.js:58
+msgid "Internal Server Error"
+msgstr "Error interno del servidor"
+
+#: static/js/wirecloud/constants.js:59
+msgid "Not Implemented"
+msgstr "No implementado"
+
+#: static/js/wirecloud/constants.js:60
+msgid "Bad Gateway"
+msgstr "Puerta de enlace incorrecta"
+
+#: static/js/wirecloud/constants.js:61
+msgid "Service Unavailable"
+msgstr "Servicio no disponible"
+
+#: static/js/wirecloud/constants.js:62
+msgid "Gateway Timeout"
+msgstr "Tiempo de espera de gateway superado"
+
+#: static/js/wirecloud/constants.js:63
+msgid "HTTP Version Not Supported"
+msgstr "Versión de HTTP no soportada"
+
+#: static/js/wirecloud/constants.js:64
+msgid "Variant Also Negotiates"
+msgstr "Variante también negocia"
+
+#: static/js/wirecloud/constants.js:65
+msgid "Insufficient Storage"
+msgstr "Almacenamiento insuficiente"
+
+#: static/js/wirecloud/constants.js:66
+msgid "Loop Detected"
+msgstr "Detectado bucle"
+
+#: static/js/wirecloud/constants.js:67
+msgid "Not Extended"
+msgstr "No extendido"
+
+#: static/js/wirecloud/constants.js:70
+msgid "Unknown status code"
+msgstr "Código de error desconocido"
+
+#: static/js/wirecloud/core.js:68
+msgid "Error adding the workspace: %(errorMsg)s."
+msgstr "Error añadiendo el entorno de trabajo: %(errorMsg)s."
+
+#: static/js/wirecloud/core.js:100
+msgid "Error merging the mashup: %(errorMsg)s."
+msgstr "Error mezclando el mashup: %(errorMsg)s."
+
+#: static/js/wirecloud/core.js:132
+msgid "Loading WireCloud Platform"
+msgstr "Descargando la plataforma WireCloud"
+
+#: static/js/wirecloud/core.js:133
+msgid "Retrieving WireCloud code"
+msgstr "Obteniendo el código de WireCloud"
+
+#: static/js/wirecloud/core.js:135
+msgid "Retrieving initial data"
+msgstr "Obteniendo datos iniciales"
+
+#: static/js/wirecloud/core.js:151
+msgid "Workspace"
+msgstr "Entorno de trabajo"
+
+#: static/js/wirecloud/core.js:180
+msgid "Processing initial context data"
+msgstr "Procesando los datos contexto iniciales"
+
+#: static/js/wirecloud/core.js:201
+msgid "Error retrieving available resources: %(errorMsg)s."
+msgstr "Error obteniendo los recursos disponibles: %(errorMsg)s."
+
+#: static/js/wirecloud/core.js:219
+msgid "Error retrieving platform preferences data: %(errorMsg)s"
+msgstr ""
+"Error obteniendo los datos de las preferencias de la plataforma: "
+"%(errorMsg)s."
+
+#: static/js/wirecloud/core.js:248
+msgid "Error retrieving workspace list"
+msgstr "Error obteniendo la lista de entornos de trabajo"
+
+#: static/js/wirecloud/core.js:259
+msgid "Unloading Wirecloud Platform"
+msgstr "Descargando la plataforma WireCloud"
+
+#: static/js/wirecloud/core.js:278
+msgid "Changing current workspace"
+msgstr "Cambiando el entorno de trabajo actual"
+
+#: static/js/wirecloud/core.js:300
+msgid "Downloading workspace (%(name)s) data"
+msgstr "Descargando los datos del entorno de trabajo (%(name)s)"
+
+#: static/js/wirecloud/core.js:407
+msgid "Merging mashup"
+msgstr "Mezclando el mashup"
 
 #: static/js/wirecloud/ui/AlertWindowMenu.js:12
 #: static/js/wirecloud/ui/MessageWindowMenu.js:28
@@ -1271,7 +1271,7 @@ msgstr "Configuración de la distribución"
 
 #: static/js/wirecloud/ui/LogWindowMenu.js:55
 #: static/js/wirecloud/ui/PublishResourceWindowMenu.js:112
-#: static/js/wirecloud/ui/WiringEditor.js:694
+#: static/js/wirecloud/ui/WiringEditor.js:689
 msgid "Details"
 msgstr "Detalles"
 
@@ -1465,27 +1465,27 @@ msgstr "Crear entorno de trabajo"
 msgid "Operator Settings"
 msgstr "Configuración del operador"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:25
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:46
 msgid "Parametrize"
 msgstr "Parametrizar"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:27
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:48
 msgid "Modify"
 msgstr "Modificar"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:32
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:53
 msgid "This value won't be editable by the user"
 msgstr "El usuario no podrá modificar el valor"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:35
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:56
 msgid "This value will be editable by the user"
 msgstr "El usuario podrá modificar el valor"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:40
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:61
 msgid "This value will be visible to the user"
 msgstr "El usuario podrá ver el valor actual"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:43
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:64
 msgid "This value won't be visible to the user"
 msgstr "El usuario no podrá ver el valor"
 
@@ -1528,6 +1528,34 @@ msgstr "Valor"
 #: static/js/wirecloud/ui/ParametrizeWindowMenu.js:31
 msgid "Parametrization"
 msgstr "Parametrización"
+
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:44
+msgid "Use current value"
+msgstr "Usar el valor actual"
+
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:74
+msgid "Add"
+msgstr "Añadir"
+
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:145
+msgid "User"
+msgstr "Usuario"
+
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:149
+msgid "User Name"
+msgstr "Nombre de Usuario"
+
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:154
+msgid "First Name"
+msgstr "Nombre"
+
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:159
+msgid "Last Name"
+msgstr "Appellidos"
+
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:166
+msgid "Context"
+msgstr "Contexto"
 
 #: static/js/wirecloud/ui/PreferencesWindowMenu.js:79
 msgid "Inherit"
@@ -1661,26 +1689,22 @@ msgstr ""
 "suéltalos en esta área. <br/>Luego enlaza las salidas y las entradas para "
 "conectar los recursos."
 
-#: static/js/wirecloud/ui/WiringEditor.js:332
-msgid "WiringEditor error (critical). Creating MiniOperator: %(message)s"
-msgstr "Error critico en el WiringEditor. Creando MiniOperador: %(message)s"
-
-#: static/js/wirecloud/ui/WiringEditor.js:372
+#: static/js/wirecloud/ui/WiringEditor.js:367
 msgid "unknown name"
 msgstr "nombre desconocido"
 
-#: static/js/wirecloud/ui/WiringEditor.js:646
+#: static/js/wirecloud/ui/WiringEditor.js:641
 msgid "Unrecoverable error while loading wiring data into the wiring editor"
 msgstr ""
 "Error irrecuperable mientras se cargaban los datos de conexión en el editor "
 "de conexiones"
 
-#: static/js/wirecloud/ui/WiringEditor.js:660
-#: static/js/wirecloud/ui/WiringEditor.js:674
+#: static/js/wirecloud/ui/WiringEditor.js:655
+#: static/js/wirecloud/ui/WiringEditor.js:669
 msgid "Fatal error loading wiring data"
 msgstr "Error fatal mientras se cargaban los datos de las conexiones"
 
-#: static/js/wirecloud/ui/WiringEditor.js:682
+#: static/js/wirecloud/ui/WiringEditor.js:677
 msgid ""
 "Unrecoverable error while loading wiring data. Do you want to start with an "
 "empty wiring?"
@@ -1688,7 +1712,7 @@ msgstr ""
 "Error irrecuperable mientras se cargaban los datos de las conexiones. "
 "¿Quieres descartar los datos y comenzar con una configuración vacía?"
 
-#: static/js/wirecloud/ui/WiringEditor.js:693
+#: static/js/wirecloud/ui/WiringEditor.js:688
 msgid ""
 "<p>There was an error loading the wiring status. Do you want WireCloud to "
 "try to recover the state of your connections automatically?</p>"
@@ -1696,9 +1720,46 @@ msgstr ""
 "<p>Ha habido un error cargando las conexiones. ¿Quieres que WireCloud "
 "intente recuperar el estado de las conexiones de forma automática?</p>"
 
-#: static/js/wirecloud/ui/WiringEditor.js:1619
+#: static/js/wirecloud/ui/WiringEditor.js:1614
 msgid "%(workspace_title)s - Wiring"
 msgstr "%(workspace_title)s - Wiring"
+
+#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:123
+msgid "Warning: %(type)s not found!"
+msgstr "Atención: ¡%(type)s no encontrado!"
+
+#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:219
+msgid ""
+"Warning! this is an old version of the operator, click to change the version"
+msgstr ""
+"Atención! esta es una versión antigua del operador, haz click para cambiar "
+"la versión"
+
+#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:809
+msgid "Hide"
+msgstr "Ocultar"
+
+#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:908
+msgid "Unfold data structure"
+msgstr "Desplegar la estructura de datos"
+
+#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:1113
+#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:1186
+msgid "Mismatch endpoint! "
+msgstr "¡El endpoint no existe! "
+
+#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:1134
+#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:1207
+msgid "Add multiconnector"
+msgstr "Añadir multiconector"
+
+#: static/js/wirecloud/ui/WiringEditor/GenericInterfaceSettingsMenuItems.js:43
+msgid "Reorder endpoints"
+msgstr "Reordenar los endpoint"
+
+#: static/js/wirecloud/ui/WiringEditor/Multiconnector.js:113
+msgid "Drag & Drop"
+msgstr "Arrastrar & soltar"
 
 #: static/js/wirecloud/ui/WorkspaceListItems.js:45
 msgid "Empty workspace list"
@@ -1743,43 +1804,6 @@ msgstr "Código a incrustar"
 msgid "Upload to my resources"
 msgstr "Subir a mis recursos"
 
-#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:123
-msgid "Warning: %(type)s not found!"
-msgstr "Atención: ¡%(type)s no encontrado!"
-
-#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:219
-msgid ""
-"Warning! this is an old version of the operator, click to change the version"
-msgstr ""
-"Atención! esta es una versión antigua del operador, haz click para cambiar "
-"la versión"
-
-#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:809
-msgid "Hide"
-msgstr "Ocultar"
-
-#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:908
-msgid "Unfold data structure"
-msgstr "Desplegar la estructura de datos"
-
-#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:1113
-#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:1186
-msgid "Mismatch endpoint! "
-msgstr "¡El endpoint no existe! "
-
-#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:1134
-#: static/js/wirecloud/ui/WiringEditor/GenericInterface.js:1207
-msgid "Add multiconnector"
-msgstr "Añadir multiconector"
-
-#: static/js/wirecloud/ui/WiringEditor/GenericInterfaceSettingsMenuItems.js:43
-msgid "Reorder endpoints"
-msgstr "Reordenar los endpoint"
-
-#: static/js/wirecloud/ui/WiringEditor/Multiconnector.js:113
-msgid "Drag & Drop"
-msgstr "Arrastrar & soltar"
-
 #: static/js/wirecloud/wiring/Endpoint.js:46
 msgid "Unimplemented function: %(funcName)s"
 msgstr "Función no implementada: %(funcName)s"
@@ -1815,3 +1839,6 @@ msgstr "El operador no ha registrado un callback para este punto de entrada"
 #: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:88
 msgid "Widget has not registered a callback for this input endpoint"
 msgstr "El widget no ha registrado un callback para este endpoint de entrada"
+
+#~ msgid "WiringEditor error (critical). Creating MiniOperator: %(message)s"
+#~ msgstr "Error critico en el WiringEditor. Creando MiniOperador: %(message)s"

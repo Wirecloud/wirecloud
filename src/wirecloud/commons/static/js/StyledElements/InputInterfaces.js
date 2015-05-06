@@ -66,25 +66,25 @@
         errorCode = parseInt(errorCode, 10);
         switch (errorCode) {
         case StyledElements.InputValidationError.REQUIRED_ERROR:
-            msg = "The following required fields are empty: %(fields)s.";
+            msg = StyledElements.Utils.gettext("The following required fields are empty: %(fields)s.");
             break;
         case StyledElements.InputValidationError.URL_ERROR:
-            msg = "The following fields do not contain a valid URL: %(fields)s.";
+            msg = StyledElements.Utils.gettext("The following fields do not contain a valid URL: %(fields)s.");
             break;
         case StyledElements.InputValidationError.EMAIL_ERROR:
-            msg = "The following fields do not contain a valid E-Mail address: %(fields)s.";
+            msg = StyledElements.Utils.gettext("The following fields do not contain a valid E-Mail address: %(fields)s.");
             break;
         case StyledElements.InputValidationError.VERSION_ERROR:
-            msg = "The following field do not contain a valid version number: %(fields)s.";
+            msg = StyledElements.Utils.gettext("The following field do not contain a valid version number: %(fields)s.");
             break;
         case StyledElements.InputValidationError.ID_ERROR:
-            msg = "The following fields contain invalid characters: %(fields)s.";
+            msg = StyledElements.Utils.gettext("The following fields contain invalid characters: %(fields)s.");
             break;
         case StyledElements.InputValidationError.COLOR_ERROR:
-            msg = "The following fields do not contain a valid color value: %(fields)s.";
+            msg = StyledElements.Utils.gettext("The following fields do not contain a valid color value: %(fields)s.");
             break;
         case StyledElements.InputValidationError.OUT_OF_RANGE_ERROR:
-            msg = "The following fields does contain an out of range value: %(fields)s.";
+            msg = StyledElements.Utils.gettext("The following fields does contain an out of range value: %(fields)s.");
             break;
         }
 
