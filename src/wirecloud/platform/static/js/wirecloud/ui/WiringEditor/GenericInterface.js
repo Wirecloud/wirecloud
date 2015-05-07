@@ -332,13 +332,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                     'plain': true
                 }),
 
-                'optionCollapse': new StyledElements.StyledButton({
-                    'title': gettext("Collapse"),
-                    'class': 'option-collapse',
-                    'iconClass': 'icon-collapse',
-                    'plain': true
-                }),
-
                 'optionPreferences': new StyledElements.PopupButton({
                     'class': 'icon-cog option-preferences',
                     'title': gettext("Preferences"),
@@ -371,11 +364,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                 updateErrorInfo.call(this);
                 this.entity.logManager.addEventListener('newentry', updateErrorInfo.bind(this));
             }
-
-            optionsElement.appendChild(this.options.optionCollapse.wrapperElement);
-            this.options.optionCollapse.addEventListener('click', function (originalEvent) {
-                this.collapsed = !this.collapsed;
-            }.bind(this));
 
             optionsElement.appendChild(this.options.optionPreferences.wrapperElement);
             this.options.optionPreferences.popup_menu.append(new Wirecloud.ui.WiringEditor.ComponentPreferences(this));
@@ -1836,9 +1824,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         this.heading.element.appendChild(this.endpoints.targetsElement);
         this.heading.element.appendChild(this.endpoints.sourcesElement);
 
-        this.options.optionCollapse.toggleIconClass('icon-collapse-top', 'icon-collapse');
-        this.options.optionCollapse.setTitle(gettext("Expand"));
-
         this.repaint();
 
         this.events.collapse.dispatch({
@@ -1865,8 +1850,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             this.wrapperElement.style.left = parseInt(parseInt(this.wrapperElement.style.left, 10) - ((originalWidth - collapsedWidth) / 2), 10) + 'px';
         }
 
-        this.options.optionCollapse.toggleIconClass('icon-collapse', 'icon-collapse-top');
-        this.options.optionCollapse.setTitle(gettext("Collapse"));
         this.repaint();
 
         this.events.expand.dispatch({

@@ -57,7 +57,7 @@ class PopupMenuTester(object):
         items = self.element.find_elements_by_css_selector('.se-popup-menu-item')
 
         for item in items:
-            span = item.find_element_by_css_selector('span')
+            span = item.find_element_by_css_selector('span:not([class*="se-icon"])')
             if span and span.text == name:
                 return item
 
@@ -577,10 +577,6 @@ class WiringComponentTester(object):
         return "background" in self.class_list
 
     @property
-    def btn_collapse_endpoints(self):
-        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".option-collapse"))
-
-    @property
     def btn_display_preferences(self):
         return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".option-preferences"))
 
@@ -614,14 +610,14 @@ class WiringComponentTester(object):
 
     def collapse_endpoints(self):
         self.testcase.assertFalse(self.collapsed)
-        self.btn_collapse_endpoints.click()
+        self.display_preferences().click_entry("Collapse endpoints")
         self.testcase.assertTrue(self.collapsed)
 
         return self
 
     def expand_endpoints(self):
         self.testcase.assertTrue(self.collapsed)
-        self.btn_collapse_endpoints.click()
+        self.display_preferences().click_entry("Expand endpoints")
         self.testcase.assertFalse(self.collapsed)
 
         return self

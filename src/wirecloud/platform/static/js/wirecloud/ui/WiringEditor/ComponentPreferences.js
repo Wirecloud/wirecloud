@@ -50,6 +50,18 @@ Wirecloud.ui.WiringEditor.ComponentPreferences = (function () {
     ComponentPreferences.prototype.build = function build() {
         var itemList = [];
 
+        if (displayItemCollapseEndpoints.call(this)) {
+            if (this.component.collapsed) {
+                itemList.push(createMenuItem("Expand endpoints", "icon-collapse-top", function () {
+                    this.component.collapsed = false;
+                }.bind(this)));
+            } else {
+                itemList.push(createMenuItem("Collapse endpoints", "icon-collapse", function () {
+                    this.component.collapsed = true;
+                }.bind(this)));
+            }
+        }
+
         if (displayItemSortEndpoints.call(this)) {
             if (this.component.editingPos) {
                 itemList.push(createMenuItem("Stop sorting", "icon-sort", function () {
@@ -100,6 +112,10 @@ Wirecloud.ui.WiringEditor.ComponentPreferences = (function () {
 
     var displayItemSortEndpoints = function displayItemSortEndpoints() {
         return !this.component.onbackground && !this.component.sleek && !this.component.collapsed && (this.component.sourceAnchors.length > 1 || this.component.targetAnchors.length > 1);
+    };
+
+    var displayItemCollapseEndpoints = function displayItemCollapseEndpoints() {
+        return !this.component.onbackground && (this.component.sourceAnchors.length > 0 || this.component.targetAnchors.length > 0);
     };
 
     var displayItemSettings = function displayItemSettings() {
