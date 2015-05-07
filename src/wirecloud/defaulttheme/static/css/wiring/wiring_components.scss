@@ -160,6 +160,7 @@
     display: table-cell;
     float: right;
     padding-left: $component-options-padding-horizontal;
+    white-space: nowrap;
 
     .styled_button {
         margin: 0px 0px 0px $component-options-margin-horizontal;
