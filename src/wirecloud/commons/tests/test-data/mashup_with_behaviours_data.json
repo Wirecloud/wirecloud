@@ -194,6 +194,7 @@
                     "components": {
                         "operator": {
                             "1": {
+                                "collapsed": false,
                                 "endpoints": {
                                     "source": ["output1"],
                                     "target": ["input1"]
@@ -204,6 +205,7 @@
                                 }
                             },
                             "2": {
+                                "collapsed": true,
                                 "endpoints": {
                                     "source": [],
                                     "target": ["input1"]
@@ -237,6 +239,7 @@
                     "components": {
                         "operator": {
                             "1": {
+                                "collapsed": false,
                                 "endpoints": {
                                     "source": ["output1"],
                                     "target": ["input1"]
@@ -249,6 +252,7 @@
                         },
                         "widget": {
                             "1": {
+                                "collapsed": true,
                                 "endpoints": {
                                     "source": ["output1"],
                                     "target": ["input1", "input2"]
@@ -293,6 +297,7 @@
                     "components": {
                         "operator": {
                             "3": {
+                                "collapsed": false,
                                 "endpoints": {
                                     "source": ["output1"],
                                     "target": ["input1"]
@@ -311,6 +316,7 @@
             "components": {
                 "operator": {
                     "1": {
+                        "collapsed": true,
                         "endpoints": {
                             "source": ["output1"],
                             "target": ["input1"]
@@ -321,6 +327,7 @@
                         }
                     },
                     "2": {
+                        "collapsed": false,
                         "endpoints": {
                             "source": [],
                             "target": ["input1"]
@@ -331,6 +338,7 @@
                         }
                     },
                     "3": {
+                        "collapsed": true,
                         "endpoints": {
                             "source": ["output1"],
                             "target": ["input1"]
@@ -343,6 +351,7 @@
                 },
                 "widget": {
                     "1": {
+                        "collapsed": false,
                         "endpoints": {
                             "source": ["output1"],
                             "target": ["input1", "input2"]
@@ -353,6 +362,7 @@
                         }
                     },
                     "2": {
+                        "collapsed": false,
                         "endpoints": {
                             "source": ["output1", "output2"],
                             "target": ["input"]
