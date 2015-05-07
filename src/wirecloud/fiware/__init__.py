@@ -25,7 +25,7 @@ DEFAULT_FIWARE_PORTALS = (
     {'name': 'Store', 'url': 'https://store.lab.fiware.org', "logout_path": "/logout"},
     {'name': 'Mashup', 'url': 'https://mashup.lab.fiware.org', "logout_path": "/logout", "active": True},
     {'name': 'Data', 'url': 'https://data.lab.fiware.org', "logout_path": "/user/logout"},
-    {'name': 'Account', 'url': 'https://account.lab.fiware.org', "logout_path": "/users/sign_out"},
+    {'name': 'Account', 'url': 'https://account.lab.fiware.org', "logout_path": "/auth/logout/"},
     {'name': 'Help&info', 'url': 'http://help.lab.fiware.org'},
 )
 
