@@ -52,26 +52,26 @@ Wirecloud.ui.WiringEditor.ComponentPreferences = (function () {
 
         if (displayItemSortEndpoints.call(this)) {
             if (this.component.editingPos) {
-                itemList.push(new StyledElements.MenuItem(gettext("Stop sorting"), function () {
+                itemList.push(createMenuItem("Stop sorting", "icon-sort", function () {
                     this.component.wiringEditor.ChangeObjectEditing(this.component);
                 }.bind(this)));
 
                 return itemList;
             } else {
-                itemList.push(new StyledElements.MenuItem(gettext("Sort endpoints"), function () {
+                itemList.push(createMenuItem("Sort endpoints", "icon-sort", function () {
                     this.component.wiringEditor.ChangeObjectEditing(this.component);
                 }.bind(this)));
             }
         }
 
-        itemList.push(new StyledElements.MenuItem(gettext('Logs'), function () {
+        itemList.push(createMenuItem("Logs", "icon-tags", function () {
             var dialog = new Wirecloud.ui.LogWindowMenu(this.component.entity.logManager);
 
             dialog.show();
         }.bind(this)));
 
         if (displayItemSettings.call(this)) {
-            itemList.push(new StyledElements.MenuItem(gettext("Settings"), function () {
+            itemList.push(createMenuItem("Settings", "icon-tasks", function () {
                 var dropdownMenu;
 
                 if (this.componentType == 'operator') {
@@ -87,6 +87,15 @@ Wirecloud.ui.WiringEditor.ComponentPreferences = (function () {
         }
 
         return itemList;
+    };
+
+    var createMenuItem = function createMenuItem(title, iconClass, callback){
+        var item;
+
+        item = new StyledElements.MenuItem(gettext(title), callback);
+        item.addIconClass(iconClass);
+
+        return item;
     };
 
     var displayItemSortEndpoints = function displayItemSortEndpoints() {

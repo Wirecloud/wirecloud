@@ -50,8 +50,19 @@
 }
 
 .se-popup-menu-item {
-    padding: 3px 20px;
+    padding: 5px 10px;
     cursor: pointer;
+
+    > span {
+        display: inline-block;
+        line-height: 20px;
+    }
+
+    > .se-icon {
+        width: 20px;
+        margin-right: 5px;
+        text-align: center;
+    }
 
     &.submenu:after {
         display: block;
