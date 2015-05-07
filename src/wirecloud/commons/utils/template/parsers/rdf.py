@@ -389,22 +389,21 @@ class RDFTemplateParser(object):
 
             self._info['wiring']['operators'][operator_info['id']] = operator_info
 
-    def _parse_wiring_components(self, element, behaviour, globalView=False):
+    def _parse_wiring_components(self, element, behaviour):
 
         behaviour['components'] = {
             'operator': {},
             'widget': {}
         }
 
-        for entity_view in self._graph.objects(element, WIRE_M['hasView']):
+        for entity_view in self._graph.objects(element, WIRE_M['hasComponentView']):
 
             type_ = self._get_field(WIRE, 'type', entity_view)
             id_ = self._get_field(WIRE, 'id', entity_view)
 
-            component_view_description = behaviour['components'][type_][id_] = {}
-
-            if type == 'widget' and globalView:
-                component_view_description['name'] = self._get_field(WIRE, 'name', entity_view)
+            component_view_description = behaviour['components'][type_][id_] = {
+                'collapsed': self._get_field(WIRE_M, 'collapsed', entity_view, required=False).lower() == 'true'
+            }
 
             sorted_sources = sorted(self._graph.objects(entity_view, WIRE_M['hasSource']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source, required=False)))
             sorted_targets = sorted(self._graph.objects(entity_view, WIRE_M['hasTarget']), key=lambda target: possible_int(self._get_field(WIRE, 'index', target, required=False)))
@@ -450,7 +449,7 @@ class RDFTemplateParser(object):
             else:
                 raise TemplateParseException(_('missing required field: hasSourceEndpoint'))
 
-            connection_info['sourcehandle'] = self._parse_position(connection, relation_name='hasSourcePosition')
+            connection_info['sourcehandle'] = self._parse_position(connection, relation_name='hasSourceHandlePosition')
 
             for target in self._graph.objects(connection, WIRE_M['hasTargetEndpoint']):
                 connection_info['targetname'] = self._join_endpoint_name(target)
@@ -458,7 +457,7 @@ class RDFTemplateParser(object):
             else:
                 raise TemplateParseException(_('missing required field: hasTargetEndpoint'))
 
-            connection_info['targethandle'] = self._parse_position(connection, relation_name='hasTargetPosition')
+            connection_info['targethandle'] = self._parse_position(connection, relation_name='hasTargetHandlePosition')
 
             behaviour['connections'].append(connection_info)
 
@@ -471,7 +470,7 @@ class RDFTemplateParser(object):
         self._parse_wiring_components(wiring_element, visualdescription)
         self._parse_wiring_connections(wiring_element, visualdescription)
 
-        sorted_behaviours = sorted(self._graph.objects(wiring_element, WIRE_M['hasWiringBehaviour']), key=lambda behaviour: possible_int(self._get_field(WIRE, 'index', behaviour, required=False)))
+        sorted_behaviours = sorted(self._graph.objects(wiring_element, WIRE_M['hasBehaviour']), key=lambda behaviour: possible_int(self._get_field(WIRE, 'index', behaviour, required=False)))
         for view in sorted_behaviours:
             behaviour = {
                 'title': self._get_field(RDFS, 'label', view),
@@ -490,10 +489,12 @@ class RDFTemplateParser(object):
         wiring_views = []
 
         for view in self._graph.objects(wiring_element, WIRE_M['hasWiringView']):
-            element_view = {}
-            element_view['label'] = self._get_field(RDFS, 'label', view)
-            element_view['iwidgets'] = {}
-            element_view['operators'] = {}
+            element_view = {
+                'label': self._get_field(RDFS, 'label', view),
+                'iwidgets': {},
+                'operators': {},
+                'connections': []
+            }
 
             for entity_view in self._graph.objects(view, WIRE_M['hasView']):
 

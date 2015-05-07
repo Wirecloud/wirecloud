@@ -67,8 +67,10 @@ def write_wiring_components_graph(graph, behaviour, components, type):
         component_view = rdflib.BNode()
         graph.add((component_view, rdflib.RDF.type, WIRE_M['ComponentView']))
         graph.add((component_view, WIRE['type'], rdflib.Literal(type)))
-        graph.add((behaviour, WIRE_M['hasView'], component_view))
         graph.add((component_view, WIRE['id'], rdflib.Literal(str(key))))
+
+        if component.get('collapsed', False):
+            graph.add((component_view, WIRE_M['collapsed'], rdflib.Literal('true')))
 
         if 'position' in component:
             write_position_graph(graph, component_view, component['position'])
@@ -89,6 +91,8 @@ def write_wiring_components_graph(graph, behaviour, components, type):
                     graph.add((component_view, WIRE_M['hasTarget'], target_element))
                     graph.add((target_element, RDFS['label'], rdflib.Literal(target)))
                     graph.add((target_element, WIRE['index'], rdflib.Literal(str(index))))
+
+        graph.add((behaviour, WIRE_M['hasComponentView'], component_view))
 
 
 def write_endpoint_graph(graph, node, endpointView, relationName='hasEndpoint'):
@@ -123,13 +127,13 @@ def write_wiring_connections_graph(graph, behaviour, connections):
         write_endpoint_graph(graph, connection_view, connection['sourcename'], relationName="hasSourceEndpoint")
 
         if 'sourcehandle' in connection:
-            write_position_graph(graph, connection_view, connection['sourcehandle'], relationName="hasSourcePosition")
+            write_position_graph(graph, connection_view, connection['sourcehandle'], relationName="hasSourceHandlePosition")
 
         # write target endpoint
         write_endpoint_graph(graph, connection_view, connection['targetname'], relationName="hasTargetEndpoint")
 
         if 'targethandle' in connection:
-            write_position_graph(graph, connection_view, connection['targethandle'], relationName="hasTargetPosition")
+            write_position_graph(graph, connection_view, connection['targethandle'], relationName="hasTargetHandlePosition")
 
         graph.add((behaviour, WIRE_M['hasConnectionView'], connection_view))
 
@@ -142,7 +146,7 @@ def write_wiring_visualdescription_graph(graph, wiring, template_info):
 
     for index, behaviour in enumerate(template_info['wiring']['visualdescription']['behaviours']):
         wiring_view = rdflib.BNode()
-        graph.add((wiring_view, rdflib.RDF.type, WIRE_M['WiringBehaviour']))
+        graph.add((wiring_view, rdflib.RDF.type, WIRE_M['Behaviour']))
         graph.add((wiring_view, WIRE['index'], rdflib.Literal(str(index))))
         graph.add((wiring_view, RDFS['label'], rdflib.Literal(behaviour['title'])))
         graph.add((wiring_view, DCTERMS['description'], rdflib.Literal(behaviour['description'])))
@@ -151,7 +155,7 @@ def write_wiring_visualdescription_graph(graph, wiring, template_info):
         write_wiring_components_graph(graph, wiring_view, behaviour['components'], 'operator')
         write_wiring_connections_graph(graph, wiring_view, behaviour['connections'])
 
-        graph.add((wiring, WIRE_M['hasWiringBehaviour'], wiring_view))
+        graph.add((wiring, WIRE_M['hasBehaviour'], wiring_view))
 
 
 def write_mashup_params(graph, resource_uri, template_info):
