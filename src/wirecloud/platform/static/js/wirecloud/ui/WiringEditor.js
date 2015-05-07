@@ -563,60 +563,6 @@ Wirecloud.ui.WiringEditor = (function () {
         }
     };
 
-    var normalizeWiringStatus = function normalizeWiringStatus(WiringStatus) {
-
-        var i;
-
-        if (WiringStatus == null) {
-            WiringStatus = {};
-        }
-
-        if (!Array.isArray(WiringStatus.connections)) {
-            WiringStatus.connections = [];
-        }
-
-        if (typeof WiringStatus.operators !== "object") {
-            WiringStatus.operators = {};
-        }
-
-        if (!Array.isArray(WiringStatus.views)) {
-            WiringStatus.views = [
-                {
-                    label: 'default',
-                    iwidgets: {},
-                    operators: {},
-                    multiconnectors: {},
-                    connections: []
-                }
-            ];
-        }
-
-        for (i = 0; i < WiringStatus.views.length; i+=1) {
-            // widgets
-            if (WiringStatus.views[i].widgets == null) {
-                WiringStatus.views[i].widgets = {};
-            }
-
-            // operators
-            if (WiringStatus.views[i].operators == null) {
-                WiringStatus.views[i].operators = {};
-            }
-
-            // multiconnectors
-            if (WiringStatus.views[i].multiconnectors == null) {
-                WiringStatus.views[i].multiconnectors = {};
-            }
-
-            // connections
-            if (!Array.isArray(WiringStatus.views[i].connections)) {
-                WiringStatus.views[i].connections = [];
-            }
-        }
-
-        return WiringStatus;
-
-    };
-
     /**
      * @Private
      * Create Mini Operator for menubar

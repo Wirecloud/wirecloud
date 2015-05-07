@@ -90,60 +90,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     };
 
     /**
-     * @static
-     * @function
-     *
-     * @param {Object.<String, *>} state
-     * @returns {Object.<String, *>} The wiring state normalized.
-     */
-    BehaviourEngine.normalizeWiring = function normalizeWiring(state) {
-        var element, i, key, wiringState;
-
-        wiringState = {
-            'version': "2.0",
-            'connections': [],
-            'operators': {},
-            'visualdescription': {
-                'behaviours': [],
-                'components': {
-                    'operator': {},
-                    'widget': {}
-                },
-                'connections': []
-            }
-        };
-
-        if (typeof state !== 'object') {
-            return wiringState;
-        }
-
-        if (Array.isArray(state.connections)) {
-            wiringState.connections = state.connections;
-        }
-
-        if (typeof state.operators === 'object') {
-            wiringState.operators = state.operators;
-        }
-
-        if (typeof state.visualdescription === 'object') {
-
-            if (Array.isArray(state.visualdescription.behaviours)) {
-                wiringState.visualdescription.behaviours = state.visualdescription.behaviours;
-            }
-
-            if (typeof state.visualdescription.components === 'object') {
-                wiringState.visualdescription.components = state.visualdescription.components;
-            }
-
-            if (Array.isArray(state.visualdescription.connections)) {
-                wiringState.visualdescription.connections = state.visualdescription.connections;
-            }
-        }
-
-        return StyledElements.Utils.cloneObject(wiringState);
-    };
-
-    /**
      * @public
      * @function
      *
@@ -443,7 +389,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.loadWiring = function loadWiring(state) {
         var i;
 
-        state = BehaviourEngine.normalizeWiring(state);
+        state = Wirecloud.Wiring.normalize(state);
 
         this.empty();
         this.currentState = state.visualdescription;
@@ -636,7 +582,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
     BehaviourEngine.prototype.serialize = function serialize() {
         var wiringState, i;
 
-        wiringState = BehaviourEngine.normalizeWiring();
+        wiringState = Wirecloud.Wiring.normalize();
 
         wiringState.visualdescription.components = this.currentState.components;
         wiringState.visualdescription.connections = this.currentState.connections;
