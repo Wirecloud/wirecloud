@@ -417,7 +417,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources((
         'responses/static/CoNWeT__Input Box Widget__1.0__CoNWeT_input-box_1.0.wgt',
-        'responses/static/CoNWeT__Youtube Browser Widget__2.99.0__CoNWeT_youtube-browser_2.99.0.wgt',
+        'responses/static/CoNWeT__Youtube Browser Widget__3.0__CoNWeT_youtube-browser_3.0.wgt',
         ),
         public=False,
         users=('user_with_markets',))
