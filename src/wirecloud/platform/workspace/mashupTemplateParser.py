@@ -94,27 +94,22 @@ def check_mashup_dependencies(template, user):
 
 
 def map_id(endpoint_view, id_mapping):
-    old_id = str(endpoint_view['id'])
-    if endpoint_view['type'] == 'widget':
-        return id_mapping['widget'][old_id].id
-    elif endpoint_view['type'] == 'operator':
-        return id_mapping['operator'][old_id]
-
-    raise ValueError("Invalid endpoint type: %s" % endpoint_view['type'])
+    return id_mapping[endpoint_view['type']][endpoint_view['id']]['id']
 
 
-def _remap_component_ids(id_mapping, components_description):
+def _remap_component_ids(id_mapping, components_description, isGlobal=False):
 
     operators = {}
     for key, operator in six.iteritems(components_description['operator']):
-        new_id = id_mapping['operator'][key]
-        operators[new_id] = operator
+        operators[id_mapping['operator'][key]['id']] = operator
     components_description['operator'] = operators
 
     widgets = {}
     for key, widget in six.iteritems(components_description['widget']):
-        new_id = id_mapping['widget'][key].id
-        widgets[new_id] = widget
+        if isGlobal:
+            widget['name'] = id_mapping['widget'][key]['name']
+
+        widgets[id_mapping['widget'][key]['id']] = widget
     components_description['widget'] = widgets
 
 
@@ -259,7 +254,10 @@ def fillWorkspaceUsingTemplate(workspace, template):
             if len(iwidget_forced_values) > 0:
                 new_forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
 
-            id_mapping['widget'][resource.get('id')] = iwidget
+            id_mapping['widget'][resource.get('id')] = {
+                'id': iwidget.id,
+                'name': resource.get('vendor') + "/" + resource.get('name') + "/" + resource.get('version')
+            }
 
     # wiring
     if workspace.wiringStatus != '':
@@ -277,7 +275,9 @@ def fillWorkspaceUsingTemplate(workspace, template):
     for operator_id, operator in six.iteritems(mashup_description['wiring']['operators']):
         max_id += 1
         new_id = unicode(max_id)
-        id_mapping['operator'][operator_id] = new_id
+        id_mapping['operator'][operator_id] = {
+            'id': new_id
+        }
         workspace_wiring_status['operators'][new_id] = {
             'id': new_id,
             'name': operator['name'],

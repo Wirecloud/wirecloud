@@ -150,7 +150,7 @@ def parse_wiring_old_version(wiring_status):
 
         # rebuild connections
         connections_length = len(new_version['connections'])
-        for connection_index, connection_view in enumerate(old_view['connections']):
+        for connection_index, connection_view in enumerate(old_view.get('connections', [])):
             if connection_index < connections_length:
                 # get connection info from business part
                 connection = new_version['connections'][connection_index]
