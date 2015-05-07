@@ -701,6 +701,19 @@
         </xs:attribute>
     </xs:complexType>
 
+    <xs:complexType name="Position2d">
+        <xs:attribute name="x" type="xs:string" use="required" />
+        <xs:attribute name="y" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="Position3d">
+        <xs:complexContent>
+            <xs:extension base="macd:Position2d">
+                <xs:attribute name="z" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="Tab">
         <xs:sequence>
             <xs:element name="preferencevalue" type="macd:PreferenceValue" minOccurs="0" maxOccurs="unbounded" />
@@ -709,13 +722,7 @@
                     <xs:choice minOccurs="1" maxOccurs="unbounded">
                         <xs:element name="preferencevalue" type="macd:ResourcePreferenceValue" minOccurs="0" maxOccurs="unbounded" />
                         <xs:element name="variablevalue" type="macd:ResourcePreferenceValue" minOccurs="0" maxOccurs="unbounded" />
-                        <xs:element name="position" minOccurs="1" maxOccurs="1">
-                            <xs:complexType>
-                                <xs:attribute name="x" type="xs:string" use="required" />
-                                <xs:attribute name="y" type="xs:string" use="required" />
-                                <xs:attribute name="z" type="xs:string" use="required" />
-                            </xs:complexType>
-                        </xs:element>
+                        <xs:element name="position" type="macd:Position3d" minOccurs="1" maxOccurs="1" />
                         <xs:element name="rendering" minOccurs="1" maxOccurs="1">
                             <xs:complexType>
                                 <xs:attribute name="width" type="xs:string" use="required" />
@@ -769,6 +776,56 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+    </xs:complexType>
+
+
+    <xs:complexType name="EndpointList">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="endpoint" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string"/>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="ComponentView">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="position" type="macd:Position2d" minOccurs="0" maxOccurs="1" />
+            <xs:element name="sources" type="macd:EndpointList" minOccurs="0" maxOccurs="1" />
+            <xs:element name="targets" type="macd:EndpointList" minOccurs="0" maxOccurs="1" />
+        </xs:choice>
+        <xs:attribute name="id" type="macd:NonEmpty" use="required" />
+        <xs:attribute name="type" type="macd:NonEmpty" use="required" />
+        <xs:attribute name="collapsed" type="xs:boolean" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="ConnectionView">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="sourcehandle" type="macd:Position2d" minOccurs="0" maxOccurs="1" />
+            <xs:element name="targethandle" type="macd:Position2d" minOccurs="0" maxOccurs="1" />
+        </xs:choice>
+        <xs:attribute name="sourcename" type="macd:NonEmpty" use="required" />
+        <xs:attribute name="targetname" type="macd:NonEmpty" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="Behaviour">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="component" type="macd:ComponentView" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="connection" type="macd:ConnectionView" minOccurs="0" maxOccurs="unbounded" />
+        </xs:choice>
+        <xs:attribute name="title" type="macd:NonEmpty" use="required" />
+        <xs:attribute name="description" type="macd:NonEmpty" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="MashupWiringVisualInfo">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="component" type="macd:ComponentView" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="connection" type="macd:ConnectionView" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="behaviour" type="macd:Behaviour" minOccurs="0" maxOccurs="unbounded" />
+        </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="MashupWiring">
@@ -832,7 +889,9 @@
                     </xs:attribute>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="visualdescription" type="macd:MashupWiringVisualInfo" minOccurs="0" maxOccurs="1" />
         </xs:choice>
+        <xs:attribute name="version" type="macd:VersionType" use="optional" />
     </xs:complexType>
 
     <xs:complexType name="MashupStructure">

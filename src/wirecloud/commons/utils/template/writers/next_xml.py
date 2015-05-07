@@ -155,26 +155,23 @@ def write_mashup_wiring_visualdescription_tree(target, visualdescription):
     write_mashup_wiring_components_tree(target, 'operator', visualdescription['components'])
     write_mashup_wiring_components_tree(target, 'widget', visualdescription['components'])
     write_mashup_wiring_connections_tree(target, visualdescription['connections'])
-
-    behaviours = etree.SubElement(target, 'behaviours')
-
-    for behaviour in visualdescription['behaviours']:
-        write_mashup_wiring_behaviour_tree(behaviours, behaviour)
+    write_mashup_wiring_behaviours_tree(target, visualdescription['behaviours'])
 
 
-def write_mashup_wiring_behaviour_tree(target, behaviour):
+def write_mashup_wiring_behaviours_tree(target, behaviours):
 
-    behaviour_element = etree.SubElement(target, 'behaviour', title=behaviour['title'], description=behaviour['description'])
+    for behaviour in behaviours:
+        behaviour_element = etree.SubElement(target, 'behaviour', title=behaviour['title'], description=behaviour['description'])
 
-    write_mashup_wiring_components_tree(behaviour_element, 'operator', behaviour['components'])
-    write_mashup_wiring_components_tree(behaviour_element, 'widget', behaviour['components'])
-    write_mashup_wiring_connections_tree(behaviour_element, behaviour['connections'])
+        write_mashup_wiring_components_tree(behaviour_element, 'operator', behaviour['components'])
+        write_mashup_wiring_components_tree(behaviour_element, 'widget', behaviour['components'])
+        write_mashup_wiring_connections_tree(behaviour_element, behaviour['connections'])
 
 
 def write_mashup_wiring_connections_tree(target, connections):
 
     for connection in connections:
-        componentview = etree.SubElement(target, 'connectionview', sourcename=connection['sourcename'], targetname=connection['targetname'])
+        componentview = etree.SubElement(target, 'connection', sourcename=connection['sourcename'], targetname=connection['targetname'])
 
         if connection.get('sourcehandle', None) is not None:
             etree.SubElement(componentview, 'sourcehandle', x=str(connection['sourcehandle']['x']), y=str(connection['sourcehandle']['y']))
@@ -186,7 +183,7 @@ def write_mashup_wiring_connections_tree(target, connections):
 def write_mashup_wiring_components_tree(target, type, components):
 
     for c_id, component in six.iteritems(components[type]):
-        componentview = etree.SubElement(target, 'componentview', id=str(c_id), type=type)
+        componentview = etree.SubElement(target, 'component', id=str(c_id), type=type)
 
         if component.get('collapsed', False):
             componentview.set('collapse', 'true')

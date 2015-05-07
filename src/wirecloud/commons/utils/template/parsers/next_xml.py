@@ -84,14 +84,13 @@ SOURCE_XPATH = 't:source'
 TARGET_XPATH = 't:target'
 
 VISUALDESCRIPTION_XPATH = 't:visualdescription'
-CONNECTIONVIEW_XPATH = 't:connectionview'
+BEHAVIOUR_XPATH = 't:behaviour'
 
-COMPONENTVIEW_XPATH = 't:componentview'
+COMPONENT_XPATH = 't:component'
 COMPONENTSOURCES_XPATH = 't:sources/t:endpoint'
 COMPONENTTARGETS_XPATH = 't:targets/t:endpoint'
 SOURCEHANDLE_XPATH = 't:sourcehandle'
 TARGETHANDLE_XPATH = 't:targethandle'
-BEHAVIOURSVIEW_XPATH = 't:behaviours/t:behaviour'
 
 TRANSLATIONS_XPATH = 't:translations'
 TRANSLATION_XPATH = 't:translation'
@@ -230,25 +229,24 @@ class ApplicationMashupTemplateParser(object):
 
         self._parse_wiring_component_view_info(self._info['wiring']['visualdescription'], visualdescription_element)
         self._parse_wiring_connection_view_info(self._info['wiring']['visualdescription'], visualdescription_element)
+        self._parse_wiring_behaviour_view_info(self._info['wiring']['visualdescription'], visualdescription_element)
 
-        for behaviour in self._xpath(BEHAVIOURSVIEW_XPATH, visualdescription_element):
-            self._parse_wiring_behaviour_view_info(behaviour)
+    def _parse_wiring_behaviour_view_info(self, target, behaviours_element):
 
-    def _parse_wiring_behaviour_view_info(self, behaviour_element):
+        for behaviour in self._xpath(BEHAVIOUR_XPATH, behaviours_element):
 
-        behaviour = get_behaviour_skeleton()
+            behaviour_info = get_behaviour_skeleton()
+            behaviour_info['title'] = behaviour['title']
+            behaviour_info['description'] = behaviour['description']
 
-        behaviour['title'] = behaviour_element['title']
-        behaviour['description'] = behaviour_element['description']
+            self._parse_wiring_component_view_info(behaviour_info, behaviour)
+            self._parse_wiring_connection_view_info(behaviour_info, behaviour)
 
-        self._parse_wiring_component_view_info(behaviour, behaviour_element)
-        self._parse_wiring_connection_view_info(behaviour, behaviour_element)
-
-        self._info['wiring']['visualdescription']['behaviours'].append(behaviour)
+            target['behaviours'].append(behaviour_info)
 
     def _parse_wiring_component_view_info(self, target, components_element):
 
-        for component in self._xpath(COMPONENTVIEW_XPATH, components_element):
+        for component in self._xpath(COMPONENT_XPATH, components_element):
             component_info = {
                 'collapsed': component.get('collapsed', 'false').strip().lower() == 'true',
                 'endpoints': {
@@ -268,15 +266,15 @@ class ApplicationMashupTemplateParser(object):
 
     def _parse_wiring_connection_view_info(self, target, connections_element):
 
-        for connection in self._xpath(CONNECTIONVIEW_XPATH, connections_element):
-
-            sourcehandle_element = self.get_xpath(SOURCEHANDLE_XPATH, connection, required=False)
-            targethandle_element = self.get_xpath(TARGETHANDLE_XPATH, connection, required=False)
+        for connection in self._xpath(CONNECTION_XPATH, connections_element):
 
             connection_info = {
                 'sourcename': connection['sourcename'],
                 'targetname': connection['targetname'],
             }
+
+            sourcehandle_element = self.get_xpath(SOURCEHANDLE_XPATH, connection, required=False)
+            targethandle_element = self.get_xpath(TARGETHANDLE_XPATH, connection, required=False)
 
             if sourcehandle_element is not None:
                 connection_info['sourcehandle'] = {
