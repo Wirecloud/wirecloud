@@ -39,6 +39,16 @@
         element.value += character;
     };
 
+    var findElementByTextContent = function findElementByTextContent(nodes, text) {
+        var i;
+        for (i = 0; i < nodes.length; i ++) {
+            if (nodes[i].textContent.toLowerCase() == text.toLowerCase()) {
+                return nodes[i];
+            }
+        }
+        return null;
+    };
+
     Wirecloud.ui.Tutorial.Utils = {
         basic_actions: {
             sleep: function sleep(milliseconds) {

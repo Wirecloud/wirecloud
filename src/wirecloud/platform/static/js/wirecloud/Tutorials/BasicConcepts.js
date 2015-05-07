@@ -74,8 +74,13 @@
     };
 
     var get_menubar = function get_menubar() {
-        var wiring_editor = document.getElementsByClassName('wiring_editor')[0];
-        return wiring_editor.getElementsByClassName('menubar')[0];
+        var btn = document.querySelector(".wirecloud_toolbar .btn-list-components");
+
+        if (!btn.classList.contains("active")) {
+            btn.click();
+        }
+
+        return document.querySelector(".wiring-sidebar .component-panel");
     };
 
     var widget_menu = function widget_menu(index) {
@@ -83,9 +88,18 @@
         return iwidget.element.getElementsByClassName('icon-cogs')[0];
     };
 
-    var get_mini_widget = function get_mini_widget(index) {
-        var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
-        return LayoutManagerFactory.getInstance().viewsByName.wiring.mini_widgets[widget_id].wrapperElement;
+    var get_mini_widget = function get_mini_widget(title) {
+        document.querySelector('.wiring-sidebar .btn-display-widget-group').click();
+
+        var widgets = document.querySelectorAll('.wiring-sidebar .component-panel .component-widget');
+
+        for (var i = 0; i < widgets.length; i++) {
+            if (widgets[i].querySelector('.component-title').textContent == title) {
+                return widgets[i];
+            }
+        }
+
+        return null;
     };
 
     var deploy_tutorial_menu = function deploy_tutorial_menu(autoAction) {
@@ -104,21 +118,57 @@
         return findElementByTextContent(popup_menu.getElementsByClassName('se-popup-menu-item'), label);
     };
 
-    var get_endpoint = function get_endpoint(index, name) {
-        var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
-        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName.wiring;
-        return wiringEditor.iwidgets[widget_id].getAnchor(name).wrapperElement;
+    var get_endpoint = function get_endpoint(type, name, endpoint_name) {
+        var instances = document.querySelectorAll('.wiring-diagram .component-' + type);
+        var iSource = null;
+
+        for (var i = 0; i < instances.length; i++) {
+            if (instances[i].querySelector('.component-name').textContent == name) {
+                iSource = instances[i];
+                break;
+            }
+        }
+
+        if (iSource != null) {
+            var endpoints = iSource.querySelectorAll('.source-endpoints .endpoint');
+
+            for (var i = 0; i < endpoints.length; i++) {
+                if (endpoints[i].textContent == endpoint_name) {
+                    return endpoints[i].querySelector('.endpoint-anchor');
+                }
+            }
+        }
+
+        return null;
     };
 
-    var get_full_endpoint = function get_endpoint(index, name) {
-        var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
-        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName.wiring;
-        return wiringEditor.iwidgets[widget_id].getAnchor(name).wrapperElement.parentElement;
+    var get_full_endpoint = function get_full_endpoint(type, name, endpoint_name) {
+        var instances = document.querySelectorAll('.wiring-diagram .component-' + type);
+        var iSource = null;
+
+        for (var i = 0; i < instances.length; i++) {
+            if (instances[i].querySelector('.component-name').textContent == name) {
+                iSource = instances[i];
+                break;
+            }
+        }
+
+        if (iSource != null) {
+            var endpoints = iSource.querySelectorAll('.target-endpoints .endpoint');
+
+            for (var i = 0; i < endpoints.length; i++) {
+                if (endpoints[i].textContent == endpoint_name) {
+                    return endpoints[i].querySelector('.endpoint-anchor');
+                }
+            }
+        }
+
+        return null;
     };
 
     var get_wiring_canvas = function get_wiring_canvas() {
         var wiringEditor = LayoutManagerFactory.getInstance().viewsByName.wiring;
-        return wiringEditor.canvas;
+        return wiringEditor.connectionEngine;
     };
 
     var get_wiring = function get_wiring() {
@@ -167,10 +217,10 @@
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace.</p>")},
             {'type': 'userAction', 'msg': gettext("Click the <em>add widget button</em>"), 'elem': BS.toolbar_button.bind(null, 'icon-plus'), 'pos': 'downLeft'},
             {'type': 'autoAction', 'action': BA.sleep(0.5)},
-            {'type': 'autoAction', 'msg': gettext('Typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input, 'pos': 'downRight', 'action': BA.input.bind(null, 'browser')},
+            {'type': 'autoAction', 'msg': gettext('Typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input, 'pos': 'downRight', 'action': BA.input('browser')},
             {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton.bind(null, "YouTube Browser"), 'pos': 'downRight'},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p><span class=\"label label-success\">Great!</span> That was easy, wasn't it?.</p><p>Let's continue adding the <em>Input Box</em> widget.</p>"), 'elem': null},
-            {'type': 'autoAction', 'msg': gettext('Typing <em>input box</em>...'), 'elem': BS.mac_wallet_input, 'pos': 'downRight', 'action': BA.input.bind(null, 'input box')},
+            {'type': 'autoAction', 'msg': gettext('Typing <em>input box</em>...'), 'elem': BS.mac_wallet_input, 'pos': 'downRight', 'action': BA.input('input box')},
             {'type': 'userAction', 'msg': gettext("Click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton.bind(null, "Input Box"), 'pos': 'downRight'},
             {'type': 'userAction', 'msg': gettext("Close the widget wallet"), 'elem': BS.mac_wallet_close_button, 'pos': 'downRight'},
 
@@ -199,14 +249,14 @@
 
 
             // WiringEditor
-            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>"), 'elem': null},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>")},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets and a combination of these behaviours.</p>"), 'elem': get_menubar},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
 
             {
                 'type': 'userAction',
                 'msg': gettext("Drag &amp; drop the <em>Input Box</em> widget"),
-                'elem': get_mini_widget.bind(null, 1),
+                'elem': get_mini_widget.bind(null, "Input Box"),
                 'pos': 'downRight',
                 'restartHandlers': [
                     {'element': get_wiring, 'event': 'widgetaddfail'},
@@ -217,7 +267,7 @@
             },            {
                 'type': 'userAction',
                 'msg': gettext("Drag &amp; drop the <em>YouTube Browser</em> widget"),
-                'elem': get_mini_widget.bind(null, 0),
+                'elem': get_mini_widget.bind(null, "YouTube Browser"),
                 'pos': 'downRight',
                 'restartHandlers': [
                     {'element': get_wiring, 'event': 'widgetaddfail'},
@@ -230,14 +280,14 @@
             {
                 'type': 'userAction',
                 'msg': gettext("Drag &amp; drop a new connection from <em>Search Box</em>'s <em>keyword</em> endpoint ..."),
-                'elem': get_endpoint.bind(null, 1, 'outputKeyword'), 'eventToDeactivateLayer': 'mousedown', 'pos': 'downLeft',
+                'elem': get_endpoint.bind(null, 'widget', 'Input Box', 'Keyword'),
+                'eventToDeactivateLayer': 'mousedown', 'pos': 'downLeft',
                 'restartHandlers': [
-                    {'element': get_wiring_canvas, 'event': 'arrowremoved'},
-                    {'element': get_wiring_canvas, 'event': 'arrowadded'}
+                    {'element': get_wiring_canvas, 'event': 'detach'}
                 ],
-                'disableElems': [wirecloud_header, get_menubar],
+                'disableElems': [],
                 'nextStepMsg': gettext("... to <em>YouTube Browser</em>'s <em>keyword</em> endpoint"),
-                'elemToApplyNextStepEvent': get_full_endpoint.bind(null, 0, 'keyword'), 'event': 'mouseup', 'secondPos': 'downLeft',
+                'elemToApplyNextStepEvent': get_full_endpoint.bind(null, 'widget', 'YouTube Browser', 'Search by keyword'), 'event': 'mouseup', 'secondPos': 'downLeft',
             },
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("Now it's time to test our creation.")},
             {'type': 'userAction', 'msg': gettext("Click <em>Back</em>"), 'elem': BS.back_button, 'pos': 'downRight'},
