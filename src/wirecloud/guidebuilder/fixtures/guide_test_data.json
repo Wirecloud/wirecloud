@@ -1,0 +1,21 @@
+[
+    {
+        "pk": 101,
+        "model": "platform.market",
+        "fields": {
+            "name": "FIWARE Lab",
+            "options": "{\"url\": \"http://marketplace.example.com/\", \"type\":\"fiware\", \"label\":\"fiware\"}",
+            "user": 1
+        }
+    },
+    {
+        "pk": 101,
+        "model": "platform.marketuserdata",
+        "fields": {
+            "market": 101,
+            "user": 1,
+            "name": "idm_token",
+            "value": "\"idm_token\""
+        }
+    }
+]

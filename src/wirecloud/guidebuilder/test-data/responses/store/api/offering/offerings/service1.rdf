@@ -1,0 +1,118 @@
+{  
+    "rating":"5.00",
+    "related_images":[  
+
+    ],
+    "description_url":"http://130.206.81.113/FiwareRepository/v1/storeOfferingCollection/CoNWeT__OrionStarterKit__1.2",
+    "creation_date":"2014-09-17 04:42:36.268000",
+    "owner_admin_user_id":"braulio",
+    "applications":[  
+
+    ],
+    "publication_date":"2014-09-17 05:05:25.496000",
+    "open": true,
+    "owner_organization":"CoNWeT",
+    "name":"OrionStarterKit",
+    "tags":[  
+        "widget",
+        "starterKit",
+        "mashup",
+        "orion"
+    ],
+    "comments":[  
+        "544283d6b73e263a567d6627",
+        "542fb634b73e2619268e376d"
+    ],
+    "state":"published",
+    "version":"1.2",
+    "image_url":"https://store.lab.fiware.org/media/CoNWeT__OrionStarterKit__1.2/catalogue.png",
+    "offering_description":{  
+        "services_included":[  
+            {  
+                "uriImage":"https://store.lab.fi-ware.org/media/CoNWeT__OrionStarterKit__1.2/catalogue.png",
+                "vendor":"",
+                "name":"OrionStarterKit",
+                "created":"2014-09-17 04:42:36.195281",
+                "interactions":[  
+
+                ],
+                "modified":"2014-09-17 04:42:36.195281",
+                "legal":[  
+
+                ],
+                "parts":[  
+                    {  
+                        "name":"",
+                        "uri":""
+                    }
+                ],
+                "version":"",
+                "sla":[  
+
+                ],
+                "short_description":"Offering composed of three mashable application components: ngsi-source, ngsientity2poi and ngsi-updater. Those components are provided as the base tools/examples for making application mashups using WireCloud and the Orion Context Broker. Those resources can be used for example for showing entities coming from an Orion server inside the Map Viewer widget or browsing and updating the attributes of those entities.",
+                "long_description":"Offering composed of three mashable application components: ngsi-source, ngsientity2poi and ngsi-updater. Those components are provided as the base tools/examples for making application mashups using WireCloud and the Orion Context Broker. Those resources can be used for example for showing entities coming from an Orion server inside the Map Viewer widget or browsing and updating the attributes of those entities.",
+                "page":""
+            }
+        ],
+        "pricing":{  
+            "price_plans":[  
+                {  
+                    "label":"",
+                    "description":"This offering can be acquired for free",
+                    "title":"Free use"
+                }
+            ],
+            "valid_through":"",
+            "valid_from":"",
+            "description":"Offering composed of three mashable application components: ngsi-source, ngsientity2poi and ngsi-updater. Those components are provided as the base tools/examples for making application mashups using WireCloud and the Orion Context Broker. Those resources can be used for example for showing entities coming from an Orion server inside the Map Viewer widget or browsing and updating the attributes of those entities.",
+            "title":"OrionStarterKit"
+        }
+    },
+    "resources":[  
+        {  
+            "version":"3.0.3",
+            "open":true,
+            "name":"NGSI Source Widget",
+            "content_type":"application/x-operator+mashable-application-component",
+            "description":"This operator allows you to use any NGSI server as source of data. This will be acomplished by creating a subscription to the NGSI server to obtain real time notifications about changes on the entities of interest.",
+            "metadata": {
+                "vendor": "CoNWeT",
+                "name": "ngsi-source",
+                "version": "3.0.3"
+            }
+        },
+        {  
+            "version":"3.0.3",
+            "open":true,
+            "name":"NGSI Entity To PoI Widget",
+            "content_type":"application/x-operator+mashable-application-component",
+            "description":"This operator transforms NGSI entities (as the ones coming from the NGSI source operator) to Points of Interest. To be able to do so, those entities should contain an attribute containing the coordinate of the entity. Also, take into account the fact this operator is generic, so market bubbles will be a simple composition of the pairs attribute/value.",
+            "metadata": {
+                "vendor": "CoNWeT",
+                "name": "ngsientity2poi",
+                "version": "3.0.3"
+            }
+        },
+        {  
+            "version":"3.0",
+            "open":true,
+            "name":"NGSI Updater Widget",
+            "content_type":"application/x-widget+mashable-application-component",
+            "description":"Generic widget that let you browse and update the NGSI entities hosted in a particular Orion Context Broker instance. This widget is meant to be useful for developing and its target is not end user."
+        },
+        {  
+            "version":"1.4",
+            "open":true,
+            "name":"Map visualization example",
+            "content_type":"application/x-mashup+mashable-application-component",
+            "description":"This is an example of how to use NSGI operators for displaying entities in a map Map Viewer.",
+            "metadata": {
+                "vendor": "CoNWeT",
+                "name": "map",
+                "version": "3.0.3"
+            }
+        }
+    ]
+}
+

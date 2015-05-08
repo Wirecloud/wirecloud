@@ -1,0 +1,95 @@
+{  
+    "rating":"5.00",
+    "related_images":[  
+        "/media/CoNWeT__KurentoStarterKit__1.0/crowddetector-screenshot1.png"
+    ],
+    "description_url":"http://130.206.81.113/FiwareRepository/v1/storeOfferingCollection/CoNWeT__KurentoStarterKit__1.0",
+    "creation_date":"2015-02-03 06:14:18.511000",
+    "owner_admin_user_id":"alvaro-arranz-garcia",
+    "applications":[  
+
+    ],
+    "publication_date":"2015-02-03 06:25:13.899000",
+    "open":true,
+    "owner_organization":"CoNWeT",
+    "name":"KurentoStarterKit",
+    "tags":[  
+        "widget",
+        "starterKit"
+    ],
+    "comments":[  
+        "54e82a77b73e26049f016a51"
+    ],
+    "state":"published",
+    "version":"1.0",
+    "image_url":"https://store.lab.fiware.org/media/CoNWeT__KurentoStarterKit__1.0/catalogue.png",
+    "offering_description":{  
+        "services_included":[  
+            {  
+                "uriImage":"https://store.lab.fi-ware.org/media/CoNWeT__KurentoStarterKit__1.0/catalogue.png",
+                "vendor":"",
+                "name":"KurentoStarterKit",
+                "created":"2015-02-03 06:14:18.428980",
+                "interactions":[  
+
+                ],
+                "modified":"2015-02-03 06:14:18.428980",
+                "legal":[  
+
+                ],
+                "parts":[  
+                    {  
+                        "name":"",
+                        "uri":""
+                    }
+                ],
+                "version":"",
+                "sla":[  
+
+                ],
+                "short_description":"Offering composed of several kurento mashable application components. Those components are provided as the base tools/examples for making application mashups using WireCloud and Kurento services. Basically, those widgets are the client part of some of the examples provided by the Kurento team (See http://demo.kurento.com/ for more details). Take a look into the provided mashups for getting a better idea of how to use them.",
+                "long_description":"Offering composed of several kurento mashable application components. Those components are provided as the base tools/examples for making application mashups using WireCloud and Kurento services. Basically, those widgets are the client part of some of the examples provided by the Kurento team (See http://demo.kurento.com/ for more details). Take a look into the provided mashups for getting a better idea of how to use them.",
+                "page":""
+            }
+        ],
+        "pricing":{  
+            "price_plans":[  
+                {  
+                    "label":"",
+                    "description":"This offering can be acquired for free",
+                    "title":"Free use"
+                }
+            ],
+            "valid_through":"",
+            "valid_from":"",
+            "description":"Offering composed of several kurento mashable application components. Those components are provided as the base tools/examples for making application mashups using WireCloud and Kurento services. Basically, those widgets are the client part of some of the examples provided by the Kurento team (See http://demo.kurento.com/ for more details). Take a look into the provided mashups for getting a better idea of how to use them.",
+            "title":"KurentoStarterKit"
+        }
+    },
+    "resources":[  
+        {  
+            "name":"Kurento one2one widget",
+            "version":"1.1.2",
+            "link":"/media/resources/CoNWeT__Kurento one2one widget__1.1.2__CoNWeT_kurento-one2one_1.1.2.wgt",
+            "content_type":"application/x-widget+mashable-application-component",
+            "open":true,
+            "description":"The kurento One2One widget is a WireCloud widget usable for adding\nvideoconference support to your dashboards in a simple way."
+        },
+        {  
+            "name":"Kurento Crowd Detector Widget",
+            "version":"0.3.2",
+            "link":"/media/resources/CoNWeT__Kurento Crowd Detector Widget__0.3.2__CoNWeT_kurento-crowddetector_0.3.2.wgt",
+            "content_type":"application/x-widget+mashable-application-component",
+            "open":true,
+            "description":"This widget provide an easy way for use a video and detect people in the areas selected in your dashboard."
+        },
+        {  
+            "name":"Crowd detector mashup example",
+            "version":"1.1",
+            "link":"/media/resources/CoNWeT__Crowd detector mashup example__1.1__CoNWeT_Crowd detector mashup example_1.1.wgt",
+            "content_type":"application/x-mashup+mashable-application-component",
+            "open":true,
+            "description":"This is a simple mashup showing the crowd detection capabilities available through Kurento"
+        }
+    ]
+}

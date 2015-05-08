@@ -1,0 +1,97 @@
+{  
+    "rating":"0.00",
+    "related_images":[  
+
+    ],
+    "description_url":"http://130.206.81.113/FiwareRepository/v1/storeOfferingCollection/sergio-garcia__MadridTransportMashup__1.0",
+    "creation_date":"2014-10-16 04:34:58.256000",
+    "owner_admin_user_id":"sergio-garcia",
+    "applications":[  
+
+    ],
+    "publication_date":"2014-10-16 04:35:43.453000",
+    "open":false,
+    "owner_organization":"sergio-garcia",
+    "name":"MadridTransportMashup",
+    "tags":[  
+        "widget",
+        "dataset"
+    ],
+    "comments":[  
+
+    ],
+    "state":"published",
+    "version":"1.0",
+    "image_url":"https://store.lab.fi-ware.org/media/sergio-garcia__MadridTransportMashup__1.0/transporticon.jpg",
+    "offering_description":{  
+        "services_included":[  
+            {  
+                "uriImage":"https://store.lab.fi-ware.org/media/sergio-garcia__MadridTransportMashup__1.0/transporticon.jpg",
+                "vendor":"",
+                "name":"MadridTransportMashup",
+                "created":"2014-10-16 04:34:58.176407",
+                "interactions":[  
+
+                ],
+                "modified":"2014-10-16 04:34:58.176407",
+                "legal":[  
+
+                ],
+                "parts":[  
+                    {  
+                        "name":"",
+                        "uri":""
+                    }
+                ],
+                "version":"",
+                "sla":[  
+
+                ],
+                "short_description":"Madrid Transport mashup",
+                "long_description":"Madrid Transport mashup",
+                "page":""
+            }
+        ],
+        "pricing":{  
+            "price_plans":[  
+                {  
+                    "deductions":[  
+
+                    ],
+                    "label":"",
+                    "description":"This price plan defines a single payment",
+                    "price_components":[  
+                        {  
+                            "currency":"EUR",
+                            "unit":"single payment",
+                            "description":"This component defines a single payment",
+                            "value":"2.0",
+                            "title":"Single payment"
+                        }
+                    ],
+                    "title":"Single payment"
+                }
+            ],
+            "valid_through":"",
+            "valid_from":"",
+            "description":"Madrid Transport mashup",
+            "title":"MadridTransportMashup"
+        }
+    },
+    "resources":[  
+        {  
+            "version":"1.0",
+            "open":false,
+            "name":"Madrid Transport Evolution",
+            "content_type":"dataset",
+            "description":"Evolution of Madrid Transport"
+        },
+        {  
+            "version":"1.0",
+            "open":false,
+            "name":"MadridTransport",
+            "content_type":"application/x-mashup+mashable-application-component",
+            "description":"Linear Graph Selector, Flotr2 Graph, Data Viewer (Table)"
+        }
+    ]
+}
