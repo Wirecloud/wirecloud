@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,10 +19,11 @@
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.utils.unittest import TestCase
+from django.test import TestCase
+from mock import DEFAULT, patch
 
 from wirecloud.platform.plugins import clear_cache, get_active_features, get_plugins, \
-    get_extra_javascripts, get_widget_api_extensions, WirecloudPlugin
+    get_extra_javascripts, get_widget_api_extensions, WirecloudPlugin, find_wirecloud_plugins
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -131,3 +132,26 @@ class WirecloudPluginTestCase(TestCase):
         )
 
         self.assertRaises(ImproperlyConfigured, get_plugins)
+
+    def test_find_wirecloud_plugins_inexistant_app(self):
+
+        with self.settings(INSTALLED_APPS=('inexistent_module',)):
+            with patch('wirecloud.platform.plugins.logger') as logger_mock:
+                find_wirecloud_plugins()
+                self.assertTrue(logger_mock.error.called)
+
+    def test_find_wirecloud_plugins_app_with_extra_import_errors(self):
+
+        with self.settings(INSTALLED_APPS=('module_with_errors',)):
+            with patch.multiple('wirecloud.platform.plugins', logger=DEFAULT, import_module=DEFAULT) as mocks:
+                mocks['import_module'].side_effect = ImportError('No module named x')
+                find_wirecloud_plugins()
+                self.assertTrue(mocks['logger'].error.called)
+
+    def test_find_wirecloud_plugins_app_with_syntax_errors(self):
+
+        with self.settings(INSTALLED_APPS=('module_with_errors',)):
+            with patch.multiple('wirecloud.platform.plugins', logger=DEFAULT, import_module=DEFAULT) as mocks:
+                mocks['import_module'].side_effect = SyntaxError()
+                find_wirecloud_plugins()
+                self.assertTrue(mocks['logger'].error.called)
