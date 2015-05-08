@@ -76,7 +76,6 @@ INSTALLED_APPS += (
     'wirecloud.oauth2provider',
     'wirecloud.fiware',
     'django_nose',
-    'wirecloud.guidebuilder',
 )
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
