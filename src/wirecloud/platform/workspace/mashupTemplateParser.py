@@ -94,7 +94,7 @@ def check_mashup_dependencies(template, user):
 
 
 def map_id(endpoint_view, id_mapping):
-    return id_mapping[endpoint_view['type']][endpoint_view['id']]['id']
+    return id_mapping[endpoint_view['type']]["%s" % endpoint_view['id']]['id']
 
 
 def _remap_component_ids(id_mapping, components_description, isGlobal=False):
