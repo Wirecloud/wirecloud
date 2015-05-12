@@ -28,6 +28,7 @@ from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
 import wirecloud.fiware
 from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_user_data
+from wirecloud.fiware.storeclient import UnexpectedResponse
 
 try:
     from social_auth.backends import get_backends
@@ -98,15 +99,35 @@ class FiWareMarketManager(MarketManager):
         else:
             token = user_data['idm_token']
 
-        storeclient.upload_resource(
-            resource_info['title'],
-            resource_info['version'],
-            "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
-            resource_info['description'],
-            mimetypes[resource_info['type']],
-            wgt_file.get_underlying_file(),
-            token
-        )
+        wirecloud_plugin_supported = False
+        try:
+            supported_plugins = storeclient.get_supported_plugins(token)
+            for plugin in supported_plugins:
+                if plugin.get('name', '').lower() == 'wirecloud component':
+                    wirecloud_plugin_supported = True
+        except UnexpectedResponse as e:
+            if e.status != 404:
+                raise e
+
+        if wirecloud_plugin_supported:
+            storeclient.upload_resource(
+                    resource_info['title'],
+                    resource_info['version'],
+                    "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
+                    resource_info['description'],
+                    "Mashable application component",
+                    wgt_file.get_underlying_file(),
+                    token,
+                    resource_type="Wirecloud component")
+        else:
+            storeclient.upload_resource(
+                    resource_info['title'],
+                    resource_info['version'],
+                    "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
+                    resource_info['description'],
+                    mimetypes[resource_info['type']],
+                    wgt_file.get_underlying_file(),
+                    token)
 
 
 class FiWarePlugin(WirecloudPlugin):

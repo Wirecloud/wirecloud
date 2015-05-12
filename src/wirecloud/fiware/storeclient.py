@@ -27,7 +27,11 @@ class NotFound(Exception):
 
 
 class UnexpectedResponse(Exception):
-    pass
+
+    status = None
+
+    def __init__(self, status=None):
+        self.status = status
 
 
 class StoreClient(object):
@@ -38,6 +42,19 @@ class StoreClient(object):
             raise ValueError("Your must provide an absolute Store URL")
 
         self._url = urlunparse((url.scheme, url.netloc, url.path.rstrip('/') + '/', '', '', ''))
+
+    def get_supported_plugins(self, token):
+
+        headers = {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + token,
+        }
+        response = requests.get(urljoin(self._url, 'api/offering/resources/plugins'), headers=headers)
+
+        if response.status_code != 200:
+            raise UnexpectedResponse(response.status_code)
+
+        return json.loads(response.text)
 
     def get_offering_info(self, offering_id, token):
 
@@ -79,24 +96,27 @@ class StoreClient(object):
         response = requests.get(urljoin(self._url, url), headers=headers)
 
         if response.status_code not in (200, 201, 204):
-            raise Exception()
+            raise UnexpectedResponse(response.status_code)
 
         return response.content
 
-    def upload_resource(self, name, version, filename, description, content_type, f, token, open=True):
+    def upload_resource(self, name, version, filename, description, content_type, f, token, open=True, resource_type=None):
 
         headers = {
             'Authorization': 'Bearer ' + token,
         }
-        data = {
-            'json': json.dumps({
-                'name': name,
-                'version': version,
-                'description': description,
-                'content_type': content_type,
-                'open': open
-            })
+        json_data = {
+            'name': name,
+            'version': version,
+            'description': description,
+            'content_type': content_type,
+            'open': open,
         }
+        if resource_type is not None:
+            json_data['resource_type'] = resource_type
+
+        data = {'json': json.dumps(json_data)}
+
         # Rest file to ensure the full file is uploaded
         f.seek(0);
         response = requests.post(urljoin(self._url, 'api/offering/resources'), headers=headers, data=data, files={'file': (filename, f)})
@@ -104,4 +124,4 @@ class StoreClient(object):
             raise Exception('Resource already exists')
 
         if response.status_code not in (200, 201, 204):
-            raise Exception('Unexpected response from Store')
+            raise UnexpectedResponse(response.status_code)
