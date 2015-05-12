@@ -76,7 +76,7 @@ def parse_resource_info(offering_resource):
         'description': offering_resource['description'],
     }
 
-    if 'metadata' in offering_resource:
+    if 'metadata' in offering_resource and len(offering_resource['metadata']) > 0:
         resource_info['metadata'] = offering_resource['metadata']
 
     if 'link' in offering_resource:
