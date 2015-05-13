@@ -203,16 +203,16 @@ Finally, please take into account that SQLite database is **not recommended for 
 
 For production purposes, PostgreSQL database is a much better choice. To do so, the following parameters must be set in `settings.py`:
 
-DATABASES = {
-      'default': {
-             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-             'NAME': '<dbname>',
-             'USER': '<dbuser>',
-             'PASSWORD': '<dbpassword>',
-             'HOST': '<dbhost>',
-             'PORT': '<dbport>',
-     }
-}
+    DATABASES = {
+          'default': {
+                 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                 'NAME': '<dbname>',
+                 'USER': '<dbuser>',
+                 'PASSWORD': '<dbpassword>',
+                 'HOST': '<dbhost>',
+                 'PORT': '<dbport>',
+         }
+    }
 
 where `<dbname>` represents the name of the database, `<dbuser>` is the name of the user with privileges on the database and `<dbpassword>` is the password to use for authenticating the user. `<dbhost>` and `<dbport>` are the host and the port of the database server to use (leave these settings empty if the server is running on the same machine as WireCloud).
 
