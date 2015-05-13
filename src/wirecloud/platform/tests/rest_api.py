@@ -330,7 +330,7 @@ def check_cache_is_purged(self, workspace, change_function, current_etag=None, i
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('rest_api', 'fiware-ut-11')
+    tags = ('wirecloud-rest-api', 'fiware-ut-11')
 
     def setUp(self):
         super(ApplicationMashupAPI, self).setUp()
@@ -1739,7 +1739,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 class ResourceManagementAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('rest_api', 'fiware-ut-11')
+    tags = ('wirecloud-rest-api', 'fiware-ut-11')
 
     def test_resource_collection_get_requires_authentication(self):
 
@@ -2093,7 +2093,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 class ExtraApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('extra_rest_api',)
+    tags = ('wirecloud-rest-api', 'wirecloud-extra-rest-api',)
 
     def test_iwidget_collection_get_requires_authentication(self):
 
@@ -2290,6 +2290,25 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 409)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         json.loads(response.content)
+
+    def test_market_collection_post_requires_absolute_url(self):
+
+        url = reverse('wirecloud.market_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make request
+        data = {
+            'name': 'new_market',
+            'options': {
+                'user': 'user_with_markets',
+                'type': 'wirecloud',
+                'url': 'relative/url'
+            }
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
 
     def test_market_collection_bad_request_content_type(self):
 
@@ -2988,7 +3007,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 class AdministrationAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('rest_api',)
+    tags = ('wirecloud-rest-api',)
 
     def check_current_user(self, user):
 
