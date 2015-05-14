@@ -41,7 +41,7 @@ TEST_WORKSPACE_TOKEN = 'rtHdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y..uQ2ig3uIEaP6n
 class ProxyTestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'fiware_proxy_test_data')
-    tags = ('fiware-proxy', 'proxy')
+    tags = ('wirecloud-fiware-proxy', 'wirecloud-proxy')
 
     @classmethod
     def setUpClass(cls):
@@ -103,6 +103,26 @@ class ProxyTestCase(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(self.read_response(response))
         self.assertEqual(data['token'], TEST_TOKEN)
+
+    def test_fiware_idm_processor_get_parameter(self):
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'content': url}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+        url += '?test=a'
+
+        client = Client()
+        client.login(username='admin', password='admin')
+        response = client.post(url, data='body', content_type='application/json',
+                HTTP_HOST='localhost',
+                HTTP_REFERER='http://localhost/user_with_workspaces/Public Workspace',
+                HTTP_X_FI_WARE_OAUTH_TOKEN='true',
+                HTTP_X_FI_WARE_OAUTH_GET_PARAMETER='access_token_id')
+        self.assertEqual(response.status_code, 200)
+        new_url = self.read_response(response)
+        self.assertEqual(new_url, 'http://example.com/path?test=a&access_token_id=' + TEST_TOKEN)
 
     def test_fiware_idm_anonymous_user(self):
 

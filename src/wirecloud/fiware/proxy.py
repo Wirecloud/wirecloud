@@ -19,6 +19,7 @@
 
 from io import BytesIO
 
+from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
 
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
@@ -55,6 +56,18 @@ class IDMTokenProcessor(object):
                 raise ValidationError(_('Workspace owner has not an active FIWARE profile'))
         else:
             raise ValidationError(_('Invalid FIWARE OAuth token source'))
+
+        if 'x-fi-ware-oauth-get-parameter' in request['headers']:
+            header_name = request['headers']['x-fi-ware-oauth-get-parameter']
+            url = request['url']
+            if '?' in url:
+                url += '&'
+            else:
+                url += '?'
+
+            url += urlquote_plus(request['headers']['x-fi-ware-oauth-get-parameter']) + '=' + urlquote_plus(token)
+            request['url'] = url
+            del request['headers']['x-fi-ware-oauth-get-parameter']
 
         if 'x-fi-ware-oauth-header-name' in request['headers']:
             header_name = request['headers']['x-fi-ware-oauth-header-name']
