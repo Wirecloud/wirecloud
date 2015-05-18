@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,8 +19,6 @@
 
 import time
 
-from django.contrib.auth.models import AnonymousUser
-
 from wirecloud.platform.plugins import WirecloudPlugin
 from wirecloud.oauth2provider.models import Token
 from wirecloud.oauth2provider.urls import urlpatterns
@@ -28,14 +26,11 @@ from wirecloud.oauth2provider.urls import urlpatterns
 
 def auth_oauth2_token(auth_type, token):
 
-    try:
-        token = Token.objects.get(token=token)
-        if (int(token.creation_timestamp) + int(token.expires_in)) <= time.time():
-            raise Exception('Token expired')
+    token = Token.objects.get(token=token)
+    if (int(token.creation_timestamp) + int(token.expires_in)) <= time.time():
+        raise Exception('Token expired')
 
-        return token.user
-    except:
-        return AnonymousUser()
+    return token.user
 
 
 class OAuth2ProviderPlugin(WirecloudPlugin):

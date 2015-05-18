@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -24,6 +24,8 @@ from django.core.urlresolvers import reverse
 from django.utils.importlib import import_module
 from django.utils.functional import SimpleLazyObject
 from django.utils.http import http_date, parse_http_date_safe
+
+from wirecloud.commons.exceptions import HttpBadCredentials
 
 
 class URLMiddleware(object):
@@ -151,7 +153,7 @@ def get_api_user(request):
     try:
         return backends[auth_type](auth_type, token)
     except:
-        return AnonymousUser()
+        raise HttpBadCredentials
 
 
 class AuthenticationMiddleware(object):

@@ -32,6 +32,7 @@ from django.utils.translation import ugettext as _
 from lxml import etree
 from six import string_types
 
+from wirecloud.commons.exceptions import HttpBadCredentials
 from wirecloud.commons.utils import mimeparser
 
 
@@ -223,15 +224,24 @@ def get_content_type(request):
         return parse_mime_type(content_type_header)
 
 
+def build_auth_error_response(request, message='Authentication required'):
+
+    from django.conf import settings
+
+    return build_error_response(request, 401, message, headers={
+        'WWW-Authenticate': 'Cookie realm="Acme" form-action="%s" cookie-name="%s"' % (settings.LOGIN_URL, settings.SESSION_COOKIE_NAME)
+    })
+
+
 def authentication_required(func):
 
     def wrapper(self, request, *args, **kwargs):
-        if request.user.is_anonymous():
-            from django.conf import settings
+        try:
+            if request.user.is_anonymous():
+                return build_auth_error_response(request)
+        except HttpBadCredentials:
+            return build_auth_error_response(request, 'Bad credentials')
 
-            return build_error_response(request, 401, 'Authentication required', headers={
-                'WWW-Authenticate': 'Cookie realm="Acme" form-action="%s" cookie-name="%s"' % (settings.LOGIN_URL, settings.SESSION_COOKIE_NAME)
-            })
 
         return func(self, request, *args, **kwargs)
 
