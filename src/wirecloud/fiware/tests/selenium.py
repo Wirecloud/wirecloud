@@ -145,14 +145,14 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login()
 
         with self.myresources_view as myresources:
-            myresources.upload_resource('Wirecloud_objectstorage-test-widget_1.0.wgt', 'Wirecloud Object Storage API test widget')
+            myresources.upload_resource('Wirecloud_objectstorage-test-widget_1.0.1.wgt', 'Wirecloud Object Storage API test widget')
 
         with self.add_widget_to_mashup('Wirecloud Object Storage API test widget'):
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
     test_objectstorage_available_to_widgets.tags = ('fiware', 'fiware-plugin', 'fiware-selenium', 'fiware-ut-12')
 
-    @uses_extra_resources(('Wirecloud_objectstorage-test-widget_1.0.wgt',))
+    @uses_extra_resources(('Wirecloud_objectstorage-test-widget_1.0.1.wgt',))
     def test_objectstorage_reports_failures(self):
 
         self.login()

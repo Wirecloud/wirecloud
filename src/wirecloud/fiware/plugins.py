@@ -151,6 +151,7 @@ class FiWarePlugin(WirecloudPlugin):
             'js/NGSI/NGSI.js',
             'js/NGSI/eventsource.js',
             'js/NGSI/NGSIManager.js',
+            'js/ObjectStorage/OpenStackManager.js',
         )
 
         if view == 'classic':
