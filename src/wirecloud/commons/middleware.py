@@ -145,8 +145,8 @@ def get_api_user(request):
     from wirecloud.platform.plugins import get_api_auth_backends
 
     parts = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
-    if len(parts) == 0:
-        return AnonymousUser()
+    if len(parts) != 2:
+        raise HttpBadCredentials
 
     (auth_type, token) = parts
     backends = get_api_auth_backends()

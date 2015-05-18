@@ -31,9 +31,11 @@ from django.utils import unittest
 from mock import Mock, patch
 
 from wirecloud.commons.authentication import logout
+from wirecloud.commons.middleware import get_api_user
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import WirecloudTestCase, wirecloud_selenium_test_case, WirecloudSeleniumTestCase
+from wirecloud.commons.exceptions import HttpBadCredentials
 from wirecloud.platform.preferences.models import update_session_lang
 
 
@@ -44,7 +46,7 @@ __test__ = False
 class BasicViewsAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-base-views',)
+    tags = ('wirecloud-base-views', 'wirecloud-base-views-unit')
 
     def setUp(self):
         super(BasicViewsAPI, self).setUp()
@@ -259,11 +261,23 @@ class BasicViewsAPI(WirecloudTestCase):
 
         self.assertNotIn('django_language', request.session)
 
+    def test_empty_authorization_header(self):
+
+        request = Mock()
+        request.META = {'HTTP_AUTHORIZATION': ''}
+        self.assertRaises(HttpBadCredentials, get_api_user, request)
+
+    def test_invalid_authorization_header(self):
+
+        request = Mock()
+        request.META = {'HTTP_AUTHORIZATION': 'type token extra_param'}
+        self.assertRaises(HttpBadCredentials, get_api_user, request)
+
 
 @wirecloud_selenium_test_case
 class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
 
-    tags = ('base-views', 'base-views-selenium')
+    tags = ('wirecloud-base-views', 'wirecloud-base-views-selenium')
 
     @unittest.skipIf(settings.ALLOW_ANONYMOUS_ACCESS is False, 'Anonymous access disabled')
     def test_root_view_anonymous_allowed(self):
