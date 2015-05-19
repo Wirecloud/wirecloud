@@ -327,6 +327,38 @@ def check_cache_is_purged(self, workspace, change_function, current_etag=None, i
     return new_etag
 
 
+def prepare_missing_dependencies_test():
+
+    # Make Test and TestOperator unavailable to any user
+    test_widget = CatalogueResource.objects.get(short_name='Test')
+    test_widget.public = False
+    test_widget.users.clear()
+    test_widget.save()
+
+    test_operator = CatalogueResource.objects.get(short_name='TestOperator')
+    test_operator.public = False
+    test_operator.users.clear()
+    test_operator.save()
+
+
+def check_missing_dependencies_respose(testcase, response):
+
+    # Check basic response structure
+    response_data = json.loads(response.content)
+    testcase.assertTrue(isinstance(response_data, dict))
+    testcase.assertTrue('description' in response_data)
+    testcase.assertTrue('details' in response_data)
+    testcase.assertTrue('missingDependencies' in response_data['details'])
+    missingDependencies = set(response_data['details']['missingDependencies'])
+    testcase.assertEqual(len(response_data['details']['missingDependencies']), len(missingDependencies))
+    testcase.assertEqual(missingDependencies, set((
+        'Wirecloud/nonavailable-operator/1.0',
+        'Wirecloud/nonavailable-widget/1.0',
+        'Wirecloud/TestOperator/1.0',
+        'Wirecloud/Test/1.0',
+    )))
+
+
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
@@ -626,16 +658,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_collection')
 
-        # Make Test and TestOperator unavailable to normuser
-        test_widget = CatalogueResource.objects.get(short_name='Test')
-        test_widget.public = False
-        test_widget.users.clear()
-        test_widget.save()
-
-        test_operator = CatalogueResource.objects.get(short_name='TestOperator')
-        test_operator.public = False
-        test_operator.users.clear()
-        test_operator.save()
+        prepare_missing_dependencies_test()
 
         # Authenticate
         self.client.login(username='normuser', password='admin')
@@ -646,21 +669,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
-
-        # Check basic response structure
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
-        self.assertTrue('description' in response_data)
-        self.assertTrue('details' in response_data)
-        self.assertTrue('missingDependencies' in response_data['details'])
-        missingDependencies = set(response_data['details']['missingDependencies'])
-        self.assertEqual(len(response_data['details']['missingDependencies']), len(missingDependencies))
-        self.assertEqual(missingDependencies, set((
-            'Wirecloud/nonavailable-operator/1.0',
-            'Wirecloud/nonavailable-widget/1.0',
-            'Wirecloud/TestOperator/1.0',
-            'Wirecloud/Test/1.0',
-        )))
+        check_missing_dependencies_respose(self, response)
 
         # Workspace should not be created
         self.assertFalse(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
@@ -2684,6 +2693,57 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Make the request
         data = {
             'mashup': 'Wirecloud/nonexistent-mashup/1.0',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+
+    def test_workspace_merge_service_post_from_noowned_mashup(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        test_mashup = CatalogueResource.objects.get(short_name='test-mashup-dependencies')
+        test_mashup.public = False
+        test_mashup.users.clear()
+        test_mashup.save()
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/test-mashup-dependencies/1.0',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+
+    @uses_extra_resources(('Wirecloud_test-mashup-dependencies_1.0.wgt',), shared=True, deploy_only=True)
+    def test_workspace_merge_service_post_from_mashup_missing_dependencies(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        prepare_missing_dependencies_test()
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/test-mashup-dependencies/1.0',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        check_missing_dependencies_respose(self, response)
+
+    def test_workspace_merge_service_post_from_widget(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/Test/1.0',
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
