@@ -155,3 +155,11 @@ class WirecloudPluginTestCase(TestCase):
                 mocks['import_module'].side_effect = SyntaxError()
                 find_wirecloud_plugins()
                 self.assertTrue(mocks['logger'].error.called)
+
+    def test_find_wirecloud_plugins_app_with_name_errors(self):
+
+        with self.settings(INSTALLED_APPS=('module_with_errors',)):
+            with patch.multiple('wirecloud.platform.plugins', logger=DEFAULT, import_module=DEFAULT) as mocks:
+                mocks['import_module'].side_effect = NameError()
+                find_wirecloud_plugins()
+                self.assertTrue(mocks['logger'].error.called)

@@ -63,7 +63,7 @@ def find_wirecloud_plugins():
         plugins_module = '%s.plugins' % app
         try:
             mod = import_module(plugins_module)
-        except (ImportError, SyntaxError) as exc:
+        except (NameError, ImportError, SyntaxError) as exc:
             error_message = text_type(exc)
             if error_message != 'No module named plugins':
                 logger.error("Error importing %(module)s (%(error_message)s). Any WireCloud plugin available through the %(app)s app will be ignored" % {"module": plugins_module, "error_message": error_message, "app": app})
