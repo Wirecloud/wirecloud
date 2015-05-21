@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import json
 import requests
 from six.moves.urllib.parse import urljoin, urlparse, urlunparse
@@ -30,8 +32,20 @@ class UnexpectedResponse(Exception):
 
     status = None
 
-    def __init__(self, status=None):
-        self.status = status
+    def __init__(self, response):
+        self.status = response.status_code
+
+        try:
+            error_info = json.loads(response.content)
+            self.message = error_info['message']
+        except:
+            pass
+
+    def __str__(self):
+        if self.status is not None and self.message is not None:
+            return "Unexpected response from server (Error code: %(error_code)s, Message: %(error_message)s)" % {"error_code": self.status, "error_message": self.message}
+        else:
+            return "Unexpected response from server (%s error code)" % self.status
 
 
 class StoreClient(object):
@@ -52,7 +66,7 @@ class StoreClient(object):
         response = requests.get(urljoin(self._url, 'api/offering/resources/plugins'), headers=headers)
 
         if response.status_code != 200:
-            raise UnexpectedResponse(response.status_code)
+            raise UnexpectedResponse(response)
 
         return json.loads(response.text)
 
@@ -68,7 +82,7 @@ class StoreClient(object):
             raise NotFound()
 
         if response.status_code != 200:
-            raise UnexpectedResponse()
+            raise UnexpectedResponse(response)
 
         return json.loads(response.text)
 
@@ -85,6 +99,9 @@ class StoreClient(object):
         }
         response = requests.post(urljoin(self._url, 'api/contracting/form'), data=json.dumps(data, ensure_ascii=False), headers=headers)
 
+        if response.status_code != 200:
+            raise UnexpectedResponse(response)
+
         return json.loads(response.text)
 
     def download_resource(self, url, token):
@@ -96,13 +113,14 @@ class StoreClient(object):
         response = requests.get(urljoin(self._url, url), headers=headers)
 
         if response.status_code not in (200, 201, 204):
-            raise UnexpectedResponse(response.status_code)
+            raise UnexpectedResponse(response)
 
         return response.content
 
     def upload_resource(self, name, version, filename, description, content_type, f, token, open=True, resource_type=None):
 
         headers = {
+            'Accept': 'application/json',
             'Authorization': 'Bearer ' + token,
         }
         json_data = {
@@ -124,4 +142,4 @@ class StoreClient(object):
             raise Exception('Resource already exists')
 
         if response.status_code not in (200, 201, 204):
-            raise UnexpectedResponse(response.status_code)
+            raise UnexpectedResponse(response)

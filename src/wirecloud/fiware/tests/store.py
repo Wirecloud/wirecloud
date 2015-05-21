@@ -24,7 +24,7 @@ import json
 import os
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
-from wirecloud.fiware.storeclient import StoreClient
+from wirecloud.fiware.storeclient import NotFound, UnexpectedResponse, StoreClient
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
@@ -33,7 +33,7 @@ __test__ = False
 
 class StoreTestCase(WirecloudTestCase):
 
-    tags = ('fiware', 'fiware-plugin', 'fiware-ut-13', 'wirecloud-fiware-store')
+    tags = ('wirecloud-fiware', 'wirecloud-fiware-plugin', 'fiware-ut-13', 'wirecloud-fiware-store')
     servers = {
         'http': {
             'example.com': DynamicWebServer()
@@ -84,7 +84,12 @@ class StoreTestCase(WirecloudTestCase):
 
     def test_offering_info_retreival_404(self):
 
-        self.assertRaises(Exception, self.store_client.get_offering_info, '17', 'wirecloud_token')
+        self.assertRaises(NotFound, self.store_client.get_offering_info, '17', 'wirecloud_token')
+
+    def test_offering_info_retreival_unexpected_response(self):
+
+        self.network._servers['http']['example.com'].add_response('GET', '/api/offering/offerings/17', {'status_code': 409, 'content': '{"message": "error description"}'})
+        self.assertRaises(UnexpectedResponse, self.store_client.get_offering_info, '17', 'wirecloud_token')
 
     def test_resource_upload(self):
 
@@ -94,4 +99,4 @@ class StoreTestCase(WirecloudTestCase):
     def test_resource_upload_error(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 400})
-        self.assertRaises(Exception, self.store_client.upload_resource, 'Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO(b'file contents'), 'test_token')
+        self.assertRaises(UnexpectedResponse, self.store_client.upload_resource, 'Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO(b'file contents'), 'test_token')
