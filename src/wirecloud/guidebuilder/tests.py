@@ -21,16 +21,16 @@ import os
 import time
 
 from django.conf import settings
-from PIL import Image
 import shutil
 
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import Select
-from wirecloud.commons.utils.testcases import uses_extra_resources,\
-    uses_extra_workspace, WirecloudSeleniumTestCase, \
-    wirecloud_selenium_test_case, DynamicWebServer, LocalFileSystemServer
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case, DynamicWebServer, LocalFileSystemServer
 
 __test__ = 'wirecloud.guidebuilder' in settings.INSTALLED_APPS
+
+if __test__ is True:
+    from PIL import Image
 
 if __test__ and not os.path.exists(os.path.join(settings.BASEDIR, 'screens')):
     os.mkdir(os.path.join(settings.BASEDIR, 'screens'))

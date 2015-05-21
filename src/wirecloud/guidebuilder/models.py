@@ -1,3 +1,5 @@
+# pragma: no cover
+
 from django.conf import settings
 
 settings.THEME_ACTIVE = 'wirecloud.oiltheme'
