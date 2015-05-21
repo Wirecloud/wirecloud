@@ -34,6 +34,7 @@ provider = WirecloudAuthorizationProvider()
 def oauth_discovery(request):
 
     endpoints = {
+        'flows': ["Authorization Code Grant"],
         'auth_endpoint': get_absolute_reverse_url('oauth2provider.auth', request),
         'token_endpoint': get_absolute_reverse_url('oauth2provider.token', request),
         'default_redirect_uri': get_absolute_reverse_url('oauth.default_redirect_uri', request),

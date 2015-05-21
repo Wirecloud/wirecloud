@@ -39,6 +39,7 @@ def oauth_discovery(request):
 
     fiware_auth_backend = get_backends()['fiware']
     endpoints = {
+        'flows': ["Authorization Code Grant", "Resource Owner Password Credentials Grant"],
         'auth_endpoint': fiware_auth_backend.AUTHORIZATION_URL,
         'token_endpoint': fiware_auth_backend.ACCESS_TOKEN_URL,
         'default_redirect_uri': get_absolute_reverse_url('oauth.default_redirect_uri', request),
