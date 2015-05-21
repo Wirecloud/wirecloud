@@ -23,6 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page
 
 from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.markets.utils import MarketManager
 from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
@@ -174,7 +175,7 @@ class FiWarePlugin(WirecloudPlugin):
         if IDM_SUPPORT_ENABLED:
             from wirecloud.fiware.views import oauth_discovery
             urls += patterns('',
-                url('^.well-known/oauth$', cache_page(7 * 24 * 60 * 60)(oauth_discovery), name='oauth.discovery'),
+                url('^.well-known/oauth$', cache_page(7 * 24 * 60 * 60, key_prefix='well-known-oauth-%s' % get_version_hash())(oauth_discovery), name='oauth.discovery'),
             )
 
         return urls
