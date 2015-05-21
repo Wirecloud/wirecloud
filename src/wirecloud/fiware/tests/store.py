@@ -73,6 +73,16 @@ class StoreTestCase(WirecloudTestCase):
         test_client = StoreClient('http://store.example.com/?query=a#a')
         self.assertEqual(test_client._url, 'http://store.example.com/')
 
+    def test_get_supported_plugins(self):
+
+        self.network._servers['http']['example.com'].add_response('GET', '/api/offering/resources/plugins', {'content': '[]'})
+        self.assertEqual(self.store_client.get_supported_plugins('wirecloud_token'), [])
+
+    def test_get_supported_plugins_unexpected_response(self):
+
+        self.network._servers['http']['example.com'].add_response('GET', '/api/offering/resources/plugins', {'status_code': 409, 'content': '{"message": "error description"}'})
+        self.assertRaises(UnexpectedResponse, self.store_client.get_supported_plugins, 'wirecloud_token')
+
     def test_offering_info_retreival(self):
 
         response_text = self.read_response_file('offering_info.json')
@@ -91,10 +101,32 @@ class StoreTestCase(WirecloudTestCase):
         self.network._servers['http']['example.com'].add_response('GET', '/api/offering/offerings/17', {'status_code': 409, 'content': '{"message": "error description"}'})
         self.assertRaises(UnexpectedResponse, self.store_client.get_offering_info, '17', 'wirecloud_token')
 
+    def test_resource_download(self):
+
+        resource_link = '/media/resources/CoNWeT__Kurento one2one widget__1.1.2__CoNWeT_kurento-one2one_1.1.2.wgt'
+        self.network._servers['http']['example.com'].add_response('GET', resource_link, {'content': 'resource content'})
+        self.assertEqual(self.store_client.download_resource(resource_link, 'wirecloud_token'), 'resource content')
+
+    def test_resource_download_unexpected_response(self):
+
+        resource_link = '/media/resources/CoNWeT__Kurento one2one widget__1.1.2__CoNWeT_kurento-one2one_1.1.2.wgt'
+        self.network._servers['http']['example.com'].add_response('GET', resource_link, {'status_code': 409, 'content': '{"message": "error description"}'})
+        self.assertRaises(UnexpectedResponse, self.store_client.download_resource, resource_link, 'wirecloud_token')
+
     def test_resource_upload(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 200})
         self.store_client.upload_resource('Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO(b'file contents'), 'test_token')
+
+    def test_resource_upload_resource_type(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 200})
+        self.store_client.upload_resource('Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO(b'file contents'), 'test_token', resource_type="Mashable application component")
+
+    def test_resource_upload_conflict(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 400})
+        self.assertRaises(UnexpectedResponse, self.store_client.upload_resource, 'Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO(b'file contents'), 'test_token')
 
     def test_resource_upload_error(self):
 
