@@ -36,6 +36,7 @@ from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.http import build_error_response, get_current_domain
+from wirecloud.platform.models import Workspace
 from wirecloud.platform.plugins import get_request_proxy_processors, get_response_proxy_processors
 from wirecloud.proxy.utils import is_valid_response_header, ValidationError
 
@@ -194,7 +195,6 @@ def proxy_request(request, protocol, domain, path):
         referer_view_info = resolve(parsed_referer.path)
         if referer_view_info.url_name == 'wirecloud.workspace_view':
 
-            from wirecloud.platform.models import Workspace
             workspace = Workspace.objects.get(creator__username=unquote(referer_view_info.kwargs['owner']), name=unquote(referer_view_info.kwargs['name']))
             if not workspace.public and workspace.creator != request.user:
                 raise Exception()
