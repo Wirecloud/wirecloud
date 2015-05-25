@@ -209,6 +209,10 @@ footer > .fiware-lab-ops-logo {
     right: 70px;
 }
 
+.slide.cover .navigation-tip {
+    display: none;
+}
+
 /*
  *  Back cover pages
  */
