@@ -23,12 +23,17 @@ from io import BytesIO
 import json
 import os
 
+from mock import Mock
+
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
-from wirecloud.fiware.storeclient import NotFound, UnexpectedResponse, StoreClient
+from wirecloud.fiware.storeclient import Conflict, NotFound, UnexpectedResponse, StoreClient
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
 __test__ = False
+
+
+OFFERING_URL = "http://repository.exmaple.com/FiwareRepository/v1/storeOfferingCollection/user__offername__1.0"
 
 
 class StoreTestCase(WirecloudTestCase):
@@ -73,6 +78,22 @@ class StoreTestCase(WirecloudTestCase):
         test_client = StoreClient('http://store.example.com/?query=a#a')
         self.assertEqual(test_client._url, 'http://store.example.com/')
 
+    def test_unexpected_response(self):
+
+        response = Mock()
+        response.status_code = 422
+        response.content = '{"message": "Unprocessable Entity"}'
+        exception = UnexpectedResponse(response)
+        self.assertEqual("%s" % exception, "Unexpected response from server (Error code: 422, Message: Unprocessable Entity)")
+
+    def test_unexpected_response_without_error_message(self):
+
+        response = Mock()
+        response.status_code = 422
+        response.content = 'no processable response'
+        exception = UnexpectedResponse(response)
+        self.assertEqual("%s" % exception, "Unexpected response from server (422 error code)")
+
     def test_get_supported_plugins(self):
 
         self.network._servers['http']['example.com'].add_response('GET', '/api/offering/resources/plugins', {'content': '[]'})
@@ -101,6 +122,21 @@ class StoreTestCase(WirecloudTestCase):
         self.network._servers['http']['example.com'].add_response('GET', '/api/offering/offerings/17', {'status_code': 409, 'content': '{"message": "error description"}'})
         self.assertRaises(UnexpectedResponse, self.store_client.get_offering_info, '17', 'wirecloud_token')
 
+    def test_start_purchase(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/api/contracting/form', {'content': '{"url": "http://store.example.org/api/contracting/form?ID=54662b63b73e260d625844ed521b881bb73e2611f137206b"}'})
+        result = self.store_client.start_purchase(OFFERING_URL, 'http://example.com/redirect_uri', 'wirecloud_token')
+        self.assertIn('url', result)
+
+    def test_start_purchase_not_found(self):
+
+        self.assertRaises(NotFound, self.store_client.start_purchase, OFFERING_URL, 'http://example.com/redirect_uri', 'wirecloud_token')
+
+    def test_start_purchase_unexpected_response(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/api/contracting/form', {'status_code': 500, 'content': '{"message": "error description"}'})
+        self.assertRaises(UnexpectedResponse, self.store_client.start_purchase, OFFERING_URL, 'http://example.com/redirect_uri', 'wirecloud_token')
+
     def test_resource_download(self):
 
         resource_link = '/media/resources/CoNWeT__Kurento one2one widget__1.1.2__CoNWeT_kurento-one2one_1.1.2.wgt'
@@ -125,8 +161,8 @@ class StoreTestCase(WirecloudTestCase):
 
     def test_resource_upload_conflict(self):
 
-        self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 400})
-        self.assertRaises(UnexpectedResponse, self.store_client.upload_resource, 'Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO(b'file contents'), 'test_token')
+        self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 409})
+        self.assertRaises(Conflict, self.store_client.upload_resource, 'Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', BytesIO(b'file contents'), 'test_token')
 
     def test_resource_upload_error(self):
 

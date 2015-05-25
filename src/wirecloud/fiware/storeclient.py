@@ -20,17 +20,23 @@
 from __future__ import unicode_literals
 
 import json
-import requests
 from six.moves.urllib.parse import urljoin, urlparse, urlunparse
+
+import requests
 
 
 class NotFound(Exception):
     pass
 
 
+class Conflict(Exception):
+    pass
+
+
 class UnexpectedResponse(Exception):
 
     status = None
+    message = None
 
     def __init__(self, response):
         self.status = response.status_code
@@ -99,7 +105,9 @@ class StoreClient(object):
         }
         response = requests.post(urljoin(self._url, 'api/contracting/form'), data=json.dumps(data, ensure_ascii=False), headers=headers)
 
-        if response.status_code != 200:
+        if response.status_code == 404:
+            raise NotFound
+        elif response.status_code != 200:
             raise UnexpectedResponse(response)
 
         return json.loads(response.text)
@@ -139,7 +147,7 @@ class StoreClient(object):
         f.seek(0);
         response = requests.post(urljoin(self._url, 'api/offering/resources'), headers=headers, data=data, files={'file': (filename, f)})
         if response.status_code == 409:
-            raise Exception('Resource already exists')
+            raise Conflict('Resource already exists')
 
         if response.status_code not in (200, 201, 204):
             raise UnexpectedResponse(response)
