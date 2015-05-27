@@ -647,36 +647,6 @@ Wirecloud.ui.WiringEditor = (function () {
 
     /**
      * @Private
-     * Create New Multiconnector
-     */
-    var generateMulticonnector = function generateMulticonnector (multi) {
-        var anchor, multiInstance;
-
-        try {
-            if (this.nextMulticonnectorId <= multi.id) {
-                this.nextMulticonnectorId = parseInt(multi.id, 10) + 1;
-            }
-            if (multi.objectType == 'ioperator') {
-                anchor = this.components.operator[multi.objectId].getAnchor(multi.sourceName);
-            } else {
-                anchor = this.components.widget[multi.objectId].getAnchor(multi.sourceName);
-            }
-            if (!anchor) {
-                // Future Ghost
-                return;
-            }
-            multiInstance = new Wirecloud.ui.WiringEditor.Multiconnector(multi.id, multi.objectId, multi.sourceName,
-                                            this.layout.content.wrapperElement,
-                                            this, anchor, multi.pos, multi.height);
-            multiInstance = this.addMulticonnector(multiInstance);
-            multiInstance.addMainArrow(multi.pullerStart, multi.pullerEnd);
-        } catch (e) {
-            throw new Error('WiringEditor error. Creating Multiconnector: [id: ' + multi.id + '] ' + e.message);
-        }
-    };
-
-    /**
-     * @Private
      * Add Ghost Endpoint in theEndpoint widget or operator
      */
     var insertGhostEndpoint = function insertGhostEndpoint(connection, isSource) {
@@ -731,18 +701,14 @@ Wirecloud.ui.WiringEditor = (function () {
         this.sourcesOn = true;
         this.targetAnchorList = [];
         this.sourceAnchorList = [];
-        this.multiconnectors = {};
         this.selectedOps = {};
         this.selectedOps.length = 0;
         this.selectedWids = {};
         this.selectedWids.length = 0;
-        this.selectedMulti = {};
-        this.selectedMulti.length = 0;
         this.selectedCount = 0;
         this.headerHeight = document.getElementById('wirecloud_header').offsetHeight;
         this.ctrlPushed = false;
         this.nextOperatorId = 0;
-        this.nextMulticonnectorId = 0;
         this.EditingObject = null;
         this.entitiesNumber = 0;
         this.recommendationsActivated = false;
@@ -987,10 +953,7 @@ Wirecloud.ui.WiringEditor = (function () {
             this.layout.content.removeChild(this.components.operator[key]);
             this.components.operator[key].destroy();
         }
-        for (key in this.multiconnectors) {
-            this.layout.content.removeChild(this.multiconnectors[key]);
-            this.multiconnectors[key].destroy();
-        }
+
         this.deactivateCtrlMultiSelect();
 
         this.connectionEngine.clear();
@@ -1001,7 +964,6 @@ Wirecloud.ui.WiringEditor = (function () {
             'operator': {},
             'widget': {}
         };
-        this.multiconnectors = {};
         this.recommendations.destroy();
     };
 
@@ -1248,9 +1210,6 @@ Wirecloud.ui.WiringEditor = (function () {
         } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             this.selectedOps[object.getId()] = object;
             this.selectedOps.length += 1;
-        } else if (object instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-            this.selectedMulti[object.getId()] = object;
-            this.selectedMulti.length += 1;
         }
         this.selectedCount += 1;
     };
@@ -1265,9 +1224,6 @@ Wirecloud.ui.WiringEditor = (function () {
         } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             delete this.selectedOps[object.getId()];
             this.selectedOps.length -= 1;
-        } else if (object instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-            delete this.selectedMulti[object.getId()];
-            this.selectedMulti.length -= 1;
         }
         if (this.selectedCount > 0) {
             this.selectedCount -= 1;
@@ -1291,12 +1247,7 @@ Wirecloud.ui.WiringEditor = (function () {
                 this.selectedWids[key].unselect(false);
             }
         }
-        for (key in this.selectedMulti) {
-            if (key != 'length') {
-                this.selectedMulti[key].unselect(false);
-            }
-        }
-        if ((this.selectedOps.length !== 0) || (this.selectedWids.length !== 0) || (this.selectedMulti.length !== 0)) {
+        if ((this.selectedOps.length !== 0) || (this.selectedWids.length !== 0)) {
             //('error resetSelection' + this.selectedOps + this.selectedWids);
         }
     };
@@ -1792,13 +1743,6 @@ Wirecloud.ui.WiringEditor = (function () {
                 pos.x = this.selectedWids[key].wrapperElement.style.left === "" ? 0 : parseInt(this.selectedWids[key].wrapperElement.style.left, 10);
             }
         }
-        for (key in this.selectedMulti) {
-            if (key != 'length') {
-                pos = this.selectedMulti[key].initPos;
-                pos.y = this.selectedMulti[key].wrapperElement.style.top === "" ? 0 : parseInt(this.selectedMulti[key].wrapperElement.style.top, 10);
-                pos.x = this.selectedMulti[key].wrapperElement.style.left === "" ? 0 : parseInt(this.selectedMulti[key].wrapperElement.style.left, 10);
-            }
-        }
     };
 
     /**
@@ -1820,12 +1764,6 @@ Wirecloud.ui.WiringEditor = (function () {
             if (key != 'length') {
                 this.selectedWids[key].setPosition({posX: this.selectedWids[key].initPos.x + xDelta, posY: this.selectedWids[key].initPos.y + yDelta});
                 this.selectedWids[key].repaint();
-            }
-        }
-        for (key in this.selectedMulti) {
-            if (key != 'length') {
-                this.selectedMulti[key].setPosition({posX: this.selectedMulti[key].initPos.x + xDelta, posY: this.selectedMulti[key].initPos.y + yDelta});
-                this.selectedMulti[key].repaint();
             }
         }
     };
@@ -1887,6 +1825,7 @@ Wirecloud.ui.WiringEditor = (function () {
                 }
             }
         }
+
         if ((desp.y >= 0) && (desp.x >= 0)) {
             return;
         }
@@ -1917,15 +1856,6 @@ Wirecloud.ui.WiringEditor = (function () {
                 position.posY -= desp.y;
                 this.selectedWids[key].setPosition(position);
                 this.selectedWids[key].repaint();
-            }
-        }
-        for (key in this.selectedMulti) {
-            if (key != 'length') {
-                position = this.selectedMulti[key].getStylePosition();
-                position.posX -= desp.x;
-                position.posY -= desp.y;
-                this.selectedMulti[key].setPosition(position);
-                this.selectedMulti[key].repaint();
             }
         }
     };
@@ -1985,11 +1915,8 @@ Wirecloud.ui.WiringEditor = (function () {
     WiringEditor.prototype.disableAnchors = function disableAnchors(anchor) {
         var i, anchorList, anchor_aux;
         anchorList = [];
-        if (anchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-            anchor_aux = anchor.initAnchor;
-        } else {
-            anchor_aux = anchor;
-        }
+        anchor_aux = anchor;
+
         if (anchor_aux instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             anchorList = this.targetAnchorList;
             this.targetsOn = false;
@@ -2000,45 +1927,6 @@ Wirecloud.ui.WiringEditor = (function () {
         for (i = 0; i < anchorList.length; i++) {
             anchorList[i].disable();
         }
-    };
-
-    /**
-     * add a multiconnector.
-     */
-    WiringEditor.prototype.addMulticonnector = function addMulticonnector(multiconnector) {
-        var id;
-
-        if (multiconnector.id == null) {
-            id = this.nextMulticonnectorId;
-            this.nextMulticonnectorId = parseInt(id, 10) + 1;
-        } else {
-            id = multiconnector.id;
-        }
-        this.layout.content.appendChild(multiconnector);
-        this.multiconnectors[id] = multiconnector;
-
-        this._startdrag_map_func(multiconnector);
-
-        if (multiconnector.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
-            this.targetAnchorList = this.targetAnchorList.concat(multiconnector);
-        } else {
-            this.sourceAnchorList = this.sourceAnchorList.concat(multiconnector);
-        }
-        return this.multiconnectors[id];
-    };
-
-    /**
-     * remove a multiconnector.
-     */
-    WiringEditor.prototype.removeMulticonnector = function removeMulticonnector(multiConnector) {
-        this.layout.content.removeChild(multiConnector);
-        if (multiConnector.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
-            this.targetAnchorList.splice(this.targetAnchorList.indexOf(multiConnector), 1);
-        } else {
-            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(multiConnector), 1);
-        }
-        multiConnector.destroy(true);
-        delete this.multiconnectors[multiConnector.id];
     };
 
     /**
@@ -2101,14 +1989,6 @@ Wirecloud.ui.WiringEditor = (function () {
             this.components.widget[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
             this.components.widget[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
             this.components.widget[key].repaint();
-        }
-        for (key in this.multiconnectors) {
-            // Calculate new position
-            top = parseFloat(this.multiconnectors[key].wrapperElement.style.top);
-            left = parseFloat(this.multiconnectors[key].wrapperElement.style.left);
-            this.multiconnectors[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
-            this.multiconnectors[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
-            this.multiconnectors[key].repaint();
         }
     };
 

@@ -101,9 +101,7 @@
         if (this.selectedArrow === arrow) {
             this.unselectArrow();
         }
-        if (arrow.multiId == null) {
-            arrow.wrapperElement.parentNode.removeChild(arrow.wrapperElement);
-        }
+        arrow.wrapperElement.parentNode.removeChild(arrow.wrapperElement);
     };
 
     /**

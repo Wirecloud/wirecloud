@@ -214,9 +214,6 @@
         this.end = null;
         this.startAnchor = null;
         this.endAnchor = null;
-        this.endMulti = null;
-        this.startMulti = null;
-        this.multiId = null;
         this.readOnly = false;
         this.isGhost = false;
 

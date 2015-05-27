@@ -454,8 +454,8 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
                 this.wrapperElement.addEventListener('mousedown', this._miniwidgetMenu_callback, false);
                 this.contextmenu.append(new Wirecloud.ui.WiringEditor.MiniInterfaceSettingsMenuItems(this));
+                this.wrapperElement.addEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener);
             }
-            this.wrapperElement.addEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener);
         }
 
         // Draggable
@@ -536,17 +536,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             return false;
         }
         return true;
-    };
-
-    var createMulticonnector = function createMulticonnector(name, anchor) {
-        var multiconnector;
-
-        multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, this.getId(), name,
-                                    this.wiringEditor.layout.getCenterContainer().wrapperElement,
-                                    this.wiringEditor, anchor, null, null);
-        this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
-        this.wiringEditor.addMulticonnector(multiconnector);
-        multiconnector.addMainArrow();
     };
 
     /**
@@ -1409,8 +1398,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator, null, isGhost);
             endpointElement.appendChild(anchor.wrapperElement);
 
-            anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
-
             subAnchors = anchorContext.data.subdata;
             if (subAnchors != null) {
                 // Generate the tree
@@ -1487,8 +1474,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator, isGhost);
             endpointElement.appendChild(anchor.wrapperElement);
-
-            anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
             endpointElement.addEventListener('mouseover', function () {
                 if (!this.wiringEditor.recommendationsActivated) {

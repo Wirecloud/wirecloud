@@ -69,7 +69,6 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/OperatorInterface.js',
     'js/wirecloud/ui/WiringEditor/SourceAnchor.js',
     'js/wirecloud/ui/WiringEditor/TargetAnchor.js',
-    'js/wirecloud/ui/WiringEditor/Multiconnector.js',
     'js/wirecloud/ui/WiringEditor/MiniInterfaceSettingsMenuItems.js',
     'js/wirecloud/ui/WiringPreview.js',
     'js/wirecloud/ui/ColorSmartBox.js',
@@ -169,7 +168,6 @@ WIRING_EDITOR_CSS = (
     'css/wiring/wiring_endpoints.scss',
     'css/wiring/wiring_connections.scss',
     'css/wiring/wiring_behaviours.scss',
-    'css/wiring/multiconnector.css',
     'css/wiring/wiringPreview.css',
     'css/wiring/colorSmartBox.css',
 )
