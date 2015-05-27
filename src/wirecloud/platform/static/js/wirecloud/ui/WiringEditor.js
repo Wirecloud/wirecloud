@@ -1756,13 +1756,14 @@ Wirecloud.ui.WiringEditor = (function () {
 
         for (key in this.selectedOps) {
             if (key != 'length') {
-                this.selectedOps[key].setPosition({posX: this.selectedOps[key].initPos.x + xDelta, posY: this.selectedOps[key].initPos.y + yDelta});
+                this.selectedOps[key].setPosition({x: this.selectedOps[key].initPos.x + xDelta, y: this.selectedOps[key].initPos.y + yDelta});
                 this.selectedOps[key].repaint();
             }
         }
+
         for (key in this.selectedWids) {
             if (key != 'length') {
-                this.selectedWids[key].setPosition({posX: this.selectedWids[key].initPos.x + xDelta, posY: this.selectedWids[key].initPos.y + yDelta});
+                this.selectedWids[key].setPosition({x: this.selectedWids[key].initPos.x + xDelta, y: this.selectedWids[key].initPos.y + yDelta});
                 this.selectedWids[key].repaint();
             }
         }
@@ -1773,87 +1774,69 @@ Wirecloud.ui.WiringEditor = (function () {
      */
     WiringEditor.prototype.onFinishSelectedObjects = function onFinishSelectedObjects() {
         var key, position, desp;
+        var min_x_coord = 15, min_y_coord = 5;
+
         if (this.selectedCount <= 1) {
             return;
         }
 
         //find the most negative X and Y
-        desp = {'x': 0, 'y': 0};
+        desp = {'x': min_x_coord, 'y': min_y_coord};
         for (key in this.selectedOps) {
             if (key != 'length') {
                 position = this.selectedOps[key].getStylePosition();
-                if (position.posX < 0) {
-                    if (position.posX < desp.x) {
-                        desp.x = position.posX;
-                    }
-                }
-                if (position.posY < 0) {
-                    if (position.posY < desp.y) {
-                        desp.y = position.posY;
-                    }
+
+                if (position.x < desp.x) {
+                    desp.x = position.x;
                 }
 
+                if (position.y < desp.y) {
+                    desp.y = position.y;
+                }
             }
         }
+
         for (key in this.selectedWids) {
             if (key != 'length') {
                 position = this.selectedWids[key].getStylePosition();
-                if (position.posX < 0) {
-                    if (position.posX < desp.x) {
-                        desp.x = position.posX;
-                    }
+
+                if (position.x < desp.x) {
+                    desp.x = position.x;
                 }
-                if (position.posY < 0) {
-                    if (position.posY < desp.y) {
-                        desp.y = position.posY;
-                    }
-                }
-            }
-        }
-        for (key in this.selectedMulti) {
-            if (key != 'length') {
-                position = this.selectedMulti[key].getStylePosition();
-                if (position.posX < 0) {
-                    if (position.posX < desp.x) {
-                        desp.x = position.posX;
-                    }
-                }
-                if (position.posY < 0) {
-                    if (position.posY < desp.y) {
-                        desp.y = position.posY;
-                    }
+
+                if (position.y < desp.y) {
+                    desp.y = position.y;
                 }
             }
         }
 
-        if ((desp.y >= 0) && (desp.x >= 0)) {
-            return;
-        }
-        if (desp.y >= 0) {
+        if (desp.y >= min_y_coord) {
             desp.y = 0;
         } else {
-            desp.y -= 8;
+            desp.y = Math.abs(desp.y - min_y_coord);
         }
-        if (desp.x >= 0) {
+        if (desp.x >= min_x_coord) {
             desp.x = 0;
         } else {
-            desp.x -= 8;
+            desp.x = Math.abs(desp.x - min_x_coord);
         }
+
         //set position of the selected group
         for (key in this.selectedOps) {
             if (key != 'length') {
                 position = this.selectedOps[key].getStylePosition();
-                position.posX -= desp.x;
-                position.posY -= desp.y;
+                position.x += desp.x;
+                position.y += desp.y;
                 this.selectedOps[key].setPosition(position);
                 this.selectedOps[key].repaint();
             }
         }
+
         for (key in this.selectedWids) {
             if (key != 'length') {
                 position = this.selectedWids[key].getStylePosition();
-                position.posX -= desp.x;
-                position.posY -= desp.y;
+                position.x += desp.x;
+                position.y += desp.y;
                 this.selectedWids[key].setPosition(position);
                 this.selectedWids[key].repaint();
             }
