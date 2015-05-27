@@ -26,20 +26,21 @@ import shutil
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import Select
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case, DynamicWebServer, LocalFileSystemServer
+from wirecloud.catalogue.models import CatalogueResource
 
 __test__ = 'wirecloud.guidebuilder' in settings.INSTALLED_APPS
 
 if __test__ is True:
     from PIL import Image
 
-if __test__ and not os.path.exists(os.path.join(settings.BASEDIR, 'screens')):
-    os.mkdir(os.path.join(settings.BASEDIR, 'screens'))
-
+USER_GUIDE_IMAGES_PATH = '../docs/images/user_guide'
 list_resources = ['CoNWeT_simple-history-module2linear-graph_2.3.2.wgt',
                   'CoNWeT_ngsi-source_3.0.2.wgt',
                   'CoNWeT_ngsientity2poi_3.0.3.wgt',
                   'CoNWeT_linear-graph_3.0.0b3.wgt',
                   'CoNWeT_map-viewer_2.5.3.wgt']
+
+
 # Common functions
 
 
@@ -49,7 +50,7 @@ def image_path(name='Wirecloud_UG.png', extra=None, resource=False):
         name = '{}_{}.png'.format(name, extra)
     name = name if name.endswith('.png') else "{}.png".format(name)
     if not resource:
-        basepath = os.path.join(settings.BASEDIR, 'screens')
+        basepath = os.path.join(settings.BASEDIR, USER_GUIDE_IMAGES_PATH)
     else:
         basepath = os.path.join(os.path.dirname(__file__), 'resources')
     return os.path.join(basepath, name)
@@ -66,21 +67,17 @@ def merge_images(img1, img2, position):
 
 
 def add_image(imgp, position, imagename):
-    lp = image_path(os.path.join('resources', imagename), resource=True)
+    lp = image_path(imagename, resource=True)
     base = Image.open(imgp)
     l = Image.open(lp)
     merge_images(base, l, position)
     base.save(imgp)
 
 
-def add_market_list(imgp, position):
-    add_image(imgp, position, 'marketlist.png')
-
-
 def add_pointer(imgp, position, pointer=True):
     mousefn = 'select_l.png' if pointer else 'arrow_l.png'
     mousefn = os.path.join('mouse', mousefn)
-    mousep = image_path(os.path.join('resources', mousefn, resource=True))
+    mousep = image_path(mousefn, resource=True)
     base = Image.open(imgp)
     mouse = Image.open(mousep)
     base.paste(mouse, position, mouse)
@@ -101,15 +98,15 @@ def crop_down(imgp, widg, offs=10):
 
 
 def get_position(widg, xoff=0.75, yoff=0.75):
-    return (widg.location['x'] + int(xoff * widg.size['width']),
-            widg.location['y'] + int(yoff * widg.size['height']))
+    return (int(widg.location['x'] + xoff * widg.size['width']),
+            int(widg.location['y'] + yoff * widg.size['height']))
 
 
 def create_box(widg, offs=3):
-    return (widg.location['x'] - offs,
-            widg.location['y'] - offs,
-            widg.location['x'] + widg.size['width'] + offs,
-            widg.location['y'] + widg.size['height'] + offs)
+    return (int(widg.location['x'] - offs),
+            int(widg.location['y'] - offs),
+            int(widg.location['x'] + widg.size['width'] + offs),
+            int(widg.location['y'] + widg.size['height'] + offs))
 
 
 def get_by_condition(driver, css, f):
@@ -175,7 +172,20 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     tags = ('wirecloud-guide',)
 
+    @classmethod
+    def setUpClass(cls):
+
+        if not os.path.exists(os.path.join(settings.BASEDIR, USER_GUIDE_IMAGES_PATH)):
+            os.makedirs(os.path.join(settings.BASEDIR, USER_GUIDE_IMAGES_PATH))
+
+        WirecloudSeleniumTestCase.setUpClass.im_func(cls)
+
     def setUp(self):
+
+        components = ['TestOperator', 'test-mashup', 'Test', 'test-mashup-dependencies']
+        for c in components:
+            CatalogueResource.objects.get(short_name=c).delete()
+
         self.store_list_response = read_response_file(
             'responses', 'marketplace', 'store_list.xml')
         self.store1_offerings = read_response_file(
@@ -218,8 +228,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_creating_new_workspace(self):
-        # Inicializacion
-        # La altura usa la barra de tareas
+        # Intitialization
         self.driver.set_window_size(1024, 768)
         self.login()
         self.create_workspace('My Multimedia Workspace')
@@ -230,18 +239,18 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         menu_widg = self.driver.find_element_by_css_selector(
             '.wirecloud_header_nav .icon-reorder')
 
-        # Captura escritorio inicial
+        # Empty workspace screenshot
         imgp = take_capture(self.driver, extra=1)
         crop_down(
             imgp, self.driver.find_element_by_css_selector('.emptyWorkspaceInfoBox'))
 
-        # Capturar la lista de workspaces
+        # Workspace list screenshot
         menu = self.open_menu()
         imgp = take_capture(self.driver, extra=3)
         add_pointer(imgp, get_position(menu_widg))  # Add the mouse
         crop_down(imgp, menu.element)  # Crop down the image
 
-        # Capturar new workspace
+        # Capture new workspace
         newworkspace_menu = menu.get_entry('New workspace')
         ActionChains(self.driver).move_to_element(newworkspace_menu).perform()
         imgp = take_capture(self.driver, extra=4)
@@ -284,7 +293,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_browsing_marketplace(self):
-        # La altura usa la barra de tareas
         self.driver.set_window_size(1024, 768)
         self.login()
 
@@ -298,8 +306,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             # Market list screenshot
             imgp = take_capture(
                 self.driver, 'Wirecloud_Marketplace_plus_stores.png')
-            add_market_list(imgp, get_position(select, 0.0, 1.0))
-            add_pointer(imgp, get_position(select, 0.7, 2.3), False)
+            add_image(imgp, get_position(select, 0.0, 1.0), 'store_filter.png')
+            add_pointer(imgp, get_position(select, 0.7, 1.8), False)
             crop_down(imgp, select, 80)
 
             # marketplaces screenshot
@@ -325,40 +333,37 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             dialog = self.driver.find_elements_by_css_selector(
                 '.window_menu')[1]
             self.fill_form_input(dialog.find_element_by_css_selector('input[name="name"]'),
-                                 'FIWARE')
+                                 'FIWARE Lab')
             self.fill_form_input(dialog.find_element_by_css_selector('input[name="url"]'),
-                                 'http://repository.example.com')
+                                 'https://marketplace.lab.fiware.org')
             Select(dialog.find_element_by_css_selector(
                 'select')).select_by_index(1)
             imgp = take_capture(self.driver, extra='AddingFiwareMarketplace')
             crop_image(imgp, *create_box(dialog))
 
-            # After added the new marketplace
-            button = dialog.find_element_by_css_selector(
-                'button.btn-primary.styled_button')
+            # Cancel marketplace creation
+            button = dialog.find_element_by_css_selector('button.styled_button:not(.btn-primary)')
             button.click()
-            self.wait_wirecloud_ready()
-            # imgp = take_capture(self.driver, extra=9)
 
-            marketplace.switch_to('FIWARE Lab')
+            #marketplace.switch_to('FIWARE Lab')
             # Where are my resources
             btn = self.driver.find_element_by_css_selector(
                 '.wirecloud_toolbar .icon-archive')
             ActionChains(self.driver).move_to_element(btn).perform()
-            time.sleep(0.2)
+            time.sleep(0.3) # wait tooltip animation
             imgp = take_capture(self.driver, "Wirecloud_switch_to_local")
             add_pointer(imgp, get_position(btn, 0.8, 0.5))
             crop_down(imgp, select, 80)
 
         with self.myresources_view as myresources:
             # Resources
-            self.clean_resources(myresources)
             imgp = take_capture(self.driver, extra=9)
 
             btn = self.driver.find_element_by_css_selector(
                 '.wirecloud_toolbar .icon-cloud-upload')
             # Where are upload button
             ActionChains(self.driver).move_to_element(btn).perform()
+            time.sleep(0.3) # wait tooltip animation
             imgp = take_capture(self.driver, extra="UploadButton")
             add_pointer(imgp, get_position(btn, 0.5, 0.5))
 
@@ -401,8 +406,9 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             select = dialog.find_element_by_css_selector('.se-select select')
             imgp = take_capture(
                 self.driver, 'Wirecloud_publish_resource_store_select')
-            add_market_list(imgp, get_position(select, 0.0, 1.0))
-            add_pointer(imgp, get_position(select, 0.7, 2.3), False)
+            add_image(imgp, get_position(select, 0.0, 1.0), 'store_list.png')
+            add_pointer(imgp, get_position(select, 0.7, 1.8), False)
+            crop_image(imgp, *create_box(dialog))
 
             get_by_text(dialog, 'button', 'Cancel').click()
             self.driver.find_element_by_css_selector(
@@ -411,15 +417,13 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_building_mashup(self):
-        # La altura usa la barra de tareas
         self.driver.set_window_size(1024, 768)
         self.login()
         self.create_workspace('History Info')
         self.open_menu().click_entry('History Info')
+        self.wait_wirecloud_ready()
 
         with self.myresources_view as resources:
-            # Remove old
-            self.clean_resources(resources)
 
             # Add to workspace(1)
             container = get_first_displayed(
@@ -838,13 +842,5 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         imgp = take_capture(self.driver, extra='Embed_Dialog')
         crop_image(imgp, *create_box(dialog))
         dialog.find_element_by_css_selector('.btn-primary').click()
-
-    def clean_resources(self, resources):
-        widgs = ['TestOperator', 'Test Mashup', 'Test']
-        for w in widgs:
-            resources.delete_resource(w)
-        # "Test Mashup Dependencies" can't be removed
-
-        get_by_text(self.driver, '.styled_button', 'Clear filters').click()
 
     test_building_mashup.tags = ('wirecloud-guide', 'ui-build-mashup')
