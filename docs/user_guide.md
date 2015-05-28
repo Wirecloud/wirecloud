@@ -231,7 +231,7 @@ You can also download them using the following URLs:
 -   [CoNWeT_simple-history-module2linear-graph_2.3.2.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_simple-history-module2linear-graph_2.3.2.wgt)
 -   [CoNWeT_ngsi-source_3.0.2.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_ngsi-source_3.0.2.wgt)
 -   [CoNWeT_ngsientity2poi_3.0.3.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_ngsientity2poi_3.0.3.wgt)
--   [CoNWeT_map-viewer_2.5.3.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_map-viewer_2.5.3.wgt)
+-   [CoNWeT_map-viewer_2.5.6.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_map-viewer_2.5.3.wgt)
 -   [CoNWeT_linear-graph_3.0.0b3.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_linear-graph_3.0.0b3.wgt)
 
 Once installed, you should be able to see all the widgets/operators used
@@ -241,21 +241,19 @@ in this example in the "My Resources" view:
 
 Go to the editor view and click on the "Add widget" button:
 
-![Wirecloud_UG_UploadButton.png](images/user_guide/Wirecloud_UG_UploadButton.png)
-![Wirecloud_UG_uploadNew](images/user_guide/Wirecloud_UG_uploadNew.png)
+![Wirecloud_UG_19.png](images/user_guide/Wirecloud_UG_19.png)
 
 Look for the *Linear Graph* widget and click on the "Add to workspace"
 button:
 
-![Wirecloud_UG_20_1.png](images/user_guide/Wirecloud_UG_20_1.png)
-![Wirecloud_UG_20_2.png](images/user_guide/Wirecloud_UG_20_2.png)
+![Wirecloud_UG_20.png](images/user_guide/Wirecloud_UG_20.png)
 
-This will add the Linear Graph widget into the dashboard, you can move
+This will add the *Linear Graph* widget into the dashboard, you can move
 and resize it until you obtain the desired layout:
 
 ![Wirecloud_UG_21.png](images/user_guide/Wirecloud_UG_21.png)
 
-Add the “Map Viewer” widget to the dashboard following the same steps
+Add the "Map Viewer" widget to the dashboard following the same steps
 for adding the *Linear Graph* widget. After rearranging it you will be
 presented with the following view, which shows you the two widgets in
 the default tab. You can see the tabs used in your workspace at the
@@ -348,21 +346,21 @@ because they represents the means to dynamically associate the widgets
 with the concrete services or sources of information you want to use in
 the context of a particular mashup.
 
-In this case, we have an *Entity Service* operator that is going to
+In this case, we have an *NGSI source* operator that is going to
 provide the data information to the *Map Viewer* widget. This kind of
 operators are called piping operators. So we have to add it to the
 wiring. To do so, drag the operator from the operator list to wiring
 canvas:
 
-![Wirecloud_UG_Wiring_EntityService_drag.png](images/user_guide/Wirecloud_UG_Wiring_EntityService_drag.png)
-![Wirecloud_UG_Wiring_EntityService.png](images/user_guide/Wirecloud_UG_Wiring_EntityService.png)
+![Wirecloud_UG_Wiring_NGSISource_drag.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource_drag.png)
+![Wirecloud_UG_Wiring_NGSISource.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource.png)
 
 Now, we have the source of information that is going to be presented in
 the *Map Viewer* widget. So we need to add it to the wiring status
 following the same process for the operator, but dragging the widget
 instead of the operator:
 
-![Wirecloud_UG_Wiring_EntityService_MapViewer.png](images/user_guide/Wirecloud_UG_Wiring_EntityService_MapViewer.png)
+![Wirecloud_UG_Wiring_NGSISource_MapViewer.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource_MapViewer.png)
 
 The wiring editor comes with a recommendation system for connections.
 For example, move the pointer to the *Provide entity* endpoint. You will
@@ -370,35 +368,35 @@ see that the endpoint get highlighted, this means that te recommendation
 system is searching for compatible endpoints. In this case there are no
 compatible endpoints.
 
-![Wirecloud_UG_Wiring_EntityService_MapViewer_rec.png](images/user_guide/Wirecloud_UG_Wiring_EntityService_MapViewer_rec.png)
+![Wirecloud_UG_Wiring_NGSISource_MapViewer_rec.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource_MapViewer_rec.png)
 
-This is because the output of the *Entity Service* cannot be connected
+This is because the output of the *NGSI source* cannot be connected
 directly with the *Map Viewer* widget. We can use a transform operator
-to convert the event data provided by the *Entity Service* operator to
+to convert the event data provided by the *NGSI source* operator to
 the format used by the *Map Viewer* widget. In this example, the
 operator that is going to perform this transformation is *Entity to
 PoI*:
 
-![Wirecloud_UG_Wiring_Entity2PoI.png](images/user_guide/Wirecloud_UG_Wiring_Entity2PoI.png)
+![Wirecloud_UG_Wiring_NGSIEntity2PoI.png](images/user_guide/Wirecloud_UG_Wiring_NGSIEntity2PoI.png)
 
 After adding the operator, we can move the pointer to the *Provide
 entity* endpoint to see that now we have a connection recommendation:
 
-![Wirecloud_UG_Wiring_Entity2PoI_rec.png](images/user_guide/Wirecloud_UG_Wiring_Entity2PoI_rec.png)
+![Wirecloud_UG_Wiring_NGSIEntity2PoI_rec.png](images/user_guide/Wirecloud_UG_Wiring_NGSIEntity2PoI_rec.png)
 
 So, we can connect it. To do so, push down the mouse button on the
 *Provide entity* endpoint and drag the arrow to the *Entity* endpoint:
 
-![Wirecloud_UG_Wiring_Entity2PoI_connection.png](images/user_guide/Wirecloud_UG_Wiring_Entity2PoI_connection.png)
-![Wirecloud_UG_Wiring_Entity2PoI_c_done.png](images/user_guide/Wirecloud_UG_Wiring_Entity2PoI_c_done.png)
+![Wirecloud_UG_Wiring_NGSIEntity2PoI_connection.png](images/user_guide/Wirecloud_UG_Wiring_NGSIEntity2PoI_connection.png)
+![Wirecloud_UG_Wiring_NGSIEntity2PoI_c_done.png](images/user_guide/Wirecloud_UG_Wiring_NGSIEntity2PoI_c_done.png)
 
-And we can also connect also the *PoI* endpoint of the *Entity To PoI*
+And we can also connect also the *PoI* endpoint of the *NGSI Entity To PoI*
 operator to the *Insert/Update PoI* endpoint on the *Map Viewer* widget:
 
 ![Wirecloud_UG_Wiring_End_1st_ph.png](images/user_guide/Wirecloud_UG_Wiring_End_1st_ph.png)
 
 If you return to the *Editor* view, you will see that the map widget has
-been updated and is showing the PoIs obtained from the *Entity Service*
+been updated and is showing the PoIs obtained from the *NGSI source*
 operator.
 
 ![Wirecloud_UG_32.png](images/user_guide/Wirecloud_UG_32.png)
