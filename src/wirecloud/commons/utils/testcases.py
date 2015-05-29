@@ -273,28 +273,11 @@ class FakeNetwork(object):
             res_info = self(method.upper(), url, *args, **kwargs)
             return self._prepare_response(res_info, url)
 
-        def get_mock(url, *args, **kwargs):
-            res_info = self('GET', url, *args, **kwargs)
-            return self._prepare_response(res_info, url)
-
-        def post_mock(url, *args, **kwargs):
-            res_info = self('POST', url, *args, **kwargs)
-            return self._prepare_response(res_info, url)
-
         self.old_requests_request = requests.request
         requests.request = request_mock
-        self.old_requests_get = requests.get
-        requests.get = get_mock
-        self.old_requests_post = requests.post
-        requests.post = post_mock
 
     def unmock_requests(self):
         requests.request = self.old_requests_request
-        requests.get = self.old_requests_get
-        requests.post = self.old_requests_post
-        self.old_requests_request = None
-        self.old_requests_get = None
-        self.old_requests_post = None
 
 
 def prepare_temporal_resource_directories(cls):
