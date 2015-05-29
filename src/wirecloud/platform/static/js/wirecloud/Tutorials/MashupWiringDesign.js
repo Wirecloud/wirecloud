@@ -190,7 +190,7 @@
         },
 
         'enableBehaviours': function enableBehaviours() {
-            return document.querySelector('.wiring-sidebar .behaviour-panel .btn-enable-behaviour-engine');
+            return document.querySelector('.wiring-sidebar .behaviour-panel .btn-enable-behaviours');
         },
 
         'getBehaviour': function getBehaviour(index) {
@@ -198,19 +198,19 @@
         },
 
         'activateBehaviour': function activateBehaviour(index) {
-            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.opt-activate');
+            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.btn-activate');
         },
 
         'getBehaviourTitle': function getBehaviourTitle(index) {
             return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.behaviour-title');
         },
 
-        'getBehaviourDescription': function getBehaviourDescription(index) {
-            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.behaviour-description');
+        openBehaviourSettings: function openBehaviourSettings(index) {
+            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.btn-show-settings');
         },
 
-        'getBehaviourElements': function getBehaviourElements(index) {
-            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.behaviour-elements');
+        'getBehaviourDescription': function getBehaviourDescription(index) {
+            return document.querySelectorAll('.wiring-sidebar .behaviour-panel .behaviour')[index].querySelector('.behaviour-description');
         }
 
     };
@@ -298,7 +298,7 @@
             title: gettext("Step 1: identify the behaviours"),
             msg: gettext(
                 "<p>Completed the above, let's start with understanding the different behaviours " +
-                "you will find in this mashup.</p>")
+                "you can find in this mashup.</p>")
         },
 
         {
@@ -325,7 +325,7 @@
         },
         {
             type: 'autoAction',
-            msg: gettext("...and their vCard is displayed here."),
+            msg: gettext("...and their vCard is shown here."),
             elem: BS.workspaceView.widget_by_title('Technician vCard'),
             pos: 'topRight',
             action: BA.sleep(3000)
@@ -340,7 +340,7 @@
         },
         {
             type: 'autoAction',
-            msg: gettext("...and their current location is displayed here."),
+            msg: gettext("...and their current location is shown here."),
             elem: BS.workspaceView.widget_by_title('Map Viewer'),
             pos: 'topRight',
             action: BA.sleep(3000)
@@ -355,7 +355,7 @@
         },
         {
             type: 'autoAction',
-            msg: gettext("...and the video call is enabled."),
+            msg: gettext("...and the video call is ready to use."),
             elem: BS.workspaceView.widget_by_title('Video Call'),
             pos: 'topLeft',
             action: BA.sleep(3000)
@@ -376,7 +376,7 @@
 
         {
             type: 'simpleDescription',
-            title: gettext("Step 2 - design the behaviours identified"),
+            title: gettext("Step 2 - design the identified behaviours"),
             msg: gettext(
                 "<p>At this point you are going to perform basic actions as well as to:</p>" +
                 "<p> - Create a behaviour and update its basic information.</p>" +
@@ -389,7 +389,7 @@
         // Step 2 - Design the first behavior
         {
             type: 'simpleDescription',
-            title: gettext("Step 2 - design the behaviours identified"),
+            title: gettext("Step 2 - design the identified behaviours"),
             msg: gettext("<p>First of all, let's enable the behaviours.</p>")
         },
         {
@@ -427,27 +427,20 @@
             pos: 'downRight',
             action: BA.click(2000)
         },
-        {
-            type: 'autoAction',
-            msg: gettext("These are the connections, operators and widgets."),
-            elem: wiringView.getBehaviourElements.bind(null, 0),
-            pos: 'downRight',
-            action: BA.click(2000)
-        },
 
         {
             type: 'simpleDescription',
-            title: gettext("Step 2 - design the behaviours identified"),
+            title: gettext("Step 2 - design the identified behaviours"),
             msg: gettext(
                 "<p>With the option behaviours already enabled, let's design " +
-                "the first behaviour identified.</p>" +
+                "the first identified behaviour.</p>" +
                 "<p>Firstly, the basic information (title and description) " +
                 "of the behaviour <strong>New Behaviour 0</strong> will be modified.</p>")
         },
         {
             type: 'autoAction',
             msg: gettext("Go to open <strong>behaviour update form</strong>."),
-            elem: wiringView.getBehaviourTitle.bind(null, 0),
+            elem: wiringView.openBehaviourSettings.bind(null, 0),
             pos: 'downRight',
             action: BA.click(2000)
         },
@@ -462,7 +455,7 @@
         {
             type: 'autoAction',
             msg: gettext("Go to set a <strong>description</strong>."),
-            elem: getBehaviourUpdateFormDescription.bind(null, "Allow find a technician from a given name in the list of technicians."),
+            elem: getBehaviourUpdateFormDescription.bind(null, "Allow to find a technician using given name in the list of technicians."),
             pos: 'downLeft',
             action: BA.sleep(2000)
         },
@@ -482,7 +475,7 @@
 
         {
             type: 'simpleDescription',
-            title: gettext("Step 2 - design the behaviours identified"),
+            title: gettext("Step 2 - design the identified behaviours"),
             msg: gettext(
                 "<p>Completed the above, let's add the components " +
                 "belonging to this behaviour.</p>")
@@ -525,7 +518,7 @@
         },
         {
             type: 'simpleDescription',
-            title: gettext("Step 2 - design the behaviours identified"),
+            title: gettext("Step 2 - design the identified behaviours"),
             msg: gettext(
                 "<p>Now, the components of this behaviour will be connected.</p>")
         },
@@ -564,9 +557,9 @@
 
         {
             type: 'simpleDescription',
-            title: gettext("Step 2 - design the behaviours identified"),
+            title: gettext("Step 2 - design the identified behaviours"),
             msg: gettext(
-                "<p>The first behaviour is finished. Then, let's create the second behaviour identified.</p>")
+                "<p>The first behaviour is finished. Then, let's create the second identified behaviour.</p>")
         },
 
         {
@@ -595,7 +588,7 @@
         {
             type: 'autoAction',
             msg: gettext("Go to set a <strong>description</strong>."),
-            elem: getBehaviourRegistrationFormDescription.bind(null, "Allow view the vCard of a technician selected."),
+            elem: getBehaviourRegistrationFormDescription.bind(null, "Allow to watch the vCard of a selected technician."),
             pos: 'downLeft',
             action: BA.sleep(2000)
         },
@@ -615,7 +608,7 @@
 
         {
             type: 'simpleDescription',
-            title: gettext("Step 2 - design the behaviours identified"),
+            title: gettext("Step 2 - design the identified behaviours"),
             msg: gettext(
                 "<p>At this point, let's add the components <strong>Technician vCard</strong>, " +
                 "<strong>Technical Service</strong> and <strong>Technicians</strong> " +
@@ -665,8 +658,8 @@
 
         {
             type: 'simpleDescription',
-            title: gettext("Step 2 - design the behaviours identified"),
-            msg: gettext("<p>The second behavior is completed. The following " +
+            title: gettext("Step 2 - design the identified behaviours"),
+            msg: gettext("<p>The second behaviour is completed. The following " +
                 "<strong>behaviours (2 y 3)</strong> will be created in the same way.</p>" +
 
                 "<div class=\"alert alert-info\">" +
@@ -679,7 +672,7 @@
         {
             type: 'autoAction',
             msg: gettext("The <strong>thrid behaviour</strong> was created."),
-            elem: addBehaviour.bind(null, 'Make a video call', 'Allow make a video call to the technician selected.'),
+            elem: addBehaviour.bind(null, 'Make a video call', 'Allow to make a video call to the selected technician.'),
             pos: 'topRight',
             action: BA.sleep(2000)
         },
@@ -726,7 +719,7 @@
         {
             type: 'autoAction',
             msg: gettext("The <strong>last behaviour</strong> was created."),
-            elem: addBehaviour.bind(null, 'Locate the technician', 'Allow display the current location of the technician selected.'),
+            elem: addBehaviour.bind(null, 'Locate the technician', 'Allow to watch the current location of the selected technician.'),
             pos: 'topRight',
             action: BA.sleep(2000)
         },
