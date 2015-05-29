@@ -256,18 +256,18 @@ footer {
     font-family: Verdana, sans-serif;
     line-height: 17px;
     padding: 0px;
-    border-top: 2px solid #48b9c9;
+    border-top: 1px solid #48b9c9;
 }
 
 footer:before {
     content: "";
     display: block;
     height: 0px;
-    border-top: 2px solid #F2E826;
+    border-top: 1px solid #F2E826;
 }
 
 footer .container-fluid {
-    border-top: 2px solid #193B6B;
+    border-top: 1px solid #193B6B;
 }
 
 footer .container-fluid .footer-content .cred {
