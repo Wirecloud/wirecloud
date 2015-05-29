@@ -481,7 +481,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                                             context.iObject.ioperator, context.iObject.wiringEditor, true);
                     }
                     miniwidget_clon.addClassName('cloned');
-                    wiringEditor.layout.slideUp();
+                    wiringEditor.layout.hide();
                     //set the clon position over the originar miniWidget
                     miniwidget_clon.setBoundingClientRect(pos_miniwidget,
                      {top: -headerHeight, left: 0, width: -2});

@@ -28,13 +28,6 @@ $offcanvas-sidebar-close-width: 15px;
 
 $offcanvas-footer-height: 40px;
 
-@mixin offcanvas-sidebar-close-font($font-size: 16px, $font-weight: bold, $font-height: 1.43, $font-align: center) {
-    font-size: $font-size;
-    font-weight: $font-weight;
-    line-height: $font-height;
-    text-align: $font-align;
-}
-
 
 .se-offcanvas {
     position: absolute;
@@ -52,21 +45,6 @@ $offcanvas-footer-height: 40px;
         margin: 0px $offcanvas-margin-all $offcanvas-margin-all;
         border: solid 0px transparent;
         box-sizing: border-box;
-
-        .se-offcanvas-btn-close {
-            position: absolute;
-            top: 0px;
-            bottom: 0px;
-            margin: auto;
-            padding: 8px 0px 0px 0px;
-            cursor: pointer;
-            width: $offcanvas-sidebar-close-width;
-            height: 40px;
-            @include offcanvas-sidebar-close-font();
-            border: solid 1px transparent;
-            z-index: $offcanvas-sidebar-close-zindex;
-            box-sizing: border-box;
-        }
     }
 
     .se-offcanvas-content {
@@ -93,16 +71,10 @@ $offcanvas-footer-height: 40px;
     }
 }
 
-.se-offcanvas.se-offcanvas-to-left {
+.se-offcanvas.left-sideway {
 
     .se-offcanvas-sidebar {
         left: ($offcanvas-sidebar-width + $offcanvas-margin-all) * -1;
-
-        .se-offcanvas-btn-close {
-            right: ($offcanvas-sidebar-close-width - 1px) * -1;
-            border-left-width: 0px;
-            border-radius: 0px $offcanvas-border-radius $offcanvas-border-radius 0px;
-        }
     }
 
     .se-offcanvas-sidebar,
@@ -122,16 +94,10 @@ $offcanvas-footer-height: 40px;
     }
 }
 
-.se-offcanvas.se-offcanvas-to-right {
+.se-offcanvas.right-sideway {
 
     .se-offcanvas-sidebar {
         right: ($offcanvas-sidebar-width + $offcanvas-margin-all) * -1;
-
-        .se-offcanvas-btn-close {
-            left: ($offcanvas-sidebar-close-width - 1px) * -1;
-            border-right-width: 0px;
-            border-radius: $offcanvas-border-radius 0px 0px $offcanvas-border-radius;
-        }
     }
 
     .se-offcanvas-sidebar,

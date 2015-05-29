@@ -31,74 +31,70 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      * @param {Object.<String, *>} [options]
      */
     var Behaviour = function Behaviour(data, index, options) {
-        var countersElement;
+        var bodyElement, headingElement, optionsElement;
 
         StyledElements.EventManagerMixin.call(this, Behaviour.events);
         data = Behaviour.normalize(data, index);
-
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = "behaviour";
 
         this.title = data.title;
         this.description = data.description;
 
         this.titleElement = document.createElement('span');
-        this.titleElement.className = "behaviour-title";
+        this.titleElement.className = "panel-title behaviour-title";
         this.titleElement.textContent = this.title;
-        this.wrapperElement.appendChild(this.titleElement);
-
-        this.descriptionElement = document.createElement('span');
-        this.descriptionElement.className = "behaviour-description";
-        this.descriptionElement.textContent = this.description;
-        this.wrapperElement.appendChild(this.descriptionElement);
-
-        countersElement = document.createElement('div');
-        countersElement.className = "behaviour-elements";
-        this.wrapperElement.appendChild(countersElement);
-
-        this.components = data.components;
-        this.connections = data.connections;
-
-        this.connectionsElement = document.createElement('div');
-        this.connectionsElement.className = "badge badge-connections";
-        countersElement.appendChild(this.connectionsElement);
-
-        this.operatorsElement = document.createElement('div');
-        this.operatorsElement.className = "badge badge-operators";
-        countersElement.appendChild(this.operatorsElement);
-
-        this.widgetsElement = document.createElement('div');
-        this.widgetsElement.className = "badge badge-widgets";
-        countersElement.appendChild(this.widgetsElement);
 
         this.btnActivate = new StyledElements.StyledButton({
             'title': gettext("Activate"),
-            'class': 'opt-activate btn-primary',
-            'iconClass': 'icon-eye-close'
+            'class': 'btn-activate',
+            'iconClass': 'icon-plus'
         });
-        this.btnActivate.insertInto(this.wrapperElement);
+
+        this.btnShowSettings = new StyledElements.StyledButton({
+            'title': gettext("Settings"),
+            'class': 'btn-show-settings',
+            'iconClass': 'icon-tasks'
+        });
+
+        optionsElement = document.createElement('span');
+        optionsElement.className = "panel-options";
+        optionsElement.appendChild(this.btnShowSettings.wrapperElement);
+        optionsElement.appendChild(this.btnActivate.wrapperElement);
+
+        headingElement = document.createElement('div');
+        headingElement.className = "panel-heading";
+        headingElement.appendChild(this.titleElement);
+        headingElement.appendChild(optionsElement);
+
+        this.descriptionElement = document.createElement('p');
+        this.descriptionElement.className = "behaviour-description";
+        this.descriptionElement.textContent = this.description;
+
+        bodyElement = document.createElement('div');
+        bodyElement.className = "panel-body";
+        bodyElement.appendChild(this.descriptionElement);
+
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = "panel behaviour";
+        this.wrapperElement.appendChild(headingElement);
+        this.wrapperElement.appendChild(bodyElement);
+
+        this.components = data.components;
+        this.connections = data.connections;
 
         Object.defineProperty(this, 'active', {
             'get': function get() {
                 return this.wrapperElement.classList.contains('active');
             },
             'set': function set(state) {
-                if (typeof state === 'boolean') {
-                    if (state) {
-                        this.wrapperElement.classList.add('active');
-                        this.btnActivate.addClassName('active');
-                        this.btnActivate.toggleIconClass('icon-eye-open', 'icon-eye-close');
-                    } else {
-                        this.wrapperElement.classList.remove('active');
-                        this.btnActivate.removeClassName('active');
-                        this.btnActivate.toggleIconClass('icon-eye-close', 'icon-eye-open');
-                    }
+                if (state) {
+                    this.wrapperElement.classList.add('active');
+                } else {
+                    this.wrapperElement.classList.remove('active');
                 }
             }
         });
 
         this.active = data.active;
-        updateCounterList.call(this);
     };
 
     StyledElements.Utils.inherit(Behaviour, null, StyledElements.EventManagerMixin);
@@ -158,8 +154,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             }
         }
 
-        updateCounterList.call(this);
-
         return this;
     };
 
@@ -210,8 +204,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             'operator': {},
             'widget': {}
         };
-
-        updateCounterList.call(this);
 
         return this;
     };
@@ -313,7 +305,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
      */
     Behaviour.prototype.removeComponent = function removeComponent(componentType, componentId) {
         delete this.components[componentType][componentId];
-        updateCounterList.call(this);
 
         return this;
     };
@@ -331,7 +322,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
 
         if ((index=this.getConnectionIndex(sourceName, targetName)) != -1) {
             this.connections.splice(index, 1);
-            updateCounterList.call(this);
         }
 
         return this;
@@ -377,8 +367,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             this.components[componentType][componentId] = componentView;
         }
 
-        updateCounterList.call(this);
-
         return this;
     };
 
@@ -410,8 +398,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             });
         }
 
-        updateCounterList.call(this);
-
         return this;
     };
 
@@ -434,20 +420,6 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
             this.description = data.description;
             this.descriptionElement.textContent = data.description;
         }
-
-        return this;
-    };
-
-    /**
-     * @private
-     * @function
-     *
-     * @returns {Behaviour} The instance on which this function was called.
-     */
-    var updateCounterList = function updateCounterList() {
-        this.connectionsElement.textContent = this.connections.length;
-        this.operatorsElement.textContent = Object.keys(this.components.operator).length;
-        this.widgetsElement.textContent = Object.keys(this.components.widget).length;
 
         return this;
     };

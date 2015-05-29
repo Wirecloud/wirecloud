@@ -15,114 +15,102 @@
  *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*global StyledElements*/
+/* global StyledElements */
 
 
-StyledElements.OffCanvasLayout = (function () {
+(function (ns) {
 
     "use strict";
 
     // ==================================================================================
-    // CLASS CONSTRUCTOR
+    // CLASS DEFINITION
     // ==================================================================================
 
     /**
-     * Create a new instance of class OffCanvasLayout.
-     * @class
+     * [OffCanvasLayout description]
      *
-     * @param {Object.<String, *>} [options]
+     * @constructor
+     * @param {Object.<String, *>} options [description]
      */
-    var OffCanvasLayout = function OffCanvasLayout(options) {
-        var defaults = {
-            'direction': "to-left",
-            'iconLClassName': "icon-caret-left",
-            'iconRClassName': "icon-caret-right"
-        };
+    ns.OffCanvasLayout = function OffCanvasLayout(options) {
+        StyledElements.StyledElement.call(this, ns.OffCanvasLayout.EVENTS);
 
-        options = StyledElements.Utils.merge(defaults, options);
-        StyledElements.StyledElement.call(this, ['slidedown', 'slideup']);
+        options = StyledElements.Utils.merge(ns.OffCanvasLayout.DEFAULTS, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = "se-offcanvas";
-
-        switch (options.direction) {
-            case 'to-left':
-                this.wrapperElement.classList.add("se-offcanvas-to-left");
-                this.toLeft = true;
-                break;
-            case 'to-right':
-                this.wrapperElement.classList.add("se-offcanvas-to-right");
-                this.toLeft = false;
-                break;
-            default:
-                break;
-        }
+        this.wrapperElement.className = "se-offcanvas " + options.sideway + "-sideway";
 
         Object.defineProperties(this, {
-            'sidebar': {
-                'value': new StyledElements.Container({
-                    'class': 'se-offcanvas-sidebar'
+            slipped: {
+                get: function get() {
+                    return this.wrapperElement.classList.contains('slipped');
+                },
+                set: function set(value) {
+                    if (value) {
+                        this.wrapperElement.classList.add('slipped');
+                    } else {
+                        this.wrapperElement.classList.remove('slipped');
+                    }
+                }
+            },
+            sidebar: {
+                value: new StyledElements.Container({
+                    'class': "se-offcanvas-sidebar"
                 })
             },
-            'content': {
-                'value': new StyledElements.Container({
-                    'class': 'se-offcanvas-content'
+            content: {
+                value: new StyledElements.Container({
+                    'class': "se-offcanvas-content"
                 })
             },
-            'footer': {
-                'value': new StyledElements.Container({
-                    'class': 'se-offcanvas-footer'
+            footer: {
+                value: new StyledElements.Container({
+                    'class': "se-offcanvas-footer"
                 })
             }
         });
 
-        this.iconLClassName = options.iconLClassName;
-        this.iconRClassName = options.iconRClassName;
-        this.slipped = false;
-        this.panelList = [];
-        this.lastestOpened = -1;
+        this.panels = [];
+        this.latestIndex = 0;
 
-        this.directionalIcon = document.createElement('span');
-
-        if (this.toLeft) {
-            this.directionalIcon.className = this.iconRClassName;
-        } else {
-            this.directionalIcon.className = this.iconLClassName;
-        }
-
-        this.btnSlideToggle = document.createElement('div');
-        this.btnSlideToggle.className = 'se-offcanvas-btn-close';
-        this.btnSlideToggle.appendChild(this.directionalIcon);
-        this.btnSlideToggle.addEventListener('click', function (event) {
-            this.slideToggle();
-        }.bind(this));
-
-        this.sidebar.appendChild(this.btnSlideToggle);
-
-        this.sidebar.insertInto(this.wrapperElement);
-        this.content.insertInto(this.wrapperElement);
-        this.footer.insertInto(this.wrapperElement);
+        this.wrapperElement.appendChild(this.sidebar.wrapperElement);
+        this.wrapperElement.appendChild(this.content.wrapperElement);
+        this.wrapperElement.appendChild(this.footer.wrapperElement);
     };
 
-    OffCanvasLayout.prototype = new StyledElements.StyledElement();
+    ns.OffCanvasLayout.DEFAULTS = {
+        sideway: 'left'
+    };
+
+    ns.OffCanvasLayout.EVENTS = ['show', 'hide'];
+
+    ns.OffCanvasLayout.prototype = new ns.StyledElement();
 
     // ==================================================================================
-    // PUBLIC METHODS
+    // PUBLIC MEMBERS
     // ==================================================================================
 
-    OffCanvasLayout.prototype.appendPanel = function appendPanel(panelElement) {
+    /**
+     * [addPanel description]
+     *
+     * @param {StyledElement} panelElement [description]
+     * @returns {OffCanvasLayout} The instance on which the member is called.
+     */
+    ns.OffCanvasLayout.prototype.addPanel = function addPanel(panelElement) {
         this.sidebar.appendChild(panelElement.wrapperElement);
-        this.panelList.push(panelElement);
+        this.panels.push(panelElement);
 
         return this;
     };
 
     /**
+     * [repaint description]
      * @override
      *
-     * @returns {OffCanvasLayout} The instance on which this function was called.
+     * @param {[type]} temporal [description]
+     * @returns {OffCanvasLayout} The instance on which the member is called.
      */
-    OffCanvasLayout.prototype.repaint = function repaint(temporal) {
+    ns.OffCanvasLayout.prototype.repaint = function repaint(temporal) {
         this.sidebar.repaint(temporal);
         this.content.repaint(temporal);
         this.footer.repaint(temporal);
@@ -131,83 +119,50 @@ StyledElements.OffCanvasLayout = (function () {
     };
 
     /**
-     * Display the default sidebar with a sliding motion.
-     * @function
-     * @public
+     * [show description]
      *
-     * @returns {OffCanvasLayout} The instance on which this function was called.
+     * @param {Number} [panelIndex] [description]
+     * @returns {OffCanvasLayout} The instance on which the member is called.
      */
-    OffCanvasLayout.prototype.slideDown = function slideDown(panelIndex) {
-        var i, panelOpened;
+    ns.OffCanvasLayout.prototype.show = function show(panelIndex) {
+        var i, shownPanel = null;
 
-        if (this.panelList.length) {
-            for (i = 0; i < this.panelList.length; i++) {
-                if (typeof panelIndex !== 'undefined' && i === panelIndex) {
-                    this.lastestOpened = i;
-                    continue;
-                }
+        if (this.panels.length) {
 
-                this.panelList[i].hide();
+            this.panels.forEach(function (panel) {
+                panel.hide();
+            });
+
+            if (typeof panelIndex !== 'undefined') {
+                shownPanel = this.panels[panelIndex].show();
+                this.latestIndex = panelIndex;
+            } else {
+                shownPanel = this.panels[this.latestIndex].show();
             }
-
-            if (this.lastestOpened < 0) {
-                this.lastestOpened = 0;
-            }
-
-            panelOpened = this.panelList[this.lastestOpened].show();
         }
 
-        this.wrapperElement.classList.add('slipped');
         this.slipped = true;
-
-        if (this.toLeft) {
-            this.directionalIcon.className = this.iconLClassName;
-        } else {
-            this.directionalIcon.className = this.iconRClassName;
-        }
-
-        this.events.slidedown.dispatch(panelOpened);
+        this.events.show.dispatch(shownPanel);
 
         return this;
     };
 
     /**
-     * Display or hide the default sidebar with a sliding motion.
-     * @function
-     * @public
+     * [hide description]
      *
-     * @returns {OffCanvasLayout} The instance on which this function was called.
+     * @param {Number} [panelIndex] [description]
+     * @returns {OffCanvasLayout} The instance on which the member is called.
      */
-    OffCanvasLayout.prototype.slideToggle = function slideToggle() {
-        return (this.slipped) ? this.slideUp() : this.slideDown();
-    };
+    ns.OffCanvasLayout.prototype.hide = function hide(panelIndex) {
 
-    /**
-     * Hide the default sidebar with a sliding motion.
-     * @function
-     * @public
-     *
-     * @returns {OffCanvasLayout} The instance on which this function was called.
-     */
-    OffCanvasLayout.prototype.slideUp = function slideUp(panelIndex) {
-        this.wrapperElement.classList.remove('slipped');
+        if (typeof panelIndex !== 'undefined') {
+            this.latestIndex = panelIndex;
+        }
+
         this.slipped = false;
-
-        if (this.panelList.length && typeof panelIndex !== 'undefined') {
-            this.lastestOpened = panelIndex;
-        }
-
-        if (this.toLeft) {
-            this.directionalIcon.className = this.iconRClassName;
-        } else {
-            this.directionalIcon.className = this.iconLClassName;
-        }
-
-        this.events.slideup.dispatch();
+        this.events.hide.dispatch();
 
         return this;
     };
 
-    return OffCanvasLayout;
-
-})();
+})(StyledElements);

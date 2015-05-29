@@ -42,10 +42,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         this.behavioursEnabled = false;
         this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
 
-        this.btnViewpoint.addEventListener('click', function (event) {
-            this.toggleViewpoint();
-        }.bind(this));
-
         this.btnEnable.addEventListener('click', function (event) {
             if (this.behavioursEnabled) {
                 delete this.currentBehaviour;
@@ -112,11 +108,9 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             if (toggleViewpoint) {
                 if (this.currentViewpoint == BehaviourEngine.viewpoints.GLOBAL) {
                     this.currentViewpoint = BehaviourEngine.viewpoints.SINGLE;
-                    this.btnViewpoint.setLabel("Single");
                     this.btnEnable.hide();
                 } else {
                     this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
-                    this.btnViewpoint.setLabel("Global");
                     this.btnEnable.show();
                 }
             }
@@ -157,7 +151,7 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
             }, event);
         }.bind(this));
 
-        behaviour.titleElement.addEventListener('click', function (event) {
+        behaviour.btnShowSettings.addEventListener('click', function (event) {
             behaviour.dispatchEvent('open')({
                 'behaviour': behaviour,
                 'behaviourEngine': this,
@@ -397,7 +391,6 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
 
         if (this.behavioursEnabled) {
             this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
-            this.btnViewpoint.setLabel("Global");
 
             for (i = 0; i < this.currentState.behaviours.length; i++) {
                 this.appendBehaviour(this.createBehaviour(this.currentState.behaviours[i]));

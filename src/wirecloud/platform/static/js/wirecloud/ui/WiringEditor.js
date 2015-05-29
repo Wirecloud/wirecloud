@@ -49,9 +49,7 @@ Wirecloud.ui.WiringEditor = (function () {
             this.events[WiringEditor.defaults.eventList[i]] = new StyledElements.Event();
         }
 
-        this.layout = new StyledElements.OffCanvasLayout({
-            'direction': "to-left"
-        });
+        this.layout = new StyledElements.OffCanvasLayout();
         this.appendChild(this.layout);
 
         buildWirecloudToolbar.call(this);
@@ -127,7 +125,7 @@ Wirecloud.ui.WiringEditor = (function () {
         }.bind(this));
 
         this.connectionEngine.addEventListener('unselectall', function () {
-            this.layout.slideUp();
+            this.layout.hide();
             this.ChangeObjectEditing(null);
         }.bind(this));
 
@@ -219,9 +217,9 @@ Wirecloud.ui.WiringEditor = (function () {
         if (this.behaviourEngine.behavioursEnabled) {
             if (this.behaviourEngine.globalViewpointActive()) {
                 this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
-                return [this.btnComponents, this.btnBehaviours, this.btnEmptyBehaviour, this.btnRemoveBehaviour];
+                return [this.btnComponents, this.btnBehaviours, this.btnToggleViewpoint, this.btnEmptyBehaviour, this.btnRemoveBehaviour];
             } else {
-                return [this.btnBehaviours];
+                return [this.btnBehaviours, this.btnToggleViewpoint];
             }
         } else {
             return [this.btnComponents, this.btnBehaviours];
@@ -312,7 +310,7 @@ Wirecloud.ui.WiringEditor = (function () {
             }.bind(this));
 
             eventTarget.behaviour.addEventListener('activate.dblclick', function() {
-                this.layout.slideUp();
+                this.layout.hide();
             }.bind(this));
 
             eventTarget.behaviour.addEventListener('open', function() {
@@ -430,10 +428,10 @@ Wirecloud.ui.WiringEditor = (function () {
         });
         this.btnComponents.addEventListener('click', function (styledElement) {
             if (!styledElement.active) {
-                this.layout.slideUp();
+                this.layout.hide();
             } else {
                 this.componentManager.activeDefaultSection();
-                this.layout.slideDown(0);
+                this.layout.show(0);
             }
         }.bind(this));
 
@@ -444,10 +442,21 @@ Wirecloud.ui.WiringEditor = (function () {
         });
         this.btnBehaviours.addEventListener('click', function (styledElement) {
             if (!styledElement.active) {
-                this.layout.slideUp();
+                this.layout.hide();
             } else {
-                this.layout.slideDown(1);
+                this.layout.show(1);
             }
+        }.bind(this));
+
+        this.btnToggleViewpoint = new StyledElements.ToggleButton({
+            'iconClass': 'icon-picture',
+            'title': gettext("Toggle viewpoint"),
+            'class': "btn-toggle-viewpoint",
+            'stackedIconClass': 'icon-globe'
+        });
+        this.btnToggleViewpoint.addEventListener('click', function (styledElement) {
+            this.layout.hide();
+            this.behaviourEngine.toggleViewpoint();
         }.bind(this));
 
         this.btnEmptyBehaviour = new StyledElements.StyledButton({
@@ -469,6 +478,8 @@ Wirecloud.ui.WiringEditor = (function () {
 
             dialog.setMsg(message);
             dialog.acceptHandler = this.behaviourEngine.emptyBehaviour.bind(this.behaviourEngine);
+
+            this.layout.hide();
             dialog.show();
         }.bind(this));
 
@@ -491,6 +502,8 @@ Wirecloud.ui.WiringEditor = (function () {
 
             dialog.setMsg(message);
             dialog.acceptHandler = this.behaviourEngine.removeBehaviour.bind(this.behaviourEngine);
+
+            this.layout.hide();
             dialog.show();
         }.bind(this));
     };
@@ -499,18 +512,18 @@ Wirecloud.ui.WiringEditor = (function () {
         this.layout.sidebar.addClassName('wiring-sidebar');
 
         this.componentManager = new WiringEditor.ComponentManager();
-        this.layout.appendPanel(this.componentManager);
+        this.layout.addPanel(this.componentManager);
 
         this.behaviourEngine = new WiringEditor.BehaviourEngine();
-        this.layout.appendPanel(this.behaviourEngine);
+        this.layout.addPanel(this.behaviourEngine);
         startBehaviourEngine.call(this);
 
-        this.layout.addEventListener('slideup', function () {
+        this.layout.addEventListener('hide', function () {
             this.btnComponents.active = false;
             this.btnBehaviours.active = false;
         }.bind(this));
-        this.layout.addEventListener('slidedown', function (panelOpened) {
-            if (panelOpened.wrapperElement.classList.contains('component-panel')) {
+        this.layout.addEventListener('show', function (shownPanel) {
+            if (shownPanel.wrapperElement.classList.contains('component-panel')) {
                 this.btnComponents.active = true;
                 this.btnBehaviours.active = false;
             } else {
@@ -716,6 +729,8 @@ Wirecloud.ui.WiringEditor = (function () {
         this.operatorVersions = {};
 
         this.componentManager.activeDefaultSection();
+        this.btnToggleViewpoint.active = false;
+        this.behaviourEngine.btnEnable.show();
 
         this.gridFullHeight = parseFloat(this.layout.content.wrapperElement.style.height);
         this.gridFullWidth = parseFloat(this.layout.content.wrapperElement.style.width);
@@ -1173,7 +1188,7 @@ Wirecloud.ui.WiringEditor = (function () {
     WiringEditor.prototype.serialize = function serialize() {
         var wiringState, key, i, ioperator, pref;
 
-        this.layout.slideUp(0);
+        this.layout.hide(0);
         wiringState = this.behaviourEngine.serialize();
 
         for (key in this.components.operator) {

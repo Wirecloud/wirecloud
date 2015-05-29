@@ -159,7 +159,14 @@ $nav-link-hover-bg:             $gray-lighter !default;
 $nav-disabled-link-color:       $gray-light !default;
 $nav-disabled-link-hover-color: $gray-light !default;
 
-/* Panels */
+// ======================================================================================
+// PANELS - BASE
+// ======================================================================================
+
+$default-border-radius: 4px;
+$default-margin-bottom: 10px;
+$default-padding-vertical: 10px;
+$default-padding-horizontal: 10px;
 
 $panel-bg:                 $body-bg !default;
 $panel-border-radius:      $border-radius-base !default;
@@ -169,6 +176,31 @@ $panel-body-padding:       15px !default;
 $panel-heading-padding:    10px 15px !default;
 $panel-footer-padding:     $panel-heading-padding !default;
 $panel-default-heading-bg: $panel-footer-bg !default;
+
+$panel-base-border-wrapper: solid 1px;
+$panel-base-padding-vertical: 8px;
+$panel-base-padding-horizontal: 8px;
+
+// ======================================================================================
+// PANELS - DEFAULT
+// ======================================================================================
+
+$panel-default-background-color: rgb(255, 255, 255);
+$panel-default-border-color: rgb(220, 220, 220);
+$panel-default-heading-font-color: rgb(80, 80, 80);
+
+$panel-default-heading-background-color: rgb(240, 240, 240);
+$panel-default-heading-font-color: rgb(80, 80, 80);
+
+$panel-default-border: $panel-base-border-wrapper $panel-default-border-color;
+
+// ======================================================================================
+// PANELS - PRIMARY
+// ======================================================================================
+
+$panel-primary-border-color: #2e6da4;
+$panel-primary-border: $panel-base-border-wrapper $panel-primary-border-color;
+$panel-primary-heading-background-color: #337ab7;
 
 /* Popovers */
 
@@ -237,17 +269,6 @@ $border-radius-onlybottom: 0px 0px $border-radius-base $border-radius-base;
 
 $btn-primary-active-background-color: #286090;
 
-$panel-base-border-wrapper: solid 1px;
-$panel-base-padding-vertical: 8px;
-$panel-base-padding-horizontal: 8px;
-
-$panel-default-border-color: #ddd;
-$panel-default-border: $panel-base-border-wrapper $panel-default-border-color;
-
-$panel-primary-border-color: #2e6da4;
-$panel-primary-border: $panel-base-border-wrapper $panel-primary-border-color;
-$panel-primary-heading-background-color: #337ab7;
-
 // ============================================================================
 // WIRECLOUD - MIXINS
 // ============================================================================
@@ -284,7 +305,6 @@ $panel-primary-heading-background-color: #337ab7;
     -webkit-user-select: none;
        -moz-user-select: none;
          -o-user-select: none;
-            user-select: none;
 }
 
 @mixin font-base($font-weight: false) {
@@ -296,12 +316,30 @@ $panel-primary-heading-background-color: #337ab7;
     }
 }
 
+@function border-base($border-color: transparent) {
+    @return 1px solid $border-color;
+}
+
+// ======================================================================================
+// MIXINS - FONTS
+// ======================================================================================
+
+@mixin font($type: "h5", $weight: "semibold") {
+
+    @if $type == "h5" {
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    @if $weight == "semibold" {
+        font-weight: 400;
+    } @else if $weight == "bold" {
+        font-weight: 700;
+    }
+}
+
 @mixin font-truncate() {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-}
-
-@function border-base($border-color: transparent) {
-    @return 1px solid $border-color;
 }

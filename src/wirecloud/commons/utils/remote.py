@@ -809,6 +809,14 @@ class WiringBehaviourTester(object):
         return 'active' in self.element.get_attribute('class').split()
 
     @property
+    def btn_activate(self):
+        return self.element.find_element_by_css_selector(".btn-activate")
+
+    @property
+    def btn_show_settings(self):
+        return self.element.find_element_by_css_selector(".btn-show-settings")
+
+    @property
     def heading(self):
         return self.element.find_element_by_css_selector(".behaviour-title")
 
@@ -819,6 +827,12 @@ class WiringBehaviourTester(object):
     @property
     def description(self):
         return self.element.find_element_by_css_selector(".behaviour-description").text
+
+    def activate(self):
+        self.btn_activate.click()
+
+    def show_settings(self):
+        self.btn_show_settings.click()
 
     def check_basic_info(self, title=None, description=None):
         if title is not None:
@@ -1470,10 +1484,6 @@ class BaseWiringViewTester(object):
         return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud-navbar .btn-list-components"))
 
     @property
-    def btn_slide_sidebar(self):
-        return ButtonTester(self.testcase, self.section_sidebar.find_element_by_css_selector(".se-offcanvas-btn-close"))
-
-    @property
     def layout(self):
         return self.testcase.driver.find_element_by_css_selector(".wiring-view")
 
@@ -1523,7 +1533,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
     @property
     def btn_enable_behaviour_engine(self):
-        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-enable-behaviour-engine"))
+        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-enable-behaviours"))
 
     @property
     def disabled(self):
@@ -1578,7 +1588,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
         return len(behaviours) > 0
 
     def update_behaviour(self, behaviour, title=None, description=None):
-        behaviour.heading.click()
+        behaviour.show_settings()
         form = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".behaviour-update-form"))
 
         if title is not None:
@@ -1720,18 +1730,6 @@ class WiringViewTester(BaseWiringViewTester):
     @property
     def component_sidebar(self):
         return WiringComponentSidebarTester(self.testcase)
-
-    @property
-    def latest_sidebar(self):
-        self.btn_slide_sidebar.click()
-
-        if self.btn_list_components.active:
-            return WiringComponentSidebarTester(self.testcase)
-
-        if self.btn_list_behaviours.active:
-            return WiringBehaviourSidebarTester(self.testcase)
-
-        return None
 
     @property
     def disabled(self):

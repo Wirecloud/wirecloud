@@ -150,7 +150,7 @@
     }
 
     .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
-        font-size: round($font-size-large * 0.7);
+        font-size: round($font-size-large * 0.65);
     }
 }
 
@@ -230,6 +230,21 @@
 .btn-group > .styled_button:last-child {
     border-top-right-radius: $border-radius-base;
     border-bottom-right-radius: $border-radius-base;
+}
+
+.btn-group-justified {
+    position: relative;
+    display: table;
+    width: 100%;
+    margin: 0px 0px 10px;
+    table-layout: fixed;
+
+    .styled_button {
+        display: table-cell;
+        float: none;
+        width: 1%;
+        text-align: center;
+    }
 }
 
 /* Button - Stacked Icon */

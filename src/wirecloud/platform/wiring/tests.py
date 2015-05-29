@@ -358,16 +358,8 @@ class WiringLayoutTestCase(WirecloudSeleniumTestCase):
                 self.assertTrue(sidebar.has_components('operator'))
                 self.assertFalse(sidebar.has_components('widget'))
 
-            with wiring.latest_sidebar as sidebar:
-                self.assertTrue(sidebar.panel.is_displayed())
-                self.assertTrue(sidebar.btn_show_widget_group.displayed)
-                self.assertTrue(sidebar.btn_show_widget_group.active)
-
             with wiring.behaviour_sidebar as sidebar:
                 self.assertFalse(sidebar.has_behaviours())
-
-            with wiring.latest_sidebar as sidebar:
-                self.assertTrue(sidebar.panel.is_displayed())
 
 
 class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
@@ -1224,7 +1216,7 @@ class EndpointStickyEffectTestCase(WirecloudSeleniumTestCase):
 class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     @classmethod
     def setUpClass(cls):

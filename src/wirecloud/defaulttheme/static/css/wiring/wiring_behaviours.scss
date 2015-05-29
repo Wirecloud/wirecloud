@@ -15,110 +15,97 @@
  *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import 'wiring/defaults';
 
+// ======================================================================================
+// WIRING - BEHAVIOUR
+// ======================================================================================
 
-// ============================================================================
-// WIRING SIDEBAR - BEHAVIOUR
-// ============================================================================
-
-.wiring-sidebar .behaviour-panel .behaviour {
+.behaviour {
     position: relative;
     display: block;
-    margin: 0px 0px $panel-components-component-margin-vertical;
+    background-color: $behaviour-background-color;
+    border-color: $behaviour-border-color;
+    border-radius: $default-border-radius;
     @include user-select();
-    background-color: $panel-components-component-background-color;
-    border-radius: 4px;
-    box-sizing: border-box;
+}
 
-    .opt-activate {
-        position: absolute;
-        display: inline-block;
-        top: 0px;
-        right: 0px;
-        width: 30px;
-        margin: 0px;
-        padding: 4px 0px;
-        text-align: center;
-        border-radius: 0px 4px;
-        box-sizing: border-box;
+.behaviour:last-child {
+    margin-bottom: 0px;
+}
+
+// ======================================================================================
+// WIRING - BEHAVIOUR HEADING
+// ======================================================================================
+
+.behaviour .panel-heading {
+    cursor: default;
+    background-color: $behaviour-heading-background-color;
+
+    .panel-title {
+        @include font($weight: "bold");
+        width: 75%;
+        color: $behaviour-heading-font-color;
     }
 }
 
-.wiring-sidebar .behaviour-panel .behaviour-title,
-.wiring-sidebar .behaviour-panel .behaviour-description {
-    position: relative;
-    display: block;
-    padding: 4px 8px;
-    font-size: 14px;
-    line-height: 20px;
-    @include user-select();
-    border: $panel-components-component-border;
-    box-sizing: border-box;
-}
+// ======================================================================================
+// WIRING - BEHAVIOUR HEADING - OPTIONS
+// ======================================================================================
 
-.wiring-sidebar .behaviour-panel .behaviour-title {
-    cursor: pointer;
-    padding-bottom: 0px;
-    font-weight: bold;
-    border-radius: 4px 4px 0px 0px;
-    border-bottom-width: 0px;
+.behaviour .panel-options {
 
-    &:hover {
-        color: rgb(30, 80, 120);
-        text-decoration: underline;
+    .styled_button {
+        color: rgb(80, 80, 80);
+
+        &:hover,
+        &:focus {
+            color: rgb(50, 120, 180);
+        }
     }
 }
 
-.wiring-sidebar .behaviour-panel .behaviour-description {
-    font-size: 13px;
-    border-radius: 0px;
-    border-top-width: 0px;
-    border-bottom-width: 0px;
-    color: rgb(80, 80, 80);
-    height: 48px;
-    overflow-y: hidden;
-}
+// ======================================================================================
+// WIRING - BEHAVIOUR BODY
+// ======================================================================================
 
-.wiring-sidebar .behaviour-panel .behaviour-elements {
-    width: 100%;
-    display: block;
-    text-align: center;
-    box-sizing: border-box;
+.behaviour .panel-body {
+    cursor: default;
 
-    .badge {
+    .behaviour-description {
         position: relative;
-        display: inline-block;
-        width: 33.33%;
-        margin: 0px 0px;
-        padding: 0px 5px;
-        color: #fff;
+        display: block;
+        margin: 0px;
         font-size: 12px;
+        font-weight: 400;
         line-height: 18px;
-        border: solid 1px transparent;
-        border-radius: 0px;
-        box-sizing: border-box;
+        color: rgb(70, 80, 90);
+        overflow: hidden;
+        height: 36px;
     }
+}
 
-    .badge:first-child {
-        border-bottom-left-radius: 3px;
-    }
+// ======================================================================================
+// WIRING - BEHAVIOUR STATES
+// ======================================================================================
 
-    .badge-connections {
-        background-color: $connection-background-color;
-        border-color: $connection-border-color;
-        border-bottom-left-radius: 4px;
-    }
+.behaviour.active {
+    border-color: #2e6da4;
 
-    .badge-operators {
-        background-color: $component-operator-background-color;
-        border-color: $component-operator-border-color;
-    }
+    .panel-heading {
+        background-color: #337ab7;
 
-    .badge-widgets {
-        background-color: $component-widget-background-color;
-        border-color: $component-widget-border-color;
-        border-bottom-right-radius: 4px;
+        .panel-title {
+            color: rgb(240, 240, 240);
+        }
+
+        .styled_button {
+            color: rgb(240, 240, 240);
+
+            &:hover,
+            &:focus {
+                color: #fff;
+            }
+        }
     }
 }

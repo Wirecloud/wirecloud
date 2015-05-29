@@ -33,6 +33,8 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
      * @param {Object.<String, *>} [options]
      */
     var ComponentManager = function ComponentManager(options) {
+        var btnGroupElement, titleElement;
+
         // Merge options's user with default options
         options = Wirecloud.Utils.merge({}, options);
 
@@ -44,17 +46,26 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
         headingElement.className = "panel-heading";
         this.wrapperElement.appendChild(headingElement);
 
+        titleElement = document.createElement('span');
+        titleElement.className = "panel-title";
+        titleElement.textContent = gettext("Available components");
+        headingElement.appendChild(titleElement);
+
+        btnGroupElement = document.createElement('div');
+        btnGroupElement.className = "btn-group btn-group-justified";
+
+        this.wrapperElement.appendChild(btnGroupElement);
+
         var containerElement = document.createElement('div');
         containerElement.className = "panel-body";
         this.wrapperElement.appendChild(containerElement);
 
         // Add section of web operators
         this.btnOperators = new StyledElements.StyledButton({
-            'plain': true,
-            'class': 'btn-display-operator-group',
+            'class': 'btn-primary btn-display-operator-group',
             'text': gettext("Operators")
         });
-        this.btnOperators.insertInto(headingElement);
+        this.btnOperators.insertInto(btnGroupElement);
         this.btnOperators.addEventListener('click', function (event) {
             this.activeSectionOperators();
         }.bind(this));
@@ -79,11 +90,10 @@ Wirecloud.ui.WiringEditor.ComponentManager = (function () {
 
         // Add section of web widgets
         this.btnWidgets = new StyledElements.StyledButton({
-            'plain': true,
-            'class': 'btn-display-widget-group',
+            'class': 'btn-primary btn-display-widget-group',
             'text': gettext("Widgets")
         });
-        this.btnWidgets.insertInto(headingElement);
+        this.btnWidgets.insertInto(btnGroupElement);
         this.btnWidgets.addEventListener('click', function (event) {
             this.activeSectionWidgets();
         }.bind(this));
