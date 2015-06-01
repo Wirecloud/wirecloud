@@ -186,16 +186,18 @@ def write_mashup_wiring_components_tree(target, type, components):
         componentview = etree.SubElement(target, 'component', id=str(c_id), type=type)
 
         if component.get('collapsed', False):
-            componentview.set('collapse', 'true')
+            componentview.set('collapsed', 'true')
 
-        if len(component['endpoints']['source']) > 0:
+        if 'position' in component:
+            etree.SubElement(componentview, 'position', x=str(component['position']['x']), y=str(component['position']['y']))
+
+        if 'endpoints' in component:
             sources = etree.SubElement(componentview, 'sources')
 
             for endpointname in component['endpoints']['source']:
                 endpoint = etree.SubElement(sources, 'endpoint')
                 endpoint.text = endpointname
 
-        if len(component['endpoints']['target']) > 0:
             targets = etree.SubElement(componentview, 'targets')
 
             for endpointname in component['endpoints']['target']:

@@ -345,6 +345,7 @@ class RDFTemplateParser(object):
                 'source': {},
                 'target': {},
             }
+
             for source in self._graph.objects(connection, WIRE_M['hasSource']):
                 connection_info['source'] = {
                     'id': self._get_field(WIRE_M, 'sourceId', source),
@@ -401,9 +402,9 @@ class RDFTemplateParser(object):
             type_ = self._get_field(WIRE, 'type', entity_view)
             id_ = self._get_field(WIRE, 'id', entity_view)
 
-            component_view_description = behaviour['components'][type_][id_] = {
-                'collapsed': self._get_field(WIRE_M, 'collapsed', entity_view, required=False).lower() == 'true'
-            }
+            component_view_description = behaviour['components'][type_][id_] = {}
+
+            component_view_description['collapsed'] = self._get_field(WIRE_M, 'collapsed', entity_view, required=False).lower() == 'true'
 
             sorted_sources = sorted(self._graph.objects(entity_view, WIRE_M['hasSource']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source, required=False)))
             sorted_targets = sorted(self._graph.objects(entity_view, WIRE_M['hasTarget']), key=lambda target: possible_int(self._get_field(WIRE, 'index', target, required=False)))
@@ -449,7 +450,9 @@ class RDFTemplateParser(object):
             else:
                 raise TemplateParseException(_('missing required field: hasSourceEndpoint'))
 
-            connection_info['sourcehandle'] = self._parse_position(connection, relation_name='hasSourceHandlePosition')
+            sourcehandle = self._parse_position(connection, relation_name='hasSourceHandlePosition')
+            if sourcehandle is not None:
+                connection_info['sourcehandle'] = sourcehandle
 
             for target in self._graph.objects(connection, WIRE_M['hasTargetEndpoint']):
                 connection_info['targetname'] = self._join_endpoint_name(target)
@@ -457,7 +460,9 @@ class RDFTemplateParser(object):
             else:
                 raise TemplateParseException(_('missing required field: hasTargetEndpoint'))
 
-            connection_info['targethandle'] = self._parse_position(connection, relation_name='hasTargetHandlePosition')
+            targethandle = self._parse_position(connection, relation_name='hasTargetHandlePosition')
+            if targethandle is not None:
+                connection_info['targethandle'] = targethandle
 
             behaviour['connections'].append(connection_info)
 

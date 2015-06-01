@@ -236,8 +236,8 @@ class ApplicationMashupTemplateParser(object):
         for behaviour in self._xpath(BEHAVIOUR_XPATH, behaviours_element):
 
             behaviour_info = get_behaviour_skeleton()
-            behaviour_info['title'] = behaviour['title']
-            behaviour_info['description'] = behaviour['description']
+            behaviour_info['title'] = behaviour.get('title')
+            behaviour_info['description'] = behaviour.get('description')
 
             self._parse_wiring_component_view_info(behaviour_info, behaviour)
             self._parse_wiring_connection_view_info(behaviour_info, behaviour)
@@ -258,19 +258,19 @@ class ApplicationMashupTemplateParser(object):
             position = self.get_xpath(POSITION_XPATH, component, required=False)
             if position is not None:
                 component_info['position'] = {
-                    'x': int(position['x']),
-                    'y': int(position['y'])
+                    'x': int(position.get('x')),
+                    'y': int(position.get('y'))
                 }
 
-            target['components'][component['type']][component['id']] = component_info
+            target['components'][component.get('type')][component.get('id')] = component_info
 
     def _parse_wiring_connection_view_info(self, target, connections_element):
 
         for connection in self._xpath(CONNECTION_XPATH, connections_element):
 
             connection_info = {
-                'sourcename': connection['sourcename'],
-                'targetname': connection['targetname'],
+                'sourcename': connection.get('sourcename'),
+                'targetname': connection.get('targetname'),
             }
 
             sourcehandle_element = self.get_xpath(SOURCEHANDLE_XPATH, connection, required=False)
@@ -278,15 +278,17 @@ class ApplicationMashupTemplateParser(object):
 
             if sourcehandle_element is not None:
                 connection_info['sourcehandle'] = {
-                    'x': int(sourcehandle_element['x']),
-                    'y': int(sourcehandle_element['y'])
+                    'x': int(sourcehandle_element.get('x')),
+                    'y': int(sourcehandle_element.get('y'))
                 }
 
             if targethandle_element is not None:
                 connection_info['targethandle'] = {
-                    'x': int(targethandle_element['x']),
-                    'y': int(targethandle_element['y'])
+                    'x': int(targethandle_element.get('x')),
+                    'y': int(targethandle_element.get('y'))
                 }
+
+            target['connections'].append(connection_info)
 
     def _parse_wiring_info(self):
 

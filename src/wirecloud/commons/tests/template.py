@@ -1383,10 +1383,15 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
-    def compare_rdf_input_and_output_mashup(self, filename):
+    def compare_input_and_output_mashup(self, filename, mashup_format="rdf"):
 
         mashup_data = self.read_json_fixtures(filename)
-        template = TemplateParser(write_rdf_description(mashup_data))
+
+        if mashup_format == "rdf":
+            template = TemplateParser(write_rdf_description(mashup_data))
+        elif mashup_format == "xml":
+            template = TemplateParser(write_next_xml_description(mashup_data))
+
         self.check_full_mashup(template.get_resource_info(), mashup_data)
 
     def read_json_fixtures(self, *args):
@@ -1579,7 +1584,31 @@ class TemplateUtilsTestCase(TestCase):
     test_rdf_parser_writer_basic_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_behaviours(self):
-        self.compare_rdf_input_and_output_mashup("mashup_with_behaviours_data")
+        self.compare_input_and_output_mashup("mashup_with_behaviours_data")
+
+    def test_rdf_parser_writer_mashup_with_behaviours_and_minimal_data(self):
+
+        mashup_data = self.read_json_fixtures("mashup_with_behaviours_minimal_data")
+        template = TemplateParser(write_rdf_description(mashup_data))
+
+        for component_id in mashup_data['wiring']['visualdescription']['components']['operator']:
+            component = mashup_data['wiring']['visualdescription']['components']['operator'][component_id]
+            component['collapsed'] = False
+
+        for component_id in mashup_data['wiring']['visualdescription']['components']['widget']:
+            component = mashup_data['wiring']['visualdescription']['components']['widget'][component_id]
+            component['collapsed'] = False
+
+        for behaviour in mashup_data['wiring']['visualdescription']['behaviours']:
+            for component_id in behaviour['components']['operator']:
+                component = behaviour['components']['operator'][component_id]
+                component['collapsed'] = False
+
+            for component_id in behaviour['components']['widget']:
+                component = behaviour['components']['widget'][component_id]
+                component['collapsed'] = False
+
+        self.check_full_mashup(template.get_resource_info(), mashup_data)
 
     def test_rdf_parser_writer_mashup(self):
 
@@ -1743,6 +1772,9 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_info)
+
+    def test_next_xml_parser_writer_mashup_with_behaviours(self):
+        self.compare_input_and_output_mashup("mashup_with_behaviours_data", mashup_format="xml")
 
     def test_next_xml_parser_writer_mashup_with_translations(self):
 
