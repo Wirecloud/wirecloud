@@ -329,6 +329,9 @@ $btn-primary-active-background-color: #286090;
     @if $type == "h5" {
         font-size: 14px;
         line-height: 20px;
+    } @else if $type == "h6" {
+        font-size: 12px;
+        line-height: 20px;
     }
 
     @if $weight == "semibold" {
