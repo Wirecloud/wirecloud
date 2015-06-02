@@ -55,7 +55,7 @@
 
         this.inputElement.addEventListener('change', this._onchange, true);
     };
-    FileButton.prototype = new StyledElements.StyledButton();
+    FileButton.prototype = new StyledElements.StyledButton({extending: true});
 
     FileButton.prototype.destroy = function destroy() {
 
