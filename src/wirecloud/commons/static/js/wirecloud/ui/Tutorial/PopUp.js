@@ -42,13 +42,14 @@
             }
         }
 
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = 'popup alert alert-info';
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = 'pop-up alert alert-info';
 
         // Close button
         if (options.closable) {
             this.cancelButton = new StyledElements.StyledButton({
-                'class': 'button icon-remove',
+                'class': 'pop-up-close',
+                'iconClass': 'icon-remove',
                 'plain': true
             });
 
@@ -60,7 +61,8 @@
         }
 
         // Message
-        this.textElement = document.createElement("div");
+        this.textElement = document.createElement('span');
+        this.textElement.className = 'pop-up-message';
         if (options.msg == null) {
             this.wrapperElement.classList.add("empty");
         } else {
@@ -75,8 +77,8 @@
         this.wrapperElement.appendChild(this.textElement);
 
         // Arrow
-        this.arrow = document.createElement("div");
-        this.arrow.className = "popUpArrowDiv icon-hand-up";
+        this.arrow = document.createElement('span');
+        this.arrow.className = "pop-up-arrow icon-external-link-sign";
         this.wrapperElement.appendChild(this.arrow);
 
         this.arrow.classList.add(options.position);
@@ -90,28 +92,20 @@
         switch (this.options.position) {
         default:
         case 'downRight':
-            this.wrapperElement.style.top = (pos.top + pos.height + 22) + 'px';
-            this.wrapperElement.style.left = (pos.left + pos.width + 22) + 'px';
-            this.arrow.style.top = '-28px';
-            this.arrow.style.left = '-19px';
+            this.wrapperElement.style.top = (pos.top + pos.height + 13) + 'px';
+            this.wrapperElement.style.left = (pos.left + (pos.width/4)*3) + 'px';
             break;
         case 'downLeft':
-            this.wrapperElement.style.top = (pos.top + pos.height + 22) + 'px';
-            this.wrapperElement.style.left = (pos.left - wrapperPos.width - 22) + 'px';
-            this.arrow.style.top = '-24px';
-            this.arrow.style.right = '-24px';
+            this.wrapperElement.style.top = (pos.top + pos.height + 13) + 'px';
+            this.wrapperElement.style.left = (pos.left - wrapperPos.width + (pos.width/4)*1) + 'px';
             break;
         case 'topRight':
-            this.wrapperElement.style.top = (pos.top - wrapperPos.height - 22) + 'px';
-            this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-            this.arrow.style.top = (wrapperPos.height - 16) + 'px';
-            this.arrow.style.left = '-23px';
+            this.wrapperElement.style.top = (pos.top - wrapperPos.height - 13) + 'px';
+            this.wrapperElement.style.left = (pos.left + (pos.width/4)*3) + 'px';
             break;
         case 'topLeft':
-            this.wrapperElement.style.top = (pos.top - wrapperPos.height - 22) + 'px';
-            this.wrapperElement.style.left = (pos.left - wrapperPos.width - 31) + 'px';
-            this.arrow.style.top = (wrapperPos.height - 12) + 'px';
-            this.arrow.style.right = '-27px';
+            this.wrapperElement.style.top = (pos.top - wrapperPos.height - 13) + 'px';
+            this.wrapperElement.style.left = (pos.left - wrapperPos.width + (pos.width/4)*1) + 'px';
             break;
         }
     };

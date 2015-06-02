@@ -1,0 +1,78 @@
+{
+    "connections": [],
+    "operators": {
+        "1": {
+            "preferences": {},
+            "name": "Wirecloud/TestOperatorDePalo/1.0",
+            "id": "1"
+        },
+        "0": {
+            "preferences": {},
+            "name": "Wirecloud/TestOperator/1.0",
+            "id": "0"
+        }
+    },
+    "version": "2.0",
+    "visualdescription": {
+        "connections": [],
+        "behaviours": [],
+        "components": {
+            "operator": {
+                "1": {
+                    "position": {
+                        "y": 400,
+                        "x": 84
+                    },
+                    "collapsed": false,
+                    "endpoints": {
+                        "source": [
+                            "in"
+                        ],
+                        "target": [
+                            "out"
+                        ]
+                    }
+                },
+                "0": {
+                    "position": {
+                        "y": 256,
+                        "x": 84
+                    },
+                    "collapsed": false
+                }
+            },
+            "widget": {
+                "1": {
+                    "position": {
+                        "y": 44,
+                        "x": 84
+                    },
+                    "endpoints": {
+                        "source": [
+                            "outputendpoint"
+                        ],
+                        "target": [
+                            "inputendpoint"
+                        ]
+                    },
+                    "name": "Wirecloud/Test/1.0"
+                },
+                "2": {
+                    "position": {
+                        "y": 153,
+                        "x": 84
+                    },
+                    "endpoints": {
+                        "source": [
+                            "outputendpoint"
+                        ],
+                        "target": [
+                            "inputendpoint"
+                        ]
+                    },
+                    "name": "Wirecloud/Test/1.0"
+                }
+            }
+        }
+    }
+}

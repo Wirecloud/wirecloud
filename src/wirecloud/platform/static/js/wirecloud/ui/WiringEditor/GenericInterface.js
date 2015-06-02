@@ -20,7 +20,8 @@
 
 /*global gettext, ngettext, interpolate, StyledElements, Wirecloud*/
 
-(function () {
+
+Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
     "use strict";
 
@@ -30,26 +31,33 @@
 
     var updateErrorInfo = function updateErrorInfo() {
         var label, errorCount = this.entity.logManager.getErrorCount();
-        this.log_button.setDisabled(errorCount === 0);
 
-        label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
-        label = interpolate(label, {errorCount: errorCount}, true);
-        this.log_button.setTitle(label);
+        if (errorCount == 0) {
+            this.options.optionNotify.hide().setTitle(gettext('No errors'));
+        } else {
+            label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
+            label = interpolate(label, {errorCount: errorCount}, true);
+
+            this.options.optionNotify.show().setTitle(label);
+        }
+
     };
 
-    /*************************************************************************
-     * Constructor
-     *************************************************************************/
+    // ==================================================================================
+    // CLASS CONSTRUCTOR
+    // ==================================================================================
+
     /**
-     * GenericInterface Class
+     * Create a new instance of class GenericInterface.
+     * @class
+     *
+     * @param {String} id
+     * @param {Object.<String, *>} [options]
      */
-    var GenericInterface = function GenericInterface(extending, wiringEditor, entity, title, manager, className, isGhost) {
-        if (extending === true) {
-            return;
-        }
+    var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': className}, []);
+        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstart', 'dragstop', 'optremove', 'optshare', 'sortstop', 'collapse', 'expand']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -67,7 +75,6 @@
         this.hollowConnections = {};
         this.fullConnections = {};
         this.subdataConnections = {};
-        this.isMinimized = false;
         this.minWidth = '';
         this.movement = false;
         this.numberOfSources = 0;
@@ -77,7 +84,6 @@
         this.initialPos = null;
         this.isGhost = isGhost;
         this.readOnlyEndpoints = 0;
-        this.readOnly = false;
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -89,7 +95,7 @@
 
         // Interface buttons, not for miniInterface
         if (!this.isMiniInterface) {
-            if (className == 'iwidget') {
+            if (className == 'widget') {
                 type = 'widget';
                 this.version = this.entity.version;
                 this.vendor = this.entity.vendor;
@@ -101,30 +107,166 @@
                 this.name = this.entity.meta.name;
             }
 
-            // header, sources and targets for the widget
-            this.resourcesDiv = new StyledElements.BorderLayout({'class': "geContainer"});
-            this.sourceDiv = this.resourcesDiv.getEastContainer();
-            this.sourceDiv.addClassName("sources");
-            this.targetDiv = this.resourcesDiv.getWestContainer();
-            this.targetDiv.addClassName("targets");
-            this.header = this.resourcesDiv.getNorthContainer();
-            this.header.addClassName('header');
+            this.componentType = className;
+            this.componentId = this.entity.id;
 
-            this.wrapperElement.appendChild(this.resourcesDiv.wrapperElement);
+            this.wrapperElement.setAttribute('data-id', this.componentId);
 
-            // Ghost interface
-            if (isGhost) {
-                this.vendor = this.entity.name.split('/')[0];
-                this.name = this.entity.name.split('/')[1];
-                this.version = new Wirecloud.Version(this.entity.name.split('/')[2].trim());
-                this.wrapperElement.classList.add('ghost');
-                ghostNotification = document.createElement("span");
-                ghostNotification.classList.add('ghostNotification');
-                msg = gettext('Warning: %(type)s not found!');
-                msg = interpolate(msg, {type: type}, true);
-                ghostNotification.textContent = msg;
-                this.header.appendChild(ghostNotification);
-            }
+            /* Component Properties */
+
+            Object.defineProperty(this, 'position', {
+                'get': function get() {
+                    return {
+                        'x': parseInt(this.wrapperElement.style.left, 10),
+                        'y': parseInt(this.wrapperElement.style.top, 10)
+                    };
+                },
+                'set': function set(newPosition) {
+                    if ('x' in newPosition) {
+                        this.wrapperElement.style.left = newPosition.x + 'px';
+                    }
+                    if ('y' in newPosition) {
+                        this.wrapperElement.style.top = newPosition.y + 'px';
+                    }
+                    this.repaint();
+                }
+            });
+
+            /* Application Status - List of States */
+
+            var readOnly = false;
+
+            Object.defineProperty(this, 'readOnly', {
+                'get': function get() {
+                    return readOnly;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean') {
+                        if ((readOnly=state)) {
+                            this.options.optionRemove.hide();
+                        } else {
+                            this.options.optionRemove.show();
+                        }
+                    }
+                }
+            });
+
+            var collapsed = false;
+
+            Object.defineProperty(this, 'collapsed', {
+                'get': function get() {
+                    return collapsed;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean' && collapsed != state) {
+                        if ((collapsed=state)) {
+                            collapseEndpoints.call(this);
+                        } else {
+                            expandEndpoints.call(this);
+                        }
+                    }
+                }
+            });
+
+            var onbackground = false;
+
+            Object.defineProperty(this, 'onbackground', {
+                'get': function get() {
+                    return onbackground;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean') {
+                        this.hidden = false;
+                        this.sleek = false;
+                        if ((onbackground=state)) {
+                            this.options.optionRemove.hide();
+                            this.options.optionShare.show();
+                            this.wrapperElement.classList.add('on-background');
+                        } else {
+                            this.options.optionRemove.show();
+                            this.options.optionShare.hide();
+                            this.wrapperElement.classList.remove('on-background');
+                        }
+                    }
+                }
+            });
+
+            var hidden = false;
+
+            Object.defineProperty(this, 'hidden', {
+                'get': function get() {
+                    return hidden;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean') {
+                        if ((hidden=state)) {
+                            this.wrapperElement.classList.add('hidden');
+                        } else {
+                            this.wrapperElement.classList.remove('hidden');
+                        }
+                    }
+                }
+            });
+
+            var sleek = false;
+
+            Object.defineProperty(this, 'sleek', {
+                'get': function get() {
+                    return sleek;
+                },
+                'set': function set(state) {
+                    var name, context;
+
+                    if (typeof state === 'boolean') {
+                        if ((sleek=state)) {
+                            this.onbackground = false;
+                            this.hidden = false;
+                            this.options.optionRemove.hide();
+                            this.wrapperElement.classList.add('sleek');
+
+                            for (name in this.sourceEndpoints) {
+                                context = this.sourceEndpoints[name];
+                                context.endpoint.classList.add('hidden');
+                            }
+
+                            for (name in this.targetEndpoints) {
+                                context = this.targetEndpoints[name];
+                                context.endpoint.classList.add('hidden');
+                            }
+                        } else {
+                            this.options.optionRemove.show();
+                            this.wrapperElement.classList.remove('sleek');
+
+                            for (name in this.sourceEndpoints) {
+                                context = this.sourceEndpoints[name];
+                                context.endpoint.classList.remove('hidden');
+                            }
+
+                            for (name in this.targetEndpoints) {
+                                context = this.targetEndpoints[name];
+                                context.endpoint.classList.remove('hidden');
+                            }
+                        }
+                    }
+                }
+            });
+
+            var is_missing = false;
+
+            Object.defineProperty(this, 'missing', {
+                'get': function get() {
+                    return is_missing;
+                },
+                'set': function set(state) {
+                    if (typeof state === 'boolean') {
+                        if ((is_missing=state)) {
+                            this.wrapperElement.classList.add('missing');
+                        } else {
+                            this.wrapperElement.classList.remove('missing');
+                        }
+                    }
+                }
+            });
 
             // Version Status
             if (type == 'operator' &&
@@ -139,76 +281,138 @@
                     this.wrapperElement.classList.add('old')
             }
 
-            // Widget name
-            this.nameElement = document.createElement("span");
-            this.nameElement.textContent = title;
-            this.nameElement.title = title;
-            this.header.appendChild(this.nameElement);
+            var headingElement = this.wrapperElement.appendChild(document.createElement('div'));
+                headingElement.className = 'component-heading';
 
-            // Close button
-            del_button = new StyledElements.StyledButton({
-                'title': gettext("Remove"),
-                'class': 'closebutton icon-remove',
-                'plain': true
-            });
-            del_button.insertInto(this.header);
-            del_button.addEventListener('click', function () {
-                if (this.readOnly == true) {
-                    return;
-                }
-                if (className == 'iwidget') {
-                    this.wiringEditor.events.widgetremoved.dispatch(this);
-                } else {
-                    this.wiringEditor.events.operatorremoved.dispatch(this);
-                }
-            }.bind(this));
+            /* Application Heading - Title */
 
-            // Log button
-            this.log_button = new StyledElements.StyledButton({
-                'plain': true,
-                'class': 'logbutton icon-warning-sign'
-            });
+            var titleElement = headingElement.appendChild(document.createElement('div'));
+                titleElement.className = 'component-title';
+
+            var nameElement = document.createElement('span');
+                nameElement.className = 'component-name';
+                nameElement.textContent = this.title;
+
+            var infoElement = document.createElement('span');
+                infoElement.className = 'component-subtitle';
+
+            this.heading = {
+
+                'element': headingElement,
+
+                'titleElement': titleElement,
+
+                'nameElement': titleElement.appendChild(nameElement),
+
+                'infoElement': titleElement.appendChild(infoElement)
+
+            };
+
+            if (isGhost) {
+                this.vendor = this.entity.name.split('/')[0];
+                this.name = this.entity.name.split('/')[1];
+                this.version = new Wirecloud.Version(this.entity.name.split('/')[2].trim());
+
+                this.missing = true;
+                this.heading.nameElement.textContent = this.name;
+                this.heading.infoElement.textContent = "The component is missing";
+            }
+
+            /* Application Heading - List of Options */
+
+            var optionsElement = headingElement.appendChild(document.createElement('div'));
+                optionsElement.className = 'component-options';
+
+            this.options = {
+
+                'element': optionsElement,
+
+                'optionNotify': new StyledElements.StyledButton({
+                    'class': 'icon-exclamation-sign option-notify',
+                    'plain': true
+                }),
+
+                'optionPreferences': new StyledElements.PopupButton({
+                    'class': 'icon-cog option-preferences',
+                    'title': gettext("Preferences"),
+                    'plain': true
+                }),
+
+                'optionRemove': new StyledElements.StyledButton({
+                    'class': 'icon-remove option-remove',
+                    'title': gettext("Remove"),
+                    'plain': true
+                }),
+
+                'optionShare': new StyledElements.StyledButton({
+                    'class': "icon-plus option-share",
+                    'title': gettext("Share"),
+                    'plain': true
+                })
+            };
+
+            optionsElement.appendChild(this.options.optionNotify.hide().wrapperElement);
+
             if (!isGhost) {
-                this.log_button.addEventListener("click",
-                    function () {
-                        var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
+                this.options.optionNotify.addEventListener('click', function (event) {
+                    var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
+
+                        dialog.htmlElement.classList.add("component-logger");
                         dialog.show();
-                    }.bind(this));
+                }.bind(this));
+
                 updateErrorInfo.call(this);
                 this.entity.logManager.addEventListener('newentry', updateErrorInfo.bind(this));
-            } else {
-                this.log_button.disable();
             }
-            this.log_button.insertInto(this.header);
 
-            // special icon for minimized interface
-            this.iconAux = document.createElement("div");
-            this.iconAux.classList.add("specialIcon");
-            this.iconAux.classList.add("icon-cogs");
-            this.iconAux.setAttribute('title', title);
-            this.wrapperElement.appendChild(this.iconAux);
-            this.iconAux.addEventListener('click', function () {
-                if (!this.movement) {
-                    this.restore();
+            optionsElement.appendChild(this.options.optionPreferences.wrapperElement);
+            this.options.optionPreferences.popup_menu.append(new Wirecloud.ui.WiringEditor.ComponentPreferences(this));
+
+            optionsElement.appendChild(this.options.optionRemove.wrapperElement);
+            this.options.optionRemove.addEventListener('click', function (originalEvent) {
+                if (!this.readOnly && !this.onbackground) {
+                    this.events.optremove.dispatch({
+                        'componentId': this.getId()
+                    }, originalEvent);
                 }
             }.bind(this));
 
-            // Add a menu button except on mini interfaces
-            this.menu_button = new StyledElements.PopupButton({
-                'title': gettext("Menu"),
-                'class': 'editPos_button icon-cog',
-                'plain': true
-            });
-            this.menu_button.insertInto(this.header);
-            this.menu_button.popup_menu.append(new Wirecloud.ui.WiringEditor.GenericInterfaceSettingsMenuItems(this));
+            optionsElement.appendChild(this.options.optionShare.hide().wrapperElement);
+            this.options.optionShare.addEventListener('click', function (originalEvent) {
+                if (!this.readOnly && this.onbackground)  {
+                    this.events.optshare.dispatch({
+                        'componentId': this.getId()
+                    }, originalEvent);
+                }
+            }.bind(this));
 
+            /* Application Endpoints - Targets and Sources */
+
+            var bodyElement = this.wrapperElement.appendChild(document.createElement('div'));
+                bodyElement.className = 'component-body';
+
+            var targetsElement = bodyElement.appendChild(document.createElement('div'));
+                targetsElement.className = 'endpoints target-endpoints';
+
+            var sourcesElement = bodyElement.appendChild(document.createElement('div'));
+                sourcesElement.className = 'endpoints source-endpoints';
+
+            this.endpoints = {
+                'element': bodyElement,
+                'sourcesElement': sourcesElement,
+                'targetsElement': targetsElement
+            };
+
+            this.sourceEndpoints = {};
+            this.targetEndpoints = {};
         } else { // MiniInterface
             this.header = document.createElement("div");
-            this.header.classList.add('header');
+            this.header.className = "component-heading";
             this.wrapperElement.appendChild(this.header);
 
             // MiniInterface name
             this.nameElement = document.createElement("span");
+            this.nameElement.className = "component-title";
             this.nameElement.textContent = title;
             this.header.appendChild(this.nameElement);
 
@@ -233,7 +437,7 @@
             this.header.appendChild(this.miniStatus);
 
             // MiniInterface Context Menu
-            if (className == 'ioperator') {
+            if (className == 'operator') {
                 this.contextmenu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left']});
                 this._miniwidgetMenu_callback = function _miniwidgetMenu_callback(e) {
                     // Context Menu
@@ -250,8 +454,8 @@
 
                 this.wrapperElement.addEventListener('mousedown', this._miniwidgetMenu_callback, false);
                 this.contextmenu.append(new Wirecloud.ui.WiringEditor.MiniInterfaceSettingsMenuItems(this));
+                this.wrapperElement.addEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener);
             }
-            this.wrapperElement.addEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener);
         }
 
         // Draggable
@@ -276,26 +480,39 @@
                         miniwidget_clon = new Wirecloud.ui.WiringEditor.OperatorInterface(context.iObject.wiringEditor,
                                             context.iObject.ioperator, context.iObject.wiringEditor, true);
                     }
-                    miniwidget_clon.addClassName('clon');
+                    miniwidget_clon.addClassName('cloned');
+                    wiringEditor.layout.hide();
                     //set the clon position over the originar miniWidget
                     miniwidget_clon.setBoundingClientRect(pos_miniwidget,
-                     {top: -headerHeight, left: 0, width: -2, height: -10});
+                     {top: -headerHeight, left: 0, width: -2});
                     // put the miniwidget clon in the layout
                     context.iObject.wiringEditor.layout.wrapperElement.appendChild(miniwidget_clon.wrapperElement);
                     //put the clon in the context.iObject
                     context.iObjectClon = miniwidget_clon;
                 },
                 function onDrag(e, draggable, context, xDelta, yDelta) {
-                    context.iObjectClon.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+                    if (!wiringEditor.layout.content.wrapperElement.contains(context.iObjectClon.wrapperElement)) {
+                        wiringEditor.layout.wrapperElement.removeChild(context.iObjectClon.wrapperElement);
+                        wiringEditor.layout.content.appendChild(context.iObjectClon);
+                    }
+                    context.iObjectClon.setPosition({'x': context.x + xDelta, 'y': context.y + yDelta});
                     context.iObjectClon.repaint();
                 },
                 this.onFinish.bind(this),
-                function () { return this.enabled && !this.wrapperElement.classList.contains('clon'); }.bind(this)
+                function () { return this.enabled && !this.wrapperElement.classList.contains('cloned'); }.bind(this)
             );
 
         }//else miniInterface
     };
-    GenericInterface.prototype = new StyledElements.Container({'extending': true});
+
+    StyledElements.Utils.inherit(GenericInterface, StyledElements.Container);
+
+    GenericInterface.prototype.setVisualInfo = function setVisualInfo(componentView) {
+        this.collapsed = componentView.collapsed;
+        this.position = componentView.position;
+
+        return this;
+    };
 
     /*************************************************************************
      * Private methods
@@ -319,17 +536,6 @@
             return false;
         }
         return true;
-    };
-
-    var createMulticonnector = function createMulticonnector(name, anchor) {
-        var multiconnector;
-
-        multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, this.getId(), name,
-                                    this.wiringEditor.layout.getCenterContainer().wrapperElement,
-                                    this.wiringEditor, anchor, null, null);
-        this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
-        this.wiringEditor.addMulticonnector(multiconnector);
-        multiconnector.addMainArrow();
     };
 
     /**
@@ -485,6 +691,26 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
+
+    GenericInterface.prototype.setHidden = function setHidden() {
+        this.addClassName('hidden');
+    };
+
+    GenericInterface.prototype.setOnBackground = function setOnBackground() {
+        this.addClassName('on-background');
+        this.del_button.addClassName('icon-plus');
+        this.del_button.removeClassName('icon-remove');
+        this.del_button.setTitle('Add');
+    };
+
+    GenericInterface.prototype.setOnForeground = function setOnForeground() {
+        this.removeClassName('hidden');
+        this.removeClassName('on-background');
+        this.del_button.addClassName('icon-remove');
+        this.del_button.removeClassName('icon-plus');
+        this.del_button.setTitle('Remove');
+    };
+
     /**
      * Making Interface Draggable.
      */
@@ -496,25 +722,27 @@
                 context.preselected = context.iObject.selected;
                 context.iObject.select(true);
                 context.iObject.wiringEditor.onStarDragSelected();
+
+                context.iObject.events.dragstart.dispatch({
+                    'componentId': context.iObject.getId(),
+                    'componentPosition': context.iObject.position
+                });
             },
             function onDrag(e, draggable, context, xDelta, yDelta) {
-                context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+                context.iObject.setPosition({'x': context.x + xDelta, 'y': context.y + yDelta});
                 context.iObject.repaint();
                 context.iObject.wiringEditor.onDragSelectedObjects(xDelta, yDelta);
             },
             function onFinish(draggable, context) {
                 context.iObject.wiringEditor.onFinishSelectedObjects();
                 var position = context.iObject.getStylePosition();
-                if (position.posX < 0) {
-                    position.posX = 8;
-                }
-                if (position.posY < 0) {
-                    position.posY = 8;
-                }
-                context.iObject.setPosition(position);
-                context.iObject.repaint();
+
+                var parentElement = context.iObject.wrapperElement.parentNode;
+
+                parentElement.insertBefore(context.iObject.wrapperElement, null);
+
                 //pseudoClick
-                if ((Math.abs(context.x - position.posX) < 2) && (Math.abs(context.y - position.posY) < 2)) {
+                if ((Math.abs(context.x - position.x) < 2) && (Math.abs(context.y - position.y) < 2)) {
                     if (context.preselected) {
                         context.iObject.unselect(true);
                     }
@@ -525,6 +753,11 @@
                     }
                     context.iObject.movement = true;
                 }
+
+                context.iObject.events['dragstop'].dispatch({
+                    'componentId': context.iObject.getId(),
+                    'componentPosition': position
+                });
             },
             function () {return true; }
         );
@@ -535,11 +768,21 @@
      */
     GenericInterface.prototype.makeSlotsDraggable = function makeSlotsDraggable() {
         var i;
-        for (i = 0; i < this.draggableSources.length; i++) {
-            this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.center, 'source_clon');
+
+        if (this.draggableSources.length > 1) {
+            this.endpoints.sourcesElement.classList.add('endpoint-sorting');
+
+            for (i = 0; i < this.draggableSources.length; i++) {
+                this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.content, 'source-endpoint');
+            }
         }
-        for (i = 0; i < this.draggableTargets.length; i++) {
-            this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.center, 'target_clon');
+
+        if (this.draggableTargets.length > 1) {
+            this.endpoints.targetsElement.classList.add('endpoint-sorting');
+
+            for (i = 0; i < this.draggableTargets.length; i++) {
+                this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.content, 'target-endpoint');
+            }
         }
     };
 
@@ -557,9 +800,10 @@
                     context.y = pos_miniwidget.top - gridbounds.top;
                     context.x = pos_miniwidget.left - gridbounds.left;
                     //create clon
-                    context.iObject.wrapperElement.classList.add('moving');
+                    context.iObject.wrapperElement.classList.add('selected');
                     clon = context.iObject.wrapperElement.cloneNode(true);
                     clon.classList.add(className);
+                    clon.classList.add('cloned');
                     // put the clon in place
                     place.wrapperElement.appendChild(clon);
                     //set the clon position over the originar miniWidget
@@ -600,11 +844,20 @@
                     }
                 },
                 function onFinish(draggable, context) {
-                    context.iObject.wrapperElement.classList.remove('moving');
+                    context.iObject.wrapperElement.classList.remove('selected');
                     if (context.iObjectClon.parentNode) {
                         context.iObjectClon.parentNode.removeChild(context.iObjectClon);
                     }
                     context.iObjectClon = null;
+
+                    var i;
+
+                    for (i = 0; i < context.genInterface.endpoints.sourcesElement.childNodes.length; i++) {
+                        context.genInterface.endpoints.sourcesElement.childNodes[i].setAttribute('data-index', i + 1);
+                    }
+                    for (i = 0; i < context.genInterface.endpoints.targetsElement.childNodes.length; i++) {
+                        context.genInterface.endpoints.targetsElement.childNodes[i].setAttribute('data-index', i + 1);
+                    }
                 },
                 function () {return true; }
         );
@@ -614,8 +867,8 @@
      * Get the GenericInterface position.
      */
     GenericInterface.prototype.getPosition = function getPosition() {
-        var coordinates = {posX: this.wrapperElement.offsetLeft,
-                           posY: this.wrapperElement.offsetTop};
+        var coordinates = {'x': this.wrapperElement.offsetLeft,
+                           'y': this.wrapperElement.offsetTop};
         return coordinates;
     };
 
@@ -624,8 +877,8 @@
      */
     GenericInterface.prototype.getStylePosition = function getStylePosition() {
         var coordinates;
-        coordinates = {posX: parseInt(this.wrapperElement.style.left, 10),
-                       posY: parseInt(this.wrapperElement.style.top, 10)};
+        coordinates = {'x': parseInt(this.wrapperElement.style.left, 10),
+                       'y': parseInt(this.wrapperElement.style.top, 10)};
         return coordinates;
     };
 
@@ -640,6 +893,25 @@
         } else {
             return null;
         }
+    };
+
+    GenericInterface.prototype.getEndpointByName = function getEndpointByName(type, displayName) {
+        var endpoint, endpoints, name;
+
+        if (type == 'source') {
+            endpoints = this.sourceEndpoints;
+        } else {
+            endpoints = this.targetEndpoints;
+        }
+
+        for (name in endpoints) {
+            if (endpoints[name].displayName == displayName) {
+                endpoint = endpoints[name];
+                break;
+            }
+        }
+
+        return endpoint;
     };
 
     /**
@@ -663,8 +935,8 @@
      * Set the GenericInterface position.
      */
     GenericInterface.prototype.setPosition = function setPosition(coordinates) {
-        this.wrapperElement.style.left = coordinates.posX + 'px';
-        this.wrapperElement.style.top = coordinates.posY + 'px';
+        this.wrapperElement.style.left = coordinates.x + 'px';
+        this.wrapperElement.style.top = coordinates.y + 'px';
     };
 
     /**
@@ -1028,7 +1300,7 @@
                 this.fullConnections[endpoint][subdatakey] = [];
             }
             connection.addClassName('full');
-            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "arrow");
+            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "connection");
             this.fullConnections[endpoint][subdatakey].push(theArrow);
         } else {
             // Add a hollow connection
@@ -1038,7 +1310,7 @@
             if (this.hollowConnections[endpoint][subdatakey] == null) {
                 this.hollowConnections[endpoint][subdatakey] = [];
             }
-            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "arrow hollow");
+            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "connection hollow");
             this.hollowConnections[endpoint][subdatakey].push(theArrow);
         }
         theArrow.setEndAnchor(targetAnchor);
@@ -1098,40 +1370,33 @@
      * Add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext, isGhost) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, subAnchors;
+        var anchor, endpointElement, labelDiv, labelElement, treeDiv, subAnchors;
 
         // Sources counter
         this.numberOfSources += 1;
 
-        // AnchorDiv
-        anchorDiv = document.createElement("div");
-        // If the output have not description, take the label
-        if (desc === '') {
-            desc = label;
-        }
-        if (isGhost) {
-            anchorDiv.setAttribute('title', gettext("Mismatch endpoint! ") + label);
-        } else {
-            anchorDiv.setAttribute('title', label + ': ' + desc);
-        }
-        anchorDiv.classList.add('anchorDiv');
-        if (isGhost) {
-            anchorDiv.classList.add('ghost');
-        }
-        // Anchor visible label
-        anchorLabel = document.createElement("span");
-        anchorLabel.textContent = label;
+        endpointElement = document.createElement('div');
+        endpointElement.className = "endpoint";
 
-        labelDiv = document.createElement("div");
-        anchorDiv.appendChild(labelDiv);
-        labelDiv.setAttribute('class', 'labelDiv');
-        labelDiv.appendChild(anchorLabel);
+        if (isGhost) {
+            endpointElement.classList.add('misplaced');
+            endpointElement.setAttribute('title', gettext('Mismatch Endpoint') + ":" + label);
+        } else {
+            if (typeof desc !== 'string' || !desc.length) {
+                desc = label;
+            }
+
+            endpointElement.setAttribute('title', label + ': ' + desc);
+        }
+
+        labelElement = document.createElement('div');
+        labelElement.className = "endpoint-label";
+        labelElement.textContent = label;
+        endpointElement.appendChild(labelElement);
 
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator, null, isGhost);
-            labelDiv.appendChild(anchor.wrapperElement);
-
-            anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
+            endpointElement.appendChild(anchor.wrapperElement);
 
             subAnchors = anchorContext.data.subdata;
             if (subAnchors != null) {
@@ -1139,103 +1404,118 @@
                 this.generateTree(anchor, name, anchorContext, subAnchors, label, this.subdataHandler.bind(this, null, name));
             }
 
-            labelDiv.addEventListener('mouseover', function () {
+            endpointElement.addEventListener('mouseover', function () {
                 this.wiringEditor.recommendations.emphasize(anchor);
             }.bind(this));
-            labelDiv.addEventListener('mouseout', function () {
+            endpointElement.addEventListener('mouseout', function () {
                 this.wiringEditor.recommendations.deemphasize(anchor);
             }.bind(this));
 
             // Sticky effect
-            anchorDiv.addEventListener('mouseover', function (e) {
+            endpointElement.addEventListener('mouseover', function (e) {
                 anchor._mouseover_callback(e);
             }.bind(this));
-            anchorDiv.addEventListener('mouseout', function (e) {
+            endpointElement.addEventListener('mouseout', function (e) {
                 anchor._mouseout_callback(e);
             }.bind(this));
 
             // Connect anchor whith mouseup on the label
-            anchorDiv.addEventListener('mouseup', function (e) {
+            endpointElement.addEventListener('mouseup', function (e) {
                 anchor._mouseup_callback(e);
             }.bind(this));
 
             this.sourceAnchorsByName[name] = anchor;
             this.sourceAnchors.push(anchor);
+
+            var endpointsLength = Object.keys(this.sourceEndpoints).length;
+
+            endpointElement.setAttribute('data-index', endpointsLength + 1);
+
+            this.sourceEndpoints[name] = {
+                'endpoint': endpointElement,
+                'displayName': label,
+                'endpointLabel': labelElement,
+                'endpointAnchor': anchor
+            };
         }
 
-        this.sourceDiv.appendChild(anchorDiv);
-        this.draggableSources.push({'wrapperElement': anchorDiv, 'context': anchorContext});
+        this.endpoints.sourcesElement.appendChild(endpointElement);
+        this.draggableSources.push({'wrapperElement': endpointElement, 'context': anchorContext});
     };
 
     /**
      * Add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext, isGhost) {
-        var anchor, anchorDiv, labelDiv, anchorLabel;
+        var anchor, endpointElement, labelDiv, labelElement;
 
         // Targets counter
         this.numberOfTargets += 1;
 
-        // AnchorDiv
-        anchorDiv = document.createElement("div");
-        // If the output have not description, take the label
-        if (desc === '') {
-            desc = label;
-        }
-        if (isGhost) {
-            anchorDiv.setAttribute('title', gettext('Mismatch endpoint! ') + label);
-        } else {
-            anchorDiv.setAttribute('title', label + ': ' + desc);
-        }
-        anchorDiv.classList.add('anchorDiv');
-        if (isGhost) {
-            anchorDiv.classList.add('ghost');
-        }
-        // Anchor visible label
-        anchorLabel = document.createElement("span");
-        anchorLabel.textContent = label;
+        endpointElement = document.createElement('div');
+        endpointElement.className = "endpoint";
 
-        labelDiv = document.createElement("div");
-        anchorDiv.appendChild(labelDiv);
-        labelDiv.setAttribute('class', 'labelDiv');
-        labelDiv.appendChild(anchorLabel);
+        if (isGhost) {
+            endpointElement.classList.add('misplaced');
+            endpointElement.setAttribute('title', gettext('Mismatch Endpoint') + ":" + label);
+        } else {
+            if (typeof desc !== 'string' || !desc.length) {
+                desc = label;
+            }
+
+            endpointElement.setAttribute('title', label + ': ' + desc);
+        }
+
+        labelElement = document.createElement('div');
+        labelElement.className = "endpoint-label";
+        labelElement.textContent = label;
+        endpointElement.appendChild(labelElement);
 
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator, isGhost);
-            labelDiv.appendChild(anchor.wrapperElement);
+            endpointElement.appendChild(anchor.wrapperElement);
 
-            anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
-
-            labelDiv.addEventListener('mouseover', function () {
+            endpointElement.addEventListener('mouseover', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.recommendations.emphasize(anchor);
                 }
             }.bind(this));
-            labelDiv.addEventListener('mouseout', function () {
+            endpointElement.addEventListener('mouseout', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.recommendations.deemphasize(anchor);
                 }
             }.bind(this));
 
             // Sticky effect
-            anchorDiv.addEventListener('mouseover', function (e) {
+            endpointElement.addEventListener('mouseover', function (e) {
                 anchor._mouseover_callback(e);
             }.bind(this));
-            anchorDiv.addEventListener('mouseout', function (e) {
+            endpointElement.addEventListener('mouseout', function (e) {
                 anchor._mouseout_callback(e);
             }.bind(this));
 
             // Connect anchor whith mouseup on the label
-            anchorDiv.addEventListener('mouseup', function (e) {
+            endpointElement.addEventListener('mouseup', function (e) {
                 anchor._mouseup_callback(e);
             }.bind(this));
 
             this.targetAnchorsByName[name] = anchor;
             this.targetAnchors.push(anchor);
+
+            var endpointsLength = Object.keys(this.targetEndpoints).length;
+
+            endpointElement.setAttribute('data-index', endpointsLength + 1);
+
+            this.targetEndpoints[name] = {
+                'endpoint': endpointElement,
+                'displayName': label,
+                'endpointLabel': labelElement,
+                'endpointAnchor': anchor
+            };
         }
 
-        this.targetDiv.appendChild(anchorDiv);
-        this.draggableTargets.push({'wrapperElement': anchorDiv, 'context': anchorContext});
+        this.endpoints.targetsElement.appendChild(endpointElement);
+        this.draggableTargets.push({'wrapperElement': endpointElement, 'context': anchorContext});
     };
 
     /**
@@ -1280,14 +1560,14 @@
         if (this.hasClassName('disabled')) {
             return;
         }
-        if (this.hasClassName('selected')) {
+        if (this.hasClassName('highlighted')) {
             return;
         }
         if (!(this.wiringEditor.ctrlPushed) && (this.wiringEditor.selectedCount > 0) && (withCtrl)) {
             this.wiringEditor.resetSelection();
         }
         this.selected = true;
-        this.addClassName('selected');
+        this.addClassName('highlighted');
         // Arrows
         for (i = 0; i < this.targetAnchors.length; i += 1) {
             arrows = this.targetAnchors[i].arrows;
@@ -1310,7 +1590,7 @@
     GenericInterface.prototype.unselect = function unselect(withCtrl) {
         var i, j, arrows;
         this.selected = false;
-        this.removeClassName('selected');
+        this.removeClassName('highlighted');
         //arrows
         for (i = 0; i < this.targetAnchors.length; i += 1) {
             arrows = this.targetAnchors[i].arrows;
@@ -1330,6 +1610,32 @@
         }
     };
 
+    GenericInterface.prototype.emptyConnections = function emptyConnections() {
+        var connections, i, j;
+
+        for (i = 0; i < this.sourceAnchors.length; i++) {
+            connections = this.sourceAnchors[i].arrows.slice(0);
+
+            for (j = connections.length - 1; j >= 0; j--) {
+                if (!connections[j].onbackground) {
+                    connections[j].remove();
+                }
+            }
+        }
+
+        for (i = 0; i < this.targetAnchors.length; i++) {
+            connections = this.targetAnchors[i].arrows.slice(0);
+
+            for (j = connections.length - 1; j >= 0; j--) {
+                if (!connections[j].onbackground) {
+                    connections[j].remove();
+                }
+            }
+        }
+
+        return this;
+    };
+
     /**
      * Destroy
      */
@@ -1346,7 +1652,7 @@
             arrows = this.sourceAnchors[i].arrows.slice(0);
             for (j = 0; j < arrows.length; j += 1) {
                 if (!arrows[j].controlledDestruction()) {
-                    arrows[j].destroy();
+                    arrows[j].remove(true);
                 }
             }
             this.sourceAnchors[i].destroy();
@@ -1356,7 +1662,7 @@
             arrows = this.targetAnchors[i].arrows.slice(0);
             for (j = 0; j < arrows.length; j += 1) {
                if (!arrows[j].controlledDestruction()) {
-                    arrows[j].destroy();
+                    arrows[j].remove(true);
                 }
             }
             this.targetAnchors[i].destroy();
@@ -1396,9 +1702,6 @@
     GenericInterface.prototype.enableEdit = function enableEdit() {
         this.draggable.destroy();
         this.editingPos = true;
-        this.sourceDiv.wrapperElement.classList.add("editing");
-        this.targetDiv.wrapperElement.classList.add("editing");
-        this.addClassName("editing");
         this.makeSlotsDraggable();
     };
 
@@ -1410,15 +1713,26 @@
 
         this.makeDraggable();
         this.editingPos = false;
-        this.sourceDiv.wrapperElement.classList.remove("editing");
-        this.targetDiv.wrapperElement.classList.remove("editing");
-        this.removeClassName("editing");
-        for (i = 0; i < this.draggableSources.length; i++) {
-            this.draggableSources[i].draggable.destroy();
+
+        if (this.draggableSources.length > 1) {
+            this.endpoints.sourcesElement.classList.remove('endpoint-sorting');
+
+            for (i = 0; i < this.draggableSources.length; i++) {
+                this.draggableSources[i].draggable.destroy();
+            }
         }
-        for (i = 0; i < this.draggableTargets.length; i++) {
-            this.draggableTargets[i].draggable.destroy();
+
+        if (this.draggableTargets.length > 1) {
+            this.endpoints.targetsElement.classList.remove('endpoint-sorting');
+
+            for (i = 0; i < this.draggableTargets.length; i++) {
+                this.draggableTargets[i].draggable.destroy();
+            }
         }
+
+        this.events.sortstop.dispatch({
+            'componentId': this.getId()
+        });
     };
 
     /**
@@ -1447,13 +1761,14 @@
 
         sources = [];
         targets = [];
-        for (i = 0; i < this.sourceDiv.wrapperElement.childNodes.length; i++) {
-            sources[i] = this.getNameForSort(this.sourceDiv.wrapperElement.childNodes[i], 'source');
+        for (i = 0; i < this.endpoints.sourcesElement.childNodes.length; i++) {
+            sources[i] = this.getNameForSort(this.endpoints.sourcesElement.childNodes[i], 'source');
         }
-        for (i = 0; i < this.targetDiv.wrapperElement.childNodes.length; i++) {
-            targets[i] = this.getNameForSort(this.targetDiv.wrapperElement.childNodes[i], 'target');
+        for (i = 0; i < this.endpoints.targetsElement.childNodes.length; i++) {
+            targets[i] = this.getNameForSort(this.endpoints.targetsElement.childNodes[i], 'target');
         }
-        return {'sources': sources, 'targets': targets};
+
+        return {'source': sources, 'target': targets};
     };
 
     /**
@@ -1475,145 +1790,58 @@
         }
     };
 
-    /**
-     * Change to minimized view for operators
-     */
-    GenericInterface.prototype.minimize = function minimize(omitEffects) {
-        var position, oc, scrollX, scrollY;
+    var collapseEndpoints = function collapseEndpoints() {
+        var collapsedWidth, originalWidth;
 
-        if (!omitEffects) {
-            this.resizeTransitStart();
+        originalWidth = this.wrapperElement.offsetWidth;
+
+        this.wrapperElement.classList.add('collapsed');
+
+        collapsedWidth = this.wrapperElement.offsetWidth;
+
+        if (originalWidth - collapsedWidth > 0) {
+            this.wrapperElement.style.left = parseInt(parseInt(this.wrapperElement.style.left, 10) + ((originalWidth - collapsedWidth) / 2), 10) + 'px';
         }
 
-        this.initialPos = this.wrapperElement.getBoundingClientRect();
-        this.minWidth = this.wrapperElement.style.minWidth;
+        this.endpoints.element.removeChild(this.endpoints.targetsElement);
+        this.endpoints.element.removeChild(this.endpoints.sourcesElement);
 
-        this.wrapperElement.classList.add('reducedInt');
-        this.wrapperElement.style.minWidth = '55px';
+        this.heading.element.appendChild(this.endpoints.targetsElement);
+        this.heading.element.appendChild(this.endpoints.sourcesElement);
 
-        // Scroll correction
-        oc = this.wiringEditor.layout.getCenterContainer();
-
-        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
-        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
-
-        this.wrapperElement.style.top = (this.initialPos.top + scrollY - this.wiringEditor.headerHeight) + ((this.initialPos.height - 8) / 2) - 12 + 'px';
-        this.wrapperElement.style.left = (this.initialPos.left + scrollX - this.wiringEditor.menubarWidth) + (this.initialPos.width / 2) - 32 + 'px';
-
-        // correct it pos if is out of grid
-        position = this.getStylePosition();
-        if (position.posX < 0) {
-            position.posX = 8;
-        }
-        if (position.posY < 0) {
-            position.posY = 8;
-        }
-        this.setPosition(position);
-
-        this.isMinimized = true;
         this.repaint();
+
+        this.events.collapse.dispatch({
+            'id': this.getId()
+        });
     };
 
-    /**
-     * Change to normal view for operators
-     */
-    GenericInterface.prototype.restore = function restore(omitEffects) {
-        var currentPos, position, oc, scrollX, scrollY;
+    var expandEndpoints = function expandEndpoints() {
+        var collapsedWidth, originalWidth;
 
-        if (!omitEffects) {
-            this.resizeTransitStart();
+        collapsedWidth = this.wrapperElement.offsetWidth;
+
+        this.wrapperElement.classList.remove('collapsed');
+
+        this.heading.element.removeChild(this.endpoints.targetsElement);
+        this.heading.element.removeChild(this.endpoints.sourcesElement);
+
+        this.endpoints.element.appendChild(this.endpoints.targetsElement);
+        this.endpoints.element.appendChild(this.endpoints.sourcesElement);
+
+        originalWidth = this.wrapperElement.offsetWidth;
+
+        if (originalWidth - collapsedWidth > 0) {
+            this.wrapperElement.style.left = parseInt(parseInt(this.wrapperElement.style.left, 10) - ((originalWidth - collapsedWidth) / 2), 10) + 'px';
         }
 
-        // Scroll correction
-        oc = this.wiringEditor.layout.getCenterContainer();
-
-        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10) + 1;
-        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
-
-        currentPos = this.wrapperElement.getBoundingClientRect();
-        this.wrapperElement.style.top = (currentPos.top + scrollY - this.wiringEditor.headerHeight) - ((this.initialPos.height + 8) / 2) + 'px';
-        this.wrapperElement.style.left = (currentPos.left + scrollX - this.wiringEditor.menubarWidth) - (this.initialPos.width / 2) + 32 + 'px';
-
-        // correct it position if is out of grid
-        position = this.getStylePosition();
-        if (position.posX < 0) {
-            position.posX = 8;
-        }
-        if (position.posY < 0) {
-            position.posY = 8;
-        }
-        this.setPosition(position);
-
-        this.wrapperElement.style.minWidth = this.minWidth;
-
-        this.wrapperElement.classList.remove('reducedInt');
-
-        this.isMinimized = false;
         this.repaint();
+
+        this.events.expand.dispatch({
+            'id': this.getId()
+        });
     };
 
-    /**
-     * Resize Transit Start
-     */
-    GenericInterface.prototype.resizeTransitStart = function resizeTransitStart() {
-        var interval;
+    return GenericInterface;
 
-        // transition events
-        this.wrapperElement.classList.add('flex');
-        /*this.wrapperElement.addEventListener('webkitTransitionEnd', this.resizeTransitEnd.bind(this), false);
-        this.wrapperElement.addEventListener('transitionend', this.resizeTransitEnd.bind(this), false);
-        this.wrapperElement.addEventListener('oTransitionEnd', this.resizeTransitEnd.bind(this), false);*/
-        interval = setInterval(this.animateArrows.bind(this), 20);
-        setTimeout(function () {
-            clearInterval(interval);
-        }, 400);
-
-        setTimeout(function () {
-            this.resizeTransitEnd();
-        }.bind(this), 450);
-
-    };
-
-    /**
-     * Resize Transit End
-     */
-    GenericInterface.prototype.resizeTransitEnd = function resizeTransitEnd() {
-        // transition events
-        this.wrapperElement.classList.remove('flex');
-        /*this.wrapperElement.removeEventListener('webkitTransitionEnd', this.resizeTransitEnd.bind(this), false);
-        this.wrapperElement.removeEventListener('transitionend', this.resizeTransitEnd.bind(this), false);
-        this.wrapperElement.removeEventListener('oTransitionEnd', this.resizeTransitEnd.bind(this), false);*/
-        this.repaint();
-    };
-
-    /**
-     * Animated arrows for the transitions betwen minimized an normal shape
-     */
-    GenericInterface.prototype.animateArrows = function animateArrows() {
-        var key, layer;
-
-        for (key in this.sourceAnchorsByName) {
-            this.sourceAnchorsByName[key].repaint();
-        }
-
-        for (key in this.targetAnchorsByName) {
-            this.targetAnchorsByName[key].repaint();
-        }
-
-        if (this.potentialArrow != null) {
-            layer = this.wiringEditor.canvas.getHTMLElement().parentNode;
-            if (this.potentialArrow.startAnchor != null) {
-                // from source to target
-                this.potentialArrow.setStart(this.potentialArrow.startAnchor.getCoordinates(layer));
-            } else {
-                // from target to source
-                this.potentialArrow.setEnd(this.potentialArrow.endAnchor.getCoordinates(layer));
-            }
-        }
-    };
-
-    /*************************************************************************
-     * Make GenericInterface public
-     *************************************************************************/
-    Wirecloud.ui.WiringEditor.GenericInterface = GenericInterface;
 })();

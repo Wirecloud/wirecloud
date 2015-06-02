@@ -34,9 +34,9 @@
      *****************/
     findEntity = function findEntity(desc) {
         switch (desc.type) {
-        case 'iwidget':
+        case 'widget':
             return this.iwidgets[desc.id];
-        case 'ioperator':
+        case 'operator':
             return this.ioperators[desc.id];
         }
     };
@@ -141,19 +141,17 @@
 
         iwidget.fullDisconnect();
 
-        if (this.status.views != null && this.status.views[0].iwidgets[iwidget.id]) {
-            delete this.status.views[0].iwidgets[iwidget.id];
-        }
+        delete this.status.visualdescription.components.widget[iwidget.id];
 
         for (i = this.status.connections.length - 1; i >= 0 ; i -= 1) {
             connection = this.status.connections[i];
 
-            if (connection.source.type === 'iwidget' && connection.source.id === iwidget.id) {
+            if (connection.source.type === 'widget' && connection.source.id === iwidget.id) {
                 this.status.connections.splice(i, 1);
-                this.status.views[0].connections.splice(i, 1);
-            } else if (connection.target.type === 'iwidget' && connection.target.id === iwidget.id) {
+                this.status.visualdescription.connections.splice(i, 1);
+            } else if (connection.target.type === 'widget' && connection.target.id === iwidget.id) {
                 this.status.connections.splice(i, 1);
-                this.status.views[0].connections.splice(i, 1);
+                this.status.visualdescription.connections.splice(i, 1);
             }
         }
 
@@ -237,6 +235,60 @@
 
         StyledElements.ObjectWithEvents.call(this, ['load', 'loaded', 'unload', 'unloaded']);
     };
+
+    /**
+     * [normalize description]
+     *
+     * @param  {Object.<String, *>} status [description]
+     * @returns {Object.<String, *>} [description]
+     */
+    Wiring.normalize = function normalize(status) {
+        var element, i, key, wiringStatus;
+
+        wiringStatus = {
+            'version': "2.0",
+            'connections': [],
+            'operators': {},
+            'visualdescription': {
+                'behaviours': [],
+                'components': {
+                    'operator': {},
+                    'widget': {}
+                },
+                'connections': []
+            }
+        };
+
+        if (typeof status !== 'object') {
+            return wiringStatus;
+        }
+
+        if (Array.isArray(status.connections)) {
+            wiringStatus.connections = status.connections;
+        }
+
+        if (typeof status.operators === 'object') {
+            wiringStatus.operators = status.operators;
+        }
+
+        if (typeof status.visualdescription === 'object') {
+
+            if (Array.isArray(status.visualdescription.behaviours)) {
+                wiringStatus.visualdescription.behaviours = status.visualdescription.behaviours;
+            }
+
+            if (typeof status.visualdescription.components === 'object') {
+                wiringStatus.visualdescription.components = status.visualdescription.components;
+            }
+
+            if (Array.isArray(status.visualdescription.connections)) {
+                wiringStatus.visualdescription.connections = status.visualdescription.connections;
+            }
+        }
+
+        return wiringStatus;
+    };
+
     Wiring.prototype = new StyledElements.ObjectWithEvents();
 
     Wiring.prototype.load = function load(status) {
@@ -255,19 +307,7 @@
 
         this.events.load.dispatch();
 
-        if (!('views' in status) || !Array.isArray(status.views)) {
-            status.views = [];
-        }
-
-        if (status.views.length === 0) {
-            status.views.push({
-                label: 'default',
-                iwidgets: {},
-                operators: {},
-                multiconnectors: {},
-                connections: []
-            });
-        }
+        status = Wiring.normalize(status);
 
         if (this.workspace.owned) {
             operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
@@ -296,8 +336,8 @@
                         msg = interpolate(msg, {operator: operator_info.name}, true);
                         this.logManager.log(msg);
                         this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
-                        if (id in status.views[0].operators) {
-                            this.ioperators[id].fillFromViewInfo(status.views[0].operators[id]);
+                        if (id in status.visualdescription.components.operator) {
+                            this.ioperators[id].fillFromViewInfo(status.visualdescription.components.operator[id]);
                         }
                     }
                 } else {
@@ -305,8 +345,8 @@
                     msg = interpolate(msg, {operator: operator_info.name}, true);
                     this.logManager.log(msg);
                     this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
-                    if (id in status.views[0].operators) {
-                        this.ioperators[id].fillFromViewInfo(status.views[0].operators[id]);
+                    if (id in status.visualdescription.components.operator) {
+                        this.ioperators[id].fillFromViewInfo(status.visualdescription.components.operator[id]);
                     }
                 }
             }

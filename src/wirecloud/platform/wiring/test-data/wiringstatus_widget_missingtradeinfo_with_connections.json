@@ -1,0 +1,139 @@
+{
+    "connections": [
+        {
+            "source": {
+                "type": "widget",
+                "id": 1,
+                "endpoint": "outputendpoint"
+            },
+            "readonly": false,
+            "target": {
+                "type": "widget",
+                "id": 2,
+                "endpoint": "inputendpoint"
+            }
+        },
+        {
+            "source": {
+                "type": "widget",
+                "id": 2,
+                "endpoint": "outputendpoint"
+            },
+            "readonly": false,
+            "target": {
+                "type": "operator",
+                "id": 0,
+                "endpoint": "input"
+            }
+        },
+        {
+            "source": {
+                "type": "operator",
+                "id": 0,
+                "endpoint": "output"
+            },
+            "readonly": false,
+            "target": {
+                "type": "widget",
+                "id": 1,
+                "endpoint": "inputendpoint"
+            }
+        },
+        {
+            "source": {
+                "type": "operator",
+                "id": 0,
+                "endpoint": "output"
+            },
+            "readonly": false,
+            "target": {
+                "type": "widget",
+                "id": 3,
+                "endpoint": "inputendpoint"
+            }
+        },
+        {
+            "source": {
+                "type": "widget",
+                "id": 1,
+                "endpoint": "outputendpoint"
+            },
+            "readonly": false,
+            "target": {
+                "type": "widget",
+                "id": 3,
+                "endpoint": "inputendpoint"
+            }
+        }
+    ],
+    "operators": {
+        "0": {
+            "preferences": {},
+            "name": "Wirecloud/TestOperator/1.0",
+            "id": "0"
+        }
+    },
+    "version": "2.0",
+    "visualdescription": {
+        "connections": [],
+        "behaviours": [],
+        "components": {
+            "operator": {
+                "0": {
+                    "position": {
+                        "y": 256,
+                        "x": 84
+                    }, 
+                    "collapsed": false
+                }
+            },
+            "widget": {
+                "1": {
+                    "position": {
+                        "y": 44,
+                        "x": 84
+                    },
+                    "endpoints": {
+                        "source": [
+                            "outputendpoint"
+                        ],
+                        "target": [
+                            "inputendpoint"
+                        ]
+                    },
+                    "name": "Wirecloud/Test/1.0"
+                },
+                "3": {
+                    "position": {
+                        "y": 100,
+                        "x": 200
+                    },
+                    "endpoints": {
+                        "source": [
+                            "outputendpoint"
+                        ],
+                        "target": [
+                            "inputendpoint"
+                        ]
+                    },
+                    "name": "Wirecloud/Test/1.0"
+                },
+                "2": {
+                    "position": {
+                        "y": 153,
+                        "x": 84
+                    },
+                    "endpoints": {
+                        "source": [
+                            "outputendpoint"
+                        ],
+                        "target": [
+                            "inputendpoint"
+                        ]
+                    },
+                    "name": "Wirecloud/Test/1.0"
+                }
+            }
+        }
+    }
+}

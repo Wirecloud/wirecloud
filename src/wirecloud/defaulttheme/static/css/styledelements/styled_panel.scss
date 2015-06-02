@@ -1,0 +1,78 @@
+@import 'variables';
+@import 'compass/utilities/color/contrast';
+
+.panel {
+    color: contrast-color($panel-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+    background-color: $panel-bg;
+    border: solid 1px rgb(205, 206, 209);
+    border-radius: $panel-border-radius;
+    margin: 0px 0px $default-margin-bottom;
+}
+
+.panel-heading {
+    border-top-left-radius: ($panel-border-radius - 1);
+    border-top-right-radius: ($panel-border-radius - 1);
+    background-color: $panel-default-heading-bg;
+}
+
+.panel-footer {
+    padding: $panel-footer-padding;
+}
+
+.panel-heading {
+    position: relative;
+    display: block;
+    padding: $default-padding-vertical $default-padding-horizontal;
+    box-sizing: border-box;
+
+    &:after {
+        display: block;
+        clear: both;
+        content: "";
+    }
+
+    .panel-title {
+        position: relative;
+        display: block;
+        @include font-truncate();
+        float: left;
+    }
+
+    .panel-options {
+        position: relative;
+        display: block;
+        float: right;
+
+        .styled_button {
+            position: relative;
+            display: inline-block;
+            margin: 0px 3px 0px 0px;
+            padding: 0px;
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+            border: none;
+            background: transparent;
+            vertical-align: baseline;
+            box-shadow: none;
+            width: 18px;
+            text-align: center;
+
+            &:hover,
+            &:focus {
+                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+                box-shadow: none;
+            }
+
+            &:last-child {
+                margin-right: 0px;
+            }
+        }
+    }
+}
+
+.panel-body {
+    position: relative;
+    display: block;
+    margin: 0px;
+    padding: $default-padding-vertical $default-padding-horizontal;
+    box-sizing: border-box;
+}

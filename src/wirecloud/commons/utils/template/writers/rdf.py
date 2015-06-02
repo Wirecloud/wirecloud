@@ -61,64 +61,101 @@ def add_translated_nodes(graph, parent_node, namespace, element_name, value, usa
         graph.add((parent_node, namespace[element_name], rdflib.Literal(value)))
 
 
-def write_wiring_views_graph(graph, wiring, template_info):
+def write_wiring_components_graph(graph, behaviour, components, type):
 
-    for view in template_info['wiring']['views']:
+    for key, component in six.iteritems(components[type]):
+        component_view = rdflib.BNode()
+        graph.add((component_view, rdflib.RDF.type, WIRE_M['ComponentView']))
+        graph.add((component_view, WIRE['type'], rdflib.Literal(type)))
+        graph.add((component_view, WIRE['id'], rdflib.Literal(str(key))))
+
+        if component.get('collapsed', False):
+            graph.add((component_view, WIRE_M['collapsed'], rdflib.Literal('true')))
+
+        if 'position' in component:
+            write_position_graph(graph, component_view, component['position'])
+
+        if 'endpoints' in component:
+            if 'source' in component['endpoints']:
+                for index, source in enumerate(component['endpoints']['source']):
+                    source_element = rdflib.BNode()
+                    graph.add((source_element, rdflib.RDF.type, WIRE_M['Source']))
+                    graph.add((component_view, WIRE_M['hasSource'], source_element))
+                    graph.add((source_element, RDFS['label'], rdflib.Literal(source)))
+                    graph.add((source_element, WIRE['index'], rdflib.Literal(str(index))))
+
+            if 'target' in component['endpoints']:
+                for index, target in enumerate(component['endpoints']['target']):
+                    target_element = rdflib.BNode()
+                    graph.add((target_element, rdflib.RDF.type, WIRE_M['Target']))
+                    graph.add((component_view, WIRE_M['hasTarget'], target_element))
+                    graph.add((target_element, RDFS['label'], rdflib.Literal(target)))
+                    graph.add((target_element, WIRE['index'], rdflib.Literal(str(index))))
+
+        graph.add((behaviour, WIRE_M['hasComponentView'], component_view))
+
+
+def write_endpoint_graph(graph, node, endpointView, relationName='hasEndpoint'):
+    component_type, component_id, endpoint_name = endpointView.split("/")
+    endpoint = rdflib.BNode()
+
+    graph.add((endpoint, rdflib.RDF.type, WIRE_M['Endpoint']))
+    graph.add((endpoint, WIRE['type'], rdflib.Literal(component_type)))
+    graph.add((endpoint, WIRE_M['id'], rdflib.Literal(str(component_id))))
+    graph.add((endpoint, WIRE_M['endpoint'], rdflib.Literal(endpoint_name)))
+
+    graph.add((node, WIRE_M[relationName], endpoint))
+
+
+def write_position_graph(graph, node, positionView, relationName='hasPosition'):
+    position = rdflib.BNode()
+
+    graph.add((position, rdflib.RDF.type, WIRE_M['Position']))
+    graph.add((position, WIRE_M['x'], rdflib.Literal(str(positionView['x']))))
+    graph.add((position, WIRE_M['y'], rdflib.Literal(str(positionView['y']))))
+
+    graph.add((node, WIRE_M[relationName], position))
+
+
+def write_wiring_connections_graph(graph, behaviour, connections):
+
+    for connection in connections:
+        connection_view = rdflib.BNode()
+        graph.add((connection_view, rdflib.RDF.type, WIRE_M['ConnectionView']))
+
+        # write source endpoint
+        write_endpoint_graph(graph, connection_view, connection['sourcename'], relationName="hasSourceEndpoint")
+
+        if 'sourcehandle' in connection:
+            write_position_graph(graph, connection_view, connection['sourcehandle'], relationName="hasSourceHandlePosition")
+
+        # write target endpoint
+        write_endpoint_graph(graph, connection_view, connection['targetname'], relationName="hasTargetEndpoint")
+
+        if 'targethandle' in connection:
+            write_position_graph(graph, connection_view, connection['targethandle'], relationName="hasTargetHandlePosition")
+
+        graph.add((behaviour, WIRE_M['hasConnectionView'], connection_view))
+
+
+def write_wiring_visualdescription_graph(graph, wiring, template_info):
+
+    write_wiring_components_graph(graph, wiring, template_info['wiring']['visualdescription']['components'], 'widget')
+    write_wiring_components_graph(graph, wiring, template_info['wiring']['visualdescription']['components'], 'operator')
+    write_wiring_connections_graph(graph, wiring, template_info['wiring']['visualdescription']['connections'])
+
+    for index, behaviour in enumerate(template_info['wiring']['visualdescription']['behaviours']):
         wiring_view = rdflib.BNode()
-        graph.add((wiring_view, rdflib.RDF.type, WIRE_M['WiringView']))
-        graph.add((wiring, WIRE_M['hasWiringView'], wiring_view))
-        graph.add((wiring_view, RDFS['label'], rdflib.Literal(view['label'])))
+        graph.add((wiring_view, rdflib.RDF.type, WIRE_M['Behaviour']))
+        graph.add((wiring_view, WIRE['index'], rdflib.Literal(str(index))))
+        graph.add((wiring_view, RDFS['label'], rdflib.Literal(behaviour['title'])))
+        graph.add((wiring_view, DCTERMS['description'], rdflib.Literal(behaviour['description'])))
 
-        for key, widget in six.iteritems(view['iwidgets']):
-            widget_view = rdflib.BNode()
-            graph.add((widget_view, rdflib.RDF.type, WIRE_M['View']))
-            graph.add((widget_view, WIRE['type'], rdflib.Literal('widget')))
-            graph.add((wiring_view, WIRE_M['hasView'], widget_view))
-            graph.add((widget_view, WIRE['id'], rdflib.Literal(str(key))))
-            position = rdflib.BNode()
-            graph.add((position, rdflib.RDF.type, WIRE_M['Position']))
-            graph.add((widget_view, WIRE_M['hasPosition'], position))
-            graph.add((position, WIRE_M['x'], rdflib.Literal(str(widget['position']['posX']))))
-            graph.add((position, WIRE_M['y'], rdflib.Literal(str(widget['position']['posY']))))
-            for index, source in enumerate(widget['endPointsInOuts']['sources']):
-                source_element = rdflib.BNode()
-                graph.add((source_element, rdflib.RDF.type, WIRE_M['Source']))
-                graph.add((widget_view, WIRE_M['hasSource'], source_element))
-                graph.add((source_element, RDFS['label'], rdflib.Literal(source)))
-                graph.add((source_element, WIRE['index'], rdflib.Literal(str(index))))
+        write_wiring_components_graph(graph, wiring_view, behaviour['components'], 'widget')
+        write_wiring_components_graph(graph, wiring_view, behaviour['components'], 'operator')
+        write_wiring_connections_graph(graph, wiring_view, behaviour['connections'])
 
-            for index, target in enumerate(widget['endPointsInOuts']['targets']):
-                target_element = rdflib.BNode()
-                graph.add((target_element, rdflib.RDF.type, WIRE_M['Target']))
-                graph.add((widget_view, WIRE_M['hasTarget'], target_element))
-                graph.add((target_element, RDFS['label'], rdflib.Literal(target)))
-                graph.add((target_element, WIRE['index'], rdflib.Literal(str(index))))
-
-        for key, operator in six.iteritems(view['operators']):
-            operator_view = rdflib.BNode()
-            graph.add((operator_view, rdflib.RDF.type, WIRE_M['View']))
-            graph.add((operator_view, WIRE['type'], rdflib.Literal('operator')))
-            graph.add((wiring_view, WIRE_M['hasView'], operator_view))
-            graph.add((operator_view, WIRE['id'], rdflib.Literal(str(key))))
-            position = rdflib.BNode()
-            graph.add((position, rdflib.RDF.type, WIRE_M['Position']))
-            graph.add((operator_view, WIRE_M['hasPosition'], position))
-            graph.add((position, WIRE_M['x'], rdflib.Literal(str(operator['position']['posX']))))
-            graph.add((position, WIRE_M['y'], rdflib.Literal(str(operator['position']['posY']))))
-
-            for index, source in enumerate(operator['endPointsInOuts']['sources']):
-                source_element = rdflib.BNode()
-                graph.add((source_element, rdflib.RDF.type, WIRE_M['Source']))
-                graph.add((operator_view, WIRE_M['hasSource'], source_element))
-                graph.add((source_element, RDFS['label'], rdflib.Literal(source)))
-                graph.add((source_element, WIRE['index'], rdflib.Literal(str(index))))
-
-            for index, target in enumerate(operator['endPointsInOuts']['targets']):
-                target_element = rdflib.BNode()
-                graph.add((target_element, rdflib.RDF.type, WIRE_M['Target']))
-                graph.add((operator_view, WIRE_M['hasTarget'], target_element))
-                graph.add((target_element, RDFS['label'], rdflib.Literal(target)))
-                graph.add((target_element, WIRE['index'], rdflib.Literal(str(index))))
+        graph.add((wiring, WIRE_M['hasBehaviour'], wiring_view))
 
 
 def write_mashup_params(graph, resource_uri, template_info):
@@ -223,6 +260,13 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
 
 def write_mashup_wiring_graph(graph, wiring, template_info):
 
+    wiring_version = template_info['wiring'].get('version', '1.0')
+    if wiring_version != '2.0':
+        raise ValueError('This writer cannot serialize wiring status version %s' % wiring_version)
+
+    graph.add((wiring, USDL['versionInfo'], rdflib.Literal('2.0')))
+
+    # Serialize operators
     for id_, operator in six.iteritems(template_info['wiring']['operators']):
         op = rdflib.BNode()
         graph.add((op, rdflib.RDF.type, WIRE_M['iOperator']))
@@ -241,6 +285,7 @@ def write_mashup_wiring_graph(graph, wiring, template_info):
             if pref.get('hidden', False):
                 graph.add((element, WIRE_M['hidden'], rdflib.Literal('true')))
 
+    # Serialize connections
     for connection in template_info['wiring']['connections']:
         element = rdflib.BNode()
         graph.add((element, rdflib.RDF.type, WIRE_M['Connection']))
@@ -263,7 +308,7 @@ def write_mashup_wiring_graph(graph, wiring, template_info):
         graph.add((target, WIRE_M['targetId'], rdflib.Literal(str(connection['target']['id']))))
         graph.add((target, WIRE_M['endpoint'], rdflib.Literal(connection['target']['endpoint'])))
 
-    write_wiring_views_graph(graph, wiring, template_info)
+    write_wiring_visualdescription_graph(graph, wiring, template_info)
 
 
 def write_contents_node(graph, resource_uri, contents_info, alternative=True):

@@ -27,19 +27,22 @@
     /*************************************************************************
      * Constructor
      *************************************************************************/
-    var Canvas = function Canvas() {
-        StyledElements.ObjectWithEvents.call(this, ['arrowadded', 'arrowremoved', 'unselectall']);
+    var Canvas = function Canvas(containment) {
+        StyledElements.ObjectWithEvents.call(this, ['detach', 'duplicate', 'establish', 'share', 'unselectall', 'update']);
 
         this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
         this.canvasElement.generalLayer = document.createElementNS(this.SVG_NAMESPACE, 'svg:g');
         this.canvasElement.appendChild(this.canvasElement.generalLayer);
-        this.canvasElement.setAttribute('class', 'canvas');
+        this.canvasElement.setAttribute('class', "wiring-connections");
         this.selectedArrow = null;
         this.canvasElement.addEventListener('click', function () {
             this.unselectArrow();
             this.events.unselectall.dispatch();
         }.bind(this), false);
 
+        this.containment = containment;
+        this.containment.appendChild(this.canvasElement);
+        this.containment.wrapperElement.addEventListener("scroll", this._onscroll_updatePosition.bind(this));
     };
     Canvas.prototype = new StyledElements.ObjectWithEvents();
 
@@ -71,22 +74,23 @@
      */
     Canvas.prototype.drawArrow = function drawArrow(from, to, extraClass, readOnly, isGhost) {
         var arrow = new Wirecloud.ui.WiringEditor.Arrow(this);
-        arrow.addClassName(extraClass);
+        if (extraClass != null) {
+            arrow.addClassName(extraClass);
+        }
+
         if (readOnly) {
             arrow.readOnly = true;
+            arrow.addClassName("readonly");
         }
         if (isGhost) {
             arrow.isGhost = true;
-            arrow.addClassName('ghost');
+            arrow.addClassName('missing');
         }
         arrow.setStart(from);
         arrow.setEnd(to);
         arrow.redraw();
         arrow.insertInto(this.canvasElement.generalLayer);
 
-        if ((extraClass != 'multiconnector_arrow') && extraClass != 'arrow hollow') {
-            this.events.arrowadded.dispatch(this, arrow);
-        }
         return arrow;
     };
 
@@ -97,10 +101,7 @@
         if (this.selectedArrow === arrow) {
             this.unselectArrow();
         }
-        if (arrow.multiId == null) {
-            arrow.wrapperElement.parentNode.removeChild(arrow.wrapperElement);
-        }
-        this.events.arrowremoved.dispatch(this, arrow);
+        arrow.wrapperElement.parentNode.removeChild(arrow.wrapperElement);
     };
 
     /**
@@ -144,6 +145,22 @@
             this.selectedArrow.unselect();
             this.selectedArrow = null;
         }
+    };
+
+    Canvas.prototype._onscroll_updatePosition = function _onscroll_updatePosition() {
+        var oc, scrollX, scrollY, param;
+        oc = this.containment;
+
+        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
+        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
+        param = "translate(" + (-scrollX) + " " + (-scrollY) + ")";
+        this.canvasElement.generalLayer.setAttribute('transform', param);
+        this.canvasElement.style.top = scrollY + 'px';
+        this.canvasElement.style.left = scrollX + 'px';
+    };
+
+    Canvas.prototype.hasConnectionSelected = function hasConnectionSelected() {
+        return this.selectedArrow !== null;
     };
 
     /*************************************************************************

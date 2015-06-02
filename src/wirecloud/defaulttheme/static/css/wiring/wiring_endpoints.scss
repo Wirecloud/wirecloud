@@ -1,0 +1,288 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+@import 'wiring/defaults';
+
+
+// ============================================================================
+// WIRING DIAGRAM - ENDPOINTS
+// ============================================================================
+
+.wiring-diagram .endpoints {
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    background-color: transparent;
+}
+
+.wiring-diagram .endpoint {
+    position: relative;
+    cursor: pointer;
+    clear: both;
+    max-width: $endpoint-max-width;
+    margin: 0px 0px $endpoint-margin-vertical;
+    @include user-select();
+
+    .endpoint-label {
+        padding: 0px $endpoint-padding-horizontal;
+        color: $endpoint-font-color;
+        font-size: 12px;
+        line-height: 20px;
+        @include font-truncate();
+    }
+
+    .endpoint-anchor {
+        position: absolute;
+        top: 0px;
+        padding: $endpoint-anchor-padding-vertical $endpoint-anchor-padding-horizontal;
+    }
+}
+
+.wiring-diagram .endpoints .endpoint:first-child {
+    margin-top: 5px;
+}
+
+// ============================================================================
+// WIRING DIAGRAM - SOURCE-ENDPOINTS
+// ============================================================================
+
+.wiring-diagram .source-endpoints {
+    padding-left: $endpoints-padding-horizontal;
+
+    .endpoint {
+        float: right;
+        border-radius: $border-radius-onlyleft;
+
+        .endpoint-anchor {
+            right: $endpoint-displacement-width;
+            background-color: $source-endpoint-background-color;
+            border-radius: $border-radius-onlyright;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - TARGET-ENDPOINTS
+// ============================================================================
+
+.wiring-diagram .target-endpoints {
+    padding-right: $endpoints-padding-horizontal;
+
+    .endpoint {
+        float: left;
+        border-radius: $border-radius-onlyright;
+
+        .endpoint-anchor {
+            left: $endpoint-displacement-width;
+            background-color: $target-endpoint-background-color;
+            border-radius: $border-radius-onlyleft;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - HIGHLIGHTED-ENDPOINTS
+// ============================================================================
+
+.wiring-diagram .endpoint.highlighted {
+    background-color: $highlighted-endpoint-background-color;
+
+    .endpoint-label {
+        color: $highlighted-endpoint-font-color;
+    }
+
+    .endpoint-anchor {
+        background-color: $highlighted-endpoint-background-color;
+    }
+}
+
+.wiring-diagram .target-endpoints .endpoint.highlighted {
+
+    .endpoint-anchor {
+        border-right: solid 1px $highlighted-endpoint-background-color;
+    }
+}
+
+.wiring-diagram .source-endpoints .endpoint.highlighted {
+
+    .endpoint-anchor {
+        border-left: solid 1px $highlighted-endpoint-background-color;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - MISPLACED-ENDPOINTS
+// ============================================================================
+
+.wiring-diagram .endpoint.misplaced {
+    background-color: $misplaced-endpoint-background-color;
+
+    .endpoint-label {
+        color: $misplaced-endpoint-font-color;
+    }
+
+    .endpoint-anchor {
+        background-color: $misplaced-endpoint-background-color;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - COLLAPSED-ENDPOINTS
+// ============================================================================
+
+.wiring-diagram .component.collapsed {
+
+    .component-heading {
+        border-radius: $component-heading-border-radius;
+    }
+
+    .component-body {
+        display: none;
+    }
+
+    .endpoints {
+        position: absolute;
+    }
+
+    .target-endpoints {
+        left: 0px;
+    }
+
+    .source-endpoints {
+        right: 0px;
+    }
+
+    .endpoint {
+        position: absolute;
+        margin: 0px;
+
+        .endpoint-label {
+            display: none;
+        }
+
+        .endpoint-anchor {
+            pointer-events: none;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - COMPONENT NO ENDPOINTS
+// ============================================================================
+
+.wiring-diagram .component.no-endpoints {
+
+    .component-heading {
+        border-radius: $component-heading-border-radius;
+    }
+
+    .component-body {
+        display: none;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - ENDPOINT-SORTING
+// ============================================================================
+
+.wiring-diagram .endpoints.endpoint-sorting {
+
+    .endpoint {
+        cursor: move;
+        box-shadow: $editable-endpoint-box-shadow;
+    }
+
+    .endpoint.selected {
+        background-color: $selected-endpoint-background-color;
+        box-shadow: $selected-endpoint-box-shadow;
+    }
+}
+
+.wiring-diagram .endpoint.cloned {
+    position: absolute;
+    cursor: move;
+    z-index: $cloned-endpoint-zindex;
+    box-shadow: $editable-endpoint-box-shadow;
+    @include children-display((".endpoint-anchor"));
+}
+
+.wiring-diagram .target-endpoint.cloned {
+    border-radius: $border-radius-onlyright;
+}
+
+.wiring-diagram .source-endpoint.cloned {
+    border-radius: $border-radius-onlyleft;
+}
+
+// ============================================================================
+// WIRING DIAGRAM - ENDPOINTS ON-BACKGROUND
+// ============================================================================
+
+.wiring-diagram .component.on-background {
+
+    .endpoint {
+        .endpoint-label {
+            color: $endpoint-onbackground-font-color;
+        }
+
+        .endpoint-anchor {
+            background-color: $endpoint-onbackground-background-color;
+        }
+    }
+
+    .endpoint.highlighted {
+        background-color: $highlighted-endpoint-background-color;
+
+        .endpoint-label {
+            color: $highlighted-endpoint-font-color;
+        }
+
+        .endpoint-anchor {
+            background-color: $highlighted-endpoint-background-color;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - ENDPOINTS IN COMPONENT HIGHLIGHTED
+// ============================================================================
+
+.wiring-diagram .component.highlighted {
+
+    .endpoint {
+        .endpoint-label {
+            color: $endpoint-font-color;
+        }
+
+        .endpoint-anchor {
+            background-color: $highlighted-component-border-color;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - DISABLED-ENDPOINTS
+// ============================================================================
+
+.wiring-diagram .endpoint.disabled {
+    opacity: 0.5;
+}
+
+.wiring-diagram .endpoint.hidden {
+    display: none !important;
+}

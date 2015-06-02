@@ -63,21 +63,30 @@
         if (element instanceof StyledElements.StyledElement) {
             element.insertInto(this.wrapperElement, refElement);
             this.children.push(element);
-        } else {
-            if (refElement instanceof StyledElements.StyledElement) {
-                refElement = refElement.wrapperElement;
-            }
 
-            if (refElement != null) {
-                this.wrapperElement.insertBefore(element, refElement);
-            } else {
-                this.wrapperElement.appendChild(element);
-            }
+            return element;
         }
+
+        if (typeof element === "string") {
+            element = document.createTextNode(element);
+        }
+
+        if (refElement instanceof StyledElements.StyledElement) {
+            refElement = refElement.wrapperElement;
+        }
+
+        if (refElement != null) {
+            this.wrapperElement.insertBefore(element, refElement);
+        } else {
+            this.wrapperElement.appendChild(element);
+        }
+
+        return element;
     };
 
-    Container.prototype.removeChild = function appendChild(element) {
+    Container.prototype.removeChild = function removeChild(element) {
         var index;
+
         if (element instanceof StyledElements.StyledElement) {
             index = this.children.indexOf(element);
             this.children.splice(index, 1);
@@ -85,6 +94,8 @@
         } else {
             this.wrapperElement.removeChild(element);
         }
+
+        return this;
     };
 
     Container.prototype.repaint = function repaint(temporal) {
@@ -125,6 +136,8 @@
         if (this.disabledLayer != null) {
             this.wrapperElement.appendChild(this.disabledLayer);
         }
+
+        return this;
     };
 
     /**

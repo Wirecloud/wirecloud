@@ -40,23 +40,24 @@
 
         isGhost = ioperator instanceof Wirecloud.wiring.GhostOperator;
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, ioperator, this.ioperator.title, manager, 'ioperator', isGhost);
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, wiringEditor, ioperator, this.ioperator.title, manager, 'operator', isGhost);
+
         if (!isMenubarRef) {
 
             // Sort
-            if ((endPointPos.sources.length > 0) || (endPointPos.targets.length > 0)) {
-                for (i = 0; i < endPointPos.sources.length; i += 1) {
-                    if (ioperator.outputs[endPointPos.sources[i]]) {
-                        outputs[endPointPos.sources[i]] = ioperator.outputs[endPointPos.sources[i]];
+            if ((endPointPos.source.length > 0) || (endPointPos.target.length > 0)) {
+                for (i = 0; i < endPointPos.source.length; i += 1) {
+                    if (ioperator.outputs[endPointPos.source[i]]) {
+                        outputs[endPointPos.source[i]] = ioperator.outputs[endPointPos.source[i]];
                     } else {
                         // Lost endpoint.
                         outputs = ioperator.outputs;
                         break;
                     }
                 }
-                for (i = 0; i < endPointPos.targets.length; i += 1) {
-                    if (ioperator.inputs[endPointPos.targets[i]]) {
-                        inputs[endPointPos.targets[i]] = ioperator.inputs[endPointPos.targets[i]];
+                for (i = 0; i < endPointPos.target.length; i += 1) {
+                    if (ioperator.inputs[endPointPos.target[i]]) {
+                        inputs[endPointPos.target[i]] = ioperator.inputs[endPointPos.target[i]];
                     } else {
                         // Lost endpoint.
                         inputs = ioperator.inputs;
@@ -82,10 +83,15 @@
                 anchorContext = {'data': inputs[key], 'iObject': this};
                 this.addTarget(label, desc, inputs[key].name, anchorContext);
             }
+
+            if (!this.sourceAnchors.length && !this.targetAnchors.length) {
+                this.wrapperElement.classList.add('no-endpoints');
+                this.options.optionCollapse.hide();
+            }
         }
     };
 
-    OperatorInterface.prototype = new Wirecloud.ui.WiringEditor.GenericInterface(true);
+    StyledElements.Utils.inherit(OperatorInterface, Wirecloud.ui.WiringEditor.GenericInterface);
 
     /**
      * onFinish for draggable
@@ -93,34 +99,27 @@
     OperatorInterface.prototype.onFinish = function onFinish(draggable, data, e) {
         var operator_interface, position, endPointPos, oc, scrollX, scrollY;
         
-        position = {posX: 0, posY: 0};
+        position = {'x': 0, 'y': 0};
         position = data.iObjectClon.getPosition();
 
         //scroll correction
-        oc = this.wiringEditor.layout.getCenterContainer();
+        oc = this.wiringEditor.layout.content;
         scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
         scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
-        position.posX += scrollX;
-        position.posY += scrollY;
+        position.x += scrollX;
+        position.y += scrollY;
 
-        if (!this.wiringEditor.withinGrid(e)) {
+        endPointPos = {'source': [], 'target': []};
+        position.x -= this.wiringEditor.getGridElement().getBoundingClientRect().left;
+
+        operator_interface = this.wiringEditor.addIOperator(this.ioperator, endPointPos, position);
+
+        if (!this.wiringEditor.layout.content.wrapperElement.contains(data.iObjectClon.wrapperElement)) {
             this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
-            this.wiringEditor.events.operatoraddfail.dispatch();
-            return;
+        } else {
+            this.wiringEditor.layout.content.removeChild(data.iObjectClon);
         }
-
-        endPointPos = {'sources': [], 'targets': []};
-        operator_interface = this.wiringEditor.addIOperator(this.ioperator, endPointPos);
-
-        position.posX -= this.wiringEditor.getGridElement().getBoundingClientRect().left;
-        if (position.posX < 0) {
-            position.posX = 8;
-        }
-        if (position.posY < 0) {
-            position.posY = 8;
-        }
-        operator_interface.setPosition(position);
-        this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
+        this.wiringEditor.layout.show();
     };
 
     /**
@@ -142,6 +141,14 @@
      */
     OperatorInterface.prototype.getName = function getName() {
         return this.ioperator.name;
+    };
+
+    OperatorInterface.prototype.serialize = function serialize() {
+        return {
+            'collapsed': this.collapsed,
+            'endpoints': this.getInOutPositions(),
+            'position': this.position
+        };
     };
 
     /*************************************************************************

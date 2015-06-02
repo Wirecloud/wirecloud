@@ -35,6 +35,7 @@
         this.context = context;
         Wirecloud.ui.WiringEditor.Anchor.call(this, false, arrowCreator, isGhost);
         this.arrowCreator = arrowCreator;
+        this.type = 'target';
     };
     TargetAnchor.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
 
@@ -49,13 +50,8 @@
 
         coordinates = this.getCoordinates(this.context.iObject.wiringEditor.getGridElement());
         for (i = 0; i < this.arrows.length; i += 1) {
-            if (this.arrows[i].endMulti == null) {
-                this.arrows[i].setEnd(coordinates);
-                this.arrows[i].redraw();
-            }
-            if (this.arrows[i].startMulti != null) {
-                this.context.iObject.wiringEditor.multiconnectors[this.arrows[i].startMulti].repaint();
-            }
+            this.arrows[i].setEnd(coordinates);
+            this.arrows[i].redraw();
         }
     };
 

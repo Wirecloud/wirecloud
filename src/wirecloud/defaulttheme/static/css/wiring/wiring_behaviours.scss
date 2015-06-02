@@ -1,0 +1,111 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import 'wiring/defaults';
+
+// ======================================================================================
+// WIRING - BEHAVIOUR
+// ======================================================================================
+
+.behaviour {
+    position: relative;
+    display: block;
+    background-color: $behaviour-background-color;
+    border-color: $behaviour-border-color;
+    border-radius: $default-border-radius;
+    @include user-select();
+}
+
+.behaviour:last-child {
+    margin-bottom: 0px;
+}
+
+// ======================================================================================
+// WIRING - BEHAVIOUR HEADING
+// ======================================================================================
+
+.behaviour .panel-heading {
+    cursor: default;
+    background-color: $behaviour-heading-background-color;
+
+    .panel-title {
+        @include font($weight: "bold");
+        width: 75%;
+        color: $behaviour-heading-font-color;
+    }
+}
+
+// ======================================================================================
+// WIRING - BEHAVIOUR HEADING - OPTIONS
+// ======================================================================================
+
+.behaviour .panel-options {
+
+    .styled_button {
+        color: rgb(80, 80, 80);
+
+        &:hover,
+        &:focus {
+            color: rgb(50, 120, 180);
+        }
+    }
+}
+
+// ======================================================================================
+// WIRING - BEHAVIOUR BODY
+// ======================================================================================
+
+.behaviour .panel-body {
+    cursor: default;
+
+    .behaviour-description {
+        position: relative;
+        display: block;
+        margin: 0px;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+        color: rgb(70, 80, 90);
+        overflow: hidden;
+        height: 36px;
+    }
+}
+
+// ======================================================================================
+// WIRING - BEHAVIOUR STATES
+// ======================================================================================
+
+.behaviour.active {
+    border-color: #2e6da4;
+
+    .panel-heading {
+        background-color: #337ab7;
+
+        .panel-title {
+            color: rgb(240, 240, 240);
+        }
+
+        .styled_button {
+            color: rgb(240, 240, 240);
+
+            &:hover,
+            &:focus {
+                color: #fff;
+            }
+        }
+    }
+}

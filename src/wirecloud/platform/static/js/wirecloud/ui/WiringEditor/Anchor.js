@@ -18,10 +18,10 @@
  *     under the License.
  */
 
-/*global Coordinates, CSSPrimitiveValue, StyledElements, Wirecloud */
+/*global StyledElements, Wirecloud */
 
 
-(function () {
+Wirecloud.ui.WiringEditor.Anchor = (function () {
 
     "use strict";
 
@@ -35,7 +35,7 @@
      *
      * @abstract
      */
-    var Anchor = function Anchor(extending, arrowCreator, isGhost) {
+    var Anchor = function Anchor(extending, arrowCreator) {
 
         if (extending === true) {
             return;
@@ -44,27 +44,11 @@
 
         this.arrows = [];
 
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.classList.add('anchor');
-        if (isGhost) {
-            this.wrapperElement.classList.add('icon-exclamation-sign');
-        } else {
-            this.wrapperElement.classList.add('icon-circle');
-        }
-        this.menu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left', 'bottom-right', 'top-right']});
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = "endpoint-anchor";
 
         this._mousedown_callback = function _mousedown_callback(e) {
             var arrow, end, start;
-
-            // Anchor Context Menu
-            if (e.button == 2) {
-                if (this.menu.isVisible()) {
-                    this.menu.hide();
-                } else {
-                    this.menu.show(this.wrapperElement.getBoundingClientRect());
-                }
-                return;
-            }
 
             e.stopPropagation();
             // Only process left mouse button events
@@ -72,75 +56,27 @@
                 arrow = this.hasSelectedArrow();
                 if (arrow != null) {
                     // ReadOnly & subdata control
-                    if (arrow.readOnly || arrow.hasClassName('hollow') || arrow.startAnchor.isSubAnchor) {
+                    if (arrow.readOnly) {
                         return;
                     }
-                    if (arrow.hasClassName('multiconnector_arrow')) {
-                        arrow.canvas.unselectArrow();
+
+                    // Changing the imput/output endpoint of an arow
+                    if (arrow.startAnchor === this) {
+                        // Click in startAnchor
+                        arrow.endAnchor.arrowCreator.startdrag(e, arrow.endAnchor);
+                        this.events.startdrag.dispatch(arrow.endAnchor);
+                        arrow.remove();
                     } else {
-                        // Changing the imput/output endpoint of an arow
-                        if (arrow.startAnchor === this) {
-                            if (arrow.endMulti == null) {
-                                // Normal arrow, click in startAnchor
-                                arrow.endAnchor.arrowCreator.startdrag(e, arrow.endAnchor);
-                                this.events.startdrag.dispatch(arrow.endAnchor);
-                                arrow.destroy();
-                            } else {
-                                // Click in startAnchor, endAnchor is multiconector
-                                arrow.destroy();
-                                end = this.context.iObject.wiringEditor.multiconnectors[arrow.endMulti];
-                                end.arrowCreator.startdrag(e, end);
-                                end.events.startdrag.dispatch(end);
-                            }
-                        } else if (arrow.endAnchor === this) {
-                            if (arrow.startMulti == null) {
-                                // Normal arrow, click in endAnchor
-                                arrow.startAnchor.arrowCreator.startdrag(e, arrow.startAnchor);
-                                this.events.startdrag.dispatch(arrow.startAnchor);
-                                arrow.destroy();
-                            } else {
-                                // Click in endAnchor, startAnchor is multiconector
-                                arrow.destroy();
-                                start = this.context.iObject.wiringEditor.multiconnectors[arrow.startMulti];
-                                start.arrowCreator.startdrag(e, start);
-                                start.events.startdrag.dispatch(start);
-                            }
-                        } else {
-                            if ((arrow.startMulti != null) && (arrow.endMulti != null)) {
-                                var multi;
-                                start = this.context.iObject.wiringEditor.multiconnectors[arrow.startMulti];
-                                end = this.context.iObject.wiringEditor.multiconnectors[arrow.endMulti];
-                                arrow.destroy();
-                                if (start === this) {
-                                    // Start and end Anchor are multiconnectors, click in start Multiconnector
-                                    multi = end;
-                                } else {
-                                    // Start and end Anchor are multiconnectors, click in end Multiconnector
-                                    multi = start;
-                                }
-                                multi.arrowCreator.startdrag(e, multi);
-                                multi.events.startdrag.dispatch(multi);
-                            } else if (arrow.startMulti != null) {
-                                // Click in startAnchor (multiconnector)
-                                end = arrow.endAnchor;
-                                end.arrowCreator.startdrag(e, end);
-                                end.events.startdrag.dispatch(end);
-                                arrow.destroy();
-                            } else {
-                                // Click in endAnchor (multiconnector)
-                                start = arrow.startAnchor;
-                                start.arrowCreator.startdrag(e, start);
-                                start.events.startdrag.dispatch(start);
-                                arrow.destroy();
-                            }
-                        }
-                        return;
+                        // Click in endAnchor
+                        arrow.startAnchor.arrowCreator.startdrag(e, arrow.startAnchor);
+                        this.events.startdrag.dispatch(arrow.startAnchor);
+                        arrow.remove();
                     }
-                    return;
+                } else {
+                    // No selected arrows in this anchor
+                    arrowCreator.startdrag(e, this);
+                    this.events.startdrag.dispatch(this);
                 }
-                // No selected arrows in this anchor
-                arrowCreator.startdrag(e, this);
-                this.events.startdrag.dispatch(this);
             }
         }.bind(this);
         this.wrapperElement.addEventListener('mousedown', this._mousedown_callback, false);
@@ -171,18 +107,15 @@
                     this.addClassName('pointed');
                     document.removeEventListener("mousemove", arrowCreator.drag, false);
                     e.stopPropagation();
-                    if (this instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                        pos = this.stick();
-                    } else {
-                        pos = this.getCoordinates(arrowCreator.layer);
-                    }
+                    pos = this.getCoordinates(arrowCreator.layer);
+
                     if (!arrowCreator.invert) {
                         arrowCreator.theArrow.setEnd(pos);
                         if (!arrowCreator.theArrow.isGhost &&
                             this.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint) {
                             //Ghost Arrow
                             arrowCreator.theArrow.isGhost = true;
-                            arrowCreator.theArrow.addClassName('ghost');
+                            arrowCreator.theArrow.addClassName('missing');
                         }
                     } else {
                         arrowCreator.theArrow.setStart(pos);
@@ -190,7 +123,7 @@
                             this.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint) {
                             //Ghost Arrow
                             arrowCreator.theArrow.isGhost = true;
-                            arrowCreator.theArrow.addClassName('ghost');
+                            arrowCreator.theArrow.addClassName('missing');
                         }
                     }
                     arrowCreator.theArrow.redraw();
@@ -206,15 +139,12 @@
                     e.stopPropagation();
                     this.removeClassName('pointed');
                     document.addEventListener("mousemove", arrowCreator.drag, false);
-                    if (this instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                        this.unstick();
-                    }
                     initEndpoint = arrowCreator.initAnchor.context.data;
                     if (arrowCreator.theArrow.isGhost &&
                         !(initEndpoint instanceof Wirecloud.wiring.GhostSourceEndpoint || initEndpoint instanceof Wirecloud.wiring.GhostTargetEndpoint)) {
                         //Clean Ghost Arrow
                         arrowCreator.theArrow.isGhost = false;
-                        arrowCreator.theArrow.removeClassName('ghost');
+                        arrowCreator.theArrow.removeClassName('missing');
                     }
                 }
             }
@@ -222,7 +152,8 @@
         this.wrapperElement.addEventListener('mouseover', this._mouseover_callback, false);
         this.wrapperElement.addEventListener('mouseout', this._mouseout_callback, false);
     };
-    Anchor.prototype = new StyledElements.StyledElement();
+
+    StyledElements.Utils.inherit(Anchor, StyledElements.StyledElement);
 
     /*************************************************************************
      * Private methods
@@ -238,20 +169,25 @@
      * @param {HTMLElement} baseElement element of reference.
      */
     Anchor.prototype.getCoordinates = function getCoordinates(baseElement) {
-
-        var anchor_bcr, base_bcr, coordinates;
+        var anchor_bcr, base_bcr, coordinates, anchorWidth;
 
         anchor_bcr = this.wrapperElement.getBoundingClientRect();
         base_bcr = baseElement.getBoundingClientRect();
 
         coordinates = {
-            posX: anchor_bcr.left - base_bcr.left + baseElement.scrollLeft,
-            posY: anchor_bcr.top - base_bcr.top + baseElement.scrollTop
+            x: anchor_bcr.left - base_bcr.left + baseElement.scrollLeft,
+            y: anchor_bcr.top - base_bcr.top + baseElement.scrollTop
         };
 
+        if (this.type == 'source') {
+            anchorWidth = this.wrapperElement.offsetWidth;
+        } else {
+            anchorWidth = 0;
+        }
+
         return {
-            posX: Math.round(coordinates.posX + (this.wrapperElement.offsetWidth / 2)),
-            posY: Math.round(coordinates.posY + (this.wrapperElement.offsetWidth / 2))
+            x: Math.round(coordinates.x + anchorWidth - 1),
+            y: Math.round(coordinates.y + (this.wrapperElement.offsetHeight / 2) -1)
         };
     };
 
@@ -262,12 +198,20 @@
         return this.arrows;
     };
 
+    Anchor.prototype.hasConnections = function hasConnections() {
+        return this.arrows.length != 0;
+    };
+
     /**
      * Return true when the Anchor has connected arrows
      */
     Anchor.prototype.isConnected = function isConnected() {
         return this.connectionArrows.length > 0;
     };
+
+    Anchor.prototype.getEndpoint = function getEndpoint() {
+        return this.wrapperElement.parentElement;
+    }
 
     /**
      * Add new Arrow to the Anchor
@@ -309,19 +253,25 @@
         }
     };
 
+    Anchor.prototype.getComponent = function getComponent() {
+        return this.context.iObject;
+    };
+
+    Anchor.prototype.getName = function getName() {
+        return [this.context.iObject.componentType, this.context.iObject.componentId, this.context.data.name].join('/');
+    };
+
     /**
      * Serialize an Anchor
      */
     Anchor.prototype.serialize = function serialize() {
-        if (!this.context.iObject.isGhost) {
-            return this.context.data.serialize();
-        } else {
-            return {
-                'type': this.context.iObject.className,
-                'id': this.context.iObject[this.context.iObject.className].id,
-                'endpoint': this.context.data.name
-            };
-        }
+        var endpoint;
+
+        return {
+            'type': this.getComponent().componentType,
+            'id': this.getComponent().componentId,
+            'endpoint': this.context.data.name
+        };
     };
 
     /**
@@ -364,8 +314,6 @@
         this.wrapperElement = null;
     };
 
-    /*************************************************************************
-     * Make Anchor public
-     *************************************************************************/
-    Wirecloud.ui.WiringEditor.Anchor = Anchor;
+    return Anchor;
+
 })();

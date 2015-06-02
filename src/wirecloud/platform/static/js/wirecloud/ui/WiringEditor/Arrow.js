@@ -39,12 +39,12 @@
 
         // Create a path for the arrow's border
         this.arrowElementBorder = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
-        this.arrowElementBorder.setAttribute('class', 'arrowborder');
+        this.arrowElementBorder.setAttribute('class', "connection-border");
         this.arrowBodyElement.appendChild(this.arrowElementBorder);
 
         // And another for the arrow's body
         this.arrowElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
-        this.arrowElement.setAttribute('class', 'arrowbody');
+        this.arrowElement.setAttribute('class', "connection-body");
         this.arrowBodyElement.appendChild(this.arrowElement);
 
         this.arrowBodyElement.addEventListener('click', function (e) {
@@ -60,9 +60,49 @@
             }
         }.bind(this), true);
 
+        /* Connection - Background */
+
+        var onbackground = false;
+
+        Object.defineProperty(this, 'onbackground', {
+            'get': function get() {
+                return onbackground;
+            },
+            'set': function set(state) {
+                if (typeof state === 'boolean') {
+                    this.hidden = false;
+                    if ((onbackground=state)) {
+                        this.wrapperElement.classList.add('on-background');
+                    } else {
+                        this.wrapperElement.classList.remove('on-background');
+                    }
+                }
+            }
+        });
+
+        var hidden = false;
+
+        Object.defineProperty(this, 'hidden', {
+            'get': function get() {
+                return hidden;
+            },
+            'set': function set(state) {
+                if (typeof state === 'boolean') {
+                    if ((hidden=state)) {
+                        this.wrapperElement.classList.add('hidden');
+                    } else {
+                        this.wrapperElement.classList.remove('hidden');
+                        this.getSourceEndpoint().classList.remove('hidden');
+                        this.getTargetEndpoint().classList.remove('hidden');
+                        this.redraw();
+                    }
+                }
+            }
+        });
+
         // Closer
         this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
-        this.closerElement.setAttribute('class', 'closer');
+        this.closerElement.setAttribute('class', "option-remove");
         this.closerElement.addEventListener('click', function (e) {
             // Only process left mouse button events
             if (e.button !== 0) {
@@ -74,8 +114,21 @@
                 e.stopPropagation();
                 return;
             }
-            if (!this.controlledDestruction()) {
-                this.destroy();
+
+            if (this.onbackground) {
+                this.canvas.events.share.dispatch({
+                    'connection': this,
+                    'sourceComponent': this.sourceComponent,
+                    'sourceEndpoint': this.startAnchor,
+                    'sourceName': this.sourceName,
+                    'targetComponent': this.targetComponent,
+                    'targetEndpoint': this.endAnchor,
+                    'targetName': this.targetName
+                });
+            } else {
+                if (!this.controlledDestruction()) {
+                    this.remove();
+                }
             }
             e.stopPropagation();
         }.bind(this));
@@ -88,14 +141,14 @@
         this.pullerEndElement.setAttribute("r", '0.4em');
         this.pullerEndElement.addEventListener("click", Wirecloud.Utils.stopPropagationListener, false);
 
-        this.pullerStartElement.setAttribute('class', 'pullerBall');
-        this.pullerEndElement.setAttribute('class', 'pullerBall');
+        this.pullerStartElement.setAttribute('class', "controller-ball");
+        this.pullerEndElement.setAttribute('class', "controller-ball");
 
         // PullerLines
         this.pullerStartLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
-        this.pullerStartLine.setAttribute('class', 'pullerLine');
+        this.pullerStartLine.setAttribute('class', "controller-line");
         this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
-        this.pullerEndLine.setAttribute('class', 'pullerLine');
+        this.pullerEndLine.setAttribute('class', "controller-line");
 
         // Draggable pullers
         this.pullerStartDraggable = new Wirecloud.ui.Draggable(this.pullerStartElement, {arrow: this},
@@ -103,11 +156,21 @@
                 data.refPos = data.arrow.getPullerStart();
             },
             function onDrag(e, draggable, data, x, y) {
-                data.arrow.setPullerStart({posX: data.refPos.posX + x, posY: data.refPos.posY + y});
+                data.arrow.setPullerStart({x: data.refPos.x + x, y: data.refPos.y + y});
                 data.arrow.redraw();
             },
             function onFinish(draggable, data) {
                 data.arrow.redraw();
+
+                canvas.events.update.dispatch({
+                    'connection': data.arrow,
+                    'sourceComponent': data.arrow.sourceComponent,
+                    'sourceEndpoint': data.arrow.startAnchor,
+                    'sourceName': data.arrow.sourceName,
+                    'targetComponent': data.arrow.targetComponent,
+                    'targetEndpoint': data.arrow.endAnchor,
+                    'targetName': data.arrow.targetName
+                });
             },
             function () {return true; }
         );
@@ -116,11 +179,21 @@
                 data.refPos = data.arrow.getPullerEnd();
             },
             function onDrag(e, draggable, data, x, y) {
-                data.arrow.setPullerEnd({posX: data.refPos.posX + x, posY: data.refPos.posY + y});
+                data.arrow.setPullerEnd({x: data.refPos.x + x, y: data.refPos.y + y});
                 data.arrow.redraw();
             },
             function onFinish(draggable, data) {
                 data.arrow.redraw();
+
+                canvas.events.update.dispatch({
+                    'connection': data.arrow,
+                    'sourceComponent': data.arrow.sourceComponent,
+                    'sourceEndpoint': data.arrow.startAnchor,
+                    'sourceName': data.arrow.sourceName,
+                    'targetComponent': data.arrow.targetComponent,
+                    'targetEndpoint': data.arrow.endAnchor,
+                    'targetName': data.arrow.targetName
+                });
             },
             function () {return true; }
         );
@@ -141,11 +214,11 @@
         this.end = null;
         this.startAnchor = null;
         this.endAnchor = null;
-        this.endMulti = null;
-        this.startMulti = null;
-        this.multiId = null;
         this.readOnly = false;
         this.isGhost = false;
+
+        this.maxCoordX = 150;
+        this.minCoordX = 25;
     };
 
     /*************************************************************************
@@ -177,6 +250,8 @@
     Arrow.prototype.setStartAnchor = function setStartAnchor(anchor) {
         if (anchor != null) {
             this.startAnchor = anchor;
+            this.sourceName = this.startAnchor.getName();
+            this.sourceComponent = this.startAnchor.getComponent();
         }
     };
 
@@ -194,8 +269,18 @@
     Arrow.prototype.setEndAnchor = function setEndAnchor(anchor) {
         if (anchor != null) {
             this.endAnchor = anchor;
+            this.targetName = this.endAnchor.getName();
+            this.targetComponent = this.endAnchor.getComponent();
         }
     };
+
+    Arrow.prototype.getSourceEndpoint = function getSourceEndpoint() {
+        return this.startAnchor.getEndpoint();
+    }
+
+    Arrow.prototype.getTargetEndpoint = function getTargetEndpoint() {
+        return this.endAnchor.getEndpoint();
+    }
 
     /**
      *  Get the Arrow pullerStart point.
@@ -210,21 +295,21 @@
             return;
         }
         if (this.pullerStart == null) {
-            difX = Math.abs(from.posX - to.posX);
-            difY = Math.abs(from.posY - to.posY);
-            if (difX > 150) {
-                difX = 150;
+            difX = Math.abs(from.x - to.x);
+            difY = Math.abs(from.y - to.y);
+            if (difX > this.maxCoordX) {
+                difX = this.maxCoordX;
             }
-            if (difX < 25) {
-                difX = 25;
+            if (difX < this.minCoordX) {
+                difX = this.minCoordX;
             }
-            result = {posX: difX, posY: 0};
+            result = {x: difX, y: 0};
         } else {
             result = this.pullerStart;
         }
 
         if (absolute) {
-            return {posX: from.posX + result.posX, posY: from.posY + result.posY};
+            return {x: from.x + result.x, y: from.y + result.y};
         } else {
             return result;
         }
@@ -243,21 +328,21 @@
             return;
         }
         if (this.pullerEnd == null) {
-            difX = Math.abs(from.posX - to.posX);
-            difY = Math.abs(from.posY - to.posY);
-            if (difX > 150) {
-                difX = 150;
+            difX = Math.abs(from.x - to.x);
+            difY = Math.abs(from.y - to.y);
+            if (difX > this.maxCoordX) {
+                difX = this.maxCoordX;
             }
-            if (difX < 25) {
-                difX = 25;
+            if (difX < this.minCoordX) {
+                difX = this.minCoordX;
             }
-            result = {posX: -difX, posY: 0};
+            result = {x: -difX, y: 0};
         } else {
             result = this.pullerEnd;
         }
 
         if (absolute) {
-            return {posX: to.posX + result.posX, posY: to.posY + result.posY};
+            return {x: to.x + result.x, y: to.y + result.y};
         } else {
             return result;
         }
@@ -267,14 +352,22 @@
      *  Set the Arrow pullerStart point.
      */
     Arrow.prototype.setPullerStart = function setPullerStart(pStart) {
-        this.pullerStart = pStart;
+        if (pStart == null || pStart == 'auto') {
+            this.pullerStart = null;
+        } else {
+            this.pullerStart = pStart;
+        }
     };
 
     /**
      *  Set the Arrow pullerEnd point.
      */
     Arrow.prototype.setPullerEnd = function setPullerEnd(pEnd) {
-        this.pullerEnd = pEnd;
+        if (pEnd == null || pEnd == 'auto') {
+            this.pullerEnd = null;
+        } else {
+            this.pullerEnd = pEnd;
+        }
     };
 
     /**
@@ -289,35 +382,35 @@
         // Start puller
         startPuller = this.getPullerStart(true);
         this.pullerStartLine.setAttribute("d",
-                "M " + from.posX + "," + from.posY + " " + startPuller.posX + "," + startPuller.posY);
-        this.pullerStartElement.setAttribute("cx", startPuller.posX);
-        this.pullerStartElement.setAttribute("cy", startPuller.posY);
+                "M " + from.x + "," + from.y + " " + startPuller.x + "," + startPuller.y);
+        this.pullerStartElement.setAttribute("cx", startPuller.x);
+        this.pullerStartElement.setAttribute("cy", startPuller.y);
 
         // End puller
         endPuller = this.getPullerEnd(true);
         this.pullerEndLine.setAttribute("d",
-                "M " + to.posX + "," + to.posY + " " + endPuller.posX + "," + endPuller.posY);
-        this.pullerEndElement.setAttribute("cx", endPuller.posX);
-        this.pullerEndElement.setAttribute("cy", endPuller.posY);
+                "M " + to.x + "," + to.y + " " + endPuller.x + "," + endPuller.y);
+        this.pullerEndElement.setAttribute("cx", endPuller.x);
+        this.pullerEndElement.setAttribute("cy", endPuller.y);
 
         this.arrowElementBorder.setAttribute("d",
-                "M " + from.posX + "," + from.posY + " " +
-                "C " + startPuller.posX + "," + startPuller.posY + " " + endPuller.posX + "," + endPuller.posY + " " +
-                to.posX + "," + to.posY
+                "M " + from.x + "," + from.y + " " +
+                "C " + startPuller.x + "," + startPuller.y + " " + endPuller.x + "," + endPuller.y + " " +
+                to.x + "," + to.y
         );
         this.arrowElement.setAttribute("d",
-                "M " + from.posX + "," + from.posY + " " +
-                "C " + startPuller.posX + "," + startPuller.posY + " " + endPuller.posX + "," + endPuller.posY + " " +
-                to.posX + "," + to.posY
+                "M " + from.x + "," + from.y + " " +
+                "C " + startPuller.x + "," + startPuller.y + " " + endPuller.x + "," + endPuller.y + " " +
+                to.x + "," + to.y
         );
 
         try {
             // Closer
             posCloser = this.calculateMid();
 
-            this.closerElement.setAttribute("cx", posCloser.posX);
-            this.closerElement.setAttribute("cy", posCloser.posY);
-            this.closerElement.setAttribute("r", '0.65em');
+            this.closerElement.setAttribute("cx", posCloser.x);
+            this.closerElement.setAttribute("cy", posCloser.y);
+            this.closerElement.setAttribute("r", '6px');
         }
         catch (err) {
             //TODO: error msg
@@ -337,9 +430,9 @@
         B4 = function B4(t) { return (1 - t) * (1 - t) * (1 - t); };
 
         getBercier = function getBezier(percent, C1, C2, C3, C4) {
-            var X = C1.posX * B1(percent) + C2.posX * B2(percent) + C3.posX * B3(percent) + C4.posX * B4(percent);
-            var Y = C1.posY * B1(percent) + C2.posY * B2(percent) + C3.posY * B3(percent) + C4.posY * B4(percent);
-            return {posX : X, posY : Y};
+            var X = C1.x * B1(percent) + C2.x * B2(percent) + C3.x * B3(percent) + C4.x * B4(percent);
+            var Y = C1.y * B1(percent) + C2.y * B2(percent) + C3.y * B3(percent) + C4.y * B4(percent);
+            return {x : X, y : Y};
         };
 
         return getBercier(0.5, this.start, this.getPullerStart(true), this.getPullerEnd(true), this.end);
@@ -365,7 +458,7 @@
     Arrow.prototype.emphasize = function emphasize() {
         if (this.emphasize_counter < 2) {
             this.emphasize_counter += 1;
-            this.addClassName('emphasize');
+            this.addClassName('highlighted');
         } else if (this.emphasize_counter == 2) {
             return;
         }
@@ -377,7 +470,7 @@
     Arrow.prototype.deemphasize = function deemphasize() {
         this.emphasize_counter -= 1;
         if (this.emphasize_counter === 0) {
-            this.removeClassName('emphasize');
+            this.removeClassName('highlighted');
         } else if (this.emphasize_counter < 0) {
             this.emphasize_counter = 0;
             return;
@@ -455,7 +548,6 @@
      * Destroy the arrow.
      */
     Arrow.prototype.destroy = function destroy() {
-
         this.disconnect();
         if (this.canvas !== null) {
             this.canvas.removeArrow(this);
@@ -489,6 +581,58 @@
             this.endAnchor.removeArrow(this);
             this.endAnchor = null;
         }
+    };
+
+    Arrow.prototype.remove = function remove(force) {
+        if (typeof force !== 'boolean') {
+            force = false;
+        }
+
+        this.canvas.events.detach.dispatch({
+            'connection': this,
+            'sourceComponent': this.sourceComponent,
+            'sourceEndpoint': this.startAnchor,
+            'sourceName': this.sourceName,
+            'targetComponent': this.targetComponent,
+            'targetEndpoint': this.endAnchor,
+            'targetName': this.targetName,
+            'cascadeRemove': force
+        });
+
+        if (force || !this.onbackground) {
+            this.destroy();
+        }
+    };
+
+    Arrow.prototype.serialize = function serialize() {
+        var sourcehandle, targethandle;
+
+        if (this.pullerStart == null) {
+            sourcehandle = 'auto';
+        } else {
+            sourcehandle = this.getPullerStart();
+        }
+
+        if (this.pullerEnd == null) {
+            targethandle = 'auto';
+        } else {
+            targethandle = this.getPullerEnd();
+        }
+
+        return {
+            'sourcename': this.sourceName,
+            'sourcehandle': sourcehandle,
+            'targetname': this.targetName,
+            'targethandle': targethandle
+        };
+    };
+
+    Arrow.prototype.getBusinessInfo = function getBusinessInfo() {
+        return {
+            'readonly': this.readOnly,
+            'source': this.startAnchor.serialize(),
+            'target': this.endAnchor.serialize()
+        };
     };
 
     /**

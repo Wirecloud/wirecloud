@@ -1,3 +1,5 @@
+/*jslint multistr: true */
+
 /*---------------------------------------------------------------------------*
  *                               Styled Gadget                               *
  *---------------------------------------------------------------------------*/
@@ -14,10 +16,11 @@ var init = function init() {
     var alternatives = new StyledElements.StyledAlternatives();
 
     /* Left Content */
-    var onChange = function(component, newSelection, newElements, removedElements) {
-        if (newSelection.length > 0)
+    var onChange = function onChange(component, newSelection, newElements, removedElements) {
+        if (newSelection.length > 0) {
             alternatives.showAlternative(newSelection[0]);
-    }
+        }
+    };
     var list = new StyledElements.StyledList({id: 'list', multivalued: false});
     list.addEventListener('change', onChange);
     layout.getWestContainer().appendChild(list);
@@ -85,6 +88,71 @@ var init = function init() {
     <h6>h6. Heading 6</h6>\n\
 ";
     insertHTMLExample("Headings", code);
+
+    /* Body */
+    code = "\
+    <h2>Body copy</h2>\n\
+\n\
+    <p>Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>\n\
+    <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec ullamcorper nulla non metus auctor fringilla. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Donec ullamcorper nulla non metus auctor fringilla.</p>\n\
+    <p>Maecenas sed diam eget risus varius blandit sit amet non magna. Donec id elit non mi porta gravida at eget metus. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>\n\
+\n\
+    <h3>Lead body copy</h3>\n\
+\n\
+    <p class=\"lead\">Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.</p>\n\
+";
+
+    insertHTMLExample("Body", code);
+
+    /* Lists */
+    code = "\
+        <h3>Unordered</h3>\n\
+\n\
+        <ul>\n\
+            <li>Lorem ipsum dolor sit amet</li>\n\
+            <li>Consectetur adipiscing elit</li>\n\
+            <li>Integer molestie lorem at massa</li>\n\
+            <li>Facilisis in pretium nisl aliquet</li>\n\
+            <li>Nulla volutpat aliquam velit\n\
+                <ul>\n\
+                    <li>Phasellus iaculis neque</li>\n\
+                    <li>Purus sodales ultricies</li>\n\
+                    <li>Vestibulum laoreet porttitor sem</li>\n\
+                    <li>Ac tristique libero volutpat at</li>\n\
+                </ul>\n\
+            </li>\n\
+            <li>Faucibus porta lacus fringilla vel</li>\n\
+            <li>Aenean sit amet erat nunc</li>\n\
+            <li>Eget porttitor lorem</li>\n\
+        </ul>\n\
+\n\
+        <h3>Ordered</h3>\n\
+\n\
+        <ol>\n\
+            <li>Lorem ipsum dolor sit amet</li>\n\
+            <li>Consectetur adipiscing elit</li>\n\
+            <li>Integer molestie lorem at massa</li>\n\
+            <li>Facilisis in pretium nisl aliquet</li>\n\
+            <li>Nulla volutpat aliquam velit</li>\n\
+            <li>Faucibus porta lacus fringilla vel</li>\n\
+            <li>Aenean sit amet erat nunc</li>\n\
+            <li>Eget porttitor lorem</li>\n\
+        </ol>\n\
+";
+
+    insertHTMLExample("Lists", code);
+
+    /*
+     * Alerts example
+     */
+    code = "\
+    <div class=\"alert alert-success\"><strong>Well done!</strong> You successfully read this important alert message.</div>\n\
+    <div class=\"alert alert-info\"><strong>Heads up!</strong> This alert needs your attention, but it's not super important.</div>\n\
+    <div class=\"alert alert-warning\"><strong>Warning!</strong> Better check yourself, you're not looking too good.</div>\n\
+    <div class=\"alert alert-danger\"><strong>Oh snap!</strong> Change a few things up and try submitting again.</div>\n\
+";
+
+    insertHTMLExample("Alerts", code);
 
     /*
      * BorderLayout example
@@ -227,20 +295,29 @@ var init = function init() {
     insertExample("Input Components", code);
 
 
+    /* Pills example */
+    code = "\
+    var pills;\n\
+\n\
+    pills = new StyledElements.Pills();\n\
+    pills.add('Home');\n\
+    pills.add('Profile');\n\
+    pills.add('Messages');\n\
+    container.appendChild(pills);\n\
+";
+
+    insertExample("Pills", code);
 
     /*
      * Notebook example
      */
     code = "\
-    var layout, goToTab3Button, createTabButton, notebook, tab1, tab2, tab3, tab4, tab5; \n\
+    var layout, goToTab3Button, notebook, tab1, tab2, tab3, tab4, tab5; \n\
 \n\
     layout = new StyledElements.BorderLayout();\n\
 \n\
     goToTab3Button = new StyledElements.StyledButton({'text': 'Go to Tab \"tres\"'});\n\
     layout.getNorthContainer().appendChild(goToTab3Button);\n\
-\n\
-    createTabButton = new StyledElements.StyledButton({'text': 'New Tab'});\n\
-    layout.getNorthContainer().appendChild(createTabButton);\n\
 \n\
     notebook = new StyledElements.StyledNotebook();\n\
     tab1 = notebook.createTab({name: 'uno'});\n\
@@ -256,8 +333,12 @@ var init = function init() {
     layout.getCenterContainer().appendChild(notebook);\n\
     container.appendChild(layout);\n\
 \n\
+    notebook.addEventListener('newTab', function (notebook) {\n\
+        var tab = notebook.createTab({name: 'New Tab'});\n\
+        tab.appendChild(document.createTextNode('Tab created dinamically'));\n\
+        notebook.goToTab(tab);\n\
+    });\n\
     goToTab3Button.addEventListener('click', function() {notebook.goToTab(tab3.getId())});\n\
-    createTabButton.addEventListener('click', function() {notebook.createTab({name: 'Tab', initiallyVisible: true})});\n\
 \n";
 
     insertExample("Notebook", code);
@@ -354,12 +435,61 @@ var init = function init() {
      * PopupMenu example
      */
     code = "\n\
-    var popupmenu = new StyledElements.PopupButton({text:'Popup'});\n\
-    container.appendChild(popupmenu);\n\
+    var build_menu = function build_menu(placement) {\n\
+        var popupmenu = new StyledElements.PopupButton({text: placement, menuOptions: {placement: [placement]}});\n\
+        popupmenu.getPopupMenu().append(new StyledElements.MenuItem('Action'));\n\
+        popupmenu.getPopupMenu().append(new StyledElements.MenuItem('Another action'));\n\
+        popupmenu.getPopupMenu().append(new StyledElements.MenuItem('Something else here'));\n\
+        popupmenu.getPopupMenu().append(new StyledElements.Separator());\n\
+        popupmenu.getPopupMenu().append(new StyledElements.MenuItem('Separated link'));\n\
 \n\
-\n";
+        return popupmenu;\n\
+    };\n\
+    container.appendChild(build_menu('left-bottom'));\n\
+    container.appendChild(build_menu('right-bottom'));\n\
+    container.appendChild(build_menu('top-left'));\n\
+    container.appendChild(build_menu('top-right'));\n\
+    container.appendChild(build_menu('bottom-left'));\n\
+    container.appendChild(build_menu('bottom-right'));\n\
+";
     
     insertExample("PopupMenu", code);
+
+    /*
+     * Tooltip example
+     */
+    code = "\n\
+    var button, tooltip;\n\
+\n\
+    button = new StyledElements.StyledButton({text: 'Tooltip on left'});\n\
+    container.appendChild(button);\n\
+\n\
+    tooltip = new StyledElements.Tooltip({content: 'Tooltip left', placement: ['left']});\n\
+    tooltip.bind(button)\n\
+\n\
+    button = new StyledElements.StyledButton({text: 'Tooltip on top'});\n\
+    container.appendChild(button);\n\
+\n\
+    tooltip = new StyledElements.Tooltip({content: 'Tooltip top', placement: ['top']});\n\
+    tooltip.bind(button)\n\
+\n\
+    button = new StyledElements.StyledButton({text: 'Tooltip on bottom'});\n\
+    container.appendChild(button);\n\
+\n\
+    tooltip = new StyledElements.Tooltip({content: 'Tooltip bottom', placement: ['bottom']});\n\
+    tooltip.bind(button)\n\
+\n\
+    button = new StyledElements.StyledButton({text: 'Tooltip on right'});\n\
+    container.appendChild(button);\n\
+\n\
+    tooltip = new StyledElements.Tooltip({content: 'Tooltip right', placement: ['right']});\n\
+    tooltip.bind(button)\n\
+\n\
+    button = new StyledElements.StyledButton({text: 'Auto placement', title: 'Auto placement'});\n\
+    container.appendChild(button);\n\
+\n";
+
+    insertExample("Tooltip", code);
 
     /*
      * Popover example
@@ -472,6 +602,44 @@ var init = function init() {
     button = new StyledElements.StyledButton({text:'Danger', 'class': 'btn-danger'});\n\
     button.disable();\n\
     container.appendChild(button);\n\
+\n\
+    title = document.createElement('h3');\n\
+    title.textContent = 'Icons';\n\
+    container.appendChild(title);\n\
+\n\
+    button = new StyledElements.StyledButton({'class': 'btn-danger', text: 'Delete', iconClass: 'icon-remove'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({iconClass: 'icon-cog'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({'class': 'btn-primary btn-large', 'iconClass': 'icon-archive', stackedIconClass: 'icon-plus-sign', stackedIconPlacement: 'bottom-left'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({'class': 'btn-info btn-large', 'iconClass': 'icon-archive', stackedIconClass: 'icon-info-sign', stackedIconPlacement: 'bottom-right', text: 'Info'});\n\
+    container.appendChild(button);\n\
+\n\
+    title = document.createElement('h3');\n\
+    title.textContent = 'Toggle buttons';\n\
+    container.appendChild(title);\n\
+\n\
+    button = new StyledElements.ToggleButton({text:'Default'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.ToggleButton({text:'Primary', 'class': 'btn-primary'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.ToggleButton({text:'Info', 'class': 'btn-info'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.ToggleButton({text:'Success', 'class': 'btn-success'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.ToggleButton({text:'Warning', 'class': 'btn-warning'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.ToggleButton({text:'Danger', 'class': 'btn-danger'});\n\
+    container.appendChild(button);\n\
 \n";
 
     insertExample("Buttons", code);
@@ -494,6 +662,16 @@ var init = function init() {
     wrapper.appendChild(label);\n\
 \n\
     label = document.createElement('span');\n\
+    label.className = 'label label-primary';\n\
+    label.textContent = 'Primary';\n\
+    wrapper.appendChild(label);\n\
+\n\
+    label = document.createElement('span');\n\
+    label.className = 'label label-info';\n\
+    label.textContent = 'Info';\n\
+    wrapper.appendChild(label);\n\
+\n\
+    label = document.createElement('span');\n\
     label.className = 'label label-success';\n\
     label.textContent = 'Success';\n\
     wrapper.appendChild(label);\n\
@@ -506,11 +684,6 @@ var init = function init() {
     label = document.createElement('span');\n\
     label.className = 'label label-important';\n\
     label.textContent = 'Important';\n\
-    wrapper.appendChild(label);\n\
-\n\
-    label = document.createElement('span');\n\
-    label.className = 'label label-info';\n\
-    label.textContent = 'Info';\n\
     wrapper.appendChild(label);\n\
 \n\
     label = document.createElement('span');\n\
@@ -530,28 +703,33 @@ var init = function init() {
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
-    badge.className = 'badge badge-success';\n\
+    badge.className = 'badge badge-primary';\n\
     badge.textContent = '2';\n\
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
-    badge.className = 'badge badge-warning';\n\
+    badge.className = 'badge badge-info';\n\
     badge.textContent = '3';\n\
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
-    badge.className = 'badge badge-important';\n\
+    badge.className = 'badge badge-success';\n\
     badge.textContent = '4';\n\
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
-    badge.className = 'badge badge-info';\n\
+    badge.className = 'badge badge-warning';\n\
     badge.textContent = '5';\n\
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
-    badge.className = 'badge badge-inverse';\n\
+    badge.className = 'badge badge-important';\n\
     badge.textContent = '6';\n\
+    wrapper.appendChild(badge);\n\
+\n\
+    badge = document.createElement('span');\n\
+    badge.className = 'badge badge-inverse';\n\
+    badge.textContent = '7';\n\
     wrapper.appendChild(badge);\n\
 \n";
 

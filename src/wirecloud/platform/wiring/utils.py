@@ -25,24 +25,37 @@ from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.platform.plugins import get_operator_api_extensions
 
 
+def has_component(endpoint, component_id, component_type):
+    c_type, c_id, e_name = tuple(endpoint.split('/'))
+
+    return c_type == component_type and c_id == component_id
+
+
+def is_component(connection, endpoint_type, component_type, component_id):
+    return connection[endpoint_type]['type'] == component_type and connection[endpoint_type]['id'] == component_id
+
+
 def remove_related_iwidget_connections(wiring, iwidget):
 
-    connections_to_remove = []
+    removed_connections = []
 
-    for index, connection in enumerate(wiring['connections']):
-        if (connection['source']['type'] == 'iwidget' and connection['source']['id'] == iwidget.id) or (connection['target']['type'] == 'iwidget' and connection['target']['id'] == iwidget.id):
-            connection['index'] = index
-            connections_to_remove.append(connection)
+    for i, connection in enumerate(wiring['connections']):
+        if is_component(connection, 'source', 'widget', iwidget.id) or is_component(connection, 'target', 'widget', iwidget.id):
+            removed_connections.append(connection)
 
-    view_available = 'views' in wiring and len(wiring['views']) > 0
-    if view_available and ('iwidgets' in wiring['views'][0]) and (iwidget.id in wiring['views'][0]['iwidgets']):
-        del wiring['views'][0]['iwidgets'][iwidget.id]
+    if 'visualdescription' in wiring:
+        if 'connections' in wiring['visualdescription']:
+            removed_visual_connections = []
 
-    connection_view_available = view_available and 'connections' in wiring['views'][0]
-    for connection in connections_to_remove:
+            for connection in wiring['visualdescription']['connections']:
+                if has_component(connection['sourcename'], iwidget.id, 'widget') or has_component(connection['targetname'], iwidget.id, 'widget'):
+                    removed_visual_connections.append(connection)
+
+            for connection in removed_visual_connections:
+                wiring['visualdescription']['connections'].remove(connection)
+
+    for connection in removed_connections:
         wiring['connections'].remove(connection)
-        if connection_view_available and len(wiring['views'][0]['connections']) > connection['index']:
-            del wiring['views'][0]['connections'][connection['index']]
 
 
 def get_operator_cache_key(operator, domain, mode):
@@ -63,3 +76,132 @@ def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode
     xhtml = t.render(c)
 
     return xhtml
+
+
+def get_endpoint_name(endpoint):
+    return "%s/%s/%s" % (endpoint['type'], endpoint['id'], endpoint['endpoint'])
+
+
+def rename_component_type(component_type):
+    return component_type[1:] if component_type in ['iwidget', 'ioperator'] else "not_supported"
+
+
+def get_behaviour_skeleton():
+    return {
+        'title': None,
+        'description': None,
+        'components': {
+            'operator': {},
+            'widget': {}
+        },
+        'connections': []
+    }
+
+
+def get_wiring_skeleton():
+    return {
+        'version': "2.0",
+        'connections': [],
+        'operators': {},
+        'visualdescription': {
+            'behaviours': [],
+            'components': {
+                'operator': {},
+                'widget': {}
+            },
+            'connections': []
+        }
+    }
+
+
+def is_empty_wiring(visualInfo):
+    return len(visualInfo['connections']) == 0 and len(visualInfo['components']['operator']) == 0 and len(visualInfo['components']['widget']) == 0
+
+
+def parse_wiring_old_version(wiring_status):
+
+    # set the structure for version 2.0
+    new_version = get_wiring_skeleton()
+
+    # set up business description
+
+    if 'operators' in wiring_status:
+        for operator_id, operator in wiring_status['operators'].items():
+            new_version['operators'][operator_id] = operator
+
+    if 'connections' in wiring_status:
+        for connection in wiring_status['connections']:
+            new_version['connections'].append({
+                'readonly': connection.get('readonly', connection.get('readOnly', False)),
+                'source': {
+                    'type': rename_component_type(connection['source']['type']),
+                    'id': connection['source']['id'],
+                    'endpoint': connection['source']['endpoint']
+                },
+                'target': {
+                    'type': rename_component_type(connection['target']['type']),
+                    'id': connection['target']['id'],
+                    'endpoint': connection['target']['endpoint']
+                }
+            })
+
+    # set up visual description
+
+    if 'views' in wiring_status and len(wiring_status['views']) > 0:
+        old_view = wiring_status['views'][0]
+
+        # rebuild connections
+        connections_length = len(new_version['connections'])
+        for connection_index, connection_view in enumerate(old_view.get('connections', [])):
+            if connection_index < connections_length:
+                # get connection info from business part
+                connection = new_version['connections'][connection_index]
+                # set info into global behaviour
+                new_version['visualdescription']['connections'].append({
+                    'sourcename': get_endpoint_name(connection['source']),
+                    'sourcehandle': {
+                        'x': connection_view['pullerStart']['posX'],
+                        'y': connection_view['pullerStart']['posY']
+                    },
+                    'targetname': get_endpoint_name(connection['target']),
+                    'targethandle': {
+                        'x': connection_view['pullerEnd']['posX'],
+                        'y': connection_view['pullerEnd']['posY']
+                    },
+                })
+
+        # rebuild operators
+        for operator_id, operator in old_view['operators'].items():
+            if operator_id in new_version['operators']:
+                # set info into global behaviour
+                visualInfo = {}
+                visualInfo['collapsed'] = operator['minimized'] if 'minimized' in operator else False
+                visualInfo['position'] = {
+                    'x': operator['position']['posX'],
+                    'y': operator['position']['posY']
+                }
+                if 'endPointsInOuts' in operator:
+                    visualInfo['endpoints'] = {
+                        'source': operator['endPointsInOuts']['sources'],
+                        'target': operator['endPointsInOuts']['targets']
+                    }
+                new_version['visualdescription']['components']['operator'][operator_id] = visualInfo
+
+        # rebuild widgets
+        for widget_id, widget in old_view['iwidgets'].items():
+            # set info into global behaviour
+            new_version['visualdescription']['components']['widget'][widget_id] = {
+                'endpoints': {
+                    'source': widget['endPointsInOuts']['sources'],
+                    'target': widget['endPointsInOuts']['targets']
+                },
+                'position': {
+                    'x': widget['position']['posX'],
+                    'y': widget['position']['posY']
+                }
+            }
+
+            if 'name' in widget:
+                new_version['visualdescription']['components']['widget'][widget_id]['name'] = widget['name']
+
+    return new_version

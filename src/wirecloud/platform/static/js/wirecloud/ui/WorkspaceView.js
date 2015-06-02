@@ -40,6 +40,7 @@
         this.walletButton = this.buildAddWidgetButton();
 
         this.wiringButton = new StyledElements.StyledButton({
+            'class': "btn-display-wiring-view",
             'iconClass': 'icon-puzzle-piece',
             'title': gettext('Wiring')
         });

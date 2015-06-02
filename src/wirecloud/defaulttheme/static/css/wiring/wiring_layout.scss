@@ -1,0 +1,88 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+@import 'wiring/defaults';
+
+
+// ============================================================================
+// WIRING-VIEW - DIAGRAM
+// ============================================================================
+
+.wiring-view .wiring-diagram {
+    background-color: $wiring-view-panel-background-color;
+    border: $panel-default-border;
+    box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+
+    .alert .se-alert-heading {
+        text-align: center;
+    }
+
+    .wiring-connections {
+        @include position-absolute(0, 0);
+        width: 100%;
+        height: 100%;
+    }
+}
+
+// ============================================================================
+// WIRING-VIEW - LEFTSIDE-BAR
+// ============================================================================
+
+.wiring-view .wiring-sidebar {
+
+    .alert {
+        padding: 10px;
+
+        .title {
+            margin-bottom: 5px;
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        .content {
+            font-size: 12px;
+            line-height: 20px;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING-VIEW - BOTTOM-BAR
+// ============================================================================
+
+.wiring-view .wiring-bottombar {
+    background-color: rgb(245, 245, 245);
+    border: $panel-default-border;
+    border-radius: $border-radius-onlybottom;
+    box-shadow: $wiring-view-panel-box-shadow;
+
+    .wiring-legend {
+        position: relative;
+        display: table;
+        float: right;
+        max-width: $panel-legend-max-width;
+        height: 100%;
+        margin: 0px 10px;
+        box-sizing: border-box;
+
+        &:last-child {
+            margin-right: 0px;
+        }
+    }
+}

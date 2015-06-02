@@ -55,6 +55,11 @@ CATALOGUE_CSS = (
 
 WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor.js',
+    'js/wirecloud/ui/WiringEditor/Behaviour.js',
+    'js/wirecloud/ui/WiringEditor/BehaviourManagerMixin.js',
+    'js/wirecloud/ui/WiringEditor/BehaviourEngine.js',
+    'js/wirecloud/ui/WiringEditor/ComponentManager.js',
+    'js/wirecloud/ui/WiringEditor/ComponentPreferences.js',
     'js/wirecloud/ui/WiringEditor/Anchor.js',
     'js/wirecloud/ui/WiringEditor/Arrow.js',
     'js/wirecloud/ui/WiringEditor/ArrowCreator.js',
@@ -64,8 +69,6 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/OperatorInterface.js',
     'js/wirecloud/ui/WiringEditor/SourceAnchor.js',
     'js/wirecloud/ui/WiringEditor/TargetAnchor.js',
-    'js/wirecloud/ui/WiringEditor/Multiconnector.js',
-    'js/wirecloud/ui/WiringEditor/GenericInterfaceSettingsMenuItems.js',
     'js/wirecloud/ui/WiringEditor/MiniInterfaceSettingsMenuItems.js',
     'js/wirecloud/ui/WiringPreview.js',
     'js/wirecloud/ui/ColorSmartBox.js',
@@ -75,6 +78,7 @@ WIRING_EDITOR_FILES = (
 
 TUTORIAL_FILES = (
     'js/wirecloud/ui/Tutorial.js',
+    'js/wirecloud/ui/Tutorial/Utils.js',
     'js/wirecloud/ui/TutorialCatalogue.js',
     'js/wirecloud/ui/TutorialSubMenu.js',
     'js/wirecloud/ui/Tutorial/PopUp.js',
@@ -83,6 +87,7 @@ TUTORIAL_FILES = (
     'js/wirecloud/ui/Tutorial/FormAction.js',
     'js/wirecloud/ui/Tutorial/AutoAction.js',
     'js/wirecloud/Tutorials/BasicConcepts.js',
+    'js/wirecloud/Tutorials/MashupWiringDesign.js',
 )
 
 STYLED_ELEMENTS_FILES = (
@@ -141,24 +146,28 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Form.js',
     'js/StyledElements/PaginationInterface.js',
     'js/StyledElements/Popover.js',
+    'js/StyledElements/EventManagerMixin.js',
+    'js/StyledElements/OffCanvasLayout.js',
+    'js/StyledElements/Alert.js',
 )
 
 BASE_CSS = (
+    'css/base/utils.scss',
     'css/base/body.scss',
     'css/base/fade.css',
-    'css/base/panel.scss',
     'css/base/code.scss',
     'css/windowmenues/logwindowmenu.scss',
     'css/workspace/ioperator.css',
 )
 
 WIRING_EDITOR_CSS = (
-    'css/wiring/editor.css',
-    'css/wiring/anchor.css',
-    'css/wiring/arrow.css',
-    'css/wiring/entities.css',
-    'css/wiring/multiconnector.css',
-    'css/wiring/emptyWiringBox.css',
+    'css/wiring/wiring_layout.scss',
+    'css/wiring/wiring_sidebar.scss',
+    'css/wiring/wiring_bottombar.scss',
+    'css/wiring/wiring_components.scss',
+    'css/wiring/wiring_endpoints.scss',
+    'css/wiring/wiring_connections.scss',
+    'css/wiring/wiring_behaviours.scss',
     'css/wiring/wiringPreview.css',
     'css/wiring/colorSmartBox.css',
 )
@@ -179,6 +188,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_notebook.scss',
     'css/styledelements/styled_form.css',
     'css/styledelements/styled_pagination.scss',
+    'css/styledelements/styled_panel.scss',
     'css/styledelements/styled_numeric_field.scss',
     'css/styledelements/styled_text_field.scss',
     'css/styledelements/styled_text_area.scss',
@@ -189,12 +199,13 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_file_field.scss',
     'css/styledelements/styled_table.scss',
     'css/styledelements/styled_label_badge.scss',
-    'css/styledelements/styled_message.scss',
+    'css/styledelements/styled_alert.scss',
     'css/styledelements/styled_rating.scss',
     'css/styledelements/styled_popup_menu.scss',
     'css/styledelements/styled_popover.scss',
     'css/styledelements/styled_tooltip.css',
     'css/styledelements/styled_expander.scss',
+    'css/styledelements/styled_offcanvas_layout.scss',
 )
 
 

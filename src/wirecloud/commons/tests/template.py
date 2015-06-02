@@ -22,14 +22,18 @@ from __future__ import unicode_literals
 import copy
 import json
 import os
+import rdflib
 
 from django.utils.unittest import TestCase
 
-from wirecloud.commons.utils.template.parsers import TemplateParser
+from wirecloud.commons.utils.template.parsers import TemplateParser, TemplateParseException
+from wirecloud.commons.utils.template.parsers.next_xml import WIRECLOUD_TEMPLATE_NS
 from wirecloud.commons.utils.template.writers.json import write_json_description
 from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
 from wirecloud.commons.utils.template.writers.xml import write_xml_description
 from wirecloud.commons.utils.template.writers.next_xml import write_xml_description as write_next_xml_description
+
+WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
@@ -38,7 +42,7 @@ __test__ = False
 
 class TemplateUtilsTestCase(TestCase):
 
-    tags = ('template',)
+    tags = ('wirecloud-template',)
     maxDiff = None
 
     @classmethod
@@ -452,11 +456,19 @@ class TemplateUtilsTestCase(TestCase):
                 }
             ],
             'wiring': {
+                'version': '2.0',
                 'inputs': [],
                 'outputs': [],
                 'operators': {},
                 'connections': [],
-                'views': []
+                'visualdescription': {
+                    "behaviours": [],
+                    "components": {
+                        "operator": {},
+                        "widget": {}
+                    },
+                    "connections": []
+                }
             },
             'default_lang': 'en',
             'translations': {},
@@ -567,6 +579,7 @@ class TemplateUtilsTestCase(TestCase):
                 },
             ],
             'wiring': {
+                'version': '2.0',
                 'inputs': [
                     {
                         'name': 'input1',
@@ -645,12 +658,19 @@ class TemplateUtilsTestCase(TestCase):
                         "readonly": True
                     },
                     {
-                        "source": {"type": "iwidget", 'id': '1', 'endpoint': 'output1'},
+                        "source": {"type": "widget", 'id': '1', 'endpoint': 'output1'},
                         "target": {"type": "operator", 'id': '1', 'endpoint': 'input1'},
                         "readonly": False
                     }
                 ],
-                'views': []
+                'visualdescription': {
+                    "behaviours": [],
+                    "components": {
+                        "operator": {},
+                        "widget": {}
+                    },
+                    "connections": []
+                }
             },
             'default_lang': 'en',
             'translations': {},
@@ -758,6 +778,7 @@ class TemplateUtilsTestCase(TestCase):
                 },
             ],
             'wiring': {
+                'version': '2.0',
                 'inputs': [
                     {
                         'name': 'input1',
@@ -836,12 +857,19 @@ class TemplateUtilsTestCase(TestCase):
                         "readonly": True
                     },
                     {
-                        "source": {"type": "iwidget", 'id': '1', 'endpoint': 'output1'},
+                        "source": {"type": "widget", 'id': '1', 'endpoint': 'output1'},
                         "target": {"type": "operator", 'id': '1', 'endpoint': 'input1'},
                         "readonly": False
                     }
                 ],
-                'views': []
+                'visualdescription': {
+                    "behaviours": [],
+                    "components": {
+                        "operator": {},
+                        "widget": {}
+                    },
+                    "connections": []
+                }
             },
             'default_lang': 'en',
             'translations': {
@@ -964,6 +992,7 @@ class TemplateUtilsTestCase(TestCase):
                 },
             ],
             'wiring': {
+                'version': '2.0',
                 'inputs': [],
                 'outputs': [],
                 'operators': {
@@ -989,7 +1018,14 @@ class TemplateUtilsTestCase(TestCase):
                     }
                 },
                 'connections': [],
-                'views': []
+                'visualdescription': {
+                    "behaviours": [],
+                    "components": {
+                        "operator": {},
+                        "widget": {}
+                    },
+                    "connections": []
+                }
             },
             'default_lang': 'en',
             'translations': {},
@@ -1355,6 +1391,34 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+    def compare_input_and_output_mashup(self, filename, mashup_format="rdf"):
+
+        mashup_data = self.read_json_fixtures(filename)
+
+        if mashup_format == "rdf":
+            template = TemplateParser(write_rdf_description(mashup_data))
+        elif mashup_format == "xml":
+            template = TemplateParser(write_next_xml_description(mashup_data))
+
+        self.check_full_mashup(template.get_resource_info(), mashup_data)
+
+    def read_json_fixtures(self, *args):
+        testdir_path = os.path.join(os.path.dirname(__file__), 'test-data')
+        json_fixtures = []
+
+        for filename in args:
+            file_opened = open(os.path.join(testdir_path, filename + '.json'))
+            json_fixtures.append(json.loads(file_opened.read()))
+            file_opened.close()
+
+        if len(json_fixtures) == 0:
+            return None
+
+        if len(json_fixtures) == 1:
+            return json_fixtures[0]
+
+        return tuple(json_fixtures)
+
     def read_template(self, *filename):
         f = open(os.path.join(os.path.dirname(__file__), '..', 'test-data', *filename), 'rb')
         contents = f.read()
@@ -1376,6 +1440,15 @@ class TemplateUtilsTestCase(TestCase):
         del processed_info['wiring']['connections']
         del mashup_info['wiring']['connections']
 
+        self.assertItemsEqual(processed_info['wiring']['visualdescription']['connections'], mashup_info['wiring']['visualdescription']['connections'])
+        del processed_info['wiring']['visualdescription']['connections']
+        del mashup_info['wiring']['visualdescription']['connections']
+
+        for behaviour1, behaviour2 in zip(processed_info['wiring']['visualdescription']['behaviours'], mashup_info['wiring']['visualdescription']['behaviours']):
+            self.assertItemsEqual(behaviour1['connections'], behaviour2['connections'])
+            del behaviour1['connections']
+            del behaviour2['connections']
+
         self.assertItemsEqual(processed_info['requirements'], mashup_info['requirements'])
         del processed_info['requirements']
         del mashup_info['requirements']
@@ -1385,6 +1458,16 @@ class TemplateUtilsTestCase(TestCase):
         del mashup_info['embedded']
 
         self.assertEqual(processed_info, mashup_info)
+
+    def check_missing_xml_element(self, query):
+        from lxml import etree
+
+        document = write_next_xml_description(self.read_json_fixtures('mashup_with_behaviours_data'), raw=True)
+
+        for element_to_remove in document.xpath(query, namespaces={'t': WIRECLOUD_TEMPLATE_NS}):
+            element_to_remove.getparent().remove(element_to_remove)
+
+        self.assertRaises(TemplateParseException, TemplateParser, etree.tostring(document, method='xml', xml_declaration=True, encoding="UTF-8"))
 
     def test_json_parser_writer_basic_operator(self):
 
@@ -1489,7 +1572,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_operator_info)
-    test_rdf_parser_writer_basic_operator.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_basic_operator.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_operator(self):
 
@@ -1498,7 +1581,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.operator_info)
-    test_rdf_parser_writer_operator.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_operator.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_operator_with_translations(self):
 
@@ -1507,7 +1590,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.operator_with_translation_info)
-    test_rdf_parser_writer_operator_with_translations.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_operator_with_translations.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_basic_mashup(self):
 
@@ -1516,7 +1599,56 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_mashup_info)
-    test_rdf_parser_writer_basic_mashup.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_basic_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
+
+    def test_rdf_parser_writer_mashup_with_behaviours(self):
+        self.compare_input_and_output_mashup("mashup_with_behaviours_data")
+
+    def _set_prop_collapsed_to_false(self, components):
+
+        for component_id in components['operator']:
+            component = components['operator'][component_id]
+            component['collapsed'] = False
+
+        for component_id in components['widget']:
+            component = components['widget'][component_id]
+            component['collapsed'] = False
+
+    def test_rdf_parser_writer_mashup_with_behaviours_and_minimal_data(self):
+
+        mashup_data = self.read_json_fixtures("mashup_with_behaviours_minimal_data")
+        template = TemplateParser(write_rdf_description(mashup_data))
+
+        self._set_prop_collapsed_to_false(mashup_data['wiring']['visualdescription']['components'])
+
+        for behaviour in mashup_data['wiring']['visualdescription']['behaviours']:
+            self._set_prop_collapsed_to_false(behaviour['components'])
+
+        self.check_full_mashup(template.get_resource_info(), mashup_data)
+
+    def check_missing_rdf_node(self, subject, predicate):
+
+        graph = rdflib.Graph()
+        graph.parse(data=self.read_template("mashup-temporal.rdf"), format='xml')
+
+        subject_ref = rdflib.URIRef(subject)
+        for node_to_remove in graph.objects(subject_ref, predicate):
+            graph.remove((subject_ref, predicate, node_to_remove))
+
+        template = TemplateParser(graph.serialize(format='pretty-xml'))
+        self.assertRaises(TemplateParseException, template.get_resource_info)
+
+    def test_rdf_parser_writer_mashup_missing_connection_target(self):
+        self.check_missing_rdf_node("http://wirecloud.conwet.fi.upm.es/ns/mashup/Wirecloud/TemplateTestMashup/1.0#connection1", WIRE_M["hasTarget"])
+
+    def test_rdf_parser_writer_mashup_missing_connection_source(self):
+        self.check_missing_rdf_node("http://wirecloud.conwet.fi.upm.es/ns/mashup/Wirecloud/TemplateTestMashup/1.0#connection1", WIRE_M["hasSource"])
+
+    def test_rdf_parser_writer_mashup_missing_connection_view_target(self):
+        self.check_missing_rdf_node("http://wirecloud.conwet.fi.upm.es/ns/mashup/Wirecloud/TemplateTestMashup/1.0#connectionview1", WIRE_M["hasTargetEndpoint"])
+
+    def test_rdf_parser_writer_mashup_missing_connection_view_source(self):
+        self.check_missing_rdf_node("http://wirecloud.conwet.fi.upm.es/ns/mashup/Wirecloud/TemplateTestMashup/1.0#connectionview1", WIRE_M["hasSourceEndpoint"])
 
     def test_rdf_parser_writer_mashup(self):
 
@@ -1525,7 +1657,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_info)
-    test_rdf_parser_writer_mashup.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_translations(self):
 
@@ -1534,7 +1666,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
-    test_rdf_parser_writer_mashup_with_translations.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_params(self):
 
@@ -1543,7 +1675,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_params)
-    test_rdf_parser_writer_mashup_with_params.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_basic_widget(self):
 
@@ -1552,7 +1684,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_widget_info)
-    test_rdf_parser_writer_basic_widget.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_basic_widget.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_widget(self):
 
@@ -1561,7 +1693,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.widget_info)
-    test_rdf_parser_writer_widget.tags = ('template', 'fiware-ut-14')
+    test_rdf_parser_writer_widget.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_minimal_endpoint_info(self):
 
@@ -1594,7 +1726,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_mashup_info)
-    test_xml_parser_writer_basic_mashup.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_basic_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup(self):
 
@@ -1603,7 +1735,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_info)
-    test_xml_parser_writer_mashup.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup_with_translations(self):
 
@@ -1612,7 +1744,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
-    test_xml_parser_writer_mashup_with_translations.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup_with_params(self):
 
@@ -1621,7 +1753,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_params)
-    test_xml_parser_writer_mashup_with_params.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_basic_widget(self):
 
@@ -1630,7 +1762,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_widget_info)
-    test_xml_parser_writer_basic_widget.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_basic_widget.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_xml_parser_writer_widget(self):
 
@@ -1639,7 +1771,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.widget_info)
-    test_xml_parser_writer_widget.tags = ('template', 'fiware-ut-14')
+    test_xml_parser_writer_widget.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_next_xml_parser_writer_basic_operator(self):
 
@@ -1680,6 +1812,15 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_info)
+
+    def test_next_xml_parser_writer_mashup_with_behaviours(self):
+        self.compare_input_and_output_mashup("mashup_with_behaviours_data", mashup_format="xml")
+
+    def test_next_xml_parser_missing_mashup_connection_target(self):
+        self.check_missing_xml_element('/mashup/structure/wiring/connection[1]/target')
+
+    def test_next_xml_parser_missing_mashup_connection_source(self):
+        self.check_missing_xml_element('/mashup/structure/wiring/connection[1]/source')
 
     def test_next_xml_parser_writer_mashup_with_translations(self):
 

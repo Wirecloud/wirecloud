@@ -40,12 +40,21 @@
         }
     };
 
+    var dblclickCallback = function dblclickCallback(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.enabled) {
+            this.events.dblclick.dispatch(this);
+        }
+    };
+
     var keydownCallback = function keydownCallback(e) {
         if (this.enabled && e.keyCode === 13) {
             if (this.inputElement != null) {
                 this.inputElement.click();
             }
-            this.events.click.dispatch(this);
+
+            this._clickCallback(e);
         }
     };
 
@@ -65,6 +74,14 @@
         this.events.blur.dispatch(this);
     };
 
+    var update_tabindex = function update_tabindex() {
+        if (this.enabled) {
+            this.wrapperElement.setAttribute('tabindex', this.tabindex);
+        } else {
+            this.wrapperElement.setAttribute('tabindex', -1);
+        }
+    };
+
     /**
      *
      * Eventos que soporta este componente:
@@ -80,16 +97,19 @@
             'iconWidth': 24,
             'icon': null,
             'iconClass': null,
-            'usedInForm': false
+            'usedInForm': false,
+            'stackedIconPlacement': 'bottom-right',
+            'stackedIconClass': '',
+            'tabindex': 0
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        // Necesario para permitir herencia
+        // Support hirerarchy
         if (options.extending) {
             return;
         }
 
-        StyledElements.StyledElement.call(this, ['click', 'focus', 'blur', 'mouseenter', 'mouseleave']);
+        StyledElements.StyledElement.call(this, ['click', 'dblclick', 'focus', 'blur', 'mouseenter', 'mouseleave', 'show', 'hide']);
 
         if (options.usedInForm) {
             this.wrapperElement = document.createElement("button");
@@ -97,7 +117,6 @@
         } else {
             this.wrapperElement = document.createElement("div");
         }
-        this.wrapperElement.setAttribute('tabindex', '0');
         this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "styled_button");
 
         if (options.id != null) {
@@ -117,31 +136,95 @@
             this.wrapperElement.appendChild(this.icon);
         }
 
-        if (options.text != null || options.iconClass != null) {
+        if (typeof options.iconClass === "string" && options.iconClass !== "") {
+            this.icon = document.createElement('i');
+            this.icon.classList.add('se-icon');
+            var classes = options.iconClass.trim().split(/\s+/);
+            for (var i = 0; i < classes.length; i++) {
+                this.icon.classList.add(classes[i]);
+            }
+            this.icon.classList.add(options.iconClass);
+            this.wrapperElement.appendChild(this.icon);
+        }
+
+        if (options.text != null) {
             this.label = document.createElement('span');
-            if (options.text != null) {
-                this.label.appendChild(document.createTextNode(options.text));
-            }
-            if (typeof options.iconClass === "string" && options.iconClass !== "") {
-                var classes = options.iconClass.trim().split(/\s+/);
-                for (var i = 0; i < classes.length; i++) {
-                    this.label.classList.add(classes[i]);
-                }
-            }
+            this.label.appendChild(document.createTextNode(options.text));
             this.wrapperElement.appendChild(this.label);
+        }
+
+        if (options.iconClass != null && options.stackedIconClass.length) {
+            this.stackedIcon = document.createElement('span');
+            this.stackedIcon.className = [options.stackedIconClass, 'se-stacked-icon', options.stackedIconPlacement].join(' ');
+            this.icon.appendChild(this.stackedIcon);
         }
 
         if (options.title) {
             this.setTitle(options.title);
         }
 
+        /* Properties */
+        var tabindex;
+        Object.defineProperty(this, 'tabindex', {
+            get: function() {
+                return tabindex;
+            },
+            set: function(new_tabindex) {
+                tabindex = new_tabindex;
+                update_tabindex.call(this);
+            }
+        });
+
+        var hidden = false;
+
+        Object.defineProperty(this, 'hidden', {
+            'get': function get() {
+                return hidden;
+            },
+            'set': function set(newState) {
+                if (typeof newState === 'boolean') {
+                    if ((hidden=newState)) {
+                        this.wrapperElement.classList.add('hidden');
+                    } else {
+                        this.wrapperElement.classList.remove('hidden');
+                    }
+                }
+            }
+        });
+
+        var invisible = false;
+
+        Object.defineProperty(this, 'invisible', {
+            'get': function get() {
+                return invisible;
+            },
+            'set': function set(state) {
+                if (typeof state === 'boolean') {
+                    if ((invisible=state)) {
+                        this.wrapperElement.classList.add('invisible');
+                    } else {
+                        this.wrapperElement.classList.remove('invisible');
+                    }
+                }
+            }
+        });
+
+        /* Initial status */
+        this.tabindex = options.tabindex;
+
         /* Event handlers */
-        this._clickCallback = clickCallback.bind(this);
+        var prototype = Object.getPrototypeOf(this);
+        if (typeof prototype._clickCallback === 'function') {
+            this._clickCallback = prototype._clickCallback.bind(this);
+        } else {
+            this._clickCallback = clickCallback.bind(this);
+        }
         this._keydownCallback = keydownCallback.bind(this);
 
         this.wrapperElement.addEventListener('toutchstart', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, false);
+        this.wrapperElement.addEventListener('dblclick', dblclickCallback.bind(this), true);
         this.wrapperElement.addEventListener('keydown', this._keydownCallback, false);
         this.wrapperElement.addEventListener('focus', onfocus.bind(this), true);
         this.wrapperElement.addEventListener('blur', onblur.bind(this), true);
@@ -160,6 +243,29 @@
         this.wrapperElement.blur();
     };
 
+    /**
+     * Enables this button
+     */
+    StyledButton.prototype.enable = function enable() {
+        this.enabled = true;
+        this.removeClassName('disabled');
+        update_tabindex.call(this);
+
+        return this;
+    };
+
+    /**
+     * Deshabilita el componente añadiendo la clase css .disabled
+     */
+    StyledButton.prototype.disable = function disable() {
+        this.enabled = false;
+        this.addClassName('disabled');
+        update_tabindex.call(this);
+        this.blur();
+
+        return this;
+    };
+
     StyledButton.prototype.setLabel = function setLabel(label) {
         this.label.textContent = label;
 
@@ -173,11 +279,18 @@
     };
 
     StyledButton.prototype.addIconClassName = function addIconClassName(classname) {
-        this.label.classList.add(classname);
+        this.icon.classList.add(classname);
     };
 
     StyledButton.prototype.removeIconClassName = function removeIconClassName(classname) {
-        this.label.classList.remove(classname);
+        this.icon.classList.remove(classname);
+    };
+
+    StyledButton.prototype.toggleIconClass = function toggleIconClass(newClass, oldClass) {
+        this.icon.classList.add(newClass);
+        this.icon.classList.remove(oldClass);
+
+        return this;
     };
 
     StyledButton.prototype.setTitle = function setTitle(title) {
@@ -212,6 +325,38 @@
         delete this._keydownCallback;
 
         StyledElements.StyledElement.prototype.destroy.call(this);
+    };
+
+    /**
+     * Display the button.
+     * @function
+     * @public
+     *
+     * @returns {StyledButton} The instance on which this function was called.
+     */
+    StyledButton.prototype.show = function show() {
+        if (this.hidden) {
+            this.hidden = false;
+            this.events.show.dispatch(this);
+        }
+
+        return this;
+    };
+
+    /**
+     * Hide the button.
+     * @function
+     * @public
+     *
+     * @returns {StyledButton} The instance on which this function was called.
+     */
+    StyledButton.prototype.hide = function hide() {
+        if (!this.hidden) {
+            this.hidden = true;
+            this.events.hide.dispatch(this);
+        }
+
+        return this;
     };
 
     StyledElements.StyledButton = StyledButton;

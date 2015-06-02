@@ -42,6 +42,8 @@
             this.isSubAnchor = false;
             this.subAnchors = null;
         }
+
+        this.type = 'source';
     };
     SourceAnchor.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
 
@@ -56,13 +58,8 @@
 
         coordinates = this.getCoordinates(this.context.iObject.wiringEditor.getGridElement());
         for (i = 0; i < this.arrows.length; i += 1) {
-            if (this.arrows[i].startMulti == null) {
-                this.arrows[i].setStart(coordinates);
-                this.arrows[i].redraw();
-            }
-            if (this.arrows[i].endMulti != null) {
-                this.context.iObject.wiringEditor.multiconnectors[this.arrows[i].endMulti].repaint();
-            }
+            this.arrows[i].setStart(coordinates);
+            this.arrows[i].redraw();
         }
     };
 

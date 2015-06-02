@@ -60,12 +60,16 @@
         'BorderLayout': window.parent.StyledElements.BorderLayout
     };
 
-    var extend = function (parent_class, extra) {
+    var extend = function (parent_class, extra, options) {
         var new_class = function () {
             parent_class.apply(this, arguments);
         };
 
-        new_class.prototype = new parent_class();
+        if (options !== undefined) {
+            new_class.prototype = new parent_class(options);
+        } else {
+            new_class.prototype = new parent_class();
+        }
         for (var key in extra) {
             new_class.prototype[key] = extra[key];
         }
@@ -263,13 +267,18 @@
     /* Button */
     StyledElements.StyledButton = extend(RealStyledElements.StyledButton, {
         Tooltip: StyledElements.Tooltip
-    });
+    }, {extending: true});
+
+    /* ToggleButton */
+    StyledElements.ToggleButton = extend(RealStyledElements.ToggleButton, {
+        Tooltip: StyledElements.Tooltip
+    }, {extending: true});
 
     /* PopupButton */
     StyledElements.PopupButton = extend(RealStyledElements.PopupButton, {
         PopupMenu: StyledElements.PopupMenu,
         Tooltip: StyledElements.Tooltip
-    });
+    }, {extending: true});
 
     /* Tab */
     StyledElements.Tab = extend(RealStyledElements.StyledNotebook.prototype.Tab, {

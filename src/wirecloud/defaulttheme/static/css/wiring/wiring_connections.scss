@@ -1,0 +1,186 @@
+/*
+ *  This file is part of Wirecloud.
+ *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *  Wirecloud is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  License, or (at your option) any later version.
+ *
+ *  Wirecloud is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+@import 'wiring/defaults';
+
+
+// ============================================================================
+// WIRING DIAGRAM - CONNECTION
+// ============================================================================
+
+.wiring-diagram .connection {
+    cursor: pointer;
+    @include children-display((".option-remove", ".controller-line", ".controller-ball"));
+
+    .connection-body {
+        fill: none;
+        stroke: $connection-background-color;
+        stroke-width: $connection-width;
+    }
+
+    .connection-border {
+        fill: none;
+        stroke: $connection-border-color;
+        stroke-width: $connection-border-width;
+    }
+}
+
+//.wiring-diagram .connection:hover {
+//    @include children-display((".option-remove"), inline);
+//}
+
+// ============================================================================
+// WIRING DIAGRAM - CONNECTION OPTION REMOVE
+// ============================================================================
+
+.wiring-diagram .connection .option-remove {
+    cursor: pointer;
+    fill: $connection-remove-background-color;
+    stroke: $connection-remove-border-color;
+    stroke-width: $stroke-default-width;
+
+    &:hover {
+        fill: $connection-mousedover-remove-background-color;
+        stroke: $connection-mousedover-remove-border-color;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - CONNECTION CONTROLLERS
+// ============================================================================
+
+.wiring-diagram .connection .controller-line {
+    cursor: default;
+    fill: none;
+    stroke: $connection-controller-border-color;
+    stroke-width: $stroke-default-width;
+    stroke-dasharray: $highlighted-connection-border-dasharray;
+}
+
+.wiring-diagram .connection .controller-ball {
+    cursor: move;
+    fill: $connection-controller-background-color;
+    stroke: $connection-controller-border-color;
+    stroke-width: $stroke-default-width;
+
+    &:hover {
+        fill: $connection-mousedover-controller-background-color;
+        stroke: $connection-mousedover-controller-border-color;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - SELECTED-CONNECTION
+// ============================================================================
+
+.wiring-diagram .connection.selected {
+    @include children-display((".option-remove", ".controller-line", ".controller-ball"), inline);
+
+    .connection-body {
+        stroke: $highlighted-connection-background-color;
+    }
+
+    .connection-border{
+        stroke: $highlighted-connection-border-color;
+        stroke-dasharray: $highlighted-connection-border-dasharray;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - READONLY-CONNECTION
+// ============================================================================
+
+.wiring-diagram .connection.readonly,
+.wiring-diagram .connection.readonly:hover {
+    cursor: default;
+    @include children-display((".option-remove", ".controller-line", ".controller-ball"));
+
+    .connection-body {
+        stroke: $connection-background-color;
+    }
+
+    .connection-border {
+        stroke: $connection-border-color;
+        stroke-dasharray: $connection-border-dasharray;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - MISSING-CONNECTION
+// ============================================================================
+
+.wiring-diagram .connection.missing {
+
+    .connection-body {
+        stroke: $misplaced-connection-background-color;
+    }
+
+    .connection-border {
+        stroke: $misplaced-connection-border-color;
+        stroke-dasharray: $highlighted-connection-border-dasharray;
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - CONNECTION ON BACKGROUND
+// ============================================================================
+
+.wiring-diagram .connection.on-background,
+.wiring-diagram .connection.on-background:hover {
+    cursor: default;
+    @include children-display((".controller-line", ".controller-ball"));
+    @include children-display((".option-remove"), inline);
+
+    .connection-body {
+        stroke: $connection-onbackground-background-color;
+    }
+
+    .connection-border {
+        stroke: $connection-onbackground-border-color;
+        stroke-dasharray: $connection-border-dasharray;
+    }
+
+    .option-remove {
+        fill: $connection-bg-optrm-background-color;
+        stroke: $connection-bg-optrm-border-color;
+
+        &:hover {
+            fill: $connection-bg-optrm-mousedover-background-color;
+            stroke: $connection-bg-optrm-mousedover-border-color;
+        }
+    }
+}
+
+// ============================================================================
+// WIRING DIAGRAM - HIGHLIGHTED-CONNECTION
+// ============================================================================
+
+.wiring-diagram .connection.highlighted {
+
+    .connection-body {
+        stroke: $highlighted-connection-background-color;
+    }
+
+    .connection-border {
+        stroke: $highlighted-connection-border-color;
+    }
+}
+
+.wiring-diagram .connection.hidden {
+    display: none !important;
+}

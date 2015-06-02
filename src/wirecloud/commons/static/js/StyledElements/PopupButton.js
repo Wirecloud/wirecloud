@@ -40,6 +40,11 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
+        // Support hirerarchy
+        if (options.extending) {
+            return;
+        }
+
         StyledElements.StyledButton.call(this, options);
 
         if (options.menu != null) {

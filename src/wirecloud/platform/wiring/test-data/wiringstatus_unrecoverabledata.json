@@ -1,0 +1,18 @@
+{
+    "operators": {
+        "0": {
+            "name": "Wirecloud/TestOperator/1.0",
+            "id": "0"
+        }
+    },
+    "connections": [
+        {
+            "source": {},
+            "target": {
+                "type": "widget",
+                "id": 2,
+                "endpoint": "inputendpoint"
+            }
+        }
+    ]
+}

@@ -191,12 +191,12 @@ h6 { font-size: $font-size-h6; }
     width: 21px;
     box-sizing: content-box;
     text-align: center;
-}
 
-.wirecloud_toolbar .styled_button .badge {
-    position: absolute;
-    bottom: -5px;
-    right: 0px;
+    .badge {
+        position: absolute;
+        bottom: -5px;
+        right: 0px;
+    }
 }
 
 #wirecloud_breadcrum {

@@ -138,7 +138,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
         with self.wiring_view as wiring:
-            self.assertIsNone(wiring.get_iwidget(iwidgets[0]))
+            self.assertIsNone(wiring.find_component_by_title('widget', "Test 1"))
 
     def test_read_only_widgets_cannot_be_removed(self):
 
@@ -475,6 +475,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_create_workspace_from_catalogue(self):
 
         self.login()
+
         self.create_workspace(mashup='Test Mashup')
 
         # Test that wiring works as expected
@@ -540,16 +541,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'parameterized password')
 
         with self.wiring_view as wiring:
-            ioperator = wiring.get_ioperators()[0]
-            ioperator.element.find_element_by_css_selector('.specialIcon').click()
-            WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(ioperator.element))
-            ioperator.open_menu().click_entry('Settings')
+            operator = wiring.find_component_by_title('operator', "TestOperator")
 
-            prefix_pref = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
-            self.assertEqual(prefix_pref.get_attribute('disabled'), 'true')
-            self.assertEqual(prefix_pref.get_attribute('value'), 'parameterized value: ')
-
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
+            modal = operator.show_settings_modal()
+            prefix_field = modal.get_field("prefix")
+            self.assertEqual(prefix_field.get_attribute('disabled'), 'true')
+            self.assertEqual(prefix_field.get_attribute('value'), 'parameterized value: ')
+            modal.accept()
 
     def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 
@@ -642,20 +640,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertTrue('disabled' in close_button.get_attribute('class'))
         close_button.click()
 
-        with self.wiring_view:
-
-            wiring_canvas = self.driver.find_element_by_css_selector('.grid .canvas')
-            arrows = wiring_canvas.find_elements_by_css_selector('.arrow')
-            self.assertEqual(len(arrows), 3)
-            for arrow in arrows:
-                try:
-                    # The find_element_by_css_selector is needed to work around a bug in the firefox driver
-                    arrow.find_element_by_css_selector('g').click()
-                    self.wait_element_visible_by_css_selector('.closer', element=arrow).click()
-                except:
-                    pass
-            arrows = wiring_canvas.find_elements_by_css_selector('.arrow')
-            self.assertEqual(len(arrows), 3)
+        with self.wiring_view as wiring:
+            self.assertEqual(len(wiring.filter_connections_by_properties("readonly")), 3)
 
         self.assertEqual(len(self.get_current_iwidgets()), 2)
 

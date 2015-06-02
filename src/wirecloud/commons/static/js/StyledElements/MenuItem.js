@@ -40,6 +40,7 @@
 
         this.run = handler;
         this.context = context;
+        this.icon = null;
 
         // Internal events
         this._mouseoverEventHandler = function (event) {
@@ -68,6 +69,18 @@
         this.wrapperElement.addEventListener("click", this._clickHandler, true);
     };
     MenuItem.prototype = new StyledElements.StyledElement();
+
+    MenuItem.prototype.addIconClass = function addIconClass(iconClass) {
+
+        if (this.icon === null) {
+            this.icon = document.createElement('span');
+            this.wrapperElement.insertBefore(this.icon, this.wrapperElement.firstChild);
+        }
+
+        this.icon.className = "se-icon " + iconClass;
+
+        return this;
+    };
 
     MenuItem.prototype.destroy = function destroy() {
         if (StyledElements.Utils.XML.isElement(this.wrapperElement.parentNode)) {

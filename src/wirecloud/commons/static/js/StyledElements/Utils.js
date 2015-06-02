@@ -626,6 +626,10 @@ if (window.StyledElements == null) {
         return result;
     };
 
+    Utils.cloneObject = function cloneObject(object) {
+        return JSON.parse(JSON.stringify(object));
+    };
+
     Utils.isEmptyObject = function isEmptyObject(obj) {
         var name;
 
@@ -669,6 +673,125 @@ if (window.StyledElements == null) {
 
         return obj1;
     };
+
+    if (!Object.hasOwnProperty('create')) {
+        Object.create = function create(parentPrototype) {
+            var ParentClass;
+
+            ParentClass = function ParentClass() {};
+            ParentClass.prototype = parentPrototype;
+
+            return new ParentClass;
+        };
+    }
+
+    /**
+     * Add public methods of 'parentClass' to the 'childClass' given.
+     * @public
+     * @function
+     *
+     * @param {Function} childClass
+     * @param {Function} parentClass
+     */
+    Utils.inherit = function inherit(childClass, parentClass) {
+        var i, mixinClass, memberName;
+
+        if (parentClass !== null) {
+            childClass.prototype = Object.create(parentClass.prototype);
+        }
+
+        childClass.prototype.constructor = childClass;
+
+        for (i = 2; i < arguments.length; i++) {
+            mixinClass = arguments[i];
+
+            for (memberName in mixinClass.prototype) {
+                if (memberName !== 'constructor') {
+                    childClass.prototype[memberName] = mixinClass.prototype[memberName];
+                }
+            }
+        }
+    };
+
+    var addMembers = function addMembers(constructor, members) {
+
+        for (var name in members) {
+            constructor.prototype[name] = members[name];
+        }
+    };
+
+    var bindMixins = function bindMixins(constructor, mixins) {
+        mixins.forEach(function (mixin) {
+            addMembers(constructor, mixin.prototype);
+        });
+
+        constructor.prototype.mixinClass = function mixinClass(index) {
+            mixins[index].apply(this, Array.prototype.slice.call(arguments, 1));
+        };
+    };
+
+    var inherit = function inherit(constructor, superConstructor) {
+        var counter = 0;
+
+        constructor.prototype = Object.create(superConstructor.prototype);
+
+        addMembers(constructor, {
+
+            constructor: constructor,
+
+            superConstructor: superConstructor,
+
+            superClass: function superClass() {
+                var currentClass = superConstructor;
+
+                for (var i = 0; i < counter; i++) {
+                    currentClass = currentClass.prototype.superConstructor;
+                }
+
+                counter++;
+
+                try {
+                    currentClass.apply(this, Array.prototype.slice.call(arguments));
+                } catch (e) {
+                    counter = 0;
+                    throw e;
+                }
+
+                counter--;
+            },
+
+            superMember: function superMember(name) {
+                var memberArgs = Array.prototype.slice.call(arguments, 1);
+
+                return superConstructor.prototype[name].apply(this, memberArgs);
+            }
+
+        });
+    };
+
+    /**
+     * [defineClass description]
+     *
+     * @param {Object.<String, *>} features [description]
+     * @returns {Function} [description]
+     */
+    Utils.defineClass = function defineClass(features) {
+
+        if ('inherit' in features) {
+            inherit(features.constructor, features.inherit);
+        }
+
+        if ('mixins' in features) {
+            bindMixins(features.constructor, features.mixins);
+        }
+
+        if ('members' in features) {
+            addMembers(features.constructor, features.members);
+        }
+
+        return features.constructor;
+    };
+
 
     var SIZE_UNITS = ['bytes', 'KB', 'MB', 'GB', 'TB'];
     Object.freeze(SIZE_UNITS);
