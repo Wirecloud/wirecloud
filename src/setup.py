@@ -18,10 +18,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from distutils.cmd import Command
+from distutils.command.sdist import sdist as distutils_sdist
 from distutils.command.install import INSTALL_SCHEMES
 import os
 from setuptools import setup
-from setuptools.command.install import install
+from setuptools.command.install import install as distutils_install
 import sys
 
 import wirecloud.platform
@@ -47,11 +49,43 @@ class bcolors:
         self.ENDC = ''
 
 
-class CustomInstallCommand(install):
+class sdist(distutils_sdist):
+
+    """Customized setuptools build command - compile po files before creating the distribution package."""
+
+    sub_commands = [('compiletranslations', None)] + distutils_sdist.sub_commands
+
+
+class compiletranslations(Command):
+
+    description = 'compile message catalogs to MO files via django compilemessages'
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        from django.core.management import call_command
+
+        oldwd = os.getcwd()
+        wirecloud_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'wirecloud'))
+        for subpath in os.listdir(wirecloud_path):
+            current_path = os.path.join(wirecloud_path, subpath)
+            if os.path.isdir(os.path.join(current_path, 'locale')):
+                os.chdir(current_path)
+                call_command('compilemessages')
+
+        os.chdir(oldwd)
+
+
+class install(distutils_install):
 
     """Customized setuptools install command - prints info about the license of Wirecloud after installing it."""
     def run(self):
-        install.run(self)
+        distutils_install.run(self)
 
         print('')
         print(bcolors.HEADER + 'License' + bcolors.ENDC)
@@ -140,6 +174,8 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ),
     cmdclass={
-        'install': CustomInstallCommand,
+        'install': install,
+        'sdist': sdist,
+        'compiletranslations': compiletranslations
     },
 )
