@@ -167,6 +167,21 @@ class ProxyTestCase(WirecloudTestCase):
         new_url = self.read_response(response)
         self.assertEqual(new_url, 'http://example.com/path?test=a&access_token_id=' + TEST_TOKEN)
 
+    def test_fiware_idm_processor_get_parameter_emtpy_query(self):
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'content': url}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+
+        request = self.prepare_request_mock('body', extra_headers={
+            'HTTP_X_FI_WARE_OAUTH_GET_PARAMETER': 'access_token_id',
+        })
+        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
+        self.assertEqual(response.status_code, 200)
+        new_url = self.read_response(response)
+        self.assertEqual(new_url, 'http://example.com/path?access_token_id=' + TEST_TOKEN)
+
     def test_fiware_idm_anonymous_user(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
