@@ -1,8 +1,9 @@
 WireCloud
 =========
 
-[![WireCloud version](https://pypip.in/v/wirecloud/badge.svg)](https://pypi.python.org/pypi/wirecloud)
-[![WireCloud downloads](https://pypip.in/d/wirecloud/badge.svg)](https://pypi.python.org/pypi/wirecloud)
+[![WireCloud license](https://img.shields.io/pypi/l/wirecloud.svg)](LICENSE.txt)
+[![WireCloud version](https://img.shields.io/pypi/v/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
+[![WireCloud downloads](https://img.shields.io/pypi/dm/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
 [![WireCloud continuous integration](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-pip-develop-python2.7/badge/icon)](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-pip-develop-python2.7/)
 
 Please visit https://conwet.fi.upm.es/wirecloud for more info.
