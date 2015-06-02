@@ -306,10 +306,10 @@ def build_xml_document(options):
     return template
 
 
-def write_xml_description(options):
+def write_xml_description(options, raw=False):
 
     if options['type'] not in ('widget', 'operator', 'mashup'):
         raise Exception('Unsupported resource type: ' + options['type'])
 
     doc = build_xml_document(options)
-    return etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
+    return doc if raw is True else etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)

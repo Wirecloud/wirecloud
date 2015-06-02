@@ -699,6 +699,19 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(iwidget2_preferences['text'].get('hidden', False), False)
         self.assertEqual(iwidget2_preferences['text'].get('readonly', False), False)
 
+    def check_workspace_structure_with_old_mashup_wiring(self, workspace):
+
+        wiring_status = json.loads(workspace.wiringStatus)
+
+        self.assertEqual(wiring_status['version'], '2.0')
+
+        self.assertEqual(len(wiring_status['connections']), 2)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
+        self.assertEqual(wiring_status['connections'][1]['readonly'], False)
+
+        self.assertEqual(wiring_status['visualdescription']['components']['operator'].keys(), ['1'])
+        self.assertEqual(wiring_status['visualdescription']['components']['widget'].keys(), ['1', '2'])
+
     def check_workspace_with_params(self, workspace):
 
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
@@ -778,6 +791,12 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         for t in data['tabs']:
             self.assertEqual(t['name'][0:7], 'Pestaña')
+
+    def test_build_workspace_from_rdf_old_mashup_with_views(self):
+        template = self.read_template('wt7.rdf')
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
+
+        self.check_workspace_structure_with_old_mashup_wiring(workspace)
 
     def test_read_only_widgets(self):
         template = self.read_template('wt6.xml')

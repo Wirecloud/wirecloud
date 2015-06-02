@@ -126,7 +126,6 @@ class ApplicationMashupTemplateParser(object):
         if root_element_qname.localname not in ('widget', 'operator', 'mashup'):
             raise TemplateParseException("Invalid root element: " + root_element_qname.localname)
 
-        self._namespace = xmlns
         self._info['type'] = root_element_qname.localname
 
     def _init(self):
@@ -140,7 +139,7 @@ class ApplicationMashupTemplateParser(object):
         self._parse_basic_info()
 
     def _xpath(self, query, element):
-        return element.xpath(query, namespaces={'t': self._namespace})
+        return element.xpath(query, namespaces={'t': WIRECLOUD_TEMPLATE_NS})
 
     def get_xpath(self, query, element, required=True):
         elements = self._xpath(query, element)

@@ -737,9 +737,7 @@ class RDFTemplateParser(object):
             tabs.append(tab_info)
 
         self._info['tabs'] = tabs
-
         self._parse_wiring_info(wiring_property='hasMashupWiring')
-        #wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
 
     def typeText2typeCode(self, typeText):
         mapping = {
