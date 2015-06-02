@@ -68,7 +68,14 @@ class compiletranslations(Command):
         pass
 
     def run(self):
-        from django.core.management import call_command
+
+        try:
+            from django.core.management import call_command
+        except:
+            import pip
+            pip.main(['install', 'Django>=1.4.2,<1.7'])
+
+            from django.core.management import call_command
 
         oldwd = os.getcwd()
         wirecloud_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'wirecloud'))
