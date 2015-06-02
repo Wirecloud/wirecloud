@@ -83,7 +83,10 @@ class compiletranslations(Command):
             current_path = os.path.join(wirecloud_path, subpath)
             if os.path.isdir(os.path.join(current_path, 'locale')):
                 os.chdir(current_path)
-                call_command('compilemessages')
+                try:
+                    call_command('compilemessages')
+                except Exception as e:
+                    print('Error compiling translations for module %(module)s: %(error)s' % {'module': subpath.replace('/', '.'), 'error': e})
 
         os.chdir(oldwd)
 
