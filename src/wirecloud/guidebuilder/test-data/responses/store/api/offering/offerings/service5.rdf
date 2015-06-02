@@ -1,0 +1,146 @@
+{  
+    "rating":"0.00",
+    "bill":[  
+        "/media/bills/53862718b73e267d5fb124d1_2014-05-28.pdf"
+    ],
+    "related_images":[  
+
+    ],
+    "description_url":"http://130.206.81.113/FiwareRepository/v1/storeOfferingCollection/CoNWeT__WebMapService__1.1",
+    "creation_date":"2013-09-06 22:32:57.546000",
+    "owner_admin_user_id":"fdelavega",
+    "applications":[  
+
+    ],
+    "publication_date":"2013-09-06 17:33:19.326000",
+    "open":false,
+    "owner_organization":"CoNWeT",
+    "name":"WebMapService",
+    "tags":[  
+        "widget",
+        "maps"
+    ],
+    "comments":[  
+
+    ],
+    "state":"published",
+    "version":"1.1",
+    "image_url":"https://store.lab.fiware.org/media/CoNWeT__WebMapService__1.1/wms_widget.png",
+    "offering_description":{  
+        "services_included":[  
+            {  
+                "uriImage":"http://wirecloud.conwet.fi.upm.es/public/widgets/WebMapService/images/catalogue.png",
+                "vendor":"CoNWeT",
+                "name":"Web Map Service",
+                "created":"2012-11-19T00:00",
+                "interactions":[  
+
+                ],
+                "long_description":"This widget gives users the ability to handle different map layers coming from several sources, showing all of them on the same map. It has a bunch of both events and slots that enables the user to have different instances of this widget wired, so she can compare with different cartographies at a glance.",
+                "modified":"2012-11-19T00:00",
+                "legal":[  
+                    {  
+                        "clauses":[  
+                            {  
+                                "text":"This widget is free software: you can redistribute it and/or modify it under the terms of the EUPL licence version 1.1",
+                                "name":"Redistribution"
+                            },
+                            {  
+                                "text":"This widget is distributed WITHOUT ANY WARRANTY without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE",
+                                "name":"No waranty"
+                            }
+                        ],
+                        "type":"http://www.linked-usdl.org/ns/usdl-legal#TermsAndConditions",
+                        "description":"Description of the terms and conditions aplied to this widget",
+                        "label":"Terms and conditions"
+                    }
+                ],
+                "vcard":{  
+                    "BEGIN":[  
+                        {  
+                            "properties":{  
+
+                            },
+                            "value":"VCARD"
+                        }
+                    ],
+                    "TEL":[  
+                        {  
+                            "properties":{  
+
+                            },
+                            "value":"+34913367394"
+                        }
+                    ],
+                    "END":[  
+                        {  
+                            "properties":{  
+
+                            },
+                            "value":"VCARD"
+                        }
+                    ],
+                    "ADR":[  
+                        {  
+                            "properties":{  
+
+                            },
+                            "value":"Campus de Montegancedo s/n;28660;Boadilla del Monte, Madrid;Spain"
+                        }
+                    ],
+                    "EMAIL":[  
+                        {  
+                            "properties":{  
+
+                            },
+                            "value":"conwet@conwet.com"
+                        }
+                    ],
+                    "FN":[  
+                        {  
+                            "properties":{  
+
+                            },
+                            "value":"CoNWeT"
+                        }
+                    ]
+                },
+                "parts":[  
+                    {  
+                        "name":"",
+                        "uri":""
+                    }
+                ],
+                "version":"2.3.2",
+                "sla":[  
+
+                ],
+                "short_description":"This widget gives users the ability to handle different map layers.",
+                "page":"file:///."
+            }
+        ],
+        "pricing":{  
+            "price_plans":[  
+                {  
+                    "label":"",
+                    "description":"This widget can be used for free",
+                    "title":"Free use"
+                }
+            ],
+            "valid_through":"2015-12-31",
+            "valid_from":"2013-09-03",
+            "description":"",
+            "title":"Web Map Service free use"
+        }
+    },
+    "resources":[  
+        {  
+            "name":"Web Map Service",
+            "version":"0.5.5",
+            "link":"/media/resources/CoNWeT__Web Map Service__0.5.5__CoNWeT_wms-viewer-geowidget_0.5.5.wgt",
+            "content_type":"application/x-widget+mashable-application-component",
+            "open":false,
+            "description":"This widget gives users the ability to handle different map layers coming from several sources, showing all of them on the same map. It has a bunch of both events and slots that enables the user to have different instances of this widget wired, so she can compare with different cartographies at a glance. Is compatible with WMS, WMTS and WMS-C."
+        }
+    ]
+}

@@ -187,7 +187,7 @@
         this.columns = columns;
 
         if (options['class'] != null) {
-            className = Wirecloud.Utils.appendWord('se-model-table', options['class']);
+            className = StyledElements.Utils.appendWord('se-model-table', options['class']);
         } else {
             className = 'se-model-table';
         }

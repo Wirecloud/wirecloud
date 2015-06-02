@@ -20,26 +20,51 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.db import connection
 from south.v2 import DataMigration
+
+
+def db_table_exists(table):
+
+    try:
+        cursor = connection.cursor()
+        table_names = connection.introspection.get_table_list(cursor)
+    except:
+        raise Exception("unable to determine if the table '%s' exists" % table)
+    else:
+        return table in table_names
+
+
+def swith_to_username(orm):
+
+    if 'social_auth' not in settings.INSTALLED_APPS or not db_table_exists('social_auth_usersocialauth'):
+        return
+
+    ids = set()
+    for user in orm['social_auth.UserSocialAuth'].objects.all():
+        if user.extra_data['username'] in ids:
+            raise Exception('Duplicated username: %s' % user.extra_data['username'])
+
+        ids.add(user.extra_data['username'])
+
+    for user in orm['social_auth.UserSocialAuth'].objects.all():
+        user.uid = user.extra_data['username']
+
+        user.save()
 
 
 class Migration(DataMigration):
 
-    if 'social_auth' in settings.INSTALLED_APPS:
-        depends_on = (
-            ("social_auth", "0002_auto__add_unique_nonce_timestamp_salt_server_url__add_unique_associati"),
-        )
-
     def forwards(self, orm):
 
-        if 'social_auth' not in settings.INSTALLED_APPS:
+        if 'social_auth' not in settings.INSTALLED_APPS or not db_table_exists('social_auth_usersocialauth'):
             return
 
         ids = set()
         users_to_remove = []
         last_login_date = None
         for user in orm['social_auth.UserSocialAuth'].objects.all():
-            if 'uid' not in user.extra_data:
+            if user.extra_data.get('uid', None) is None:
                 users_to_remove.append(user)
 
                 if last_login_date is None or user.user.last_login > last_login_date:
@@ -68,19 +93,7 @@ class Migration(DataMigration):
 
     def backwards(self, orm):
 
-        if 'social_auth' not in settings.INSTALLED_APPS:
-            return
-
-        ids = set()
-        for user in orm['social_auth.UserSocialAuth'].objects.all():
-            if user.extra_data['username'] in ids:
-                raise Exception('Duplicated username: %s' % user.extra_data['username'])
-
-            ids.add(user.extra_data['username'])
-
-        for user in orm['social_auth.UserSocialAuth'].objects.all():
-            user.uid = user.extra_data['username']
-            user.save()
+        swith_to_username(orm)
 
     models = {
         u'auth.group': {

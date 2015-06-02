@@ -18,10 +18,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from distutils.cmd import Command
+from distutils.command.sdist import sdist as distutils_sdist
+from distutils.command.install import INSTALL_SCHEMES
 import os
 from setuptools import setup
-from setuptools.command.install import install
-from distutils.command.install import INSTALL_SCHEMES
+from setuptools.command.install import install as distutils_install
+import sys
 
 import wirecloud.platform
 
@@ -46,11 +49,53 @@ class bcolors:
         self.ENDC = ''
 
 
-class CustomInstallCommand(install):
+class sdist(distutils_sdist):
+
+    """Customized setuptools build command - compile po files before creating the distribution package."""
+
+    sub_commands = [('compiletranslations', None)] + distutils_sdist.sub_commands
+
+
+class compiletranslations(Command):
+
+    description = 'compile message catalogs to MO files via django compilemessages'
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+
+        try:
+            from django.core.management import call_command
+        except:
+            import pip
+            pip.main(['install', 'Django>=1.4.2,<1.7'])
+
+            from django.core.management import call_command
+
+        oldwd = os.getcwd()
+        wirecloud_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'wirecloud'))
+        for subpath in os.listdir(wirecloud_path):
+            current_path = os.path.join(wirecloud_path, subpath)
+            if os.path.isdir(os.path.join(current_path, 'locale')):
+                os.chdir(current_path)
+                try:
+                    call_command('compilemessages')
+                except Exception as e:
+                    print('Error compiling translations for module %(module)s: %(error)s' % {'module': subpath.replace('/', '.'), 'error': e})
+
+        os.chdir(oldwd)
+
+
+class install(distutils_install):
 
     """Customized setuptools install command - prints info about the license of Wirecloud after installing it."""
     def run(self):
-        install.run(self)
+        distutils_install.run(self)
 
         print('')
         print(bcolors.HEADER + 'License' + bcolors.ENDC)
@@ -79,6 +124,12 @@ def include_data_files(path):
 data_files.append(['wirecloud', ['LICENSE']])
 include_data_files('wirecloud')
 
+
+extra_requirements = ()
+if sys.version_info < (3, 2):
+    extra_requirements = ('futures>=2.1.3',)
+
+
 setup(
     name='wirecloud',
     version=wirecloud.platform.__version__,
@@ -103,7 +154,6 @@ setup(
         'django_compressor>=1.4',
         'rdflib>=3.2.0',
         'requests>=2.1.0',
-        'gevent>=1.0.0,<2.0.0',
         'selenium>=2.41',
         'pytz',
         'django_relatives',
@@ -114,7 +164,7 @@ setup(
         'pycrypto',
         'pyScss>=1.3.4,<2.0',
         'Pygments'
-    ),
+    ) + extra_requirements,
     tests_require=(
         'django-nose',
         'mock>=1.0,<2.0',
@@ -134,6 +184,8 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ),
     cmdclass={
-        'install': CustomInstallCommand,
+        'install': install,
+        'sdist': sdist,
+        'compiletranslations': compiletranslations
     },
 )

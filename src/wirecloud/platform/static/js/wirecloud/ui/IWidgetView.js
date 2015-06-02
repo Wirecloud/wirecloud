@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -106,16 +106,23 @@
                 handle.addClassName("rightResizeHandle");
                 return handle;
             },
-            'iframe': function () {
+            'iframe': function (options, tcomponents, iwidget) {
                 var content = document.createElement("iframe");
                 content.classList.add("widget_object");
-                content.setAttribute("type", this.widget.code_content_type);
+                content.setAttribute("type", iwidget.widget.code_content_type);
                 content.setAttribute("frameBorder", "0");
                 content.addEventListener("load", iwidget._notifyLoaded.bind(iwidget, content), true);
 
+                var requirements = iwidget.widget.requirements;
+                for (var i = 0; i < requirements.length; i++) {
+                    if (requirements[i].type === 'feature' && requirements[i].name === 'FullscreenWidget') {
+                        content.setAttribute('allowfullscreen', 'true');
+                        break;
+                    }
+                }
                 return content;
-            }.bind(iwidget)
-        });
+            }
+        }, iwidget);
 
         if ('bottomresizehandle' in tmp) {
             tmp.bottomresizehandle.setResizableElement(ui_fragment.elements[1]);

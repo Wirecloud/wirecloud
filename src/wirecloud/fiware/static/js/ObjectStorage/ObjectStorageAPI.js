@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,6 +25,8 @@
 
     "use strict";
 
+    var manager = window.parent.OpenStackManager;
+
     var merge = function merge(obj1, obj2) {
         if (obj2 != null) {
 
@@ -39,10 +41,7 @@
     var initHeaders = function initHeaders(options) {
         var headers = {};
 
-        if (options.use_user_fiware_token) {
-            headers['X-FI-WARE-OAuth-Token'] = 'true';
-            headers['X-FI-WARE-OAuth-Header-Name'] = 'X-Auth-Token';
-        } else if ('token' in options) {
+        if ('token' in options) {
             headers['X-Auth-Token'] = options.token;
         } else {
             throw new TypeError();
@@ -73,6 +72,8 @@
             url += '/';
         }
 
+        url = url.replace(/\/v\d+(?:\.\d+)?\/$/, '/');
+
         if (options == null) {
             options = {};
         }
@@ -82,8 +83,9 @@
         this.use_user_fiware_token = !!options.use_user_fiware_token;
     };
 
-    KeystoneAPI.prototype.TENANTS_ENDPOINT = 'tenants';
-    KeystoneAPI.prototype.TOKENS_ENDPOINT = 'tokens';
+    KeystoneAPI.prototype.v2 = {};
+    KeystoneAPI.prototype.v2.TENANTS_ENDPOINT = 'v2.0/tenants';
+    KeystoneAPI.prototype.v2.TOKENS_ENDPOINT = 'v2.0/tokens';
 
     KeystoneAPI.prototype.ERROR = {
         UNKNOWN: 0,
@@ -93,17 +95,12 @@
         SERVICE_UNAVAILABLE: 4
     };
 
-    KeystoneAPI.prototype.getTenants = function getTenants(options) {
+    var realGetTenants = function realGetTenants(options) {
 
         var url, headers;
 
-        options = merge({
-            token: this.token,
-            use_user_fiware_token: !!this.use_user_fiware_token,
-        }, options);
-
-        url = this.url + this.TENANTS_ENDPOINT;
-        headers = initHeaders(options);
+        url = this.url + this.v2.TENANTS_ENDPOINT;
+        headers = initHeaders.call(this, options);
         headers.Accept = "application/json";
 
         MashupPlatform.http.makeRequest(url, {
@@ -132,7 +129,54 @@
 
     };
 
-    KeystoneAPI.prototype.getAuthToken = function getAuthToken(options) {
+    KeystoneAPI.prototype.v2.getTenants = function getTenants(options) {
+
+        options = merge({
+            token: this.token,
+            use_user_fiware_token: !!this.use_user_fiware_token,
+        }, options);
+
+        if (options.use_user_fiware_token ) {
+            manager.get_openstack_token_from_idm_token(this.url, function (token) {
+                options.token = token;
+                options.use_user_fiware_token = false;
+                realGetTenants.call(this, options);
+            }.bind(this), options.onFailure);
+        } else {
+            realGetTenants.call(this, options);
+        }
+
+    };
+    KeystoneAPI.prototype.getTenants = KeystoneAPI.prototype.v2.getTenants;
+
+    var realGetAuthToken = function realGetAuthToken(postBody, headers, options) {
+        MashupPlatform.http.makeRequest(this.url + this.v2.TOKENS_ENDPOINT, {
+            requestHeaders: headers,
+            contentType: "application/json",
+            postBody: JSON.stringify(postBody),
+            onSuccess: function (transport) {
+                if (typeof options.onSuccess === 'function') {
+                    var response = JSON.parse(transport.responseText);
+                    options.onSuccess(response.access.token.id, response);
+                }
+            },
+            onFailure: function (response) {
+                var reason;
+
+                if (typeof options.onFailure === 'function') {
+                    reason = process_failure.call(this, response);
+                    options.onFailure(reason);
+                }
+            }.bind(this),
+            onComplete: function (transport) {
+                if (typeof options.onComplete === 'function') {
+                    options.onComplete();
+                }
+            }
+        });
+    };
+
+    KeystoneAPI.prototype.v2.getAuthToken = function getAuthToken(options) {
         var postBody, headers;
 
         options = merge({
@@ -166,40 +210,19 @@
                 "id": options.token
             };
         } else if (options.use_user_fiware_token === true) {
-            postBody.auth.token = {
-                "id": "%fiware_token%"
-            };
-            headers['X-FI-WARE-OAuth-Token'] = 'true';
-            headers['X-FI-WARE-OAuth-Token-Body-Pattern'] = '%fiware_token%';
+            manager.get_openstack_token_from_idm_token(this.url, function (token) {
+                postBody.auth.token = {
+                    "id": token
+                };
+                realGetAuthToken.call(this, postBody, headers, options);
+            }.bind(this), options.onFailure);
+            return;
         } else {
             throw new Error();
         }
-
-        MashupPlatform.http.makeRequest(this.url + this.TOKENS_ENDPOINT, {
-            requestHeaders: headers,
-            contentType: "application/json",
-            postBody: JSON.stringify(postBody),
-            onSuccess: function (transport) {
-                if (typeof options.onSuccess === 'function') {
-                    var response = JSON.parse(transport.responseText);
-                    options.onSuccess(response.access.token.id, response);
-                }
-            },
-            onFailure: function (response) {
-                var reason;
-
-                if (typeof options.onFailure === 'function') {
-                    reason = process_failure.call(this, response);
-                    options.onFailure(reason);
-                }
-            }.bind(this),
-            onComplete: function (transport) {
-                if (typeof options.onComplete === 'function') {
-                    options.onComplete();
-                }
-            }
-        });
+        realGetAuthToken.call(this, postBody, headers, options);
     };
+    KeystoneAPI.prototype.getAuthToken = KeystoneAPI.prototype.v2.getAuthToken;
 
     var ObjectStorageAPI = function ObjectStorageAPI(url, options) {
         if (typeof url !== 'string') {

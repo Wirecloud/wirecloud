@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,11 +23,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page
 
 from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.markets.utils import MarketManager
 from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
 import wirecloud.fiware
 from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_user_data
+from wirecloud.fiware.storeclient import UnexpectedResponse
 
 try:
     from social_auth.backends import get_backends
@@ -41,7 +43,7 @@ def auth_fiware_token(auth_type, token):
 
     from social_auth.models import UserSocialAuth
     user_data = FIWARE_SOCIAL_AUTH_BACKEND._user_data(token)
-    return UserSocialAuth.objects.get(provider='fiware', uid=user_data['nickName']).user
+    return UserSocialAuth.objects.get(provider='fiware', uid=user_data['username']).user
 
 
 class FiWareMarketManager(MarketManager):
@@ -98,15 +100,35 @@ class FiWareMarketManager(MarketManager):
         else:
             token = user_data['idm_token']
 
-        storeclient.upload_resource(
-            resource_info['title'],
-            resource_info['version'],
-            "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
-            resource_info['description'],
-            mimetypes[resource_info['type']],
-            wgt_file.get_underlying_file(),
-            token
-        )
+        wirecloud_plugin_supported = False
+        try:
+            supported_plugins = storeclient.get_supported_plugins(token)
+            for plugin in supported_plugins:
+                if plugin.get('name', '').lower() == 'wirecloud component':
+                    wirecloud_plugin_supported = True
+        except UnexpectedResponse as e:
+            if e.status != 404:
+                raise e
+
+        if wirecloud_plugin_supported:
+            storeclient.upload_resource(
+                    resource_info['title'],
+                    resource_info['version'],
+                    "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
+                    resource_info['description'],
+                    "Mashable application component",
+                    wgt_file.get_underlying_file(),
+                    token,
+                    resource_type="Wirecloud component")
+        else:
+            storeclient.upload_resource(
+                    resource_info['title'],
+                    resource_info['version'],
+                    "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
+                    resource_info['description'],
+                    mimetypes[resource_info['type']],
+                    wgt_file.get_underlying_file(),
+                    token)
 
 
 class FiWarePlugin(WirecloudPlugin):
@@ -129,6 +151,7 @@ class FiWarePlugin(WirecloudPlugin):
             'js/NGSI/NGSI.js',
             'js/NGSI/eventsource.js',
             'js/NGSI/NGSIManager.js',
+            'js/ObjectStorage/OpenStackManager.js',
         )
 
         if view == 'classic':
@@ -153,7 +176,7 @@ class FiWarePlugin(WirecloudPlugin):
         if IDM_SUPPORT_ENABLED:
             from wirecloud.fiware.views import oauth_discovery
             urls += patterns('',
-                url('^.well-known/oauth$', cache_page(7 * 24 * 60 * 60)(oauth_discovery), name='oauth.discovery'),
+                url('^.well-known/oauth$', cache_page(7 * 24 * 60 * 60, key_prefix='well-known-oauth-%s' % get_version_hash())(oauth_discovery), name='oauth.discovery'),
             )
 
         return urls
@@ -192,7 +215,7 @@ class FiWarePlugin(WirecloudPlugin):
         if IDM_SUPPORT_ENABLED:
             import wirecloud.fiware.social_auth_backend
             constants["FIWARE_OFFICIAL_PORTAL"] = getattr(settings, "FIWARE_OFFICIAL_PORTAL", False)
-            constants["FIWARE_IDM_SERVER"] = getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FILAB_IDM_SERVER)
+            constants["FIWARE_IDM_SERVER"] = getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FIWARE_LAB_IDM_SERVER)
 
         return constants
 
@@ -259,7 +282,7 @@ class FiWarePlugin(WirecloudPlugin):
         }
 
         if IDM_SUPPORT_ENABLED:
-            context["FIWARE_IDM_SERVER"] = getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FILAB_IDM_SERVER)
+            context["FIWARE_IDM_SERVER"] = getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FIWARE_LAB_IDM_SERVER)
         else:
             context["FIWARE_IDM_SERVER"] = None
 

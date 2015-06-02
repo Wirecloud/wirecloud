@@ -20,7 +20,21 @@
 import os
 import sys
 
+import django
 from django.core.urlresolvers import reverse_lazy
+
+
+BASE_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'wirecloud.commons',
+    'wirecloud.defaulttheme',
+    'compressor',
+)
 
 
 class NoseArgs(object):
@@ -70,18 +84,10 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
 
     settings['USE_TZ'] = True
 
-    settings['INSTALLED_APPS'] = (
-        'django.contrib.auth',
-        'django.contrib.contenttypes',
-        'django.contrib.sessions',
-        'django.contrib.messages',
-        'django.contrib.staticfiles',
-        'django.contrib.admin',
-        'wirecloud.commons',
-        'wirecloud.defaulttheme',
-        'south',
-        'compressor',
-    )
+    settings['INSTALLED_APPS'] = BASE_APPS
+
+    if django.VERSION[1] < 7:
+        settings['INSTALLED_APPS'] += ('south',)
 
     if instance_type == 'catalogue':
         settings['INSTALLED_APPS'] += (

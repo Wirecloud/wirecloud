@@ -1,7 +1,9 @@
 /index/
 /static/
+/screens/
 /catalogue/
 /deployment/
 *.pyc
 *.mo
 *.db
+*.egg-info

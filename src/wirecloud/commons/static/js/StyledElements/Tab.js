@@ -54,7 +54,7 @@
             'tabId': {value: id}
         });
 
-        this.tabElement = document.createElement("div");
+        this.tabElement = document.createElement("li");
         this.tabElement.className = "se-notebook-tab";
         this.name = document.createElement('span');
         this.tabElement.appendChild(this.name);

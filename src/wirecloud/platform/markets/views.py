@@ -26,11 +26,12 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+from six import text_type
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.baseviews import Resource, Service
-from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes
+from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, validate_url_param
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
@@ -44,7 +45,7 @@ class MarketCollection(Resource):
         result = {}
 
         for market in Market.objects.filter(Q(user=None) | Q(user=request.user)):
-            market_key = unicode(market)
+            market_key = text_type(market)
             market_data = json.loads(market.options)
 
             market_data['name'] = market.name
@@ -70,8 +71,16 @@ class MarketCollection(Resource):
         try:
             received_data = json.loads(request.body)
         except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
+            msg = _("malformed json data: %s") % e
             return build_error_response(request, 400, msg)
+
+        if 'options' not in received_data:
+            return build_error_response(request, 400, _("Missing marketplace options"))
+
+        try:
+            validate_url_param('options.url', received_data['options']['url'])
+        except (TypeError, ValueError) as e:
+            return build_error_response(request, 422, text_type(e))
 
         if 'user' not in received_data['options'] or received_data['options']['user'] == request.user.username:
             user_entry = request.user
@@ -119,7 +128,7 @@ class PublishService(Service):
         try:
             data = json.loads(request.body)
         except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
+            msg = _("malformed json data: %s") % e
             return build_error_response(request, 400, msg)
 
         (resource_vendor, resource_name, resource_version) = data['resource'].split('/')
@@ -138,7 +147,7 @@ class PublishService(Service):
             try:
                 market_managers[market_endpoint['market']].publish(market_endpoint, wgt_file, request.user, request=request)
             except Exception as e:
-                errors[market_endpoint['market']] = unicode(e)
+                errors[market_endpoint['market']] = text_type(e)
 
         if len(errors) == 0:
             return HttpResponse(status=204)

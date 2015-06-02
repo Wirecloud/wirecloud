@@ -36,9 +36,9 @@
     font-size: 16px;
     line-height: 23px;
     position: absolute;
-    top: 1px;
+    top: 0px;
     right: 0px;
-    background: linear-gradient(to right, rgba(252, 252, 252, 0), rgb(252, 252, 252) 38px, rgb(252, 252, 252));
+    background: linear-gradient(to right, rgba($body-bg, 0), rgb($body-bg) 38px, rgb($body-bg));
     border-radius: 4px;
     padding: 0px 3px 0px 38px;
     opacity: 0;
@@ -66,9 +66,9 @@
     font-size: 16px;
     line-height: 23px;
     padding: 0px 38px 0px 3px;
-    background: linear-gradient(to left, rgba(252, 252, 252, 0), rgb(252, 252, 252) 38px, rgb(252, 252, 252));
+    background: linear-gradient(to left, rgba($body-bg, 0), rgb($body-bg) 38px, rgb($body-bg));
     position: absolute;
-    top: 1px;
+    top: 0px;
     left: 0px;
     margin: 0px;
     @include transition-property(opacity);

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,13 +23,15 @@ from six.moves.urllib.parse import parse_qs, urlparse
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
+from django.test.utils import override_settings
 from django.utils import unittest
 from django.utils.http import urlencode
 
+from wirecloud.commons.utils.conf import BASE_APPS
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 
-@unittest.skipIf(not 'wirecloud.oauth2provider' in settings.INSTALLED_APPS, 'OAuth2 provider not enabled')
+@override_settings(INSTALLED_APPS=BASE_APPS + ('wirecloud.platform', 'wirecloud.oauth2provider'))
 class Oauth2TestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'oauth2_test_data')
@@ -46,10 +48,10 @@ class Oauth2TestCase(WirecloudTestCase):
     def setUp(self):
         self.user_client.login(username='normuser', password='admin')
 
-    def _check_token(self, token):
+    def _check_token(self, token, endpoint='wirecloud.resource_collection'):
 
         # Make an authenticated request
-        url = reverse('wirecloud.resource_collection')
+        url = reverse(endpoint)
 
         return  self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer ' + token)
 
@@ -63,9 +65,9 @@ class Oauth2TestCase(WirecloudTestCase):
 
         return response
 
-    def check_token_is_invalid(self, token):
+    def check_token_is_invalid(self, token, endpoint='wirecloud.resource_collection'):
 
-        response = self._check_token(token)
+        response = self._check_token(token, endpoint)
         self.assertEqual(response.status_code, 401)
 
         response_data = json.loads(response.content)
@@ -347,7 +349,16 @@ class Oauth2TestCase(WirecloudTestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_authorization_bad_token(self):
+        """
+        Check an error response is returned when using an invalid token for endpoints requiring authentication.
+        """
         self.check_token_is_invalid('invalid_token')
+
+    def test_authorization_bad_token_no_auth_required(self):
+        """
+        Check an error response is returned when using an invalid token for endpoints not requiring authentication.
+        """
+        self.check_token_is_invalid('invalid_token', 'wirecloud.workspace_collection')
 
     def test_authorization_expired_token(self):
         self.check_token_is_invalid('expired_token')

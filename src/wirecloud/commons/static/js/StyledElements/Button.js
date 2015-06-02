@@ -139,6 +139,7 @@
         this._clickCallback = clickCallback.bind(this);
         this._keydownCallback = keydownCallback.bind(this);
 
+        this.wrapperElement.addEventListener('toutchstart', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, false);
         this.wrapperElement.addEventListener('keydown', this._keydownCallback, false);
@@ -202,6 +203,7 @@
 
     StyledButton.prototype.destroy = function destroy() {
 
+        this.wrapperElement.removeEventListener('touchstart', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('click', this._clickCallback, true);
         this.wrapperElement.removeEventListener('keydown', this._keydownCallback, false);

@@ -133,6 +133,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/InputInterface.js',
     'js/StyledElements/InputInterfaces.js',
     'js/wirecloud/ui/ParametrizableValueInputInterface.js',
+    'js/wirecloud/ui/ParametrizedTextInputInterface.js',
     'js/wirecloud/ui/LayoutInputInterface.js',
     'js/StyledElements/VersionInputInterface.js',
     'js/StyledElements/InputInterfaceFactory.js',
@@ -207,6 +208,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         'Wirecloud': wirecloud.platform.__version__,
         'ApplicationMashup': '1.0',
         'StyledElements': '0.5',
+        'FullscreenWidget': '0.5',
     }
 
     def get_platform_context_definitions(self):

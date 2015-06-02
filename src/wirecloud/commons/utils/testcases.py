@@ -99,6 +99,19 @@ def restoretree(backup_path, dest_path):
             shutil.copy2(srcname, dstname)
 
 
+class RealWebServer(object):
+
+    def __init__(self):
+        self._request_method = requests.request
+
+    def request(self, method, url, *args, **kwargs):
+        response = self._request_method(method, url, *args, **kwargs)
+        return {
+            'status_code': response.status_code,
+            'headers': response.headers,
+            'content': response.content
+        }
+
 class DynamicWebServer(object):
 
     responses = {}

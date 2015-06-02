@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,7 +29,7 @@
 
     InputInterfaceFactory.addFieldType('layout', Wirecloud.ui.LayoutInputInterface);
     InputInterfaceFactory.addFieldType('parametrizableValue', Wirecloud.ui.ParametrizableValueInputInterface);
-    InputInterfaceFactory.addFieldType('parametrizedText', ParametrizedTextInputInterface);
+    InputInterfaceFactory.addFieldType('parametrizedText', Wirecloud.ui.ParametrizedTextInputInterface);
     InputInterfaceFactory.addFieldType('mac', Wirecloud.ui.MACInputInterface);
 
     Wirecloud.ui.InputInterfaceFactory = InputInterfaceFactory;

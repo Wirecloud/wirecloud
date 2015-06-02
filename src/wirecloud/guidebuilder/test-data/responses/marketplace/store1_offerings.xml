@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<collection>
+    <resource name="SmartCityLigths">
+        <creator username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </creator>
+        <id>117</id>
+        <lasteditor username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </lasteditor>
+        <registrationDate>2013-08-30T15:17:59+02:00</registrationDate>
+        <url>http://repository.example.com/CoNWeT/service1.rdf</url>
+    </resource>
+    <resource name="TestOperator">
+        <creator username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </creator>
+        <id>118</id>
+        <lasteditor username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </lasteditor>
+        <registrationDate>2013-08-30T15:17:59+02:00</registrationDate>
+        <url>http://repository.example.com/CoNWeT/service3.rdf</url>
+    </resource>
+    <resource name="MultimediaPack">
+        <creator username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </creator>
+        <id>122</id>
+        <lasteditor username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </lasteditor>
+        <registrationDate>2013-08-30T15:17:59+02:00</registrationDate>
+        <url>http://repository.example.com/CoNWeT/service5.rdf</url>
+    </resource>
+    <resource name="InvalidOffering">
+        <creator username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </creator>
+        <id>123</id>
+        <lasteditor username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </lasteditor>
+        <registrationDate>2013-08-30T15:17:59+02:00</registrationDate>
+        <url>http://repository.example.com/CoNWeT/service7.rdf</url>
+    </resource>
+    <resource name="MadridTransportMashup">
+        <creator username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </creator>
+        <id>124</id>
+        <lasteditor username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </lasteditor>
+        <registrationDate>2013-08-30T15:17:59+02:00</registrationDate>
+        <url>http://repository.example.com/CoNWeT/service8.rdf</url>
+    </resource>
+</collection>

@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, InputValidationError, StyledElements, Wirecloud*/
+/*global gettext, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -190,7 +190,7 @@
     };
 
     LayoutInputInterface.prototype._checkValue = function _checkValue(newValue) {
-        return InputValidationError.NO_ERROR;
+        return StyledElements.InputValidationError.NO_ERROR;
     };
 
     LayoutInputInterface.prototype.getValue = function getValue() {

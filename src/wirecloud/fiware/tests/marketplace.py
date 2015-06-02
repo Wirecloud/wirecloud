@@ -94,6 +94,7 @@ class MarketplaceTestCase(WirecloudTestCase):
         store2_offerings = self.read_response_file('responses', 'marketplace', 'store2_offerings.xml')
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offerings', {'content': store2_offerings})
         result = self.market_adaptor.get_all_services_from_store('Store 2')
+        result['resources'] = list(result['resources'])
         expected_result = json.loads(self.read_response_file('results', 'test_marketplace_get_all_offerings_from_store.json'))
 
         self.assertEqual(result, expected_result)
@@ -106,7 +107,7 @@ class MarketplaceTestCase(WirecloudTestCase):
         try:
             result = self.market_adaptor.get_all_services_from_store('Store 2')
 
-            self.assertEqual(result, {'resources': []})
+            self.assertEqual(result, {'resources': ()})
         finally:
             self.network._servers['http']['repository.example.com'] = old_repository
 
@@ -114,6 +115,7 @@ class MarketplaceTestCase(WirecloudTestCase):
 
         self.network._servers['http']['repository.example.com'].add_response('GET', '/CoNWeT/service2.rdf', {'content': 'invalid content'});
         result = self.market_adaptor.get_all_services_from_store('Store 2')
+        result['resources'] = list(result['resources'])
         expected_result = json.loads(self.read_response_file('results', 'test_marketplace_get_all_offerings_from_store_bad_usdl_content.json'))
 
         self.assertEqual(result, expected_result)
@@ -142,6 +144,7 @@ class MarketplaceTestCase(WirecloudTestCase):
         response_text = self.read_response_file('responses', 'marketplace', 'keyword_search.xml')
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/search/offerings/fulltext/test', {'content': response_text})
         result = self.market_adaptor.full_text_search('', 'test', {})
+        result['resources'] = list(result['resources'])
         expected_result = json.loads(self.read_response_file('results', 'test_marketplace_keyword_search.json'))
 
         self.assertEqual(result, expected_result)

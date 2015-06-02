@@ -66,8 +66,8 @@
     };
 
     var install_youtubebrowser = function install_youtubebrowser(autoAction) {
-        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/youtube-browser/2.99.0')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_youtube-browser_2.99.0.wgt'), {
+        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/youtube-browser/3.0')) {
+            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_youtube-browser_3.0.wgt'), {
                 onSuccess: autoAction.nextHandler.bind(autoAction)
             });
         } else {

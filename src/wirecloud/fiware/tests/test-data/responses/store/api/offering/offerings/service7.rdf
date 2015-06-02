@@ -65,8 +65,8 @@
     },
     "resources": [
         {
-            "version": "2.99.0",
-            "link": "http://static.example.com/CoNWeT__Youtube Browser Widget__2.99.0__invalidfilename.wgt",
+            "version": "3.0",
+            "link": "http://static.example.com/CoNWeT__Youtube Browser Widget__3.0__invalidfilename.wgt",
             "name": "Youtube Browser Widget",
             "content_type": "application/x-widget+mashable-application-component",
             "description": "A widget for browsing Youtube"

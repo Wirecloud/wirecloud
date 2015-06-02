@@ -1,0 +1,86 @@
+{  
+    "rating":"0.00",
+    "related_images":[  
+
+    ],
+    "description_url":"http://130.206.81.113/FiwareRepository/v1/storeOfferingCollection/CoNWeT__WireCloudUserGuide__1.0",
+    "creation_date":"2015-05-04 06:00:27.814000",
+    "owner_admin_user_id":"alvaro-arranz-garcia",
+    "applications":[  
+
+    ],
+    "publication_date":"None",
+    "open":true,
+    "owner_organization":"CoNWeT",
+    "name":"WireCloudUserGuide",
+    "tags":[  
+        "widget"
+    ],
+    "comments":[  
+
+    ],
+    "state":"uploaded",
+    "version":"1.0",
+    "image_url":"https://store.lab.fiware.org/media/CoNWeT__WireCloudUserGuide__1.0/wirecloud_logo.png",
+    "offering_description":{  
+        "services_included":[  
+            {  
+                "uriImage":"https://store.lab.fiware.org/media/CoNWeT__WireCloudUserGuide__1.0/wirecloud_logo.png",
+                "vendor":"",
+                "name":"WireCloudUserGuide",
+                "created":"2015-05-04 06:00:27.748005",
+                "interactions":[  
+
+                ],
+                "modified":"2015-05-04 06:00:27.748005",
+                "legal":[  
+
+                ],
+                "parts":[  
+                    {  
+                        "name":"",
+                        "uri":""
+                    }
+                ],
+                "version":"",
+                "sla":[  
+
+                ],
+                "short_description":"This offering contains all the widgets and operators used in the WireCloud  User and Programmer guide (see https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Application_Mashup_-_Wirecloud_-_User_and_Programmer_Guide#Building_a_new_mashup for more info)",
+                "long_description":"This offering contains all the widgets and operators used in the WireCloud  User and Programmer guide (see https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Application_Mashup_-_Wirecloud_-_User_and_Programmer_Guide#Building_a_new_mashup for more info)",
+                "page":""
+            }
+        ],
+        "pricing":{  
+            "price_plans":[  
+                {  
+                    "label":"",
+                    "description":"This offering can be acquired for free",
+                    "title":"Free use"
+                }
+            ],
+            "valid_through":"",
+            "valid_from":"",
+            "description":"This offering contains all the widgets and operators used in the WireCloud  User and Programmer guide (see https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Application_Mashup_-_Wirecloud_-_User_and_Programmer_Guide#Building_a_new_mashup for more info)",
+            "title":"WireCloudUserGuide"
+        }
+    },
+    "resources":[  
+        {  
+            "name":"Map Viewer",
+            "version":"2.5.3",
+            "link":"/media/resources/CoNWeT__Map Viewer__2.5.3__CoNWeT_map-viewer_2.5.3.wgt",
+            "content_type":"application/x-widget+mashable-application-component",
+            "open":true,
+            "description":"Place things on map! Explore the world, trace routes... Don't carry a paper map again..."
+        },
+        {  
+            "name":"Linear Graph Selector",
+            "version":"1.0.2",
+            "link":"/media/resources/CoNWeT__Linear Graph Selector__1.0.2__CoNWeT_ckan-linear-graph-selector_1.0.2.wgt",
+            "content_type":"application/x-widget+mashable-application-component",
+            "open":true,
+            "description":"Wirecloud widget to choose what data should be shown in a graph"
+        }
+    ]
+}

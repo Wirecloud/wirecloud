@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -31,6 +31,7 @@ By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
 
+import base64
 import json
 from six.moves.urllib.parse import urlencode, urljoin, urlparse
 
@@ -40,28 +41,24 @@ from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend
 
 
-FILAB_IDM_SERVER = 'https://account.lab.fiware.org'
+FIWARE_LAB_IDM_SERVER = 'https://account.lab.fiware.org'
 
-FIWARE_AUTHORIZATION_ENDPOINT = 'authorize'
-FIWARE_ACCESS_TOKEN_ENDPOINT = 'token'
+FIWARE_AUTHORIZATION_ENDPOINT = 'oauth2/authorize'
+FIWARE_ACCESS_TOKEN_ENDPOINT = 'oauth2/token'
 FIWARE_USER_DATA_ENDPOINT = 'user'
 
 
 class FiwareBackend(OAuthBackend):
     """FIWARE IdM OAuth authentication backend"""
     name = 'fiware'
+
     # Default extra data to store
     EXTRA_DATA = [
-        ('nickName', 'username'),
-        ('actorId', 'uid'),
+        ('username', 'username'),
         ('refresh_token', 'refresh_token'),
         ('expires_in', 'expires_in'),
     ]
-
-    def get_user_id(self, details, response):
-        """Return the user id, FIWARE IdM only provides username as a unique
-        identifier"""
-        return response['actorId']
+    ID_KEY = 'username'
 
     def get_user_details(self, response):
         """Return user details from FIWARE account"""
@@ -72,7 +69,7 @@ class FiwareBackend(OAuthBackend):
             first_name, last_name = name.split(' ', 1)
         else:
             first_name = name
-        return {'username': response.get('nickName'),
+        return {'username': response.get('username'),
                 'email': response.get('email') or '',
                 'fullname': name,
                 'first_name': first_name,
@@ -81,9 +78,9 @@ class FiwareBackend(OAuthBackend):
 
 class FiwareAuth(BaseOAuth2):
     """FIWARE OAuth2 mechanism"""
-    AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
-    ACCESS_TOKEN_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_ACCESS_TOKEN_ENDPOINT)
-    USER_DATA_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_USER_DATA_ENDPOINT)
+    AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
+    ACCESS_TOKEN_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_ACCESS_TOKEN_ENDPOINT)
+    USER_DATA_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_USER_DATA_ENDPOINT)
     AUTH_BACKEND = FiwareBackend
     REDIRECT_STATE = False
     STATE_PARAMETER = False
@@ -94,6 +91,14 @@ class FiwareAuth(BaseOAuth2):
 
     FIWARE_ORGANIZATION = getattr(settings, 'FIWARE_ORGANIZATION', None)
 
+    @classmethod
+    def auth_headers(cls):
+        return {
+            'Authorization': 'Basic %s' % base64.urlsafe_b64encode(
+                '%s:%s' % cls.get_key_and_secret()
+            )
+        }
+
     @staticmethod
     def _user_data(access_token):
         url = FiwareAuth.USER_DATA_URL + '?' + urlencode({
@@ -102,6 +107,13 @@ class FiwareAuth(BaseOAuth2):
 
         try:
             data = json.load(dsa_urlopen(url))
+            # Newer versions of the FIWARE IdM provides and id field with the
+            # username of the user. Older versions use actorId as identifier, but
+            # also provides a nickName field. We use nickName because it is also
+            # unique and provides a better way for migrating to newer versions
+            # of KeyRock. Store the appropiated field in username to simplify
+            # the rest of the code
+            data['username'] = data['nickName'] if 'nickName' in data else data['id']
         except ValueError:
             data = None
 

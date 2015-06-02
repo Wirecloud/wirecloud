@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -96,7 +96,7 @@ class UserWorkspace(models.Model):
 class Tab(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
-    visible = models.BooleanField(_('Visible'))
+    visible = models.BooleanField(_('Visible'), default=False, null=False)
     position = models.IntegerField(null=True, blank=True)
     workspace = models.ForeignKey(Workspace, verbose_name=_('Workspace'))
 

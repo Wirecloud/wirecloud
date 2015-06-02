@@ -1,5 +1,5 @@
 /*jshint globalstrict:true */
-/*global MashupPlatform, ObjectStorageAPI, StyledElements*/
+/*global KeystoneAPI, MashupPlatform, ObjectStorageAPI, StyledElements*/
 
 (function () {
 
@@ -35,16 +35,32 @@
     };
 
     var onGetAuthTokenSuccess = function onGetAuthTokenSuccess(new_token, data) {
-        var i, object_storage;
+        var i, j, object_storage, currentService, region;
 
         token = new_token;
         document.getElementById('api_token').textContent = token;
 
         for (i = 0; i < data.access.serviceCatalog.length; i++) {
-            if (data.access.serviceCatalog[i].type === 'object-store') {
-                object_storage = data.access.serviceCatalog[i].endpoints[0].publicURL;
+            currentService = data.access.serviceCatalog[i];
+            if (currentService.type === 'object-store') {
+                region = MashupPlatform.prefs.get('region').trim();
+                if (region !== '') {
+                    for (j = 0; j < currentService.endpoints.length; j++) {
+                        if (currentService.endpoints[j].region === region) {
+                            object_storage = currentService.endpoints[j].publicURL;
+                            break;
+                        }
+                    }
+                } else {
+                    object_storage = currentService.endpoints[0].publicURL;
+                }
                 break;
             }
+        }
+
+        if (object_storage == null) {
+            document.getElementById('api_token').textContent = 'Fail. Object Storage Service not found';
+            fail();
         }
 
         api = new ObjectStorageAPI(object_storage);
@@ -74,7 +90,7 @@
                     break;
                 }
             }
-        };
+        }
 
         document.getElementById('file_name').textContent = file_name;
         var blob = new Blob(["Hello world!"], { type: "text/plain" });
