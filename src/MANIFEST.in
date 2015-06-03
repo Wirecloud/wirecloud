@@ -1,4 +1,6 @@
 include LICENSE
+include MANIFEST.in
 recursive-include wirecloud *
+recursive-exclude * __pycache__
 recursive-exclude wirecloud *.py[co]
 prune wirecloud/guidebuilder
