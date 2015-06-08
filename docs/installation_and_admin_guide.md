@@ -470,8 +470,8 @@ Create a new Application using the IdM server to use (for example: `https://acco
     - Add a `FIWARE_IDM_SERVER` setting pointing to the IdM server to use (e.g. `FIWARE_IDM_SERVER = "https://account.lab.fiware.org"`)
     - Add `FIWARE_APP_ID` and `FIWARE_APP_SECRET` settings using the id and secret values provided by the IdM. You should end having something like this:
 
-		  FIWARE_APP_ID = "43"
-          FIWARE_APP_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc8225e2cf940f746e6b229158b5e3828e2716b915d2c4762a34219e1792b85e4d3cdf66d70d72840b"
+            FIWARE_APP_ID = "43"
+            FIWARE_APP_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc8225e2cf940f746e6b229158b5e3828e2716b915d2c4762a34219e1792b85e4d3cdf66d70d72840b"
 
 4. Edit `urls.py`:
     - Replace the login endpoint:
