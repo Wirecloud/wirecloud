@@ -322,6 +322,35 @@ One of the main features of debug mode is the display of detailed error pages. I
 Language code to use by default (e.g. "en"). This setting also support other values: "browser", meaning "use the language detected from browser" and "default" for using the value of the `LANGUAGE_CODE` setting.
 
 
+#### FORCE_DOMAIN
+(String, default: `None`)
+
+Set `FORCE_DOMAIN` using an string if you want to force WireCloud to use a
+concrete domain name when building internal URLs. If this setting is `None` (the
+default), WireCloud will use the domain info coming with the requests or from
+the [Django's sites
+framework](https://docs.djangoproject.com/en/1.4/ref/contrib/sites/) if
+configured and used.
+
+This setting is mainly useful when WireCloud is behind a web server acting as
+proxy.
+
+
+#### FORCE_PROTO
+(String, default: `None`)
+
+Set `FORCE_PROTO` to "http" or to "https" if you want to force WireCloud to use
+one of those schemes when building internal URLs.
+
+If this setting is `None` (the default), WireCloud will check if the request
+comes from a secure connection and, in that case, it will use https as the
+scheme for building the internal URLs. In any other case, WireCloud will use
+http as the scheme for the internal URLs.
+
+This setting is mainly useful when WireCloud is behind a web server acting as
+proxy.
+
+
 #### LANGUAGE_CODE
 (String; default: "en-us") 
 
@@ -791,7 +820,7 @@ Rebuilds whoosh indexes used by the search engine of WireCloud. Some commonly us
 
 Example usage:
 
-	$ python manage.py --noinput --indexes=user,group
+	$ python manage.py resetsearchindexes --noinput --indexes=user,group
 
 
 ### Creating WireCloud backups and restoring them
