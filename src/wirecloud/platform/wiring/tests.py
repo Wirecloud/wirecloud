@@ -1229,12 +1229,12 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
             with wiring.behaviour_sidebar as sidebar:
                 sidebar.enable()
                 self.assertEqual(len(sidebar.behaviour_list), 1)
-                sidebar.active_behaviour.check_basic_info("New behaviour 0", "No description provided.")
+                sidebar.active_behaviour.check_basic_info("New behavior", "No description provided.")
 
             with wiring.behaviour_sidebar as sidebar:
                 self.assertFalse(sidebar.disabled)
                 self.assertEqual(len(sidebar.behaviour_list), 1)
-                sidebar.active_behaviour.check_basic_info("New behaviour 0", "No description provided.")
+                sidebar.active_behaviour.check_basic_info("New behavior", "No description provided.")
 
     def test_behaviour_basic_info_can_be_updated(self):
         self._enable_behaviour_engine_in_workspace(5)

@@ -818,7 +818,7 @@ class WiringBehaviourTester(object):
 
     @property
     def heading(self):
-        return self.element.find_element_by_css_selector(".behaviour-title")
+        return self.element.find_element_by_css_selector(".behavior-title")
 
     @property
     def title(self):
@@ -826,7 +826,7 @@ class WiringBehaviourTester(object):
 
     @property
     def description(self):
-        return self.element.find_element_by_css_selector(".behaviour-description").text
+        return self.element.find_element_by_css_selector(".behavior-description").text
 
     def activate(self):
         self.btn_activate.click()
@@ -1485,11 +1485,11 @@ class BaseWiringViewTester(object):
 
     @property
     def btn_list_behaviours(self):
-        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud-navbar .btn-list-behaviours"))
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud-navbar .btn-list-behaviors"))
 
     @property
     def btn_list_components(self):
-        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud-navbar .btn-list-components"))
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud-navbar .btn-add-components"))
 
     @property
     def layout(self):
@@ -1533,15 +1533,15 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
     @property
     def behaviour_list(self):
-        return [WiringBehaviourTester(self.testcase, e) for e in self.panel.find_elements_by_css_selector(".behaviour")]
+        return [WiringBehaviourTester(self.testcase, e) for e in self.panel.find_elements_by_css_selector(".behavior")]
 
     @property
     def btn_create_behaviour(self):
-        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-create-behaviour"))
+        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-create"))
 
     @property
     def btn_enable_behaviour_engine(self):
-        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-enable-behaviours"))
+        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-enable"))
 
     @property
     def disabled(self):
@@ -1549,13 +1549,13 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
     @property
     def panel(self):
-        return self.section_sidebar.find_element_by_css_selector(".behaviour-panel")
+        return self.section_sidebar.find_element_by_css_selector(".panel-behaviors")
 
     def create_behaviour(self, title=None, description=None):
         old_behaviour_list_length = len(self.behaviour_list)
 
         self.btn_create_behaviour.click()
-        form = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".behaviour-registration-form"))
+        form = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".behavior-create-form"))
 
         if title is not None:
             form.set_field_value('title', title)
@@ -1572,7 +1572,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
         last_behaviour = new_behaviour_list[-1]
 
-        self.testcase.assertEqual(last_behaviour.title, title if title is not None and title else "New behaviour %d" % (len(new_behaviour_list) - 1))
+        self.testcase.assertEqual(last_behaviour.title, title if title is not None and title else "New behavior")
         self.testcase.assertEqual(last_behaviour.description, description if description is not None and description else "No description provided.")
 
         return self
@@ -1597,7 +1597,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
     def update_behaviour(self, behaviour, title=None, description=None):
         behaviour.show_settings()
-        form = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".behaviour-update-form"))
+        form = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".behavior-update-form"))
 
         if title is not None:
             form.set_field_value('title', title)
@@ -1631,11 +1631,11 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     @property
     def btn_show_operator_group(self):
-        return ButtonTester(self.testcase, self.section_sidebar.find_element_by_css_selector(".btn-display-operator-group"))
+        return ButtonTester(self.testcase, self.section_sidebar.find_element_by_css_selector(".btn-list-operator-group"))
 
     @property
     def btn_show_widget_group(self):
-        return ButtonTester(self.testcase, self.section_sidebar.find_element_by_css_selector(".btn-display-widget-group"))
+        return ButtonTester(self.testcase, self.section_sidebar.find_element_by_css_selector(".btn-list-widget-group"))
 
     @property
     def section_operator_group(self):
@@ -1647,7 +1647,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     @property
     def panel(self):
-        return self.section_sidebar.find_element_by_css_selector(".component-panel")
+        return self.section_sidebar.find_element_by_css_selector(".panel-components")
 
     def _filter_components_by_type(self, component_type):
         return [self._build_component(component_type, e) for e in self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)]
@@ -1678,7 +1678,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         button = getattr(self, "btn_show_%s_group" % component_type)
 
         if not button.active:
-            WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".wiring-sidebar .component-panel .btn-display-%s-group" % component_type)))
+            WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".wiring-sidebar .panel-components .btn-list-%s-group" % component_type)))
             button.click()
 
             section = getattr(self, "section_%s_group" % component_type)

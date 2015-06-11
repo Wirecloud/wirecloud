@@ -24,7 +24,7 @@ if (!Wirecloud.ui) {
     Wirecloud.ui = {};
 }
 
-Wirecloud.ui.WiringEditor = (function () {
+Wirecloud.ui.WiringEditor = (function (se) {
 
     "use strict";
 
@@ -49,7 +49,7 @@ Wirecloud.ui.WiringEditor = (function () {
             this.events[WiringEditor.defaults.eventList[i]] = new StyledElements.Event();
         }
 
-        this.layout = new StyledElements.OffCanvasLayout();
+        this.layout = new se.OffCanvasLayout();
         this.appendChild(this.layout);
 
         buildWirecloudToolbar.call(this);
@@ -57,21 +57,24 @@ Wirecloud.ui.WiringEditor = (function () {
         buildWiringSidebar.call(this);
         buildWiringBottombar.call(this);
 
-        this.layout.content.addClassName('wiring-diagram');
-        this.layout.footer.addClassName('wiring-bottombar');
+        this.layout.content.addClass('wiring-diagram');
+        this.layout.footer.addClass('wiring-footer');
 
         // Manage the alert for an empty wiring
         this.entitiesNumber = 0;
 
         this.alertEmptyWiring = new StyledElements.Alert({
-            'contextualClass': "info",
-            'placement': "static-top",
+            state: 'info',
+            alignment: 'static-top',
+            title: "Hi, welcome to the mashup's wiring view!",
+            message: "In this edition area, you can add web applications (widgets/operators) from the sidebar and then, connect them each other."
         });
-        this.alertEmptyWiring.setHeadline("Hi, welcome to the mashup's wiring view!");
-        this.alertEmptyWiring.setContent("In this edition area, you can add web applications (widgets/operators) from the sidebar and then, connect them each other.");
-        this.alertEmptyWiring.addBlockquote("Only if a web application provides input or output endpoints, it will be connectable with others.");
-        this.alertEmptyWiring.hide();
-        this.layout.content.appendChild(this.alertEmptyWiring);
+        this.alertEmptyWiring
+            .addNote("Only if a web application provides input or output endpoints, it will be connectable with others.")
+            .hide();
+        this.alertEmptyWiring.heading
+            .addClass('text-center');
+        this.layout.content.append(this.alertEmptyWiring);
 
         /* CONNECTION ENGINE SETTING */
 
@@ -110,11 +113,11 @@ Wirecloud.ui.WiringEditor = (function () {
             }
 
             if (found) {
-                switch (this.behaviourEngine.removeConnection(eventTarget.sourceName, eventTarget.targetName, eventTarget.cascadeRemove)) {
-                case WiringEditor.BehaviourEngine.CONNECTION_REMOVED:
+                switch (this.behaviorEngine.removeConnection(eventTarget.sourceName, eventTarget.targetName, eventTarget.cascadeRemove)) {
+                case WiringEditor.BehaviorEngine.CONNECTION_REMOVED:
                     eventTarget.connection.onbackground = true;
                     break;
-                case WiringEditor.BehaviourEngine.CONNECTION_REMOVED_FULLY:
+                case WiringEditor.BehaviorEngine.CONNECTION_REMOVED_FULLY:
                     this.connections.splice(index, 1);
                 }
             }
@@ -125,13 +128,13 @@ Wirecloud.ui.WiringEditor = (function () {
         }.bind(this));
 
         this.connectionEngine.addEventListener('unselectall', function () {
-            this.layout.hide();
+            this.layout.slideOut();
             this.ChangeObjectEditing(null);
         }.bind(this));
 
         this.connectionEngine.addEventListener('update', function (eventTarget) {
             if (!eventTarget.connection.onbackground) {
-                this.behaviourEngine.updateConnection(eventTarget.connection.serialize(), true);
+                this.behaviorEngine.updateConnection(eventTarget.connection.serialize(), true);
             }
         }.bind(this));
 
@@ -139,6 +142,11 @@ Wirecloud.ui.WiringEditor = (function () {
         this.disableAnchors = this.disableAnchors.bind(this);
 
         this.componentsCollapsed = [];
+
+        this.components = {
+            operator: {},
+            widget: {}
+        };
 
         this.arrowCreator = new Wirecloud.ui.WiringEditor.ArrowCreator(this.connectionEngine, this,
             function () {
@@ -214,15 +222,14 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     WiringEditor.prototype.getToolbarButtons = function getToolbarButtons() {
-        if (this.behaviourEngine.behavioursEnabled) {
-            if (this.behaviourEngine.globalViewpointActive()) {
-                this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
-                return [this.btnComponents, this.btnBehaviours, this.btnToggleViewpoint, this.btnEmptyBehaviour, this.btnRemoveBehaviour];
+        if (this.behaviorEngine.enabled) {
+            if (this.behaviorEngine.viewpoint === 0) {
+                return [this.btnAddComponents, this.btnListBehaviors, this.btnToggleViewpoint, this.btnEmptyBehavior];
             } else {
-                return [this.btnBehaviours, this.btnToggleViewpoint];
+                return [this.btnListBehaviors, this.btnToggleViewpoint];
             }
         } else {
-            return [this.btnComponents, this.btnBehaviours];
+            return [this.btnAddComponents, this.btnListBehaviors];
         }
     };
 
@@ -230,18 +237,19 @@ Wirecloud.ui.WiringEditor = (function () {
     // PRIVATE METHODS
     // ==================================================================================
 
-    var startBehaviourEngine = function startBehaviourEngine() {
-        this.behaviourEngine.addEventListener('activate', function (eventTarget) {
+    var startBehaviorEngine = function startBehaviorEngine() {
+        this.behaviorEngine
+            .on('activate', function (behavior, viewpoint) {
             var component, componentId, componentType, connection, i;
 
-            LayoutManagerFactory.getInstance().header.refresh();
-            this.connectionEngine.unselectArrow();
+                LayoutManagerFactory.getInstance().header.refresh();
+                this.connectionEngine.unselectArrow();
 
-            if (eventTarget.globalViewpoint) {
+            if (viewpoint === 0) {
 
                 for (i = 0; i < this.connections.length; i++) {
                     connection = this.connections[i];
-                    if (eventTarget.behaviour.containsConnection(connection.sourceName, connection.targetName)) {
+                    if (behavior.hasConnection(connection.sourceName, connection.targetName)) {
                         connection.onbackground = false;
                     } else {
                         connection.onbackground = true;
@@ -251,9 +259,9 @@ Wirecloud.ui.WiringEditor = (function () {
                 for (componentType in this.components) {
                     for (componentId in this.components[componentType]) {
                         component = this.components[componentType][componentId];
-                        component.setVisualInfo(this.behaviourEngine.getComponentView(componentType, componentId));
+                        component.setVisualInfo(this.behaviorEngine.findComponent(componentType, componentId));
 
-                        if (eventTarget.behaviour.containsComponent(componentType, componentId)) {
+                        if (behavior.hasComponent(componentType, componentId)) {
                             component.onbackground = false;
                         } else {
                             component.onbackground = true;
@@ -273,9 +281,9 @@ Wirecloud.ui.WiringEditor = (function () {
                     for (componentId in this.components[componentType]) {
                         component = this.components[componentType][componentId];
 
-                        if (eventTarget.behaviour.containsComponent(componentType, componentId)) {
+                        if (behavior.hasComponent(componentType, componentId)) {
                             component.sleek = true;
-                            component.setVisualInfo(this.behaviourEngine.getComponentView(componentType, componentId));
+                            component.setVisualInfo(this.behaviorEngine.findComponent(componentType, componentId));
                         } else {
                             component.hidden = true;
                         }
@@ -284,7 +292,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
                 for (i = 0; i < this.connections.length; i++) {
                     connection = this.connections[i];
-                    if (eventTarget.behaviour.containsConnection(connection.sourceName, connection.targetName)) {
+                    if (behavior.hasConnection(connection.sourceName, connection.targetName)) {
                         connection.onbackground = false;
                     } else {
                         connection.hidden = true;
@@ -295,158 +303,80 @@ Wirecloud.ui.WiringEditor = (function () {
                     for (componentId in this.components[componentType]) {
                         component = this.components[componentType][componentId];
 
-                        if (eventTarget.behaviour.containsComponent(componentType, componentId)) {
+                        if (behavior.hasComponent(componentType, componentId)) {
                             component.repaint();
                         }
                     }
                 }
 
             }
-        }.bind(this));
 
-        this.behaviourEngine.addEventListener('append', function (eventTarget) {
-            eventTarget.behaviour.addEventListener('activate', function() {
-                this.behaviourEngine.activateBehaviour(eventTarget.behaviour);
-            }.bind(this));
+            }, this)
+            .on('beforeEmpty', function (behavior) {
+                Object.keys(this.components).forEach(function (type) {
+                    Object.keys(this.components[type]).forEach(function (id) {
+                        var component = this.components[type][id];
 
-            eventTarget.behaviour.addEventListener('activate.dblclick', function() {
-                this.layout.hide();
-            }.bind(this));
+                        if (behavior.hasComponent(type, id)) {
+                            this.removeComponent(type, id, false);
+                        }
+                    }, this);
+                }, this);
+            }, this)
+            .on('enable', function (enabled) {
+                LayoutManagerFactory.getInstance().header.refresh();
+                this.connectionEngine.unselectArrow();
 
-            eventTarget.behaviour.addEventListener('open', function() {
-                var btnSave = new StyledElements.Button({
-                    'text': gettext("Save changes"),
-                    'class': 'btn-primary'
-                });
+                Object.keys(this.components).forEach(function (type) {
+                    Object.keys(this.components[type]).forEach(function (id) {
+                        var component = this.components[type][id];
 
-                var dialog = new Wirecloud.ui.FormWindowMenu([
-                        {name: 'title', label: gettext("Title"), type: 'text'},
-                        {name: 'description', label: gettext("Description"), type: 'longtext'}
-                    ],
-                    gettext("Information of the behaviour"),
-                    'behaviour-update-form',
-                    {
-                        acceptButton: btnSave
-                    });
+                        this.behaviorEngine.updateComponent(type, id, component.serialize());
 
-                dialog.executeOperation = function (data) {
-                    eventTarget.behaviour.updateInfo(data);
-                };
+                        if (!enabled) {
+                            component.onbackground = false;
+                        }
+                    }, this);
+                }, this);
 
-                dialog.show();
-                dialog.setValue(eventTarget.behaviour.getInfo());
-            }.bind(this));
-        }.bind(this));
+                this.connections.forEach(function (connection) {
+                    this.behaviorEngine.updateConnection(connection.serialize());
 
-        this.behaviourEngine.addEventListener('create', function (eventTarget) {
-            var btnSave = new StyledElements.Button({
-                'text': gettext("New behaviour"),
-                'class': 'btn-primary'
-            });
-
-            var dialog = new Wirecloud.ui.FormWindowMenu([
-                    {name: 'title', label: gettext("Title"), type: 'text'},
-                    {name: 'description', label: gettext("Description"), type: 'longtext'}
-                ],
-                gettext("Create a new behaviour"),
-                'behaviour-registration-form',
-                {
-                    acceptButton: btnSave
-                });
-
-            dialog.executeOperation = function (data) {
-                var behaviour = eventTarget.behaviourEngine.createBehaviour(data);
-
-                eventTarget.behaviourEngine.appendBehaviour(behaviour);
-                this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
-            }.bind(this);
-
-            dialog.show();
-        }.bind(this));
-
-        this.behaviourEngine.addEventListener('beforeEmpty', function (eventTarget) {
-            var component, componentId, componentType, connection, i, idList;
-
-            for (componentType in this.components) {
-                idList = Object.keys(this.components[componentType]);
-
-                for (i = 0; i < idList.length; i++) {
-                    component = this.components[componentType][idList[i]];
-
-                    if (eventTarget.behaviour.containsComponent(componentType, idList[i])) {
-                        this.removeComponent(componentType, idList[i], false);
+                    if (!enabled) {
+                        connection.onbackground = false;
                     }
-                }
-            }
-        }.bind(this));
-
-        this.behaviourEngine.addEventListener('enable', function (eventTarget) {
-            var component, componentId, componentType, connection, i;
-
-            LayoutManagerFactory.getInstance().header.refresh();
-            this.connectionEngine.unselectArrow();
-
-            if (eventTarget.isEnabled) {
-                for (componentType in this.components) {
-                    for (componentId in this.components[componentType]) {
-                        component = this.components[componentType][componentId];
-                        this.behaviourEngine.updateComponent(componentType, componentId, component.serialize());
-                    }
-                }
-
-                for (i = 0; i < this.connections.length; i++) {
-                    connection = this.connections[i];
-                    this.behaviourEngine.updateConnection(connection.serialize());
-                }
-            } else {
-                for (componentType in this.components) {
-                    for (componentId in this.components[componentType]) {
-                        component = this.components[componentType][componentId];
-                        component.onbackground = false;
-                    }
-                }
-
-                for (i = 0; i < this.connections.length; i++) {
-                    connection = this.connections[i];
-                    connection.onbackground = false;
-                }
-            }
-        }.bind(this));
-
-        this.behaviourEngine.addEventListener('remove', function (eventTarget) {
-            this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
-        }.bind(this));
+                }, this);
+            }, this);
     };
 
     var buildWirecloudToolbar = function buildWirecloudToolbar() {
-        this.btnComponents = new StyledElements.ToggleButton({
+        this.btnAddComponents = new StyledElements.ToggleButton({
             'iconClass': 'icon-archive',
             'stackedIconClass': 'icon-plus-sign',
             'stackedIconposition': 'bottom-right',
-            'title': gettext("Components"),
-            'class': "btn-list-components"
+            'title': gettext("Add components"),
+            'class': "btn-add-components"
         });
-        this.btnComponents.addEventListener('click', function (styledElement) {
-            if (!styledElement.active) {
-                this.layout.hide();
+        this.btnAddComponents.on('click', function (element) {
+            if (!element.active) {
+                this.layout.slideOut();
             } else {
-                this.componentManager.activeDefaultSection();
-                this.layout.show(0);
+                this.layout.slideIn(0);
             }
-        }.bind(this));
+        }, this);
 
-        this.btnBehaviours = new StyledElements.ToggleButton({
+        this.btnListBehaviors = new StyledElements.ToggleButton({
             'iconClass': 'icon-sitemap',
-            'title': gettext("Behaviours"),
-            'class': "btn-list-behaviours"
+            'title': gettext("List behaviors"),
+            'class': "btn-list-behaviors"
         });
-        this.btnBehaviours.addEventListener('click', function (styledElement) {
-            if (!styledElement.active) {
-                this.layout.hide();
+        this.btnListBehaviors.on('click', function (element) {
+            if (!element.active) {
+                this.layout.slideOut();
             } else {
-                this.layout.show(1);
+                this.layout.slideIn(1);
             }
-        }.bind(this));
+        }, this);
 
         this.btnToggleViewpoint = new StyledElements.ToggleButton({
             'iconClass': 'icon-picture',
@@ -454,83 +384,57 @@ Wirecloud.ui.WiringEditor = (function () {
             'class': "btn-toggle-viewpoint",
             'stackedIconClass': 'icon-globe'
         });
-        this.btnToggleViewpoint.addEventListener('click', function (styledElement) {
-            this.layout.hide();
-            this.behaviourEngine.toggleViewpoint();
-        }.bind(this));
+        this.btnToggleViewpoint.on('click', function () {
+            this.layout.slideOut();
+            this.behaviorEngine.toggleViewpoint();
+        }, this);
 
-        this.btnEmptyBehaviour = new StyledElements.Button({
+        this.btnEmptyBehavior = new StyledElements.Button({
             'iconClass': 'icon-eraser',
-            'title': gettext("Empty behaviour"),
-            'class': "btn-empty-behaviour"
+            'title': gettext("Empty behavior"),
+            'class': "btn-empty-behavior"
         });
-        this.btnEmptyBehaviour.addEventListener('click', function (styledElement) {
+        this.btnEmptyBehavior.on('click', function () {
             var dialog, message;
 
             message = gettext("The following operation is irreversible " +
-                "and cleans all components and connections belonging to the current behaviour. " +
+                "and cleans all components and connections belonging to the current behavior. " +
                 "Would you like to continue?");
 
             dialog = new Wirecloud.ui.AlertWindowMenu({
-                'acceptLabel': gettext("Yes, empty"),
+                'acceptLabel': gettext("Yes"),
                 'cancelLabel': gettext("No, thank you")
             });
 
             dialog.setMsg(message);
-            dialog.acceptHandler = this.behaviourEngine.emptyBehaviour.bind(this.behaviourEngine);
+            dialog.acceptHandler = function () {
+                this.behaviorEngine.emptyBehavior();
+            }.bind(this);
 
-            this.layout.hide();
+            this.layout.slideOut();
             dialog.show();
-        }.bind(this));
-
-        this.btnRemoveBehaviour = new StyledElements.Button({
-            'iconClass': 'icon-trash',
-            'title': gettext("Remove behaviour"),
-            'class': "btn-remove-behaviour btn-danger"
-        });
-        this.btnRemoveBehaviour.addEventListener('click', function (styledElement) {
-            var dialog, message;
-
-            message = gettext("The following operation is irreversible " +
-                "and completely removes the current behaviour. " +
-                "Would you like to continue?");
-
-            dialog = new Wirecloud.ui.AlertWindowMenu({
-                'acceptLabel': gettext("Yes, remove"),
-                'cancelLabel': gettext("No, thank you")
-            });
-
-            dialog.setMsg(message);
-            dialog.acceptHandler = this.behaviourEngine.removeBehaviour.bind(this.behaviourEngine);
-
-            this.layout.hide();
-            dialog.show();
-        }.bind(this));
+        }, this);
     };
 
     var buildWiringSidebar = function buildWiringSidebar() {
-        this.layout.sidebar.addClassName('wiring-sidebar');
+        this.layout.sidebar.addClass("wiring-sidebar");
 
         this.componentManager = new WiringEditor.ComponentManager();
-        this.layout.addPanel(this.componentManager);
+        this.behaviorEngine = new WiringEditor.BehaviorEngine();
 
-        this.behaviourEngine = new WiringEditor.BehaviourEngine();
-        this.layout.addPanel(this.behaviourEngine);
-        startBehaviourEngine.call(this);
+        this.layout
+            .addPanel(this.componentManager)
+            .addPanel(this.behaviorEngine)
+            .on('slideOut', function () {
+                this.btnAddComponents.active = false;
+                this.btnListBehaviors.active = false;
+            }, this)
+            .on('slideIn', function (panel) {
+                this.btnAddComponents.active = panel.hasClass("panel-components");
+                this.btnListBehaviors.active = panel.hasClass("panel-behaviors");
+            }, this);
 
-        this.layout.addEventListener('hide', function () {
-            this.btnComponents.active = false;
-            this.btnBehaviours.active = false;
-        }.bind(this));
-        this.layout.addEventListener('show', function (shownPanel) {
-            if (shownPanel.wrapperElement.classList.contains('component-panel')) {
-                this.btnComponents.active = true;
-                this.btnBehaviours.active = false;
-            } else {
-                this.btnComponents.active = false;
-                this.btnBehaviours.active = true;
-            }
-        }.bind(this));
+        startBehaviorEngine.call(this);
     };
 
     var buildWiringBottombar = function buildWiringBottombar() {
@@ -538,20 +442,33 @@ Wirecloud.ui.WiringEditor = (function () {
 
         wiringLegend.className = "wiring-legend";
         wiringLegend.innerHTML =
-            '<div class="wiring-element legend-connections">' +
-                '<div class="symbols"><div class="symbol-fg"></div></div>' +
-                '<div class="title">Connections</div>' +
-            '</div>' +
-            '<div class="wiring-element legend-operators">' +
-                '<div class="symbols"><div class="symbol-fg"></div></div>' +
-                '<div class="title">Operators</div>' +
-            '</div>' +
-            '<div class="wiring-element legend-widgets">' +
-                '<div class="symbols"><div class="symbol-fg"></div></div>' +
-                '<div class="title">Widgets</div>' +
-            '</div>';
+            '<span class="wiring-element element-connection">' +
+                '<span class="color"></span>' +
+                '<span class="title">Connections</span>' +
+            '</span>' +
+            '<span class="wiring-element element-operator">' +
+                '<span class="color"></span>' +
+                '<span class="title">Operators</span>' +
+            '</span>' +
+            '<span class="wiring-element element-widget">' +
+                '<span class="color"></span>' +
+                '<span class="title">Widgets</span>' +
+            '</span>';
 
-        this.layout.footer.appendChild(wiringLegend);
+        var wiringLogger = document.createElement('div');
+        var currentBehavior = document.createElement('span');
+
+        wiringLogger.className = 'wiring-logger';
+        wiringLogger.appendChild(currentBehavior);
+
+        this.behaviorEngine.addLogger(currentBehavior,
+            wiringLegend.querySelector('.element-connection .color'),
+            wiringLegend.querySelector('.element-operator .color'),
+            wiringLegend.querySelector('.element-widget .color'));
+
+        this.layout.footer
+            .append(wiringLogger)
+            .append(wiringLegend);
     };
 
     /**
@@ -561,7 +478,7 @@ Wirecloud.ui.WiringEditor = (function () {
     var keydownListener = function keydownListener(event) {
         if (event.keyCode == 17) {
             this.ctrlPushed = true;
-            this.layout.content.addClassName('selecting');
+            this.layout.content.addClass('selecting');
         }
     };
 
@@ -572,7 +489,7 @@ Wirecloud.ui.WiringEditor = (function () {
     var keyupListener = function keyupListener(event) {
         if (event.keyCode == 17) {
             this.ctrlPushed = false;
-            this.layout.content.removeClassName('selecting');
+            this.layout.content.removeClass('selecting');
         }
     };
 
@@ -588,7 +505,7 @@ Wirecloud.ui.WiringEditor = (function () {
             if (!versionInfo) {
                 // New operator
                 operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-                this.componentManager.appendOperator(operator_interface);
+                this.componentManager.addComponent('operator', operator_interface);
                 this.operatorVersions[operator.vendor + '/' + operator.name] = {
                     'lastVersion': operator.version,
                     'currentVersion': operator.version,
@@ -600,9 +517,9 @@ Wirecloud.ui.WiringEditor = (function () {
                 comp = versionInfo.lastVersion.compareTo(operator.version);
                 if (comp < 0) {
                     // upgrade
-                    this.componentManager.removeOperator(versionInfo.miniOperator);
+                    this.componentManager.removeComponent('operator', versionInfo.miniOperator);
                     operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-                    this.componentManager.appendOperator(operator_interface);
+                    this.componentManager.addComponent('operator', operator_interface);
                     this.operatorVersions[operator.vendor + '/' + operator.name].lastVersion = operator.version;
                     this.operatorVersions[operator.vendor + '/' + operator.name].currentVersion = operator.version;
                     this.operatorVersions[operator.vendor + '/' + operator.name].versions.push({'version': operator.version, 'operatorInterface': operator_interface});
@@ -705,7 +622,7 @@ Wirecloud.ui.WiringEditor = (function () {
      * @Private
      * load wiring from status and workspace info
      */
-    var loadWiring = function loadWiring(workspace, WiringStatus) {
+    var loadWiring = function loadWiring(workspace, status) {
         var availableOperatorGroup, componentId, componentObj, componentType,
             connectionList, connection, i, operatorGroup, pk, sourceName,
             status, targetName, widgetList;
@@ -728,17 +645,18 @@ Wirecloud.ui.WiringEditor = (function () {
         this.recommendations = new Wirecloud.ui.RecommendationManager();
         this.operatorVersions = {};
 
-        this.componentManager.activeDefaultSection();
+        this.componentManager
+            .empty()
+            .setUp();
         this.btnToggleViewpoint.active = false;
-        this.behaviourEngine.btnEnable.show();
 
-        this.gridFullHeight = parseFloat(this.layout.content.wrapperElement.style.height);
-        this.gridFullWidth = parseFloat(this.layout.content.wrapperElement.style.width);
+        this.gridFullHeight = parseFloat(this.layout.content.style('height'));
+        this.gridFullWidth = parseFloat(this.layout.content.style('width'));
         this.fullHeaderHeight = LayoutManagerFactory.getInstance().mainLayout.getNorthContainer().wrapperElement.getBoundingClientRect().height;
 
-        status = this.behaviourEngine.loadWiring(WiringStatus);
+        status = this.behaviorEngine.setUp(status);
 
-        this.behaviourEngine.readonly = true;
+        this.behaviorEngine.readonly = true;
         this.components = {};
         this.componentsMissingCount = 0;
 
@@ -757,10 +675,10 @@ Wirecloud.ui.WiringEditor = (function () {
 
             // Add the widget into panel of components.
             componentObj = new WiringEditor.WidgetInterface(this, widgetList[i], this, true);
-            this.componentManager.addComponent(componentType, componentId, componentObj);
+            this.componentManager.addComponent(componentType, componentObj);
 
             // If the widget is already available in the mashup's wiring...
-            if (this.behaviourEngine.containsComponent(componentType, componentId)) {
+            if (this.behaviorEngine.hasComponent(componentType, componentId)) {
                 // it will be disabled from panel of components.
                 componentObj.disable();
                 // it will be added into wiring's diagram.
@@ -771,18 +689,18 @@ Wirecloud.ui.WiringEditor = (function () {
                 // it will be disabled from panel of components.
                 componentObj.disable();
                 // it will be added into wiring's diagram.
-                this.behaviourEngine.readonly = false;
+                this.behaviorEngine.readonly = false;
                 this.addComponent(componentType, componentId, widgetList[i]);
-                this.behaviourEngine.readonly = true;
+                this.behaviorEngine.readonly = true;
             }
         }
 
         var currentComponents = Object.keys(this.components[componentType]);
 
         // Paint the reference of widgets that are missing.
-        for (pk in this.behaviourEngine.currentState.components[componentType]) {
+        for (pk in this.behaviorEngine.description.components[componentType]) {
             if (currentComponents.indexOf(pk) == -1) {
-                addMissingWidget.call(this, pk, this.behaviourEngine.getComponentView(componentType, pk));
+                addMissingWidget.call(this, pk, this.behaviorEngine.findComponent(componentType, pk));
             }
         }
         // ...load completed.
@@ -805,22 +723,18 @@ Wirecloud.ui.WiringEditor = (function () {
         // Add the operators in use into wiring's diagram.
         for (componentId in operatorGroup) {
             // If the operator has visual description...
-            if (this.behaviourEngine.containsComponent(componentType, componentId)) {
+            if (this.behaviorEngine.hasComponent(componentType, componentId)) {
                 // it will be added into wiring's diagram.
                 this.addComponent(componentType, componentId, operatorGroup[componentId]);
             }
             // otherwise, the operator does not have visual description...
             else {
                 // it will be added into wiring's diagram.
-                this.behaviourEngine.readonly = false;
+                this.behaviorEngine.readonly = false;
                 this.addComponent(componentType, componentId, operatorGroup[componentId]);
-                this.behaviourEngine.readonly = true;
+                this.behaviorEngine.readonly = true;
             }
         }
-
-        // Clean the reference of operators that are misplaced.
-        this.behaviourEngine.cleanComponentGroup(componentType, Object.keys(this.components[componentType]));
-        // ...load completed.
 
         // Loading the connections established in the workspace...
         this.connections = [];
@@ -834,29 +748,27 @@ Wirecloud.ui.WiringEditor = (function () {
             // If the connection can be established...
             if (connectionAvailable.call(this, connection)) {
                 // and if the connection has visual description...
-                if (this.behaviourEngine.containsConnection(sourceName, targetName)) {
+                if (this.behaviorEngine.hasConnection(sourceName, targetName)) {
                     // it will be added into wiring's diagram.
                     this.generateConnection(connection, sourceName, targetName);
                 }
                 // otherwise, the connection does not have visual description.
                 else {
-                    this.behaviourEngine.readonly = false;
+                    this.behaviorEngine.readonly = false;
                     this.generateConnection(connection, sourceName, targetName);
-                    this.behaviourEngine.readonly = true;
+                    this.behaviorEngine.readonly = true;
                 }
             }
             // otherwise, the connection has an endpoint misplaced...
             else {
-                // and it will remove of the behaviour engine.
-                this.behaviourEngine.removeConnection(sourceName, targetName, true);
+                // and it will remove of the behavior engine.
+                this.behaviorEngine.removeConnection(sourceName, targetName, true);
             }
         }
         // ...load completed.
 
-        this.btnRemoveBehaviour.setDisabled(!this.behaviourEngine.erasureEnabled);
-
-        this.behaviourEngine.readonly = false;
-        this.behaviourEngine.activateBehaviour();
+        this.behaviorEngine.readonly = false;
+        this.behaviorEngine.activate();
         this.activateCtrlMultiSelect();
 
         this.valid = true;
@@ -961,18 +873,18 @@ Wirecloud.ui.WiringEditor = (function () {
             workspace.wiring.save();
         }
         for (key in this.components.widget) {
-            this.layout.content.removeChild(this.components.widget[key]);
+            this.layout.content.remove(this.components.widget[key]);
             this.components.widget[key].destroy();
         }
         for (key in this.components.operator) {
-            this.layout.content.removeChild(this.components.operator[key]);
+            this.layout.content.remove(this.components.operator[key]);
             this.components.operator[key].destroy();
         }
 
         this.deactivateCtrlMultiSelect();
 
         this.connectionEngine.clear();
-        this.componentManager.clear();
+        this.componentManager.empty();
         this.arrows = [];
         this.connections = [];
         this.components = {
@@ -990,7 +902,7 @@ Wirecloud.ui.WiringEditor = (function () {
         var sources, targets, sourcesVirginDims, targetsVirginDims, currentFontSize;
 
         // Current font-size from css
-        currentFontSize = parseFloat(this.layout.content.wrapperElement.style.fontSize) * parseInt(getComputedStyle(this.wrapperElement).fontSize);
+        currentFontSize = parseFloat(this.layout.content.style('fontSize')) * parseInt(getComputedStyle(this.wrapperElement).fontSize);
 
         // Sources
         sources = theInterface.wrapperElement.getElementsByClassName('sources')[0];
@@ -1079,12 +991,12 @@ Wirecloud.ui.WiringEditor = (function () {
         }
 
         //Change Version
-        this.componentManager.removeOperator(miniOperator);
+        this.componentManager.removeComponent('operator', miniOperator);
         if (this.operatorVersions[versionIndex].lastVersion.compareTo(versionInfo.version) > 0) {
             // Old Version
             versionInfo.operatorInterface.wrapperElement.classList.add('old');
         }
-        this.componentManager.appendOperator(versionInfo.operatorInterface);
+        this.componentManager.addComponent('operator', versionInfo.operatorInterface);
         this.operatorVersions[versionIndex].currentVersion = versionInfo.version;
         this.operatorVersions[versionIndex].miniOperator = versionInfo.operatorInterface;
         return;
@@ -1094,7 +1006,7 @@ Wirecloud.ui.WiringEditor = (function () {
      * returns the dom element asociated with the grid
      */
     WiringEditor.prototype.getGridElement = function getGridElement() {
-        return this.layout.content.wrapperElement;
+        return this.layout.content.get();
     };
 
     /**
@@ -1109,7 +1021,7 @@ Wirecloud.ui.WiringEditor = (function () {
         endAnchor = findEndpoint.call(this, connection.target);
 
         if (startAnchor !== null && endAnchor !== null) {
-            connectionView = this.behaviourEngine.getConnectionView(sourceName, targetName);
+            connectionView = this.behaviorEngine.findConnection(sourceName, targetName);
 
             try {
                 if ('readonly' in connection && connection.readonly) {
@@ -1120,8 +1032,8 @@ Wirecloud.ui.WiringEditor = (function () {
 
                 // Create arrow
                 isGhost = startAnchor.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint;
-                arrow = this.connectionEngine.drawArrow(startAnchor.getCoordinates(this.layout.content.wrapperElement),
-                                              endAnchor.getCoordinates(this.layout.content.wrapperElement), "connection", connection.readonly, isGhost);
+                arrow = this.connectionEngine.drawArrow(startAnchor.getCoordinates(this.layout.content.get()),
+                                              endAnchor.getCoordinates(this.layout.content.get()), "connection", connection.readonly, isGhost);
 
                 // Set arrow anchors
                 arrow.setStartAnchor(startAnchor);
@@ -1179,7 +1091,7 @@ Wirecloud.ui.WiringEditor = (function () {
         document.removeEventListener("keydown", this._keydownListener, false);
         document.removeEventListener("keyup", this._keyupListener, false);
         this.ctrlPushed = false;
-        this.layout.content.removeClassName('selecting');
+        this.layout.content.removeClass('selecting');
     };
 
     /**
@@ -1188,8 +1100,8 @@ Wirecloud.ui.WiringEditor = (function () {
     WiringEditor.prototype.serialize = function serialize() {
         var wiringState, key, i, ioperator, pref;
 
-        this.layout.hide(0);
-        wiringState = this.behaviourEngine.serialize();
+        this.layout.slideOut(0);
+        wiringState = this.behaviorEngine.serialize();
 
         for (key in this.components.operator) {
             ioperator = this.components.operator[key].getIOperator();
@@ -1287,21 +1199,21 @@ Wirecloud.ui.WiringEditor = (function () {
     };
 
     var shareComponent = function shareComponent(component) {
-        this.behaviourEngine.updateComponent(component.componentType, component.componentId, component.serialize());
+        this.behaviorEngine.updateComponent(component.componentType, component.componentId, component.serialize());
         component.onbackground = false;
 
         return this;
     };
 
     var shareConnection = function shareConnection(connection) {
-        if (this.behaviourEngine.behavioursEnabled) {
+        if (this.behaviorEngine.enabled) {
             shareComponent.call(this, connection.sourceComponent);
             shareComponent.call(this, connection.targetComponent);
 
-            this.behaviourEngine.updateConnection(connection.serialize());
+            this.behaviorEngine.updateConnection(connection.serialize());
             connection.onbackground = false;
         } else {
-            this.behaviourEngine.updateConnection(connection.serialize());
+            this.behaviorEngine.updateConnection(connection.serialize());
         }
 
         return this;
@@ -1319,10 +1231,10 @@ Wirecloud.ui.WiringEditor = (function () {
             widget_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
             widget_interface.repaint();
 
-            if (this.behaviourEngine.globalViewpointActive()) {
-                this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), widget_interface.onbackground);
+            if (this.behaviorEngine.viewpoint === 0) {
+                this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), widget_interface.onbackground);
             } else {
-                this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), true);
+                this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), true);
             }
         }.bind(this));
 
@@ -1339,15 +1251,15 @@ Wirecloud.ui.WiringEditor = (function () {
         }.bind(this));
 
         widget_interface.addEventListener('collapse', function (componentInfo) {
-            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize(), true);
+            this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize(), true);
         }.bind(this));
 
         widget_interface.addEventListener('expand', function (componentInfo) {
-            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize(), true);
+            this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize(), true);
         }.bind(this));
 
         widget_interface.addEventListener('sortstop', function (eventTarget) {
-            this.behaviourEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize());
+            this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize());
         }.bind(this));
 
         widget_interface.addEventListener('optremove', function (eventTarget) {
@@ -1356,8 +1268,8 @@ Wirecloud.ui.WiringEditor = (function () {
             componentId = eventTarget.componentId;
             componentType = WiringEditor.WIDGET_TYPE;
 
-            if (this.behaviourEngine.getByComponent(componentType, componentId).length > 1) {
-                message = gettext('This component belongs to other behaviours. ' +
+            if (this.behaviorEngine.findBehaviorByComponent(componentType, componentId).length > 1) {
+                message = gettext('This component belongs to other behaviors. ' +
                     'Do you want to delete it from them too?');
 
                 dialog = new Wirecloud.ui.AlertWindowMenu({
@@ -1376,7 +1288,7 @@ Wirecloud.ui.WiringEditor = (function () {
             shareComponent.call(this, widget_interface);
         }.bind(this));
 
-        this.layout.content.appendChild(widget_interface);
+        this.layout.content.append(widget_interface);
 
         if (typeof collapsed == 'boolean') {
             widget_interface.collapsed = collapsed;
@@ -1387,7 +1299,7 @@ Wirecloud.ui.WiringEditor = (function () {
         this.events.widgetadded.dispatch();
 
         this.components.widget[iwidget.id] = widget_interface;
-        this.behaviourEngine.updateComponent('widget', iwidget.id, widget_interface.serialize());
+        this.behaviorEngine.updateComponent('widget', iwidget.id, widget_interface.serialize());
 
         for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
             anchor = widget_interface.sourceAnchors[i];
@@ -1436,7 +1348,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         component = this.components[componentType][componentId];
         component.unselect(false);
-        this.layout.content.removeChild(component);
+        this.layout.content.remove(component);
 
         for (i = 0; i < component.sourceAnchors.length; i += 1) {
             anchor = component.sourceAnchors[i];
@@ -1472,8 +1384,8 @@ Wirecloud.ui.WiringEditor = (function () {
         startAnchor = findComponent.call(this, sourceEndpoint.type, sourceEndpoint.name).getEndpointByName('source', sourceEndpoint.endpointName).endpointAnchor;
         endAnchor = findComponent.call(this, targetEndpoint.type, targetEndpoint.name).getEndpointByName('target', targetEndpoint.endpointName).endpointAnchor;
 
-        arrow = this.connectionEngine.drawArrow(startAnchor.getCoordinates(this.layout.content.wrapperElement),
-            endAnchor.getCoordinates(this.layout.content.wrapperElement), "connection", false, false);
+        arrow = this.connectionEngine.drawArrow(startAnchor.getCoordinates(this.layout.content.get()),
+            endAnchor.getCoordinates(this.layout.content.get()), "connection", false, false);
 
         // Set arrow anchors
         arrow.setStartAnchor(startAnchor);
@@ -1511,11 +1423,11 @@ Wirecloud.ui.WiringEditor = (function () {
 
         switch (type) {
         case WiringEditor.OPERATOR_TYPE:
-            obj = this.componentManager.getOperatorByName(name);
+            obj = this.componentManager.getComponent(type, name);
             component = this.addIOperator(obj.ioperator, endpoints, position);
             break;
         case WiringEditor.WIDGET_TYPE:
-            obj = this.componentManager.getWidgetByName(name);
+            obj = this.componentManager.getComponent(type, name);
             component = this.addIWidget(obj.iwidget, endpoints, position);
             obj.disable();
             break;
@@ -1540,7 +1452,7 @@ Wirecloud.ui.WiringEditor = (function () {
             return this;
         }
 
-        if (!(componentView=this.behaviourEngine.getComponentView(componentType, componentId))) {
+        if (!(componentView=this.behaviorEngine.findComponent(componentType, componentId))) {
             componentView = {
                 collapsed: false,
                 endpoints: {
@@ -1610,21 +1522,21 @@ Wirecloud.ui.WiringEditor = (function () {
             cascadeRemove = false;
         }
 
-        switch (this.behaviourEngine.removeComponent(componentType, componentId, cascadeRemove)) {
-        case WiringEditor.BehaviourEngine.COMPONENT_REMOVED:
+        switch (this.behaviorEngine.removeComponent(componentType, componentId, cascadeRemove)) {
+        case WiringEditor.BehaviorEngine.COMPONENT_REMOVED:
             this.components[componentType][componentId].emptyConnections().onbackground = true;
             break;
-        case WiringEditor.BehaviourEngine.COMPONENT_REMOVED_FULLY:
+        case WiringEditor.BehaviorEngine.COMPONENT_REMOVED_FULLY:
             _removeComponent.call(this, componentType, componentId);
             this.events.componentremoved.dispatch({
                 'componentType': componentType,
                 'componentId': componentId
             });
             break;
-        case WiringEditor.BehaviourEngine.COMPONENT_UNREACHABLE:
+        case WiringEditor.BehaviorEngine.COMPONENT_UNREACHABLE:
             // TODO
             break;
-        case WiringEditor.BehaviourEngine.COMPONENT_NOT_FOUND:
+        case WiringEditor.BehaviorEngine.COMPONENT_NOT_FOUND:
             // TODO
             break;
         }
@@ -1648,11 +1560,11 @@ Wirecloud.ui.WiringEditor = (function () {
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
 
         operator_interface.addEventListener('collapse', function (componentInfo) {
-            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, componentInfo.id, operator_interface.serialize());
+            this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, componentInfo.id, operator_interface.serialize());
         }.bind(this));
 
         operator_interface.addEventListener('expand', function (componentInfo) {
-            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, componentInfo.id, operator_interface.serialize());
+            this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, componentInfo.id, operator_interface.serialize());
         }.bind(this));
 
         operator_interface.addEventListener('dragstart', function (eventTarget) {
@@ -1663,15 +1575,15 @@ Wirecloud.ui.WiringEditor = (function () {
             operator_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
             operator_interface.repaint();
 
-            if (this.behaviourEngine.globalViewpointActive()) {
-                this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), operator_interface.onbackground);
+            if (this.behaviorEngine.viewpoint === 0) {
+                this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), operator_interface.onbackground);
             } else {
-                this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), true);
+                this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), true);
             }
         }.bind(this));
 
         operator_interface.addEventListener('sortstop', function (eventTarget) {
-            this.behaviourEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize());
+            this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize());
         }.bind(this));
 
         operator_interface.addEventListener('optremove', function (eventTarget) {
@@ -1680,8 +1592,8 @@ Wirecloud.ui.WiringEditor = (function () {
             componentId = eventTarget.componentId;
             componentType = WiringEditor.OPERATOR_TYPE;
 
-            if (this.behaviourEngine.getByComponent(componentType, componentId).length > 1) {
-                message = gettext('This component belongs to other behaviours. ' +
+            if (this.behaviorEngine.findBehaviorByComponent(componentType, componentId).length > 1) {
+                message = gettext('This component belongs to other behaviors. ' +
                     'Do you want to delete it from them too?');
 
                 dialog = new Wirecloud.ui.AlertWindowMenu({
@@ -1700,7 +1612,7 @@ Wirecloud.ui.WiringEditor = (function () {
             shareComponent.call(this, operator_interface);
         }.bind(this));
 
-        this.layout.content.appendChild(operator_interface);
+        this.layout.content.append(operator_interface);
 
         if (typeof collapsed == 'boolean') {
             operator_interface.collapsed = collapsed;
@@ -1727,7 +1639,7 @@ Wirecloud.ui.WiringEditor = (function () {
 
         this.components.operator[operator_interface.getId()] = operator_interface;
 
-        this.behaviourEngine.updateComponent('operator', operator_interface.getId(), operator_interface.serialize());
+        this.behaviorEngine.updateComponent('operator', operator_interface.getId(), operator_interface.serialize());
 
         this.entitiesNumber += 1;
         this.alertEmptyWiring.hide();
@@ -1959,13 +1871,13 @@ Wirecloud.ui.WiringEditor = (function () {
         var key, invertPercent, calculatedHeight, calculatedWidth, calculatedLeft, top, left, currentSize;
 
         // Initial size
-        currentSize = parseFloat(this.layout.content.wrapperElement.style.fontSize);
+        currentSize = parseFloat(this.layout.content.style('fontSize'));
         // Change general grid zoom
-        changeZoom(this.layout.content.wrapperElement, percent);
+        changeZoom(this.layout.content.get(), percent);
         for (key in this.components.operator) {
-            this.layout.content.removeChild(this.components.operator[key]);
+            this.layout.content.remove(this.components.operator[key]);
             setEntityMaxWidth.call(this, this.components.operator[key]);
-            this.layout.content.appendChild(this.components.operator[key]);
+            this.layout.content.append(this.components.operator[key]);
             // To avoid scroll problems
             this.components.operator[key].wrapperElement.style.minWidth = this.components.operator[key].getBoundingClientRect().width + 'px';
             // Calculate new position
@@ -1976,9 +1888,9 @@ Wirecloud.ui.WiringEditor = (function () {
             this.components.operator[key].repaint();
         }
         for (key in this.components.widget) {
-            this.layout.content.removeChild(this.components.widget[key]);
+            this.layout.content.remove(this.components.widget[key]);
             setEntityMaxWidth.call(this, this.components.widget[key]);
-            this.layout.content.appendChild(this.components.widget[key]);
+            this.layout.content.append(this.components.widget[key]);
             // To avoid scroll problems
             this.components.widget[key].wrapperElement.style.minWidth = this.components.widget[key].getBoundingClientRect().width + 'px';
             // Calculate new position
@@ -2104,4 +2016,4 @@ Wirecloud.ui.WiringEditor = (function () {
 
     return WiringEditor;
 
-})();
+})(StyledElements);
