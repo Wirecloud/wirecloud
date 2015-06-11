@@ -33,7 +33,7 @@
      */
     var SourceAnchor = function SourceAnchor(context, arrowCreator, subAnchors, isGhost) {
         this.context = context;
-        Wirecloud.ui.WiringEditor.Anchor.call(this, false, arrowCreator, isGhost);
+        this.superClass(arrowCreator, isGhost);
         this.arrowCreator = arrowCreator;
         if (subAnchors != null) {
             this.isSubAnchor = true;
@@ -45,7 +45,8 @@
 
         this.type = 'source';
     };
-    SourceAnchor.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
+
+    StyledElements.Utils.inherit(SourceAnchor, Wirecloud.ui.WiringEditor.Anchor);
 
     /*************************************************************************
      * Public methods

@@ -163,6 +163,10 @@
         return this.selectedArrow !== null;
     };
 
+    Canvas.prototype.hasSelected = function hasSelected() {
+        return this.selectedArrow !== null;
+    };
+
     /*************************************************************************
      * Make Canvas public
      *************************************************************************/

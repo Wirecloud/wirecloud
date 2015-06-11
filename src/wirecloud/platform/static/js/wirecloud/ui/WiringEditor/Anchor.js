@@ -35,12 +35,9 @@ Wirecloud.ui.WiringEditor.Anchor = (function () {
      *
      * @abstract
      */
-    var Anchor = function Anchor(extending, arrowCreator) {
+    var Anchor = function Anchor(arrowCreator) {
 
-        if (extending === true) {
-            return;
-        }
-        StyledElements.StyledElement.call(this, ['startdrag', 'enddrag']);
+        this.superClass(['startdrag', 'enddrag']);
 
         this.arrows = [];
 
