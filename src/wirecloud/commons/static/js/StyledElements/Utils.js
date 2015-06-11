@@ -582,8 +582,38 @@ if (window.StyledElements == null) {
         return result;
     };
 
-    Utils.cloneObject = function cloneObject(object) {
-        return JSON.parse(JSON.stringify(object));
+    Utils.cloneObject = function cloneObject(source) {
+        var target = {};
+
+        if (isNull(source)) {
+            return target;
+        }
+
+        if (!isPlainObject(source)) {
+            throw new TypeError("[error description]");
+        }
+
+        for (var name in source) {
+            target[name] = cloneProp.call(Utils, source[name]);
+        }
+
+        return target;
+    };
+
+    var cloneProp = function cloneProp(sourceValue) {
+        if (isNull(sourceValue)) {
+            return null;
+        }
+
+        if (isPlainObject(sourceValue)) {
+            return this.cloneObject(sourceValue);
+        }
+
+        if (Array.isArray(sourceValue)) {
+            return sourceValue.slice();
+        }
+
+        return sourceValue;
     };
 
     Utils.isEmptyObject = function isEmptyObject(obj) {
@@ -630,6 +660,95 @@ if (window.StyledElements == null) {
         return obj1;
     };
 
+    /**
+     * [updateObject description]
+     *
+     * @param {Object.<String, *>} target [description]
+     * @param {Object.<String, *>} source [description]
+     * @returns {Object.<String, *>} [description]
+     */
+    Utils.updateObject = function updateObject(target, source) {
+        target = Utils.cloneObject(target);
+        source = Utils.cloneObject(source);
+
+        for (var name in source) {
+            target[name] = updateProp.call(Utils, target[name], source[name]);
+        }
+
+        return target;
+    };
+
+    var isNull = function isNull(source) {
+        return typeof source === 'undefined' || source === null;
+    };
+
+    var isPlainObject = function isPlainObject(source) {
+
+        if (typeof source !== 'object') {
+            return false;
+        }
+
+        if (source.constructor && !Object.hasOwnProperty.call(source.constructor.prototype, 'isPrototypeOf')) {
+            return false;
+        }
+
+        return true;
+    };
+
+    var isSubClass = function isSubClass(superClass, childClass) {
+        var c1, c2, found = false;
+
+        if (typeof superClass !== 'function' || typeof childClass !== 'function') {
+            return found;
+        }
+
+        c1 = superClass.prototype;
+        c2 = childClass.prototype;
+
+        while (!(found = (c1 === c2))) {
+            c2 = Object.getPrototypeOf(c2);
+
+            if (c2 === null || (c2 === Object.prototype && c1 !== c2)) {
+                break;
+            }
+        }
+
+        return found;
+    };
+
+    var equalsClass = function equalsClass(target, source) {
+        return target.constructor === source.constructor;
+    };
+
+    var updateProp = function updateProp(targetValue, sourceValue) {
+        if (isNull(sourceValue)) {
+            if (isNull(targetValue)) {
+                targetValue = null;
+            }
+        } else if (typeof sourceValue === 'function') {
+            if (isNull(targetValue) || isSubClass(targetValue, sourceValue)) {
+                targetValue = sourceValue;
+            }
+        } else if (isPlainObject(sourceValue)) {
+            if (isNull(targetValue) || isPlainObject(targetValue)) {
+                targetValue = this.updateObject(targetValue, sourceValue);
+            }
+        } else if (Array.isArray(sourceValue)) {
+            if (isNull(targetValue)) {
+                targetValue = [];
+            }
+            if (Array.isArray(targetValue)) {
+                targetValue = targetValue.concat(sourceValue);
+            }
+        } else {
+            if (isNull(targetValue) || equalsClass(targetValue, sourceValue)) {
+                targetValue = sourceValue;
+            }
+        }
+
+        return targetValue;
+    };
+
     if (!Object.hasOwnProperty('create')) {
         Object.create = function create(parentPrototype) {
             var ParentClass;
@@ -641,38 +760,17 @@ if (window.StyledElements == null) {
         };
     }
 
-    /**
-     * Add public methods of 'parentClass' to the 'childClass' given.
-     * @public
-     * @function
-     *
-     * @param {Function} childClass
-     * @param {Function} parentClass
-     */
-    Utils.inherit = function inherit(childClass, parentClass) {
-        var i, mixinClass, memberName;
-
-        if (parentClass !== null) {
-            childClass.prototype = Object.create(parentClass.prototype);
-        }
-
-        childClass.prototype.constructor = childClass;
-
-        for (i = 2; i < arguments.length; i++) {
-            mixinClass = arguments[i];
-
-            for (memberName in mixinClass.prototype) {
-                if (memberName !== 'constructor') {
-                    childClass.prototype[memberName] = mixinClass.prototype[memberName];
-                }
-            }
-        }
-    };
-
     var addMembers = function addMembers(constructor, members) {
 
         for (var name in members) {
             constructor.prototype[name] = members[name];
+        }
+    };
+
+    var addStatics = function addStatics(constructor, statics) {
+
+        for (var name in statics) {
+            constructor[name] = statics[name];
         }
     };
 
@@ -686,7 +784,7 @@ if (window.StyledElements == null) {
         };
     };
 
-    var inherit = function inherit(constructor, superConstructor) {
+    Utils.inherit = function inherit(constructor, superConstructor) {
         var counter = 0;
 
         constructor.prototype = Object.create(superConstructor.prototype);
@@ -734,11 +832,15 @@ if (window.StyledElements == null) {
     Utils.defineClass = function defineClass(features) {
 
         if ('inherit' in features) {
-            inherit(features.constructor, features.inherit);
+            Utils.inherit(features.constructor, features.inherit);
         }
 
         if ('mixins' in features) {
             bindMixins(features.constructor, features.mixins);
+        }
+
+        if ('statics' in features) {
+            addStatics(features.constructor, features.statics);
         }
 
         if ('members' in features) {
