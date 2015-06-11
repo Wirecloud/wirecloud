@@ -32,7 +32,7 @@ h4 { font-size: $font-size-h4; }
 h5 { font-size: $font-size-h5; }
 h6 { font-size: $font-size-h6; }
 
-a {
+a, .se-link {
     color: $link-color;
     text-decoration: none;
     cursor: pointer;
@@ -45,6 +45,8 @@ a {
 }
 
 p {
+    position: relative;
+    display: block;
     margin: 0 0 floor($line-height-base / 2) 0;
 }
 
