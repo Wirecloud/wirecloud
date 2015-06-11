@@ -68,7 +68,7 @@
             isGhost = false;
         }
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, wiringEditor, iwidget, this.iwidget.name, manager, 'widget', isGhost);
+        this.superClass(wiringEditor, iwidget, this.iwidget.name, manager, 'widget', isGhost);
         if (!isMenubarRef) {
 
             // Sort
@@ -143,12 +143,12 @@
         endPointPos = {'source': [], 'target': []};
         iwidget_interface = this.wiringEditor.addIWidget(this.iwidget, endPointPos, position);
 
-        if (!this.wiringEditor.layout.content.wrapperElement.contains(data.iObjectClon.wrapperElement)) {
-            this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
+        if (!this.wiringEditor.layout.content.has(data.iObjectClon)) {
+            this.wiringEditor.layout.remove(data.iObjectClon);
         } else {
-            this.wiringEditor.layout.content.removeChild(data.iObjectClon);
+            this.wiringEditor.layout.content.remove(data.iObjectClon);
         }
-        this.wiringEditor.layout.show();
+        this.wiringEditor.layout.slideIn();
         this.disable();
     };
 

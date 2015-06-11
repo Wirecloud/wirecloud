@@ -40,7 +40,7 @@
 
         isGhost = ioperator instanceof Wirecloud.wiring.GhostOperator;
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, wiringEditor, ioperator, this.ioperator.title, manager, 'operator', isGhost);
+        this.superClass(wiringEditor, ioperator, this.ioperator.title, manager, 'operator', isGhost);
 
         if (!isMenubarRef) {
 
@@ -114,12 +114,12 @@
 
         operator_interface = this.wiringEditor.addIOperator(this.ioperator, endPointPos, position);
 
-        if (!this.wiringEditor.layout.content.wrapperElement.contains(data.iObjectClon.wrapperElement)) {
-            this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
+        if (!this.wiringEditor.layout.content.has(data.iObjectClon)) {
+            this.wiringEditor.layout.remove(data.iObjectClon);
         } else {
-            this.wiringEditor.layout.content.removeChild(data.iObjectClon);
+            this.wiringEditor.layout.content.remove(data.iObjectClon);
         }
-        this.wiringEditor.layout.show();
+        this.wiringEditor.layout.slideIn();
     };
 
     /**

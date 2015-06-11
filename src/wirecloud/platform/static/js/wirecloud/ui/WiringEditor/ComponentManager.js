@@ -1,357 +1,194 @@
 /*
- *  This file is part of Wirecloud.
- *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
- *  Wirecloud is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  License, or (at your option) any later version.
+ *     This file is part of Wirecloud Platform.
  *
- *  Wirecloud is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
  */
 
-/*globals gettext, StyledElements, Wirecloud*/
+/* global gettext, StyledElements, Wirecloud */
 
 
-Wirecloud.ui.WiringEditor.ComponentManager = (function () {
+(function (ns, se, utils) {
 
     "use strict";
 
     // ==================================================================================
-    // CLASS CONSTRUCTOR
+    // CLASS DEFINITION
     // ==================================================================================
 
     /**
      * Create a new instance of class ComponentManager.
-     * @class
+     * @extends {Panel}
      *
-     * @param {Object.<String, *>} [options]
+     * @constructor
      */
-    var ComponentManager = function ComponentManager(options) {
-        var btnGroupElement, titleElement;
+    ns.ComponentManager = utils.defineClass({
 
-        // Merge options's user with default options
-        options = Wirecloud.Utils.merge({}, options);
+        constructor: function ComponentManager() {
+            var btnGroupElement;
 
-        // Build structure of the default panel
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = "panel component-panel";
+            this.superClass([], {
+                extraClass: 'panel-components',
+                title: gettext("Available components")
+            });
 
-        var headingElement = document.createElement('div');
-        headingElement.className = "panel-heading";
-        this.wrapperElement.appendChild(headingElement);
+            this.components = {
+                operator: {
+                    elements: {}
+                },
+                widget: {
+                    elements: {}
+                }
+            };
 
-        titleElement = document.createElement('span');
-        titleElement.className = "panel-title";
-        titleElement.textContent = gettext("Available components");
-        headingElement.appendChild(titleElement);
+            btnGroupElement = document.createElement('div');
+            btnGroupElement.className = "btn-group btn-group-justified";
+            this.append(btnGroupElement);
 
-        btnGroupElement = document.createElement('div');
-        btnGroupElement.className = "btn-group btn-group-justified";
+            this.components.operator.button = new se.ToggleButton({
+                state: 'primary',
+                extraClass: "btn-list-operator-group",
+                text: gettext("Operators")
+            });
+            this.components.operator.button
+                .appendTo(btnGroupElement)
+                .on('click', function () {
+                    this.show('operator');
+                }, this);
 
-        this.wrapperElement.appendChild(btnGroupElement);
+            this.components.operator.container = new se.Container({
+                extraClass: "section operator-group"
+            });
+            this.body.append(this.components.operator.container);
 
-        var containerElement = document.createElement('div');
-        containerElement.className = "panel-body";
-        this.wrapperElement.appendChild(containerElement);
+            this.components.operator.alert = new se.Alert({
+                state: 'info',
+                title: "No available operators",
+                message: "No operator in your current account. Go to inventory for uploading at least one."
+            });
+            this.components.operator.container
+                .append(this.components.operator.alert);
 
-        // Add section of web operators
-        this.btnOperators = new StyledElements.Button({
-            'class': 'btn-primary btn-display-operator-group',
-            'text': gettext("Operators")
-        });
-        this.btnOperators.insertInto(btnGroupElement);
-        this.btnOperators.addEventListener('click', function (event) {
-            this.activeSectionOperators();
-        }.bind(this));
+            this.components.widget.button = new se.ToggleButton({
+                state: "primary",
+                extraClass: "btn-list-widget-group",
+                text: gettext("Widgets")
+            });
+            this.components.widget.button
+                .appendTo(btnGroupElement)
+                .on('click', function () {
+                    this.show('widget');
+                }, this);
 
-        this.operatorGroup = {};
-        this.sectionOperators = new StyledElements.Container({
-            'class': "section operator-group"
-        });
-        this.sectionOperators.insertInto(containerElement);
+            this.components.widget.container = new se.Container({
+                extraClass: "section widget-group"
+            });
+            this.body.append(this.components.widget.container);
 
-        this.messageOperators = document.createElement('div');
-        this.messageOperators.className = "alert alert-info";
-        this.messageOperators.innerHTML =
-            [
-                "<h4 class=\"title\">No operators found</h4>",
-                "<p class=\"content\">",
-                "At this time, there is no operator uploaded to your current user account.",
-                "<br/>",
-                "Go to the inventory view for uploading at least a web operator.</p>"
-            ].join('');
-        this.sectionOperators.appendChild(this.messageOperators);
+            this.components.widget.alert = new se.Alert({
+                state: 'info',
+                title: "No available widgets",
+                message: "No widget in your current workspace. Go to dashboard for adding at least one."
+            });
+            this.components.widget.container
+                .append(this.components.widget.alert);
 
-        // Add section of web widgets
-        this.btnWidgets = new StyledElements.Button({
-            'class': 'btn-primary btn-display-widget-group',
-            'text': gettext("Widgets")
-        });
-        this.btnWidgets.insertInto(btnGroupElement);
-        this.btnWidgets.addEventListener('click', function (event) {
-            this.activeSectionWidgets();
-        }.bind(this));
+            this.setUp();
+        },
 
-        this.widgetGroup = {};
-        this.sectionWidgets = new StyledElements.Container({
-            'class': "section widget-group"
-        });
-        this.sectionWidgets.insertInto(containerElement);
+        inherit: se.Panel,
 
-        this.messageWidgets = document.createElement('div');
-        this.messageWidgets.className = "alert alert-info";
-        this.messageWidgets.innerHTML =
-            [
-                "<h4 class=\"title\">No widgets found</h4>",
-                "<p class=\"content\">",
-                "At this time, there is no widget added to your current mashup.",
-                "<br/>",
-                "Back to the home view for adding at least a web widget.</p>"
-            ].join('');
-        this.sectionWidgets.appendChild(this.messageWidgets);
+        members: {
 
-        // Active the default section
-        this.activeDefaultSection();
-    };
+            addComponent: function addComponent(type, element) {
+                this.components[type].elements[element.getId()] = element;
+                this.components[type].container.append(element);
 
-    StyledElements.Utils.inherit(ComponentManager, StyledElements.StyledElement);
+                if (Object.keys(this.components[type].elements).length) {
+                    this.components[type].alert.hide();
+                }
 
-    ComponentManager.OPERATOR_TYPE = 'operator';
-    ComponentManager.WIDGET_TYPE = 'widget';
+                return this;
+            },
 
-    /**
-     * Display the section chosen by default.
-     * @function
-     * @public
-     *
-     * @returns {ComponentManager} The instance on which this function was called.
-     */
-    ComponentManager.prototype.activeDefaultSection = function activeDefaultSection() {
-        this.activeSectionOperators();
+            empty: function empty() {
+                Object.keys(this.components).forEach(function (type) {
+                    this.components[type].container
+                        .empty()
+                        .append(this.components[type].alert);
+                    this.components[type].elements = {};
+                }, this);
 
-        return this;
-    };
+                return this;
+            },
 
-    /**
-     * Display the section of web operators installed.
-     * @function
-     * @public
-     *
-     * @returns {ComponentManager} The instance on which this function was called.
-     */
-    ComponentManager.prototype.activeSectionOperators = function activeSectionOperators() {
-        this.btnOperators.addClassName('active');
-        this.sectionOperators.removeClassName('hidden');
+            enableWidget: function enableWidget(id) {
 
-        this.btnWidgets.removeClassName('active');
-        this.sectionWidgets.addClassName('hidden');
+                if (id in this.components.widget.elements) {
+                    this.components.widget.elements[id].enable();
+                }
 
-        return this;
-    };
+                return this;
+            },
 
-    /**
-     * Display the section of web widgets used.
-     * @function
-     * @public
-     *
-     * @returns {ComponentManager} The instance on which this function was called.
-     */
-    ComponentManager.prototype.activeSectionWidgets = function activeSectionWidgets() {
-        this.btnOperators.removeClassName('active');
-        this.sectionOperators.addClassName('hidden');
+            getComponent: function getComponent(type, title) {
 
-        this.btnWidgets.addClassName('active');
-        this.sectionWidgets.removeClassName('hidden');
+                for (var id in this.components[type].elements) {
+                    if (this.components[type].elements[id].title === title) {
+                        return this.components[type].elements[id];
+                    }
+                }
 
-        return this;
-    };
+                return null;
+            },
 
-    ComponentManager.prototype.addComponent = function addComponent(componentType, componentId, componentObj) {
-        switch (componentType) {
-        case ComponentManager.WIDGET_TYPE:
-            this.widgetGroup[componentId] = componentObj;
-            this.sectionWidgets.appendChild(componentObj);
+            removeComponent: function removeComponent(type, element) {
+                this.components[type].container.remove(element);
+                delete this.components[type].elements[element.getId()];
 
-            if (!this.messageWidgets.classList.contains('hidden')) {
-                this.messageWidgets.classList.add('hidden');
+                return this;
+            },
+
+            setUp: function setUp() {
+                return this.show('operator');
+            },
+
+            show: function show(type) {
+                type = typeof type !== 'string' ? "": type;
+
+                if (arguments.length && type) {
+                    Object.keys(this.components).forEach(function (existingType) {
+                        if (existingType === type) {
+                            this.components[existingType].button.active = true;
+                            this.components[existingType].container.show();
+                        } else {
+                            this.components[existingType].button.active = false;
+                            this.components[existingType].container.hide();
+                        }
+                    }, this);
+
+                    return this;
+                }
+
+                return this.superMember('show');
             }
-            break;
+
         }
 
-        return this;
-    };
+    });
 
-    /**
-     * Add the ioperator given to the end of list.
-     * @function
-     * @public
-     *
-     * @param {Object} operatorInterface
-     * @returns {ComponentManager} The instance on which this function was called.
-     */
-    ComponentManager.prototype.appendOperator = function appendOperator(operatorInterface) {
-        this.operatorGroup[operatorInterface.getId()] = operatorInterface;
-        this.sectionOperators.appendChild(operatorInterface);
-
-        if (!this.messageOperators.classList.contains('hidden')) {
-            this.messageOperators.classList.add('hidden');
-        }
-
-        return this;
-    };
-
-    /**
-     * Add the iwidget given.
-     * @function
-     * @public
-     *
-     * @param {IWidget} iwidget
-     * @returns {ComponentManager} The instance on which this function was called.
-     */
-    ComponentManager.prototype.appendWidget = function appendWidget(widgetInterface) {
-        this.widgetGroup[widgetInterface.getId()] = widgetInterface;
-        this.sectionWidgets.appendChild(widgetInterface);
-
-        if (!this.messageWidgets.classList.contains('hidden')) {
-            this.messageWidgets.classList.add('hidden');
-        }
-
-        return this;
-    };
-
-    /**
-     * Clear the whole content.
-     * @function
-     * @public
-     *
-     * @returns {ComponentManager} The instance on which this function was called.
-     */
-    ComponentManager.prototype.clear = function clear() {
-        this.sectionOperators.clear();
-        this.sectionWidgets.clear();
-
-        this.operatorGroup = {};
-        this.widgetGroup = {};
-
-        this.sectionOperators.appendChild(this.messageOperators);
-        this.sectionWidgets.appendChild(this.messageWidgets);
-        this.activeDefaultSection();
-
-        return this;
-    };
-
-    /**
-     * Return the ioperator found from the title given.
-     * @function
-     * @public
-     *
-     * @param {String} operatorTitle
-     * @returns {Object} The ioperator found.
-     */
-    ComponentManager.prototype.getOperatorByName = function getOperatorByName(name) {
-        var id;
-
-        for (id in this.operatorGroup) {
-            if (this.operatorGroup[id].title == name) {
-                return this.operatorGroup[id];
-            }
-        }
-
-        return null;
-    };
-
-    ComponentManager.prototype.getWidgetById = function getWidgetById(widgetId) {
-        return this.widgetGroup[widgetId];
-    };
-
-    ComponentManager.prototype.enableWidget = function enableWidget(widgetId) {
-        if (widgetId in this.widgetGroup) {
-            this.widgetGroup[widgetId].enable();
-        }
-
-        return this;
-    };
-
-    /**
-     * Return the iwidget found from the title given.
-     * @function
-     * @public
-     *
-     * @param {Object} widgetTitle
-     * @returns {Object} The iwidget found.
-     */
-    ComponentManager.prototype.getWidgetByName = function getWidgetByName(name) {
-        var id;
-
-        for (id in this.widgetGroup) {
-            if (this.widgetGroup[id].title == name) {
-                return this.widgetGroup[id];
-            }
-        }
-
-        return null;
-    };
-
-    ComponentManager.prototype.hide = function hide() {
-        this.wrapperElement.classList.add('hidden');
-
-        return this;
-    };
-
-    /**
-     * Remove the ioperator given.
-     * @function
-     * @public
-     *
-     * @param {Object} operatorInterface
-     * @returns {ComponentManager} The instance on which this function was called.
-     */
-    ComponentManager.prototype.removeOperator = function removeOperator(operatorInterface) {
-        var id;
-
-        id = operatorInterface.getId();
-
-        if (id in this.operatorGroup) {
-            delete this.operatorGroup[id];
-            this.sectionOperators.removeChild(operatorInterface);
-        }
-
-        return this;
-    };
-
-    /**
-     * Remove the iwidget given.
-     * @function
-     * @public
-     *
-     * @param {Object} widgetInterface
-     * @returns {ComponentManager} The instance on which this function was called.
-     */
-    ComponentManager.prototype.removeWidget = function removeWidget(widgetInterface) {
-        var id;
-
-        id = widgetInterface.getId();
-
-        if (id in this.widgetGroup) {
-            delete this.widgetGroup[id];
-            this.sectionWidgets.removeChild(widgetInterface);
-        }
-
-        return this;
-    };
-
-    ComponentManager.prototype.show = function show() {
-        this.wrapperElement.classList.remove('hidden');
-
-        return this;
-    };
-
-    return ComponentManager;
-
-})();
+})(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

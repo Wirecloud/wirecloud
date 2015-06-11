@@ -57,7 +57,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
     var GenericInterface = function GenericInterface(wiringEditor, entity, title, manager, className, isGhost) {
         var del_button, log_button, type, msg, ghostNotification;
 
-        StyledElements.Container.call(this, {'class': 'component component-' + className}, ['dragstart', 'dragstop', 'optremove', 'optshare', 'sortstop', 'collapse', 'expand']);
+        this.superClass({'class': 'component component-' + className}, ['dragstart', 'dragstop', 'optremove', 'optshare', 'sortstop', 'collapse', 'expand']);
 
         Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
@@ -186,23 +186,6 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                             this.options.optionRemove.show();
                             this.options.optionShare.hide();
                             this.wrapperElement.classList.remove('on-background');
-                        }
-                    }
-                }
-            });
-
-            var hidden = false;
-
-            Object.defineProperty(this, 'hidden', {
-                'get': function get() {
-                    return hidden;
-                },
-                'set': function set(state) {
-                    if (typeof state === 'boolean') {
-                        if ((hidden=state)) {
-                            this.wrapperElement.classList.add('hidden');
-                        } else {
-                            this.wrapperElement.classList.remove('hidden');
                         }
                     }
                 }
@@ -481,19 +464,19 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                                             context.iObject.ioperator, context.iObject.wiringEditor, true);
                     }
                     miniwidget_clon.addClassName('cloned');
-                    wiringEditor.layout.hide();
+                    wiringEditor.layout.slideOut();
                     //set the clon position over the originar miniWidget
                     miniwidget_clon.setBoundingClientRect(pos_miniwidget,
                      {top: -headerHeight, left: 0, width: -2});
                     // put the miniwidget clon in the layout
-                    context.iObject.wiringEditor.layout.wrapperElement.appendChild(miniwidget_clon.wrapperElement);
+                    context.iObject.wiringEditor.layout.append(miniwidget_clon);
                     //put the clon in the context.iObject
                     context.iObjectClon = miniwidget_clon;
                 },
                 function onDrag(e, draggable, context, xDelta, yDelta) {
-                    if (!wiringEditor.layout.content.wrapperElement.contains(context.iObjectClon.wrapperElement)) {
-                        wiringEditor.layout.wrapperElement.removeChild(context.iObjectClon.wrapperElement);
-                        wiringEditor.layout.content.appendChild(context.iObjectClon);
+                    if (!wiringEditor.layout.content.has(context.iObjectClon)) {
+                        wiringEditor.layout.remove(context.iObjectClon);
+                        wiringEditor.layout.content.append(context.iObjectClon);
                     }
                     context.iObjectClon.setPosition({'x': context.x + xDelta, 'y': context.y + yDelta});
                     context.iObjectClon.repaint();

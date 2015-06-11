@@ -23,7 +23,7 @@
 // WIRING LEFTSIDE-BAR - COMPONENT
 // ============================================================================
 
-.wiring-sidebar .component-panel .component {
+.wiring-sidebar .panel-components .component {
     position: relative;
     cursor: move;
     margin: 0px 0px 10px;
@@ -34,15 +34,23 @@
     @include children-display((".status"), none);
 
     .component-heading {
-        padding: 6px 12px;
-        color: $panel-components-component-font-color;
-        text-align: center;
-        @include font-base($font-weight: bold);
-        @include user-select();
+        position: relative;
+        display: block;
+        padding: 10px;
+        box-sizing: border-box;
+
+        .component-title {
+            position: relative;
+            display: block;
+            color: $panel-components-component-font-color;
+            @include font($weight: "bold");
+            @include font-truncate();
+            box-sizing: border-box;
+        }
     }
 }
 
-.wiring-sidebar .component-panel .section {
+.wiring-sidebar .panel-components .section {
 
     .component:last-child {
         margin-bottom: 0px;
@@ -53,7 +61,7 @@
 // WIRING LEFTSIDE-BAR - MOUSEDOVER-COMPONENT
 // ============================================================================
 
-.wiring-sidebar .component-panel .component:hover {
+.wiring-sidebar .panel-components .component:hover {
     background-color: $panel-components-mousedover-component-background-color;
     border-color: $panel-components-mousedover-component-border-color;
 }
@@ -62,7 +70,7 @@
 // WIRING LEFTSIDE-BAR - DISABLED-COMPONENT
 // ============================================================================
 
-.wiring-sidebar .component-panel .component.disabled {
+.wiring-sidebar .panel-components .component.disabled {
     pointer-events: none;
     cursor: not-allowed;
     background-color: $panel-components-disabled-component-background-color;
