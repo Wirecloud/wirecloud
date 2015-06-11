@@ -1,64 +1,80 @@
 @import 'variables';
 @import 'compass/utilities/color/contrast';
 
+
+// ======================================================================================
+// COMPONENT - PANEL
+// ======================================================================================
+
 .panel {
-    color: contrast-color($panel-bg, $text-color-light, $text-color-dark, $text-color-threshold);
-    background-color: $panel-bg;
-    border: solid 1px rgb(205, 206, 209);
-    border-radius: $panel-border-radius;
-    margin: 0px 0px $default-margin-bottom;
-}
-
-.panel-heading {
-    border-top-left-radius: ($panel-border-radius - 1);
-    border-top-right-radius: ($panel-border-radius - 1);
-    background-color: $panel-default-heading-bg;
-}
-
-.panel-footer {
-    padding: $panel-footer-padding;
-}
-
-.panel-heading {
     position: relative;
     display: block;
-    padding: $default-padding-vertical $default-padding-horizontal;
-    box-sizing: border-box;
+    margin: 0px 0px $panel-margin-v;
+    background-color: $panel-bg-color;
+    border: solid 1px transparent;
+    border-radius: $panel-border-radius;
 
-    &:after {
+    .panel-heading,
+    .panel-body,
+    .panel-footer {
+        position: relative;
         display: block;
-        clear: both;
-        content: "";
+        margin: 0px;
+        padding: $panel-padding-v $panel-padding-h;
+        background-color: transparent;
+        box-sizing: border-box;
+
+        &:after {
+            display: block;
+            clear: both;
+            content: "";
+        }
+    }
+
+    .panel-heading {
+        border-top-left-radius: ($panel-border-radius - 1);
+        border-top-right-radius: ($panel-border-radius - 1);
+    }
+
+    .panel-title,
+    .panel-options {
+        position: relative;
+        display: block;
     }
 
     .panel-title {
-        position: relative;
-        display: block;
+        @include font($weight: "bold");
         @include font-truncate();
+        color: $panel-heading-font-color;
+        text-shadow: $panel-heading-font-shadow;
         float: left;
     }
 
     .panel-options {
-        position: relative;
-        display: block;
         float: right;
 
         .se-btn {
             position: relative;
             display: inline-block;
-            margin: 0px 3px 0px 0px;
+            width: $panel-option-width;
+            margin: 0px $panel-option-margin-h 0px 0px;
             padding: 0px;
-            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
-            border: none;
+            color: $panel-heading-font-color;
+            text-shadow: $panel-heading-font-shadow;
             background: transparent;
-            vertical-align: baseline;
+            border: none;
             box-shadow: none;
-            width: 18px;
+            vertical-align: baseline;
             text-align: center;
 
             &:hover,
             &:focus {
-                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+                text-shadow: $panel-option-hover-font-shadow;
+                box-shadow: none;
+            }
+
+            &.disabled {
+                text-shadow: none;
                 box-shadow: none;
             }
 
@@ -67,12 +83,62 @@
             }
         }
     }
+
+    .panel-footer {
+        border-bottom-left-radius: ($panel-border-radius - 1);
+        border-bottom-right-radius: ($panel-border-radius - 1);
+    }
 }
 
-.panel-body {
-    position: relative;
-    display: block;
-    margin: 0px;
-    padding: $default-padding-vertical $default-padding-horizontal;
-    box-sizing: border-box;
+// ======================================================================================
+// COMPONENT - PANEL DEFAULT
+// ======================================================================================
+
+.panel-default {
+    border-color: $panel-default-border-color;
+
+    .panel-heading {
+        background-color: $panel-default-heading-bg-color;
+    }
+
+    .panel-title {
+        color: $panel-default-heading-font-color;
+    }
+
+    .panel-options .se-btn {
+        color: $panel-default-heading-font-color;
+
+        &:hover,
+        &:focus {
+            color: $panel-default-option-hover-font-color;
+        }
+    }
+}
+
+// ======================================================================================
+// COMPONENT - PANEL PRIMARY
+// ======================================================================================
+
+.panel-primary {
+    border-color: $panel-primary-border-color;
+
+    .panel-heading {
+        background-color: $panel-primary-heading-bg-color;
+    }
+
+    .panel-title {
+        color: $panel-primary-heading-font-color;
+        text-shadow: $panel-primary-heading-font-shadow;
+    }
+
+    .panel-options .se-btn {
+        color: $panel-primary-heading-font-color;
+        text-shadow: $panel-primary-heading-font-shadow;
+
+        &:hover,
+        &:focus {
+            color: $panel-primary-option-hover-font-color;
+            text-shadow: $panel-option-hover-font-shadow;
+        }
+    }
 }
