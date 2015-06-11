@@ -23,38 +23,27 @@
 // WIRING-BOTTOMBAR - LEGEND ELEMENTS
 // ============================================================================
 
-.wiring-bottombar .wiring-element {
-    position: relative;
-    display: table-cell;
-    width: 1%;
-    padding-right: 10px;
-    color: #555;
-    font-size: 14px;
-    font-weight: bold;
+.wiring-footer .wiring-element {
+    display: inline-block;
+    @include font($weight: "bold");
+    color: $panel-heading-font-color;
     vertical-align: middle;
+    margin: 0px ($panel-padding-h * 2) 0px 0px;
+
+    &:last-child {
+        margin-right: 0px;
+    }
+
+    .color {
+        padding: 0px $panel-padding-h;
+        color: rgb(255, 255, 255);
+        border: solid 1px transparent;
+        border-radius: $panel-border-radius;
+        box-sizing: border-box;
+    }
 
     .title {
-        display: block;
-        padding-left: 35px;
-    }
-
-    .symbols {
-        position: absolute;
-        left: 10px;
-        top: 0;
-        bottom: 0;
-        width: 20px;
-        height: 10px;
-        margin: auto;
-    }
-
-    .symbol-fg {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border: solid 1px transparent;
-        border-radius: 2px;
-        box-sizing: border-box;
+        margin-left: ($panel-padding-h / 2);
     }
 }
 
@@ -62,9 +51,9 @@
 // WIRING-BOTTOMBAR - LEGEND CONNECTIONS
 // ============================================================================
 
-.wiring-bottombar .legend-connections {
+.wiring-footer .element-connection {
 
-    .symbol-fg {
+    .color {
         background-color: $connection-background-color;
         border-color: $connection-border-color;
     }
@@ -74,9 +63,9 @@
 // WIRING-BOTTOMBAR - LEGEND OPERATORS
 // ============================================================================
 
-.wiring-bottombar .legend-operators {
+.wiring-footer .element-operator {
 
-    .symbol-fg {
+    .color {
         background-color: $component-operator-background-color;
         border-color: $component-operator-border-color;
     }
@@ -86,9 +75,9 @@
 // WIRING-BOTTOMBAR - LEGEND WIDGETS
 // ============================================================================
 
-.wiring-bottombar .legend-widgets {
+.wiring-footer .element-widget {
 
-    .symbol-fg {
+    .color {
         background-color: $component-widget-background-color;
         border-color: $component-widget-border-color;
     }

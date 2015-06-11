@@ -23,9 +23,6 @@
 // WIRING VIEW - GLOBALS
 // ============================================================================
 
-$wiring-view-panel-background-color:    #fafafa;
-$wiring-view-panel-box-shadow:          0 1px 1px rgba(0, 0, 0, .10);
-
 $panel-components-heading-height:   48px;
 
 $panel-components-component-margin-vertical:    8px;
@@ -178,5 +175,5 @@ $behavior-description-font-color: rgb(70, 80, 90);
 $behavior-hover-border-color: rgb(200, 200, 200);
 $behavior-hover-heading-bg-color: rgb(230, 230, 230);
 
-$behaviour-heading-background-color: rgb(240, 240, 240);
-$behaviour-heading-font-color: rgb(80, 80, 80);
+$wiring-panel-title-width: 75%;
+$wiring-diagram-bg-color: rgb(250, 250, 250);

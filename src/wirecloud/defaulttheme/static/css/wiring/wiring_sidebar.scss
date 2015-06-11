@@ -1,21 +1,3 @@
-/*
- *  This file is part of Wirecloud.
- *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
- *
- *  Wirecloud is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  License, or (at your option) any later version.
- *
- *  Wirecloud is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 @import 'wiring/defaults';
 
 
@@ -25,67 +7,42 @@
 
 .wiring-sidebar > .panel {
     @include position-absolute(0, 0, 0, 0);
-    margin: 0px;
-    background-color: rgb(245, 245, 245);
-    border-color: $panel-default-border-color;
+    margin-bottom: 0px;
+    background-color: $panel-default-heading-bg-color;
     border-radius: 0px;
-    padding: 10px;
-    box-shadow: $wiring-view-panel-box-shadow;
-}
+    padding: $panel-padding-v $panel-padding-h;
+    box-shadow: $panel-box-shadow-o;
 
-// ============================================================================
-// WIRING SIDEBAR - PANEL COMPONENTS HEADING
-// ============================================================================
+    & > .panel-heading {
+        padding: 0px 0px $panel-padding-v;
+        border-radius: 0px;
 
-.wiring-sidebar > .panel > .panel-heading {
-    padding: 0px 0px 10px;
-    background-color: rgb(245, 245, 245);
-    border-radius: 0px;
-
-    .panel-title {
-        @include font($weight: "bold");
-        width: 75%;
-        color: $panel-default-heading-font-color;
-    }
-
-    .se-btn {
-        color: rgb(80, 80, 80);
-
-        &:hover,
-        &:focus {
-            color: rgb(50, 120, 180);
+        .panel-title {
+            width: $wiring-panel-title-width;
         }
     }
-}
-
-// ============================================================================
-// WIRING SIDEBAR - PANEL COMPONENTS BODY
-// ============================================================================
-
-.wiring-sidebar > .panel > .panel-body {
-    overflow-y: auto;
-    padding: 10px;
-    border: solid 1px rgb(220, 220, 220);
-    position: absolute;
-    top: 40px;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,.05),0 1px 0 rgba(255,255,255,.1);
-    background-color: rgb(255, 255, 255);
-
-    .section {
-        position: relative;
-
-        &.hidden {
-            display: none;
-        }
-    }
-}
-
-.wiring-sidebar .component-panel {
 
     & > .panel-body {
+        @include position-absolute($panel-padding-h, 40px, $panel-padding-h, $panel-padding-v);
+        border: solid 1px $panel-default-border-color;
+        box-shadow: $panel-box-shadow-i;
+        background-color: $panel-bg-color;
+        overflow-y: auto;
+
+        .section {
+            position: relative;
+            display: block;
+        }
+    }
+}
+
+.wiring-sidebar > .panel-behaviors.disabled {
+    opacity: 1;
+}
+
+.wiring-sidebar > .panel-components {
+
+    .panel-body {
         top: 80px;
     }
 }
