@@ -53,33 +53,12 @@
         this._checkedText = options.checkedText;
 
         Object.defineProperty(this, 'active', {
-            set: function (active) {
-                active = !!active;
-
-                if (this.active === active) {
-                    return; // Nothing to do
-                }
-
-                if (active) {
-                    this.wrapperElement.classList.add('active');
-                    if (this.icon) {
-                        this.icon.src = this._checkedIcon;
-                    }
-                    if (this.label) {
-                        this.label.textContent = this._checkedText;
-                    }
-                } else {
-                    this.wrapperElement.classList.remove('active');
-                    if (this.icon) {
-                        this.icon.src = this._icon;
-                    }
-                    if (this.label) {
-                        this.label.textContent = this._text;
-                    }
-                }
+            get: function get() {
+                return this.hasClass('active');
             },
-            get: function() {
-                return this.wrapperElement.classList.contains('active');
+            set: function set(value) {
+                this.toggleClass('active', value)
+                    ._onactive(value);
             }
         });
 
@@ -87,6 +66,21 @@
         this.active = options.initiallyChecked;
     };
     StyledElements.ToggleButton.prototype = new StyledElements.Button({extending: true});
+
+    StyledElements.ToggleButton.prototype._onactive = function _onactive(active) {
+
+        if (this.active !== active) {
+            if (this.icon) {
+                this.icon.src = active ? this._checkedIcon: this._icon;
+            }
+
+            if (this.label) {
+                this.label.textContent = active ? this._checkedText: this._text;
+            }
+        }
+
+        return this;
+    };
 
     StyledElements.ToggleButton.prototype._clickCallback = function _clickCallback(event) {
         if (!this.enabled) {
@@ -96,6 +90,7 @@
         event.stopPropagation();
         this.active = !this.active;
         this.events.click.dispatch(this);
+        this.trigger('click', this, event);
     };
 
 })();

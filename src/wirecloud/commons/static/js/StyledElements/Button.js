@@ -19,11 +19,16 @@
  *
  */
 
-/*global StyledElements*/
+/* global StyledElements */
 
-(function () {
+
+(function (se, utils) {
 
     "use strict";
+
+    // ==================================================================================
+    // CLASS DEFINITION
+    // ==================================================================================
 
     var clickCallback = function clickCallback(e) {
         if (this.inputElement != null && e.target === this.inputElement) {
@@ -37,6 +42,7 @@
                 this.inputElement.click();
             }
             this.events.click.dispatch(this);
+            this.trigger('click', this, e);
         }
     };
 
@@ -88,28 +94,14 @@
      *      - click: evento lanzado cuando se pulsa el botón.
      */
     var Button = function Button(options) {
-        var defaultOptions = {
-            'text': null,
-            'title': '',
-            'class': '',
-            'plain': false,
-            'iconHeight': 24,
-            'iconWidth': 24,
-            'icon': null,
-            'iconClass': null,
-            'usedInForm': false,
-            'stackedIconPlacement': 'bottom-right',
-            'stackedIconClass': '',
-            'tabindex': 0
-        };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = StyledElements.Utils.updateObject(defaults, options);
 
         // Support hirerarchy
         if (options.extending) {
             return;
         }
 
-        StyledElements.StyledElement.call(this, ['click', 'dblclick', 'focus', 'blur', 'mouseenter', 'mouseleave', 'show', 'hide']);
+        this.superClass(events);
 
         if (options.usedInForm) {
             this.wrapperElement = document.createElement("button");
@@ -117,14 +109,27 @@
         } else {
             this.wrapperElement = document.createElement("div");
         }
-        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "se-btn");
 
-        if (options.id != null) {
+        this.wrapperElement.className = "se-btn";
+
+        if (options.state) {
+            this.addClass('btn-' + options.state);
+        }
+
+        if (options['class']) {
+            this.addClass(options['class']);
+        }
+
+        if (options.extraClass) {
+            this.addClass(options.extraClass);
+        }
+
+        if (options.id) {
             this.wrapperElement.setAttribute('id', options.id);
         }
 
         if (options.plain) {
-            this.wrapperElement.classList.add('plain');
+            this.addClass("plain");
         }
 
         if (options.icon != null) {
@@ -136,7 +141,7 @@
             this.wrapperElement.appendChild(this.icon);
         }
 
-        if (typeof options.iconClass === "string" && options.iconClass !== "") {
+        if (options.iconClass) {
             this.icon = document.createElement('i');
             this.icon.classList.add('se-icon');
             var classes = options.iconClass.trim().split(/\s+/);
@@ -147,13 +152,13 @@
             this.wrapperElement.appendChild(this.icon);
         }
 
-        if (options.text != null) {
+        if (options.text) {
             this.label = document.createElement('span');
             this.label.appendChild(document.createTextNode(options.text));
-            this.wrapperElement.appendChild(this.label);
+            this.append(this.label);
         }
 
-        if (options.iconClass != null && options.stackedIconClass.length) {
+        if (options.iconClass && options.stackedIconClass) {
             this.stackedIcon = document.createElement('span');
             this.stackedIcon.className = [options.stackedIconClass, 'se-stacked-icon', options.stackedIconPlacement].join(' ');
             this.icon.appendChild(this.stackedIcon);
@@ -165,48 +170,28 @@
 
         /* Properties */
         var tabindex;
-        Object.defineProperty(this, 'tabindex', {
-            get: function() {
-                return tabindex;
-            },
-            set: function(new_tabindex) {
-                tabindex = new_tabindex;
-                update_tabindex.call(this);
-            }
-        });
+        Object.defineProperties(this, {
 
-        var hidden = false;
-
-        Object.defineProperty(this, 'hidden', {
-            'get': function get() {
-                return hidden;
+            tabindex: {
+                get: function() {
+                    return tabindex;
+                },
+                set: function(new_tabindex) {
+                    tabindex = new_tabindex;
+                    update_tabindex.call(this);
+                }
             },
-            'set': function set(newState) {
-                if (typeof newState === 'boolean') {
-                    if ((hidden=newState)) {
-                        this.wrapperElement.classList.add('hidden');
-                    } else {
-                        this.wrapperElement.classList.remove('hidden');
-                    }
+
+            visible: {
+                get: function get() {
+                    return !this.hasClass('invisible');
+                },
+                set: function set(value) {
+                    this.toggleClass('invisible', !value)
+                        ._onvisible(value);
                 }
             }
-        });
 
-        var invisible = false;
-
-        Object.defineProperty(this, 'invisible', {
-            'get': function get() {
-                return invisible;
-            },
-            'set': function set(state) {
-                if (typeof state === 'boolean') {
-                    if ((invisible=state)) {
-                        this.wrapperElement.classList.add('invisible');
-                    } else {
-                        this.wrapperElement.classList.remove('invisible');
-                    }
-                }
-            }
         });
 
         /* Initial status */
@@ -231,9 +216,27 @@
         this.wrapperElement.addEventListener('mouseenter', onmouseenter.bind(this), false);
         this.wrapperElement.addEventListener('mouseleave', onmouseleave.bind(this), false);
     };
-    Button.prototype = new StyledElements.StyledElement();
+    StyledElements.Utils.inherit(Button, StyledElements.StyledElement);
 
     Button.prototype.Tooltip = StyledElements.Tooltip;
+
+    Button.prototype._onenabled = function _onenabled(enabled) {
+        update_tabindex.call(this);
+
+        if (!enabled) {
+            this.blur();
+        }
+
+        return this;
+    };
+
+    /**
+     * @version 0.2.0
+     * @abstract
+     */
+    Button.prototype._onvisible = function _onvisible(visible) {
+        // This member can be implemented by subclass.
+    };
 
     Button.prototype.focus = function focus() {
         this.wrapperElement.focus();
@@ -241,29 +244,6 @@
 
     Button.prototype.blur = function blur() {
         this.wrapperElement.blur();
-    };
-
-    /**
-     * Enables this button
-     */
-    Button.prototype.enable = function enable() {
-        this.enabled = true;
-        this.removeClassName('disabled');
-        update_tabindex.call(this);
-
-        return this;
-    };
-
-    /**
-     * Deshabilita el componente añadiendo la clase css .disabled
-     */
-    Button.prototype.disable = function disable() {
-        this.enabled = false;
-        this.addClassName('disabled');
-        update_tabindex.call(this);
-        this.blur();
-
-        return this;
     };
 
     Button.prototype.setLabel = function setLabel(label) {
@@ -286,7 +266,7 @@
         this.icon.classList.remove(classname);
     };
 
-    Button.prototype.toggleIconClass = function toggleIconClass(newClass, oldClass) {
+    Button.prototype.replaceIconClass = function replaceIconClass(newClass, oldClass) {
         this.icon.classList.add(newClass);
         this.icon.classList.remove(oldClass);
 
@@ -306,6 +286,8 @@
             }
             this.tooltip.options.content = title;
         }
+
+        return this;
     };
 
     Button.prototype.click = function click() {
@@ -327,38 +309,30 @@
         StyledElements.StyledElement.prototype.destroy.call(this);
     };
 
-    /**
-     * Display the button.
-     * @function
-     * @public
-     *
-     * @returns {Button} The instance on which this function was called.
-     */
-    Button.prototype.show = function show() {
-        if (this.hidden) {
-            this.hidden = false;
-            this.events.show.dispatch(this);
-        }
-
-        return this;
-    };
-
-    /**
-     * Hide the button.
-     * @function
-     * @public
-     *
-     * @returns {Button} The instance on which this function was called.
-     */
-    Button.prototype.hide = function hide() {
-        if (!this.hidden) {
-            this.hidden = true;
-            this.events.hide.dispatch(this);
-        }
-
-        return this;
-    };
-
     StyledElements.Button = Button;
 
-})();
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var defaults = {
+        id: "",
+        'class': "",
+        extraClass: "",
+        iconClass: "",
+        stackedIconClass: "",
+        state: '',
+        plain: false,
+        usedInForm: false,
+        text: "",
+        'title': '',
+        'iconHeight': 24,
+        'iconWidth': 24,
+        'icon': null,
+        'stackedIconPlacement': 'bottom-right',
+        'tabindex': 0
+    };
+
+    var events = ['blur', 'click', 'dblclick', 'focus', 'mouseenter', 'mouseleave'];
+
+})(StyledElements, StyledElements.Utils);
