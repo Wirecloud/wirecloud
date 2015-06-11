@@ -56,7 +56,6 @@ CATALOGUE_CSS = (
 WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor.js',
     'js/wirecloud/ui/WiringEditor/Behaviour.js',
-    'js/wirecloud/ui/WiringEditor/BehaviourManagerMixin.js',
     'js/wirecloud/ui/WiringEditor/BehaviourEngine.js',
     'js/wirecloud/ui/WiringEditor/ComponentManager.js',
     'js/wirecloud/ui/WiringEditor/ComponentPreferences.js',
@@ -146,7 +145,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Form.js',
     'js/StyledElements/PaginationInterface.js',
     'js/StyledElements/Popover.js',
-    'js/StyledElements/EventManagerMixin.js',
+    'js/StyledElements/Panel.js',
     'js/StyledElements/OffCanvasLayout.js',
     'js/StyledElements/Alert.js',
 )
