@@ -1,337 +1,681 @@
 /*
- *  This file is part of Wirecloud.
- *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
- *  Wirecloud is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  License, or (at your option) any later version.
+ *     This file is part of Wirecloud Platform.
  *
- *  Wirecloud is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
  */
 
-/*global StyledElements, Wirecloud */
+/* global gettext, StyledElements, Wirecloud */
 
 
-Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
+(function (ns, se, utils) {
 
     "use strict";
 
-    /**
-     * Create a new instance of class BehaviourEngine.
-     * @class
-     *
-     * @param {Object.<String, *>} [options]
-     */
-    var BehaviourEngine = function BehaviourEngine(options) {
-        StyledElements.EventManagerMixin.call(this, BehaviourEngine.events);
-        Wirecloud.ui.WiringEditor.BehaviourManagerMixin.call(this);
-
-        this.btnCreate.addEventListener('click', function (event) {
-            this.dispatchEvent('create')({
-                'behaviourEngine': this
-            }, event);
-        }.bind(this));
-
-        this.readonly = true;
-        this.behavioursEnabled = false;
-        this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
-
-        this.btnEnable.addEventListener('click', function (event) {
-            if (this.behavioursEnabled) {
-                delete this.currentBehaviour;
-                this.emptyBehaviourList();
-                this.behavioursEnabled = false;
-            } else {
-                this.behavioursEnabled = true;
-                this.appendBehaviour(this.createBehaviour());
-            }
-            this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
-
-            this.dispatchEvent('enable')({
-                'isEnabled': this.behavioursEnabled
-            });
-        }.bind(this));
+    var viewpoints = {
+        GLOBAL: 0,
+        INDEPENDENT: 1
     };
 
-    StyledElements.Utils.inherit(BehaviourEngine, null,
-        StyledElements.EventManagerMixin, Wirecloud.ui.WiringEditor.BehaviourManagerMixin);
-
-    BehaviourEngine.OPERATION_NOT_ALLOWED = -1;
-
-    BehaviourEngine.COMPONENT_NOT_FOUND = 4;
-    BehaviourEngine.COMPONENT_UNREACHABLE = 3;
-    BehaviourEngine.COMPONENT_UNSUPPORTED = 2;
-
-    BehaviourEngine.COMPONENT_REMOVED = 1;
-    BehaviourEngine.COMPONENT_REMOVED_FULLY = 0;
-
-    BehaviourEngine.CONNECTION_NOT_FOUND = 4;
-    BehaviourEngine.CONNECTION_UNREACHABLE = 3;
-    BehaviourEngine.CONNECTION_UNSUPPORTED = 2;
-
-    BehaviourEngine.CONNECTION_REMOVED = 1;
-    BehaviourEngine.CONNECTION_REMOVED_FULLY = 0;
-
-    BehaviourEngine.events = ['activate', 'append', 'beforeActivate', 'beforeEmpty', 'create', 'enable', 'remove'];
-
-    BehaviourEngine.viewpoints = {
-        'GLOBAL': 0,
-        'SINGLE': 1
-    };
+    // ==================================================================================
+    // CLASS DEFINITION
+    // ==================================================================================
 
     /**
-     * @public
-     * @function
+     * Create a new instance of class BehaviorEngine.
+     * @extends {Panel}
      *
-     * @param {Behaviour} behaviour
-     * @returns {BehaviourEngine} The instance on which this function was called.
+     * @constructor
      */
-    BehaviourEngine.prototype.activateBehaviour = function activateBehaviour(behaviour, toggleViewpoint) {
-        if (this.behavioursEnabled) {
-            if (typeof toggleViewpoint !== 'boolean') {
-                toggleViewpoint = false;
-            }
+    ns.BehaviorEngine = utils.defineClass({
 
-            this.dispatchEvent('beforeActivate')({
-                'behaviour': this.currentBehaviour,
-                'behaviourEngine': this
+        constructor: function BehaviorEngine() {
+
+            this.btnCreate = new se.Button({
+                'title': gettext("Add behavior"),
+                'class': "btn-create",
+                'iconClass': 'icon-plus'
+            });
+            this.btnCreate.on('click', handleOnCreate, this);
+
+            this.btnEnable = new se.Button({
+                'title': gettext("Enable"),
+                'class': "btn-enable",
+                'iconClass': 'icon-lock'
+            });
+            this.btnEnable.on('click', handleOnEnable, this);
+
+            this.superClass(events, {
+                extraClass: 'panel-behaviors',
+                title: gettext("Identified behaviors"),
+                optionList: [this.btnCreate, this.btnEnable]
             });
 
-            desactivateAllExcept.call(this, behaviour);
+            this.disabledAlert = new se.Alert({
+                state: 'info',
+                title: "New feature",
+                message: "Enable the behaviors to enjoy with a new way to handle connections."
+            });
 
-            if (toggleViewpoint) {
-                if (this.currentViewpoint == BehaviourEngine.viewpoints.GLOBAL) {
-                    this.currentViewpoint = BehaviourEngine.viewpoints.SINGLE;
-                    this.btnEnable.hide();
+            this.readonly = true;
+
+            this.viewpoint = viewpoints.GLOBAL;
+            this.behaviors = [];
+        },
+
+        inherit: se.Panel,
+
+        statics: {
+
+            OPERATION_NOT_ALLOWED: -1,
+
+            COMPONENT_NOT_FOUND:     0,
+            COMPONENT_UNREACHABLE:   1,
+            COMPONENT_UNSUPPORTED:   2,
+            COMPONENT_REMOVED:       3,
+            COMPONENT_REMOVED_FULLY: 4,
+
+            CONNECTION_NOT_FOUND:     0,
+            CONNECTION_UNREACHABLE:   1,
+            CONNECTION_UNSUPPORTED:   2,
+            CONNECTION_REMOVED:       3,
+            CONNECTION_REMOVED_FULLY: 4,
+
+            viewpoints: viewpoints
+
+        },
+
+        members: {
+
+            _onenabled: function _onenabled(enabled) {
+
+                this.empty();
+
+                if (enabled) {
+                    this.btnEnable
+                        .setTitle('Disable')
+                        .replaceIconClass('lock', 'unlock');
+                    this.btnCreate.show();
+                    this.body.remove(this.disabledAlert);
                 } else {
-                    this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
-                    this.btnEnable.show();
+                    this.btnEnable
+                        .setTitle('Enable')
+                        .replaceIconClass('unlock', 'lock');
+                    this.btnCreate.hide();
+                    this.body.append(this.disabledAlert);
                 }
+
+                return this;
+            },
+
+            addLogger: function addLogger(behavior, connections, operators, widgets) {
+                this.logger = {
+                    behavior: behavior,
+                    connections: connections,
+                    operators: operators,
+                    widgets: widgets
+                };
+
+                return this;
+            },
+
+            /**
+             * [activate description]
+             *
+             * @param {Behavior} behavior
+             *      [description]
+             * @param {Boolean} [viewpoint]
+             *      [description]
+             * @returns {BehaviorEngine}
+             *      The instance on which the member is called.
+             */
+            activate: function activate(behavior, viewpoint) {
+
+                if (!this.enabled) {
+                    return this;
+                }
+
+                desactivateAllExcept.call(this, behavior);
+                toggleViewpoint.call(this, viewpoint);
+                updateBehaviorLogger.call(this);
+
+                return this.trigger('activate', this.behavior, this.viewpoint);
+            },
+
+            /**
+             * [addBehavior description]
+             *
+             * @param {Object.<String, *>} behaviorInfo
+             *      [description]
+             * @returns {BehaviorEngine}
+             *      The instance on which the member is called.
+             */
+            createBehavior: function createBehavior(behaviorInfo) {
+                var behavior;
+
+                behavior = (new ns.Behavior(behaviorInfo))
+                    .on('click', function () {
+                        this.activate(behavior);
+                    }, this)
+                    .on('remove', function () {
+                        this.removeBehavior(behavior);
+                    }, this)
+                    .on('update', function () {
+                        if (this.behavior.equals(behavior)) {
+                            updateBehaviorLogger.call(this);
+                        }
+                    }, this);
+
+                return insertBehavior.call(this, behavior);
+            },
+
+            /**
+             * [empty description]
+             * @override
+             *
+             * @returns {BehaviorEngine}
+             *      The instance on which the member is called.
+             */
+            empty: function empty() {
+                this.btnEnable.show();
+
+                this.viewpoint = viewpoints.GLOBAL;
+                this.description = Wirecloud.Wiring.normalize().visualdescription;
+                this.behavior = null;
+                this.behaviors.length = 0;
+
+                return this.superMember('empty');
+            },
+
+            /**
+             * [emptyBehavior description]
+             *
+             * @param {Behavior} [behavior]
+             *      [description]
+             * @returns {BehaviorEngine}
+             *      The instance on which the member is called.
+             */
+            emptyBehavior: function emptyBehavior(behavior) {
+                var _behavior;
+
+                if (!this.enabled) {
+                    return this;
+                }
+
+                if (behavior == null) {
+                    behavior = this.behavior;
+                }
+
+                if (!this.behavior.equals(behavior)) {
+                    _behavior = this.behavior;
+                    this.activate(behavior);
+                }
+
+                this.trigger('beforeEmpty', this.behavior);
+                behavior.empty();
+
+                if (_behavior != null) {
+                    this.activate(_behavior);
+                }
+
+                return this;
+            },
+
+            /**
+             * [findBehaviorByComponent description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @returns {Behavior[]}
+             *      [description]
+             */
+            findBehaviorByComponent: function findBehaviorByComponent(type, id) {
+                return this.behaviors.filter(function (behavior) {
+                    return behavior.hasComponent(type, id);
+                });
+            },
+
+            /**
+             * [findComponent description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @returns {Object.<String, *>}
+             *      [description]
+             */
+            findComponent: function findComponent(type, id) {
+                var view;
+
+                if (this.enabled && this.viewpoint === viewpoints.INDEPENDENT) {
+                    if (this.behavior.hasComponentView(type, id)) {
+                        return this.behavior.findComponent(type, id);
+                    }
+                }
+
+                view = this.description.components[type][id];
+
+                if (view != null && !Object.keys(view).length) {
+                    view = null;
+                }
+
+                return view;
+            },
+
+            /**
+             * [findConnection description]
+             *
+             * @param {String} sourceName
+             *      [description]
+             * @param {String} targetName
+             *      [description]
+             * @returns {Object.<String, *>}
+             *      [description]
+             */
+            findConnection: function findConnection(sourceName, targetName) {
+                var index;
+
+                if (this.enabled && this.viewpoint === viewpoints.INDEPENDENT) {
+                    return this.behavior.findConnection(sourceName, targetName);
+                }
+
+                index = getConnectionIndex.call(this, sourceName, targetName);
+
+                return index < 0 ? null : this.description.connections[index];
+            },
+
+            /**
+             * [hasComponent description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @returns {Boolean}
+             *      [description]
+             */
+            hasComponent: function hasComponent(type, id) {
+                var found;
+
+                if (this.enabled) {
+                    found = this.behaviors.some(function (behavior) {
+                        return behavior.hasComponent(type, id);
+                    });
+                } else {
+                    found = id in this.description.components[type];
+                }
+
+                return found;
+            },
+
+            /**
+             * [hasConnection description]
+             *
+             * @param {String} sourceName
+             *      [description]
+             * @param {String} targetName
+             *      [description]
+             * @returns {Boolean}
+             *      [description]
+             */
+            hasConnection: function hasConnection(sourceName, targetName) {
+                var found, i;
+
+                if (this.enabled) {
+                    found = this.behaviors.some(function (behavior) {
+                        return behavior.hasConnection(sourceName, targetName);
+                    });
+                } else {
+                    found = getConnectionIndex.call(this, sourceName, targetName) !== -1;
+                }
+
+                return found;
+            },
+
+            /**
+             * [setUp description]
+             *
+             * @param {Object.<String, *>} status
+             *      [description]
+             * @returns {Object.<String, *>}
+             *      [description]
+             */
+            setUp: function setUp(status) {
+                status = Wirecloud.Wiring.normalize(status);
+
+                this.enabled = status.visualdescription.behaviours.length > 0;
+                this.description = status.visualdescription;
+
+                if (this.enabled) {
+                    this.description.behaviours.forEach(function (info) {
+                        this.createBehavior(info);
+                    }, this);
+
+                    if (!this.behaviors.length) {
+                        this.createBehavior();
+                    }
+                }
+
+                return status;
+            },
+
+            /**
+             * [removeBehavior description]
+             *
+             * @param {Behavior} behavior
+             *      [description]
+             * @returns {BehaviorEngine}
+             *      The instance on which the member is called.
+             */
+            removeBehavior: function removeBehavior(behavior) {
+                var _behavior;
+
+                if (!this.enabled) {
+                    return this;
+                }
+
+                if (this.behavior.equals(behavior)) {
+                    this.behaviors.some(function (existingBehavior) {
+                        return !behavior.equals((_behavior=existingBehavior));
+                    });
+                } else {
+                    _behavior = this.behavior;
+                }
+
+                this.emptyBehavior(behavior)
+                    .activate(_behavior);
+
+                this.body.remove(behavior);
+                this.behaviors.splice(this.behaviors.indexOf(behavior), 1);
+                enableRemoveBehavior.call(this);
+
+                return this;
+            },
+
+            /**
+             * [removeComponent description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @param {Boolean} [cascade=false]
+             *      [description]
+             * @returns {Number}
+             *      [description]
+             */
+            removeComponent: function removeComponent(type, id, cascade) {
+
+                if (typeof cascade !== 'boolean') {
+                    cascade = false;
+                }
+
+                if (this.readonly || (this.enabled && this.viewpoint !== viewpoints.GLOBAL)) {
+                    return ns.BehaviorEngine.OPERATION_NOT_ALLOWED;
+                }
+
+                if (!this.hasComponent(type, id)) {
+                    return ns.BehaviorEngine.COMPONENT_NOT_FOUND;
+                }
+
+                if (this.enabled) {
+                    if (cascade) {
+                        this.behaviors.forEach(function (behavior) {
+                            behavior.removeComponent(type, id);
+                        });
+                    } else {
+                        if (!this.behavior.hasComponent(type, id)) {
+                            return ns.BehaviorEngine.COMPONENT_UNREACHABLE;
+                        }
+
+                        this.behavior.removeComponent(type, id);
+
+                        if (this.hasComponent(type, id)) {
+                            return ns.BehaviorEngine.COMPONENT_REMOVED;
+                        }
+                    }
+                }
+
+                delete this.description.components[type][id];
+                updateLogger.call(this);
+
+                return ns.BehaviorEngine.COMPONENT_REMOVED_FULLY;
+            },
+
+            /**
+             * [removeConnection description]
+             *
+             * @param {String} sourceName
+             *      [description]
+             * @param {String} targetName
+             *      [description]
+             * @param {Boolean} [cascade=false]
+             *      [description]
+             * @returns {Number}
+             *      [description]
+             */
+            removeConnection: function removeConnection(sourceName, targetName, cascade) {
+                var index = getConnectionIndex.call(this, sourceName, targetName);
+
+                if (typeof cascade !== 'boolean') {
+                    cascade = false;
+                }
+
+                if (this.readonly || (this.enabled && this.viewpoint !== viewpoints.GLOBAL)) {
+                    return ns.BehaviorEngine.OPERATION_NOT_ALLOWED;
+                }
+
+                if (index === -1) {
+                    return ns.BehaviorEngine.CONNECTION_NOT_FOUND;
+                }
+
+                if (this.enabled) {
+                    if (cascade) {
+                        this.behaviors.forEach(function (behavior) {
+                            behavior.removeConnection(sourceName, targetName);
+                        });
+                    } else {
+                        if (!this.behavior.hasConnection(sourceName, targetName)) {
+                            return ns.BehaviorEngine.CONNECTION_UNREACHABLE;
+                        }
+
+                        this.behavior.removeConnection(sourceName, targetName);
+
+                        if (this.hasConnection(sourceName, targetName)) {
+                            return ns.BehaviorEngine.CONNECTION_REMOVED;
+                        }
+                    }
+                }
+
+                this.description.connections.splice(index, 1);
+                updateLogger.call(this);
+
+                return ns.BehaviorEngine.CONNECTION_REMOVED_FULLY;
+            },
+
+            /**
+             * [serialize description]
+             *
+             * @returns {BehaviorEngine}
+             *      The instance on which the member is called.
+             */
+            serialize: function serialize() {
+                var status = Wirecloud.Wiring.normalize();
+
+                status.visualdescription.components = this.description.components;
+                status.visualdescription.connections = this.description.connections;
+
+                this.behaviors.forEach(function (behavior) {
+                    status.visualdescription.behaviours.push(behavior.serialize());
+                });
+
+                return status;
+            },
+
+            /**
+             * [toggleViewpoint description]
+             *
+             * @returns {BehaviorEngine}
+             *      The instance on which the member is called.
+             */
+            toggleViewpoint: function toggleViewpoint() {
+                return this.activate(this.behavior, true);
+            },
+
+            /**
+             * [updateComponent description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @param {Object.<String, *>} view
+             *      [description]
+             * @param {Boolean} [updateOnly=false]
+             *      [description]
+             * @returns {BehaviorEngine}
+             *      The instance on which the member is called.
+             */
+            updateComponent: function updateComponent(type, id, view, updateOnly) {
+
+                if (typeof updateOnly !== 'boolean') {
+                    updateOnly = false;
+                }
+
+                if (this.readonly) {
+                    return this;
+                }
+
+                if (this.enabled) {
+                    switch (this.viewpoint) {
+                    case viewpoints.GLOBAL:
+                        if (updateOnly) {
+                            if (id in this.description.components[type]) {
+                                this.description.components[type][id] = view;
+                            }
+                        } else {
+                            this.description.components[type][id] = view;
+                            this.behavior.updateComponent(type, id);
+                        }
+                        break;
+                    case viewpoints.INDEPENDENT:
+                        if (updateOnly && this.behavior.hasComponent(type, id)) {
+                            this.behavior.updateComponent(type, id, view);
+                            return this;
+                        }
+                    }
+                } else {
+                    this.description.components[type][id] = view;
+                }
+
+                updateLogger.call(this);
+
+                return this;
+            },
+
+            /**
+             * [updateConnection description]
+             *
+             * @param {Object.<String, *>} view
+             *      [description]
+             * @param {Boolean} [updateOnly=false]
+             *      [description]
+             * @returns {BehaviorEngine}
+             *      The instance on which the member is called.
+             */
+            updateConnection: function updateConnection(view, updateOnly) {
+                var index = getConnectionIndex.call(this, view.sourcename, view.targetname);
+
+                if (typeof updateOnly !== 'boolean') {
+                    updateOnly = false;
+                }
+
+                if (this.readonly || (this.enabled && this.viewpoint !== viewpoints.GLOBAL)) {
+                    return this;
+                }
+
+                if (this.enabled) {
+
+                    if (updateOnly) {
+                        if (index !== -1) {
+                            this.description.connections[index] = view;
+                        }
+                    } else {
+                        if (index !== -1) {
+                            this.description.connections[index] = view;
+                        } else {
+                            this.description.connections.push(view);
+                        }
+                        this.behavior.updateConnection(view);
+                    }
+                } else {
+                    if (index !== -1) {
+                        this.description.connections[index] = view;
+                    } else {
+                        this.description.connections.push(view);
+                    }
+                }
+
+                updateLogger.call(this);
+
+                return this;
             }
 
-            this.dispatchEvent('activate')({
-                'behaviour': this.currentBehaviour,
-                'behaviourEngine': this,
-                'globalViewpoint': this.globalViewpointActive()
-            });
         }
+
+    });
+
+    var desactivateAllExcept = function desactivateAllExcept(behavior) {
+        var i, found;
+
+        for (found = false, i = 0; i < this.behaviors.length; i++) {
+            this.behaviors[i].active = false;
+
+            if (!found && this.behaviors[i].equals(behavior)) {
+                this.behavior = this.behaviors[i];
+                found = true;
+            }
+        }
+
+        this.behavior.active = true;
 
         return this;
     };
 
-    /**
-     * @public
-     * @function
-     *
-     * @param {Behaviour} behaviour
-     * @returns {BehaviourEngine} The instance on which this function was called.
-     */
-    BehaviourEngine.prototype.appendBehaviour = function appendBehaviour(behaviour) {
-        this._appendBehaviour(behaviour);
+    var enableRemoveBehavior = function enableRemoveBehavior() {
+        var state = this.behaviors.length > 1;
 
-        behaviour.btnActivate.addEventListener('click', function (event) {
-            if (!behaviour.active) {
-                behaviour.dispatchEvent('activate')({
-                    'behaviour': behaviour,
-                    'behaviourEngine': this,
-                }, event);
-            }
-        }.bind(this));
-
-        behaviour.btnActivate.addEventListener('dblclick', function (event) {
-            behaviour.dispatchEvent('activate.dblclick')({
-                'behaviour': behaviour,
-                'behaviourEngine': this,
-            }, event);
-        }.bind(this));
-
-        behaviour.btnShowSettings.addEventListener('click', function (event) {
-            behaviour.dispatchEvent('open')({
-                'behaviour': behaviour,
-                'behaviourEngine': this,
-            }, event);
-        }.bind(this));
-
-        if (behaviour.active || !this.currentBehaviour) {
-            desactivateAllExcept.call(this, behaviour);
-        }
-
-        this.dispatchEvent('append')({
-            'behaviour': behaviour,
-            'behaviourEngine': this
+        this.behaviors.forEach(function (behavior) {
+            behavior.btnRemove.enabled = state;
         });
 
         return this;
     };
 
-    /**
-     * Remove the set of behaviours saved.
-     * @public
-     * @function
-     *
-     * @returns {BehaviourEngine} The instance on which this function was called.
-     */
-    BehaviourEngine.prototype.empty = function empty() {
-        delete this.currentBehaviour;
-        delete this.currentState;
-        delete this.currentViewpoint;
+    var events = ['activate', 'beforeEmpty', 'enable'];
 
-        this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
-        this.emptyBehaviourList();
+    var getConnectionIndex = function getConnectionIndex(sourceName, targetName) {
+        var connection, found, i, index = -1;
 
-        return this;
-    };
-
-    BehaviourEngine.prototype.cleanComponentGroup = function cleanComponentGroup(componentType, idList) {
-        var componentList, i, id;
-
-        componentList = Object.keys(this.currentState.components[componentType]);
-
-        for (i = 0; i < this.behaviourList.length; i++) {
-            this.behaviourList[i].cleanComponentGroup(componentType, idList);
-        }
-
-        for (i = 0; i < componentList.length; i++) {
-            id = componentList[i];
-
-            if (idList.indexOf(id) == -1) {
-                delete this.currentState.components[componentType][id];
-            }
-        }
-
-        return this;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {String} componentId
-     * @returns {BehaviourEngine} The instance on which this function was called.
-     */
-    BehaviourEngine.prototype.containsComponent = function containsComponent(componentType, componentId) {
-        var i, found;
-
-        if (this.behavioursEnabled) {
-            for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
-                if (this.behaviourList[i].containsComponent(componentType, componentId)) {
-                    found = true;
-                }
-            }
-        } else {
-            found = componentId in this.currentState.components[componentType];
-        }
-
-        return found;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} sourceName
-     * @param {String} targetName
-     * @returns {Boolean} If that connection is saved.
-     */
-    BehaviourEngine.prototype.containsConnection = function containsConnection(sourceName, targetName) {
-        var found, i;
-
-        if (this.behavioursEnabled) {
-            for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
-                if (this.behaviourList[i].containsConnection(sourceName, targetName)) {
-                    found = true;
-                }
-            }
-        } else {
-            found = this.getConnectionIndex(sourceName, targetName) != -1;
-        }
-
-        return found;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {String} componentId
-     * @returns {Array.<Behaviour>} The behaviours that contain to the component given.
-     */
-    BehaviourEngine.prototype.getByComponent = function getByComponent(componentType, componentId) {
-        var behaviourList, i;
-
-        behaviourList = [];
-
-        if (this.behavioursEnabled) {
-            for (i = 0; i < this.behaviourList.length; i++) {
-                if (this.behaviourList[i].containsComponent(componentType, componentId)) {
-                    behaviourList.push(this.behaviourList[i]);
-                }
-            }
-        }
-
-        return behaviourList;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {String} componentId
-     * @returns {Object.<String, *>} The current view of the component given.
-     */
-    BehaviourEngine.prototype.getComponentView = function getComponentView(componentType, componentId) {
-        var componentView;
-
-        componentView = null;
-
-        if (this.behavioursEnabled) {
-            switch (this.currentViewpoint) {
-            case BehaviourEngine.viewpoints.GLOBAL:
-                componentView = this.currentState.components[componentType][componentId];
-
-                if (!hasComponentView.call(this, componentView)) {
-                    componentView = null;
-                }
-                break;
-            case BehaviourEngine.viewpoints.SINGLE:
-                if (this.currentBehaviour.hasComponentView(componentType, componentId)) {
-                    componentView = this.currentBehaviour.getComponentView(componentType, componentId);
-                } else {
-                    componentView = this.currentState.components[componentType][componentId];
-                }
-                break;
-            }
-        } else {
-            componentView = this.currentState.components[componentType][componentId];
-        }
-
-        return componentView;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} sourceName
-     * @param {String} targetName
-     * @returns {Number} The index of the connection found.
-     */
-    BehaviourEngine.prototype.getConnectionIndex = function getConnectionIndex(sourceName, targetName) {
-        var connection, found, i, index;
-
-        index = -1;
-
-        for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
-            connection = this.currentState.connections[i];
+        for (found = false, i = 0; !found && i < this.description.connections.length; i++) {
+            connection = this.description.connections[i];
 
             if (connection.sourcename == sourceName && connection.targetname == targetName) {
                 found = true;
@@ -342,406 +686,102 @@ Wirecloud.ui.WiringEditor.BehaviourEngine = (function () {
         return index;
     };
 
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} sourceName
-     * @param {String} targetName
-     * @returns {Object.<String, *>} The current view of the connection given.
-     */
-    BehaviourEngine.prototype.getConnectionView = function getConnectionView(sourceName, targetName) {
-        var connection, connectionView, found, i;
+    var handleOnCreate = function handleOnCreate() {
+        var dialog = new Wirecloud.ui.FormWindowMenu([
+                {name: 'title', label: gettext("Title"), type: 'text'},
+                {name: 'description', label: gettext("Description"), type: 'longtext'}
+            ],
+            gettext("New behavior"),
+            'behavior-create-form');
 
-        connectionView = null;
-
-        switch (this.currentViewpoint) {
-            case BehaviourEngine.viewpoints.GLOBAL:
-                for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
-                    connection = this.currentState.connections[i];
-
-                    if (connection.sourcename == sourceName && connection.targetname == targetName) {
-                        found = true;
-                        connectionView = connection;
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-
-        return connectionView;
+        dialog.executeOperation = function (data) {
+            this.appendBehavior(this.createBehavior(data));
+        }.bind(this);
+        dialog.show();
     };
 
-    /**
-     * @public
-     * @function
-     *
-     * @param {Object.<String, *>} state
-     * @returns {Object.<String, *>} The wiring state normalized.
-     */
-    BehaviourEngine.prototype.loadWiring = function loadWiring(state) {
-        var i;
+    var handleOnEnable = function handleOnEnable() {
+        var dialog, message;
 
-        state = Wirecloud.Wiring.normalize(state);
+        if (this.enabled) {
+            message = gettext("The following operation is irreversible and removes all identified behaviors. " +
+                "Would you like to continue?");
 
-        this.empty();
-        this.currentState = state.visualdescription;
-        this.behavioursEnabled = this.currentState.behaviours.length > 0;
-
-        if (this.behavioursEnabled) {
-            this.currentViewpoint = BehaviourEngine.viewpoints.GLOBAL;
-
-            for (i = 0; i < this.currentState.behaviours.length; i++) {
-                this.appendBehaviour(this.createBehaviour(this.currentState.behaviours[i]));
-            }
-
-            if (!this.hasBehaviours()) {
-                this.appendBehaviour(this.createBehaviour());
-            }
-        }
-
-        return state;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {Behaviour} behaviour
-     * @returns {BehaviourEngine} The instance on which this function was called.
-     */
-    BehaviourEngine.prototype.removeBehaviour = function removeBehaviour(behaviour) {
-        var found, i, index, oldBehaviour;
-
-        if (typeof behaviour === 'undefined') {
-            behaviour = this.currentBehaviour;
-        }
-
-        if (this.erasureEnabled && (index=this.getBehaviourIndex(behaviour)) != -1) {
-            if (this.currentBehaviour.equals(behaviour)) {
-                for (found = false, i = 0; !found && i < this.behaviourList.length; i++) {
-                    if (!this.behaviourList[i].equals(behaviour)) {
-                        oldBehaviour = this.behaviourList[i];
-                        found = true;
-                    }
-                }
-            } else {
-                oldBehaviour = this.currentBehaviour;
-            }
-
-            this.emptyBehaviour(behaviour);
-            this.activateBehaviour(oldBehaviour);
-            this._removeBehaviour(behaviour);
-
-            this.dispatchEvent('remove')({
-                'behaviour': behaviour,
-                'behaviourEngine': this
+            dialog = new Wirecloud.ui.AlertWindowMenu({
+                'acceptLabel': gettext("Yes"),
+                'cancelLabel': gettext("No, thank you")
             });
-        }
-
-        return this;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {Behaviour} behaviour
-     * @returns {BehaviourEngine} The instance on which this function was called.
-     */
-    BehaviourEngine.prototype.emptyBehaviour = function emptyBehaviour(behaviour) {
-        var found, i, index, oldBehaviour;
-
-        if (typeof behaviour === 'undefined') {
-            behaviour = this.currentBehaviour;
-        }
-
-        if (this.containsBehaviour(behaviour)) {
-            if (this.currentBehaviour.equals(behaviour)) {
-                oldBehaviour = null;
-            } else {
-                oldBehaviour = this.currentBehaviour;
-                this.activateBehaviour(behaviour);
-            }
-
-            this.dispatchEvent('beforeEmpty')({
-                'behaviour': behaviour,
-                'behaviourEngine': this
-            });
-
-            behaviour.empty();
-
-            if (oldBehaviour != null) {
-                this.activateBehaviour(oldBehaviour);
-            }
-        }
-
-        return this;
-    };
-
-    BehaviourEngine.prototype.removeComponent = function removeComponent(componentType, componentId, cascadeRemove) {
-        var i;
-
-        if (this.readonly) {
-            return BehaviourEngine.OPERATION_NOT_ALLOWED;
-        }
-
-        if (typeof cascadeRemove !== 'boolean') {
-            cascadeRemove = false;
-        }
-
-        if (!this.containsComponent(componentType, componentId)) {
-            return BehaviourEngine.COMPONENT_NOT_FOUND;
-        }
-
-        if (this.behavioursEnabled && this.currentViewpoint == BehaviourEngine.viewpoints.GLOBAL) {
-            if (cascadeRemove) {
-                for (i = 0; i < this.behaviourList.length; i++) {
-                    this.behaviourList[i].removeComponent(componentType, componentId);
-                }
-            } else {
-                if (!this.currentBehaviour.containsComponent(componentType, componentId)) {
-                    return BehaviourEngine.COMPONENT_UNREACHABLE;
-                }
-
-                this.currentBehaviour.removeComponent(componentType, componentId);
-
-                if (this.containsComponent(componentType, componentId)) {
-                    return BehaviourEngine.COMPONENT_REMOVED;
-                }
-            }
-        }
-
-        delete this.currentState.components[componentType][componentId];
-
-        return BehaviourEngine.COMPONENT_REMOVED_FULLY;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} sourceName
-     * @param {String} targetName
-     * @returns {Number} A number that explain what operation was done.
-     */
-    BehaviourEngine.prototype.removeConnection = function removeConnection(sourceName, targetName, cascadeRemove) {
-        var i, index;
-
-        if (this.readonly) {
-            return BehaviourEngine.OPERATION_NOT_ALLOWED;
-        }
-
-        if (typeof cascadeRemove !== 'boolean') {
-            cascadeRemove = false;
-        }
-
-        index = this.getConnectionIndex(sourceName, targetName);
-
-        if (index == -1) {
-            return BehaviourEngine.CONNECTION_NOT_FOUND;
-        }
-
-        if (this.behavioursEnabled && this.currentViewpoint == BehaviourEngine.viewpoints.GLOBAL) {
-            if (cascadeRemove) {
-                for (i = 0; i < this.behaviourList.length; i++) {
-                    this.behaviourList[i].removeConnection(sourceName, targetName);
-                }
-            } else {
-                if (!this.currentBehaviour.containsConnection(sourceName, targetName)) {
-                    return BehaviourEngine.CONNECTION_UNREACHABLE;
-                }
-
-                this.currentBehaviour.removeConnection(sourceName, targetName);
-
-                if (this.containsConnection(sourceName, targetName)) {
-                    return BehaviourEngine.CONNECTION_REMOVED;
-                }
-            }
-        }
-
-        this.currentState.connections.splice(index, 1);
-
-        return BehaviourEngine.CONNECTION_REMOVED_FULLY;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @returns {Object.<String, *>} The visual part of current wiring state.
-     */
-    BehaviourEngine.prototype.serialize = function serialize() {
-        var wiringState, i;
-
-        wiringState = Wirecloud.Wiring.normalize();
-
-        wiringState.visualdescription.components = this.currentState.components;
-        wiringState.visualdescription.connections = this.currentState.connections;
-
-        for (i = 0; i < this.behaviourList.length; i++) {
-            wiringState.visualdescription.behaviours.push(this.behaviourList[i].serialize());
-        }
-
-        return StyledElements.Utils.cloneObject(wiringState);
-    };
-
-    BehaviourEngine.prototype.globalViewpointActive = function globalViewpointActive() {
-        return this.currentViewpoint == BehaviourEngine.viewpoints.GLOBAL;
-    }
-
-    BehaviourEngine.prototype.toggleViewpoint = function toggleViewpoint() {
-        this.activateBehaviour(this.currentBehaviour, true);
-
-        return this;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {String} componentId
-     * @param {Object.<String, *>} componentView
-     * @param {Boolean} updateOnly
-     * @returns {BehaviourEngine} The instance on which this function was called.
-     */
-    BehaviourEngine.prototype.updateComponent = function updateComponent(componentType, componentId, componentView, updateOnly) {
-        componentView = StyledElements.Utils.cloneObject(componentView);
-
-        if (this.readonly) {
-            return this;
-        }
-
-        if (typeof updateOnly !== 'boolean') {
-            updateOnly = false;
-        }
-
-        if (this.behavioursEnabled) {
-            switch (this.currentViewpoint) {
-            case BehaviourEngine.viewpoints.GLOBAL:
-                if (updateOnly) {
-                    if (componentId in this.currentState.components[componentType]) {
-                        this.currentState.components[componentType][componentId] = componentView;
-                    }
-                } else {
-                    this.currentState.components[componentType][componentId] = componentView;
-                    this.currentBehaviour.updateComponent(componentType, componentId);
-                }
-                break;
-            case BehaviourEngine.viewpoints.SINGLE:
-                if (updateOnly) {
-                    if (this.currentBehaviour.containsComponent(componentType, componentId)) {
-                        this.currentBehaviour.updateComponent(componentType, componentId, componentView);
-                    }
-                }
-                break;
-            }
+            dialog.setMsg(message);
+            dialog.acceptHandler = function () {
+                this.enabled = false;
+                this.trigger('enable', this.enabled, this);
+            }.bind(this);
+            dialog.show();
         } else {
-            this.currentState.components[componentType][componentId] = componentView;
+            this.enabled = true;
+            this.createBehavior();
+            this.trigger('enable', this.enabled, this);
         }
+    };
+
+    var insertBehavior = function insertBehavior(behavior) {
+        this.body.append(behavior);
+        this.behaviors.push(behavior);
+
+        if (behavior.active || !this.behavior) {
+            desactivateAllExcept.call(this, behavior);
+        }
+
+        enableRemoveBehavior.call(this);
 
         return this;
     };
 
-    /**
-     * @public
-     * @function
-     *
-     * @param {Object.<String, *>} connectionView
-     * @param {Boolean} [updateOnly]
-     * @returns {BehaviourEngine} The instance on which this function was called.
-     */
-    BehaviourEngine.prototype.updateConnection = function updateConnection(connectionView, updateOnly) {
-        var found, i, index;
+    var toggleViewpoint = function toggleViewpoint(value) {
 
-        if (this.readonly) {
-            return this;
+        if (typeof value !== 'boolean') {
+            value = false;
         }
 
-        connectionView = StyledElements.Utils.cloneObject(connectionView);
-
-        if (typeof updateOnly !== 'boolean') {
-            updateOnly = false;
-        }
-
-        if (this.behavioursEnabled) {
-            switch (this.currentViewpoint) {
-                case BehaviourEngine.viewpoints.GLOBAL:
-                    for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
-                        if (this.currentState.connections[i].sourcename == connectionView.sourcename &&
-                            this.currentState.connections[i].targetname == connectionView.targetname) {
-                            found = true;
-                            index = i;
-                        }
-                    }
-
-                    if (updateOnly) {
-                        if (found) {
-                            this.currentState.connections[index] = connectionView;
-                        }
-                    } else {
-                        if (found) {
-                            this.currentState.connections[index] = connectionView;
-                        } else {
-                            this.currentState.connections.push(connectionView);
-                        }
-                        this.currentBehaviour.updateConnection(connectionView);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            for (found = false, i = 0; !found && i < this.currentState.connections.length; i++) {
-                if (this.currentState.connections[i].sourcename == connectionView.sourcename &&
-                    this.currentState.connections[i].targetname == connectionView.targetname) {
-                    this.currentState.connections[i] = connectionView;
-                    found = true;
-                }
-            }
-
-            if (!found) {
-                this.currentState.connections.push(connectionView);
+        if (value) {
+            if (this.viewpoint === viewpoints.GLOBAL) {
+                this.viewpoint = viewpoints.INDEPENDENT;
+                this.btnEnable.hide();
+            } else {
+                this.viewpoint = viewpoints.GLOBAL;
+                this.btnEnable.show();
             }
         }
 
         return this;
     };
 
-    /**
-     * @private
-     * @function
-     *
-     * @param {Behaviour} behaviour
-     * @returns {BehaviourEngine} The instance on which this function was called.
-     */
-    var desactivateAllExcept = function desactivateAllExcept(behaviour) {
-        var i, found;
+    var updateLogger = function updateLogger() {
 
-        for (found = false, i = 0; i < this.behaviourList.length; i++) {
-            this.behaviourList[i].active = false;
-
-            if (!found && this.behaviourList[i].equals(behaviour)) {
-                this.currentBehaviour = this.behaviourList[i];
-                found = true;
-            }
+        if (this.logger != null && !this.enabled) {
+            this.logger.behavior
+                .innerHTML = "";
+            this.logger.connections
+                .textContent = this.description.connections.length;
+            this.logger.operators
+                .textContent = Object.keys(this.description.components.operator).length;
+            this.logger.widgets
+                .textContent = Object.keys(this.description.components.widget).length;
         }
-
-        this.currentBehaviour.active = true;
-
-        return this;
     };
 
-    /**
-     * @private
-     * @function
-     */
-    var hasComponentView = function hasComponentView(view) {
-        return typeof view === 'object' && view != null && Object.keys(view).length > 0;
+    var updateBehaviorLogger = function updateBehaviorLogger() {
+
+        if (this.logger != null) {
+            this.logger.behavior
+                .innerHTML = "<strong>Behavior:</strong> " + this.behavior.title.text();
+            this.logger.connections
+                .textContent = this.behavior.connections.length;
+            this.logger.operators
+                .textContent = Object.keys(this.behavior.components.operator).length;
+            this.logger.widgets
+                .textContent = Object.keys(this.behavior.components.widget).length;
+        }
     };
 
-    return BehaviourEngine;
-
-})();
+})(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

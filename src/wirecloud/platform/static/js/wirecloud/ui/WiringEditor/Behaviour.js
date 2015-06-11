@@ -1,260 +1,356 @@
 /*
- *  This file is part of Wirecloud.
- *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
- *  Wirecloud is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  License, or (at your option) any later version.
+ *     This file is part of Wirecloud Platform.
  *
- *  Wirecloud is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
  */
 
-/*global StyledElements, Wirecloud */
+/* global gettext, StyledElements, Wirecloud */
 
 
-Wirecloud.ui.WiringEditor.Behaviour = (function () {
+(function (ns, se, utils) {
 
     "use strict";
 
+    // ==================================================================================
+    // CLASS DEFINITION
+    // ==================================================================================
+
     /**
-     * Create a new instance of class Behaviour.
-     * @class
+     * Create a new instance of class Behavior.
+     * @extends {Panel}
      *
-     * @param {Object.<String, *>} data
-     * @param {Number} index
+     * @constructor
      * @param {Object.<String, *>} [options]
+     *      [description]
      */
-    var Behaviour = function Behaviour(data, index, options) {
-        var bodyElement, headingElement, optionsElement;
+    ns.Behavior = utils.defineClass({
 
-        StyledElements.EventManagerMixin.call(this, Behaviour.events);
-        data = Behaviour.normalize(data, index);
+        constructor: function Behavior(options) {
+            var descriptionElement;
 
-        this.title = data.title;
-        this.description = data.description;
+            options = utils.updateObject(defaults, options);
 
-        this.titleElement = document.createElement('span');
-        this.titleElement.className = "panel-title behaviour-title";
-        this.titleElement.textContent = this.title;
-
-        this.btnActivate = new StyledElements.Button({
-            'title': gettext("Activate"),
-            'class': 'btn-activate',
-            'iconClass': 'icon-plus'
-        });
-
-        this.btnShowSettings = new StyledElements.Button({
-            'title': gettext("Settings"),
-            'class': 'btn-show-settings',
-            'iconClass': 'icon-tasks'
-        });
-
-        optionsElement = document.createElement('span');
-        optionsElement.className = "panel-options";
-        optionsElement.appendChild(this.btnShowSettings.wrapperElement);
-        optionsElement.appendChild(this.btnActivate.wrapperElement);
-
-        headingElement = document.createElement('div');
-        headingElement.className = "panel-heading";
-        headingElement.appendChild(this.titleElement);
-        headingElement.appendChild(optionsElement);
-
-        this.descriptionElement = document.createElement('p');
-        this.descriptionElement.className = "behaviour-description";
-        this.descriptionElement.textContent = this.description;
-
-        bodyElement = document.createElement('div');
-        bodyElement.className = "panel-body";
-        bodyElement.appendChild(this.descriptionElement);
-
-        this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = "panel behaviour";
-        this.wrapperElement.appendChild(headingElement);
-        this.wrapperElement.appendChild(bodyElement);
-
-        this.components = data.components;
-        this.connections = data.connections;
-
-        Object.defineProperty(this, 'active', {
-            'get': function get() {
-                return this.wrapperElement.classList.contains('active');
-            },
-            'set': function set(state) {
-                if (state) {
-                    this.wrapperElement.classList.add('active');
-                } else {
-                    this.wrapperElement.classList.remove('active');
-                }
+            if (!options.title) {
+                options.title = defaults.title;
             }
-        });
 
-        this.active = data.active;
-    };
+            if (!options.description) {
+                options.description = defaults.description;
+            }
 
-    StyledElements.Utils.inherit(Behaviour, null, StyledElements.EventManagerMixin);
+            this.btnShowInfo = new se.Button({
+                'title': gettext("Settings"),
+                'class': 'btn-show-settings',
+                'iconClass': 'icon-tasks'
+            });
+            this.btnShowInfo.on('click', displayUpdateForm, this);
 
-    Behaviour.events = ['activate', 'activate.dblclick', 'open'];
+            this.btnRemove = new se.Button({
+                'title': gettext("Remove"),
+                'class': 'btn-activate',
+                'iconClass': 'icon-remove'
+            });
+            this.btnRemove.on('click', handleOnRemove, this);
 
-    Behaviour.normalize = function normalize(data, index) {
-        if (typeof data !== 'object') {
-            data = {
-                active: false,
-                title: "New behaviour " + index,
-                description: "No description provided.",
-                components: {
+            this.superClass(events, {
+                extraClass: 'behavior',
+                title: options.title,
+                optionList: [this.btnShowInfo, this.btnRemove]
+            });
+
+            this.title.addClass('se-link behavior-title');
+
+            descriptionElement = document.createElement('p');
+            descriptionElement.className = 'behavior-description';
+            descriptionElement.textContent = options.description;
+            this.body.append(descriptionElement);
+
+            Object.defineProperty(this, 'description', {
+                get: function get() {
+                    return descriptionElement.textContent;
+                },
+                set: function set(value) {
+                    descriptionElement.textContent = value ? value : defaults.description;
+                }
+            });
+
+            this.active = options.active;
+            this.components = options.components;
+            this.connections = options.connections;
+        },
+
+        inherit: se.Panel,
+
+        members: {
+
+            /**
+             * @override
+             */
+            _onclick: function _onclick(event) {
+                if (!this.active) {
+                    this.superMember('_onclick', event);
+                }
+            },
+
+            /**
+             * [empty description]
+             *
+             * @returns {Behavoir}
+             *      [description]
+             */
+            empty: function empty() {
+                this.components = {
                     operator: {},
                     widget: {}
-                },
-                connections: []
-            };
-        }
+                };
+                this.connections.length = 0;
 
-        if (typeof data.active !== 'boolean') {
-            data.active = false;
-        }
+                return this;
+            },
 
-        if (typeof data.title !== 'string' || !data.title.length) {
-            data.title = "New behaviour " + index;
-        }
+            /**
+             * [equals description]
+             *
+             * @param {Behavior} behavior
+             *      [description]
+             * @returns {Boolean}
+             *      [description]
+             */
+            equals: function equals(behavior) {
+                return behavior instanceof ns.Behavior && Object.is(this, behavior);
+            },
 
-        if (typeof data.description !== 'string' || !data.description.length) {
-            data.description = "No description provided.";
-        }
+            /**
+             * [findComponent description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @returns {Object.<String, *>}
+             *      [description]
+             */
+            findComponent: function findComponent(type, id) {
+                return this.components[type][id];
+            },
 
-        if (typeof data.components !== 'object') {
-            data.components = {
-                operator: {},
-                widget: {}
-            };
-        }
+            /**
+             * [findConnection description]
+             *
+             * @param {String} sourceName
+             *      [description]
+             * @param {String} targetName
+             *      [description]
+             * @returns {Object.<String, *>}
+             *      [description]
+             */
+            findConnection: function findConnection(sourceName, targetName) {
+                var index = getConnectionIndex.call(this, sourceName, targetName);
 
-        if (!Array.isArray(data.connections)) {
-            data.connections = [];
-        }
+                return index !== -1 ? this.connections[index] : null;
+            },
 
-        return data;
-    };
+            /**
+             * [hasComponent description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @returns {Boolean}
+             *      [description]
+             */
+            hasComponent: function hasComponent(type, id) {
+                return id in this.components[type];
+            },
 
-    Behaviour.prototype.cleanComponentGroup = function cleanComponentGroup(componentType, idList) {
-        var componentList, i, id;
+            /**
+             * [hasComponentView description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @returns {Boolean}
+             *      [description]
+             */
+            hasComponentView: function hasComponentView(type, id) {
+                return Object.keys(this.components[type][id] || {}).length > 0;
+            },
 
-        componentList = Object.keys(this.components[componentType]);
+            /**
+             * [hasConnection description]
+             *
+             * @param {String} sourceName
+             *      [description]
+             * @param {String} targetName
+             *      [description]
+             * @returns {Boolean}
+             *      [description]
+             */
+            hasConnection: function hasConnection(sourceName, targetName) {
+                return this.connections.some(function (connection) {
+                    return connection.sourcename == sourceName && connection.targetname == targetName;
+                });
+            },
 
-        for (i = 0; i < componentList.length; i++) {
-            id = componentList[i];
+            /**
+             * [removeComponent description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @returns {Behavoir}
+             *      [description]
+             */
+            removeComponent: function removeComponent(type, id) {
+                delete this.components[type][id];
 
-            if (idList.indexOf(id) == -1) {
-                delete this.components[componentType][id];
+                return this.trigger('update', this);
+            },
+
+            /**
+             * [removeConnection description]
+             *
+             * @param {String} sourceName
+             *      [description]
+             * @param {String} targetName
+             *      [description]
+             * @returns {Behavoir}
+             *      [description]
+             */
+            removeConnection: function removeConnection(sourceName, targetName) {
+                var index = getConnectionIndex.call(this, sourceName, targetName);
+
+                if (index !== -1) {
+                    this.connections.splice(index, 1);
+                }
+
+                return this.trigger('update', this);
+            },
+
+            /**
+             * [serialize description]
+             *
+             * @returns {Object.<String, *>}
+             *      [description]
+             */
+            serialize: function serialize() {
+                return {
+                    title: this.title.text(),
+                    description: this.description,
+                    active: this.active,
+                    components: this.components,
+                    connections: this.connections
+                };
+            },
+
+            /**
+             * [updateComponent description]
+             *
+             * @param {String} type
+             *      [description]
+             * @param {String|Number} id
+             *      [description]
+             * @param  {[type]} view [description]
+             * @returns {Behavoir}
+             *      [description]
+             */
+            updateComponent: function updateComponent(type, id, view) {
+                view = view || {};
+
+                if (this.hasComponentView(type, id) && !Object.keys(view).length) {
+                    return this;
+                }
+
+                this.components[type][id] = view;
+
+                return this.trigger('update', this);
+            },
+
+            /**
+             * @public
+             * @function
+             *
+             * @param {Object.<String, *>} data
+             * @returns {Behavior} The instance on which this function was called.
+             */
+            updateConnection: function updateConnection(view) {
+                var index = getConnectionIndex.call(this, view.sourcename, view.targetname);
+
+                if (index !== -1) {
+                    this.connections[index] = {
+                        sourcename: view.sourcename,
+                        targetname: view.targetname
+                    };
+                } else {
+                    this.connections.push({
+                        sourcename: view.sourcename,
+                        targetname: view.targetname
+                    });
+                }
+
+                return this.trigger('update', this);
             }
+
         }
 
-        return this;
+    });
+
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var defaults = {
+        title: "New behavior",
+        description: "No description provided.",
+        active: false,
+        components: {
+            operator: {},
+            widget: {}
+        },
+        connections: []
     };
 
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {String} componentId
-     * @returns {Boolean} If the component given is saved.
-     */
-    Behaviour.prototype.containsComponent = function containsComponent(componentType, componentId) {
-        return componentId in this.components[componentType];
+    var events = ['remove', 'update'];
+
+    var displayUpdateForm = function displayUpdateForm() {
+        var dialog = new Wirecloud.ui.FormWindowMenu([
+                {name: 'title', label: gettext("Title"), type: 'text'},
+                {name: 'description', label: gettext("Description"), type: 'longtext'}
+            ],
+            gettext("Behavior Info"),
+            'behavior-update-form');
+
+        dialog.executeOperation = function (data) {
+            updateInfo.call(this, data);
+        }.bind(this);
+
+        dialog.show();
+        dialog.setValue({
+            title: this.title.text(),
+            description: this.description
+        });
     };
 
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} sourceName
-     * @param {String} targetName
-     * @returns {Boolean} If the connection given is saved.
-     */
-    Behaviour.prototype.containsConnection = function containsConnection(sourceName, targetName) {
-        var connection, found, i;
-
-        for (found = false, i = 0; !found && i < this.connections.length; i++) {
-            connection = this.connections[i];
-
-            if (connection.sourcename == sourceName && connection.targetname == targetName) {
-                found = true;
-            }
-        }
-
-        return found;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {Behaviour} behaviour
-     * @returns {Boolean} If the behaviour given is the same behaviour saved.
-     */
-    Behaviour.prototype.empty = function empty() {
-        this.connections.length = 0;
-        this.components = {
-            'operator': {},
-            'widget': {}
-        };
-
-        return this;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {Behaviour} behaviour
-     * @returns {Boolean} If the behaviour given is the same behaviour saved.
-     */
-    Behaviour.prototype.equals = function equals(behaviour) {
-        return (behaviour instanceof Behaviour) && Object.is(this, behaviour);
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {String} componentId
-     * @returns {Boolean} If the component given has view registered.
-     */
-    Behaviour.prototype.hasComponentView = function hasComponentView(componentType, componentId) {
-        return Object.keys(this.components[componentType][componentId]).length;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {String} componentId
-     * @returns {Object.<String, *>} The current view of the component given.
-     */
-    Behaviour.prototype.getComponentView = function getComponentView(componentType, componentId) {
-        return this.components[componentType][componentId];
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} sourceName
-     * @param {String} targetName
-     * @returns {Number} The index of the connection found.
-     */
-    Behaviour.prototype.getConnectionIndex = function getConnectionIndex(sourceName, targetName) {
-        var connection, found, i, index;
-
-        index = -1;
+    var getConnectionIndex = function getConnectionIndex(sourceName, targetName) {
+        var connection, found, i, index = -1;
 
         for (found = false, i = 0; !found && i < this.connections.length; i++) {
             connection = this.connections[i];
@@ -268,162 +364,28 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         return index;
     };
 
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} connectionId
-     * @returns {Object.<String, *>} The current view of the component given.
-     */
-    Behaviour.prototype.getConnectionView = function getConnectionView(connectionId) {
-        var connectionView, found, i;
+    var handleOnRemove = function handleOnRemove(event) {
+        var dialog, message;
 
-        for (found = false, i = 0; !found && i < this.connections.length; i++) {
-            if (this.connections[i].id == connectionId) {
-                connectionView = this.connections[i];
-                found = true;
-            }
-        }
+        message = gettext("The following operation is irreversible " +
+            "and removes the selected behavior completely. " +
+            "Would you like to continue?");
 
-        return connectionView;
-    };
-
-    Behaviour.prototype.getInfo = function getInfo() {
-        return StyledElements.Utils.cloneObject({
-            'title': this.title,
-            'description': this.description
+        dialog = new Wirecloud.ui.AlertWindowMenu({
+            acceptLabel: gettext("Yes, remove"),
+            cancelLabel: gettext("No, thank you")
         });
+        dialog.setMsg(message);
+        dialog.acceptHandler = function () {
+            this.trigger('remove', this, event);
+        }.bind(this);
+        dialog.show();
     };
 
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {String} componentId
-     * @returns {Behaviour} The instance on which this function was called.
-     */
-    Behaviour.prototype.removeComponent = function removeComponent(componentType, componentId) {
-        delete this.components[componentType][componentId];
-
-        return this;
+    var updateInfo = function updateInfo(data) {
+        this.title.text(data.title ? data.title : defaults.title);
+        this.description = data.description;
+        this.trigger('update', this);
     };
 
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} sourceName
-     * @param {String} targetName
-     * @returns {Behaviour} The instance on which this function was called.
-     */
-    Behaviour.prototype.removeConnection = function removeConnection(sourceName, targetName) {
-        var index;
-
-        if ((index=this.getConnectionIndex(sourceName, targetName)) != -1) {
-            this.connections.splice(index, 1);
-        }
-
-        return this;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @returns {Object.<String, *>} The current information saved.
-     */
-    Behaviour.prototype.serialize = function serialize() {
-        var data = {
-            active: this.active,
-            title: this.title,
-            description: this.description,
-            components: this.components,
-            connections: this.connections
-        };
-
-        return StyledElements.Utils.cloneObject(data);
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {String} componentId
-     * @param {Object.<String, *>} componentView
-     * @returns {Behaviour} The instance on which this function was called.
-     */
-    Behaviour.prototype.updateComponent = function updateComponent(componentType, componentId, componentView) {
-        if (typeof componentView === 'undefined') {
-            componentView = {};
-        }
-
-        if (this.containsComponent(componentType, componentId) && this.hasComponentView(componentType, componentId)) {
-            if (Object.keys(componentView).length > 0) {
-                this.components[componentType][componentId] = componentView;
-            }
-        } else {
-            this.components[componentType][componentId] = componentView;
-        }
-
-        return this;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {Object.<String, *>} data
-     * @returns {Behaviour} The instance on which this function was called.
-     */
-    Behaviour.prototype.updateConnection = function updateConnection(connectionView) {
-        var found, i;
-
-        for (found = false, i = 0; !found && i < this.connections.length; i++) {
-            if (this.connections[i].sourcename == connectionView.sourcename &&
-                this.connections[i].targetname == connectionView.targetname) {
-                this.connections[i] = {
-                    'sourcename': connectionView.sourcename,
-                    'targetname': connectionView.targetname
-                };
-                found = true;
-            }
-        }
-
-        if (!found) {
-            this.connections.push({
-                'sourcename': connectionView.sourcename,
-                'targetname': connectionView.targetname
-            });
-        }
-
-        return this;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {Object.<String, *>} data
-     * @returns {Behaviour} The instance on which this function was called.
-     */
-    Behaviour.prototype.updateInfo = function updateInfo(data) {
-        var prop;
-
-        if (typeof data.title === 'string' && data.title.length) {
-            this.title = data.title;
-            this.titleElement.textContent = data.title;
-        }
-
-        if (typeof data.description === 'string' && data.description.length) {
-            this.description = data.description;
-            this.descriptionElement.textContent = data.description;
-        }
-
-        return this;
-    };
-
-    return Behaviour;
-
-})();
+})(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

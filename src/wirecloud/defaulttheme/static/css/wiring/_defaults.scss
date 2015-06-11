@@ -171,8 +171,12 @@ $connection-bg-optrm-border-color: rgba(220, 220, 220, 0.8);
 $connection-bg-optrm-mousedover-background-color: rgba(50, 175, 210, 1.0);
 $connection-bg-optrm-mousedover-border-color: rgba(40, 150, 190, 1.0);
 
-$behaviour-background-color: rgb(255, 255, 255);
-$behaviour-border-color: rgb(220, 220, 220);
+$behavior-title-width: 75%;
+$behavior-description-height: 36px;
+$behavior-description-font-color: rgb(70, 80, 90);
+
+$behavior-hover-border-color: rgb(200, 200, 200);
+$behavior-hover-heading-bg-color: rgb(230, 230, 230);
 
 $behaviour-heading-background-color: rgb(240, 240, 240);
 $behaviour-heading-font-color: rgb(80, 80, 80);
