@@ -120,11 +120,14 @@
     font-size: $font-size-base;
 
     blockquote {
-        padding: ($line-height-base / 4) ($line-height-base / 2);
         font-size: inherit;
 
+        &:first-child {
+            margin-top: ($line-height-base / 2);
+        }
+
         &:last-child {
-            margin-bottom: 0px;
+            margin-bottom: 0;
         }
     }
 }
