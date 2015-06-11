@@ -6,7 +6,7 @@
     opacity: 1;
 }
 
-.se-container > .se-container-disable-layer {
+.se-container-disable-layer {
     position: absolute;
     top: 0;
     left: 0;
