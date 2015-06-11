@@ -245,54 +245,25 @@
     /**
      * [normalize description]
      *
-     * @param  {Object.<String, *>} status [description]
-     * @returns {Object.<String, *>} [description]
+     * @param {Object.<String, *>} [status]
+     *      [description]
+     * @returns {Object.<String, *>}
+     *      [description]
      */
     Wiring.normalize = function normalize(status) {
-        var element, i, key, wiringStatus;
-
-        wiringStatus = {
-            'version': "2.0",
-            'connections': [],
-            'operators': {},
-            'visualdescription': {
-                'behaviours': [],
-                'components': {
-                    'operator': {},
-                    'widget': {}
+        return StyledElements.Utils.updateObject({
+            version: '2.0',
+            connections: [],
+            operators: {},
+            visualdescription: {
+                behaviours: [],
+                components: {
+                    operator: {},
+                    widget: {}
                 },
-                'connections': []
+                connections: []
             }
-        };
-
-        if (typeof status !== 'object') {
-            return wiringStatus;
-        }
-
-        if (Array.isArray(status.connections)) {
-            wiringStatus.connections = status.connections;
-        }
-
-        if (typeof status.operators === 'object') {
-            wiringStatus.operators = status.operators;
-        }
-
-        if (typeof status.visualdescription === 'object') {
-
-            if (Array.isArray(status.visualdescription.behaviours)) {
-                wiringStatus.visualdescription.behaviours = status.visualdescription.behaviours;
-            }
-
-            if (typeof status.visualdescription.components === 'object') {
-                wiringStatus.visualdescription.components = status.visualdescription.components;
-            }
-
-            if (Array.isArray(status.visualdescription.connections)) {
-                wiringStatus.visualdescription.connections = status.visualdescription.connections;
-            }
-        }
-
-        return wiringStatus;
+        }, status);
     };
 
     Wiring.prototype = new StyledElements.ObjectWithEvents();
