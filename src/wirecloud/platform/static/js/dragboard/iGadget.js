@@ -19,11 +19,7 @@
  *
  */
 
-/*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global CSSPrimitiveValue, Insertion, document, gettext, ngettext, interpolate, window */
-/*global DropDownMenu, LayoutManagerFactory, Wirecloud*/
-/*global IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
-/*global ColorDropDownMenu*/
+/*global CSSPrimitiveValue, gettext, ngettext, interpolate, Wirecloud, IWidgetIconDraggable*/
 
 /**
  * Creates an instance of a Widget.
@@ -33,38 +29,20 @@
  * @class Represents an instance of a Widget.
  *
  * @param {Widget}            widget        Widget of this iWidget
- * @param {Number}            iWidgetId     iWidget id in persistence. This
- *                                          parameter can be null for new
- *                                          iWidgets (not coming from
- *                                          persistence)
- * @param {String}            iWidgetName   current widget
  * @param {Wirecloud.ui.DragboardLayout}   layout        associated layout
- * @param {DragboardPosition} position      initial position. This parameter can
- *                                          be null for new iWidgets (not coming
- *                                          from persistence)
- * @param {Number}            zPos          initial z coordinate position. This
- *                                          parameter can be null for new
- *                                          iWidgets (not coming from
- *                                          persistence)
- * @param {Number}            width         initial content width
- * @param {Number}            height        initial content height
- * @param {Boolean}           fulldragboard initial fulldragboard mode
- * @param {Boolean}           minimized     initial minimized status
- * @param {String}            menu_color    background color for the menu.
- *                                          (6 chars with a hexadecimal color)
  */
-function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, readOnly, description) {
+function IWidget(widget, layout, description) {
 
     this.code = null;
-    this.position = position;
-    this.contentWidth = Number(width);
-    this.contentHeight = Number(height);
-    this.zPos = zPos;
+    this.position = new Wirecloud.DragboardPosition(description.left, description.top);
+    this.contentWidth = Number(description.width);
+    this.contentHeight = Number(description.height);
+    this.zPos = description.zIndex;
     this.draggable = null;
     this.visible = false;
-    this.minimized = minimized;
+    this.minimized = !!description.minimized;
 
-    if (fulldragboard) {
+    if (description.fulldragboard) {
         this.minimized = false;
         this.previousContentWidth = this.contentWidth;
         this.previousHeight = this.contentHeight + layout.getMenubarSize().inLU; // TODO
@@ -76,7 +54,7 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
         this.position.y = 0;
 
         layout = layout.dragboard.fulldragboardLayout;
-    } else if (!minimized) {
+    } else if (!this.minimized) {
         this.height = this.contentHeight;
     } else {
         this.height = layout.getMenubarSize().inLU;
@@ -100,7 +78,7 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
         this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
     }
 
-    this.refusedVersion = refusedVersion !== null ? new Wirecloud.Version(refusedVersion) : null;
+    this.refusedVersion = null;
 
     // Elements
     this.element = null;
@@ -118,7 +96,7 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.iconElement = null;
     this.iconImg = null;
     this.iwidgetIconNameHTMLElement =  null;
-    this.iconPosition = iconPosition;
+    this.iconPosition = new Wirecloud.DragboardPosition(description.icon_left, description.icon_top);
     this.iconDraggable =  null;
 
     // Menu attributes
@@ -834,7 +812,7 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
 };
 
 IWidget.prototype.isInFullDragboardMode = function () {
-    return this.layout instanceof FullDragboardLayout;
+    return this.layout instanceof Wirecloud.ui.FullDragboardLayout;
 };
 
 IWidget.prototype.setFullDragboardMode = function (enable) {
@@ -963,9 +941,9 @@ IWidget.prototype.moveToLayout = function (newLayout) {
     affectedWidgetsRemoving = oldLayout.removeIWidget(this, dragboardChange);
 
 
-    if (dragboardChange && !(newLayout instanceof FreeLayout)) {
+    if (dragboardChange && !(newLayout instanceof Wirecloud.ui.FreeLayout)) {
         this.position = null;
-    } else if (oldLayout instanceof FullDragboardLayout) {
+    } else if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
         this.position = this.previousPosition;
     } else {
         this.position.x = oldLayout.getColumnOffset(this.position.x);
@@ -976,7 +954,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
     }
 
     // ##### TODO Review this
-    if (oldLayout instanceof FullDragboardLayout) {
+    if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
         this.contentWidth = this.previousContentWidth;
         this.height = this.previousHeight;
     } else {
@@ -1026,7 +1004,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
 
         var iWidgetInfo = {};
         iWidgetInfo['id'] = this.id;
-        if (!(newLayout instanceof FullDragboardLayout)) {
+        if (!(newLayout instanceof Wirecloud.ui.FullDragboardLayout)) {
             iWidgetInfo['top'] = this.position.y;
             iWidgetInfo['left'] = this.position.x;
             iWidgetInfo['width'] = this.contentWidth;

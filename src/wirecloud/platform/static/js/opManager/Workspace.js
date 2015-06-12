@@ -550,7 +550,7 @@ function Workspace(workspaceState, resources) {
         Wirecloud.GlobalLogManager.newCycle();
     }
 
-    Workspace.prototype.addIWidget = function(tab, iwidget, iwidgetJSON, options) {
+    Workspace.prototype.addIWidget = function(tab, iwidget, options) {
         // emptyWorkspaceInfoBox
         this.emptyWorkspaceInfoBox.classList.add('hidden');
 

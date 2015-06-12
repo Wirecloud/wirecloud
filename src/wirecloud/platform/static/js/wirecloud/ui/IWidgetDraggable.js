@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebEffectBase, FullDragboardLayout, Wirecloud*/
+/*global EzWebEffectBase, Wirecloud*/
 
 (function () {
 
@@ -65,7 +65,7 @@
     };
 
     IWidgetDraggable.prototype.canBeDraggedFunc = function canBeDraggedFunc(draggable, context) {
-        return context.iWidget.isAllowed('move') && !(context.iWidget.layout instanceof FullDragboardLayout);
+        return context.iWidget.isAllowed('move') && !(context.iWidget.layout instanceof Wirecloud.ui.FullDragboardLayout);
     };
 
 

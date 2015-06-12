@@ -172,6 +172,6 @@
         this.newPosition = null;
     };
 
-    window.FullDragboardLayout = FullDragboardLayout;
+    Wirecloud.ui.FullDragboardLayout = FullDragboardLayout;
 
 })();

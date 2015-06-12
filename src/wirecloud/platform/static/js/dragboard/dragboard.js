@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, Wirecloud*/
+/*global CSSPrimitiveValue, IWidget, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -51,21 +51,7 @@
             }
 
             // Create instance model
-            new IWidget(widget,
-                curIWidget.id,
-                curIWidget.name,
-                layout,
-                new Wirecloud.DragboardPosition(curIWidget.left, curIWidget.top),
-                new Wirecloud.DragboardPosition(curIWidget.icon_left, curIWidget.icon_top),
-                curIWidget.zIndex,
-                curIWidget.width,
-                curIWidget.height,
-                curIWidget.fulldragboard,
-                curIWidget.minimized,
-                curIWidget.refused_version,
-                curIWidget.readOnly,
-                curIWidget
-            );
+            new IWidget(widget, layout, curIWidget);
         }
     };
 
@@ -302,22 +288,8 @@
                         layout = this.freeLayout;
                     }
 
-                    iwidget = new IWidget(widget,
-                        iwidgetinfo.id,
-                        iwidgetinfo.name,
-                        layout,
-                        new Wirecloud.DragboardPosition(iwidgetinfo.left, iwidgetinfo.top),
-                        new Wirecloud.DragboardPosition(iwidgetinfo.icon_left, iwidgetinfo.icon_top),
-                        iwidgetinfo.zIndex,
-                        iwidgetinfo.width,
-                        iwidgetinfo.height,
-                        iwidgetinfo.fulldragboard,
-                        iwidgetinfo.minimized,
-                        iwidgetinfo.refused_version,
-                        iwidgetinfo.readOnly,
-                        iwidgetinfo
-                    );
-                    this.addIWidget(iwidget, iwidgetinfo, options);
+                    iwidget = new IWidget(widget, layout, iwidgetinfo);
+                    this.addIWidget(iwidget, options);
                     iwidget.paint();
                 }.bind(this),
                 onFailure: function (response) {
@@ -400,7 +372,7 @@
             iWidget.code = null;
         };
 
-        Dragboard.prototype.addIWidget = function addIWidget(iWidget, iwidgetInfo, options) {
+        Dragboard.prototype.addIWidget = function addIWidget(iWidget, options) {
             if (!this.iWidgetsByCode[iWidget.code]) {
                 throw new Error();
             }
@@ -408,7 +380,7 @@
             var oldHeight = iWidget.getHeight();
             var oldWidth = iWidget.getWidth();
 
-            this.workspace.addIWidget(this.tab, iWidget, iwidgetInfo, options);
+            this.workspace.addIWidget(this.tab, iWidget, options);
 
             // Notify resize event
             iWidget.layout._notifyResizeEvent(iWidget, oldWidth, oldHeight, iWidget.getWidth(), iWidget.getHeight(), false, true);
@@ -504,8 +476,8 @@
         }.bind(this);
 
         this.baseLayout = this._buildLayoutFromPreferences();
-        this.freeLayout = new FreeLayout(this);
-        this.fulldragboardLayout = new FullDragboardLayout(this);
+        this.freeLayout = new Wirecloud.ui.FreeLayout(this);
+        this.fulldragboardLayout = new Wirecloud.ui.FullDragboardLayout(this);
 
         parseTab.call(this, tab.tabInfo);
     };
