@@ -330,7 +330,7 @@
 
             this.iWidgetsByCode[iWidget.code] = iWidget;
             var zpos = iWidget.getZPosition();
-            if (zpos !== null) {
+            if (zpos != null) {
                 if (this.orderList[zpos] !== undefined) {
                     this.orderList.splice(zpos, 1, this.orderList[zpos], iWidget);
 
