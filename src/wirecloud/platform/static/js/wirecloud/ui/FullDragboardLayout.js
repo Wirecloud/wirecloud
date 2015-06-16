@@ -69,7 +69,7 @@
     };
 
     FullDragboardLayout.prototype.getColumnOffset = function getColumnOffset(column) {
-        return this.dragboard.dragboardElement.getBoundingClientRect().left;
+        return this.dragboard.dragboardElement.getBoundingClientRect().left + this.dragboardLeftMargin;
     };
 
     FullDragboardLayout.prototype.getRowOffset = function getRowOffset(row) {

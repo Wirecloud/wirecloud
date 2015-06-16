@@ -232,8 +232,6 @@
                 return;
             }
 
-            //var width = layout.unitConvert(widget.width + "cm", CSSPrimitiveValue.CSS_PX)[0];
-            //width = layout.adaptWidth(width, width).inLU;
             var width = widget.default_width;
             var height = widget.default_height;
             var layout_id = this.tab.preferences.get('initiallayout') === "Free" ? 1 : 0;
@@ -243,6 +241,8 @@
             // Check if the widget doesn't fit in the dragboard
             if (layout instanceof Wirecloud.ui.ColumnLayout) {
                 var maxColumns = layout.getColumns();
+                width = layout.adaptWidth(width).inLU;
+                height = layout.adaptHeight(height).inLU;
                 if (width > maxColumns) {
                     // TODO warning
                     width = maxColumns;

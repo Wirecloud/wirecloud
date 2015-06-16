@@ -133,10 +133,21 @@
         return cells * (100 / this.columns);
     };
 
-    ColumnLayout.prototype.adaptColumnOffset = function (pixels) {
-        var halfColumnWidth = Math.floor(this.fromHCellsToPixels(1) / 2);
-        var offsetInLU = Math.floor(this.fromPixelsToHCells(pixels - this.leftMargin + halfColumnWidth));
-        var offsetInPixels = this.fromHCellsToPixels(offsetInLU) + this.leftMargin;
+    ColumnLayout.prototype.adaptColumnOffset = function adaptColumnOffset(size) {
+        var offsetInLU, offsetInPixels, pixels, parsedSize;
+
+        parsedSize = this.parseSize(size);
+        if (parsedSize[1] === 'cells') {
+            offsetInLU = Math.round(parsedSize[0]);
+        } else {
+            if (parsedSize[1] === '%') {
+                pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+            } else {
+                pixels = parsedSize[0];
+            }
+            offsetInLU = Math.round(this.fromPixelsToHCells(pixels - this.leftMargin));
+        }
+        offsetInPixels = this.fromHCellsToPixels(offsetInLU) + this.leftMargin;
         return new Wirecloud.ui.MultiValuedSize(offsetInPixels, offsetInLU);
     };
 
@@ -147,24 +158,38 @@
         return new Wirecloud.ui.MultiValuedSize(offsetInPixels, offsetInLU);
     };
 
-    ColumnLayout.prototype.adaptHeight = function (contentHeight, fullSize, oldLayout) {
-        oldLayout = oldLayout ? oldLayout : this;
-        fullSize = oldLayout.padHeight(fullSize);
+    ColumnLayout.prototype.adaptHeight = function adaptHeight(size) {
+        var parsedSize, pixels, sizeInLU;
 
-        var paddedFullSizeInCells = Math.ceil(this.fromPixelsToVCells(fullSize));
-        var paddedFullSize = this.fromVCellsToPixels(paddedFullSizeInCells);
-
-        return new Wirecloud.ui.MultiValuedSize(contentHeight + (paddedFullSize - fullSize), paddedFullSizeInCells);
+        parsedSize = this.parseSize(size);
+        if (parsedSize[1] === 'cells') {
+            sizeInLU = Math.round(parsedSize[0]);
+        } else {
+            if (parsedSize[1] === '%') {
+                pixels = Math.round((parsedSize[0] * this.getHeight()) / 100);
+            } else {
+                pixels = this.padHeight(parsedSize[0]);
+            }
+            sizeInLU = Math.round(this.fromPixelsToVCells(pixels));
+        }
+        return new Wirecloud.ui.MultiValuedSize(this.getHeightInPixels(sizeInLU), sizeInLU);
     };
 
-    ColumnLayout.prototype.adaptWidth = function (contentWidth, fullSize, oldLayout) {
-        oldLayout = oldLayout ? oldLayout : this;
-        fullSize = oldLayout.padWidth(fullSize);
+    ColumnLayout.prototype.adaptWidth = function adaptWidth(size) {
+        var parsedSize, pixels, sizeInLU;
 
-        var paddedFullSizeInCells = Math.round(this.fromPixelsToHCells(fullSize));
-        var paddedFullSize = this.fromHCellsToPixels(paddedFullSizeInCells);
-
-        return new Wirecloud.ui.MultiValuedSize(contentWidth + (paddedFullSize - fullSize), paddedFullSizeInCells);
+        parsedSize = this.parseSize(size);
+        if (parsedSize[1] === 'cells') {
+            sizeInLU = Math.round(parsedSize[0]);
+        } else {
+            if (parsedSize[1] === '%') {
+                pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+            } else {
+                pixels = this.padWidth(parsedSize[0]);
+            }
+            sizeInLU = Math.round(this.fromPixelsToHCells(pixels));
+        }
+        return new Wirecloud.ui.MultiValuedSize(this.getWidthInPixels(sizeInLU), sizeInLU);
     };
 
     ColumnLayout.prototype.padWidth = function (width) {

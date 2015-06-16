@@ -105,8 +105,27 @@
     /////////////////////////////////////
 
     /**
-     * Converts
+     * Converters
      */
+    var UNIT_RE = /^(\d+(?:\.\d+)?)\s*(px|%|)$/;
+    DragboardLayout.prototype.parseSize = function parseSize(value) {
+        var matches;
+
+        if (typeof value === 'number') {
+            return [value, 'cells'];
+        } else if (typeof value === 'string') {
+            value = value.trim();
+            matches = value.match(UNIT_RE);
+            if (matches[2] != '') {
+                return [Number(matches[1]), matches[2]];
+            } else {
+                return [Number(matches[1]), "cells"];
+            }
+        } else {
+            throw new TypeError();
+        }
+    };
+
     DragboardLayout.prototype.adaptColumnOffset = function adaptColumnOffset(pixels) {
         var msg = "method \"%(method)s\" must be implemented.";
         msg = interpolate(msg, {method: "adaptColumnOffset"}, true);

@@ -34,9 +34,17 @@
 function IWidget(widget, layout, description) {
 
     this.code = null;
-    this.position = new Wirecloud.DragboardPosition(description.left, description.top);
-    this.contentWidth = Number(description.width);
-    this.contentHeight = Number(description.height);
+    this.position = new Wirecloud.DragboardPosition(layout.adaptColumnOffset(description.left).inLU, layout.adaptRowOffset(description.top).inLU);
+    if (description.width != null) {
+        this.contentWidth = layout.adaptWidth(description.width).inLU;
+    } else {
+        this.contentWidth = layout.adaptWidth(widget.default_width).inLU;
+    }
+    if (description.height != null) {
+        this.contentHeight = layout.adaptHeight(description.height).inLU;
+    } else {
+        this.contentHeight = layout.adaptHeight(widget.default_height).inLU;
+    }
     this.zPos = description.zIndex;
     this.draggable = null;
     this.visible = false;
@@ -647,7 +655,7 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
                         this.statusBar.offsetHeight;
             fullSize += this._computeExtraHeightPixels();
 
-            var processedSize = this.layout.adaptHeight(contentHeight, fullSize);
+            var processedSize = this.layout.adaptHeight(fullSize + 'px');
             contentHeight = processedSize.inPixels;
             this.height = processedSize.inLU;
             this.content.style.height = contentHeight + "px";
@@ -794,7 +802,7 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     }
 
     var oldHeight = this.getHeight();
-    this._recomputeHeight(true);
+    this._recomputeHeight(false);
 
     this.internal_iwidget.contextManager.modify({
         'height': this.height,
@@ -946,11 +954,11 @@ IWidget.prototype.moveToLayout = function (newLayout) {
     } else if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
         this.position = this.previousPosition;
     } else {
-        this.position.x = oldLayout.getColumnOffset(this.position.x);
-        this.position.x = newLayout.adaptColumnOffset(this.position.x).inLU;
+        this.position.x = oldLayout.getColumnOffset(this.position.x) - oldLayout.dragboardLeftMargin;
+        this.position.x = newLayout.adaptColumnOffset(this.position.x + 'px').inLU;
 
-        this.position.y = oldLayout.getRowOffset(this.position.y);
-        this.position.y = newLayout.adaptRowOffset(this.position.y).inLU;
+        this.position.y = oldLayout.getRowOffset(this.position.y) - oldLayout.dragboardTopMargin;
+        this.position.y = newLayout.adaptRowOffset(this.position.y + 'px').inLU;
     }
 
     // ##### TODO Review this
@@ -959,12 +967,12 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         this.height = this.previousHeight;
     } else {
         //console.debug("prev width: " + this.contentWidth);
-        var newWidth = newLayout.adaptWidth(contentWidth, fullWidth, oldLayout);
+        var newWidth = newLayout.adaptWidth(contentWidth + 'px');
         this.contentWidth = newWidth.inLU;
         //console.debug("new width: " + this.contentWidth);
 
         //console.debug("prev height: " + this.height);
-        var newHeight = newLayout.adaptHeight(contentHeight, fullHeight, oldLayout);
+        var newHeight = newLayout.adaptHeight(fullHeight + 'px');
         this.height = newHeight.inLU;
         //console.debug("new height: " + this.height);
     }

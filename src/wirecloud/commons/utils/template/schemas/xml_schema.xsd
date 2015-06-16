@@ -26,6 +26,12 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="Size">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d+(\.\d+)?\s*(px|%)?"></xs:pattern>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="VersionType">
         <xs:restriction base="xs:string">
             <xs:pattern value="([1-9]\d*\.|0\.)*([1-9]\d*|0)((a|b|rc)[1-9]\d*)?"></xs:pattern>
@@ -972,12 +978,12 @@
                             <xs:complexType>
                                 <xs:attribute name="width" use="required">
                                     <xs:simpleType>
-                                        <xs:restriction base="xs:byte" />
+                                        <xs:restriction base="macd:Size" />
                                     </xs:simpleType>
                                 </xs:attribute>
                                 <xs:attribute name="height" use="required">
                                     <xs:simpleType>
-                                        <xs:restriction base="xs:byte" />
+                                        <xs:restriction base="macd:Size" />
                                     </xs:simpleType>
                                 </xs:attribute>
                             </xs:complexType>

@@ -71,7 +71,7 @@
     };
 
     FreeLayout.prototype.fromHCellsToPixels = function fromHCellsToPixels(cells) {
-        return Math.ceil((this.getWidth() * cells) / this.MAX_HLU);
+        return Math.round((this.getWidth() * cells) / this.MAX_HLU);
     };
 
     FreeLayout.prototype.fromHCellsToPercentage = function fromHCellsToPercentage(cells) {
@@ -79,29 +79,80 @@
     };
 
     FreeLayout.prototype.getColumnOffset = function getColumnOffset(column) {
-        return Math.ceil((this.getWidth() * column) / this.MAX_HLU);
+        return this.dragboardLeftMargin + this.fromHCellsToPixels(column);
     };
 
     FreeLayout.prototype.getRowOffset = function getRowOffset(row) {
-        return row;
+        return this.dragboardTopMargin + row;
     };
 
-    FreeLayout.prototype.adaptColumnOffset = function adaptColumnOffset(pixels) {
-        var offsetInLU = Math.ceil(this.fromPixelsToHCells(pixels));
-        return new Wirecloud.ui.MultiValuedSize(this.fromHCellsToPixels(offsetInLU), offsetInLU);
+    FreeLayout.prototype.adaptColumnOffset = function adaptColumnOffset(size) {
+        var offsetInLU, offsetInPixels, pixels, parsedSize;
+
+        parsedSize = this.parseSize(size);
+        if (parsedSize[1] === 'cells') {
+            offsetInLU = Math.round(parsedSize[0]);
+        } else {
+            if (parsedSize[1] === '%') {
+                pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+            } else {
+                pixels = parsedSize[0];
+            }
+            offsetInLU = Math.round(this.fromPixelsToHCells(pixels));
+        }
+        offsetInPixels = this.fromHCellsToPixels(offsetInLU);
+        return new Wirecloud.ui.MultiValuedSize(offsetInPixels, offsetInLU);
     };
 
-    FreeLayout.prototype.adaptRowOffset = function adaptRowOffset(pixels) {
+    FreeLayout.prototype.adaptRowOffset = function adaptRowOffset(size) {
+        var pixels, parsedSize;
+
+        parsedSize = this.parseSize(size);
+        switch (parsedSize[1]) {
+        case "%":
+            pixels = Math.round((parsedSize[0] * this.getHeight()) / 100);
+            break;
+        case "cells":
+            /* falls through */
+        case "px":
+            pixels = parsedSize[0];
+            break;
+        }
         return new Wirecloud.ui.MultiValuedSize(pixels, pixels);
     };
 
-    FreeLayout.prototype.adaptHeight = function adaptHeight(contentHeight, fullSize, oldLayout) {
-        return new Wirecloud.ui.MultiValuedSize(contentHeight, fullSize);
+    FreeLayout.prototype.adaptHeight = function adaptHeight(size) {
+        var pixels, parsedSize;
+        
+        parsedSize = this.parseSize(size);
+        switch (parsedSize[1]) {
+        case "%":
+            pixels = Math.round((parsedSize[0] * this.getHeight()) / 100);
+            break;
+        case "cells":
+            /* falls through */
+        case "px":
+            pixels = parsedSize[0];
+            break;
+        }
+        return new Wirecloud.ui.MultiValuedSize(pixels, pixels);
     };
 
-    FreeLayout.prototype.adaptWidth = function adaptWidth(contentWidth, fullSize) {
-        var widthInLU = Math.floor(this.fromPixelsToHCells(fullSize));
-        return new Wirecloud.ui.MultiValuedSize(this.fromHCellsToPixels(widthInLU), widthInLU);
+    FreeLayout.prototype.adaptWidth = function adaptWidth(size) {
+        var parsedSize, pixels, sizeInLU;
+
+        parsedSize = this.parseSize(size);
+        if (parsedSize[1] === 'cells') {
+            sizeInLU = Math.round(parsedSize[0]);
+        } else {
+            if (parsedSize[1] === '%') {
+                pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+            } else {
+                pixels = this.padWidth(parsedSize[0]);
+            }
+            sizeInLU = Math.round(this.fromPixelsToHCells(pixels));
+        }
+        return new Wirecloud.ui.MultiValuedSize(this.getWidthInPixels(sizeInLU), sizeInLU);
     };
 
     FreeLayout.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent(widthChanged, heightChanged) {
@@ -146,7 +197,7 @@
      * Calculate what cell is at a given position in pixels
      */
     FreeLayout.prototype.getCellAt = function getCellAt(x, y) {
-        return new Wirecloud.DragboardPosition((x * this.MAX_HLU) / this.getWidth(), y);
+        return new Wirecloud.DragboardPosition(((x - this.dragboardLeftMargin) * this.MAX_HLU) / this.getWidth(), y - this.dragboardTopMargin);
     };
 
     FreeLayout.prototype.addIWidget = function addIWidget(iWidget, affectsDragboard) {
