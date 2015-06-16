@@ -138,23 +138,6 @@
         return new Wirecloud.ui.MultiValuedSize(pixels, pixels);
     };
 
-    FreeLayout.prototype.adaptWidth = function adaptWidth(size) {
-        var parsedSize, pixels, sizeInLU;
-
-        parsedSize = this.parseSize(size);
-        if (parsedSize[1] === 'cells') {
-            sizeInLU = Math.round(parsedSize[0]);
-        } else {
-            if (parsedSize[1] === '%') {
-                pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
-            } else {
-                pixels = this.padWidth(parsedSize[0]);
-            }
-            sizeInLU = Math.round(this.fromPixelsToHCells(pixels));
-        }
-        return new Wirecloud.ui.MultiValuedSize(this.getWidthInPixels(sizeInLU), sizeInLU);
-    };
-
     FreeLayout.prototype._notifyWindowResizeEvent = function _notifyWindowResizeEvent(widthChanged, heightChanged) {
         if (widthChanged) {
             Wirecloud.ui.DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);

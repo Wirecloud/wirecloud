@@ -123,10 +123,21 @@
         return columns * (100 / this.columns);
     };
 
-    GridLayout.prototype.adaptColumnOffset = function (pixels) {
-        var halfColumnWidth = Math.floor(this.fromHCellsToPixels(1) / 2);
-        var offsetInLU = Math.floor(this.fromPixelsToHCells(pixels - this.leftMargin + halfColumnWidth));
-        var offsetInPixels = this.fromHCellsToPixels(offsetInLU) + this.leftMargin;
+    GridLayout.prototype.adaptColumnOffset = function adaptColumnOffset(size) {
+        var offsetInLU, offsetInPixels, pixels, parsedSize;
+
+        parsedSize = this.parseSize(size);
+        if (parsedSize[1] === 'cells') {
+            offsetInLU = Math.round(parsedSize[0]);
+        } else {
+            if (parsedSize[1] === '%') {
+                pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+            } else {
+                pixels = parsedSize[0];
+            }
+            offsetInLU = Math.round(this.fromPixelsToHCells(pixels - this.leftMargin));
+        }
+        offsetInPixels = this.fromHCellsToPixels(offsetInLU) + this.leftMargin;
         return new Wirecloud.ui.MultiValuedSize(offsetInPixels, offsetInLU);
     };
 
@@ -135,26 +146,6 @@
         var offsetInLU = Math.floor(this.fromPixelsToVCells(pixels - this.topMargin + halfRowHeight));
         var offsetInPixels = this.fromVCellsToPixels(offsetInLU) + this.topMargin;
         return new Wirecloud.ui.MultiValuedSize(offsetInPixels, offsetInLU);
-    };
-
-    GridLayout.prototype.adaptHeight = function (contentHeight, fullSize, oldLayout) {
-        oldLayout = oldLayout ? oldLayout : this;
-        fullSize = oldLayout.padHeight(fullSize);
-
-        var paddedFullSizeInCells = Math.ceil(this.fromPixelsToVCells(fullSize));
-        var paddedFullSize = this.fromVCellsToPixels(paddedFullSizeInCells);
-
-        return new Wirecloud.ui.MultiValuedSize(contentHeight + (paddedFullSize - fullSize), paddedFullSizeInCells);
-    };
-
-    GridLayout.prototype.adaptWidth = function (contentWidth, fullSize, oldLayout) {
-        oldLayout = oldLayout ? oldLayout : this;
-        fullSize = oldLayout.padWidth(fullSize);
-
-        var paddedFullSizeInCells = Math.round(this.fromPixelsToHCells(fullSize));
-        var paddedFullSize = this.fromHCellsToPixels(paddedFullSizeInCells);
-
-        return new Wirecloud.ui.MultiValuedSize(contentWidth + (paddedFullSize - fullSize), paddedFullSizeInCells);
     };
 
     GridLayout.prototype.padWidth = function (width) {

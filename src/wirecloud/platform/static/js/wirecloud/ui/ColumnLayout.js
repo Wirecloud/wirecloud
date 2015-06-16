@@ -158,40 +158,6 @@
         return new Wirecloud.ui.MultiValuedSize(offsetInPixels, offsetInLU);
     };
 
-    ColumnLayout.prototype.adaptHeight = function adaptHeight(size) {
-        var parsedSize, pixels, sizeInLU;
-
-        parsedSize = this.parseSize(size);
-        if (parsedSize[1] === 'cells') {
-            sizeInLU = Math.round(parsedSize[0]);
-        } else {
-            if (parsedSize[1] === '%') {
-                pixels = Math.round((parsedSize[0] * this.getHeight()) / 100);
-            } else {
-                pixels = this.padHeight(parsedSize[0]);
-            }
-            sizeInLU = Math.round(this.fromPixelsToVCells(pixels));
-        }
-        return new Wirecloud.ui.MultiValuedSize(this.getHeightInPixels(sizeInLU), sizeInLU);
-    };
-
-    ColumnLayout.prototype.adaptWidth = function adaptWidth(size) {
-        var parsedSize, pixels, sizeInLU;
-
-        parsedSize = this.parseSize(size);
-        if (parsedSize[1] === 'cells') {
-            sizeInLU = Math.round(parsedSize[0]);
-        } else {
-            if (parsedSize[1] === '%') {
-                pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
-            } else {
-                pixels = this.padWidth(parsedSize[0]);
-            }
-            sizeInLU = Math.round(this.fromPixelsToHCells(pixels));
-        }
-        return new Wirecloud.ui.MultiValuedSize(this.getWidthInPixels(sizeInLU), sizeInLU);
-    };
-
     ColumnLayout.prototype.padWidth = function (width) {
         return width + this.leftMargin + this.rightMargin;
     };

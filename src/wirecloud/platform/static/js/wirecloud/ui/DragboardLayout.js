@@ -138,16 +138,38 @@
         throw new Error(msg);
     };
 
-    DragboardLayout.prototype.adaptHeight = function adaptHeight(contentHeight, fullSize, oldLayout) {
-        var msg = "method \"%(method)s\" must be implemented.";
-        msg = interpolate(msg, {method: "adaptHeight"}, true);
-        throw new Error(msg);
+    DragboardLayout.prototype.adaptHeight = function adaptHeight(size) {
+        var parsedSize, pixels, sizeInLU;
+
+        parsedSize = this.parseSize(size);
+        if (parsedSize[1] === 'cells') {
+            sizeInLU = Math.round(parsedSize[0]);
+        } else {
+            if (parsedSize[1] === '%') {
+                pixels = Math.round((parsedSize[0] * this.getHeight()) / 100);
+            } else {
+                pixels = this.padHeight(parsedSize[0]);
+            }
+            sizeInLU = Math.round(this.fromPixelsToVCells(pixels));
+        }
+        return new Wirecloud.ui.MultiValuedSize(this.getHeightInPixels(sizeInLU), sizeInLU);
     };
 
-    DragboardLayout.prototype.adaptWidth = function adaptWidth(contentWidth, fullSize, oldLayout) {
-        var msg = "method \"%(method)s\" must be implemented.";
-        msg = interpolate(msg, {method: "adaptWidth"}, true);
-        throw new Error(msg);
+    DragboardLayout.prototype.adaptWidth = function adaptWidth(size) {
+        var parsedSize, pixels, sizeInLU;
+
+        parsedSize = this.parseSize(size);
+        if (parsedSize[1] === 'cells') {
+            sizeInLU = Math.round(parsedSize[0]);
+        } else {
+            if (parsedSize[1] === '%') {
+                pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+            } else {
+                pixels = this.padWidth(parsedSize[0]);
+            }
+            sizeInLU = Math.round(this.fromPixelsToHCells(pixels));
+        }
+        return new Wirecloud.ui.MultiValuedSize(this.getWidthInPixels(sizeInLU), sizeInLU);
     };
 
     DragboardLayout.prototype.padWidth = function padWidth(width) {
