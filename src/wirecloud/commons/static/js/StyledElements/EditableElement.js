@@ -36,7 +36,10 @@
     };
 
     var onKeydown = function onKeydown(e) {
-        if (e.keyCode === 13) {
+        if (e.keyCode === 13) { // enter
+            this._onBlur();
+        } else if (e.keyCode === 27) { // esc
+            this.wrapperElement.textContent = this._prev_content;
             this._onBlur();
         }
     };
@@ -48,7 +51,11 @@
 
         document.removeEventListener('mousedown', this._onBlur, false);
 
-        this.events.change.dispatch(this, this.wrapperElement.textContent);
+        var new_content = this.wrapperElement.textContent;
+        this.wrapperElement.textContent = new_content;
+        if (this._prev_content !== new_content) {
+            this.events.change.dispatch(this, new_content);
+        }
         this.disableEdition();
     };
 
@@ -84,6 +91,7 @@
         if (!this.wrapperElement.hasAttribute('contenteditable')) {
             this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
             this.wrapperElement.setAttribute('contenteditable', 'true');
+            this._prev_content = this.wrapperElement.textContent;
         }
         this.wrapperElement.focus();
     };
