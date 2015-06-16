@@ -284,32 +284,21 @@ if (window.StyledElements == null) {
     }
 
     /**
-     * Devuelve la posición relativa de un elemento respecto de otro elemento.
+     * Returns the position of a given element relative to another given element.
      *
-     * @param {Element} element1 Debe ser un nodo descenciente de element2.
-     * @param {Element} element2 Elemento base.
+     * @param {Element} element1 Element to position
+     * @param {Element} element2 Base element
      */
     Utils.getRelativePosition = function getRelativePosition(element1, element2) {
-        var coordinates = {x: element1.offsetLeft, y: element1.offsetTop};
-        var contextDocument = element1.ownerDocument;
 
         if (element1 === element2) {
             return {x: 0, y: 0};
         }
 
-        var parentNode = element1.offsetParent;
-        while (parentNode != element2) {
-            var cssStyle = contextDocument.defaultView.getComputedStyle(parentNode, null);
-            var p = cssStyle.getPropertyValue('position');
-            if (p != 'static') {
-                coordinates.y += parentNode.offsetTop + cssStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-                coordinates.x += parentNode.offsetLeft + cssStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-                coordinates.y -= parentNode.scrollTop;
-                coordinates.x -= parentNode.scrollLeft;
-            }
-            parentNode = parentNode.offsetParent;
-        }
-        return coordinates;
+        var element1_rect = element1.getBoundingClientRect();
+        var element2_rect = element2.getBoundingClientRect();
+
+        return {x: element1_rect.left - element2_rect.left, y: element1_rect.top - element2_rect.top};
     };
 
     /**
