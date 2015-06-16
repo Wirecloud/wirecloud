@@ -353,10 +353,14 @@ class PlatformSouthMigrationsTestCase(TestCase):
         self.assertEqual(empty_workspace.save.call_count, 0)
         self.assertEqual(workspace.save.call_count, 1)
         self.assertEqual(json.loads(workspace.wiringStatus), output_file)
-    test_restructure_behaviour_oriented_wiring_forwards.tags = ('wirecloud-wiring',)
 
     def test_restructure_behaviour_oriented_wiring_backwards(self):
         migration = self._pick_migration('0017_restructure_behaviour_oriented_wiring')
         orm = Mock(autospec=migration.prev_orm())
         self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
-    test_restructure_behaviour_oriented_wiring_backwards.tags = ('wirecloud-wiring',)
+
+    def test_rename_targetOrganizations_to_groups_forwards(self):
+        self.check_basic_migration_forwards('0015_rename_targetOrganizations_to_groups')
+
+    def test_rename_targetOrganizations_to_groups_backwards(self):
+        self.check_basic_migration_backwards('0015_rename_targetOrganizations_to_groups')

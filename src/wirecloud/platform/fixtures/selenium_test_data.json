@@ -42,9 +42,7 @@
         "model": "platform.widget",
         "fields": {
             "resource": 14,
-            "width": 6,
-            "xhtml": 1,
-            "height": 24
+            "xhtml": 1
         }
     },
     {

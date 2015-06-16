@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -93,10 +93,6 @@ def create_widget_from_template(template, user, request=None, base=None):
         use_platform_style=widget_info['contents']['useplatformstyle'],
         cacheable=widget_info['contents']['cacheable']
     )
-
-    widget.width = widget_info['widget_width']
-    widget.height = widget_info['widget_height']
-
     widget.save()
 
     for preference in widget_info['preferences']:

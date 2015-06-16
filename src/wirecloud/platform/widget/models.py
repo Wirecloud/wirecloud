@@ -80,10 +80,6 @@ class Widget(models.Model):
     resource = models.OneToOneField('catalogue.CatalogueResource')
 
     xhtml = models.ForeignKey(XHTML)
-
-    width = models.IntegerField(_('Width'), default=1)
-    height = models.IntegerField(_('Height'), default=1)
-
     objects = WidgetManager()
 
     @property
