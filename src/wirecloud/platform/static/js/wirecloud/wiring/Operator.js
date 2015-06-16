@@ -51,13 +51,13 @@
 
         this.loaded = false;
 
-        inputs = this.meta.inputs;
+        inputs = this.meta.inputList;
         this.inputs = {};
         for (i = 0; i < inputs.length; i++) {
             this.inputs[inputs[i].name] = new Wirecloud.wiring.OperatorTargetEndpoint(this, inputs[i]);
         }
 
-        outputs = this.meta.outputs;
+        outputs = this.meta.outputList;
         this.outputs = {};
         for (i = 0; i < outputs.length; i++) {
             this.outputs[outputs[i].name] = new Wirecloud.wiring.OperatorSourceEndpoint(this, outputs[i]);

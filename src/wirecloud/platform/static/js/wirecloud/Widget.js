@@ -63,21 +63,6 @@
         Object.freeze(this.properties);
         Object.freeze(this.propertyList);
 
-        // Inputs
-        this.inputList = data.wiring.inputs;
-        this.inputs = {};
-        for (i = 0; i < this.inputList.length; i++) {
-            this.inputs[this.inputList[i].name] = this.inputList[i];
-        }
-
-        // Outputs
-        this.outputList = data.wiring.outputs;
-        this.outputs = {};
-        for (i = 0; i < this.outputList.length; i++) {
-            this.outputs[this.outputList[i].name] = this.outputList[i];
-        }
-
-        this.image = data.image;
         this.default_width = data.widget_width;
         this.default_height = data.widget_height;
 

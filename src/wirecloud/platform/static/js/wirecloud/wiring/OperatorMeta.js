@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) CoNWeT Lab., 2012-2014 Universidad Politécnica de Madrid
+ *     Copyright (c) CoNWeT Lab., 2012-2015 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,7 +26,7 @@
     "use strict";
 
     var OperatorMeta = function OperatorMeta(desc) {
-        var inputs, outputs, prefList, prefs, pref, i;
+        var prefList, prefs, pref, i;
 
         Wirecloud.MashableApplicationComponent.call(this, desc);
 
@@ -41,18 +41,6 @@
         }
         Object.defineProperty(this, 'preferences', {value: prefs});
         Object.defineProperty(this, 'preferenceList', {value: prefList});
-
-        inputs = desc.wiring.inputs;
-        if (inputs == null) {
-            inputs = {};
-        }
-        Object.defineProperty(this, 'inputs', {value: inputs});
-
-        outputs = desc.wiring.outputs;
-        if (outputs == null) {
-            outputs = {};
-        }
-        Object.defineProperty(this, 'outputs', {value: outputs});
     };
 
     OperatorMeta.prototype.instantiate = function instantiate(id, operator_status, wiring) {

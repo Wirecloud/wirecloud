@@ -1,5 +1,5 @@
 /*
- *     Copyright 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,7 +26,7 @@
     "use strict";
 
     var MashableApplicationComponent = function MashableApplicationComponent(desc) {
-        var vendor, name, version, uri, title, description, changelog;
+        var vendor, name, version, uri, title, description, changelog, i, inputs, outputs;
 
         // Vendor
         if (!('vendor' in desc) || desc.vendor.trim() === '') {
@@ -59,6 +59,9 @@
         }
         Object.defineProperty(this, 'type', {value: desc.type});
 
+        // Image
+        Object.defineProperty(this, 'image', {value: desc.image});
+
         // Change log url
         if (!('changelog' in desc) || desc.changelog.trim() === '') {
             changelog = '';
@@ -89,6 +92,28 @@
                 file_path: ''
             })
         });
+
+        // Inputs
+        if (desc.wiring.inputs == null) {
+            desc.wiring.inputs = [];
+        }
+        Object.defineProperty(this, 'inputList', {value: desc.wiring.inputs});
+        inputs = {};
+        for (i = 0; i < this.inputList.length; i++) {
+            inputs[this.inputList[i].name] = this.inputList[i];
+        }
+        Object.defineProperty(this, 'inputs', {value: inputs});
+
+        // Outputs
+        if (desc.wiring.outputs == null) {
+            desc.wiring.outputs = [];
+        }
+        Object.defineProperty(this, 'outputList', {value: desc.wiring.outputs});
+        outputs = {};
+        for (i = 0; i < this.outputList.length; i++) {
+            outputs[this.outputList[i].name] = this.outputList[i];
+        }
+        Object.defineProperty(this, 'outputs', {value: outputs});
     };
 
     Wirecloud.MashableApplicationComponent = MashableApplicationComponent;
