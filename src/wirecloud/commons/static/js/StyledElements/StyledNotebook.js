@@ -677,7 +677,7 @@
     };
 
     StyledNotebook.prototype.addButton = function addButton(button, position) {
-        if (!(button instanceof StyledElements.Button) && !(button instanceof StyledElements.StyledSelect)) {
+        if (!(button instanceof StyledElements.Button) && !(button instanceof StyledElements.Select)) {
             throw new TypeError();
         }
 

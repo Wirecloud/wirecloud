@@ -136,7 +136,7 @@
         this.wrapperElement = new StyledElements.HorizontalLayout({'class': 'se-layout-field input input-prepend input-append'});
 
         // Layout type select
-        this.selectElement = new StyledElements.StyledSelect({
+        this.selectElement = new StyledElements.Select({
             name: options.name + '-type',
             initialEntries: [
                 {"value": "columnlayout", "label": gettext("Columns")},

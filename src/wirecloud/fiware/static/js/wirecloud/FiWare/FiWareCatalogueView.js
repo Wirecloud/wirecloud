@@ -108,7 +108,7 @@
         this.callbacks = [];
         this.store_info = [];
 
-        this.storeSelect = new StyledElements.StyledSelect({
+        this.storeSelect = new StyledElements.Select({
             'class': 'store_select'
         });
         this.storeSelect.addEventListener('change', change_store_filter.bind(this));

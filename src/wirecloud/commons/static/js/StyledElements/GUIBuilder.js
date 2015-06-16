@@ -159,7 +159,7 @@
                 return new StyledElements.Button(options);
             },
             'select': function (builder, element, options) {
-                return new StyledElements.StyledSelect(options);
+                return new StyledElements.Select(options);
             }
         };
 

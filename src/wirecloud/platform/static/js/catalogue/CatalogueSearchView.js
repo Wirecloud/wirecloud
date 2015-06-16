@@ -126,7 +126,7 @@
                 return button;
             }.bind(this),
             'orderby': function () {
-                var select = new StyledElements.StyledSelect({
+                var select = new StyledElements.Select({
                     'initialValue': '-creation_date',
                     'initialEntries': [
                         {'label': gettext('Creation date'), 'value': '-creation_date'},
@@ -140,7 +140,7 @@
                 return select;
             }.bind(this),
             'scope': function () {
-                var select = new StyledElements.StyledSelect({
+                var select = new StyledElements.Select({
                     'initialValue': 'all',
                     'initialEntries': [
                         {'label': gettext('All'), 'value': 'all'},

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -48,7 +48,8 @@
         'StyledTextField': window.parent.StyledElements.StyledTextField,
         'StyledPasswordField': window.parent.StyledElements.StyledPasswordField,
         'StyledRadioButton': window.parent.StyledElements.StyledRadioButton,
-        'StyledSelect': window.parent.StyledElements.StyledSelect,
+        'Select': window.parent.StyledElements.Select,
+        'StyledSelect': window.parent.StyledElements.Select, // backwards compatibility alias
         'StyledTextArea': window.parent.StyledElements.StyledTextArea,
         'PaginatedSource': window.parent.StyledElements.PaginatedSource,
         'PaginationInterface': window.parent.StyledElements.PaginationInterface,

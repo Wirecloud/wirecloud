@@ -46,7 +46,7 @@
             endpoints = views[key].getPublishEndpoints();
             if (endpoints != null && endpoints.length > 0) {
                 endpoints.forEach(function (endpoint) { endpoint.value = key + '#' + endpoint.value; });
-                secondInput = new StyledElements.StyledSelect({initialEntries: endpoints});
+                secondInput = new StyledElements.Select({initialEntries: endpoints});
             } else {
                 secondInput = null;
             }

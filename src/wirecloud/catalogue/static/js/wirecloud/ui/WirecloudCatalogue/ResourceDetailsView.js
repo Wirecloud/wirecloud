@@ -46,7 +46,7 @@
                         LayoutManagerFactory.getInstance().header.refresh();
                     }.bind(this));
 
-                    var select = new StyledElements.StyledSelect({'class': 'versions'});
+                    var select = new StyledElements.Select({'class': 'versions'});
                     entries = [];
                     versions = resource.getAllVersions();
                     for (i = 0; i < versions.length; i++) {

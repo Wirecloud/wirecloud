@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var StyledSelect, onchange, onfocus, onblur;
+    var Select, onchange, onfocus, onblur;
 
     onchange = function onchange(event) {
         if (this.enabled) {
@@ -53,7 +53,7 @@
      *     * idFunc: In case you want to assign non-string values, you must provide
      *     a function for converting them into strings.
      */
-    StyledSelect = function StyledSelect(options) {
+    Select = function Select(options) {
         options = StyledElements.Utils.merge({
             'class': '',
             'initialEntries': [],
@@ -118,17 +118,17 @@
             this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
         }
     };
-    StyledSelect.prototype = new StyledElements.StyledInputElement();
+    Select.prototype = new StyledElements.StyledInputElement();
 
-    StyledSelect.prototype.getLabel = function getLabel() {
+    Select.prototype.getLabel = function getLabel() {
         return this.textDiv.textContent;
     };
 
-    StyledSelect.prototype.getValue = function getValue() {
+    Select.prototype.getValue = function getValue() {
         return this.optionValues[this.inputElement.value];
     };
 
-    StyledSelect.prototype.setValue = function setValue(newValue) {
+    Select.prototype.setValue = function setValue(newValue) {
         if (typeof newValue !== 'string') {
             try {
                 newValue = this.idFunc(newValue);
@@ -158,7 +158,7 @@
      * @param {null|Array} newEntries Entries to add. This method does nothing if
      * newEntries is null.
      */
-    StyledSelect.prototype.addEntries = function addEntries(newEntries) {
+    Select.prototype.addEntries = function addEntries(newEntries) {
         var oldSelectedIndex, optionValue, optionLabel;
 
         oldSelectedIndex = this.inputElement.options.selectedIndex;
@@ -201,7 +201,7 @@
         }
     };
 
-    StyledSelect.prototype.clear = function clear() {
+    Select.prototype.clear = function clear() {
         // Clear textDiv
         this.textDiv.textContent = "";
 
@@ -212,7 +212,7 @@
         this.optionsValues = {};
     };
 
-    StyledSelect.prototype.destroy = function destroy() {
+    Select.prototype.destroy = function destroy() {
 
         this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('click', StyledElements.Utils.stopPropagationListener, true);
@@ -227,6 +227,6 @@
         StyledElements.StyledInputElement.prototype.destroy.call(this);
     };
 
-    StyledElements.StyledSelect = StyledSelect;
+    StyledElements.Select = Select;
 
 })();

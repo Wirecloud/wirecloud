@@ -351,7 +351,7 @@
                 desc.initialEntries = [{label: '---------', value: null}].concat(desc.initialEntries);
             }
         }
-        this.inputElement = new StyledElements.StyledSelect(desc);
+        this.inputElement = new StyledElements.Select(desc);
     };
     SelectInputInterface.prototype = new StyledElements.InputInterface();
 
