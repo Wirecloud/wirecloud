@@ -29,7 +29,7 @@
 
         var ui_fragment = builder.parse(template, {
             'closebutton': function () {
-                var button = new StyledElements.StyledButton({
+                var button = new StyledElements.Button({
                     'plain': true,
                     'class': 'icon-remove',
                     'title': gettext('Close')
@@ -44,7 +44,7 @@
                 return button;
             },
             'errorbutton': function () {
-                var button = new StyledElements.StyledButton({
+                var button = new StyledElements.Button({
                     'plain': true,
                     'class': 'errorbutton icon-warning-sign'
                 });
@@ -59,7 +59,7 @@
                 return button;
             }.bind(iwidget),
             'menubutton': function () {
-                var button = new StyledElements.StyledButton({
+                var button = new StyledElements.Button({
                     'plain': true,
                     'class': 'icon-cogs',
                     'title': gettext('Menu')
@@ -72,7 +72,7 @@
                 return button;
             },
             'minimizebutton': function () {
-                var button = new StyledElements.StyledButton({
+                var button = new StyledElements.Button({
                     'plain': true
                 });
                 button.addEventListener("click",

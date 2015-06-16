@@ -32,7 +32,7 @@
         this.app_bar = this.wrapperElement.querySelector('.wirecloud_app_bar');
         this.breadcrum = document.getElementById('wirecloud_breadcrum');
 
-        this.backButton = new StyledElements.StyledButton({
+        this.backButton = new StyledElements.Button({
             'class': 'btn-large btn-back',
             'iconClass': 'icon-caret-left'
         });
@@ -71,7 +71,7 @@
             wrapper.className = 'user_menu_wrapper';
             this.menu.appendChild(wrapper);
 
-            login_button = new StyledElements.StyledButton({
+            login_button = new StyledElements.Button({
                 text: gettext('Sign in')
             });
             login_button.addEventListener('click', function () {

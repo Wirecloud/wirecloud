@@ -67,7 +67,7 @@
     var updateBehaviour = function updateBehaviour() {
         var form = document.querySelector('.behaviour-update-form');
 
-        return form.querySelectorAll('.window_bottom .styled_button')[0];
+        return form.querySelectorAll('.window_bottom .se-btn')[0];
     };
 
     var getBehaviourUpdateFormTitle = function getBehaviourUpdateFormTitle(title) {
@@ -91,7 +91,7 @@
     var createBehaviour = function createBehaviour() {
         var form = document.querySelector('.behaviour-registration-form');
 
-        return form.querySelectorAll('.window_bottom .styled_button')[0];
+        return form.querySelectorAll('.window_bottom .se-btn')[0];
     };
 
     var getBehaviourRegistrationFormTitle = function getBehaviourRegistrationFormTitle(title) {

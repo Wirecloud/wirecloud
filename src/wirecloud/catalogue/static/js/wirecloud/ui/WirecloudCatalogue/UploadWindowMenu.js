@@ -144,7 +144,7 @@
                 "class": "wc-upload-mac-button-column",
                 "sortable": false,
                 "contentBuilder": function (entry) {
-                    var button = new StyledElements.StyledButton({"iconClass": "icon-remove", plain: true});
+                    var button = new StyledElements.Button({"iconClass": "icon-remove", plain: true});
                     button.addEventListener("click", this.removeFile.bind(this, entry.file));
                     return button;
                 }.bind(this)
@@ -161,7 +161,7 @@
         this.fileTable.statusBar.appendChild(addMoreButton);
         this.fileTable.insertInto(this.windowContent);
 
-        this.acceptButton = new StyledElements.StyledButton({
+        this.acceptButton = new StyledElements.Button({
             text: gettext("Upload"),
             'class': 'btn-primary'
         });
@@ -175,7 +175,7 @@
         this.windowContent.appendChild(border);
 
         // Cancel button
-        this.cancelButton = new StyledElements.StyledButton({
+        this.cancelButton = new StyledElements.Button({
             text: gettext("Cancel"),
             'class': 'btn-default'
         });

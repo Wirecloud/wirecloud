@@ -265,9 +265,10 @@
     });
 
     /* Button */
-    StyledElements.StyledButton = extend(RealStyledElements.StyledButton, {
+    StyledElements.Button = extend(RealStyledElements.Button, {
         Tooltip: StyledElements.Tooltip
     }, {extending: true});
+    StyledElements.StyledButton = StyledElements.Button; // Alias for backwards compatibility
 
     /* ToggleButton */
     StyledElements.ToggleButton = extend(RealStyledElements.ToggleButton, {
@@ -282,14 +283,14 @@
 
     /* Tab */
     StyledElements.Tab = extend(RealStyledElements.StyledNotebook.prototype.Tab, {
-        Button: StyledElements.StyledButton,
+        Button: StyledElements.Button,
         Tooltip: StyledElements.Tooltip
     });
 
     /* Notebook */
     StyledElements.StyledNotebook = extend(RealStyledElements.StyledNotebook, {
         Tab: StyledElements.Tab,
-        Button: StyledElements.StyledButton
+        Button: StyledElements.Button
     });
 
 

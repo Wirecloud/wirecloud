@@ -213,7 +213,7 @@
     };
     StyledNotebook.prototype = new StyledElements.StyledElement();
 
-    StyledNotebook.prototype.Button = StyledElements.StyledButton;
+    StyledNotebook.prototype.Button = StyledElements.Button;
     StyledNotebook.prototype.Tab = StyledElements.Tab;
 
     /**
@@ -677,7 +677,7 @@
     };
 
     StyledNotebook.prototype.addButton = function addButton(button, position) {
-        if (!(button instanceof StyledElements.StyledButton) && !(button instanceof StyledElements.StyledSelect)) {
+        if (!(button instanceof StyledElements.Button) && !(button instanceof StyledElements.StyledSelect)) {
             throw new TypeError();
         }
 

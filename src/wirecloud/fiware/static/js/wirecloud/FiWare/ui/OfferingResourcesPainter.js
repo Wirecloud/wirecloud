@@ -158,9 +158,9 @@
 
                 if ('install' in resource) {
 
-                    button = new StyledElements.StyledButton({text: ''});
+                    button = new StyledElements.Button({text: ''});
                     button.insertInto(btn_group);
-                    details_button = new StyledElements.StyledButton({text: gettext('Details')});
+                    details_button = new StyledElements.Button({text: gettext('Details')});
                     details_button.addEventListener('click', function () {
                         var myresources_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
                         myresources_view.createUserCommand('showDetails', this, {version: this.version})();
@@ -170,7 +170,7 @@
                     resource_entry.details_button = details_button;
 
                 } else {
-                    button = new StyledElements.StyledButton({'class': 'btn-info', text: gettext('Download')});
+                    button = new StyledElements.Button({'class': 'btn-info', text: gettext('Download')});
                     button.insertInto(btn_group);
                 }
             }

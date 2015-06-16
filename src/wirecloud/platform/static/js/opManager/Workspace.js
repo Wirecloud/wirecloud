@@ -381,7 +381,7 @@ function Workspace(workspaceState, resources) {
         }
 
         if (Wirecloud.Utils.isFullscreenSupported()) {
-            this.fullscreenButton = new StyledElements.StyledButton({'iconClass': 'icon-resize-full', title: gettext('Full screen')});
+            this.fullscreenButton = new StyledElements.Button({'iconClass': 'icon-resize-full', title: gettext('Full screen')});
             this.notebook.addButton(this.fullscreenButton);
             Wirecloud.Utils.onFullscreenChange(this.notebook, function () {
                 this.fullscreenButton.removeIconClassName('icon-resize-full');
@@ -406,7 +406,7 @@ function Workspace(workspaceState, resources) {
         }
 
         if (Wirecloud.contextManager.get('mode') === 'embedded') {
-            this.seeOnWirecloudButton = new StyledElements.StyledButton({
+            this.seeOnWirecloudButton = new StyledElements.Button({
                 'class': 'powered-by-wirecloud'
             });
             this.notebook.addButton(this.seeOnWirecloudButton);
@@ -415,7 +415,7 @@ function Workspace(workspaceState, resources) {
                 window.open(url, '_blank')
             }.bind(this));
         } else {
-            this.poweredByWirecloudButton = new StyledElements.StyledButton({
+            this.poweredByWirecloudButton = new StyledElements.Button({
                 'class': 'powered-by-wirecloud'
             });
             this.notebook.addButton(this.poweredByWirecloudButton);

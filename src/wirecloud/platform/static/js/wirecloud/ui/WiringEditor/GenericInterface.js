@@ -327,7 +327,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
 
                 'element': optionsElement,
 
-                'optionNotify': new StyledElements.StyledButton({
+                'optionNotify': new StyledElements.Button({
                     'class': 'icon-exclamation-sign option-notify',
                     'plain': true
                 }),
@@ -338,13 +338,13 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
                     'plain': true
                 }),
 
-                'optionRemove': new StyledElements.StyledButton({
+                'optionRemove': new StyledElements.Button({
                     'class': 'icon-remove option-remove',
                     'title': gettext("Remove"),
                     'plain': true
                 }),
 
-                'optionShare': new StyledElements.StyledButton({
+                'optionShare': new StyledElements.Button({
                     'class': "icon-plus option-share",
                     'title': gettext("Share"),
                     'plain': true
@@ -1077,7 +1077,7 @@ Wirecloud.ui.WiringEditor.GenericInterface = (function () {
         treeFrame.classList.add('sources');
 
         // Close button
-        close_button = new StyledElements.StyledButton({
+        close_button = new StyledElements.Button({
             'title': gettext("Hide"),
             'class': 'hideTreeButton icon-off',
             'plain': true

@@ -66,7 +66,7 @@
     }
 }
 
-.styled_button {
+.se-btn {
     font-size: $font-size-base;
     padding: $padding-vertical-base $padding-horizontal-base;
     @include border-radius($button-border-radius);
@@ -98,15 +98,15 @@
     }
 }
 
-.styled_button:focus, .styled_button:hover {
+.se-btn:focus, .se-btn:hover {
     z-index: 2;
 }
 
-.styled_button.open {
+.se-btn.open {
     z-index: 111113;
 }
 
-.styled_button.plain {
+.se-btn.plain {
     font-size: inherit;
     line-height: inherit;
     margin-bottom: 0px;
@@ -135,12 +135,12 @@
     }
 }
 
-.styled_button img.icon {
+.se-btn img.icon {
     margin: 3px;
     vertical-align: middle;
 }
 
-.styled_button.btn-large, .styled_button.btn-lg {
+.se-btn.btn-large, .se-btn.btn-lg {
     font-size: $font-size-large;
     padding: $padding-vertical-large $padding-horizontal-large;
     @include border-radius($border-radius-large);
@@ -154,7 +154,7 @@
     }
 }
 
-.styled_button.btn-small, .styled_button.btn-sm {
+.se-btn.btn-small, .se-btn.btn-sm {
     font-size: $font-size-small;
     padding: $padding-vertical-small $padding-horizontal-small;
     @include border-radius($border-radius-small);
@@ -168,7 +168,7 @@
     }
 }
 
-.styled_button.btn-mini, .styled_button.btn-xs {
+.se-btn.btn-mini, .se-btn.btn-xs {
     font-size: $font-size-xs;
     padding: $padding-vertical-xs $padding-horizontal-xs;
     @include border-radius($border-radius-xs);
@@ -190,44 +190,44 @@
     vertical-align: middle;
 }
 
-.btn-group > .styled_button,
-.pagination > .styled_button {
+.btn-group > .se-btn,
+.pagination > .se-btn {
     margin: 0px;
 }
 
-.btn-group > .styled_button:not(:first-child),
-.pagination > .styled_button:not(:first-child) {
+.btn-group > .se-btn:not(:first-child),
+.pagination > .se-btn:not(:first-child) {
     margin-left: -1px;
 }
 
-.input-prepend > .se-hl-west-container > .styled_button {
+.input-prepend > .se-hl-west-container > .se-btn {
     margin: 0 -1px 0 0;
 }
 
-.input-prepend > .se-hl-west-container > .styled_button,
-.btn-group > .styled_button,
-.pagination > .styled_button {
+.input-prepend > .se-hl-west-container > .se-btn,
+.btn-group > .se-btn,
+.pagination > .se-btn {
     border-radius: 0px;
 }
 
-.input-prepend > .se-hl-west-container > .styled_button:first-child,
-.btn-group > .styled_button:first-child,
-.pagination > .styled_button:first-child {
+.input-prepend > .se-hl-west-container > .se-btn:first-child,
+.btn-group > .se-btn:first-child,
+.pagination > .se-btn:first-child {
     border-top-left-radius: $border-radius-base;
     border-bottom-left-radius: $border-radius-base;
 }
 
-.input-append > .se-hl-east-container > .styled_button {
+.input-append > .se-hl-east-container > .se-btn {
     margin: 0 0 0 -1px;
 }
 
-.input-append > .se-hl-east-container > .styled_button {
+.input-append > .se-hl-east-container > .se-btn {
     border-radius: 0px;
 }
 
-.input-append > .se-hl-east-container > .styled_button:last-child,
-.pagination > .styled_button:last-child,
-.btn-group > .styled_button:last-child {
+.input-append > .se-hl-east-container > .se-btn:last-child,
+.pagination > .se-btn:last-child,
+.btn-group > .se-btn:last-child {
     border-top-right-radius: $border-radius-base;
     border-bottom-right-radius: $border-radius-base;
 }
@@ -239,7 +239,7 @@
     margin: 0px 0px 10px;
     table-layout: fixed;
 
-    .styled_button {
+    .se-btn {
         display: table-cell;
         float: none;
         width: 1%;
@@ -249,7 +249,7 @@
 
 /* Button - Stacked Icon */
 
-.styled_button .se-stacked-icon {
+.se-btn .se-stacked-icon {
     position: absolute;
     border-radius: 50%;
 
@@ -276,28 +276,28 @@
 
 /* Button variants */
 
-.styled_button.btn-primary {
+.se-btn.btn-primary {
     @include button-variant($button-background-primary, $button-border-primary);
 }
 
-.styled_button.btn-info {
+.se-btn.btn-info {
     @include button-variant($button-background-info, $button-border-info);
 }
 
-.styled_button.btn-success {
+.se-btn.btn-success {
     @include button-variant($button-background-success, $button-border-success);
 }
 
-.styled_button.btn-warning {
+.se-btn.btn-warning {
     @include button-variant($button-background-warning, $button-border-warning);
 }
 
-.styled_button.btn-danger {
+.se-btn.btn-danger {
     @include button-variant($button-background-danger, $button-border-danger);
 }
 
 /* File buttons */
-.styled_button > input[type="file"] {
+.se-btn > input[type="file"] {
     position: absolute;
     top: 0;
     left: 0;

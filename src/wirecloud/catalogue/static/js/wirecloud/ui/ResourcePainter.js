@@ -116,7 +116,7 @@
             'home': function () {
                 var button;
 
-                button = new StyledElements.StyledButton({
+                button = new StyledElements.Button({
                     'plain': true,
                     'class': 'icon-home',
                     'title': gettext('Home page')
@@ -134,7 +134,7 @@
             'issuetracker': function () {
                 var button;
 
-                button = new StyledElements.StyledButton({
+                button = new StyledElements.Button({
                     'plain': true,
                     'class': 'icon-exclamation-sign',
                     'title': gettext('Issue tracker')
@@ -153,7 +153,7 @@
             'license_home': function () {
                 var button;
 
-                button = new StyledElements.StyledButton({
+                button = new StyledElements.Button({
                     'plain': true,
                     'class': 'icon-legal',
                     'title': gettext('License details')
@@ -212,7 +212,7 @@
     ResourcePainter.prototype.renderAdvancedOperations = function renderAdvancedOperations(resource) {
         var button, fragment = new StyledElements.Fragment();
 
-        button = new StyledElements.StyledButton({
+        button = new StyledElements.Button({
             'text': gettext('Download')
         });
         button.addEventListener('click', function () {
@@ -221,7 +221,7 @@
         fragment.appendChild(button);
 
         if (resource.type === 'widget') {
-            button = new StyledElements.StyledButton({
+            button = new StyledElements.Button({
                 'text': gettext('Add to workspace')
             });
             button.addEventListener('click', function () {
@@ -233,7 +233,7 @@
         }
 
         if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue) {
-            button = new StyledElements.StyledButton({
+            button = new StyledElements.Button({
                 'text': gettext('Publish')
             });
             button.addEventListener('click', this.catalogue_view.createUserCommand('publishOtherMarket', resource));
@@ -242,7 +242,7 @@
 
         if (Wirecloud.LocalCatalogue.resourceExists(resource) && resource.isAllow('uninstall')) {
             var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-            button = new StyledElements.StyledButton({
+            button = new StyledElements.Button({
                 'class': 'btn-danger',
                 'text': gettext('Uninstall')
             });
@@ -251,7 +251,7 @@
         }
 
         if ((resource.getAllVersions().length > 1) && resource.isAllow('uninstall-all')) {
-            button = new StyledElements.StyledButton({
+            button = new StyledElements.Button({
                 'class': 'btn-danger',
                 'text': gettext('Uninstall all versions')
             });
@@ -260,7 +260,7 @@
         }
 
         if (resource.isAllow('delete')) {
-            button = new StyledElements.StyledButton({
+            button = new StyledElements.Button({
                 'class': 'btn-danger',
                 'text': gettext('Delete')
             });
@@ -269,7 +269,7 @@
         }
 
         if ((resource.getAllVersions().length > 1) && resource.isAllow('delete-all')) {
-            button = new StyledElements.StyledButton({
+            button = new StyledElements.Button({
                 'class': 'btn-danger',
                 'text': gettext('Delete all versions')
             });

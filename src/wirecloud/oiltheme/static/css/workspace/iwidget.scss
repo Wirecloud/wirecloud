@@ -52,13 +52,13 @@
     opacity: 1;
 }
 
-.iwidget > .widget_menu .styled_button {
+.iwidget > .widget_menu .se-btn {
     color: rgba(136, 136, 136, 0.6);
     @include transition-property(color);
     @include transition-duration(1s);
 }
 
-.iwidget > .widget_menu .styled_button:focus, .iwidget > .widget_menu .styled_button:hover {
+.iwidget > .widget_menu .se-btn:focus, .iwidget > .widget_menu .se-btn:hover {
     color: rgba(136, 136, 136, 1);
 }
 

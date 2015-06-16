@@ -156,7 +156,7 @@
             'button': function (builder, element, options) {
                 options = StyledElements.Utils.merge({}, options);
                 options.text = element.textContent;
-                return new StyledElements.StyledButton(options);
+                return new StyledElements.Button(options);
             },
             'select': function (builder, element, options) {
                 return new StyledElements.StyledSelect(options);

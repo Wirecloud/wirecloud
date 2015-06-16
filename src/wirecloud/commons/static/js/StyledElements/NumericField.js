@@ -101,8 +101,8 @@
 
         this.inputElement.setAttribute("value", options.initialValue);
 
-        var topButton = new StyledElements.StyledButton({'class': 'se-numeric-field-top-button', iconClass: 'icon-caret-up'});
-        var bottomButton = new StyledElements.StyledButton({'class': 'se-numeric-field-bottom-button', iconClass: 'icon-caret-down'});
+        var topButton = new StyledElements.Button({'class': 'se-numeric-field-top-button', iconClass: 'icon-caret-up'});
+        var bottomButton = new StyledElements.Button({'class': 'se-numeric-field-bottom-button', iconClass: 'icon-caret-down'});
 
         /* Internal events */
         topButton.addEventListener("click", update.bind(this, options.inc));

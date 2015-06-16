@@ -48,7 +48,7 @@
         };
         this.viewsByName.search.init();
 
-        this.uploadButton = new StyledElements.StyledButton({
+        this.uploadButton = new StyledElements.Button({
             'iconClass': 'icon-cloud-upload',
             'title': gettext('Upload')
         });
@@ -57,7 +57,7 @@
             upload_dialog.show();
         });
 
-        this.marketButton = new StyledElements.StyledButton({
+        this.marketButton = new StyledElements.Button({
             'iconClass': 'icon-shopping-cart',
             'title': gettext('Marketplace')
         });

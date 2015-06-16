@@ -284,7 +284,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.switch_to('fiware')
 
             with marketplace.search_in_results(offering_name) as offering:
-                buttons = len(offering.details.find_elements_by_css_selector('.panel .styled_button:not(.plain), .se-notebook-tab-content .styled_button'))
+                buttons = len(offering.details.find_elements_by_css_selector('.panel .se-btn:not(.plain), .se-notebook-tab-content .se-btn'))
                 self.assertEqual(buttons, 0)
 
     def test_store_upload_resource(self):
@@ -481,7 +481,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
                         break
                 resources = free_offering.details.find_elements_by_css_selector('.offering_resource_list .se-model-table-row')
                 resource = resources[1]
-                button = resource.find_element_by_css_selector('.styled_button')
+                button = resource.find_element_by_css_selector('.se-btn')
                 self.assertEqual(button.text, 'Install')
                 button.click()
 

@@ -172,7 +172,7 @@
             }
         });
 
-        this.myresourcesButton = new StyledElements.StyledButton({
+        this.myresourcesButton = new StyledElements.Button({
             'iconClass': 'icon-archive',
             'title': gettext('My Resources')
         });

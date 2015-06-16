@@ -87,7 +87,7 @@
         }
 
         // Start button
-        this.start_button = new StyledElements.StyledButton({
+        this.start_button = new StyledElements.Button({
             text: gettext('Start'),
             'class': 'btn-primary'
         });
@@ -100,7 +100,7 @@
         }.bind(this));
 
         // Cancel button
-        this.cancel_button = new StyledElements.StyledButton({
+        this.cancel_button = new StyledElements.Button({
             text: gettext('Cancel'),
             'class': 'btn-danger'
         });

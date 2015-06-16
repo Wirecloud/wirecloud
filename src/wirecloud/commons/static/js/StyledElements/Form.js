@@ -51,10 +51,10 @@
 
         // Parse setdefaultsButton
         this.setdefaultsButton = null;
-        if (options.setdefaultsButton instanceof StyledElements.StyledButton) {
+        if (options.setdefaultsButton instanceof StyledElements.Button) {
             this.setdefaultsButton = options.setdefaultsButton;
         } else if (options.setdefaultsButton === true) {
-            this.setdefaultsButton = new StyledElements.StyledButton({
+            this.setdefaultsButton = new StyledElements.Button({
                 usedInForm: options.useHtmlForm,
                 text: StyledElements.Utils.gettext('Set Defaults')
             });
@@ -62,10 +62,10 @@
 
         // Parse resetButton
         this.resetButton = null;
-        if (options.resetButton instanceof StyledElements.StyledButton) {
+        if (options.resetButton instanceof StyledElements.Button) {
             this.resetButton = options.resetButton;
         } else if (options.resetButton === true) {
-            this.resetButton = new StyledElements.StyledButton({
+            this.resetButton = new StyledElements.Button({
                 usedInForm: options.useHtmlForm,
                 text: StyledElements.Utils.gettext('Reset')
             });
@@ -73,10 +73,10 @@
 
         // Parse acceptButton
         this.acceptButton = null;
-        if (options.acceptButton instanceof StyledElements.StyledButton) {
+        if (options.acceptButton instanceof StyledElements.Button) {
             this.acceptButton = options.acceptButton;
         } else if (options.acceptButton === true) {
-            this.acceptButton = new StyledElements.StyledButton({
+            this.acceptButton = new StyledElements.Button({
                 'usedInForm': options.useHtmlForm,
                 'class': 'btn-primary',
                 'text': StyledElements.Utils.gettext('Accept')
@@ -85,10 +85,10 @@
 
         // Parse cancelButton
         this.cancelButton = null;
-        if (options.cancelButton instanceof StyledElements.StyledButton) {
+        if (options.cancelButton instanceof StyledElements.Button) {
             this.cancelButton = options.cancelButton;
         } else if (options.cancelButton === true) {
-            this.cancelButton = new StyledElements.StyledButton({
+            this.cancelButton = new StyledElements.Button({
                 usedInForm: options.useHtmlForm,
                 text: StyledElements.Utils.gettext('Cancel')
             });

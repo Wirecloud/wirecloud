@@ -36,7 +36,7 @@
             return;
         }
 
-        StyledElements.StyledButton.call(this, options);
+        StyledElements.Button.call(this, options);
 
         if (options.checkedIcon == null) {
             options.checkedIcon = options.icon;
@@ -86,7 +86,7 @@
         // Init status
         this.active = options.initiallyChecked;
     };
-    StyledElements.ToggleButton.prototype = new StyledElements.StyledButton({extending: true});
+    StyledElements.ToggleButton.prototype = new StyledElements.Button({extending: true});
 
     StyledElements.ToggleButton.prototype._clickCallback = function _clickCallback(event) {
         if (!this.enabled) {

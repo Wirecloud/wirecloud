@@ -87,7 +87,7 @@
      * Eventos que soporta este componente:
      *      - click: evento lanzado cuando se pulsa el botón.
      */
-    var StyledButton = function StyledButton(options) {
+    var Button = function Button(options) {
         var defaultOptions = {
             'text': null,
             'title': '',
@@ -117,7 +117,7 @@
         } else {
             this.wrapperElement = document.createElement("div");
         }
-        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "styled_button");
+        this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "se-btn");
 
         if (options.id != null) {
             this.wrapperElement.setAttribute('id', options.id);
@@ -231,22 +231,22 @@
         this.wrapperElement.addEventListener('mouseenter', onmouseenter.bind(this), false);
         this.wrapperElement.addEventListener('mouseleave', onmouseleave.bind(this), false);
     };
-    StyledButton.prototype = new StyledElements.StyledElement();
+    Button.prototype = new StyledElements.StyledElement();
 
-    StyledButton.prototype.Tooltip = StyledElements.Tooltip;
+    Button.prototype.Tooltip = StyledElements.Tooltip;
 
-    StyledButton.prototype.focus = function focus() {
+    Button.prototype.focus = function focus() {
         this.wrapperElement.focus();
     };
 
-    StyledButton.prototype.blur = function blur() {
+    Button.prototype.blur = function blur() {
         this.wrapperElement.blur();
     };
 
     /**
      * Enables this button
      */
-    StyledButton.prototype.enable = function enable() {
+    Button.prototype.enable = function enable() {
         this.enabled = true;
         this.removeClassName('disabled');
         update_tabindex.call(this);
@@ -257,7 +257,7 @@
     /**
      * Deshabilita el componente añadiendo la clase css .disabled
      */
-    StyledButton.prototype.disable = function disable() {
+    Button.prototype.disable = function disable() {
         this.enabled = false;
         this.addClassName('disabled');
         update_tabindex.call(this);
@@ -266,34 +266,34 @@
         return this;
     };
 
-    StyledButton.prototype.setLabel = function setLabel(label) {
+    Button.prototype.setLabel = function setLabel(label) {
         this.label.textContent = label;
 
         return this;
     };
 
-    StyledButton.prototype.clearClassName = function clearClassName() {
-        this.wrapperElement.className = 'styled_button';
+    Button.prototype.clearClassName = function clearClassName() {
+        this.wrapperElement.className = 'se-btn';
 
         return this;
     };
 
-    StyledButton.prototype.addIconClassName = function addIconClassName(classname) {
+    Button.prototype.addIconClassName = function addIconClassName(classname) {
         this.icon.classList.add(classname);
     };
 
-    StyledButton.prototype.removeIconClassName = function removeIconClassName(classname) {
+    Button.prototype.removeIconClassName = function removeIconClassName(classname) {
         this.icon.classList.remove(classname);
     };
 
-    StyledButton.prototype.toggleIconClass = function toggleIconClass(newClass, oldClass) {
+    Button.prototype.toggleIconClass = function toggleIconClass(newClass, oldClass) {
         this.icon.classList.add(newClass);
         this.icon.classList.remove(oldClass);
 
         return this;
     };
 
-    StyledButton.prototype.setTitle = function setTitle(title) {
+    Button.prototype.setTitle = function setTitle(title) {
         if (title == null || title === '') {
             if (this.tooltip != null) {
                 this.tooltip.destroy();
@@ -308,13 +308,13 @@
         }
     };
 
-    StyledButton.prototype.click = function click() {
+    Button.prototype.click = function click() {
         if (this.enabled) {
             this.events.click.dispatch(this);
         }
     };
 
-    StyledButton.prototype.destroy = function destroy() {
+    Button.prototype.destroy = function destroy() {
 
         this.wrapperElement.removeEventListener('touchstart', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
@@ -332,9 +332,9 @@
      * @function
      * @public
      *
-     * @returns {StyledButton} The instance on which this function was called.
+     * @returns {Button} The instance on which this function was called.
      */
-    StyledButton.prototype.show = function show() {
+    Button.prototype.show = function show() {
         if (this.hidden) {
             this.hidden = false;
             this.events.show.dispatch(this);
@@ -348,9 +348,9 @@
      * @function
      * @public
      *
-     * @returns {StyledButton} The instance on which this function was called.
+     * @returns {Button} The instance on which this function was called.
      */
-    StyledButton.prototype.hide = function hide() {
+    Button.prototype.hide = function hide() {
         if (!this.hidden) {
             this.hidden = true;
             this.events.hide.dispatch(this);
@@ -359,5 +359,6 @@
         return this;
     };
 
-    StyledElements.StyledButton = StyledButton;
+    StyledElements.Button = Button;
+
 })();

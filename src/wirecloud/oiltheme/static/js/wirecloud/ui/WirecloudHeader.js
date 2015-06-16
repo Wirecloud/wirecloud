@@ -31,7 +31,7 @@
         this.breadcrum = document.getElementById('wirecloud_breadcrum');
         this.oil_header = this.wrapperElement.querySelector('.fiware-header nav.collapse');
 
-        this.backButton = new StyledElements.StyledButton({'class': 'btn-large', 'iconClass': 'icon-caret-left'});
+        this.backButton = new StyledElements.Button({'class': 'btn-large', 'iconClass': 'icon-caret-left'});
         this.backButton.addEventListener('click', function () {
             this.currentView.goUp();
         }.bind(this));
@@ -261,7 +261,7 @@
                 cookie_banner.innerHTML = '<p>We use first and third-party’s cookies to improve your experience and our services, identifying your Internet browsing preferences on our website. If you keep browsing, you accept its use. You can get more information on our <a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Cookies_Policy_FIWARE_Lab" target="_blank">Cookie Policy</a>.</p>';
                 document.body.appendChild(cookie_banner);
 
-                this.close_cookie_banner_button = new StyledElements.StyledButton({text: 'X', plain: true, id: 'close-cookie-banner'});
+                this.close_cookie_banner_button = new StyledElements.Button({text: 'X', plain: true, id: 'close-cookie-banner'});
                 this.close_cookie_banner_button.insertInto(cookie_banner);
                 this.close_cookie_banner_button.addEventListener('click', function () {
                     document.body.removeChild(cookie_banner);

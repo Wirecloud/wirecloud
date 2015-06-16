@@ -168,7 +168,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
 
         try:
             with iwidget:
-                self.driver.find_element_by_css_selector('.styled_button').click()
+                self.driver.find_element_by_css_selector('.se-btn').click()
                 self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success!')
         finally:
             iwidget.remove()
@@ -178,7 +178,7 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
 
         try:
             with iwidget:
-                self.driver.find_element_by_css_selector('.styled_button').click()
+                self.driver.find_element_by_css_selector('.se-btn').click()
                 self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success!')
         finally:
             iwidget.remove()

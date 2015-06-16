@@ -20,7 +20,7 @@
             cancelLabel: gettext('No')
         }, options);
 
-        this.acceptButton = new StyledElements.StyledButton({
+        this.acceptButton = new StyledElements.Button({
             text: options.acceptLabel,
             'class': 'btn-danger'
         });
@@ -29,7 +29,7 @@
         this.acceptButton.insertInto(this.windowBottom);
 
         // Cancel button
-        this.cancelButton = new StyledElements.StyledButton({
+        this.cancelButton = new StyledElements.Button({
             text: options.cancelLabel,
             'class': 'btn-primary'
         });

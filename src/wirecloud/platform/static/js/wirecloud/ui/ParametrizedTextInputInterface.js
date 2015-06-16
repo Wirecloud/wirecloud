@@ -40,7 +40,7 @@
             'class': 'parametrized_text_input'
         });
 
-        this.resetButton = new StyledElements.StyledButton({
+        this.resetButton = new StyledElements.Button({
             'text': StyledElements.Utils.gettext('Use current value')
         });
         this.resetButton.addEventListener('click', function () {
@@ -70,7 +70,7 @@
         this.selectorWrapperElement.appendChild(this.secondSelect);
         this.secondSelect.addEventListener('change', this._updateDescription.bind(this), true);
 
-        this.addButton = new StyledElements.StyledButton({
+        this.addButton = new StyledElements.Button({
             'text': StyledElements.Utils.gettext('Add')
         });
         this.addButton.addEventListener('click', function () {

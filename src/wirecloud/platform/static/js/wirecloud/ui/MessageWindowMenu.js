@@ -38,7 +38,7 @@
         this.windowContent.appendChild(this.msgElement);
 
         // Accept button
-        this.button = new StyledElements.StyledButton({
+        this.button = new StyledElements.Button({
             text: gettext('Accept'),
             'class': 'btn-primary'
         });

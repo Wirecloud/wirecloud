@@ -160,7 +160,7 @@
                 if (['widget', 'operator', 'mashup', 'pack'].indexOf(offering.type) === -1 && this.is_details_view) {
                     return null;
                 } else {
-                    button = new StyledElements.StyledButton({text: ''});
+                    button = new StyledElements.Button({text: ''});
                     offering_entry.mainbuttons.push(button);
                 }
 

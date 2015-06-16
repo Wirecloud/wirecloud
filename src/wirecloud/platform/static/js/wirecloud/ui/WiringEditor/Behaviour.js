@@ -43,13 +43,13 @@ Wirecloud.ui.WiringEditor.Behaviour = (function () {
         this.titleElement.className = "panel-title behaviour-title";
         this.titleElement.textContent = this.title;
 
-        this.btnActivate = new StyledElements.StyledButton({
+        this.btnActivate = new StyledElements.Button({
             'title': gettext("Activate"),
             'class': 'btn-activate',
             'iconClass': 'icon-plus'
         });
 
-        this.btnShowSettings = new StyledElements.StyledButton({
+        this.btnShowSettings = new StyledElements.Button({
             'title': gettext("Settings"),
             'class': 'btn-show-settings',
             'iconClass': 'icon-tasks'

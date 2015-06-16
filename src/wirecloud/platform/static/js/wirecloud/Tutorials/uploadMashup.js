@@ -24,7 +24,7 @@
         var layoutManager;
 
         layoutManager = LayoutManagerFactory.getInstance();
-        return layoutManager.currentMenu.htmlElement.getElementsByClassName('window_bottom')[0].getElementsByClassName('styled_button')[1];
+        return layoutManager.currentMenu.htmlElement.getElementsByClassName('window_bottom')[0].getElementsByClassName('se-btn')[1];
     };
 
     var windowForm = function(callback) {
@@ -94,7 +94,7 @@
         var layoutManager;
 
         layoutManager = LayoutManagerFactory.getInstance();
-        return layoutManager.currentMenu.htmlElement.getElementsByClassName('btn-primary styled_button')[0];
+        return layoutManager.currentMenu.htmlElement.getElementsByClassName('btn-primary se-btn')[0];
     };
 
     Wirecloud.TutorialCatalogue.add('save-mashups', new Wirecloud.ui.Tutorial(gettext('Save & share your mashups'), [

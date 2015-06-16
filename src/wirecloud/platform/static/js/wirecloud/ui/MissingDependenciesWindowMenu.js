@@ -53,7 +53,7 @@
         this.msg2Element.textContent = gettext('You will be able to continue after installing all the required dependencies.');
 
         // New Workspace button
-        this.continueButton = new StyledElements.StyledButton({
+        this.continueButton = new StyledElements.Button({
             text: gettext('Continue'),
         });
         this.continueButton.addEventListener("click", onContinue.bind(this, next));
@@ -61,7 +61,7 @@
         this.continueButton.disable();
 
         // Cancel button
-        this.cancelButton = new StyledElements.StyledButton({
+        this.cancelButton = new StyledElements.Button({
             'class': 'btn-primary',
             text: gettext('Cancel')
         });

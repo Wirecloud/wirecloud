@@ -40,7 +40,7 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        StyledElements.StyledButton.call(this, options);
+        StyledElements.Button.call(this, options);
 
         Object.defineProperty(this, 'inputElement', {value: document.createElement("input")});
         this.inputElement.setAttribute("type", "file");
@@ -55,7 +55,7 @@
 
         this.inputElement.addEventListener('change', this._onchange, true);
     };
-    FileButton.prototype = new StyledElements.StyledButton({extending: true});
+    FileButton.prototype = new StyledElements.Button({extending: true});
 
     FileButton.prototype.destroy = function destroy() {
 
@@ -63,7 +63,7 @@
 
         delete this._onchange;
 
-        StyledElements.StyledButton.prototype.destroy.call(this);
+        StyledElements.Button.prototype.destroy.call(this);
     };
 
     StyledElements.FileButton = FileButton;

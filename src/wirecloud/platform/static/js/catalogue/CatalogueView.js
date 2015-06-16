@@ -47,13 +47,13 @@
 
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
                 if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
-                    button = new StyledElements.StyledButton({
+                    button = new StyledElements.Button({
                         'class': 'btn-danger',
                         'text': gettext('Uninstall')
                     });
                     button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue));
                 } else {
-                    button = new StyledElements.StyledButton({
+                    button = new StyledElements.Button({
                         'class': 'btn-success',
                         'text': gettext('Install')
                     });

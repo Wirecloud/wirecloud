@@ -283,7 +283,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Wait complete and capture state
         # dialog.find_element_by_xpath("//*[text()='Accept']").click()
         dialog.find_element_by_css_selector(
-            'button.btn-primary.styled_button').click()
+            'button.btn-primary.se-btn').click()
         self.wait_wirecloud_ready()
         imgp = take_capture(self.driver, extra='HistoryInfoWorkspace')
         crop_down(
@@ -356,7 +356,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_image(imgp, *create_box(dialog))
 
             # Cancel marketplace creation
-            button = dialog.find_element_by_css_selector('button.styled_button:not(.btn-primary)')
+            button = dialog.find_element_by_css_selector('button.se-btn:not(.btn-primary)')
             button.click()
 
             #marketplace.switch_to('FIWARE Lab')
@@ -389,7 +389,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             imgp = take_capture(self.driver, extra='uploadNew')
             crop_image(imgp, *create_box(dialog))
             dialog.find_element_by_css_selector(
-                '.btn-default.styled_button').click()  # cancel
+                '.btn-default.se-btn').click()  # cancel
 
             # Click in a widget for details
             container = get_first_displayed(
@@ -407,7 +407,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             time.sleep(0.2)
             container = get_first_displayed(
                 self.driver, '.advanced_operations')
-            btn = get_by_text(container, '.styled_button', 'Publish')
+            btn = get_by_text(container, '.se-btn', 'Publish')
             ActionChains(self.driver).move_to_element(btn).perform()  # wait?
             imgp = take_capture(self.driver, "Wirecloud_click_publish")
             add_pointer(imgp, get_position(btn, 0.8, 0.8))
@@ -505,7 +505,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         crop_image(imgp, *create_box(dialog))
 
         dialog.find_element_by_css_selector(
-            'button.btn-primary.styled_button').click()
+            'button.btn-primary.se-btn').click()
         time.sleep(0.2)
 
         # Reload map viewer widget so it updates the view using the initial zoom and initial location
@@ -797,7 +797,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             imgp = take_capture(self.driver, extra='HistoryOperatorSettings2')
             crop_image(imgp, *create_box(dialog))
             dialog.find_element_by_css_selector(
-                'button.btn-primary.styled_button').click()
+                'button.btn-primary.se-btn').click()
 
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))

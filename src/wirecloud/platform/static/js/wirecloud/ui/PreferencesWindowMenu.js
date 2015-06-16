@@ -164,7 +164,7 @@
         Object.defineProperty(this, 'manager', {value: manager});
 
         // Reset button
-        this.resetButton = new StyledElements.StyledButton({
+        this.resetButton = new StyledElements.Button({
             text: gettext('Set Defaults'),
         });
         this.resetButton.addEventListener("click", function () {
@@ -183,7 +183,7 @@
         this.resetButton.insertInto(this.windowBottom);
 
         // Accept button
-        this.acceptButton = new StyledElements.StyledButton({
+        this.acceptButton = new StyledElements.Button({
             text: gettext('Save'),
             'class': 'btn-primary'
         });
@@ -191,7 +191,7 @@
         this.acceptButton.insertInto(this.windowBottom);
 
         // Cancel button
-        this.cancelButton = new StyledElements.StyledButton({
+        this.cancelButton = new StyledElements.Button({
             text: gettext('Cancel')
         });
 

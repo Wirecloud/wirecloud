@@ -46,7 +46,7 @@
         this.macsearch.insertInto(this.windowContent);
 
         // Accept button
-        this.button = new StyledElements.StyledButton({
+        this.button = new StyledElements.Button({
             text: gettext('Close'),
             'class': 'btn-primary'
         });

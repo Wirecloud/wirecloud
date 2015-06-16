@@ -92,7 +92,7 @@
     Tab.prototype = new StyledElements.Container({extending: true});
 
     Tab.prototype.Tooltip = StyledElements.Tooltip;
-    Tab.prototype.Button = StyledElements.StyledButton;
+    Tab.prototype.Button = StyledElements.Button;
 
     /**
      * Elimina este Tab del notebook al que está asociado.

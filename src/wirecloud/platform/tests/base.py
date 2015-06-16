@@ -283,7 +283,7 @@ class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_root_view_anonymous_allowed(self):
         url = self.live_server_url + reverse('wirecloud.root')
         self.driver.get(url)
-        sign_in_button = self.wait_element_visible_by_css_selector('#wirecloud_header .user_menu_wrapper .styled_button, #wirecloud_header .arrow-down-settings')
+        sign_in_button = self.wait_element_visible_by_css_selector('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
 
         if sign_in_button.text != 'Sign in':
             # Oiltheme
@@ -304,7 +304,7 @@ class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def check_login_behaviour(self, initial_url):
 
-        sign_in_button = self.wait_element_visible_by_css_selector('#wirecloud_header .user_menu_wrapper .styled_button, #wirecloud_header .arrow-down-settings')
+        sign_in_button = self.wait_element_visible_by_css_selector('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
 
         if sign_in_button.text != 'Sign in':
             # Oiltheme

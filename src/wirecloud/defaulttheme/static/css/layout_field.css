@@ -16,8 +16,8 @@
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
 
-.se-layout-field.focus > .se-hl-east-container > .styled_button,
-.se-layout-field.focus > .se-hl-west-container > .styled_button
+.se-layout-field.focus > .se-hl-east-container > .se-btn,
+.se-layout-field.focus > .se-hl-west-container > .se-btn
 {
     border-color: rgba(82, 168, 236, 0.8);
 }

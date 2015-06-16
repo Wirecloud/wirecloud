@@ -162,7 +162,7 @@
     padding-left: $component-options-padding-horizontal;
     white-space: nowrap;
 
-    .styled_button {
+    .se-btn {
         margin: 0px 0px 0px $component-options-margin-horizontal;
         @include font-base($font-weight: bold);
         text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
@@ -175,19 +175,19 @@
         }
     }
 
-    .styled_button:first-child {
+    .se-btn:first-child {
         margin-left: 0px;
     }
 
-    .styled_button:last-child {
+    .se-btn:last-child {
         margin-right: 0px;
     }
 
-    .styled_button.hidden {
+    .se-btn.hidden {
         display: none !important;
     }
 
-    .styled_button.invisible {
+    .se-btn.invisible {
         visibility: hidden !important;
     }
 }
@@ -210,7 +210,7 @@
 
     .component-options {
 
-        .styled_button {
+        .se-btn {
             color: $component-operator-options-font-color;
 
             &:hover {
@@ -234,7 +234,7 @@
 
     .component-options{
 
-        .styled_button {
+        .se-btn {
             color: $component-widget-options-font-color;
 
             &:hover {
@@ -264,7 +264,7 @@
 
     .component-options {
 
-        .styled_button {
+        .se-btn {
             color: $component-onbackground-options-font-color;
 
             &:hover {
@@ -294,7 +294,7 @@
 
     .component-options{
 
-        .styled_button {
+        .se-btn {
             color: $component-onbackground-options-font-color;
 
             &:hover {
@@ -327,7 +327,7 @@
 
     .component-options {
 
-        .styled_button {
+        .se-btn {
             color: $highlighted-component-heading-font-color;
 
             &:hover {

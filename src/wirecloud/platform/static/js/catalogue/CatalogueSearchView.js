@@ -118,7 +118,7 @@
                 return new StyledElements.PaginationInterface(this.source);
             }.bind(this),
             'reset_button': function () {
-                var button = new StyledElements.StyledButton({text: gettext('Refresh')});
+                var button = new StyledElements.Button({text: gettext('Refresh')});
                 button.addEventListener('click', function () {
                     this.source.changeOptions({'correct_query': true, 'keywords': '', scope: 'all'});
                 }.bind(this));

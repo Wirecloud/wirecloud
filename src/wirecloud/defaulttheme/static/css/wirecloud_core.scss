@@ -123,13 +123,13 @@ h6 { font-size: $font-size-h6; }
     vertical-align: top;
 }
 
-#wirecloud_header .user_menu_wrapper > .styled_button {
+#wirecloud_header .user_menu_wrapper > .se-btn {
     margin: 0;
     vertical-align: baseline;
     height: 20px;
 }
 
-#wirecloud_header .user_menu_wrapper > .styled_button {
+#wirecloud_header .user_menu_wrapper > .se-btn {
     color: #FFF;
     font-size: 12px;
     margin: 0;
@@ -144,7 +144,7 @@ h6 { font-size: $font-size-h6; }
     box-shadow: none;
 }
 
-#wirecloud_header .user_menu_wrapper > .styled_button.open > div {
+#wirecloud_header .user_menu_wrapper > .se-btn.open > div {
     background: white;
     border-color: #BEBEBE;
     color: #41768D;
@@ -187,7 +187,7 @@ h6 { font-size: $font-size-h6; }
     margin: 0 5px;
 }
 
-.wirecloud_toolbar .styled_button {
+.wirecloud_toolbar .se-btn {
     width: 21px;
     box-sizing: content-box;
     text-align: center;

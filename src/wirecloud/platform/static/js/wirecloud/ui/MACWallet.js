@@ -67,7 +67,7 @@
                 addmore: function () {
                     var div = document.createElement('div');
                     div.className = 'widget_wallet_addmore';
-                    var button = new StyledElements.StyledButton({text: gettext('Get more resources'), "class": "btn-success"});
+                    var button = new StyledElements.Button({text: gettext('Get more resources'), "class": "btn-success"});
                     button.addEventListener('click', function () {
                         LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
                     });
@@ -86,7 +86,7 @@
                     return pills;
                 }.bind(this),
                 closebutton: function () {
-                    var button = new StyledElements.StyledButton({"class": "icon-remove", plain: true});
+                    var button = new StyledElements.Button({"class": "icon-remove", plain: true});
                     button.addEventListener('click', function () {
                         this.hide();
                     }.bind(this));

@@ -93,7 +93,7 @@
         this.inputElement.disable();
         this.inputElement.insertInto(this.wrapperElement);
 
-        this.buttonElement = new StyledElements.StyledButton({text: ''});
+        this.buttonElement = new StyledElements.Button({text: ''});
         this.buttonElement.addEventListener('click', function () {
             var dialog = new Wirecloud.ui.ParametrizeWindowMenu(this);
             dialog.show(this.parentWindow);

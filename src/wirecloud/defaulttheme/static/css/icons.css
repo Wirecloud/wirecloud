@@ -1,4 +1,4 @@
-.styled_button.icon-menu {
+.se-btn.icon-menu {
     border-width: 1px 1px 0px 1px;
     border-style: solid;
     border-color: transparent;
@@ -7,17 +7,17 @@
     text-align: center;
 }
 
-.styled_button.icon-menu.open {
+.se-btn.icon-menu.open {
     background-color: white;
     border-color: #BEBEBE;
 }
 
-.styled_button.icon-tab-menu {
+.se-btn.icon-tab-menu {
     float: right;
     margin: 0 0 0 6px;
 }
 
-.styled_button.icon-tab-menu.open {
+.se-btn.icon-tab-menu.open {
     border-color: #BEBEBE;
 }
 

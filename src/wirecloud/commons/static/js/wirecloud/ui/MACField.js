@@ -90,14 +90,14 @@
         this.name_preview.className = 'add-on';
         this.layout.getCenterContainer().appendChild(this.name_preview);
 
-        var close_button = new StyledElements.StyledButton({iconClass: 'icon-remove', title: gettext('Clear current selection')});
+        var close_button = new StyledElements.Button({iconClass: 'icon-remove', title: gettext('Clear current selection')});
         this.layout.getWestContainer().appendChild(close_button);
         close_button.disable();
         close_button.addEventListener('click', function () {
             this.setValue('');
         }.bind(this));
 
-        var button = new StyledElements.StyledButton({iconClass: 'icon-search', title: gettext('Search')});
+        var button = new StyledElements.Button({iconClass: 'icon-search', title: gettext('Search')});
         this.layout.getEastContainer().appendChild(button);
 
         /* Public fields */

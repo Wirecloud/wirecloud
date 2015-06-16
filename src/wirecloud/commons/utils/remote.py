@@ -321,7 +321,7 @@ class CatalogueEntryTester(object):
 
     def advanced_operation(self, action):
 
-        for operation in self.details.find_elements_by_css_selector('.advanced_operations .styled_button'):
+        for operation in self.details.find_elements_by_css_selector('.advanced_operations .se-btn'):
             if operation.text == action:
                 operation.click()
                 return
@@ -449,7 +449,7 @@ class MACFieldTester(WalletTester):
             self.element = None
 
         if self.element is not None:
-            self.element.find_element_by_css_selector('.window_bottom .styled_button').click()
+            self.element.find_element_by_css_selector('.window_bottom .se-btn').click()
             WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
             self.element = None
 

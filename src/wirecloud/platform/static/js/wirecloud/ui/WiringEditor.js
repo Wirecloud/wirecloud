@@ -314,7 +314,7 @@ Wirecloud.ui.WiringEditor = (function () {
             }.bind(this));
 
             eventTarget.behaviour.addEventListener('open', function() {
-                var btnSave = new StyledElements.StyledButton({
+                var btnSave = new StyledElements.Button({
                     'text': gettext("Save changes"),
                     'class': 'btn-primary'
                 });
@@ -339,7 +339,7 @@ Wirecloud.ui.WiringEditor = (function () {
         }.bind(this));
 
         this.behaviourEngine.addEventListener('create', function (eventTarget) {
-            var btnSave = new StyledElements.StyledButton({
+            var btnSave = new StyledElements.Button({
                 'text': gettext("New behaviour"),
                 'class': 'btn-primary'
             });
@@ -459,7 +459,7 @@ Wirecloud.ui.WiringEditor = (function () {
             this.behaviourEngine.toggleViewpoint();
         }.bind(this));
 
-        this.btnEmptyBehaviour = new StyledElements.StyledButton({
+        this.btnEmptyBehaviour = new StyledElements.Button({
             'iconClass': 'icon-eraser',
             'title': gettext("Empty behaviour"),
             'class': "btn-empty-behaviour"
@@ -483,7 +483,7 @@ Wirecloud.ui.WiringEditor = (function () {
             dialog.show();
         }.bind(this));
 
-        this.btnRemoveBehaviour = new StyledElements.StyledButton({
+        this.btnRemoveBehaviour = new StyledElements.Button({
             'iconClass': 'icon-trash',
             'title': gettext("Remove behaviour"),
             'class': "btn-remove-behaviour btn-danger"

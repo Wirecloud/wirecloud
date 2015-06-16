@@ -40,7 +40,7 @@
                             if (typeof tooltip === 'function') {
                                 tooltip = tooltip(resource);
                             }
-                            var button = new StyledElements.StyledButton({
+                            var button = new StyledElements.Button({
                                 'class': 'mainbutton btn-primary',
                                 'iconClass': this.resourceButtonIconClass,
                                 'title': tooltip

@@ -20,7 +20,7 @@
         Wirecloud.ui.WindowMenu.call(this, title, extra_class);
 
         // Close button
-        this.button = new StyledElements.StyledButton({
+        this.button = new StyledElements.Button({
             text: gettext('Close'),
             'class': 'btn-primary'
         });

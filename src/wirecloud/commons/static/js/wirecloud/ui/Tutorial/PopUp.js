@@ -47,7 +47,7 @@
 
         // Close button
         if (options.closable) {
-            this.cancelButton = new StyledElements.StyledButton({
+            this.cancelButton = new StyledElements.Button({
                 'class': 'pop-up-close',
                 'iconClass': 'icon-remove',
                 'plain': true

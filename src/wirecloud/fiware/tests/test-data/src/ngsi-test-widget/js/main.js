@@ -101,7 +101,7 @@
     };
 
     setTimeout(function () {
-        button = new StyledElements.StyledButton({
+        button = new StyledElements.Button({
             'text': 'Pass integration tests',
             'class': 'btn-primary'
         });

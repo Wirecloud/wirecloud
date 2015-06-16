@@ -162,7 +162,7 @@
         this.wrapperElement.getCenterContainer().appendChild(this.summary_addon);
 
         // Settings button
-        this.buttonElement = new StyledElements.StyledButton({iconClass: 'icon-cogs'});
+        this.buttonElement = new StyledElements.Button({iconClass: 'icon-cogs'});
         this.buttonElement.addEventListener('click', function () {
             var fields = LAYOUT_FIELDS_MAPPING[this.layout.type];
             var dialog = new Wirecloud.ui.FormWindowMenu(fields, gettext('Layout configuration'), 'layout_settings');

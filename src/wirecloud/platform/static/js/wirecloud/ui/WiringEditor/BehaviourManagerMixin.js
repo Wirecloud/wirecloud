@@ -34,13 +34,13 @@ Wirecloud.ui.WiringEditor.BehaviourManagerMixin = (function () {
         titleElement.className = "panel-title";
         titleElement.textContent = gettext("Identified behaviours");
 
-        this.btnEnable = new StyledElements.StyledButton({
+        this.btnEnable = new StyledElements.Button({
             'title': gettext("Disabled"),
             'class': "btn-enable-behaviours",
             'iconClass': 'icon-lock'
         });
 
-        this.btnCreate = new StyledElements.StyledButton({
+        this.btnCreate = new StyledElements.Button({
             'title': gettext("New behaviour"),
             'class': "btn-create-behaviour",
             'iconClass': 'icon-plus'

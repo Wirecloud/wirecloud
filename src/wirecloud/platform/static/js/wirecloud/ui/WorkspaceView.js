@@ -39,7 +39,7 @@
         this.wallet = new Wirecloud.ui.MACWallet();
         this.walletButton = this.buildAddWidgetButton();
 
-        this.wiringButton = new StyledElements.StyledButton({
+        this.wiringButton = new StyledElements.Button({
             'class': "btn-display-wiring-view",
             'iconClass': 'icon-puzzle-piece',
             'title': gettext('Wiring')
@@ -48,7 +48,7 @@
             LayoutManagerFactory.getInstance().changeCurrentView('wiring');
         });
 
-        this.myresourcesButton = new StyledElements.StyledButton({
+        this.myresourcesButton = new StyledElements.Button({
             'iconClass': 'icon-archive',
             'title': gettext('My Resources')
         });
@@ -56,7 +56,7 @@
             LayoutManagerFactory.getInstance().changeCurrentView('myresources');
         });
 
-        this.marketButton = new StyledElements.StyledButton({
+        this.marketButton = new StyledElements.Button({
             'iconClass': 'icon-shopping-cart',
             'title': gettext('Marketplace')
         });
@@ -92,7 +92,7 @@
     WorkspaceView.prototype.view_name = 'workspace';
 
     WorkspaceView.prototype.buildAddWidgetButton = function buildAddWidgetButton() {
-        var button = new StyledElements.StyledButton({
+        var button = new StyledElements.Button({
             'class': 'btn-primary',
             'iconClass': 'icon-plus',
             'title': gettext('Add widget')

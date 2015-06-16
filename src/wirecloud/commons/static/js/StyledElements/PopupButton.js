@@ -45,7 +45,7 @@
             return;
         }
 
-        StyledElements.StyledButton.call(this, options);
+        StyledElements.Button.call(this, options);
 
         if (options.menu != null) {
             this.popup_menu = options.menu;
@@ -66,7 +66,7 @@
         this._visibilityChangeListener = visibilityChangeListener.bind(this);
         this.popup_menu.addEventListener('visibilityChange', this._visibilityChangeListener);
     };
-    PopupButton.prototype = new StyledElements.StyledButton({extending: true});
+    PopupButton.prototype = new StyledElements.Button({extending: true});
     PopupButton.prototype.PopupMenu = StyledElements.PopupMenu;
 
     PopupButton.prototype.getPopupMenu = function getPopupMenu() {
@@ -82,7 +82,7 @@
     };
 
     PopupButton.prototype.destroy = function destroy() {
-        StyledElements.StyledButton.prototype.destroy.call(this);
+        StyledElements.Button.prototype.destroy.call(this);
 
         if (this._owned_popup_menu) {
             this.popup_menu.destroy();

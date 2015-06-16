@@ -584,7 +584,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             with myresources.search_in_results('Test') as test_widget:
 
-                operations = [operation.text for operation in test_widget.details.find_elements_by_css_selector('.advanced_operations .styled_button')]
+                operations = [operation.text for operation in test_widget.details.find_elements_by_css_selector('.advanced_operations .se-btn')]
                 if admin:
                     self.assertIn('Delete all versions', operations)
                 else:

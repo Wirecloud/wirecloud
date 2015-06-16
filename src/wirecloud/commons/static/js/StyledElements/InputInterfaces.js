@@ -534,13 +534,13 @@
 
         entry.form.insertInto(entry.wrapper);
 
-        entry.addRowButton = new StyledElements.StyledButton({text: '+'});
+        entry.addRowButton = new StyledElements.Button({text: '+'});
         entry.addRowButton.addEventListener('click', function () {
             this._addEntry();
         }.bind(this));
         entry.addRowButton.insertInto(entry.wrapper);
 
-        entry.removeRowButton = new StyledElements.StyledButton({text: '-'});
+        entry.removeRowButton = new StyledElements.Button({text: '-'});
         entry.removeRowButton.addEventListener('click', function () {
             this.control._removeEntry(entry);
         }.bind({control: this, entry: entry}));

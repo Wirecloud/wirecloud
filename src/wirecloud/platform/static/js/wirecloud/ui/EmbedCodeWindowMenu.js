@@ -32,7 +32,7 @@
         this.code.insertInto(this.windowContent);
 
         // Accept button
-        this.button = new StyledElements.StyledButton({
+        this.button = new StyledElements.Button({
             text: gettext('Accept'),
             'class': 'btn-primary'
         });
