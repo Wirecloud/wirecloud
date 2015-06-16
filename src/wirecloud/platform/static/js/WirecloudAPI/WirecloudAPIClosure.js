@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -28,6 +28,7 @@
     // Remove reference to the internal wirecloud resource
     delete MashupPlatform.resource;
 
+    Object.preventExtensions(MashupPlatform.mashup);
     Object.preventExtensions(MashupPlatform);
 
     // Remove link to wirecloud

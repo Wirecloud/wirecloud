@@ -90,8 +90,6 @@
     });
     Object.preventExtensions(window.MashupPlatform.mashup.context);
 
-    Object.preventExtensions(window.MashupPlatform.mashup);
-
     // Prefs Module
     Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
     Object.defineProperty(window.MashupPlatform.prefs, 'get', {

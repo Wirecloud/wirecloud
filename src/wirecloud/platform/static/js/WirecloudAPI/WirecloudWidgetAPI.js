@@ -37,7 +37,7 @@
         current = tmp[i];
         current = current.split("=", 2);
         if (current[0] === "id") {
-            id = parseInt(current[1], 10);
+            id = current[1];
             break;
         }
     }

@@ -98,6 +98,9 @@
 
             for (var i = 0; i < keys.length; i++) {
                 iWidget = this.iWidgetsByCode[keys[i]];
+                if (iWidget.internal_iwidget instanceof Wirecloud.VolatileWidget) {
+                    continue;
+                }
                 iWidgetInfo = {};
                 position = iWidget.getPosition();
                 iWidgetInfo.id = iWidget.id;

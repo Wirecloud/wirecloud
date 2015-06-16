@@ -220,6 +220,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         'ApplicationMashup': '1.0',
         'StyledElements': '0.5',
         'FullscreenWidget': '0.5',
+        'DashboardManagement': '1.0',
     }
 
     def get_platform_context_definitions(self):
@@ -401,6 +402,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/TaskMonitorModel.js',
             'js/wirecloud/PropertyCommiter.js',
             'js/wirecloud/IWidget.js',
+            'js/wirecloud/VolatileWidget.js',
             'js/wirecloud/Wiring.js',
             'js/wirecloud/LogManager.js',
             'js/wirecloud/Widget/LogManager.js',
@@ -584,9 +586,18 @@ class WirecloudCorePlugin(WirecloudPlugin):
             return common
 
     def get_widget_api_extensions(self, view, features):
-        return (
-            'js/WirecloudAPI/StyledElements.js',
-        )
+        extensions = ['js/WirecloudAPI/StyledElements.js']
+
+        if 'DashboardManagement' in features:
+            extensions.append('js/WirecloudAPI/DashboardManagementAPI.js')
+
+        return extensions
+
+    def get_operator_api_extensions(self, view, features):
+        if 'DashboardManagement' in features:
+            return ('js/WirecloudAPI/DashboardManagementAPI.js',)
+        else:
+            return ()
 
     def get_proxy_processors(self):
         return ('wirecloud.proxy.processors.SecureDataProcessor',)

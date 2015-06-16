@@ -68,7 +68,8 @@ function IWidget(widget, layout, description) {
         this.height = layout.getMenubarSize().inLU;
     }
 
-    this.internal_iwidget = new Wirecloud.IWidget(
+    var widget_class = description.volatile ? Wirecloud.VolatileWidget : Wirecloud.IWidget;
+    this.internal_iwidget = new widget_class(
         widget,
         layout.dragboard.tab,
         description
