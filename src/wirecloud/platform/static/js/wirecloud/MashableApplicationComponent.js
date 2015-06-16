@@ -26,7 +26,7 @@
     "use strict";
 
     var MashableApplicationComponent = function MashableApplicationComponent(desc) {
-        var vendor, name, version, uri, title, description, changelog, i, inputs, outputs;
+        var vendor, name, version, uri, title, description, changelog, i, inputs, outputs, preference;
 
         // Vendor
         if (!('vendor' in desc) || desc.vendor.trim() === '') {
@@ -92,6 +92,21 @@
                 file_path: ''
             })
         });
+
+        // Preferences
+        this.preferences = {};
+        this.preferenceList = [];
+        for (i = 0; i < desc.preferences.length; i++) {
+            preference = new Wirecloud.UserPrefDef(desc.preferences[i].name, desc.preferences[i].type, desc.preferences[i]);
+            this.preferences[preference.name] = preference;
+            this.preferenceList.push(preference);
+        }
+        Object.freeze(this.preferences);
+        Object.freeze(this.preferenceList);
+
+        // Requirements
+        this.requirements = desc.requirements;
+        Object.freeze(this.requirements);
 
         // Inputs
         if (desc.wiring.inputs == null) {

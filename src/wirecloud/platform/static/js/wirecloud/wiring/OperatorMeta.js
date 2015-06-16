@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) CoNWeT Lab., 2012-2015 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,21 +26,12 @@
     "use strict";
 
     var OperatorMeta = function OperatorMeta(desc) {
-        var prefList, prefs, pref, i;
-
+        if (desc.type !== 'operator') {
+            throw new TypeError('Invalid operator description');
+        }
         Wirecloud.MashableApplicationComponent.call(this, desc);
 
-        prefList = desc.preferences;
-        if (!Array.isArray(prefList)) {
-            prefList = [];
-        }
-        prefs = {};
-        for (i = 0; i < prefList.length; i += 1) {
-            pref = prefList[i] = new Wirecloud.UserPrefDef(prefList[i].name, prefList[i].type, prefList[i]);
-            prefs[pref.name] = pref;
-        }
-        Object.defineProperty(this, 'preferences', {value: prefs});
-        Object.defineProperty(this, 'preferenceList', {value: prefList});
+        Object.freeze(this);
     };
 
     OperatorMeta.prototype.instantiate = function instantiate(id, operator_status, wiring) {

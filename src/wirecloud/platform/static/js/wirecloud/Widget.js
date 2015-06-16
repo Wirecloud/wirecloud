@@ -41,17 +41,6 @@
         this.code_content_type = data.contents.contenttype;
         this.doc = data.doc;
 
-        // Preferences
-        this.preferences = {};
-        this.preferenceList = [];
-        for (i = 0; i < data.preferences.length; i++) {
-            preference = new Wirecloud.UserPrefDef(data.preferences[i].name, data.preferences[i].type, data.preferences[i]);
-            this.preferences[preference.name] = preference;
-            this.preferenceList.push(preference);
-        }
-        Object.freeze(this.preferences);
-        Object.freeze(this.preferenceList);
-
         // Properties
         this.properties = {}
         this.propertyList = [];
@@ -65,10 +54,6 @@
 
         this.default_width = data.widget_width;
         this.default_height = data.widget_height;
-
-        // Requirements
-        this.requirements = data.requirements;
-        Object.freeze(this.requirements);
 
         /* FIXME */
         this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
