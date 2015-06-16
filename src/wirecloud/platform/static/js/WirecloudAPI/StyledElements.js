@@ -49,7 +49,7 @@
         'StyledPasswordField': window.parent.StyledElements.StyledPasswordField,
         'StyledRadioButton': window.parent.StyledElements.StyledRadioButton,
         'Select': window.parent.StyledElements.Select,
-        'StyledSelect': window.parent.StyledElements.Select, // backwards compatibility alias
+        'StyledSelect': window.parent.StyledElements.Select, // backward compatibility alias
         'StyledTextArea': window.parent.StyledElements.StyledTextArea,
         'PaginatedSource': window.parent.StyledElements.PaginatedSource,
         'PaginationInterface': window.parent.StyledElements.PaginationInterface,
@@ -269,7 +269,7 @@
     StyledElements.Button = extend(RealStyledElements.Button, {
         Tooltip: StyledElements.Tooltip
     }, {extending: true});
-    StyledElements.StyledButton = StyledElements.Button; // Alias for backwards compatibility
+    StyledElements.StyledButton = StyledElements.Button; // Alias for backward compatibility
 
     /* ToggleButton */
     StyledElements.ToggleButton = extend(RealStyledElements.ToggleButton, {
@@ -283,16 +283,17 @@
     }, {extending: true});
 
     /* Tab */
-    StyledElements.Tab = extend(RealStyledElements.StyledNotebook.prototype.Tab, {
+    StyledElements.Tab = extend(RealStyledElements.Notebook.prototype.Tab, {
         Button: StyledElements.Button,
         Tooltip: StyledElements.Tooltip
     });
 
     /* Notebook */
-    StyledElements.StyledNotebook = extend(RealStyledElements.StyledNotebook, {
+    StyledElements.Notebook = extend(RealStyledElements.Notebook, {
         Tab: StyledElements.Tab,
         Button: StyledElements.Button
     });
+    StyledElements.StyledNotebook = StyledElements.Notebook; // Alias for backward compatibility
 
 
     Object.freeze(window.StyledElements);

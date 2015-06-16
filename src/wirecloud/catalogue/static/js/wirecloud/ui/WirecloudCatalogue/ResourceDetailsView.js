@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -37,7 +37,7 @@
                 'details': function (options, context) {
                     var details, i, entries, versions;
 
-                    details = new StyledElements.StyledNotebook();
+                    details = new StyledElements.Notebook();
                     details.addEventListener('changed', function (notebook, oldTab, newTab, context) {
                         if (context == null || context.init !== true) {
                             var new_status = this.mainview.buildStateData();

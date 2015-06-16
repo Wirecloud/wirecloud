@@ -124,7 +124,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/ToggleButton.js',
     'js/StyledElements/Pills.js',
     'js/StyledElements/Tab.js',
-    'js/StyledElements/StyledNotebook.js',
+    'js/StyledElements/Notebook.js',
     'js/StyledElements/Alternative.js',
     'js/StyledElements/Alternatives.js',
     'js/StyledElements/HorizontalLayout.js',

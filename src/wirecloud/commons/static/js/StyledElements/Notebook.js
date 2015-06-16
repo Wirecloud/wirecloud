@@ -45,7 +45,7 @@
      *      - tabInsertion: evento lanzado cuando se crea e inserta un nuevo tab en
      *        el notebook.
      */
-    var StyledNotebook = function StyledNotebook(options) {
+    var Notebook = function Notebook(options) {
         var tabWrapper;
 
         StyledElements.StyledElement.call(this, ['change', 'changed', 'tabDeletion', 'tabInsertion', 'newTab']);
@@ -211,10 +211,10 @@
             }
         });
     };
-    StyledNotebook.prototype = new StyledElements.StyledElement();
+    Notebook.prototype = new StyledElements.StyledElement();
 
-    StyledNotebook.prototype.Button = StyledElements.Button;
-    StyledNotebook.prototype.Tab = StyledElements.Tab;
+    Notebook.prototype.Button = StyledElements.Button;
+    Notebook.prototype.Tab = StyledElements.Tab;
 
     /**
      * @private
@@ -298,18 +298,18 @@
     /**
      * Desplaza las pestañas a la izquierda.
      */
-    StyledNotebook.prototype.shiftLeftTabs = function shiftLeftTabs() {
+    Notebook.prototype.shiftLeftTabs = function shiftLeftTabs() {
         this.transitionsQueue.addCommand({type: 'shiftLeft'});
     };
 
     /**
      * Desplaza las pestañas a la derecha.
      */
-    StyledNotebook.prototype.shiftRightTabs = function shiftRightTabs() {
+    Notebook.prototype.shiftRightTabs = function shiftRightTabs() {
         this.transitionsQueue.addCommand({type: 'shiftRight'});
     };
 
-    StyledNotebook.prototype.insertInto = function insertInto(element, refElement) {
+    Notebook.prototype.insertInto = function insertInto(element, refElement) {
         StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
 
         this.repaint();
@@ -331,7 +331,7 @@
      *                - title: indica el "title" inicial que tendrá el Tab (ver el
      *                  método Tab.setTitle).
      */
-    StyledNotebook.prototype.createTab = function createTab(options) {
+    Notebook.prototype.createTab = function createTab(options) {
         var defaultOptions = {
             'initiallyVisible': false,
             'name': '',
@@ -386,7 +386,7 @@
      * @param id identificador de la pestaña que se quiere recuperar.
      * @returns {Tab}
      */
-    StyledNotebook.prototype.getTab = function getTab(id) {
+    Notebook.prototype.getTab = function getTab(id) {
         return this.tabsById[id];
     };
 
@@ -396,7 +396,7 @@
      * @param id identificador de la pestaña que se quiere recuperar.
      * @returns {Tab}
      */
-    StyledNotebook.prototype.getTabByLabel = function getTabByLabel(label) {
+    Notebook.prototype.getTabByLabel = function getTabByLabel(label) {
         for (var i = 0; i < this.tabs.length; i++) {
             if (this.tabs[i].nameText === label) {
                 return this.tabs[i];
@@ -410,7 +410,7 @@
      *
      * @returns {StyledElements.Tab}
      */
-    StyledNotebook.prototype.getVisibleTab = function getVisibleTab() {
+    Notebook.prototype.getVisibleTab = function getVisibleTab() {
         return this.visibleTab;
     };
 
@@ -421,7 +421,7 @@
      * identificador de pestaña.
      * @returns {Tab}
      */
-    StyledNotebook.prototype.getTabByIndex = function getTabByIndex(index) {
+    Notebook.prototype.getTabByIndex = function getTabByIndex(index) {
         return this.tabs[index];
     };
 
@@ -432,7 +432,7 @@
      * @param id identificador de la pestaña de la que se quiere conocer su posición
      * actual.
      */
-    StyledNotebook.prototype.getTabIndex = function getTabIndex(id) {
+    Notebook.prototype.getTabIndex = function getTabIndex(id) {
         for (var i = 0; i < this.tabs.length; i++) {
             if (this.tabs[i].tabId == id) {
                 return i;
@@ -445,7 +445,7 @@
      * Elimina del notebook la pestaña indicada mediante su identificador.
      * @param id identificador de la pestaña que se quiere eliminar.
      */
-    StyledNotebook.prototype.removeTab = function removeTab(id) {
+    Notebook.prototype.removeTab = function removeTab(id) {
         var index, tabToExtract, nextTab;
 
         if (!this.tabsById[id]) {
@@ -485,7 +485,7 @@
      *
      * @param {Number|Tab} tab instancia o identificador de la pestaña que se quiere eliminar.
      */
-    StyledNotebook.prototype.goToTab = function goToTab(tab, options) {
+    Notebook.prototype.goToTab = function goToTab(tab, options) {
         var newTab, oldTab;
 
         if (tab instanceof StyledElements.Tab) {
@@ -531,7 +531,7 @@
     /**
      * Devuelve el número de pestañas disponibles actualmente en este notebook.
      */
-    StyledNotebook.prototype.getNumberOfTabs = function getNumberOfTabs() {
+    Notebook.prototype.getNumberOfTabs = function getNumberOfTabs() {
         return this.tabs.length;
     };
 
@@ -539,14 +539,14 @@
      * Establece el foco en la pestaña indicada, esto es, fuerza a que sea visible
      * la pestaña en el area de pestañas del notebook.
      */
-    StyledNotebook.prototype.focus = function focus(tabId) {
+    Notebook.prototype.focus = function focus(tabId) {
         this.transitionsQueue.addCommand({type: 'focus', tabId: tabId});
     };
 
     /**
      * @private
      */
-    StyledNotebook.prototype._computeMaxTabElementWidth = function _computeMaxTabElementWidth() {
+    Notebook.prototype._computeMaxTabElementWidth = function _computeMaxTabElementWidth() {
         var tabAreaWidth, tabElement, computedStyle, tabAreaComputedStyle;
 
         if (this.tabs.length === 0) {
@@ -593,7 +593,7 @@
         }
     };
 
-    StyledNotebook.prototype.repaint = function repaint(temporal) {
+    Notebook.prototype.repaint = function repaint(temporal) {
         var i, height;
         temporal = temporal !== undefined ? temporal: false;
 
@@ -630,7 +630,7 @@
     /**
      * Devuelve <code>true</code> si este Componente está deshabilitado.
      */
-    StyledNotebook.prototype.isDisabled = function isDisabled() {
+    Notebook.prototype.isDisabled = function isDisabled() {
         return this.disabledLayer != null;
     };
 
@@ -639,7 +639,7 @@
      * los usuarios no pueden realizar ninguna operación de ningún componente
      * incluido dentro de este.
      */
-    StyledNotebook.prototype.setDisabled = function setDisabled(disabled) {
+    Notebook.prototype.setDisabled = function setDisabled(disabled) {
         if (this.isDisabled() == disabled) {
             // Nothing to do
             return;
@@ -656,15 +656,15 @@
         this.enabled = !disabled;
     };
 
-    StyledNotebook.prototype.enable = function enable() {
+    Notebook.prototype.enable = function enable() {
         this.setDisabled(false);
     };
 
-    StyledNotebook.prototype.disable = function disable() {
+    Notebook.prototype.disable = function disable() {
         this.setDisabled(true);
     };
 
-    StyledNotebook.prototype.clear = function clear() {
+    Notebook.prototype.clear = function clear() {
         this.tabs = [];
         this.tabsById = [];
         this.visibleTab = null;
@@ -676,7 +676,7 @@
         enableDisableButtons.call(this);
     };
 
-    StyledNotebook.prototype.addButton = function addButton(button, position) {
+    Notebook.prototype.addButton = function addButton(button, position) {
         if (!(button instanceof StyledElements.Button) && !(button instanceof StyledElements.Select)) {
             throw new TypeError();
         }
@@ -693,7 +693,7 @@
         }
     };
 
-    StyledNotebook.prototype.requestFullscreen = function requestFullscreen() {
+    Notebook.prototype.requestFullscreen = function requestFullscreen() {
         if ('requestFullscreen' in this.wrapperElement) {
             this.wrapperElement.requestFullscreen();
         } else if ('msRequestFullscreen' in this.wrapperElement) {
@@ -705,7 +705,7 @@
         }
     };
 
-    StyledNotebook.prototype.exitFullscreen = function exitFullscreen() {
+    Notebook.prototype.exitFullscreen = function exitFullscreen() {
         if (this.fullscreen !== true) {
             return;
         }
@@ -721,7 +721,7 @@
         }
     };
 
-    StyledNotebook.prototype.destroy = function destroy() {
+    Notebook.prototype.destroy = function destroy() {
         if (StyledElements.Utils.XML.isElement(this.wrapperElement.parentNode)) {
             StyledElements.Utils.removeFromParent(this.wrapperElement);
         }
@@ -733,6 +733,6 @@
         StyledElements.StyledElement.prototype.destroy.call(this);
     };
 
-    StyledElements.StyledNotebook = StyledNotebook;
+    StyledElements.Notebook = Notebook;
 
 })();

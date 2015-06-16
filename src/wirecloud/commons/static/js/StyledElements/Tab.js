@@ -33,7 +33,7 @@
             return;
         }
 
-        if (!(notebook instanceof StyledElements.StyledNotebook)) {
+        if (!(notebook instanceof StyledElements.Notebook)) {
             throw new Error("Invalid notebook argument");
         }
 
