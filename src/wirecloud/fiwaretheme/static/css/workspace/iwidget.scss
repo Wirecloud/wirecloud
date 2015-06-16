@@ -1,11 +1,13 @@
 @import 'variables';
+@import 'compass/css3';
 
 .iwidget {
     position: absolute;
+    background: rgba($body-bg, 0.9);
+    border-radius: $border-radius-base $border-radius-base 0px 0px;
     -moz-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in;
     -webkit-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in;
     transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in;
-    background: white;
     border-color: #C2CBD2;
     overflow: visible;
 }
@@ -17,38 +19,33 @@
 }
 
 .iwidget > .widget_menu {
-    background: transparent;
-    color: #4C5054;
-    font-size: 24px;
+    color: #888;
+    font-size: 20px;
     cursor: move;
-    line-height: 30px;
+    line-height: 22px;
     position: relative;
+    padding-top: 1px;
+    padding-bottom: 7px;
 }
 
 .iwidget > .widget_menu > span {
-    font-family: Comfortaa;
-    display: inline-block;
+    display: inline;
 }
 
 .iwidget > .widget_menu > .buttons {
     display: block;
+    font-size: 16px;
+    line-height: 23px;
     position: absolute;
     top: 0px;
     right: 0px;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgb(255, 255, 255) 38px, rgb(255, 255, 255));
-    border-radius: 4px;
+    background: linear-gradient(to right, rgba($body-bg, 0), rgb($body-bg) 38px, rgb($body-bg));
+    border-radius: $border-radius-base;
     padding: 0px 3px 0px 38px;
     opacity: 0;
     white-space: nowrap;
-    -moz-transition-property: opacity;
-    -moz-transition-duration: 1s;
-    -webkit-transition-property: opacity;
-    -webkit-transition-duration: 1s;
-    -o-transition-property: opacity;
-    -o-transition-duration: 1s;
-    transition-property: opacity;
-    transition-duration: 1s;
-    line-height: 28px;
+    @include transition-property(opacity);
+    @include transition-duration(1s);
 }
 
 .iwidget > .widget_menu:hover > .buttons {
@@ -56,16 +53,9 @@
 }
 
 .iwidget > .widget_menu .styled_button {
-    font-size: 75%;
     color: rgba(136, 136, 136, 0.6);
-    -moz-transition-property: color;
-    -moz-transition-duration: 1s;
-    -webkit-transition-property: color;
-    -webkit-transition-duration: 1s;
-    -o-transition-property: color;
-    -o-transition-duration: 1s;
-    transition-property: color;
-    transition-duration: 1s;
+    @include transition-property(color);
+    @include transition-duration(1s);
 }
 
 .iwidget > .widget_menu .styled_button:focus, .iwidget > .widget_menu .styled_button:hover {
@@ -73,13 +63,17 @@
 }
 
 .iwidget > .widget_menu > .infobuttons {
+    display: block;
+    font-size: 16px;
+    line-height: 23px;
     padding: 0px 38px 0px 3px;
-    background: linear-gradient(to left, rgba(255, 255, 255, 0), rgb(255, 255, 255) 38px, rgb(255, 255, 255));
+    background: linear-gradient(to left, rgba($body-bg, 0), rgb($body-bg) 38px, rgb($body-bg));
     position: absolute;
     top: 0px;
     left: 0px;
     margin: 0px;
-    line-height: 28px;
+    @include transition-property(opacity);
+    @include transition-duration(1s);
 }
 
 .iwidget > .widget_menu .errorbutton.disabled {
@@ -88,6 +82,11 @@
 
 .iwidget > .widget_shadow {
     background: $widget-bg;
+    box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
+    border-radius: $border-radius-base;
+    -moz-transition: box-shadow 0.7s linear;
+    -webkit-transition: box-shadow 0.7s linear;
+    transition: box-shadow 0.7s linear;
 }
 
 .iwidget > .widget_shadow > .widget_wrapper {
@@ -95,26 +94,69 @@
     overflow: hidden;
     width: auto;
     border-width: 1px 1px 0px 1px;
-    border-radius: 4px 4px 0px 0px;
+    border-radius: $border-radius-base $border-radius-base 0px 0px;
     border-style: solid;
     border-color: #DDD;
+    -moz-transition: border-color 0.7s ease-in;
+    -webkit-transition: border-color 0.7s ease-in;
+    transition: border-color 0.7s ease-in;
 }
 
 .iwidget > .widget_shadow > .widget_wrapper > iframe {
+    border-radius: ($border-radius-base - 1) ($border-radius-base - 1) 0px 0px;
     width: 100%;
     border: none;
 }
 
 .iwidget > .widget_shadow > .statusBar {
-    background: #DDD;
     height: 1px;
     border: 1px solid #DDD;
-    border-radius: 0px 0px 4px 4px;
+    border-radius: 0px 0px $border-radius-base $border-radius-base;
     background: #DDD;
+    -moz-transition: border-color 0.7s ease-in, background-color 0.7s ease-in;
+    -webkit-transition: border-color 0.7s ease-in, background-color 0.7s ease-in;
+    transition: border-color 0.7s ease-in, background-color 0.7s ease-in;
 }
 
-.fulldragboard .statusBar {
+.iwidget.highlighted > .widget_shadow {
+    -webkit-animation: highlight_iwidget 2s infinite linear;
+    -moz-animation: highlight_iwidget 2s infinite linear;
+    -o-animation: highlight_iwidget 2s infinite linear;
+    animation: highlight_iwidget 2s infinite linear;
+}
+
+.iwidget.highlighted > .widget_shadow > .widget_wrapper {
+    border-color: rgba(82, 168, 236, 0.8);
+}
+
+.iwidget.highlighted > .widget_shadow > .statusBar {
+    border-color: rgba(82, 168, 236, 0.8);
+    background-color: rgb(82, 168, 236);
+}
+
+@-webkit-keyframes highlight_iwidget {
+    0% {
+        box-shadow: 0 0 8px 0px rgba(82, 168, 236, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 8px 4px rgba(82, 168, 236, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 8px 0px rgba(82, 168, 236, 0.6);
+    }
+}
+
+.fulldragboard .iwidget > .widget_shadow > .statusBar {
   display: none;
+}
+
+.iwidget .bottomResizeHandle {
+    position: absolute;
+    height: 10px;
+    bottom: -5px;
+    left: 48px;
+    right: 48px;
+    cursor: s-resize;
 }
 
 .iwidget .leftResizeHandle {
@@ -135,19 +177,19 @@
     cursor: se-resize;
 }
 
-.iwidget div.inUse {
+.iwidget .inUse {
     width: 200%;
     height: 200%;
 }
 
-.iwidget div.leftResizeHandle.inUse {
+.iwidget .leftResizeHandle.inUse {
     right: 0px;
     top: 0px;
     bottom: auto;
     left: auto;
 }
 
-.iwidget div.rightResizeHandle.inUse {
+.iwidget .rightResizeHandle.inUse {
     left: 0px;
     top: 0px;
     bottom: auto;
@@ -155,8 +197,8 @@
 }
 
 /*div.dragboard.fixed*/
-div.fixed div.iwidget div.leftResizeHandle,
-  div.fixed div.iwidget div.rightResizeHandle,
+div.fixed .iwidget .leftResizeHandle,
+  div.fixed .iwidget .rightResizeHandle,
 {
   display: none;
 }
