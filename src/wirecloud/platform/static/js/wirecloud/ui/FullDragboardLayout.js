@@ -76,20 +76,19 @@
         return this.dragboard.dragboardElement.getBoundingClientRect().top;
     };
 
-    FullDragboardLayout.prototype.adaptColumnOffset = function adaptColumnOffset(pixels) {
+    FullDragboardLayout.prototype.adaptColumnOffset = function adaptColumnOffset(size) {
         return new Wirecloud.ui.MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().left, 0);
     };
 
-    FullDragboardLayout.prototype.adaptRowOffset = function adaptRowOffset(pixels) {
+    FullDragboardLayout.prototype.adaptRowOffset = function adaptRowOffset(size) {
         return new Wirecloud.ui.MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().top, 0);
     };
 
-    FullDragboardLayout.prototype.adaptHeight = function adaptHeight(contentHeight, fullSize, oldLayout) {
-        var diff = fullSize - contentHeight;
-        return new Wirecloud.ui.MultiValuedSize(contentHeight - diff, 1);
+    FullDragboardLayout.prototype.adaptHeight = function adaptHeight(size) {
+        return new Wirecloud.ui.MultiValuedSize(this.getHeight(), 1);
     };
 
-    FullDragboardLayout.prototype.adaptWidth = function adaptWidth(contentWidth, fullSize) {
+    FullDragboardLayout.prototype.adaptWidth = function adaptWidth(size) {
         return new Wirecloud.ui.MultiValuedSize(this.getWidth(), 1);
     };
 
