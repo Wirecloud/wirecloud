@@ -104,6 +104,5 @@
     };
 
     Wirecloud.WidgetMeta = WidgetMeta;
-    Wirecloud.Widget = {};
 
 })();

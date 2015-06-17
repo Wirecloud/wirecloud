@@ -402,7 +402,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/TaskMonitorModel.js',
             'js/wirecloud/PropertyCommiter.js',
             'js/wirecloud/WidgetBase.js',
-            'js/wirecloud/IWidget.js',
+            'js/wirecloud/Widget.js',
             'js/wirecloud/VolatileWidget.js',
             'js/wirecloud/Wiring.js',
             'js/wirecloud/LogManager.js',

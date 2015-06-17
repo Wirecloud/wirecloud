@@ -38,7 +38,7 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
     this.element = null;
     this.content = null;
 
-    this.internal_iwidget = new Wirecloud.IWidget(
+    this.internal_iwidget = new Wirecloud.Widget(
         widget,
         dragboard.tab,
         description

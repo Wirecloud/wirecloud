@@ -84,17 +84,17 @@
 
     /**
      */
-    var IWidget = function IWidget(widget, tab, options) {
+    var Widget = function Widget(widget, tab, options) {
         Wirecloud.WidgetBase.call(this, widget, tab, options);
     };
-    Wirecloud.Utils.inherit(IWidget, Wirecloud.WidgetBase);
+    Wirecloud.Utils.inherit(Widget, Wirecloud.WidgetBase);
 
     /**
      * Renames this iWidget.
      *
      * @param {String} iwidgetName New name for this iWidget.
      */
-    IWidget.prototype.setName = function setName(new_name, options) {
+    Widget.prototype.setName = function setName(new_name, options) {
         var old_name = this.name;
 
         if (options == null) {
@@ -118,7 +118,7 @@
         }
     };
 
-    IWidget.prototype.remove = function remove(options) {
+    Widget.prototype.remove = function remove(options) {
         var url;
 
         if (options == null) {
@@ -141,7 +141,7 @@
     /**
      * This method must be called to avoid memory leaks caused by circular references.
      */
-    IWidget.prototype.destroy = function destroy() {
+    Widget.prototype.destroy = function destroy() {
 
         if (this.loaded) {
             this.events.unload.dispatch(this);
@@ -152,6 +152,6 @@
         this.logManager.close();
     };
 
-    Wirecloud.IWidget = IWidget;
+    Wirecloud.Widget = Widget;
 
 })();
