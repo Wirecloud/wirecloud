@@ -401,6 +401,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/TabPreferences.js',
             'js/wirecloud/TaskMonitorModel.js',
             'js/wirecloud/PropertyCommiter.js',
+            'js/wirecloud/WidgetBase.js',
             'js/wirecloud/IWidget.js',
             'js/wirecloud/VolatileWidget.js',
             'js/wirecloud/Wiring.js',
