@@ -88,7 +88,7 @@
 
         var key, i, preferences, iwidget_pref_info, properties, iwidget_prop_info;
 
-        if (typeof options !== 'object' || !(widget instanceof Wirecloud.Widget)) {
+        if (typeof options !== 'object' || !(widget instanceof Wirecloud.WidgetMeta)) {
             throw new TypeError();
         }
 

@@ -37,7 +37,7 @@
 
         switch (resource_data.type) {
         case 'widget':
-            resource = new Wirecloud.Widget(resource_data);
+            resource = new Wirecloud.WidgetMeta(resource_data);
             break;
         case 'operator':
             resource = new Wirecloud.wiring.OperatorMeta(resource_data);

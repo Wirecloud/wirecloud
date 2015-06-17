@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var Widget = function Widget(data) {
+    var WidgetMeta = function WidgetMeta(data) {
 
         var i, preference, property;
 
@@ -97,12 +97,13 @@
         Object.freeze(this);
     };
 
-    Widget.prototype.getInfoString = function getInfoString() {
+    WidgetMeta.prototype.getInfoString = function getInfoString() {
         var transObj = {vendor: this.vendor, name: this.name, version: this.version};
         var msg = gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
         return interpolate(msg, transObj, true);
     };
 
-    Wirecloud.Widget = Widget;
+    Wirecloud.WidgetMeta = WidgetMeta;
+    Wirecloud.Widget = {};
 
 })();

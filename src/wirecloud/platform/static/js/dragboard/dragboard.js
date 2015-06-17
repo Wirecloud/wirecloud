@@ -224,7 +224,7 @@
 
             Wirecloud.Utils.merge(options, options_);
 
-            if (!(widget instanceof Wirecloud.Widget)) {
+            if (!(widget instanceof Wirecloud.WidgetMeta)) {
                 throw new TypeError();
             }
 

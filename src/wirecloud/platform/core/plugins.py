@@ -386,7 +386,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/HistoryManager.js',
             'js/wirecloud/Version.js',
             'js/wirecloud/MashableApplicationComponent.js',
-            'js/wirecloud/Widget.js',
+            'js/wirecloud/WidgetMeta.js',
             'js/wirecloud/PreferenceDef.js',
             'js/wirecloud/PlatformPref.js',
             'js/wirecloud/PreferencesDef.js',
