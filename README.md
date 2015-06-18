@@ -6,6 +6,8 @@ WireCloud
 [![WireCloud downloads](https://img.shields.io/pypi/dm/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
 [![WireCloud continuous integration](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-pip-develop-python2.7/badge/icon)](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-pip-develop-python2.7/)
 
+This project is part of [FIWARE](http://www.fiware.org). Check it out in the [Catalogue](http://catalogue.fiware.org/enablers/application-mashup-wirecloud)
+
 Please visit https://conwet.fi.upm.es/wirecloud for more info.
 
 ## Install
