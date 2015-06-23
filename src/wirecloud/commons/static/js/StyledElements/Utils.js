@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -299,39 +299,6 @@ if (window.StyledElements == null) {
         var element2_rect = element2.getBoundingClientRect();
 
         return {x: element1_rect.left - element2_rect.left, y: element1_rect.top - element2_rect.top};
-    };
-
-    /**
-     * Devuelve la lista de acciones que se pueden realizar al propagar un evento dado.
-     */
-    Utils.getEventActions = function getEventActions(eventVar) {
-        var i, actions, contactSlots, nslotsByLabel, slotInfo, actionLabel;
-
-        contactSlots = eventVar.getFinalSlots();
-        nslotsByLabel = {};
-        actions = [];
-
-        for (i = 0; i < contactSlots.length; i += 1) {
-            slotInfo = contactSlots[i];
-
-            if (nslotsByLabel[slotInfo.action_label] == null) {
-                nslotsByLabel[slotInfo.action_label] = 1;
-            } else {
-                nslotsByLabel[slotInfo.action_label] += 1;
-            }
-        }
-
-        for (i = 0; i < contactSlots.length; i += 1) {
-            slotInfo = contactSlots[i];
-
-            actionLabel = slotInfo.action_label;
-            if (nslotsByLabel[actionLabel] > 1) {
-                actionLabel += ' (' + slotInfo.iGadgetName + ')';
-            }
-            actions.push({value: slotInfo, label: actionLabel});
-        }
-
-        return actions;
     };
 
     /*---------------------------------------------------------------------------*/

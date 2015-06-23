@@ -153,7 +153,7 @@
     Object.defineProperty(window.MashupPlatform.wiring, 'getReachableEndpoints', {
         value: function getReachableEndpoints(outputName) {
             if (outputName in resource.outputs) {
-                return resource.outputs[outputName].getFinalSlots();
+                return resource.outputs[outputName].getReachableEndpoints();
             } else {
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
                 throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);

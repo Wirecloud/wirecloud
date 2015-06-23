@@ -61,15 +61,15 @@
         return false;
     };
 
-    OperatorTargetEndpoint.prototype.getFinalSlots = function getFinalSlots() {
-        var action_label = this.meta.action_label, result;
-        if (!action_label || action_label === '') {
-            action_label = gettext('Use in %(endpointName)s');
-            action_label = interpolate(action_label, {endpointName: this.meta.label}, true);
+    OperatorTargetEndpoint.prototype.getReachableEndpoints = function getReachableEndpoints() {
+        var actionlabel = this.meta.actionlabel, result;
+        if (!actionlabel || actionlabel === '') {
+            actionlabel = gettext('Use in %(endpointName)s');
+            actionlabel = interpolate(actionlabel, {endpointName: this.meta.label}, true);
         }
 
         result = this.serialize();
-        result.action_label = action_label;
+        result.actionlabel = actionlabel;
 
         return [result];
     };

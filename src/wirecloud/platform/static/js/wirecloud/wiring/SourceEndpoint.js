@@ -74,17 +74,17 @@
         }
     };
 
-    SourceEndpoint.prototype.getFinalSlots = function getFinalSlots() {
-        var slots = [];
+    SourceEndpoint.prototype.getReachableEndpoints = function getReachableEndpoints() {
+        var endpoints = [];
 
         for (var i = 0; i < this.outputs.length; ++i) {
-            var currentSlots = this.outputs[i].getFinalSlots();
-            if (currentSlots && currentSlots.length > 0) {
-                slots = slots.concat(currentSlots);
+            var currentEndpoints = this.outputs[i].getReachableEndpoints();
+            if (currentEndpoints && currentEndpoints.length > 0) {
+                endpoints = endpoints.concat(currentEndpoints);
             }
         }
 
-        return slots;
+        return endpoints;
     };
 
     Wirecloud.wiring.SourceEndpoint = SourceEndpoint;

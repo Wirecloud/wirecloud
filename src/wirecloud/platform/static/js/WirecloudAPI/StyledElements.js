@@ -178,30 +178,30 @@
     /* SendMenuItems */
 
     var getEventActions = function getEventActions(endpoint) {
-        var i, actions, contactSlots, nslotsByLabel, slotInfo, actionLabel;
+        var i, actions, endpoints, endpointsByLabel, endpointInfo, actionLabel;
 
-        contactSlots = MashupPlatform.wiring.getReachableEndpoints(endpoint);
-        nslotsByLabel = {};
+        endpoints = endpoint.getReachableEndpoints();
+        endpointsByLabel = {};
         actions = [];
 
-        for (i = 0; i < contactSlots.length; i += 1) {
-            slotInfo = contactSlots[i];
+        for (i = 0; i < endpoints.length; i += 1) {
+            endpointInfo = endpoints[i];
 
-            if (nslotsByLabel[slotInfo.action_label] == null) {
-                nslotsByLabel[slotInfo.action_label] = 1;
+            if (endpointsByLabel[endpointInfo.actionlabel] == null) {
+                endpointsByLabel[endpointInfo.actionlabel] = 1;
             } else {
-                nslotsByLabel[slotInfo.action_label] += 1;
+                endpointsByLabel[endpointInfo.actionlabel] += 1;
             }
         }
 
-        for (i = 0; i < contactSlots.length; i += 1) {
-            slotInfo = contactSlots[i];
+        for (i = 0; i < endpoints.length; i += 1) {
+            endpointInfo = endpoints[i];
 
-            actionLabel = slotInfo.action_label;
-            if (nslotsByLabel[actionLabel] > 1) {
-                actionLabel += ' (' + slotInfo.iWidgetName + ')';
+            actionLabel = endpointInfo.actionlabel;
+            if (endpointsByLabel[actionLabel] > 1) {
+                actionLabel += ' (' + endpointInfo.iGadgetName + ')';
             }
-            actions.push({value: slotInfo, label: actionLabel});
+            actions.push({value: endpointInfo, label: actionLabel});
         }
 
         return actions;

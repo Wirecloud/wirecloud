@@ -33,7 +33,7 @@
         return this.id;
     };
 
-    Endpoint.prototype.getFinalSlots = function getFinalSlots() {
+    Endpoint.prototype.getReachableEndpoints = function getReachableEndpoints() {
         return null;
     };
 

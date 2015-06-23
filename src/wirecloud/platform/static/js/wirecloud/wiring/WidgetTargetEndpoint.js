@@ -61,17 +61,17 @@
         };
     };
 
-    WidgetTargetEndpoint.prototype.getFinalSlots = function getFinalSlots() {
+    WidgetTargetEndpoint.prototype.getReachableEndpoints = function getReachableEndpoints() {
 
-        var result, action_label = this.meta.action_label;
+        var result, actionlabel = this.meta.actionlabel;
 
-        if (!action_label || action_label === '') {
-            action_label = gettext('Use in %(endpointName)s');
-            action_label = interpolate(action_label, {endpointName: this.meta.label}, true);
+        if (!actionlabel || actionlabel === '') {
+            actionlabel = gettext('Use in %(endpointName)s');
+            actionlabel = interpolate(actionlabel, {endpointName: this.meta.label}, true);
         }
 
         result = this.serialize();
-        result.action_label = action_label;
+        result.actionlabel = actionlabel;
         result.iWidgetName = this.iwidget.name;
 
         return [result];
