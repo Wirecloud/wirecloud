@@ -35,7 +35,10 @@
             id: resource.id + '/' + counter++,
             name: widget_title,
             volatile: true,
-            readOnly: true,
+            permissions: {
+                close: true,
+                rename: false
+            },
             properties: options.properties,
             preferences: options.preferences,
             top: options.top,

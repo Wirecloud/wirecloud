@@ -50,6 +50,13 @@
         this.readOnly = options.readOnly;
         this.pending_events = [];
 
+        this.permissions = Wirecloud.Utils.merge({
+            'rename': true,
+            'move': true,
+            'resize': true,
+            'close': true
+        }, options.permissions);
+
         this.inputs = {};
         for (key in this.meta.inputs) {
             this.inputs[key] = new Wirecloud.wiring.WidgetTargetEndpoint(this, this.meta.inputs[key]);
@@ -143,17 +150,18 @@
 
         switch (action) {
         case "close":
-            return !this.readOnly && this.workspace.isAllowed('add_remove_iwidgets');
+            return this.permissions.close && this.workspace.isAllowed('add_remove_iwidgets');
         case "move":
         case "resize":
-            return !this.tab.readOnly && this.workspace.isAllowed('edit_layout');
+            return this.permissions[action] && !this.tab.readOnly && this.workspace.isAllowed('edit_layout');
         case "minimize":
             return this.workspace.isAllowed('edit_layout');
-        case "rename":
-        case "configure":
-            return true;
         default:
-            return false;
+            if (action in this.permissions) {
+                return this.permissions[action];
+            } else {
+                return false;
+            }
         }
     };
 
