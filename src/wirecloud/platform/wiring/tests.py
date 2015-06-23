@@ -649,7 +649,6 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
         return tuple(json_fixtures)
 
-    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_recovers_from_invalid_views_data(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_recoverabledata'))
@@ -685,7 +684,6 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
 
-    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_allows_wiring_status_reset_on_unrecoverable_errors(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_unrecoverabledata'))
@@ -739,7 +737,6 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
         return tuple(json_fixtures)
 
-    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_widget_with_visual_info_is_not_in_workspace(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_widget_missingtradeinfo'))
@@ -753,7 +750,6 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             self.assertTrue(wiring.find_component_by_title('widget', "Test").missing)
 
-    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_widget_with_visualinfo_and_connections_is_not_in_workspace(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_widget_missingtradeinfo_with_connections'))
@@ -766,7 +762,6 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
             self.assertTrue(wiring.find_component_by_title('widget', "Test").missing)
             self.assertEqual(len(wiring.find_connections()), 5)
 
-    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_operator_uninstalled_with_tradeinfo(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo'))
@@ -789,7 +784,6 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(operator.filter_endpoints_by_type('source')), 1)
             self.assertEqual(len(operator.filter_endpoints_by_type('target')), 1)
 
-    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_operator_uninstalled_with_tradeinfo_and_connections(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo_and_connections'))
