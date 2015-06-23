@@ -150,6 +150,26 @@
             }
         }
     });
+    Object.defineProperty(window.MashupPlatform.wiring, 'hasInputConnections', {
+        value: function getReachableEndpoints(inputName) {
+            if (inputName in resource.inputs) {
+                return resource.inputs[inputName].inputs.length > 0;
+            } else {
+                var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid input endpoint', {endpoint: inputName}, true);
+                throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
+            }
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.wiring, 'hasOutputConnections', {
+        value: function getReachableEndpoints(outputName) {
+            if (outputName in resource.outputs) {
+                return resource.outputs[outputName].outputs.length > 0;
+            } else {
+                var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
+                throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
+            }
+        }
+    });
     Object.defineProperty(window.MashupPlatform.wiring, 'getReachableEndpoints', {
         value: function getReachableEndpoints(outputName) {
             if (outputName in resource.outputs) {
