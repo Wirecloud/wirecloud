@@ -92,10 +92,14 @@
                 try {
                     this.callback.call(this.iwidget, newValue);
                 } catch (error) {
-                    msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
-                    msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
-                    details = this.iwidget.logManager.formatException(error);
-                    this.iwidget.logManager.log(msg, {details: details});
+                    if (error instanceof Wirecloud.wiring.EndpointTypeError || error instanceof Wirecloud.wiring.EndpointValueError) {
+                        throw error;
+                    } else {
+                        msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                        msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
+                        details = this.iwidget.logManager.formatException(error);
+                        this.iwidget.logManager.log(msg, {details: details});
+                    }
                 }
             } else {
                 this.iwidget.pending_events.push({'endpoint': this.meta.name, 'value': newValue});

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -82,7 +82,13 @@
             sourceEndpoint = findEndpoint(sourceEntity, connection.source, 'outputs');
             targetEndpoint = findEndpoint(targetEntity, connection.target, 'inputs');
             if (sourceEndpoint != null && targetEndpoint != null) {
-                sourceEndpoint.connect(targetEndpoint);
+                if (connection.logManager == null) {
+                    connection.logManager = new Wirecloud.wiring.ConnectionLogManager(this);
+                }
+                if (connection.successcount == null) {
+                    connection.successcount = 0;
+                }
+                sourceEndpoint.connect(targetEndpoint, connection);
             } else {
                 msg = gettext('The connection between %(source)s and %(target)s could not be established');
                 msg = interpolate(msg, {

@@ -27,7 +27,13 @@ MashupPlatform.http.makeRequest('http://example.com/success.html', {
 });
 
 MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
-    document.getElementById('registercallback_test').innerHTML = data;
+    if (data === 'typeerror') {
+        throw new MashupPlatform.wiring.EndpointTypeError('invalid data format');
+    } else if (data === 'valueerror') {
+        throw new MashupPlatform.wiring.EndpointValueError('invalid value');
+    } else {
+        document.getElementById('registercallback_test').innerHTML = data;
+    }
 });
 MashupPlatform.wiring.pushEvent('outputendpoint', 'Success!!');
 

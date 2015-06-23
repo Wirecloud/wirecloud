@@ -34,7 +34,7 @@ from django.utils import unittest
 import selenium
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
+from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, WirecloudTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 from wirecloud.platform import plugins
 from wirecloud.platform.workspace.models import Workspace
 from wirecloud.platform.workspace.utils import set_variable_value
@@ -48,6 +48,15 @@ SELENIUM_VERSION = tuple(selenium.__version__.split('.'))
 
 def selenium_supports_draganddrop(driver):
     return driver.capabilities['browserName'] != 'firefox' or SELENIUM_VERSION >= (2, 37, 2) or driver.profile.native_events_enabled
+
+
+def send_test_event(testcase, widget, event):
+    with widget:
+        text_input = testcase.driver.find_element_by_tag_name('input')
+        testcase.fill_form_input(text_input, event)
+        # Work around hang when using Firefox Driver
+        testcase.driver.execute_script('sendEvent();')
+        #testcase.driver.find_element_by_id('b1').click()
 
 
 class WiringTestCase(WirecloudTestCase):
@@ -599,6 +608,22 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'preferences changed: test_logging')
+
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
+    def test_type_error_and_value_exceptions(self):
+
+        self.login(username="admin", next="/admin/api-test-mashup")
+        iwidgets = self.get_current_iwidgets()
+
+        send_test_event(self, iwidgets[0], 'typeerror')
+        send_test_event(self, iwidgets[0], 'valueerror')
+        send_test_event(self, iwidgets[2], 'typeerror')
+        send_test_event(self, iwidgets[2], 'valueerror')
+
+        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
+        self.assertTrue(error_badge.is_displayed())
+        self.find_navbar_button("display-wiring-view").check_badge_text("4")
 
 
 @wirecloud_selenium_test_case

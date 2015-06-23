@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -89,10 +89,14 @@
                 try {
                     this.callback.call(this.operator, newValue);
                 } catch (error) {
-                    msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
-                    msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
-                    details = this.operator.logManager.formatException(error);
-                    this.operator.logManager.log(msg, {details: details});
+                    if (error instanceof Wirecloud.wiring.EndpointTypeError || error instanceof Wirecloud.wiring.EndpointValueError) {
+                        throw error;
+                    } else {
+                        msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                        msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
+                        details = this.operator.logManager.formatException(error);
+                        this.operator.logManager.log(msg, {details: details});
+                    }
                 }
             } else {
                 this.operator.pending_events.push({'endpoint': this.meta.name, 'value': newValue});

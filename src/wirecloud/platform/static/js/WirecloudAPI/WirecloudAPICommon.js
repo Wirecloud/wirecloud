@@ -161,6 +161,8 @@
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'EndpointDoesNotExistError', {value: platform.Wirecloud.wiring.EndpointDoesNotExistError});
+    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointTypeError', {value: platform.Wirecloud.wiring.EndpointTypeError});
+    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointValueError', {value: platform.Wirecloud.wiring.EndpointValueError});
     Object.preventExtensions(window.MashupPlatform.wiring);
 
     // General error handler
