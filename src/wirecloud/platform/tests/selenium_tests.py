@@ -355,12 +355,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         target_iwidget = iwidgets[1]
         self.assertIsNotNone(source_iwidget.element)
         self.assertIsNone(target_iwidget.element)
-        with source_iwidget:
-            text_input = self.driver.find_element_by_tag_name('input')
-            self.fill_form_input(text_input, 'hello world!!')
-            # Work around hang when using Firefox Driver
-            self.driver.execute_script('sendEvent();')
-            #self.driver.find_element_by_id('b1').click()
+        self.send_basic_event(source_iwidget)
 
         time.sleep(0.5)
 
@@ -489,13 +484,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
 
         # Send wiring event
-        with iwidgets[0]:
-            text_input = self.driver.find_element_by_tag_name('input')
-            self.fill_form_input(text_input, 'hello world!!')
-            # Work around hang when using Firefox Driver
-            self.driver.execute_script('sendEvent();')
-            #self.driver.find_element_by_id('b1').click()
-
+        self.send_basic_event(iwidgets[0])
         time.sleep(0.2)
 
         # Check event is received by the second test widget
@@ -750,12 +739,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.icon-add-tab')
 
         # Check wiring works
-        with source_iwidget:
-            text_input = self.driver.find_element_by_tag_name('input')
-            self.fill_form_input(text_input, 'hello world!!')
-            # Work around hang when using Firefox Driver
-            self.driver.execute_script('sendEvent();')
-            #self.driver.find_element_by_id('b1').click()
+        self.send_basic_event(source_iwidget)
 
         # Work around selenium not being able to go to the parent frame
         if frame_id is not None:
@@ -1355,11 +1339,7 @@ class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
         with source_iwidget:
             check_default_settings_values(self)
 
-            text_input = self.driver.find_element_by_tag_name('input')
-            self.fill_form_input(text_input, 'hello world!!')
-            # Work around hang when using Firefox Driver
-            self.driver.execute_script('sendEvent();')
-            #self.driver.find_element_by_id('b1').click()
+        self.send_basic_event(source_iwidget)
 
         self.driver.find_element_by_css_selector('.dragboard .toolbar .back_button > .menu_text').click()
         time.sleep(0.2)

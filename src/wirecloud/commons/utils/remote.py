@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -906,6 +906,14 @@ class RemoteTestCase(object):
             return self.get_current_iwidgets(tab)
 
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
+
+    def send_basic_event(self, widget, event='hello world!!'):
+        with widget:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, event)
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
 
 
 class WirecloudRemoteTestCase(RemoteTestCase):

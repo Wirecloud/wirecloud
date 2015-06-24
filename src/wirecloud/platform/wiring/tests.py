@@ -50,15 +50,6 @@ def selenium_supports_draganddrop(driver):
     return driver.capabilities['browserName'] != 'firefox' or SELENIUM_VERSION >= (2, 37, 2) or driver.profile.native_events_enabled
 
 
-def send_test_event(testcase, widget, event):
-    with widget:
-        text_input = testcase.driver.find_element_by_tag_name('input')
-        testcase.fill_form_input(text_input, event)
-        # Work around hang when using Firefox Driver
-        testcase.driver.execute_script('sendEvent();')
-        #testcase.driver.find_element_by_id('b1').click()
-
-
 class WiringTestCase(WirecloudTestCase):
 
     fixtures = ('test_data',)
@@ -406,7 +397,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             target = widget2.find_endpoint_by_title('target', "Input")
             source.connect(target)
 
-        send_test_event(self, iwidgets[0], 'hello world!!')
+        self.send_basic_event(iwidgets[0])
         time.sleep(0.2)
 
         with iwidgets[1]:
@@ -446,7 +437,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             target = widget2.find_endpoint_by_title('target', "Input")
             source.connect(target)
 
-        send_test_event(self, iwidgets[0], 'hello world!!')
+        self.send_basic_event(iwidgets[0])
         time.sleep(0.2)
 
         with iwidgets[1]:
@@ -482,7 +473,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             target1.connect(target2)
             self.assertEqual(len(wiring.find_connections()), connections_length)
 
-        send_test_event(self, iwidgets[0], 'hello new world!!')
+        self.send_basic_event(iwidgets[0], 'hello new world!!')
 
         with iwidgets[2]:
 
@@ -552,7 +543,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'preferences changed: prefix')
 
-        send_test_event(self, iwidgets[1], 'hello world!!')
+        self.send_basic_event(iwidgets[1])
         time.sleep(0.2)
 
         with iwidgets[0]:
@@ -595,10 +586,10 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         self.login(username="admin", next="/admin/api-test-mashup")
         iwidgets = self.get_current_iwidgets()
 
-        send_test_event(self, iwidgets[0], 'typeerror')
-        send_test_event(self, iwidgets[0], 'valueerror')
-        send_test_event(self, iwidgets[2], 'typeerror')
-        send_test_event(self, iwidgets[2], 'valueerror')
+        self.send_basic_event(iwidgets[0], 'typeerror')
+        self.send_basic_event(iwidgets[0], 'valueerror')
+        self.send_basic_event(iwidgets[2], 'typeerror')
+        self.send_basic_event(iwidgets[2], 'valueerror')
 
         error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
         self.assertTrue(error_badge.is_displayed())
@@ -645,7 +636,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
             self.assertFalse(wiring.find_component_by_title('widget', "Test 2").missing)
             self.assertEqual(len(wiring.find_connections()), 3)
 
-        send_test_event(self, iwidgets[0], 'hello world!!')
+        self.send_basic_event(iwidgets[0])
         time.sleep(0.2)
 
         with iwidgets[1]:
@@ -843,7 +834,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
         tab = self.get_workspace_tab_by_name('Tab 2')
         tab.element.click()
         (target_iwidget, source_iwidget) = self.get_current_iwidgets()
-        send_test_event(self, source_iwidget, 'hello world!!')
+        self.send_basic_event(source_iwidget)
 
         with target_iwidget:
             WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('wiringOut').text != 'hello world!!')
@@ -1065,7 +1056,7 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(source_iwidget.error_count, 0)
         self.assertEqual(target_iwidget.error_count, 0)
 
-        send_test_event(self, source_iwidget, 'hello world!!')
+        self.send_basic_event(source_iwidget)
 
         WebDriverWait(self.driver, timeout=10).until(lambda driver: target_iwidget.error_count == 1)
         self.assertEqual(source_iwidget.error_count, 0)
@@ -1078,7 +1069,7 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
         source_iwidget = iwidgets[1]
         target_iwidget = iwidgets[0]
 
-        send_test_event(self, source_iwidget, 'hello world!!')
+        self.send_basic_event(source_iwidget)
 
         self.find_navbar_button("display-wiring-view").check_badge_text("1")
 
@@ -1192,12 +1183,8 @@ class EndpointStickyEffectTestCase(WirecloudSeleniumTestCase):
             source1.connect(target2, sticky_effect=True)
             source2.connect(target1, sticky_effect=True)
 
+        self.send_basic_event(iwidget)
         with iwidget:
-            text_input = self.driver.find_element_by_tag_name('input')
-            self.fill_form_input(text_input, 'hello world!!')
-            # Work around hang when using Firefox Driver
-            self.driver.execute_script('sendEvent();')
-            #self.driver.find_element_by_id('b1').click()
             WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
