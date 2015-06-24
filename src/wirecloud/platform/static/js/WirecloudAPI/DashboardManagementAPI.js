@@ -47,9 +47,7 @@
             height: options.height
         };
         var iwidget = new platform.IWidget(widget_def, layout, iwidgetinfo);
-        Wirecloud.activeWorkspace.getActiveDragboard().addIWidget(iwidget, {
-            "setDefaultValues" : function () {}
-        });
+        Wirecloud.activeWorkspace.getActiveDragboard().addIWidget(iwidget);
 
         /*
         var tmp_enpdoint = new Wirecloud.wiring.WidgetTargetEndpoint(resource, {

@@ -393,11 +393,6 @@ IWidget.prototype.paint = function (onInit) {
     this.minimized = null;
     this.setMinimizeStatus(minimizedStatusBackup, false, false);
 
-    //Initialize read-only status
-    if (this.internal_iwidget.readOnly) {
-        this.element.classList.add("widget_window_readonly");
-    }
-
     // Time to show the iwidget (we need to take into account the widget can be iconified)
     if (!this.onFreeLayout() || !minimizedStatusBackup) {
         this.element.style.visibility = "";

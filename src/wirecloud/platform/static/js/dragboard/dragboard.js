@@ -218,8 +218,7 @@
          */
         Dragboard.prototype.addInstance = function addInstance(widget, options_) {
             var options = {
-                "iwidgetName": widget.title,
-                "setDefaultValues" : function () {}
+                "iwidgetName": widget.title
             };
 
             Wirecloud.Utils.merge(options, options_);
@@ -375,7 +374,7 @@
             iWidget.code = null;
         };
 
-        Dragboard.prototype.addIWidget = function addIWidget(iWidget, options) {
+        Dragboard.prototype.addIWidget = function addIWidget(iWidget) {
             if (!this.iWidgetsByCode[iWidget.code]) {
                 throw new Error();
             }
@@ -383,7 +382,7 @@
             var oldHeight = iWidget.getHeight();
             var oldWidth = iWidget.getWidth();
 
-            this.workspace.addIWidget(this.tab, iWidget, options);
+            this.workspace.addIWidget(this.tab, iWidget);
 
             // Notify resize event
             iWidget.layout._notifyResizeEvent(iWidget, oldWidth, oldHeight, iWidget.getWidth(), iWidget.getHeight(), false, true);
