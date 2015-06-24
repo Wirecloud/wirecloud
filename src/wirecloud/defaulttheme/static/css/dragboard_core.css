@@ -21,14 +21,6 @@ div.row {
   white-space: nowrap;
 }
 
-.widget_menu span {
-  cursor: pointer;
-}
-
-div.fixed .widget_menu span {
-	cursor: default;
-}
-
 .widget_menu .iwidget_name {
   float:left;
   display:inline;

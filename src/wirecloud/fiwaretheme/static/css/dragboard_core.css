@@ -29,10 +29,6 @@ div.row {
   white-space: nowrap;
 }
 
-div.fixed .widget_menu span {
-	cursor: default;
-}
-
 .widget_menu_locked .hide_on_lock, .widget_menu_fulldragboard .hide_on_fulldragboard, .widget_menu_minimized .hide_on_minimize {
   display: none;
 }
