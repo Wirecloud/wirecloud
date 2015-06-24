@@ -99,7 +99,7 @@
             return this.permissions.close && this.workspace.isAllowed('add_remove_iwidgets');
         case "move":
         case "resize":
-            return this.permissions[action] && !this.tab.readOnly && this.workspace.isAllowed('edit_layout');
+            return this.permissions[action] && !this.tab.readonly && this.workspace.isAllowed('edit_layout');
         case "minimize":
             return this.workspace.isAllowed('edit_layout');
         default:

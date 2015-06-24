@@ -224,7 +224,7 @@ class WiringTestCase(WirecloudTestCase):
             'operators': [],
             'connections': [
                 {
-                    'readOnly': True,
+                    'readonly': True,
                     'source': {
                         'type': 'widget',
                         'id': 1,
@@ -800,9 +800,9 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
         workspace = Workspace.objects.get(id=3)
         parsedStatus = json.loads(workspace.wiringStatus)
         parsedStatus['operators']['0']['preferences'] = {
-            'prefix': {"readOnly": False, "hidden": False, "value": 'test_'},
-            'exception_on_event': {"readOnly": False, "hidden": False, "value": 'true'},
-            'test_logging': {"readOnly": False, "hidden": False, "value": 'true'}
+            'prefix': {"readonly": False, "hidden": False, "value": 'test_'},
+            'exception_on_event': {"readonly": False, "hidden": False, "value": 'true'},
+            'test_logging': {"readonly": False, "hidden": False, "value": 'true'}
         }
         workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
         workspace.save()
@@ -1091,7 +1091,7 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
         # Enable operator exceptions
         workspace = Workspace.objects.get(id=2)
         parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['operators']['0']['preferences']['exception_on_event'] = {"readOnly": False, "hidden": False, "value": 'true'}
+        parsedStatus['operators']['0']['preferences']['exception_on_event'] = {"readonly": False, "hidden": False, "value": 'true'}
         workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
         workspace.save()
 

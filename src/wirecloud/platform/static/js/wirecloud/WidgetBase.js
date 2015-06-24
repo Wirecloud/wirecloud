@@ -47,7 +47,6 @@
         this.id = options.id;
         this.loaded = false;
         this.name = options.name;
-        this.readOnly = options.readOnly;
         this.pending_events = [];
 
         this.permissions = Wirecloud.Utils.merge({
@@ -57,6 +56,12 @@
             'rename': true,
             'resize': true
         }, options.permissions);
+
+        if (options.readonly) {
+            this.permissions.close = false;
+            this.permissions.move = false;
+            this.permissions.resize = false;
+        }
 
         this.inputs = {};
         for (key in this.meta.inputs) {

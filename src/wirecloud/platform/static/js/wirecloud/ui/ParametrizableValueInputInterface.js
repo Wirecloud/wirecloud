@@ -136,7 +136,7 @@
         if (newValue == null || VALID_STATUS_VALUES.indexOf(newValue.status) === -1) {
             this.status = 'normal';
         } else if (!this.canBeHidden && newValue.status === 'hidden') {
-            this.status = 'readOnly';
+            this.status = 'readonly';
         } else {
             this.status = newValue.status;
         }

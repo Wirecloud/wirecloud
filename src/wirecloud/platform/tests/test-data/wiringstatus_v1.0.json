@@ -10,12 +10,12 @@
                     "value": ""
                 },
                 "exception_on_event": {
-                    "readOnly": false,
+                    "readonly": false,
                     "hidden": false,
                     "value": false
                 },
                 "test_logging": {
-                    "readOnly": false,
+                    "readonly": false,
                     "hidden": false,
                     "value": false
                 }
@@ -24,7 +24,7 @@
     },
     "connections": [
         {
-            "readOnly": false,
+            "readonly": false,
             "source": {
                 "type": "ioperator",
                 "id": "0",

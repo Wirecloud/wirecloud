@@ -127,6 +127,11 @@ def parse_wiring_old_version(wiring_status):
 
     if 'operators' in wiring_status:
         for operator_id, operator in wiring_status['operators'].items():
+            for preference_id, preference in operator['preferences'].items():
+                if 'readOnly' in preference and 'readonly' not in preference:
+                    preference['readonly'] = preference['readOnly']
+                    del preference['readOnly']
+
             new_version['operators'][operator_id] = operator
 
     if 'connections' in wiring_status:
@@ -175,7 +180,7 @@ def parse_wiring_old_version(wiring_status):
             if operator_id in new_version['operators']:
                 # set info into global behaviour
                 visualInfo = {}
-                visualInfo['collapsed'] = operator['minimized'] if 'minimized' in operator else False
+                visualInfo['collapsed'] = operator.get('minimized', False)
                 visualInfo['position'] = {
                     'x': operator['position']['posX'],
                     'y': operator['position']['posY']

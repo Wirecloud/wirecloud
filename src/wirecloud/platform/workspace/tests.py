@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -805,7 +805,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         self.assertEqual(len(data['tabs'][0]['iwidgets']), 3)
-        self.assertEqual(data['tabs'][0]['iwidgets'][0]['readOnly'], True)
+        self.assertEqual(data['tabs'][0]['iwidgets'][0]['readonly'], True)
 
     def test_blocked_connections(self):
         template = self.read_template('wt2.xml')

@@ -32,17 +32,17 @@
             "id": "0",
             "preferences": {
                 "prefix": {
-                    "readOnly": false,
+                    "readonly": false,
                     "hidden": false,
                     "value": ""
                 },
                 "test_logging": {
-                    "readOnly": false,
+                    "readonly": false,
                     "hidden": false,
                     "value": false
                 },
                 "exception_on_event": {
-                    "readOnly": false,
+                    "readonly": false,
                     "hidden": false,
                     "value": false
                 }

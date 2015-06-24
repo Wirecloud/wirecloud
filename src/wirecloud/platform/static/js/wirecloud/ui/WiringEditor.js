@@ -1201,7 +1201,7 @@ Wirecloud.ui.WiringEditor = (function () {
             };
             for (pref in ioperator.preferences) {
                 wiringState.operators[key].preferences[pref] = {
-                    "readOnly": ioperator.preferences[pref].readOnly,
+                    "readonly": ioperator.preferences[pref].readonly,
                     "hidden": ioperator.preferences[pref].hidden,
                     "value": ioperator.preferences[pref].value
                 };

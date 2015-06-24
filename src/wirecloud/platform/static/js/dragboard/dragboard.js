@@ -32,8 +32,8 @@
         this.iWidgets = {};
         this.iWidgetsByCode = {};
 
-        if (this.tab.readOnly || this.workspace.restricted) {
-            this.readOnly = true;
+        if (this.tab.readonly || this.workspace.restricted) {
+            this.readonly = true;
             this.dragboardElement.classList.add("fixed");
         }
 
@@ -73,7 +73,7 @@
         this.iWidgetsByCode = {};
         this.tab = tab;
         this.workspace = workspace;
-        this.readOnly = false;
+        this.readonly = false;
 
         // ***********************
         // PRIVATE FUNCTIONS
@@ -227,7 +227,7 @@
                 throw new TypeError();
             }
 
-            if (this.readOnly) {
+            if (this.readonly) {
                 var msg = gettext("The destination tab (%(tabName)s) is read only.");
                 msg = interpolate(msg, {tabName: this.tab.tabInfo.name}, true);
                 (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
@@ -309,8 +309,11 @@
         };
 
         Dragboard.prototype.hasReadOnlyIWidgets = function hasReadOnlyIWidgets() {
+            var currentWidget;
+
             for (var key in this.iWidgets) {
-                if (this.iWidgets[key].internal_iwidget.readOnly) {
+                currentWidget = this.iWidgets[key].internal_iwidget;
+                if (!(currentWidget instanceof Wirecloud.VolatileWidget) && !currentWidget.isAllowed('close')) {
                     return true;
                 }
             }

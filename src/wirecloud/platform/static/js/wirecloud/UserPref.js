@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -28,9 +28,9 @@
     /**
      * @author aarranz
      */
-    var UserPref = function UserPref(pref_def, readOnly, hidden, currentValue) {
+    var UserPref = function UserPref(pref_def, readonly, hidden, currentValue) {
         Object.defineProperty(this, 'meta', {value: pref_def});
-        Object.defineProperty(this, 'readOnly', {value: !!readOnly});
+        Object.defineProperty(this, 'readonly', {value: !!readonly});
         Object.defineProperty(this, 'hidden', {value: !!hidden});
 
         if (pref_def.type === 'boolean' && typeof currentValue === 'string') {
@@ -53,7 +53,7 @@
         desc = Wirecloud.Utils.merge(this.meta.options, {
             'type': type,
             'defaultValue': this.meta.default,
-            'initiallyDisabled': this.readOnly,
+            'initiallyDisabled': this.readonly,
             'initialValue': this.value,
             'required': false
         });

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,7 +27,7 @@
 
     var PersistentVariable = function PersistentVariable(def, commiter, readonly, currentValue) {
         Object.defineProperty(this, 'meta', {value: def});
-        Object.defineProperty(this, 'readnOnly', {value: readonly});
+        Object.defineProperty(this, 'readonly', {value: readonly});
         Object.defineProperty(this, 'commiter', {value: commiter});
         this.value = currentValue;
     };
@@ -37,7 +37,7 @@
     };
 
     PersistentVariable.prototype.set = function set(new_value) {
-        if (this.readOnly) {
+        if (this.readonly) {
             throw new Error('Read only properties cannot be modified');
         }
 

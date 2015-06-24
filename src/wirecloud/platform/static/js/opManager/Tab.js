@@ -140,7 +140,7 @@
         this.preferences = Wirecloud.PreferenceManager.buildPreferences('tab', this.tabInfo.preferences, this);
         this.preferences.addEventListener('pre-commit', preferencesChanged.bind(this));
 
-        this.readOnly = this.workspace.restricted;
+        this.readonly = this.workspace.restricted;
 
         this.dragboard = new Dragboard(this, this.workspace, this.wrapperElement);
 
@@ -286,7 +286,7 @@
     Tab.prototype.isAllowed = function isAllowed(action) {
         switch (action) {
         case "remove":
-            return !this.readOnly && Object.keys(this.workspace.tabInstances).length > 1 && !this.hasReadOnlyIWidgets();
+            return !this.readonly && Object.keys(this.workspace.tabInstances).length > 1 && !this.hasReadOnlyIWidgets();
         default:
             return false;
         }

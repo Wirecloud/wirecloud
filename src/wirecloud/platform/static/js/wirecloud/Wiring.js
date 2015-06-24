@@ -198,7 +198,7 @@
                 ghost_operator.preferences = {};
                 for (key in operator.preferences) {
                     ghost_operator.preferences[key] = {
-                        "readOnly": operator.preferences[key].readOnly,
+                        "readonly": operator.preferences[key].readonly,
                         "hidden": operator.preferences[key].hidden,
                         "value": operator.preferences[key].value
                     };

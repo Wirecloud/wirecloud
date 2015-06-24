@@ -542,7 +542,7 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         'height': iwidget.position.height,
         'fulldragboard': iwidget.position.fulldragboard,
         'minimized': iwidget.position.minimized,
-        'readOnly': iwidget.readOnly,
+        'readonly': iwidget.readOnly,
     }
 
     if iwidget.icon_position:

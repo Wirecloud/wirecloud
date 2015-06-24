@@ -55,7 +55,7 @@ function Workspace(workspaceState, resources) {
 
         var initialTab = {
             'id': 0,
-            'readOnly': "true",
+            'readonly': "true",
             'iwidgets': [],
             'name': gettext("Unusable Tab"),
             'visible': 1,
