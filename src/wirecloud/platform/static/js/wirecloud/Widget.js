@@ -89,6 +89,28 @@
     };
     Wirecloud.Utils.inherit(Widget, Wirecloud.WidgetBase);
 
+    Widget.prototype.isAllowed = function isAllowed(action) {
+        if (this.workspace.restricted) {
+            return false;
+        }
+
+        switch (action) {
+        case "close":
+            return this.permissions.close && this.workspace.isAllowed('add_remove_iwidgets');
+        case "move":
+        case "resize":
+            return this.permissions[action] && !this.tab.readOnly && this.workspace.isAllowed('edit_layout');
+        case "minimize":
+            return this.workspace.isAllowed('edit_layout');
+        default:
+            if (action in this.permissions) {
+                return this.permissions[action];
+            } else {
+                return false;
+            }
+        }
+    };
+
     /**
      * Renames this iWidget.
      *

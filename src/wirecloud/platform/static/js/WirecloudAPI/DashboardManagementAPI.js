@@ -9,10 +9,16 @@
     var counter = 1;
 
     MashupPlatform.mashup.addWidget = function addWidget(ref, options) {
+
+        if (ref == null) {
+            throw new TypeError('missing widget_ref parameter');
+        }
+
         // default options
         options = Wirecloud.Utils.merge({
             title: null,
-            ref_position: null,
+            refposition: null,
+            permissions: null,
             preferences: {},
             properties: {},
             top: "0px",
@@ -21,24 +27,26 @@
             height: null
         }, options);
 
+        options.permissions = Wirecloud.Utils.merge({
+                close: true,
+                rename: false
+        }, options.permissions);
+
         var widget_def = Wirecloud.LocalCatalogue.getResourceId(ref);
         var widget_title = options.title ? options.title : widget_def.title;
         var layout = Wirecloud.activeWorkspace.getActiveDragboard().freeLayout;
 
-        if (options.ref_position != null) {
+        if (options.refposition != null) {
             var current_position = Wirecloud.Utils.getRelativePosition(resource_element, resource.tab.wrapperElement);
-            options.left = (current_position.x + options.ref_position.left - layout.dragboardLeftMargin) + "px";
-            options.top = (current_position.y + options.ref_position.bottom - layout.dragboardTopMargin) + "px";
+            options.left = (current_position.x + options.refposition.left - layout.dragboardLeftMargin) + "px";
+            options.top = (current_position.y + options.refposition.bottom - layout.dragboardTopMargin) + "px";
         }
 
         var iwidgetinfo = {
             id: resource.id + '/' + counter++,
             name: widget_title,
             volatile: true,
-            permissions: {
-                close: true,
-                rename: false
-            },
+            permissions: options.permissions,
             properties: options.properties,
             preferences: options.preferences,
             top: options.top,

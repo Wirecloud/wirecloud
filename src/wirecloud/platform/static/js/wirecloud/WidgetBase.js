@@ -51,10 +51,11 @@
         this.pending_events = [];
 
         this.permissions = Wirecloud.Utils.merge({
-            'rename': true,
+            'close': true,
+            'configure': true,
             'move': true,
-            'resize': true,
-            'close': true
+            'rename': true,
+            'resize': true
         }, options.permissions);
 
         this.inputs = {};
@@ -144,24 +145,10 @@
     WidgetBase.prototype = new StyledElements.ObjectWithEvents();
 
     WidgetBase.prototype.isAllowed = function isAllowed(action) {
-        if (this.workspace.restricted) {
+        if (action in this.permissions) {
+            return this.permissions[action];
+        } else {
             return false;
-        }
-
-        switch (action) {
-        case "close":
-            return this.permissions.close && this.workspace.isAllowed('add_remove_iwidgets');
-        case "move":
-        case "resize":
-            return this.permissions[action] && !this.tab.readOnly && this.workspace.isAllowed('edit_layout');
-        case "minimize":
-            return this.workspace.isAllowed('edit_layout');
-        default:
-            if (action in this.permissions) {
-                return this.permissions[action];
-            } else {
-                return false;
-            }
         }
     };
 
