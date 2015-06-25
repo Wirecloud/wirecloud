@@ -95,7 +95,7 @@ def write_wiring_components_graph(graph, behaviour, components, type):
         graph.add((behaviour, WIRE_M['hasComponentView'], component_view))
 
 
-def write_endpoint_graph(graph, node, endpointView, relationName='hasEndpoint'):
+def write_endpoint_graph(graph, node, endpointView, relationName='hasEndpoint', auto=False):
     component_type, component_id, endpoint_name = endpointView.split("/")
     endpoint = rdflib.BNode()
 
@@ -103,6 +103,9 @@ def write_endpoint_graph(graph, node, endpointView, relationName='hasEndpoint'):
     graph.add((endpoint, WIRE['type'], rdflib.Literal(component_type)))
     graph.add((endpoint, WIRE_M['id'], rdflib.Literal(str(component_id))))
     graph.add((endpoint, WIRE_M['endpoint'], rdflib.Literal(endpoint_name)))
+
+    if auto:
+        graph.add((endpoint, WIRE_M['auto'], rdflib.Literal('true')))
 
     graph.add((node, WIRE_M[relationName], endpoint))
 
@@ -123,16 +126,20 @@ def write_wiring_connections_graph(graph, behaviour, connections):
         connection_view = rdflib.BNode()
         graph.add((connection_view, rdflib.RDF.type, WIRE_M['ConnectionView']))
 
-        # write source endpoint
-        write_endpoint_graph(graph, connection_view, connection['sourcename'], relationName="hasSourceEndpoint")
+        is_auto = 'sourcehandle' in connection and connection['sourcehandle'] == 'auto'
 
-        if 'sourcehandle' in connection:
+        # write source endpoint
+        write_endpoint_graph(graph, connection_view, connection['sourcename'], relationName="hasSourceEndpoint", auto=is_auto)
+
+        if 'sourcehandle' in connection and connection['sourcehandle'] != 'auto':
             write_position_graph(graph, connection_view, connection['sourcehandle'], relationName="hasSourceHandlePosition")
 
-        # write target endpoint
-        write_endpoint_graph(graph, connection_view, connection['targetname'], relationName="hasTargetEndpoint")
+        is_auto = 'targethandle' in connection and connection['targethandle'] == 'auto'
 
-        if 'targethandle' in connection:
+        # write target endpoint
+        write_endpoint_graph(graph, connection_view, connection['targetname'], relationName="hasTargetEndpoint", auto=is_auto)
+
+        if 'targethandle' in connection and connection['targethandle'] != 'auto':
             write_position_graph(graph, connection_view, connection['targethandle'], relationName="hasTargetHandlePosition")
 
         graph.add((behaviour, WIRE_M['hasConnectionView'], connection_view))

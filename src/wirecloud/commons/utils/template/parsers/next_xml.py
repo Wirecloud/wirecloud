@@ -272,20 +272,28 @@ class ApplicationMashupTemplateParser(object):
                 'targetname': connection.get('targetname'),
             }
 
-            sourcehandle_element = self.get_xpath(SOURCEHANDLE_XPATH, connection, required=False)
-            targethandle_element = self.get_xpath(TARGETHANDLE_XPATH, connection, required=False)
+            sourceauto = connection.get('sourceauto', 'false').strip().lower() == 'true'
+            targetauto = connection.get('targetauto', 'false').strip().lower() == 'true'
 
-            if sourcehandle_element is not None:
-                connection_info['sourcehandle'] = {
-                    'x': int(sourcehandle_element.get('x')),
-                    'y': int(sourcehandle_element.get('y'))
-                }
+            if sourceauto:
+                connection_info['sourcehandle'] = 'auto'
+            else:
+                sourcehandle_element = self.get_xpath(SOURCEHANDLE_XPATH, connection, required=False)
+                if sourcehandle_element is not None:
+                    connection_info['sourcehandle'] = {
+                        'x': int(sourcehandle_element.get('x')),
+                        'y': int(sourcehandle_element.get('y'))
+                    }
 
-            if targethandle_element is not None:
-                connection_info['targethandle'] = {
-                    'x': int(targethandle_element.get('x')),
-                    'y': int(targethandle_element.get('y'))
-                }
+            if targetauto:
+                connection_info['targethandle'] = 'auto'
+            else:
+                targethandle_element = self.get_xpath(TARGETHANDLE_XPATH, connection, required=False)
+                if targethandle_element is not None:
+                    connection_info['targethandle'] = {
+                        'x': int(targethandle_element.get('x')),
+                        'y': int(targethandle_element.get('y'))
+                    }
 
             target['connections'].append(connection_info)
 

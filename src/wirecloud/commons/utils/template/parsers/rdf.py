@@ -443,26 +443,37 @@ class RDFTemplateParser(object):
 
         for connection in self._graph.objects(element, WIRE_M['hasConnectionView']):
             connection_info = {}
+            is_auto = False
 
             for source in self._graph.objects(connection, WIRE_M['hasSourceEndpoint']):
                 connection_info['sourcename'] = self._join_endpoint_name(source)
+                is_auto = self._get_field(WIRE_M, 'auto', source, required=False).lower() == 'true'
                 break
             else:
                 raise TemplateParseException(_('missing required field: hasSourceEndpoint'))
 
-            sourcehandle = self._parse_position(connection, relation_name='hasSourceHandlePosition')
-            if sourcehandle is not None:
-                connection_info['sourcehandle'] = sourcehandle
+            if is_auto:
+                connection_info['sourcehandle'] = 'auto'
+            else:
+                sourcehandle = self._parse_position(connection, relation_name='hasSourceHandlePosition')
+                if sourcehandle is not None:
+                    connection_info['sourcehandle'] = sourcehandle
+
+            is_auto = False
 
             for target in self._graph.objects(connection, WIRE_M['hasTargetEndpoint']):
                 connection_info['targetname'] = self._join_endpoint_name(target)
+                is_auto = self._get_field(WIRE_M, 'auto', target, required=False).lower() == 'true'
                 break
             else:
                 raise TemplateParseException(_('missing required field: hasTargetEndpoint'))
 
-            targethandle = self._parse_position(connection, relation_name='hasTargetHandlePosition')
-            if targethandle is not None:
-                connection_info['targethandle'] = targethandle
+            if is_auto:
+                connection_info['targethandle'] = 'auto'
+            else:
+                targethandle = self._parse_position(connection, relation_name='hasTargetHandlePosition')
+                if targethandle is not None:
+                    connection_info['targethandle'] = targethandle
 
             behaviour['connections'].append(connection_info)
 

@@ -171,13 +171,19 @@ def write_mashup_wiring_behaviours_tree(target, behaviours):
 def write_mashup_wiring_connections_tree(target, connections):
 
     for connection in connections:
-        componentview = etree.SubElement(target, 'connection', sourcename=connection['sourcename'], targetname=connection['targetname'])
+        connectionview = etree.SubElement(target, 'connection', sourcename=connection['sourcename'], targetname=connection['targetname'])
 
         if connection.get('sourcehandle', None) is not None:
-            etree.SubElement(componentview, 'sourcehandle', x=str(connection['sourcehandle']['x']), y=str(connection['sourcehandle']['y']))
+            if connection['sourcehandle'] == 'auto':
+                connectionview.set('sourceauto', 'true')
+            else:
+                etree.SubElement(connectionview, 'sourcehandle', x=str(connection['sourcehandle']['x']), y=str(connection['sourcehandle']['y']))
 
         if connection.get('targethandle', None) is not None:
-            etree.SubElement(componentview, 'targethandle', x=str(connection['targethandle']['x']), y=str(connection['targethandle']['y']))
+            if connection['targethandle'] == 'auto':
+                connectionview.set('targetauto', 'true')
+            else:
+                etree.SubElement(connectionview, 'targethandle', x=str(connection['targethandle']['x']), y=str(connection['targethandle']['y']))
 
 
 def write_mashup_wiring_components_tree(target, type, components):

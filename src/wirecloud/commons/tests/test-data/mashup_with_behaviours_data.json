@@ -267,15 +267,9 @@
                     "connections": [
                         {
                             "sourcename": "widget/1/output1",
-                            "sourcehandle": {
-                                "x": 0,
-                                "y": 0
-                            },
+                            "sourcehandle": "auto",
                             "targetname": "operator/1/input1",
-                            "targethandle": {
-                                "x": 0,
-                                "y": 0
-                            }
+                            "targethandle": "auto"
                         },
                         {
                             "sourcename": "operator/1/output1",
@@ -377,15 +371,9 @@
             "connections": [
                 {
                     "sourcename": "operator/1/output1",
-                    "sourcehandle": {
-                        "x": 0,
-                        "y": 0
-                    },
+                    "sourcehandle": "auto",
                     "targetname": "operator/2/input1",
-                    "targethandle": {
-                        "x": 0,
-                        "y": 0
-                    }
+                    "targethandle": "auto"
                 },
                 {
                     "sourcename": "widget/1/output1",
