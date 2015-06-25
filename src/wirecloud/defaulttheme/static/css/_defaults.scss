@@ -25,17 +25,17 @@ $font-size-xs:             ceil($font-size-base * 0.75) !default; // ~11px
 $line-height-factor-base:  1.42857143 !default;
 $line-height-base:         floor($font-size-base * $line-height-factor-base) !default; // 20px
 
-$padding-vertical-base:     4px !default;
+$padding-vertical-base:     6px !default;
 $padding-horizontal-base:  12px !default;
 
-$padding-vertical-large:   11px !default;
-$padding-horizontal-large: 19px !default;
+$padding-vertical-large:   10px !default;
+$padding-horizontal-large: 16px !default;
 
-$padding-vertical-small:    2px !default;
+$padding-vertical-small:    5px !default;
 $padding-horizontal-small: 10px !default;
 
-$padding-vertical-xs:       0px !default;
-$padding-horizontal-xs:     6px !default;
+$padding-vertical-xs:       1px !default;
+$padding-horizontal-xs:     5px !default;
 
 /* Global settings */
 
