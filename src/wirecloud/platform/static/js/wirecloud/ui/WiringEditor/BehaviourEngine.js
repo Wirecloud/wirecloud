@@ -109,13 +109,13 @@
                 if (enabled) {
                     this.btnEnable
                         .setTitle('Disable')
-                        .replaceIconClass('lock', 'unlock');
+                        .replaceIconClass('icon-lock', 'icon-unlock');
                     this.btnCreate.show();
                     this.body.remove(this.disabledAlert);
                 } else {
                     this.btnEnable
                         .setTitle('Enable')
-                        .replaceIconClass('unlock', 'lock');
+                        .replaceIconClass('icon-unlock', 'icon-lock');
                     this.btnCreate.hide();
                     this.body.append(this.disabledAlert);
                 }

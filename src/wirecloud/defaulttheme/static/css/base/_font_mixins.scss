@@ -1,0 +1,23 @@
+
+@mixin font($type: "h5", $weight: "semibold") {
+
+    @if $type == "h5" {
+        font-size: 14px;
+        line-height: 20px;
+    } @else if $type == "h6" {
+        font-size: 12px;
+        line-height: 20px;
+    }
+
+    @if $weight == "semibold" {
+        font-weight: 400;
+    } @else if $weight == "bold" {
+        font-weight: 700;
+    }
+}
+
+@mixin font-truncate() {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

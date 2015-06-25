@@ -34,14 +34,13 @@
      * Create a new instance of class Panel.
      *
      * @constructor
-     * @param {String[]} events [description]
      * @param {Object.<String, *>} options [description]
      */
     se.Panel = utils.defineClass({
 
-        constructor: function Panel(events, options) {
+        constructor: function Panel(options) {
             options = utils.updateObject(defaults, options);
-            this.superClass(['click'].concat(events));
+            this.superClass(['click'].concat(options.events));
 
             this.wrapperElement = document.createElement('div');
             this.wrapperElement.className = 'panel';
@@ -135,6 +134,7 @@
     // ==================================================================================
 
     var defaults = {
+        events: [],
         title: "",
         state: 'default',
         selectable: false,

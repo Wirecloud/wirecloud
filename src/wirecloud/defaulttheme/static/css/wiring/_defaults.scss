@@ -28,7 +28,7 @@ $panel-components-heading-height:   48px;
 $panel-components-component-margin-vertical:    8px;
 $panel-components-component-font-color:         #555;
 $panel-components-component-background-color:   #fff;
-$panel-components-component-border:             border-base($border-color: #ddd);
+$panel-components-component-border:             1px solid #ddd;
 $panel-components-component-border-radius:      4px;
 
 $panel-components-mousedover-component-background-color:    #f5f5f5;
@@ -134,6 +134,8 @@ $endpoint-onbackground-background-color: rgba(26, 172, 218, 0.3);
 // WIRING VIEW - CONNECTIONS
 // ============================================================================
 
+$stroke-default-width: 2px !default;
+
 $connection-width:              4px;
 $connection-opacity:            0.9;
 $connection-background-color:   rgba(92, 150, 188, $connection-opacity);
@@ -169,7 +171,7 @@ $connection-bg-optrm-mousedover-background-color: rgba(50, 175, 210, 1.0);
 $connection-bg-optrm-mousedover-border-color: rgba(40, 150, 190, 1.0);
 
 $behavior-title-width: 75%;
-$behavior-description-height: 36px;
+$behavior-description-height: 40px;
 $behavior-description-font-color: rgb(70, 80, 90);
 
 $behavior-hover-border-color: rgb(200, 200, 200);

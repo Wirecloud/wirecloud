@@ -1,4 +1,5 @@
 @import 'wiring/defaults';
+@import "utils";
 
 
 // ============================================================================
@@ -6,7 +7,7 @@
 // ============================================================================
 
 .wiring-sidebar > .panel {
-    @include position-absolute(0, 0, 0, 0);
+    @include positioned-element(0, 0, 0, 0);
     margin-bottom: 0px;
     background-color: $panel-default-heading-bg;
     border-radius: 0px;
@@ -23,7 +24,7 @@
     }
 
     & > .panel-body {
-        @include position-absolute($panel-padding-h, 40px, $panel-padding-h, $panel-padding-v);
+        @include positioned-element(40px, $panel-padding-horizontal, $panel-padding-vertical, $panel-padding-horizontal);
         border: solid 1px $panel-default-border-color;
         box-shadow: $panel-box-shadow-inset;
         background-color: $panel-bg;

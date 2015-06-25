@@ -1,4 +1,6 @@
 @import 'wiring/defaults';
+@import 'compass/css3/user-interface';
+@import "utils";
 
 
 // ======================================================================================
@@ -7,7 +9,7 @@
 
 .behavior {
     cursor: pointer;
-    @include user-select();
+    @include user-select(none);
 
     .behavior-title {
         width: $behavior-title-width;

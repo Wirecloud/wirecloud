@@ -17,7 +17,8 @@
 
 
 @import 'wiring/defaults';
-
+@import 'compass/css3/user-interface';
+@import "utils";
 
 // ============================================================================
 // WIRING LEFTSIDE-BAR - COMPONENT
@@ -89,8 +90,8 @@
         color: $component-heading-font-color;
         text-align: center;
         text-shadow: $component-heading-font-shadow;
-        @include font-base($font-weight: bold);
-        @include user-select();
+        @include font($weight: bold);
+        @include user-select(none);
     }
 }
 
@@ -103,7 +104,7 @@
     position: absolute;
     z-index: $component-zindex;
     background-color: transparent;
-    border: border-base();
+    border: 1px solid transparent;
     border-radius: $component-border-radius;
     box-shadow: $component-box-shadow;
     box-sizing: border-box;
@@ -129,7 +130,7 @@
     vertical-align: middle;
     color: $component-heading-font-color;
     text-shadow: $component-heading-font-shadow;
-    @include user-select();
+    @include user-select(none);
 
     .component-name {
         display: block;
@@ -172,7 +173,7 @@
 
     .se-btn {
         margin: 0px 0px 0px $component-options-margin-horizontal;
-        @include font-base($font-weight: bold);
+        @include font($weight: bold);
         text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
         opacity: 1;
 

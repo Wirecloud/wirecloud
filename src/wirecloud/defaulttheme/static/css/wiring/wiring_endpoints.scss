@@ -17,7 +17,8 @@
 
 
 @import 'wiring/defaults';
-
+@import 'compass/css3/user-interface';
+@import "utils";
 
 // ============================================================================
 // WIRING DIAGRAM - ENDPOINTS
@@ -36,7 +37,7 @@
     clear: both;
     max-width: $endpoint-max-width;
     margin: 0px 0px $endpoint-margin-vertical;
-    @include user-select();
+    @include user-select(none);
 
     .endpoint-label {
         padding: 0px $endpoint-padding-horizontal;
@@ -66,12 +67,12 @@
 
     .endpoint {
         float: right;
-        border-radius: $border-radius-onlyleft;
+        @include positioned-border-radius(left);
 
         .endpoint-anchor {
             right: $endpoint-displacement-width;
             background-color: $source-endpoint-background-color;
-            border-radius: $border-radius-onlyright;
+            @include positioned-border-radius(right);
         }
     }
 }
@@ -85,12 +86,12 @@
 
     .endpoint {
         float: left;
-        border-radius: $border-radius-onlyright;
+        @include positioned-border-radius(right);
 
         .endpoint-anchor {
             left: $endpoint-displacement-width;
             background-color: $target-endpoint-background-color;
-            border-radius: $border-radius-onlyleft;
+            @include positioned-border-radius(left);
         }
     }
 }
@@ -222,11 +223,11 @@
 }
 
 .wiring-diagram .target-endpoint.cloned {
-    border-radius: $border-radius-onlyright;
+    @include positioned-border-radius(right);
 }
 
 .wiring-diagram .source-endpoint.cloned {
-    border-radius: $border-radius-onlyleft;
+    @include positioned-border-radius(left);
 }
 
 // ============================================================================
