@@ -1,82 +1,109 @@
 @import 'variables';
 @import 'compass/utilities/color/contrast';
+@import "utils";
 
+
+// ======================================================================================
+// COMPONENT - MIXINS
+// ======================================================================================
+
+@mixin panel-variant(
+    $border-color,
+    $background-color,
+    $text-color,
+    $text-shadow,
+    $text-hover-color
+) {
+
+    border-color: $border-color;
+
+    & > .panel-heading {
+        background-color: $background-color;
+
+        .panel-title {
+            color: $text-color;
+            text-shadow: $text-shadow;
+        }
+
+        .panel-options .se-btn {
+            color: $text-color;
+            text-shadow: $text-shadow;
+
+            &:hover,
+            &:focus {
+                color: $text-hover-color;
+            }
+        }
+    }
+
+}
+
+@mixin panel-selectable(
+    $border-color,
+    $background-color
+) {
+
+    &.panel-selectable:hover {
+        border-color: darken($border-color, 6%);
+
+        & > .panel-heading {
+            background-color: darken($background-color, 6%);
+        }
+    }
+
+}
 
 // ======================================================================================
 // COMPONENT - PANEL
 // ======================================================================================
 
-.panel {
+.panel, .panel-heading, .panel-body, .panel-footer {
     position: relative;
-    display: block;
-    margin: 0px 0px $panel-margin-v;
-    background-color: $panel-bg-color;
-    border: solid 1px transparent;
+    box-sizing: border-box;
+
+    &:after {
+        content: "";
+        display: block;
+        clear: both;
+    }
+}
+
+.panel {
+    margin: 0px 0px $panel-margin-vertical;
+    background-color: $panel-bg;
+    border: 1px solid transparent;
     border-radius: $panel-border-radius;
+}
 
-    .panel-heading,
-    .panel-body,
-    .panel-footer {
-        position: relative;
-        display: block;
-        margin: 0px;
-        padding: $panel-padding-v $panel-padding-h;
-        background-color: transparent;
-        box-sizing: border-box;
-
-        &:after {
-            display: block;
-            clear: both;
-            content: "";
-        }
-    }
-
-    .panel-heading {
-        border-top-left-radius: ($panel-border-radius - 1);
-        border-top-right-radius: ($panel-border-radius - 1);
-    }
-
-    .panel-title,
-    .panel-options {
-        position: relative;
-        display: block;
-    }
+.panel-heading {
+    padding: $panel-padding-vertical $panel-padding-horizontal;
+    border-top-left-radius: ($panel-border-radius - 1);
+    border-top-right-radius: ($panel-border-radius - 1);
 
     .panel-title {
+        position: relative;
+        display: block;
         @include font($weight: "bold");
         @include font-truncate();
-        color: $panel-heading-font-color;
-        text-shadow: $panel-heading-font-shadow;
         float: left;
     }
 
     .panel-options {
+        position: relative;
+        display: block;
         float: right;
 
         .se-btn {
             position: relative;
             display: inline-block;
-            width: $panel-option-width;
-            margin: 0px $panel-option-margin-h 0px 0px;
+            width: $panel-btn-width;
+            margin: 0px $panel-btn-margin-horizontal 0px 0px;
             padding: 0px;
-            color: $panel-heading-font-color;
-            text-shadow: $panel-heading-font-shadow;
             background: transparent;
             border: none;
             box-shadow: none;
             vertical-align: baseline;
             text-align: center;
-
-            &:hover,
-            &:focus {
-                text-shadow: $panel-option-hover-font-shadow;
-                box-shadow: none;
-            }
-
-            &.disabled {
-                text-shadow: none;
-                box-shadow: none;
-            }
 
             &:last-child {
                 margin-right: 0px;
@@ -84,61 +111,124 @@
         }
     }
 
-    .panel-footer {
-        border-bottom-left-radius: ($panel-border-radius - 1);
-        border-bottom-right-radius: ($panel-border-radius - 1);
-    }
+}
+
+.panel-body {
+    padding: $panel-padding-vertical $panel-padding-horizontal;
+    background-color: transparent;
+}
+
+.panel-footer {
+    background-color: $panel-default-footer-bg;
+    border-bottom-left-radius: ($panel-border-radius - 1);
+    border-bottom-right-radius: ($panel-border-radius - 1);
 }
 
 // ======================================================================================
-// COMPONENT - PANEL DEFAULT
+// COMPONENT - PANEL - CONTEXTUAL CLASSES
 // ======================================================================================
 
 .panel-default {
-    border-color: $panel-default-border-color;
+    @include panel-variant(
+        $panel-default-border-color,
+        $panel-default-heading-bg,
+        $panel-default-heading-text-color,
+        $panel-default-heading-text-shadow,
+        $panel-default-btn-hover-text-color);
 
-    .panel-heading {
-        background-color: $panel-default-heading-bg-color;
-    }
+    @include panel-selectable(
+        $panel-default-border-color,
+        $panel-default-heading-bg);
 
-    .panel-title {
-        color: $panel-default-heading-font-color;
-    }
-
-    .panel-options .se-btn {
-        color: $panel-default-heading-font-color;
-
-        &:hover,
-        &:focus {
-            color: $panel-default-option-hover-font-color;
-        }
+    &.panel-selectable.active {
+        @include panel-variant(
+            $panel-primary-border-color,
+            $panel-primary-heading-bg,
+            $panel-primary-heading-text-color,
+            $panel-primary-heading-text-shadow,
+            $panel-primary-btn-hover-text-color);
     }
 }
 
-// ======================================================================================
-// COMPONENT - PANEL PRIMARY
-// ======================================================================================
-
 .panel-primary {
-    border-color: $panel-primary-border-color;
+    @include panel-variant(
+        $panel-primary-border-color,
+        $panel-primary-heading-bg,
+        $panel-primary-heading-text-color,
+        $panel-primary-heading-text-shadow,
+        $panel-primary-btn-hover-text-color);
 
-    .panel-heading {
-        background-color: $panel-primary-heading-bg-color;
-    }
+    @include panel-selectable(
+        $panel-primary-border-color,
+        $panel-primary-heading-bg);
+}
 
-    .panel-title {
-        color: $panel-primary-heading-font-color;
-        text-shadow: $panel-primary-heading-font-shadow;
-    }
+.panel-success {
+    @include panel-variant(
+        $panel-success-border-color,
+        $panel-success-heading-bg,
+        $panel-success-heading-text-color,
+        $panel-success-heading-text-shadow,
+        $panel-success-btn-hover-text-color);
 
-    .panel-options .se-btn {
-        color: $panel-primary-heading-font-color;
-        text-shadow: $panel-primary-heading-font-shadow;
+    @include panel-selectable(
+        $panel-success-border-color,
+        $panel-success-heading-bg);
+}
+
+.panel-info {
+    @include panel-variant(
+        $panel-info-border-color,
+        $panel-info-heading-bg,
+        $panel-info-heading-text-color,
+        $panel-info-heading-text-shadow,
+        $panel-info-btn-hover-text-color);
+
+    @include panel-selectable(
+        $panel-info-border-color,
+        $panel-info-heading-bg);
+}
+
+.panel-warning {
+    @include panel-variant(
+        $panel-warning-border-color,
+        $panel-warning-heading-bg,
+        $panel-warning-heading-text-color,
+        $panel-warning-heading-text-shadow,
+        $panel-warning-btn-hover-text-color);
+
+    @include panel-selectable(
+        $panel-warning-border-color,
+        $panel-warning-heading-bg);
+}
+
+.panel-danger {
+    @include panel-variant(
+        $panel-danger-border-color,
+        $panel-danger-heading-bg,
+        $panel-danger-heading-text-color,
+        $panel-danger-heading-text-shadow,
+        $panel-danger-btn-hover-text-color);
+
+    @include panel-selectable(
+        $panel-danger-border-color,
+        $panel-danger-heading-bg);
+}
+
+.panel, .panel.panel-selectable {
+
+    .panel-heading .panel-options .se-btn {
 
         &:hover,
         &:focus {
-            color: $panel-primary-option-hover-font-color;
-            text-shadow: $panel-option-hover-font-shadow;
+            text-shadow: $panel-btn-hover-text-shadow;
+            box-shadow: none;
+        }
+
+        &.disabled {
+            text-shadow: none;
+            box-shadow: none;
+            opacity: 0.4;
         }
     }
 }

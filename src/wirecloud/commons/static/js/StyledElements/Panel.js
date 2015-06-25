@@ -50,6 +50,10 @@
                 this.addClass('panel-' + options.state);
             }
 
+            if (options.selectable) {
+                this.addClass('panel-selectable');
+            }
+
             if (options.extraClass) {
                 this.addClass(options.extraClass);
             }
@@ -133,6 +137,7 @@
     var defaults = {
         title: "",
         state: 'default',
+        selectable: false,
         extraClass: "",
         optionList: []
     };

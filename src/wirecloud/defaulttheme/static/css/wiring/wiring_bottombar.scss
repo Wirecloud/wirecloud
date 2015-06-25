@@ -26,16 +26,16 @@
 .wiring-footer .wiring-element {
     display: inline-block;
     @include font($weight: "bold");
-    color: $panel-heading-font-color;
+    color: $panel-default-heading-text-color;
     vertical-align: middle;
-    margin: 0px ($panel-padding-h * 2) 0px 0px;
+    margin: 0px ($panel-padding-horizontal * 2) 0px 0px;
 
     &:last-child {
         margin-right: 0px;
     }
 
     .color {
-        padding: 0px $panel-padding-h;
+        padding: 0px $panel-padding-horizontal;
         color: rgb(255, 255, 255);
         border: solid 1px transparent;
         border-radius: $panel-border-radius;
@@ -43,7 +43,7 @@
     }
 
     .title {
-        margin-left: ($panel-padding-h / 2);
+        margin-left: ($panel-padding-horizontal / 2);
     }
 }
 

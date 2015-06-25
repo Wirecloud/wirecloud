@@ -67,9 +67,11 @@
             });
             this.btnRemove.on('click', handleOnRemove, this);
 
-            this.superClass(events, {
+            this.superClass({
+                events: events,
                 extraClass: 'behavior',
                 title: options.title,
+                selectable: true,
                 optionList: [this.btnShowInfo, this.btnRemove]
             });
 

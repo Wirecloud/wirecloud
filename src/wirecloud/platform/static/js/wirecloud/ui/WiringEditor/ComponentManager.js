@@ -41,7 +41,7 @@
         constructor: function ComponentManager() {
             var btnGroupElement;
 
-            this.superClass([], {
+            this.superClass({
                 extraClass: 'panel-components',
                 title: gettext("Available components")
             });

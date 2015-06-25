@@ -59,7 +59,8 @@
             });
             this.btnEnable.on('click', handleOnEnable, this);
 
-            this.superClass(events, {
+            this.superClass({
+                events: events,
                 extraClass: 'panel-behaviors',
                 title: gettext("Identified behaviors"),
                 optionList: [this.btnCreate, this.btnEnable]

@@ -8,13 +8,13 @@
 .wiring-sidebar > .panel {
     @include position-absolute(0, 0, 0, 0);
     margin-bottom: 0px;
-    background-color: $panel-default-heading-bg-color;
+    background-color: $panel-default-heading-bg;
     border-radius: 0px;
-    padding: $panel-padding-v $panel-padding-h;
-    box-shadow: $panel-box-shadow-o;
+    padding: $panel-padding-vertical $panel-padding-horizontal;
+    box-shadow: $panel-box-shadow;
 
     & > .panel-heading {
-        padding: 0px 0px $panel-padding-v;
+        padding: 0px 0px $panel-padding-vertical;
         border-radius: 0px;
 
         .panel-title {
@@ -25,8 +25,8 @@
     & > .panel-body {
         @include position-absolute($panel-padding-h, 40px, $panel-padding-h, $panel-padding-v);
         border: solid 1px $panel-default-border-color;
-        box-shadow: $panel-box-shadow-i;
-        background-color: $panel-bg-color;
+        box-shadow: $panel-box-shadow-inset;
+        background-color: $panel-bg;
         overflow-y: auto;
 
         .section {
