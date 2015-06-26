@@ -266,9 +266,9 @@
         this.icon.classList.remove(classname);
     };
 
-    Button.prototype.replaceIconClass = function replaceIconClass(newClass, oldClass) {
-        this.icon.classList.add(newClass);
-        this.icon.classList.remove(oldClass);
+    Button.prototype.replaceIconClass = function replaceIconClass(className, newClassName) {
+        this.icon.classList.remove(className);
+        this.icon.classList.add(newClassName);
 
         return this;
     };

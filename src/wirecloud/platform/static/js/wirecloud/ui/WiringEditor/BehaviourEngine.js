@@ -147,6 +147,7 @@
             activate: function activate(behavior, viewpoint) {
 
                 if (!this.enabled) {
+                    updateLogger.call(this);
                     return this;
                 }
 
