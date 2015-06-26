@@ -153,9 +153,7 @@
         }
 
         if (options.text) {
-            this.label = document.createElement('span');
-            this.label.appendChild(document.createTextNode(options.text));
-            this.append(this.label);
+            this.setLabel(options.text);
         }
 
         if (options.iconClass && options.stackedIconClass) {
@@ -246,10 +244,17 @@
         this.wrapperElement.blur();
     };
 
-    Button.prototype.setLabel = function setLabel(label) {
-        this.label.textContent = label;
-
-        return this;
+    /**
+     * [setLabel description]
+     * @version 0.2.0
+     *
+     * @param {String} [textContent]
+     *      [description]
+     * @returns {Button}
+     *      The instance on which the member is called.
+     */
+    Button.prototype.setLabel = function setLabel(textContent) {
+        return textContent ? addLabel.call(this, textContent) : removeLabel.call(this);
     };
 
     Button.prototype.clearClassName = function clearClassName() {
@@ -334,5 +339,27 @@
     };
 
     var events = ['blur', 'click', 'dblclick', 'focus', 'mouseenter', 'mouseleave'];
+
+    function removeLabel() {
+
+        if (this.label != null) {
+            this.remove(this.label);
+            delete this.label;
+        }
+
+        return this;
+    }
+
+    function addLabel(textContent) {
+
+        if (this.label == null) {
+            this.label = document.createElement('span');
+            this.append(this.label);
+        }
+
+        this.label.textContent = textContent;
+
+        return this;
+    }
 
 })(StyledElements, StyledElements.Utils);
