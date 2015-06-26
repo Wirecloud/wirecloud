@@ -622,6 +622,35 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
 
+    @uses_extra_resources(('Wirecloud_ParameterizedMashup_1.0.zip',), shared=True)
+    def test_workspace_collection_post_creation_from_mashup_with_preferences(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'test',
+            'mashup': 'Wirecloud/ParameterizedMashup/1.0',
+            'preferences': {
+                'password_param': 'password from api',
+                'text_param': 'text from api',
+            }
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        # Check basic response structure
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('id' in response_data)
+        self.assertEqual(response_data['name'], 'test')
+        self.assertTrue(isinstance(response_data['wiring'], dict))
+        self.assertEqual(response_data['preferences']['password_param'], {'inherit': False, 'value': 'password from api'})
+        self.assertEqual(response_data['preferences']['text_param'], {'inherit': False, 'value': 'text from api'})
+
     @uses_extra_resources(('Wirecloud_test-mashup_1.0.wgt',), shared=True, deploy_only=True)
     def test_workspace_collection_post_creation_from_mashup_conflict(self):
 

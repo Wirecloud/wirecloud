@@ -41,6 +41,7 @@ from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
+from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.wiring.utils import get_wiring_skeleton
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_rdf_template_from_workspace
@@ -104,9 +105,10 @@ class WorkspaceCollection(Resource):
         workspace_name = data.get('name', '').strip()
         workspace_id = data.get('workspace', '')
         mashup_id = data.get('mashup', '')
+        initial_pref_values = data.get('preferences', {})
         try:
             allow_renaming = normalize_boolean_param('allow_renaming', data.get('allow_renaming', False))
-            dry_run = normalize_boolean_param('allow_renaming', data.get('dry_run', False))
+            dry_run = normalize_boolean_param('dry_run', data.get('dry_run', False))
         except (TypeError, ValueError) as e:
             return build_error_response(request, 422, unicode(e))
 
@@ -183,6 +185,9 @@ class WorkspaceCollection(Resource):
             except IntegrityError:
                 msg = _('A workspace with the given name already exists')
                 return build_error_response(request, 409, msg)
+
+        if len(initial_pref_values) > 0:
+            update_workspace_preferences(workspace, initial_pref_values, invalidate_cache=False)
 
         workspace_data = get_global_workspace_data(workspace, request.user)
 

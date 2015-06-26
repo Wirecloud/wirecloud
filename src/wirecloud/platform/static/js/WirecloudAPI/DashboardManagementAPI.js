@@ -1,3 +1,26 @@
+/*
+ *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*global MashupPlatform*/
+
 (function () {
 
     "use strict";
@@ -7,6 +30,14 @@
     var resource = MashupPlatform.resource;
     var resource_element = resource.workspace.getIWidget(resource.id).content;
     var counter = 1;
+
+    // Workspace wrapper
+    var Workspace = function Workspace(workspace) {
+        Object.defineProperties(this, {
+            'owner': {value: workspace.creator},
+            'name': {value: workspace.name},
+        });
+    };
 
     MashupPlatform.mashup.addWidget = function addWidget(ref, options) {
 
@@ -72,5 +103,21 @@
         */
         return iwidget;
     };
+
+    var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(workspace) {
+        this(new Workspace(workspace));
+    };
+
+    var createWorkspace = function createWorkspace(options) {
+        if (options != null && typeof options.onSuccess === 'function') {
+            options.onSuccess = onCreateWorkspaceSuccess.bind(options.onSuccess);
+        }
+
+        Wirecloud.createWorkspace(options);
+    };
+
+    Object.defineProperties(MashupPlatform.mashup, {
+        createWorkspace: {value: createWorkspace}
+    });
 
 })();

@@ -158,13 +158,22 @@ def update_workspace_preferences(workspace, preferences_json, invalidate_cache=T
         else:
             preference = WorkspacePreference(workspace=workspace, name=name)
 
-        if 'value' in preference_data and preference.value != preference_data['value']:
-            preference.value = preference_data['value']
-            changes = pref_changes = True
+        if isinstance(preference_data, dict):
+            if 'value' in preference_data and preference.value != preference_data['value']:
+                preference.value = preference_data['value']
+                changes = pref_changes = True
 
-        if 'inherit' in preference_data and preference.inherit != preference_data['inherit']:
-            preference.inherit = preference_data['inherit']
-            changes = pref_changes = True
+            if 'inherit' in preference_data and preference.inherit != preference_data['inherit']:
+                preference.inherit = preference_data['inherit']
+                changes = pref_changes = True
+        else:
+            if preference.value != preference_data:
+                preference.value = preference_data
+                changes = pref_changes = True
+
+            if preference.inherit is not False:
+                preference.inherit = False
+                changes = pref_changes = True
 
         if pref_changes:
             preference.save()
