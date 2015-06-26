@@ -68,7 +68,7 @@
                 .appendTo(btnGroupElement)
                 .on('click', function () {
                     this.show('operator');
-                }, this);
+                }.bind(this));
 
             this.components.operator.container = new se.Container({
                 extraClass: "section operator-group"
@@ -92,7 +92,7 @@
                 .appendTo(btnGroupElement)
                 .on('click', function () {
                     this.show('widget');
-                }, this);
+                }.bind(this));
 
             this.components.widget.container = new se.Container({
                 extraClass: "section widget-group"

@@ -36,12 +36,10 @@
     se.ObjectWithEvents = utils.defineClass({
 
         constructor: function ObjectWithEvents(names) {
-            this._handlers = {};
             this.events = {};
 
             (Array.isArray(names) ? names : []).forEach(function (name) {
-                this._handlers[name] = [];
-                this.events[name] = new se.Event();
+                this.events[name] = new se.Event(this);
             }, this);
         },
 
@@ -49,7 +47,7 @@
 
             /**
              * Remove an event handler from one or more existing events.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String} [names]
              *      Optional. One or more space-separated event names.
@@ -60,16 +58,9 @@
              */
             off: function off(names, handler) {
                 names = typeof names !== 'string' ? "" : names.trim();
-
-                if (names && arguments.length > 1) {
-                    names.split(/\s+/).forEach(function (name) {
-                        removeEventHandler(this._handlers[name], handler);
-                    }, this);
-                } else {
-                    names = names ? names.split(/\s+/) : Object.keys(this._handlers);
-                    names.forEach(function (name) {
-                        this._handlers[name].length = 0;
-                    }, this);
+                names = names ? names.split(/\s+/) : Object.keys(this.events);
+                for (var i = 0; i < names.length; i++) {
+                    this.events[names[i]].off(handler);
                 }
 
                 return this;
@@ -77,28 +68,23 @@
 
             /**
              * Attach an event handler for one or more existing events.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String} names
              *      One or more space-separated event names.
              * @param {Function} handler
              *      An event handler to execute when the event is triggered.
-             * @param {Object} [thisArg]
-             *      Optional. An object to use as this when the event is triggered.
              * @returns {ObjectWithEvents}
              *      The instance on which the member is called.
              */
-            on: function on(names, handler, thisArg) {
+            on: function on(names, handler) {
                 names = typeof names !== 'string' ? "" : names.trim();
 
                 if (names) {
-                    thisArg = arguments.length > 2 ? thisArg : this;
-                    names.split(/\s+/).forEach(function (name) {
-                        this._handlers[name].push({
-                            handler: handler,
-                            thisArg: thisArg
-                        });
-                    }, this);
+                    names = names.split(/\s+/);
+                    for (var i = 0; i < names.length; i++) {
+                        this.events[names[i]].on(handler);
+                    }
                 }
 
                 return this;
@@ -106,7 +92,7 @@
 
             /**
              * Execute all event handlers attached for the existing event.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String} name
              *      A string containing a existing event.
@@ -116,20 +102,20 @@
             trigger: function trigger(name) {
                 var handlerArgs;
 
-                name = typeof name !== 'string' ? "" : name.trim();
-
-                if (name) {
-                    handlerArgs = Array.prototype.slice.call(arguments, 1);
-                    this._handlers[name].forEach(function (callback) {
-                        callback.handler.apply(callback.thisArg, handlerArgs);
-                    });
+                if (!(name in this.events)) {
+                    throw new Error(utils.interpolate("Unhandled event '%(name)s'", {
+                        name: name
+                    }));
                 }
+
+                handlerArgs = Array.prototype.slice.call(arguments, 1);
+                this.events[name].trigger.apply(this.events[name], handlerArgs);
 
                 return this;
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6
              */
             addEventListener: function addEventListener(name, handler) {
 
@@ -145,7 +131,7 @@
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6
              */
             clearEventListeners: function clearEventListeners(name) {
 
@@ -169,7 +155,7 @@
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6
              */
             destroy: function destroy() {
                 this.events = null;
@@ -178,7 +164,7 @@
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6
              */
             removeEventListener: function removeEventListener(name, handler) {
 
@@ -196,20 +182,5 @@
         }
 
     });
-
-    // ==================================================================================
-    // PRIVATE MEMBERS
-    // ==================================================================================
-
-    var removeEventHandler = function removeEventHandler(callbacks, handler) {
-        var i;
-
-        for (i = callbacks.length - 1; i >= 0; i--) {
-            if (callbacks[i].handler === handler) {
-                callbacks.splice(i, 1);
-                break;
-            }
-        }
-    };
 
 })(StyledElements, StyledElements.Utils);

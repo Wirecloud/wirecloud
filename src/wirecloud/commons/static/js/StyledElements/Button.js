@@ -41,8 +41,7 @@
             if (this.inputElement != null) {
                 this.inputElement.click();
             }
-            this.events.click.dispatch(this);
-            this.trigger('click', this, e);
+            this.events.click.trigger(this);
         }
     };
 

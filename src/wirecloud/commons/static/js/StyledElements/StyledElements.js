@@ -74,7 +74,7 @@
         members: {
 
             /**
-             * @version 0.2.0
+             * @version 0.6
              * @abstract
              */
             _onenabled: function _onenabled(enabled) {
@@ -82,7 +82,7 @@
             },
 
             /**
-             * @version 0.2.0
+             * @version 0.6
              * @abstract
              */
             _onhidden: function _onhidden(hidden) {
@@ -91,7 +91,7 @@
 
             /**
              * Add one or more classes to the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String} classList
              *      One or more space-separated classes to be added to the
@@ -113,7 +113,7 @@
 
             /**
              * Insert a new element to the end of the wrapperElement children.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {StyledElement|HTMLElement|String} newElement
              *      An element to insert into the wrapperElement.
@@ -166,7 +166,7 @@
 
             /**
              * Disable the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @returns {StyledElement}
              *      The instance on which the member is called.
@@ -182,7 +182,7 @@
 
             /**
              * Enable the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @returns {StyledElement}
              *      The instance on which the member is called.
@@ -198,7 +198,7 @@
 
             /**
              * Remove all children of the wrapperElement from the DOM.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @returns {StyledElement}
              *      The instance on which the member is called.
@@ -214,7 +214,7 @@
 
             /**
              * Get the attached wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @returns {HTMLElement}
              *      If the wrapperElement is not instance of HTMLElement, the member
@@ -231,7 +231,7 @@
 
             /**
              * Check if an element is a descendant of the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {StyledElement|HTMLElement} childElement
              *      An element that may be contained.
@@ -250,7 +250,7 @@
 
             /**
              * Check if the wrapperElement is assigned a class.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String} className
              *      A class name to search for.
@@ -266,7 +266,7 @@
 
             /**
              * Display the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @returns {StyledElement}
              *      The instance on which the member is called.
@@ -275,7 +275,7 @@
 
                 if (!this.hidden) {
                     this.hidden = true;
-                    this.trigger('hide', this);
+                    this.events.hide.trigger(this);
                 }
 
                 return this;
@@ -283,7 +283,7 @@
 
             /**
              * Get the parent of the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @returns {HTMLElement}
              *      The parent element of the wrapperElement.
@@ -299,7 +299,7 @@
 
             /**
              * Insert a new element to the beginning of the wrapperElement children.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {StyledElement|HTMLElement|String} newElement
              *      An element to insert into the wrapperElement.
@@ -352,7 +352,7 @@
 
             /**
              * Remove the wrapperElement or a specified child from the DOM.
-             * @version  0.2.0
+             * @version 0.6
              *
              * @param {StyledElement|HTMLElement} [childElement]
              *      An element to be removed from the DOM.
@@ -385,7 +385,7 @@
 
             /**
              * Remove multiple or all classes from the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String} [classList]
              *      Optional. One or more space-separated classes to be removed from the
@@ -410,7 +410,7 @@
 
             /**
              * Replace a existing class with other class.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String} className1
              *      A existing class name to be removed.
@@ -436,7 +436,7 @@
 
             /**
              * Display the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @returns {StyledElement}
              *      The instance on which the member is called.
@@ -445,7 +445,7 @@
 
                 if (this.hidden) {
                     this.hidden = false;
-                    this.trigger('show', this);
+                    this.events.show.trigger(this);
                 }
 
                 return this;
@@ -454,7 +454,7 @@
             /**
              * Get the value of a computed style property or set one or more CSS
              * properties for the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String|Object.<String, *>} properties
              *      A CSS property name or an object of property-value pairs.
@@ -482,7 +482,7 @@
 
             /**
              * Get the text content or set a text as the content of the wrapperElement.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String|Number|Boolean} [text]
              *      A text to set as the content of the wrapperElement. When Number or
@@ -504,7 +504,7 @@
             /**
              * Add or remove one or more classes from the wrapperElement, depending on
              * either the class's presence.
-             * @version 0.2.0
+             * @version 0.6
              *
              * @param {String} classList
              *      One or more space-separated classes to be toggled from the
@@ -582,7 +582,7 @@
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6
              */
             addClassName: function addClassName(className) {
                 var i, tokens;
@@ -600,15 +600,12 @@
                 return this;
             },
 
-            /**
-             * @deprecated since version 0.2.0
-             */
             getBoundingClientRect: function getBoundingClientRect() {
                 return this.wrapperElement.getBoundingClientRect();
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6
              */
             hasClassName: function hasClassName(className) {
                 return this.wrapperElement.classList.contains(className);
@@ -642,7 +639,7 @@
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6
              */
             removeClassName: function removeClassName(className) {
                 var i, tokens;
@@ -676,7 +673,7 @@
             repaint: function repaint(temporal) {},
 
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6
              */
             setDisabled: function setDisabled(disable) {
                 if (disable) {

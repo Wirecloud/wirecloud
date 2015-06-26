@@ -89,8 +89,7 @@
 
         event.stopPropagation();
         this.active = !this.active;
-        this.events.click.dispatch(this);
-        this.trigger('click', this, event);
+        this.events.click.trigger(this);
     };
 
 })();

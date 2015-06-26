@@ -50,14 +50,14 @@
                 'class': "btn-create",
                 'iconClass': 'icon-plus'
             });
-            this.btnCreate.on('click', handleOnCreate, this);
+            this.btnCreate.on('click', handleOnCreate.bind(this));
 
             this.btnEnable = new se.Button({
                 'title': gettext("Enable"),
                 'class': "btn-enable",
                 'iconClass': 'icon-lock'
             });
-            this.btnEnable.on('click', handleOnEnable, this);
+            this.btnEnable.on('click', handleOnEnable.bind(this));
 
             this.superClass({
                 events: events,
@@ -172,15 +172,15 @@
                 behavior = (new ns.Behavior(behaviorInfo))
                     .on('click', function () {
                         this.activate(behavior);
-                    }, this)
+                    }.bind(this))
                     .on('remove', function () {
                         this.removeBehavior(behavior);
-                    }, this)
+                    }.bind(this))
                     .on('update', function () {
                         if (this.behavior.equals(behavior)) {
                             updateBehaviorLogger.call(this);
                         }
-                    }, this);
+                    }.bind(this));
 
                 return insertBehavior.call(this, behavior);
             },

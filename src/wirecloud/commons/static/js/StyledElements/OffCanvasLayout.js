@@ -108,7 +108,8 @@
 
                 this.slipped = false;
 
-                return this.trigger('slideOut', this);
+                this.events.slideOut.trigger('slideOut', this);
+                return this;
             },
 
             /**
@@ -136,7 +137,9 @@
 
                 this.slipped = true;
 
-                return this.trigger('slideIn', panel, this);
+                this.events.slideOut.trigger('slideIn', panel, this);
+
+                return this;
             }
 
         }

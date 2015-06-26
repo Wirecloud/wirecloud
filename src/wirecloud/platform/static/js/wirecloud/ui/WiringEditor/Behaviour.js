@@ -58,14 +58,14 @@
                 'class': 'btn-show-settings',
                 'iconClass': 'icon-tasks'
             });
-            this.btnShowInfo.on('click', displayUpdateForm, this);
+            this.btnShowInfo.on('click', displayUpdateForm.bind(this));
 
             this.btnRemove = new se.Button({
                 'title': gettext("Remove"),
                 'class': 'btn-activate',
                 'iconClass': 'icon-remove'
             });
-            this.btnRemove.on('click', handleOnRemove, this);
+            this.btnRemove.on('click', handleOnRemove.bind(this));
 
             this.superClass({
                 events: events,

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,40 +26,75 @@
     "use strict";
 
     /**
-     * Esta clase se encarga de gestionar los eventos que van a manejar los
-     * <code>StyledElement</code>s.
+     * This class manages the callbacks of the <code>StyledElement</code>s' events.
      */
-    var Event = function Event() {
-        this.handlers = [];
+    var Event = function Event(context) {
+        Object.defineProperties(this, {
+            context: {value: context},
+            handlers: {value: []}
+        });
     };
 
-    Event.prototype.addEventListener = function addEventListener(handler) {
+    Event.prototype.on = function on(handler) {
         if (typeof handler !== 'function') {
             throw new TypeError('Handlers must be functions');
         }
         this.handlers.push(handler);
     };
 
+    Event.prototype.off = function off(handler) {
+        if (handler != null) {
+            this.handlers.length = 0;
+        } else {
+            var index = this.handlers.indexOf(handler);
+            if (index != -1) {
+                this.handlers.splice(index, 1);
+            }
+        }
+    };
+
+    Event.prototype.trigger = function trigger() {
+        for (var i = 0; i < this.handlers.length; i++) {
+            try {
+                this.handlers[i].apply(this.context, arguments);
+            } catch (e) {
+                if (window.console != null && typeof window.console.error === 'function') {
+                    console.error(e);
+                }
+            }
+        }
+    };
+
+    /**
+     * @deprecated since version 0.6
+     */
+    Event.prototype.addEventListener = function addEventListener(handler) {
+        this.on(handler);
+    };
+
+    /**
+     * @deprecated since version 0.6
+     */
     Event.prototype.removeEventListener = function removeEventListener(handler) {
         if (typeof handler !== 'function') {
             throw new TypeError('Handlers must be functions');
         }
-        var index = this.handlers.indexOf(handler);
-        if (index != -1) {
-            this.handlers.splice(index, 1);
-        }
+
+        this.off(handler);
     };
 
+    /**
+     * @deprecated since version 0.6
+     */
     Event.prototype.clearEventListeners = function clearEventListeners() {
-        this.handlers.length = 0;
+        this.off();
     };
 
+    /**
+     * @deprecated since version 0.6
+     */
     Event.prototype.dispatch = function dispatch() {
-        for (var i = 0; i < this.handlers.length; i++) {
-            try {
-                this.handlers[i].apply(null, arguments);
-            } catch (e) {}
-        }
+        this.trigger.apply(this, arguments);
     };
 
     StyledElements.Event = Event;

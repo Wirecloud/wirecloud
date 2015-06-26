@@ -113,7 +113,7 @@
              * @override
              */
             _onclick: function _onclick(event) {
-                return this.trigger('click', this, event);
+                return this.events.click.trigger(this);
             },
 
             /**
