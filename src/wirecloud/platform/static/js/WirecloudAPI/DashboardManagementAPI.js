@@ -31,6 +31,17 @@
     var resource_element = resource.workspace.getIWidget(resource.id).content;
     var counter = 1;
 
+    // Widget wrapper
+    var Widget = function Widget(real_widget) {
+        Object.defineProperties(this, {
+            'close': {
+                value: function close() {
+                    real_widget.remove();
+                }
+            }
+        });
+    };
+
     // Workspace wrapper
     var Workspace = function Workspace(workspace) {
         Object.defineProperties(this, {
@@ -39,7 +50,7 @@
         });
     };
 
-    MashupPlatform.mashup.addWidget = function addWidget(ref, options) {
+    var addWidget = function addWidget(ref, options) {
 
         if (ref == null) {
             throw new TypeError('missing widget_ref parameter');
@@ -73,7 +84,7 @@
             options.top = (current_position.y + options.refposition.bottom - layout.dragboardTopMargin) + "px";
         }
 
-        var iwidgetinfo = {
+        var widgetinfo = {
             id: resource.id + '/' + counter++,
             name: widget_title,
             volatile: true,
@@ -85,8 +96,8 @@
             width: options.width,
             height: options.height
         };
-        var iwidget = new platform.IWidget(widget_def, layout, iwidgetinfo);
-        Wirecloud.activeWorkspace.getActiveDragboard().addIWidget(iwidget);
+        var widget = new platform.IWidget(widget_def, layout, widgetinfo);
+        Wirecloud.activeWorkspace.getActiveDragboard().addIWidget(widget);
 
         /*
         var tmp_enpdoint = new Wirecloud.wiring.WidgetTargetEndpoint(resource, {
@@ -101,7 +112,7 @@
             }
         };
         */
-        return iwidget;
+        return new Widget(widget);
     };
 
     var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(workspace) {
@@ -117,6 +128,7 @@
     };
 
     Object.defineProperties(MashupPlatform.mashup, {
+        addWidget: {value: addWidget},
         createWorkspace: {value: createWorkspace}
     });
 
