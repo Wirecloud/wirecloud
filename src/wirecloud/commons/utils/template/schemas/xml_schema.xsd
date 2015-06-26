@@ -813,8 +813,6 @@
             <xs:element name="sourcehandle" type="macd:Position2d" minOccurs="0" maxOccurs="1" />
             <xs:element name="targethandle" type="macd:Position2d" minOccurs="0" maxOccurs="1" />
         </xs:choice>
-        <xs:attribute name="sourceauto" type="xs:boolean" use="optional" />
-        <xs:attribute name="targetauto" type="xs:boolean" use="optional" />
         <xs:attribute name="sourcename" type="macd:NonEmpty" use="required" />
         <xs:attribute name="targetname" type="macd:NonEmpty" use="required" />
     </xs:complexType>

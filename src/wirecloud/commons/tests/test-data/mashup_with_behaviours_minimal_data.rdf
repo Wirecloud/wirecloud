@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:wire-m="http://wirecloud.conwet.fi.upm.es/ns/mashup#"
+  xmlns:gr="http://purl.org/goodrelations/v1#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:usdl="http://www.linked-usdl.org/ns/usdl-core#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+  xmlns:ns1="http://usefulinc.com/ns/doap#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+>
+  <wire-m:Mashup rdf:about="http://wirecloud.conwet.fi.upm.es/ns/mashup#Wirecloud/TemplateTestMashup/1.0">
+    <wire-m:hasMashupWiring>
+      <wire:PlatformWiring rdf:nodeID="N41fa84897d224e3eb4351063e4a8914e">
+        <wire-m:hasBehaviour>
+          <wire-m:Behaviour rdf:nodeID="N660fe54df8d544cfb8181f511f459605">
+            <wire:index>2</wire:index>
+            <rdfs:label>test 3</rdfs:label>
+            <dcterms:description>test 3 description</dcterms:description>
+            <wire-m:hasComponentView>
+              <wire-m:ComponentView rdf:nodeID="N54ec956ab45a41aa954f8f3f916ee89f">
+                <wire:type>operator</wire:type>
+                <wire:id>3</wire:id>
+              </wire-m:ComponentView>
+            </wire-m:hasComponentView>
+          </wire-m:Behaviour>
+        </wire-m:hasBehaviour>
+        <wire-m:hasConnectionView>
+          <wire-m:ConnectionView rdf:nodeID="N0edb4facf67e4ebcaf228b533039825f">
+            <wire-m:hasSourceEndpoint>
+              <wire-m:Endpoint rdf:nodeID="Nd67b1f4e7f1746eaa4bdcdadb5f95e9d">
+                <wire-m:id>1</wire-m:id>
+                <wire:type>operator</wire:type>
+                <wire-m:endpoint>output1</wire-m:endpoint>
+              </wire-m:Endpoint>
+            </wire-m:hasSourceEndpoint>
+            <wire-m:hasTargetEndpoint>
+              <wire-m:Endpoint rdf:nodeID="Nbc07c8d3ae79403898254dfe54f43824">
+                <wire:type>operator</wire:type>
+                <wire-m:endpoint>input1</wire-m:endpoint>
+                <wire-m:id>2</wire-m:id>
+              </wire-m:Endpoint>
+            </wire-m:hasTargetEndpoint>
+          </wire-m:ConnectionView>
+        </wire-m:hasConnectionView>
+        <wire:hasOutputEndpoint>
+          <wire:OutputEndpoint rdf:nodeID="Ncc4c9de158ed44b098749fe3f217b1da">
+            <wire:type>text</wire:type>
+            <dcterms:title>output2</dcterms:title>
+            <wire:index>1</wire:index>
+            <wire:friendcode>friendcode 2</wire:friendcode>
+            <dcterms:description>Output description 2</dcterms:description>
+            <rdfs:label>Output label 2</rdfs:label>
+          </wire:OutputEndpoint>
+        </wire:hasOutputEndpoint>
+        <wire-m:hasComponentView>
+          <wire-m:ComponentView rdf:nodeID="N6762b3f6fa68432c8e5ac7015927c8f0">
+            <wire:type>operator</wire:type>
+            <wire:id>3</wire:id>
+          </wire-m:ComponentView>
+        </wire-m:hasComponentView>
+        <wire-m:hasComponentView>
+          <wire-m:ComponentView rdf:nodeID="N0966aeba92714ec1bc23c4fb3c4570f6">
+            <wire:type>widget</wire:type>
+            <wire:id>1</wire:id>
+          </wire-m:ComponentView>
+        </wire-m:hasComponentView>
+        <wire-m:hasComponentView>
+          <wire-m:ComponentView rdf:nodeID="N1058ee4ebd654fe5bdcfcec2cd88f95b">
+            <wire:id>2</wire:id>
+            <wire:type>widget</wire:type>
+          </wire-m:ComponentView>
+        </wire-m:hasComponentView>
+        <wire-m:hasiOperator>
+          <wire-m:iOperator rdf:nodeID="N741405b5132a41628c9b4f76e6648d70">
+            <wire-m:hasiOperatorPreference>
+              <wire-m:iOperatorPreference rdf:nodeID="N512e5b112666427bb71e6837aee73ae5">
+                <wire:value>op2 pref2 value</wire:value>
+                <wire-m:readonly>true</wire-m:readonly>
+                <dcterms:title>pref2</dcterms:title>
+              </wire-m:iOperatorPreference>
+            </wire-m:hasiOperatorPreference>
+            <wire-m:iOperatorId>2</wire-m:iOperatorId>
+            <wire-m:hasiOperatorPreference>
+              <wire-m:iOperatorPreference rdf:nodeID="N0207755793f34480a90f63ea9a1327fd">
+                <wire:value>op2 pref1 value</wire:value>
+                <dcterms:title>pref1</dcterms:title>
+              </wire-m:iOperatorPreference>
+            </wire-m:hasiOperatorPreference>
+            <dcterms:title>Wirecloud/TestOperator/2.0</dcterms:title>
+          </wire-m:iOperator>
+        </wire-m:hasiOperator>
+        <wire-m:hasConnection>
+          <wire-m:Connection rdf:nodeID="N970ae3b89aac4d14acb873bb57ebab01">
+            <wire-m:hasTarget>
+              <wire-m:Target rdf:nodeID="N3296709735bd49258292b9397043373c">
+                <wire-m:targetId>1</wire-m:targetId>
+                <wire:type>operator</wire:type>
+                <wire-m:endpoint>input1</wire-m:endpoint>
+              </wire-m:Target>
+            </wire-m:hasTarget>
+            <wire-m:hasSource>
+              <wire-m:Source rdf:nodeID="N4f26017fcff3436c950972f557b8d12d">
+                <wire:type>widget</wire:type>
+                <wire-m:endpoint>output1</wire-m:endpoint>
+                <wire-m:sourceId>1</wire-m:sourceId>
+              </wire-m:Source>
+            </wire-m:hasSource>
+          </wire-m:Connection>
+        </wire-m:hasConnection>
+        <wire-m:hasComponentView>
+          <wire-m:ComponentView rdf:nodeID="N307cf4c377a94a87b4472a87e10e4a1a">
+            <wire:type>operator</wire:type>
+            <wire:id>2</wire:id>
+          </wire-m:ComponentView>
+        </wire-m:hasComponentView>
+        <wire-m:hasBehaviour>
+          <wire-m:Behaviour rdf:nodeID="N858ed75a101a4d08a46fd6f1a12a901a">
+            <rdfs:label>test 1</rdfs:label>
+            <wire-m:hasComponentView>
+              <wire-m:ComponentView rdf:nodeID="Nfe12c7b3567143caa61f4200f7a6b89e">
+                <wire:type>operator</wire:type>
+                <wire:id>1</wire:id>
+              </wire-m:ComponentView>
+            </wire-m:hasComponentView>
+            <wire-m:hasConnectionView>
+              <wire-m:ConnectionView rdf:nodeID="N49f80ed636544fc5848071dc87386dc5">
+                <wire-m:hasTargetEndpoint>
+                  <wire-m:Endpoint rdf:nodeID="N53ef8393a6424f92b6dbdac108dacc73">
+                    <wire-m:id>2</wire-m:id>
+                    <wire:type>operator</wire:type>
+                    <wire-m:endpoint>input1</wire-m:endpoint>
+                  </wire-m:Endpoint>
+                </wire-m:hasTargetEndpoint>
+                <wire-m:hasSourceEndpoint>
+                  <wire-m:Endpoint rdf:nodeID="Nbf9a47b173f94e5d908a774f29346698">
+                    <wire:type>operator</wire:type>
+                    <wire-m:endpoint>output1</wire-m:endpoint>
+                    <wire-m:id>1</wire-m:id>
+                  </wire-m:Endpoint>
+                </wire-m:hasSourceEndpoint>
+              </wire-m:ConnectionView>
+            </wire-m:hasConnectionView>
+            <wire:index>0</wire:index>
+            <dcterms:description>test 1 description</dcterms:description>
+            <wire-m:hasComponentView>
+              <wire-m:ComponentView rdf:nodeID="Nc71b35d66b274a12a3f5e5218eca4596">
+                <wire:id>2</wire:id>
+                <wire:type>operator</wire:type>
+              </wire-m:ComponentView>
+            </wire-m:hasComponentView>
+          </wire-m:Behaviour>
+        </wire-m:hasBehaviour>
+        <wire:hasInputEndpoint>
+          <wire:InputEndpoint rdf:nodeID="N6219c30e1a9b455b853b68f84d16fe4c">
+            <dcterms:title>input3</dcterms:title>
+            <wire:index>2</wire:index>
+            <rdfs:label>Input label 3</rdfs:label>
+            <wire:friendcode>friendcode 3</wire:friendcode>
+            <dcterms:description>Input description 3</dcterms:description>
+            <wire:type>text</wire:type>
+            <wire:inputActionLabel>action label 3</wire:inputActionLabel>
+          </wire:InputEndpoint>
+        </wire:hasInputEndpoint>
+        <wire-m:hasiOperator>
+          <wire-m:iOperator rdf:nodeID="N829c33a93bbe4c8ba7a586e8a8f2b098">
+            <wire-m:hasiOperatorPreference>
+              <wire-m:iOperatorPreference rdf:nodeID="N8c86106f6ea846f8b2f263abe724fb53">
+                <wire-m:readonly>true</wire-m:readonly>
+                <dcterms:title>pref1</dcterms:title>
+                <wire-m:hidden>true</wire-m:hidden>
+                <wire:value>op3 pref1 value</wire:value>
+              </wire-m:iOperatorPreference>
+            </wire-m:hasiOperatorPreference>
+            <wire-m:iOperatorId>3</wire-m:iOperatorId>
+            <dcterms:title>Wirecloud/TestOperator/2.0</dcterms:title>
+          </wire-m:iOperator>
+        </wire-m:hasiOperator>
+        <wire:hasInputEndpoint>
+          <wire:InputEndpoint rdf:nodeID="Ndaebed9d23f4419dac00a733a075bce6">
+            <wire:index>0</wire:index>
+            <dcterms:title>input1</dcterms:title>
+            <wire:friendcode>friendcode 1</wire:friendcode>
+            <rdfs:label>Input label 1</rdfs:label>
+            <wire:inputActionLabel>a</wire:inputActionLabel>
+            <wire:type>text</wire:type>
+            <dcterms:description>Input description 1</dcterms:description>
+          </wire:InputEndpoint>
+        </wire:hasInputEndpoint>
+        <wire:hasOutputEndpoint>
+          <wire:OutputEndpoint rdf:nodeID="N0244ac3b5caf4f57af1aa92e7f01aa75">
+            <wire:type>text</wire:type>
+            <rdfs:label>Output label 1</rdfs:label>
+            <wire:friendcode>friendcode 1</wire:friendcode>
+            <wire:index>0</wire:index>
+            <dcterms:description>Output description 1</dcterms:description>
+            <dcterms:title>output1</dcterms:title>
+          </wire:OutputEndpoint>
+        </wire:hasOutputEndpoint>
+        <wire-m:hasConnectionView>
+          <wire-m:ConnectionView rdf:nodeID="N89c5234ef12c4154aaebe49244f9971b">
+            <wire-m:hasTargetEndpoint>
+              <wire-m:Endpoint rdf:nodeID="N9f47df1f805c4a7892cb6d17dd913807">
+                <wire:type>operator</wire:type>
+                <wire-m:endpoint>input1</wire-m:endpoint>
+                <wire-m:id>1</wire-m:id>
+              </wire-m:Endpoint>
+            </wire-m:hasTargetEndpoint>
+            <wire-m:hasSourceEndpoint>
+              <wire-m:Endpoint rdf:nodeID="N704a9b7448024b89bf4a2ba3d2761e18">
+                <wire:type>widget</wire:type>
+                <wire-m:endpoint>output1</wire-m:endpoint>
+                <wire-m:id>1</wire-m:id>
+              </wire-m:Endpoint>
+            </wire-m:hasSourceEndpoint>
+          </wire-m:ConnectionView>
+        </wire-m:hasConnectionView>
+        <wire-m:hasConnectionView>
+          <wire-m:ConnectionView rdf:nodeID="N3bee4764215349fcb887e2b427a2a129">
+            <wire-m:hasSourceEndpoint>
+              <wire-m:Endpoint rdf:nodeID="N2ad1fa262c554bee95d11577d9e43a42">
+                <wire:type>operator</wire:type>
+                <wire-m:endpoint>output1</wire-m:endpoint>
+                <wire-m:id>1</wire-m:id>
+              </wire-m:Endpoint>
+            </wire-m:hasSourceEndpoint>
+            <wire-m:hasTargetEndpoint>
+              <wire-m:Endpoint rdf:nodeID="N1510a426b95f413f83d6d89b0a0eff10">
+                <wire-m:endpoint>input1</wire-m:endpoint>
+                <wire:type>widget</wire:type>
+                <wire-m:id>1</wire-m:id>
+              </wire-m:Endpoint>
+            </wire-m:hasTargetEndpoint>
+          </wire-m:ConnectionView>
+        </wire-m:hasConnectionView>
+        <usdl:versionInfo>2.0</usdl:versionInfo>
+        <wire:hasInputEndpoint>
+          <wire:InputEndpoint rdf:nodeID="N44a43e70b5f54989b698c982504d941c">
+            <wire:type>text</wire:type>
+            <dcterms:title>input2</dcterms:title>
+            <wire:index>1</wire:index>
+            <wire:inputActionLabel></wire:inputActionLabel>
+            <rdfs:label>Input label 2</rdfs:label>
+            <dcterms:description>Input description 2</dcterms:description>
+            <wire:friendcode>friendcode 2</wire:friendcode>
+          </wire:InputEndpoint>
+        </wire:hasInputEndpoint>
+        <wire-m:hasConnection>
+          <wire-m:Connection rdf:nodeID="Ne253f74581eb46d7b017a6955e7b72d0">
+            <wire-m:hasTarget>
+              <wire-m:Target rdf:nodeID="N705056a9ce7148ba97444adcb9b49816">
+                <wire-m:targetId>2</wire-m:targetId>
+                <wire-m:endpoint>input1</wire-m:endpoint>
+                <wire:type>operator</wire:type>
+              </wire-m:Target>
+            </wire-m:hasTarget>
+            <wire-m:hasSource>
+              <wire-m:Source rdf:nodeID="Na825049ef30f403884ed68dd8c18df2f">
+                <wire-m:endpoint>output1</wire-m:endpoint>
+                <wire-m:sourceId>1</wire-m:sourceId>
+                <wire:type>operator</wire:type>
+              </wire-m:Source>
+            </wire-m:hasSource>
+          </wire-m:Connection>
+        </wire-m:hasConnection>
+        <wire-m:hasBehaviour>
+          <wire-m:Behaviour rdf:nodeID="N82b8f3d0396e46f8980290116b910863">
+            <dcterms:description>test 2 description</dcterms:description>
+            <wire-m:hasComponentView>
+              <wire-m:ComponentView rdf:nodeID="N2ee2886468f448d8a7b85837ca31967d">
+                <wire:id>1</wire:id>
+                <wire:type>operator</wire:type>
+              </wire-m:ComponentView>
+            </wire-m:hasComponentView>
+            <wire-m:hasConnectionView>
+              <wire-m:ConnectionView rdf:nodeID="N1a1aadb3c3b041018ca87684049115a4">
+                <wire-m:hasTargetEndpoint>
+                  <wire-m:Endpoint rdf:nodeID="N49cf0bb2d05146569db1344efb09fa32">
+                    <wire-m:id>1</wire-m:id>
+                    <wire:type>operator</wire:type>
+                    <wire-m:endpoint>input1</wire-m:endpoint>
+                  </wire-m:Endpoint>
+                </wire-m:hasTargetEndpoint>
+                <wire-m:hasSourceEndpoint>
+                  <wire-m:Endpoint rdf:nodeID="Nefbb29abbfe549fdb31523ffe32fa9fb">
+                    <wire-m:endpoint>output1</wire-m:endpoint>
+                    <wire-m:id>1</wire-m:id>
+                    <wire:type>widget</wire:type>
+                  </wire-m:Endpoint>
+                </wire-m:hasSourceEndpoint>
+              </wire-m:ConnectionView>
+            </wire-m:hasConnectionView>
+            <wire-m:hasConnectionView>
+              <wire-m:ConnectionView rdf:nodeID="Nd08ce9d0dafa45429352697772866aa4">
+                <wire-m:hasSourceEndpoint>
+                  <wire-m:Endpoint rdf:nodeID="N6b8c6a7a06a0499b9bd043fcdacf3b4d">
+                    <wire:type>operator</wire:type>
+                    <wire-m:endpoint>output1</wire-m:endpoint>
+                    <wire-m:id>1</wire-m:id>
+                  </wire-m:Endpoint>
+                </wire-m:hasSourceEndpoint>
+                <wire-m:hasTargetEndpoint>
+                  <wire-m:Endpoint rdf:nodeID="N156adb0b82f741f9b61eb1f4fd5639f8">
+                    <wire-m:id>1</wire-m:id>
+                    <wire:type>widget</wire:type>
+                    <wire-m:endpoint>input1</wire-m:endpoint>
+                  </wire-m:Endpoint>
+                </wire-m:hasTargetEndpoint>
+              </wire-m:ConnectionView>
+            </wire-m:hasConnectionView>
+            <rdfs:label>test 2</rdfs:label>
+            <wire-m:hasComponentView>
+              <wire-m:ComponentView rdf:nodeID="N83cc82b4fdc548abb585751021379adb">
+                <wire:id>1</wire:id>
+                <wire:type>widget</wire:type>
+              </wire-m:ComponentView>
+            </wire-m:hasComponentView>
+            <wire:index>1</wire:index>
+          </wire-m:Behaviour>
+        </wire-m:hasBehaviour>
+        <wire-m:hasComponentView>
+          <wire-m:ComponentView rdf:nodeID="N93075be67430424aa34366c1b6d0c623">
+            <wire:type>operator</wire:type>
+            <wire:id>1</wire:id>
+          </wire-m:ComponentView>
+        </wire-m:hasComponentView>
+        <wire:hasOutputEndpoint>
+          <wire:OutputEndpoint rdf:nodeID="N5ea70ca781c64879a9b97de66b59eaa4">
+            <wire:index>2</wire:index>
+            <dcterms:description>Output description 3</dcterms:description>
+            <dcterms:title>output3</dcterms:title>
+            <wire:friendcode>friendcode 3</wire:friendcode>
+            <rdfs:label>Output label 3</rdfs:label>
+            <wire:type>text</wire:type>
+          </wire:OutputEndpoint>
+        </wire:hasOutputEndpoint>
+        <wire-m:hasiOperator>
+          <wire-m:iOperator rdf:nodeID="N9016ae345792441a84d4ea4f33fd5cf1">
+            <dcterms:title>Wirecloud/TestOperator/1.0</dcterms:title>
+            <wire-m:iOperatorId>1</wire-m:iOperatorId>
+          </wire-m:iOperator>
+        </wire-m:hasiOperator>
+      </wire:PlatformWiring>
+    </wire-m:hasMashupWiring>
+    <dcterms:creator>
+      <foaf:Person rdf:nodeID="Nc708424143794bfcaaa493684d6451fc">
+        <wire:index>0</wire:index>
+        <foaf:name>author_test</foaf:name>
+      </foaf:Person>
+    </dcterms:creator>
+    <foaf:homepage rdf:resource="http://homepage.example.com"/>
+    <dcterms:abstract>test</dcterms:abstract>
+    <wire-m:hasTab>
+      <wire-m:Tab rdf:nodeID="N7a374b21a8cb4e49b2d56fb5ddae1fbc">
+        <wire-m:hasTabPreference>
+          <wire-m:TabPreference rdf:nodeID="Nd16f14eca1e742c68a448f98711b2228">
+            <wire:value>pref value</wire:value>
+            <dcterms:title>pref1</dcterms:title>
+          </wire-m:TabPreference>
+        </wire-m:hasTabPreference>
+        <dcterms:title>Tab 2</dcterms:title>
+        <wire:index>1</wire:index>
+      </wire-m:Tab>
+    </wire-m:hasTab>
+    <wire:hasChangeLog rdf:resource="log/change.html"/>
+    <ns1:bug-database rdf:resource="http://issuetracker.example.com"/>
+    <wire-m:hasEmbeddedResource>
+      <rdf:Description rdf:about="https://macs.example.com/macs/Wirecloud_TestOperator_2.0.wgt">
+        <usdl:versionInfo>2.0</usdl:versionInfo>
+        <usdl:hasProvider>
+          <gr:BussisnessEntity rdf:nodeID="N47c758f43c934dd786faa0c21314d06d">
+            <foaf:name>Wirecloud</foaf:name>
+          </gr:BussisnessEntity>
+        </usdl:hasProvider>
+        <rdfs:label>TestOperator</rdfs:label>
+      </rdf:Description>
+    </wire-m:hasEmbeddedResource>
+    <dcterms:description rdf:resource="README.md"/>
+    <wire-m:hasEmbeddedResource>
+      <rdf:Description rdf:about="macs/Wirecloud_TestOperator_1.0.wgt">
+        <usdl:hasProvider>
+          <gr:BussisnessEntity rdf:nodeID="Nc7044861defd4755b4a5243ea6eafcad">
+            <foaf:name>Wirecloud</foaf:name>
+          </gr:BussisnessEntity>
+        </usdl:hasProvider>
+        <usdl:versionInfo>1.0</usdl:versionInfo>
+        <rdfs:label>TestOperator</rdfs:label>
+      </rdf:Description>
+    </wire-m:hasEmbeddedResource>
+    <wire:hasRequirement>
+      <wire:Feature rdf:nodeID="N0a09881c42474f329a3ec1e54c9b6ce6">
+        <rdfs:label>PubSub</rdfs:label>
+      </wire:Feature>
+    </wire:hasRequirement>
+    <usdl:hasProvider>
+      <gr:BusinessEntity rdf:nodeID="Nf75c5bb65cad47b8a7027edc7f86751b">
+        <foaf:name>Wirecloud</foaf:name>
+      </gr:BusinessEntity>
+    </usdl:hasProvider>
+    <dcterms:license>
+      <dcterms:LicenseDocument rdf:about="http://www.apache.org/licenses/LICENSE-2.0.html">
+        <rdfs:label>Apache License 2</rdfs:label>
+      </dcterms:LicenseDocument>
+    </dcterms:license>
+    <dcterms:title>TemplateTestMashup</dcterms:title>
+    <usdl:versionInfo>1.0</usdl:versionInfo>
+    <wire:hasiPhoneImageUri rdf:resource="images/smartphone.png"/>
+    <foaf:page rdf:resource="docs/index.html"/>
+    <wire:hasImageUri rdf:resource="images/catalogue.png"/>
+    <wire:hasRequirement>
+      <wire:Feature rdf:nodeID="N5540c5527c464f41b9d984d292275f1b">
+        <rdfs:label>Wirecloud</rdfs:label>
+      </wire:Feature>
+    </wire:hasRequirement>
+    <wire:displayName>Template Test Mashup</wire:displayName>
+    <wire-m:hasTab>
+      <wire-m:Tab rdf:nodeID="Nd91d8a986c2f4c0da18c693ef37b3d36">
+        <wire:index>0</wire:index>
+        <wire-m:hasiWidget>
+          <wire-m:iWidget rdf:nodeID="Ndf61c4121b7e41f583090f951cf7a4b4">
+            <dcterms:title>Widget title</dcterms:title>
+            <wire-m:hasiWidgetRendering>
+              <wire-m:iWidgetRendering rdf:nodeID="N434b452e0a9145b1a50f7e6886bc0c12">
+                <wire-m:minimized>True</wire-m:minimized>
+                <wire:renderingWidth>10</wire:renderingWidth>
+                <wire-m:fullDragboard>True</wire-m:fullDragboard>
+                <wire:renderingHeight>10</wire:renderingHeight>
+                <wire-m:layout>0</wire-m:layout>
+              </wire-m:iWidgetRendering>
+            </wire-m:hasiWidgetRendering>
+            <rdfs:label>TestWidget</rdfs:label>
+            <wire-m:readonly>true</wire-m:readonly>
+            <wire-m:hasiWidgetProperty>
+              <wire-m:iWidgetProperty rdf:nodeID="Nd858e37f995e480e9b49cd82447dcf3e">
+                <wire:value>value1</wire:value>
+                <dcterms:title>prop1</dcterms:title>
+              </wire-m:iWidgetProperty>
+            </wire-m:hasiWidgetProperty>
+            <usdl:hasProvider>
+              <gr:BussisnessEntity rdf:nodeID="N751c8d19886f4c2981cd308806f5c46d">
+                <foaf:name>Wirecloud</foaf:name>
+              </gr:BussisnessEntity>
+            </usdl:hasProvider>
+            <wire-m:iWidgetId>2</wire-m:iWidgetId>
+            <wire-m:hasPosition>
+              <wire-m:Position rdf:nodeID="Ndc86ff78b8c647fba01bb8c54ddd4f0c">
+                <wire-m:x>10</wire-m:x>
+                <wire-m:z>2</wire-m:z>
+                <wire-m:y>1</wire-m:y>
+              </wire-m:Position>
+            </wire-m:hasPosition>
+            <usdl:versionInfo>2.0</usdl:versionInfo>
+            <wire-m:hasiWidgetPreference>
+              <wire-m:iWidgetPreference rdf:nodeID="Nbe678a6d57b94bb790577b44ea6cabea">
+                <wire:value>other value</wire:value>
+                <dcterms:title>text</dcterms:title>
+                <wire-m:hidden>true</wire-m:hidden>
+                <wire-m:readonly>true</wire-m:readonly>
+              </wire-m:iWidgetPreference>
+            </wire-m:hasiWidgetPreference>
+          </wire-m:iWidget>
+        </wire-m:hasiWidget>
+        <dcterms:title>Tab 1</dcterms:title>
+        <wire-m:hasTabPreference>
+          <wire-m:TabPreference rdf:nodeID="Nb95effe5f7ca44ac85735fad8b14f0b4">
+            <wire:value>9</wire:value>
+            <dcterms:title>columns</dcterms:title>
+          </wire-m:TabPreference>
+        </wire-m:hasTabPreference>
+        <wire-m:hasiWidget>
+          <wire-m:iWidget rdf:nodeID="N0fbab8ddbc4b4c27a9e125a3a9980841">
+            <dcterms:title>Widget title</dcterms:title>
+            <wire-m:hasiWidgetProperty>
+              <wire-m:iWidgetProperty rdf:nodeID="N854fe8f8cd0240d4b4238c866b7257d2">
+                <dcterms:title>prop2</dcterms:title>
+                <wire:value>value 2</wire:value>
+                <wire-m:readonly>true</wire-m:readonly>
+              </wire-m:iWidgetProperty>
+            </wire-m:hasiWidgetProperty>
+            <wire-m:hasiWidgetPreference>
+              <wire-m:iWidgetPreference rdf:nodeID="Nfbcbbd4468484cd992eb1ef460c5a575">
+                <dcterms:title>list</dcterms:title>
+                <wire-m:readonly>true</wire-m:readonly>
+                <wire:value>default</wire:value>
+              </wire-m:iWidgetPreference>
+            </wire-m:hasiWidgetPreference>
+            <rdfs:label>TestWidget</rdfs:label>
+            <wire-m:hasPosition>
+              <wire-m:Position rdf:nodeID="Na21e0ed809cd49259b0f5d4692b345c6">
+                <wire-m:z>2</wire-m:z>
+                <wire-m:x>0</wire-m:x>
+                <wire-m:y>1</wire-m:y>
+              </wire-m:Position>
+            </wire-m:hasPosition>
+            <usdl:versionInfo>1.0</usdl:versionInfo>
+            <wire-m:iWidgetId>1</wire-m:iWidgetId>
+            <usdl:hasProvider>
+              <gr:BussisnessEntity rdf:nodeID="Ne7ced776667347a79d04167873a1c866">
+                <foaf:name>Wirecloud</foaf:name>
+              </gr:BussisnessEntity>
+            </usdl:hasProvider>
+            <wire-m:hasiWidgetProperty>
+              <wire-m:iWidgetProperty rdf:nodeID="N52e67533b5ed40e3a22928209997a574">
+                <wire:value>value1</wire:value>
+                <dcterms:title>prop1</dcterms:title>
+              </wire-m:iWidgetProperty>
+            </wire-m:hasiWidgetProperty>
+            <wire-m:hasiWidgetPreference>
+              <wire-m:iWidgetPreference rdf:nodeID="N271152691ccd44c0b784b4c78b8b0297">
+                <dcterms:title>text</dcterms:title>
+                <wire:value>other value</wire:value>
+                <wire-m:hidden>true</wire-m:hidden>
+                <wire-m:readonly>true</wire-m:readonly>
+              </wire-m:iWidgetPreference>
+            </wire-m:hasiWidgetPreference>
+            <wire-m:hasiWidgetRendering>
+              <wire-m:iWidgetRendering rdf:nodeID="N0926434a489349b495e73a29ae85f37c">
+                <wire-m:minimized>False</wire-m:minimized>
+                <wire:renderingHeight>10</wire:renderingHeight>
+                <wire:renderingWidth>10</wire:renderingWidth>
+                <wire-m:fullDragboard>False</wire-m:fullDragboard>
+                <wire-m:layout>0</wire-m:layout>
+              </wire-m:iWidgetRendering>
+            </wire-m:hasiWidgetRendering>
+          </wire-m:iWidget>
+        </wire-m:hasiWidget>
+        <wire-m:hasTabPreference>
+          <wire-m:TabPreference rdf:nodeID="N0767dfef132641dfa8383dea20447a68">
+            <wire:value>false</wire:value>
+            <dcterms:title>smart</dcterms:title>
+          </wire-m:TabPreference>
+        </wire-m:hasTabPreference>
+      </wire-m:Tab>
+    </wire-m:hasTab>
+    <wire-m:hasMashupPreference>
+      <wire-m:MashupPreference rdf:nodeID="Nb8e04b9bd8264362981df880f8f78a2e">
+        <dcterms:title>columns</dcterms:title>
+        <wire:value>8</wire:value>
+      </wire-m:MashupPreference>
+    </wire-m:hasMashupPreference>
+  </wire-m:Mashup>
+</rdf:RDF>

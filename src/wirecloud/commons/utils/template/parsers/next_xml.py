@@ -272,28 +272,24 @@ class ApplicationMashupTemplateParser(object):
                 'targetname': connection.get('targetname'),
             }
 
-            sourceauto = connection.get('sourceauto', 'false').strip().lower() == 'true'
-            targetauto = connection.get('targetauto', 'false').strip().lower() == 'true'
+            sourcehandle_element = self.get_xpath(SOURCEHANDLE_XPATH, connection, required=False)
+            targethandle_element = self.get_xpath(TARGETHANDLE_XPATH, connection, required=False)
 
-            if sourceauto:
+            if sourcehandle_element is not None:
+                connection_info['sourcehandle'] = {
+                    'x': int(sourcehandle_element.get('x')),
+                    'y': int(sourcehandle_element.get('y'))
+                }
+            else:
                 connection_info['sourcehandle'] = 'auto'
-            else:
-                sourcehandle_element = self.get_xpath(SOURCEHANDLE_XPATH, connection, required=False)
-                if sourcehandle_element is not None:
-                    connection_info['sourcehandle'] = {
-                        'x': int(sourcehandle_element.get('x')),
-                        'y': int(sourcehandle_element.get('y'))
-                    }
 
-            if targetauto:
-                connection_info['targethandle'] = 'auto'
+            if targethandle_element is not None:
+                connection_info['targethandle'] = {
+                    'x': int(targethandle_element.get('x')),
+                    'y': int(targethandle_element.get('y'))
+                }
             else:
-                targethandle_element = self.get_xpath(TARGETHANDLE_XPATH, connection, required=False)
-                if targethandle_element is not None:
-                    connection_info['targethandle'] = {
-                        'x': int(targethandle_element.get('x')),
-                        'y': int(targethandle_element.get('y'))
-                    }
+                connection_info['targethandle'] = 'auto'
 
             target['connections'].append(connection_info)
 

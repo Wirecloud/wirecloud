@@ -409,16 +409,15 @@ class RDFTemplateParser(object):
             sorted_sources = sorted(self._graph.objects(entity_view, WIRE_M['hasSource']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source, required=False)))
             sorted_targets = sorted(self._graph.objects(entity_view, WIRE_M['hasTarget']), key=lambda target: possible_int(self._get_field(WIRE, 'index', target, required=False)))
 
-            if len(sorted_sources) > 0 or len(sorted_targets) > 0:
-                component_view_description['endpoints'] = {}
-                component_view_description['endpoints']['source'] = [self._get_field(RDFS, 'label', sourc) for sourc in sorted_sources]
-                component_view_description['endpoints']['target'] = [self._get_field(RDFS, 'label', targ) for targ in sorted_targets]
+            component_view_description['endpoints'] = {}
+            component_view_description['endpoints']['source'] = [self._get_field(RDFS, 'label', sourc) for sourc in sorted_sources]
+            component_view_description['endpoints']['target'] = [self._get_field(RDFS, 'label', targ) for targ in sorted_targets]
 
             position = self._parse_position(entity_view)
             if position is not None:
                 component_view_description['position'] = position
 
-    def _parse_position(self, node, relation_name='hasPosition'):
+    def _parse_position(self, node, relation_name='hasPosition', default=None):
             position_node = self._get_field(WIRE_M, relation_name, node, id_=True, default=None, required=False)
             if position_node is not None:
                 return {
@@ -426,7 +425,7 @@ class RDFTemplateParser(object):
                     'y': int(self._get_field(WIRE_M, 'y', position_node))
                 }
 
-            return None
+            return default
 
     def _join_endpoint_name(self, endpointView):
         endpoint = {
@@ -443,37 +442,22 @@ class RDFTemplateParser(object):
 
         for connection in self._graph.objects(element, WIRE_M['hasConnectionView']):
             connection_info = {}
-            is_auto = False
 
             for source in self._graph.objects(connection, WIRE_M['hasSourceEndpoint']):
                 connection_info['sourcename'] = self._join_endpoint_name(source)
-                is_auto = self._get_field(WIRE_M, 'auto', source, required=False).lower() == 'true'
                 break
             else:
                 raise TemplateParseException(_('missing required field: hasSourceEndpoint'))
 
-            if is_auto:
-                connection_info['sourcehandle'] = 'auto'
-            else:
-                sourcehandle = self._parse_position(connection, relation_name='hasSourceHandlePosition')
-                if sourcehandle is not None:
-                    connection_info['sourcehandle'] = sourcehandle
-
-            is_auto = False
+            connection_info['sourcehandle'] = self._parse_position(connection, relation_name='hasSourceHandlePosition', default="auto")
 
             for target in self._graph.objects(connection, WIRE_M['hasTargetEndpoint']):
                 connection_info['targetname'] = self._join_endpoint_name(target)
-                is_auto = self._get_field(WIRE_M, 'auto', target, required=False).lower() == 'true'
                 break
             else:
                 raise TemplateParseException(_('missing required field: hasTargetEndpoint'))
 
-            if is_auto:
-                connection_info['targethandle'] = 'auto'
-            else:
-                targethandle = self._parse_position(connection, relation_name='hasTargetHandlePosition')
-                if targethandle is not None:
-                    connection_info['targethandle'] = targethandle
+            connection_info['targethandle'] = self._parse_position(connection, relation_name='hasTargetHandlePosition', default="auto")
 
             behaviour['connections'].append(connection_info)
 

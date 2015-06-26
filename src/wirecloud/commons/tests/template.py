@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -38,6 +38,17 @@ WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
 
 # Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
 __test__ = False
+
+
+def read_template(filename):
+    testdir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test-data'))
+
+    with open(os.path.join(testdir_path, filename)) as file_opened:
+        return file_opened.read()
+
+
+def read_json_fixtures(filename):
+    return json.loads(read_template(filename + '.json'))
 
 
 class TemplateUtilsTestCase(TestCase):
@@ -1391,40 +1402,27 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
-    def compare_input_and_output_mashup(self, filename, mashup_format="rdf"):
+        cls.mashup_with_behaviours_minimal_data = read_json_fixtures("mashup_with_behaviours_minimal_data_result")
 
-        mashup_data = self.read_json_fixtures(filename)
+    def compare_input_and_output_mashup(self, filename, mashup_format):
+
+        mashup_data = read_json_fixtures(filename)
 
         if mashup_format == "rdf":
             template = TemplateParser(write_rdf_description(mashup_data))
         elif mashup_format == "xml":
             template = TemplateParser(write_next_xml_description(mashup_data))
+        elif mashup_format == "json":
+            template = TemplateParser(write_json_description(mashup_data))
 
         self.check_full_mashup(template.get_resource_info(), mashup_data)
 
-    def read_json_fixtures(self, *args):
-        testdir_path = os.path.join(os.path.dirname(__file__), 'test-data')
-        json_fixtures = []
+    def check_minimal_mashup_data(self, testname, format):
+        template_contents = read_template(testname + "." + format)
+        template = TemplateParser(template_contents)
+        processed_info = template.get_resource_info()
 
-        for filename in args:
-            file_opened = open(os.path.join(testdir_path, filename + '.json'))
-            json_fixtures.append(json.loads(file_opened.read()))
-            file_opened.close()
-
-        if len(json_fixtures) == 0:
-            return None
-
-        if len(json_fixtures) == 1:
-            return json_fixtures[0]
-
-        return tuple(json_fixtures)
-
-    def read_template(self, *filename):
-        f = open(os.path.join(os.path.dirname(__file__), '..', 'test-data', *filename), 'rb')
-        contents = f.read()
-        f.close()
-
-        return contents
+        self.check_full_mashup(processed_info, getattr(self, testname))
 
     def check_full_mashup(self, processed_info, expected_result):
 
@@ -1462,7 +1460,7 @@ class TemplateUtilsTestCase(TestCase):
     def check_missing_xml_element(self, query):
         from lxml import etree
 
-        document = write_next_xml_description(self.read_json_fixtures('mashup_with_behaviours_data'), raw=True)
+        document = write_next_xml_description(read_json_fixtures('mashup_with_behaviours_data'), raw=True)
 
         for element_to_remove in document.xpath(query, namespaces={'t': WIRECLOUD_TEMPLATE_NS}):
             element_to_remove.getparent().remove(element_to_remove)
@@ -1500,6 +1498,9 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_mashup_info)
+
+    def test_json_parser_writer_mashup_with_behaviours(self):
+        self.compare_input_and_output_mashup("mashup_with_behaviours_data", "json")
 
     def test_json_parser_writer_mashup(self):
 
@@ -1543,7 +1544,7 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_json_parser_minimal_endpoint_info(self):
 
-        json_description = self.read_template('minimal_endpoint_info.json')
+        json_description = read_template('minimal_endpoint_info.json')
         template = TemplateParser(json_description)
         processed_info = template.get_resource_info()
 
@@ -1551,7 +1552,7 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_json_parser_minimal_preference_info(self):
 
-        json_description = self.read_template('minimal_preference_info.json')
+        json_description = read_template('minimal_preference_info.json')
         template = TemplateParser(json_description)
         processed_info = template.get_resource_info()
 
@@ -1559,7 +1560,7 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_json_parser_minimal_property_info(self):
 
-        json_description = self.read_template('minimal_property_info.json')
+        json_description = read_template('minimal_property_info.json')
         template = TemplateParser(json_description)
         processed_info = template.get_resource_info()
 
@@ -1602,34 +1603,15 @@ class TemplateUtilsTestCase(TestCase):
     test_rdf_parser_writer_basic_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_behaviours(self):
-        self.compare_input_and_output_mashup("mashup_with_behaviours_data")
-
-    def _set_prop_collapsed_to_false(self, components):
-
-        for component_id in components['operator']:
-            component = components['operator'][component_id]
-            component['collapsed'] = False
-
-        for component_id in components['widget']:
-            component = components['widget'][component_id]
-            component['collapsed'] = False
+        self.compare_input_and_output_mashup("mashup_with_behaviours_data", "rdf")
 
     def test_rdf_parser_writer_mashup_with_behaviours_and_minimal_data(self):
-
-        mashup_data = self.read_json_fixtures("mashup_with_behaviours_minimal_data")
-        template = TemplateParser(write_rdf_description(mashup_data))
-
-        self._set_prop_collapsed_to_false(mashup_data['wiring']['visualdescription']['components'])
-
-        for behaviour in mashup_data['wiring']['visualdescription']['behaviours']:
-            self._set_prop_collapsed_to_false(behaviour['components'])
-
-        self.check_full_mashup(template.get_resource_info(), mashup_data)
+        self.check_minimal_mashup_data("mashup_with_behaviours_minimal_data", "rdf")
 
     def check_missing_rdf_node(self, subject, predicate):
 
         graph = rdflib.Graph()
-        graph.parse(data=self.read_template("mashup-temporal.rdf"), format='xml')
+        graph.parse(data=read_template("mashup-temporal.rdf"), format='xml')
 
         subject_ref = rdflib.URIRef(subject)
         for node_to_remove in graph.objects(subject_ref, predicate):
@@ -1697,7 +1679,7 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_rdf_parser_minimal_endpoint_info(self):
 
-        xml_description = self.read_template('minimal_endpoint_info.rdf')
+        xml_description = read_template('minimal_endpoint_info.rdf')
         template = TemplateParser(xml_description)
         processed_info = template.get_resource_info()
 
@@ -1705,7 +1687,7 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_rdf_parser_minimal_preference_info(self):
 
-        rdf_description = self.read_template('minimal_preference_info.rdf')
+        rdf_description = read_template('minimal_preference_info.rdf')
         template = TemplateParser(rdf_description)
         processed_info = template.get_resource_info()
 
@@ -1713,7 +1695,7 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_rdf_parser_minimal_property_info(self):
 
-        rdf_description = self.read_template('minimal_property_info.rdf')
+        rdf_description = read_template('minimal_property_info.rdf')
         template = TemplateParser(rdf_description)
         processed_info = template.get_resource_info()
 
@@ -1814,7 +1796,10 @@ class TemplateUtilsTestCase(TestCase):
         self.check_full_mashup(processed_info, self.mashup_info)
 
     def test_next_xml_parser_writer_mashup_with_behaviours(self):
-        self.compare_input_and_output_mashup("mashup_with_behaviours_data", mashup_format="xml")
+        self.compare_input_and_output_mashup("mashup_with_behaviours_data", "xml")
+
+    def test_next_xml_parser_writer_mashup_with_behaviours_and_minimal_data(self):
+        self.check_minimal_mashup_data("mashup_with_behaviours_minimal_data", "xml")
 
     def test_next_xml_parser_missing_mashup_connection_target(self):
         self.check_missing_xml_element('/mashup/structure/wiring/connection[1]/target')
@@ -1856,7 +1841,7 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_next_xml_parser_minimal_endpoint_info(self):
 
-        xml_description = self.read_template('minimal_endpoint_info.xml')
+        xml_description = read_template('minimal_endpoint_info.xml')
         template = TemplateParser(xml_description)
         processed_info = template.get_resource_info()
 
@@ -1864,7 +1849,7 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_next_xml_parser_minimal_preference_info(self):
 
-        xml_description = self.read_template('minimal_preference_info.xml')
+        xml_description = read_template('minimal_preference_info.xml')
         template = TemplateParser(xml_description)
         processed_info = template.get_resource_info()
 
@@ -1872,7 +1857,7 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_next_xml_parser_minimal_property_info(self):
 
-        xml_description = self.read_template('minimal_property_info.xml')
+        xml_description = read_template('minimal_property_info.xml')
         template = TemplateParser(xml_description)
         processed_info = template.get_resource_info()
 
