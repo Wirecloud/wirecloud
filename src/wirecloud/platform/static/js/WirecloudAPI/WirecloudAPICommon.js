@@ -140,6 +140,15 @@
             }
         }
     });
+    Object.defineProperty(window.MashupPlatform.wiring, 'registerStatusCallback', {
+        value: function registerCallback(callback) {
+            if (typeof callback !== "function") {
+                throw new TypeError('callback must be a function');
+            }
+
+            resource.workspace.wiring.addEventListener('load', callback);
+        }
+    });
     Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {
         value: function pushEvent(outputName, data, options) {
             if (outputName in resource.outputs) {
