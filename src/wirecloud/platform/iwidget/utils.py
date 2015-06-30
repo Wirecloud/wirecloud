@@ -2,24 +2,37 @@
 
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+from six import text_type
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.platform.models import IWidget, Position, Tab, VariableDef
+from wirecloud.platform.models import IWidget, Position, Tab
 
 
-def addIWidgetVariable(iwidget, varDef, initial_value=None):
+def parse_value_from_text(info, value):
+    if info['type'] == 'boolean':
+        if isinstance(value, text_type):
+            return value.strip().lower() in ('true', '1', 'on')
+        else:
+            return bool(value)
+    elif info['type'] == 'number':
+        return float(value)
+    elif info['type'] in ('list', 'text', 'password'):
+        return text_type(value)
+
+
+def process_initial_value(vardef, initial_value=None):
 
     # Sets the default value of variable
-    if varDef.readonly == False and initial_value:
-        var_value = initial_value
-    elif varDef.value:
-        var_value = varDef.value
-    elif varDef.default_value:
-        var_value = varDef.default_value
+    if vardef.get('readonly', False) is False and initial_value is not None:
+        value = initial_value
+    elif vardef.get('value', None) is not None:
+        value = vardef['value']
+    elif vardef['default']:
+        value = vardef['default']
     else:
-        var_value = ''
+        value = ''
 
-    iwidget.variable_set.create(vardef=varDef, value=var_value)
+    return parse_value_from_text(vardef, value)
 
 
 def SaveIWidget(iwidget, user, tab, initial_variable_values):
@@ -31,9 +44,10 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
     if not resource.is_available_for(user):
         raise CatalogueResource.DoesNotExist
 
+    iwidget_info = resource.get_processed_info()
     iwidget_name = iwidget.get('name', None)
     if iwidget_name is None:
-        iwidget_name = resource.get_processed_info()['title']
+        iwidget_name = iwidget_info['title']
 
     width = iwidget.get('width', 0)
     height = iwidget.get('height', 0)
@@ -53,16 +67,15 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
     icon_position.save()
 
     new_iwidget = IWidget(name=iwidget_name, widget=resource.widget, tab=tab, layout=layout, position=position, icon_position=icon_position)
-    new_iwidget.save()
 
-    variableDefs = VariableDef.objects.filter(widget=resource.widget)
-    for varDef in variableDefs:
-        if initial_variable_values and varDef.name in initial_variable_values:
-            initial_value = initial_variable_values[varDef.name]
+    for vardef in (iwidget_info['preferences'] + iwidget_info['properties']):
+        if initial_variable_values and vardef['name'] in initial_variable_values:
+            initial_value = initial_variable_values[vardef['name']]
         else:
             initial_value = None
-        addIWidgetVariable(new_iwidget, varDef, initial_value)
+        new_iwidget.set_variable_value(vardef['name'], process_initial_value(vardef, initial_value))
 
+    new_iwidget.save()
     return new_iwidget
 
 

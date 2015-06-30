@@ -37,8 +37,9 @@ from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.html import clean_html
 from wirecloud.platform.context.utils import get_workspace_context, get_context_values
+from wirecloud.platform.iwidget.utils import parse_value_from_text
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, Workspace
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
 
 
@@ -94,13 +95,6 @@ def decrypt_value(value):
         return json.loads(value.decode('utf8'))
     except:
         return ''
-
-
-def set_variable_value(var_id, value):
-
-    variable = Variable.objects.select_related('vardef').get(id=var_id)
-    variable.set_variable_value(value)
-    variable.save()
 
 
 def sync_base_workspaces(user):
@@ -187,20 +181,31 @@ def get_workspace_list(user):
     return workspaces, active_workspace
 
 
-def _variable_cache_key(iwidget):
-    return '_variable_cache/' + str(iwidget.id)
+def _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid):
+    varname = vardef['name']
+    entry = {
+        'type': vardef['type'],
+        'secure': vardef['secure'],
+    }
+    if svariwidget in forced_values['iwidget'] and varname in forced_values['iwidget'][svariwidget]:
+        fv_entry = forced_values['iwidget'][svariwidget][varname]
 
+        entry['value'] = fv_entry['value']
+        if vardef['secure']:
+            entry['value'] = encrypt_value(entry['value'])
+        else:
+            entry['value'] = parse_value_from_text(entry, entry['value'])
 
-def _get_cached_variables(iwidget):
-    key = _variable_cache_key(iwidget)
+        entry['readonly'] = True
+        entry['hidden'] = fv_entry.get('hidden', False)
 
-    variables = cache.get(key)
-    if variables == None:
-        variable_query = Variable.objects.filter(iwidget__id=iwidget.id).select_related('iwidget', 'vardef')
-        variables = variable_query[::1]
-        cache.set(key, variables)
+    else:
+        entry['value'] = iwidget.variables.get(varname, parse_value_from_text(entry, vardef['default']))
+        entry['readonly'] = False
+        entry['hidden'] = False
 
-    return variables
+    values_by_varname[iwidget.id][varname] = entry
+    values_by_varid["%s/%s" % (iwidget.id, varname)] = entry
 
 
 def _populate_variables_values_cache(workspace, user, key, forced_values=None):
@@ -213,38 +218,17 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
         preferences = get_workspace_preference_values(workspace)
         forced_values = process_forced_values(workspace, user, context_values, preferences)
 
-    var_values = Variable.objects.filter(iwidget__tab__workspace=workspace)
-    for variable in var_values.select_related('vardef'):
-        variwidget = variable.iwidget.id
-        varname = variable.vardef.name
+    for iwidget in IWidget.objects.filter(tab__workspace=workspace):
         # forced_values uses string keys
-        svariwidget = str(variwidget)
+        svariwidget = str(iwidget.id)
+        values_by_varname[iwidget.id] = {}
+        iwidget_info = iwidget.widget.resource.get_processed_info()
 
-        if not variwidget in values_by_varname:
-            values_by_varname[variwidget] = {}
+        for vardef in iwidget_info['preferences']:
+            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid)
 
-        entry = {}
-        if svariwidget in forced_values['iwidget'] and varname in forced_values['iwidget'][svariwidget]:
-            fv_entry = forced_values['iwidget'][svariwidget][varname]
-
-            entry['value'] = fv_entry['value']
-            if variable.vardef.secure:
-                entry['value'] = encrypt_value(entry['value'])
-
-            entry['readonly'] = True
-            entry['hidden'] = fv_entry.get('hidden', False)
-
-        else:
-            entry['value'] = variable.value
-
-            entry['readonly'] = False
-            entry['hidden'] = False
-
-        entry['type'] = variable.vardef.type
-        entry['secure'] = variable.vardef.secure
-
-        values_by_varname[variwidget][varname] = entry
-        values_by_varid[variable.id] = entry
+        for vardef in iwidget_info['properties']:
+            _process_variable(iwidget, svariwidget, vardef, forced_values, values_by_varname, values_by_varid)
 
     values = {
         'by_varid': values_by_varid,
@@ -278,7 +262,8 @@ class VariableValueCacheManager():
     def _process_entry(self, entry):
 
         if entry['secure'] == True:
-            return decrypt_value(entry['value'])
+            value = decrypt_value(entry['value'])
+            return parse_value_from_text(entry, value)
         else:
             return entry['value']
 
@@ -297,44 +282,25 @@ class VariableValueCacheManager():
             iwidget_id = iwidget.id
         elif 'id' in iwidget:
             iwidget_id = iwidget.id
-            iwidget = IWidget.objects.get(id=iwidget_id)
         else:
             iwidget_id = int(iwidget)
-            iwidget = IWidget.objects.get(id=iwidget_id)
 
         values = self.get_variable_values()
         entry = values['by_varname'][iwidget_id][var_name]
         value = self._process_entry(entry)
 
-        if entry['type'] == 'B':
-            value = value.lower() == 'true'
-        elif entry['type'] == 'N':
-            value = float(value)
-
         return value
 
-    def get_variable_data(self, variable):
+    def get_variable_data(self, iwidget, var_name):
         values = self.get_variable_values()
-        entry = values['by_varid'][variable.id]
-        data_ret = {}
-
-        if entry['secure']:
-            data_ret['value'] = ''
-            data_ret['secure'] = True
-        else:
-            value = entry['value']
-
-            if entry['type'] == 'B':
-                value = value.lower() == 'true'
-            elif entry['type'] == 'N':
-                value = float(value)
-
-            data_ret['value'] = value
-
-        data_ret['readonly'] = entry['readonly']
-        data_ret['hidden'] = entry['hidden']
-
-        return data_ret
+        entry = values['by_varname'][iwidget.id][var_name]
+        return {
+            'name': var_name,
+            'secure': entry['secure'],
+            'readonly': entry['readonly'],
+            'hidden': entry['hidden'],
+            'value': '' if entry['secure'] else entry['value']
+        }
 
 
 def get_workspace_data(workspace, user):
@@ -555,28 +521,8 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
     if cache_manager is None:
         cache_manager = VariableValueCacheManager(workspace, user)
 
-    variables = _get_cached_variables(iwidget)
-    data_ret['preferences'] = {}
-    data_ret['properties'] = {}
-    for variable in variables:
-        var_data = get_variable_data(variable, workspace, cache_manager)
-        if variable.vardef.aspect == "PROP":
-            data_ret['properties'][variable.vardef.name] = var_data
-        else:
-            data_ret['preferences'][variable.vardef.name] = var_data
-
-    return data_ret
-
-
-def get_variable_data(variable, workspace, cache_manager=None, user=None):
-    data_ret = {
-        'name': variable.vardef.name,
-    }
-
-    if cache_manager is None:
-        cache_manager = VariableValueCacheManager(workspace, user)
-
-    # Variable info is splited into 2 entities: VariableDef and VariableValue
-    data_ret.update(cache_manager.get_variable_data(variable))
+    iwidget_info = iwidget.widget.resource.get_processed_info()
+    data_ret['preferences'] = {preference['name']: cache_manager.get_variable_data(iwidget, preference['name']) for preference in iwidget_info['preferences']}
+    data_ret['properties'] = {property['name']: cache_manager.get_variable_data(iwidget, property['name']) for property in iwidget_info['properties']}
 
     return data_ret

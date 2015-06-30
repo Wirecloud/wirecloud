@@ -29,11 +29,11 @@ from django.core.cache import cache
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.iwidget.utils import SaveIWidget
-from wirecloud.platform.models import Tab, UserWorkspace, Workspace
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_xml_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-from wirecloud.platform.workspace.utils import get_global_workspace_data, set_variable_value
+from wirecloud.platform.workspace.utils import get_global_workspace_data
 from wirecloud.platform.workspace.views import createEmptyWorkspace
 
 
@@ -114,12 +114,9 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
     def test_updating_preferences_invalidates_cache(self):
 
-        variable = self.workspace.tab_set.get(pk=1).iwidget_set.get(pk=1).variable_set.select_related('vardef').get(
-            vardef__name='username',
-            vardef__aspect='PREF'
-        )
-        variable.set_variable_value('new_username')
-        variable.save()
+        iwidget = self.workspace.tab_set.get(pk=1).iwidget_set.get(pk=1)
+        iwidget.set_variable_value('username', 'new_username')
+        iwidget.save()
 
         workspace_info = get_global_workspace_data(self.workspace, self.user)
         self.assertNotEqual(self.initial_info.timestamp, workspace_info.timestamp)
@@ -134,12 +131,9 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
     def test_updating_properties_invalidates_cache(self):
 
-        variable = self.workspace.tab_set.get(pk=1).iwidget_set.get(pk=1).variable_set.select_related('vardef').get(
-            vardef__name='prop',
-            vardef__aspect='PROP'
-        )
-        variable.set_variable_value('new_data')
-        variable.save()
+        iwidget = self.workspace.tab_set.get(pk=1).iwidget_set.get(pk=1)
+        iwidget.set_variable_value('prop', 'new_data')
+        iwidget.save()
 
         workspace_info = get_global_workspace_data(self.workspace, self.user)
         self.assertNotEqual(self.initial_info.timestamp, workspace_info.timestamp)
@@ -237,6 +231,14 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.user = User.objects.get(username='test')
         self.workspace_with_iwidgets = Workspace.objects.get(pk=1)
         self.workspace = createEmptyWorkspace('Testing', self.user)
+
+        # password variables must be encrypted
+        iwidget = IWidget.objects.get(pk=1)
+        iwidget.set_variable_value('password', 'test_password')
+        iwidget.save()
+        iwidget = IWidget.objects.get(pk=2)
+        iwidget.set_variable_value('password', 'test_password')
+        iwidget.save()
 
     def assertXPathText(self, root_element, xpath, content):
         elements = root_element.xpath(xpath)
@@ -414,9 +416,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
     def test_build_xml_template_from_workspace_forced_values(self):
 
-        set_variable_value(1, 'test_password')
-        set_variable_value(6, 'test_password')
-
         # Workspace with iwidgets
         template = build_xml_template_from_workspace(self.forced_value_options, self.workspace_with_iwidgets, self.user)
         self.check_basic_xml_workspace_template_info(template)
@@ -446,9 +445,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'hidden', 'true')
 
     def test_build_rdf_template_from_workspace(self):
-
-        set_variable_value(1, 'test_password')
-        set_variable_value(6, 'test_password')
 
         options = {
             'vendor': 'Wirecloud Test Suite',
@@ -492,7 +488,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
             self.assertRDFElement(graph, iwidget, self.WIRE_M, 'readonly', 'false', optional=True)
-            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
+            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 4)
             username_found = password_found = False
             for preference in graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference']):
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
@@ -504,6 +500,9 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                 elif unicode(name) == 'password':
                     password_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
+                elif unicode(name) in ('boolean', 'list'):
+                    # Ignore boolean and list preferences
+                    pass
                 else:
                     self.fail()
 
@@ -512,9 +511,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.check_workspace_rdf_wiring(graph, mashup_uri)
 
     def test_build_rdf_template_from_workspace_read_only_widgets(self):
-
-        set_variable_value(1, 'test_password')
-        set_variable_value(6, 'test_password')
 
         # Workspace with iwidgets
         options = {
@@ -536,7 +532,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
             self.assertRDFElement(graph, iwidget, self.WIRE_M, 'readonly', 'true')
-            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
+            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 4)
             username_found = password_found = False
             for preference in graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference']):
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
@@ -548,15 +544,15 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                 elif unicode(name) == 'password':
                     password_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
+                elif unicode(name) in ('boolean', 'list'):
+                    # Ignore boolean and list preferences
+                    pass
                 else:
                     self.fail()
 
             self.assertTrue(username_found and password_found)
 
     def test_build_rdf_template_from_workspace_forced_values(self):
-
-        set_variable_value(1, 'test_password')
-        set_variable_value(6, 'test_password')
 
         # Workspace with iwidgets
         graph = build_rdf_template_from_workspace(self.forced_value_options, self.workspace_with_iwidgets, self.user)
@@ -569,7 +565,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
             name = unicode(self.get_rdf_element(graph, iwidget, self.DCTERMS, 'title'))
 
-            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
+            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 4)
             preferences = graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference'])
 
             username_found = password_found = False
@@ -577,16 +573,20 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             if name == 'Test Widget':
 
                 for preference in preferences:
-                    self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                     name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
                     if unicode(name) == 'username':
                         username_found = True
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'default')
                     elif unicode(name) == 'password':
                         password_found = True
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'initial text')
+                    elif unicode(name) in ('boolean', 'list'):
+                        # Ignore boolean and list preferences
+                        pass
                     else:
                         self.fail()
 
@@ -600,6 +600,9 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                     elif unicode(name) == 'password':
                         password_found = True
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
+                    elif unicode(name) in ('boolean', 'list'):
+                        # Ignore boolean and list preferences
+                        pass
                     else:
                         self.fail()
 

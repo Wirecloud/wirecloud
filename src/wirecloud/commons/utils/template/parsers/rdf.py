@@ -734,20 +734,6 @@ class RDFTemplateParser(object):
         self._info['tabs'] = tabs
         self._parse_wiring_info(wiring_property='hasMashupWiring')
 
-    def typeText2typeCode(self, typeText):
-        mapping = {
-            'text': 'S',
-            'number': 'N',
-            'date': 'D',
-            'boolean': 'B',
-            'list': 'L',
-            'password': 'P',
-        }
-        if typeText in mapping:
-            return mapping[typeText]
-        else:
-            raise TemplateParseException(_("ERROR: unkown TEXT TYPE ") + typeText)
-
     def get_contents(self):
         return self._graph.serialize(format='pretty-xml')
 

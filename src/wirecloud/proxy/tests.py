@@ -30,9 +30,8 @@ from django.utils import unittest
 from django.utils.importlib import import_module
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
-from wirecloud.platform.models import Variable
+from wirecloud.platform.models import IWidget
 from wirecloud.platform.plugins import clear_cache
-from wirecloud.platform.workspace.utils import set_variable_value
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -338,8 +337,10 @@ class ProxySecureDataTests(ProxyTestsBase):
 
     def test_secure_data(self):
 
-        set_variable_value(1, 'test_password')
-        self.assertTrue(Variable.objects.get(pk=1).value != 'test_password')
+        iwidget = IWidget.objects.get(pk=1)
+        iwidget.set_variable_value('password', 'test_password')
+        iwidget.save()
+        self.assertNotEqual(iwidget.variables['password'], 'test_password')
 
         self.client.login(username='test', password='test')
 

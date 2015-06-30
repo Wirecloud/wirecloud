@@ -31,7 +31,7 @@ from mock import Mock, patch
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
-from wirecloud.platform.models import IWidget, Tab, Variable, Workspace, UserWorkspace, WorkspacePreference
+from wirecloud.platform.models import IWidget, Tab, Workspace, UserWorkspace, WorkspacePreference
 from wirecloud.platform.widget import utils as localcatalogue
 
 
@@ -1549,11 +1549,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         def iwidget_preference_not_created(self):
             # IWidget preferences should not be updated
-            variable = Variable.objects.get(
-                vardef__name='text',
-                iwidget__id=2
-            )
-            self.assertNotEqual(variable.value, 'new value')
+            variables = IWidget.objects.get(pk=2).variables
+            self.assertNotEqual(variables['text'], 'new value')
 
         check_post_requires_authentication(self, url, json.dumps(data), iwidget_preference_not_created)
 
@@ -1582,11 +1579,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(response.content, '')
 
             # IWidget preferences should be updated
-            variable = Variable.objects.get(
-                vardef__name='text',
-                iwidget__id=2
-            )
-            self.assertEqual(variable.value, 'new value')
+            variables = IWidget.objects.get(pk=2).variables
+            self.assertEqual(variables['text'], 'new value')
 
         check_cache_is_purged(self, 2, update_iwidget_preference)
 
@@ -1618,9 +1612,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
     def test_iwidget_preferences_entry_post_readonly_preference(self):
 
-        vardef = Variable.objects.get(vardef__name='text', iwidget__id=2).vardef
-        vardef.readonly = True
-        vardef.save()
+        resource = CatalogueResource.objects.get(vendor="Wirecloud", short_name="Test", version="1.0")
+        json_description = json.loads(resource.json_description)
+        json_description['preferences'] = [{'secure': False, 'name': 'text', 'default': 'initial text', 'label': 'text', 'type': 'text', 'description': 'text preference', 'readonly': True}]
+        resource.json_description = json.dumps(json_description)
+        resource.save()
 
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
 
@@ -1639,9 +1635,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def _todo_create_property(self):
 
         # TODO
-        from wirecloud.platform.models import VariableDef
-        vardef = VariableDef.objects.create(widget_id=1, name="prop", aspect="PROP", type="T", secure=False, default_value="")
-        Variable.objects.create(vardef=vardef, iwidget_id=2, value="default")
+        resource = CatalogueResource.objects.get(vendor="Wirecloud", short_name="Test", version="1.0")
+        json_description = json.loads(resource.json_description)
+        json_description['properties'] = [{'secure': False, 'name': 'prop', 'default': '', 'label': '', 'type': 'text'}]
+        resource.json_description = json.dumps(json_description)
+        resource.save()
         # end TODO
 
     def test_iwidget_properties_entry_post_requires_authentication(self):
@@ -1657,11 +1655,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         def iwidget_preference_not_created(self):
             # IWidget properties should not be updated
-            variable = Variable.objects.get(
-                vardef__name='prop',
-                iwidget__id=2
-            )
-            self.assertNotEqual(variable.value, 'new value')
+            variables = IWidget.objects.get(pk=2).variables
+            self.assertNotIn('prop', variables)
 
         check_post_requires_authentication(self, url, json.dumps(data), iwidget_preference_not_created)
 
@@ -1692,11 +1687,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(response.content, '')
 
             # IWidget properties should be updated
-            variable = Variable.objects.get(
-                vardef__name='prop',
-                iwidget__id=2
-            )
-            self.assertEqual(variable.value, 'new value')
+            variables = IWidget.objects.get(pk=2).variables
+            self.assertEqual(variables['prop'], 'new value')
         check_cache_is_purged(self, 2, update_iwidget_property)
 
     def test_iwidget_properties_entry_post_bad_request_content_type(self):

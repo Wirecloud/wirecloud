@@ -32,7 +32,7 @@ from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import ERROR_FORMATTERS, get_absolute_static_url
 from wirecloud.commons.utils.template import TemplateParser, UnsupportedFeature
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
-from wirecloud.platform.models import Widget, UserWorkspace, VariableDef, Workspace, XHTML
+from wirecloud.platform.models import Widget, UserWorkspace, Workspace, XHTML
 from wirecloud.platform.plugins import get_active_features, get_widget_api_extensions
 
 
@@ -94,28 +94,6 @@ def create_widget_from_template(template, user, request=None, base=None):
         cacheable=widget_info['contents']['cacheable']
     )
     widget.save()
-
-    for preference in widget_info['preferences']:
-        vDef = VariableDef.objects.create(
-            name=preference['name'],
-            type=parser.typeText2typeCode(preference['type']),
-            aspect='PREF',
-            readonly=preference['readonly'],
-            default_value=preference['default'],
-            value=preference['value'],
-            widget=widget,
-            secure=preference['secure']
-        )
-
-    for prop in widget_info['properties']:
-        vDef = VariableDef.objects.create(
-            name=prop['name'],
-            type=parser.typeText2typeCode(prop['type']),
-            aspect='PROP',
-            default_value=prop['default'],
-            widget=widget,
-            secure=prop['secure'],
-        )
 
     return widget
 

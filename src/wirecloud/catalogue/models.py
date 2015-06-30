@@ -113,10 +113,16 @@ class CatalogueResource(models.Model):
         parser = TemplateParser(self.json_description, base=template_uri)
         return parser
 
-    def get_processed_info(self, request=None, lang=None, process_urls=True):
+    def get_processed_info(self, request=None, lang=None, process_urls=True, translate=True, process_variables=False):
+
+        if translate and lang is None:
+            from django.utils import translation
+            lang = translation.get_language()
+        else:
+            lang = None
 
         parser = self.get_template(request)
-        return parser.get_resource_processed_info(lang=lang, process_urls=process_urls)
+        return parser.get_resource_processed_info(lang=lang, process_urls=process_urls, translate=True, process_variables=True)
 
     def delete(self, *args, **kwargs):
 

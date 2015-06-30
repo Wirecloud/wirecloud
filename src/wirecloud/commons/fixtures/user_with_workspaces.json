@@ -270,7 +270,8 @@
             "refused_version": null,
             "readOnly": false,
             "position": 1,
-            "icon_position": 2
+            "icon_position": 2,
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
     {
@@ -284,7 +285,8 @@
             "refused_version": null,
             "readOnly": false,
             "position": 3,
-            "icon_position": 4
+            "icon_position": 4,
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
     {
@@ -298,7 +300,8 @@
             "refused_version": null,
             "readOnly": false,
             "position": 5,
-            "icon_position": 6
+            "icon_position": 6,
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
     {
@@ -312,7 +315,8 @@
             "refused_version": null,
             "readOnly": true,
             "position": 7,
-            "icon_position": 8
+            "icon_position": 8,
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
     {
@@ -326,7 +330,8 @@
             "refused_version": null,
             "readOnly": false,
             "position": 15,
-            "icon_position": 16
+            "icon_position": 16,
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
     {
@@ -340,7 +345,8 @@
             "refused_version": null,
             "readOnly": false,
             "position": 17,
-            "icon_position": 18
+            "icon_position": 18,
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
     {
@@ -354,7 +360,8 @@
             "refused_version": null,
             "readOnly": false,
             "position": 19,
-            "icon_position": 20
+            "icon_position": 20,
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
     {
@@ -368,7 +375,8 @@
             "refused_version": null,
             "readOnly": false,
             "position": 11,
-            "icon_position": 12
+            "icon_position": 12,
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
     {
@@ -382,412 +390,8 @@
             "refused_version": null,
             "readOnly": false,
             "position": 13,
-            "icon_position": 14
-        }
-    },
-    {
-        "pk": 1,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 1,
-            "vardef": 1,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 1,
-            "vardef": 2,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 1,
-            "vardef": 3,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 1,
-            "vardef": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 1,
-            "vardef": 5,
-            "value": "2"
-        }
-    },
-    {
-        "pk": 7,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 2,
-            "vardef": 1,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 8,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 2,
-            "vardef": 2,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 9,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 2,
-            "vardef": 3,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 10,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 2,
-            "vardef": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 11,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 2,
-            "vardef": 5,
-            "value": "2"
-        }
-    },
-    {
-        "pk": 13,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 3,
-            "vardef": 1,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 14,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 3,
-            "vardef": 2,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 15,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 3,
-            "vardef": 3,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 16,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 3,
-            "vardef": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 17,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 3,
-            "vardef": 5,
-            "value": "2"
-        }
-    },
-    {
-        "pk": 19,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 4,
-            "vardef": 1,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 20,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 4,
-            "vardef": 2,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 21,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 4,
-            "vardef": 3,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 22,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 4,
-            "vardef": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 23,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 4,
-            "vardef": 5,
-            "value": "2"
-        }
-    },
-    {
-        "pk": 25,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 5,
-            "vardef": 1,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 26,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 5,
-            "vardef": 2,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 27,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 5,
-            "vardef": 3,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 28,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 5,
-            "vardef": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 29,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 5,
-            "vardef": 5,
-            "value": "2"
-        }
-    },
-    {
-        "pk": 31,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 6,
-            "vardef": 1,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 32,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 6,
-            "vardef": 2,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 33,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 6,
-            "vardef": 3,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 34,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 6,
-            "vardef": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 35,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 6,
-            "vardef": 5,
-            "value": "2"
-        }
-    },
-    {
-        "pk": 36,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 7,
-            "vardef": 1,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 37,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 7,
-            "vardef": 2,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 38,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 7,
-            "vardef": 3,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 39,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 7,
-            "vardef": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 40,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 7,
-            "vardef": 5,
-            "value": "2"
-        }
-    },
-    {
-        "pk": 41,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 8,
-            "vardef": 1,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 42,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 8,
-            "vardef": 2,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 43,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 8,
-            "vardef": 3,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 44,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 8,
-            "vardef": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 45,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 8,
-            "vardef": 5,
-            "value": "2"
-        }
-    },
-    {
-        "pk": 46,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 9,
-            "vardef": 1,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 47,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 9,
-            "vardef": 2,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 48,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 9,
-            "vardef": 3,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 49,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 9,
-            "vardef": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 50,
-        "model": "platform.variable",
-        "fields": {
-            "iwidget": 9,
-            "vardef": 5,
-            "value": "2"
+            "icon_position": 14,
+            "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
     {

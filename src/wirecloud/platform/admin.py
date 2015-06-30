@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -28,7 +28,6 @@ admin.site.register(models.Constant)
 
 admin.site.register(models.Position)
 admin.site.register(models.IWidget)
-admin.site.register(models.Variable)
 
 
 class MarketAdmin(admin.ModelAdmin):
@@ -40,18 +39,7 @@ class MarketUserDataAdmin(admin.ModelAdmin):
     list_display = ('market', 'user', 'name', 'value')
     ordering = ('market', 'user', 'name')
 admin.site.register(models.MarketUserData, MarketUserDataAdmin)
-
-class VariableDefInline(admin.StackedInline):
-
-    model = models.VariableDef
-    extra = 0
-
-class WidgetAdmin(admin.ModelAdmin):
-
-    inlines = (VariableDefInline,)
-
-
-admin.site.register(models.Widget, WidgetAdmin)
+admin.site.register(models.Widget)
 admin.site.register(models.XHTML)
 
 admin.site.register(models.PlatformPreference)

@@ -36,8 +36,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, WirecloudTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 from wirecloud.platform import plugins
-from wirecloud.platform.workspace.models import Workspace
-from wirecloud.platform.workspace.utils import set_variable_value
+from wirecloud.platform.models import IWidget, Workspace
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -1086,7 +1085,9 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
     def test_input_endpoint_exceptions(self):
 
         # Enable widget exceptions
-        set_variable_value(9, 'true')
+        iwidget = IWidget.objects.get(pk=2)
+        iwidget.set_variable_value("boolean", 'true')
+        iwidget.save()
 
         # Enable operator exceptions
         workspace = Workspace.objects.get(id=2)

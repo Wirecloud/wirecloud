@@ -112,44 +112,6 @@ class Widget(models.Model):
     def __str__(self):
         return self.uri
 
-    def get_related_preferences(self):
-        return VariableDef.objects.filter(widget=self, aspect='PREF')
-
-    def get_related_properties(self):
-        return VariableDef.objects.filter(widget=self, aspect='PROP')
-
-
-@python_2_unicode_compatible
-class VariableDef(models.Model):
-
-    name = models.CharField(_('Name'), max_length=30)
-    TYPES = (
-        ('N', _('Number')),
-        ('S', _('String')),
-        ('D', _('Date')),
-        ('B', _('Boolean')),
-        ('P', _('Password')),
-        ('L', _('List')),
-    )
-    type = models.CharField(_('Type'), max_length=1, choices=TYPES)
-    ASPECTS = (
-        ('PREF', _('Preference')),
-        ('PROP', _('Property')),
-    )
-    secure = models.BooleanField(_('Secure'), default=False)
-    aspect = models.CharField(_('Aspect'), max_length=4, choices=ASPECTS)
-    readonly = models.BooleanField(_('Read Only'), default=False)
-    default_value = models.TextField(_('Default value'), blank=True, null=True)
-    value = models.TextField(_('Value'), blank=True, null=True)
-    widget = models.ForeignKey(Widget)
-
-    def __str__(self):
-        return self.widget.uri + " " + self.aspect
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_variabledef'
-
 
 @receiver(post_save, sender=CatalogueResource)
 def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs):

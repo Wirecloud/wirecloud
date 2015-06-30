@@ -618,21 +618,6 @@ class ApplicationMashupTemplateParser(object):
 
         self._info['translation_index_usage'] = self._translation_indexes
 
-    def typeText2typeCode(self, typeText):
-
-        mapping = {
-            'text': 'S',
-            'number': 'N',
-            'date': 'D',
-            'boolean': 'B',
-            'list': 'L',
-            'password': 'P',
-        }
-        if typeText in mapping:
-            return mapping[typeText]
-        else:
-            raise TemplateParseException(_("Invalid type: %s") % typeText)
-
     def get_contents(self):
         return etree.tostring(self._doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
 

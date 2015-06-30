@@ -29,7 +29,7 @@ from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget
-from wirecloud.platform.models import Widget, IWidget, Tab, Variable, Workspace
+from wirecloud.platform.models import Widget, IWidget, Tab, Workspace
 from wirecloud.platform.workspace.utils import VariableValueCacheManager, get_iwidget_data
 
 
@@ -162,30 +162,28 @@ class IWidgetPreferences(Resource):
             msg = _('You have not enough permission for updating the preferences of the iwidget')
             return build_error_response(request, 403, msg)
 
+        iwidget = get_object_or_404(IWidget.objects.select_related('widget__resource'), pk=iwidget_id)
+        iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
         try:
             new_values = json.loads(request.body)
         except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        try:
-            for var_name in new_values:
-                variable = Variable.objects.select_related('vardef').get(
-                    vardef__name=var_name,
-                    vardef__aspect='PREF',
-                    iwidget__id=iwidget_id
-                )
+        for var_name in new_values:
+            try:
+                vardef = iwidget_info['variables']['preferences'][var_name]
+            except KeyError:
+                msg = _('Invalid preference: "%s"') % var_name
+                return build_error_response(request, 422, msg)
 
-                if variable.vardef.readonly is True:
-                    msg = _('"%s" preference is read only.') % var_name
-                    return build_error_response(request, 403, msg)
+            if vardef['readonly'] is True:
+                msg = _('"%s" preference is read only.') % var_name
+                return build_error_response(request, 403, msg)
 
-                variable.set_variable_value(new_values[var_name])
-                variable.save()
-        except Variable.DoesNotExist:
-            msg = _('Invalid preference: "%s"') % var_name
-            return build_error_response(request, 422, msg)
+            iwidget.set_variable_value(var_name, new_values[var_name])
 
+        iwidget.save()
         return HttpResponse(status=204)
 
 
@@ -201,23 +199,20 @@ class IWidgetProperties(Resource):
             msg = _('You have not enough permission for updating the persistent variables of this widget')
             return build_error_response(request, 403, msg)
 
+        iwidget = get_object_or_404(IWidget, pk=iwidget_id)
+        iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
         try:
             new_values = json.loads(request.body)
         except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        try:
-            for var_name in new_values:
-                variable = Variable.objects.select_related('vardef').get(
-                    vardef__name=var_name,
-                    vardef__aspect='PROP',
-                    iwidget__id=iwidget_id
-                )
-                variable.set_variable_value(new_values[var_name])
-                variable.save()
-        except Variable.DoesNotExist:
-            msg = _('Invalid persistent variable: "%s"') % var_name
-            return build_error_response(request, 422, msg)
+        for var_name in new_values:
+            if var_name not in iwidget_info['variables']['properties']:
+                msg = _('Invalid persistent variable: "%s"') % var_name
+                return build_error_response(request, 422, msg)
 
+            iwidget.set_variable_value(var_name, new_values[var_name])
+
+        iwidget.save()
         return HttpResponse(status=204)

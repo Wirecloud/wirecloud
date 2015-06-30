@@ -46,66 +46,6 @@
         }
     },
     {
-        "pk": 1,
-        "model": "platform.variabledef",
-        "fields": {
-            "default_value": "default",
-            "name": "list",
-            "aspect": "PREF",
-            "type": "L",
-            "widget": 1,
-            "secure": false
-        }
-    },
-    {
-        "pk": 2,
-        "model": "platform.variabledef",
-        "fields": {
-            "default_value": "initial text",
-            "name": "text",
-            "aspect": "PREF",
-            "type": "S",
-            "widget": 1,
-            "secure": false
-        }
-    },
-    {
-        "pk": 3,
-        "model": "platform.variabledef",
-        "fields": {
-            "default_value": "false",
-            "name": "boolean",
-            "aspect": "PREF",
-            "type": "B",
-            "widget": 1,
-            "secure": false
-        }
-    },
-    {
-        "pk": 4,
-        "model": "platform.variabledef",
-        "fields": {
-            "default_value": "default",
-            "name": "password",
-            "aspect": "PREF",
-            "type": "P",
-            "widget": 1,
-            "secure": false
-        }
-    },
-    {
-        "pk": 5,
-        "model": "platform.variabledef",
-        "fields": {
-            "default_value": "2",
-            "name": "number",
-            "aspect": "PREF",
-            "type": "N",
-            "widget": 1,
-            "secure": false
-        }
-    },
-    {
         "model": "platform.workspace",
         "pk": 1,
         "fields": {

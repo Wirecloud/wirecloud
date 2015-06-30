@@ -86,18 +86,18 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
         })
 
     # preferences
-    widget_preferences = widget.get_related_preferences()
+    widget_preferences = widget_description['preferences']
     preferences = {}
     for pref in widget_preferences:
         status = 'normal'
-        if pref.name in iwidget_params:
-            iwidget_param_desc = iwidget_params[pref.name]
+        if pref['name'] in iwidget_params:
+            iwidget_param_desc = iwidget_params[pref['name']]
             source = iwidget_param_desc['source']
             if source == 'default':
                 # Do not issue a Preference element for this preference
                 continue
             elif source == 'current':
-                value = cache_manager.get_variable_value_from_varname(iwidget, pref.name)
+                value = cache_manager.get_variable_value_from_varname(iwidget, pref['name'])
             elif source == 'custom':
                 value = iwidget_param_desc['value']
             else:
@@ -105,35 +105,35 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
 
             status = iwidget_param_desc['status']
         else:
-            value = cache_manager.get_variable_value_from_varname(iwidget, pref.name)
+            value = cache_manager.get_variable_value_from_varname(iwidget, pref['name'])
 
-        if pref.type == 'B':
+        if pref['type'] == 'boolean':
             value = str(value).lower()
-        elif pref.type == 'N':
+        elif pref['type'] == 'number':
             value = str(value)
 
-        preferences[pref.name] = {
+        preferences[pref['name']] = {
             'readonly': status != 'normal',
             'hidden': status == 'hidden',
             'value': value,
         }
 
     # iWidget properties
-    widget_properties = widget.get_related_properties()
+    widget_properties = widget_description['properties']
     properties = {}
     for prop in widget_properties:
         status = 'normal'
-        if prop.name in iwidget_params:
-            iwidget_param_desc = iwidget_params[prop.name]
+        if prop['name'] in iwidget_params:
+            iwidget_param_desc = iwidget_params[prop['name']]
             if iwidget_param_desc['source'] == 'default':
                 # Do not issue a Property element for this property
                 continue
             value = iwidget_param_desc['value']
             status = iwidget_param_desc['status']
         else:
-            value = cache_manager.get_variable_value_from_varname(iwidget, prop.name)
+            value = cache_manager.get_variable_value_from_varname(iwidget, prop['name'])
 
-        properties[prop.name] = {
+        properties[prop['name']] = {
             'readonly': status != 'normal',
             'value': value,
         }

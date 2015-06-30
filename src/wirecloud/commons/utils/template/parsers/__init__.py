@@ -65,9 +65,6 @@ class TemplateParser(object):
 
         self._parser._init()
 
-    def typeText2typeCode(self, typeText):
-        return self._parser.typeText2typeCode(typeText)
-
     def set_base(self, base):
         self.base = base
 
@@ -97,10 +94,10 @@ class TemplateParser(object):
 
         return urljoin(base, url)
 
-    def get_resource_processed_info(self, base=None, lang=None, process_urls=True):
+    def get_resource_processed_info(self, base=None, lang=None, process_urls=True, translate=True, process_variables=False):
         info = deepcopy(self.get_resource_info())
 
-        if lang is None:
+        if translate and lang is None:
             from django.utils import translation
             lang = translation.get_language()
 
@@ -116,7 +113,7 @@ class TemplateParser(object):
                 variables[outputendpoint['name']] = outputendpoint
 
         # process translations
-        if len(info['translations']) > 0:
+        if translate and len(info['translations']) > 0:
 
             translation = info['translations'][info['default_lang']]
             if lang in info['translations']:
@@ -142,8 +139,26 @@ class TemplateParser(object):
         del info['translations']
         del info['translation_index_usage']
 
+        # Provide a fallback for the title
         if info['title'] == '':
             info['title'] = info['name']
+
+        # Process resource variables
+        if process_variables and info['type'] in ('widget', 'operator'):
+
+            info['variables'] = {
+                'all': {},
+                'preferences': {},
+                'properties': {},
+            }
+
+            for vardef in info['preferences']:
+                info['variables']['all'][vardef['name']] = vardef
+                info['variables']['preferences'][vardef['name']] = vardef
+
+            for vardef in info['properties']:
+                info['variables']['all'][vardef['name']] = vardef
+                info['variables']['properties'][vardef['name']] = vardef
 
         if process_urls is False:
             return info
