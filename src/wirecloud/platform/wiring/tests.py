@@ -599,35 +599,23 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
-    def _read_json_fixtures(self, *args):
-        testdir_path = os.path.join(os.path.dirname(__file__), 'test-data')
-        json_fixtures = []
+    def _read_json_fixtures(self, filename):
+        testdir_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test-data'))
 
-        for filename in args:
-            file_opened = open(os.path.join(testdir_path, filename + '.json'))
-            json_fixtures.append(json.loads(file_opened.read()))
-            file_opened.close()
+        with open(os.path.join(testdir_path, filename + '.json')) as file_opened:
+            return json.loads(file_opened.read())
 
-        if len(json_fixtures) == 0:
-            return None
-
-        if len(json_fixtures) == 1:
-            return json_fixtures[0]
-
-        return tuple(json_fixtures)
-
-    def test_wiring_recovers_from_invalid_views_data(self):
+    def test_wiring_recovers_from_missing_visual_data(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_recoverabledata'))
+        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_missing_visual_data'))
         workspace.save()
 
         self.login(username='user_with_workspaces')
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
-        self.wiring_view.expect_error = True
 
         with self.wiring_view as wiring:
             self.assertFalse(wiring.find_component_by_title('operator', "TestOperator").missing)
@@ -647,14 +635,13 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
 
-    def test_wiring_allows_wiring_status_reset_on_unrecoverable_errors(self):
+    def test_wiring_recovers_from_unrecoverable_data(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_unrecoverabledata'))
         workspace.save()
 
         self.login(username='user_with_workspaces')
         self.find_navbar_button("display-wiring-view").check_badge_text("1")
-        self.wiring_view.expect_error = True
 
         with self.wiring_view as wiring:
             self.assertFalse(wiring.find_component_by_title('operator', "TestOperator").missing)
