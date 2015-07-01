@@ -931,6 +931,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         if webdriver_args is None:
             webdriver_args = {}
         cls.driver = getattr(module, klass_name)(**webdriver_args)
+        cls.driver.set_window_size(1024, 800)
 
     @classmethod
     def tearDownClass(cls):
