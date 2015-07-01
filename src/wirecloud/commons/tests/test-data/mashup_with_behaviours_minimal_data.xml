@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mashup xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud" name="TemplateTestMashup" version="1.0">
+  <details>
+    <title>Template Test Mashup</title>
+    <image>images/catalogue.png</image>
+    <smartphoneimage>images/smartphone.png</smartphoneimage>
+    <description>test</description>
+    <longdescription>README.md</longdescription>
+    <homepage>http://homepage.example.com</homepage>
+    <doc>docs/index.html</doc>
+    <license>Apache License 2</license>
+    <licenseurl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseurl>
+    <changelog>log/change.html</changelog>
+    <issuetracker>http://issuetracker.example.com</issuetracker>
+    <authors>author_test</authors>
+  </details>
+  <requirements>
+    <feature name="Wirecloud"/>
+    <feature name="PubSub"/>
+  </requirements>
+  <structure>
+    <preferencevalue name="columns" value="8"/>
+    <tab id="0" name="Tab 1">
+      <preferencevalue name="smart" value="false"/>
+      <preferencevalue name="columns" value="9"/>
+      <resource id="1" name="TestWidget" title="Widget title" vendor="Wirecloud" version="1.0">
+        <position x="0" y="1" z="2"/>
+        <rendering height="10" width="10" layout="0" minimized="false" fulldragboard="false"/>
+        <preferencevalue name="text" value="other value" readonly="true" hidden="true"/>
+        <preferencevalue name="list" value="default" readonly="true"/>
+        <variablevalue name="prop1" value="value1"/>
+        <variablevalue name="prop2" value="value 2" readonly="true"/>
+      </resource>
+      <resource id="2" name="TestWidget" title="Widget title" vendor="Wirecloud" version="2.0" readonly="true">
+        <position x="10" y="1" z="2"/>
+        <rendering height="10" width="10" layout="0" minimized="true" fulldragboard="true"/>
+        <preferencevalue name="text" value="other value" readonly="true" hidden="true"/>
+        <variablevalue name="prop1" value="value1"/>
+      </resource>
+    </tab>
+    <tab id="1" name="Tab 2">
+      <preferencevalue name="pref1" value="pref value"/>
+    </tab>
+    <wiring version="2.0">
+      <operator id="1" name="TestOperator" vendor="Wirecloud" version="1.0"/>
+      <operator id="3" name="TestOperator" vendor="Wirecloud" version="2.0">
+        <preferencevalue name="pref1" value="op3 pref1 value" readonly="true" hidden="true"/>
+      </operator>
+      <operator id="2" name="TestOperator" vendor="Wirecloud" version="2.0">
+        <preferencevalue name="pref1" value="op2 pref1 value"/>
+        <preferencevalue name="pref2" value="op2 pref2 value" readonly="true"/>
+      </operator>
+      <connection>
+        <source endpoint="output1" id="1" type="operator"/>
+        <target endpoint="input1" id="2" type="operator"/>
+      </connection>
+      <connection>
+        <source endpoint="output1" id="1" type="widget"/>
+        <target endpoint="input1" id="1" type="operator"/>
+      </connection>
+      <visualdescription>
+        <component id="1" type="operator"/>
+        <component id="3" type="operator"/>
+        <component id="2" type="operator"/>
+        <component id="1" type="widget"/>
+        <component id="2" type="widget"/>
+        <connection sourcename="operator/1/output1" targetname="widget/1/input1"/>
+        <connection sourcename="widget/1/output1" targetname="operator/1/input1"/>
+        <connection sourcename="operator/1/output1" targetname="operator/2/input1"/>
+        <behaviour description="test 1 description" title="test 1">
+          <component id="1" type="operator"/>
+          <component id="2" type="operator"/>
+          <connection sourcename="operator/1/output1" targetname="operator/2/input1"/>
+        </behaviour>
+        <behaviour description="test 2 description" title="test 2">
+          <component id="1" type="operator"/>
+          <component id="1" type="widget"/>
+          <connection sourcename="operator/1/output1" targetname="widget/1/input1"/>
+          <connection sourcename="widget/1/output1" targetname="operator/1/input1"/>
+        </behaviour>
+        <behaviour description="test 3 description" title="test 3">
+          <component id="3" type="operator"/>
+        </behaviour>
+      </visualdescription>
+    </wiring>
+  </structure>
+  <embedded>
+    <resource name="TestOperator" src="https://macs.example.com/macs/Wirecloud_TestOperator_2.0.wgt" vendor="Wirecloud" version="2.0"/>
+    <resource name="TestOperator" src="macs/Wirecloud_TestOperator_1.0.wgt" vendor="Wirecloud" version="1.0"/>
+  </embedded>
+  <wiring>
+    <outputendpoint name="output1" type="text" label="Output label 1" description="Output description 1" friendcode="friendcode 1"/>
+    <outputendpoint name="output2" type="text" label="Output label 2" description="Output description 2" friendcode="friendcode 2"/>
+    <outputendpoint name="output3" type="text" label="Output label 3" description="Output description 3" friendcode="friendcode 3"/>
+    <inputendpoint name="input1" type="text" label="Input label 1" description="Input description 1" actionlabel="a" friendcode="friendcode 1"/>
+    <inputendpoint name="input2" type="text" label="Input label 2" description="Input description 2" friendcode="friendcode 2"/>
+    <inputendpoint name="input3" type="text" label="Input label 3" description="Input description 3" actionlabel="action label 3" friendcode="friendcode 3"/>
+  </wiring>
+</mashup>
