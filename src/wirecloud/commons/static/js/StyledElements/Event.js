@@ -43,7 +43,7 @@
     };
 
     Event.prototype.off = function off(handler) {
-        if (handler != null) {
+        if (handler == null) {
             this.handlers.length = 0;
         } else {
             var index = this.handlers.indexOf(handler);
