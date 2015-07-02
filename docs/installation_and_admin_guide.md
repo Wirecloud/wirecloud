@@ -100,9 +100,9 @@ virtualenv can be installed using pip:
 
 Once installed virtualenv, you will be able to create virtual environments using the following command:
 
-    $ virtualenv ENV
+    $ virtualenv venv
 
-This will create an ENV folder for storing all the resources related to the virtual environment. To begin using the virtual environment, it needs to be activated:
+This will create an `venv` folder for storing all the resources related to the virtual environment. To begin using the virtual environment, it needs to be activated:
 
     $ source venv/bin/activate
 
@@ -155,7 +155,7 @@ Once installed WireCloud, you will have access to the `wirecloud-admin` script. 
 
     $ adduser --system --group --shell /bin/bash wirecloud
 
-Then, create a new instance directory using the `startproject` command. This will create a new directory containing the configuration files, also, you can add new python modules into this directory to customise your instance.
+Then, create a new instance directory using the `startproject` command. This will create a new directory containing the `manage.py` script, the configuration files, ... related to the new instance. Moreover, you can add new python modules into this directory to customise your instance.
 
     $ cd /opt
     $ wirecloud-admin startproject wirecloud_instance
