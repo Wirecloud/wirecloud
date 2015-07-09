@@ -57,19 +57,14 @@
             this.panels = [];
             this.latestIndex = 0;
 
-            this.sidebar = new se.Container({
-                extraClass: 'se-offcanvas-sidebar'
+            Object.defineProperties(this, {
+                sidebar: {value: new se.Container({extraClass: 'se-offcanvas-sidebar'})},
+                content: {value: new se.Container({extraClass: 'se-offcanvas-content'})},
+                footer: {value: new se.Container({extraClass: 'se-offcanvas-footer'})}
             });
+
             this.append(this.sidebar);
-
-            this.content = new se.Container({
-                extraClass: 'se-offcanvas-content'
-            });
             this.append(this.content);
-
-            this.footer = new se.Container({
-                extraClass: 'se-offcanvas-footer'
-            });
             this.append(this.footer);
         },
 

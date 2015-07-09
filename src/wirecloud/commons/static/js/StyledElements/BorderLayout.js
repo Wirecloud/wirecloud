@@ -38,11 +38,13 @@
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = StyledElements.Utils.appendWord(options['class'], "se-border-layout");
 
-        this.north = new StyledElements.Container({'class': 'se-bl-north-container'});
-        this.west = new StyledElements.Container({'class': 'se-bl-west-container'});
-        this.center = new StyledElements.Container({'class': 'se-bl-center-container'});
-        this.east = new StyledElements.Container({'class': 'se-bl-east-container'});
-        this.south = new StyledElements.Container({'class': 'se-bl-south-container'});
+        Object.defineProperties(this, {
+            north: {value: new StyledElements.Container({'class': 'se-bl-north-container'})},
+            west: {value: new StyledElements.Container({'class': 'se-bl-west-container'})},
+            center: {value: new StyledElements.Container({'class': 'se-bl-center-container'})},
+            east: {value: new StyledElements.Container({'class': 'se-bl-east-container'})},
+            south: {value: new StyledElements.Container({'class': 'se-bl-south-container'})}
+        });
 
         this.north.insertInto(this.wrapperElement);
         this.west.insertInto(this.wrapperElement);
