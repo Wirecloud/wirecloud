@@ -82,6 +82,10 @@
         color: contrast-color($brand-primary, $text-color-light, $text-color-dark, $text-color-threshold);
         background: $brand-primary;
     }
+
+    &.disabled {
+        cursor: default;
+    }
 }
 
 .se-popup-menu > hr {
