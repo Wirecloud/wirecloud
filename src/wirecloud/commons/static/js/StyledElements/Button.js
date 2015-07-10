@@ -203,7 +203,7 @@
         }
         this._keydownCallback = keydownCallback.bind(this);
 
-        this.wrapperElement.addEventListener('toutchstart', StyledElements.Utils.stopPropagationListener, true);
+        this.wrapperElement.addEventListener('touchstart', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, false);
         this.wrapperElement.addEventListener('dblclick', dblclickCallback.bind(this), true);
