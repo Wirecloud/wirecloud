@@ -1489,13 +1489,13 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Make the request
         data = {
-            'name': 'New Name',
+            'title': 'New Title',
         }
 
         def iwidget_not_created(self):
             # IWidget should be not updated
             iwidget = IWidget.objects.get(pk=2)
-            self.assertNotEqual(iwidget.name, 'New Name')
+            self.assertNotEqual(iwidget.name, 'New Title')
 
         check_post_requires_authentication(self, url, json.dumps(data), iwidget_not_created)
 
@@ -1503,7 +1503,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
         data = {
-            'name': 'New Name',
+            'title': 'New Title',
         }
         check_post_requires_permission(self, url, json.dumps(data))
 
@@ -1517,7 +1517,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Make the request
         def update_iwidget_name():
             data = {
-                'name': 'New Name',
+                'title': 'New Title',
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
@@ -1525,7 +1525,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
             # Check that the iwidget name has been changed
             iwidget = IWidget.objects.get(pk=2)
-            self.assertEqual(iwidget.name, 'New Name')
+            self.assertEqual(iwidget.name, 'New Title')
         check_cache_is_purged(self, 2, update_iwidget_name)
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)

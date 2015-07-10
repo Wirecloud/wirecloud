@@ -241,7 +241,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 "zIndex": int(position.get('z')),
                 "width": int(rendering.get('width')),
                 "height": int(rendering.get('height')),
-                "name": resource.get('title'),
+                "title": resource.get('title'),
                 "layout": int(rendering.get('layout')),
                 "widget": widget.uri,
             }

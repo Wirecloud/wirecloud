@@ -25,15 +25,15 @@
 
     "use strict";
 
-    var renameSuccess = function renameSuccess(options, old_name, new_name, response) {
-        this.name = new_name;
-        this.contextManager.modify({title: new_name});
+    var renameSuccess = function renameSuccess(options, old_title, new_title, response) {
+        this.title = new_title;
+        this.contextManager.modify({title: new_title});
 
         var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
-        msg = interpolate(msg, {oldName: old_name, newName: new_name}, true);
+        msg = interpolate(msg, {oldName: old_title, newName: new_title}, true);
         this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
-        this.events.name_changed.dispatch(new_name);
+        this.events.title_changed.dispatch(new_title);
 
         if (options.onSuccess === 'function') {
             try {
@@ -55,8 +55,8 @@
     };
 
     var removeSuccess = function removeSuccess(options, response) {
-        var msg = gettext("IWidget \"%(name)s\" removed from workspace succesfully");
-        msg = interpolate(msg, {name: this.name}, true);
+        var msg = gettext("IWidget \"%(title)s\" removed from workspace succesfully");
+        msg = interpolate(msg, {title: this.title}, true);
         this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
         this.events.removed.dispatch(this);
@@ -114,16 +114,16 @@
     /**
      * Renames this iWidget.
      *
-     * @param {String} iwidgetName New name for this iWidget.
+     * @param {String} iwidgetTitle New title for this iWidget.
      */
-    Widget.prototype.setName = function setName(new_name, options) {
-        var old_name = this.name;
+    Widget.prototype.setTitle = function setTitle(new_title, options) {
+        var old_title = this.title;
 
         if (options == null) {
             options = {};
         }
 
-        if (new_name !== null && new_name.length > 0) {
+        if (new_title !== null && new_title.length > 0) {
             var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
                 workspace_id: this.workspace.id,
                 tab_id: this.tab.id,
@@ -133,8 +133,8 @@
                 method: 'POST',
                 contentType: 'application/json',
                 requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify({name: new_name}),
-                onSuccess: renameSuccess.bind(this, options, old_name, new_name),
+                postBody: JSON.stringify({title: new_title}),
+                onSuccess: renameSuccess.bind(this, options, old_title, new_title),
                 onFailure: renameFailure.bind(this, options)
             });
         }

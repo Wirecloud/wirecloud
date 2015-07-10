@@ -42,7 +42,6 @@
 
         Object.defineProperties(this, {
             meta: {value: operator_meta},
-            name: {value: operator_meta.name},
             title: {value: operator_meta.title},
             id: {value: "" + id},
             wiring: {value: wiring}

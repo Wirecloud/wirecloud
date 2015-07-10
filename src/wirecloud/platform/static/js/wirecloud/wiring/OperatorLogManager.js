@@ -19,14 +19,18 @@
  *
  */
 
-/*global gettext, interpolate, Wirecloud*/
+/* global gettext, StyledElements, Wirecloud */
 
-(function () {
+(function (ns, utils) {
 
     "use strict";
 
     /**
+     * [OperatorLogManager description]
+     * @constructor
      *
+     * @param {Operator} ioperator
+     *      [description]
      */
     var OperatorLogManager = function OperatorLogManager(ioperator) {
         Wirecloud.LogManager.call(this, ioperator.wiring.logManager);
@@ -39,7 +43,7 @@
 
         if (this.ioperator) {
             title = gettext('%(ioperator_title)s\'s logs');
-            title = interpolate(title, {ioperator_title: this.ioperator.name}, true);
+            title = utils.interpolate(title, { ioperator_title: this.ioperator.title });
             return title;
         } else {
             return this.title;
@@ -51,6 +55,6 @@
         this.ioperator = null;
     };
 
-    Wirecloud.wiring.OperatorLogManager = OperatorLogManager;
+    ns.OperatorLogManager = OperatorLogManager;
 
-})();
+})(Wirecloud.wiring, StyledElements.Utils);

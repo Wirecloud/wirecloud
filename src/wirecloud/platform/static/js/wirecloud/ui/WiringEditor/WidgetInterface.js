@@ -68,7 +68,7 @@
             isGhost = false;
         }
 
-        this.superClass(wiringEditor, iwidget, this.iwidget.name, manager, 'widget', isGhost);
+        this.superClass(wiringEditor, iwidget, this.iwidget.title, manager, 'widget', isGhost);
         if (!isMenubarRef) {
 
             // Sort

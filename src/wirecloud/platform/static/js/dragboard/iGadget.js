@@ -81,7 +81,7 @@ function IWidget(widget, layout, description) {
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},
         'widget': {get: function () {return this.internal_iwidget.widget;}},
-        'name': {get: function () {return this.internal_iwidget.name;}}
+        'title': {get: function () {return this.internal_iwidget.title;}}
     });
     if (this.id) {
         this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
@@ -331,7 +331,7 @@ IWidget.prototype.build = function () {
     };
 
     this.iwidgetIconNameHTMLElement = document.createElement("a");
-    this.iwidgetIconNameHTMLElement.textContent = this.name;
+    this.iwidgetIconNameHTMLElement.textContent = this.title;
     this.iwidgetIconNameHTMLElement.classList.add("floating_widget_title");
     this.iconElement.appendChild(this.iwidgetIconNameHTMLElement);
 

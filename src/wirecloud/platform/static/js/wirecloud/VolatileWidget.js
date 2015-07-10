@@ -35,23 +35,23 @@
     /**
      * Renames this iWidget.
      *
-     * @param {String} iwidgetName New name for this iWidget.
+     * @param {String} iwidgetTitle New title for this iWidget.
      */
-    VolatileWidget.prototype.setName = function setName(new_name, options) {
-        var old_name = this.name;
+    VolatileWidget.prototype.setTitle = function setTitle(new_title, options) {
+        var old_title = this.title;
 
         if (options == null) {
             options = {};
         }
 
-        if (new_name !== null && new_name.length > 0) {
-            this.name = new_name;
-            this.contextManager.modify({title: new_name});
+        if (new_title !== null && new_title.length > 0) {
+            this.title = new_title;
+            this.contextManager.modify({title: new_title});
             var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
-            msg = interpolate(msg, {oldName: old_name, newName: new_name}, true);
+            msg = interpolate(msg, {oldName: old_title, newName: new_title}, true);
             this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
-            this.events.name_changed.dispatch(new_name);
+            this.events.title_changed.dispatch(new_title);
 
             Wirecloud.Utils.callCallback(options.onSuccess);
         }
@@ -64,8 +64,8 @@
             options = {};
         }
 
-        var msg = gettext("Widget \"%(name)s\" removed from workspace succesfully");
-        msg = interpolate(msg, {name: this.name}, true);
+        var msg = gettext("Widget \"%(title)s\" removed from workspace succesfully");
+        msg = interpolate(msg, {title: this.title}, true);
         this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
         this.events.removed.dispatch(this);

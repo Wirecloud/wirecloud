@@ -197,7 +197,7 @@ class IWidgetTester(object):
         ''', name_input)
 
         def name_changed(driver):
-            return driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%s).name === "%s"' % (self.id, new_name))
+            return driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%s).title === "%s"' % (self.id, new_name))
 
         WebDriverWait(self.testcase.driver, timeout).until(name_changed)
 

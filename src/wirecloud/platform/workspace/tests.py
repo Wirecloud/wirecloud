@@ -151,7 +151,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         tab = self.workspace.tab_set.get(pk=1)
         iwidget_data = {
             'widget': 'Test/Test Widget/1.0.0',
-            'name': 'test',
+            'title': 'test',
             'top': 0,
             'left': 0,
             'width': 2,
@@ -666,7 +666,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(workspace.name, 'Test Mashup')
         self.assertEqual(len(workspace_data['tabs']), 1)
 
-        if workspace_data['tabs'][0]['iwidgets'][0]['name'] == 'Test (1)':
+        if workspace_data['tabs'][0]['iwidgets'][0]['title'] == 'Test (1)':
 
             iwidget1 = workspace_data['tabs'][0]['iwidgets'][0]
             iwidget2 = workspace_data['tabs'][0]['iwidgets'][1]
@@ -728,9 +728,9 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         iwidget3 = None
         for iwidget in workspace_data['tabs'][0]['iwidgets']:
 
-            if iwidget['name'] == 'Test (1)':
+            if iwidget['title'] == 'Test (1)':
                 iwidget1 = iwidget
-            elif iwidget['name'] == 'Test (2)':
+            elif iwidget['title'] == 'Test (2)':
                 iwidget2 = iwidget
             else:
                 iwidget3 = iwidget

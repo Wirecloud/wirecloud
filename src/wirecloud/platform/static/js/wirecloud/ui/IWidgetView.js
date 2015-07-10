@@ -83,8 +83,8 @@
                 return button;
             },
             'title': function () {
-                var element = new StyledElements.EditableElement({initialContent: view.name});
-                element.addEventListener('change', function (element, new_name) { iwidget.setName(new_name); });
+                var element = new StyledElements.EditableElement({initialContent: iwidget.title});
+                element.addEventListener('change', function (element, new_title) { iwidget.setTitle(new_title); });
                 tmp.titleelement = element;
                 return element;
             },

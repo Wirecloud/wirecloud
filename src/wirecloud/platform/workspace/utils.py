@@ -496,7 +496,7 @@ def get_tab_data(tab):
 def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
 
     data_ret = {'id': iwidget.id,
-        'name': iwidget.name,
+        'title': iwidget.name,
         'tab': iwidget.tab.id,
         'layout': iwidget.layout,
         'refused_version': iwidget.refused_version,

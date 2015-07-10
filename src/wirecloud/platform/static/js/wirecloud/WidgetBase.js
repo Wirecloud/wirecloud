@@ -46,7 +46,7 @@
         Object.defineProperty(this, 'workspace', {value: tab.workspace});
         this.id = options.id;
         this.loaded = false;
-        this.name = options.name;
+        this.title = options.title;
         this.pending_events = [];
 
         this.permissions = Wirecloud.Utils.merge({
@@ -109,7 +109,7 @@
             'title': {
                 label: gettext("Title"),
                 description: gettext("Widget's title"),
-                value: options.name
+                value: options.title
             },
             'xPosition': {
                 label: gettext("X-Position"),
@@ -145,7 +145,7 @@
         Object.defineProperty(this, 'logManager', {value: new Wirecloud.Widget.LogManager(this)});
         this.prefCallback = null;
 
-        StyledElements.ObjectWithEvents.call(this, ['load', 'unload', 'removed', 'name_changed']);
+        StyledElements.ObjectWithEvents.call(this, ['load', 'unload', 'removed', 'title_changed']);
     };
     WidgetBase.prototype = new StyledElements.ObjectWithEvents();
 
