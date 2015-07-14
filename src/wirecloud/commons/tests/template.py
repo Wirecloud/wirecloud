@@ -1502,6 +1502,9 @@ class TemplateUtilsTestCase(TestCase):
     def test_json_parser_writer_mashup_with_behaviours(self):
         self.compare_input_and_output_mashup("mashup_with_behaviours_data", "json")
 
+    def test_json_parser_writer_mashup_with_behaviours_and_minimal_data(self):
+        self.check_minimal_mashup_data("mashup_with_behaviours_minimal_data", "json")
+
     def test_json_parser_writer_mashup(self):
 
         json_description = write_json_description(self.mashup_info)

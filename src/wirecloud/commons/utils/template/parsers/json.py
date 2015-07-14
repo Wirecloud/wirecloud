@@ -22,10 +22,12 @@ from __future__ import absolute_import, unicode_literals
 import json
 
 from django.utils.translation import ugettext as _
+import six
 from six import text_type
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, parse_contacts_info, TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
+from wirecloud.platform.wiring.utils import get_wiring_skeleton, parse_wiring_old_version
 
 
 class JSONTemplateParser(object):
@@ -53,6 +55,9 @@ class JSONTemplateParser(object):
         if place is None:
             place = self._info
 
+        if not isinstance(fields, (list, tuple)):
+            fields = (fields,)
+
         for field in fields:
             if field not in place:
                 if required:
@@ -65,6 +70,9 @@ class JSONTemplateParser(object):
     def _check_string_fields(self, fields, place=None, required=False, default='', null=False):
         if place is None:
             place = self._info
+
+        if not isinstance(fields, (list, tuple)):
+            fields = (fields,)
 
         for field in fields:
             if field not in place:
@@ -81,6 +89,9 @@ class JSONTemplateParser(object):
         if place is None:
             place = self._info
 
+        if not isinstance(fields, (list, tuple)):
+            fields = (fields,)
+
         for field in fields:
             if field not in place:
                 if required:
@@ -89,6 +100,19 @@ class JSONTemplateParser(object):
                 place[field] = default
             elif not isinstance(place[field], bool):
                 raise TemplateParseException('A boolean value was expected for the %s field' % field)
+
+    def _check_integer_fields(self, fields, place=None, required=False, default=0):
+        if place is None:
+            place = self._info
+
+        for field in fields:
+            if field not in place:
+                if required:
+                    raise TemplateParseException('Missing required field: %s' % field)
+
+                place[field] = default
+            elif not isinstance(place[field], int):
+                raise TemplateParseException('An integer value was expected for the %s field' % field)
 
     def _check_contacts_fields(self, fields, place=None, required=False):
         if place is None:
@@ -118,6 +142,38 @@ class JSONTemplateParser(object):
                 self._check_boolean_fields(('useplatformstyle',), place=data, default=False)
         else:
             raise TemplateParseException('contents info must be an object')
+
+    def _check_handle_field(self, data, name):
+        if name not in data:
+            data[name] = 'auto'
+        elif data[name] != 'auto':
+            self._check_integer_fields(('x', 'y'), data[name])
+
+    def _check_connection_handles(self, data):
+        self._check_handle_field(data, 'sourcehandle')
+        self._check_handle_field(data, 'targethandle')
+
+    def _check_component_info(self, data, component_type):
+
+        for component_id, component in six.iteritems(data['components'][component_type]):
+            self._check_boolean_fields('collapsed', place=component, default=False)
+            if 'endpoints' not in component:
+                component['endpoints'] = {}
+
+            if 'source' not in component['endpoints']:
+                component['endpoints']['source'] = []
+
+            if 'target' not in component['endpoints']:
+                component['endpoints']['target'] = []
+
+    def _check_behaviour_view_fields(self, data):
+
+        self._check_component_info(data, 'operator')
+        self._check_component_info(data, 'widget')
+        self._check_array_fields(('connections',), place=data, required=False)
+        for connection in data['connections']:
+            self._check_string_fields(('sourcename', 'targetname'), place=connection, required=True)
+            self._check_connection_handles(connection)
 
     def _add_translation_index(self, value, **kwargs):
         index = get_trans_index(value)
@@ -170,10 +226,35 @@ class JSONTemplateParser(object):
                 else:
                     raise TemplateParseException('embedded resource info must be an object')
 
+            if 'wiring' not in self._info:
+                self._info['wiring'] = get_wiring_skeleton()
+
+            self._check_string_fields(('version',), place=self._info['wiring'], default='1.0')
+
+            if self._info['wiring']['version'] == '1.0':
+
+                # TODO: update to the new wiring format
+                inputs = self._info['wiring']['inputs']
+                outputs = self._info['wiring']['outputs']
+                self._info['wiring'] = parse_wiring_old_version(self._info['wiring'])
+                self._info['wiring']['inputs'] = inputs
+                self._info['wiring']['outputs'] = outputs
+                # END TODO
+
+            elif self._info['wiring']['version'] == '2.0':
+
+                if 'visualdescription' not in self._info['wiring']:
+                    self._info['wiring']['visualdescription'] = {}
+
+                self._check_array_fields('behaviours', place=self._info['wiring']['visualdescription'], required=False)
+                self._check_behaviour_view_fields(self._info['wiring']['visualdescription'])
+                for behaviour in self._info['wiring']['visualdescription']['behaviours']:
+                    self._check_behaviour_view_fields(behaviour)
+
         if not 'wiring' in self._info:
             self._info['wiring'] = {}
 
-        self._check_array_fields(('inputs', 'outputs'), place=self._info['wiring'])
+        self._check_array_fields(('inputs', 'outputs'), place=self._info['wiring'], required=False)
 
         # Translations
         self._check_string_fields(('default_lang',), default='en')
