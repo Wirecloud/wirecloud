@@ -85,30 +85,12 @@
         }
     },
     {
-        "model": "platform.Position",
-        "pk": "1",
-        "fields": {
-            "posX": "0",
-            "posY": "0",
-            "posZ": "0"
-        }
-    },
-    {
-        "model": "platform.Position",
-        "pk": "2",
-        "fields": {
-            "posX": "5",
-            "posY": "0",
-            "posZ": "1"
-        }
-    },
-    {
         "model": "platform.IWidget",
         "pk": "1",
         "fields": {
             "widget": "1",
             "name": "Test Widget",
-            "position": "1",
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "tab": "1",
             "variables": "{\"password\": \"test_password\", \"username\": \"test_username\", \"prop\": \"test_data\"}"
         }
@@ -119,7 +101,7 @@
         "fields": {
             "widget": "1",
             "name": "Test Widget 2",
-            "position": "2",
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":5,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "tab": "1",
             "variables": "{\"password\": \"test_password\", \"username\": \"test_username\", \"prop\": \"test_data\"}"
         }
