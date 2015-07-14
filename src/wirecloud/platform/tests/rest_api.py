@@ -1528,6 +1528,28 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(iwidget.name, 'New Name')
         check_cache_is_purged(self, 2, update_iwidget_name)
 
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
+    def test_iwidget_entry_post_upgrade(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def upgrade_widget():
+            data = {
+                'widget': 'Wirecloud/Test/2.0',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content, '')
+
+            # Check that the iwidget name has been changed
+            iwidget = IWidget.objects.get(pk=2)
+            self.assertEqual(iwidget.widget.resource.local_uri_part, 'Wirecloud/Test/2.0')
+        check_cache_is_purged(self, 2, upgrade_widget)
+
     def test_iwidget_entry_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})

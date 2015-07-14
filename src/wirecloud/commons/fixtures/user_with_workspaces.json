@@ -1,266 +1,6 @@
 [
     {
         "pk": 1,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 0,
-            "posX": 0,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 2,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 3,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 1,
-            "posX": 6,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 4,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 5,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 0,
-            "posX": 0,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 6,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 7,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 1,
-            "posX": 6,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 8,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 9,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 0,
-            "posX": 0,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 10,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 11,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 0,
-            "posX": 6,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 12,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 13,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 0,
-            "posX": 12,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 14,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 15,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 0,
-            "posX": 0,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 16,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 17,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 1,
-            "posX": 6,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 18,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 19,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": 24,
-            "width": 6,
-            "posZ": 0,
-            "posX": 0,
-            "posY": 0,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 20,
-        "model": "platform.position",
-        "fields": {
-            "minimized": false,
-            "height": null,
-            "width": null,
-            "posZ": 0,
-            "posX": -1,
-            "posY": -1,
-            "fulldragboard": false
-        }
-    },
-    {
-        "pk": 1,
         "model": "platform.iwidget",
         "fields": {
             "widget": 1,
@@ -269,8 +9,7 @@
             "tab": 101,
             "refused_version": null,
             "readOnly": false,
-            "position": 1,
-            "icon_position": 2,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
@@ -284,8 +23,7 @@
             "tab": 101,
             "refused_version": null,
             "readOnly": false,
-            "position": 3,
-            "icon_position": 4,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
@@ -299,8 +37,7 @@
             "tab": 102,
             "refused_version": null,
             "readOnly": false,
-            "position": 5,
-            "icon_position": 6,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
@@ -314,8 +51,7 @@
             "tab": 103,
             "refused_version": null,
             "readOnly": true,
-            "position": 7,
-            "icon_position": 8,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
@@ -329,8 +65,7 @@
             "tab": 104,
             "refused_version": null,
             "readOnly": false,
-            "position": 15,
-            "icon_position": 16,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
@@ -344,8 +79,7 @@
             "tab": 104,
             "refused_version": null,
             "readOnly": false,
-            "position": 17,
-            "icon_position": 18,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
@@ -359,8 +93,7 @@
             "tab": 105,
             "refused_version": null,
             "readOnly": false,
-            "position": 19,
-            "icon_position": 20,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":2,\"left\":12,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
@@ -374,8 +107,7 @@
             "tab": 105,
             "refused_version": null,
             "readOnly": false,
-            "position": 11,
-            "icon_position": 12,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },
@@ -389,8 +121,7 @@
             "tab": 105,
             "refused_version": null,
             "readOnly": false,
-            "position": 13,
-            "icon_position": 14,
+            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "variables": "{\"list\": \"default\", \"text\": \"initial text\", \"boolean\": false, \"password\": \"default\", \"number\": 2}"
         }
     },

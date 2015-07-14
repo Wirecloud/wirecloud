@@ -501,22 +501,17 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         'layout': iwidget.layout,
         'refused_version': iwidget.refused_version,
         'widget': iwidget.widget.uri,
-        'top': iwidget.position.posY,
-        'left': iwidget.position.posX,
-        'zIndex': iwidget.position.posZ,
-        'width': iwidget.position.width,
-        'height': iwidget.position.height,
-        'fulldragboard': iwidget.position.fulldragboard,
-        'minimized': iwidget.position.minimized,
+        'top': iwidget.positions['widget']['top'],
+        'left': iwidget.positions['widget']['left'],
+        'zIndex': iwidget.positions['widget']['zIndex'],
+        'width': iwidget.positions['widget']['width'],
+        'height': iwidget.positions['widget']['height'],
+        'fulldragboard': iwidget.positions['widget']['fulldragboard'],
+        'minimized': iwidget.positions['widget']['minimized'],
+        'icon_top': iwidget.positions['icon']['top'],
+        'icon_left': iwidget.positions['icon']['left'],
         'readonly': iwidget.readOnly,
     }
-
-    if iwidget.icon_position:
-        data_ret['icon_top'] = iwidget.icon_position.posY
-        data_ret['icon_left'] = iwidget.icon_position.posX
-    else:
-        data_ret['icon_top'] = 0
-        data_ret['icon_left'] = 0
 
     if cache_manager is None:
         cache_manager = VariableValueCacheManager(workspace, user)

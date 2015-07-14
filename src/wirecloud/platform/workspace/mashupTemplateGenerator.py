@@ -148,16 +148,16 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
         'properties': properties,
         'preferences': preferences,
         'position': {
-            'x': str(iwidget.position.posX),
-            'y': str(iwidget.position.posY),
-            'z': str(iwidget.position.posZ),
+            'x': str(iwidget.positions['widget']['left']),
+            'y': str(iwidget.positions['widget']['top']),
+            'z': str(iwidget.positions['widget']['zIndex']),
         },
         'rendering': {
-            'width': str(iwidget.position.width),
-            'height': str(iwidget.position.height),
+            'width': str(iwidget.positions['widget']['width']),
+            'height': str(iwidget.positions['widget']['height']),
             'layout': str(iwidget.layout),
-            'fulldragboard': str(iwidget.position.fulldragboard),
-            'minimized': str(iwidget.position.minimized),
+            'fulldragboard': str(iwidget.positions['widget']['fulldragboard']),
+            'minimized': str(iwidget.positions['widget']['minimized']),
         },
     }
 

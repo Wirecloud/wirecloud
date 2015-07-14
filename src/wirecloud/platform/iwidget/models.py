@@ -29,33 +29,13 @@ from wirecloud.platform.wiring.utils import remove_related_iwidget_connections
 
 
 @python_2_unicode_compatible
-class Position(models.Model):
-
-    posX = models.IntegerField(_('PositionX'))
-    posY = models.IntegerField(_('PositionY'))
-    posZ = models.IntegerField(_('PositionZ'), default=0)
-    height = models.IntegerField(_('Height'), blank=True, null=True)
-    width = models.IntegerField(_('Width'), blank=True, null=True)
-    minimized = models.BooleanField(_('Minimized'), default=False)
-    fulldragboard = models.BooleanField(_('Fulldragboard'), default=False)
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_position'
-
-    def __str__(self):
-        return str(self.pk)
-
-
-@python_2_unicode_compatible
 class IWidget(models.Model):
 
     name = models.CharField(_('Name'), max_length=250)
     widget = models.ForeignKey('platform.Widget', verbose_name=_('Widget'))
     tab = models.ForeignKey('platform.Tab', verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
-    position = models.ForeignKey(Position, verbose_name=_('Position'), related_name="Position")
-    icon_position = models.ForeignKey(Position, verbose_name=_('Icon Position'), related_name="Icon_Position", blank=True, null=True)
+    positions = JSONField(blank=True)
     refused_version = models.CharField(_('Refused Version'), max_length=150, blank=True, null=True)
     readOnly = models.BooleanField(_('Read Only'), default=False)
     variables = JSONField(blank=True)
@@ -88,12 +68,6 @@ class IWidget(models.Model):
         self.tab.workspace.save()  # Invalidate workspace cache
 
     def delete(self, *args, **kwargs):
-
-        # Delete IWidget and its position
-        self.position.delete()
-        icon_position = self.icon_position
-        if icon_position is not None:
-            icon_position.delete()
 
         # Delete IWidget from wiring
         wiring = json.loads(self.tab.workspace.wiringStatus)

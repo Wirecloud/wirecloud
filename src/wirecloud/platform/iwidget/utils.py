@@ -1,11 +1,27 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import get_object_or_404
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+
+# This file is part of Wirecloud.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
 from django.utils.translation import ugettext as _
 from six import text_type
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.platform.models import IWidget, Position, Tab
+from wirecloud.platform.models import IWidget, Tab
 
 
 def parse_value_from_text(info, value):
@@ -49,24 +65,26 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
     if iwidget_name is None:
         iwidget_name = iwidget_info['title']
 
-    width = iwidget.get('width', 0)
-    height = iwidget.get('height', 0)
-    top = iwidget.get('top', 0)
-    left = iwidget.get('left', 0)
-    icon_top = iwidget.get('icon_top', 0)
-    icon_left = iwidget.get('icon_left', 0)
-    zIndex = iwidget.get('zIndex', 0)
     layout = iwidget.get('layout', 0)
 
-    # Creates IWidget position
-    position = Position(posX=left, posY=top, posZ=zIndex, height=height, width=width, minimized=False, fulldragboard=False)
-    position.save()
+    # Creates IWidget positions
+    positions = {
+        'widget': {
+            'top': iwidget.get('top', 0),
+            'left': iwidget.get('left', 0),
+            'zIndex': iwidget.get('zIndex', 0),
+            'height': iwidget.get('height', 0),
+            'width': iwidget.get('width', 0),
+            'minimized': iwidget.get('minimized', False),
+            'fulldragboard': iwidget.get('fulldragboard', False)
+        },
+        'icon': {
+            'top': iwidget.get('icon_top', 0),
+            'left': iwidget.get('icon_left', 0),
+        },
+    }
 
-    # Creates IWidget icon position
-    icon_position = Position(posX=icon_left, posY=icon_top)
-    icon_position.save()
-
-    new_iwidget = IWidget(name=iwidget_name, widget=resource.widget, tab=tab, layout=layout, position=position, icon_position=icon_position)
+    new_iwidget = IWidget(name=iwidget_name, widget=resource.widget, tab=tab, layout=layout, positions=positions)
 
     for vardef in (iwidget_info['preferences'] + iwidget_info['properties']):
         if initial_variable_values and vardef['name'] in initial_variable_values:
@@ -79,93 +97,93 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
     return new_iwidget
 
 
-def UpdateIWidget(iwidget, user, tab):
+def update_position_value(model, data, field):
+    if field in data:
+        size = data[field]
 
-    iwidget_pk = iwidget.get('id')
+        if not isinstance(size, int):
+            raise TypeError(_('Field %(field)s must contain a number value') % {"field": field})
 
-    # Checks
-    ig = get_object_or_404(IWidget, tab=tab, pk=iwidget_pk)
+        if size < 0:
+            raise ValueError(_('Invalid value for %(field)s') % {"field": field})
 
-    if 'name' in iwidget:
-        name = iwidget['name']
-        ig.name = name
+        model[field] = size
 
-    if 'tab' in iwidget:
-        newtab_id = iwidget['tab']
+
+def update_size_value(model, data, field):
+    if field in data:
+        size = data[field]
+
+        if not isinstance(size, int):
+            raise TypeError(_('Field %(field)s must contain a number value') % {"field": field})
+
+        if size <= 0:
+            raise ValueError(_('Invalid value for %(field)s') % {"field": field})
+
+        model[field] = size
+
+
+def update_icon_position(iwidget, data):
+    if 'icon' not in iwidget.positions:
+        iwidget.positions['icon'] = {}
+
+    position = iwidget.positions['icon']
+
+    update_position_value(position, data, 'top')
+    update_position_value(position, data, 'left')
+
+
+def update_position(iwidget, key, data):
+    if key not in iwidget.positions:
+        iwidget.positions[key] = {}
+
+    position = iwidget.positions[key]
+
+    update_size_value(position, data, 'width')
+    update_size_value(position, data, 'height')
+    update_position_value(position, data, 'top')
+    update_position_value(position, data, 'left')
+    update_position_value(position, data, 'zIndex')
+
+
+def UpdateIWidget(data, user, tab):
+
+    iwidget = IWidget.objects.get(tab=tab, pk=data.get('id'))
+
+    if 'widget' in data:
+        widget_uri = data.get('widget')
+
+        (widget_vendor, widget_name, widget_version) = widget_uri.split('/')
+        resource = CatalogueResource.objects.select_related('widget').get(vendor=widget_vendor, short_name=widget_name, version=widget_version)
+        if not resource.is_available_for(user):
+            raise CatalogueResource.DoesNotExist
+
+        iwidget.widget = resource.widget
+
+    if 'name' in data:
+        name = data['name']
+        iwidget.name = name
+
+    if 'tab' in data:
+        newtab_id = data['tab']
         if newtab_id < 0:
             raise Exception(_('Malformed iWidget JSON'))
 
         if newtab_id != tab.id:
             newtab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=tab.workspace_id, pk=newtab_id)
-            ig.tab = newtab
+            iwidget.tab = newtab
 
-    if 'layout' in iwidget:
-        layout = iwidget['layout']
-        ig.layout = layout
+    if 'layout' in data:
+        layout = data['layout']
+        iwidget.layout = layout
 
-    if 'icon_top' in iwidget and 'icon_left' in iwidget:
-        icon_position = ig.icon_position
-        if icon_position:
-            icon_position.posX = iwidget["icon_left"]
-            icon_position.posY = iwidget["icon_top"]
-        else:  # backward compatibility (old widgets without icon position)
-            icon_position = Position(posX=iwidget["icon_left"], posY=iwidget["icon_top"])
-        icon_position.save()
-        ig.icon_position = icon_position
-
-    if 'refused_version' in iwidget:
-        refused_version = iwidget['refused_version']
-        ig.refused_version = refused_version
-
-    ig.save()
+    if 'refused_version' in data:
+        refused_version = data['refused_version']
+        iwidget.refused_version = refused_version
 
     # get IWidget's position
-    position = ig.position
-
-    # update the requested attributes
-    if 'width' in iwidget:
-        width = iwidget['width']
-        if width <= 0:
-            raise Exception(_('Malformed iWidget JSON'))
-        position.width = width
-
-    if 'height' in iwidget:
-        height = iwidget['height']
-        if height <= 0:
-            raise Exception(_('Malformed iWidget JSON'))
-        position.height = height
-
-    if 'top' in iwidget:
-        top = iwidget['top']
-        if top < 0:
-            raise Exception(_('Malformed iWidget JSON'))
-        position.posY = top
-
-    if 'left' in iwidget:
-        left = iwidget['left']
-        if left < 0:
-            raise Exception(_('Malformed iWidget JSON'))
-        position.posX = left
-
-    if 'zIndex' in iwidget:
-        zIndex = iwidget['zIndex']
-        if not isinstance(zIndex, int):
-            raise Exception(_('Malformed iWidget JSON'))
-        position.posZ = zIndex
-
-    if 'minimized' in iwidget:
-        minimized = iwidget['minimized']
-        if not isinstance(minimized, bool) and not isinstance(minimized, int):
-            raise Exception(_('Malformed iWidget JSON'))
-        position.minimized = minimized
-
-    if 'fulldragboard' in iwidget:
-        fulldragboard = iwidget['fulldragboard']
-        if not isinstance(fulldragboard, bool) and not isinstance(fulldragboard, int):
-            raise Exception(_('Malformed iWidget JSON'))
-        position.fulldragboard = fulldragboard
+    update_position(iwidget, 'widget', data)
+    update_icon_position(iwidget, data)
 
     # save the changes
-    position.save()
-
-    ig.tab.workspace.save() # Invalidate workspace cache
+    iwidget.save()

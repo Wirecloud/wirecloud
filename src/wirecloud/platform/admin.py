@@ -26,7 +26,6 @@ from wirecloud.platform import models
 
 admin.site.register(models.Constant)
 
-admin.site.register(models.Position)
 admin.site.register(models.IWidget)
 
 
