@@ -37,6 +37,7 @@
         'Container': window.parent.StyledElements.Container,
         'DynamicMenuItems': window.parent.StyledElements.DynamicMenuItems,
         'Event': window.parent.StyledElements.Event,
+        'Fragment': window.parent.StyledElements.Fragment,
         'Form': window.parent.Form,
         'ObjectWithEvents': window.parent.StyledElements.ObjectWithEvents,
         'StyledAlternatives': window.parent.StyledElements.StyledAlternatives,
