@@ -38,12 +38,9 @@ class Migration(SchemaMigration):
                       keep_default=False)
 
 
-        # User chose to not deal with backwards NULL issues for 'IWidget.position'
-        raise RuntimeError("Cannot reverse this migration. 'IWidget.position' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration        # Adding field 'IWidget.position'
+        # Adding field 'IWidget.position'
         db.add_column('wirecloud_iwidget', 'position',
-                      self.gf('django.db.models.fields.related.ForeignKey')(related_name='Position', to=orm['platform.Position']),
+                      self.gf('django.db.models.fields.related.ForeignKey')(related_name='Position', null=True, to=orm['platform.Position']),
                       keep_default=False)
 
 

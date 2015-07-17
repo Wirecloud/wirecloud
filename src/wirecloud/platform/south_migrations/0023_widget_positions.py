@@ -6,13 +6,14 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         for widget in orm.IWidget.objects.all():
-            position = widget.position
             icon_position = widget.icon_position
+            if icon_position is not None:
+                widget.positions['icon'] = {
+                    'top': icon_position.posX,
+                    'left': icon_position.posY
+                }
 
-            widget.positions['icon'] = {
-                'top': icon_position.posX,
-                'left': icon_position.posY
-            }
+            position = widget.position
             widget.positions['widget'] = {
                 'top': position.posX,
                 'left': position.posY,
@@ -25,7 +26,7 @@ class Migration(DataMigration):
             widget.save()
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        raise RuntimeError("Cannot reverse this migration.")
 
     models = {
         u'auth.group': {
@@ -92,7 +93,7 @@ class Migration(DataMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'layout': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
-            'position': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'Position'", 'to': "orm['platform.Position']"}),
+            'position': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'Position'", 'null': 'True', 'to': "orm['platform.Position']"}),
             'positions': ('wirecloud.commons.fields.JSONField', [], {'default': "'{}'", 'blank': 'True'}),
             'readOnly': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'refused_version': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),

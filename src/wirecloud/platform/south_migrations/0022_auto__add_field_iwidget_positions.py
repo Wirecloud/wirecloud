@@ -13,8 +13,13 @@ class Migration(SchemaMigration):
                       self.gf('wirecloud.commons.fields.JSONField')(default='{}', blank=True),
                       keep_default=False)
 
+        # Changing field 'IWidget.position'
+        db.alter_column('wirecloud_iwidget', 'position_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['platform.Position']))
 
     def backwards(self, orm):
+        # Changing field 'IWidget.position'
+        db.alter_column('wirecloud_iwidget', 'position_id', self.gf('django.db.models.fields.related.ForeignKey')(default=5, to=orm['platform.Position']))
+
         # Deleting field 'IWidget.positions'
         db.delete_column('wirecloud_iwidget', 'positions')
 

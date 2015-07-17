@@ -359,8 +359,109 @@ class PlatformSouthMigrationsTestCase(TestCase):
         orm = Mock(autospec=migration.prev_orm())
         self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
 
-    def test_rename_targetOrganizations_to_groups_forwards(self):
-        self.check_basic_migration_forwards('0015_rename_targetOrganizations_to_groups')
+    def test_delete_widget_height_and_width_fields_forwards(self):
+        self.check_basic_migration_forwards('0018_auto__del_field_widget_height__del_field_widget_width')
 
-    def test_rename_targetOrganizations_to_groups_backwards(self):
-        self.check_basic_migration_backwards('0015_rename_targetOrganizations_to_groups')
+    def test_delete_widget_height_and_width_fields_backwards(self):
+        self.check_basic_migration_backwards('0018_auto__del_field_widget_height__del_field_widget_width')
+
+    def test_add_field_iwidget_variables_forwards(self):
+        self.check_basic_migration_forwards('0019_auto__add_field_iwidget_variables')
+
+    def test_add_field_iwidget_variables_backwards(self):
+        self.check_basic_migration_backwards('0019_auto__add_field_iwidget_variables')
+
+    def test_widget_variables_forwards(self):
+
+        var1 = Mock()
+        var1.vardef.name = 'bool'
+        var1.vardef.type = 'B'
+        var1.value = "true"
+
+        var2 = Mock()
+        var2.vardef.name = 'number'
+        var2.vardef.type = 'N'
+        var2.value = "2"
+
+        var3 = Mock()
+        var3.vardef.name = 'text'
+        var3.vardef.type = 'S'
+        var3.value = "hello world"
+
+        empty_iwidget = Mock()
+        empty_iwidget.variable_set.all.return_value = []
+
+        iwidget = Mock()
+        iwidget.variable_set.all.return_value = [var1, var2, var3]
+
+        migration = self._pick_migration('0020_widget_variables')
+        orm = Mock(autospec=migration.orm())
+        orm.IWidget.objects.all.return_value = TestQueryResult([empty_iwidget, iwidget])
+        migration.migration_instance().forwards(orm)
+
+        self.assertEqual(empty_iwidget.save.call_count, 1)
+        self.assertEqual(iwidget.save.call_count, 1)
+        self.assertEqual(iwidget.variables, {"bool": True, "number": 2.0, "text": "hello world"})
+
+    def test_widget_variables_backwards(self):
+        migration = self._pick_migration('0020_widget_variables')
+        orm = Mock(autospec=migration.prev_orm())
+        self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
+
+    def test_del_variable__del_variabledef_forwards(self):
+        self.check_basic_migration_forwards('0021_auto__del_variable__del_variabledef')
+
+    def test_del_variable__del_variabledef_backwards(self):
+        self.check_basic_migration_backwards('0021_auto__del_variable__del_variabledef')
+
+    def test_add_field_iwidget_positions_forwards(self):
+        self.check_basic_migration_forwards('0022_auto__add_field_iwidget_positions')
+
+    def test_add_field_iwidget_positions_backwards(self):
+        self.check_basic_migration_backwards('0022_auto__add_field_iwidget_positions')
+
+    def test_widget_positions_forwards(self):
+
+        iwidget1 = Mock()
+        iwidget1.positions = {}
+        iwidget1.icon_position = None
+        iwidget1.position.posX = 1
+        iwidget1.position.posY = 2
+        iwidget1.position.posZ = 3
+        iwidget1.position.height = 10
+        iwidget1.position.width = 20
+        iwidget1.position.minimized = False
+        iwidget1.position.fulldragboard = False
+
+        iwidget2 = Mock()
+        iwidget2.positions = {}
+        iwidget2.icon_position.posX = 0
+        iwidget2.icon_position.posY = 0
+        iwidget2.position.posX = 1
+        iwidget2.position.posY = 2
+        iwidget2.position.posZ = 3
+        iwidget2.position.height = 10
+        iwidget2.position.width = 20
+        iwidget2.position.minimized = False
+        iwidget2.position.fulldragboard = False
+
+        migration = self._pick_migration('0023_widget_positions')
+        orm = Mock(autospec=migration.orm())
+        orm.IWidget.objects.all.return_value = TestQueryResult([iwidget1, iwidget2])
+        migration.migration_instance().forwards(orm)
+
+        self.assertEqual(iwidget1.save.call_count, 1)
+        self.assertEqual(iwidget1.positions, {"widget": {"top": 1, "left": 2, "zIndex": 3, "height": 10, "width": 20, "minimized": False, "fulldragboard": False}})
+        self.assertEqual(iwidget2.save.call_count, 1)
+        self.assertEqual(iwidget2.positions, {"icon": {"top": 0, "left": 0}, "widget": {"top": 1, "left": 2, "zIndex": 3, "height": 10, "width": 20, "minimized": False, "fulldragboard": False}})
+
+    def test_widget_positions_backwards(self):
+        migration = self._pick_migration('0023_widget_positions')
+        orm = Mock(autospec=migration.prev_orm())
+        self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
+
+    def test_del_position__del_field_iwidget_icon_position__del_field_iwidget_forwards(self):
+        self.check_basic_migration_forwards('0024_auto__del_position__del_field_iwidget_icon_position__del_field_iwidget')
+
+    def test_del_position__del_field_iwidget_icon_position__del_field_iwidget_backwards(self):
+        self.check_basic_migration_backwards('0024_auto__del_position__del_field_iwidget_icon_position__del_field_iwidget')

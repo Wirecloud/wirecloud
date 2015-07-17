@@ -4,6 +4,17 @@ import json
 
 from south.v2 import DataMigration
 
+from wirecloud.platform.iwidget.utils import parse_value_from_text
+
+TYPE_MAPPING = {
+    'B': 'boolean',
+    'D': 'date',
+    'S': 'text',
+    'N': 'number',
+    'L': 'list',
+    'P': 'password',
+}
+
 class Migration(DataMigration):
 
     def forwards(self, orm):
@@ -12,13 +23,13 @@ class Migration(DataMigration):
             variables = {}
 
             for variable in iwidget.variable_set.all():
-                variables[variable.vardef.name] = variable.value
+                variables[variable.vardef.name] = parse_value_from_text({"type": TYPE_MAPPING[variable.vardef.type]}, variable.value)
 
-            iwidget.variables = json.dumps(variables)
+            iwidget.variables = variables
             iwidget.save()
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        raise RuntimeError("Cannot reverse this migration.")
 
     models = {
         u'auth.group': {
