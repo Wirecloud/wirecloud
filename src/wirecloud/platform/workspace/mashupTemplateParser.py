@@ -236,8 +236,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
             iwidget_data = {
                 "left": int(position.get('x')),
                 "top": int(position.get('y')),
-                "icon_left": -1,
-                "icon_top": -1,
+                "icon_left": 0,
+                "icon_top": 0,
                 "zIndex": int(position.get('z')),
                 "width": int(rendering.get('width')),
                 "height": int(rendering.get('height')),

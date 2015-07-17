@@ -1550,6 +1550,68 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(iwidget.widget.resource.local_uri_part, 'Wirecloud/Test/2.0')
         check_cache_is_purged(self, 2, upgrade_widget)
 
+    def test_iwidget_entry_post_upgrade_inexistent_widget(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'widget': 'Wirecloud/inexistent/2.0',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_iwidget_entry_post_upgrade_operator(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'widget': 'Wirecloud/TestOperator/1.0',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def check_iwidget_entry_post_invalid_position_value(self, field, value, error_code):
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the requests
+        data = {}
+        data[field] = value
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, error_code)
+
+    def test_iwidget_entry_post_invalid_top_position_type(self):
+        self.check_iwidget_entry_post_invalid_position_value('top', 'a', 400)
+
+    def test_iwidget_entry_post_invalid_left_position_value(self):
+        self.check_iwidget_entry_post_invalid_position_value('left', -2, 422)
+
+    def test_iwidget_entry_post_invalid_width_value(self):
+        self.check_iwidget_entry_post_invalid_position_value('width', 0, 422)
+
+    def test_iwidget_entry_post_invalid_height_value(self):
+        self.check_iwidget_entry_post_invalid_position_value('height', -1, 422)
+
+    def test_iwidget_entry_post_invalid_icon_top_type(self):
+        self.check_iwidget_entry_post_invalid_position_value('icon_top', 'a', 400)
+
+    def test_iwidget_entry_post_invalid_icon_left_type(self):
+        self.check_iwidget_entry_post_invalid_position_value('icon_left', True, 400)
+
     def test_iwidget_entry_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})

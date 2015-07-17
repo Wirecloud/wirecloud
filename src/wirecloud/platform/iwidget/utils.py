@@ -61,15 +61,16 @@ def update_title_value(iwidget, data):
             iwidget.name = data['title']
 
 
-def update_position_value(model, data, field):
-    if field in data:
-        size = data[field]
+def update_position_value(model, data, field, data_field=None):
+    data_field = data_field if data_field is not None else field
+    if data_field in data:
+        size = data[data_field]
 
-        if not isinstance(size, int):
-            raise TypeError(_('Field %(field)s must contain a number value') % {"field": field})
+        if type(size) != int:
+            raise TypeError(_('Field %(field)s must contain a number value') % {"field": data_field})
 
         if size < 0:
-            raise ValueError(_('Invalid value for %(field)s') % {"field": field})
+            raise ValueError(_('Invalid value for %(field)s') % {"field": data_field})
 
         model[field] = size
 
@@ -78,7 +79,7 @@ def update_size_value(model, data, field):
     if field in data:
         size = data[field]
 
-        if not isinstance(size, int):
+        if type(size) != int:
             raise TypeError(_('Field %(field)s must contain a number value') % {"field": field})
 
         if size <= 0:
@@ -93,8 +94,8 @@ def update_icon_position(iwidget, data):
 
     position = iwidget.positions['icon']
 
-    update_position_value(position, data, 'top')
-    update_position_value(position, data, 'left')
+    update_position_value(position, data, 'top', 'icon_top')
+    update_position_value(position, data, 'left', 'icon_left')
 
 
 def update_position(iwidget, key, data):
@@ -110,20 +111,36 @@ def update_position(iwidget, key, data):
     update_position_value(position, data, 'zIndex')
 
 
+def update_widget_value(iwidget, data, user, required=False):
+
+    if 'widget' in data:
+        (widget_vendor, widget_name, widget_version) = data['widget'].split('/')
+        resource = CatalogueResource.objects.select_related('widget').get(vendor=widget_vendor, short_name=widget_name, version=widget_version)
+        if not resource.is_available_for(user):
+            raise CatalogueResource.DoesNotExist
+
+        if resource.resource_type() != 'widget':
+            raise ValueError(_('%(uri)s is not a widget') % {"uri": data['widget']})
+
+        iwidget.widget = resource.widget
+        return resource
+    elif required:
+        raise ValueError('Missing widget info')
+
+
 def SaveIWidget(iwidget, user, tab, initial_variable_values):
 
     widget_uri = iwidget.get('widget')
 
-    (widget_vendor, widget_name, widget_version) = widget_uri.split('/')
-    resource = CatalogueResource.objects.select_related('widget').get(vendor=widget_vendor, short_name=widget_name, version=widget_version)
-    if not resource.is_available_for(user):
-        raise CatalogueResource.DoesNotExist
+    new_iwidget = IWidget(tab=tab)
 
+    resource = update_widget_value(new_iwidget, iwidget, user, required=True)
     iwidget_info = resource.get_processed_info()
-    layout = iwidget.get('layout', 0)
+    new_iwidget.name = iwidget_info['title']
+    new_iwidget.layout = iwidget.get('layout', 0)
 
-    # Creates IWidget positions
-    default_positions = {
+    # set default positions
+    new_iwidget.positions = {
         'widget': {
             'top': 0,
             'left': 0,
@@ -139,7 +156,6 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
         },
     }
 
-    new_iwidget = IWidget(name=iwidget_info['title'], widget=resource.widget, tab=tab, layout=layout, positions=default_positions)
     for vardef in (iwidget_info['preferences'] + iwidget_info['properties']):
         if initial_variable_values and vardef['name'] in initial_variable_values:
             initial_value = initial_variable_values[vardef['name']]
@@ -159,16 +175,7 @@ def UpdateIWidget(data, user, tab):
 
     iwidget = IWidget.objects.get(tab=tab, pk=data.get('id'))
 
-    if 'widget' in data:
-        widget_uri = data.get('widget')
-
-        (widget_vendor, widget_name, widget_version) = widget_uri.split('/')
-        resource = CatalogueResource.objects.select_related('widget').get(vendor=widget_vendor, short_name=widget_name, version=widget_version)
-        if not resource.is_available_for(user):
-            raise CatalogueResource.DoesNotExist
-
-        iwidget.widget = resource.widget
-
+    update_widget_value(iwidget, data, user)
     update_title_value(iwidget, data)
 
     if 'tab' in data:

@@ -74,6 +74,10 @@ class IWidgetCollection(Resource):
         except (CatalogueResource.DoesNotExist, Widget.DoesNotExist) as e:
             msg = _('refered widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
             return build_error_response(request, 422, msg)
+        except TypeError as e:
+            return build_error_response(request, 400, e)
+        except ValueError as e:
+            return build_error_response(request, 422, e)
 
     @authentication_required
     @consumes(('application/json',))
@@ -127,7 +131,15 @@ class IWidgetEntry(Resource):
             return build_error_response(request, 403, msg)
 
         iwidget['id'] = iwidget_id
-        UpdateIWidget(iwidget, request.user, tab)
+        try:
+            UpdateIWidget(iwidget, request.user, tab)
+        except (CatalogueResource.DoesNotExist, Widget.DoesNotExist) as e:
+            msg = _('refered widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
+            return build_error_response(request, 422, msg)
+        except TypeError as e:
+            return build_error_response(request, 400, e)
+        except ValueError as e:
+            return build_error_response(request, 422, e)
 
         return HttpResponse(status=204)
 
