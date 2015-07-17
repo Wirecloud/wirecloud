@@ -1320,6 +1320,20 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_iwidget_collection_post_creation_missing_required_widget_parameter(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {}
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
     def test_iwidget_collection_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
@@ -1528,6 +1542,27 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(iwidget.name, 'New Title')
         check_cache_is_purged(self, 2, update_iwidget_name)
 
+    def test_iwidget_entry_post_emtpy_name(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def update_iwidget_name():
+            data = {
+                'title': '',
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.content, '')
+
+            # Check that the iwidget name has been changed
+            iwidget = IWidget.objects.get(pk=2)
+            self.assertEqual(iwidget.name, 'Test')
+        check_cache_is_purged(self, 2, update_iwidget_name)
+
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_iwidget_entry_post_upgrade(self):
 
@@ -1603,8 +1638,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_iwidget_entry_post_invalid_width_value(self):
         self.check_iwidget_entry_post_invalid_position_value('width', 0, 422)
 
-    def test_iwidget_entry_post_invalid_height_value(self):
-        self.check_iwidget_entry_post_invalid_position_value('height', -1, 422)
+    def test_iwidget_entry_post_invalid_height_type(self):
+        self.check_iwidget_entry_post_invalid_position_value('height', 'a', 400)
 
     def test_iwidget_entry_post_invalid_icon_top_type(self):
         self.check_iwidget_entry_post_invalid_position_value('icon_top', 'a', 400)
