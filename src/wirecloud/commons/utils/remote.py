@@ -292,8 +292,10 @@ class CatalogueEntryTester(object):
 
     def __exit__(self, type, value, traceback):
 
+        button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True))
+
         if self.catalogue.get_subview() == 'details':
-            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-caret-left"), parent=True)).click()
+            button.click()
 
         self.details = None
 
