@@ -204,6 +204,10 @@
             }
         }, true);
 
+        element.contentDocument.defaultView.addEventListener('click', function () {
+            Wirecloud.UserInterfaceManager.handleEscapeEvent();
+        });
+
         /* Propagate pending events */
         for (var i = 0; i < this.pending_events.length; i += 1) {
             this.inputs[this.pending_events[i].endpoint].propagate(this.pending_events[i].value);
