@@ -135,6 +135,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/CheckBox.js',
     'js/StyledElements/RadioButton.js',
     'js/StyledElements/InputInterface.js',
+    'js/StyledElements/TextInputInterface.js',
     'js/StyledElements/InputInterfaces.js',
     'js/wirecloud/ui/ParametrizableValueInputInterface.js',
     'js/wirecloud/ui/ParametrizedTextInputInterface.js',

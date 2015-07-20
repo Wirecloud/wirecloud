@@ -155,6 +155,15 @@
         return this._checkValue(newValue);
     };
 
+    InputInterface.prototype.validate = function validate() {
+        if (this.timeout != null) {
+            clearTimeout(this.timeout);
+        }
+
+        var errorCode = this.checkValue();
+        this._setError(errorCode !== StyledElements.InputValidationError.NO_ERROR);
+    };
+
     /**
      * Checks if the given value is valid for this InputInterface.
      *

@@ -113,36 +113,6 @@
     /**
      *
      */
-    var TextInputInterface = function TextInputInterface(fieldId, options) {
-        if (arguments.length === 0) {
-            return;
-        }
-
-        StyledElements.InputInterface.call(this, fieldId, options);
-
-        this.inputElement = new StyledElements.StyledTextField(options);
-    };
-    TextInputInterface.prototype = new StyledElements.InputInterface();
-
-    TextInputInterface.parse = function parse(value) {
-        return value;
-    };
-
-    TextInputInterface.stringify = function stringify(value) {
-        return value;
-    };
-
-    TextInputInterface.prototype.assignDefaultButton = function assignDefaultButton(button) {
-        this.inputElement.addEventListener('submit', function () {
-            button.click();
-        });
-    };
-
-    StyledElements.TextInputInterface = TextInputInterface;
-
-    /**
-     *
-     */
     var PasswordInputInterface = function PasswordInputInterface(fieldId, options) {
         if (arguments.length === 0) {
             return;
@@ -154,8 +124,8 @@
     };
     PasswordInputInterface.prototype = new StyledElements.InputInterface();
 
-    PasswordInputInterface.parse = TextInputInterface.parse;
-    PasswordInputInterface.stringify = TextInputInterface.stringify;
+    PasswordInputInterface.parse = StyledElements.TextInputInterface.parse;
+    PasswordInputInterface.stringify = StyledElements.TextInputInterface.stringify;
 
     StyledElements.PasswordInputInterface = PasswordInputInterface;
 
@@ -240,11 +210,12 @@
         StyledElements.InputInterface.call(this, fieldId, options);
 
         this.inputElement = new StyledElements.StyledTextArea(options);
+        this.events.blur = this.inputElement.events.blur;
     };
     LongTextInputInterface.prototype = new StyledElements.InputInterface();
 
-    LongTextInputInterface.parse = TextInputInterface.parse;
-    LongTextInputInterface.stringify = TextInputInterface.stringify;
+    LongTextInputInterface.parse = StyledElements.TextInputInterface.parse;
+    LongTextInputInterface.stringify = StyledElements.TextInputInterface.stringify;
 
     StyledElements.LongTextInputInterface = LongTextInputInterface;
 
@@ -256,12 +227,12 @@
             return;
         }
 
-        TextInputInterface.call(this, fieldId, options);
+        StyledElements.TextInputInterface.call(this, fieldId, options);
     };
-    URLInputInterface.prototype = new TextInputInterface();
+    URLInputInterface.prototype = new StyledElements.TextInputInterface();
 
-    URLInputInterface.parse = TextInputInterface.parse;
-    URLInputInterface.stringify = TextInputInterface.stringify;
+    URLInputInterface.parse = StyledElements.TextInputInterface.parse;
+    URLInputInterface.stringify = StyledElements.TextInputInterface.stringify;
 
     URLInputInterface.prototype._URLChecker = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
@@ -275,9 +246,9 @@
      *
      */
     var EMailInputInterface = function EMailInputInterface(fieldId, options) {
-        TextInputInterface.call(this, fieldId, options);
+        StyledElements.TextInputInterface.call(this, fieldId, options);
     };
-    EMailInputInterface.prototype = new TextInputInterface();
+    EMailInputInterface.prototype = new StyledElements.TextInputInterface();
 
     EMailInputInterface.prototype._EMailChecker = /[\w\d][\w\-]*@[\w\d\-]+\.[\w\d]+/;
 
