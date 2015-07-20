@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global Form, Wirecloud */
+/*global StyledElements, Wirecloud */
 
 (function () {
 
@@ -43,7 +43,7 @@
         }, options);
         options.buttonArea = this.windowBottom;
 
-        this.form = new Form(fields, options);
+        this.form = new StyledElements.Form(fields, options);
         this.form.insertInto(this.windowContent);
         this.form.addEventListener('submit', function (form, data) {
             this.form.acceptButton.disable();

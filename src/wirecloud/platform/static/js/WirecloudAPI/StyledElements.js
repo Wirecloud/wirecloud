@@ -38,7 +38,7 @@
         'DynamicMenuItems': window.parent.StyledElements.DynamicMenuItems,
         'Event': window.parent.StyledElements.Event,
         'Fragment': window.parent.StyledElements.Fragment,
-        'Form': window.parent.Form,
+        'Form': window.parent.StyledElements.Form,
         'ObjectWithEvents': window.parent.StyledElements.ObjectWithEvents,
         'StyledAlternatives': window.parent.StyledElements.StyledAlternatives,
         'StyledCheckBox': window.parent.StyledElements.StyledCheckBox,

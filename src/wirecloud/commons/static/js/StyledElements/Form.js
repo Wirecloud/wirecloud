@@ -569,6 +569,6 @@
         this.repaint();
     };
 
-    window.Form = Form;
+    StyledElements.Form = Form;
 
 })();

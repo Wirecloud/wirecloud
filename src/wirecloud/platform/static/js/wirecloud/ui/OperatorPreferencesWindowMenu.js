@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,14 +19,14 @@
  *
  */
 
-/*global Form, gettext, Wirecloud*/
+/*global Wirecloud*/
 
 (function () {
 
     "use strict";
 
     var OperatorPreferencesWindowMenu = function OperatorPreferencesWindowMenu(css_class) {
-        Wirecloud.ui.WindowMenu.call(this, gettext('Operator Settings'), css_class);
+        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Operator Settings'), css_class);
     };
     OperatorPreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
@@ -46,7 +46,7 @@
                 this._current_ioperator.prefCallback(new_values);
             } catch (error) {
                 details = this._current_ioperator.logManager.formatException(error);
-                this._current_ioperator.logManager.log(gettext('Exception catched while processing preference changes'), {details: details});
+                this._current_ioperator.logManager.log(Wirecloud.Utils.gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
 
@@ -67,7 +67,7 @@
             }
         }
         this._current_ioperator = ioperator;
-        this._current_form = new Form(fields, {
+        this._current_form = new StyledElements.Form(fields, {
             setdefaultsButton: true,
             buttonArea: this.windowBottom
         });

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,14 +19,14 @@
  *
  */
 
-/*global Form, gettext, Wirecloud*/
+/*global Wirecloud*/
 
 (function () {
 
     "use strict";
 
     var PreferencesWindowMenu = function PreferencesWindowMenu(css_class) {
-        Wirecloud.ui.WindowMenu.call(this, gettext('Widget Settings'), css_class);
+        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Widget Settings'), css_class);
     };
     PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
@@ -63,7 +63,7 @@
                 this._current_iwidget.prefCallback(new_values);
             } catch (error) {
                 details = this._current_iwidget.logManager.formatException(error);
-                this._current_iwidget.logManager.log(gettext('Exception catched while processing preference changes'), {details: details});
+                this._current_iwidget.logManager.log(Wirecloud.Utils.gettext('Exception catched while processing preference changes'), {details: details});
             }
         }
     };
@@ -82,7 +82,7 @@
             }
         }
         this._current_iwidget = iwidget;
-        this._current_form = new Form(fields, {
+        this._current_form = new StyledElements.Form(fields, {
             setdefaultsButton: true,
             buttonArea: this.windowBottom
         });
