@@ -308,7 +308,7 @@
         }
 
         requestHeaders = JSON.parse(JSON.stringify(this.request_headers));
-        requestHeaders['Accept'] = 'application/json';
+        requestHeaders.Accept = 'application/json';
 
         this.makeRequest(url, {
             method: body != null ? 'POST' : 'GET',
@@ -452,7 +452,7 @@
         if ('polygon' in scope.value) {
             result = {
                 polygon: {
-                     vertices: []
+                    vertices: []
                 }
             };
             for (i = 0; i < scope.value.polygon.vertices.length; i++) {
@@ -470,7 +470,7 @@
             result = {
                 circle: {
                     centerLatitude: "" + scope.value.circle.centerLatitude,
-                    centerLongitude: "" +scope.value.circle.centerLongitude,
+                    centerLongitude: "" + scope.value.circle.centerLongitude,
                     radius: scope.value.circle.radius
                 }
             };
@@ -484,7 +484,7 @@
     };
 
     var ngsi_build_restriction_element = function ngsi_build_restriction_element(doc, restriction) {
-        var restrictionElement, attributeExpressionElement, scopeElement,
+        var restrictionElement, scopeElement,
             operationScopeElement, scopeTypeElement, scopeValueElement, i;
 
 
@@ -615,7 +615,7 @@
 
         body = {
             entities: []
-        }
+        };
 
         for (i = 0; i < e.length; i += 1) {
             body.entities.push(ngsi_build_entity_id_element_json(e[i]));
@@ -1189,14 +1189,36 @@
         return [data, error_data];
     };
 
-    var parse_available_types_response = function parse_available_types_response(data) {
-        var status_info = process_status_info_json(data);
+    var parse_available_types_response = function parse_available_types_response(data, options) {
+        var parsed_details, status_info, details;
 
-        if (status_info.code !== 200) {
+        status_info = process_status_info_json(data);
+        if (status_info.code === 404) {
+            parsed_details = status_info.details.match(NGSI_INVALID_OFFSET_RE);
+            if (parsed_details) {
+                details = status_info.details = {
+                    "text": status_info.details,
+                    "matches": parseInt(parsed_details[1]),
+                    "offset": parseInt(parsed_details[2])
+                };
+            }
+            if (options.offset != null && options.offset !== 0) {
+                throw status_info;
+            } else {
+                return [[], details];
+            }
+        } else if (status_info.code !== 200) {
             throw new NGSI.InvalidResponseError('Unexpected error code');
+        } else if (status_info.details != null) {
+            parsed_details = status_info.details.match(NGSI_QUERY_COUNT_RE);
+            if (parsed_details) {
+                details = {
+                    "count": parseInt(parsed_details[1], 10)
+                };
+            }
         }
 
-        return [data.types];
+        return [data.types, details];
     };
 
     var parse_type_info_response = function parse_type_info_response(data) {
@@ -1236,22 +1258,6 @@
         }
 
         return status_info;
-    };
-
-    var process_error_code = function process_error_code(element) {
-        var errorCodeElement, codeElement, reasonPhraseElement, detailsElement, details;
-
-        errorCodeElement = NGSI.XML.getChildElementByTagName(element, 'errorCode');
-        if (errorCodeElement != null) {
-            codeElement = NGSI.XML.getChildElementByTagName(errorCodeElement, 'code');
-            reasonPhraseElement = NGSI.XML.getChildElementByTagName(errorCodeElement, 'reasonPhrase');
-            detailsElement = NGSI.XML.getChildElementByTagName(errorCodeElement, 'details');
-            if (detailsElement != null) {
-                details = detailsElement.textContent;
-            }
-
-            throw new NGSI.InvalidRequestError(parseInt(codeElement.textContent, 10), reasonPhraseElement.textContent, details);
-        }
     };
 
     var process_error_code_json = function process_error_code_json(data) {
@@ -1363,6 +1369,39 @@
 
         var list = NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextRegistrationResponseList');
         return [parse_context_registration_response_list(list)];
+    };
+
+    var parse_pagination_options = function parse_pagination_options(options, default_details) {
+        var parameters = {};
+
+        if (options.limit != null) {
+            if (typeof options.limit !== 'number' || options.limit < 20) {
+                throw new TypeError('invalid value for the limit option');
+            }
+            parameters.limit = options.limit;
+        }
+
+        if (options.offset != null) {
+            if (typeof options.offset !== 'number' || options.offset < 0) {
+                throw new TypeError('invalid value for the offset option');
+            }
+            parameters.offset = options.offset;
+        }
+
+        if (options.details != null) {
+            if (typeof options.details !== 'boolean') {
+                throw new TypeError('invalid value for the details option');
+            }
+            if (options.details) {
+                parameters.details = 'on';
+            } else {
+                parameters.details = 'off';
+            }
+        } else {
+            parameters.details = default_details;
+        }
+
+        return parameters;
     };
 
     NGSI.parseNotifyContextRequest = function parseNotifyContextRequest(doc, options) {
@@ -1478,7 +1517,7 @@
         }.bind(this), 30000);
     };
 
-    NGSI.ProxyConnection = function ProxyConnection(url, /* TODO */ makeRequest) {
+    NGSI.ProxyConnection = function ProxyConnection(url, makeRequest /* TODO */) {
         this.url = "" + url;
 
         if (this.url[this.url.length - 1] !== '/') {
@@ -1848,32 +1887,7 @@
             options = {};
         }
 
-        // Parse pagination parameters
-        parameters = {};
-        if (options.limit != null) {
-            if (typeof options.limit !== 'number' || options.limit < 20) {
-                throw new TypeError('invalid value for the limit option');
-            }
-            parameters.limit = options.limit;
-        }
-
-        if (options.offset != null) {
-            if (typeof options.offset !== 'number' || options.offset < 0) {
-                throw new TypeError('invalid value for the offset option');
-            }
-            parameters.offset = options.offset;
-        }
-
-        if (options.details != null) {
-            if (typeof options.details !== 'boolean') {
-                throw new TypeError('invalid value for the details option');
-            }
-            if (options.details) {
-                parameters.details = 'on';
-            } else {
-                parameters.details = 'off';
-            }
-        }
+        parameters = parse_pagination_options(options, 'off');
 
         url = this.url + NGSI.endpoints.QUERY_CONTEXT;
         payload = ngsi_build_query_context_request(entities, attrNames, options.restriction);
@@ -2035,7 +2049,8 @@
 
     NGSI.Connection.prototype.getAvailableTypes = function getAvailableTypes(options) {
         var url = this.url + NGSI.endpoints.CONTEXT_TYPES;
-        makeJSONRequest.call(this, url, null, parse_available_types_response, options);
+        var parameters = parse_pagination_options(options, 'on');
+        makeJSONRequest.call(this, url, null, parse_available_types_response, options, parameters);
     };
 
     NGSI.Connection.prototype.getTypeInfo = function getTypeInfo(type, options) {
