@@ -103,12 +103,30 @@
                         var title = document.createElement('h5');
                         title.textContent = entry.resource.name;
                         fragment.appendChild(title);
+
                         if ('type' in resource && !('install' in resource)) {
                             var error_label = document.createElement('span');
                             error_label.className = 'label label-danger';
                             error_label.textContent = Wirecloud.Utils.gettext('missing WireCloud metadata');
                             title.appendChild(error_label);
+                        } else if ('type' in resource) {
+                            var label = document.createElement('span');
+                            label.textContent = offering.type;
+                            label.className = 'label';
+                            switch (offering.type) {
+                            case 'widget':
+                                label.classList.add('label-success');
+                                break;
+                            case 'operator':
+                                label.classList.add('label-warning');
+                                break;
+                            case 'mashup':
+                                label.classList.add('label-important');
+                                break;
+                            }
+                            title.appendChild(label);
                         }
+
                         var description = document.createTextNode(entry.resource.description);
                         fragment.appendChild(description);
                         return fragment;
