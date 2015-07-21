@@ -104,16 +104,16 @@
                         title.textContent = entry.resource.name;
                         fragment.appendChild(title);
 
-                        if ('type' in resource && !('install' in resource)) {
+                        if ('type' in entry.resource && !('install' in entry.resource)) {
                             var error_label = document.createElement('span');
                             error_label.className = 'label label-danger';
                             error_label.textContent = Wirecloud.Utils.gettext('missing WireCloud metadata');
                             title.appendChild(error_label);
-                        } else if ('type' in resource) {
+                        } else if ('type' in entry.resource) {
                             var label = document.createElement('span');
-                            label.textContent = offering.type;
+                            label.textContent = entry.resource.type;
                             label.className = 'label';
-                            switch (offering.type) {
+                            switch (entry.resource.type) {
                             case 'widget':
                                 label.classList.add('label-success');
                                 break;
