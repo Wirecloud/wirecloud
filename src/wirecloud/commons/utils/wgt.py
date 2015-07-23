@@ -43,6 +43,10 @@ class WgtFile(object):
             if normalized_filename.startswith('/'):
                 raise ValueError('Invalid absolute file name: %s', filename)
 
+    @property
+    def namelist(self):
+        return self._zip.namelist
+
     def get_underlying_file(self):
         return self._zip.fp
 

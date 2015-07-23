@@ -20,6 +20,7 @@
 import errno
 import json
 import os
+import re
 from six.moves.urllib.parse import urljoin
 from six.moves.urllib.request import pathname2url, url2pathname
 import time
@@ -89,6 +90,41 @@ def extract_resource_media_from_package(template, package, base_path):
     return overrides
 
 
+def check_invalid_doc_entry(wgt_file, doc_path):
+
+    try:
+        doc_code = wgt_file.read(doc_path)
+    except:
+        raise InvalidContents('missing file: %s' % doc_path)
+
+    try:
+        doc_code = doc_code.decode('utf-8')
+    except:
+        raise InvalidContents('file is not encoded using UTF-8: %s' % doc_path)
+
+    try:
+        doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
+    except:
+        raise InvalidContents("file cannot be parsed as markdown: %s" % doc_path)
+
+
+def check_invalid_doc_content(wgt_file, resource_info, key):
+
+    doc_url = resource_info[key]
+    if doc_url != '' and not doc_url.startswith(('http://', 'https://')):
+        doc_path = url2pathname(doc_url)
+
+        # Check default version
+        check_invalid_doc_entry(wgt_file, doc_path)
+
+        # Check localized versions
+        (doc_filename_root, doc_filename_ext) = os.path.splitext(doc_path)
+        pattern = re.escape(doc_filename_root) + '\.\w\w(?:-\w\w)?' + re.escape(doc_filename_ext)
+        for filename in wgt_file.namelist():
+            if re.match(pattern, filename):
+                check_invalid_doc_entry(wgt_file, filename)
+
+
 def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=False):
 
     close_wgt = False
@@ -112,10 +148,14 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
                 raise InvalidContents(msg % {'file_name': code_url})
 
             try:
-                unicode(code, resource_info['contents']['charset'])
+                code.decode(resource_info['contents']['charset'])
             except UnicodeDecodeError:
                 msg = _('%(file_name)s was not encoded using the specified charset (%(charset)s according to the widget descriptor file).')
                 raise InvalidContents(msg % {'file_name': code_url, 'charset': resource_info['contents']['charset']})
+
+    check_invalid_doc_content(wgt_file, resource_info, 'longdescription')
+    check_invalid_doc_content(wgt_file, resource_info, 'doc')
+    check_invalid_doc_content(wgt_file, resource_info, 'changelog')
 
     resource_id = (
         template.get_resource_vendor(),

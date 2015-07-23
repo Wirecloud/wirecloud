@@ -17,13 +17,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import errno
 
 from django.test import TestCase
-from mock import Mock, patch, DEFAULT
+from mock import MagicMock, Mock, patch, DEFAULT
 
-from wirecloud.catalogue.utils import update_resource_catalogue_cache
+from wirecloud.catalogue.utils import add_packaged_resource, update_resource_catalogue_cache
 from wirecloud.commons.utils.template import TemplateParseException
+from wirecloud.commons.utils.wgt import InvalidContents
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)
@@ -199,3 +202,109 @@ class CatalogueUtilsTestCase(TestCase):
         self.assertFalse(mac1.delete.called)
         self.assertFalse(mac2.save.called)
         self.assertFalse(mac2.delete.called)
+
+    def build_add_packaged_resouce_mocks(self, files, invalid_files):
+
+        file_mocks = {}
+        def read_file(key):
+            if key not in files:
+                raise KeyError()
+            elif key in invalid_files:
+                return 'á'.encode('iso-8859-1')
+            else:
+                mock = Mock()
+                file_mocks[key] = mock
+                return mock
+
+        f = Mock()
+        user = Mock()
+        wgt_file = Mock()
+        wgt_file.read.side_effect = read_file
+        wgt_file.namelist.return_value = files
+        template = Mock()
+        template.get_resource_info.return_value = {
+            'type': 'widget',
+            'doc': 'doc/index.md',
+            'longdescription': 'DESCRIPTION.md',
+            'changelog': 'CHANGELOG.md',
+            'contents': {
+                'src': 'index.html',
+                'charset': 'utf-8',
+            }
+        }
+        template.get_resource_vendor.return_value = 'Wirecloud'
+        template.get_resource_name.return_value = 'Test'
+        template.get_resource_version.return_value = '1.0'
+
+        return f, user, wgt_file, template, file_mocks
+
+    def test_add_packaged_resource_invalid_longdescription_encoding(self):
+        f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'DESCRIPTION.md', 'CHANGELOG.md'], ['DESCRIPTION.md'])
+
+        with patch('wirecloud.catalogue.utils.extract_resource_media_from_package'):
+            try:
+                add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
+                self.fail('Expecting InvalidContents exception to be raised')
+            except InvalidContents as e:
+                self.assertIn('DESCRIPTION.md', e.message)
+            wgt_file.read.assert_called_with('DESCRIPTION.md')
+
+    def test_add_packaged_resource_missing_longdescription_file(self):
+        f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'doc/index.md', 'CHANGELOG.md'], [])
+
+        with patch('wirecloud.catalogue.utils.extract_resource_media_from_package'):
+            try:
+                add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
+                self.fail('Expecting InvalidContents exception to be raised')
+            except InvalidContents as e:
+                self.assertIn('DESCRIPTION.md', e.message)
+
+    def test_add_packaged_resource_invalid_translated_longdescription_encoding(self):
+        f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'DESCRIPTION.md', 'doc/index.md', 'DESCRIPTION.es.md', 'CHANGELOG.md'], ['DESCRIPTION.es.md'])
+
+        with patch('wirecloud.catalogue.utils.extract_resource_media_from_package'):
+            try:
+                add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
+                self.fail('Expecting InvalidContents exception to be raised')
+            except InvalidContents as e:
+                self.assertIn('DESCRIPTION.es.md', e.message)
+
+    def test_add_packaged_resource_missing_userguide_file(self):
+        f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'DESCRIPTION.md', 'CHANGELOG.md'], [])
+
+        with patch('wirecloud.catalogue.utils.extract_resource_media_from_package'):
+            try:
+                add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
+                self.fail('Expecting InvalidContents exception to be raised')
+            except InvalidContents as e:
+                self.assertIn('doc/index.md', e.message)
+
+    def test_add_packaged_resource_invalid_translated_userguide_encoding(self):
+        f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'DESCRIPTION.md', 'doc/index.md', 'doc/index.es.md', 'CHANGELOG.md'], ['doc/index.es.md'])
+
+        with patch('wirecloud.catalogue.utils.extract_resource_media_from_package'):
+            try:
+                add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
+                self.fail('Expecting InvalidContents exception to be raised')
+            except InvalidContents as e:
+                self.assertIn('doc/index.es.md', e.message)
+
+    def test_add_packaged_resource_missing_changelog_file(self):
+        f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'doc/index.md', 'DESCRIPTION.md'], [])
+
+        with patch('wirecloud.catalogue.utils.extract_resource_media_from_package'):
+            try:
+                add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
+                self.fail('Expecting InvalidContents exception to be raised')
+            except InvalidContents as e:
+                self.assertIn('CHANGELOG.md', e.message)
+
+    def test_add_packaged_resource_invalid_translated_changelog_encoding(self):
+        f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'DESCRIPTION.md', 'doc/index.md', 'CHANGELOG.es.md', 'CHANGELOG.md'], ['CHANGELOG.es.md'])
+
+        with patch('wirecloud.catalogue.utils.extract_resource_media_from_package'):
+            try:
+                add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
+                self.fail('Expecting InvalidContents exception to be raised')
+            except InvalidContents as e:
+                self.assertIn('CHANGELOG.es.md', e.message)
