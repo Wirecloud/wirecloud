@@ -59,6 +59,10 @@
 .se-model-table-body {
     overflow-y: auto;
     color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
+
+    & > .alert {
+        margin: $padding-vertical-base $padding-horizontal-base;
+    }
 }
 
 .se-model-table-row {

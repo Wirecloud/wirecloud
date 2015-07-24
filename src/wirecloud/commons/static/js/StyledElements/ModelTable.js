@@ -164,6 +164,18 @@
         this.resizeColumns();
     };
 
+    var onRequestEnd = function onRequestEnd(source, error) {
+        if (error == null) {
+            this.reload();
+        } else {
+            this.pClearTable();
+            var message = document.createElement('div');
+            message.className = "alert alert-danger"
+            message.textContent = error;
+            this.tableBody.appendChild(message);
+        }
+    };
+
     /**
      * Each column must provide the following options:
      * * `field` (String): name of the attribute
@@ -237,8 +249,7 @@
         }
         Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
 
-        this.pRefreshBody = this.reload.bind(this);
-        this.source.addEventListener('requestEnd', this.pRefreshBody);
+        this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
 
         if (this.source.pOptions.pageSize !== 0) {
             this.paginationInterface = new StyledElements.PaginationInterface(this.source);
@@ -475,8 +486,6 @@
 
         this.source.destroy();
         this.source = null;
-
-        this.pRefreshBody = null;
     };
 
     StyledElements.ModelTable = ModelTable;
