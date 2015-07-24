@@ -9,7 +9,6 @@
     <Description>description</Description>
     <ImageURI>images/catalogue.png</ImageURI>
     <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
-    <WikiURI>doc/index.html</WikiURI>
   </Catalog.ResourceDescription>
 
   <Platform.Preferences>

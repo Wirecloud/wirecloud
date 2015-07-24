@@ -26,7 +26,6 @@
 
         <usdl-core:utilizedResource rdf:resource="/examplecode5.js"/>
 
-        <foaf:page rdf:resource="doc/index.html"/>
         <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
 
         <vCard:addr>

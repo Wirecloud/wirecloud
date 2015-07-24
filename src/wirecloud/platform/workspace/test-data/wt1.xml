@@ -8,7 +8,6 @@
         <Mail>a@b.com</Mail>
         <Description>Mashup for testing</Description>
         <ImageURI>images/mashup.png</ImageURI>
-        <WikiURI>docs/index.html</WikiURI>
 
         <IncludedResources>
             <Tab id="1" name="Tab">

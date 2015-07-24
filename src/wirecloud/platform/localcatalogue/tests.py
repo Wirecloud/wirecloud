@@ -139,7 +139,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def test_basic_widget_creation_from_rdf(self):
 
-        file_contents = self.build_simple_wgt('template1.rdf', other_files=('images/catalogue.png', 'images/catalogue_iphone.png',))
+        file_contents = self.build_simple_wgt('template1.rdf', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
         resource = install_resource_to_user(self.user, file_contents=file_contents)
 
         self.check_basic_widget_info(resource)
@@ -187,7 +187,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         client.login(username='test', password='test')
         widget_id = {'vendor': 'Wirecloud', 'name': 'test', 'version': '0.1'}
 
-        file_contents = self.build_simple_wgt('template1.xml')
+        file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
         resource = install_resource_to_user(self.user, file_contents=file_contents)
         resource_pk = resource.pk
         xhtml_pk = resource.widget.pk
@@ -203,7 +203,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, pk=resource_pk)
 
         # Use a different xhtml code
-        file_contents = self.build_simple_wgt('template1.xml', b'code')
+        file_contents = self.build_simple_wgt('template1.xml', b'code', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
         resource = install_resource_to_user(self.user, file_contents=file_contents)
 
         response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
@@ -228,7 +228,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def test_template_translations(self):
 
-        file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png',))
+        file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
 
         resource = install_resource_to_user(self.user, file_contents=file_contents)
 

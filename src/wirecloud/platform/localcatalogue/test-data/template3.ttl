@@ -28,7 +28,6 @@
 	wire:hasImageUri <images/catalogue.png> ;
 	wire:hasiPhoneImageUri <images/catalogue_iphone.png> ;
 	usdl-core:exposes <test.html> ;
-	foaf:page <doc/index.html> ;
 	usdl-core:hasProvider <http://vendoruri/> ;
 	vcard:addr _:b1 ;
 	wire:hasPlatformPreference _:b2 ;

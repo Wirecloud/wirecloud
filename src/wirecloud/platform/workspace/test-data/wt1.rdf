@@ -17,7 +17,6 @@
         <usdl-core:versionInfo>1</usdl-core:versionInfo>
         <wire:hasImageUri rdf:resource="images/mashup.png"/>
 
-        <foaf:page rdf:resource="docs/index.html"/>
         <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
 
         <vCard:addr>

@@ -17,7 +17,6 @@
 		<wire:hasImageUri rdf:resource="images/catalogue.png"/>
 		<wire:hasiPhoneImageUri rdf:resource="images/catalogue_iphone.png"/>
 		<usdl-core:exposes rdf:resource="test.html"/>
-		<foaf:page rdf:resource="doc/index.html"/>
 		<usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
 
 		<vCard:addr>
@@ -61,10 +60,6 @@
 
 	<usdl-core:Resource rdf:about="test.html">
 		<dcterms:title>code</dcterms:title>
-	</usdl-core:Resource>
-
-	<usdl-core:Resource rdf:about="doc/index.html">
-		<dcterms:title>WikiURI</dcterms:title>
 	</usdl-core:Resource>
 
 	<foaf:Image rdf:about="images/catalogue.png">

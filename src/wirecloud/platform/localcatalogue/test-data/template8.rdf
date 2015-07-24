@@ -19,7 +19,6 @@
         <wire:hasiPhoneImageUri rdf:resource="images/catalogue_iphone.png"/>
 
         <usdl-core:utilizedResource rdf:resource="test.html"/>
-        <foaf:page rdf:resource="doc/index.html"/>
         <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
 
         <vCard:addr>
