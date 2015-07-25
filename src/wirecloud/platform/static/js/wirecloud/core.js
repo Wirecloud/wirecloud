@@ -256,7 +256,7 @@
      */
     Wirecloud.unload = function unload() {
         var layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager._startComplexTask(gettext('Unloading Wirecloud Platform'));
+        layoutManager._startComplexTask(gettext('Unloading WireCloud'));
 
         if (this.activeWorkspace != null) {
             this.activeWorkspace.unload();

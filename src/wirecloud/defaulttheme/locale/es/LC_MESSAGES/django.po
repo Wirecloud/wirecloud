@@ -170,8 +170,8 @@ msgid "WireCloud Platform"
 msgstr "Plataforma WireCloud"
 
 #: templates/wirecloud/views/base.html:41
-msgid "Loading WireCloud Platform"
-msgstr "Cargando la plataforma WireCloud"
+msgid "Loading WireCloud"
+msgstr "Iniciando WireCloud"
 
 #: templates/wirecloud/views/base.html:45
 msgid "Retrieving WireCloud code"

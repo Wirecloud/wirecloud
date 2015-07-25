@@ -1117,8 +1117,8 @@ msgid "Error retrieving workspace list"
 msgstr "Error obteniendo la lista de entornos de trabajo"
 
 #: static/js/wirecloud/core.js:259
-msgid "Unloading Wirecloud Platform"
-msgstr "Descargando la plataforma WireCloud"
+msgid "Unloading WireCloud"
+msgstr "Cerrando WireCloud"
 
 #: static/js/wirecloud/core.js:278
 msgid "Changing current workspace"

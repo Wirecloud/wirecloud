@@ -134,7 +134,7 @@ msgstr "Importando el recurso al repositorio local"
 
 #: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:39
 msgid "Uploading resource"
-msgstr "Descargando el recurso"
+msgstr "Subiendo el recurso"
 
 #: static/js/wirecloud/FiWare/ui/OfferingResourcesPainter.js:43
 msgid "Resource installed successfully"

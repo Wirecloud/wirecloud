@@ -485,7 +485,7 @@ msgstr "Autor(es)"
 
 #: templates/wirecloud/catalogue/main_resource_details.html:15
 msgid "Contributor(s)"
-msgstr "Contribuyente(s)"
+msgstr "Colaborador(es)"
 
 #: templates/wirecloud/catalogue/main_resource_details.html:17
 msgid "Size"
