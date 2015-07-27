@@ -1,0 +1,49 @@
+<Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
+  <Catalog.ResourceDescription>
+    <Vendor>Wirecloud Test Suite</Vendor>
+    <Name>test</Name>
+    <Version>1</Version>
+    <Author>admin</Author>
+    <Mail>a@c.com</Mail>
+    <Description>Wirecloud Mashup composed of: Test, Test</Description>
+    <ImageURI>images/mashup.png</ImageURI>
+    <WikiURI>doc/index.html</WikiURI>
+    <Organization></Organization>
+    <IncludedResources>
+      <Tab id="1" name="Tab">
+        <Preference name="smart" value="False"/>
+        <Resource title="Test (1)" version="1.0" vendor="Wirecloud" id="1" name="Test">
+          <Position y="0" x="0" z="0"/>
+          <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
+          <Preference name="list" value="default" readonly="true" hidden="true"/>
+          <Preference name="text" value="initial text" readonly="true" hidden="false"/>
+        </Resource>
+      </Tab>
+      <Tab id="2" name="Tab 2">
+        <Resource title="Test (2)" version="1.0" vendor="Wirecloud" id="2" name="Test">
+          <Position y="0" x="0" z="0"/>
+          <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
+          <Preference name="list" value="default"/>
+          <Preference name="text" value="initial text" readonly="true" hidden="true"/>
+        </Resource>
+      </Tab>
+      <Tab id="3" name="Tab 3"/>
+      <Tab id="4" name="Tab 4"/>
+    </IncludedResources>
+  </Catalog.ResourceDescription>
+  <Platform.Wiring>
+    <Event label="event" type="text" friendcode="event" name="event"/>
+    <Slot label="slot" type="text" friendcode="slot" name="slot"/>
+    <Event label="event" type="text" friendcode="event" name="event"/>
+    <Slot label="slot" type="text" friendcode="slot" name="slot"/>
+    <Operator id="1" name="Wirecloud/TestOperator/1.0">
+        <Preference name="pref_with_val" value="value1"/>
+        <Preference name="readonly_pref" readonly="true" value="value2"/>
+        <Preference name="hidden_pref" readonly="true" hidden="true" value="value3"/>
+    </Operator>
+    <Connection>
+        <Source type="iwidget" endpoint="event" id="1"/>
+        <Target type="iwidget" endpoint="slot" id="2"/>
+    </Connection>
+  </Platform.Wiring>
+</Template>

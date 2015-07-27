@@ -756,6 +756,25 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(iwidget3_preferences['text'].get('hidden', False), False)
         self.assertEqual(iwidget3_preferences['text'].get('readonly', False), False)
 
+        # Check operator data
+        operator_preferences = workspace_data['wiring']['operators']['1']['preferences']
+
+        # Check pref1
+        self.assertEqual(operator_preferences['pref1']['value'], 'initial world')
+        self.assertEqual(operator_preferences['pref1'].get('hidden', False), False)
+        self.assertEqual(operator_preferences['pref1']['readonly'], True)
+
+        # Check pref2
+        self.assertEqual(operator_preferences['pref2']['value'], 'initial world')
+        self.assertEqual(operator_preferences['pref2']['hidden'], True)
+        self.assertEqual(operator_preferences['pref2']['readonly'], True)
+
+        # Check pref3
+        self.assertEqual(operator_preferences['pref3']['value'], 'initial %(params.param)')
+        self.assertEqual(operator_preferences['pref3'].get('hidden', False), False)
+        self.assertEqual(operator_preferences['pref3'].get('readonly', False), False)
+
+
     def test_fill_workspace_using_template(self):
         template = self.read_template('wt1.xml')
         fillWorkspaceUsingTemplate(self.workspace, template)
@@ -774,6 +793,12 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         self.assertEqual(len(data['tabs']), 4)
         self.assertNotEqual(data['tabs'][2]['name'], data['tabs'][3]['name'])
+
+    def test_build_workspace_from_template(self):
+        template = self.read_template('wt1.old.xml')
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
+
+        self.check_basic_workspace_structure(workspace)
 
     def test_build_workspace_from_template(self):
         template = self.read_template('wt1.xml')
@@ -801,6 +826,15 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         self.check_workspace_structure_with_old_mashup_wiring(workspace)
 
+    def test_read_only_widgets_rdf(self):
+        template = self.read_template('wt6.old.xml')
+
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+
+        self.assertEqual(len(data['tabs'][0]['iwidgets']), 3)
+        self.assertEqual(data['tabs'][0]['iwidgets'][0]['readonly'], True)
+
     def test_read_only_widgets(self):
         template = self.read_template('wt6.xml')
 
@@ -809,6 +843,14 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         self.assertEqual(len(data['tabs'][0]['iwidgets']), 3)
         self.assertEqual(data['tabs'][0]['iwidgets'][0]['readonly'], True)
+
+    def test_blocked_connections_old(self):
+        template = self.read_template('wt2.old.xml')
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
+
+        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
 
     def test_blocked_connections(self):
         template = self.read_template('wt2.xml')
@@ -856,6 +898,14 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(wiring_status['connections'][0]['target']['type'], 'widget')
         self.assertEqual(wiring_status['connections'][0]['target']['endpoint'], 'slot')
 
+    def test_complex_workspaces_old(self):
+        template3 = self.read_template('wt3.old.xml')
+
+        workspace, _junk = buildWorkspaceFromTemplate(template3, self.user)
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+
+        self.check_complex_workspace_data(data)
+
     def test_complex_workspaces(self):
         template3 = self.read_template('wt3.xml')
 
@@ -871,6 +921,12 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         self.check_complex_workspace_data(data)
+
+    def test_workspace_with_params_old(self):
+        template = self.read_template('wt5.old.xml')
+
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
+        self.check_workspace_with_params(workspace)
 
     def test_workspace_with_params(self):
         template = self.read_template('wt5.xml')

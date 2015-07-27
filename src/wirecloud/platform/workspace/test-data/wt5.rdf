@@ -185,6 +185,33 @@
         </wire-m:hasTab>
         <wire-m:hasMashupWiring>
             <wire:PlatformWiring rdf:ID="wiring">
+                <wire-m:hasiOperator>
+                  <wire-m:iOperator rdf:nodeID="Nc46e6fd2be914bd38fb2bbf251c0a4ff">
+                    <wire-m:hasiOperatorPreference>
+                      <wire-m:iOperatorPreference rdf:nodeID="N415cc19f2f234da992bf546768f1fb1d">
+                        <wire:value>initial %(params.param)</wire:value>
+                        <wire-m:readonly>true</wire-m:readonly>
+                        <dcterms:title>pref1</dcterms:title>
+                      </wire-m:iOperatorPreference>
+                    </wire-m:hasiOperatorPreference>
+                    <dcterms:title>CoNWeT/TestOperator/1.0</dcterms:title>
+                    <wire-m:hasiOperatorPreference>
+                      <wire-m:iOperatorPreference rdf:nodeID="N6df6d2c29da14370958ce70006ecb8c0">
+                        <wire:value>initial %(params.param)</wire:value>
+                        <wire-m:hidden>true</wire-m:hidden>
+                        <dcterms:title>pref2</dcterms:title>
+                        <wire-m:readonly>true</wire-m:readonly>
+                      </wire-m:iOperatorPreference>
+                    </wire-m:hasiOperatorPreference>
+                    <wire-m:hasiOperatorPreference>
+                      <wire-m:iOperatorPreference rdf:nodeID="N23e0c9f0bcbe40e3a21c138acc09dfa4">
+                        <dcterms:title>pref3</dcterms:title>
+                        <wire:value>initial %(params.param)</wire:value>
+                      </wire-m:iOperatorPreference>
+                    </wire-m:hasiOperatorPreference>
+                    <wire-m:iOperatorId>0</wire-m:iOperatorId>
+                  </wire-m:iOperator>
+                </wire-m:hasiOperator>
                 <wire-m:hasConnection>
                     <wire-m:Connection rdf:ID="CH-1">
                         <dcterms:title>connection</dcterms:title>

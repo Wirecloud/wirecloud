@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
+  <Catalog.ResourceDescription>
+    <Vendor>Wirecloud Test Suite</Vendor>
+    <Name>Test Workspace</Name>
+    <Version>1</Version>
+    <DisplayName></DisplayName>
+    <Author>admin</Author>
+    <Mail>a@b.com</Mail>
+    <LongDescription></LongDescription>
+    <Description>This template defines an empty mashup</Description>
+    <ImageURI>images/mashup.png</ImageURI>
+    <iPhoneImageURI></iPhoneImageURI>
+    <Homepage></Homepage>
+    <WikiURI>docs/index.html</WikiURI>
+    <License></License>
+    <LicenseURL></LicenseURL>
+    <IssueTracker></IssueTracker>
+    <ChangeLogURL></ChangeLogURL>
+    <IncludedResources>
+      <Tab id="0" name="Tab">
+        <Preference name="smart" value="False"/>
+        <Resource id="1" name="Test" title="Test (1)" vendor="Wirecloud" version="1.0">
+          <Position x="0" y="0" z="0"/>
+          <Rendering fulldragboard="False" height="24" layout="0" minimized="False" width="24"/>
+          <Preference name="text" value="initial text" readonly="true"/>
+          <Preference name="list" value="default" readonly="true" hidden="true"/>
+        </Resource>
+        <Resource id="2" name="Test" title="Test (2)" vendor="Wirecloud" version="1.0">
+          <Position x="0" y="0" z="0"/>
+          <Rendering fulldragboard="False" height="24" layout="0" minimized="False" width="24"/>
+          <Preference name="text" value="initial text" readonly="true" hidden="true"/>
+          <Preference name="list" value="default"/>
+        </Resource>
+      </Tab>
+    </IncludedResources>
+  </Catalog.ResourceDescription>
+  <Platform.Wiring>
+    <Connection readonly="true">
+      <Source endpoint="test" id="1" type="iwidget"/>
+      <Target endpoint="test" id="2" type="iwidget"/>
+    </Connection>
+  </Platform.Wiring>
+</Template>
