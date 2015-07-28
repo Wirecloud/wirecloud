@@ -859,6 +859,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         next_tab.rename('NewName')
 
         initial_workspace_tab.element.click()
+        WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, initial_workspace_tab_name))
 
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_tab_name(self, 'NewName'))
