@@ -387,6 +387,10 @@
             body.mashup = options.mashup;
         }
 
+        if (options.preferences != null) {
+            body.preferences = options.preferences;
+        }
+
         Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
             method: 'POST',
             contentType: 'application/json',
