@@ -41,7 +41,7 @@
                     {name: 'name', label: gettext('Mashup Name'), type: 'text', required: true, initialValue: workspace.getName(), defaultValue: workspace.getName()},
                     {name: 'vendor', label: gettext('Vendor'), type: 'text',  required: true},
                     {name: 'version', label: gettext('Version'), type: 'version',  required: true},
-                    {name: 'email', label: gettext('Email'), type: 'text',  required: true},
+                    {name: 'email', label: gettext('Email'), type: 'text'},
                     {name: 'description', label: gettext('Description'), type: 'longtext'},
                     {name: 'doc', label: gettext('Home page'), type: 'text'},
                     {name: 'authors', label: gettext('Author'), type: 'text',  initialValue: user_name, defaultValue: user_name}
