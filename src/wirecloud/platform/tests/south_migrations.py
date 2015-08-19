@@ -61,8 +61,8 @@ class PlatformSouthMigrationsTestCase(TestCase):
     def fill_orm_external_models(self, orm):
 
         available_models = {
-            'auth.user': Mock(),
-            'auth.group': Mock(),
+            'auth.user': Mock(_meta=Mock(abstract=False)),
+            'auth.group': Mock(_meta=Mock(abstract=False)),
             'catalogue.catalogueresource': Mock(),
             'platform.iwidget': Mock(),
             'platform.market': Mock(),
@@ -74,6 +74,8 @@ class PlatformSouthMigrationsTestCase(TestCase):
             'platform.widget': Mock(),
             'platform.workspace': Mock(),
             'platform.xhtml': Mock(),
+            'platform.organization': Mock(_meta=Mock(abstract=False)),
+            'platform.team': Mock(_meta=Mock(abstract=False)),
         }
         orm.__getitem__ = lambda self, model: available_models[model.lower()]
 
@@ -470,3 +472,9 @@ class PlatformSouthMigrationsTestCase(TestCase):
 
     def test_chg_json_fields_backwards(self):
         self.check_basic_migration_backwards('0025_chg_json_fields')
+
+    def test_add_organization_models_forwards(self):
+        self.check_basic_migration_forwards('0026_add_organization_models')
+
+    def test_add_organization_models_backwards(self):
+        self.check_basic_migration_backwards('0026_add_organization_models')

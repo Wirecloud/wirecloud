@@ -1,3 +1,4 @@
+from wirecloud.platform.core.models import *
 from wirecloud.platform.context.models import *
 from wirecloud.platform.iwidget.models import *
 from wirecloud.platform.markets.models import *
