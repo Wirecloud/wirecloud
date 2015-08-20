@@ -20,7 +20,7 @@ from django.conf import settings
 from south.v2 import DataMigration
 
 # from wirecloud.fiware.south_migrations.0001_switch_to_actorId import swith_to_username
-swith_to_actorId_module = __import__('wirecloud.fiware.south_migrations.0001_switch_to_actorId', globals(), locals(), ['swith_to_username', 'db_table_exists'], -1)
+swith_to_actorId_module = __import__('wirecloud.fiware.south_migrations.0001_switch_to_actorId', globals(), locals(), ['swith_to_username', 'db_table_exists'], 0)
 swith_to_username = swith_to_actorId_module.swith_to_username
 db_table_exists = swith_to_actorId_module.db_table_exists
 

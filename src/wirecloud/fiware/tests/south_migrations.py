@@ -26,7 +26,7 @@ import six
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 
 # from wirecloud.fiware.south_migrations.0001_switch_to_actorId import db_table_exists
-db_table_exists = __import__('wirecloud.fiware.south_migrations.0001_switch_to_actorId', globals(), locals(), ['db_table_exists'], -1).db_table_exists
+db_table_exists = __import__('wirecloud.fiware.south_migrations.0001_switch_to_actorId', globals(), locals(), ['db_table_exists'], 0).db_table_exists
 
 # Avoid nose to repeat these tests (they are run through wirecloud/fiware/tests/__init__.py)
 __test__ = False

@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import json
 from six.moves.urllib.parse import parse_qsl
 
@@ -86,11 +88,13 @@ class ProxyTestCase(WirecloudTestCase):
     def read_response(self, response):
 
         if getattr(response, 'streaming', False) is True:
-            return "".join(response.streaming_content)
+            return b"".join(response.streaming_content).decode('utf-8')
         else:
-            return response.content
+            return response.content.decode('utf-8')
 
     def prepare_request_mock(self, data, referer='http://localhost/user_with_workspaces/Public Workspace', user=None, extra_headers={}, GET=''):
+        data = data.encode('utf-8')
+
         request = Mock()
         request.method = 'POST'
         request.get_host.return_value = 'localhost'

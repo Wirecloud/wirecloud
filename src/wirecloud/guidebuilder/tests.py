@@ -755,7 +755,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             # Move minimized
             mins_elems = container.find_elements_by_css_selector(
                 '.se-container.reducedInt')
-            map(lambda (e, x): move_elem(self.driver, e, x, 0),
+            map(lambda e, x: move_elem(self.driver, e, x, 0),
                 zip(mins_elems, [-100, -60]))
             move_elem(self.driver, mapheader, -240, 0)
             panel = self.driver.find_element_by_css_selector(
