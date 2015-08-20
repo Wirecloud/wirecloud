@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,19 +17,21 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import string
-import urllib
 import random
-from six.moves.urllib.parse import parse_qsl, urlparse, urlunparse
+from six.moves import range
+from six.moves.urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 import six
 
-UNICODE_ASCII_CHARACTERS = (string.ascii_letters.decode('ascii') +
-    string.digits.decode('ascii'))
+UNICODE_ASCII_CHARACTERS = (six.text_type(string.ascii_letters) +
+    six.text_type(string.digits))
 
 
 def random_ascii_string(length):
-    return ''.join([random.choice(UNICODE_ASCII_CHARACTERS) for x in xrange(length)])
+    return ''.join([random.choice(UNICODE_ASCII_CHARACTERS) for x in range(length)])
 
 
 def build_url(base, additional_params=None):
@@ -55,5 +57,5 @@ def build_url(base, additional_params=None):
                                 url.netloc,
                                 url.path,
                                 url.params,
-                                urllib.urlencode(query_params),
+                                urlencode(query_params),
                                 url.fragment))

@@ -385,7 +385,7 @@ class AuthorizationProvider(Provider):
 
             # Catch missing parameters in request
             return self._make_error_response(request, 'invalid_request')
-        except StandardError as exc:
+        except Exception as exc:
             self._handle_exception(exc)
 
             # Catch all other server errors

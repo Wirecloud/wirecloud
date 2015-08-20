@@ -29,6 +29,7 @@ from django.utils.http import urlencode
 
 from wirecloud.commons.utils.conf import BASE_APPS
 from wirecloud.commons.utils.testcases import WirecloudTestCase
+from wirecloud.platform.plugins import clear_cache
 
 
 @override_settings(INSTALLED_APPS=BASE_APPS + ('wirecloud.platform', 'wirecloud.oauth2provider'))
@@ -45,6 +46,16 @@ class Oauth2TestCase(WirecloudTestCase):
         cls.client = Client()
         cls.user_client = Client()
 
+        # Clear WireCloud plugins cache
+        clear_cache()
+
+    @classmethod
+    def tearDownClass(cls):
+        WirecloudTestCase.tearDownClass.__func__(cls)
+
+        # Clear WireCloud plugins cache
+        clear_cache()
+
     def setUp(self):
         self.user_client.login(username='normuser', password='admin')
 
@@ -60,7 +71,7 @@ class Oauth2TestCase(WirecloudTestCase):
         response = self._check_token(token)
         self.assertEqual(response.status_code, 200)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
         return response
@@ -70,7 +81,7 @@ class Oauth2TestCase(WirecloudTestCase):
         response = self._check_token(token, endpoint)
         self.assertEqual(response.status_code, 401)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertIn('WWW-Authenticate', response)
         self.assertTrue(isinstance(response_data, dict))
 
@@ -267,7 +278,7 @@ class Oauth2TestCase(WirecloudTestCase):
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         token = response_data['access_token']
         token_type = response_data['token_type']
         self.assertEqual(token_type, 'Bearer')
@@ -335,7 +346,7 @@ class Oauth2TestCase(WirecloudTestCase):
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         token = response_data['access_token']
         token_type = response_data['token_type']
         self.assertEqual(token_type, 'Bearer')

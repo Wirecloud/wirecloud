@@ -418,7 +418,7 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None, current_a
             defaults = {}
 
         for result, params in possibility:
-            if set(kwargs + defaults.keys()) != set(params + defaults.keys() + prefix_args):
+            if set(kwargs + list(defaults)) != set(params + list(defaults) + prefix_args):
                 continue
 
             unicode_kwargs = dict([(k, '%(' + force_text(k) + ')s') for k in kwargs])
