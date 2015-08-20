@@ -26,8 +26,6 @@ import sys
 from django.test import TestCase
 from mock import patch, MagicMock
 
-from wirecloud.fiware.plugins import auth_fiware_token
-
 
 class BasicClass(object):
 
@@ -93,18 +91,19 @@ class TestSocialAuthBackend(TestCase):
             'social': self.social,
             'social.backends': self.social.backends,
             'social.backends.oauth': self.social.backends.oauth,
+            'social.apps': self.social.apps,
+            'social.apps.django_app': self.social.apps.django_app,
+            'social.apps.django_app.default': self.social.apps.django_app.default,
             'social.apps.django_app.default.models': self.social.apps.django_app.default.models,
-            'social.apps.django_app.utils': self.social.apps.django_app.utils,
         }
         self.social.backends.oauth.BaseOAuth2 = BasicClass
 
         self.module_patcher = patch.dict('sys.modules', modules)
         self.module_patcher.start()
-        if 'wirecloud.fiware.social_auth_backend' in sys.modules:
-            del sys.modules['wirecloud.fiware.social_auth_backend']
 
         from wirecloud.fiware.social_auth_backend import FIWAREOAuth2
         self.fiwareauth_module = FIWAREOAuth2
+        self.fiwareauth_module._request_user_info = self.fiwareauth_module.request_user_info
         self.fiwareauth_module.request_user_info = MagicMock()
         self.instance = self.fiwareauth_module()
 
@@ -166,11 +165,10 @@ class TestSocialAuthBackend(TestCase):
     def test_request_user_info(self):
 
         with patch('wirecloud.fiware.social_auth_backend.requests') as requests_mock:
-            import ipdb; ipdb.set_trace()
             response = MagicMock()
             response.content = '{"test": true}'
             requests_mock.get.return_value = response
-            self.assertEqual(self.instance.request_user_info('token'), {"test": True})
+            self.assertEqual(self.instance._request_user_info('token'), {"test": True})
 
     def test_api_authentication_using_idm(self):
 
@@ -182,4 +180,5 @@ class TestSocialAuthBackend(TestCase):
 
         with patch('wirecloud.fiware.plugins.FIWARE_SOCIAL_AUTH_BACKEND', create=True) as backend_mock:
             backend_mock._user_data.return_value = self.USER_DATA
+            from wirecloud.fiware.plugins import auth_fiware_token
             self.assertEqual(auth_fiware_token('Bearer', 'token'), auth_user_mock.user)
