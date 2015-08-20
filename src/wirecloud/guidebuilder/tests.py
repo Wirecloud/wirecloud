@@ -193,7 +193,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         if not os.path.exists(os.path.join(settings.BASEDIR, USER_GUIDE_IMAGES_PATH)):
             os.makedirs(os.path.join(settings.BASEDIR, USER_GUIDE_IMAGES_PATH))
 
-        WirecloudSeleniumTestCase.setUpClass.im_func(cls)
+        WirecloudSeleniumTestCase.setUpClass.__func__(cls)
 
     def setUp(self):
 

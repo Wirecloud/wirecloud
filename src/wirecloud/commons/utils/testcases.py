@@ -518,7 +518,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         from django.conf import settings
 
-        WirecloudRemoteTestCase.setUpClass.im_func(cls)
+        WirecloudRemoteTestCase.setUpClass.__func__(cls)
 
         cls.old_LANGUAGES = settings.LANGUAGES
         cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
@@ -539,7 +539,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         prepare_temporal_resource_directories(cls)
 
-        LiveServerTestCase.setUpClass.im_func(cls)
+        LiveServerTestCase.setUpClass.__func__(cls)
 
         cls.network._servers['http'][cls.server_thread.host + ':' + str(cls.server_thread.port)] = LiveServer()
 
@@ -548,7 +548,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         from django.conf import settings
 
-        WirecloudRemoteTestCase.tearDownClass.im_func(cls)
+        WirecloudRemoteTestCase.tearDownClass.__func__(cls)
 
         # Unmock network requests
         cls.network.unmock_requests()
@@ -581,8 +581,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         except:
             pass
 
-        LiveServerTestCase.setUp.im_func(self)
-        WirecloudRemoteTestCase.setUp.im_func(self)
+        LiveServerTestCase.setUp.__func__(self)
+        WirecloudRemoteTestCase.setUp.__func__(self)
 
     def tearDown(self):
 
@@ -592,8 +592,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
             searcher.clear_cache()
         shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
-        LiveServerTestCase.tearDown.im_func(self)
-        WirecloudRemoteTestCase.tearDown.im_func(self)
+        LiveServerTestCase.tearDown.__func__(self)
+        WirecloudRemoteTestCase.tearDown.__func__(self)
 
 
 class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteTestCase):
@@ -608,7 +608,7 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
 
         from django.conf import settings
 
-        MobileWirecloudRemoteTestCase.setUpClass.im_func(cls)
+        MobileWirecloudRemoteTestCase.setUpClass.__func__(cls)
 
         cls.old_LANGUAGES = settings.LANGUAGES
         cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
@@ -629,7 +629,7 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
 
         prepare_temporal_resource_directories(cls)
 
-        LiveServerTestCase.setUpClass.im_func(cls)
+        LiveServerTestCase.setUpClass.__func__(cls)
 
         cls.network._servers['http'][cls.server_thread.host + ':' + str(cls.server_thread.port)] = LiveServer()
 
@@ -638,7 +638,7 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
 
         from django.conf import settings
 
-        MobileWirecloudRemoteTestCase.tearDownClass.im_func(cls)
+        MobileWirecloudRemoteTestCase.tearDownClass.__func__(cls)
 
         # Unmock network requests
         cls.network.unmock_requests()
@@ -681,7 +681,7 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
             searcher.clear_cache()
         shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
-        LiveServerTestCase.tearDown.im_func(self)
+        LiveServerTestCase.tearDown.__func__(self)
 
 
 DEFAULT_BROWSER_CONF = {

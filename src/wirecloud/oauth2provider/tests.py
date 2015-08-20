@@ -40,7 +40,7 @@ class Oauth2TestCase(WirecloudTestCase):
     @classmethod
     def setUpClass(cls):
 
-        WirecloudTestCase.setUpClass.im_func(cls)
+        WirecloudTestCase.setUpClass.__func__(cls)
 
         cls.client = Client()
         cls.user_client = Client()

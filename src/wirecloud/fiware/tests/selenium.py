@@ -57,7 +57,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
     @classmethod
     def setUpClass(cls):
 
-        WirecloudSeleniumTestCase.setUpClass.im_func(cls)
+        WirecloudSeleniumTestCase.setUpClass.__func__(cls)
 
         cls.store_list_response = read_response_file('responses', 'marketplace', 'store_list.xml')
         cls.store1_offerings = read_response_file('responses', 'marketplace', 'store1_offerings.xml')
