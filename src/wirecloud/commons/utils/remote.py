@@ -102,6 +102,7 @@ class PopupMenuTester(object):
     def close(self):
         if self.button is not None:
             self.button.click()
+            WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
 
 
 class IWidgetTester(object):

@@ -730,7 +730,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNotNone(source_iwidget.element)
         self.assertIsNotNone(target_iwidget.element)
 
-        source_iwidget.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Full Dragboard', 'Extract from grid'))
+        source_iwidget.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Full Dragboard', 'Extract from grid')).close()
         target_iwidget.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Full Dragboard', 'Extract from grid'))
 
         tab = self.get_workspace_tab_by_name('Tab')
