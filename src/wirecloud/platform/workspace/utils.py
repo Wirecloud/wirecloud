@@ -268,10 +268,10 @@ class VariableValueCacheManager():
             return entry['value']
 
     def get_variable_values(self):
-        if self.values == None:
+        if self.values is None:
             key = _variable_values_cache_key(self.workspace, self.user)
             self.values = cache.get(key)
-            if self.values == None:
+            if self.values is None:
                 self.values = _populate_variables_values_cache(self.workspace, self.user, key, self.forced_values)
 
         return self.values
@@ -377,13 +377,13 @@ def process_forced_values(workspace, user, concept_values, preferences):
             'ioperator': {},
         }
 
-    if not 'extra_prefs' in forced_values:
+    if 'extra_prefs' not in forced_values:
         forced_values['extra_prefs'] = []
 
-    if not 'ioperator' in forced_values:
+    if 'ioperator' not in forced_values:
         forced_values['ioperator'] = {}
 
-    if not 'iwidget' in forced_values:
+    if 'iwidget' not in forced_values:
         forced_values['iwidget'] = {}
 
     if len(forced_values['iwidget']) == 0 and len(forced_values['ioperator']) == 0:
@@ -441,10 +441,10 @@ def _get_global_workspace_data(workspaceDAO, user):
     # Check if the workspace's tabs have order
     tabs = Tab.objects.filter(workspace=workspaceDAO).order_by('position')
     if tabs.count() > 0:
-        if tabs[0].position != None:
+        if tabs[0].position is not None:
             tabs = tabs.order_by('position')
         else:
-            #set default order
+            # set default order
             for i in range(len(tabs)):
                 tabs[i].position = i
                 tabs[i].save()
