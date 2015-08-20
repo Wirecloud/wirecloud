@@ -456,28 +456,28 @@ After this, you can run the NGSI proxy issuing the following command:
 Create a new Application using the IdM server to use (for example: `https://account.lab.fiware.org`).
 
 1. Redirect URI must be: http(s)://<wirecloud_server>/complete/fiware/
-2. Install the `social-auth` django module (e.g. `pip install django-social-auth`)
-3. Edit settings.py:
-    - Remove wirecloud.oauth2provider from `INSTALLED_APPS`
-    - Add social_auth to `INSTALLED_APPS`
-    - Add `wirecloud.fiware.social_auth_backend.FiwareBackend` to `AUTHENTICATION_BACKENDS`. example:
+2. Install the `python-social-auth` module (e.g. `pip install python-social-auth`)
+3. Edit `settings.py`:
+    - Remove `wirecloud.oauth2provider` from `INSTALLED_APPS`
+    - Add `social.apps.django_app.default` to `INSTALLED_APPS`
+    - Add `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` to `AUTHENTICATION_BACKENDS`. example:
 
             AUTHENTICATION_BACKENDS = (
-                'wirecloud.fiware.social_auth_backend.FiwareBackend',
+                'wirecloud.fiware.social_auth_backend.FIWAREOAuth2',
                 'django.contrib.auth.backends.ModelBackend',
             )
 
     - Add a `FIWARE_IDM_SERVER` setting pointing to the IdM server to use (e.g. `FIWARE_IDM_SERVER = "https://account.lab.fiware.org"`)
-    - Add `FIWARE_APP_ID` and `FIWARE_APP_SECRET` settings using the id and secret values provided by the IdM. You should end having something like this:
+    - Add `SOCIAL_AUTH_FIWARE_KEY` and `SOCIAL_AUTH_FIWARE_SECRET` settings using the id and secret values provided by the IdM. You should end having something like this:
 
-            FIWARE_APP_ID = "43"
-            FIWARE_APP_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc8225e2cf940f746e6b229158b5e3828e2716b915d2c4762a34219e1792b85e4d3cdf66d70d72840b"
+            SOCIAL_AUTH_FIWARE_KEY = "43"
+            SOCIAL_AUTH_FIWARE_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc8225e2cf940f746e6b229158b5e3828e2716b915d2c4762a34219e1792b85e4d3cdf66d70d72840b"
 
 4. Edit `urls.py`:
     - Replace the login endpoint:
         - Remove: `url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),`
         - Add: `url(r'^login/?$', 'wirecloud.fiware.views.login', name="login"),`
-    - Add social-auth url endpoints at the end of the pattern list: `url(r'', include('social_auth.urls'))`,
+    - Add `python-social-auth` url endpoints at the end of the pattern list: `url('', include('social.apps.django_app.urls', namespace='social')),`
 5. Run `python manage.py syncdb --migrate; python manage.py collectstatic --noinput; python manage.py compress --force`
 
 <a id="running_wirecloud" />
@@ -897,6 +897,31 @@ versions of the JavaScript and CSS files by running the following command:
         $ python manage.py syncdb --migrate; python manage.py collectstatic --noinput; python manage.py compress --force
 
 3. Reload WireCloud (e.g. `$ service apache2 restart`)
+
+### From 0.7.x to 0.8.x
+
+WireCloud 0.8.x migrated FIWARE IdM code to use python-social-auth instead of
+using django-social-auth due to the later being deprecated. Please, follow these
+instructions if you are using the IdM integration:
+
+1. Install `python-social-auth` (e.g. `pip install python-social-auth`)
+2. Edit your `settings.py` making the following changes:
+    1. replace `social_auth` with `social.apps.django_app.default` in the
+    `INSTALLED_APPS` setting.
+    2. replace `wirecloud.fiware.social_auth_backend.FiwareBackend` with
+    `wirecloud.fiware.social_auth_backend.FIWAREOAuth2`
+    3. rename `FIWARE_APP_ID` to `SOCIAL_AUTH_FIWARE_KEY` and
+    `FIWARE_APP_SECRET` to `SOCIAL_AUTH_FIWARE_SECRET`.
+3. Edit your `urls.py` file and replace:
+
+        url(r'', include('social_auth.urls')),
+
+    with
+
+        url('', include('social.apps.django_app.urls', namespace='social'))
+
+4. Now you can remove django-social-auth :). E.g. `pip uninstal
+   django-social-auth`.
 
 ### From 0.6.x to 0.7.x
 

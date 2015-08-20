@@ -19,8 +19,8 @@
 
 from __future__ import unicode_literals
 
+from copy import deepcopy
 from io import StringIO
-import json
 import sys
 
 from django.test import TestCase
@@ -43,31 +43,70 @@ class TestSocialAuthBackend(TestCase):
 
     tags = ('wirecloud-fiware-social-auth',)
 
-    OLD_RESPONSE = '{"schemas":["urn:scim:schemas:core:2.0:User"],"id":1,"actorId":1,"nickName":"demo","displayName":"Demo user","email":"demo@fiware.org","roles":[{"id":1,"name":"Manager"},{"id":7,"name":"Ticket manager"}],"organizations":[{"id":1,"actorId":2,"displayName":"Universidad Politecnica de Madrid","roles":[{"id":14,"name":"Admin"}]}]}'
-    NEW_RESPONSE = '{"id":"demo","displayName":"Demo user","email":"demo@fiware.org","roles":[{"id":"1","name":"Manager"},{"id":"7","name":"Ticket manager"}],"organizations":[{"id":"00000000000000000000000000000001","displayName":"Universidad Politecnica de Madrid","roles":[{"id":14,"name":"Admin"}]}]}'
-    RESPONSE_NO_LAST_NAME = '{"id":"demo","username":"demo","displayName":"Demo","email":"demo@fiware.org","roles":[{"id":"1","name":"Manager"},{"id":"7","name":"Ticket manager"}],"organizations":[{"id":"00000000000000000000000000000001","displayName":"Universidad Politecnica de Madrid","roles":[{"id":14,"name":"Admin"}]}]}'
+    OLD_RESPONSE = {
+        "schemas": ["urn:scim:schemas:core:2.0:User"],
+        "id": 1,
+        "actorId": 1,
+        "nickName": "demo",
+        "displayName": "Demo user",
+        "email": "demo@fiware.org",
+        "roles": [{"id": 1, "name": "Manager"}, {"id": 7, "name": "Ticket manager"}],
+        "organizations": [{
+            "id": 1,
+            "actorId": 2,
+            "displayName": "Universidad Politecnica de Madrid",
+            "roles": [{"id": 14, "name": "Admin"}]
+        }]
+    }
+
+    NEW_RESPONSE = {
+        "id": "demo",
+        "displayName": "Demo user",
+        "email": "demo@fiware.org",
+        "roles": [{"id": "1", "name": "Manager"}, {"id": "7", "name": "Ticket manager"}],
+        "organizations": [{
+            "id": "00000000000000000000000000000001",
+            "displayName": "Universidad Politecnica de Madrid",
+            "roles": [{"id": 14, "name": "Admin"}]
+        }]
+    }
+
+    RESPONSE_NO_LAST_NAME = {
+        "id": "demo",
+        "username": "demo",
+        "displayName": "Demo",
+        "email": "demo@fiware.org",
+        "roles": [{"id": "1", "name": "Manager"}, {"id": "7", "name": "Ticket manager"}],
+        "organizations": [{
+            "id": "00000000000000000000000000000001",
+            "displayName": "Universidad Politecnica de Madrid",
+            "roles": [{"id": 14, "name": "Admin"}]
+        }]
+    }
+
     USER_DATA = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo user", "first_name": "Demo", "last_name": "user"}
     USER_DATA_NO_LAST_NAME = {"username": "demo", "email": "demo@fiware.org", "fullname": "Demo", "first_name": "Demo", "last_name": ""}
 
     def setUp(self):
-        self.social_auth = MagicMock()
+        self.social = MagicMock()
         modules = {
-            'social_auth': self.social_auth,
-            'social_auth.backends': self.social_auth.backends,
-            'social_auth.models': self.social_auth.models,
-            'social_auth.utils': self.social_auth.utils,
+            'social': self.social,
+            'social.backends': self.social.backends,
+            'social.backends.oauth': self.social.backends.oauth,
+            'social.apps.django_app.default.models': self.social.apps.django_app.default.models,
+            'social.apps.django_app.utils': self.social.apps.django_app.utils,
         }
-        self.social_auth.backends.BaseOAuth2 = BasicClass
-        self.social_auth.backends.OAuthBackend = BasicClass
+        self.social.backends.oauth.BaseOAuth2 = BasicClass
 
         self.module_patcher = patch.dict('sys.modules', modules)
         self.module_patcher.start()
         if 'wirecloud.fiware.social_auth_backend' in sys.modules:
             del sys.modules['wirecloud.fiware.social_auth_backend']
 
-        from wirecloud.fiware.social_auth_backend import FiwareAuth, FiwareBackend
-        self.fiwareauth_module = FiwareAuth
-        self.fiwarebackend_module = FiwareBackend
+        from wirecloud.fiware.social_auth_backend import FIWAREOAuth2
+        self.fiwareauth_module = FIWAREOAuth2
+        self.fiwareauth_module.request_user_info = MagicMock()
+        self.instance = self.fiwareauth_module()
 
     def tearDown(self):
 
@@ -75,63 +114,63 @@ class TestSocialAuthBackend(TestCase):
 
     def test_get_user_data_old_version(self):
 
-        self.social_auth.utils.dsa_urlopen.return_value = StringIO(self.OLD_RESPONSE)
-        instance = self.fiwareauth_module()
-        data = instance.user_data('token')
+        self.instance.request_user_info.return_value = self.OLD_RESPONSE
+        data = self.instance.user_data('token')
 
         self.assertIn('username', data)
         self.assertEqual(data['username'], 'demo')
 
     def test_get_user_data_new_version(self):
 
-        self.social_auth.utils.dsa_urlopen.return_value = StringIO(self.NEW_RESPONSE)
-        instance = self.fiwareauth_module()
-        data = instance.user_data('token')
+        self.instance.request_user_info.return_value = self.NEW_RESPONSE
+        data = self.instance.user_data('token')
 
         self.assertIn('username', data)
         self.assertEqual(data['username'], 'demo')
 
     def test_get_user_data_invalid_response(self):
 
-        self.social_auth.utils.dsa_urlopen.return_value = StringIO('bad response')
-        instance = self.fiwareauth_module()
-        data = instance.user_data('token')
-
-        self.assertIsNone(data)
+        self.instance.request_user_info.side_effect = Exception
+        self.assertRaises(Exception, self.instance.user_data, 'token')
 
     def test_auth_headers(self):
 
-        instance = self.fiwareauth_module()
-        headers = instance.auth_headers()
+        headers = self.instance.auth_headers()
 
         self.assertIn('Authorization', headers)
         self.assertIn('Basic ', headers['Authorization'])
 
     def test_get_user_details_old_version(self):
 
-        instance = self.fiwarebackend_module()
-        response = json.loads(self.OLD_RESPONSE)
+        response = deepcopy(self.OLD_RESPONSE)
         response['username'] = 'demo'
-        data = instance.get_user_details(response)
+        data = self.instance.get_user_details(response)
 
         self.assertEqual(data, self.USER_DATA)
 
     def test_get_user_details_new_version(self):
 
-        instance = self.fiwarebackend_module()
-        response = json.loads(self.NEW_RESPONSE)
+        response = deepcopy(self.NEW_RESPONSE)
         response['username'] = 'demo'
-        data = instance.get_user_details(response)
+        data = self.instance.get_user_details(response)
 
         self.assertEqual(data, self.USER_DATA)
 
     def test_get_user_details_no_last_name(self):
 
-        instance = self.fiwarebackend_module()
-        response = json.loads(self.RESPONSE_NO_LAST_NAME)
-        data = instance.get_user_details(response)
+        response = deepcopy(self.RESPONSE_NO_LAST_NAME)
+        data = self.instance.get_user_details(response)
 
         self.assertEqual(data, self.USER_DATA_NO_LAST_NAME)
+
+    def test_request_user_info(self):
+
+        with patch('wirecloud.fiware.social_auth_backend.requests') as requests_mock:
+            import ipdb; ipdb.set_trace()
+            response = MagicMock()
+            response.content = '{"test": true}'
+            requests_mock.get.return_value = response
+            self.assertEqual(self.instance.request_user_info('token'), {"test": True})
 
     def test_api_authentication_using_idm(self):
 
@@ -139,7 +178,7 @@ class TestSocialAuthBackend(TestCase):
         def get_social_auth(provider, uid):
             if provider == 'fiware' and uid == 'demo':
                 return auth_user_mock
-        self.social_auth.models.UserSocialAuth.objects.get.side_effect = get_social_auth
+        self.social.apps.django_app.default.models.UserSocialAuth.objects.get.side_effect = get_social_auth
 
         with patch('wirecloud.fiware.plugins.FIWARE_SOCIAL_AUTH_BACKEND', create=True) as backend_mock:
             backend_mock._user_data.return_value = self.USER_DATA

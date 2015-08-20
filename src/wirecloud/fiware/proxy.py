@@ -26,6 +26,17 @@ from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 from wirecloud.proxy.utils import ValidationError
 
 
+def get_access_token(user, error_msg):
+    "Gets the access_token of a user using python-social-auth"
+    try:
+        oauth_info = user.social_auth.get(provider='fiware')
+        if oauth_info.token is None:
+            raise Exception
+        return oauth_info.token
+    except:
+        raise ValidationError(error_msg)
+
+
 class IDMTokenProcessor(object):
 
     def process_request(self, request):
@@ -45,15 +56,9 @@ class IDMTokenProcessor(object):
             del request['headers']['x-fi-ware-oauth-source']
 
         if source == 'user':
-            try:
-                token = request['user'].social_auth.get(provider='fiware').tokens['access_token']
-            except:
-                raise ValidationError(_('Current user has not an active FIWARE profile'))
+            token = get_access_token(request['user'], _('Current user has not an active FIWARE profile'))
         elif source == 'workspaceowner':
-            try:
-                token = request['workspace'].creator.social_auth.get(provider='fiware').tokens['access_token']
-            except:
-                raise ValidationError(_('Workspace owner has not an active FIWARE profile'))
+            token = get_access_token(request['workspace'].creator, _('Workspace owner has not an active FIWARE profile'))
         else:
             raise ValidationError(_('Invalid FIWARE OAuth token source'))
 

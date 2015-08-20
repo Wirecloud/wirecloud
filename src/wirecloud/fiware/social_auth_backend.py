@@ -33,12 +33,12 @@ field, check OAuthBackend class for details on how to extend it.
 
 import base64
 import json
+import requests
 from six.moves.urllib.parse import urlencode, urljoin, urlparse
 
 from django.conf import settings
 
-from social_auth.utils import dsa_urlopen
-from social_auth.backends import BaseOAuth2, OAuthBackend
+from social.backends.oauth import BaseOAuth2
 
 
 FIWARE_LAB_IDM_SERVER = 'https://account.lab.fiware.org'
@@ -48,17 +48,28 @@ FIWARE_ACCESS_TOKEN_ENDPOINT = 'oauth2/token'
 FIWARE_USER_DATA_ENDPOINT = 'user'
 
 
-class FiwareBackend(OAuthBackend):
+class FIWAREOAuth2(BaseOAuth2):
     """FIWARE IdM OAuth authentication backend"""
     name = 'fiware'
-
-    # Default extra data to store
+    ID_KEY = 'username'
+    AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
+    ACCESS_TOKEN_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_ACCESS_TOKEN_ENDPOINT)
+    USER_DATA_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_USER_DATA_ENDPOINT)
+    REDIRECT_STATE = False
+    ACCESS_TOKEN_METHOD = 'POST'
+    SCOPE_VAR_NAME = 'FIWARE_EXTENDED_PERMISSIONS'
     EXTRA_DATA = [
         ('username', 'username'),
         ('refresh_token', 'refresh_token'),
         ('expires_in', 'expires_in'),
     ]
-    ID_KEY = 'username'
+
+    def auth_headers(self):
+        return {
+            'Authorization': 'Basic %s' % base64.urlsafe_b64encode(
+                '%s:%s' % self.get_key_and_secret()
+            )
+        }
 
     def get_user_details(self, response):
         """Return user details from FIWARE account"""
@@ -75,55 +86,24 @@ class FiwareBackend(OAuthBackend):
                 'first_name': first_name,
                 'last_name': last_name}
 
-
-class FiwareAuth(BaseOAuth2):
-    """FIWARE OAuth2 mechanism"""
-    AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
-    ACCESS_TOKEN_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_ACCESS_TOKEN_ENDPOINT)
-    USER_DATA_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FIWARE_LAB_IDM_SERVER), FIWARE_USER_DATA_ENDPOINT)
-    AUTH_BACKEND = FiwareBackend
-    REDIRECT_STATE = False
-    STATE_PARAMETER = False
-    SETTINGS_KEY_NAME = 'FIWARE_APP_ID'
-    SETTINGS_SECRET_NAME = 'FIWARE_APP_SECRET'
-    SCOPE_SEPARATOR = ','
-    SCOPE_VAR_NAME = 'FIWARE_EXTENDED_PERMISSIONS'
-
-    FIWARE_ORGANIZATION = getattr(settings, 'FIWARE_ORGANIZATION', None)
+    @classmethod
+    def request_user_info(cls, access_token):
+        response = requests.get(cls.USER_DATA_URL, params={'access_token': access_token})
+        response.raise_for_status()
+        return json.loads(response.content)
 
     @classmethod
-    def auth_headers(cls):
-        return {
-            'Authorization': 'Basic %s' % base64.urlsafe_b64encode(
-                '%s:%s' % cls.get_key_and_secret()
-            )
-        }
-
-    @staticmethod
-    def _user_data(access_token):
-        url = FiwareAuth.USER_DATA_URL + '?' + urlencode({
-            'access_token': access_token
-        })
-
-        try:
-            data = json.load(dsa_urlopen(url))
-            # Newer versions of the FIWARE IdM provides and id field with the
-            # username of the user. Older versions use actorId as identifier, but
-            # also provides a nickName field. We use nickName because it is also
-            # unique and provides a better way for migrating to newer versions
-            # of KeyRock. Store the appropiated field in username to simplify
-            # the rest of the code
-            data['username'] = data['nickName'] if 'nickName' in data else data['id']
-        except ValueError:
-            data = None
+    def _user_data(cls, access_token):
+        data = cls.request_user_info(access_token)
+        # Newer versions of the FIWARE IdM provides and id field with the
+        # username of the user. Older versions use actorId as identifier, but
+        # also provides a nickName field. We use nickName because it is also
+        # unique and provides a better way for migrating to newer versions
+        # of KeyRock. Store the appropiated field in username to simplify
+        # the rest of the code
+        data['username'] = data['nickName'] if 'nickName' in data else data['id']
 
         return data
 
     def user_data(self, access_token, *args, **kwargs):
-        """Loads user data from service"""
         return self._user_data(access_token)
-
-# Backend definition
-BACKENDS = {
-    'fiware': FiwareAuth,
-}
