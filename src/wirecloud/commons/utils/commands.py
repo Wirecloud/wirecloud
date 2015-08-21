@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -90,7 +90,10 @@ class BaseCommand(object):
 
         """
         parser = self.create_parser(prog_name, subcommand)
-        parser.print_help(file=file)
+
+        if file is None:
+            file = sys.stdout
+        file.write(parser.format_help())
 
     def run_from_argv(self, argv, stdout=None, stderr=None):
         """

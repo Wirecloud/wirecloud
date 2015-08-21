@@ -34,7 +34,7 @@ def processOption(options, field, required=False, type='string'):
             return None
     else:
         if type == 'string':
-            return unicode(options[field])
+            return six.text_type(options[field])
         elif type == 'boolean':
             return 'true' if options[field] else 'false'
         elif type == 'people':
@@ -312,4 +312,4 @@ def write_xml_description(options, raw=False):
         raise Exception('Unsupported resource type: ' + options['type'])
 
     doc = build_xml_document(options)
-    return doc if raw is True else etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
+    return doc if raw is True else etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True).decode('utf-8')

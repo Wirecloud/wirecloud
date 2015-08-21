@@ -78,4 +78,4 @@ def write_json_description(template_info):
                     raise Exception('Invalid embedded resource')
 
     del template_info['translation_index_usage']
-    return json.dumps(template_info, sort_keys=True, indent=4)
+    return json.dumps(template_info, sort_keys=True, indent=4, ensure_ascii=False)

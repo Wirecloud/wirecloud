@@ -570,4 +570,4 @@ def write_rdf_description(template_info, format='pretty-xml'):
         raise Exception('Unsupported resource type: ' + template_info['type'])
 
     graph = build_rdf_graph(template_info)
-    return graph.serialize(format=format)
+    return graph.serialize(format=format, encoding='utf-8').decode('utf-8')

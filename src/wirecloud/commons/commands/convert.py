@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -16,6 +16,8 @@
 
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import unicode_literals
 
 from optparse import make_option
 import os
@@ -71,8 +73,7 @@ class ConvertCommand(BaseCommand):
             converted_template = old_xml.write_xml_description(template_info)
 
         if len(args) == 2:
-            output_file = open(args[1], "wb")
-            output_file.write(converted_template)
-            output_file.close()
+            with open(args[1], "wb") as output_file:
+                output_file.write(converted_template.encode('utf-8'))
         else:
             self.stdout.write(converted_template)

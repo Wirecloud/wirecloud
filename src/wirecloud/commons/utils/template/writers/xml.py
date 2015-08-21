@@ -239,4 +239,4 @@ def write_xml_description(options):
         raise Exception('Unsupported resource type: ' + options['type'])
 
     doc = build_xml_document(options)
-    return etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
+    return etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True).decode('utf-8')

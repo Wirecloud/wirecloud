@@ -53,13 +53,13 @@ class BaseAdminCommandTestCase(TestCase):
 
     def test_general_help(self):
 
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(['wirecloud-admin'], **options)
         options['stdout'].seek(0)
         first_output = options['stdout'].read()
         self.assertIn('Available subcommands', first_output)
 
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(['wirecloud-admin', '--help'], **options)
         options['stdout'].seek(0)
         second_output = options['stdout'].read()
@@ -68,12 +68,12 @@ class BaseAdminCommandTestCase(TestCase):
 
     def test_command_help(self):
 
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(['wirecloud-admin', 'help', 'convert'], **options)
         options['stdout'].seek(0)
         first_output = options['stdout'].read()
 
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(['wirecloud-admin', 'convert', '--help'], **options)
         options['stdout'].seek(0)
         second_output = options['stdout'].read()
@@ -82,14 +82,14 @@ class BaseAdminCommandTestCase(TestCase):
 
     def test_version(self):
 
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(['wirecloud-admin', 'version'], **options)
         options['stdout'].seek(0)
         self.assertEqual(wirecloud.platform.__version__ + '\n', options['stdout'].read())
 
     def test_command_list(self):
 
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(['wirecloud-admin', 'help', '--commands'], **options)
         options['stdout'].seek(0)
         first_output = options['stdout'].read()
@@ -98,7 +98,7 @@ class BaseAdminCommandTestCase(TestCase):
     def test_basic_command_call(self):
 
         args = ['wirecloud-admin', 'convert', '-d', 'xml', os.path.join(self.test_data_dir, 'minimal_endpoint_info.json')]
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(args, **options)
 
         options['stdout'].seek(0)
@@ -110,7 +110,7 @@ class BaseAdminCommandTestCase(TestCase):
 
         # Calling directly to an inexistent command
         args = ['wirecloud-admin', 'inexistentcommand', 'option1']
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(args, **options)
 
         options['stdout'].seek(0)
@@ -121,7 +121,7 @@ class BaseAdminCommandTestCase(TestCase):
 
         # Requesting help for an inexistent command
         args = ['wirecloud-admin', 'help', 'inexistentcommand']
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(args, **options)
 
         options['stdout'].seek(0)
@@ -131,7 +131,7 @@ class BaseAdminCommandTestCase(TestCase):
 
         # Requesting help for an inexistent command (alternative way)
         args = ['wirecloud-admin', 'inexistentcommand', '--help']
-        options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(args, **options)
 
         options['stdout'].seek(0)
@@ -194,7 +194,7 @@ class ConvertCommandTestCase(TestCase):
 
         for format in ('json', 'xml', 'rdf', 'old_xml'):
             args = [os.path.join(self.test_data_dir, 'minimal_endpoint_info.json')]
-            options = {"dest_format": format, "rdf_format": "n3", "stdout": io.BytesIO(), "stderr": io.BytesIO()}
+            options = {"dest_format": format, "rdf_format": "n3", "stdout": io.StringIO(), "stderr": io.StringIO()}
             self.command.execute(*args, **options)
 
             options['stdout'].seek(0)
@@ -206,7 +206,7 @@ class ConvertCommandTestCase(TestCase):
 
         dest_file = os.path.join(self.tmp_dir, 'new_file.xml')
         args = [os.path.join(self.test_data_dir, 'minimal_endpoint_info.json'), dest_file]
-        options = {"dest_format": 'rdf', "rdf_format": "pretty-xml", "stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        options = {"dest_format": 'rdf', "rdf_format": "pretty-xml", "stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command.execute(*args, **options)
 
         options['stdout'].seek(0)
