@@ -122,7 +122,7 @@ class CatalogueResource(models.Model):
             lang = None
 
         parser = self.get_template(request)
-        return parser.get_resource_processed_info(lang=lang, process_urls=process_urls, translate=True, process_variables=True)
+        return parser.get_resource_processed_info(lang=lang, process_urls=process_urls, translate=True, process_variables=process_variables)
 
     def delete(self, *args, **kwargs):
 
