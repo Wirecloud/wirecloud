@@ -146,7 +146,7 @@
                 throw new TypeError('callback must be a function');
             }
 
-            resource.workspace.wiring.addEventListener('load', callback);
+            resource.workspace.wiring.addEventListener('loaded', callback);
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {
@@ -172,7 +172,7 @@
     Object.defineProperty(window.MashupPlatform.wiring, 'hasOutputConnections', {
         value: function getReachableEndpoints(outputName) {
             if (outputName in resource.outputs) {
-                return resource.outputs[outputName].outputs.length > 0;
+                return resource.outputs[outputName].outputList.length > 0;
             } else {
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
                 throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);

@@ -416,6 +416,44 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
 
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
+    def test_wiring_remove_connection(self):
+
+        self.login()
+
+        iwidgets = self.get_current_iwidgets()
+
+        with iwidgets[1]:
+            text_div = self.driver.find_element_by_id('wiring_hasinputconnections_test')
+            self.assertEqual(text_div.text, 'true')
+            text_div = self.driver.find_element_by_id('wiring_hasoutputconnections_test')
+            self.assertEqual(text_div.text, 'false')
+
+        with self.wiring_view as wiring:
+            connections = wiring.find_connections()
+            for connection in connections:
+                connection.click().btn_remove.click()
+
+            api_test_widget = wiring.find_component_by_title('widget', "Wirecloud API test")
+            test_operator = wiring.find_component_by_title('operator', "TestOperator")
+
+            target = test_operator.find_endpoint_by_title('target', "input")
+            source = api_test_widget.find_endpoint_by_title('source', "Output")
+            source.connect(target)
+
+        self.send_basic_event(iwidgets[0])
+
+        time.sleep(1)
+
+        with iwidgets[1]:
+            text_div = self.driver.find_element_by_id('registercallback_test')
+            self.assertEqual(text_div.text, '')
+            text_div = self.driver.find_element_by_id('wiring_hasinputconnections_test')
+            self.assertEqual(text_div.text, 'false')
+            text_div = self.driver.find_element_by_id('wiring_hasoutputconnections_test')
+            self.assertEqual(text_div.text, 'true')
+
     def test_wiring_editor_modify_arrow_endpoints(self):
 
         if not selenium_supports_draganddrop(self.driver):  # pragma: no cover

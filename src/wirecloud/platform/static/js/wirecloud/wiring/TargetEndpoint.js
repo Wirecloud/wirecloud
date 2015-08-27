@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2008-2013 Universidad Politécnica de Madrid
+ *     (C) Copyright 2008-2015 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -45,8 +45,8 @@
     TargetEndpoint.prototype._removeInput = function _removeInput(input) {
         var index = this.inputs.indexOf(input);
 
-        if (index != -1) {
-            this.inputs.splice(index, input);
+        if (index !== -1) {
+            this.inputs.splice(index, 1);
         }
     };
 
