@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,38 +25,38 @@
 
     "use strict";
 
-    var platform, id, idx, tmp, i, current, ioperator;
+    var platform, ioperator, endpoint_name, inputs, outputs;
 
     platform = window.parent;
 
-    // Get id from the URL
-    idx = document.URL.lastIndexOf('#');
-    tmp = document.URL.substr(idx + 1);
-    tmp = tmp.split("&");
-    for (i = 0; i < tmp.length; i++) {
-        current = tmp[i];
-        current = current.split("=", 2);
-        if (current[0] === "id") {
-            id = parseInt(current[1], 10);
-            break;
-        }
-    }
-
-    // API declaration
-    Object.defineProperty(window, 'MashupPlatform', {value: {}});
-
-    // Temporal reference to the resource (in this case a widget) so other API files can make use of it. This attribute is removed in WirecloudAPIClosure.js
-    ioperator = platform.Wirecloud.activeWorkspace.wiring.ioperators[id];
-    MashupPlatform.resource = ioperator;
+    // Init resource entry (in this case an operator) so other API files can make
+    // use of it
+    ioperator = platform.Wirecloud.activeWorkspace.wiring.ioperators[MashupPlatform.priv.id];
+    MashupPlatform.priv.resource = ioperator;
 
     // Operator Module
     Object.defineProperty(window.MashupPlatform, 'operator', {value: {}});
-    Object.defineProperty(window.MashupPlatform.operator, 'id', {value: id});
+    Object.defineProperty(window.MashupPlatform.operator, 'id', {value: MashupPlatform.priv.id});
     Object.defineProperty(window.MashupPlatform.operator, 'log', {
         value: function log(msg, level) {
             ioperator.logManager.log(msg, level);
         }
     });
+
+    // Inputs
+    inputs = {};
+    for (endpoint_name in ioperator.inputs) {
+        inputs[endpoint_name] = new MashupPlatform.priv.InputEndpoint(ioperator.inputs[endpoint_name], true);
+    }
+    Object.defineProperty(window.MashupPlatform.operator, 'inputs', {value: inputs});
+
+    // Outputs
+    outputs = {};
+    for (endpoint_name in ioperator.outputs) {
+        outputs[endpoint_name] = new MashupPlatform.priv.OutputEndpoint(ioperator.outputs[endpoint_name], true);
+    }
+    Object.defineProperty(window.MashupPlatform.operator, 'outputs', {value: outputs});
+
     Object.preventExtensions(window.MashupPlatform.operator);
 
 })();

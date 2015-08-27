@@ -25,8 +25,9 @@
 
     "use strict";
 
-    // Remove reference to the internal wirecloud resource
-    delete MashupPlatform.resource;
+    // Remove reference to the private dict, removing also the reference to the
+    // internal wirecloud resource
+    delete MashupPlatform.priv;
 
     Object.preventExtensions(MashupPlatform.mashup);
     Object.preventExtensions(MashupPlatform);

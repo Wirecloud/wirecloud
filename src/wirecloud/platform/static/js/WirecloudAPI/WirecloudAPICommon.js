@@ -26,25 +26,26 @@
     "use strict";
 
     var platform = window.parent;
-    var resource = MashupPlatform.resource;
+    var Wirecloud = platform.Wirecloud;
+    var resource = MashupPlatform.priv.resource;
     var guibuilder = new platform.StyledElements.GUIBuilder();
 
     // HTTP module
     Object.defineProperty(window.MashupPlatform, 'http', {value: {}});
-    Object.defineProperty(window.MashupPlatform.http, 'buildProxyURL', {value: platform.Wirecloud.io.buildProxyURL});
-    Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {value: platform.Wirecloud.io.makeRequest});
+    Object.defineProperty(window.MashupPlatform.http, 'buildProxyURL', {value: Wirecloud.io.buildProxyURL});
+    Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {value: Wirecloud.io.makeRequest});
     Object.preventExtensions(window.MashupPlatform.http);
 
     // Platform context module
     Object.defineProperty(window.MashupPlatform, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.context, 'getAvailableContext', {
         value: function getAvailableContext() {
-            return platform.Wirecloud.contextManager.getAvailableContext();
+            return Wirecloud.contextManager.getAvailableContext();
         }
     });
     Object.defineProperty(window.MashupPlatform.context, 'get', {
         value: function get(name) {
-            return platform.Wirecloud.contextManager.get(name);
+            return Wirecloud.contextManager.get(name);
         }
     });
     Object.defineProperty(window.MashupPlatform.context, 'registerCallback', {
@@ -71,12 +72,12 @@
     Object.defineProperty(window.MashupPlatform.mashup, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.mashup.context, 'getAvailableContext', {
         value: function getAvailableContext() {
-            return platform.Wirecloud.activeWorkspace.contextManager.getAvailableContext();
+            return Wirecloud.activeWorkspace.contextManager.getAvailableContext();
         }
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'get', {
         value: function get(name) {
-            return platform.Wirecloud.activeWorkspace.contextManager.get(name);
+            return Wirecloud.activeWorkspace.contextManager.get(name);
         }
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'registerCallback', {
@@ -89,6 +90,7 @@
         }
     });
     Object.preventExtensions(window.MashupPlatform.mashup.context);
+
 
     // Prefs Module
     Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
@@ -121,8 +123,9 @@
             }
         }
     });
-    Object.defineProperty(window.MashupPlatform.prefs, 'PreferenceDoesNotExistError', {value: platform.Wirecloud.PreferenceDoesNotExistError});
+    Object.defineProperty(window.MashupPlatform.prefs, 'PreferenceDoesNotExistError', {value: Wirecloud.PreferenceDoesNotExistError});
     Object.preventExtensions(window.MashupPlatform.prefs);
+
 
     // Wiring Module
     Object.defineProperty(window.MashupPlatform, 'wiring', {value: {}});
@@ -189,10 +192,11 @@
             }
         }
     });
-    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointDoesNotExistError', {value: platform.Wirecloud.wiring.EndpointDoesNotExistError});
-    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointTypeError', {value: platform.Wirecloud.wiring.EndpointTypeError});
-    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointValueError', {value: platform.Wirecloud.wiring.EndpointValueError});
+    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointDoesNotExistError', {value: Wirecloud.wiring.EndpointDoesNotExistError});
+    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointTypeError', {value: Wirecloud.wiring.EndpointTypeError});
+    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointValueError', {value: Wirecloud.wiring.EndpointValueError});
     Object.preventExtensions(window.MashupPlatform.wiring);
+
 
     // General error handler
     window.onerror = function (message, url, line, column, error) {

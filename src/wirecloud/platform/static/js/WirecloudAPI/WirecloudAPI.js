@@ -1,1 +1,0 @@
-WirecloudWidgetAPI.js

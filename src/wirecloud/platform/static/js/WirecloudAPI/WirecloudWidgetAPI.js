@@ -25,24 +25,14 @@
 
     "use strict";
 
-    var platform, id, idx, tmp, i, iwidget, current, IWidgetVariable;
+    var platform, iwidget, IWidgetVariable, endpoint_name, inputs, outputs;
 
     platform = window.parent;
 
-    // Get id from the URL
-    idx = document.URL.lastIndexOf('#');
-    tmp = document.URL.substr(idx + 1);
-    tmp = tmp.split("&");
-    for (i = 0; i < tmp.length; i++) {
-        current = tmp[i];
-        current = current.split("=", 2);
-        if (current[0] === "id") {
-            id = current[1];
-            break;
-        }
-    }
-
-    iwidget = platform.Wirecloud.activeWorkspace.getIWidget(id).internal_iwidget;
+    // Init resource entry (in this case a widget) so other API files can make
+    // use of it
+    iwidget = platform.Wirecloud.activeWorkspace.getIWidget(MashupPlatform.priv.id).internal_iwidget;
+    MashupPlatform.priv.resource = iwidget;
 
     IWidgetVariable = function IWidgetVariable(variable) {
         this.set = function set(value) {
@@ -55,15 +45,9 @@
         Object.freeze(this);
     };
 
-    // API declaration
-    Object.defineProperty(window, 'MashupPlatform', {value: {}});
-
-    // Temporal reference to the resource (in this case a widget) so other API files can make use of it. This attribute is removed in WirecloudAPIClosure.js
-    MashupPlatform.resource = iwidget;
-
     // Widget module
     Object.defineProperty(window.MashupPlatform, 'widget', {value: {}});
-    Object.defineProperty(window.MashupPlatform.widget, 'id', {value: id});
+    Object.defineProperty(window.MashupPlatform.widget, 'id', {value: MashupPlatform.priv.id});
     Object.defineProperty(window.MashupPlatform.widget, 'getVariable', {
         value: function getVariable(name) {
             var variable = iwidget.properties[name];
@@ -106,6 +90,20 @@
     });
     Object.preventExtensions(window.MashupPlatform.widget.context);
 
-    Object.preventExtensions(window.MashupPlatform.widget);
+    // Inputs
+    inputs = {};
+    for (endpoint_name in iwidget.inputs) {
+        inputs[endpoint_name] = new MashupPlatform.priv.InputEndpoint(iwidget.inputs[endpoint_name], true);
+    }
+    Object.defineProperty(window.MashupPlatform.widget, 'inputs', {value: inputs});
+
+    // Outputs
+    outputs = {};
+    for (endpoint_name in iwidget.outputs) {
+        outputs[endpoint_name] = new MashupPlatform.priv.OutputEndpoint(iwidget.outputs[endpoint_name], true);
+    }
+    Object.defineProperty(window.MashupPlatform.widget, 'outputs', {value: outputs});
+
+    //Object.preventExtensions(window.MashupPlatform.widget);
 
 })();

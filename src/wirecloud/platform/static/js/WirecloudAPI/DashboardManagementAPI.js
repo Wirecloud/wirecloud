@@ -27,14 +27,30 @@
 
     var platform = window.parent;
     var Wirecloud = platform.Wirecloud;
-    var resource = MashupPlatform.resource;
+    var resource = MashupPlatform.priv.resource;
+    var InputEndpoint = MashupPlatform.priv.InputEndpoint;
+    var OutputEndpoint = MashupPlatform.priv.OutputEndpoint;
     var resource_element = resource.workspace.getIWidget(resource.id).content;
     var counter = 1;
 
-    // Widget wrapper
+    // Widget facade
     var Widget = function Widget(real_widget) {
+        var endpoint_name;
+
+        var inputs = {};
+        for (endpoint_name in real_widget.inputs) {
+            inputs[endpoint_name] = new InputEndpoint(real_widget.inputs[endpoint_name], false);
+        }
+
+        var outputs = {};
+        for (endpoint_name in real_widget.outputs) {
+            outputs[endpoint_name] = new OutputEndpoint(real_widget.outputs[endpoint_name], false);
+        }
+
         Object.defineProperties(this, {
-            'close': {
+            'inputs': {value: inputs},
+            'outputs': {value: outputs},
+            'remove': {
                 value: function close() {
                     real_widget.remove();
                 }
@@ -42,7 +58,32 @@
         });
     };
 
-    // Workspace wrapper
+    // Operator facade
+    var Operator = function Operator(real_operator) {
+        var endpoint_name;
+
+        var inputs = {};
+        for (endpoint_name in real_operator.inputs) {
+            inputs[endpoint_name] = new InputEndpoint(real_operator.inputs[endpoint_name], this);
+        }
+
+        var outputs = {};
+        for (endpoint_name in real_operator.outputs) {
+            outputs[endpoint_name] = new OutputEndpoint(real_operator.outputs[endpoint_name], this);
+        }
+
+        Object.defineProperties(this, {
+            'inputs': {value: inputs},
+            'outputs': {value: outputs},
+            'remove': {
+                value: function close() {
+                    real_operator.remove();
+                }
+            }
+        });
+    };
+
+    // Workspace facade
     var Workspace = function Workspace(workspace) {
         Object.defineProperties(this, {
             'owner': {value: workspace.creator},
@@ -99,20 +140,7 @@
         var widget = new platform.IWidget(widget_def, layout, widgetinfo);
         Wirecloud.activeWorkspace.getActiveDragboard().addIWidget(widget);
 
-        /*
-        var tmp_enpdoint = new Wirecloud.wiring.WidgetTargetEndpoint(resource, {
-            name: 'status-' + iwidgetinfo.id,
-        });
-        iwidget.internal_iwidget.outputs["call-state"].connect(tmp_enpdoint);
-        var registered_count = 0;
-        tmp_enpdoint.callback = function (state) {
-            if (state === 'REGISTERED') {
-                iwidget.internal_iwidget.inputs["user-id"].propagate("tmendoza");
-                iwidget.internal_iwidget.inputs["call-user"].propagate("anonymous");
-            }
-        };
-        */
-        return new Widget(widget);
+        return new Widget(widget.internal_iwidget);
     };
 
     var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(workspace) {
@@ -126,6 +154,30 @@
 
         Wirecloud.createWorkspace(options);
     };
+
+    if ('widget' in MashupPlatform) {
+        Object.defineProperties(MashupPlatform.widget, {
+            createInputEndpoint: {value: function createInputEndpoint(callback) {
+                var endpoint = new Wirecloud.wiring.WidgetTargetEndpoint(resource);
+                endpoint.callback = callback;
+                return new InputEndpoint(endpoint, true);
+            }},
+            createOutputEndpoint: {value: function createOutputEndpoint() {
+                return new OutputEndpoint(new Wirecloud.wiring.WidgetSourceEndpoint(resource), true);
+            }}
+        });
+    } else {
+        Object.defineProperties(MashupPlatform.widget, {
+            createInputEndpoint: {value: function createInputEndpoint(callback) {
+                var endpoint = new Wirecloud.wiring.OperatorTargetEndpoint(resource);
+                endpoint.callback = callback;
+                return new InputEndpoint(endpoint, true);
+            }},
+            createOutputEndpoint: {value: function createOutputEndpoint() {
+                return new OutputEndpoint(new Wirecloud.wiring.OperatorSourceEndpoint(resource), true);
+            }}
+        });
+    }
 
     Object.defineProperties(MashupPlatform.mashup, {
         addWidget: {value: addWidget},
