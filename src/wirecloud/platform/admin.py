@@ -75,7 +75,9 @@ class TabAdmin(admin.ModelAdmin):
 
 
 class WorkspaceAdmin(admin.ModelAdmin):
-    list_display = ('creator', 'name')
+
+    search_fields = ('creator__username', 'name', 'description')
+    list_display = ('creator', 'name', 'description')
     ordering = ('creator', 'name')
     inlines = (WorkspacePreferenceInline, TabInline,)
 
