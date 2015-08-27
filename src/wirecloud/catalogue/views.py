@@ -139,7 +139,10 @@ class ResourceEntry(Resource):
             resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
             data = get_resource_data(resource, request.user, request)
         else:
-            resources = get_list_or_404(CatalogueResource.objects.filter(Q(vendor=vendor) & Q(short_name=name) & (Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all()))).distinct())
+            if request.user.is_authenticated():
+                resources = get_list_or_404(CatalogueResource.objects.filter(Q(vendor=vendor) & Q(short_name=name) & (Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all()))).distinct())
+            else:
+                resources = get_list_or_404(CatalogueResource.objects.filter(Q(vendor=vendor) & Q(short_name=name) & Q(public=True)))
             data = get_resource_group_data(resources, request.user, request)
 
         return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
@@ -196,7 +199,7 @@ class ResourceVersionCollection(Resource):
     def create(self, request):
 
         try:
-            resources = json.loads(request.body)
+            resources = json.loads(request.body.decode('utf-8'))
         except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)

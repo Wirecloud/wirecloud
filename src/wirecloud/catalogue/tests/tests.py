@@ -33,7 +33,7 @@ import wirecloud.catalogue.utils
 from wirecloud.catalogue.models import CatalogueResource, Version
 from wirecloud.catalogue.utils import get_resource_data
 from wirecloud.catalogue.views import serve_catalogue_media
-from wirecloud.commons.utils.testcases import WirecloudTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)
@@ -434,6 +434,60 @@ class CatalogueAPITestCase(WirecloudTestCase):
         self.assertTrue('resources' in result_json)
         self.assertEqual(len(result_json['resources']), 1)
         self.assertEqual(result_json['resources'][0]['lastVersion'], '1.10')
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, public=True)
+    def test_resource_entry_get(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['version'], '1.0')
+        self.assertNotIn('versions', response_data)
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, public=True)
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('test',))
+    def test_resource_entry_get_all_versions(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test'})
+
+        # Authenticate
+        self.client.login(username='test', password='test')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data['versions']), 2)
+
+    def test_resource_entry_get_all_empty(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test'})
+
+        # Authenticate
+        self.client.login(username='test', password='test')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, public=True)
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('test',))
+    def test_resource_entry_get_all_versions_anonymous(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test'})
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data['versions']), 1)
 
 
 class WGTDeploymentTestCase(WirecloudTestCase):

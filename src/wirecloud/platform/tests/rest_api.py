@@ -2192,7 +2192,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.client.login(username='admin', password='admin')
 
         # Make the request
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get(url, HTTP_ACCEPT='*/*')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/x-widget+mashable-application-component')
 
