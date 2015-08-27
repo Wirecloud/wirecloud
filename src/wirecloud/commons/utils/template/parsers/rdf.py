@@ -130,11 +130,11 @@ class RDFTemplateParser(object):
                 translated = True
 
                 if field_element.language not in self._translations:
-                    self._translations[unicode(field_element.language)] = {}
+                    self._translations[text_type(field_element.language)] = {}
 
-                self._translations[unicode(field_element.language)][translation_name] = unicode(field_element)
+                self._translations[text_type(field_element.language)][translation_name] = text_type(field_element)
             else:
-                base_value = unicode(field_element)
+                base_value = text_type(field_element)
 
         if base_value is not None and translated is True:
             if 'en' not in self._translations:
@@ -164,7 +164,7 @@ class RDFTemplateParser(object):
         fields = self._graph.objects(subject, namespace[element])
         for field_element in fields:
             if not id_:
-                result = unicode(field_element)
+                result = text_type(field_element)
                 break
             else:
                 result = field_element
@@ -238,7 +238,7 @@ class RDFTemplateParser(object):
 
         license = self._get_field(DCTERMS, 'license', self._rootURI, required=False, default=None, id_=True)
         if license is not None:
-            self._info['licenseurl'] = unicode(license)
+            self._info['licenseurl'] = text_type(license)
             self._info['license'] = self._get_field(RDFS, 'label', license, required=False)
         else:
             self._info['licenseurl'] = ''
@@ -598,7 +598,7 @@ class RDFTemplateParser(object):
 
             for contents_node in sorted_contents:
                 contents_info = {
-                    'src': unicode(contents_node),
+                    'src': text_type(contents_node),
                 }
                 contents_info['scope'] = self._get_field(WIRE, 'contentsScope', contents_node, required=False)
                 contenttype, parameters = parse_mime_type(self._get_field(DCTERMS, 'format', contents_node, required=False))
@@ -634,7 +634,7 @@ class RDFTemplateParser(object):
 
             self._info['js_files'] = []
             for js_element in sorted_js_files:
-                self._info['js_files'].append(unicode(js_element))
+                self._info['js_files'].append(text_type(js_element))
 
             if not len(self._info['js_files']) > 0:
                 raise TemplateParseException(_('Missing required field: Javascript files'))
@@ -670,7 +670,7 @@ class RDFTemplateParser(object):
                 'vendor': self._get_field(FOAF, 'name', vendor),
                 'name': self._get_field(RDFS, 'label', resource),
                 'version': self._get_field(USDL, 'versionInfo', resource),
-                'src': unicode(resource)
+                'src': text_type(resource)
             })
 
         ordered_tabs = sorted(self._graph.objects(self._rootURI, WIRE_M['hasTab']), key=lambda raw_tab: possible_int(self._get_field(WIRE, 'index', raw_tab, required=False)))

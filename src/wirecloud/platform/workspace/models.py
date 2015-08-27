@@ -67,7 +67,7 @@ class Workspace(models.Model):
             update_workspace_preferences(self, {'public': {'value': self.public}}, invalidate_cache=False)
             self.__original_public = self.public
 
-        self.last_modified = long(time.time() * 1000)
+        self.last_modified = int(time.time() * 1000)
 
         super(Workspace, self).save(*args, **kwargs)
 

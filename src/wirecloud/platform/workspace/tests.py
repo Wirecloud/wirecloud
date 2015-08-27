@@ -712,8 +712,8 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(wiring_status['connections'][0]['readonly'], False)
         self.assertEqual(wiring_status['connections'][1]['readonly'], False)
 
-        self.assertEqual(wiring_status['visualdescription']['components']['operator'].keys(), ['1'])
-        self.assertEqual(wiring_status['visualdescription']['components']['widget'].keys(), ['1', '2'])
+        self.assertEqual(set(wiring_status['visualdescription']['components']['operator']), {'1'})
+        self.assertEqual(set(wiring_status['visualdescription']['components']['widget']), {'1', '2'})
 
     def check_workspace_with_params(self, workspace):
 
