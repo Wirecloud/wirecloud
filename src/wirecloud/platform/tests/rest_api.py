@@ -3107,8 +3107,8 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'email': 'test@example.com'
         }
 
-        original_catalogue_image = os.path.join(self.shared_test_data_dir, 'src/api-test/images/catalogue.png')
-        original_smartphone_image = os.path.join(self.shared_test_data_dir, 'src/api-test/images/smartphone.png')
+        original_catalogue_image = os.path.join(self.shared_test_data_dir, 'src/context-inspector/images/catalogue.png')
+        original_smartphone_image = os.path.join(self.shared_test_data_dir, 'src/context-inspector/images/smartphone.png')
         with open(original_catalogue_image, 'rb') as f1:
             with open(original_smartphone_image, 'rb') as f2:
                 response = self.client.post(url, {'json': json.dumps(data), 'image': f1, 'smartphoneimage': f2}, HTTP_ACCEPT='application/json')
