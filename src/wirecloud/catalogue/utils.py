@@ -29,7 +29,7 @@ from django.conf import settings
 from django.utils.translation import get_language, ugettext as _
 import markdown
 
-from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue.models import CatalogueResource, Version
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.html import clean_html
@@ -302,18 +302,17 @@ def get_resource_group_data(resources, user, request=None):
 
 def get_latest_resource_version(name, vendor):
 
-    resource_versions = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
-    if resource_versions.count() > 0:
-        # convert from ["1.9", "1.10", "1.9.1"] to [[1,9], [1,10], [1,9,1]] to
-        # allow comparing integers
-        versions = [map(int, r.version.split(".")) for r in resource_versions]
+    resources = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
+    if resources.count() > 0:
+        newest_version = Version(resources[0].version)
+        newest_resource = resources[0]
+        for resource in resources[1:]:
+            current_version = Version(resource.version)
+            if current_version > newest_version:
+                newest_version = current_version
+                newest_resource = resource
 
-        index = 0
-        for k in range(len(versions)):
-            if max(versions[index], versions[k]) == versions[k]:
-                index = k
-
-        return resource_versions[index]
+        return newest_resource
 
     return None
 

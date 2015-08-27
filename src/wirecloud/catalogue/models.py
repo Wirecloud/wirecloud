@@ -261,6 +261,7 @@ class Version(object):
 
     def __init__(self, vstring, reverse=False):
 
+        self.vstring = vstring
         match = self.version_re.match(vstring)
 
         if not match:
@@ -319,6 +320,7 @@ class Version(object):
 
     def __gt__(self, other):
         return self.__cmp__(other) > 0
+
 
 @receiver(post_save, sender=CatalogueResource)
 def update_catalogue_index(sender, instance, created, **kwargs):
