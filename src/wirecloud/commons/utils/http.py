@@ -30,7 +30,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from lxml import etree
-from six import string_types
+from six import text_type, string_types
 
 from wirecloud.commons.exceptions import HttpBadCredentials
 from wirecloud.commons.utils import mimeparser
@@ -110,7 +110,7 @@ def get_xml_error_response(request, mimetype, status_code, context):
     doc = etree.Element('error')
 
     description = etree.Element('description')
-    description.text = unicode(context['error_msg'])
+    description.text = text_type(context['error_msg'])
 
     doc.append(description)
 
@@ -141,7 +141,7 @@ def get_xml_error_response(request, mimetype, status_code, context):
 
 def get_json_error_response(request, mimetype, status_code, context):
     body = {
-        'description': unicode(context['error_msg'])
+        'description': text_type(context['error_msg'])
     }
     if context.get('details') is not None:
         body['details'] = context['details']
