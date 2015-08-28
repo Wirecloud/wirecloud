@@ -74,7 +74,7 @@
     };
 
     var get_menubar = function get_menubar() {
-        var btn = document.querySelector(".wirecloud_toolbar .btn-list-components");
+        var btn = document.querySelector(".wc-toolbar .btn-list-components");
 
         if (!btn.classList.contains("active")) {
             btn.click();

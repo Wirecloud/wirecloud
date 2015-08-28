@@ -628,7 +628,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         self.send_basic_event(iwidgets[2], 'typeerror')
         self.send_basic_event(iwidgets[2], 'valueerror')
 
-        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
+        error_badge = self.driver.find_element_by_css_selector(".wc-toolbar .icon-puzzle-piece + .badge")
         self.assertTrue(error_badge.is_displayed())
         self.find_navbar_button("display-wiring-view").check_badge_text("4")
 
@@ -851,7 +851,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
             myresources.upload_resource('Wirecloud_TestOperator_1.0.zip', 'TestOperator', shared=True)
 
         # Check the operator leaves ghost mode
-        error_badge = self.driver.find_element_by_css_selector(".wirecloud_toolbar .icon-puzzle-piece + .badge")
+        error_badge = self.driver.find_element_by_css_selector(".wc-toolbar .icon-puzzle-piece + .badge")
         self.assertFalse(error_badge.is_displayed())
 
         # Check operator connections are restored sucessfully

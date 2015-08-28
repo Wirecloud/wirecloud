@@ -123,18 +123,18 @@ body {
     text-shadow: 1px 0px 1px rgba(255, 255, 255, 0.1);
 }
 
-.wirecloud_toolbar {
+.wc-toolbar {
     overflow: visible;
     margin: 0 5px;
 }
 
-.wirecloud_toolbar .se-btn {
+.wc-toolbar .se-btn {
     width: 21px;
     box-sizing: content-box;
     text-align: center;
 }
 
-.wirecloud_toolbar .se-btn .badge {
+.wc-toolbar .se-btn .badge {
     position: absolute;
     bottom: -10px;
     right: 0;

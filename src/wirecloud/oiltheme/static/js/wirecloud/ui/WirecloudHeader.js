@@ -43,7 +43,7 @@
         this.menuButton.insertInto(this.breadcrum.parentNode);
 
         this.toolbar = document.createElement('div');
-        this.toolbar.className = 'btn-group wirecloud_toolbar';
+        this.toolbar.className = 'btn-group wc-toolbar';
         this.app_bar.appendChild(this.toolbar);
 
         this.currentView = null;

@@ -150,7 +150,7 @@
     var header = {
 
         'getOption': function getOption(optionName) {
-            return document.querySelector('.wirecloud_toolbar .' + optionName);
+            return document.querySelector('.wc-toolbar .' + optionName);
         }
 
     };

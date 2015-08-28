@@ -324,18 +324,18 @@ footer a:hover {
     position: relative;
 }
 
-.wirecloud_toolbar {
+.wc-toolbar {
     overflow: visible;
     margin: 0 5px;
 }
 
-.wirecloud_toolbar .se-btn {
+.wc-toolbar .se-btn {
     width: 21px;
     box-sizing: content-box;
     text-align: center;
 }
 
-.wirecloud_toolbar .se-btn .badge {
+.wc-toolbar .se-btn .badge {
     position: absolute;
     bottom: -6px;
     right: 0;

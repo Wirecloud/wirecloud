@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -47,7 +47,7 @@
         this.menuButton.insertInto(this.breadcrum.parentNode);
 
         this.toolbar = document.createElement('div');
-        this.toolbar.className = 'btn-group wirecloud_toolbar wirecloud-navbar';
+        this.toolbar.className = 'btn-group wc-toolbar';
         this.app_bar.appendChild(this.toolbar);
 
         menu_wrapper = document.createElement('div');

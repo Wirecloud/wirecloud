@@ -367,7 +367,7 @@ class WalletTester(object):
 
     def __enter__(self):
 
-        self.testcase.wait_element_visible_by_css_selector('.wirecloud_toolbar .icon-plus').click()
+        self.testcase.wait_element_visible_by_css_selector('.wc-toolbar .icon-plus').click()
         self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
         return self
 
@@ -957,7 +957,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         self.driver.delete_all_cookies()
 
     def find_navbar_button(self, classname):
-        return ButtonTester(self, self.driver.find_element_by_css_selector(".wirecloud-navbar .btn-%s" % classname))
+        return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-toolbar .btn-%s" % classname))
 
     def scroll_and_click(self, element):
 
@@ -1206,7 +1206,7 @@ class MarketplaceViewTester(object):
         self.myresources = MyResourcesViewTester(testcase, self)
 
     def __enter__(self):
-        self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-shopping-cart").click()
+        self.testcase.wait_element_visible_by_css_selector(".wc-toolbar .icon-shopping-cart").click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
         WebDriverWait(self.testcase.driver, 10).until(marketplace_loaded)
         return self
@@ -1355,7 +1355,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         self.marketplace_view = marketplace_view
 
     def __enter__(self):
-        self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-archive").click()
+        self.testcase.wait_element_visible_by_css_selector(".wc-toolbar .icon-archive").click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'myresources')
         return self
 
@@ -1368,7 +1368,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'workspace')
         else:
-            self.testcase.wait_element_visible_by_css_selector(".wirecloud_toolbar .icon-shopping-cart").click()
+            self.testcase.wait_element_visible_by_css_selector(".wc-toolbar .icon-shopping-cart").click()
 
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
 
@@ -1394,7 +1394,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         self.wait_catalogue_ready()
 
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_toolbar .icon-cloud-upload"), parent=True)).click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-cloud-upload"), parent=True)).click()
 
         dialog = WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.wc-upload-mac-dialog')))
         dialog.find_element_by_css_selector('input[type="file"]').send_keys(wgt_path)
@@ -1489,11 +1489,11 @@ class BaseWiringViewTester(object):
 
     @property
     def btn_list_behaviours(self):
-        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud-navbar .btn-list-behaviors"))
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-toolbar .btn-list-behaviors"))
 
     @property
     def btn_list_components(self):
-        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud-navbar .btn-add-components"))
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-toolbar .btn-add-components"))
 
     @property
     def layout(self):
@@ -1721,7 +1721,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 class WiringViewTester(BaseWiringViewTester):
 
     def __enter__(self):
-        self.testcase.wait_element_visible_by_css_selector(".wirecloud-navbar .btn-display-wiring-view").click()
+        self.testcase.wait_element_visible_by_css_selector(".wc-toolbar .btn-display-wiring-view").click()
 
         if self.expect_error is False:
             WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'wiring' and not self.disabled)

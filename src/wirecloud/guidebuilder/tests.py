@@ -290,7 +290,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             imgp, self.driver.find_element_by_css_selector('.emptyWorkspaceInfoBox'))
 
         btn = self.driver.find_element_by_css_selector(
-            '.wirecloud_toolbar .icon-shopping-cart')
+            '.wc-toolbar .icon-shopping-cart')
         ActionChains(self.driver).move_to_element(btn).perform()
         time.sleep(0.2)
         imgp = take_capture(self.driver, extra=17)
@@ -362,7 +362,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             #marketplace.switch_to('FIWARE Lab')
             # Where are my resources
             btn = self.driver.find_element_by_css_selector(
-                '.wirecloud_toolbar .icon-archive')
+                '.wc-toolbar .icon-archive')
             ActionChains(self.driver).move_to_element(btn).perform()
             time.sleep(0.3) # wait tooltip animation
             imgp = take_capture(self.driver, "Wirecloud_switch_to_local")
@@ -374,7 +374,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             imgp = take_capture(self.driver, extra=9)
 
             btn = self.driver.find_element_by_css_selector(
-                '.wirecloud_toolbar .icon-cloud-upload')
+                '.wc-toolbar .icon-cloud-upload')
             # Where are upload button
             ActionChains(self.driver).move_to_element(btn).perform()
             time.sleep(0.3) # wait tooltip animation
@@ -438,7 +438,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         self.open_menu().click_entry('History Info')
         self.wait_wirecloud_ready()
 
-        add_widget_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-plus') 
+        add_widget_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-plus')
         ActionChains(self.driver).move_to_element(add_widget_button).perform()
         time.sleep(0.3) # wait tooltip animation
         imgp = take_capture(self.driver, extra="19")
@@ -522,7 +522,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         dialog = self.driver.find_element_by_css_selector(
             '.wirecloud_app_bar')
         btn = dialog.find_element_by_css_selector(
-            '.wirecloud_toolbar .icon-puzzle-piece')
+            '.wc-toolbar .icon-puzzle-piece')
         ActionChains(self.driver).move_to_element(btn).perform()
         time.sleep(0.3)
         imgp = take_capture(self.driver, extra=28)

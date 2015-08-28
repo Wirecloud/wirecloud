@@ -647,13 +647,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
 
-        widget_wallet_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-plus').find_element_by_xpath('..')
+        widget_wallet_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-plus').find_element_by_xpath('..')
         self.assertIn('disabled', re.split('\s+', widget_wallet_button.get_attribute('class')))
-        wiring_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-puzzle-piece').find_element_by_xpath('..')
+        wiring_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-puzzle-piece').find_element_by_xpath('..')
         self.assertIn('disabled', re.split('\s+', wiring_button.get_attribute('class')))
-        myresources_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-archive').find_element_by_xpath('..')
+        myresources_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-archive').find_element_by_xpath('..')
         self.assertNotIn('disabled', re.split('\s+', myresources_button.get_attribute('class')))
-        marketplace_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-shopping-cart').find_element_by_xpath('..')
+        marketplace_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-shopping-cart').find_element_by_xpath('..')
         self.assertNotIn('disabled', re.split('\s+', marketplace_button.get_attribute('class')))
 
         # Check public workspaces cannot be renamed/removed by non owners
@@ -677,10 +677,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.get(url)
         self.wait_wirecloud_ready()
 
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wirecloud_toolbar .icon-plus')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wirecloud_toolbar .icon-puzzle-piece')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wirecloud_toolbar .icon-archive')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wirecloud_toolbar .icon-shopping-cart')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wc-toolbar .icon-plus')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wc-toolbar .icon-puzzle-piece')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wc-toolbar .icon-archive')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.wc-toolbar .icon-shopping-cart')
 
         self.check_public_workspace()
 
@@ -911,17 +911,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Pending Events'))
 
-        widget_wallet_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-plus').find_element_by_xpath('..')
+        widget_wallet_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-plus').find_element_by_xpath('..')
         self.assertIn('disabled', re.split('\s+', widget_wallet_button.get_attribute('class')))
-        wiring_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-puzzle-piece').find_element_by_xpath('..')
+        wiring_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-puzzle-piece').find_element_by_xpath('..')
         self.assertIn('disabled', re.split('\s+', wiring_button.get_attribute('class')))
 
         self.driver.back()
         WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'Workspace'))
 
-        widget_wallet_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-plus').find_element_by_xpath('..')
+        widget_wallet_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-plus').find_element_by_xpath('..')
         self.assertNotIn('disabled', re.split('\s+', widget_wallet_button.get_attribute('class')))
-        wiring_button = self.driver.find_element_by_css_selector('.wirecloud_toolbar .icon-puzzle-piece').find_element_by_xpath('..')
+        wiring_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-puzzle-piece').find_element_by_xpath('..')
         self.assertNotIn('disabled', re.split('\s+', wiring_button.get_attribute('class')))
 
     def assertElementHasFocus(self, element):
@@ -952,7 +952,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertElementHasFocus(next_button)
         next_button.click()
 
-        WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .wirecloud_toolbar .icon-plus')))
+        WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .wc-toolbar .icon-plus')))
         with self.wallet as wallet:
             time.sleep(1)
 

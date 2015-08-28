@@ -115,7 +115,7 @@
                 return document.querySelector("#wirecloud_header .icon-caret-left").parentElement;
             },
             toolbar_button: function toolbar_button(button_class) {
-                return document.querySelector("#wirecloud_header .wirecloud_toolbar").getElementsByClassName(button_class)[0].parentElement;
+                return document.querySelector("#wirecloud_header .wc-toolbar").getElementsByClassName(button_class)[0].parentElement;
             },
             mac_wallet_close_button: function mac_wallet_close_button() {
                 return document.querySelector('.widget_wallet .icon-remove');
