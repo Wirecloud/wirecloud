@@ -1,0 +1,1177 @@
+FORMAT: 1A
+HOST: https://mashup.lab.fiware.org/
+
+# FIWARE Application Mashup
+
+The Application Mashup GE offers two separate APIs that cannot be combined
+because of their different nature: The Widget API is a JavaScript API, while
+the Application Mashup API (the subject of this document) is a RESTful one. You
+can find the Widget API in this separate [entry](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.OpenSpecification.Apps.WidgetAPI):
+
+The Application Mashup API is a RESTful, resource-oriented API accessed via HTTP
+that uses various representations for information interchange. This API provides
+the functionality to create and modify workspaces and the functionality to manage
+the resources available for building these workspaces.
+
+This document will also show some examples that can be tested using WireCloud,
+the reference implementation of the FIWARE Application Mashup GE.
+
+# Authentication
+
+Each HTTP request against the Application Mashup API requires the inclusion of
+specific authentication credentials. The specific implementation of this API
+may support multiple authentication schemes (OAuth, Basic Auth, Token) and will
+be determined by the specific provider that implements the GE. Please contact
+the provider to determine the best way to authenticate against this API.
+Remember that some authentication schemes may require that the API operates
+using SSL over HTTP (HTTPS).
+
+WireCloud provides support for `Cookie` and `OAuth2` authentication being
+`OAuth2` the default in FIWARE Lab.
+
+# Representation Format
+
+The Application Mashup API MUST support at least JSON for delivering any kind
+of resources. It may also support other formats as simple text, XML and HTML.
+The request format is specified using the `Content-Type` header and is required
+for operations that have a request body. The response format can be specified
+in requests using the `Accept` header. Note that it is possible for a response
+to be serialized using a format different from the request.
+
+# Synchronous Faults
+
+Error responses will be encoded using the most appropriated content-type in
+base to the `Accept` header of the request. In any case, the response will
+provide a human-readable message (through the `description` attribute) for
+displaying to end users. If the server can provide extra details about the
+error, they will be provided through the `details` attribute.
+
+JSON Example:
+
+    {
+        "description": "Missing dependencies",
+        "details": {
+           "missingDependencies": [
+               "Wirecloud/nonavailable-operator/1.0",
+               "Wirecloud/nonavailable-widget/1.0"
+           ]
+        }
+    }
+
+XML Example:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <error>
+       <description>Missing dependencies</description>
+       <details>
+           <missingDependencies>
+               <element>Wirecloud/nonavailable-operator/1.0</element>
+               <element>Wirecloud/nonavailable-widget/1.0</element>
+           </missingDependencies>
+       </details>
+    </error>
+
+# Used HTTP Status Codes
+
+| HTTP Code | Type                     | Description                                                                       |
+|-----------|--------------------------|-----------------------------------------------------------------------------------|
+|    200    |                       OK | The request was handled successfully and transmitted in response message.         |
+|    201    |                  Created | The request was fulfilled and resulted in a new resource being created.           |
+|    204    |               No Content | The server successfully processed the request, but did not return any content.    |
+|    304    |             Not Modified | Indicates the resource was not modified since last requested. Typically, the HTTP client provides a header like the `If-Modified-Since` header to provide a time against which to compare. Use of this feature saves bandwidth and reprocessing on both the server and client side, as only the header data must be sent and received in comparison to the entire page being re-processed by the server, then sent again using more bandwidth of the server and client. |
+|    400    |              Bad Request | The request could not be fulfilled due to bad syntax.                             |
+|    401    |             Unauthorised | The request requires user authentication. If the request already included Authorization credentials, then the 401 response indicates that authorization was refused for those credentials. |
+|    403    |                Forbidden | The server understood the request, but is refusing to fulfill it because the user doesn’t have permission to perform the requested action. |
+|    404    |                Not Found | The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible. |
+|    405    |       Method Not Allowed | The method specified in the Request-Line is not allowed for the resource identified by the Request-URI. |
+|    406    |           Not Acceptable | The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request. |
+|    409    |                 Conflict | Indicates that the request could not be processed because of conflict in the request, such as an already taken name. |
+|    413    | Request Entity Too Large | The request is larger than the server is willing or able to process.              |
+|    415    |   Unsupported Media Type | The server is refusing to service the request because the entity of the request is in a format not supported by the requested resource for the requested method. |
+|    422    |     Unprocessable Entity | The request was well-formed but was unable to be followed due to semantic errors. |
+|    500    |    Internal Server Error | A generic error message, returned when no other specific message is suitable.     |
+
+# Group Core
+
+## Supported features [/api/features]
+
+### List all supported features [GET]
+
+**Used status codes**: 200, 304, 406
+
+> **NOTE**: This action SHOULD NOT be protected by any authentication mechanism.
+
++ Request
+
+    + Headers
+    
+            Accept: application/json
+
++ Response 200
+
+    + Body
+    
+            {
+                "FIWARE": "4.4.3",
+                "Wirecloud": "0.8.0",
+                "ObjectStorage": "0.5",
+                "ApplicationMashup": "1.0",
+                "NGSI": "1.0",
+                "FullscreenWidget": "0.5",
+                "StyledElements": "0.5"
+            }
+
+## Platform preferences [/api/preferences]
+
+### Retrieve platform preferences [GET]
+
+**Used status codes**: 200, 304, 401, 403, 406
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "language": {
+                    "value": "en-gb",
+                    "inherit": false
+                }
+            }
+
+### Update platform preferences [POST]
+
+**Used status codes**: 204, 400, 401, 403, 413, 415
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+    
+            {
+                "language": {
+                    "value": "browser"
+                }
+            }
+
++ Response 204
+
+# Group Managing workspaces
+
+## Workspace collection [/api/workspaces]
+
+### List workspaces [GET]
+
+List all the available workspaces of the user. If the request is made without including user credentials, this action will return all the publically available workspaces.
+
+**Used status codes**: 200, 304, 401, 406
+
++ Request List available workspaces
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+
+            [
+                {
+                    "name": "workspace",
+                    "creator": "user",
+                    "removable": true,
+                    "shared": false,
+                    "id": 1
+                },
+                {
+                    "name": "public-workspace",
+                    "creator": "otheruser",
+                    "removable": false,
+                    "shared": true,
+                    "id": 20
+                }
+            ]
+
++ Request List public workspaces
+
+    + Headers
+
+            Accept: application/json
+
++ Response 200
+
+    + Headers
+
+            Content-Type: application/json
+
+    + Body
+
+            [
+                {
+                    "name": "public-workspace",
+                    "creator": "otheruser",
+                    "removable": false,
+                    "shared": true,
+                    "id": 20
+                }
+            ]
+
+### Create new workspaces [POST]
+
+Creates a new workspace. This workspace will be empty, created from a template or created by duplicating an existing workspace depending on the used parameters.
+
+Those parameters should be send in the body of the request using the selected representation format (e.g. JSON):
+
++ `mashup` (string): Id of the mashup to use as base for creating the workspace. This option cannot be used along `workspace`.
++ `workspace` (string): Id of the workspace to use as base for creating the new workspace. This option cannot be used along `mashup`.
++ `name` (string): Name for the new workspace. This parameter is optional if either `mashup` or `workspace` are used. In those cases, the name will be obtained from the referenced mashup or workspace.
++ `allow_renaming` (boolean; default: `false`): If `false`, any attempt to create a workspace using a currently used name will fail. If this parameter is `true` and the name is already in use, a new name will be computed using the indicated name as base.
+
+**Used status codes**: 201, 400, 401, 403, 406, 409, 413, 415, 422
+
++ Request Empty workspace (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+            
+    + Body
+    
+            {
+                "name": "test"
+            }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "name": "test",
+                "creator": "admin",
+                "wiring": {"operators": {}, "connections": []},
+                "empty_params": [],
+                "active": false,
+                "shared": false,
+                "tabs": [
+                    {
+                        "visible": true,
+                        "iwidgets":[],
+                        "id":84,
+                        "name": "Tab",
+                        "preferences": {}
+                    }
+                ],
+                "id": 81,
+                "extra_prefs": {},
+                "preferences": {
+                    "public": {"value": "true", "inherit": false}
+                }
+            }
+
++ Request Workspace from mashup (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+            
+    + Body
+    
+            {
+                "mashup": "UPM/Mashup/1.0"
+            }
+            
++ Response 201 (application/mashup)
+
+    + Body
+
+            {
+               "name": "example",
+               "creator": "admin",
+               "wiring": {"operators": {}, "connections": []},
+               "empty_params": [],
+               "active": false,
+               "shared": false,
+               "tabs": [
+                  {
+                     "visible": true,
+                     "iwidgets": [
+                           {
+                              "widget": "UPM/Widget1/0.1",
+                              "layout": 0,
+                              "name": "Widget1",
+                              "icon_top": -1,
+                              "variables": {},
+                              "minimized": false,
+                              "id": 311,
+                              "height": 28,
+                              "zIndex": 0,
+                              "width": 6,
+                              "readOnly": false,
+                              "icon_left": -1,
+                              "tab": 100,
+                              "transparency": false,
+                              "refused_version": null,
+                              "top": 0,
+                              "fulldragboard": false,
+                              "left": 0
+                           },
+                           {
+                              "widget": "UPM/Widget2/0.1",
+                              "layout": 0,
+                              "name": "Widget2",
+                              "icon_top": -1,
+                              "variables": {},
+                              "minimized": false,
+                              "id": 312,
+                              "height": 28,
+                              "zIndex": 0,
+                              "width": 6,
+                              "readOnly": false,
+                              "icon_left": -1,
+                              "tab": 100,
+                              "transparency": false,
+                              "refused_version": null,
+                              "top": 0,
+                              "fulldragboard": false,
+                              "left": 7
+                           }
+                     ],
+                     "id": 100,
+                     "name": "Tab",
+                     "preferences": {}
+                  }
+               ],
+               "id": 50,
+               "extra_prefs": {},
+               "preferences": {}
+            }
+
++ Request Duplicating a workspace (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+            
+    + Body
+    
+            {
+                "workspace": "81"
+            }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {}
+
+## Workspace [/api/workspace/{workspace_id}]
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+
+### Get workspace details [GET]
+
+**Used status codes**: 200, 401, 403, 404, 406
+
++ Request
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+ 
+    
++ Response 200
+
+    + Body
+    
+            {
+               "name": "test",
+               "creator": "admin",
+               "wiring": "{\"operators\": {}, \"connections\": []}",
+               "empty_params": [],
+               "active": false,
+               "shared": false,
+               "tabs": [
+                  {
+                     "visible": true,
+                     "iwidgets": [],
+                     "id": 84,
+                     "name": "Tab",
+                     "preferences": {}
+                  }
+               ],
+               "id": 81,
+               "extra_prefs": {},
+               "preferences": {}
+            }
+
+### Update workspace details [POST]
+
+Workspace attributes that can be modified:
+
+- `name`: Name of the workspace
+
+**Used status codes**: 204, 400, 401, 403, 404, 415
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+    
+            {
+                "name": "New name"
+            }
+
++ Response 204
+
++ Response 403
+
+    + Body
+
+            {
+                "description": "You are not allowed to update this workspace"
+            }
+
+### Update workspace preferences [POST /api/workspace/{workspace_id}/preferences]
+
+**Used status codes**: 204, 400, 401, 403, 404, 413, 415
+
+> **NOTE**: Supported preferences varies depending on the extensions enabled on the Application Mashup instance.
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+
+            {
+                "public": {"value": "true"}
+            }
+
++ Response 204
+
+### Update workspace wiring configuration [PUT /api/workspace/{workspace_id}/wiring]
+
+**Used status codes**: 204, 400, 401, 403, 404, 413, 422
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+
+            {
+               "operators":{
+                    "0":{
+                        "name": "UPM/Operator/0.1",
+                        "id": "0"
+                    }
+               },
+               "connections":[
+                    {
+                        "source":{
+                            "type": "iwidget",
+                            "id": 311,
+                            "endpoint": "location_info_event"
+                        },
+                        "target":{
+                            "type": "iwidget",
+                            "id": 312,
+                            "endpoint": "search_text_slot"
+                        }
+                    },
+                    {
+                        "source": {
+                            "type": "iwidget",
+                            "id": 311,
+                            "endpoint": "location_info_event"
+                        },
+                        "target":{
+                            "type": "ioperator",
+                            "id": 0,
+                            "endpoint": "message"
+                     }
+                  }
+               ]
+            }
+
++ Response 204
+
+### Delete workspace [DELETE]
+
+**Used status codes**: 204, 401, 403, 404
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 204
+
+### Adding new tabs [POST /api/worksace/{workspace_id}/tabs]
+
+**Used status codes**: 201, 400, 401, 403, 404, 406, 413, 415, 422
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+            
+    + Body
+    
+            {
+                "name": "Tab 2"
+            }
+            
++ Response 201 (application/json)
+
+    + Body
+    
+            {
+               "id": 3,
+               "name": "Tab 2"
+            }
+
+## Tab [/api/workspace/{workspace_id}/tab/{tab_id}]
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+    + tab_id: 100 (number) - ID of the tab
+
+### Update tab details [POST]
+
+**Used status codes**: 204, 400, 401, 403, 404, 413, 415, 422
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+    
+            {
+                "name": "New name"
+            }
+        
++ Response 204
+
+### Update tab preferences [POST /api/workspace/{workspace_id}/tab/{tab_id}/preferences]
+
+**Used status codes**: 204, 400, 401, 403, 404, 413, 415
+
+> **NOTE**: Supported preferences varies depending on the extensions enabled on the Application Mashup instance.
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+    + tab_id: 100 (number) - ID of the tab
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+    
+            {
+                "baselayout": 
+                    {
+                        "inherit": false,
+                        "value": "{\"verticalmargin\":3,\"smart\":\"false\",\"horizontalmargin\":4,\"type\":\"gridlayout\",\"columns\":20,\"cellheight\":12,\"rows\":12}"
+                    }
+                }
+            }
+
++ Response 204
+
+### Delete a tab [DELETE]
+
+**Used status codes**: 204, 401, 403, 404
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 204
+
+### Add new widgets [POST /api/workspace/{workspace_id}/tab/{tab_id}/iwidgets]
+
+**Used status codes**: 201, 400, 401, 403, 404, 406, 413, 415, 422
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+    + tab_id: 100 (number) - ID of the tab
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+    
+            {
+                "widget": "UPM/Widget/1.0"
+            }
+
++ Response 200
+
+    + Body
+
+            {
+               "widget": "UPM/Widget/1.0",
+               "left": 12,
+               "top": 0,
+               "icon_left": -1,
+               "icon_top": -1,
+               "zIndex": 2,
+               "width": 6,
+               "height": 28,
+               "name": "Widget",
+               "layout": 0
+            }
+
+## Instantiated widget [/api/workspace/{workspace_id}/tab/{tab_id}/iwidget/{iwidget_id}]
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+    + tab_id: 100 (number) - ID of the tab
+    + iwidget_id: 101 (number) - ID of the instantiated widget
+
+### Update instantiated widget details [POST]
+
+Updates the attributes of a instantiated widget. Only the attributes referenced in the request will be updated leaving the other attributes intact. The modificable attributes are:
+
+- `name` (string): Name given to the instance of Widget.
+- `tab` (string): Id of the tab where the widget is going to be hosted. Widgets can only be moved between tabs of the same workspace.
+- `width` (number): Width of the widget in layout columns.
+- `height` (number): Height of the widget in layout rows.
+- `top` (number): Vertical position of the widget in layout rows.
+- `left` (number): Horizontal postiion of the widget in layout columns.
+- `zIndex` (number): Stack order of the widget.
+
+**Used status codes**: 204, 400, 401, 403, 404, 413, 415, 422
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+
+            {
+                "name": "new name"
+            }
+
++ Response 204
+
+### Update instantiated widget preferences [POST /api/workspace/{workspace_id}/tab/{tab_id}/iwidget/{iwidget_id}/preferences]
+
+**Used status codes**: 204, 400, 401, 403, 404, 413, 415
+
++ Parameters
+
+    + workspace_id: 81 (number) - ID of the workspace
+    + tab_id: 100 (number) - ID of the tab
+    + iwidget_id: 101 (number) - ID of the instantiated widget
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+
+            {
+                "pref": "value"
+            }
+
++ Response 204
+
+### Remove instantiated widget [DELETE]
+
+**Used status codes**: 204, 401, 403, 404
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 204
+
+
+# Group Managing resources
+
+## Resource collection [/api/resources]
+
+### List available Mashable Application Components [GET]
+
+**Used status codes**: 200, 401, 406
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+               "CoNWeT/multimedia-viewer/0.5": {
+                    "type": "widget",
+                    "vendor": "CoNWeT",
+                    "name": "multimedia-viewer"
+                    "version": "0.5",
+                    "description": "This widget allows watch youtube videos, flickr images and another images.",
+                    "preferences": [
+                        {
+                            "default": "http://orion.lab.fiware.org:1026/",
+                            "description": "URL of the Orion Context Broker to use for retrieving entity information"
+                            "label": "NGSI server URL"
+                            "name": "ngsi_server"
+                            "readonly": false
+                            "secure": false
+                            "type": "text"
+                            "value": null
+                        },
+                    ...
+                    ],
+                    "wiring": {
+                        "inputs": [],
+                        "outputs": []
+                    }
+               },
+               ...
+               "UPM/Operator/1.0": {
+                  "type": "operator",
+                  "vendor": "UPM",
+                  "name": "Operator"
+                  "version": "1.0",
+                  ...
+               }
+            }
+
+### Upload Mashable Application Components [POST]
+
+**Used status codes**: 204, 401, 403, 404, 406, 409, 413, 415
+
++ Request (application/octet-stream)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+    
+            ‹Binary data (Not supported on APIary)›
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "contributors": [],
+                "image": "https://mashup.lab.fiware.org/catalogue/media/Wirecloud/Test/1.0/images/catalogue.png",
+                "type": "widget",
+                "smartphoneimage": "https://mashup.lab.fiware.org/catalogue/media/Wirecloud/Test/1.0/images/catalogue_iphone.png",
+                "contents": {
+                    "src": "https://mashup.lab.fiware.org/catalogue/media/Wirecloud/Test/1.0/test.html",
+                    "charset": "utf-8",
+                    "contenttype": "text/html",
+                    "cacheable": true,
+                    "useplatformstyle": false
+                },
+                "requirements": [],
+                "preferences": [
+                    {
+                        "secure": false,
+                        "description": "list preference",
+                        "default": "default",
+                        "value": null,
+                        "label": "list",
+                        "readonly": false,
+                        "type": "list",
+                        "options": [
+                            {
+                                "value": "default",
+                                "label": "Default"
+                            },
+                            {
+                                "value": "1",
+                                "label": "value1"
+                            },
+                            {
+                                "value": "2",
+                                "label": "value2"
+                            }
+                        ],
+                        "name": "list"
+                    },
+                    {
+                        "secure": false,
+                        "description": "text preference",
+                        "default": "initial text",
+                        "value": null,
+                        "label": "text",
+                        "readonly": false,
+                        "type": "text",
+                        "name": "text"
+                    },
+                    {
+                        "secure": false,
+                        "description": "boolean preference",
+                        "default": "false",
+                        "value": null,
+                        "label": "boolean",
+                        "readonly": false,
+                        "type": "boolean",
+                        "name": "boolean"
+                    },
+                    {
+                        "secure": false,
+                        "description": "password preference",
+                        "default": "default",
+                        "value": null,
+                        "label": "password",
+                        "readonly": false,
+                        "type": "password",
+                        "name": "password"
+                    },
+                    {
+                        "secure": false,
+                        "description": "number preference",
+                        "default": "2",
+                        "value": null,
+                        "label": "number",
+                        "readonly": false,
+                        "type": "number",
+                        "name": "number"
+                    }
+                ],
+                "title": "Test",
+                "wiring": {
+                    "inputs": [
+                        {
+                            "friendcode": "test-data",
+                            "name": "inputendpoint",
+                            "actionlabel": "",
+                            "label": "Input",
+                            "type": "text",
+                            "description": ""
+                        },
+                        {
+                            "friendcode": "nothandled",
+                            "name": "nothandled",
+                            "actionlabel": "",
+                            "label": "Not handled endpoint",
+                            "type": "text",
+                            "description": ""
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "description": "",
+                            "type": "text",
+                            "friendcode": "test-data",
+                            "name": "outputendpoint",
+                            "label": "Output"
+                        }
+                    ]
+                },
+                "longdescription": "DESCRIPTION.md",
+                "version": "1.0",
+                "widget_height": "24",
+                "homepage": "",
+                "email": "aarranz@conwet.com",
+                "default_lang": "en",
+                "issuetracker": "",
+                "vendor": "Wirecloud",
+                "description": "This widget is used to test some of the features of the Wirecloud platform",
+                "authors": [
+                    {
+                        "name": "aarranz"
+                    }
+                ],
+                "properties": [],
+                "altcontents": [],
+                "name": "Test",
+                "license": "",
+                "changelog": "CHANGELOG.md",
+                "doc": "https://mashup.lab.fiware.org/catalogue/media/Wirecloud/Test/1.0/doc/index.md",
+                "licenseurl": "",
+                "widget_width": "6"
+            }
+
++ Response 400 (application/json)
+
+    + Body
+    
+            {
+                "description": "The uploaded file is not a zip file"
+            }  
+
++ Request Multipart (multipart/form-data; boundary=----WebKitFormBoundaryHPwaOXLATyUcGQp8)
+
+    + Body
+    
+            ------WebKitFormBoundaryHPwaOXLATyUcGQp8
+            Content-Disposition: form-data; name="file"; filename="Wirecloud_Test_1.0.wgt"
+            Content-Type: application/octet-stream
+            
+            ‹Base64 data›
+            
+            ------WebKitFormBoundaryHPwaOXLATyUcGQp8--
+
++ Response 201 (application/json)
+
+    + Body
+    
+            {
+                "contributors": [],
+                "image": "https://mashup.lab.fiware.org/catalogue/media/Wirecloud/Test/1.0/images/catalogue.png",
+                "type": "widget",
+                "smartphoneimage": "https://mashup.lab.fiware.org/catalogue/media/Wirecloud/Test/1.0/images/catalogue_iphone.png",
+                "contents": {
+                    "src": "https://mashup.lab.fiware.org/catalogue/media/Wirecloud/Test/1.0/test.html",
+                    "charset": "utf-8",
+                    "contenttype": "text/html",
+                    "cacheable": true,
+                    "useplatformstyle": false
+                },
+                "requirements": [],
+                "preferences": [
+                    {
+                        "secure": false,
+                        "description": "list preference",
+                        "default": "default",
+                        "value": null,
+                        "label": "list",
+                        "readonly": false,
+                        "type": "list",
+                        "options": [
+                            {
+                                "value": "default",
+                                "label": "Default"
+                            },
+                            {
+                                "value": "1",
+                                "label": "value1"
+                            },
+                            {
+                                "value": "2",
+                                "label": "value2"
+                            }
+                        ],
+                        "name": "list"
+                    },
+                    {
+                        "secure": false,
+                        "description": "text preference",
+                        "default": "initial text",
+                        "value": null,
+                        "label": "text",
+                        "readonly": false,
+                        "type": "text",
+                        "name": "text"
+                    },
+                    {
+                        "secure": false,
+                        "description": "boolean preference",
+                        "default": "false",
+                        "value": null,
+                        "label": "boolean",
+                        "readonly": false,
+                        "type": "boolean",
+                        "name": "boolean"
+                    },
+                    {
+                        "secure": false,
+                        "description": "password preference",
+                        "default": "default",
+                        "value": null,
+                        "label": "password",
+                        "readonly": false,
+                        "type": "password",
+                        "name": "password"
+                    },
+                    {
+                        "secure": false,
+                        "description": "number preference",
+                        "default": "2",
+                        "value": null,
+                        "label": "number",
+                        "readonly": false,
+                        "type": "number",
+                        "name": "number"
+                    }
+                ],
+                "title": "Test",
+                "wiring": {
+                    "inputs": [
+                        {
+                            "friendcode": "test-data",
+                            "name": "inputendpoint",
+                            "actionlabel": "",
+                            "label": "Input",
+                            "type": "text",
+                            "description": ""
+                        },
+                        {
+                            "friendcode": "nothandled",
+                            "name": "nothandled",
+                            "actionlabel": "",
+                            "label": "Not handled endpoint",
+                            "type": "text",
+                            "description": ""
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "description": "",
+                            "type": "text",
+                            "friendcode": "test-data",
+                            "name": "outputendpoint",
+                            "label": "Output"
+                        }
+                    ]
+                },
+                "longdescription": "DESCRIPTION.md",
+                "version": "1.0",
+                "widget_height": "24",
+                "homepage": "",
+                "email": "aarranz@conwet.com",
+                "default_lang": "en",
+                "issuetracker": "",
+                "vendor": "Wirecloud",
+                "description": "This widget is used to test some of the features of the Wirecloud platform",
+                "authors": [
+                    {
+                        "name": "aarranz"
+                    }
+                ],
+                "properties": [],
+                "altcontents": [],
+                "name": "Test",
+                "license": "",
+                "changelog": "CHANGELOG.md",
+                "doc": "https://mashup.lab.fiware.org/catalogue/media/Wirecloud/Test/1.0/doc/index.md",
+                "licenseurl": "",
+                "widget_width": "6"
+            }
+
++ Response 204
+
+## Resource [/api/resource/{vendor}/{name}/{version}]
+
++ Parameters
+
+    + vendor: Wirecloud (string) -  ID of the Mashable Application Component
+    + name: Test (string) - Name ID of the Mashable Application Component
+    + version: 0.9 (string) - Version of the Mashable Application Component
+
+### Export Mashable Application Component [GET]
+
+**Used status codes**: 200, 401, 403, 404, 406
+
++ Request
+
+    + Headers
+
+            Accept: */*
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 200 (application/octet-stream)
+
+    + Body
+    
+            ‹Binary data (Not supported on APIary)›
+
+
+### Uninstall all versions of a Mashable Application Component [DELETE /api/resource/{vendor}/{name}]
+
+**Used status codes**: 204, 401, 403, 404
+
++ Parameters
+
+    + vendor: Wirecloud (string) -  ID of the Mashable Application Component
+    + name: Test (string) - Name ID of the Mashable Application Component
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 204
+
+### Uninstall Mashable Application Component [DELETE]
+
+**Used status codes**: 204, 401, 403, 404
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
++ Response 204
