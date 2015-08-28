@@ -101,7 +101,7 @@ def _remap_component_ids(id_mapping, components_description, isGlobal=False):
 
     operators = {}
     for key, operator in six.iteritems(components_description['operator']):
-        operators[id_mapping['operator'][key]['id']] = operator
+        operators[six.text_type(id_mapping['operator'][key]['id'])] = operator
     components_description['operator'] = operators
 
     widgets = {}
@@ -109,7 +109,7 @@ def _remap_component_ids(id_mapping, components_description, isGlobal=False):
         if isGlobal:
             widget['name'] = id_mapping['widget'][key]['name']
 
-        widgets[id_mapping['widget'][key]['id']] = widget
+        widgets[six.text_type(id_mapping['widget'][key]['id'])] = widget
     components_description['widget'] = widgets
 
 
@@ -117,11 +117,11 @@ def _create_new_behaviour(mashup_description, title, description):
 
     operators = {}
     for key, operator in six.iteritems(mashup_description['components']['operator']):
-        operators[key] = {}
+        operators[six.text_type(key)] = {}
 
     widgets = {}
     for key, widget in six.iteritems(mashup_description['components']['widget']):
-        widgets[key] = {}
+        widgets[six.text_type(key)] = {}
 
     connections = []
     for connection in mashup_description['connections']:
