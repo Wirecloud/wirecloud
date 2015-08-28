@@ -38,7 +38,7 @@ OFFERING_URL = "http://repository.exmaple.com/FiwareRepository/v1/storeOfferingC
 
 class StoreTestCase(WirecloudTestCase):
 
-    tags = ('wirecloud-fiware', 'wirecloud-fiware-plugin', 'fiware-ut-13', 'wirecloud-fiware-store')
+    tags = ('wirecloud-fiware', 'fiware-ut-13', 'wirecloud-fiware-store')
     servers = {
         'http': {
             'example.com': DynamicWebServer()

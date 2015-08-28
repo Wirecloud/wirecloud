@@ -52,7 +52,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             'orion.example.com:1026': DynamicWebServer(),
         },
     }
-    tags = ('wirecloud-selenium', 'fiware', 'fiware-plugin', 'fiware-selenium')
+    tags = ('wirecloud-selenium', 'wirecloud-fiware', 'wirecloud-fiware-selenium')
 
     @classmethod
     def setUpClass(cls):
@@ -83,7 +83,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.add('fiware', 'http://marketplace.example.com/', 'fiware')
             widget_offering = marketplace.search_in_results('Smart City Lights application')
             self.assertIsNotNone(widget_offering)
-    test_add_fiware_marketplace.tags = ('fiware', 'fiware-plugin', 'fiware-selenium', 'fiware-ut-8')
+    test_add_fiware_marketplace.tags = ('wirecloud-fiware', 'wirecloud-fiware-selenium', 'fiware-ut-8')
 
     def test_add_public_fiware_marketplace(self):
 
@@ -93,7 +93,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             marketplace.add('fiware', 'http://marketplace.example.com/', 'fiware', public=True)
             widget_offering = marketplace.search_in_results('Smart City Lights application')
             self.assertIsNotNone(widget_offering)
-    test_add_public_fiware_marketplace.tags = ('fiware', 'fiware-plugin', 'fiware-selenium', 'fiware-ut-8')
+    test_add_public_fiware_marketplace.tags = ('wirecloud-fiware', 'wirecloud-fiware-selenium', 'fiware-ut-8')
 
     def test_delete_fiware_marketplace(self):
 
@@ -102,7 +102,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.marketplace_view as marketplace:
             marketplace.switch_to('fiware')
             marketplace.delete()
-    test_delete_fiware_marketplace.tags = ('fiware', 'fiware-plugin', 'fiware-selenium', 'fiware-ut-8')
+    test_delete_fiware_marketplace.tags = ('wirecloud-fiware', 'wirecloud-fiware-selenium', 'fiware-ut-8')
 
     def test_ngsi_available_to_widgets(self):
 
@@ -114,7 +114,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.add_widget_to_mashup('Wirecloud NGSI API test widget'):
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
-    test_ngsi_available_to_widgets.tags = ('fiware', 'fiware-plugin', 'fiware-selenium', 'fiware-ut-7')
+    test_ngsi_available_to_widgets.tags = ('wirecloud-fiware', 'wirecloud-fiware-selenium', 'fiware-ut-7')
 
     @uses_extra_resources(('Wirecloud_ngsi-test-widget_1.0.1.wgt',))
     def test_ngsi_api_reports_failures(self):
@@ -150,7 +150,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.add_widget_to_mashup('Wirecloud Object Storage API test widget'):
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
-    test_objectstorage_available_to_widgets.tags = ('fiware', 'fiware-plugin', 'fiware-selenium', 'fiware-ut-12')
+    test_objectstorage_available_to_widgets.tags = ('wirecloud-fiware', 'wirecloud-fiware-selenium', 'fiware-ut-12')
 
     @uses_extra_resources(('Wirecloud_objectstorage-test-widget_1.0.1.wgt',))
     def test_objectstorage_reports_failures(self):

@@ -33,7 +33,7 @@ __test__ = False
 
 class FIWAREViewsTestCase(unittest.TestCase):
 
-    tags = ('wirecloud-fiware-views',)
+    tags = ('wirecloud-fiware', 'wirecloud-fiware-views')
 
     def test_login_redirect_invalid_method(self):
 

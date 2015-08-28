@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -226,7 +226,7 @@
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify({
-                template_uri: url,
+                url: url,
                 force_create: !!options.forceCreate,
                 install_embedded_resources: true,
                 market_endpoint: options.market_info

@@ -33,7 +33,7 @@ __test__ = False
 
 class MarketplaceTestCase(WirecloudTestCase):
 
-    tags = ('fiware', 'fiware-plugin', 'fiware-ut-8', 'fiware-marketplace')
+    tags = ('wirecloud-fiware', 'fiware-ut-8', 'wirecloud-fiware-marketplace')
     fixtures = ('initial_data', 'selenium_test_data', 'fiware_test_data')
     servers = {
         'http': {

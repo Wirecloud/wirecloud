@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -245,7 +245,7 @@
         Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'POST',
             requestHeaders: {'Accept': 'application/json'},
-            parameters: {'template_uri': url, force_create: !!options.forceCreate},
+            parameters: {'url': url, force_create: !!options.forceCreate},
             onSuccess: function () {
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();

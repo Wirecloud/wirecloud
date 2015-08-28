@@ -171,7 +171,7 @@ class CatalogueUtilsTestCase(TestCase):
         CatalogueResource_mock = Mock()
         CatalogueResource_mock.objects.all.return_value = TestQueryResult([mac1, mac2])
         with patch('wirecloud.catalogue.utils.CatalogueResource', CatalogueResource_mock):
-            with patch.multiple('wirecloud.catalogue.utils', WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
+            with patch.multiple('wirecloud.catalogue.utils', WgtFile=DEFAULT, TemplateParser=DEFAULT, download_http_content=DEFAULT, autospec=True) as context:
                 context['TemplateParser'].side_effect = (parser_mac1, parser_mac2)
 
                 update_resource_catalogue_cache()
