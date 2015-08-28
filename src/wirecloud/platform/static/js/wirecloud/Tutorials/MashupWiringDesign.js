@@ -147,14 +147,6 @@
         return wiringEditor.connectionEngine;
     };
 
-    var header = {
-
-        'getOption': function getOption(optionName) {
-            return document.querySelector('.wc-toolbar .' + optionName);
-        }
-
-    };
-
     var wiringView = {
 
         'addComponent': function addComponent(type, name, x , y) {
@@ -368,7 +360,7 @@
         {
             type: 'userAction',
             msg: gettext("<strong>You:</strong> click here to continue"),
-            elem: BS.toolbar_button.bind(null, 'icon-puzzle-piece'),
+            elem: BS.toolbar_button('icon-puzzle-piece'),
             pos: 'downLeft'
         },
 
@@ -395,7 +387,7 @@
         {
             type: 'autoAction',
             msg: gettext("Go to open <strong>behaviours</strong>"),
-            elem: header.getOption.bind(null, 'btn-list-behaviours'),
+            elem: BS.toolbar_button('btn-list-behaviours'),
             pos: 'downLeft',
             action: BA.click(1500)
         },
@@ -483,7 +475,7 @@
         {
             type: 'autoAction',
             msg: gettext("Go to open <strong>components</strong>"),
-            elem: header.getOption.bind(null, 'btn-list-components'),
+            elem: BS.toolbar_button('btn-list-components'),
             pos: 'downLeft',
             action: BA.click(1500)
         },
@@ -565,7 +557,7 @@
         {
             type: 'autoAction',
             msg: gettext("Go to open <strong>behaviours</strong> again"),
-            elem: header.getOption.bind(null, 'btn-list-behaviours'),
+            elem: BS.toolbar_button('btn-list-behaviours'),
             pos: 'downLeft',
             action: BA.click(1500)
         },

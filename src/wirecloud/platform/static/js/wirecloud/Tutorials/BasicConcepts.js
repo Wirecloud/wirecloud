@@ -215,7 +215,7 @@
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/input-box/1.0')},
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/youtube-browser/3.0')},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace.</p>")},
-            {'type': 'userAction', 'msg': gettext("Click the <em>add widget button</em>"), 'elem': BS.toolbar_button.bind(null, 'icon-plus'), 'pos': 'downLeft'},
+            {'type': 'userAction', 'msg': gettext("Click the <em>add widget button</em>"), 'elem': BS.toolbar_button('icon-plus'), 'pos': 'downLeft'},
             {'type': 'autoAction', 'action': BA.sleep(0.5)},
             {'type': 'autoAction', 'msg': gettext('Typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input, 'pos': 'downRight', 'action': BA.input('browser')},
             {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton.bind(null, "YouTube Browser"), 'pos': 'downRight'},
@@ -245,7 +245,7 @@
                 'asynchronous': true
             },
 
-            {'type': 'userAction', 'msg': gettext("Click <em>Wiring</em> to continue"), 'elem': BS.toolbar_button.bind(null, 'icon-puzzle-piece'), 'pos': 'downLeft'},
+            {'type': 'userAction', 'msg': gettext("Click <em>Wiring</em> to continue"), 'elem': BS.toolbar_button('icon-puzzle-piece'), 'pos': 'downLeft'},
 
 
             // WiringEditor

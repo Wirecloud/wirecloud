@@ -115,7 +115,14 @@
                 return document.querySelector("#wirecloud_header .icon-caret-left").parentElement;
             },
             toolbar_button: function toolbar_button(button_class) {
-                return document.querySelector("#wirecloud_header .wc-toolbar").getElementsByClassName(button_class)[0].parentElement;
+                return function () {
+                    var element = document.querySelector("#wirecloud_header .wc-toolbar").getElementsByClassName(button_class)[0];
+                    if (element.classList.contains('se-btn')) {
+                        return element;
+                    } else {
+                        return element.parentElement;
+                    }
+                }
             },
             mac_wallet_close_button: function mac_wallet_close_button() {
                 return document.querySelector('.widget_wallet .icon-remove');
