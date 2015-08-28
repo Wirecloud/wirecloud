@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,7 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import codecs
+from django.utils.translation import ugettext as _
 import platform
 import requests
 from six.moves.urllib.parse import urlparse
@@ -43,7 +46,7 @@ def download_http_content(url, user=None):
 
     parsed_url = urlparse(url)
     if parsed_url.scheme not in ('http', 'https'):
-        return ''
+        raise requests.exceptions.InvalidSchema(_('Invalid schema: %s') % parsed_url.scheme)
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (%(system)s %(machine)s;U) Wirecloud/%(wirecloud_version)s python-requests/%(requests_version)s' % VERSIONS,
@@ -57,4 +60,6 @@ def download_http_content(url, user=None):
             'Remote-User': user.username,
         })
 
-    return requests.get(url, headers=headers).content
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.content

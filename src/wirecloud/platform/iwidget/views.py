@@ -27,7 +27,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
-from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes
+from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, parse_json_request
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget
 from wirecloud.platform.models import Widget, IWidget, Tab, Workspace
 from wirecloud.platform.workspace.utils import VariableValueCacheManager, get_iwidget_data
@@ -52,12 +52,7 @@ class IWidgetCollection(Resource):
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id):
 
-        try:
-            iwidget = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
+        iwidget = parse_json_request(request)
         initial_variable_values = iwidget.get('variable_values', None)
 
         # iWidget creation
@@ -84,11 +79,7 @@ class IWidgetCollection(Resource):
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
 
-        try:
-            iwidgets = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        iwidgets = parse_json_request(request)
 
         tab = get_object_or_404(Tab, workspace__pk=workspace_id, pk=tab_id)
         if not request.user.is_superuser and tab.workspace.creator != request.user:
@@ -119,11 +110,7 @@ class IWidgetEntry(Resource):
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
-        try:
-            iwidget = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        iwidget = parse_json_request(request)
 
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
         if not request.user.is_superuser and tab.workspace.creator != request.user:
@@ -176,11 +163,8 @@ class IWidgetPreferences(Resource):
 
         iwidget = get_object_or_404(IWidget.objects.select_related('widget__resource'), pk=iwidget_id)
         iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
-        try:
-            new_values = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+
+        new_values = parse_json_request(request)
 
         for var_name in new_values:
             try:
@@ -213,11 +197,8 @@ class IWidgetProperties(Resource):
 
         iwidget = get_object_or_404(IWidget, pk=iwidget_id)
         iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
-        try:
-            new_values = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+
+        new_values = parse_json_request(request)
 
         for var_name in new_values:
             if var_name not in iwidget_info['variables']['properties']:

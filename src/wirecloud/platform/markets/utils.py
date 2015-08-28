@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 import json
 
 from django.db.models import Q
+import six
 
 from wirecloud.platform.models import Market
 from wirecloud.platform.plugins import get_plugins
@@ -77,6 +78,6 @@ def get_market_managers(user):
             user = market.user.username
 
         if options['type'] in manager_classes:
-            managers[unicode(market)] = manager_classes[options['type']](user, market.name, options)
+            managers[six.text_type(market)] = manager_classes[options['type']](user, market.name, options)
 
     return managers

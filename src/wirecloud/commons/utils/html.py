@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 
 from lxml import etree
 from lxml.html import fragment_fromstring, XHTMLParser
+import six
 from six.moves.urllib.parse import urljoin, urlparse
 
 
@@ -63,4 +64,4 @@ def clean_html(code, base_url=None):
         # Add target="_blank" to general links
         link_element.attrib['target'] = '_blank'
 
-    return (doc.text or '') + ''.join([etree.tostring(child, method='xml') for child in doc.iterchildren()])
+    return (doc.text or '') + ''.join([etree.tostring(child, method='xml').decode('utf-8') for child in doc.iterchildren()])

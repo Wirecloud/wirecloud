@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import errno
 from io import BytesIO
 import json
@@ -37,7 +39,7 @@ from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.downloader import download_http_content
-from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, consumes, produces
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
 from wirecloud.commons.utils.template import TemplateParseException, UnsupportedFeature
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
@@ -114,15 +116,11 @@ class ResourceCollection(Resource):
             market_endpoint = None
 
             if content_type == 'application/json':
-                try:
-                    data = json.loads(request.body)
-                except ValueError as e:
-                    msg = _("malformed json data: %s") % unicode(e)
-                    return build_error_response(request, 400, msg)
+                data = parse_json_request(request)
 
                 install_embedded_resources = normalize_boolean_param('install_embedded_resources', data.get('install_embedded_resources', False))
                 force_create = data.get('force_create', False)
-                templateURL = data.get('template_uri')
+                templateURL = data.get('url')
                 market_endpoint = data.get('market_endpoint', None)
 
             else:
@@ -149,7 +147,7 @@ class ResourceCollection(Resource):
                 try:
                     downloaded_file = download_http_content(templateURL)
                 except:
-                    return build_error_response(request, 409, _('Content cannot be downloaded from the marketplace'))
+                    return build_error_response(request, 409, _('Content cannot be downloaded from the specified url'))
 
             try:
                 downloaded_file = BytesIO(downloaded_file)
@@ -179,7 +177,7 @@ class ResourceCollection(Resource):
 
         except (InvalidContents, UnsupportedFeature) as e:
 
-            return build_error_response(request, 400, unicode(e))
+            return build_error_response(request, 400, e)
 
         except IntegrityError:
 

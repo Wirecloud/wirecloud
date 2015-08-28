@@ -32,7 +32,7 @@ from django.utils.translation import ugettext as _
 from lxml import etree
 from six import text_type, string_types
 
-from wirecloud.commons.exceptions import HttpBadCredentials
+from wirecloud.commons.exceptions import HttpBadCredentials, ErrorResponse
 from wirecloud.commons.utils import mimeparser
 
 
@@ -387,3 +387,12 @@ def build_sendfile_response(file_path, document_root):
     response = HttpResponse()
     response['X-Sendfile'] = smart_str(fullpath)
     return response
+
+
+def parse_json_request(request):
+
+    try:
+        return json.loads(request.body.decode('utf-8'))
+    except ValueError as e:
+        msg = _("malformed json data: %s") % e
+        raise ErrorResponse(build_error_response(request, 400, msg))

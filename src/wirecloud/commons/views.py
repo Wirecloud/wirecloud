@@ -28,7 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.searchers import get_search_engine, is_available
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, consumes, produces
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, consumes, parse_json_request, produces
 
 
 extra_formatters = {
@@ -77,11 +77,7 @@ class SwitchUserService(Service):
         if not request.user.is_superuser:
             return build_error_response(request, 403, _("You don't have permission to switch current session user"))
 
-        try:
-            user_info = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        user_info = parse_json_request(request)
 
         if "username" not in user_info:
             return build_error_response(request, 422, "Missing target user info")

@@ -272,7 +272,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
     # Process operators info
     for operator_id, operator in six.iteritems(mashup_description['wiring']['operators']):
         max_id += 1
-        new_id = unicode(max_id)
+        new_id = "%s" % max_id
         id_mapping['operator'][operator_id] = {
             'id': new_id
         }

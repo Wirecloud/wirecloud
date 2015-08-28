@@ -581,8 +581,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         except:
             pass
 
-        LiveServerTestCase.setUp.__func__(self)
-        WirecloudRemoteTestCase.setUp.__func__(self)
+        LiveServerTestCase.setUp(self)
+        WirecloudRemoteTestCase.setUp(self)
 
     def tearDown(self):
 
@@ -592,8 +592,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
             searcher.clear_cache()
         shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
-        LiveServerTestCase.tearDown.__func__(self)
-        WirecloudRemoteTestCase.tearDown.__func__(self)
+        LiveServerTestCase.tearDown(self)
+        WirecloudRemoteTestCase.tearDown(self)
 
 
 class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteTestCase):
@@ -681,7 +681,7 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
             searcher.clear_cache()
         shutil.rmtree(settings.WIRECLOUD_INDEX_DIR, ignore_errors=True)
 
-        LiveServerTestCase.tearDown.__func__(self)
+        LiveServerTestCase.tearDown(self)
 
 
 DEFAULT_BROWSER_CONF = {

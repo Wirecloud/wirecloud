@@ -31,7 +31,7 @@ from six import text_type
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.baseviews import Resource, Service
-from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, validate_url_param
+from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, parse_json_request, validate_url_param
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
@@ -68,11 +68,7 @@ class MarketCollection(Resource):
     @commit_on_http_success
     def create(self, request):
 
-        try:
-            received_data = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % e
-            return build_error_response(request, 400, msg)
+        received_data = parse_json_request(request)
 
         if 'options' not in received_data:
             return build_error_response(request, 400, _("Missing marketplace options"))
@@ -125,11 +121,7 @@ class PublishService(Service):
     @consumes(('application/json'))
     def process(self, request):
 
-        try:
-            data = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % e
-            return build_error_response(request, 400, msg)
+        data = parse_json_request(request)
 
         (resource_vendor, resource_name, resource_version) = data['resource'].split('/')
         resource = get_object_or_404(CatalogueResource, vendor=resource_vendor, short_name=resource_name, version=resource_version)

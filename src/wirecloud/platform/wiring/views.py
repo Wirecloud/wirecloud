@@ -27,7 +27,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import CacheableData
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, get_current_domain, consumes
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, get_current_domain, consumes, parse_json_request
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_operator_cache_key
 
@@ -38,11 +38,7 @@ class WiringEntry(Resource):
     @consumes(('application/json',))
     def update(self, request, workspace_id):
 
-        try:
-            wiring_status = json.loads(request.body.decode('utf-8'))
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        wiring_status = parse_json_request(request)
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if not request.user.is_superuser and workspace.creator != request.user:

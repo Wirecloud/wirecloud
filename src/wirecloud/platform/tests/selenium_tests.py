@@ -1327,7 +1327,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'mobile')
+    tags = ('wirecloud-selenium', 'wirecloud-mobile')
 
     def check_basic_workspace(self, frame_id=None):
 

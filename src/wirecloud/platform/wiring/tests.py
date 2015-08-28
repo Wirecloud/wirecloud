@@ -42,7 +42,7 @@ from wirecloud.platform.models import IWidget, Workspace
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
 __test__ = False
 
-SELENIUM_VERSION = tuple(selenium.__version__.split('.'))
+SELENIUM_VERSION = tuple([int(number) for number in selenium.__version__.split('.')])
 
 
 def selenium_supports_draganddrop(driver):

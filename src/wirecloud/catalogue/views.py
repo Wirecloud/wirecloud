@@ -47,7 +47,7 @@ from wirecloud.commons.utils.downloader import download_http_content, download_l
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import build_error_response, build_sendfile_response, consumes, produces, force_trailing_slash
+from wirecloud.commons.utils.http import build_error_response, build_sendfile_response, consumes, force_trailing_slash, parse_json_request, produces
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 
@@ -198,11 +198,7 @@ class ResourceVersionCollection(Resource):
     @consumes(('application/json',))
     def create(self, request):
 
-        try:
-            resources = json.loads(request.body.decode('utf-8'))
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        resources = parse_json_request(request)
 
         result = []
         for g in resources:

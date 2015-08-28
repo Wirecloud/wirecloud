@@ -177,7 +177,7 @@ def build_json_template_from_workspace(options, workspace, user):
         options['description'] = description + '\n' + get_workspace_description(workspace)
 
     if 'authors' not in options:
-        options['authors'] = ({'name': unicode(user)},)
+        options['authors'] = ({'name': six.text_type(user)},)
     elif isinstance(options['authors'], six.text_type):
         options['authors'] = parse_contacts_info(options['authors'])
 

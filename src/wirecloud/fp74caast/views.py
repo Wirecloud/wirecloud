@@ -18,7 +18,6 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from cStringIO import StringIO
-import json
 import zipfile
 
 from django.contrib.auth.models import User
@@ -31,7 +30,7 @@ from six import string_types
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.downloader import download_http_content
-from wirecloud.commons.utils.http import build_error_response, get_content_type
+from wirecloud.commons.utils.http import build_error_response, get_content_type, parse_json_request
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -58,11 +57,7 @@ def parse_username(tenant_id):
 @commit_on_http_success
 def add_tenant(request):
 
-    try:
-        data = json.loads(request.body)
-    except ValueError as e:
-        msg = _("malformed json data: %s") % unicode(e)
-        return build_error_response(request, 400, msg)
+    data = parse_json_request(request)
 
     id_4CaaSt = data['4CaaStID']
 
@@ -98,11 +93,7 @@ def add_tenant(request):
 @commit_on_http_success
 def remove_tenant(request):
 
-    try:
-        data = json.loads(request.body)
-    except ValueError as e:
-        msg = _("malformed json data: %s") % unicode(e)
-        return build_error_response(request, 400, msg)
+    data = parse_json_request(request)
 
     id_4CaaSt = data.get('4CaaStID')
 
@@ -131,11 +122,7 @@ def _parse_ac_request(request):
     file_contents = None
     content_type = get_content_type(request)[0]
 
-    try:
-        data = json.loads(request.body)
-    except Exception as e:
-        msg = _("malformed json data: %s") % unicode(e)
-        return build_error_response(request, 400, msg)
+    data = parse_json_request(request)
 
     if 'url' not in data:
         return build_error_response(request, 400, _('Missing widget URL'))

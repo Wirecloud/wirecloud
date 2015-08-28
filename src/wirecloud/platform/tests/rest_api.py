@@ -71,7 +71,7 @@ def check_get_requires_authentication(self, url, test_after_request=None):
 
     # Error response should be a dict
     self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     self.assertTrue(isinstance(response_data, dict))
 
     if test_after_request is not None:
@@ -97,7 +97,7 @@ def check_post_requires_authentication(self, url, data, test_after_request=None)
 
     # Error response should be a dict
     self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     self.assertTrue(isinstance(response_data, dict))
 
     if test_after_request is not None:
@@ -150,7 +150,7 @@ def check_post_bad_request_content_type(self, url):
     # Test bad json syntax
     response = self.client.post(url, 'bad content type', content_type='bad/content-type; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 415)
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     self.assertTrue(isinstance(response_data, dict))
 
 
@@ -162,7 +162,7 @@ def check_post_bad_request_syntax(self, url, username='user_with_workspaces'):
     # Test bad json syntax
     response = self.client.post(url, 'bad syntax', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 400)
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     self.assertTrue(isinstance(response_data, dict))
 
 
@@ -170,7 +170,7 @@ def check_post_bad_provided_data(self, url, data):
 
     response = self.client.post(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 400)
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     self.assertTrue(isinstance(response_data, dict))
 
 
@@ -182,7 +182,7 @@ def check_put_bad_request_content_type(self, url):
     # Test bad json syntax
     response = self.client.put(url, 'bad content type', content_type='bad/content-type; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 415)
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     self.assertTrue(isinstance(response_data, dict))
 
 
@@ -194,7 +194,7 @@ def check_put_bad_request_syntax(self, url):
     # Test bad json syntax
     response = self.client.put(url, 'bad syntax', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 400)
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     self.assertTrue(isinstance(response_data, dict))
 
 
@@ -206,7 +206,7 @@ def check_put_requires_authentication(self, url, data, test_after_request=None):
 
     # Error response should be a dict
     self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     self.assertTrue(isinstance(response_data, dict))
 
     if test_after_request is not None:
@@ -256,7 +256,7 @@ def check_delete_requires_authentication(self, url, test_after_request=None):
 
     # Error response should be a dict
     self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     self.assertTrue(isinstance(response_data, dict))
 
     if test_after_request is not None:
@@ -313,7 +313,7 @@ def check_cache_is_purged(self, workspace, change_function, current_etag=None, i
     if not inverse:
         response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_IF_NONE_MATCH=current_etag)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        json.loads(response.content)
+        json.loads(response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
 
         new_etag = response['ETag']
@@ -344,7 +344,7 @@ def prepare_missing_dependencies_test():
 def check_missing_dependencies_respose(testcase, response):
 
     # Check basic response structure
-    response_data = json.loads(response.content)
+    response_data = json.loads(response.content.decode('utf-8'))
     testcase.assertTrue(isinstance(response_data, dict))
     testcase.assertTrue('description' in response_data)
     testcase.assertTrue('details' in response_data)
@@ -376,7 +376,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_workspace_collection_get(self):
@@ -388,7 +388,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, list))
         self.assertTrue(isinstance(response_data[0], dict))
 
@@ -421,7 +421,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 201)
 
         # Check basic response structure
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
         self.assertEqual(response_data['name'], 'test')
@@ -450,7 +450,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['creator'], 'emptyuser')
         self.assertEqual(response_data['name'], 'Public Workspace')
         public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
@@ -471,7 +471,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['creator'], 'user_with_workspaces')
         self.assertEqual(response_data['name'], 'Pending Events 2')
         public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
@@ -536,7 +536,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
         self.assertNotEqual(response_data['name'], 'ExistingWorkspace')
@@ -613,7 +613,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 201)
 
         # Check basic response structure
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
         self.assertEqual(response_data['name'], 'Test Mashup')
@@ -643,7 +643,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 201)
 
         # Check basic response structure
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
         self.assertEqual(response_data['name'], 'test')
@@ -744,7 +744,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 422)
 
         # Check basic response structure
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('description' in response_data)
         self.assertTrue('details' in response_data)
@@ -770,7 +770,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 422)
 
         # Check basic response structure
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('description' in response_data)
 
@@ -800,7 +800,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Response should be a dict
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue('id' in response_data)
         self.assertFalse(response_data['shared'])
@@ -834,7 +834,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Response should be a dict
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue('id' in response_data)
         self.assertTrue(response_data['shared'])
         self.assertEqual(response_data['name'], 'Public Workspace')
@@ -851,7 +851,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        json.loads(response.content)
+        json.loads(response.content.decode('utf-8'))
         etag = response['ETag']
 
         # There are no changes in the workspaces, so next requests so return a 304 error code
@@ -909,7 +909,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Make the request
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue(response_data["Wirecloud/TestOperator/1.0"]["js_files"][0].startswith('http'))
 
@@ -923,7 +923,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Make the request
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertEqual(response_data["Wirecloud/TestOperator/1.0"]["js_files"][0], "js/main.js")
 
@@ -948,7 +948,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Error response should be a dict
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
         # Workspace wiring status should not have change
@@ -1038,7 +1038,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(response.status_code, 201)
 
             # Check basic response structure
-            response_data = json.loads(response.content)
+            response_data = json.loads(response.content.decode('utf-8'))
             self.assertTrue(isinstance(response_data, dict))
             self.assertEqual(response_data['name'], 'rest_api_test')
 
@@ -1195,7 +1195,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Make the request
         response = self.client.delete(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 403)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
         # Tab should not be removed
@@ -1276,7 +1276,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 200)
-            response_data = json.loads(response.content)
+            response_data = json.loads(response.content.decode('utf-8'))
             self.assertTrue(isinstance(response_data, dict))
         check_cache_is_purged(self, 1, add_iwidget_to_workspace)
 
@@ -1293,7 +1293,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_iwidget_collection_post_creation_from_nonavailable_widget(self):
@@ -1315,7 +1315,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_iwidget_collection_post_creation_missing_required_widget_parameter(self):
@@ -1329,7 +1329,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {}
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_iwidget_collection_post_bad_request_content_type(self):
@@ -1387,7 +1387,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 200)
-        self.assertIn("cached hello world!", response.content)
+        self.assertIn("cached hello world!", response.content.decode('utf-8'))
 
     def test_widget_code_absolute_url(self):
 
@@ -1407,7 +1407,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 200)
-        self.assertIn("absolute hello world!", response.content)
+        self.assertIn("absolute hello world!", response.content.decode('utf-8'))
 
     def test_widget_code_entry_get_bad_encoding(self):
 
@@ -1430,7 +1430,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 502)
-        self.assertIn('Widget code was not encoded using the specified charset (utf-8', response.content)
+        self.assertIn('Widget code was not encoded using the specified charset (utf-8', response.content.decode('utf-8'))
 
     def test_widget_code_entry_get_bad_encoding_noncacheable(self):
 
@@ -1458,7 +1458,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 502)
-        self.assertIn('Widget code was not encoded using the specified charset (utf-8', response.content)
+        self.assertIn('Widget code was not encoded using the specified charset (utf-8', response.content.decode('utf-8'))
 
     def test_widget_code_entry_get_html_missing(self):
 
@@ -1470,7 +1470,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 502)
-        self.assertIn('HTML code is not accessible', response.content)
+        self.assertIn('HTML code is not accessible', response.content.decode('utf-8'))
 
     def test_widget_code_entry_get_invalid_html(self):
 
@@ -1481,7 +1481,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         base_dir = localcatalogue.wgt_deployer.get_base_dir(**widget_id)
         os.makedirs(base_dir)
         with open(os.path.join(base_dir, 'test.html'), 'wb') as f:
-            f.write('<html><div></div</html>')
+            f.write(b'<html><div></div</html>')
         resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
         json_description = json.loads(resource.json_description)
         json_description['contents']['contenttype'] = 'application/xhtml+xml'
@@ -1493,7 +1493,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 502)
-        self.assertIn('Error processing widget code', response.content)
+        self.assertIn('Error processing widget code', response.content.decode('utf-8'))
 
     def test_iwidget_entry_post_requires_authentication(self):
 
@@ -1533,7 +1533,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-            self.assertEqual(response.content, '')
+            self.assertEqual(response.content.decode('utf-8'), '')
 
             # Check that the iwidget name has been changed
             iwidget = IWidget.objects.get(pk=2)
@@ -1554,7 +1554,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-            self.assertEqual(response.content, '')
+            self.assertEqual(response.content.decode('utf-8'), '')
 
             # Check that the iwidget name has been changed
             iwidget = IWidget.objects.get(pk=2)
@@ -1576,7 +1576,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-            self.assertEqual(response.content, '')
+            self.assertEqual(response.content.decode('utf-8'), '')
 
             # Check that the iwidget name has been changed
             iwidget = IWidget.objects.get(pk=2)
@@ -1596,7 +1596,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_iwidget_entry_post_upgrade_operator(self):
@@ -1612,7 +1612,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def check_iwidget_entry_post_invalid_position_value(self, field, value, error_code):
@@ -1693,7 +1693,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-            self.assertEqual(response.content, '')
+            self.assertEqual(response.content.decode('utf-8'), '')
 
             # IWidget preferences should be updated
             variables = IWidget.objects.get(pk=2).variables
@@ -1724,7 +1724,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_iwidget_preferences_entry_post_readonly_preference(self):
@@ -1746,7 +1746,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 403)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def _todo_create_property(self):
@@ -1801,7 +1801,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-            self.assertEqual(response.content, '')
+            self.assertEqual(response.content.decode('utf-8'), '')
 
             # IWidget properties should be updated
             variables = IWidget.objects.get(pk=2).variables
@@ -1831,7 +1831,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_iwidget_entry_delete_requires_authentication(self):
@@ -1860,7 +1860,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         def delete_iwidget_from_workspace():
             response = self.client.delete(url, HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-            self.assertEqual(response.content, '')
+            self.assertEqual(response.content.decode('utf-8'), '')
 
             # IWidget should be deleted
             self.assertRaises(IWidget.DoesNotExist, IWidget.objects.get, pk=2)
@@ -1876,7 +1876,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Make the request
         response = self.client.delete(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 403)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
         # IWidget should not be deleted
@@ -1902,7 +1902,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         for resource_id in response_data:
             resource = response_data[resource_id]
@@ -1928,7 +1928,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         for resource_id in response_data:
             resource = response_data[resource_id]
@@ -1956,7 +1956,7 @@ class ResourceManagementAPI(WirecloudTestCase):
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertIn('type', response_data)
         self.assertEqual(response_data['type'], 'widget')
@@ -1988,7 +1988,7 @@ class ResourceManagementAPI(WirecloudTestCase):
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 500)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_resource_collection_post_widget_invalid_html_encoding(self):
@@ -2002,7 +2002,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Invalid_HTML_Encoding_1.0.wgt'), 'rb') as f:
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_resource_collection_post_resource_missing_config_xml(self):
@@ -2016,7 +2016,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Missing_Config_1.0.wgt'), 'rb') as f:
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_resource_collection_post_resource_missing_contents_file(self):
@@ -2030,7 +2030,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Missing_HTML_1.0.wgt'), 'rb') as f:
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_resource_collection_post_resource_invalid_config_xml(self):
@@ -2044,7 +2044,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Invalid_Config_1.0.wgt'), 'rb') as f:
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertEqual(response_data['description'], 'Error parsing config.xml descriptor file: No valid parser found')
 
@@ -2059,7 +2059,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Missing_Features_1.0.wgt'), 'rb') as f:
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertIn('inexistentfeature', response_data['description'])
 
@@ -2075,7 +2075,7 @@ class ResourceManagementAPI(WirecloudTestCase):
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertIn('type', response_data)
         self.assertEqual(response_data['type'], 'operator')
         self.assertIn('vendor', response_data)
@@ -2097,7 +2097,7 @@ class ResourceManagementAPI(WirecloudTestCase):
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertIn('type', response_data)
         self.assertEqual(response_data['type'], 'mashup')
         self.assertIn('vendor', response_data)
@@ -2130,6 +2130,31 @@ class ResourceManagementAPI(WirecloudTestCase):
             response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
+    def test_resource_collection_post_using_resource_url(self):
+
+        url = reverse('wirecloud.resource_collection')
+
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            self.network._servers['http']['example.com'].add_response('GET', '/widget.wgt', {'content': f.read()})
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        data = {
+            'url': 'http://example.com/widget.wgt'
+        }
+        response = self.client.post(url, json.dumps(data), content_type="application/json", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertIn('type', response_data)
+        self.assertIn(response_data['type'], CatalogueResource.RESOURCE_TYPES)
+        self.assertIn('vendor', response_data)
+        self.assertIn('name', response_data)
+        self.assertIn('version', response_data)
+
     def test_resource_collection_post_using_octet_stream(self):
 
         url = reverse('wirecloud.resource_collection')
@@ -2142,7 +2167,7 @@ class ResourceManagementAPI(WirecloudTestCase):
             response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertIn('type', response_data)
         self.assertIn(response_data['type'], CatalogueResource.RESOURCE_TYPES)
@@ -2256,7 +2281,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, list))
 
     def test_iwidget_entry_get_requires_authentication(self):
@@ -2273,7 +2298,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_resource_description_entry_get(self):
@@ -2288,7 +2313,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(response_data["contents"]["src"].startswith('http'))
 
     def test_resource_description_entry_get_no_process_urls(self):
@@ -2303,7 +2328,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertFalse(response_data["contents"]["src"].startswith('http'))
 
     @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, deploy_only=True)
@@ -2319,7 +2344,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(set(response_data['wgt_files']), set(['images/catalogue_iphone.png', 'images/catalogue.png', 'test.html', 'config.xml', 'DESCRIPTION.md', 'CHANGELOG.md', 'doc/index.md']))
 
     @uses_extra_resources(('Wirecloud_TestOperator_1.0.zip',), shared=True, deploy_only=True)
@@ -2335,7 +2360,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(set(response_data['wgt_files']), set(['images/catalogue_iphone.png', 'images/catalogue.png', 'js/main.js', 'config.xml']))
 
     def test_market_collection_get_requires_authentication(self):
@@ -2352,7 +2377,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_market_collection_post_requires_authentication(self):
@@ -2436,7 +2461,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        json.loads(response.content)
+        json.loads(response.content.decode('utf-8'))
 
     def test_market_collection_post_requires_absolute_url(self):
 
@@ -2528,7 +2553,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = {'resource': 'Wirecloud/TestOperator/1.0', 'marketplaces': [{'market': 'origin'}]}
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 502)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertIn('details', response_data)
 
@@ -2546,7 +2571,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertEqual(response_data['username']['value'], 'user_with_workspaces')
 
@@ -2556,7 +2581,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertEqual(response_data['username']['value'], 'anonymous')
 
@@ -2569,7 +2594,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_platform_preference_collection_get_allows_anonymous_requests(self):
@@ -2578,7 +2603,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_platform_preference_collection_post_requires_authentication(self):
@@ -2604,7 +2629,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.content, '')
+        self.assertEqual(response.content.decode('utf-8'), '')
 
     def test_platform_preference_collection_bad_request_content_type(self):
 
@@ -2623,7 +2648,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, list))
         self.assertEqual(len(response_data), 1)
         self.assertEqual(response_data[0]['name'], 'Public Workspace')
@@ -2915,7 +2940,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_workspace_preference_collection_post_requires_authentication(self):
@@ -2954,7 +2979,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-            self.assertEqual(response.content, '')
+            self.assertEqual(response.content.decode('utf-8'), '')
         check_cache_is_purged(self, 2, update_workspace_preferences)
 
     def test_workspace_preference_collection_post_withoutchanges(self):
@@ -2975,7 +3000,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-            self.assertEqual(response.content, '')
+            self.assertEqual(response.content.decode('utf-8'), '')
         check_cache_is_purged(self, 2, update_workspace_preferences, inverse=True)
 
     def test_workspace_entry_preference_collection_post_bad_request_content_type(self):
@@ -3007,7 +3032,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
     def test_tab_preference_collection_post_requires_authentication(self):
@@ -3044,7 +3069,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
-            self.assertEqual(response.content, '')
+            self.assertEqual(response.content.decode('utf-8'), '')
         check_cache_is_purged(self, 2, update_workspace_tab_preferences)
 
     def test_tab_preference_collection_post_bad_request_content_type(self):
@@ -3085,7 +3110,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['vendor'], 'Wirecloud')
         self.assertEqual(response_data['name'], 'test-published-mashup')
         self.assertEqual(response_data['title'], 'Mashup (Rest API Test)')
@@ -3141,7 +3166,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['vendor'], 'Wirecloud')
         self.assertEqual(response_data['name'], 'test-published-mashup')
         self.assertEqual(response_data['title'], 'Mashup (Rest API Test)')
@@ -3212,7 +3237,7 @@ class AdministrationAPI(WirecloudTestCase):
         url = reverse('wirecloud.platform_context_collection')
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertEqual(response_data['username']['value'], user)
 

@@ -19,7 +19,7 @@
 
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseForbidden
 
-from wirecloud.commons.exceptions import Http403, HttpBadCredentials
+from wirecloud.commons.exceptions import Http403, HttpBadCredentials, ErrorResponse
 from wirecloud.commons.utils.http import build_auth_error_response
 
 
@@ -55,3 +55,5 @@ class Resource(object):
             return HttpResponseForbidden()
         except HttpBadCredentials:
             return build_auth_error_response(request, 'Bad credentials')
+        except ErrorResponse as e:
+            return e.response

@@ -35,8 +35,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.db import save_alternative
-from wirecloud.commons.utils.downloader import download_http_content
-from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, consumes, produces
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
 from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
@@ -94,11 +93,7 @@ class WorkspaceCollection(Resource):
     @commit_on_http_success
     def create(self, request):
 
-        try:
-            data = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        data = parse_json_request(request)
 
         workspace_name = data.get('name', '').strip()
         workspace_id = data.get('workspace', '')
@@ -108,7 +103,7 @@ class WorkspaceCollection(Resource):
             allow_renaming = normalize_boolean_param('allow_renaming', data.get('allow_renaming', False))
             dry_run = normalize_boolean_param('dry_run', data.get('dry_run', False))
         except (TypeError, ValueError) as e:
-            return build_error_response(request, 422, unicode(e))
+            return build_error_response(request, 422, e)
 
         if mashup_id == '' and workspace_id == '' and workspace_name == '':
             return build_error_response(request, 422, _('Missing name parameter'))
@@ -170,7 +165,7 @@ class WorkspaceCollection(Resource):
                 details = {
                     'missingDependencies': e.missing_dependencies,
                 }
-                return build_error_response(request, 422, unicode(e), details=details)
+                return build_error_response(request, 422, e, details=details)
 
             if dry_run:
                 return HttpResponse(status=204)
@@ -212,11 +207,7 @@ class WorkspaceEntry(Resource):
     @commit_on_http_success
     def create(self, request, workspace_id):
 
-        try:
-            ts = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        ts = parse_json_request(request)
 
         workspace = Workspace.objects.get(pk=workspace_id)
         if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
@@ -272,11 +263,7 @@ class TabCollection(Resource):
     def create(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
-        try:
-            data = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        data = parse_json_request(request)
 
         if 'name' not in data:
             return build_error_response(request, 400, _('Malformed tab JSON: expecting tab name.'))
@@ -308,11 +295,7 @@ class TabOrderService(Service):
         if not (request.user.is_superuser or workspace.creator == request.user):
             return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
 
-        try:
-            order = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        order = parse_json_request(request)
 
         tabs = Tab.objects.filter(id__in=order)
 
@@ -338,11 +321,7 @@ class TabEntry(Resource):
         if user_workspace.manager != '':
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
-        try:
-            data = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        data = parse_json_request(request)
 
         if 'visible' in data:
             visible = data['visible']
@@ -409,11 +388,7 @@ class MashupMergeService(Service):
     @commit_on_http_success
     def process(self, request, to_ws_id):
 
-        try:
-            data = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        data = parse_json_request(request)
 
         mashup_id = data.get('mashup', '')
         workspace_id = data.get('workspace', '')
@@ -467,7 +442,7 @@ class MashupMergeService(Service):
             details = {
                 'missingDependencies': e.missing_dependencies,
             }
-            return build_error_response(request, 422, unicode(e), details=details)
+            return build_error_response(request, 422, e, details=details)
 
         fillWorkspaceUsingTemplate(to_ws, template)
         return HttpResponse(status=204)
@@ -496,7 +471,7 @@ class WorkspacePublisherEntry(Resource):
         image_file = None
         smartphoneimage_file = None
         if content_type == 'application/json':
-            received_json = request.body
+            received_json = request.body.decode('utf-8')
         else:
             received_json = request.POST['json']
             image_file = request.FILES.get('image', None)
@@ -505,7 +480,7 @@ class WorkspacePublisherEntry(Resource):
         try:
             options = json.loads(received_json)
         except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
+            msg = _("malformed json data: %s") % e
             return build_error_response(request, 400, msg)
 
         missing_fields = check_json_fields(options, ('name', 'vendor', 'version'))

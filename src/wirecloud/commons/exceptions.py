@@ -24,3 +24,9 @@ class Http403(Exception):
 
 class HttpBadCredentials(Exception):
     pass
+
+
+class ErrorResponse(Exception):
+
+    def __init__(self, response):
+        self.response = response

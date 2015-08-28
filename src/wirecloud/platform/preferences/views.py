@@ -29,7 +29,7 @@ from django.utils.translation import gettext_lazy as _
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes
+from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, parse_json_request
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.plugins import get_tab_preferences, get_workspace_preferences
 from wirecloud.platform.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
@@ -49,7 +49,7 @@ def update_preferences(user, preferences_json):
         else:
             preference = PlatformPreference(user=user, name=name)
 
-        preference.value = unicode(preference_data['value'])
+        preference.value = preference_data['value']
         preference.save()
 
 
@@ -112,7 +112,7 @@ def update_tab_preferences(tab, preferences_json):
             preference = TabPreference(tab=tab, name=name)
 
         if 'value' in preference_data:
-            preference.value = unicode(preference_data['value'])
+            preference.value = preference_data['value']
 
         if 'inherit' in preference_data:
             preference.inherit = preference_data['inherit']
@@ -201,12 +201,8 @@ class PlatformPreferencesCollection(Resource):
     @consumes(('application/json',))
     @commit_on_http_success
     def create(self, request):
-        try:
-            preferences_json = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
 
+        preferences_json = parse_json_request(request)
         update_preferences(request.user, preferences_json)
 
         if 'language' in preferences_json:
@@ -240,11 +236,7 @@ class WorkspacePreferencesCollection(Resource):
         if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
-        try:
-            preferences_json = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        preferences_json = parse_json_request(request)
 
         if 'public' in preferences_json:
             workspace.public = preferences_json['public']['value']
@@ -281,11 +273,7 @@ class TabPreferencesCollection(Resource):
         if not (request.user.is_superuser or tab.workspace.users.filter(pk=request.user.pk).exists()):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
-        try:
-            preferences_json = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
+        preferences_json = parse_json_request(request)
 
         update_tab_preferences(tab, preferences_json)
         return HttpResponse(status=204)
