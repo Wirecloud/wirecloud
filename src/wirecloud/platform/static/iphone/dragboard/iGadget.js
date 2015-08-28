@@ -46,7 +46,7 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},
         'widget': {get: function () {return this.internal_iwidget.widget;}},
-        'name': {get: function () {return this.internal_iwidget.name;}},
+        'title': {get: function () {return this.internal_iwidget.title;}},
         'alternative': {value: alternative}
     });
     this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;

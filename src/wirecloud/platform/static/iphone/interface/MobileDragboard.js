@@ -55,5 +55,5 @@ MobileDragboard.prototype.show = function (iwidget_alternative) {
 };
 
 MobileDragboard.prototype._updateIWidgetInfo = function (iwidget) {
-    this.toolbar.setTitle(iwidget.name);
+    this.toolbar.setTitle(iwidget.title);
 };

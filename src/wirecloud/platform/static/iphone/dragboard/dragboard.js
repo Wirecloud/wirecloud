@@ -73,7 +73,7 @@
 
             // Create instance model
             container = opManager.globalDragboard.newIWidgetContainer();
-            iwidget = new IWidget(widget, curIWidget.id, curIWidget.code, curIWidget.name, this, container, curIWidget);
+            iwidget = new IWidget(widget, curIWidget.id, curIWidget.code, curIWidget.title, this, container, curIWidget);
             this.iWidgets[curIWidget.id] = iwidget;
 
             if (curIWidget.code >= this.currentCode) {

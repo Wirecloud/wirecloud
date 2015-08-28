@@ -86,7 +86,7 @@
 
         var widgetinfo = {
             id: resource.id + '/' + counter++,
-            name: widget_title,
+            title: widget_title,
             volatile: true,
             permissions: options.permissions,
             properties: options.properties,

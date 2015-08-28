@@ -65,7 +65,7 @@ function Tab(tabInfo, workspace, index) {
             icon.setAttribute('src', iWidgets[i].widget.getIPhoneImageURI());
             iWidgetElement.appendChild(icon);
 
-            iWidgetElement.appendChild(document.createTextNode(iWidgets[i].name));
+            iWidgetElement.appendChild(document.createTextNode(iWidgets[i].title));
             iWidgetElement.addEventListener('click', opManager.showDragboard.bind(opManager, iWidgets[i].id), false);
             tabContent.appendChild(iWidgetElement);
         }
