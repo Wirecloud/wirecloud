@@ -52,7 +52,7 @@ def selenium_supports_draganddrop(driver):
 class WiringTestCase(WirecloudTestCase):
 
     fixtures = ('test_data',)
-    tags = ('wirecloud-wiring',)
+    tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium')
 
     def setUp(self):
 
@@ -65,7 +65,7 @@ class WiringTestCase(WirecloudTestCase):
         }
 
         self.workspace_id = 1
-        Workspace.objects.filter(id=self.workspace_id).update(wiringStatus=json.dumps(self.empty_wiring, ensure_ascii=False))
+        Workspace.objects.filter(id=self.workspace_id).update(wiringStatus=self.empty_wiring)
         transaction.commit()
 
         self.wiring_url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': self.workspace_id})
@@ -95,12 +95,11 @@ class WiringTestCase(WirecloudTestCase):
 
         self.assertEqual(response.status_code, 204)
         workspace = Workspace.objects.get(id=self.workspace_id)
-        workspace_wiring = json.loads(workspace.wiringStatus)
-        self.assertEqual(workspace_wiring, new_wiring)
+        self.assertEqual(workspace.wiringStatus, new_wiring)
 
     def test_basic_wiring_operations_with_read_only_connections(self):
         workspace = Workspace.objects.get(id=self.workspace_id)
-        workspace.wiringStatus = json.dumps({
+        workspace.wiringStatus = {
             'operators': [],
             'connections': [
                 {
@@ -117,7 +116,7 @@ class WiringTestCase(WirecloudTestCase):
                     },
                 },
             ],
-        })
+        }
         workspace.save()
 
         client = Client()
@@ -157,13 +156,12 @@ class WiringTestCase(WirecloudTestCase):
 
         self.assertEqual(response.status_code, 204)
         workspace = Workspace.objects.get(id=self.workspace_id)
-        workspace_wiring = json.loads(workspace.wiringStatus)
-        self.assertEqual(workspace_wiring, new_wiring)
+        self.assertEqual(workspace.wiringStatus, new_wiring)
 
     def test_read_only_connections_cannot_be_deleted(self):
 
         workspace = Workspace.objects.get(id=self.workspace_id)
-        workspace.wiringStatus = json.dumps({
+        workspace.wiringStatus = {
             'operators': [],
             'connections': [
                 {
@@ -180,7 +178,7 @@ class WiringTestCase(WirecloudTestCase):
                     },
                 },
             ],
-        })
+        }
         workspace.save()
 
         client = Client()
@@ -196,7 +194,7 @@ class WiringTestCase(WirecloudTestCase):
     def test_read_only_connections_cannot_be_modified(self):
 
         workspace = Workspace.objects.get(id=self.workspace_id)
-        workspace.wiringStatus = json.dumps({
+        workspace.wiringStatus = {
             'operators': [],
             'connections': [
                 {
@@ -213,7 +211,7 @@ class WiringTestCase(WirecloudTestCase):
                     },
                 },
             ],
-        })
+        }
         workspace.save()
 
         client = Client()
@@ -243,7 +241,7 @@ class WiringTestCase(WirecloudTestCase):
     def test_iwidget_removed(self):
 
         workspace = Workspace.objects.get(id=self.workspace_id)
-        workspace.wiringStatus = json.dumps({
+        workspace.wiringStatus = {
             'operators': [],
             'connections': [
                 {
@@ -259,7 +257,7 @@ class WiringTestCase(WirecloudTestCase):
                     },
                 },
             ],
-        })
+        }
         workspace.save()
 
         client = Client()
@@ -268,15 +266,14 @@ class WiringTestCase(WirecloudTestCase):
         client.delete(url)
 
         workspace = Workspace.objects.get(id=self.workspace_id)
-        workspace_wiring = json.loads(workspace.wiringStatus)
-        self.assertEqual(workspace_wiring, self.empty_wiring)
+        self.assertEqual(workspace.wiringStatus, self.empty_wiring)
 
 
 class OperatorCodeEntryTestCase(WirecloudTestCase):
 
     XML_NORMALIZATION_RE = re.compile(r'>\s+<')
     fixtures = ('selenium_test_data',)
-    tags = ('wirecloud-wiring',)
+    tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -647,7 +644,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     def test_wiring_recovers_from_missing_visual_data(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_missing_visual_data'))
+        workspace.wiringStatus = self._read_json_fixtures('wiringstatus_missing_visual_data')
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -675,7 +672,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     def test_wiring_recovers_from_unrecoverable_data(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_unrecoverabledata'))
+        workspace.wiringStatus = self._read_json_fixtures('wiringstatus_unrecoverabledata')
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -727,7 +724,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
     def test_widget_with_visual_info_is_not_in_workspace(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_widget_missingtradeinfo'))
+        workspace.wiringStatus = self._read_json_fixtures('wiringstatus_widget_missingtradeinfo')
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -740,7 +737,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
     def test_widget_with_visualinfo_and_connections_is_not_in_workspace(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_widget_missingtradeinfo_with_connections'))
+        workspace.wiringStatus = self._read_json_fixtures('wiringstatus_widget_missingtradeinfo_with_connections')
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -752,7 +749,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
     def test_operator_uninstalled_with_tradeinfo(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo'))
+        workspace.wiringStatus = self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo')
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -774,7 +771,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
     def test_operator_uninstalled_with_tradeinfo_and_connections(self):
         workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = json.dumps(self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo_and_connections'))
+        workspace.wiringStatus = self._read_json_fixtures('wiringstatus_operatoruninstalled_with_tradeinfo_and_connections')
         workspace.save()
 
         self.login(username='user_with_workspaces')
@@ -822,13 +819,11 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
 
     def check_operator_reinstall_behaviour(self, reload):
         workspace = Workspace.objects.get(id=3)
-        parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['operators']['0']['preferences'] = {
+        workspace.wiringStatus['operators']['0']['preferences'] = {
             'prefix': {"readonly": False, "hidden": False, "value": 'test_'},
             'exception_on_event': {"readonly": False, "hidden": False, "value": 'true'},
             'test_logging': {"readonly": False, "hidden": False, "value": 'true'}
         }
-        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
         workspace.save()
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
@@ -898,9 +893,7 @@ class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
 
     def _set_connection_readonly(self, workspace_id, connection_index):
         workspace = Workspace.objects.get(id=workspace_id)
-        wiring_status = json.loads(workspace.wiringStatus)
-        wiring_status['connections'][connection_index]['readonly'] = True
-        workspace.wiringStatus = json.dumps(wiring_status)
+        workspace.wiringStatus['connections'][connection_index]['readonly'] = True
         workspace.save()
 
     def test_readonly_connection_cannot_be_deleted(self):
@@ -1116,9 +1109,7 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
 
         # Enable operator exceptions
         workspace = Workspace.objects.get(id=2)
-        parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['operators']['0']['preferences']['exception_on_event'] = {"readonly": False, "hidden": False, "value": 'true'}
-        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
+        workspace.wiringStatus['operators']['0']['preferences']['exception_on_event'] = {"readonly": False, "hidden": False, "value": 'true'}
         workspace.save()
 
         # Check exceptions
@@ -1128,10 +1119,8 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
 
         # Update wiring connections to use the not handled input endpoints
         workspace = Workspace.objects.get(id=2)
-        parsedStatus = json.loads(workspace.wiringStatus)
-        parsedStatus['connections'][0]['target']['endpoint'] = 'nothandled'
-        parsedStatus['connections'][1]['target']['endpoint'] = 'nothandled'
-        workspace.wiringStatus = json.dumps(parsedStatus, ensure_ascii=False)
+        workspace.wiringStatus['connections'][0]['target']['endpoint'] = 'nothandled'
+        workspace.wiringStatus['connections'][1]['target']['endpoint'] = 'nothandled'
         workspace.save()
 
         self.check_input_endpoint_exceptions()
@@ -1243,9 +1232,7 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
 
     def _enable_behaviour_engine_in_workspace(self, workspace_id):
         workspace = Workspace.objects.get(id=workspace_id)
-        wiring_status = json.loads(workspace.wiringStatus)
-        wiring_status['visualdescription']['behaviours'].append(self._build_simple_behaviour())
-        workspace.wiringStatus = json.dumps(wiring_status)
+        workspace.wiringStatus['visualdescription']['behaviours'].append(self._build_simple_behaviour())
         workspace.save()
 
     def test_behaviour_engine_is_disabled_by_default(self):

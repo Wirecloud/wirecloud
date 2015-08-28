@@ -70,9 +70,7 @@ class IWidget(models.Model):
     def delete(self, *args, **kwargs):
 
         # Delete IWidget from wiring
-        wiring = json.loads(self.tab.workspace.wiringStatus)
-        remove_related_iwidget_connections(wiring, self)
-        self.tab.workspace.wiringStatus = json.dumps(wiring, ensure_ascii=False)
+        remove_related_iwidget_connections(self.tab.workspace.wiringStatus, self)
         self.tab.workspace.save()  # This also invalidates the workspace cache
 
         super(IWidget, self).delete(*args, **kwargs)

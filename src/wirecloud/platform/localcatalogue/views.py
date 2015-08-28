@@ -307,8 +307,7 @@ class WorkspaceResourceCollection(Resource):
             for iwidget in tab.iwidget_set.select_related('widget__resource').all():
                 resources.add(iwidget.widget.resource)
 
-        wiring_status = json.loads(workspace.wiringStatus)
-        for operator_id, operator in six.iteritems(wiring_status['operators']):
+        for operator_id, operator in six.iteritems(workspace.wiringStatus['operators']):
             vendor, name, version = operator['name'].split('/')
             try:
                 resources.add(CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version))

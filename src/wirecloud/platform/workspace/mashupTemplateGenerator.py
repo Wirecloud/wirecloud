@@ -230,9 +230,8 @@ def build_json_template_from_workspace(options, workspace, user):
 
     # wiring conections and operators
     readOnlyConnectables = options.get('readOnlyConnectables', False)
-    try:
-        wiring_status = json.loads(workspace.wiringStatus)
-    except:
+    wiring_status = workspace.wiringStatus
+    if len(wiring_status) == 0:
         wiring_status = get_wiring_skeleton()
 
     # Set the wiring status' version

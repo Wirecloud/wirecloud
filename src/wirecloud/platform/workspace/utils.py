@@ -465,7 +465,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
         tab['iwidgets'] = iwidget_data
 
-    data_ret['wiring'] = json.loads(workspaceDAO.wiringStatus)
+    data_ret['wiring'] = workspaceDAO.wiringStatus
     for forced_operator_id, forced_preferences in six.iteritems(forced_values['ioperator']):
         for forced_pref_name, forced_preference in six.iteritems(forced_preferences):
             data_ret['wiring']['operators'][forced_operator_id]['preferences'][forced_pref_name]['value'] = forced_preference['value']

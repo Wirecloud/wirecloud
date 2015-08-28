@@ -260,14 +260,12 @@ def fillWorkspaceUsingTemplate(workspace, template):
             }
 
     # wiring
-    if workspace.wiringStatus != '':
-        workspace_wiring_status = json.loads(workspace.wiringStatus)
-    else:
-        workspace_wiring_status = get_wiring_skeleton()
+    if len(workspace.wiringStatus) == 0:
+        workspace.wiringStatus = get_wiring_skeleton()
 
     max_id = 0
 
-    for id_ in workspace_wiring_status['operators'].keys():
+    for id_ in workspace.wiringStatus['operators'].keys():
         if int(id_) > max_id:
             max_id = int(id_)
 
@@ -278,7 +276,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         id_mapping['operator'][operator_id] = {
             'id': new_id
         }
-        workspace_wiring_status['operators'][new_id] = {
+        workspace.wiringStatus['operators'][new_id] = {
             'id': new_id,
             'name': operator['name'],
             'preferences': operator['preferences'],
@@ -307,7 +305,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         target_mapping[old_target_name] = get_endpoint_name(connection['target'])
 
     # Add new connections
-    workspace_wiring_status['connections'] += mashup_description['wiring']['connections']
+    workspace.wiringStatus['connections'] += mashup_description['wiring']['connections']
 
     # Merging visual description...
 
@@ -320,23 +318,20 @@ def fillWorkspaceUsingTemplate(workspace, template):
             _remap_component_ids(id_mapping, behaviour['components'])
             _remap_connection_endpoints(source_mapping, target_mapping, behaviour)
 
-    if len(workspace_wiring_status['visualdescription']['behaviours']) != 0 or len(mashup_description['wiring']['visualdescription']['behaviours']) != 0:
-        if len(workspace_wiring_status['visualdescription']['behaviours']) == 0 and not is_empty_wiring(workspace_wiring_status['visualdescription']):
+    if len(workspace.wiringStatus['visualdescription']['behaviours']) != 0 or len(mashup_description['wiring']['visualdescription']['behaviours']) != 0:
+        if len(workspace.wiringStatus['visualdescription']['behaviours']) == 0 and not is_empty_wiring(workspace.wiringStatus['visualdescription']):
             # *TODO* flag to check if the user really want to merge both workspaces.
-            _create_new_behaviour(workspace_wiring_status['visualdescription'], _("Original wiring"), _("This is the wiring description of the original workspace"))
+            _create_new_behaviour(workspace.wiringStatus['visualdescription'], _("Original wiring"), _("This is the wiring description of the original workspace"))
 
         if len(mashup_description['wiring']['visualdescription']['behaviours']) == 0:
             _create_new_behaviour(mashup_description['wiring']['visualdescription'], _("Merged wiring"), _("This is the wiring descriptoin of the merged mashup."))
 
-        workspace_wiring_status['visualdescription']['behaviours'] += mashup_description['wiring']['visualdescription']['behaviours']
+        workspace.wiringStatus['visualdescription']['behaviours'] += mashup_description['wiring']['visualdescription']['behaviours']
 
     # Merge global behaviour components and connections
-    workspace_wiring_status['visualdescription']['components']['operator'].update(mashup_description['wiring']['visualdescription']['components']['operator'])
-    workspace_wiring_status['visualdescription']['components']['widget'].update(mashup_description['wiring']['visualdescription']['components']['widget'])
-    workspace_wiring_status['visualdescription']['connections'] += mashup_description['wiring']['visualdescription']['connections']
-
-    # save new wiring status
-    workspace.wiringStatus = json.dumps(workspace_wiring_status)
+    workspace.wiringStatus['visualdescription']['components']['operator'].update(mashup_description['wiring']['visualdescription']['components']['operator'])
+    workspace.wiringStatus['visualdescription']['components']['widget'].update(mashup_description['wiring']['visualdescription']['components']['widget'])
+    workspace.wiringStatus['visualdescription']['connections'] += mashup_description['wiring']['visualdescription']['connections']
 
     # Forced values
     if workspace.forcedValues is not None and workspace.forcedValues != '':

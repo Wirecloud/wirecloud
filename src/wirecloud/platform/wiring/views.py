@@ -38,9 +38,8 @@ class WiringEntry(Resource):
     @consumes(('application/json',))
     def update(self, request, workspace_id):
 
-        wiring_status_string = request.body
         try:
-            wiring_status = json.loads(wiring_status_string)
+            wiring_status = json.loads(request.body.decode('utf-8'))
         except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -49,7 +48,7 @@ class WiringEntry(Resource):
         if not request.user.is_superuser and workspace.creator != request.user:
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
-        old_wiring_status = json.loads(workspace.wiringStatus)
+        old_wiring_status = workspace.wiringStatus
         old_read_only_connections = []
         for connection in old_wiring_status['connections']:
             if connection.get('readonly', False):
@@ -67,7 +66,7 @@ class WiringEntry(Resource):
             if connection not in read_only_connections:
                 return build_error_response(request, 403, _('You are not allowed to remove read only connections'))
 
-        workspace.wiringStatus = wiring_status_string
+        workspace.wiringStatus = wiring_status
         workspace.save()
 
         return HttpResponse(status=204)

@@ -936,7 +936,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
         workspace = Workspace.objects.get(id=1)
-        old_wiring_status = json.loads(workspace.wiringStatus)
+        old_wiring_status = workspace.wiringStatus
 
         data = json.dumps({
             'operators': [{'name': 'Operator1'}],
@@ -953,8 +953,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Workspace wiring status should not have change
         workspace = Workspace.objects.get(id=1)
-        wiring_status = json.loads(workspace.wiringStatus)
-        self.assertEqual(wiring_status, old_wiring_status)
+        self.assertEqual(workspace.wiringStatus, old_wiring_status)
 
         # Check using Accept: text/html
         response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='text/html')
@@ -992,8 +991,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
             # Workspace wiring status should have change
             workspace = Workspace.objects.get(id=1)
-            wiring_status = json.loads(workspace.wiringStatus)
-            self.assertEqual(wiring_status, new_wiring_status)
+            self.assertEqual(workspace.wiringStatus, new_wiring_status)
         check_cache_is_purged(self, 1, update_workspace_wiring)
 
     def test_workspace_wiring_entry_put_bad_request_syntax(self):

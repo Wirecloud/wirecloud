@@ -57,9 +57,7 @@ def createEmptyWorkspace(workspaceName, user, allow_renaming=False):
         # there isn't yet an active workspace
         active = True
 
-    empty_wiring = json.dumps(get_wiring_skeleton())
-
-    workspace = Workspace(name=workspaceName, creator=user, wiringStatus=empty_wiring)
+    workspace = Workspace(name=workspaceName, creator=user, wiringStatus=get_wiring_skeleton())
     if allow_renaming is True:
         save_alternative(Workspace, 'name', workspace)
     else:

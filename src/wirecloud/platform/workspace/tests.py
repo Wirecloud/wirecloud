@@ -657,10 +657,8 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     def check_basic_workspace_structure(self, workspace):
 
-        wiring_status = json.loads(workspace.wiringStatus)
-
-        self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
+        self.assertEqual(len(workspace.wiringStatus['connections']), 1)
+        self.assertEqual(workspace.wiringStatus['connections'][0]['readonly'], False)
 
         workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         self.assertEqual(workspace.name, 'Test Mashup')
@@ -704,16 +702,14 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     def check_workspace_structure_with_old_mashup_wiring(self, workspace):
 
-        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(workspace.wiringStatus['version'], '2.0')
 
-        self.assertEqual(wiring_status['version'], '2.0')
+        self.assertEqual(len(workspace.wiringStatus['connections']), 2)
+        self.assertEqual(workspace.wiringStatus['connections'][0]['readonly'], False)
+        self.assertEqual(workspace.wiringStatus['connections'][1]['readonly'], False)
 
-        self.assertEqual(len(wiring_status['connections']), 2)
-        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
-        self.assertEqual(wiring_status['connections'][1]['readonly'], False)
-
-        self.assertEqual(set(wiring_status['visualdescription']['components']['operator']), {'1'})
-        self.assertEqual(set(wiring_status['visualdescription']['components']['widget']), {'1', '2'})
+        self.assertEqual(set(workspace.wiringStatus['visualdescription']['components']['operator']), {'1'})
+        self.assertEqual(set(workspace.wiringStatus['visualdescription']['components']['widget']), {'1', '2'})
 
     def check_workspace_with_params(self, workspace):
 
@@ -848,25 +844,22 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         template = self.read_template('wt2.old.xml')
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
-        wiring_status = json.loads(workspace.wiringStatus)
-        self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
+        self.assertEqual(len(workspace.wiringStatus['connections']), 1)
+        self.assertEqual(workspace.wiringStatus['connections'][0]['readonly'], True)
 
     def test_blocked_connections(self):
         template = self.read_template('wt2.xml')
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
-        wiring_status = json.loads(workspace.wiringStatus)
-        self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
+        self.assertEqual(len(workspace.wiringStatus['connections']), 1)
+        self.assertEqual(workspace.wiringStatus['connections'][0]['readonly'], True)
 
     def test_blocked_connections_rdf(self):
         template = self.read_template('wt2.rdf')
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
-        wiring_status = json.loads(workspace.wiringStatus)
-        self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
+        self.assertEqual(len(workspace.wiringStatus['connections']), 1)
+        self.assertEqual(workspace.wiringStatus['connections'][0]['readonly'], True)
 
     def check_complex_workspace_data(self, data):
 

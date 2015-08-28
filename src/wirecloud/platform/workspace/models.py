@@ -29,6 +29,8 @@ from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
+from wirecloud.commons.fields import JSONField
+
 
 @python_2_unicode_compatible
 class Workspace(models.Model):
@@ -44,7 +46,7 @@ class Workspace(models.Model):
     description = models.TextField(_('Description'), max_length=140, blank=True)
     longdescription = models.TextField(_('Long description'), blank=True)
     forcedValues = models.TextField(blank=True)
-    wiringStatus = models.TextField(blank=True)
+    wiringStatus = JSONField(blank=True)
 
     __original_public = False
 
