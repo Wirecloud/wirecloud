@@ -31,7 +31,7 @@
         this.breadcrum = document.getElementById('wirecloud_breadcrum');
         this.oil_header = this.wrapperElement.querySelector('.fiware-header nav.collapse');
 
-        this.backButton = new StyledElements.Button({'class': 'btn-large', 'iconClass': 'icon-caret-left'});
+        this.backButton = new StyledElements.Button({'class': 'btn-large btn-back', 'iconClass': 'icon-caret-left'});
         this.backButton.addEventListener('click', function () {
             this.currentView.goUp();
         }.bind(this));
