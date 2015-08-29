@@ -37,7 +37,7 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
 
                 return json.loads(value)
             except Exception as err:
-                raise ValidationError(str(err))
+                raise ValidationError(six.text_type(err))
         else:
             return value
 
@@ -49,14 +49,14 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
             try:
                 json.loads(value)
             except Exception as err:
-                raise ValidationError(str(err))
+                raise ValidationError(six.text_type(err))
 
     def get_prep_value(self, value):
         """Convert value to JSON string before save"""
         try:
             return json.dumps(value)
         except Exception as err:
-            raise ValidationError(str(err))
+            raise ValidationError(six.text_type(err))
 
     def value_to_string(self, obj):
         """Return value from object converted to string properly"""

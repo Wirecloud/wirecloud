@@ -85,7 +85,7 @@ def encrypt_value(value):
     cipher = AES.new(settings.SECRET_KEY[:32])
     json_value = json.dumps(value, ensure_ascii=False).encode('utf8')
     padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * b' '
-    return base64.b64encode(cipher.encrypt(padded_value))
+    return base64.b64encode(cipher.encrypt(padded_value)).decode('utf-8')
 
 
 def decrypt_value(value):

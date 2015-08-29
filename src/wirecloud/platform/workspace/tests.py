@@ -26,6 +26,7 @@ import json
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
+import six
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.iwidget.utils import SaveIWidget
@@ -298,7 +299,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         element = self.get_rdf_element(graph, element, ns, predicate)
         if optional and element is None:
             return
-        self.assertEqual(unicode(element), content)
+        self.assertEqual(six.text_type(element), content)
 
     def assertRDFCount(self, graph, element, ns, predicate, count):
         num = 0
@@ -332,13 +333,13 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                if unicode(name) == 'pref_with_val':
+                if six.text_type(name) == 'pref_with_val':
                     pref_with_val_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value1')
-                elif unicode(name) == 'readonly_pref':
+                elif six.text_type(name) == 'readonly_pref':
                     readonly_pref_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value2')
-                elif unicode(name) == 'hidden_pref':
+                elif six.text_type(name) == 'hidden_pref':
                     hidden_pref_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value3')
                 else:
@@ -494,13 +495,13 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                if unicode(name) == 'username':
+                if six.text_type(name) == 'username':
                     username_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_username')
-                elif unicode(name) == 'password':
+                elif six.text_type(name) == 'password':
                     password_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
-                elif unicode(name) in ('boolean', 'list'):
+                elif six.text_type(name) in ('boolean', 'list'):
                     # Ignore boolean and list preferences
                     pass
                 else:
@@ -538,13 +539,13 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                 name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                if unicode(name) == 'username':
+                if six.text_type(name) == 'username':
                     username_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_username')
-                elif unicode(name) == 'password':
+                elif six.text_type(name) == 'password':
                     password_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
-                elif unicode(name) in ('boolean', 'list'):
+                elif six.text_type(name) in ('boolean', 'list'):
                     # Ignore boolean and list preferences
                     pass
                 else:
@@ -563,7 +564,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
 
-            name = unicode(self.get_rdf_element(graph, iwidget, self.DCTERMS, 'title'))
+            name = six.text_type(self.get_rdf_element(graph, iwidget, self.DCTERMS, 'title'))
 
             self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 4)
             preferences = graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference'])
@@ -574,17 +575,17 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
                 for preference in preferences:
                     name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                    if unicode(name) == 'username':
+                    if six.text_type(name) == 'username':
                         username_found = True
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'default')
-                    elif unicode(name) == 'password':
+                    elif six.text_type(name) == 'password':
                         password_found = True
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'initial text')
-                    elif unicode(name) in ('boolean', 'list'):
+                    elif six.text_type(name) in ('boolean', 'list'):
                         # Ignore boolean and list preferences
                         pass
                     else:
@@ -594,13 +595,13 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
                 for preference in preferences:
                     name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
-                    if unicode(name) == 'username':
+                    if six.text_type(name) == 'username':
                         username_found = True
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_username')
-                    elif unicode(name) == 'password':
+                    elif six.text_type(name) == 'password':
                         password_found = True
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
-                    elif unicode(name) in ('boolean', 'list'):
+                    elif six.text_type(name) in ('boolean', 'list'):
                         # Ignore boolean and list preferences
                         pass
                     else:

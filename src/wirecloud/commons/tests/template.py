@@ -61,6 +61,9 @@ class TemplateUtilsTestCase(TestCase):
 
         super(TemplateUtilsTestCase, cls).setUpClass()
 
+        if not hasattr(cls, 'assertCountEqual'):
+            cls.assertCountEqual = cls.assertItemsEqual
+
         cls.basic_operator_info = {
             'type': 'operator',
             'vendor': 'Wirecloud',
@@ -1430,28 +1433,28 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(len(processed_info['tabs']), len(mashup_info['tabs']))
         for tab_index, tab in enumerate(processed_info['tabs']):
-            self.assertItemsEqual(tab['resources'], mashup_info['tabs'][tab_index]['resources'])
+            self.assertCountEqual(tab['resources'], mashup_info['tabs'][tab_index]['resources'])
             del tab['resources']
             del mashup_info['tabs'][tab_index]['resources']
 
-        self.assertItemsEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
+        self.assertCountEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
         del processed_info['wiring']['connections']
         del mashup_info['wiring']['connections']
 
-        self.assertItemsEqual(processed_info['wiring']['visualdescription']['connections'], mashup_info['wiring']['visualdescription']['connections'])
+        self.assertCountEqual(processed_info['wiring']['visualdescription']['connections'], mashup_info['wiring']['visualdescription']['connections'])
         del processed_info['wiring']['visualdescription']['connections']
         del mashup_info['wiring']['visualdescription']['connections']
 
         for behaviour1, behaviour2 in zip(processed_info['wiring']['visualdescription']['behaviours'], mashup_info['wiring']['visualdescription']['behaviours']):
-            self.assertItemsEqual(behaviour1['connections'], behaviour2['connections'])
+            self.assertCountEqual(behaviour1['connections'], behaviour2['connections'])
             del behaviour1['connections']
             del behaviour2['connections']
 
-        self.assertItemsEqual(processed_info['requirements'], mashup_info['requirements'])
+        self.assertCountEqual(processed_info['requirements'], mashup_info['requirements'])
         del processed_info['requirements']
         del mashup_info['requirements']
 
-        self.assertItemsEqual(processed_info['embedded'], mashup_info['embedded'])
+        self.assertCountEqual(processed_info['embedded'], mashup_info['embedded'])
         del processed_info['embedded']
         del mashup_info['embedded']
 

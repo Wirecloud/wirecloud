@@ -23,6 +23,7 @@ import errno
 
 from django.test import TestCase
 from mock import MagicMock, Mock, patch, DEFAULT
+import six
 
 from wirecloud.catalogue.utils import add_packaged_resource, update_resource_catalogue_cache
 from wirecloud.commons.utils.template import TemplateParseException
@@ -47,7 +48,7 @@ class TestQueryResult(object):
 
 class CatalogueUtilsTestCase(TestCase):
 
-    tags = ('wirecloud-catalogue',)
+    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-noselenium')
 
     def test_update_resource_catalogue_cache_no_resources(self):
 
@@ -246,7 +247,7 @@ class CatalogueUtilsTestCase(TestCase):
                 add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
                 self.fail('Expecting InvalidContents exception to be raised')
             except InvalidContents as e:
-                self.assertIn('DESCRIPTION.md', e.message)
+                self.assertIn('DESCRIPTION.md', six.text_type(e))
             wgt_file.read.assert_called_with('DESCRIPTION.md')
 
     def test_add_packaged_resource_missing_longdescription_file(self):
@@ -257,7 +258,7 @@ class CatalogueUtilsTestCase(TestCase):
                 add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
                 self.fail('Expecting InvalidContents exception to be raised')
             except InvalidContents as e:
-                self.assertIn('DESCRIPTION.md', e.message)
+                self.assertIn('DESCRIPTION.md', six.text_type(e))
 
     def test_add_packaged_resource_invalid_translated_longdescription_encoding(self):
         f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'DESCRIPTION.md', 'doc/index.md', 'DESCRIPTION.es.md', 'CHANGELOG.md'], ['DESCRIPTION.es.md'])
@@ -267,7 +268,7 @@ class CatalogueUtilsTestCase(TestCase):
                 add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
                 self.fail('Expecting InvalidContents exception to be raised')
             except InvalidContents as e:
-                self.assertIn('DESCRIPTION.es.md', e.message)
+                self.assertIn('DESCRIPTION.es.md', six.text_type(e))
 
     def test_add_packaged_resource_missing_userguide_file(self):
         f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'DESCRIPTION.md', 'CHANGELOG.md'], [])
@@ -277,7 +278,7 @@ class CatalogueUtilsTestCase(TestCase):
                 add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
                 self.fail('Expecting InvalidContents exception to be raised')
             except InvalidContents as e:
-                self.assertIn('doc/index.md', e.message)
+                self.assertIn('doc/index.md', six.text_type(e))
 
     def test_add_packaged_resource_invalid_translated_userguide_encoding(self):
         f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'DESCRIPTION.md', 'doc/index.md', 'doc/index.es.md', 'CHANGELOG.md'], ['doc/index.es.md'])
@@ -287,7 +288,7 @@ class CatalogueUtilsTestCase(TestCase):
                 add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
                 self.fail('Expecting InvalidContents exception to be raised')
             except InvalidContents as e:
-                self.assertIn('doc/index.es.md', e.message)
+                self.assertIn('doc/index.es.md', six.text_type(e))
 
     def test_add_packaged_resource_missing_changelog_file(self):
         f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'doc/index.md', 'DESCRIPTION.md'], [])
@@ -297,7 +298,7 @@ class CatalogueUtilsTestCase(TestCase):
                 add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
                 self.fail('Expecting InvalidContents exception to be raised')
             except InvalidContents as e:
-                self.assertIn('CHANGELOG.md', e.message)
+                self.assertIn('CHANGELOG.md', six.text_type(e))
 
     def test_add_packaged_resource_invalid_translated_changelog_encoding(self):
         f, user, wgt_file, template, file_mocks = self.build_add_packaged_resouce_mocks(['index.html', 'DESCRIPTION.md', 'doc/index.md', 'CHANGELOG.es.md', 'CHANGELOG.md'], ['CHANGELOG.es.md'])
@@ -307,4 +308,4 @@ class CatalogueUtilsTestCase(TestCase):
                 add_packaged_resource(f, user, wgt_file=wgt_file, template=template, deploy_only=True)
                 self.fail('Expecting InvalidContents exception to be raised')
             except InvalidContents as e:
-                self.assertIn('CHANGELOG.es.md', e.message)
+                self.assertIn('CHANGELOG.es.md', six.text_type(e))

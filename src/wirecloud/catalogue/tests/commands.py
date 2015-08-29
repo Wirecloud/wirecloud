@@ -20,6 +20,7 @@
 import io
 import os
 import shutil
+import sys
 from tempfile import mkdtemp
 
 from django.core.management import call_command
@@ -42,7 +43,10 @@ class AddToCatalogueCommandTestCase(TestCase):
 
     def setUp(self):
 
-        self.options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        if sys.version_info > (3, 0):
+            self.options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
+        else:
+            self.options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
 
     def test_addtocatalogue_command_no_args(self, getdefaultlocale_mock):
 
@@ -62,7 +66,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['users'] = 'admin'
 
         try:
-            with patch('__builtin__.open'):
+            with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
                 with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue',
                         add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
@@ -93,7 +97,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['groups'] = 'group1'
 
         try:
-            with patch('__builtin__.open'):
+            with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
                 with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue',
                         add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
@@ -124,7 +128,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['public'] = True
 
         try:
-            with patch('__builtin__.open'):
+            with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
                 with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue',
                         add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                         WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
@@ -153,7 +157,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
         args = ['file.wgt']
 
-        with patch('__builtin__.open'):
+        with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
             with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue',
                     add_packaged_resource=DEFAULT, install_resource_to_user=DEFAULT, install_resource_to_group=DEFAULT, install_resource_to_all_users=DEFAULT,
                     WgtFile=DEFAULT, TemplateParser=DEFAULT, User=DEFAULT, Group=DEFAULT, autospec=True) as context:
@@ -178,7 +182,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
         args = ['file1.wgt', 'file2.wgt']
         try:
-            with patch('__builtin__.open'):
+            with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
                 with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue', add_packaged_resource=DEFAULT, WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
                     call_command('addtocatalogue', *args, **self.options)
                     self.assertEqual(context['add_packaged_resource'].call_count, 2)
@@ -193,7 +197,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
         args = ['file1.wgt', 'file2.wgt']
         try:
-            with patch('__builtin__.open') as open_mock:
+            with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True) as open_mock:
                 def open_mock_side_effect(file_name, mode):
                     if file_name == 'file1.wgt':
                         raise Exception
@@ -216,7 +220,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
         args = ['file1.wgt', 'file2.wgt']
         try:
-            with patch('__builtin__.open'):
+            with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
                 with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue', add_packaged_resource=DEFAULT, WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
 
                     context['TemplateParser'].side_effect = (Exception, None)
@@ -239,7 +243,7 @@ class AddToCatalogueCommandTestCase(TestCase):
 
         args = ['file1.wgt', 'file2.wgt']
         try:
-            with patch('__builtin__.open'):
+            with patch('wirecloud.catalogue.management.commands.addtocatalogue.open', create=True):
                 with patch.multiple('wirecloud.catalogue.management.commands.addtocatalogue', add_packaged_resource=DEFAULT, WgtFile=DEFAULT, TemplateParser=DEFAULT, autospec=True) as context:
 
                     context['TemplateParser'].side_effect = (Exception, None)

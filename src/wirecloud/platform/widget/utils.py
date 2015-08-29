@@ -162,7 +162,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
     # This line is here for raising UnicodeDecodeError in case the widget_code is not encoded using the expecified encoding
     widget_code.decode(encoding)
 
-    if content_type in ('text/html', 'application/xhtml+xml') and widget_code.strip() == '':
+    if content_type in ('text/html', 'application/xhtml+xml') and widget_code.strip() == b'':
         widget_code = b'<html></html>'
 
     if content_type == 'text/html':

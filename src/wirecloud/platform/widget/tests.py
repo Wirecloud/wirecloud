@@ -38,9 +38,9 @@ __test__ = False
 
 class CodeTransformationTestCase(TestCase):
 
-    tags = ('wirecloud-widget-module', 'widget_code_transformation')
+    tags = ('wirecloud-widget-module', 'widget-code-transformation')
 
-    XML_NORMALIZATION_RE = re.compile(r'>\s+<')
+    XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
 
     @classmethod
     def setUpClass(cls):
