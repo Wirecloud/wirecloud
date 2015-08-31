@@ -118,7 +118,7 @@ class ResourceCollection(Resource):
             if content_type == 'application/json':
                 data = parse_json_request(request)
 
-                install_embedded_resources = normalize_boolean_param('install_embedded_resources', data.get('install_embedded_resources', False))
+                install_embedded_resources = normalize_boolean_param(request, 'install_embedded_resources', data.get('install_embedded_resources', False))
                 force_create = data.get('force_create', False)
                 templateURL = data.get('url')
                 market_endpoint = data.get('market_endpoint', None)

@@ -341,27 +341,39 @@ def get_absolute_static_url(url, request=None):
     return urljoin(base, url)
 
 
-def validate_url_param(name, value, force_absolute=True, required=False):
+def validate_url_param(request, name, value, force_absolute=True, required=False):
 
     if isinstance(value, string_types):
+        if required and value.strip() == '':
+            msg = _('Missing required parameter: %(parameter)s') % {"parameter": name}
+            raise ErrorResponse(build_error_response(request, 422, msg))
+
         parsed_url = urlparse(value)
         if force_absolute and not bool(parsed_url.netloc and parsed_url.scheme):
-            raise ValueError("%(parameter)s must be an absolute URL" % {"parameter": name})
+            msg = _("%(parameter)s must be an absolute URL") % {"parameter": name}
+            raise ErrorResponse(build_error_response(request, 422, msg))
+        elif parsed_url.scheme not in ('', 'http', 'https', 'ftp'):
+            msg = _("Invalid schema: %(schema)s") % {"schema": parsed_url.scheme}
+            raise ErrorResponse(build_error_response(request, 422, msg))
     elif required and value is None:
-        return ValueError(_('Missing required parameter: %(parameter)s') % {"parameter": name})
+        msg = _('Missing required parameter: %(parameter)s') % {"parameter": name}
+        raise ErrorResponse(build_error_response(request, 422, msg))
     else:
-        return TypeError(_('Invalid %(parameter)s type') % {"parameter": name})
+        msg = _('Invalid %(parameter)s type') % {"parameter": name}
+        raise ErrorResponse(build_error_response(request, 422, msg))
 
 
-def normalize_boolean_param(name, value):
+def normalize_boolean_param(request, name, value):
 
     if isinstance(value, string_types):
         value = value.strip().lower()
         if value not in ('true', 'false'):
-            raise ValueError(_('Invalid %(parameter)s value') % {"parameter": name})
+            msg = _('Invalid %(parameter)s value') % {"parameter": name}
+            raise ErrorResponse(build_error_response(request, 422, msg))
         return value == 'true'
     elif not isinstance(value, bool):
-        return TypeError(_('Invalid %(parameter)s type') % {"parameter": name})
+        msg = _('Invalid %(parameter)s type') % {"parameter": name}
+        raise ErrorResponse(build_error_response(request, 422, msg))
 
     return value
 

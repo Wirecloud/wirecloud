@@ -99,11 +99,8 @@ class WorkspaceCollection(Resource):
         workspace_id = data.get('workspace', '')
         mashup_id = data.get('mashup', '')
         initial_pref_values = data.get('preferences', {})
-        try:
-            allow_renaming = normalize_boolean_param('allow_renaming', data.get('allow_renaming', False))
-            dry_run = normalize_boolean_param('dry_run', data.get('dry_run', False))
-        except (TypeError, ValueError) as e:
-            return build_error_response(request, 422, e)
+        allow_renaming = normalize_boolean_param(request, 'allow_renaming', data.get('allow_renaming', False))
+        dry_run = normalize_boolean_param(request, 'dry_run', data.get('dry_run', False))
 
         if mashup_id == '' and workspace_id == '' and workspace_name == '':
             return build_error_response(request, 422, _('Missing name parameter'))

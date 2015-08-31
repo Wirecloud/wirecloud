@@ -72,10 +72,7 @@ class MarketCollection(Resource):
         if 'options' not in received_data:
             return build_error_response(request, 400, _("Missing marketplace options"))
 
-        try:
-            validate_url_param('options.url', received_data['options']['url'])
-        except (TypeError, ValueError) as e:
-            return build_error_response(request, 422, text_type(e))
+        validate_url_param(request, 'options.url', received_data['options']['url'])
 
         if 'user' not in received_data['options'] or received_data['options']['user'] == request.user.username:
             user_entry = request.user

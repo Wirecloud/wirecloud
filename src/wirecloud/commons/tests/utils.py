@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from io import BytesIO
 import os
 import zipfile
@@ -25,8 +27,9 @@ from django.http import Http404, UnreadablePostError
 from django.test import TestCase
 from mock import patch, Mock
 
+from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import build_sendfile_response
+from wirecloud.commons.utils.http import build_sendfile_response, normalize_boolean_param, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
 from wirecloud.commons.utils.wgt import WgtFile
@@ -38,7 +41,7 @@ __test__ = False
 
 class HTMLCleanupTestCase(TestCase):
 
-    tags = ('wirecloud-html-cleanup',)
+    tags = ('wirecloud-utils', 'wirecloud-html-cleanup')
 
     def test_scripts_are_removed(self):
         self.assertEqual(clean_html('<script>asdfas</script>'), '')
@@ -75,7 +78,7 @@ class HTMLCleanupTestCase(TestCase):
 
 class GeneralUtilsTestCase(TestCase):
 
-    tags = ('wirecloud-general-utils',)
+    tags = ('wirecloud-utils', 'wirecloud-general-utils')
 
     def test_skipunreadableposts_filter(self):
 
@@ -113,7 +116,7 @@ class GeneralUtilsTestCase(TestCase):
 
 class WGTTestCase(TestCase):
 
-    tags = ('wirecloud-wgt',)
+    tags = ('wirecloud-utils', 'wirecloud-wgt',)
 
     def build_simple_wgt(self, other_files=()):
 
@@ -223,7 +226,19 @@ class WGTTestCase(TestCase):
 
 class HTTPUtilsTestCase(TestCase):
 
-    tags = ('wirecloud-http-utils',)
+    tags = ('wirecloud-utils', 'wirecloud-general-utils', 'wirecloud-http-utils',)
+
+    def _prepare_request_mock(self):
+
+        request = Mock()
+        request.META = {
+            'HTTP_ACCEPT': 'application/json',
+            'SERVER_PROTOCOL': 'http',
+            'REMOTE_ADDR': '127.0.0.1',
+            'HTTP_HOST': 'localhost',
+        }
+
+        return request
 
     def test_build_sendfile_response(self):
 
@@ -250,3 +265,83 @@ class HTTPUtilsTestCase(TestCase):
         response = build_sendfile_response('../a/../file.js', '/folder')
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], 'file.js')
+
+    def test_normalize_boolean_param_string(self):
+
+        request = self._prepare_request_mock()
+        normalize_boolean_param(request, 'param', 'true')
+
+    def test_normalize_boolean_param_boolean(self):
+
+        request = self._prepare_request_mock()
+        normalize_boolean_param(request, 'param', True)
+
+    def test_normalize_boolean_param_number(self):
+
+        request = self._prepare_request_mock()
+        try:
+            normalize_boolean_param(request, 'param', 5)
+            self.fail('ErrorResponse not raised by normalize_boolean_param')
+        except ErrorResponse as e:
+            self.assertEqual(e.response.status_code, 422)
+
+    def test_normalize_boolean_param_invalid_string(self):
+
+        request = self._prepare_request_mock()
+        try:
+            normalize_boolean_param(request, 'param', 'invalid')
+            self.fail('ErrorResponse not raised by normalize_boolean_param')
+        except ErrorResponse as e:
+            self.assertEqual(e.response.status_code, 422)
+
+    def test_validate_url_param_string(self):
+
+        request = self._prepare_request_mock()
+        validate_url_param(request, 'param', 'index.html', force_absolute=False)
+
+    def test_validate_url_param_string_empty_and_required(self):
+
+        request = self._prepare_request_mock()
+        try:
+            validate_url_param(request, 'param', '', force_absolute=False, required=True)
+            self.fail('ErrorResponse not raised by validate_url_param')
+        except ErrorResponse as e:
+            self.assertEqual(e.response.status_code, 422)
+
+    def test_validate_url_param_string_force_absolute(self):
+
+        request = self._prepare_request_mock()
+        validate_url_param(request, 'param', 'http://example.com/index.html', force_absolute=True)
+
+    def test_validate_url_param_string_invalid_schema(self):
+
+        request = self._prepare_request_mock()
+        try:
+            validate_url_param(request, 'param', 'file:///etc/password', force_absolute=False)
+            self.fail('ErrorResponse not raised by validate_url_param')
+        except ErrorResponse as e:
+            self.assertEqual(e.response.status_code, 422)
+
+    def test_validate_url_param_string_relative_urls_not_allowed(self):
+        request = self._prepare_request_mock()
+        try:
+            validate_url_param(request, 'param', 'index.html', force_absolute=True)
+            self.fail('ErrorResponse not raised by validate_url_param')
+        except ErrorResponse as e:
+            self.assertEqual(e.response.status_code, 422)
+
+    def test_validate_url_param_none_and_required(self):
+        request = self._prepare_request_mock()
+        try:
+            validate_url_param(request, 'param', None, force_absolute=False, required=True)
+            self.fail('ErrorResponse not raised by validate_url_param')
+        except ErrorResponse as e:
+            self.assertEqual(e.response.status_code, 422)
+
+    def test_validate_url_param_number(self):
+        request = self._prepare_request_mock()
+        try:
+            validate_url_param(request, 'param', 5, force_absolute=False)
+            self.fail('ErrorResponse not raised by validate_url_param')
+        except ErrorResponse as e:
+            self.assertEqual(e.response.status_code, 422)
