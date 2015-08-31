@@ -19,14 +19,15 @@
 
 from __future__ import unicode_literals
 
+from copy import deepcopy
 from io import BytesIO
 import json
 from lxml import etree
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.test.client import RequestFactory
 from django.test import Client
+from django.test.client import RequestFactory
 from django.utils import unittest
 from mock import Mock, patch
 
@@ -120,7 +121,7 @@ class BasicViewsAPI(WirecloudTestCase):
         self.assertIn('Location', response)
         self.assertTrue(response['Location'].endswith('?a=b'))
 
-    @unittest.skipIf(settings.ALLOW_ANONYMOUS_ACCESS is False, 'Anonymous access disabled')
+    @patch('wirecloud.platform.views.ALLOW_ANONYMOUS_ACCESS', new=True)
     def test_root_view_anonymous_allowed(self):
 
         url = reverse('wirecloud.root')
@@ -128,7 +129,7 @@ class BasicViewsAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 200)
 
-    @unittest.skipIf(settings.ALLOW_ANONYMOUS_ACCESS is True, 'Anonymous access enabled')
+    @patch('wirecloud.platform.views.ALLOW_ANONYMOUS_ACCESS', new=False)
     def test_root_view_anonymous_not_allowed(self):
 
         url = reverse('wirecloud.root')
@@ -144,21 +145,21 @@ class BasicViewsAPI(WirecloudTestCase):
 
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
-        old_cookies = self.client.cookies.values()
+        old_cookies = deepcopy(self.client.cookies)
 
         response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_data['username']['value'], 'user_with_workspaces')
 
         self.client.get(logout_url, HTTP_ACCEPT='application/xhtml+xml')
-        for cookie in old_cookies:
+        for cookie in old_cookies.values():
             # Check session id has also changed
             self.assertNotEqual(self.client.cookies[cookie.key].value, cookie.value)
             self.client.cookies[cookie.key] = cookie.value
 
         response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_data['username']['value'], 'anonymous')
 
@@ -180,7 +181,7 @@ class BasicViewsAPI(WirecloudTestCase):
 
         # Check language after logout
         response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_data['language']['value'], 'es')
 

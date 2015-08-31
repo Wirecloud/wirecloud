@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,9 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import rdflib
+from __future__ import unicode_literals
 
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
+import rdflib
+import six
 
 
 FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
@@ -41,16 +44,14 @@ DOAP = rdflib.Namespace('http://usefulinc.com/ns/doap#')
 GEO = rdflib.Namespace('http://www.w3.org/2003/01/geo/wgs84_pos#')
 
 
+@python_2_unicode_compatible
 class USDLParseException(Exception):
 
     def __init__(self, msg=''):
         self.msg = msg
 
     def __str__(self):
-        return str(self.msg)
-
-    def __unicode__(self):
-        return unicode(self.msg)
+        return self.msg
 
 
 class USDLParser(object):
@@ -79,7 +80,7 @@ class USDLParser(object):
         try:
             self._graph.parse(data=usdl_document, format=rdf_format)
         except Exception as e:
-            msg = _('Error parsing rdf document: %s' % unicode(e))
+            msg = _('Error parsing rdf document: %s' % e)
             raise USDLParseException(msg)
 
         # take all the services in the document
@@ -97,7 +98,7 @@ class USDLParser(object):
 
         for e in self._graph.objects(element, namespace[predicate]):
             if not id_:
-                result.append(unicode(e))
+                result.append(six.text_type(e))
             else:
                 #If id = True means that the uri will be used so it is necesary to return the class
                 result.append(e)

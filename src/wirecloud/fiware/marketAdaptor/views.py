@@ -25,7 +25,7 @@ from django.shortcuts import get_object_or_404
 from requests.exceptions import ConnectionError, ConnectTimeout
 
 from wirecloud.commons.baseviews import Resource, Service
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, consumes, produces
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, consumes, parse_json_request, produces
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.platform.models import Market, MarketUserData
 
@@ -180,7 +180,7 @@ class StartPurchaseService(Service):
         adaptor = get_market_adaptor(market_user, market_name)
         user_data = get_market_user_data(request.user, market_user, market_name)
 
-        data = json.loads(request.body)
+        data = parse_json_request(request)
 
         redirect_uri = get_absolute_reverse_url('wirecloud.fiware.store_redirect_uri', request)
         try:

@@ -20,15 +20,19 @@
 import json
 from six.moves.urllib.parse import urlparse, urlunparse, parse_qs
 
-from django.contrib.auth.views import redirect_to_login
-from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.contrib.auth.views import redirect_to_login as django_redirect_to_login
+from django.core import urlresolvers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import TemplateDoesNotExist
+from django.utils.encoding import force_text
+from django.utils.functional import Promise
 from django.utils.http import urlencode
 from django.views.decorators.cache import cache_page
 from django.views.i18n import javascript_catalog
 from user_agents import parse as ua_parse
+import six
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import build_error_response
@@ -45,6 +49,52 @@ class FeatureCollection(Resource):
         features = get_active_features_info()
 
         return HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
+
+
+def resolve_url(to, *args, **kwargs):
+    """
+    Return a URL appropriate for the arguments passed.
+    The arguments could be:
+        * A model: the model's `get_absolute_url()` function will be called.
+        * A view name, possibly with arguments: `urlresolvers.reverse()` will
+          be used to reverse-resolve the name.
+        * A URL, which will be returned as-is.
+
+    > Copied from django for workaround versions of django not including this patch:
+    > https://code.djangoproject.com/ticket/24097
+    """
+    # If it's a model, use get_absolute_url()
+    if hasattr(to, 'get_absolute_url'):
+        return to.get_absolute_url()
+
+    if isinstance(to, Promise):
+        # Expand the lazy instance, as it can cause issues when it is passed
+        # further to some Python functions like urlparse.
+        to = force_text(to)
+
+    if isinstance(to, six.string_types):
+        # Handle relative URLs
+        if to.startswith(('./', '../')):
+            return to
+
+    # Next try a reverse URL resolution.
+    try:
+        return urlresolvers.reverse(to, args=args, kwargs=kwargs)
+    except urlresolvers.NoReverseMatch:
+        # If this is a callable, re-raise.
+        if callable(to):
+            raise
+        # If this doesn't "feel" like a URL, re-raise.
+        if '/' not in to and '.' not in to:
+            raise
+
+    # Finally, fall back and assume it's a URL
+    return to
+
+
+def redirect_to_login(*args, **kwargs):
+    kwargs['login_url'] = resolve_url(kwargs.get('login_url') or settings.LOGIN_URL)
+    return django_redirect_to_login(*args, **kwargs)
 
 
 @cache_page(60 * 60 * 24, key_prefix='js18n-%s' % get_version_hash())
@@ -69,7 +119,7 @@ def auto_select_workspace(request, mode=None):
     _junk1, active_workspace = get_workspace_list(request.user)
 
     if active_workspace is not None:
-        url = reverse('wirecloud.workspace_view', kwargs={
+        url = urlresolvers.reverse('wirecloud.workspace_view', kwargs={
             'owner': active_workspace.workspace.creator.username,
             'name': active_workspace.workspace.name,
         })

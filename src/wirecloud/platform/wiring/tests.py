@@ -271,7 +271,7 @@ class WiringTestCase(WirecloudTestCase):
 
 class OperatorCodeEntryTestCase(WirecloudTestCase):
 
-    XML_NORMALIZATION_RE = re.compile(r'>\s+<')
+    XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
     fixtures = ('selenium_test_data',)
     tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium')
 

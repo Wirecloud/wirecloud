@@ -241,11 +241,11 @@ def get_resource_data(resource, user, request=None):
         localized_longdescription_path = filename_root + '.' + get_language() + filename_ext
 
         try:
-            description_code = download_local_file(localized_longdescription_path)
+            description_code = download_local_file(localized_longdescription_path).decode('utf-8')
             longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'), base_url=longdescription_base_url)
         except:
             try:
-                description_code = download_local_file(longdescription_path)
+                description_code = download_local_file(longdescription_path).decode('utf-8')
                 longdescription = clean_html(markdown.markdown(description_code, output_format='xhtml5'), base_url=longdescription_base_url)
             except:
                 longdescription = resource_info['description']

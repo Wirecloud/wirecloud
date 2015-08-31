@@ -82,7 +82,7 @@ class StoreTestCase(WirecloudTestCase):
 
         response = Mock()
         response.status_code = 422
-        response.content = '{"message": "Unprocessable Entity"}'
+        response.text = '{"message": "Unprocessable Entity"}'
         exception = UnexpectedResponse(response)
         self.assertEqual("%s" % exception, "Unexpected response from server (Error code: 422, Message: Unprocessable Entity)")
 
@@ -141,7 +141,7 @@ class StoreTestCase(WirecloudTestCase):
 
         resource_link = '/media/resources/CoNWeT__Kurento one2one widget__1.1.2__CoNWeT_kurento-one2one_1.1.2.wgt'
         self.network._servers['http']['example.com'].add_response('GET', resource_link, {'content': 'resource content'})
-        self.assertEqual(self.store_client.download_resource(resource_link, 'wirecloud_token'), 'resource content')
+        self.assertEqual(self.store_client.download_resource(resource_link, 'wirecloud_token'), b'resource content')
 
     def test_resource_download_unexpected_response(self):
 

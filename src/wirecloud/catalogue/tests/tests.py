@@ -502,9 +502,8 @@ class WGTDeploymentTestCase(WirecloudTestCase):
     def test_wgt_uploading_requires_login(self):
         c = Client()
 
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
-        response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
-        f.close()
+        with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'), 'rb') as f:
+            response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
 
         self.assertFalse(response.status_code > 200 and response.status_code < 300)
 
@@ -513,10 +512,9 @@ class WGTDeploymentTestCase(WirecloudTestCase):
         widget_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
 
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
         c.login(username='test', password='test')
-        response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
-        f.close()
+        with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'), 'rb') as f:
+            response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(os.path.isdir(widget_path))
@@ -547,7 +545,7 @@ class WGTDeploymentTestCase(WirecloudTestCase):
         c = Client()
 
         c.login(username='test', password='test')
-        with open(os.path.join(os.path.dirname(__file__), '../../commons/test-data/Wirecloud_Test_1.0.wgt')) as f:
+        with open(os.path.join(os.path.dirname(__file__), '../../commons/test-data/Wirecloud_Test_1.0.wgt'), 'rb') as f:
             response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
 
         self.assertEqual(response.status_code, 200)
@@ -561,10 +559,9 @@ class WGTDeploymentTestCase(WirecloudTestCase):
         operator_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Wirecloud', 'basic-operator', '0.1')
         c = Client()
 
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_operator.zip'))
         c.login(username='test', password='test')
-        response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
-        f.close()
+        with open(os.path.join(os.path.dirname(__file__), 'test-data/basic_operator.zip'), 'rb') as f:
+            response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(os.path.isdir(operator_path))

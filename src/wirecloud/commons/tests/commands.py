@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -16,6 +16,8 @@
 
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import unicode_literals
 
 import io
 import os
@@ -66,9 +68,9 @@ class ResetSearchIndexesCommandTestCase(TestCase):
                 call_command('resetsearchindexes', *args, **self.options)
 
         self.options['stdout'].seek(0)
-        self.assertEqual(self.options['stdout'].read(), '')
+        self.assertEqual(self.options['stdout'].read(), b'')
         self.options['stderr'].seek(0)
-        self.assertEqual(self.options['stderr'].read(), '')
+        self.assertEqual(self.options['stderr'].read(), b'')
         self.assertFalse(os.path.exists(self.inexistent_index_dir))
 
     def test_resetsearchindexes_command_existing_dir(self, getdefaultlocale_mock):
@@ -85,9 +87,9 @@ class ResetSearchIndexesCommandTestCase(TestCase):
                 raise CommandError('')
 
         self.options['stdout'].seek(0)
-        self.assertEqual(self.options['stdout'].read(), '')
+        self.assertEqual(self.options['stdout'].read(), b'')
         self.options['stderr'].seek(0)
-        self.assertEqual(self.options['stderr'].read(), '')
+        self.assertEqual(self.options['stderr'].read(), b'')
         self.assertTrue(os.path.exists(self.new_index_dir))
         for search_index in get_available_search_engines():
             self.assertTrue(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
@@ -106,9 +108,9 @@ class ResetSearchIndexesCommandTestCase(TestCase):
                 raise CommandError('')
 
         self.options['stdout'].seek(0)
-        self.assertEqual(self.options['stdout'].read(), '')
+        self.assertEqual(self.options['stdout'].read(), b'')
         self.options['stderr'].seek(0)
-        self.assertEqual(self.options['stderr'].read(), '')
+        self.assertEqual(self.options['stderr'].read(), b'')
         self.assertTrue(os.path.exists(self.new_index_dir))
         self.assertTrue(index.exists_in(self.new_index_dir, indexname='other_index'))
         for search_index in get_available_search_engines():

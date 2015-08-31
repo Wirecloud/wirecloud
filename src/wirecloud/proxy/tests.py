@@ -41,7 +41,7 @@ __test__ = False
 class ProxyTestsBase(WirecloudTestCase):
 
     fixtures = ('test_data.json',)
-    tags = ('proxy',)
+    tags = ('wirecloud-proxy',)
 
     servers = {
         'http': {
@@ -328,7 +328,7 @@ class ProxyTests(ProxyTestsBase):
 
 class ProxySecureDataTests(ProxyTestsBase):
 
-    tags = ('proxy', 'proxy-secure-data')
+    tags = ('wirecloud-proxy', 'wirecloud-proxy-secure-data')
 
     def setUp(self):
         super(ProxySecureDataTests, self).setUp()
@@ -423,7 +423,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             HTTP_X_WIRECLOUD_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 422)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertNotEqual(response_data['description'], '')
 
     def test_secure_data_invalid_var_ref(self):

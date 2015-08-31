@@ -42,7 +42,7 @@ class UnexpectedResponse(Exception):
         self.status = response.status_code
 
         try:
-            error_info = json.loads(response.content)
+            error_info = json.loads(response.text)
             self.message = error_info['message']
         except:
             pass

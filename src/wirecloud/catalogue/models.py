@@ -23,7 +23,6 @@ import logging
 import operator
 import random
 import regex
-from six import string_types
 from six.moves.urllib.parse import urlparse, urljoin
 
 from django.contrib.auth.models import User, Group
@@ -37,6 +36,7 @@ from whoosh import fields
 from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.query import And, Every, Or, Term
 from whoosh.sorting import FieldFacet, FunctionFacet
+import six
 
 from wirecloud.commons.searchers import BaseSearcher, get_search_engine
 from wirecloud.commons.utils.http import get_absolute_reverse_url
@@ -283,7 +283,7 @@ class Version(object):
 
     def __cmp__(self, other):
 
-        if isinstance(other, string_types):
+        if isinstance(other, six.string_types):
             other = Version(other)
 
         if not isinstance(other, Version):
@@ -465,7 +465,7 @@ def suggest(request, prefix='', limit=30):
                 frequent_terms[term] = frequency
 
     # flatten terms
-    return [term for term, frequency in sorted(frequent_terms.items(), key=operator.itemgetter(1), reverse=True)[:limit]]
+    return [term.decode('utf-8') for term, frequency in sorted(frequent_terms.items(), key=operator.itemgetter(1), reverse=True)[:limit]]
 
 
 def order_by_version(searcher, docnum):
