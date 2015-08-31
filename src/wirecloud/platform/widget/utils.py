@@ -148,7 +148,7 @@ def get_widget_platform_style():
         code+= '{% endcompress %}'
 
         result = Template(code).render(Context({'STATIC_URL': settings.STATIC_URL}))
-        doc = etree.parse(BytesIO(bytes('<files>' + result + '</files>')), etree.XMLParser())
+        doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
 
         files = [link.get('href') for link in doc.getroot()]
         files.reverse()
