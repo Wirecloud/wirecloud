@@ -10,7 +10,13 @@ class Migration(SchemaMigration):
         # Changing field 'Workspace.wiringStatus'
         db.alter_column(u'wirecloud_workspace', 'wiringStatus', self.gf('wirecloud.commons.fields.JSONField')())
 
+        # Changing field 'Market.options'
+        db.alter_column('wirecloud_market', 'options', self.gf('wirecloud.commons.fields.JSONField')())
+
     def backwards(self, orm):
+
+        # Changing field 'Market.options'
+        db.alter_column('wirecloud_market', 'options', self.gf('django.db.models.fields.TextField')())
 
         # Changing field 'Workspace.wiringStatus'
         db.alter_column(u'wirecloud_workspace', 'wiringStatus', self.gf('django.db.models.fields.TextField')())
@@ -90,7 +96,7 @@ class Migration(SchemaMigration):
             'Meta': {'unique_together': "(('user', 'name'),)", 'object_name': 'Market', 'db_table': "'wirecloud_market'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'options': ('django.db.models.fields.TextField', [], {}),
+            'options': ('wirecloud.commons.fields.JSONField', [], {'default': "'{}'"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'})
         },
         'platform.marketuserdata': {

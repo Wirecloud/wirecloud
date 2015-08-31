@@ -46,8 +46,7 @@ def get_market_adaptor(market_user, market):
 
     if market not in market_adaptors[username]:
         m = get_object_or_404(Market, user__username=market_user, name=market)
-        options = json.loads(m.options)
-        market_adaptors[username][market] = MarketAdaptor(options['url'])
+        market_adaptors[username][market] = MarketAdaptor(m.options['url'])
 
     return market_adaptors[username][market]
 

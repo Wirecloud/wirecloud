@@ -71,13 +71,12 @@ def get_market_managers(user):
 
     managers = {}
     for market in Market.objects.filter(Q(user=None) | Q(user=user)):
-        options = json.loads(market.options)
         if market.user is None:
             user = None
         else:
             user = market.user.username
 
-        if options['type'] in manager_classes:
-            managers[six.text_type(market)] = manager_classes[options['type']](user, market.name, options)
+        if market.options['type'] in manager_classes:
+            managers[six.text_type(market)] = manager_classes[market.options['type']](user, market.name, market.options)
 
     return managers

@@ -46,8 +46,7 @@ class MarketCollection(Resource):
 
         for market in Market.objects.filter(Q(user=None) | Q(user=request.user)):
             market_key = text_type(market)
-            market_data = json.loads(market.options)
-
+            market_data = market.options
             market_data['name'] = market.name
 
             if market.user is not None:
@@ -92,7 +91,7 @@ class MarketCollection(Resource):
             del received_data['options']['user']
 
         try:
-            Market.objects.create(user=user_entry, name=received_data['name'], options=json.dumps(received_data['options']))
+            Market.objects.create(user=user_entry, name=received_data['name'], options=received_data['options'])
         except IntegrityError:
             return build_error_response(request, 409, 'Market name already in use')
 

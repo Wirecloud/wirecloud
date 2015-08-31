@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,12 +22,14 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
+from wirecloud.commons.fields import JSONField
+
 
 @python_2_unicode_compatible
 class Market(models.Model):
     user = models.ForeignKey(User, verbose_name=_('User'), blank=True, null=True)
     name = models.CharField(_('Name'), max_length=50)
-    options = models.TextField(_('Options'))
+    options = JSONField(_('Options'))
 
     class Meta:
         unique_together = ('user', 'name')
