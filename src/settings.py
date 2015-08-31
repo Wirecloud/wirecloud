@@ -3,7 +3,7 @@
 
 from os import path
 from wirecloud.commons.utils.conf import load_default_wirecloud_conf
-from wirecloud.commons.utils.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy
 
 DEBUG = True
 BASEDIR = path.dirname(path.abspath(__file__))
