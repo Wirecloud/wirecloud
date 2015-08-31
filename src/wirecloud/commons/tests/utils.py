@@ -29,7 +29,7 @@ from mock import patch, Mock
 
 from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import build_sendfile_response, normalize_boolean_param, validate_url_param
+from wirecloud.commons.utils.http import build_sendfile_response, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
 from wirecloud.commons.utils.wgt import WgtFile
@@ -345,3 +345,22 @@ class HTTPUtilsTestCase(TestCase):
             self.fail('ErrorResponse not raised by validate_url_param')
         except ErrorResponse as e:
             self.assertEqual(e.response.status_code, 422)
+
+    def test_produces_decorator_supported_accept_header(self):
+        func = Mock()
+        wrapped_func = produces(('application/json',))(func)
+
+        request = self._prepare_request_mock()
+        wrapped_func(Mock(), request)
+
+        self.assertEqual(func.call_count, 1)
+
+    def test_produces_decorator_unsupported_accept_header(self):
+        func = Mock()
+        wrapped_func = produces(('application/xml',))(func)
+
+        request = self._prepare_request_mock()
+        result = wrapped_func(Mock(), request)
+
+        self.assertEqual(func.call_count, 0)
+        self.assertEqual(result.status_code, 406)
