@@ -219,7 +219,7 @@ def parse_mime_type(mime_type):
 def get_content_type(request):
     content_type_header = request.META.get('CONTENT_TYPE')
     if content_type_header is None:
-        return '', ''
+        return '', {}
     else:
         return parse_mime_type(content_type_header)
 

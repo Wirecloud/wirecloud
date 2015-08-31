@@ -29,7 +29,7 @@ from mock import patch, Mock
 
 from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import build_sendfile_response, normalize_boolean_param, produces, validate_url_param
+from wirecloud.commons.utils.http import build_sendfile_response, get_content_type, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
 from wirecloud.commons.utils.wgt import WgtFile
@@ -364,3 +364,12 @@ class HTTPUtilsTestCase(TestCase):
 
         self.assertEqual(func.call_count, 0)
         self.assertEqual(result.status_code, 406)
+
+    def test_get_content_type(self):
+        request = self._prepare_request_mock()
+        request.META['CONTENT_TYPE'] = 'application/json'
+        self.assertEqual(get_content_type(request), ('application/json', {}))
+
+    def test_get_content_type_no_provided(self):
+        request = self._prepare_request_mock()
+        self.assertEqual(get_content_type(request), ('', {}))
