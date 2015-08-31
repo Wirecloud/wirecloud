@@ -332,7 +332,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
         response = client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/xhtml+xml')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', response.content)
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', response.content)
 
         expected_code = self.read_file('test-data/xhtml1-expected.xhtml')
         self.assertEqual(final_code, expected_code)
