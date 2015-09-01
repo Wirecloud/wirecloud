@@ -38,15 +38,27 @@ import six
 from six.moves import reduce
 
 
-def parse_mime_type(mime_type):
+def parse_mime_type(mime_type, split_type=False):
     """Parses a mime-type into its component parts.
 
-    Carves up a mime-type and returns a tuple of the (type, subtype, params)
-    where 'params' is a dictionary of all the parameters for the media range.
+    If split_type is True, this method carves up a mime-type and returns a
+    tuple of the (type, subtype, params) where 'params' is a dictionary of all
+    the parameters for the media range.
+
     For example, the media range 'application/xhtml;q=0.5' would get parsed
     into:
 
        ('application', 'xhtml', {'q', '0.5'})
+
+    If split_type is False, this method carves up a mime-type and returns a
+    tuple of the (fulltype, params) where 'params' is a dictionary of all
+    the parameters for the media range.
+
+    For example, the media range 'application/xhtml;q=0.5' would get parsed
+    into:
+
+       ('application/xhtml', {'q', '0.5'})
+
        """
     parts = mime_type.split(';')
     params = dict([tuple([s.strip() for s in param.split('=', 1)])
@@ -57,9 +69,13 @@ def parse_mime_type(mime_type):
     # single '*'. Turn it into a legal wildcard.
     if full_type == '*':
         full_type = '*/*'
+
     (type, subtype) = full_type.split('/')
 
-    return (type.strip(), subtype.strip(), params)
+    if split_type:
+        return (type.strip(), subtype.strip(), params)
+    else:
+        return (type.strip() + "/" + subtype.strip(), params)
 
 
 def parse_media_range(range):
@@ -76,7 +92,7 @@ def parse_media_range(range):
     in the params dictionary, filling it in with a proper default if
     necessary.
     """
-    (type, subtype, params) = parse_mime_type(range)
+    (type, subtype, params) = parse_mime_type(range, split_type=True)
     if 'q' not in params or not params['q'] or \
             not float(params['q']) or float(params['q']) > 1\
             or float(params['q']) < 0:

@@ -102,9 +102,17 @@ class GeneralUtilsTestCase(TestCase):
         filter = SkipUnreadablePosts()
         self.assertTrue(filter.filter(record))
 
+    def test_mimeparser_parse_mime_type(self):
+
+        self.assertEqual(parse_mime_type('application/xhtml;q=0.5'), ('application/xhtml', {'q': '0.5'}))
+
     def test_mimeparser_parse_mime_type_should_accept_single_wildcard(self):
 
-        self.assertEqual(parse_mime_type('*;q=0.5'), ('*', '*', {'q': '0.5'}))
+        self.assertEqual(parse_mime_type('*;q=0.5'), ('*/*', {'q': '0.5'}))
+
+    def test_mimeparser_parse_mime_type_split_type(self):
+
+        self.assertEqual(parse_mime_type('application/xhtml;q=0.5', split_type=True), ('application', 'xhtml', {'q': '0.5'}))
 
     def test_mimeparser_best_match_should_ignore_blank_media_ranges(self):
 

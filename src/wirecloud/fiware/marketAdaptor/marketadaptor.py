@@ -27,7 +27,7 @@ from six.moves.urllib.error import URLError, HTTPError
 from six.moves.urllib.parse import urljoin, urlparse, urlunparse
 from lxml import etree
 
-from wirecloud.commons.utils.http import parse_mime_type
+from wirecloud.commons.utils.mimeparser import parse_mime_type
 from wirecloud.fiware.marketAdaptor.usdlParser import USDLParseException, USDLParser
 from wirecloud.fiware.storeclient import StoreClient
 

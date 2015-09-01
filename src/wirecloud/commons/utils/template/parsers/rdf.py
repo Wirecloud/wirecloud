@@ -25,8 +25,8 @@ from django.utils.translation import ugettext as _
 from lxml import etree
 from six import text_type
 
+from wirecloud.commons.utils.mimeparser import parse_mime_type
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
-from wirecloud.commons.utils.http import parse_mime_type
 from wirecloud.platform.wiring.utils import parse_wiring_old_version, get_wiring_skeleton
 
 # Namespaces used by rdflib
@@ -601,17 +601,24 @@ class RDFTemplateParser(object):
                     'src': text_type(contents_node),
                 }
                 contents_info['scope'] = self._get_field(WIRE, 'contentsScope', contents_node, required=False)
-                contenttype, parameters = parse_mime_type(self._get_field(DCTERMS, 'format', contents_node, required=False))
-
                 contents_info['contenttype'] = 'text/html'
                 contents_info['charset'] = 'utf-8'
-                if contenttype != '':
+
+                contents_format = self._get_field(DCTERMS, 'format', contents_node, required=False)
+
+                if contents_format.strip() != '':
+                    try:
+                        contenttype, parameters = parse_mime_type(contents_format)
+                    except:
+                        raise TemplateParseException('Invalid code content type: %s' % contents_format)
+
                     contents_info['contenttype'] = contenttype
                     if 'charset' in parameters:
                         contents_info['charset'] = parameters['charset'].lower()
+                        del parameters['charset']
 
-                elif len(parameters) > 1:
-                    raise Exception('Invalid code content type')
+                    if len(parameters) > 0:
+                        raise TemplateParseException('Invalid code content type: %s' % contents_format)
 
                 if contents_info['scope'] == '':
                     del contents_info['scope']
