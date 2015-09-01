@@ -19,6 +19,7 @@
 
 from __future__ import unicode_literals
 
+from datetime import datetime
 import json
 import os
 
@@ -33,6 +34,7 @@ import wirecloud.catalogue.utils
 from wirecloud.catalogue.models import CatalogueResource, Version
 from wirecloud.catalogue.utils import get_resource_data
 from wirecloud.catalogue.views import serve_catalogue_media
+from wirecloud.commons.searchers import get_search_engine
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
 
 
@@ -218,14 +220,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 2)
 
-        # Empty query
-        result = self.client.get(self.base_url+'?q=totally+uncorrectable+search+giving+an+empty+resultset')
-        result_json = json.loads(result.content.decode('utf-8'))
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(result_json['pagenum'], 1)
-        self.assertEqual(result_json['pagelen'], 0)
-        self.assertEqual(result_json['pagelen'], len(result_json['results']))
-
         self.client.logout()
         self.client.login(username='MyUser', password='admin')
 
@@ -236,6 +230,54 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['results'][0]['version'], "1.10.5")
         self.assertEqual(len(result_json['results'][0]['others']), 1)
+
+    def test_basic_search_with_querytext_empty(self):
+
+        self.client.login(username='myuser', password='admin')
+
+        # Empty query
+        result = self.client.get(self.base_url+'?q=totally+uncorrectable+search+giving+an+empty+resultset')
+        result_json = json.loads(result.content.decode('utf-8'))
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagenum'], 1)
+        self.assertEqual(result_json['pagelen'], 0)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+
+    def test_basic_search_with_querytext_multireader_empty(self):
+
+        # Check WireCloud is not affected by bug #415 of Whoosh
+        # Force whoosh to use a MultiReader instance
+        searcher = get_search_engine('resource')
+        with searcher.get_batch_writer() as writer:
+            writer.add_document(**{
+                'pk': '1000',
+                'vendor_name': 'Wirecloud/new',
+                'vendor': 'Wirecloud',
+                'name': 'new',
+                'version': '1.0',
+                'template_uri': 'http://example.com',
+                'type': 'widget',
+                'creation_date': datetime.utcnow(),
+                'public': False,
+                'title': 'New',
+                'description': 'description',
+                'wiring': 'description',
+                'image': 'image.png',
+                'smartphoneimage': 'smartphoneimage.png',
+                'users': '',
+                'groups': '',
+                'content': 'detailed description',
+            })
+
+        self.client.login(username='myuser', password='admin')
+
+        # Empty query
+        result = self.client.get(self.base_url+'?q=totally+uncorrectable+search+giving+an+empty+resultset')
+        result_json = json.loads(result.content.decode('utf-8'))
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['pagenum'], 1)
+        self.assertEqual(result_json['pagelen'], 0)
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
 
     def test_basic_search_with_staff(self):
 

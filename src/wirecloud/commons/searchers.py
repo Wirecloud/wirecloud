@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -21,12 +21,14 @@ from __future__ import unicode_literals
 
 import os
 import time
+import types
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from whoosh.fields import ID, NGRAM, SchemaClass, TEXT
 from whoosh.index import create_in, exists_in, LockError, open_dir
 from whoosh.qparser import QueryParser
+from whoosh.reading import MultiReader
 from whoosh.writing import IndexWriter as WhooshIndexWriter
 
 
@@ -283,3 +285,16 @@ def get_search_engine(indexname):
             return s
 
     return None
+
+
+def patch_expand_prefix(searcher):
+
+    def expand_prefix(self, fieldname, prefix):
+        prefix = self._text_to_bytes(fieldname, prefix)
+        for fn, text in self.terms_from(fieldname, prefix):
+            if fn != fieldname or not text.startswith(prefix):
+                return
+            yield text
+
+    if searcher.ixreader.__class__ == MultiReader:
+        searcher.ixreader.expand_prefix = types.MethodType(expand_prefix, searcher.ixreader)

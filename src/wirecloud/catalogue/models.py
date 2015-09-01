@@ -38,7 +38,7 @@ from whoosh.query import And, Every, Or, Term
 from whoosh.sorting import FieldFacet, FunctionFacet
 import six
 
-from wirecloud.commons.searchers import BaseSearcher, get_search_engine
+from wirecloud.commons.searchers import BaseSearcher, get_search_engine, patch_expand_prefix
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
 
@@ -407,10 +407,9 @@ def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None
 
         if querytext and hits.is_empty():
 
-            # TODO currently searches from BufferedWriters give problems when correcting queries
-            with search_engine.open_index().searcher() as corrector:
-                correction_q = multif_p.parse(querytext)
-                corrected = corrector.correct_query(correction_q, querytext)
+            patch_expand_prefix(searcher)
+            correction_q = multif_p.parse(querytext)
+            corrected = searcher.correct_query(correction_q, querytext)
 
             if corrected.query != correction_q:
                 querytext = corrected.string
