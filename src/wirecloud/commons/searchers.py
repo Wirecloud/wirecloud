@@ -128,21 +128,28 @@ class BaseSearcher(IndexWriter):
 
         return result
 
-    def search_page(self, result, hits, pagenum, maxresults):
-        result['total'] = hits.estimated_length()
-        result['pagecount'] = result['total'] // maxresults + 1
+    def prepare_search_response(self, search_result, hits, pagenum, maxresults):
+        if hits.has_exact_length():
+            search_result['total'] = len(hits.top_n)
+        else:
+            search_result['total'] = hits.estimated_length()
 
-        if pagenum > result['pagecount']:
-            pagenum = result['pagecount']
+        search_result['pagecount'] = search_result['total'] // maxresults
+        if (search_result['total'] % maxresults) != 0:
+            search_result['pagecount'] += 1
 
-        result['pagenum'] = pagenum
-        offset = (pagenum - 1) * maxresults
+        if pagenum > search_result['pagecount']:
+            pagenum = max(1, search_result['pagecount'])
 
-        result['offset'] = offset
-        result['results'] = hits[offset:]
-        result['pagelen'] = len(result['results'])
+        search_result['pagenum'] = pagenum
+        start = (pagenum - 1) * maxresults
+        end = pagenum * maxresults
 
-        return result
+        search_result['offset'] = start
+        search_result['results'] = hits[start:end]
+        search_result['pagelen'] = len(search_result['results'])
+
+        return search_result
 
 
 class SafeWriter(WhooshIndexWriter):

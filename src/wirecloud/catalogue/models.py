@@ -419,34 +419,9 @@ def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None
                 user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
                 hits = searcher.search(user_q, limit=(pagenum * maxresults), **search_kwargs)
 
-        search_page(search_result, hits, pagenum, maxresults)
+        search_engine.prepare_search_response(search_result, hits, pagenum, maxresults)
         search_result['results'] = add_other_versions(searcher, search_result['results'], request.user, staff)
         add_absolute_urls(search_result['results'], request)
-
-    return search_result
-
-
-def search_page(search_result, hits, pagenum, maxresults):
-
-    if hits.has_exact_length():
-        search_result['total'] = len(hits.top_n)
-    else:
-        search_result['total'] = hits.estimated_length()
-
-    search_result['pagecount'] = search_result['total'] // maxresults
-    if (search_result['total'] % maxresults) != 0:
-        search_result['pagecount'] += 1
-
-    if pagenum > search_result['pagecount']:
-        pagenum = max(1, search_result['pagecount'])
-
-    search_result['pagenum'] = pagenum
-    start = (pagenum - 1) * maxresults
-    end = pagenum * maxresults
-
-    search_result['offset'] = start
-    search_result['results'] = hits[start:end]
-    search_result['pagelen'] = len(search_result['results'])
 
     return search_result
 
