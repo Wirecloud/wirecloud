@@ -25,11 +25,12 @@ import zipfile
 
 from django.http import Http404, UnreadablePostError
 from django.test import TestCase
-from mock import patch, Mock
+from django.test.utils import override_settings
+from mock import DEFAULT, patch, Mock
 
 from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import build_sendfile_response, get_content_type, normalize_boolean_param, produces, validate_url_param
+from wirecloud.commons.utils.http import build_sendfile_response, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
 from wirecloud.commons.utils.wgt import WgtFile
@@ -231,14 +232,23 @@ class HTTPUtilsTestCase(TestCase):
     def _prepare_request_mock(self):
 
         request = Mock()
+        request.get_host.return_value = 'example.com'
         request.META = {
             'HTTP_ACCEPT': 'application/json',
             'SERVER_PROTOCOL': 'http',
+            'SERVER_PORT': '80',
             'REMOTE_ADDR': '127.0.0.1',
             'HTTP_HOST': 'localhost',
         }
 
         return request
+
+    def _prepare_site_mock(self):
+
+        site = Mock()
+        site.domain = 'site.example.com:8000'
+
+        return site
 
     def test_build_sendfile_response(self):
 
@@ -373,3 +383,111 @@ class HTTPUtilsTestCase(TestCase):
     def test_get_content_type_no_provided(self):
         request = self._prepare_request_mock()
         self.assertEqual(get_content_type(request), ('', {}))
+
+    @override_settings(FORCE_PROTO=None)
+    def test_get_current_scheme_http(self):
+        request = self._prepare_request_mock()
+        request.is_secure.return_value = False
+        self.assertEqual(get_current_scheme(request), 'http')
+
+    @override_settings(FORCE_PROTO=None)
+    def test_get_current_scheme_https(self):
+        request = self._prepare_request_mock()
+        request.is_secure.return_value = True
+        self.assertEqual(get_current_scheme(request), 'https')
+
+    @override_settings(FORCE_PROTO='https')
+    def test_get_current_scheme_forced_http(self):
+        request = self._prepare_request_mock()
+        request.is_secure.return_value = False
+        self.assertEqual(get_current_scheme(request), 'https')
+
+    @override_settings(FORCE_PROTO='http')
+    def test_get_current_scheme_forced_http(self):
+        request = self._prepare_request_mock()
+        request.is_secure.return_value = True
+        self.assertEqual(get_current_scheme(request), 'http')
+
+    @override_settings(FORCE_PROTO=None)
+    def test_get_current_scheme_fallback(self):
+        self.assertEqual(get_current_scheme(None), 'http')
+
+    @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=None)
+    def test_get_current_domain(self):
+        request = self._prepare_request_mock()
+        with patch('django.contrib.sites.models.get_current_site') as get_current_site_mock:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+                get_current_site_mock.return_value = self._prepare_site_mock()
+                mocks['get_current_scheme'].return_value = 'http'
+                self.assertEqual(get_current_domain(request), 'site.example.com:8000')
+                self.assertEqual(mocks['socket'].getfqdn.call_count, 0)
+
+    @override_settings(FORCE_PROTO=None, FORCE_DOMAIN='myserver.com', FORCE_PORT=8080)
+    def test_get_current_domain_forced(self):
+        request = self._prepare_request_mock()
+        with patch('django.contrib.sites.models.get_current_site') as get_current_site_mock:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+                mocks['get_current_scheme'].return_value = 'http'
+                self.assertEqual(get_current_domain(request), 'myserver.com:8080')
+                self.assertEqual(mocks['socket'].getfqdn.call_count, 0)
+                self.assertEqual(get_current_site_mock.call_count, 0)
+
+    @override_settings(FORCE_PROTO=None, FORCE_DOMAIN='forced.example.com', FORCE_PORT=8000)
+    def test_get_current_domain_forced_domain(self):
+        request = self._prepare_request_mock()
+        with patch('django.contrib.sites.models.get_current_site') as get_current_site_mock:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+                get_current_site_mock.return_value = self._prepare_site_mock()
+                mocks['get_current_scheme'].return_value = 'http'
+                self.assertEqual(get_current_domain(request), 'forced.example.com:8000')
+                self.assertEqual(mocks['socket'].getfqdn.call_count, 0)
+
+    @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=81)
+    def test_get_current_domain_forced_port(self):
+        request = self._prepare_request_mock()
+        with patch('django.contrib.sites.models.get_current_site') as get_current_site_mock:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+                get_current_site_mock.return_value = self._prepare_site_mock()
+                mocks['get_current_scheme'].return_value = 'http'
+                self.assertEqual(get_current_domain(request), 'site.example.com:81')
+                self.assertEqual(mocks['socket'].getfqdn.call_count, 0)
+
+    @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=80)
+    def test_get_current_domain_fallback_http(self):
+        request = self._prepare_request_mock()
+        with patch('django.contrib.sites.models.get_current_site') as get_current_site_mock:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+                get_current_site_mock.side_effect = Exception
+                mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
+                mocks['get_current_scheme'].return_value = 'http'
+                self.assertEqual(get_current_domain(request), 'fqdn.example.com')
+
+    @override_settings(FORCE_PROTO=None, FORCE_DOMAIN=None, FORCE_PORT=81)
+    def test_get_current_domain_fallback_http_custom_port(self):
+        request = self._prepare_request_mock()
+        with patch('django.contrib.sites.models.get_current_site') as get_current_site_mock:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+                get_current_site_mock.side_effect = Exception
+                mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
+                mocks['get_current_scheme'].return_value = 'http'
+                self.assertEqual(get_current_domain(request), 'fqdn.example.com:81')
+
+    @override_settings(FORCE_DOMAIN=None, FORCE_PORT=443)
+    def test_get_current_domain_fallback_https(self):
+        request = self._prepare_request_mock()
+        with patch('django.contrib.sites.models.get_current_site') as get_current_site_mock:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+                get_current_site_mock.side_effect = Exception
+                mocks['socket'].getfqdn.return_value = 'fqdn.example.com'
+                mocks['get_current_scheme'].return_value = 'https'
+                self.assertEqual(get_current_domain(request), 'fqdn.example.com')
+
+    @override_settings(FORCE_DOMAIN=None, FORCE_PORT=8443)
+    def test_get_current_domain_fallback_https_custom_port(self):
+        request = self._prepare_request_mock()
+        with patch('django.contrib.sites.models.get_current_site') as get_current_site_mock:
+            with patch.multiple('wirecloud.commons.utils.http', socket=DEFAULT, get_current_scheme=DEFAULT) as mocks:
+                get_current_site_mock.side_effect = Exception
+                mocks['socket'].getfqdn.return_value = 'example.com'
+                mocks['get_current_scheme'].return_value = 'http'
+                self.assertEqual(get_current_domain(request), 'fqdn.example.com:8443')

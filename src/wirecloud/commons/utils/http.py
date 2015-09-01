@@ -291,25 +291,38 @@ def consumes(mime_types):
     return wrap
 
 
-_domain = None
+_servername = None
 def get_current_domain(request=None):
     from django.conf import settings
     from django.contrib.sites.models import get_current_site
 
+    # Server name
     if getattr(settings, 'FORCE_DOMAIN', None) is not None:
-        return settings.FORCE_DOMAIN
+        servername = settings.FORCE_DOMAIN
     else:
         try:
-            return get_current_site(request).domain
+            servername = get_current_site(request).domain.split(':', 1)[0]
         except:
-            global _domain
-            if _domain is None:
-                domain = socket.getfqdn()
-                port = getattr(settings, 'FORCE_PORT', 8000)
-                if port != 80:
-                    domain += ':' + str(port)
-                _domain = domain
-            return _domain
+            global _servername
+            if _servername is None:
+                _servername = socket.getfqdn()
+            servername = _servername
+
+    # Port
+    scheme = get_current_scheme(request)
+
+    if getattr(settings, 'FORCE_PORT', None) is not None:
+        port = int(settings.FORCE_PORT)
+    else:
+        try:
+            port = int(get_current_site(request).domain.split(':', 1)[1])
+        except:
+            port = 80 if scheme == 'http' else 443
+
+    if (scheme == 'http' and port != 80) or (scheme == 'https' and port != 443):
+        return servername + (':%s' % port)
+    else:
+        return servername
 
 
 def get_current_scheme(request=None):
