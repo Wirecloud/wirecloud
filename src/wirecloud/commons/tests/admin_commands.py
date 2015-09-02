@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import io
 import os
 import shutil
@@ -24,6 +26,7 @@ from tempfile import mkdtemp
 
 from django.core.management.base import CommandError
 from django.test import TestCase
+from mock import DEFAULT, Mock, patch
 
 from wirecloud.commons.wirecloud_admin import CommandLineUtility
 from wirecloud.commons.utils.testcases import cleartree
@@ -216,3 +219,145 @@ class ConvertCommandTestCase(TestCase):
 
         with open(dest_file, 'rb') as f:
             self.assertNotEqual(f.read(), '')
+
+
+class StartprojectCommandTestCase(TestCase):
+
+    tags = ('wirecloud-commands', 'wirecloud-command-startproject')
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.tmp_dir = mkdtemp()
+        cls.test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+
+    @classmethod
+    def tearDownClass(cls):
+
+        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
+
+    def setUp(self):
+
+        from wirecloud.commons.commands.startproject import StartprojectCommand
+        self.command = StartprojectCommand()
+
+    def tearDown(self):
+        cleartree(self.tmp_dir)
+
+    def test_no_args(self):
+
+        args = []
+        options = {
+            "type": "platform",
+            "quick_start": False,
+            "verbosity": "1",
+        }
+        with patch.multiple('wirecloud.commons.commands.startproject', Command=DEFAULT, subprocess=DEFAULT) as mocks:
+            self.assertRaises(CommandError, self.command.execute, *args, **options)
+            self.assertEqual(mocks['Command'].call_count, 0)
+
+    def test_invalid_project_type(self):
+
+        args = ['wirecloud_instance']
+        options = {
+            "type": "invalid",
+            "quick_start": False,
+            "verbosity": "1",
+        }
+        with patch.multiple('wirecloud.commons.commands.startproject', Command=DEFAULT, subprocess=DEFAULT) as mocks:
+            self.assertRaises(CommandError, self.command.execute, *args, **options)
+            self.assertEqual(mocks['Command'].call_count, 0)
+
+    def test_platform_creation(self):
+
+        args = ['wirecloud_instance']
+        options = {
+            "type": "platform",
+            "quick_start": False,
+            "verbosity": "1",
+        }
+        with patch.multiple('wirecloud.commons.commands.startproject', Command=DEFAULT, subprocess=DEFAULT) as mocks:
+            command_instance_mock = Mock()
+            mocks['Command'].return_value = command_instance_mock
+
+            self.command.execute(*args, **options)
+
+            self.assertEqual(command_instance_mock.handle.call_count, 1)
+            call_args, call_kwargs = command_instance_mock.handle.call_args_list[0]
+            self.assertEqual(call_args[0], 'wirecloud_instance')
+            self.assertEqual(call_args[1], None)
+            self.assertEqual(call_kwargs['verbosity'], '1')
+            self.assertEqual(mocks['subprocess'].call.call_count, 0)
+
+    def test_platform_creation_quick_start(self):
+
+        args = ['wirecloud_instance']
+        options = {
+            "type": "platform",
+            "quick_start": True,
+            "verbosity": "1",
+        }
+        with patch.multiple('wirecloud.commons.commands.startproject', Command=DEFAULT, subprocess=DEFAULT, os=DEFAULT, sys=DEFAULT) as mocks:
+            command_instance_mock = Mock()
+            mocks['Command'].return_value = command_instance_mock
+            mocks['subprocess'].call.return_value = None
+            mocks['sys'].executable = 'python-interpreter'
+
+            self.command.execute(*args, **options)
+
+            self.assertEqual(command_instance_mock.handle.call_count, 1)
+            call_args, call_kwargs = command_instance_mock.handle.call_args_list[0]
+            self.assertEqual(call_args[0], 'wirecloud_instance')
+            self.assertEqual(call_args[1], None)
+            self.assertEqual(call_kwargs['verbosity'], '1')
+            self.assertGreaterEqual(mocks['subprocess'].call.call_count, 1)
+            for (call_args, call_kwargs) in mocks['subprocess'].call.call_args_list:
+                self.assertTrue(call_args[0].startswith('python-interpreter '))
+
+    def test_platform_creation_quick_start_no_executable_info(self):
+
+        args = ['wirecloud_instance']
+        options = {
+            "type": "platform",
+            "quick_start": True,
+            "verbosity": "1",
+        }
+        with patch.multiple('wirecloud.commons.commands.startproject', Command=DEFAULT, subprocess=DEFAULT, os=DEFAULT, sys=DEFAULT) as mocks:
+            command_instance_mock = Mock()
+            mocks['Command'].return_value = command_instance_mock
+            mocks['subprocess'].call.return_value = None
+            mocks['sys'].executable = None
+
+            self.command.execute(*args, **options)
+
+            self.assertEqual(command_instance_mock.handle.call_count, 1)
+            call_args, call_kwargs = command_instance_mock.handle.call_args_list[0]
+            self.assertEqual(call_args[0], 'wirecloud_instance')
+            self.assertEqual(call_args[1], None)
+            self.assertEqual(call_kwargs['verbosity'], '1')
+            self.assertGreaterEqual(mocks['subprocess'].call.call_count, 1)
+            for (call_args, call_kwargs) in mocks['subprocess'].call.call_args_list:
+                self.assertTrue(call_args[0].startswith('python '))
+
+    def test_platform_creation_quick_start_external_cmd_error(self):
+
+        args = ['wirecloud_instance']
+        options = {
+            "type": "platform",
+            "quick_start": True,
+            "verbosity": "1",
+        }
+        with patch.multiple('wirecloud.commons.commands.startproject', Command=DEFAULT, subprocess=DEFAULT, os=DEFAULT, sys=DEFAULT) as mocks:
+            command_instance_mock = Mock()
+            mocks['Command'].return_value = command_instance_mock
+            mocks['subprocess'].call.return_value = 1
+            mocks['sys'].executable = 'python-interpreter'
+
+            self.assertRaises(CommandError, self.command.execute, *args, **options)
+
+            self.assertEqual(command_instance_mock.handle.call_count, 1)
+            call_args, call_kwargs = command_instance_mock.handle.call_args_list[0]
+            self.assertEqual(call_args[0], 'wirecloud_instance')
+            self.assertEqual(call_args[1], None)
+            self.assertEqual(call_kwargs['verbosity'], '1')
+            self.assertEqual(mocks['subprocess'].call.call_count, 1)

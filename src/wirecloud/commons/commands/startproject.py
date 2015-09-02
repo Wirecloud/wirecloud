@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,6 +20,7 @@
 from optparse import make_option
 import os
 import subprocess
+import sys
 
 from django.core.management.base import CommandError
 from django.core.management.commands.startproject import Command
@@ -29,8 +30,12 @@ import wirecloud.commons
 from wirecloud.commons.utils.commands import BaseCommand
 
 
-def exec_external_cmd(cmd):
-    result = subprocess.call(cmd, shell=True)
+def exec_external_python_cmd(cmd):
+    if sys.executable in ('', None):
+        python_executable = 'python'
+    else:
+        python_executable = sys.executable
+    result = subprocess.call(python_executable + ' ' + cmd, shell=True)
     if result:
         raise CommandError('Error executing external command')
 
@@ -75,7 +80,7 @@ class StartprojectCommand(BaseCommand):
         if options['quick_start']:
 
             os.chdir(project_name)
-            exec_external_cmd('python manage.py syncdb --migrate --noinput')
-            exec_external_cmd('python manage.py loaddata wirecloud_quick_start')
-            exec_external_cmd('python manage.py collectstatic --noinput')
-            exec_external_cmd('python manage.py compress --force')
+            exec_external_python_cmd('manage.py syncdb --migrate --noinput')
+            exec_external_python_cmd('manage.py loaddata wirecloud_quick_start')
+            exec_external_python_cmd('manage.py collectstatic --noinput')
+            exec_external_python_cmd('manage.py compress --force')
