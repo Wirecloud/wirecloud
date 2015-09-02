@@ -51,7 +51,7 @@ class FeatureCollection(Resource):
         return HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
 
 
-def resolve_url(to, *args, **kwargs):
+def resolve_url(to, *args, **kwargs):  # pragma: no cover
     """
     Return a URL appropriate for the arguments passed.
     The arguments could be:
