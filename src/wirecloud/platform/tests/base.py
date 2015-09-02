@@ -37,6 +37,7 @@ from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import WirecloudTestCase, wirecloud_selenium_test_case, WirecloudSeleniumTestCase
 from wirecloud.commons.exceptions import HttpBadCredentials
+from wirecloud.platform.views import get_default_view, render_wirecloud
 from wirecloud.platform.preferences.models import update_session_lang
 
 
@@ -120,6 +121,28 @@ class BasicViewsAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn('Location', response)
         self.assertTrue(response['Location'].endswith('?a=b'))
+
+    @patch('wirecloud.platform.views.ALLOW_ANONYMOUS_ACCESS', new=True)
+    def test_workspace_view_public_anonymous_allowed(self):
+
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Public Workspace'})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml', HTTP_USER_AGENT='')
+        self.assertEqual(response.status_code, 200)
+
+    @patch('wirecloud.platform.views.ALLOW_ANONYMOUS_ACCESS', new=False)
+    def test_workspace_view_public_anonymous_not_allowed(self):
+
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Public Workspace'})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml', HTTP_USER_AGENT='')
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].startswith(self.login_url))
+
+    def test_render_wirecloud_invalid_view_type(self):
+        request = Mock(GET={}, META={})
+        with patch('wirecloud.platform.views.get_default_view', return_value="classic"):
+            render_wirecloud(request, view_type='invalid')
 
     @patch('wirecloud.platform.views.ALLOW_ANONYMOUS_ACCESS', new=True)
     def test_root_view_anonymous_allowed(self):
@@ -273,6 +296,26 @@ class BasicViewsAPI(WirecloudTestCase):
         request = Mock()
         request.META = {'HTTP_AUTHORIZATION': 'type token extra_param'}
         self.assertRaises(HttpBadCredentials, get_api_user, request)
+
+    def test_get_default_view_classic(self):
+
+        request = Mock()
+        request.META = {'HTTP_USER_AGENT': ''}
+        request.session = {}
+        with patch('wirecloud.platform.views.ua_parse') as ua_parse_mock:
+            ua_parse_mock.return_value = Mock(is_mobile=False)
+            self.assertEqual(get_default_view(request), 'classic')
+            self.assertEqual(request.session['default_mode'], 'classic')
+
+    def test_get_default_view_smartphone(self):
+
+        request = Mock()
+        request.META = {'HTTP_USER_AGENT': ''}
+        request.session = {}
+        with patch('wirecloud.platform.views.ua_parse') as ua_parse_mock:
+            ua_parse_mock.return_value = Mock(is_mobile=True)
+            self.assertEqual(get_default_view(request), 'smartphone')
+            self.assertEqual(request.session['default_mode'], 'smartphone')
 
 
 @wirecloud_selenium_test_case
