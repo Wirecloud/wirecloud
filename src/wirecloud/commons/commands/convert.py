@@ -69,7 +69,7 @@ class ConvertCommand(BaseCommand):
             converted_template = json.write_json_description(template_info)
         elif options['dest_format'] == 'xml':
             converted_template = xml.write_xml_description(template_info)
-        elif options['dest_format'] == 'old_xml':
+        else:  # if options['dest_format'] == 'old_xml':
             converted_template = old_xml.write_xml_description(template_info)
 
         if len(args) == 2:
