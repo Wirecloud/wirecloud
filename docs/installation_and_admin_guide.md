@@ -326,14 +326,27 @@ Language code to use by default (e.g. "en"). This setting also support other val
 (String, default: `None`)
 
 Set `FORCE_DOMAIN` using an string if you want to force WireCloud to use a
-concrete domain name when building internal URLs. If this setting is `None` (the
-default), WireCloud will use the domain info coming with the requests or from
-the [Django's sites
-framework](https://docs.djangoproject.com/en/1.4/ref/contrib/sites/) if
-configured and used.
+concrete domain name (without including the port) when building internal URLs.
+If this setting is `None` (the default), WireCloud will try to use the [Django's
+sites framework](https://docs.djangoproject.com/en/1.4/ref/contrib/sites/) for
+obtaining the domain info. If the sites framework is not used, the domain is
+extracted from the request.
 
-This setting is mainly useful when WireCloud is behind a web server acting as
-proxy.
+> This setting is mainly useful when WireCloud is behind a web server acting as
+> proxy.
+
+
+#### FORCE_PORT
+(Integer, default: `None`)
+
+Set `FORCE_PORT` using a number if you want to force WireCloud to use
+that port when building internal URLs.
+
+If this setting is `None` (the default), WireCloud will use the port info from
+incoming requests for building internal URLs.
+
+> This setting is mainly useful when WireCloud is behind a web server acting as
+> proxy.
 
 
 #### FORCE_PROTO
@@ -347,8 +360,8 @@ comes from a secure connection and, in that case, it will use https as the
 scheme for building the internal URLs. In any other case, WireCloud will use
 http as the scheme for the internal URLs.
 
-This setting is mainly useful when WireCloud is behind a web server acting as
-proxy.
+> This setting is mainly useful when WireCloud is behind a web server acting as
+> proxy.
 
 
 #### LANGUAGE_CODE
