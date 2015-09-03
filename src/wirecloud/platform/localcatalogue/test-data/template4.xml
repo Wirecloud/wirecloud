@@ -1,50 +1,39 @@
-<?xml version="1.0" ?><Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
-  <!-- Widget Meta-Info -->
-  <Catalog.ResourceDescription>
-    <Vendor>Wirecloud</Vendor>
-    <Name>test</Name>
-    <DisplayName>__MSG_displayName__</DisplayName>
-    <Version>0.2</Version>
-    <Author>admin</Author>
-    <Mail>test@example.com</Mail>
-    <Description>__MSG_description__</Description>
-    <ImageURI>images/catalogue.png</ImageURI>
-    <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
-  </Catalog.ResourceDescription>
-
-  <Platform.Preferences>
-    <Preference default="value" description="__MSG_prefDescription__" label="__MSG_varLabel__" name="pref" type="text"/>
-  </Platform.Preferences>
-
-  <Platform.StateProperties>
-    <Property label="__MSG_varLabel__" name="prop" type="text"/>
-  </Platform.StateProperties>
-
-  <Platform.Wiring>
-    <OutputEndpoint friendcode="test_friend_code" label="__MSG_varLabel__" name="event" type="text"/>
-    <InputEndpoint friendcode="test_friend_code" label="__MSG_varLabel__" name="slot" type="text"/>
-  </Platform.Wiring>
-
-  <Platform.Link>
-    <XHTML href="test.html"/>
-  </Platform.Link>
-
-  <Platform.Rendering height="24" width="10"/>
-
-  <Translations default="en">
-    <Translation lang="en">
-      <msg name="displayName">Test Widget</msg>
-      <msg name="description">Test Widget description</msg>
-      <msg name="prefDescription">Preference description</msg>
-      <msg name="varLabel">Label</msg>
-      <msg name="extraIndex">Boo</msg>
-    </Translation>
-    <Translation lang="es">
-      <msg name="displayName">Widget de pruebas</msg>
-      <msg name="description">Descripción del Widget de pruebas</msg>
-      <msg name="prefDescription">Descripción de la preferencia</msg>
-      <msg name="varLabel">Etiqueta</msg>
-      <msg name="extraIndex">Boo</msg>
-    </Translation>
-  </Translations>
-</Template>
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud" name="test" version="0.2">
+    <details>
+        <title>__MSG_displayName__</title>
+        <email>test@example.com</email>
+        <image>images/catalogue.png</image>
+        <smartphoneimage>images/catalogue_iphone.png</smartphoneimage>
+        <description>__MSG_description__</description>
+        <authors>admin</authors>
+    </details>
+    <preferences>
+        <preference name="pref" type="text" label="__MSG_varLabel__" description="__MSG_prefDescription__" default="value"/>
+    </preferences>
+    <persistentvariables>
+        <variable name="prop" type="text" label="__MSG_varLabel__"/>
+    </persistentvariables>
+    <wiring>
+        <outputendpoint name="event" type="text" label="__MSG_varLabel__" friendcode="test_friend_code"/>
+        <inputendpoint name="slot" type="text" label="__MSG_varLabel__" friendcode="test_friend_code"/>
+    </wiring>
+    <contents src="test.html"/>
+    <rendering height="24" width="10"/>
+    <translations default="en">
+        <translation lang="en">
+            <msg name="prefDescription">Preference description</msg>
+            <msg name="varLabel">Label</msg>
+            <msg name="displayName">Test Widget</msg>
+            <msg name="description">Test Widget description</msg>
+            <msg name="extraIndex">Boo</msg>
+        </translation>
+        <translation lang="es">
+            <msg name="prefDescription">Descripción de la preferencia</msg>
+            <msg name="varLabel">Etiqueta</msg>
+            <msg name="displayName">Widget de pruebas</msg>
+            <msg name="description">Descripción del Widget de pruebas</msg>
+            <msg name="extraIndex">Boo</msg>
+        </translation>
+    </translations>
+</widget>
