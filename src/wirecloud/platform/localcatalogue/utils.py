@@ -16,13 +16,9 @@
 
 # You should have received a copy of the GNU Affero General Public License
 
-from django.db.models import Q
-from django.utils.translation import ugettext as _
-
 from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.platform.localcatalogue.signals import resource_installed
-from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 
@@ -94,34 +90,3 @@ def install_resource_to_all_users(**kwargs):
         resource_installed.send(sender=resource)
 
     return added, resource
-
-
-def install_resource_from_available_marketplaces(vendor, name, version, user):
-
-    # Now search it on other marketplaces
-    market_managers = get_market_managers(user)
-    resource_info = None
-
-    for manager in market_managers:
-
-        try:
-            resource_info = market_managers[manager].search_resource(vendor, name, version, user)
-        except:
-            pass
-
-        if resource_info is not None:
-            break
-
-    if resource_info is not None:
-
-        return install_resource_to_user(user, file_contents=resource_info['downloaded_file'])
-    else:
-        raise Exception
-
-
-def get_or_add_resource_from_available_marketplaces(vendor, name, version, user):
-
-    if not CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version).filter(Q(public=True) | Q(users=user)).exists():
-        return install_resource_from_available_marketplaces(vendor, name, version, user)
-    else:
-        return CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
