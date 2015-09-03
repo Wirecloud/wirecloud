@@ -212,6 +212,10 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         self.assertNotEqual(old_code, new_code)
 
+    def test_install_resource_requires_wgt_instance(self):
+
+        self.assertRaises(TypeError, install_resource, None, self.user)
+
     def test_widget_with_missing_translation_indexes(self):
 
         file_contents = self.build_simple_wgt('template3.xml')

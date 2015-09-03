@@ -16,12 +16,9 @@
 
 # You should have received a copy of the GNU Affero General Public License
 
-from io import BytesIO
-
 from django.db import IntegrityError
 from django.db.models import Q
 from django.utils.translation import ugettext as _
-from six import string_types
 
 from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.catalogue.models import CatalogueResource
@@ -31,17 +28,12 @@ from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 
 
-def install_resource(file_contents, executor_user):
+def install_resource(wgt_file, executor_user):
 
-    if isinstance(file_contents, string_types):
-        file_contents = BytesIO(file_contents)
-        wgt_file = WgtFile(file_contents)
-    elif isinstance(file_contents, WgtFile):
-        wgt_file = file_contents
-        file_contents = wgt_file.get_underlying_file()
-    else:
-        raise Exception
+    if not isinstance(wgt_file, WgtFile):
+        raise TypeError('wgt_file must be a WgtFile')
 
+    file_contents = wgt_file.get_underlying_file()
     template_contents = wgt_file.get_template()
 
     template = TemplateParser(template_contents)
