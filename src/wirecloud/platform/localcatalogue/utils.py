@@ -16,7 +16,6 @@
 
 # You should have received a copy of the GNU Affero General Public License
 
-from django.db import IntegrityError
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 
@@ -52,17 +51,16 @@ def install_resource_to_user(user, **kwargs):
 
     executor_user = kwargs.get('executor_user', user)
     downloaded_file = kwargs.get('file_contents', None)
-    raise_conflicts = kwargs.get('raise_conflicts', False)
 
     resource = install_resource(downloaded_file, executor_user)
     if resource.users.filter(pk=user.pk).exists():
-        if raise_conflicts:
-            raise IntegrityError(_('Resource already exists %(resource_id)s') % {'resource_id': resource.local_uri_part})
+        added = False
     else:
+        added = True
         resource.users.add(user)
         resource_installed.send(sender=resource, user=user)
 
-    return resource
+    return added, resource
 
 
 def install_resource_to_group(group, **kwargs):
@@ -71,11 +69,14 @@ def install_resource_to_group(group, **kwargs):
     downloaded_file = kwargs.get('file_contents', None)
 
     resource = install_resource(downloaded_file, executor_user)
-    resource.groups.add(group)
+    if resource.groups.filter(pk=group.pk).exists():
+        added = False
+    else:
+        added = True
+        resource.groups.add(group)
+        resource_installed.send(sender=resource, group=group)
 
-    resource_installed.send(sender=resource, group=group)
-
-    return resource
+    return added, resource
 
 
 def install_resource_to_all_users(**kwargs):
@@ -84,12 +85,15 @@ def install_resource_to_all_users(**kwargs):
     downloaded_file = kwargs.get('file_contents', None)
 
     resource = install_resource(downloaded_file, executor_user)
-    resource.public = True
-    resource.save()
+    if resource.public:
+        added = False
+    else:
+        added = True
+        resource.public = True
+        resource.save()
+        resource_installed.send(sender=resource)
 
-    resource_installed.send(sender=resource)
-
-    return resource
+    return added, resource
 
 
 def install_resource_from_available_marketplaces(vendor, name, version, user):

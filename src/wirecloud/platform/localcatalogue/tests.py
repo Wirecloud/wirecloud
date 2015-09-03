@@ -37,7 +37,7 @@ from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.testcases import uses_extra_resources, DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase, wirecloud_selenium_test_case
 from wirecloud.commons.utils.wgt import WgtFile
-from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
+from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user, install_resource_to_group, install_resource_to_all_users
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
 
@@ -57,11 +57,13 @@ class LocalCatalogueTestCase(WirecloudTestCase):
             'example.com': DynamicWebServer(),
         }
     }
-    tags = ('localcatalogue',)
+    tags = ('wirecloud-localcatalogue', 'wirecloud-noselenium', 'wirecloud-localcatalogue-noselenium')
 
     def setUp(self):
         super(LocalCatalogueTestCase, self).setUp()
         self.user = User.objects.get(username='test')
+        self.user2 = User.objects.get(username='test2')
+        self.group = Group.objects.get(name='normusers')
 
     def read_template(self, *template):
         f = open(os.path.join(os.path.dirname(__file__), 'test-data', *template))
@@ -119,8 +121,9 @@ class LocalCatalogueTestCase(WirecloudTestCase):
     def test_widget_with_minimal_info(self):
 
         file_contents = self.build_simple_wgt('template9.xml')
-        resource = install_resource_to_user(self.user, file_contents=file_contents)
+        added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
+        self.assertTrue(added)
         resource_info = json.loads(resource.json_description)
         self.assertEqual(resource.vendor, 'Wirecloud')
         self.assertEqual(resource.short_name, 'test')
@@ -133,15 +136,17 @@ class LocalCatalogueTestCase(WirecloudTestCase):
     def test_basic_widget_creation(self):
 
         file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
-        resource = install_resource_to_user(self.user, file_contents=file_contents)
+        added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
+        self.assertTrue(added)
         self.check_basic_widget_info(resource)
 
     def test_basic_widget_creation_from_rdf(self):
 
         file_contents = self.build_simple_wgt('template1.rdf', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
-        resource = install_resource_to_user(self.user, file_contents=file_contents)
+        added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
+        self.assertTrue(added)
         self.check_basic_widget_info(resource)
 
     def test_basic_operator_creation_from_rdf(self):
@@ -188,7 +193,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         widget_id = {'vendor': 'Wirecloud', 'name': 'test', 'version': '0.1'}
 
         file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
-        resource = install_resource_to_user(self.user, file_contents=file_contents)
+        added, resource = install_resource_to_user(self.user, file_contents=file_contents)
+        self.assertTrue(added)
         resource_pk = resource.pk
         xhtml_pk = resource.widget.pk
 
@@ -216,6 +222,49 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         self.assertRaises(TypeError, install_resource, None, self.user)
 
+    def test_install_resource_to_group(self):
+
+        wgt_file = self.build_simple_wgt('template1.xml', b'code', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+
+        added, resource = install_resource_to_group(self.group, file_contents=wgt_file)
+        self.assertTrue(added)
+        self.assertTrue(resource.is_available_for(self.user))
+        self.assertTrue(resource.is_available_for(self.user2))
+
+    def test_install_resource_to_group_duplicated(self):
+
+        resource = CatalogueResource.objects.get(vendor='Test', short_name='Test Widget', version='1.0.0')
+        resource.groups.add(self.group)
+
+        wgt_file = self.build_simple_wgt('template10.xml', b'code')
+
+        added, resource = install_resource_to_group(self.group, file_contents=wgt_file)
+        self.assertFalse(added)
+        self.assertTrue(resource.is_available_for(self.user))
+        self.assertTrue(resource.is_available_for(self.user2))
+
+    def test_install_resource_to_all_users(self):
+
+        wgt_file = self.build_simple_wgt('template1.xml', b'code', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+
+        added, resource = install_resource_to_all_users(file_contents=wgt_file)
+        self.assertTrue(added)
+        self.assertTrue(resource.public)
+        self.assertTrue(resource.is_available_for(self.user))
+        self.assertTrue(resource.is_available_for(self.user2))
+
+    def test_install_resource_to_all_users_duplicated(self):
+
+        CatalogueResource.objects.filter(vendor='Test', short_name='Test Widget', version='1.0.0').update(public=True)
+
+        wgt_file = self.build_simple_wgt('template10.xml', b'code')
+
+        added, resource = install_resource_to_all_users(file_contents=wgt_file)
+        self.assertFalse(added)
+        self.assertTrue(resource.public)
+        self.assertTrue(resource.is_available_for(self.user))
+        self.assertTrue(resource.is_available_for(self.user2))
+
     def test_widget_with_missing_translation_indexes(self):
 
         file_contents = self.build_simple_wgt('template3.xml')
@@ -234,8 +283,9 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
 
-        resource = install_resource_to_user(self.user, file_contents=file_contents)
+        added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
+        self.assertTrue(added)
         self.changeLanguage('es')
         data = resource.get_processed_info(process_urls=False)
         self.assertEqual(data['vendor'], 'Wirecloud')
@@ -320,8 +370,9 @@ class LocalCatalogueTestCase(WirecloudTestCase):
     def test_basic_mashup(self):
 
         file_contents = self.build_simple_wgt(os.path.join('..', '..', 'workspace', 'test-data', 'wt1.xml'))
-        resource = install_resource_to_user(self.user, file_contents=file_contents)
+        added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
+        self.assertTrue(added)
         self.assertEqual(resource.vendor, 'Wirecloud Test Suite')
         self.assertEqual(resource.short_name, 'Test Mashup')
         self.assertEqual(resource.version, '1')
@@ -330,8 +381,9 @@ class LocalCatalogueTestCase(WirecloudTestCase):
     def test_basic_mashup_rdf(self):
 
         file_contents = self.build_simple_wgt(os.path.join('..', '..', 'workspace', 'test-data', 'wt1.rdf'))
-        resource = install_resource_to_user(self.user, file_contents=file_contents)
+        added, resource = install_resource_to_user(self.user, file_contents=file_contents)
 
+        self.assertTrue(added)
         self.assertEqual(resource.vendor, 'Wirecloud Test Suite')
         self.assertEqual(resource.short_name, 'Test Mashup')
         self.assertEqual(resource.version, '1')
@@ -340,7 +392,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
 class PackagedResourcesTestCase(WirecloudTestCase):
 
-    tags = ('localcatalogue',)
+    tags = ('wirecloud-localcatalogue', 'wirecloud-noselenium', 'wirecloud-localcatalogue-noselenium')
 
     def setUp(self):
 
@@ -353,11 +405,12 @@ class PackagedResourcesTestCase(WirecloudTestCase):
         catalogue_deployment_path = catalogue.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         deployment_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
 
-        install_resource_to_user(self.user, file_contents=wgt_file)
-        resource = CatalogueResource.objects.get(vendor='Morfeo', short_name='Test', version='0.1')
+        added, resource = install_resource_to_user(self.user, file_contents=wgt_file)
         resource.widget
+        self.assertTrue(added)
         self.assertTrue(os.path.isdir(deployment_path))
         self.assertTrue(os.path.isdir(catalogue_deployment_path))
+        self.assertTrue(resource.is_available_for(self.user))
 
         resource.delete()
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Morfeo', short_name='Test', version='0.1')
@@ -406,7 +459,7 @@ class PackagedResourcesTestCase(WirecloudTestCase):
 class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('localcatalogue', 'localcatalogue-selenium')
+    tags = ('wirecloud-localcatalogue', 'wirecloud-selenium', 'wirecloud-localcatalogue-selenium')
 
     def test_basic_resource_details(self):
 

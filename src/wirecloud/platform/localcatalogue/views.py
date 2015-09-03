@@ -84,6 +84,7 @@ class ResourceCollection(Resource):
     @commit_on_http_success
     def create(self, request):
 
+        status_code = 201
         force_create = False
         install_embedded_resources = False
         templateURL = None
@@ -159,7 +160,12 @@ class ResourceCollection(Resource):
 
         try:
 
-            resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, raise_conflicts=force_create)
+            added, resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL)
+
+            if not added and force_create:
+                return build_error_response(request, 409, _('Resource already exists'))
+            elif not added:
+                status_code = 200
 
         except OSError as e:
 
@@ -179,10 +185,6 @@ class ResourceCollection(Resource):
 
             return build_error_response(request, 400, e)
 
-        except IntegrityError:
-
-            return build_error_response(request, 409, _('Resource already exists'))
-
         if install_embedded_resources:
 
             info = {
@@ -198,14 +200,15 @@ class ResourceCollection(Resource):
                         resource_file = BytesIO(file_contents.read(embedded_resource['src']))
 
                     extra_resource_contents = WgtFile(resource_file)
-                    extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
-                    info['extra_resources'].append(extra_resource.get_processed_info(request))
+                    extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
+                    if extra_resource_added:
+                        info['extra_resources'].append(extra_resource.get_processed_info(request))
 
-            return HttpResponse(json.dumps(info), status=201, content_type='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(info), status=status_code, content_type='application/json; charset=UTF-8')
 
         else:
 
-            return HttpResponse(json.dumps(resource.get_processed_info(request)), status=201, content_type='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(resource.get_processed_info(request)), status=status_code, content_type='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):

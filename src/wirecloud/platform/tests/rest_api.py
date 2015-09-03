@@ -2175,6 +2175,51 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('name', response_data)
         self.assertIn('version', response_data)
 
+    def test_resource_collection_post_duplicated(self):
+
+        url = reverse('wirecloud.resource_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertIn('type', response_data)
+        self.assertIn(response_data['type'], CatalogueResource.RESOURCE_TYPES)
+        self.assertIn('vendor', response_data)
+        self.assertIn('name', response_data)
+        self.assertIn('version', response_data)
+
+    def test_resource_collection_post_install_embedded_resources(self):
+
+        url = reverse('wirecloud.resource_collection') + '?install_embedded_resources=true'
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_TestMashupEmbedded_2.0.zip'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertIn('resource_details', response_data)
+        self.assertIn('type', response_data['resource_details'])
+        self.assertIn(response_data['resource_details']['type'], CatalogueResource.RESOURCE_TYPES)
+        self.assertIn('vendor', response_data['resource_details'])
+        self.assertIn('name', response_data['resource_details'])
+        self.assertIn('version', response_data['resource_details'])
+        self.assertEqual(len(response_data['resource_details']['embedded']), 3)
+
+        self.assertIn('extra_resources', response_data)
+        self.assertEqual(len(response_data['extra_resources']), 2)
+
     def test_resource_collection_post_using_invalid_resource_url(self):
 
         url = reverse('wirecloud.resource_collection')

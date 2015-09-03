@@ -1,5 +1,12 @@
 [
     {
+        "model": "auth.Group",
+        "pk": "1",
+        "fields": {
+            "name": "normusers"
+        }
+    },
+    {
         "model": "auth.User",
         "pk": "2",
         "fields": {
@@ -10,7 +17,7 @@
             "is_superuser": false,
             "is_staff": false,
             "last_login": "2011-03-17T17:21:19Z",
-            "groups": [],
+            "groups": [1],
             "user_permissions": [],
             "password": "sha1$b85c0$28136cb118976e070a47e85bd67e7b9171ec4604",
             "email": "",
@@ -28,7 +35,7 @@
             "is_superuser": false,
             "is_staff": false,
             "last_login": "2011-03-17T17:21:19Z",
-            "groups": [],
+            "groups": [1],
             "user_permissions": [],
             "password": "sha1$b85c0$28136cb118976e070a47e85bd67e7b9171ec4604",
             "email": "",
