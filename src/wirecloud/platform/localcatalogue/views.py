@@ -25,21 +25,17 @@ import json
 import os
 import zipfile
 
-from django.conf import settings
-from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
-from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
-from django.views.static import serve
 import six
 
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.downloader import download_http_content
-from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_downloadfile_response, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
 from wirecloud.commons.utils.template import TemplateParseException, UnsupportedFeature
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
@@ -222,17 +218,7 @@ class ResourceEntry(Resource):
 
         file_name = '_'.join((vendor, name, version)) + '.wgt'
         base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
-        local_path = os.path.normpath(os.path.join(base_dir, file_name))
-
-        if not os.path.isfile(local_path):
-            return HttpResponse(status=404)
-
-        if not getattr(settings, 'USE_XSENDFILE', False):
-            response = serve(request, local_path, document_root='/')
-        else:
-            response = HttpResponse()
-            response['X-Sendfile'] = smart_str(local_path)
-
+        response = build_downloadfile_response(request, file_name, base_dir)
         response['Content-Type'] = resource.mimetype
         return response
 

@@ -33,13 +33,12 @@ from django.shortcuts import get_object_or_404
 from django.utils.http import urlunquote
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET
-from django.views.static import serve
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
-from wirecloud.commons.utils.http import build_response, build_sendfile_response, get_absolute_reverse_url, get_current_domain
+from wirecloud.commons.utils.http import build_response, build_downloadfile_response, get_absolute_reverse_url, get_current_domain
 import wirecloud.platform.widget.utils as showcase_utils
 from wirecloud.platform.widget.utils import WIDGET_ERROR_FORMATTERS, fix_widget_code
 
@@ -154,13 +153,8 @@ def serve_showcase_media(request, vendor, name, version, file_path):
     #    return build_error_response(request, 403, "Forbidden")
 
     base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
-
-    if not getattr(settings, 'USE_XSENDFILE', False):
-        response = serve(request, file_path, document_root=base_dir)
-    else:
-        response = build_sendfile_response(file_path, base_dir)
-
+    response = build_downloadfile_response(request, file_path, base_dir)
     if response.status_code == 302:
-        response['Location'] = reverse('wirecloud_catalogue.media', kwargs= {"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
+        response['Location'] = reverse('wirecloud.showcase_media', kwargs= {"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
 
     return response

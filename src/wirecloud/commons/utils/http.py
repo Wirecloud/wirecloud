@@ -402,6 +402,17 @@ def build_sendfile_response(file_path, document_root):
     return response
 
 
+def build_downloadfile_response(request, file_path, base_dir):
+
+    from django.conf import settings
+    from django.views.static import serve
+
+    if not getattr(settings, 'USE_XSENDFILE', False):
+        return serve(request, file_path, document_root=base_dir)
+    else:
+        return build_sendfile_response(file_path, base_dir)
+
+
 def parse_json_request(request):
 
     try:

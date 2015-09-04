@@ -30,7 +30,7 @@ from mock import DEFAULT, patch, Mock
 
 from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.commons.utils.http import build_sendfile_response, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
+from wirecloud.commons.utils.http import build_downloadfile_response, build_sendfile_response, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
 from wirecloud.commons.utils.wgt import WgtFile
@@ -42,7 +42,7 @@ __test__ = False
 
 class HTMLCleanupTestCase(TestCase):
 
-    tags = ('wirecloud-utils', 'wirecloud-html-cleanup')
+    tags = ('wirecloud-utils', 'wirecloud-html-cleanup', 'wirecloud-noselenium')
 
     def test_scripts_are_removed(self):
         self.assertEqual(clean_html('<script>asdfas</script>'), '')
@@ -79,7 +79,7 @@ class HTMLCleanupTestCase(TestCase):
 
 class GeneralUtilsTestCase(TestCase):
 
-    tags = ('wirecloud-utils', 'wirecloud-general-utils')
+    tags = ('wirecloud-utils', 'wirecloud-general-utils', 'wirecloud-noselenium')
 
     def test_skipunreadableposts_filter(self):
 
@@ -125,7 +125,7 @@ class GeneralUtilsTestCase(TestCase):
 
 class WGTTestCase(TestCase):
 
-    tags = ('wirecloud-utils', 'wirecloud-wgt',)
+    tags = ('wirecloud-utils', 'wirecloud-wgt', 'wirecloud-noselenium')
 
     def build_simple_wgt(self, other_files=()):
 
@@ -235,7 +235,7 @@ class WGTTestCase(TestCase):
 
 class HTTPUtilsTestCase(TestCase):
 
-    tags = ('wirecloud-utils', 'wirecloud-general-utils', 'wirecloud-http-utils',)
+    tags = ('wirecloud-utils', 'wirecloud-general-utils', 'wirecloud-http-utils', 'wirecloud-noselenium')
 
     def _prepare_request_mock(self):
 
@@ -283,6 +283,24 @@ class HTTPUtilsTestCase(TestCase):
         response = build_sendfile_response('../a/../file.js', '/folder')
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], 'file.js')
+
+    @override_settings(USE_XSENDFILE=False)
+    def test_build_downloadfile_response(self):
+
+        request = self._prepare_request_mock()
+        with patch('django.views.static.serve') as serve_mock:
+            response = build_downloadfile_response(request, 'manage.py', '/')
+            self.assertNotEqual(response, None)
+            serve_mock.assert_called_once_with(request, 'manage.py', document_root='/')
+
+    @override_settings(USE_XSENDFILE=True)
+    def test_build_downloadfile_response_sendfile(self):
+
+        request = self._prepare_request_mock()
+        with patch('wirecloud.commons.utils.http.build_sendfile_response') as serve_mock:
+            response = build_downloadfile_response(request, 'manage.py', '/')
+            self.assertNotEqual(response, None)
+            serve_mock.assert_called_once_with('manage.py', '/')
 
     def test_normalize_boolean_param_string(self):
 
