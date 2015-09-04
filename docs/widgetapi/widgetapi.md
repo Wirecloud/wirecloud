@@ -1,45 +1,77 @@
-# JavaScript API
+FIWARE Application Mashup - Widget API Specification
+====================================================
+Date: 30th September 2015
 
-.fx: cover
+This version:
 
-@conwet
+    https://github.com/Wirecloud/wirecloud/tree/0.8.x/docs/widgetapi/
 
----
+Previous version:
 
-## Introduction
+    https://github.com/Wirecloud/wirecloud/tree/0.7.x/docs/widgetapi/
 
-.fx: section-title
+Latest version:
 
----
-<!-- SLIDE 3 -->
-## Introduction
+    https://github.com/Wirecloud/wirecloud/tree/develop/docs/widgetapi/
 
-The JavaScript API allow Widgets and Operators to access the functionalities
-offered by the Application Mashup GE like widget/operator interconnection, state
-persistence, access to the cross-domain proxy, ...
+The Application Mashup GE offers two separate APIs that cannot be combined
+because of their different nature: The Widget API (the subject of this
+document) is a JavaScript API, while the Application Mashup API is a
+RESTful one. You can find the Application Mashup RESTful API in the
+following link:
 
----
-## MashupPlatform.http
+    http://docs.fiwareapplicationmashup.apiary.io/
 
-.fx: section-title
+The Widget API is a JavaScript API that allows deployed widgets in a Application
+Mashup server to gain access to its functionalities. It does not make sense
+to expose it as a RESTful API since it needs to be consumed by a widget in its
+own local execution environment. Amongst other functionalities, this API allows
+the widgets to gain access to remote resources. For example, in order to gain
+access to a remote REST API or to resolve cross-domain problems, a widget needs
+to use a proxy through the Widget API
 
----
-<!-- SLIDE 5 -->
-## MashupPlatform.http
-### Introduction
+## Editors
+
+  + Álvaro Arranz, Universidad Politécnica de Madrid
+
+## Acknowledgements
+
+The editors would like to express their gratitude to the following people who actively contributed to this specification:
+Aitor Magan and Francisco de la Vega
+
+## Status
+
+This is a work in progress and is changing on a daily basis. You can check the latest
+available version on: https://github.com/Wirecloud/wirecloud/tree/develop.
+Please send your comments to wirecloud@conwet.com
+
+This specification is licensed under the [FIWARE Open Specification License (implicit patents license)](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29).
+
+## Copyright
+
+* Copyright © 2012-2015 by Universidad Politécnica de Madrid
+
+All rights reserved. No part of this publication may be reproduced, distributed, or
+transmitted in any form or by any means, including photocopying, recording, or
+other electronic or mechanical methods, without the prior written permission of the
+publisher, except in the case of brief quotations embodied in critical reviews and
+certain other noncommercial uses permitted by copyright law. For permission
+requests, write to the publisher, addressed “Attention: Permissions Coordinator,” at
+the address below.
+
+## Widget API
+
+### MashupPlatform.http
 
 This module provides some methods for handling HTTP requests including support
 for using the cross domain proxy.
 
 Currently this module is composed of two methods:
 
-- [`buildProxyURL`](#slide6)
-- [`makeRequest`](#slide7)
+- [`buildProxyURL`](#buildproxyurl-method)
+- [`makeRequest`](#makerequest-method)
 
----
-<!-- SLIDE 6 -->
-## MashupPlatform.http
-### `buildProxyURL` method
+#### `buildProxyURL` method
 
 This method builds a URL suitable for working around the cross-domain problem.
 It is usually handled using the WireCloud proxy but it also can be handled using
@@ -47,68 +79,56 @@ the access control request headers if the browser has support for them. If all
 the needed requirements are meet, this function will return a URL without using
 the proxy.
 
-	!javascript
-	MashupPlatform.http.buildProxyURL(url, options)
+```javascript
+MashupPlatform.http.buildProxyURL(url, options)
+```
 
 * `url` is the target URL
 * `options` is an object with request options (shown later)
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    var internal_url = 'http://server.intranet.com/image/a.png';
-    var url = MashupPlatform.http.buildProxyURL(internal_url, {forceProxy: true});
-    var img = document.createElement('img');
-    img.src = url;
+```javascript
+var internal_url = 'http://server.intranet.com/image/a.png';
+var url = MashupPlatform.http.buildProxyURL(internal_url, {forceProxy: true});
+var img = document.createElement('img');
+img.src = url;
+```
 
----
-
-<!-- SLIDE 7 -->
-## MashupPlatform.http
-### `makeRequest` method
+#### `makeRequest` method
 
 Sends an HTTP request. This method internally calls the buildProxyURL method for
 working around any possible problem related with the same-origin policy followed
 by browser (allowing CORS requests).
 
-	!javascript
-	MashupPlatform.http.makeRequest(url, options)
+```javascript
+MashupPlatform.http.makeRequest(url, options)
+```
 
 * `url` is the URL to which to send the request
 * `options` is an object with a list of request options (shown later)
 
----
+**Example usage:**
 
-<!-- SLIDE 8 -->
-## MashupPlatform.http
-### `makeRequest` method
+```javascript
+$('loading').show();
+MashupPlatform.http.makeRequest('http://api.example.com', {
+    method: "POST",
+    postBody: JSON.stringify({key: value}),
+    contentType: "application/json",
+    onSuccess: function (response) {
+        // Everything went ok
+    },
+    onFailure: function (response) {
+        // Something went wrong
+    },
+    onComplete: function () {
+        $('loading').hide();
+    }
+});
+```
 
-.fx: code-block
-
-Example usage:
-
-    !javascript
-    $('loading').show();
-    MashupPlatform.http.makeRequest('http://api.example.com', {
-        method: "POST",
-        postBody: JSON.stringify({key: value}),
-        contentType: "application/json",
-        onSuccess: function (response) {
-            // Everything went ok
-        },
-        onFailure: function (response) {
-            // Something went wrong
-        },
-        onComplete: function () {
-            $('loading').hide();
-        }
-    });
-
----
-
-<!-- SLIDE 9 -->
-## MashupPlatform.http
-### Request options: General options (1/2)
+#### Request options: General options
 
 - `contentType` (String): The Content-Type header for your request. If it is not
   provided, the content-type header will be extrapolated from the value of the
@@ -124,12 +144,6 @@ Example usage:
 - `parameters` (Object): The parameters for the request, which will be encoded
   into the URL for a `GET` method, or into the request body when using the `PUT`
   and `POST` methods.
-
----
-<!-- SLIDE 10 -->
-## MashupPlatform.http
-### Request options: General options (2/2)
-
 - `postBody` (`ArrayBufferView`, `Blob`, `Document`, `String`, `FormData`): The
   contents to use as request body (usually used in post and put requests, but
   can be used by any request). If it is not provided, the contents of the
@@ -148,20 +162,11 @@ Example usage:
   to the callbacks. If context is `null` the `this` parameter of the callbacks
   is left intact.
 
----
-<!-- SLIDE 11 -->
-## MashupPlatform.http
-### Request options: Callback options (1/2)
+#### Request options: Callback options
 
 - `onSuccess`: Invoked when a request completes and its status code belongs in the 2xy family. This is skipped if a code-specific callback is defined, and happens before `onComplete`. Receives the response object as the first argument
 - `onFailure`: Invoked when a request completes and its status code exists but is not in the 2xy family. This is skipped if a code-specific callback is defined, and happens before `onComplete`. Receives the response object as the first argument
 - `onXYZ` (with XYZ representing any HTTP status code): Invoked just after the response is complete if the status code is the exact code used in the callback name. Prevents execution of onSuccess and `onFailure`. Happens before `onComplete`. Receives the response object as the first argument
-
----
-<!-- SLIDE 12 -->
-## MashupPlatform.http
-### Request options: Callback options (2/2)
-
 - `onComplete`: Triggered at the very end of a request's life-cycle, after the
   request completes, status-specific callbacks are called, and possible
   automatic behaviours are processed. Guaranteed to run regardless of what
@@ -171,10 +176,7 @@ Example usage:
   `onXYZ`, `onSuccess`, `onFailure` and `onComplete` callbacks. Receives the
   request as the first argument, and the exception object as the second one
 
----
-<!-- SLIDE 13 -->
-## MashupPlatform.http
-### response object
+#### Response object
 
 - `request` (Request): The request for the current response
 - `status` (Number): The status of the response to the request. This is the HTTP
@@ -189,14 +191,8 @@ Example usage:
   request was unsuccessful or the responseType option of the requests was
   different to ""
 
----
-## MashupPlatform.log
 
-.fx: section-title
-
----
-<!-- SLIDE 15 -->
-## MashupPlatform.log
+### MashupPlatform.log
 
 This module contains the following constants:
 
@@ -207,39 +203,29 @@ This module contains the following constants:
 Those constants can be used when calling to the `MashupPlatform.widget.log` and
 `MashupPlatform.operator.log` methods.
 
----
-## MashupPlatform.prefs
-
-.fx: section-title
-
----
-<!-- SLIDE 17 -->
-## MashupPlatform.prefs
-### Introduction
+### MashupPlatform.prefs
 
 This module provides methods for managing the preferences defined on the
 mashable application component description file (`config.xml` file).
 
 Currently, this module provides three methods:
 
-- [`get`](#slide18)
-- [`registerCallback`](#slide19)
-- [`set`](#slide20)
+- [`get`](#get)
+- [`registerCallback`](#registercallback-method)
+- [`set`](#set-method)
 
 and one exception:
 
-- [`PreferenceDoesNotExistError`](#slide21)
+`PreferenceDoesNotExistError`
 
----
-<!-- SLIDE 18 -->
-## MashupPlatform.prefs
-### `get` method
+#### `get` method
 
 This method retrieves the value of a preference. The type of the value returned
 by this method depends on the type of the preference.
 
-	!javascript
-	MashupPlatform.prefs.get(key)
+```javascript
+MashupPlatform.prefs.get(key)
+```
 
 - `key` is the name of the preference as defined on the `config.xml` file.
 
@@ -247,46 +233,44 @@ This method can raise the following exceptions:
 
 - `MashupPlatform.prefs.PreferenceDoesNotExistError`
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.prefs.get('boolean-pref'); // true or false
-    MashupPlatform.prefs.get('number-prefs'); // a number value
-    MashupPlatform.prefs.get('text-prefs');   // a string value
+```javascript
+MashupPlatform.prefs.get('boolean-pref'); // true or false
+MashupPlatform.prefs.get('number-prefs'); // a number value
+MashupPlatform.prefs.get('text-prefs');   // a string value
+```
 
----
-<!-- SLIDE 19 -->
-## MashupPlatform.prefs
-### `registerCallback` method
+#### `registerCallback` method
 
 This method registers a callback for listening for preference changes.
 
-	!javascript
-	MashupPlatform.prefs.registerCallback(callback)
+```javascript
+MashupPlatform.prefs.registerCallback(callback)
+```
 
 - `callback` function to be called when a change in one or more preferences is
   detected. This callback will receive a key-value object with the changed
   preferences and their new values.
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.prefs.registerCallback(function (new_values) {
-        if ('some-pref' in new_values) {
-            // some-pref has been changed
-            // new_values['some-pref'] contains the new value
-        }
-    });
+```javascript
+MashupPlatform.prefs.registerCallback(function (new_values) {
+    if ('some-pref' in new_values) {
+        // some-pref has been changed
+        // new_values['some-pref'] contains the new value
+    }
+});
+```
 
----
-<!-- SLIDE 20 -->
-## MashupPlatform.prefs
-### `set` method
+#### `set` method
 
 This method sets the value of a preference.
 
-	!javascript
-	MashupPlatform.prefs.set(key, value)
+```javascript
+MashupPlatform.prefs.set(key, value)
+```
 
 - `key` is the name of the preference as defined on the `config.xml` file.
 - `value` is the new value for the preference. The acceptable values for this
@@ -296,57 +280,43 @@ This method can raise the following exceptions:
 
 - `MashupPlatform.prefs.PreferenceDoesNotExistError`
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.prefs.set('boolean-pref', true);
+```javascript
+MashupPlatform.prefs.set('boolean-pref', true);
+```
 
----
-<!-- SLIDE 21 -->
-## MashupPlatform.prefs
 ### `PreferenceDoesNotExistError` exception
 
 This exception is raised when a preference is not found.
 
-	!javascript
-	MashupPlatform.prefs.PreferenceDoesNotExistError
+```javascript
+MashupPlatform.prefs.PreferenceDoesNotExistError
+```
 
----
-## MashupPlatform.mashup
-
-.fx: section-title section-title-sm
-
----
-<!-- SLIDE 23 -->
-## MashupPlatform.mashup
-### Introduction
+### MashupPlatform.mashup
 
 The mashup module contains one attribute:
 
-- [`context`](#slide24)
+- `context`
 
 and a the following two methods:
 
-- [`addWidget`](#slide25)
-- [`createWorkspace`](#slide29)
+- `addWidget`
+- `createWorkspace`
 
----
-<!-- SLIDE 24 -->
-## MashupPlatform.mashup
-### `context` attribute
+#### `context` attribute
 
 This attribute contains the context manager of the mashup. See the
-[documentation about context managers](#slide45) for more information.
+documentation about context managers](#slide45) for more information.
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.mashup.context.get('title');
+```javascript
+MashupPlatform.mashup.context.get('title');
+```
 
----
-<!-- SLIDE 25 -->
-## MashupPlatform.mashup
-### `addWidget` method
+#### `addWidget` method
 > new in WireCloud 0.8.0
 
 This method allows widgets and operators to add new temporal widgets into the
@@ -355,16 +325,12 @@ current workspace.
 This method is only available when making use of the `DashboardManagement`
 feature.
 
-	!javascript
-	MashupPlatform.mashup.addWidget(widget_ref, options)
+```javascript
+MashupPlatform.mashup.addWidget(widget_ref, options)
+```
 
 - `widget_ref` (String): id (vendor/name/version) of the widget to use.
 - `options` (Object, optional): object with extra options.
-
----
-<!-- SLIDE 26 -->
-## MashupPlatform.mashup
-### `addWidget` method options (1/2)
 
 Supported options:
 
@@ -380,16 +346,6 @@ Supported options:
 - `refposition` (ClientRect): Element position to use as reference for placing
   the new widget. You can obtain such a object using the
   [`getBoundingClientRect`][getBoundingClientRect] method.
-
-[getBoundingClientRect]: https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
-
----
-<!-- SLIDE 27 -->
-## MashupPlatform.mashup
-### `addWidget` method options (2/2)
-
-Supported options:
-
 - `top` (String, default: `0px`): This option specifies the distance between the top margin edge
   of the element and the top edge of the dashboard. This value will be ignored
   if you provide a value for the `refposition` option.
@@ -401,32 +357,28 @@ Supported options:
 - `height` (String, default: `null`): This options specifies the height of the
   widget. If not provided, the default height will be used.
 
----
-<!-- SLIDE 28 -->
-## MashupPlatform.mashup
-### `addWidget` method example usage
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    var widget = MashupPlatform.mashup.addWidget('CoNWeT/kuernto-one2one/1.0', {
-        "permissions": {
-            "close": false,
-            "configure": false
-        },
-        "preferences": {
-            "stand-alone": {
-                "value": false
-            }
-        },
-        "top": "0px",
-        "left": "66%"
-    });
+```javascript
+var widget = MashupPlatform.mashup.addWidget('CoNWeT/kuernto-one2one/1.0', {
+    "permissions": {
+        "close": false,
+        "configure": false
+    },
+    "preferences": {
+        "stand-alone": {
+            "value": false
+        }
+    },
+    "top": "0px",
+    "left": "66%"
+});
+```
 
----
-<!-- SLIDE 29 -->
-## MashupPlatform.mashup
-### `createWorkspace` method
+[getBoundingClientRect]: https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+
+#### `createWorkspace` method
 > new in WireCloud 0.8.0
 
 This method allows widgets and operators to create new workspaces for the
@@ -435,17 +387,13 @@ current user. This method is asynchronous.
 This method is only available when making use of the `DashboardManagement`
 feature.
 
-	!javascript
-	MashupPlatform.mashup.createWorkspace(options)
+```javascript
+MashupPlatform.mashup.createWorkspace(options)
+```
 
 - `options` (Object): object with the options to use for creating the workspace.
   At least one of the following options has to be provided: `name`, `mashup`,
   `workspace`.
-
----
-<!-- SLIDE 29 -->
-## MashupPlatform.mashup
-### `createWorkspace` method options (1/2)
 
 Supported options:
 
@@ -462,206 +410,159 @@ Supported options:
 - `allowrenaming` (Boolean, default `false`): if this option is `true`,
   WireCloud will rename the workspace if a workspace with the same name
   already exists.
----
-<!-- SLIDE 30 -->
-## MashupPlatform.mashup
-### `createWorkspace` method options (2/2)
-
-Supported options:
-
 - `preferences` (Object): Object with the initial values for the workspace
   preferences. If not provided, the default values will be used.
 - `onSuccess` (Function): callback to invoke if the workspace is created successfully.
 - `onFailure` (Function): callback to invoke if some error is raised while creating the
   workspace
 
----
-<!-- SLIDE 31 -->
-## MashupPlatform.mashup
-### `createWorkspace` method example usage
+**Example usage:**
 
-Example usage:
+```javascript
+MashupPlatform.mashup.createWorkspace({
+    name: 'New workspace',
+    mashup: 'CoNWeT/ckan-graph-mashup/1.0',
+    onSuccess: function (workspace) {
+        alert(workspace.owner + "/" + workspace.name + " created successfully");
+    }
+});
+```
 
-    !javascript
-    MashupPlatform.mashup.createWorkspace({
-        name: 'New workspace',
-        mashup: 'CoNWeT/ckan-graph-mashup/1.0',
-        onSuccess: function (workspace) {
-            alert(workspace.owner + "/" + workspace.name + " created successfully");
-        }
-    });
-
----
-## MashupPlatform.operator
-
-.fx: section-title section-title-sm
-
----
-<!-- SLIDE 33 -->
-## MashupPlatform.operator
-### Introduction
+### MashupPlatform.operator
 
 This module is only available when running inside an operator. Currently,
 WireCloud provides the following attributes:
 
-- [`id`](#slide34)
-- [`context`](#slide35)
+- [`id`](#id-attribute)
+- [`context`](#context-atribute)
 
 and a the following method:
 
-- [`log`](#slide36)
+- [`log`](#log-method)
 
----
-<!-- SLIDE 34 -->
-## MashupPlatform.operator
-### `id` attribute
+#### `id` attribute
 
 This attribute contains the operator's id.
 
-	!javascript
-	MashupPlatform.operator.id
+```javascript
+MashupPlatform.operator.id
+```
 
----
-<!-- SLIDE 35 -->
-## MashupPlatform.operator
-### `context` attribute
+#### `context` attribute
 
 This attribute contains the context manager of the operator. See the
 [documentation about context managers](#slide54) for more information.
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.operator.context.get('version');
+```javascript
+MashupPlatform.operator.context.get('version');
+```
 
----
-<!-- SLIDE 36 -->
-## MashupPlatform.operator
-### `log` method
+#### `log` method
 
 This method writes a message into the WireCloud's log console.
 
-	!javascript
-	MashupPlatform.operator.log(msg, level)
+```javascript
+MashupPlatform.operator.log(msg, level)
+```
 
 - `msg` (String): is the text of the message to log.
 - `level` (optional, default: `MashupPlatform.log.ERROR`): This optional
   parameter specifies the level to use for logging the message. See
   [MashupPlatform.log](#slide15) for available log levels.
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.operator.log('error message description');
-    MashupPlatform.operator.log('info message description', MashupPlatform.log.INFO);
+```javascript
+MashupPlatform.operator.log('error message description');
+MashupPlatform.operator.log('info message description', MashupPlatform.log.INFO);
+```
 
----
-## MashupPlatform.widget
 
-.fx: section-title section-title-sm
-
----
-<!-- SLIDE 38 -->
-## MashupPlatform.widget
-### Introduction
+### MashupPlatform.widget
 
 This module is only available when running inside a widget. Currently,
 WireCloud provides the following attributes:
 
-- [`id`](#slide39)
-- [`context`](#slide40)
+- [`id`](#id-attribute-1)
+- [`context`](#context-atribute-1)
 
 and the following methods:
 
-- [`getVariable`](#slide41)
-- [`drawAttention`](#slide42)
-- [`log`](#slide43)
+- [`getVariable`](#getvariable-method)
+- [`drawAttention`](#drawAttention-method)
+- [`log`](#log-method-1)
 
----
-<!-- SLIDE 39 -->
-## MashupPlatform.widget
-### `id` attribute
+#### `id` attribute
 
 This attribute contains the widget's id.
 
-	!javascript
-	MashupPlatform.widget.id
+```javascript
+MashupPlatform.widget.id
+```
 
----
-<!-- SLIDE 40 -->
-## MashupPlatform.widget
-### `context` attribute
+#### `context` attribute
 
 This attribute contains the context manager of the widget. See the
 [documentation about context managers](#slide54) for more information.
 
-	!javascript
-	MashupPlatform.widget.context
+```javascript
+MashupPlatform.widget.context
+```
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.widget.context.get('version');
+```javascript
+MashupPlatform.widget.context.get('version');
+```
 
----
-<!-- SLIDE 41 -->
-## MashupPlatform.widget
-### `getVariable` method
+#### `getVariable` method
 
 Returns a widget variable by its name.
 
-    !javascript
-    MashupPlatform.widget.getVariable(name)
+```javascript
+MashupPlatform.widget.getVariable(name)
+```
 
 - `name` is the name of the persistent variable as defined on the `config.xml`
   file.
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    var variable = MashupPlatform.widget.getVariable('persistent-var');
-    variable.set(JSON.stringify(data));
+```javascript
+var variable = MashupPlatform.widget.getVariable('persistent-var');
+variable.set(JSON.stringify(data));
+```
 
----
-<!-- SLIDE 42 -->
-## MashupPlatform.widget
-### `drawAttention` method
+#### `drawAttention` method
 
 Makes WireCloud notify that the widget needs user's attention.
 
-	!javascript
-	MashupPlatform.widget.drawAttention()
-
----
-<!-- SLIDE 43 -->
-## MashupPlatform.widget
-### `log` method
+```javascript
+MashupPlatform.widget.drawAttention()
+```
+#### `log` method
 
 Writes a message into the WireCloud's log console.
 
-	!javascript
-	MashupPlatform.widget.log(msg, level)
+```javascript
+MashupPlatform.widget.log(msg, level)
+```
 
 - `msg` (String): is the text of the message to log.
 - `level` (optional, default: `MashupPlatform.log.ERROR`): This optional
   parameter specifies the level to use for logging the message. See
   [MashupPlatform.log](#slide15) for available log levels.
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.operator.log('error message description');
-    MashupPlatform.operator.log('warning message description', MashupPlatform.log.WARN);
+```javascript
+MashupPlatform.operator.log('error message description');
+MashupPlatform.operator.log('warning message description', MashupPlatform.log.WARN);
+```
 
----
-## MashupPlatform.wiring
-
-.fx: section-title section-title-sm
-
----
-<!-- SLIDE 45 -->
-## MashupPlatform.wiring
-### Introduction
+### MashupPlatform.wiring
 
 This module provides some methods for handling the communication between widgets
 an operators through the wiring.
@@ -680,232 +581,198 @@ and three exceptions:
 - [`EndpointTypeError`](#slide52)
 - [`EndpointValueError`](#slide53)
 
----
-<!-- SLIDE 46 -->
-## MashupPlatform.wiring
-### `hasInputConnections` method
+#### `hasInputConnections` method
 > new in WireCloud 0.8.0
 
 Sends an event through the wiring.
 
-	!javascript
-	MashupPlatform.wiring.hasInputConnections(inputName)
+```javascript
+MashupPlatform.wiring.hasInputConnections(inputName)
+```
 
 This method can raise the following exceptions:
 
 - `MashupPlatform.wiring.EndpointDoesNotExistError`
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.wiring.hasInputConnections('inputendpoint');
+```javascript
+MashupPlatform.wiring.hasInputConnections('inputendpoint');
+```
 
----
-<!-- SLIDE 47 -->
-## MashupPlatform.wiring
-### `hasOutputConnections` method
+#### `hasOutputConnections` method
 > new in WireCloud 0.8.0
 
 Sends an event through the wiring.
 
-	!javascript
-	MashupPlatform.wiring.hasOutputConnections(outputName)
+```javascript
+MashupPlatform.wiring.hasOutputConnections(outputName)
+```
 
 This method can raise the following exceptions:
 
 - `MashupPlatform.wiring.EndpointDoesNotExistError`
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.wiring.hasOutputConnections('outputendpoint');
+```javascript
+MashupPlatform.wiring.hasOutputConnections('outputendpoint');
+```
 
----
-<!-- SLIDE 48 -->
-## MashupPlatform.wiring
-### `pushEvent` method
+#### `pushEvent` method
 
 Sends an event through the wiring.
 
-	!javascript
-	MashupPlatform.wiring.pushEvent(outputName, data)
+```javascript
+MashupPlatform.wiring.pushEvent(outputName, data)
+```
 
 This method can raise the following exceptions:
 
 - `MashupPlatform.wiring.EndpointDoesNotExistError`
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.wiring.pushEvent('outputendpoint', 'event data');
+```javascript
+MashupPlatform.wiring.pushEvent('outputendpoint', 'event data');
+```
 
----
-<!-- SLIDE 49 -->
-## MashupPlatform.wiring
-### `registerCallback` method
+#### `registerCallback` method
 
 Registers a callback for a given input endpoint. If the given endpoint already
 has registered a callback, it will be replaced by the new one.
 
-	!javascript
-	MashupPlatform.wiring.registerCallback(inputName, callback)
+```javascript
+MashupPlatform.wiring.registerCallback(inputName, callback)
+```
 
 This method can raise the following exceptions:
 
 - `MashupPlatform.wiring.EndpointDoesNotExistError`
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.wiring.registerCallback('inputendpoint', function (data_string) {
-        var data = JSON.parse(data_string);
-        ...
-    });
+```javascript
+MashupPlatform.wiring.registerCallback('inputendpoint', function (data_string) {
+    var data = JSON.parse(data_string);
+    ...
+});
+```
 
----
-<!-- SLIDE 50 -->
-## MashupPlatform.wiring
-### `registerStatusCallback` method
+#### `registerStatusCallback` method
 
 Registers a callback that will be called everytime the wiring status of the
 mashup changes.
 
-	!javascript
-	MashupPlatform.wiring.registerCallback(inputName, callback)
+```javascript
+MashupPlatform.wiring.registerCallback(inputName, callback)
+```
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.wiring.registerStatusCallback(function () {
-        ...
-    });
+```javascript
+MashupPlatform.wiring.registerStatusCallback(function () {
+    ...
+});
+```
 
----
-<!-- SLIDE 51 -->
-## MashupPlatform.wiring
-### `EndpointDoesNotExistError` exception
+#### `EndpointDoesNotExistError` exception
 
 This exception is raised when an input/output endpoint is not found.
 
-	!javascript
-	MashupPlatform.wiring.EndpointDoesNotExistError
+```javascript
+MashupPlatform.wiring.EndpointDoesNotExistError
+```
 
----
-<!-- SLIDE 52 -->
-## MashupPlatform.wiring
-### `EndpointTypeError` exception
+#### `EndpointTypeError` exception
 > new in WireCloud 0.8.0
 
 Widgets/operators can throw this exception if they detect that the data arriving
 an input endpoint is not of the expected type.
 
-	!javascript
-	MashupPlatform.wiring.EndpointTypeError
+```javascript
+MashupPlatform.wiring.EndpointTypeError
+```
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
-        try {
-            data = JSON.parse(data);
-        } catch (error) {
-            throw new MashupPlatform.wiring.EndpointTypeError('data should be encoded as JSON');
-        }
+```javascript
+MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
+    try {
+        data = JSON.parse(data);
+    } catch (error) {
+        throw new MashupPlatform.wiring.EndpointTypeError('data should be encoded as JSON');
+    }
 
-        ...
-    });
+    ...
+});
+```
 
----
-<!-- SLIDE 53 -->
-## MashupPlatform.wiring
-### `EndpointValueError` exception
+#### `EndpointValueError` exception
 > new in WireCloud 0.8.0
 
 Widgets/operators can throw this exception if they detect that the data arriving
 an input endpoint, although has the right type, contains inappropriate values.
 
-	!javascript
-	MashupPlatform.wiring.EndpointValueError
+```javascript
+MashupPlatform.wiring.EndpointValueError
+```
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
-        ...
+```javascript
+MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
+    ...
 
-        if (data.level > 4 || data.level < 0) {
-            throw new MashupPlatform.wiring.EndpointTypeError('level out of range');
-        }
+    if (data.level > 4 || data.level < 0) {
+        throw new MashupPlatform.wiring.EndpointTypeError('level out of range');
+    }
 
-        ...
-    });
+    ...
+});
+```
 
----
-## Context Managers
-
-.fx: section-title section-title-sm
-
----
-<!-- SLIDE 55 -->
-## Context managers
-### Introduction
+### Context Managers
 
 Each context managers supports three methods:
 
-* [`getAvailableContext`](#slide56)
+* [`getAvailableContext`](#get-available-method)
 * [`get`](#slide57)
 * [`registerCallback`](#slide58)
 
----
-<!-- SLIDE 56 -->
-## Context managers
-### `getAvailableContext` method
+#### `getAvailableContext` method
 
 This method provides information about what concepts are available for the given level
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.context.getAvailableContext();
+```javascript
+MashupPlatform.context.getAvailableContext();
+```
 
----
-## Context Managers
-### `get` method
+#### `get` method
 
 Retrieves the current value for a concept
 
-Example usage:
+**Example usage:**
 
-	!javascript
-    MashupPlatform.widget.context.get('heightInPixels');
-    MashupPlatform.mashup.context.get('name');
-    MashupPlatform.context.get('username');
+```javascript
+MashupPlatform.widget.context.get('heightInPixels');
+MashupPlatform.mashup.context.get('name');
+MashupPlatform.context.get('username');
+```
 
----
-## Context managers
-### `registerCallback` method
+#### `registerCallback` method
 
 Allows to register a callback that will be called when any of the concepts are modified
 
-Example usage:
+**Example usage:**
 
-    !javascript
-    MashupPlatform.widget.context.registerCallback(function (new_values) {
-        if ('some-context-concept' in new_values) {
-            // some-context-concept has been changed
-            // new_values['some-context-concept'] contains the new value
-        }
-    });
-
----
-
-.fx: back-cover
-
-Thanks!
-
-FIWARE                                FIWARE Lab
-OPEN APIs FOR OPEN MINDS              Spark your imagination
-
-         www.fiware.org               FIWARE Ops
-twitter: @Fiware                      Easing your operations
-
+```javascript
+MashupPlatform.widget.context.registerCallback(function (new_values) {
+    if ('some-context-concept' in new_values) {
+        // some-context-concept has been changed
+        // new_values['some-context-concept'] contains the new value
+    }
+});
+```
