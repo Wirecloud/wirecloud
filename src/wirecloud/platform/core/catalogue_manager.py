@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,12 +17,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import json
 import os
 import requests
 from six.moves.urllib.parse import urljoin
 
 from django.utils.encoding import iri_to_uri
+from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
@@ -83,6 +86,10 @@ class WirecloudCatalogueManager(MarketManager):
             if template is None:
                 template = TemplateParser(wgt_file.get_template())
 
-            return install_resource_to_user(user, file_contents=wgt_file, packaged=True, raise_conflicts=True)
+            added, resource = install_resource_to_user(user, file_contents=wgt_file, packaged=True, raise_conflicts=True)
+            if not added:
+                raise Exception(_('Resource already exists %(resource_id)s') % {'resource_id': resource.local_uri_part})
+
+            return resource
         else:
             raise Exception('TODO')
