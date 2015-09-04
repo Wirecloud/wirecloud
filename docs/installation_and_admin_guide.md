@@ -537,7 +537,7 @@ You can use this template as starting point:
             ### Wirecloud ###
             WSGIPassAuthorization On
 
-            WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud>
+            WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud> user=<wirecloud_user> group=<wirecloud_group>
             WSGIScriptAlias / <path_to_wirecloud_wsgi.py>
             <Location />
                     WSGIProcessGroup wirecloud
@@ -562,14 +562,16 @@ You can use this template as starting point:
             ...
     </VirtualHost>
 
-Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`, you should have something similar to:
+Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`
+and you created a `wirecloud` user on the system, you should have something
+similar to:
 
     <VirtualHost *:80>
             ...
             ### Wirecloud ###
             WSGIPassAuthorization On
 
-            WSGIDaemonProcess wirecloud python-path=/opt/wirecloud_instance
+            WSGIDaemonProcess wirecloud python-path=/opt/wirecloud_instance user=wirecloud group=wirecloud
             WSGIScriptAlias / /opt/wirecloud_instance/wirecloud_instance/wsgi.py
             <Location />
                     WSGIProcessGroup wirecloud
@@ -620,7 +622,7 @@ You can use this template as starting point:
             ### Wirecloud ###
             WSGIPassAuthorization On
 
-            WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud>
+            WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud> user=<wirecloud_user> group=<wirecloud_group>
             WSGIScriptAlias / <path_to_wirecloud_wsgi.py>
             <Location />
                     WSGIProcessGroup wirecloud
@@ -645,7 +647,9 @@ You can use this template as starting point:
             ...
     </VirtualHost>
 
-Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`, you should have something similar to:
+Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`
+and you created a `wirecloud` user on the system, you should have something
+similar to:
 
     <VirtualHost *:80>
             ...
