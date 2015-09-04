@@ -27,12 +27,10 @@ from django.db.models import Q
 from django.template import Context, Template
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.exceptions import Http403
-from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import ERROR_FORMATTERS, get_absolute_static_url
-from wirecloud.commons.utils.template import TemplateParser, UnsupportedFeature
+from wirecloud.commons.utils.template import UnsupportedFeature
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
-from wirecloud.platform.models import Widget, UserWorkspace, Workspace, XHTML
+from wirecloud.platform.models import Widget, XHTML
 from wirecloud.platform.plugins import get_active_features, get_widget_api_extensions
 
 
@@ -65,49 +63,32 @@ def check_requirements(resource):
             raise UnsupportedFeature('Unsupported requirement type (%s).' % requirement['type'])
 
 
-def create_widget_from_template(template, user, request=None, base=None):
+def create_widget_from_wgt(wgt_file, user, deploy_only=False):
 
-    """Creates a widget from a template"""
-
-    if isinstance(template, TemplateParser):
-        parser = template
-    else:
-        template_content = download_http_content(template, user=user)
-        if base is None:
-            base = template
-        parser = TemplateParser(template_content, base=base)
-
-    if parser.get_resource_type() != 'widget':
-        raise Exception()
-
-    widget_info = parser.get_resource_info()
-    check_requirements(widget_info)
-
-    widget = Widget()
-    widget.resource = CatalogueResource.objects.get(vendor=parser.get_resource_vendor(), short_name=parser.get_resource_name(), version=parser.get_resource_version())
-    widget_code = parser.get_absolute_url(widget_info['contents']['src'], base)
-    widget.xhtml = XHTML.objects.create(
-        uri=widget.uri + "/xhtml",
-        url=widget_code,
-        content_type=widget_info['contents']['contenttype'],
-        use_platform_style=widget_info['contents']['useplatformstyle'],
-        cacheable=widget_info['contents']['cacheable']
-    )
-    widget.save()
-
-    return widget
-
-
-def create_widget_from_wgt(wgt, user, deploy_only=False):
-
-    if isinstance(wgt, WgtFile):
-        wgt_file = wgt
-    else:
-        wgt_file = WgtFile(BytesIO(download_http_content(wgt)))
+    if not isinstance(wgt_file, WgtFile):
+        raise TypeError()
 
     template = wgt_deployer.deploy(wgt_file)
+    if template.get_resource_type() != 'widget':
+        raise Exception()
+
     if not deploy_only:
-        return create_widget_from_template(template, user)
+        widget_info = template.get_resource_info()
+        check_requirements(widget_info)
+
+        widget = Widget()
+        widget.resource = CatalogueResource.objects.get(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())
+        widget_code = template.get_absolute_url(widget_info['contents']['src'])
+        widget.xhtml = XHTML.objects.create(
+            uri=widget.uri + "/xhtml",
+            url=widget_code,
+            content_type=widget_info['contents']['contenttype'],
+            use_platform_style=widget_info['contents']['useplatformstyle'],
+            cacheable=widget_info['contents']['cacheable']
+        )
+        widget.save()
+
+        return widget
 
 
 def get_or_add_widget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
