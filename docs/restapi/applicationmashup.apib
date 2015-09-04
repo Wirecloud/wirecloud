@@ -1,20 +1,55 @@
 FORMAT: 1A
 HOST: https://mashup.lab.fiware.org/
+TITLE: FIWARE Application Mashup RESTful v2 Specification
+DATE: 30 September 2015
+VERSION: v2
+PREVIOUS_VERSION: v1
+APIARY_PROJECT: fiwareapplicationmashup
 
-# FIWARE Application Mashup
+# FIWARE Application Mashup RESTful Specification
 
 The Application Mashup GE offers two separate APIs that cannot be combined
 because of their different nature: The Widget API is a JavaScript API, while
 the Application Mashup API (the subject of this document) is a RESTful one. You
-can find the Widget API in this separate [entry](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.OpenSpecification.Apps.WidgetAPI):
+can find the Widget API in this separate [entry](https://github.com/Wirecloud/wirecloud/tree/develop/docs/widgetapi/widgetapi.md).
 
 The Application Mashup API is a RESTful, resource-oriented API accessed via HTTP
 that uses various representations for information interchange. This API provides
 the functionality to create and modify workspaces and the functionality to manage
-the resources available for building these workspaces.
+the resources available at the Application Mashup server for building these
+workspaces.
 
 This document will also show some examples that can be tested using WireCloud,
 the reference implementation of the FIWARE Application Mashup GE.
+
+## Editors
+
+  + Álvaro Arranz, Universidad Politécnica de Madrid
+
+## Acknowledgements
+
+The editors would like to express their gratitude to the following people who actively contributed to this specification:
+Aitor Magan and Francisco de la Vega
+
+## Status
+
+This is a work in progress and is changing on a daily basis. You can check the latest
+available version on: https://github.com/Wirecloud/wirecloud/tree/develop. 
+Please send your comments to wirecloud@conwet.com
+
+This specification is licensed under the [FIWARE Open Specification License (implicit patents license)](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29).
+
+## Copyright
+
+* Copyright © 2012-2015 by Universidad Politécnica de Madrid
+
+All rights reserved. No part of this publication may be reproduced, distributed, or
+transmitted in any form or by any means, including photocopying, recording, or 
+other electronic or mechanical methods, without the prior written permission of the 
+publisher, except in the case of brief quotations embodied in critical reviews and 
+certain other noncommercial uses permitted by copyright law. For permission 
+requests, write to the publisher, addressed “Attention: Permissions Coordinator,” at 
+the address below.
 
 # Authentication
 
