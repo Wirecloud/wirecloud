@@ -30,6 +30,9 @@ the widgets to gain access to remote resources. For example, in order to gain
 access to a remote REST API or to resolve cross-domain problems, a widget needs
 to use a proxy through the Widget API
 
+This document also show some examples that can be tested using WireCloud, the
+reference implementation of the FIWARE Application Mashup GE.
+
 ## Editors
 
   + Álvaro Arranz, Universidad Politécnica de Madrid
@@ -71,6 +74,7 @@ Currently this module is composed of two methods:
 - [`buildProxyURL`](#buildproxyurl-method)
 - [`makeRequest`](#makerequest-method)
 
+
 #### `buildProxyURL` method
 
 This method builds a URL suitable for working around the cross-domain problem.
@@ -94,6 +98,7 @@ var url = MashupPlatform.http.buildProxyURL(internal_url, {forceProxy: true});
 var img = document.createElement('img');
 img.src = url;
 ```
+
 
 #### `makeRequest` method
 
@@ -127,6 +132,7 @@ MashupPlatform.http.makeRequest('http://api.example.com', {
     }
 });
 ```
+
 
 #### Request options: General options
 
@@ -162,11 +168,21 @@ MashupPlatform.http.makeRequest('http://api.example.com', {
   to the callbacks. If context is `null` the `this` parameter of the callbacks
   is left intact.
 
+
 #### Request options: Callback options
 
-- `onSuccess`: Invoked when a request completes and its status code belongs in the 2xy family. This is skipped if a code-specific callback is defined, and happens before `onComplete`. Receives the response object as the first argument
-- `onFailure`: Invoked when a request completes and its status code exists but is not in the 2xy family. This is skipped if a code-specific callback is defined, and happens before `onComplete`. Receives the response object as the first argument
-- `onXYZ` (with XYZ representing any HTTP status code): Invoked just after the response is complete if the status code is the exact code used in the callback name. Prevents execution of onSuccess and `onFailure`. Happens before `onComplete`. Receives the response object as the first argument
+- `onSuccess`: Invoked when a request completes and its status code belongs in
+  the 2xy family. This is skipped if a code-specific callback is defined, and
+  happens before `onComplete`. Receives the response object as the first
+  argument
+- `onFailure`: Invoked when a request completes and its status code exists but
+  is not in the 2xy family. This is skipped if a code-specific callback is
+  defined, and happens before `onComplete`. Receives the response object as the
+  first argument
+- `onXYZ` (with XYZ representing any HTTP status code): Invoked just after the
+  response is complete if the status code is the exact code used in the callback
+  name. Prevents execution of onSuccess and `onFailure`. Happens
+  before `onComplete`. Receives the response object as the first argument
 - `onComplete`: Triggered at the very end of a request's life-cycle, after the
   request completes, status-specific callbacks are called, and possible
   automatic behaviours are processed. Guaranteed to run regardless of what
@@ -176,7 +192,11 @@ MashupPlatform.http.makeRequest('http://api.example.com', {
   `onXYZ`, `onSuccess`, `onFailure` and `onComplete` callbacks. Receives the
   request as the first argument, and the exception object as the second one
 
+
 #### Response object
+
+The response object returned by the `MashupPlatform.http.makeRequest` method
+provides the following attributes:
 
 - `request` (Request): The request for the current response
 - `status` (Number): The status of the response to the request. This is the HTTP
@@ -203,6 +223,7 @@ This module contains the following constants:
 Those constants can be used when calling to the `MashupPlatform.widget.log` and
 `MashupPlatform.operator.log` methods.
 
+
 ### MashupPlatform.prefs
 
 This module provides methods for managing the preferences defined on the
@@ -210,13 +231,14 @@ mashable application component description file (`config.xml` file).
 
 Currently, this module provides three methods:
 
-- [`get`](#get)
+- [`get`](#get-method)
 - [`registerCallback`](#registercallback-method)
 - [`set`](#set-method)
 
 and one exception:
 
-`PreferenceDoesNotExistError`
+- [`PreferenceDoesNotExistError`](#preferencedoesnotexisterror-exception)
+
 
 #### `get` method
 
@@ -241,6 +263,7 @@ MashupPlatform.prefs.get('number-prefs'); // a number value
 MashupPlatform.prefs.get('text-prefs');   // a string value
 ```
 
+
 #### `registerCallback` method
 
 This method registers a callback for listening for preference changes.
@@ -264,6 +287,7 @@ MashupPlatform.prefs.registerCallback(function (new_values) {
 });
 ```
 
+
 #### `set` method
 
 This method sets the value of a preference.
@@ -286,6 +310,7 @@ This method can raise the following exceptions:
 MashupPlatform.prefs.set('boolean-pref', true);
 ```
 
+
 ### `PreferenceDoesNotExistError` exception
 
 This exception is raised when a preference is not found.
@@ -294,21 +319,24 @@ This exception is raised when a preference is not found.
 MashupPlatform.prefs.PreferenceDoesNotExistError
 ```
 
+
 ### MashupPlatform.mashup
 
 The mashup module contains one attribute:
 
-- `context`
+- [`context`](#context-attribute)
 
 and a the following two methods:
 
-- `addWidget`
-- `createWorkspace`
+- [`addWidget`](#addwidget-method)
+- [`addOperator`](#addoperator-method)
+- [`createWorkspace`](#createworkspace-method)
+
 
 #### `context` attribute
 
 This attribute contains the context manager of the mashup. See the
-documentation about context managers](#slide45) for more information.
+[documentation about context managers](#context-managers) for more information.
 
 **Example usage:**
 
@@ -316,8 +344,9 @@ documentation about context managers](#slide45) for more information.
 MashupPlatform.mashup.context.get('title');
 ```
 
+
 #### `addWidget` method
-> new in WireCloud 0.8.0
+> new in WireCloud 0.8.0 / Widget API v2
 
 This method allows widgets and operators to add new temporal widgets into the
 current workspace.
@@ -361,7 +390,7 @@ Supported options:
 **Example usage:**
 
 ```javascript
-var widget = MashupPlatform.mashup.addWidget('CoNWeT/kuernto-one2one/1.0', {
+var widget = MashupPlatform.mashup.addWidget('CoNWeT/kurento-one2one/1.0', {
     "permissions": {
         "close": false,
         "configure": false
@@ -378,8 +407,31 @@ var widget = MashupPlatform.mashup.addWidget('CoNWeT/kuernto-one2one/1.0', {
 
 [getBoundingClientRect]: https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
 
+
+#### `addOperator` method
+> new in WireCloud 0.8.0 / Widget API v2
+
+This method allows widgets and operators to add new temporal operators into the
+current workspace.
+
+This method is only available when making use of the `DashboardManagement`
+feature.
+
+```javascript
+MashupPlatform.mashup.addOperator(operator_ref, options)
+```
+
+- `operator_ref` (String): id (vendor/name/version) of the operator to use.
+- `options` (Object, optional): object with extra options.
+
+Supported options:
+
+- `preferences` (Object): Object with the initial configuration for the
+  preferences. If not provided, the default configuration of the operator is used.
+
+
 #### `createWorkspace` method
-> new in WireCloud 0.8.0
+> new in WireCloud 0.8.0 / Widget API v2
 
 This method allows widgets and operators to create new workspaces for the
 current user. This method is asynchronous.
@@ -428,17 +480,24 @@ MashupPlatform.mashup.createWorkspace({
 });
 ```
 
+
 ### MashupPlatform.operator
 
 This module is only available when running inside an operator. Currently,
 WireCloud provides the following attributes:
 
 - [`id`](#id-attribute)
-- [`context`](#context-atribute)
+- [`context`](#context-attribute-1)
+- [`inputs`](#inputs-attribute)
+- [`outputs`](#outputs-attribute)
 
-and a the following method:
 
+and three methods:
+
+- [`createInputEndpoint`](#createinputendpoint-method)
+- [`createOutputEndpoint`](#createoutputendpoint-method)
 - [`log`](#log-method)
+
 
 #### `id` attribute
 
@@ -448,16 +507,77 @@ This attribute contains the operator's id.
 MashupPlatform.operator.id
 ```
 
+
 #### `context` attribute
 
 This attribute contains the context manager of the operator. See the
-[documentation about context managers](#slide54) for more information.
+[documentation about context managers](#context-managers) for more information.
 
 **Example usage:**
 
 ```javascript
 MashupPlatform.operator.context.get('version');
 ```
+
+
+#### `inputs` attribute
+
+A dict with the input endpoints of the widget using as key the name of the input
+endpoints.
+
+```javascript
+MashupPlatform.operator.inputs;
+```
+
+#### `outputs` attribute
+
+A dict with the input endpoints of the widget using as key the name of the output
+endpoints.
+
+```javascript
+MashupPlatform.operator.outputs;
+```
+
+
+#### `createInputEndpoint` method
+> new in WireCloud 0.8.0 / Widget API v2
+
+This method creates a dynamic input endpoint.
+
+```javascript
+MashupPlatform.operator.createInputEndpoint(callback);
+```
+
+- `callback` is the function that will be called when an event arrives the input
+  endpoint.
+
+**Example usage:**
+
+```javascript
+MashupPlatform.operator.createInputEndpoint(function (data_string) {
+    var data = JSON.parse(data_string);
+    ...
+});
+```
+
+
+#### `createOutputEndpoint` method
+> new in WireCloud 0.8.0 / Widget API v2
+
+This method creates a dynamic input endpoint.
+
+```javascript
+MashupPlatform.operator.createOutputEndpoint();
+```
+
+**Example usage:**
+
+```javascript
+var endpoint = MashupPlatform.operator.createOutputEndpoint();
+...
+endpoint.pushEvent('event data');
+```
+
 
 #### `log` method
 
@@ -470,7 +590,7 @@ MashupPlatform.operator.log(msg, level)
 - `msg` (String): is the text of the message to log.
 - `level` (optional, default: `MashupPlatform.log.ERROR`): This optional
   parameter specifies the level to use for logging the message. See
-  [MashupPlatform.log](#slide15) for available log levels.
+  [MashupPlatform.log](#mashupplatformlog) for available log levels.
 
 **Example usage:**
 
@@ -486,13 +606,18 @@ This module is only available when running inside a widget. Currently,
 WireCloud provides the following attributes:
 
 - [`id`](#id-attribute-1)
-- [`context`](#context-atribute-1)
+- [`context`](#context-attribute-2)
+- [`inputs`](#inputs-attribute-1)
+- [`outputs`](#outputs-attribute-1)
 
 and the following methods:
 
+- [`createInputEndpoint`](#createinputendpoint-method-1)
+- [`createOutputEndpoint`](#createoutputendpoint-method-1)
 - [`getVariable`](#getvariable-method)
-- [`drawAttention`](#drawAttention-method)
+- [`drawAttention`](#drawattention-method)
 - [`log`](#log-method-1)
+
 
 #### `id` attribute
 
@@ -502,10 +627,11 @@ This attribute contains the widget's id.
 MashupPlatform.widget.id
 ```
 
+
 #### `context` attribute
 
 This attribute contains the context manager of the widget. See the
-[documentation about context managers](#slide54) for more information.
+[documentation about context managers](#context-managers) for more information.
 
 ```javascript
 MashupPlatform.widget.context
@@ -516,6 +642,67 @@ MashupPlatform.widget.context
 ```javascript
 MashupPlatform.widget.context.get('version');
 ```
+
+
+#### `inputs` attribute
+
+A dict with the input endpoints of the widget using as key the name of the input
+endpoints.
+
+```javascript
+MashupPlatform.widget.inputs;
+```
+
+
+#### `outputs` attribute
+
+A dict with the input endpoints of the widget using as key the name of the output
+endpoints.
+
+```javascript
+MashupPlatform.widget.outputs;
+```
+
+
+#### `createInputEndpoint` method
+> new in WireCloud 0.8.0 / Widget API v2
+
+This method creates a dynamic input endpoint.
+
+```javascript
+MashupPlatform.widget.createInputEndpoint(callback);
+```
+
+- `callback` is the function that will be called when an event arrives the input
+  endpoint.
+
+**Example usage:**
+
+```javascript
+MashupPlatform.widget.createInputEndpoint(function (data_string) {
+    var data = JSON.parse(data_string);
+    ...
+});
+```
+
+
+#### `createOutputEndpoint` method
+> new in WireCloud 0.8.0 / Widget API v2
+
+This method creates a dynamic input endpoint.
+
+```javascript
+MashupPlatform.widget.createOutputEndpoint();
+```
+
+**Example usage:**
+
+```javascript
+var endpoint = MashupPlatform.widget.createOutputEndpoint();
+...
+endpoint.pushEvent('event data');
+```
+
 
 #### `getVariable` method
 
@@ -535,6 +722,7 @@ var variable = MashupPlatform.widget.getVariable('persistent-var');
 variable.set(JSON.stringify(data));
 ```
 
+
 #### `drawAttention` method
 
 Makes WireCloud notify that the widget needs user's attention.
@@ -542,6 +730,8 @@ Makes WireCloud notify that the widget needs user's attention.
 ```javascript
 MashupPlatform.widget.drawAttention()
 ```
+
+
 #### `log` method
 
 Writes a message into the WireCloud's log console.
@@ -553,14 +743,15 @@ MashupPlatform.widget.log(msg, level)
 - `msg` (String): is the text of the message to log.
 - `level` (optional, default: `MashupPlatform.log.ERROR`): This optional
   parameter specifies the level to use for logging the message. See
-  [MashupPlatform.log](#slide15) for available log levels.
+  [MashupPlatform.log](#mashupplatform-log) for available log levels.
 
 **Example usage:**
 
 ```javascript
-MashupPlatform.operator.log('error message description');
-MashupPlatform.operator.log('warning message description', MashupPlatform.log.WARN);
+MashupPlatform.widget.log('error message description');
+MashupPlatform.widget.log('warning message description', MashupPlatform.log.WARN);
 ```
+
 
 ### MashupPlatform.wiring
 
@@ -569,20 +760,21 @@ an operators through the wiring.
 
 Currently this module is composed of four methods:
 
-- [`hasInputConnections`](#slide46)
-- [`hasOutputConnections`](#slide47)
-- [`pushEvent`](#slide48)
-- [`registerCallback`](#slide49)
-- [`registerStatusCallback`](#slide50)
+- [`hasInputConnections`](#hasinputconnections-method)
+- [`hasOutputConnections`](#hasoutputconnections-method)
+- [`pushEvent`](#pushevent-method)
+- [`registerCallback`](#registercallback-method)
+- [`registerStatusCallback`](#registerstatuscallback-method)
 
 and three exceptions:
 
-- [`EndpointDoesNotExistError`](#slide51)
-- [`EndpointTypeError`](#slide52)
-- [`EndpointValueError`](#slide53)
+- [`EndpointDoesNotExistError`](#endpointdoesnotexisterror)
+- [`EndpointTypeError`](#endpointtypeerror)
+- [`EndpointValueError`](#endpointvalueerror)
+
 
 #### `hasInputConnections` method
-> new in WireCloud 0.8.0
+> new in WireCloud 0.8.0 / Widget API v2
 
 Sends an event through the wiring.
 
@@ -600,8 +792,9 @@ This method can raise the following exceptions:
 MashupPlatform.wiring.hasInputConnections('inputendpoint');
 ```
 
+
 #### `hasOutputConnections` method
-> new in WireCloud 0.8.0
+> new in WireCloud 0.8.0 / Widget API v2
 
 Sends an event through the wiring.
 
@@ -618,6 +811,7 @@ This method can raise the following exceptions:
 ```javascript
 MashupPlatform.wiring.hasOutputConnections('outputendpoint');
 ```
+
 
 #### `pushEvent` method
 
@@ -636,6 +830,7 @@ This method can raise the following exceptions:
 ```javascript
 MashupPlatform.wiring.pushEvent('outputendpoint', 'event data');
 ```
+
 
 #### `registerCallback` method
 
@@ -659,10 +854,12 @@ MashupPlatform.wiring.registerCallback('inputendpoint', function (data_string) {
 });
 ```
 
+
 #### `registerStatusCallback` method
+> new in WireCloud 0.8.0 / Widget API v2
 
 Registers a callback that will be called everytime the wiring status of the
-mashup changes.
+mashup change, except by the changes made .
 
 ```javascript
 MashupPlatform.wiring.registerCallback(inputName, callback)
@@ -676,6 +873,7 @@ MashupPlatform.wiring.registerStatusCallback(function () {
 });
 ```
 
+
 #### `EndpointDoesNotExistError` exception
 
 This exception is raised when an input/output endpoint is not found.
@@ -684,8 +882,9 @@ This exception is raised when an input/output endpoint is not found.
 MashupPlatform.wiring.EndpointDoesNotExistError
 ```
 
+
 #### `EndpointTypeError` exception
-> new in WireCloud 0.8.0
+> new in WireCloud 0.8.0 / Widget API v2
 
 Widgets/operators can throw this exception if they detect that the data arriving
 an input endpoint is not of the expected type.
@@ -708,8 +907,9 @@ MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
 });
 ```
 
+
 #### `EndpointValueError` exception
-> new in WireCloud 0.8.0
+> new in WireCloud 0.8.0 / Widget API v2
 
 Widgets/operators can throw this exception if they detect that the data arriving
 an input endpoint, although has the right type, contains inappropriate values.
@@ -732,13 +932,191 @@ MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
 });
 ```
 
+### Endpoint instances
+> new in WireCloud 0.8.0 / Widget API v2
+
+Endpoint instances provide one attribute:
+
+- [`connected`](#connected-attribute)
+
+and the following methods (depending on the type of endpoint):
+
+- [`connect`](#connect-method)
+- [`disconnect`](#disconnect-method)
+- [`pushEvent`](#pushevent-method-1)
+
+#### `connected` attribute
+
+This attribute indicates if the associated endpoint has at least one connection.
+
+```javascript
+Endpoint.connected;
+```
+
+**Example usage**
+```javascript
+if (MashupPlatform.widget.inputs.source.connected) {
+    $('#alert').hide();
+} else {
+    $('#alert').show();
+}
+
+```
+
+#### `connect` method
+
+This method stablishes a connection between the endpoint associated to the
+instance and the endpoint passed as parameter.
+
+```javascript
+Endpoint.connect(endpoint);
+```
+
+- `endpoint` is the input/output endpoint to connect on the other end of the
+  connection.
+
+**Example usage**
+
+```javascript
+var operator = MashupPlatform.mashup.addOperator('CoNWeT/ngsientity2poi/3.0.3', ...);
+var widget = MashupPlatform.mashup.addWidget('CoNWeT/map-viewer/2.5.7', ...);
+
+MashupPlatform.widget.outputs.entity.connect(operator.inputs.entityInput);
+operator.outputs.poiOutput.connect(widget.inputs.poiInput);
+```
+
+#### `disconnect` method
+
+Removes dynamic connections starting or ending in this endpoint. This method
+cannot be used for disconnecting connections created by the user using the
+Wiring Editor.
+
+```javascript
+Endpoint.disconnect(endpoint);
+```
+
+- `endpoint` is the endpoint on the other end of the connection. If `endpoint`
+  is `null`, all the dynamic connections related to this endpoint will be
+  disconnected.
+
+
+#### `pushEvent` method
+
+Sends an event through the wiring.
+
+Only available on output endpoints.
+
+```javascript
+Endpoint.pushEvent(data)
+```
+
+**Example usage:**
+
+```javascript
+MashupPlatform.widget.outputs.entity.pushEvent('event data');
+```
+
+
+### Widget instances
+> new in WireCloud 0.8.0 / Widget API v2
+
+Widget instances (obtained using the `MashupPlatform.mashup.addWidget` method)
+provides the following attributes:
+
+- [`inputs`](#inputs-attribute-2)
+- [`outputs`](#outputs-attribute-2)
+
+And the following method:
+
+- [`remove`](#remove-method)
+
+#### `inputs` attribute
+
+A dict with the input endpoints of the widget using as key the name of the input
+endpoints.
+
+```javascript
+Widget.inputs;
+```
+
+#### `outputs` attribute
+
+A dict with the input endpoints of the widget using as key the name of the output
+endpoints.
+
+```javascript
+Widget.outputs;
+```
+
+#### `remove` method
+
+This method removes the widget from the workspace. Any wiring connection
+involving this widget is disconnected before removing the widget.
+
+**Example usage:**
+
+```javascript
+var widget = MashupPlatform.mashup.addWidget(...);
+....
+widget.remove();
+```
+
+
+### Operator instances
+> new in WireCloud 0.8.0 / Widget API v2
+
+Operators instances (obtained using the `MashupPlatform.mashup.addOperator`
+method) provides the following attributes:
+
+- [`inputs`](#inputs-attribute-3)
+- [`outputs`](#outputs-attribute-3)
+
+And the following method:
+
+- [`remove`](#remove-method)
+
+
+#### `inputs` attribute
+
+A dict with the input endpoints of the widget using as key the name of the input
+endpoints.
+
+```javascript
+Operator.inputs;
+```
+
+
+#### `outputs` attribute
+
+A dict with the input endpoints of the widget using as key the name of the output
+endpoints.
+
+```javascript
+Operator.outputs;
+```
+
+
+#### `remove` method
+
+This method removes the operator from the workspace. Any wiring connection
+involving this operator is disconnected before removing the operator.
+
+**Example usage:**
+
+```javascript
+var operator = MashupPlatform.mashup.addOperator(...);
+....
+operator.remove();
+```
+
+
 ### Context Managers
 
 Each context managers supports three methods:
 
-* [`getAvailableContext`](#get-available-method)
-* [`get`](#slide57)
-* [`registerCallback`](#slide58)
+* [`getAvailableContext`](#getavailablecontext-method)
+* [`get`](#get-method-1)
+* [`registerCallback`](#registercallback-method)
 
 #### `getAvailableContext` method
 
