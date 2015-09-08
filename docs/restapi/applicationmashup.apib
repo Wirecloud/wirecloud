@@ -42,17 +42,9 @@ This specification is licensed under the [FIWARE Open Specification License (imp
 
 ## Copyright
 
-* Copyright © 2012-2015 by Universidad Politécnica de Madrid
+Copyright © 2012-2015 by Universidad Politécnica de Madrid
 
-All rights reserved. No part of this publication may be reproduced, distributed, or
-transmitted in any form or by any means, including photocopying, recording, or 
-other electronic or mechanical methods, without the prior written permission of the 
-publisher, except in the case of brief quotations embodied in critical reviews and 
-certain other noncommercial uses permitted by copyright law. For permission 
-requests, write to the publisher, addressed “Attention: Permissions Coordinator,” at 
-the address below.
-
-# Authentication
+## Authentication
 
 Each HTTP request against the Application Mashup API requires the inclusion of
 specific authentication credentials. The specific implementation of this API
@@ -65,7 +57,7 @@ using SSL over HTTP (HTTPS).
 WireCloud provides support for `Cookie` and `OAuth2` authentication being
 `OAuth2` the default in FIWARE Lab.
 
-# Representation Format
+## Representation Format
 
 The Application Mashup API MUST support at least JSON for delivering any kind
 of resources. It may also support other formats as simple text, XML and HTML.
@@ -74,7 +66,7 @@ for operations that have a request body. The response format can be specified
 in requests using the `Accept` header. Note that it is possible for a response
 to be serialized using a format different from the request.
 
-# Synchronous Faults
+## Synchronous Faults
 
 Error responses will be encoded using the most appropriated content-type in
 base to the `Accept` header of the request. In any case, the response will
@@ -107,7 +99,7 @@ XML Example:
        </details>
     </error>
 
-# Used HTTP Status Codes
+## Used HTTP Status Codes
 
 | HTTP Code | Type                     | Description                                                                       |
 |-----------|--------------------------|-----------------------------------------------------------------------------------|
@@ -208,7 +200,8 @@ XML Example:
 
 ### List workspaces [GET]
 
-List all the available workspaces of the user. If the request is made without including user credentials, this action will return all the publically available workspaces.
+List all the workspaces available to the user. If the request is made without
+including user credentials, this action will return all the public workspaces.
 
 **Used status codes**: 200, 304, 401, 406
 
@@ -268,10 +261,17 @@ Creates a new workspace. This workspace will be empty, created from a template o
 
 Those parameters should be send in the body of the request using the selected representation format (e.g. JSON):
 
-+ `mashup` (string): Id of the mashup to use as base for creating the workspace. This option cannot be used along `workspace`.
-+ `workspace` (string): Id of the workspace to use as base for creating the new workspace. This option cannot be used along `mashup`.
-+ `name` (string): Name for the new workspace. This parameter is optional if either `mashup` or `workspace` are used. In those cases, the name will be obtained from the referenced mashup or workspace.
-+ `allow_renaming` (boolean; default: `false`): If `false`, any attempt to create a workspace using a currently used name will fail. If this parameter is `true` and the name is already in use, a new name will be computed using the indicated name as base.
++ `mashup` (string): Id of the mashup to use as base for creating the workspace.
+  This option cannot be used along `workspace`.
++ `workspace` (string): Id of the workspace to use as base for creating the new
+  workspace. This option cannot be used along `mashup`.
++ `name` (string): Name for the new workspace. This parameter is optional if
+  either `mashup` or `workspace` are used. In those cases, the name will be
+  obtained from the referenced mashup or workspace.
++ `allow_renaming` (boolean; default: `false`): If `false`, any attempt to
+  create a workspace using a currently used name will fail (with a `409` status
+  code). If this parameter is `true` and the name is already in use, a new name
+  will be computed using the indicated name as base.
 
 **Used status codes**: 201, 400, 401, 403, 406, 409, 413, 415, 422
 
@@ -346,7 +346,7 @@ Those parameters should be send in the body of the request using the selected re
                            {
                               "widget": "UPM/Widget1/0.1",
                               "layout": 0,
-                              "name": "Widget1",
+                              "title": "Widget1",
                               "icon_top": -1,
                               "variables": {},
                               "minimized": false,
@@ -356,9 +356,6 @@ Those parameters should be send in the body of the request using the selected re
                               "width": 6,
                               "readOnly": false,
                               "icon_left": -1,
-                              "tab": 100,
-                              "transparency": false,
-                              "refused_version": null,
                               "top": 0,
                               "fulldragboard": false,
                               "left": 0
@@ -366,7 +363,7 @@ Those parameters should be send in the body of the request using the selected re
                            {
                               "widget": "UPM/Widget2/0.1",
                               "layout": 0,
-                              "name": "Widget2",
+                              "title": "Widget2",
                               "icon_top": -1,
                               "variables": {},
                               "minimized": false,
@@ -376,9 +373,6 @@ Those parameters should be send in the body of the request using the selected re
                               "width": 6,
                               "readOnly": false,
                               "icon_left": -1,
-                              "tab": 100,
-                              "transparency": false,
-                              "refused_version": null,
                               "top": 0,
                               "fulldragboard": false,
                               "left": 7
@@ -411,7 +405,61 @@ Those parameters should be send in the body of the request using the selected re
 
     + Body
 
-            {}
+            {
+               "name": "example",
+               "creator": "admin",
+               "wiring": {"operators": {}, "connections": []},
+               "empty_params": [],
+               "active": false,
+               "shared": false,
+               "tabs": [
+                  {
+                     "visible": true,
+                     "iwidgets": [
+                           {
+                              "widget": "UPM/Widget1/0.1",
+                              "layout": 0,
+                              "title": "Widget1",
+                              "icon_top": -1,
+                              "variables": {},
+                              "minimized": false,
+                              "id": 313,
+                              "height": 28,
+                              "zIndex": 0,
+                              "width": 6,
+                              "readOnly": false,
+                              "icon_left": -1,
+                              "top": 0,
+                              "fulldragboard": false,
+                              "left": 0
+                           },
+                           {
+                              "widget": "UPM/Widget2/0.1",
+                              "layout": 0,
+                              "title": "Widget2",
+                              "icon_top": -1,
+                              "variables": {},
+                              "minimized": false,
+                              "id": 314,
+                              "height": 28,
+                              "zIndex": 0,
+                              "width": 6,
+                              "readOnly": false,
+                              "icon_left": -1,
+                              "top": 0,
+                              "fulldragboard": false,
+                              "left": 7
+                           }
+                     ],
+                     "id": 101,
+                     "name": "Tab",
+                     "preferences": {}
+                  }
+               ],
+               "id": 51,
+               "extra_prefs": {},
+               "preferences": {}
+            }
 
 ## Workspace [/api/workspace/{workspace_id}]
 
@@ -581,6 +629,10 @@ Workspace attributes that can be modified:
 
 ### Adding new tabs [POST /api/worksace/{workspace_id}/tabs]
 
+Creates a new empty tab. This request must provide the name of the tab passing
+it using the `name` parameter in the body of the request using the selected
+representation format (e.g. JSON).
+
 **Used status codes**: 201, 400, 401, 403, 404, 406, 413, 415, 422
 
 + Request (application/json)
@@ -613,6 +665,10 @@ Workspace attributes that can be modified:
     + tab_id: 100 (number) - ID of the tab
 
 ### Update tab details [POST]
+
+Tab attributes that can be modified:
+
+- `name`: Name of the workspace
 
 **Used status codes**: 204, 400, 401, 403, 404, 413, 415, 422
 
@@ -676,6 +732,14 @@ Workspace attributes that can be modified:
 + Response 204
 
 ### Add new widgets [POST /api/workspace/{workspace_id}/tab/{tab_id}/iwidgets]
+
+Adds a widget to the workspace/tab. This request support the following
+parameters (that should be send in the body of the request using the selected
+representation format, e.g. JSON):
+
++ `widget` (string): Id (vendor/name/version) of the widget to instantiate.
++ `title` (optional, string): Title of the widget. If not provided, the title of
+  the widget will be obtained from the widget description (`config.xml`).
 
 **Used status codes**: 201, 400, 401, 403, 404, 406, 413, 415, 422
 
@@ -845,6 +909,10 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
             }
 
 ### Upload Mashable Application Components [POST]
+
+Due to this request handles binary content, this request SHOULD support the
+following extra `Content-Types` for the request itself:
+`application/octect-stream` and `multipart/form-data`.
 
 **Used status codes**: 204, 401, 403, 404, 406, 409, 413, 415
 
