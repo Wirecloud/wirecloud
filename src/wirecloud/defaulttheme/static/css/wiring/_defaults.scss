@@ -134,45 +134,45 @@ $endpoint-onbackground-background-color: rgba(26, 172, 218, 0.3);
 // WIRING VIEW - CONNECTIONS
 // ============================================================================
 
-$stroke-default-width: 2px !default;
+$connection-base-bg: rgb(90, 150, 180) !default;
 
-$connection-width:              4px;
-$connection-opacity:            0.9;
-$connection-background-color:   rgba(92, 150, 188, $connection-opacity);
-$connection-border-width:       2 * $stroke-default-width + $connection-width;
-$connection-border-color:       rgba(33, 100, 119, $connection-opacity);
-$connection-border-dasharray:   none;
+$connection-width:        4px !default;
+$connection-bg:           transparentize($connection-base-bg, 0.1) !default;
+$connection-border-width: 2 * $connection-width !default;
+$connection-border-color: darken($connection-bg, 20%) !default;
 
-$highlighted-connection-opacity:            1;
-$highlighted-connection-background-color:   rgba(199, 230, 245, $highlighted-connection-opacity);
-$highlighted-connection-border-color:       rgba(102, 175, 233, $highlighted-connection-opacity);
-$highlighted-connection-border-dasharray:   4, 2;
+$connection-text-color:        rgb(255, 255, 255) !default;
+$connection-text-hover-shadow: 0 1px 0 rgba(0, 0, 0, 0.75) !default;
 
-$misplaced-connection-background-color: rgba(255, 255, 255, $connection-opacity);
-$misplaced-connection-border-color:     rgba(170, 170, 170, $connection-opacity);
+$connection-options-bg:           transparentize(lighten($connection-bg, 5%), 0.1) !default;
+$connection-options-border-color: $connection-border-color !default;
 
-$connection-remove-background-color:            rgba(217, 83, 79, $highlighted-connection-opacity);
-$connection-remove-border-color:                rgba(212, 63, 58, $highlighted-connection-opacity);
-$connection-mousedover-remove-background-color: rgba(201, 48, 44, $highlighted-connection-opacity);
-$connection-mousedover-remove-border-color:     rgba(172, 41, 37, $highlighted-connection-opacity);
+$connection-background-bg: transparentize(lighten($connection-bg, 55%), 0.5) !default;
+$connection-background-border-color: transparentize(lighten($connection-border-color, 45%), 0.5) !default;
 
-$connection-controller-background-color:            rgba(51, 122, 183, $highlighted-connection-opacity);
-$connection-controller-border-color:                rgba(46, 109, 164, $highlighted-connection-opacity);
-$connection-mousedover-controller-background-color: rgba(40, 96, 144, $highlighted-connection-opacity);
-$connection-mousedover-controller-border-color:     rgba(32, 77, 116, $highlighted-connection-opacity);
+$connection-background-options-bg:           transparentize(lighten($connection-bg, 35%), 0.5) !default;
+$connection-background-options-border-color: transparentize(lighten($connection-border-color, 35%), 0.5) !default;
 
-$connection-onbackground-background-color: rgba(250, 250, 250, 0.8);
-$connection-onbackground-border-color: rgba(220, 220, 220, 0.5);
+$connection-background-text-color: rgba(0, 0, 0, 0.2) !default;
 
-$connection-bg-optrm-background-color: rgba(245, 245, 245, 0.8);
-$connection-bg-optrm-border-color: rgba(220, 220, 220, 0.8);
+$connection-active-bg:           rgb(180, 230, 250) !default;
+$connection-active-border-color: darken($component-active-bg, 20%) !default;
 
-$connection-bg-optrm-mousedover-background-color: rgba(50, 175, 210, 1.0);
-$connection-bg-optrm-mousedover-border-color: rgba(40, 150, 190, 1.0);
+$connection-active-options-bg:           transparentize($connection-active-bg, 0.2) !default;
+$connection-active-options-border-color: $connection-active-border-color !default;
 
-$behavior-title-width: 75%;
-$behavior-description-height: 40px;
-$behavior-description-font-color: rgb(70, 80, 90);
+$connection-active-text-color:       rgb(050, 150, 200) !default;
+$connection-active-text-shadow:      0 1px 0 rgb(255, 255, 255) !default;
+$connection-active-text-hover-color: darken($connection-active-text-color, 10%) !default;
+
+$connection-editable-border-dasharray: 4, 2 !default;
+
+$connection-handle-width: 2px !default;
+$connection-handle-border-dasharray: 6, 3 !default;
+
+// ============================================================================
+// WIRING VIEW - BEHAVIOURS
+// ============================================================================
 
 $behavior-hover-border-color: rgb(200, 200, 200);
 $behavior-hover-heading-bg-color: rgb(230, 230, 230);
