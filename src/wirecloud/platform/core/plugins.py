@@ -206,6 +206,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_tooltip.css',
     'css/styledelements/styled_expander.scss',
     'css/styledelements/styled_offcanvas_layout.scss',
+    'css/styledelements/styled_thumbnail.scss',
 )
 
 
