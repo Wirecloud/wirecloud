@@ -814,10 +814,10 @@ if (window.StyledElements == null) {
                 counter--;
             },
 
-            superMember: function superMember(name) {
-                var memberArgs = Array.prototype.slice.call(arguments, 1);
+            superMember: function superMember(superClass, name) {
+                var memberArgs = Array.prototype.slice.call(arguments, 2);
 
-                return superConstructor.prototype[name].apply(this, memberArgs);
+                return superClass.prototype[name].apply(this, memberArgs);
             }
 
         });
