@@ -589,7 +589,7 @@ if (window.StyledElements == null) {
             return target;
         }
 
-        if (!isPlainObject(source)) {
+        if (!Utils.isPlainObject(source)) {
             throw new TypeError("[error description]");
         }
 
@@ -605,7 +605,7 @@ if (window.StyledElements == null) {
             return null;
         }
 
-        if (isPlainObject(sourceValue)) {
+        if (Utils.isPlainObject(sourceValue)) {
             return this.cloneObject(sourceValue);
         }
 
@@ -682,9 +682,9 @@ if (window.StyledElements == null) {
         return typeof source === 'undefined' || source === null;
     };
 
-    var isPlainObject = function isPlainObject(source) {
+    Utils.isPlainObject = function isPlainObject(source) {
 
-        if (typeof source !== 'object') {
+        if (typeof source !== 'object' || source === null) {
             return false;
         }
 
@@ -729,8 +729,8 @@ if (window.StyledElements == null) {
             if (isNull(targetValue) || isSubClass(targetValue, sourceValue)) {
                 targetValue = sourceValue;
             }
-        } else if (isPlainObject(sourceValue)) {
-            if (isNull(targetValue) || isPlainObject(targetValue)) {
+        } else if (Utils.isPlainObject(sourceValue)) {
+            if (isNull(targetValue) || Utils.isPlainObject(targetValue)) {
                 targetValue = this.updateObject(targetValue, sourceValue);
             }
         } else if (Array.isArray(sourceValue)) {
