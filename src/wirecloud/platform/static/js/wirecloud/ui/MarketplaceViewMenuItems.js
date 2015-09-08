@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012-2014 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -39,17 +39,18 @@
     MarketplaceViewMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
     MarketplaceViewMenuItems.prototype.build = function build(context) {
-        var current_catalogue, key, items = [], item;
+        var current_catalogue, catalogue, items = [], item, i;
 
         current_catalogue = this.market.alternatives.getCurrentAlternative();
 
         // If no view exits no view is pushed
         if (this.market.number_of_alternatives > 0) {
 
-            for (key in this.market.viewsByName) {
-                items.push(new StyledElements.MenuItem(this.market.viewsByName[key].getLabel(),
+            for (i = 0; i < this.market.viewList.length; i++) {
+                catalogue = this.market.viewList[i];
+                items.push(new StyledElements.MenuItem(catalogue.getLabel(),
                     this._click_callback,
-                    this.market.viewsByName[key]
+                    catalogue
                 ));
             }
 

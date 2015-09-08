@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -45,44 +45,47 @@
     };
 
     auto_select_initial_market = function auto_select_initial_market() {
-        var market_names = Object.keys(this.viewsByName);
-        if (market_names.length > 0) {
-            this.alternatives.showAlternative(this.viewsByName[market_names[0]]);
+        if (this.viewList.length > 0) {
+            this.alternatives.showAlternative(this.viewList[0]);
         } else {
             var msg = gettext("<p>WireCloud is not connected with any marketplace.</p><p>Suggestions:</p><ul><li>Connect WireCloud with a new marketplace.</li><li>Go to the my resources view instead</li></ul>");
             notifyError.call(this, msg);
         }
     };
 
-    onGetMarketsSuccess = function onGetMarketsSuccess(options, view_info) {
-        var info, old_views, view_element, view_constructor, first_element = null;
+    onGetMarketsSuccess = function onGetMarketsSuccess(options, response) {
+        var market_key, old_views, view_element, view_constructor, i;
 
         this.loading = false;
 
         old_views = this.viewsByName;
         this.viewsByName = {};
+        this.viewList = [];
 
-        for (info in view_info) {
+        for (i = 0; i < response.length; i++) {
 
-            view_element = view_info[info];
+            view_element = response[i];
+            if (view_element.user != null) {
+                market_key = view_element.user + '/' + view_element.name;
+            } else {
+                market_key = view_element.name;
+            }
 
-            if (info in old_views) {
-                this.viewsByName[info] = old_views[info];
-                delete old_views[info];
+            if (market_key in old_views) {
+                this.viewsByName[market_key] = old_views[market_key];
+                delete old_views[market_key];
             } else {
                 view_constructor = Wirecloud.MarketManager.getMarketViewClass(view_element.type);
-                this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: view_element}});
+                this.viewsByName[market_key] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: view_element}});
             }
+            this.viewList.push(this.viewsByName[market_key]);
 
             this.number_of_alternatives += 1;
-            if (first_element === null) {
-                first_element = this.viewsByName[info];
-            }
         }
 
-        for (info in old_views) {
-            this.alternatives.removeAlternative(old_views[info]);
-            old_views[info].destroy();
+        for (market_key in old_views) {
+            this.alternatives.removeAlternative(old_views[market_key]);
+            old_views[market_key].destroy();
         }
 
         if (this.isVisible()) {

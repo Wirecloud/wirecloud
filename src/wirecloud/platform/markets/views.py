@@ -42,10 +42,9 @@ class MarketCollection(Resource):
 
     @authentication_required
     def read(self, request):
-        result = {}
+        result = []
 
-        for market in Market.objects.filter(Q(user=None) | Q(user=request.user)):
-            market_key = text_type(market)
+        for market in Market.objects.filter(Q(user=None) | Q(user=request.user)).order_by('user'):
             market_data = market.options
             market_data['name'] = market.name
 
@@ -58,7 +57,7 @@ class MarketCollection(Resource):
                 'delete': request.user.is_superuser or market.user == request.user
             }
 
-            result[market_key] = market_data
+            result.append(market_data)
 
         return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 

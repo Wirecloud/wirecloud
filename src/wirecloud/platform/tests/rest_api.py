@@ -2423,7 +2423,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue(isinstance(response_data, list))
 
     def test_market_collection_post_requires_authentication(self):
 
