@@ -436,6 +436,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/OperatorTargetEndpoint.js',
             'js/wirecloud/wiring/WidgetSourceEndpoint.js',
             'js/wirecloud/wiring/WidgetTargetEndpoint.js',
+            'js/wirecloud/wiring/KeywordSuggestion.js',
         )
 
         if view in ('classic', 'embedded'):
