@@ -7,37 +7,6 @@
 // COMPONENT - MIXINS
 // ======================================================================================
 
-@mixin panel-variant(
-    $border-color,
-    $background-color,
-    $text-color,
-    $text-shadow,
-    $text-hover-color
-) {
-
-    border-color: $border-color;
-
-    & > .panel-heading {
-        background-color: $background-color;
-
-        .panel-title {
-            color: $text-color;
-            text-shadow: $text-shadow;
-        }
-
-        .panel-options .se-btn {
-            color: $text-color;
-            text-shadow: $text-shadow;
-
-            &:hover,
-            &:focus {
-                color: $text-hover-color;
-            }
-        }
-    }
-
-}
-
 @mixin panel-selectable(
     $border-color,
     $background-color
@@ -60,12 +29,6 @@
 .panel, .panel-heading, .panel-body, .panel-footer {
     position: relative;
     box-sizing: border-box;
-
-    &:after {
-        content: "";
-        display: block;
-        clear: both;
-    }
 }
 
 .panel {
@@ -86,6 +49,11 @@
         @include font($weight: "bold");
         @include font-truncate();
         float: left;
+    }
+
+    .panel-subtitle {
+        clear: both;
+        display: block;
     }
 
     .panel-options {
@@ -111,11 +79,26 @@
         }
     }
 
+    &:last-child {
+        border-bottom-left-radius: ($panel-border-radius - 1);
+        border-bottom-right-radius: ($panel-border-radius - 1);
+    }
+
+    &:after {
+        content: "";
+        display: block;
+        clear: both;
+    }
 }
 
 .panel-body {
     padding: $panel-padding-vertical $panel-padding-horizontal;
     background-color: transparent;
+
+    &:last-child {
+        border-bottom-left-radius: ($panel-border-radius - 1);
+        border-bottom-right-radius: ($panel-border-radius - 1);
+    }
 }
 
 .panel-footer {
@@ -213,6 +196,15 @@
     @include panel-selectable(
         $panel-danger-border-color,
         $panel-danger-heading-bg);
+}
+
+.panel.panel-selectable {
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+        z-index: 10;
+    }
 }
 
 .panel, .panel.panel-selectable {

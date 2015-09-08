@@ -182,9 +182,9 @@ $panel-box-shadow-inset: inset $panel-box-shadow !default;
 
 $panel-heading-text-shadow: 0 1px 0 rgba(255, 255, 255, 1.0) !default;
 
-$panel-btn-width:             18px !default;
+$panel-btn-width:             16px !default;
 $panel-btn-margin-horizontal: 3px !default;
-$panel-btn-hover-text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3) !default;
+$panel-btn-hover-text-shadow: 0 1px 0px rgba(0, 0, 0, 0.75) !default;
 
 // ======================================================================================
 // COMPONENT - PANEL - CONTEXTUAL CLASSES
