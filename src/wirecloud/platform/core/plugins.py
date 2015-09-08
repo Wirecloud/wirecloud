@@ -104,6 +104,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/GUIBuilder.js',
     'js/StyledElements/Tooltip.js',
     'js/StyledElements/Button.js',
+    'js/StyledElements/SVGPlainButton.js',
     'js/StyledElements/FileButton.js',
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',
