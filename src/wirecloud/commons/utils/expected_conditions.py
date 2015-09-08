@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -53,7 +53,10 @@ class element_be_clickable(object):
                     position['y'] + (element.size['height'] / 2)
                 )
 
-            while top_element is not None:
+            if top_element is None:
+                return False
+
+            while top_element.tag_name != 'html':
                 if element == top_element:
                     return element
                 top_element = top_element.find_element_by_xpath('..')
