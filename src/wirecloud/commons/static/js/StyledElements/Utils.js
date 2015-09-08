@@ -850,6 +850,9 @@ if (window.StyledElements == null) {
         return features.constructor;
     };
 
+    Utils.capitalize = function capitalize(text) {
+        return text.charAt(0).toUpperCase() + text.substring(1);
+    };
 
     var SIZE_UNITS = ['bytes', 'KB', 'MB', 'GB', 'TB'];
     Object.freeze(SIZE_UNITS);
