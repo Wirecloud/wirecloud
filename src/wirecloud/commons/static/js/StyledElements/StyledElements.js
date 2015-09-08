@@ -223,6 +223,11 @@
             get: function get() {
 
                 if (!(this.wrapperElement instanceof HTMLElement)) {
+
+                    if (this.wrapperElement instanceof SVGElement) {
+                        return this.wrapperElement;
+                    }
+
                     throw new TypeError("The wrapperElement must be instance of HTMLElement.");
                 }
 
