@@ -174,8 +174,8 @@ $connection-handle-border-dasharray: 6, 3 !default;
 // WIRING VIEW - BEHAVIOURS
 // ============================================================================
 
-$behavior-hover-border-color: rgb(200, 200, 200);
-$behavior-hover-heading-bg-color: rgb(230, 230, 230);
+$behaviour-description-height: 40px !default;
+$behaviour-description-font-color: rgb(70, 80, 90) !default;
 
 $wiring-panel-title-width: 75%;
 $wiring-diagram-bg-color: rgb(250, 250, 250);
