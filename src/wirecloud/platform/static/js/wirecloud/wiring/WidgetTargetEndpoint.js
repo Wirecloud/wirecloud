@@ -42,20 +42,25 @@
     };
 
     var WidgetTargetEndpoint = function WidgetTargetEndpoint(iwidget, meta) {
-        Object.defineProperty(this, 'meta', {value: meta});
-        Object.defineProperty(this, 'name', {value: meta.name});
-        Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-        Object.defineProperty(this, 'label', {value: meta.label});
-        Object.defineProperty(this, 'description', {value: meta.description});
         Object.defineProperty(this, 'iwidget', {value: iwidget});
+        Object.defineProperty(this, 'component', {value: iwidget});
 
-        Wirecloud.wiring.TargetEndpoint.call(this, this.meta.name, this.meta.type, this.meta.friendcode, 'iwidget_' + iwidget.id + '_' + this.meta.name);
+        Object.defineProperty(this, 'meta', {value: meta});
+        if (meta != null) {
+            Object.defineProperty(this, 'name', {value: meta.name});
+            Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
+            Object.defineProperty(this, 'label', {value: meta.label});
+            Object.defineProperty(this, 'description', {value: meta.description});
+            Object.defineProperty(this, 'id', {value: 'widget/' + iwidget.id + '/' + this.meta.name});
+        }
+
+        Wirecloud.wiring.TargetEndpoint.call(this);
     };
     WidgetTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
     WidgetTargetEndpoint.prototype.serialize = function serialize() {
         return {
-            'type': 'iwidget',
+            'type': 'widget',
             'id': this.iwidget.id,
             'endpoint': this.meta.name
         };

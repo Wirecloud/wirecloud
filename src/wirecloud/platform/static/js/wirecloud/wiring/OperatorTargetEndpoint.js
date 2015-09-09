@@ -26,20 +26,25 @@
     "use strict";
 
     var OperatorTargetEndpoint = function OperatorTargetEndpoint(operator, meta) {
-        Object.defineProperty(this, 'meta', {value: meta});
-        Object.defineProperty(this, 'name', {value: meta.name});
-        Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-        Object.defineProperty(this, 'label', {value: meta.label});
-        Object.defineProperty(this, 'description', {value: meta.description});
         Object.defineProperty(this, 'operator', {value: operator});
+        Object.defineProperty(this, 'component', {value: operator});
 
-        Wirecloud.wiring.TargetEndpoint.call(this, this.meta.name, this.meta.type, this.meta.friendcode, 'ioperator_' + this.operator.id + '_' + this.meta.name);
+        Object.defineProperty(this, 'meta', {value: meta});
+        if (meta != null) {
+            Object.defineProperty(this, 'name', {value: meta.name});
+            Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
+            Object.defineProperty(this, 'label', {value: meta.label});
+            Object.defineProperty(this, 'description', {value: meta.description});
+            Object.defineProperty(this, 'id', {value: 'operator/' + this.operator.id + '/' + this.meta.name});
+        }
+
+        Wirecloud.wiring.TargetEndpoint.call(this);
     };
     OperatorTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
     OperatorTargetEndpoint.prototype.serialize = function serialize() {
         return {
-            'type': 'ioperator',
+            'type': 'operator',
             'id': this.operator.id,
             'endpoint': this.meta.name
         };

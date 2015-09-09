@@ -25,31 +25,31 @@
 
     "use strict";
 
-    var SourceEndpoint = function SourceEndpoint(name, type, friendCode, id) {
-        Wirecloud.wiring.Endpoint.call(this, name, type, friendCode, id);
+    var SourceEndpoint = function SourceEndpoint() {
+        Wirecloud.wiring.Endpoint.call(this);
         this.outputList = [];
-        this.outputs = {};
+        this.connections = [];
     };
     SourceEndpoint.prototype = new Wirecloud.wiring.Endpoint();
 
-    SourceEndpoint.prototype.connect = function connect(out, controller) {
+    SourceEndpoint.prototype.connect = function connect(out, connection) {
         if (!(out instanceof Wirecloud.wiring.TargetEndpoint)) {
             throw new TypeError('Invalid target endpoint');
         }
 
-        this.outputList.push(out);
-        this.outputs[out.id] = controller;
-
-        out._addInput(this);
+        if (this.outputList.indexOf(out) === -1) {
+            this.outputList.push(out);
+            this.connections.push(connection);
+            out._addInput(this);
+        }
     };
 
     SourceEndpoint.prototype.disconnect = function disconnect(out) {
-        if (out.id in this.outputs) {
-            var index = this.outputList.indexOf(out);
+        var index = this.outputList.indexOf(out);
 
+        if (index !== -1) {
             this.outputList.splice(index, 1);
-            delete this.outputs[out.id];
-
+            this.connections.splice(index, 1);
             out._removeInput(this);
         }
     };
@@ -71,7 +71,7 @@
      * new value to the output connectables.
      */
     SourceEndpoint.prototype.propagate = function propagate(value, options) {
-        var i, connectionDetails, errorDetails, targetEndpoint, controller;
+        var i, connectionDetails, errorDetails, targetEndpoint, connection;
 
         options = Wirecloud.Utils.merge({
             initial: false
@@ -79,13 +79,13 @@
 
         for (i = 0; i < this.outputList.length; ++i) {
             targetEndpoint = this.outputList[i];
-            controller = this.outputs[targetEndpoint.id];
+            connection = this.connections[i];
             try {
                 targetEndpoint.propagate(value, options);
             } catch (error) {
-                if (controller != null) {
+                if (connection != null) {
                     errorDetails = this.formatException(error);
-                    controller.logManager.log(errorDetails);
+                    connection.logManager.log(errorDetails);
                 }
             }
         }

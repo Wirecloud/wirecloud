@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,20 +26,25 @@
     "use strict";
 
     var WidgetSourceEndpoint = function WidgetSourceEndpoint(iwidget, meta) {
-        Object.defineProperty(this, 'meta', {value: meta});
-        Object.defineProperty(this, 'name', {value: meta.name});
-        Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-        Object.defineProperty(this, 'label', {value: meta.label});
-        Object.defineProperty(this, 'description', {value: meta.description});
         Object.defineProperty(this, 'iwidget', {value: iwidget});
+        Object.defineProperty(this, 'component', {value: iwidget});
 
-        Wirecloud.wiring.SourceEndpoint.call(this, this.meta.name, this.meta.type, this.friendcode, 'iwidget_' + iwidget.id + '_' + this.meta.name);
+        Object.defineProperty(this, 'meta', {value: meta});
+        if (meta != null) {
+            Object.defineProperty(this, 'name', {value: meta.name});
+            Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
+            Object.defineProperty(this, 'label', {value: meta.label});
+            Object.defineProperty(this, 'description', {value: meta.description});
+            Object.defineProperty(this, 'id', {value: 'widget/' + iwidget.id + '/' + this.meta.name});
+        }
+
+        Wirecloud.wiring.SourceEndpoint.call(this);
     };
     WidgetSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
     WidgetSourceEndpoint.prototype.serialize = function serialize() {
         return {
-            'type': 'iwidget',
+            'type': 'widget',
             'id': this.iwidget.id,
             'endpoint': this.meta.name
         };

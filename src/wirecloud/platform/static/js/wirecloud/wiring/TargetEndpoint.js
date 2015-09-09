@@ -25,12 +25,27 @@
 
     "use strict";
 
-    var TargetEndpoint = function TargetEndpoint(name, type, friendCode, id) {
-        Wirecloud.wiring.Endpoint.call(this, name, type, friendCode, id);
+    var TargetEndpoint = function TargetEndpoint() {
+        Wirecloud.wiring.Endpoint.call(this);
         this.inputs = [];
     };
-
     TargetEndpoint.prototype = new Wirecloud.wiring.Endpoint();
+
+    TargetEndpoint.prototype.connect = function connect(input, connection) {
+        if (!(input instanceof Wirecloud.wiring.TargetEndpoint)) {
+            throw new TypeError('Invalid source endpoint');
+        }
+
+        input.connect(this, connection);
+    };
+
+    TargetEndpoint.prototype.disconnect = function disconnect(input) {
+        if (!(input instanceof Wirecloud.wiring.TargetEndpoint)) {
+            throw new TypeError('Invalid source endpoint');
+        }
+
+        input.disconnect(this);
+    };
 
     /**
      * @private

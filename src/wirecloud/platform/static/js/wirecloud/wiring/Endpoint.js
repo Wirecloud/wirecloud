@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2008-2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,12 +25,7 @@
 
     "use strict";
 
-    var Endpoint = function Endpoint(name, type, friendCode, id) {
-        this.id = id;
-    };
-
-    Endpoint.prototype.getId = function getId() {
-        return this.id;
+    var Endpoint = function Endpoint() {
     };
 
     Endpoint.prototype.getReachableEndpoints = function getReachableEndpoints() {
