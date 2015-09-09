@@ -334,11 +334,16 @@ def get_absolute_reverse_url(viewname, request=None, **kwargs):
     return urljoin(scheme + '://' + get_current_domain(request) + '/', path)
 
 
-def get_absolute_static_url(url, request=None):
+def get_absolute_static_url(url, request=None, versioned=False):
     from django.conf import settings
 
     scheme = get_current_scheme()
     base = urljoin(scheme + '://' + get_current_domain(request), settings.STATIC_URL)
+
+    if versioned:
+        from wirecloud.platform.core.plugins import get_version_hash
+        url += '?v=' + get_version_hash()
+
     return urljoin(base, url)
 
 
