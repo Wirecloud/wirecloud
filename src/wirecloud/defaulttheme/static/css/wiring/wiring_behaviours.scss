@@ -4,22 +4,22 @@
 
 
 // ======================================================================================
-// WIRING - BEHAVIOR
+// WIRING - BEHAVIOUR
 // ======================================================================================
 
-.behavior {
+.behaviour {
     cursor: pointer;
     @include user-select(none);
 
-    .behavior-title {
-        width: $behavior-title-width;
+    .behaviour-title {
+        width: $wiring-panel-title-width;
     }
 
-    .behavior-description {
-        height: $behavior-description-height;
+    .behaviour-description {
+        height: $behaviour-description-height;
         margin-bottom: 0px;
         @include font($type: "h6");
-        color: $behavior-description-font-color;
+        color: $behaviour-description-font-color;
         overflow: hidden;
     }
 

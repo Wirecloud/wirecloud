@@ -31,72 +31,87 @@
     // ==================================================================================
 
     /**
-     * Create a new instance of class Behavior.
+     * Create a new instance of class Behaviour.
      * @extends {Panel}
      *
      * @constructor
-     * @param {Object.<String, *>} [options]
-     *      [description]
+     * @param {PlainObject} [options]
+     *      [TODO: description]
      */
-    ns.Behavior = utils.defineClass({
+    ns.Behaviour = utils.defineClass({
 
-        constructor: function Behavior(options) {
+        constructor: function Behaviour(options) {
             var descriptionElement;
 
-            options = utils.updateObject(defaults, options);
+            options = utils.updateObject(ns.Behaviour.JSON_TEMPLATE, options);
 
             if (!options.title) {
-                options.title = defaults.title;
+                options.title = ns.Behaviour.JSON_TEMPLATE.title;
             }
 
             if (!options.description) {
-                options.description = defaults.description;
+                options.description = ns.Behaviour.JSON_TEMPLATE.description;
             }
 
-            this.btnShowInfo = new se.Button({
-                'title': gettext("Settings"),
-                'class': 'btn-show-settings',
-                'iconClass': 'icon-tasks'
+            this.btnPrefs = new se.PopupButton({
+                title: gettext("Preferences"),
+                extraClass: "btn-show-prefs",
+                iconClass: "icon-reorder"
             });
-            this.btnShowInfo.on('click', displayUpdateForm.bind(this));
+            this.btnPrefs.popup_menu.append(new ns.BehaviourPrefs(this));
 
             this.btnRemove = new se.Button({
-                'title': gettext("Remove"),
-                'class': 'btn-activate',
-                'iconClass': 'icon-remove'
+                title: gettext("Remove"),
+                extraClass: "btn-remove",
+                iconClass: "icon-remove-sign"
             });
-            this.btnRemove.on('click', handleOnRemove.bind(this));
+            this.btnRemove.on('click', btnremove_onclick.bind(this));
 
             this.superClass({
                 events: events,
-                extraClass: 'behavior',
+                extraClass: "behaviour",
                 title: options.title,
                 selectable: true,
-                optionList: [this.btnShowInfo, this.btnRemove]
+                buttons: [this.btnPrefs, this.btnRemove]
             });
 
-            this.title.addClass('se-link behavior-title');
+            this.heading.title.addClass("se-link behaviour-title");
 
             descriptionElement = document.createElement('p');
-            descriptionElement.className = 'behavior-description';
+            descriptionElement.className = "behaviour-description";
             descriptionElement.textContent = options.description;
             this.body.append(descriptionElement);
 
-            Object.defineProperty(this, 'description', {
-                get: function get() {
-                    return descriptionElement.textContent;
+            Object.defineProperties(this, {
+
+                description: {
+                    get: function get() {return descriptionElement.textContent;},
+                    set: function set(value) {descriptionElement.textContent = value ? value : ns.Behaviour.JSON_TEMPLATE.description;}
                 },
-                set: function set(value) {
-                    descriptionElement.textContent = value ? value : defaults.description;
-                }
+
+                logManager: {value: new ns.BehaviourLogManager(this)}
+
             });
 
             this.active = options.active;
+
             this.components = options.components;
             this.connections = options.connections;
         },
 
         inherit: se.Panel,
+
+        statics: {
+
+            JSON_TEMPLATE: {
+                title: gettext("New behaviour"),
+                description: gettext("No description provided."),
+                active: false,
+                components: {operator: {}, widget: {}},
+                connections: []
+            }
+
+        },
 
         members: {
 
@@ -104,158 +119,171 @@
              * @override
              */
             _onclick: function _onclick(event) {
-                if (!this.active) {
-                    this.superMember('_onclick', event);
-                }
-            },
 
-            /**
-             * [empty description]
-             *
-             * @returns {Behavoir}
-             *      [description]
-             */
-            empty: function empty() {
-                this.components = {
-                    operator: {},
-                    widget: {}
-                };
-                this.connections.length = 0;
+                if (!this.active) {
+                    this.superMember(se.Panel, '_onclick', event);
+                }
 
                 return this;
             },
 
             /**
-             * [equals description]
+             * @override
+             */
+            empty: function empty() {
+
+                this.components = {operator: {}, widget: {}};
+                this.connections = [];
+
+                return this.trigger('change');
+            },
+
+            /**
+             * [TODO: equals description]
              *
-             * @param {Behavior} behavior
-             *      [description]
+             * @param {Behaviour} behaviour
+             *      [TODO: description]
              * @returns {Boolean}
-             *      [description]
+             *      [TODO: description]
              */
-            equals: function equals(behavior) {
-                return behavior instanceof ns.Behavior && Object.is(this, behavior);
+            equals: function equals(behaviour) {
+                return behaviour instanceof ns.Behaviour && Object.is(this, behaviour);
+            },
+
+            getConnectionIndex: function getConnectionIndex(connection) {
+                var _connection, found, i, index = -1;
+
+                for (found = false, i = 0; !found && i < this.connections.length; i++) {
+                    _connection = this.connections[i];
+
+                    if (_connection.sourcename == connection.sourceId && _connection.targetname == connection.targetId) {
+                        found = true;
+                        index = i;
+                    }
+                }
+
+                return index;
+            },
+
+            getCurrentStatus: function getCurrentStatus() {
+                return {
+                    title: this.title,
+                    connections: this.connections.length,
+                    components: {
+                        operator: Object.keys(this.components.operator).length,
+                        widget: Object.keys(this.components.widget).length
+                    }
+                };
             },
 
             /**
-             * [findComponent description]
+             * [TODO: hasComponent description]
              *
-             * @param {String} type
-             *      [description]
-             * @param {String|Number} id
-             *      [description]
-             * @returns {Object.<String, *>}
-             *      [description]
-             */
-            findComponent: function findComponent(type, id) {
-                return this.components[type][id];
-            },
-
-            /**
-             * [findConnection description]
-             *
-             * @param {String} sourceName
-             *      [description]
-             * @param {String} targetName
-             *      [description]
-             * @returns {Object.<String, *>}
-             *      [description]
-             */
-            findConnection: function findConnection(sourceName, targetName) {
-                var index = getConnectionIndex.call(this, sourceName, targetName);
-
-                return index !== -1 ? this.connections[index] : null;
-            },
-
-            /**
-             * [hasComponent description]
-             *
-             * @param {String} type
-             *      [description]
-             * @param {String|Number} id
-             *      [description]
+             * @param {Component} component
+             *      [TODO: description]
              * @returns {Boolean}
-             *      [description]
+             *      [TODO: description]
              */
-            hasComponent: function hasComponent(type, id) {
-                return id in this.components[type];
+            hasComponent: function hasComponent(component) {
+                return component.id in this.components[component.type];
             },
 
             /**
-             * [hasComponentView description]
+             * [TODO: hasComponentView description]
              *
-             * @param {String} type
-             *      [description]
-             * @param {String|Number} id
-             *      [description]
+             * @param {Component} component
+             *      [TODO: description]
              * @returns {Boolean}
-             *      [description]
+             *      [TODO: description]
              */
-            hasComponentView: function hasComponentView(type, id) {
-                return Object.keys(this.components[type][id] || {}).length > 0;
+            hasComponentView: function hasComponentView(component) {
+                return Object.keys(this.components[component.type][component.id] || {}).length > 0;
             },
 
             /**
-             * [hasConnection description]
+             * [TODO: hasConnection description]
              *
-             * @param {String} sourceName
-             *      [description]
-             * @param {String} targetName
-             *      [description]
+             * @param {Connection} connection
+             *      [TODO: description]
              * @returns {Boolean}
-             *      [description]
+             *      [TODO: description]
              */
-            hasConnection: function hasConnection(sourceName, targetName) {
-                return this.connections.some(function (connection) {
-                    return connection.sourcename == sourceName && connection.targetname == targetName;
+            hasConnection: function hasConnection(connection) {
+                return this.connections.some(function (vInfo) {
+                    return vInfo.sourcename == connection.sourceId && vInfo.targetname == connection.targetId;
                 });
             },
 
             /**
-             * [removeComponent description]
+             * [TODO: removeComponent description]
              *
-             * @param {String} type
-             *      [description]
-             * @param {String|Number} id
-             *      [description]
-             * @returns {Behavoir}
-             *      [description]
+             * @param {ComponentDraggable} component
+             *      [TODO: description]
+             * @returns {Behaviour}
+             *      The instance on which the member is called.
              */
-            removeComponent: function removeComponent(type, id) {
-                delete this.components[type][id];
+            removeComponent: function removeComponent(component) {
 
-                return this.trigger('update', this);
+                if (this.hasComponent(component)) {
+                    delete this.components[component.type][component.id];
+                }
+
+                return this.trigger('change');
             },
 
             /**
-             * [removeConnection description]
+             * [TODO: removeConnection description]
              *
-             * @param {String} sourceName
-             *      [description]
-             * @param {String} targetName
-             *      [description]
-             * @returns {Behavoir}
-             *      [description]
+             * @param {Connection} connection
+             *      [TODO: description]
+             * @returns {Behaviour}
+             *      The instance on which the member is called.
              */
-            removeConnection: function removeConnection(sourceName, targetName) {
-                var index = getConnectionIndex.call(this, sourceName, targetName);
+            removeConnection: function removeConnection(connection) {
+                var index = this.getConnectionIndex(connection);
 
                 if (index !== -1) {
                     this.connections.splice(index, 1);
                 }
 
-                return this.trigger('update', this);
+                return this.trigger('change');
             },
 
             /**
-             * [serialize description]
+             * [TODO: showLogs description]
              *
-             * @returns {Object.<String, *>}
-             *      [description]
+             * @returns {Behaviour}
+             *      The instance on which the member is called.
              */
-            serialize: function serialize() {
+            showLogs: function showLogs() {
+                var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
+                    modal.show();
+
+                return this;
+            },
+
+            /**
+             * [TODO: showSettings description]
+             *
+             * @returns {Behaviour}
+             *      The instance on which the member is called.
+             */
+            showSettings: function showSettings() {
+
+                displayUpdateForm.call(this);
+
+                return this;
+            },
+
+            /**
+             * [TODO: toJSON description]
+             *
+             * @returns {PlainObject}
+             *      [TODO: description]
+             */
+            toJSON: function toJSON() {
                 return {
-                    title: this.title.text(),
+                    title: this.title,
                     description: this.description,
                     active: this.active,
                     components: this.components,
@@ -264,51 +292,58 @@
             },
 
             /**
-             * [updateComponent description]
+             * [TODO: updateComponent description]
              *
-             * @param {String} type
-             *      [description]
-             * @param {String|Number} id
-             *      [description]
-             * @param  {[type]} view [description]
-             * @returns {Behavoir}
-             *      [description]
+             * @param {ComponentDraggable} component
+             *      [TODO: description]
+             * @param {PlainObject} [view]
+             *      [TODO: description]
+             * @returns {Behaviour}
+             *      The instance on which the member is called.
              */
-            updateComponent: function updateComponent(type, id, view) {
-                view = view || {};
+            updateComponent: function updateComponent(component, view) {
+                var name;
 
-                if (this.hasComponentView(type, id) && !Object.keys(view).length) {
-                    return this;
+                if (!this.hasComponent(component)) {
+                    this.components[component.type][component.id] = {};
                 }
 
-                this.components[type][id] = view;
+                view = view || {};
 
-                return this.trigger('update', this);
+                for (name in view) {
+                    this.components[component.type][component.id][name] = view[name];
+                }
+
+                return this.trigger('change');
             },
 
             /**
-             * @public
-             * @function
+             * [TODO: updateConnection description]
              *
-             * @param {Object.<String, *>} data
-             * @returns {Behavior} The instance on which this function was called.
+             * @param {Connection} connection
+             *      [TODO: description]
+             * @param {PlainObject} [view]
+             *      [TODO: description]
+             * @returns {Behaviour}
+             *      The instance on which the member is called.
              */
-            updateConnection: function updateConnection(view) {
-                var index = getConnectionIndex.call(this, view.sourcename, view.targetname);
+            updateConnection: function updateConnection(connection, view) {
+                var name, vInfo, index = this.getConnectionIndex(connection);
 
-                if (index !== -1) {
-                    this.connections[index] = {
-                        sourcename: view.sourcename,
-                        targetname: view.targetname
-                    };
-                } else {
-                    this.connections.push({
-                        sourcename: view.sourcename,
-                        targetname: view.targetname
+                if (index < 0) {
+                    index = this.connections.push({
+                        sourcename: connection.sourceId,
+                        targetname: connection.targetId
                     });
                 }
 
-                return this.trigger('update', this);
+                view = view || {};
+
+                for (name in view) {
+                    this.connections[index][name] = view[name];
+                }
+
+                return this.trigger('change');
             }
 
         }
@@ -319,26 +354,33 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var defaults = {
-        title: "New behavior",
-        description: "No description provided.",
-        active: false,
-        components: {
-            operator: {},
-            widget: {}
-        },
-        connections: []
-    };
+    var events = ['change', 'optremove'];
 
-    var events = ['remove', 'update'];
+    function btnremove_onclick(event) {
+        var dialog, message;
 
-    var displayUpdateForm = function displayUpdateForm() {
+        message = gettext("The following operation is irreversible " +
+            "and removes the behaviour completely. " +
+            "Would you like to continue?");
+
+        dialog = new Wirecloud.ui.AlertWindowMenu({
+            acceptLabel: gettext("Continue"),
+            cancelLabel: gettext("No, thank you")
+        });
+        dialog.setMsg(message);
+        dialog.acceptHandler = function () {
+            this.trigger('optremove');
+        }.bind(this);
+        dialog.show();
+    }
+
+    function displayUpdateForm() {
         var dialog = new Wirecloud.ui.FormWindowMenu([
                 {name: 'title', label: gettext("Title"), type: 'text'},
                 {name: 'description', label: gettext("Description"), type: 'longtext'}
             ],
-            gettext("Behavior Info"),
-            'behavior-update-form');
+            gettext("Behaviour settings"),
+            'behaviour-update-form');
 
         dialog.executeOperation = function (data) {
             updateInfo.call(this, data);
@@ -346,48 +388,15 @@
 
         dialog.show();
         dialog.setValue({
-            title: this.title.text(),
+            title: this.title,
             description: this.description
         });
-    };
+    }
 
-    var getConnectionIndex = function getConnectionIndex(sourceName, targetName) {
-        var connection, found, i, index = -1;
-
-        for (found = false, i = 0; !found && i < this.connections.length; i++) {
-            connection = this.connections[i];
-
-            if (connection.sourcename == sourceName && connection.targetname == targetName) {
-                found = true;
-                index = i;
-            }
-        }
-
-        return index;
-    };
-
-    var handleOnRemove = function handleOnRemove(event) {
-        var dialog, message;
-
-        message = gettext("The following operation is irreversible " +
-            "and removes the selected behavior completely. " +
-            "Would you like to continue?");
-
-        dialog = new Wirecloud.ui.AlertWindowMenu({
-            acceptLabel: gettext("Yes, remove"),
-            cancelLabel: gettext("No, thank you")
-        });
-        dialog.setMsg(message);
-        dialog.acceptHandler = function () {
-            this.trigger('remove', this, event);
-        }.bind(this);
-        dialog.show();
-    };
-
-    var updateInfo = function updateInfo(data) {
-        this.title.text(data.title ? data.title : defaults.title);
+    function updateInfo(data) {
+        this.heading.title.text(data.title ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
         this.description = data.description;
-        this.trigger('update', this);
-    };
+        this.trigger('change');
+    }
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);
