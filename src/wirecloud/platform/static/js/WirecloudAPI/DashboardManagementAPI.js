@@ -139,6 +139,7 @@
         };
         var widget = new platform.IWidget(widget_def, layout, widgetinfo);
         Wirecloud.activeWorkspace.getActiveDragboard().addIWidget(widget);
+        resource.addEventListener('unload', widget.remove.bind(widget));
 
         return new Widget(widget.internal_iwidget);
     };
