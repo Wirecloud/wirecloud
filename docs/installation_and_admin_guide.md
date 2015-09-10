@@ -35,7 +35,7 @@ This section describes all the requirements of a basic WireCloud installation. *
     - pyScss 1.3.4+
     - Pygments
 
-All these dependencies are available for Linux, Mac OS and Windows, so WireCloud should work on any of these operating systems. However, it is better to use Debian Wheezy+, CentOS 6.3+, Ubuntu 12.04+ or Mac OS X 10.9 as these operating systems are actively tested. Specifically, this installation guide was tested in the following systems: 
+All these dependencies are available for Linux, Mac OS and Windows, so WireCloud should work on any of these operating systems. However, it is better to use Debian Wheezy+, CentOS 6.3+, Ubuntu 12.04+ or Mac OS X 10.9 as these operating systems are actively tested. Specifically, this installation guide was tested in the following systems:
 
 - Ubuntu 14.04
 - Ubuntu 12.04
@@ -148,6 +148,10 @@ Once downloaded the source code, you can install WireCloud using the `setup.py` 
     $ sudo pip install dist/wirecloud-<version>.tar.gz
 
 Where `<version>` is the version of WireCloud to install.
+
+### Installing WireCloud using Docker
+
+WireCloud can be deployed using [Docker](https://www.docker.com/), the images can be found at [docker hub](https://hub.docker.com/r/wirecloud/fiware-wirecloud/), the DockerFiles are in the [docker-wirecloud](https://github.com/Wirecloud/docker-wirecloud/) repository, and the documentation to deploy and start is available in the [README.md](https://github.com/Wirecloud/docker-wirecloud/tree/master/hub-docs/README.md) file.
 
 ### Creating a new instance of WireCloud
 
@@ -365,7 +369,7 @@ http as the scheme for the internal URLs.
 
 
 #### LANGUAGE_CODE
-(String; default: "en-us") 
+(String; default: "en-us")
 
 A string representing the language code to use as fallback when no translation exist for a given literal to the user’s preferred language. For example, U.S. English is "en-us".
 
