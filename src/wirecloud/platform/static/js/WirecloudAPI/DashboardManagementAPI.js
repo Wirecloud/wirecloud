@@ -64,12 +64,12 @@
 
         var inputs = {};
         for (endpoint_name in real_operator.inputs) {
-            inputs[endpoint_name] = new InputEndpoint(real_operator.inputs[endpoint_name], this);
+            inputs[endpoint_name] = new InputEndpoint(real_operator.inputs[endpoint_name], false);
         }
 
         var outputs = {};
         for (endpoint_name in real_operator.outputs) {
-            outputs[endpoint_name] = new OutputEndpoint(real_operator.outputs[endpoint_name], this);
+            outputs[endpoint_name] = new OutputEndpoint(real_operator.outputs[endpoint_name], false);
         }
 
         Object.defineProperties(this, {
@@ -77,7 +77,7 @@
             'outputs': {value: outputs},
             'remove': {
                 value: function close() {
-                    real_operator.remove();
+                    real_operator.destroy();
                 }
             }
         });
@@ -116,6 +116,9 @@
         }, options.permissions);
 
         var widget_def = Wirecloud.LocalCatalogue.getResourceId(ref);
+        if (widget_def == null || widget_def.type !== 'widget') {
+            throw new TypeError('invalid widget ref');
+        }
         var widget_title = options.title ? options.title : widget_def.title;
         var layout = Wirecloud.activeWorkspace.getActiveDragboard().freeLayout;
 
@@ -142,6 +145,19 @@
         resource.addEventListener('unload', widget.remove.bind(widget));
 
         return new Widget(widget.internal_iwidget);
+    };
+
+    var addOperator = function addOperator(ref) {
+        var operator_def = Wirecloud.LocalCatalogue.getResourceId(ref);
+        if (operator_def == null || operator_def.type !== 'operator') {
+            throw new TypeError('invalid operator ref');
+        }
+        var operator = operator_def.instantiate(resource.id + '/' + counter++, undefined, resource.workspace.wiring);
+        // TODO remove manual volatile attribute and manual registration of the operator on the wiring module
+        operator.volatile = true;
+        resource.workspace.wiring.ioperators[operator.id] = operator;
+        resource.addEventListener('unload', operator.destroy.bind(operator));
+        return (new Operator(operator));
     };
 
     var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(workspace) {
@@ -182,6 +198,7 @@
 
     Object.defineProperties(MashupPlatform.mashup, {
         addWidget: {value: addWidget},
+        addOperator: {value: addOperator},
         createWorkspace: {value: createWorkspace}
     });
 

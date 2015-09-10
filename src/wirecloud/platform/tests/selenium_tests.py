@@ -1322,6 +1322,33 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     test_window_resize.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
 
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
+    def test_dashboard_management_api(self):
+
+        self.login()
+
+        initial_iwidgets = self.get_current_iwidgets()
+        initial_iwidget_count = len(initial_iwidgets)
+
+        with initial_iwidgets[1]:
+            self.driver.find_element_by_id('dashboard_management_button').click()
+            # Two widgets are created when clicking the dashboard management button
+            # one of them is connected directly, the other is connected through and
+            # operator
+            self.driver.find_element_by_id('wiring_pushevent_button').click()
+
+        WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.get_current_iwidgets()) == (initial_iwidget_count + 2))
+
+        iwidgets = self.get_current_iwidgets()
+        with iwidgets[3]:
+            text_div = self.driver.find_element_by_id('registercallback_test')
+            self.assertEqual(text_div.text, 'Success!!')
+
+        with iwidgets[4]:
+            text_div = self.driver.find_element_by_id('registercallback_test')
+            self.assertEqual(text_div.text, 'Success!!')
+
 
 @wirecloud_selenium_test_case
 class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):

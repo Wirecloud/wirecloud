@@ -122,7 +122,7 @@ class IWidgetTester(object):
         return isinstance(other, IWidgetTester) and other.id == self.id
 
     def __enter__(self):
-        self.content_element = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%d).content;' % self.id)
+        self.content_element = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidget("%s").content;' % self.id)
 
         self.testcase.driver.switch_to.frame(self.content_element)
         return None
