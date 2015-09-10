@@ -31,6 +31,7 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.test import Client
 from django.utils import unittest
+from mock import Mock, patch
 import selenium
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -269,6 +270,7 @@ class WiringTestCase(WirecloudTestCase):
         self.assertEqual(workspace.wiringStatus, self.empty_wiring)
 
 
+@patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
 class OperatorCodeEntryTestCase(WirecloudTestCase):
 
     XML_NORMALIZATION_RE = re.compile(b'>\\s+<')

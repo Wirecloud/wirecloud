@@ -36,9 +36,10 @@ from wirecloud.platform.widget.views import serve_showcase_media
 __test__ = False
 
 
+@patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
 class CodeTransformationTestCase(TestCase):
 
-    tags = ('wirecloud-widget-module', 'widget-code-transformation', 'wirecloud-noselenium')
+    tags = ('wirecloud-widget-module', 'wirecloud-widget-code-transformation', 'wirecloud-noselenium')
 
     XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
 
