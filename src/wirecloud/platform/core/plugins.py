@@ -163,8 +163,6 @@ BASE_CSS = (
 
 WIRING_EDITOR_CSS = (
     'css/wiring/wiring_layout.scss',
-    'css/wiring/wiring_sidebar.scss',
-    'css/wiring/wiring_bottombar.scss',
     'css/wiring/wiring_components.scss',
     'css/wiring/wiring_connections.scss',
     'css/wiring/wiring_behaviours.scss',
