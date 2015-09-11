@@ -48,9 +48,11 @@
         Object.defineProperty(this, 'meta', {value: meta});
         if (meta != null) {
             Object.defineProperty(this, 'name', {value: meta.name});
+            Object.defineProperty(this, 'missing', {value: false});
             Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
+            Object.defineProperty(this, 'keywords', {value: meta.friendcode.trim().split(/\s+/)});
             Object.defineProperty(this, 'label', {value: meta.label});
-            Object.defineProperty(this, 'description', {value: meta.description});
+            Object.defineProperty(this, 'description', {value: meta.description ? meta.description : gettext("No description provided.")});
             Object.defineProperty(this, 'id', {value: 'widget/' + iwidget.id + '/' + this.meta.name});
         }
 

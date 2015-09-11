@@ -426,7 +426,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/EndpointValueError.js',
             'js/wirecloud/wiring/SourceEndpoint.js',
             'js/wirecloud/wiring/TargetEndpoint.js',
-            'js/wirecloud/wiring/GhostEndpoint.js',
+            'js/wirecloud/wiring/MissingEndpoint.js',
             'js/wirecloud/wiring/MissingComponent.js',
             'js/wirecloud/wiring/MissingComponentLogManager.js',
             'js/wirecloud/wiring/OperatorFactory.js',

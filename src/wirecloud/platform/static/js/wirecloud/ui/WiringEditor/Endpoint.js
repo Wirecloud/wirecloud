@@ -106,7 +106,9 @@
             });
 
             this.title = wiringEndpoint.label;
-            this.missing = wiringEndpoint.missing;
+            if (wiringEndpoint.missing) {
+                this.missing = true;
+            }
 
             this.rightAnchorPoint = false;
 
