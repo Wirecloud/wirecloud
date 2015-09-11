@@ -1332,11 +1332,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         initial_iwidget_count = len(initial_iwidgets)
 
         with initial_iwidgets[1]:
-            self.driver.find_element_by_id('dashboard_management_button').click()
+            # use execute_script as we are not testing if the button is visible
+            # and directly clickable without scrolling the view
+            self.driver.execute_script("document.getElementById('dashboard_management_button').click();")
             # Two widgets are created when clicking the dashboard management button
             # one of them is connected directly, the other is connected through and
             # operator
-            self.driver.find_element_by_id('wiring_pushevent_button').click()
+            self.driver.execute_script("document.getElementById('wiring_pushevent_button').click();")
 
         WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.get_current_iwidgets()) == (initial_iwidget_count + 2))
 
