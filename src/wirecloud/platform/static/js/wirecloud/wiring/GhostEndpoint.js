@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,82 +19,12 @@
  *
  */
 
-/*global Wirecloud */
+/*global gettext, StyledElements, Wirecloud */
 
-(function () {
+
+(function (ns, se, utils) {
 
     "use strict";
-
-    var GhostEntity = function GhostEntity(id, info) {
-        if (arguments.length === 0) {
-            return;
-        }
-
-        if (info.preferences == null) {
-            info.preferences = {};
-        }
-
-        Object.defineProperties(this, {
-            'id':    {value: id},
-            'meta':  {value: {
-                    uri: info.name,
-                    preferenceList: []
-                }
-            },
-            'name':  {value: info.name},
-            'title': {value: info.name},
-            'preferences': {value: info.preferences, writable: true}
-        });
-        this.inputs = {};
-        this.outputs = {};
-    };
-
-    GhostEntity.prototype.fillFromViewInfo = function fillFromViewInfo(data) {
-        var i, endpoint;
-
-        if (!('endpoints' in data)) {
-            return;
-        }
-
-        if ('source' in data.endpoints) {
-            for (i = 0; i < data.endpoints.source.length; i++) {
-                endpoint = new Wirecloud.wiring.GhostSourceEndpoint(this, data.endpoints.source[i]);
-                this.outputs[endpoint.name] = endpoint;
-            }
-        }
-
-        if ('target' in data.endpoints) {
-            for (i = 0; i < data.endpoints.target.length; i++) {
-                endpoint = new Wirecloud.wiring.GhostTargetEndpoint(this, data.endpoints.target[i]);
-                this.inputs[endpoint.name] = endpoint;
-            }
-        }
-    };
-
-    GhostEntity.prototype.destroy = function destroy() {};
-
-    GhostEntity.prototype.fullDisconnect = function fullDisconnect() {
-        var key, connectables;
-
-        connectables = this.inputs;
-        for (key in connectables) {
-            connectables[key].fullDisconnect();
-        }
-
-        connectables = this.outputs;
-        for (key in connectables) {
-            connectables[key].fullDisconnect();
-        }
-    };
-
-    Wirecloud.wiring.GhostEntity = GhostEntity;
-
-    var GhostOperator = function GhostOperator(id, info) {
-        GhostEntity.call(this, id, info);
-    };
-    GhostOperator.prototype = new GhostEntity();
-
-    Wirecloud.wiring.GhostOperator = GhostOperator;
 
     var GhostSourceEndpoint = function GhostSourceEndpoint(entity, endpoint) {
         Object.defineProperties(this, {
@@ -142,4 +72,4 @@
 
     Wirecloud.wiring.GhostTargetEndpoint = GhostTargetEndpoint;
 
-})();
+})(Wirecloud.wiring, StyledElements, StyledElements.Utils);

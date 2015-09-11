@@ -191,7 +191,7 @@
                 operator = this.ioperators[id];
                 this.ioperators[id].destroy();
 
-                ghost_operator = new Wirecloud.wiring.GhostOperator(id, this.status.operators[id]);
+                ghost_operator = new Wirecloud.wiring.MissingOperator(id, this, this.status.operators[id]);
                 this.ioperators[id] = ghost_operator;
 
                 // Preserve preferences
@@ -299,7 +299,7 @@
                 this.ioperators[id] = old_operators[id];
                 delete old_operators[id];
 
-                if (this.ioperators[id] instanceof Wirecloud.wiring.GhostOperator) {
+                if (this.ioperators[id] instanceof Wirecloud.wiring.MissingOperator) {
                     msg = gettext('%(operator)s operator is not available for this account');
                     msg = interpolate(msg, {operator: operator_info.name}, true);
                     this.logManager.log(msg);
@@ -312,18 +312,18 @@
                         msg = gettext('Error instantiating the %(operator)s operator');
                         msg = interpolate(msg, {operator: operator_info.name}, true);
                         this.logManager.log(msg);
-                        this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
+                        this.ioperators[id] = new Wirecloud.wiring.MissingOperator(id, this, operator_info);
                         if (id in status.visualdescription.components.operator) {
-                            this.ioperators[id].fillFromViewInfo(status.visualdescription.components.operator[id]);
+                            this.ioperators[id].loadVisualInfo(status.visualdescription.components.operator[id]);
                         }
                     }
                 } else {
                     msg = gettext('%(operator)s operator is not available for this account');
                     msg = interpolate(msg, {operator: operator_info.name}, true);
                     this.logManager.log(msg);
-                    this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
+                    this.ioperators[id] = new Wirecloud.wiring.MissingOperator(id, this, operator_info);
                     if (id in status.visualdescription.components.operator) {
-                        this.ioperators[id].fillFromViewInfo(status.visualdescription.components.operator[id]);
+                        this.ioperators[id].loadVisualInfo(status.visualdescription.components.operator[id]);
                     }
                 }
             }
