@@ -30,9 +30,22 @@
     // CLASS DEFINITION
     // ==================================================================================
 
+    /**
+     * Create a new instance of class MissingComponent.
+     *
+     * @constructor
+     * @param {Number} id
+     *      [TODO: description]
+     * @param {String} type
+     *      [TODO: description]
+     * @param {Wiring} wiringEngine
+     *      [TODO: description]
+     * @param {String} reason
+     *      [TODO: description]
+     */
     ns.MissingComponent = utils.defineClass({
 
-        constructor: function MissingComponent(id, type, wiringEngine, businessInfo) {
+        constructor: function MissingComponent(id, type, wiringEngine, reason) {
 
             this.loaded = false;
             this.pending_events = [];
@@ -53,10 +66,13 @@
                         type: type
                     }
                 },
-
-                missing: {value: true}
-
+                missing: {value: true},
+                reason: {value: reason}
             });
+
+            this.logManager.log(utils.interpolate(utils.gettext("A missing %(type)s was restored."), {
+                type: type
+            }), Wirecloud.constants.LOGGING.WARN_MSG);
         },
 
         statics: {
@@ -139,11 +155,8 @@
                     fillComponentMeta.call(this, businessInfo.name);
 
                     Object.defineProperties(this, {
-
                         preferences: {value: businessInfo.preferences, writable: true},
-
                         title: {value: this.meta.title}
-
                     });
                 }
 
@@ -158,11 +171,8 @@
                     fillComponentMeta.call(this, visualInfo.name);
 
                     Object.defineProperties(this, {
-
                         preferences: {value: {}, writable: true},
-
                         title: {value: this.meta.title}
-
                     });
                 }
 
@@ -178,7 +188,7 @@
             },
 
             remove: function remove() {
-                return this;
+                return this.fullDisconnect();
             },
 
             showLogs: function showLogs() {
@@ -200,12 +210,25 @@
     // CLASS DEFINITION
     // ==================================================================================
 
+    /**
+     * Create a new instance of class MissingOperator.
+     * @extends {MissingComponent}
+     *
+     * @constructor
+     * @param {Number} id
+     *      [TODO: description]
+     * @param {Wiring} wiringEngine
+     *      [TODO: description]
+     * @param {PlainObject} businessInfo
+     *      [TODO: description]
+     * @param {String} reason
+     *      [TODO: description]
+     */
     ns.MissingOperator = utils.defineClass({
 
-        constructor: function MissingOperator(id, wiringEngine, businessInfo) {
-            this.superClass(id, 'operator', wiringEngine);
+        constructor: function MissingOperator(id, wiringEngine, businessInfo, reason) {
+            this.superClass(id, 'operator', wiringEngine, reason);
             this.loadBusinessInfo(businessInfo);
-            this.logManager.log(gettext("The missing operator was restored."), Wirecloud.constants.LOGGING.WARN_MSG);
         },
 
         inherit: ns.MissingComponent,
@@ -244,12 +267,25 @@
     // CLASS DEFINITION
     // ==================================================================================
 
+    /**
+     * Create a new instance of class MissingWidget.
+     * @extends {MissingComponent}
+     *
+     * @constructor
+     * @param {Number} id
+     *      [TODO: description]
+     * @param {Wiring} wiringEngine
+     *      [TODO: description]
+     * @param {PlainObject} visualInfo
+     *      [TODO: description]
+     * @param {String} reason
+     *      [TODO: description]
+     */
     ns.MissingWidget = utils.defineClass({
 
-        constructor: function MissingWidget(id, wiringEngine, visualInfo) {
-            this.superClass(id, 'widget', wiringEngine);
+        constructor: function MissingWidget(id, wiringEngine, visualInfo, reason) {
+            this.superClass(id, 'widget', wiringEngine, reason);
             this.loadVisualInfo(visualInfo);
-            this.logManager.log(gettext("The missing widget was restored."), Wirecloud.constants.LOGGING.WARN_MSG);
         },
 
         inherit: ns.MissingComponent

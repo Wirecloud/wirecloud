@@ -28,18 +28,21 @@
 
     var GhostSourceEndpoint = function GhostSourceEndpoint(entity, endpoint) {
         Object.defineProperties(this, {
-            'entity': {value: entity},
-            'name': {value: endpoint},
-            'label': {value: endpoint},
-            'type': {value: 'ioperator'},
-            'friendcode': {value: 'ghost_null'}
+            id: {value: entity.meta.type + '/' + entity.id + '/' + endpoint},
+            entity: {value: entity},
+            component: {value: entity},
+            name: {value: endpoint},
+            label: {value: endpoint},
+            description: {value: gettext("No description provided")},
+            friendcode: {value: 'ghost_null'},
+            missing: {value: true}
         });
     };
     GhostSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
     GhostSourceEndpoint.prototype.serialize = function serialize() {
         return {
-            'type': this.type,
+            'type': this.entity.meta.type,
             'id': this.entity.id,
             'endpoint': this.name
         };
@@ -49,11 +52,14 @@
 
     var GhostTargetEndpoint = function GhostTargetEndpoint(entity, endpoint) {
         Object.defineProperties(this, {
-            'entity': {value: entity},
-            'name': {value: endpoint},
-            'label': {value: endpoint},
-            'type': {value: 'ioperator'},
-            'friendcode': {value: 'ghost_null'}
+            id: {value: entity.meta.type + '/' + entity.id + '/' + endpoint},
+            entity: {value: entity},
+            component: {value: entity},
+            name: {value: endpoint},
+            label: {value: endpoint},
+            description: {value: gettext("No description provided")},
+            friendcode: {value: 'ghost_null'},
+            missing: {value: true}
         });
     };
     GhostTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
@@ -64,7 +70,7 @@
 
     GhostTargetEndpoint.prototype.serialize = function serialize() {
         return {
-            'type': this.type,
+            'type': this.entity.meta.type,
             'id': this.entity.id,
             'endpoint': this.name
         };
