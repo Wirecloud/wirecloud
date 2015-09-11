@@ -166,7 +166,6 @@ WIRING_EDITOR_CSS = (
     'css/wiring/wiring_sidebar.scss',
     'css/wiring/wiring_bottombar.scss',
     'css/wiring/wiring_components.scss',
-    'css/wiring/wiring_endpoints.scss',
     'css/wiring/wiring_connections.scss',
     'css/wiring/wiring_behaviours.scss',
     'css/wiring/wiringPreview.css',
