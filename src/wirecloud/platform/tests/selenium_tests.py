@@ -1351,6 +1351,31 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
 
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
+    def test_dashboard_management_api_from_operator(self):
+
+        self.login()
+
+        initial_iwidgets = self.get_current_iwidgets()
+        initial_iwidget_count = len(initial_iwidgets)
+
+        self.send_basic_event(initial_iwidgets[2], 'dashboard_management_test')
+        # Two widgets are created when sending the dashboard_management_test
+        # event, one of them is connected directly to the initial TestOperator,
+        # the other is connected through and new TestOperator instance
+
+        WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.get_current_iwidgets()) == (initial_iwidget_count + 2))
+
+        iwidgets = self.get_current_iwidgets()
+        with iwidgets[3]:
+            text_div = self.driver.find_element_by_id('registercallback_test')
+            self.assertEqual(text_div.text, 'Success!!')
+
+        with iwidgets[4]:
+            text_div = self.driver.find_element_by_id('registercallback_test')
+            self.assertEqual(text_div.text, 'Success!!')
+
 
 @wirecloud_selenium_test_case
 class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):

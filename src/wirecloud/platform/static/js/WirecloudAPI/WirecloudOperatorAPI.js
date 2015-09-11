@@ -57,6 +57,4 @@
     }
     Object.defineProperty(window.MashupPlatform.operator, 'outputs', {value: outputs});
 
-    Object.preventExtensions(window.MashupPlatform.operator);
-
 })();

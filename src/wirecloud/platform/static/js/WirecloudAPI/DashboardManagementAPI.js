@@ -25,13 +25,22 @@
 
     "use strict";
 
-    var platform = window.parent;
-    var Wirecloud = platform.Wirecloud;
-    var resource = MashupPlatform.priv.resource;
-    var InputEndpoint = MashupPlatform.priv.InputEndpoint;
-    var OutputEndpoint = MashupPlatform.priv.OutputEndpoint;
-    var resource_element = resource.workspace.getIWidget(resource.id).content;
-    var counter = 1;
+    var platform, Wirecloud, resource, InputEndpoint, OutputEndpoint, resource_workspace, resource_element, counter;
+
+    platform = window.parent;
+    Wirecloud = platform.Wirecloud;
+    resource = MashupPlatform.priv.resource;
+    InputEndpoint = MashupPlatform.priv.InputEndpoint;
+    OutputEndpoint = MashupPlatform.priv.OutputEndpoint;
+    counter = 1;
+
+    if ('widget' in MashupPlatform) {
+        resource_workspace = resource.workspace;
+        resource_element = resource_workspace.getIWidget(resource.id).content;
+    } else {
+        resource_workspace = resource.wiring.workspace;
+    }
+
 
     // Widget facade
     var Widget = function Widget(real_widget) {
@@ -152,10 +161,10 @@
         if (operator_def == null || operator_def.type !== 'operator') {
             throw new TypeError('invalid operator ref');
         }
-        var operator = operator_def.instantiate(resource.id + '/' + counter++, undefined, resource.workspace.wiring);
+        var operator = operator_def.instantiate(resource.id + '/' + counter++, undefined, resource_workspace.wiring);
         // TODO remove manual volatile attribute and manual registration of the operator on the wiring module
         operator.volatile = true;
-        resource.workspace.wiring.ioperators[operator.id] = operator;
+        resource_workspace.wiring.ioperators[operator.id] = operator;
         resource.addEventListener('unload', operator.destroy.bind(operator));
         return (new Operator(operator));
     };
@@ -184,7 +193,7 @@
             }}
         });
     } else {
-        Object.defineProperties(MashupPlatform.widget, {
+        Object.defineProperties(MashupPlatform.operator, {
             createInputEndpoint: {value: function createInputEndpoint(callback) {
                 var endpoint = new Wirecloud.wiring.OperatorTargetEndpoint(resource);
                 endpoint.callback = callback;

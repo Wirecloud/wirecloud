@@ -104,6 +104,4 @@
     }
     Object.defineProperty(window.MashupPlatform.widget, 'outputs', {value: outputs});
 
-    //Object.preventExtensions(window.MashupPlatform.widget);
-
 })();

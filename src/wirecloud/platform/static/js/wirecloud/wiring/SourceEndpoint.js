@@ -77,8 +77,10 @@
             initial: false
         }, options);
 
-        for (i = 0; i < this.outputList.length; ++i) {
-            targetEndpoint = this.outputList[i];
+        var outputs = Wirecloud.Utils.clone(this.outputList);
+
+        for (i = 0; i < outputs.length; ++i) {
+            targetEndpoint = outputs[i];
             connection = this.connections[i];
             try {
                 targetEndpoint.propagate(value, options);

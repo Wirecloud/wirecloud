@@ -32,6 +32,12 @@
     Object.preventExtensions(MashupPlatform.mashup);
     Object.preventExtensions(MashupPlatform);
 
+    if ('widget' in MashupPlatform) {
+        Object.preventExtensions(MashupPlatform.widget);
+    } else {
+        Object.preventExtensions(MashupPlatform.operator);
+    }
+
     // Remove link to wirecloud
     window.parent = window;
 
