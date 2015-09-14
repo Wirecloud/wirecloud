@@ -307,7 +307,8 @@
             } else {
                 if (operator_info.name in operators) {
                     try {
-                        this.ioperators[id] = operators[operator_info.name].instantiate(id, operator_info, this);
+                        this.ioperators[id] = operators[operator_info.name].instantiate(id, this, operator_info);
+                        this.ioperators[id].load();
                     } catch (e) {
                         msg = gettext('Error instantiating the %(operator)s operator');
                         msg = interpolate(msg, {operator: operator_info.name}, true);
@@ -375,7 +376,8 @@
             if (operator_info.name === operator.uri) {
                 this.ioperators[id].fullDisconnect();
                 try {
-                    ioperator = operator.instantiate(id, operator_info, this);
+                    ioperator = operator.instantiate(id, this, operator_info);
+                    ioperator.load();
                     this.ioperators[id] = ioperator;
                     // TODO
                     // This code remove operator not available error counts
