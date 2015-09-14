@@ -151,6 +151,16 @@
             },
 
             /**
+             * [TODO: hasSettings description]
+             *
+             * @returns {Operator}
+             *      The instance on which the member is called.
+             */
+            hasSettings: function hasSettings() {
+                return this.preferenceList.length > 0;
+            },
+
+            /**
              * [TODO: load description]
              *
              * @returns {Operator}
@@ -195,6 +205,36 @@
             registerPrefCallback: function registerPrefCallback(prefCallback) {
 
                 this.prefCallback = prefCallback;
+
+                return this;
+            },
+
+            /**
+             * [TODO: showLogs description]
+             *
+             * @returns {Operator}
+             *      The instance on which the member is called.
+             */
+            showLogs: function showLogs() {
+                var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
+
+                modal.htmlElement.classList.add("component-logmanager");
+                modal.show();
+
+                return this;
+            },
+
+            /**
+             * [TODO: showSettings description]
+             *
+             * @returns {Operator}
+             *      The instance on which the member is called.
+             */
+            showSettings: function showSettings() {
+                var modal = new Wirecloud.ui.OperatorPreferencesWindowMenu();
+
+                modal.htmlElement.classList.add("component-update-form");
+                modal.show(this);
 
                 return this;
             },

@@ -275,6 +275,28 @@
         }
     };
 
+    WidgetBase.prototype.hasSettings = function hasSettings() {
+        return this.preferenceList.length > 0;
+    };
+
+    WidgetBase.prototype.showLogs = function showLogs() {
+        var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
+
+        modal.htmlElement.classList.add("component-logmanager");
+        modal.show();
+
+        return this;
+    };
+
+    WidgetBase.prototype.showSettings = function showSettings() {
+        var modal = new Wirecloud.Widget.PreferencesWindowMenu();
+
+        modal.htmlElement.classList.add("component-update-form");
+        modal.show(this);
+
+        return this;
+    };
+
     Wirecloud.WidgetBase = WidgetBase;
 
 })();
