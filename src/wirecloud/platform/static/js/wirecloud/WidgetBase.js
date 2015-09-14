@@ -42,6 +42,7 @@
 
         Object.defineProperty(this, 'widget', {value: widget});
         Object.defineProperty(this, 'meta', {value: widget});
+        Object.defineProperty(this, 'missing', {value: false});
         Object.defineProperty(this, 'tab', {value: tab});
         Object.defineProperty(this, 'workspace', {value: tab.workspace});
         this.id = options.id;

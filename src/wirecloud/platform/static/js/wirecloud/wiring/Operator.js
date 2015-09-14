@@ -87,7 +87,7 @@
                 id: {value: id},
                 logManager: {value: new Wirecloud.wiring.OperatorLogManager(this, wiringEngine)},
                 meta: {value: meta},
-
+                missing: {value: false},
                 preferenceList: {value: Object.freeze(preferenceList)},
                 preferences: {value: Object.freeze(preferences)}
             });
