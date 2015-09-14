@@ -46,7 +46,7 @@ class TestQueryResult(object):
 
 class PlatformSouthMigrationsTestCase(TestCase):
 
-    tags = ('wirecloud-migrations',)
+    tags = ('wirecloud-migrations', 'wirecloud-platform-migrations')
 
     def _pick_migration(self, migration_name):
         """
@@ -465,3 +465,9 @@ class PlatformSouthMigrationsTestCase(TestCase):
 
     def test_del_position__del_field_iwidget_icon_position__del_field_iwidget_backwards(self):
         self.check_basic_migration_backwards('0024_auto__del_position__del_field_iwidget_icon_position__del_field_iwidget')
+
+    def test_chg_field_workspace_wiringStatus_market_options_forwards(self):
+        self.check_basic_migration_forwards('0025_chg_field_workspace_wiringStatus_market_options')
+
+    def test_chg_field_workspace_wiringStatus_market_options_backwards(self):
+        self.check_basic_migration_backwards('0025_chg_field_workspace_wiringStatus_market_options')
