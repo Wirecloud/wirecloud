@@ -40,11 +40,11 @@
     };
     GhostSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
-    GhostSourceEndpoint.prototype.serialize = function serialize() {
+    GhostSourceEndpoint.prototype.toJSON = function toJSON() {
         return {
-            'type': this.entity.meta.type,
-            'id': this.entity.id,
-            'endpoint': this.name
+            type: this.component.meta.type,
+            id: this.component.id,
+            endpoint: this.name
         };
     };
 
@@ -68,11 +68,11 @@
         // Do nothing
     };
 
-    GhostTargetEndpoint.prototype.serialize = function serialize() {
+    GhostTargetEndpoint.prototype.toJSON = function toJSON() {
         return {
-            'type': this.entity.meta.type,
-            'id': this.entity.id,
-            'endpoint': this.name
+            type: this.component.meta.type,
+            id: this.component.id,
+            endpoint: this.name
         };
     };
 
