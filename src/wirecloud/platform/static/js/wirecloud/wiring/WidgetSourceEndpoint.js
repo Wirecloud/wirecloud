@@ -44,11 +44,11 @@
     };
     WidgetSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
-    WidgetSourceEndpoint.prototype.serialize = function serialize() {
+    WidgetSourceEndpoint.prototype.toJSON = function toJSON() {
         return {
-            'type': 'widget',
-            'id': this.iwidget.id,
-            'endpoint': this.meta.name
+            type: this.component.meta.type,
+            id: this.component.id,
+            endpoint: this.name
         };
     };
 

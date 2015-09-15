@@ -44,11 +44,11 @@
     };
     OperatorTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
-    OperatorTargetEndpoint.prototype.serialize = function serialize() {
+    OperatorTargetEndpoint.prototype.toJSON = function toJSON() {
         return {
-            'type': 'operator',
-            'id': this.operator.id,
-            'endpoint': this.meta.name
+            type: this.component.meta.type,
+            id: this.component.id,
+            endpoint: this.name
         };
     };
 
