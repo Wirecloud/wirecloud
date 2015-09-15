@@ -719,6 +719,22 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         }
         self.assertRaises(Exception, build_json_template_from_workspace, options, self.workspace_with_iwidgets, self.user)
 
+    def test_build_template_from_workspace_invalid_widget_prop_source(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'parametrization': {
+                'iwidgets': {
+                    '1': {
+                        'prop': {'source': 'invalid'},
+                    },
+                },
+            },
+        }
+        self.assertRaises(Exception, build_json_template_from_workspace, options, self.workspace_with_iwidgets, self.user)
+
     def test_build_template_from_workspace_invalid_operator_pref_source(self):
 
         options = {
