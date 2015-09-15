@@ -419,6 +419,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/WorkspaceCatalogue.js',
             'js/wirecloud/wiring/LogManager.js',
+            'js/wirecloud/wiring/Connection.js',
             'js/wirecloud/wiring/ConnectionLogManager.js',
             'js/wirecloud/wiring/Endpoint.js',
             'js/wirecloud/wiring/EndpointDoesNotExistError.js',
