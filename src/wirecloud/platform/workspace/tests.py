@@ -20,15 +20,18 @@
 from __future__ import unicode_literals
 
 import codecs
+from collections import OrderedDict
 import os
 import rdflib
 import json
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
+from mock import Mock
 import six
 
-from wirecloud.commons.utils.testcases import WirecloudTestCase
+from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase
 from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
@@ -842,7 +845,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
 class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
-    fixtures = ('selenium_test_data',)
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('fiware-ut-2', 'wirecloud-template', 'wirecloud-workspace-parse', 'wirecloud-noselenium')
 
     base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')
@@ -853,6 +856,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         self.user = User.objects.get(username='normuser')
         self.workspace = createEmptyWorkspace('Testing', self.user)
+        self.workspace_with_iwidgets = Workspace.objects.get(pk=2)
 
     def read_template(self, filename):
         f = codecs.open(os.path.join(os.path.dirname(__file__), 'test-data', filename), 'rb')
@@ -908,6 +912,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     def check_workspace_structure_with_old_mashup_wiring(self, workspace):
 
+        iwidgets = set(map(six.text_type, workspace.tab_set.all()[0].iwidget_set.values_list('pk', flat=True)))
         self.assertEqual(workspace.wiringStatus['version'], '2.0')
 
         self.assertEqual(len(workspace.wiringStatus['connections']), 2)
@@ -915,7 +920,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(workspace.wiringStatus['connections'][1]['readonly'], False)
 
         self.assertEqual(set(workspace.wiringStatus['visualdescription']['components']['operator']), {'1'})
-        self.assertEqual(set(workspace.wiringStatus['visualdescription']['components']['widget']), {'1', '2'})
+        self.assertEqual(set(workspace.wiringStatus['visualdescription']['components']['widget']), iwidgets)
 
     def check_workspace_with_params(self, workspace):
 
@@ -943,6 +948,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(iwidget1_preferences['text']['value'], 'initial world')
         self.assertEqual(iwidget1_preferences['text'].get('hidden', False), False)
         self.assertEqual(iwidget1_preferences['text']['readonly'], True)
+        self.assertEqual(iwidget1['properties'], {})
 
         # Check iwidget 2 data
         iwidget2_preferences = iwidget2['preferences']
@@ -950,6 +956,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(iwidget2_preferences['text']['value'], 'initial world')
         self.assertEqual(iwidget2_preferences['text']['hidden'], True)
         self.assertEqual(iwidget2_preferences['text']['readonly'], True)
+        self.assertEqual(iwidget2['properties'], {})
 
         # Check iwidget 3 data
         iwidget3_preferences = iwidget3['preferences']
@@ -976,6 +983,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(operator_preferences['pref3'].get('hidden', False), False)
         self.assertEqual(operator_preferences['pref3'].get('readonly', False), False)
 
+        return workspace_data
 
     def test_fill_workspace_using_template(self):
         template = self.read_template('wt1.xml')
@@ -1127,14 +1135,91 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
         self.check_workspace_with_params(workspace)
 
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_workspace_with_params(self):
         template = self.read_template('wt5.xml')
 
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
-        self.check_workspace_with_params(workspace)
+        workspace_data = self.check_workspace_with_params(workspace)
+
+        iwidget1 = workspace_data['tabs'][1]['iwidgets'][0]
+        self.assertEqual(iwidget1['properties'], {'prop': {'readonly': False, 'secure': False, 'hidden': False, 'value': 'initial_data', 'name': 'prop'}})
+
+        iwidget2 = workspace_data['tabs'][1]['iwidgets'][1]
+        self.assertEqual(iwidget2['properties'], {'prop': {'readonly': True, 'secure': False, 'hidden': False, 'value': '', 'name': 'prop'}})
 
     def test_workspace_with_params_rdf(self):
         template = self.read_template('wt5.rdf')
 
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
         self.check_workspace_with_params(workspace)
+
+    def test_build_workspace_from_widget_template(self):
+        template = Mock(spec=TemplateParser)
+        template.get_resource_type.return_value = 'operator'
+        self.assertRaises(TypeError, buildWorkspaceFromTemplate, template, self.user)
+        self.assertEqual(template.get_resource_type.call_count, 2)
+
+    def test_fill_workspace_using_widget_template(self):
+        template = Mock(spec=TemplateParser)
+        template.get_resource_type.return_value = 'operator'
+        self.assertRaises(TypeError, fillWorkspaceUsingTemplate, self.workspace, template)
+        self.assertEqual(template.get_resource_type.call_count, 2)
+
+    def test_fill_workspace_using_template_invalid_forced_values(self):
+        template = self.read_template('wt-with-behaviours.xml')
+        self.workspace.forcedValues = {}
+        fillWorkspaceUsingTemplate(self.workspace, template)
+        self.assertEqual(self.workspace.forcedValues, {
+            'extra_prefs': [],
+            'iwidget': {},
+            'ioperator': {},
+        })
+
+    def test_fill_workspace_using_widget_template_inverse_operator_key_list(self):
+        template = self.read_template('wt-with-behaviours.xml')
+        self.workspace.wiringStatus['operators'] = OrderedDict([
+            ("2", {"preferences": {}, 'name': "Wirecloud/TestOperator/1.0"}),
+            ("1", {"preferences": {}, 'name': "Wirecloud/TestOperator/1.0"}),
+        ])
+        fillWorkspaceUsingTemplate(self.workspace, template)
+        self.assertEqual(set(self.workspace.wiringStatus['operators'].keys()), {"1", "2", "3", "4"})
+
+    def test_fill_workspace_target_without_behaviours_template_with_behaviours(self):
+        template = self.read_template('wt-with-behaviours.xml')
+        fillWorkspaceUsingTemplate(self.workspace_with_iwidgets, template)
+        # wt-with-behaviours provides 2 behaviours
+        # self.workspace_with_iwidgets initial wiring should be transformed into 1 behaviour
+        wiring = self.workspace_with_iwidgets.wiringStatus
+        self.assertEqual(len(wiring['visualdescription']['behaviours']), 3)
+
+    def enable_workspace_behaviours(self, workspace):
+        workspace.wiringStatus['visualdescription']['behaviours'].append({
+            "title": "Initial behaviour",
+            "description": "autogenerated behaviour",
+            "components": {
+                "operator": {},
+                "widget": {}
+            },
+            "connections": []
+        })
+
+    def test_fill_workspace_target_with_behaviours_template_without_behaviours(self):
+        self.enable_workspace_behaviours(self.workspace_with_iwidgets)
+        template = self.read_template('wt-without-behaviours.xml')
+        fillWorkspaceUsingTemplate(self.workspace_with_iwidgets, template)
+        wiring = self.workspace_with_iwidgets.wiringStatus
+        self.assertEqual(len(wiring['visualdescription']['behaviours']), 2)
+        self.assertEqual(wiring['visualdescription']['behaviours'][1]['components'], {'operator': {'1': {}}, 'widget': {'11': {}, '10': {}}})
+
+    def test_fill_workspace_target_with_behaviours_template_with_behaviours(self):
+        self.enable_workspace_behaviours(self.workspace_with_iwidgets)
+        template = self.read_template('wt-with-behaviours.xml')
+        fillWorkspaceUsingTemplate(self.workspace_with_iwidgets, template)
+        # wt-with-behaviours provides 2 behaviours
+        # self.workspace_with_iwidgets initial wiring should be transformed into 1 behaviour
+        wiring = self.workspace_with_iwidgets.wiringStatus
+        self.assertEqual(len(wiring['visualdescription']['behaviours']), 3)
+        self.assertEqual(wiring['visualdescription']['behaviours'][0]['title'], 'Initial behaviour')
+        self.assertEqual(wiring['visualdescription']['behaviours'][1]['title'], 'Behaviour 1')
+        self.assertEqual(wiring['visualdescription']['behaviours'][2]['title'], 'Behaviour 2')

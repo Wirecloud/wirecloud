@@ -128,7 +128,17 @@ def update_widget_value(iwidget, data, user, required=False):
         raise ValueError('Missing widget info')
 
 
-def SaveIWidget(iwidget, user, tab, initial_variable_values):
+def set_initial_values(iwidget, initial_values, iwidget_info):
+
+    for vardef in (iwidget_info['preferences'] + iwidget_info['properties']):
+        if vardef['name'] in initial_values:
+            initial_value = initial_values[vardef['name']]
+        else:
+            initial_value = None
+        iwidget.set_variable_value(vardef['name'], process_initial_value(vardef, initial_value))
+
+
+def SaveIWidget(iwidget, user, tab, initial_variable_values=None, commit=True):
 
     new_iwidget = IWidget(tab=tab)
 
@@ -154,18 +164,16 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
         },
     }
 
-    for vardef in (iwidget_info['preferences'] + iwidget_info['properties']):
-        if initial_variable_values and vardef['name'] in initial_variable_values:
-            initial_value = initial_variable_values[vardef['name']]
-        else:
-            initial_value = None
-        new_iwidget.set_variable_value(vardef['name'], process_initial_value(vardef, initial_value))
+    if initial_variable_values is not None:
+        set_initial_values(new_iwidget, initial_variable_values, iwidget_info)
 
     update_title_value(new_iwidget, iwidget)
     update_position(new_iwidget, 'widget', iwidget)
     update_icon_position(new_iwidget, iwidget)
 
-    new_iwidget.save()
+    if commit:
+        new_iwidget.save()
+
     return new_iwidget
 
 

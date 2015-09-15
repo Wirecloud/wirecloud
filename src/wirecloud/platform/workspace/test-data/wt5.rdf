@@ -194,7 +194,7 @@
                         <dcterms:title>pref1</dcterms:title>
                       </wire-m:iOperatorPreference>
                     </wire-m:hasiOperatorPreference>
-                    <dcterms:title>CoNWeT/TestOperator/1.0</dcterms:title>
+                    <dcterms:title>Wirecloud/TestOperator/1.0</dcterms:title>
                     <wire-m:hasiOperatorPreference>
                       <wire-m:iOperatorPreference rdf:nodeID="N6df6d2c29da14370958ce70006ecb8c0">
                         <wire:value>initial %(params.param)</wire:value>

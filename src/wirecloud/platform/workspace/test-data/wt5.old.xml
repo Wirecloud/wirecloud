@@ -37,7 +37,7 @@
     </Catalog.ResourceDescription>
 
     <Platform.Wiring>
-        <Operator id="0" name="TestOperator" vendor="CoNWeT" version="1.0">
+        <Operator id="0" name="TestOperator" vendor="Wirecloud" version="1.0">
             <Preference name="pref1" value="initial %(params.param)" readonly="true"/>
             <Preference name="pref2" value="initial %(params.param)" readonly="true" hidden="true"/>
             <Preference name="pref3" value="initial %(params.param)"/>

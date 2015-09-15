@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from django.utils.translation import ugettext as _
 import six
 
@@ -25,7 +27,7 @@ from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.context.utils import get_context_values
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
-from wirecloud.platform.iwidget.utils import SaveIWidget
+from wirecloud.platform.iwidget.utils import SaveIWidget, set_initial_values
 from wirecloud.platform.preferences.views import update_tab_preferences, update_workspace_preferences
 from wirecloud.platform.models import Workspace, UserWorkspace
 from wirecloud.platform.wiring.utils import get_wiring_skeleton, get_endpoint_name, is_empty_wiring
@@ -38,7 +40,7 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=No
         template = TemplateParser(template)
 
     if template.get_resource_type() != 'mashup':
-        raise Exception()
+        raise TypeError('Unsupported resource type: %s' % template.get_resource_type())
 
     if new_name is not None:
         name = new_name
@@ -71,9 +73,6 @@ class MissingDependencies(Exception):
 
 
 def check_mashup_dependencies(template, user):
-
-    if not isinstance(template, TemplateParser):
-        template = TemplateParser(template)
 
     missing_dependencies = set()
     dependencies = template.get_resource_dependencies()
@@ -157,7 +156,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         template = TemplateParser(template)
 
     if template.get_resource_type() != 'mashup':
-        raise Exception()
+        raise TypeError('Unsupported resource type: %s' % template.get_resource_type())
 
     user = workspace.creator
 
@@ -211,25 +210,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             position = resource['position']
             rendering = resource['rendering']
 
-            initial_variable_values = {}
-            iwidget_forced_values = {}
-            for prop_name in resource['properties']:
-                prop = resource['properties'][prop_name]
-                read_only = prop.get('readonly')
-                if read_only:
-                    iwidget_forced_values[prop_name] = {'value': prop.get('value')}
-                else:
-                    initial_variable_values[prop_name] = processor.process(prop.get('value'))
-
-            for pref_name in resource['preferences']:
-                pref = resource['preferences'][pref_name]
-                read_only = pref.get('readonly')
-                if read_only:
-                    iwidget_forced_values[pref_name] = {'value': pref.get('value'), 'hidden': pref.get('hidden', False)}
-                else:
-                    initial_variable_values[pref_name] = processor.process(pref.get('value'))
-
-            widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), user, None)
+            widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), user)
 
             iwidget_data = {
                 "left": int(position.get('x')),
@@ -244,13 +225,42 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 "widget": widget.uri,
             }
 
-            iwidget = SaveIWidget(iwidget_data, user, tab, initial_variable_values)
+            iwidget = SaveIWidget(iwidget_data, user, tab, commit=False)
             if resource.get('readonly'):
                 iwidget.readOnly = True
-                iwidget.save()
+
+            initial_variable_values = {}
+            iwidget_forced_values = {}
+            iwidget_info = widget.resource.get_processed_info(process_variables=True)
+            for prop_name in resource['properties']:
+                prop = resource['properties'][prop_name]
+                read_only = prop.get('readonly')
+                if prop.get('value', None) is not None:
+                    value = prop['value']
+                else:
+                    value = iwidget_info['variables']['properties'][prop_name]['default']
+                if read_only:
+                    iwidget_forced_values[prop_name] = {'value': value}
+                else:
+                    initial_variable_values[prop_name] = processor.process(value)
+
+            for pref_name in resource['preferences']:
+                pref = resource['preferences'][pref_name]
+                read_only = pref.get('readonly')
+                if pref.get('value', None) is not None:
+                    value = pref['value']
+                else:
+                    value = iwidget_info['variables']['preferences'][pref_name]['default']
+                if read_only:
+                    iwidget_forced_values[pref_name] = {'value': value, 'hidden': pref.get('hidden', False)}
+                else:
+                    initial_variable_values[pref_name] = processor.process(value)
+
+            set_initial_values(iwidget, initial_variable_values, iwidget_info)
+            iwidget.save()
 
             if len(iwidget_forced_values) > 0:
-                new_forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
+                new_forced_values['iwidget'][six.text_type(iwidget.id)] = iwidget_forced_values
 
             id_mapping['widget'][resource.get('id')] = {
                 'id': iwidget.id,
@@ -306,8 +316,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
     workspace.wiringStatus['connections'] += mashup_description['wiring']['connections']
 
     # Merging visual description...
-
-    _remap_component_ids(id_mapping, mashup_description['wiring']['visualdescription']['components'])
+    _remap_component_ids(id_mapping, mashup_description['wiring']['visualdescription']['components'], isGlobal=True)
     _remap_connection_endpoints(source_mapping, target_mapping, mashup_description['wiring']['visualdescription'])
 
     # Remap mashup description behaviours' ids

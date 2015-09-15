@@ -10,7 +10,7 @@
   xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
   xmlns:gr="http://purl.org/goodrelations/v1#"
 >
-  <wire-m:Mashup rdf:about="http://wirecloud.conwet.fi.upm.es/ns/mashup#CoNWeT/old-mashup-with-views/1.0">
+  <wire-m:Mashup rdf:about="http://wirecloud.conwet.fi.upm.es/ns/mashup#Wirecloud/old-mashup-with-views/1.0">
     <wire:hasImageUri rdf:resource=""/>
     <dcterms:creator>
       <foaf:Person rdf:nodeID="N72bab68e559f47f1b1d2b917297acda2">
@@ -330,7 +330,7 @@
     </wire-m:hasTab>
     <usdl:hasProvider>
       <gr:BusinessEntity rdf:nodeID="N3072ce7e0a7e4b2abc441653a9a3648f">
-        <foaf:name>CoNWeT</foaf:name>
+        <foaf:name>Wirecloud</foaf:name>
       </gr:BusinessEntity>
     </usdl:hasProvider>
   </wire-m:Mashup>
