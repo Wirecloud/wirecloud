@@ -242,7 +242,8 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
                 graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetPreference']))
                 graph.add((resource, WIRE_M['hasiWidgetPreference'], element))
                 graph.add((element, DCTERMS['title'], rdflib.Literal(pref_name)))
-                graph.add((element, WIRE['value'], rdflib.Literal(pref['value'])))
+                if pref.get('value', None) is not None:
+                    graph.add((element, WIRE['value'], rdflib.Literal(pref['value'])))
                 if pref.get('readonly', False):
                     graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
                 if pref.get('hidden', False):
@@ -253,7 +254,8 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
                 graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetProperty']))
                 graph.add((resource, WIRE_M['hasiWidgetProperty'], element))
                 graph.add((element, DCTERMS['title'], rdflib.Literal(prop_name)))
-                graph.add((element, WIRE['value'], rdflib.Literal(prop['value'])))
+                if prop.get('value', None) is not None:
+                    graph.add((element, WIRE['value'], rdflib.Literal(prop['value'])))
                 if prop.get('readonly', False):
                     graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
 
@@ -279,7 +281,8 @@ def write_mashup_wiring_graph(graph, wiring, template_info):
             graph.add((element, rdflib.RDF.type, WIRE_M['iOperatorPreference']))
             graph.add((op, WIRE_M['hasiOperatorPreference'], element))
             graph.add((element, DCTERMS['title'], rdflib.Literal(pref_name)))
-            graph.add((element, WIRE['value'], rdflib.Literal(pref['value'])))
+            if pref.get('value', None) is not None:
+                graph.add((element, WIRE['value'], rdflib.Literal(pref['value'])))
             if pref.get('readonly', False):
                 graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
             if pref.get('hidden', False):

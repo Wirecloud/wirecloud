@@ -385,7 +385,7 @@ class RDFTemplateParser(object):
                 operator_info['preferences'][self._get_field(DCTERMS, 'title', pref)] = {
                     'readonly': self._get_field(WIRE_M, 'readonly', pref, required=False).lower() == 'true',
                     'hidden': self._get_field(WIRE_M, 'hidden', pref, required=False).lower() == 'true',
-                    'value': self._get_field(WIRE, 'value', pref, required=False),
+                    'value': self._get_field(WIRE, 'value', pref, default=None, required=False),
                 }
 
             self._info['wiring']['operators'][operator_info['id']] = operator_info
@@ -724,14 +724,14 @@ class RDFTemplateParser(object):
                 for prop in self._graph.objects(resource, WIRE_M['hasiWidgetProperty']):
                     resource_info['properties'][self._get_field(DCTERMS, 'title', prop)] = {
                         'readonly': self._get_field(WIRE_M, 'readonly', prop, required=False).lower() == 'true',
-                        'value': self._get_field(WIRE, 'value', prop, required=False),
+                        'value': self._get_field(WIRE, 'value', prop, default=None, required=False),
                     }
 
                 for pref in self._graph.objects(resource, WIRE_M['hasiWidgetPreference']):
                     resource_info['preferences'][self._get_field(DCTERMS, 'title', pref)] = {
                         'readonly': self._get_field(WIRE_M, 'readonly', pref, required=False).lower() == 'true',
                         'hidden': self._get_field(WIRE_M, 'hidden', pref, required=False).lower() == 'true',
-                        'value': self._get_field(WIRE, 'value', pref, required=False),
+                        'value': self._get_field(WIRE, 'value', pref, default=None, required=False),
                     }
 
                 tab_info['resources'].append(resource_info)

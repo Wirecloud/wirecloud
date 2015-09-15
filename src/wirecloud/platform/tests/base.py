@@ -48,7 +48,7 @@ __test__ = False
 class BasicViewsAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-base-views', 'wirecloud-base-views-unit')
+    tags = ('wirecloud-base-views', 'wirecloud-base-views-unit', 'wirecloud-noselenium')
 
     def setUp(self):
         super(BasicViewsAPI, self).setUp()

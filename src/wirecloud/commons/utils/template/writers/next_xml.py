@@ -27,7 +27,7 @@ from wirecloud.commons.utils.template.base import stringify_contact_info
 
 
 def processOption(options, field, required=False, type='string'):
-    if field not in options:
+    if options.get(field, None) is None:
         if required:
             raise Exception(_('Missing %s option') % field)
         else:
@@ -76,7 +76,8 @@ def addElements(options, element, attrs, **other_options):
 
 def addPreferenceValues(resource, preferences):
     for pref_name, pref in six.iteritems(preferences):
-        element = etree.SubElement(resource, 'preferencevalue', name=pref_name, value=pref['value'])
+        element = etree.SubElement(resource, 'preferencevalue', name=pref_name)
+        addAttribute(pref, element, 'value', type='string', required=False)
         addAttributes(pref, element, ('readonly', 'hidden'), default='false', type='boolean')
 
 
@@ -121,7 +122,10 @@ def write_mashup_tree(doc, resources, options):
             addPreferenceValues(resource, iwidget['preferences'])
 
             for prop_name, prop in six.iteritems(iwidget.get('properties', {})):
-                element = etree.SubElement(resource, 'variablevalue', name=prop_name, value=prop['value'])
+                element = etree.SubElement(resource, 'variablevalue', name=prop_name)
+
+                if prop.get('value', None) is not None:
+                    element.set('value', prop['value'])
 
                 if prop.get('readonly', False):
                     element.set('readonly', 'true')

@@ -92,10 +92,13 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
         status = 'normal'
         if pref['name'] in iwidget_params:
             iwidget_param_desc = iwidget_params[pref['name']]
-            source = iwidget_param_desc['source']
+            status = iwidget_param_desc.get('status', 'normal')
+            source = iwidget_param_desc.get('source', 'current')
             if source == 'default':
-                # Do not issue a Preference element for this preference
-                continue
+                if status == 'normal':
+                    # Do not issue a Preference element for this preference
+                    continue
+                value = None
             elif source == 'current':
                 value = cache_manager.get_variable_value_from_varname(iwidget, pref['name'])
             elif source == 'custom':
@@ -103,20 +106,21 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
             else:
                 raise Exception('Invalid preference value source: %s' % source)
 
-            status = iwidget_param_desc['status']
         else:
             value = cache_manager.get_variable_value_from_varname(iwidget, pref['name'])
-
-        if pref['type'] == 'boolean':
-            value = str(value).lower()
-        elif pref['type'] == 'number':
-            value = str(value)
 
         preferences[pref['name']] = {
             'readonly': status != 'normal',
             'hidden': status == 'hidden',
-            'value': value,
         }
+
+        if value is not None:
+            if pref['type'] == 'boolean':
+                value = str(value).lower()
+            elif pref['type'] == 'number':
+                value = str(value)
+
+            preferences[pref['name']]['value'] = value
 
     # iWidget properties
     widget_properties = widget_description['properties']
@@ -125,11 +129,20 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
         status = 'normal'
         if prop['name'] in iwidget_params:
             iwidget_param_desc = iwidget_params[prop['name']]
-            if iwidget_param_desc['source'] == 'default':
-                # Do not issue a Property element for this property
-                continue
-            value = iwidget_param_desc['value']
-            status = iwidget_param_desc['status']
+            status = iwidget_param_desc.get('status', 'normal')
+            source = iwidget_param_desc.get('source', 'current')
+            if source == 'default':
+                if status == 'normal':
+                    # Do not issue a Property element for this property
+                    continue
+                else:
+                    value = None
+            elif source == 'current':
+                value = cache_manager.get_variable_value_from_varname(iwidget, prop['name'])
+            elif source == 'custom':
+                value = iwidget_param_desc['value']
+            else:
+                raise Exception('Invalid property value source: %s' % source)
         else:
             value = cache_manager.get_variable_value_from_varname(iwidget, prop['name'])
 
@@ -255,10 +268,13 @@ def build_json_template_from_workspace(options, workspace, user):
             status = 'normal'
             if preference['name'] in operator_params:
                 ioperator_param_desc = operator_params[preference['name']]
-                source = ioperator_param_desc['source']
+                status = ioperator_param_desc.get('status', 'normal')
+                source = ioperator_param_desc.get('source', 'current')
                 if source == 'default':
-                    # Do not issue a Preference element for this preference
-                    continue
+                    if status == 'normal':
+                        # Do not issue a Preference element for this preference
+                        continue
+                    value = None
                 elif source == 'current':
                     value = get_current_operator_pref_value(operator, preference)
                 elif source == 'custom':
@@ -266,15 +282,15 @@ def build_json_template_from_workspace(options, workspace, user):
                 else:
                     raise Exception('Invalid preference value source: %s' % source)
 
-                status = ioperator_param_desc['status']
             else:
                 value = get_current_operator_pref_value(operator, preference)
 
             operator_data['preferences'][preference['name']] = {
                 'readonly': status != 'normal',
                 'hidden': status == 'hidden',
-                'value': value,
             }
+            if value is not None:
+                operator_data['preferences'][preference['name']]['value'] = value
 
         options['wiring']['operators'][id_] = operator_data
         if options['embedmacs']:

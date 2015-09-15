@@ -32,7 +32,7 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_xml_template_from_workspace, build_rdf_template_from_workspace
+from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_xml_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.platform.workspace.utils import get_global_workspace_data
 from wirecloud.platform.workspace.views import createEmptyWorkspace
@@ -57,6 +57,7 @@ class CacheTestCase(WirecloudTestCase):
 class WorkspaceTestCase(CacheTestCase):
 
     fixtures = ('test_data',)
+    tags = ('wirecloud-noselenium', 'fiware-ut-3')
 
     def setUp(self):
         super(WorkspaceTestCase, self).setUp()
@@ -76,7 +77,6 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(preferences['username']['value'], 'test_username')
         properties = tab['iwidgets'][0]['properties']
         self.assertEqual(properties['prop']['value'], 'test_data')
-    test_get_global_workspace_data.tags = ('fiware-ut-3',)
 
     def test_create_empty_workspace(self):
 
@@ -92,13 +92,12 @@ class WorkspaceTestCase(CacheTestCase):
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         self.assertEqual(data['owned'], True)
         self.assertEqual(data['shared'], False)
-    test_create_empty_workspace.tags = ('fiware-ut-3',)
 
 
 class WorkspaceCacheTestCase(CacheTestCase):
 
     fixtures = ('test_data',)
-    tags = ('fiware-ut-3',)
+    tags = ('fiware-ut-3', 'wirecloud-noselenium')
 
     def setUp(self):
         super(WorkspaceCacheTestCase, self).setUp()
@@ -194,7 +193,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
     VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
 
     fixtures = ('test_data',)
-    tags = ('fiware-ut-1', 'wirecloud-template', 'wirecloud-workspace-write')
+    tags = ('fiware-ut-1', 'wirecloud-template', 'wirecloud-workspace-write', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -213,14 +212,24 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                     '1': {
                         'username': {'source': 'custom', 'status': 'readonly', 'value': 'default'},
                         'password': {'source': 'custom', 'status': 'hidden', 'value': 'initial text'},
-                    }
+                    },
+                    '2': {
+                        'username': {'source': 'default', 'status': 'readonly'},
+                        'password': {'source': 'current', 'status': 'hidden'},
+                        'list': {'source': 'default', 'status': 'normal'},
+                    },
                 },
                 'ioperators': {
                     '1': {
                         'pref_with_val': {'source': 'custom', 'status': 'normal', 'value': 'new_value1'},
                         'readonly_pref': {'source': 'custom', 'status': 'readonly', 'value': 'new_value2'},
                         'hidden_pref': {'source': 'custom', 'status': 'hidden', 'value': 'new_value3'},
-                    }
+                    },
+                    '2': {
+                        'pref_with_val': {'source': 'default', 'status': 'normal'},
+                        'readonly_pref': {'source': 'current', 'status': 'readonly'},
+                        'hidden_pref': {'source': 'default', 'status': 'hidden'},
+                    },
                 }
             },
         }
@@ -246,6 +255,12 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertEqual(len(elements), 1)
         self.assertEqual(elements[0].text, content)
 
+    def assertXPathMissingAttr(self, root_element, xpath, attr):
+        elements = root_element.xpath(xpath)
+        self.assertEqual(len(elements), 1)
+
+        self.assertNotIn(attr, elements[0], "Attribute %(attr)s is present in %(xpath)s" % {"attr": attr, "xpath": xpath})
+
     def assertXPathAttr(self, root_element, xpath, attr, content, optional=False):
         elements = root_element.xpath(xpath)
         self.assertEqual(len(elements), 1)
@@ -270,7 +285,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
     def check_workspace_xml_wiring(self, template):
 
         self.assertXPathCount(template, '/Template/Platform.Wiring/Connection', 0)
-        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator', 1)
+        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator', 2)
+
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]', 'name', 'Wirecloud/TestOperator/1.0')
         self.assertXPathCount(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference', 3)
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="pref_with_val"]', 'value', 'value1')
@@ -282,6 +298,18 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'value', 'value3')
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'hidden', 'false', optional=True)
+
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]', 'name', 'Wirecloud/TestOperator/1.0')
+        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference', 3)
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="pref_with_val"]', 'value', 'value1')
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="pref_with_val"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="pref_with_val"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'value', 'value2')
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'value', 'value3')
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'hidden', 'false', optional=True)
 
     def get_rdf_element(self, graph, base, ns, predicate):
         element = None
@@ -325,7 +353,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
     def check_workspace_rdf_wiring(self, graph, mashup_uri):
         wiring = next(graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']))
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasConnection', 0)
-        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasiOperator', 1)
+        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasiOperator', 2)
         for ioperator in graph.objects(wiring, self.WIRE_M['hasiOperator']):
             self.assertRDFCount(graph, ioperator, self.WIRE_M, 'hasiOperatorPreference', 3)
             pref_with_val_found = readonly_pref_found = hidden_pref_found = False
@@ -413,6 +441,13 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]', 'readonly', 'true')
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]', 'readonly', 'true')
 
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'value', 'test_username')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'value', 'test_password')
+
         self.check_workspace_xml_wiring(template)
 
     def test_build_xml_template_from_workspace_forced_values(self):
@@ -427,13 +462,23 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="password"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="password"]', 'hidden', 'true')
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="password"]', 'value', 'initial text')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="list"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="list"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="list"]', 'value', 'default')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="boolean"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="boolean"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="boolean"]', 'value', 'false')
 
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'value', 'test_username')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'hidden', 'false', optional=True)
+        self.assertXPathMissingAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'value')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'readonly', 'true', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'hidden', 'true', optional=True)
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'value', 'test_password')
+        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="list"]', 0)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="boolean"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="boolean"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="boolean"]', 'value', 'false')
 
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="pref_with_val"]', 'value', 'new_value1')
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="pref_with_val"]', 'readonly', 'false', optional=True)
@@ -444,6 +489,15 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'value', 'new_value3')
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'hidden', 'true')
+
+        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="pref_with_val"]', 0)
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'value', 'value2')
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathMissingAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'value')
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'hidden', 'true')
+
 
     def test_build_rdf_template_from_workspace(self):
 
@@ -566,48 +620,63 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
             name = six.text_type(self.get_rdf_element(graph, iwidget, self.DCTERMS, 'title'))
 
-            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 4)
             preferences = graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference'])
 
-            username_found = password_found = False
+            username_count = password_count = list_count = boolean_count = 0
 
             if name == 'Test Widget':
 
                 for preference in preferences:
                     name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
                     if six.text_type(name) == 'username':
-                        username_found = True
+                        username_count += 1
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'default')
                     elif six.text_type(name) == 'password':
-                        password_found = True
+                        password_count += 1
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'initial text')
-                    elif six.text_type(name) in ('boolean', 'list'):
-                        # Ignore boolean and list preferences
-                        pass
+                    elif six.text_type(name) == 'list':
+                        list_count += 1
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', 'default')
+                    elif six.text_type(name) == 'boolean':
+                        boolean_count += 1
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', 'false')
                     else:
                         self.fail()
+
+                self.assertTrue(username_count == 1 and password_count == 1 and boolean_count == 1 and list_count == 1)
 
             elif name == 'Test Widget 2':
 
                 for preference in preferences:
                     name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
                     if six.text_type(name) == 'username':
-                        username_found = True
-                        self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_username')
+                        username_count += 1
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
+                        self.assertRDFCount(graph, preference, self.WIRE, 'value', 0)
                     elif six.text_type(name) == 'password':
-                        password_found = True
+                        password_count += 1
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'true')
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'true')
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', 'test_password')
-                    elif six.text_type(name) in ('boolean', 'list'):
-                        # Ignore boolean and list preferences
-                        pass
+                    elif six.text_type(name) == 'boolean':
+                        boolean_count += 1
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', 'false')
                     else:
                         self.fail()
 
-            self.assertTrue(username_found and password_found)
+                self.assertTrue(username_count == 1 and password_count == 1 and boolean_count == 1 and list_count == 0)
+
 
     def test_build_rdf_template_from_workspace_utf8_char(self):
         options = {
@@ -634,11 +703,131 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         authors = next(graph.objects(mashup_uri, self.DCTERMS['creator']))
         self.assertRDFElement(graph, authors, self.FOAF, 'name', 'author with é')
 
+    def test_build_template_from_workspace_invalid_widget_pref_source(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'parametrization': {
+                'iwidgets': {
+                    '1': {
+                        'username': {'source': 'invalid'},
+                    },
+                },
+            },
+        }
+        self.assertRaises(Exception, build_json_template_from_workspace, options, self.workspace_with_iwidgets, self.user)
+
+    def test_build_template_from_workspace_invalid_operator_pref_source(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'parametrization': {
+                'ioperators': {
+                    '1': {
+                        'pref_with_val': {'source': 'invalid'},
+                    },
+                },
+            },
+        }
+        self.assertRaises(Exception, build_json_template_from_workspace, options, self.workspace_with_iwidgets, self.user)
+
+    def test_build_template_from_workspace_contributors(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'contributors': [{'url': 'http://example.com', 'name': 'user1', 'email': 'a@b.com'}, {'name': 'user2'}]
+        }
+        template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        self.assertEqual(template['contributors'], [{'url': 'http://example.com', 'name': 'user1', 'email': 'a@b.com'}, {'name': 'user2'}])
+
+    def test_build_template_from_workspace_contributors_string(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'contributors': 'user1 <a@b.com> (http://example.com), user2'
+        }
+        template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        self.assertEqual(template['contributors'], [{'url': 'http://example.com', 'name': 'user1', 'email': 'a@b.com'}, {'name': 'user2'}])
+
+    def test_build_template_from_workspace_empty_wiring_status(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1'
+        }
+        self.workspace_with_iwidgets.wiringStatus = {}
+        template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        self.assertEqual(template['wiring']['version'], '2.0')
+
+    def test_build_template_from_workspace_with_preferences(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1'
+        }
+        self.workspace_with_iwidgets.workspacepreference_set.create(inherit=True, name='ignoreme', value='ignoreme')
+        self.workspace_with_iwidgets.workspacepreference_set.create(inherit=False, name='pref1', value='value1')
+        tab = self.workspace_with_iwidgets.tab_set.all()[0]
+        tab.tabpreference_set.create(inherit=True, name='ignoreme', value='ignoreme')
+        tab.tabpreference_set.create(inherit=False, name='pref2', value='value2')
+        template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        self.assertEqual(template['preferences'], {'pref1': 'value1'})
+        self.assertEqual(template['tabs'][0]['preferences'], {'pref2': 'value2'})
+
+    def test_build_template_from_workspace_with_preferences(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1'
+        }
+        self.workspace_with_iwidgets.workspacepreference_set.create(inherit=True, name='ignoreme', value='ignoreme')
+        self.workspace_with_iwidgets.workspacepreference_set.create(inherit=False, name='pref1', value='value1')
+        tab = self.workspace_with_iwidgets.tab_set.all()[0]
+        tab.tabpreference_set.create(inherit=True, name='ignoreme', value='ignoreme')
+        tab.tabpreference_set.create(inherit=False, name='pref2', value='value2')
+        template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        self.assertEqual(template['preferences'], {'pref1': 'value1'})
+        self.assertEqual(template['tabs'][0]['preferences'], {'pref2': 'value2'})
+
+    def test_build_template_from_workspace_stateproperties_parametrization(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'parametrization': {
+                'iwidgets': {
+                    '1': {
+                        'prop': {'source': 'custom', 'status': 'readonly', 'value': 'new_value'},
+                        'prop2': {'source': 'default', 'status': 'normal'}
+                    },
+                    '2': {
+                        'prop': {'source': 'current', 'status': 'normal'},
+                        'prop2': {'source': 'default', 'status': 'readonly'}
+                    }
+                }
+            }
+        }
+        template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        self.assertEqual(template['tabs'][0]['resources'][0]['properties'], {'prop': {'readonly': True, 'value': 'new_value'}})
+        self.assertEqual(template['tabs'][0]['resources'][1]['properties'], {'prop': {'readonly': False, 'value': 'test_data'}, 'prop2': {'readonly': True, 'value': None}})
+
 
 class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('fiware-ut-2', 'wirecloud-template', 'wirecloud-workspace-parse')
+    tags = ('fiware-ut-2', 'wirecloud-template', 'wirecloud-workspace-parse', 'wirecloud-noselenium')
 
     base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')
 

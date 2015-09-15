@@ -58,7 +58,10 @@ def write_mashup_tree(resources, options):
                 fulldragboard=str(iwidget['rendering']['fulldragboard']), layout=str(iwidget['rendering']['layout']))
 
             for pref_name, pref in six.iteritems(iwidget['preferences']):
-                element = etree.SubElement(resource, 'Preference', name=pref_name, value=pref['value'])
+                element = etree.SubElement(resource, 'Preference', name=pref_name)
+
+                if pref.get('value', None) is not None:
+                    element.set('value', pref['value'])
 
                 if pref.get('readonly', False):
                     element.set('readonly', 'true')
@@ -67,7 +70,10 @@ def write_mashup_tree(resources, options):
                     element.set('hidden', 'true')
 
             for prop_name, prop in six.iteritems(iwidget.get('properties', {})):
-                element = etree.SubElement(resource, 'Property', name=prop_name, value=prop['value'])
+                element = etree.SubElement(resource, 'Property', name=prop_name)
+
+                if prop.get('value', None) is not None:
+                    element.set('value', prop['value'])
 
                 if prop.get('readonly', False):
                     element.set('readonly', 'true')
@@ -79,7 +85,10 @@ def write_mashup_wiring_tree(wiring, options):
         operator_element = etree.SubElement(wiring, 'Operator', id=op_id, name=operator['name'])
 
         for pref_name, pref in six.iteritems(operator['preferences']):
-            element = etree.SubElement(operator_element, 'Preference', name=pref_name, value=pref['value'])
+            element = etree.SubElement(operator_element, 'Preference', name=pref_name)
+
+            if pref.get('value', None) is not None:
+                element.set('value', pref['value'])
 
             if pref.get('readonly', False):
                 element.set('readonly', 'true')

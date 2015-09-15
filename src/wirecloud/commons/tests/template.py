@@ -53,7 +53,7 @@ def read_json_fixtures(filename):
 
 class TemplateUtilsTestCase(TestCase):
 
-    tags = ('wirecloud-template',)
+    tags = ('wirecloud-template', 'wirecloud-noselenium')
     maxDiff = None
 
     @classmethod
@@ -541,7 +541,9 @@ class TemplateUtilsTestCase(TestCase):
                             },
                             'preferences': {
                                 'list': {'value': 'default', 'readonly': True, 'hidden': False},
-                                'text': {'value': 'other value', 'readonly': True, 'hidden': True}
+                                'text': {'value': 'other value', 'readonly': True, 'hidden': True},
+                                'password': {'value': None, 'readonly': True, 'hidden': True},
+                                'boolean': {'value': None, 'readonly': True, 'hidden': False}
                             },
                             'position': {
                                 'x': '0',
@@ -564,7 +566,8 @@ class TemplateUtilsTestCase(TestCase):
                             'readonly': True,
                             'title': 'Widget title',
                             'properties': {
-                                'prop1': {'value': 'value1', 'readonly': False}
+                                'prop1': {'value': 'value1', 'readonly': False},
+                                'prop2': {'value': None, 'readonly': True}
                             },
                             'preferences': {
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
@@ -661,7 +664,9 @@ class TemplateUtilsTestCase(TestCase):
                         "id": '3',
                         "name": "Wirecloud/TestOperator/2.0",
                         "preferences": {
-                            'pref1': {'value': 'op3 pref1 value', 'hidden': True, 'readonly': True}
+                            'pref1': {'value': 'op3 pref1 value', 'hidden': True, 'readonly': True},
+                            'pref2': {'value': None, 'hidden': True, 'readonly': True},
+                            'pref3': {'value': None, 'hidden': False, 'readonly': True}
                         },
                     }
                 },
@@ -1579,7 +1584,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_operator_info)
-    test_rdf_parser_writer_basic_operator.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_rdf_parser_writer_basic_operator.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_rdf_parser_writer_operator(self):
 
@@ -1588,7 +1593,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.operator_info)
-    test_rdf_parser_writer_operator.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_rdf_parser_writer_operator.tags = ('wirecloud-template', 'wirecloud-noselenium',  'fiware-ut-14')
 
     def test_rdf_parser_writer_operator_with_translations(self):
 
@@ -1597,7 +1602,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.operator_with_translation_info)
-    test_rdf_parser_writer_operator_with_translations.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_rdf_parser_writer_operator_with_translations.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_rdf_parser_writer_basic_mashup(self):
 
@@ -1606,7 +1611,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_mashup_info)
-    test_rdf_parser_writer_basic_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_rdf_parser_writer_basic_mashup.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_behaviours(self):
         self.compare_input_and_output_mashup("mashup_with_behaviours_data", "rdf")
@@ -1645,7 +1650,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_info)
-    test_rdf_parser_writer_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_rdf_parser_writer_mashup.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_translations(self):
 
@@ -1654,7 +1659,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
-    test_rdf_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_rdf_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_rdf_parser_writer_mashup_with_params(self):
 
@@ -1663,7 +1668,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_params)
-    test_rdf_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_rdf_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_rdf_parser_writer_basic_widget(self):
 
@@ -1672,7 +1677,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_widget_info)
-    test_rdf_parser_writer_basic_widget.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_rdf_parser_writer_basic_widget.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_rdf_parser_writer_widget(self):
 
@@ -1681,7 +1686,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.widget_info)
-    test_rdf_parser_writer_widget.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_rdf_parser_writer_widget.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_rdf_parser_minimal_endpoint_info(self):
 
@@ -1714,7 +1719,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_mashup_info)
-    test_xml_parser_writer_basic_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_xml_parser_writer_basic_mashup.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup(self):
 
@@ -1723,7 +1728,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_info)
-    test_xml_parser_writer_mashup.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_xml_parser_writer_mashup.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup_with_translations(self):
 
@@ -1732,7 +1737,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
-    test_xml_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_xml_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup_with_params(self):
 
@@ -1741,7 +1746,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_params)
-    test_xml_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_xml_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_xml_parser_writer_basic_widget(self):
 
@@ -1750,7 +1755,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_widget_info)
-    test_xml_parser_writer_basic_widget.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_xml_parser_writer_basic_widget.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_xml_parser_writer_widget(self):
 
@@ -1759,7 +1764,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.widget_info)
-    test_xml_parser_writer_widget.tags = ('wirecloud-template', 'fiware-ut-14')
+    test_xml_parser_writer_widget.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_next_xml_parser_writer_basic_operator(self):
 
