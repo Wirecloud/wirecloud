@@ -45,7 +45,7 @@ class Workspace(models.Model):
     groups = models.ManyToManyField(Group, verbose_name=_('Groups'), blank=True, null=True)
     description = models.TextField(_('Description'), max_length=140, blank=True)
     longdescription = models.TextField(_('Long description'), blank=True)
-    forcedValues = models.TextField(blank=True)
+    forcedValues = JSONField(blank=True)
     wiringStatus = JSONField(blank=True)
 
     __original_public = False

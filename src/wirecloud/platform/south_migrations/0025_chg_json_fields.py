@@ -7,6 +7,9 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
+        # Changing field 'Workspace.forcedValues'
+        db.alter_column(u'wirecloud_workspace', 'forcedValues', self.gf('wirecloud.commons.fields.JSONField')())
+
         # Changing field 'Workspace.wiringStatus'
         db.alter_column(u'wirecloud_workspace', 'wiringStatus', self.gf('wirecloud.commons.fields.JSONField')())
 
@@ -20,6 +23,9 @@ class Migration(SchemaMigration):
 
         # Changing field 'Workspace.wiringStatus'
         db.alter_column(u'wirecloud_workspace', 'wiringStatus', self.gf('django.db.models.fields.TextField')())
+
+        # Changing field 'Workspace.forcedValues'
+        db.alter_column(u'wirecloud_workspace', 'forcedValues', self.gf('django.db.models.fields.TextField')())
 
     models = {
         u'auth.group': {
@@ -150,7 +156,7 @@ class Migration(SchemaMigration):
             'creation_date': ('django.db.models.fields.BigIntegerField', [], {'default': '1440758282972.062'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'creator'", 'to': u"orm['auth.User']"}),
             'description': ('django.db.models.fields.TextField', [], {'max_length': '140', 'blank': 'True'}),
-            'forcedValues': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'forcedValues': ('wirecloud.commons.fields.JSONField', [], {'default': "'{}'", 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'last_modified': ('django.db.models.fields.BigIntegerField', [], {'null': 'True', 'blank': 'True'}),

@@ -130,8 +130,6 @@ def update_widget_value(iwidget, data, user, required=False):
 
 def SaveIWidget(iwidget, user, tab, initial_variable_values):
 
-    widget_uri = iwidget.get('widget')
-
     new_iwidget = IWidget(tab=tab)
 
     resource = update_widget_value(new_iwidget, iwidget, user, required=True)

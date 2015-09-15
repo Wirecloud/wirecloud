@@ -20,6 +20,7 @@
 from __future__ import unicode_literals
 
 import base64
+from copy import deepcopy
 from Crypto.Cipher import AES
 import json
 import re
@@ -368,23 +369,21 @@ class TemplateValueProcessor:
         return self._RE.sub(self.__repl, value)
 
 
+def normalize_forced_values(workspace):
+
+    if 'extra_prefs' not in workspace.forcedValues:
+        workspace.forcedValues['extra_prefs'] = []
+
+    if 'ioperator' not in workspace.forcedValues:
+        workspace.forcedValues['ioperator'] = {}
+
+    if 'iwidget' not in workspace.forcedValues:
+        workspace.forcedValues['iwidget'] = {}
+
+
 def process_forced_values(workspace, user, concept_values, preferences):
-    try:
-        forced_values = json.loads(workspace.forcedValues)
-    except:
-        forced_values = {
-            'iwidget': {},
-            'ioperator': {},
-        }
-
-    if 'extra_prefs' not in forced_values:
-        forced_values['extra_prefs'] = []
-
-    if 'ioperator' not in forced_values:
-        forced_values['ioperator'] = {}
-
-    if 'iwidget' not in forced_values:
-        forced_values['iwidget'] = {}
+    normalize_forced_values(workspace)
+    forced_values = deepcopy(workspace.forcedValues)
 
     if len(forced_values['iwidget']) == 0 and len(forced_values['ioperator']) == 0:
         forced_values['empty_params'] = []

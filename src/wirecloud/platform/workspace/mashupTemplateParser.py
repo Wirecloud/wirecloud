@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-
 from django.utils.translation import ugettext as _
 import six
 
@@ -31,7 +29,7 @@ from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.preferences.views import update_tab_preferences, update_workspace_preferences
 from wirecloud.platform.models import Workspace, UserWorkspace
 from wirecloud.platform.wiring.utils import get_wiring_skeleton, get_endpoint_name, is_empty_wiring
-from wirecloud.platform.workspace.utils import createTab, TemplateValueProcessor
+from wirecloud.platform.workspace.utils import createTab, normalize_forced_values, TemplateValueProcessor
 
 
 def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=None):
@@ -334,24 +332,10 @@ def fillWorkspaceUsingTemplate(workspace, template):
     workspace.wiringStatus['visualdescription']['connections'] += mashup_description['wiring']['visualdescription']['connections']
 
     # Forced values
-    if workspace.forcedValues is not None and workspace.forcedValues != '':
-        forced_values = json.loads(workspace.forcedValues)
-    else:
-        forced_values = {
-            'extra_prefs': [],
-            'iwidget': {},
-            'ioperator': {},
-        }
+    normalize_forced_values(workspace)
 
-    if 'ioperator' not in forced_values:
-        forced_values['ioperator'] = {}
-
-    if 'iwidget' not in forced_values:
-        forced_values['iwidget'] = {}
-
-    forced_values['extra_prefs'] += new_forced_values['extra_prefs']
-    forced_values['iwidget'].update(new_forced_values['iwidget'])
-    forced_values['ioperator'].update(new_forced_values['ioperator'])
-    workspace.forcedValues = json.dumps(forced_values, ensure_ascii=False)
+    workspace.forcedValues['extra_prefs'] += new_forced_values['extra_prefs']
+    workspace.forcedValues['iwidget'].update(new_forced_values['iwidget'])
+    workspace.forcedValues['ioperator'].update(new_forced_values['ioperator'])
 
     workspace.save()
