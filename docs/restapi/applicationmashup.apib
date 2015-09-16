@@ -708,11 +708,9 @@ Tab attributes that can be modified:
     + Body
     
             {
-                "baselayout": 
-                    {
-                        "inherit": false,
-                        "value": "{\"verticalmargin\":3,\"smart\":\"false\",\"horizontalmargin\":4,\"type\":\"gridlayout\",\"columns\":20,\"cellheight\":12,\"rows\":12}"
-                    }
+                "baselayout": {
+                    "inherit": false,
+                    "value": "{\"verticalmargin\":3,\"smart\":\"false\",\"horizontalmargin\":4,\"type\":\"gridlayout\",\"columns\":20,\"cellheight\":12,\"rows\":12}"
                 }
             }
 
@@ -890,21 +888,24 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
                             "secure": false
                             "type": "text"
                             "value": null
-                        },
-                    ...
+                        }
                     ],
                     "wiring": {
                         "inputs": [],
                         "outputs": []
                     }
                },
-               ...
                "UPM/Operator/1.0": {
-                  "type": "operator",
-                  "vendor": "UPM",
-                  "name": "Operator"
-                  "version": "1.0",
-                  ...
+                    "type": "operator",
+                    "vendor": "UPM",
+                    "name": "Operator"
+                    "version": "1.0",
+                    "description": "Example operator",
+                    "preferences": [],
+                    "wiring": {
+                        "inputs": [],
+                        "outputs": []
+                    }
                }
             }
 

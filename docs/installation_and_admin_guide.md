@@ -3,7 +3,7 @@ WireCloud Installation and Administration Guide
 
 ## Introduction
 
-This Installation and Administration Guide covers WireCloud version 0.7 (starting from FIWARE release 4.2). Any feedback on this document is highly welcomed, including bugs, typos or things you think should be included but are not. Please send it to the "Contact Person" email that appears in the [Catalogue page for this GEi](http://catalogue.fiware.org/enablers/application-mashup-wirecloud).
+This Installation and Administration Guide covers WireCloud version 0.8 (starting from FIWARE release 4.4). Any feedback on this document is highly welcomed, including bugs, typos or things you think should be included but are not. Please send it to the "Contact Person" email that appears in the [Catalogue page for this GEi](http://catalogue.fiware.org/enablers/application-mashup-wirecloud).
 
 
 ## Installation
@@ -16,14 +16,14 @@ This page contains the Installation and Administration Guide for the WireCloud M
 This section describes all the requirements of a basic WireCloud installation. **However, these dependencies are not meant to be installed manually in this step, as they will be installed throughout the documentation:**
 
 - A Database Manager (MySQL, PostgreSQL, SQLite3...)
-- Python 2.6 or 2.7. Python 3 and other versions are currently not supported. Also the following python packages must be installed:
+- Python 2.6 or 2.7. WireCloud 0.8.0 adds support for python 3.4+. In any case, the following python packages must be installed:
     - Django 1.5+
     - South 0.7.4+
     - lxml 2.3.0+
     - django-compressor 1.4+
     - rdflib 3.2.0+
     - requests 2.1.0+
-    - futures 2.1.3+ (WireCloud 0.7.0 and 0.7.1 required gevent 1.0.0+ but this requirement has been changed by futures on WireCloud 0.7.2+)
+    - futures 2.1.3+ (only on python 2)
     - selenium 2.41+
     - pytz
     - django_relatives
@@ -130,16 +130,16 @@ You can always install the latest version of WireCloud from PyPI using the follo
 
 ### Installing WireCloud from sources
 
-The WireCloud source code is available from the [GitHub WireCloud repository](https://github.com/Wirecloud/wirecloud).
+The WireCloud source code is available on the [GitHub WireCloud repository](https://github.com/Wirecloud/wirecloud).
 
 To get the latest development version of the code, you can choose between two options:
 
-- Go to the WireCloud repository on GitHub, switch to the 0.7.x branch (or select a specific 0.7.x tag) and click on the ZIP button to download the repository as a zip file, or just click on this [link](https://github.com/Wirecloud/wirecloud/zipball/0.7.x). Unzip it.
+- Go to the WireCloud repository on GitHub, switch to the `0.8.x` branch (or select a specific 0.8.x tag, e.g. `0.8.0`) and click on the *Download ZIP* button to download the repository as a zip file, or just click on this [link](https://github.com/Wirecloud/wirecloud/zipball/0.8.x). Unzip it.
 - Or use a [GIT](http://git-scm.com/) client to get the latest development version via Git:
 
         $ git clone git://github.com/Wirecloud/wirecloud.git
         $ cd wirecloud
-        $ git checkout 0.7.x
+        $ git checkout 0.8.x
 
 Once downloaded the source code, you can install WireCloud using the `setup.py` script (this step requires root privileges):
 
@@ -151,7 +151,9 @@ Where `<version>` is the version of WireCloud to install.
 
 ### Installing WireCloud using Docker
 
-WireCloud can be deployed using [Docker](https://www.docker.com/), the images can be found at [docker hub](https://hub.docker.com/r/wirecloud/fiware-wirecloud/), the DockerFiles are in the [docker-wirecloud](https://github.com/Wirecloud/docker-wirecloud/) repository, and the documentation to deploy and start is available in the [README.md](https://github.com/Wirecloud/docker-wirecloud/tree/master/hub-docs/README.md) file.
+WireCloud can also be deployed using [Docker](https://www.docker.com/), the images can be found on [docker hub](https://hub.docker.com/r/wirecloud/fiware-wirecloud/). This guide doesn't cover WireCloud installation using docker, please refere to the documentation available on docker hub for more info about how to procede in this case. Anyway, once installed WireCloud using docker, you can make use of any of the administration procedures described in this guide.
+
+> WireCloud's DockerFiles and image documentation are hosted on the [docker-wirecloud](https://github.com/Wirecloud/docker-wirecloud/) repository.
 
 ### Creating a new instance of WireCloud
 

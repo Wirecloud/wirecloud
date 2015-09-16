@@ -371,7 +371,8 @@ Supported options:
   properties. If not provided, the default configuration of the widget is used.
 - `refposition` (*`ClientRect`*): Element position to use as reference for placing
   the new widget. You can obtain such a object using the
-  [`getBoundingClientRect`][getBoundingClientRect] method.
+  [`getBoundingClientRect`][getBoundingClientRect] method. This option cannot be
+  used when using the `addWidget` method from an operator.
 - `top` (*string, default: `0px`*): This option specifies the distance between
   the top margin edge of the element and the top edge of the dashboard. This
   value will be ignored if you provide a value for the `refposition` option.
@@ -775,9 +776,9 @@ Currently this module is composed of five methods:
 
 and three exceptions:
 
-- [`EndpointDoesNotExistError`](#endpointdoesnotexisterror)
-- [`EndpointTypeError`](#endpointtypeerror)
-- [`EndpointValueError`](#endpointvalueerror)
+- [`EndpointDoesNotExistError`](#endpointdoesnotexisterror-exception)
+- [`EndpointTypeError`](#endpointtypeerror-exception)
+- [`EndpointValueError`](#endpointvalueerror-exception)
 
 
 #### `hasInputConnections` method
