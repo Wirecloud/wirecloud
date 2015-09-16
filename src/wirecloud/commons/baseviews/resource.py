@@ -53,7 +53,7 @@ class Resource(object):
             raise
         except Http403:
             return HttpResponseForbidden()
-        except HttpBadCredentials:
-            return build_auth_error_response(request, 'Bad credentials')
+        except HttpBadCredentials as e:
+            return build_auth_error_response(request, e.message, e.error_info)
         except ErrorResponse as e:
             return e.response

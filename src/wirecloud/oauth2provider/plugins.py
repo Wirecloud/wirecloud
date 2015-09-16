@@ -17,8 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import time
 
+from django.utils.translation import ugettext as _
+
+from wirecloud.commons.exceptions import HttpBadCredentials
 from wirecloud.platform.plugins import WirecloudPlugin
 from wirecloud.oauth2provider.models import Token
 from wirecloud.oauth2provider.urls import urlpatterns
@@ -28,7 +33,7 @@ def auth_oauth2_token(auth_type, token):
 
     token = Token.objects.get(token=token)
     if (int(token.creation_timestamp) + int(token.expires_in)) <= time.time():
-        raise Exception('Token expired')
+        raise HttpBadCredentials(_('Expired access token'), 'Bearer realm="WireCloud", error="invalid_token", error_description="expired access token"')
 
     return token.user
 

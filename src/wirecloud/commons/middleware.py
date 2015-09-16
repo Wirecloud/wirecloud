@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from django.contrib.auth.middleware import get_user
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import MiddlewareNotUsed
@@ -24,6 +26,7 @@ from django.core.urlresolvers import reverse
 from django.utils.importlib import import_module
 from django.utils.functional import SimpleLazyObject
 from django.utils.http import http_date, parse_http_date_safe
+from django.utils.translation import ugettext as _
 
 from wirecloud.commons.exceptions import HttpBadCredentials
 
@@ -146,14 +149,16 @@ def get_api_user(request):
 
     parts = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
     if len(parts) != 2:
-        raise HttpBadCredentials
+        raise HttpBadCredentials(_('Bad credentials'))
 
     (auth_type, token) = parts
     backends = get_api_auth_backends()
     try:
         return backends[auth_type](auth_type, token)
+    except HttpBadCredentials:
+        raise
     except:
-        raise HttpBadCredentials
+        raise HttpBadCredentials(_('Bad credentials'), '%(auth_type)s realm="WireCloud", error="invalid_token", error_description="bad credentials"' % {"auth_type": auth_type})
 
 
 class AuthenticationMiddleware(object):
