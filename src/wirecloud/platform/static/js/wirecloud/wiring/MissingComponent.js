@@ -56,7 +56,7 @@
             Object.defineProperties(this, {
                 id: {value: id},
                 type: {value: type},
-                logManager: {value: new Wirecloud.wiring.MissingComponentLogManager(this, wiringEngine)},
+                logManager: {value: new ns.MissingComponentLogManager(this, wiringEngine)},
                 meta: {
                     value: {
                         inputList: [],
@@ -69,10 +69,6 @@
                 missing: {value: true},
                 reason: {value: reason}
             });
-
-            this.logManager.log(utils.interpolate(utils.gettext("A missing %(type)s was restored."), {
-                type: type
-            }), Wirecloud.constants.LOGGING.WARN_MSG);
         },
 
         statics: {
@@ -310,6 +306,11 @@
         this.meta.vendor = splitURI[0];
         this.meta.name = splitURI[1];
         this.meta.version = {text: splitURI[2]};
+
+        this.logManager.log(utils.interpolate(this.reason, {
+            id: this.id,
+            uri: uri
+        }), Wirecloud.constants.LOGGING.WARN_MSG);
 
         return this;
     }
