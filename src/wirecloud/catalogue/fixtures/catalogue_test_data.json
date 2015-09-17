@@ -10,7 +10,7 @@
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
             "template_uri": "http://example.com/path/widget.xml",
-            "json_description": "{\"vendor\": \"Test\", \"name\": \"widget1\", \"version\": \"1.2\", \"type\": \"widget\", \"contents\": {\"src\": \"js/main.js\"}}"
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"widget1\", \"version\": \"1.2\", \"type\": \"widget\", \"doc\": \"http://example.org/doc\", \"contents\": {\"src\": \"js/main.js\"}}"
         }
     },
     {

@@ -209,10 +209,14 @@ class ResourceVersionCollection(Resource):
 
 class ResourceChangelogEntry(Resource):
 
+    @produces(('application/xml+xhtml',))
     def read(self, request, vendor, name, version):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
         resource_info = resource.get_processed_info(process_urls=False)
+        if resource_info['changelog'] == '':
+            raise Http404
+
         doc_relative_path = url2pathname(resource_info['changelog'])
         doc_base_url = force_trailing_slash(urljoin(resource.get_template_url(request=request, for_base=True), pathname2url(os.path.dirname(doc_relative_path))))
         doc_path = os.path.join(catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version), doc_relative_path)
@@ -237,6 +241,7 @@ class ResourceChangelogEntry(Resource):
 
 class ResourceDocumentationEntry(Resource):
 
+    @produces(('application/xml+xhtml',))
     def read(self, request, vendor, name, version):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
@@ -246,7 +251,7 @@ class ResourceDocumentationEntry(Resource):
 
         doc_base_url = None
         if resource_info['doc'].startswith(('http://', 'https://')):
-            doc_code = _('You can find the documentation of this resource in this external <a target="_blank" href="%s">link</a>') % resource_info['doc']
+            doc_code = _('You can find the userguide of this component in this external <a target="_blank" href="%s">link</a>') % resource_info['doc']
             doc_code = '<div style="margin-top: 10px"><p>%s</p></div>' % doc_code
         else:
             doc_relative_path = url2pathname(resource_info['doc'])
@@ -262,7 +267,7 @@ class ResourceDocumentationEntry(Resource):
                 try:
                     doc_code = download_local_file(doc_path)
                 except:
-                    msg = _('Error opening the documentation file')
+                    msg = _('Error opening the userguide file')
                     doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
         doc_code = doc_code.decode('utf-8')

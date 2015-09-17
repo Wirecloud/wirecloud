@@ -45,7 +45,7 @@ __test__ = False
 class CatalogueSearchTestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_search_data',)
-    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-search')
+    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-search', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -394,7 +394,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 class CatalogueSuggestionTestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_search_data',)
-    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-suggestions')
+    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-suggestions', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -445,7 +445,7 @@ class CatalogueSuggestionTestCase(WirecloudTestCase):
 class CatalogueAPITestCase(WirecloudTestCase):
 
     fixtures = ('catalogue_test_data',)
-    tags = ('wirecloud-catalogue',)
+    tags = ('wirecloud-catalogue', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -531,10 +531,76 @@ class CatalogueAPITestCase(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data['versions']), 1)
 
+    def test_resource_userguide_entry_404(self):
+
+        url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Wirecloud', 'name': 'nonexistent', 'version': '1.0'})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        self.assertEqual(response.status_code, 404)
+
+    @uses_extra_resources(('Wirecloud_Test_Selenium_1.0.wgt',), shared=True, public=True)
+    def test_resource_userguide_entry_missing_userguide(self):
+
+        # Test_Selenium exists but doesn't provide an userguide
+        url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test_Selenium', 'version': '1.0'})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        self.assertEqual(response.status_code, 404)
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, public=True)
+    def test_resource_userguide_entry_error_reading_userguide(self):
+
+        url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+
+        with patch('wirecloud.catalogue.views.download_local_file', side_effect=Exception):
+            response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+            self.assertEqual(response.status_code, 200)
+            response_text = response.content.decode('utf-8').lower()
+            self.assertIn('error', response_text)
+            self.assertIn('userguide', response_text)
+
+    def test_resource_userguide_entry_external_doc(self):
+
+        url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Test', 'name': 'widget1', 'version': '1.2'})
+
+        with patch('wirecloud.catalogue.views.download_local_file', side_effect=Exception):
+            response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+            self.assertEqual(response.status_code, 200)
+            response_text = response.content.decode('utf-8').lower()
+            self.assertIn('http://example.org/doc', response_text)
+
+    def test_resource_changelog_entry_missing_changelog(self):
+
+        url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'nonexistent', 'version': '1.0'})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        self.assertEqual(response.status_code, 404)
+
+    @uses_extra_resources(('Wirecloud_Test_Selenium_1.0.wgt',), shared=True, public=True)
+    def test_resource_changelog_entry_missing_changelog(self):
+
+        # Test_Selenium doesn't provide a changelog
+        url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test_Selenium', 'version': '1.0'})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        self.assertEqual(response.status_code, 404)
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, public=True)
+    def test_resource_userguide_entry_error_reading_changelog(self):
+
+        url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+
+        with patch('wirecloud.catalogue.views.download_local_file', side_effect=Exception):
+            response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+            self.assertEqual(response.status_code, 200)
+            response_text = response.content.decode('utf-8').lower()
+            self.assertIn('error', response_text)
+            self.assertIn('changelog', response_text)
+
 
 class WGTDeploymentTestCase(WirecloudTestCase):
 
-    tags = ('wirecloud-catalogue',)
+    tags = ('wirecloud-catalogue', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
 
     def setUp(self):
         super(WGTDeploymentTestCase, self).setUp()
