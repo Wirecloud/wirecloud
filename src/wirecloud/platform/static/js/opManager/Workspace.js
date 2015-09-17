@@ -130,7 +130,7 @@ function Workspace(workspaceState, resources) {
             LayoutManagerFactory.getInstance().header._notifyWorkspaceLoaded(this);
             // END FIXME
 
-            this.wiring.load(this.workspaceState.wiring);
+            this.wiring.load(this.wiring.unmarshall(this.workspaceState.wiring));
 
             var initial_tab = Wirecloud.HistoryManager.getCurrentState().tab;
             if (initial_tab != null && this.tabsByName[initial_tab]) {
