@@ -49,7 +49,7 @@
         constructor: function Operator(id, meta, wiringEngine, businessInfo) {
             var preferenceList = [], preferences = {};
 
-            this.superClass(['load', 'unload']);
+            this.superClass(['load', 'remove', 'unload']);
 
             businessInfo = utils.updateObject(ns.Operator.JSON_TEMPLATE, businessInfo);
 
@@ -116,7 +116,6 @@
              *      The instance on which the member is called.
              */
             destroy: function destroy() {
-
                 this.fullDisconnect();
 
                 if (this.loaded) {
@@ -209,6 +208,19 @@
             registerPrefCallback: function registerPrefCallback(prefCallback) {
 
                 this.prefCallback = prefCallback;
+
+                return this;
+            },
+
+            /**
+             * [TODO: remove description]
+             *
+             * @returns {Operator}
+             *      The instance on which the member is called.
+             */
+            remove: function remove() {
+                this.destroy();
+                this.trigger('remove');
 
                 return this;
             },

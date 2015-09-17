@@ -86,7 +86,7 @@
             'outputs': {value: outputs},
             'remove': {
                 value: function close() {
-                    real_operator.destroy();
+                    real_operator.remove();
                 }
             }
         });
