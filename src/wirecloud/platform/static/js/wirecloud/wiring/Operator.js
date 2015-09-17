@@ -160,6 +160,10 @@
                 return this.preferenceList.length > 0;
             },
 
+            is: function is(component) {
+                return this.meta.type == component.meta.type && this.id == component.id;
+            },
+
             /**
              * [TODO: load description]
              *

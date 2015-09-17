@@ -158,6 +158,10 @@
         }
     };
 
+    WidgetBase.prototype.is = function is(component) {
+        return this.meta.type == component.meta.type && this.id == component.id;
+    };
+
     WidgetBase.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
         this.prefCallback = prefCallback;
     };
