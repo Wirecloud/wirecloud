@@ -116,18 +116,7 @@
              *      The instance on which the member is called.
              */
             destroy: function destroy() {
-
-                this.fullDisconnect();
-
-                if (this.loaded) {
-                    this.trigger('unload');
-                }
-
-                if (this.wrapperElement.parentNode) {
-                    this.wrapperElement.parentNode.removeChild(this.wrapperElement);
-                }
-
-                return this;
+                return this.remove();
             },
 
             /**
@@ -209,6 +198,27 @@
             registerPrefCallback: function registerPrefCallback(prefCallback) {
 
                 this.prefCallback = prefCallback;
+
+                return this;
+            },
+
+            /**
+             * [TODO: remove description]
+             *
+             * @returns {Operator}
+             *      The instance on which the member is called.
+             */
+            remove: function remove() {
+
+                this.fullDisconnect();
+
+                if (this.loaded) {
+                    this.trigger('unload');
+                }
+
+                if (this.wrapperElement.parentNode) {
+                    this.wrapperElement.parentNode.removeChild(this.wrapperElement);
+                }
 
                 return this;
             },
