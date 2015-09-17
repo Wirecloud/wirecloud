@@ -143,6 +143,10 @@
                 return false;
             },
 
+            is: function is(component) {
+                return this.meta.type == component.meta.type && this.id == component.id;
+            },
+
             load: function load() {
                 return this;
             },
