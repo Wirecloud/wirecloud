@@ -33,6 +33,7 @@ from wirecloud.commons.utils.html import clean_html
 from wirecloud.commons.utils.http import build_downloadfile_response, build_sendfile_response, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
+from wirecloud.commons.utils.version import Version
 from wirecloud.commons.utils.wgt import WgtFile
 
 
@@ -121,6 +122,34 @@ class GeneralUtilsTestCase(TestCase):
     def test_mimeparser_best_match_should_ignore_blank_media_ranges(self):
 
         self.assertEqual(best_match(['application/xbel+xml; a=1; b=2', 'application/xml'], 'application/*, application/xbel+xml; a=1; b=2'), 'application/xbel+xml; a=1; b=2')
+
+    def test_version_order(self):
+
+        self.assertLess(Version('1.0'), Version('1.11a1'))
+        self.assertLess(Version('1.11a1'), Version('1.11a2'))
+        self.assertLess(Version('1.11a2'), Version('1.11b1'))
+        self.assertLess(Version('1.11b1'), Version('1.11rc1'))
+        self.assertLess(Version('1.11rc1'), Version('1.11'))
+        self.assertLess(Version('1.11'), Version('1.11.5.1'))
+        self.assertLess(Version('1.11.5.1'), Version('1.11.5.4'))
+        self.assertLess(Version('1.11.5.4'), Version('1.100'))
+
+        self.assertGreater(Version('1.0'), Version('1.0a1'))
+        self.assertGreater(Version('1.0', reverse=True), Version('1.11a1', reverse=True))
+        self.assertGreater(Version('1.11b1', reverse=True), Version('1.11rc1', reverse=True))
+
+        self.assertEqual(Version('1'), '1.0.0')
+        self.assertEqual(Version('1.0'), '1.0.0')
+        self.assertEqual(Version('1.0'), Version('1.0.0'))
+        self.assertEqual(Version('1.0', reverse=True), Version('1.0.0', reverse=True))
+
+    def test_version_invalid_values(self):
+
+        self.assertRaises(ValueError, Version, '-0')
+        self.assertRaises(ValueError, Version, '0.a')
+        self.assertRaises(ValueError, Version('1.0').__eq__, None)
+        self.assertRaises(ValueError, Version('1.0').__eq__, 5)
+        self.assertRaises(ValueError, Version('1.0').__eq__, {})
 
 
 class WGTTestCase(TestCase):

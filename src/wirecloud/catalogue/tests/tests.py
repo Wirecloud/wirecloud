@@ -31,7 +31,7 @@ from django.test.utils import override_settings
 from mock import MagicMock, Mock, patch
 
 import wirecloud.catalogue.utils
-from wirecloud.catalogue.models import CatalogueResource, Version
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import get_resource_data
 from wirecloud.catalogue.views import serve_catalogue_media
 from wirecloud.commons.searchers import get_search_engine
@@ -312,32 +312,6 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         for result in result_json['results']:
             self.assertTrue(result['image'].startswith('http://wirecloud.example.com/'))
             self.assertTrue(result['smartphoneimage'].startswith('http://wirecloud.example.com/'))
-
-    def test_version_order(self):
-
-        self.assertLess(Version('1.0'), Version('1.11a1'))
-        self.assertLess(Version('1.11a1'), Version('1.11a2'))
-        self.assertLess(Version('1.11a2'), Version('1.11b1'))
-        self.assertLess(Version('1.11b1'), Version('1.11rc1'))
-        self.assertLess(Version('1.11rc1'), Version('1.11'))
-        self.assertLess(Version('1.11'), Version('1.11.5.1'))
-        self.assertLess(Version('1.11.5.1'), Version('1.11.5.4'))
-        self.assertLess(Version('1.11.5.4'), Version('1.100'))
-
-        self.assertGreater(Version('1.0'), Version('1.0a1'))
-        self.assertGreater(Version('1.0', reverse=True), Version('1.11a1', reverse=True))
-        self.assertGreater(Version('1.11b1', reverse=True), Version('1.11rc1', reverse=True))
-
-        self.assertEqual(Version('1'), '1.0.0')
-        self.assertEqual(Version('1.0'), '1.0.0')
-        self.assertEqual(Version('1.0'), Version('1.0.0'))
-        self.assertEqual(Version('1.0', reverse=True), Version('1.0.0', reverse=True))
-
-        self.assertRaises(ValueError, Version, '-0')
-        self.assertRaises(ValueError, Version, '0.a')
-        self.assertRaises(ValueError, Version('1.0').__eq__, None)
-        self.assertRaises(ValueError, Version('1.0').__eq__, 5)
-        self.assertRaises(ValueError, Version('1.0').__eq__, {})
 
     def test_basic_search_with_query_correction(self):
 

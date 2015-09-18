@@ -29,13 +29,14 @@ from django.conf import settings
 from django.utils.translation import get_language, ugettext as _
 import markdown
 
-from wirecloud.catalogue.models import CatalogueResource, Version
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.html import clean_html
 from wirecloud.commons.utils.http import get_absolute_reverse_url, force_trailing_slash
 from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
+from wirecloud.commons.utils.version import Version
 from wirecloud.commons.utils.wgt import InvalidContents, WgtDeployer, WgtFile
 
 

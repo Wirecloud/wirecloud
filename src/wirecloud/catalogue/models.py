@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 import logging
 import operator
 import random
-import regex
 from six.moves.urllib.parse import urlparse, urljoin
 
 from django.contrib.auth.models import User, Group
@@ -36,11 +35,11 @@ from whoosh import fields
 from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.query import And, Every, Or, Term
 from whoosh.sorting import FieldFacet, FunctionFacet
-import six
 
 from wirecloud.commons.searchers import BaseSearcher, get_search_engine, patch_expand_prefix
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
+from wirecloud.commons.utils.version import Version
 
 
 # Get an instance of a logger
@@ -249,77 +248,6 @@ def get_template_url(vendor, name, version, url, request=None):
         template_url = url
 
     return template_url
-
-
-def cmp(a, b):
-    return (a > b) - (a < b)
-
-
-class Version(object):
-
-    version_re = regex.compile(r'^([1-9]\d*|0)((?:\.(?:[1-9]\d*|0))*)(?:(a|b|rc)([1-9]\d*))?$')
-
-    def __init__(self, vstring, reverse=False):
-
-        self.vstring = vstring
-        match = self.version_re.match(vstring)
-
-        if not match:
-            raise ValueError("invalid version number '%s'" % vstring)
-
-        (major, patch, prerelease, prerelease_num) = match.group(1, 2, 3, 4)
-
-        if patch:
-            self.version = tuple(map(int, [major] + patch[1:].split('.')))
-        else:
-            self.version = (int(major),)
-
-        if prerelease:
-            self.prerelease = (prerelease, int(prerelease_num))
-        else:
-            self.prerelease = None
-
-        self.reverse = reverse
-
-    def __cmp__(self, other):
-
-        if isinstance(other, six.string_types):
-            other = Version(other)
-
-        if not isinstance(other, Version):
-            raise ValueError("invalid version number '%s'" % other)
-
-        maxlen = max(len(self.version), len(other.version))
-        compare = cmp(self.version + (0,)*(maxlen - len(self.version)), other.version + (0,)*(maxlen - len(other.version)))
-
-        if compare == 0:
-
-            # case 1: neither has prerelease; they're equal
-            if not self.prerelease and not other.prerelease:
-                compare = 0
-
-            # case 2: self has prerelease, other doesn't; other is greater
-            elif self.prerelease and not other.prerelease:
-                compare = -1
-
-            # case 3: self doesn't have prerelease, other does: self is greater
-            elif not self.prerelease and other.prerelease:
-                compare = 1
-
-            # case 4: both have prerelease: must compare them!
-            else:
-                compare = cmp(self.prerelease, other.prerelease)
-
-        return compare if not self.reverse else (compare * -1)
-
-    def __eq__(self, other):
-        return self.__cmp__(other) == 0
-
-    def __lt__(self, other):
-        return self.__cmp__(other) < 0
-
-    def __gt__(self, other):
-        return self.__cmp__(other) > 0
 
 
 @receiver(post_save, sender=CatalogueResource)
