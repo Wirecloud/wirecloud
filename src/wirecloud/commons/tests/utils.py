@@ -29,7 +29,7 @@ from django.test.utils import override_settings
 from mock import DEFAULT, patch, Mock
 
 from wirecloud.commons.exceptions import ErrorResponse
-from wirecloud.commons.utils.html import clean_html
+from wirecloud.commons.utils.html import clean_html, filter_changelog
 from wirecloud.commons.utils.http import build_downloadfile_response, build_sendfile_response, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
 from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
@@ -76,6 +76,21 @@ class HTMLCleanupTestCase(TestCase):
         initial_code = 'Example image: <img src="images/example.png"/>'
         expected_code = 'Example image: <img src="http://example.com/images/example.png"/>'
         self.assertEqual(clean_html(initial_code, base_url='http://example.com'), expected_code)
+
+    def test_filter_changelog(self):
+        initial_code = '<h1>1.0.2</h1><p>1.0.2 change list</p><h1>1.0.1</h1><p>1.0.1 change list</p><h1>1.0.0</h1><p>Initial release</p>'
+        expected_code = '<h1>1.0.2</h1><p>1.0.2 change list</p>'
+        self.assertEqual(filter_changelog(initial_code, Version('1.0.1')), expected_code)
+
+    def test_filter_changelog_headers_with_extra_content(self):
+        initial_code = '<h1>1.0.2 (2015-05-01)</h1><p>1.0.2 change list</p><h1>1.0.1 (2015-04-01)</h1><p>1.0.1 change list</p><h1>1.0.0 (2015-03-01)</h1><p>Initial release</p>'
+        expected_code = '<h1>1.0.2 (2015-05-01)</h1><p>1.0.2 change list</p>'
+        self.assertEqual(filter_changelog(initial_code, Version('1.0.1')), expected_code)
+
+    def test_filter_changelog_version_not_found(self):
+        initial_code = '<h1>1.0.2</h1><p>1.0.2 change list</p><h1>1.0.1</h1><p>1.0.1 change list</p><h1>1.0.0</h1><p>Initial release</p>'
+        expected_code = '<h1>1.0.2</h1><p>1.0.2 change list</p><h1>1.0.1</h1><p>1.0.1 change list</p><h1>1.0.0</h1><p>Initial release</p>'
+        self.assertEqual(filter_changelog(initial_code, Version('0.9.0')), expected_code)
 
 
 class GeneralUtilsTestCase(TestCase):

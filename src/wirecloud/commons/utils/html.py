@@ -19,10 +19,16 @@
 
 from __future__ import unicode_literals
 
+import re
+
 from lxml import etree
 from lxml.html import fragment_fromstring, XHTMLParser
-import six
 from six.moves.urllib.parse import urljoin, urlparse
+
+from wirecloud.commons.utils.version import Version
+
+
+VERSION_HEADER_RE = re.compile('[\s(]')
 
 
 def clean_html(code, base_url=None):
@@ -63,5 +69,25 @@ def clean_html(code, base_url=None):
 
         # Add target="_blank" to general links
         link_element.attrib['target'] = '_blank'
+
+    return (doc.text or '') + ''.join([etree.tostring(child, method='xml').decode('utf-8') for child in doc.iterchildren()])
+
+
+def filter_changelog(code, from_version):
+
+    parser = XHTMLParser()
+    doc = fragment_fromstring(code, create_parent=True, parser=parser)
+
+    for header in doc.xpath('/div/h1'):
+        try:
+            version = Version(VERSION_HEADER_RE.split(header.text, 1)[0])
+        except:
+            continue
+
+        if version == from_version:
+            for elem in header.itersiblings():
+                elem.drop_tree()
+            header.drop_tree()
+            break
 
     return (doc.text or '') + ''.join([etree.tostring(child, method='xml').decode('utf-8') for child in doc.iterchildren()])

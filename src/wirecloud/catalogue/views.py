@@ -44,10 +44,11 @@ from wirecloud.catalogue.utils import add_packaged_resource, delete_resource
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.html import clean_html
+from wirecloud.commons.utils.html import clean_html, filter_changelog
 from wirecloud.commons.utils.http import build_error_response, build_downloadfile_response, consumes, force_trailing_slash, parse_json_request, produces
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.version import Version
 
 
 @require_GET
@@ -212,6 +213,13 @@ class ResourceChangelogEntry(Resource):
     @produces(('application/xml+xhtml',))
     def read(self, request, vendor, name, version):
 
+        from_version = request.GET.get('from')
+        if from_version is not None:
+            try:
+                from_version = Version(from_version)
+            except:
+                return build_error_response(request, 422, _("Missing parameter: template_uri or file"))
+
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
         resource_info = resource.get_processed_info(process_urls=False)
         if resource_info['changelog'] == '':
@@ -235,6 +243,10 @@ class ResourceChangelogEntry(Resource):
 
         doc_code = doc_code.decode('utf-8')
         doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
+
+        if from_version:
+            doc_pre_html = filter_changelog(doc_pre_html, from_version)
+
         doc = clean_html(doc_pre_html, base_url=doc_base_url)
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
 

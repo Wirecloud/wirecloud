@@ -505,7 +505,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data['versions']), 1)
 
-    def test_resource_userguide_entry_404(self):
+    def test_resource_userguide_entry_missing_component(self):
 
         url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Wirecloud', 'name': 'nonexistent', 'version': '1.0'})
 
@@ -513,7 +513,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         self.assertEqual(response.status_code, 404)
 
     @uses_extra_resources(('Wirecloud_Test_Selenium_1.0.wgt',), shared=True, public=True)
-    def test_resource_userguide_entry_missing_userguide(self):
+    def test_resource_userguide_entry_component_missing_userguide(self):
 
         # Test_Selenium exists but doesn't provide an userguide
         url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test_Selenium', 'version': '1.0'})
@@ -543,7 +543,16 @@ class CatalogueAPITestCase(WirecloudTestCase):
             response_text = response.content.decode('utf-8').lower()
             self.assertIn('http://example.org/doc', response_text)
 
-    def test_resource_changelog_entry_missing_changelog(self):
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=True)
+    def test_resource_changelog_entry_from_version(self):
+
+        url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '2.0'}) + '?from=1.0'
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('1.0', response.content.decode('utf-8'))
+
+    def test_resource_changelog_entry_missing_component(self):
 
         url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'nonexistent', 'version': '1.0'})
 
@@ -551,7 +560,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         self.assertEqual(response.status_code, 404)
 
     @uses_extra_resources(('Wirecloud_Test_Selenium_1.0.wgt',), shared=True, public=True)
-    def test_resource_changelog_entry_missing_changelog(self):
+    def test_resource_changelog_entry_component_missing_changelog(self):
 
         # Test_Selenium doesn't provide a changelog
         url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test_Selenium', 'version': '1.0'})
