@@ -45,7 +45,7 @@
      */
     ns.MissingComponent = utils.defineClass({
 
-        constructor: function MissingComponent(id, type, wiringEngine, reason) {
+        constructor: function MissingComponent(id, type, wiringEngine) {
 
             this.loaded = false;
             this.pending_events = [];
@@ -66,8 +66,7 @@
                         type: type
                     }
                 },
-                missing: {value: true},
-                reason: {value: reason}
+                missing: {value: true}
             });
         },
 
@@ -229,6 +228,10 @@
         constructor: function MissingOperator(id, wiringEngine, businessInfo, reason) {
             this.superClass(id, 'operator', wiringEngine, reason);
             this.loadBusinessInfo(businessInfo);
+            Object.defineProperties(this, {
+                reason: {value: utils.interpolate(reason, {id: this.id, uri: this.meta.uri})},
+            });
+            this.logManager.log(this.reason, Wirecloud.constants.LOGGING.ERROR_MSG);
         },
 
         inherit: ns.MissingComponent,
@@ -286,6 +289,10 @@
         constructor: function MissingWidget(id, wiringEngine, visualInfo, reason) {
             this.superClass(id, 'widget', wiringEngine, reason);
             this.loadVisualInfo(visualInfo);
+            Object.defineProperties(this, {
+                reason: {value: utils.interpolate(reason, {id: this.id, uri: this.meta.uri})},
+            });
+            this.logManager.log(this.reason, Wirecloud.constants.LOGGING.ERROR_MSG);
         },
 
         inherit: ns.MissingComponent
@@ -306,11 +313,6 @@
         this.meta.vendor = splitURI[0];
         this.meta.name = splitURI[1];
         this.meta.version = {text: splitURI[2]};
-
-        this.logManager.log(utils.interpolate(this.reason, {
-            id: this.id,
-            uri: uri
-        }), Wirecloud.constants.LOGGING.WARN_MSG);
 
         return this;
     }
