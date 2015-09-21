@@ -210,7 +210,7 @@ class ResourceVersionCollection(Resource):
 
 class ResourceChangelogEntry(Resource):
 
-    @produces(('application/xml+xhtml',))
+    @produces(('application/xhtml+xml',))
     def read(self, request, vendor, name, version):
 
         from_version = request.GET.get('from')
@@ -253,7 +253,7 @@ class ResourceChangelogEntry(Resource):
 
 class ResourceDocumentationEntry(Resource):
 
-    @produces(('application/xml+xhtml',))
+    @produces(('application/xhtml+xml',))
     def read(self, request, vendor, name, version):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)

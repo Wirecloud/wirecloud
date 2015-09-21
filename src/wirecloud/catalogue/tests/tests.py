@@ -509,7 +509,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
 
         url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Wirecloud', 'name': 'nonexistent', 'version': '1.0'})
 
-        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 404)
 
     @uses_extra_resources(('Wirecloud_Test_Selenium_1.0.wgt',), shared=True, public=True)
@@ -518,7 +518,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         # Test_Selenium exists but doesn't provide an userguide
         url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test_Selenium', 'version': '1.0'})
 
-        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 404)
 
     @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, public=True)
@@ -527,7 +527,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
 
         with patch('wirecloud.catalogue.views.download_local_file', side_effect=Exception):
-            response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+            response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
             self.assertEqual(response.status_code, 200)
             response_text = response.content.decode('utf-8').lower()
             self.assertIn('error', response_text)
@@ -538,7 +538,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         url = reverse('wirecloud_catalogue.resource_userguide_entry', kwargs={'vendor': 'Test', 'name': 'widget1', 'version': '1.2'})
 
         with patch('wirecloud.catalogue.views.download_local_file', side_effect=Exception):
-            response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+            response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
             self.assertEqual(response.status_code, 200)
             response_text = response.content.decode('utf-8').lower()
             self.assertIn('http://example.org/doc', response_text)
@@ -548,7 +548,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
 
         url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '2.0'}) + '?from=1.0'
 
-        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('1.0', response.content.decode('utf-8'))
 
@@ -556,7 +556,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
 
         url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'nonexistent', 'version': '1.0'})
 
-        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 404)
 
     @uses_extra_resources(('Wirecloud_Test_Selenium_1.0.wgt',), shared=True, public=True)
@@ -565,7 +565,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         # Test_Selenium doesn't provide a changelog
         url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test_Selenium', 'version': '1.0'})
 
-        response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 404)
 
     @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, public=True)
@@ -574,7 +574,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         url = reverse('wirecloud_catalogue.resource_changelog_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
 
         with patch('wirecloud.catalogue.views.download_local_file', side_effect=Exception):
-            response = self.client.get(url, HTTP_ACCEPT='application/xml+xhtml')
+            response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
             self.assertEqual(response.status_code, 200)
             response_text = response.content.decode('utf-8').lower()
             self.assertIn('error', response_text)
