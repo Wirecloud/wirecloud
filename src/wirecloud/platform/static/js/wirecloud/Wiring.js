@@ -160,7 +160,7 @@
             },
 
             load: function load(status) {
-                var id, old_operators, operator;
+                var connection, i, id, old_operators, operator;
 
                 wiring_onunload.call(this);
                 old_operators = this.status.operators;
@@ -182,7 +182,20 @@
                 }
 
                 for (id in old_operators) {
-                    old_operators[id].remove();
+                    operator = old_operators[id];
+                    if (operator.volatile) {
+                        status.operators[id] = operator;
+                    } else {
+                        operator.remove();
+                    }
+                }
+
+                for (i = this.status.connections.length - 1; i >= 0; i--) {
+                    connection = this.status.connections[i];
+
+                    if (connection.volatile) {
+                        status.connections.push(connection);
+                    }
                 }
 
                 this.status = status;
