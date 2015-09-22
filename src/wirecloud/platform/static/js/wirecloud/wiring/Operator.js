@@ -49,7 +49,7 @@
         constructor: function Operator(id, meta, wiringEngine, businessInfo) {
             var preferenceList = [], preferences = {};
 
-            this.superClass(['load', 'unload']);
+            this.superClass(['load', 'remove', 'unload']);
 
             businessInfo = utils.updateObject(ns.Operator.JSON_TEMPLATE, businessInfo);
 
@@ -220,7 +220,7 @@
                     this.wrapperElement.parentNode.removeChild(this.wrapperElement);
                 }
 
-                return this;
+                return this.trigger('remove');
             },
 
             /**
