@@ -955,7 +955,7 @@ MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
     ...
 
     if (data.level > 4 || data.level < 0) {
-        throw new MashupPlatform.wiring.EndpointTypeError('level out of range');
+        throw new MashupPlatform.wiring.EndpointValueError('level out of range');
     }
 
     ...
