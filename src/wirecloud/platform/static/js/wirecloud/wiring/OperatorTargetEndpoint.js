@@ -44,6 +44,10 @@
     };
     OperatorTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
+    OperatorTargetEndpoint.prototype.toString = function toString() {
+        return this.id;
+    };
+
     OperatorTargetEndpoint.prototype.toJSON = function toJSON() {
         return {
             type: this.component.meta.type,

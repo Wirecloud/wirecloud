@@ -44,6 +44,10 @@
     };
     WidgetSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
+    WidgetSourceEndpoint.prototype.toString = function toString() {
+        return this.id;
+    };
+
     WidgetSourceEndpoint.prototype.toJSON = function toJSON() {
         return {
             type: this.component.meta.type,
