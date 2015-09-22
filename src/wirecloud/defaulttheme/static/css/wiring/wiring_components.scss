@@ -1,351 +1,664 @@
-/*
- *  This file is part of Wirecloud.
- *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
- *
- *  Wirecloud is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  License, or (at your option) any later version.
- *
- *  Wirecloud is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 @import 'wiring/defaults';
 @import 'compass/css3/user-interface';
 @import "utils";
 
+
 // ============================================================================
-// WIRING LEFTSIDE-BAR - COMPONENT
+// WIRING SIDEBAR - COMPONENT
 // ============================================================================
 
-.wiring-sidebar .panel-components .component {
-    position: relative;
-    cursor: move;
-    margin: 0px 0px 10px;
-    background-color: $panel-components-component-background-color;
-    border: $panel-components-component-border;
-    border-radius: $panel-components-component-border-radius;
-    box-sizing: border-box;
-    @include children-display((".status"), none);
+.wiring-sidebar .component-group {
+    margin: 0 0 10px;
 
-    .component-heading {
-        position: relative;
-        display: block;
-        padding: 10px;
-        box-sizing: border-box;
+    .component-meta {
+        margin: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
 
-        .component-title {
-            position: relative;
-            display: block;
-            color: $panel-components-component-font-color;
-            @include font($weight: "bold");
+        .panel-title {
+            width: 85%;
+        }
+
+        .component-version-list {
+            margin: 0 0 5px;
+
+            .component-version {
+                width: 80px;
+            }
+        }
+
+        .component-vendor {
+            font-weight: 700;
             @include font-truncate();
-            box-sizing: border-box;
+        }
+
+        .component-description {
+            max-height: 40px;
+            font-size: 12px;
+            color: rgb(100, 100, 100);
+            overflow: hidden;
+        }
+    }
+
+    .component {
+        border-radius: 0;
+        margin: 0;
+        @include user-select(none);
+
+        .panel-heading {
+            padding: 5px 8px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .panel-title {
+            width: 85%;
+        }
+
+        &:not(:last-child) .panel-heading {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .component-version {
+            font-size: 12px;
+            line-height: 14px;
+        }
+    }
+
+    .component {
+        margin-top: -1px;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    > :last-child {
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT
+// ============================================================================
+
+@mixin component-variant(
+    $component-variant-bg,
+    $component-variant-border-color
+) {
+
+    border-color: $component-variant-border-color;
+
+    .panel-heading {
+        background-color: $component-variant-bg;
+
+        .panel-title,
+        .panel-subtitle,
+        .panel-options .se-btn {
+            color: $component-text-color;
+            text-shadow: $component-text-shadow;
+        }
+    }
+
+}
+
+.component-operator {
+    @include component-variant(
+        $component-operator-bg,
+        $component-operator-border-color
+    );
+}
+
+.component-widget {
+    @include component-variant(
+        $component-widget-bg,
+        $component-widget-border-color
+    );
+}
+
+.wiring-sidebar .component-operator:hover {
+    border-color: $component-operator-hover-border-color;
+
+    .panel-heading {
+        background-color: $component-operator-hover-bg;
+    }
+}
+
+.wiring-sidebar .component-widget:hover {
+    border-color: $component-widget-hover-border-color;
+
+    .panel-heading {
+        background-color: $component-widget-hover-bg;
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT-ITEM - DISABLED
+// ============================================================================
+
+.wiring-sidebar .component {
+
+    &.disabled,
+    &:hover.disabled,
+    &:focus.disabled {
+        cursor: default;
+        opacity: 1;
+        @include panel-variant(
+            $panel-default-border-color,
+            $panel-default-heading-bg,
+            $panel-default-heading-text-color,
+            $panel-default-heading-text-shadow,
+            $panel-default-btn-hover-text-color
+        );
+
+        .panel-heading {
+
+            .panel-subtitle {
+                color: $panel-default-heading-text-color;
+                text-shadow: $panel-default-heading-text-shadow;
+            }
+
+            .panel-options .se-btn {
+
+                &:hover,
+                &:focus {
+                    text-shadow: $panel-btn-hover-text-shadow;
+                }
+            }
+
+            .badge {
+                position: absolute;
+                bottom: 5px;
+                right: 10px;
+                padding: 0;
+                line-height: 14px;
+                font-size: 10px;
+                border-radius: 3px;
+                padding: 0px 5px;
+                margin: 0;
+                text-shadow: initial;
+            }
         }
     }
 }
 
-.wiring-sidebar .panel-components .section {
-
-    .component:last-child {
-        margin-bottom: 0px;
-    }
-}
-
 // ============================================================================
-// WIRING LEFTSIDE-BAR - MOUSEDOVER-COMPONENT
+// WIRING VIEW - COMPONENT DRAGGABLE
 // ============================================================================
 
-.wiring-sidebar .panel-components .component:hover {
-    background-color: $panel-components-mousedover-component-background-color;
-    border-color: $panel-components-mousedover-component-border-color;
-}
-
-// ============================================================================
-// WIRING LEFTSIDE-BAR - DISABLED-COMPONENT
-// ============================================================================
-
-.wiring-sidebar .panel-components .component.disabled {
-    pointer-events: none;
-    cursor: not-allowed;
-    background-color: $panel-components-disabled-component-background-color;
-    border-color: $panel-components-disabled-component-border-color;
-    box-shadow: $panel-components-disabled-component-box-shadow;
-}
-
-// ============================================================================
-// WIRING VIEW - CLONED-COMPONENT
-// ============================================================================
-
-.wiring-view .component.cloned {
-    @include children-display((".status"), none);
-
-    .component-heading {
-        color: $component-heading-font-color;
-        text-align: center;
-        text-shadow: $component-heading-font-shadow;
-        @include font($weight: bold);
-        @include user-select(none);
-    }
-}
-
-// ============================================================================
-// WIRING DIAGRAM - COMPONENT
-// ============================================================================
-
-.wiring-view .component.cloned,
-.wiring-diagram .component {
+.component-draggable {
     position: absolute;
-    z-index: $component-zindex;
+    margin: 0;
     background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: $component-border-radius;
-    box-shadow: $component-box-shadow;
-    box-sizing: border-box;
+    @include user-select(none);
+    cursor: pointer;
+    z-index: $component-z-index;
+
+    .panel-heading {
+        display: table;
+        width: 100%;
+        white-space: nowrap;
+
+        .panel-title,
+        .panel-options {
+            display: table-cell;
+            float: inherit;
+            vertical-align: middle;
+        }
+
+        .panel-title span {
+            display: block;
+            @include font-truncate();
+            max-width: $component-title-max-width;
+        }
+
+        .panel-options {
+            padding-left: $component-options-padding-horizontal;
+            float: right;
+        }
+    }
+
+    .panel-body {
+        display: table;
+        width: 100%;
+        padding: 0;
+        background-color: $component-body-bg;
+    }
+
+    &.dragging {
+        cursor: move;
+    }
 }
 
 // ============================================================================
-// WIRING DIAGRAM - COMPONENT HEADING
+// WIRING VIEW - ENDPOINTS
 // ============================================================================
 
-.wiring-view .component.cloned .component-heading,
-.wiring-diagram .component-heading {
+@mixin endpoints-variant(
+    $endpoint-float,
+    $endpoint-border-radius,
+    $endpoint-anchor-bg
+) {
+
+    .endpoint {
+        float: $endpoint-float;
+        @include positioned-border-radius($endpoint-border-radius);
+
+        .endpoint-anchor {
+            #{$endpoint-float}: $endpoint-anchor-offsetwidth;
+            background-color: $endpoint-anchor-bg;
+            @include positioned-border-radius($endpoint-float);
+        }
+    }
+
+    .endpoint:hover,
+    .endpoint.active {
+
+        .endpoint-anchor {
+            border-left: solid 1px $endpoint-active-bg;
+        }
+    }
+
+}
+
+.endpoints {
     position: relative;
-    display: table;
-    cursor: move;
-    width: 100%;
-    padding: $component-heading-padding-vertical $component-heading-padding-horizontal;
-    border-radius: $component-heading-border-radius $component-heading-border-radius 0px 0px;
-    box-sizing: border-box;
-}
-
-.wiring-diagram .component-title {
     display: table-cell;
     vertical-align: middle;
-    color: $component-heading-font-color;
-    text-shadow: $component-heading-font-shadow;
+
+    .endpoint {
+        position: relative;
+        cursor: pointer;
+        clear: both;
+        margin: 0 0 $endpoint-margin-vertical;
+
+        .endpoint-title {
+            color: $endpoint-text-color;
+        }
+
+        .endpoint-anchor {
+            position: absolute;
+            top: 0;
+            padding: ($endpoint-text-height / 2) ($endpoint-anchor-width / 2);
+        }
+
+        &:first-child {
+            margin-top: $endpoint-margin-vertical;
+        }
+    }
+
+    &.source-endpoints {
+        @include endpoints-variant(
+            right,
+            left,
+            $source-endpoint-anchor-bg
+        );
+    }
+
+    &.target-endpoints {
+        @include endpoints-variant(
+            left,
+            right,
+            $target-endpoint-anchor-bg
+        );
+    }
+
+    .endpoint:hover,
+    .endpoint.active {
+        background-color: $endpoint-active-bg;
+
+        .endpoint-title {
+            color: $endpoint-active-text-color;
+        }
+
+        .endpoint-anchor {
+            background-color: $endpoint-active-bg;
+        }
+    }
+
+    .endpoint.missing .endpoint-anchor {
+        background-color: $endpoint-missing-bg;
+    }
+}
+
+.endpoint {
+    max-width: $endpoint-max-width;
     @include user-select(none);
 
-    .component-name {
+    .endpoint-title {
+        position: relative;
         display: block;
-        max-width: $component-heading-font-max-width;
-        font-size: $component-heading-font-size;
-        font-weight: bold;
-        @include font-truncate();
-    }
-
-    .component-subtitle {
-        display: block;
-        max-width: $component-heading-font-max-width;
-        font-size: $component-heading-subtitle-font-size;
+        padding: 0 $endpoint-padding-horizontal;
+        font-size: $endpoint-text-size;
+        line-height: $endpoint-text-height;
         @include font-truncate();
     }
 }
 
 // ============================================================================
-// WIRING DIAGRAM - COMPONENT BODY
+// WIRING VIEW - COMPONENT - BACKGROUND
 // ============================================================================
 
-.wiring-diagram .component-body {
-    position: relative;
-    display: table;
-    cursor: move;
-    width: 100%;
-    background-color: $component-background-color;
-    border-radius: 0px 0px 3px 3px;
+.component-draggable.background {
+    z-index: $component-background-z-index;
+
+    .panel-heading .panel-title,
+    .panel-heading .panel-options .se-btn {
+        color: $component-background-text-color;
+    }
+
+    .panel-body {
+        background-color: $component-background-body-bg;
+    }
+
+    &.component-operator {
+        border-color: $component-background-operator-border-color;
+
+        .panel-heading {
+            background-color: $component-background-operator-bg;
+        }
+    }
+
+    &.component-widget {
+        border-color: $component-background-widget-border-color;
+
+        .panel-heading {
+            background-color: $component-background-widget-bg;
+        }
+    }
+
+    .endpoints {
+
+        .endpoint .endpoint-title {
+            color: $endpoint-background-text-color;
+        }
+
+        &.source-endpoints .endpoint-anchor {
+            background-color: $source-endpoint-background-anchor-bg;
+        }
+
+        &.target-endpoints .endpoint-anchor {
+            background-color: $target-endpoint-background-anchor-bg;
+        }
+
+        .endpoint:hover,
+        .endpoint.active {
+            background-color: $endpoint-active-bg;
+
+            .endpoint-title {
+                color: $endpoint-active-text-color;
+            }
+
+            .endpoint-anchor {
+                background-color: $endpoint-active-bg;
+            }
+        }
+
+        .endpoint.missing .endpoint-anchor {
+            background-color: $endpoint-missing-background-bg;
+        }
+    }
 }
 
 // ============================================================================
-// WIRING DIAGRAM - COMPONENT OPTIONS
+// WIRING VIEW - COMPONENT - OPTIONS
 // ============================================================================
 
-.wiring-diagram .component-options {
-    display: table-cell;
-    float: right;
-    padding-left: $component-options-padding-horizontal;
-    white-space: nowrap;
+.component-operator .panel-heading {
 
-    .se-btn {
-        margin: 0px 0px 0px $component-options-margin-horizontal;
-        @include font($weight: bold);
-        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
-        opacity: 1;
+    .panel-options .se-btn:hover,
+    .panel-options .se-btn:focus {
+        color: $component-operator-text-color;
+        text-shadow: $component-text-hover-shadow;
+    }
+}
+
+.component-widget .panel-heading {
+
+    .panel-options .se-btn:hover,
+    .panel-options .se-btn:focus {
+        color: $component-widget-text-color;
+        text-shadow: $component-text-hover-shadow;
+    }
+}
+
+// ============================================================================
+// WIRING VIEW - COMPONENT - ACTIVE
+// ============================================================================
+
+.component-draggable.active,
+.component-draggable.background.active {
+    border-color: $component-active-border-color;
+    z-index: $component-active-z-index;
+
+    .panel-heading {
+        background-color: $component-active-bg;
+
+        .panel-title,
+        .panel-options .se-btn {
+            color: $component-active-text-color;
+            text-shadow: $component-active-text-shadow;
+        }
+
+        .panel-options .se-btn:hover,
+        .panel-options .se-btn:focus {
+            color: $component-active-text-hover-color;
+            text-shadow: $component-text-hover-shadow;
+        }
+    }
+
+    .panel-body {
+        background-color: $component-body-bg;
+    }
+
+    .endpoints {
+
+        .endpoint .endpoint-title {
+            color: $endpoint-text-color;
+        }
+
+        &.source-endpoints {
+
+            .endpoint .endpoint-anchor {
+                background-color: $source-endpoint-anchor-bg;
+            }
+
+            .endpoint:hover,
+            .endpoint.active {
+
+                .endpoint-anchor {
+                    border-left: solid 1px $component-active-text-hover-color;
+                }
+            }
+        }
+
+        &.target-endpoints {
+
+            .endpoint .endpoint-anchor {
+                background-color: $target-endpoint-anchor-bg;
+            }
+
+            .endpoint:hover,
+            .endpoint.active {
+
+                .endpoint-anchor {
+                    border-right: solid 1px $component-active-text-hover-color;
+                }
+            }
+        }
+
+        .endpoint:hover,
+        .endpoint.active {
+            background-color: $component-active-text-hover-color;
+
+            .endpoint-title {
+                color: $endpoint-active-text-color;
+            }
+
+            .endpoint-anchor {
+                background-color: $component-active-text-hover-color;
+            }
+        }
+
+        .endpoint.missing .endpoint-anchor {
+            background-color: $endpoint-missing-bg;
+        }
+    }
+}
+
+.component-draggable .endpoints,
+.component-draggable.active .endpoints {
+
+    .endpoint.missing {
 
         &:hover,
-        &:focus:active {
-            text-shadow: $component-mousedover-options-font-shadow;
-            box-shadow: none;
+        &.active {
+            background-color: $endpoint-missing-active-bg;
+
+            .endpoint-anchor {
+                background-color: $endpoint-missing-active-bg;
+            }
         }
     }
 
-    .se-btn:first-child {
-        margin-left: 0px;
+    &.source-endpoints .endpoint.missing {
+
+        &:hover,
+        &.active {
+
+            .endpoint-anchor {
+                border-left: solid 1px $endpoint-missing-active-bg;
+            }
+        }
     }
 
-    .se-btn:last-child {
-        margin-right: 0px;
-    }
+    &.target-endpoints .endpoint.missing {
 
-    .se-btn.hidden {
-        display: none !important;
-    }
+        &:hover,
+        &.active {
 
-    .se-btn.invisible {
-        visibility: hidden !important;
-    }
-}
-
-.wiring-diagram .component-options.hidden {
-    display: none !important;
-}
-
-// ============================================================================
-// WIRING DIAGRAM - COMPONENT OPERATOR
-// ============================================================================
-
-.wiring-view .component-operator.cloned,
-.wiring-diagram .component-operator {
-    border-color: $component-operator-border-color;
-
-    .component-heading {
-        background-color: $component-operator-background-color;
-    }
-
-    .component-options {
-
-        .se-btn {
-            color: $component-operator-options-font-color;
-
-            &:hover {
-                color: $component-mousedover-options-font-color;
+            .endpoint-anchor {
+                border-left: solid 1px $endpoint-missing-active-bg;
             }
         }
     }
 }
 
 // ============================================================================
-// WIRING DIAGRAM - COMPONENT WIDGET
+// WIRING VIEW - COMPONENT - COLLAPSED
 // ============================================================================
 
-.wiring-view .component-widget.cloned,
-.wiring-diagram .component-widget {
-    border-color: $component-widget-border-color;
+.wiring-view .component-draggable.collapsed {
 
-    .component-heading {
-        background-color: $component-widget-background-color;
-    }
+    .endpoints {
+        position: absolute;
+        top: 10px;
 
-    .component-options{
+        > .endpoint {
+            position: absolute;
+            cursor: default;
+            margin: 0;
 
-        .se-btn {
-            color: $component-widget-options-font-color;
+            .endpoint-title {
+                display: none;
+            }
 
-            &:hover {
-                color: $component-mousedover-options-font-color;
+            .endpoint-anchor {
+                pointer-events: none;
             }
         }
+    }
+
+    .target-endpoints {
+        left: 0;
+    }
+
+    .source-endpoints {
+        right: 0;
     }
 }
 
 // ============================================================================
-// WIRING DIAGRAM - COMPONENT ON BACKGROUND
+// WIRING VIEW - COMPONENT - SORTABLE ENDPOINTS
 // ============================================================================
 
-.wiring-diagram .component-operator.on-background {
-    z-index: $component-onbackground-zindex;
-    border-color: $component-operator-onbackground-border-color;
-    box-shadow: $component-onbackground-box-shadow;
+.component-draggable .endpoints.sortable {
 
-    .component-heading {
-        background-color: $component-operator-onbackground-heading-background-color;
+    .endpoint {
+        box-shadow: $endpoint-sortable-box-shadow;
     }
 
-    .component-title {
-        color: $component-onbackground-font-color;
-        text-shadow: $component-onbackground-font-shadow;
-    }
+    .endpoint.dragging {
+        background-color: $endpoint-sortable-active-bg;
+        box-shadow: $endpoint-sortable-active-box-shadow;
 
-    .component-options {
-
-        .se-btn {
-            color: $component-onbackground-options-font-color;
-
-            &:hover {
-                color: $component-mousedover-options-font-color;
-            }
+        .endpoint-title {
+            color: $endpoint-sortable-active-text-color;
         }
-    }
-
-    .component-body {
-        background-color: $component-onbackground-body-background-color;
     }
 }
 
-.wiring-diagram .component-widget.on-background {
-    z-index: $component-onbackground-zindex;
-    border-color: $component-widget-onbackground-border-color;
-    box-shadow: $component-onbackground-box-shadow;
+.endpoint.cloned {
+    position: absolute;
+    background-color: $component-active-text-hover-color;
+    box-shadow: $endpoint-sortable-box-shadow;
+    cursor: move;
+    z-index: $endpoint-cloned-z-index;
 
-    .component-heading {
-        background-color: $component-widget-onbackground-heading-background-color;
+    .endpoint-title {
+        color: $endpoint-active-text-color;
     }
 
-    .component-title {
-        color: $component-onbackground-font-color;
-        text-shadow: $component-onbackground-font-shadow;
+    .endpoint-anchor {
+        display: none;
     }
 
-    .component-options{
-
-        .se-btn {
-            color: $component-onbackground-options-font-color;
-
-            &:hover {
-                color: $component-mousedover-options-font-color;
-            }
-        }
+    &.source-endpoint {
+        @include positioned-border-radius(left);
     }
 
-    .component-body {
-        background-color: $component-onbackground-body-background-color;
+    &.target-endpoint {
+        @include positioned-border-radius(right);
     }
 }
 
 // ============================================================================
-// WIRING DIAGRAM - HIGHLIGHTED-COMPONENT
+// WIRING VIEW - COMPONENT - NOTICES
 // ============================================================================
 
-.wiring-diagram .component.highlighted {
-    z-index: $highlighted-component-zindex;
-    border-color: $highlighted-component-border-color;
-    box-shadow: $highlighted-component-box-shadow;
+.component-draggable .component-notice {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    left: 0;
+    text-align: center;
 
-    .component-heading {
-        background-color: $highlighted-component-heading-background-color;
-
-        .component-title {
-            color: $highlighted-component-heading-font-color;
-        }
+    .label {
+        font-size: 12px;
+        line-height: 20px;
+        padding: 0px 8px;
+        margin: 0;
     }
+}
 
-    .component-options {
+.component-draggable.background .component-notice .label {
+    background-color: transparentize(lighten($brand-danger, 15%), 0.3);
+}
 
-        .se-btn {
-            color: $highlighted-component-heading-font-color;
+.component-draggable.active,
+.component-draggable.active.background {
 
-            &:hover {
-                color: $highlighted-component-mousedover-options-font-color;
-            }
-        }
+    .component-notice .label {
+        background-color: $brand-danger;
     }
+}
 
-    .component-body {
-        background-color: $component-background-color;
+.component-draggable,
+.component-draggable.background {
+
+    .component-notice .label:hover {
+        background-color: darken($brand-danger, 10%);
     }
 }

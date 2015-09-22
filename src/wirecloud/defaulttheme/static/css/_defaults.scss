@@ -182,9 +182,9 @@ $panel-box-shadow-inset: inset $panel-box-shadow !default;
 
 $panel-heading-text-shadow: 0 1px 0 rgba(255, 255, 255, 1.0) !default;
 
-$panel-btn-width:             18px !default;
+$panel-btn-width:             16px !default;
 $panel-btn-margin-horizontal: 3px !default;
-$panel-btn-hover-text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3) !default;
+$panel-btn-hover-text-shadow: 0 1px 0px rgba(0, 0, 0, 0.75) !default;
 
 // ======================================================================================
 // COMPONENT - PANEL - CONTEXTUAL CLASSES
@@ -226,6 +226,20 @@ $panel-danger-heading-bg:           darken($state-danger-bg, 5%) !default;
 $panel-danger-heading-text-color:   lighten($state-danger-text, 5%) !default;
 $panel-danger-heading-text-shadow:  $panel-heading-text-shadow !default;
 $panel-danger-btn-hover-text-color: darken($state-danger-text, 5%) !default;
+
+// ======================================================================================
+// COMPONENT - THUMBNAIL
+// ======================================================================================
+
+$thumbnail-height: 140px !default;
+$thumbnail-margin-vertical: 10px !default;
+$thumbnail-bg: rgb(255, 255, 255) !default;
+
+$thumbnail-rounded-padding: 3px !default;
+$thumbnail-rounded-border-color: rgb(210, 210, 210) !default;
+$thumbnail-rounded-border-radius: 4px !default;
+
+$thumbnail-sm-height: 80px !default;
 
 /* Popovers */
 

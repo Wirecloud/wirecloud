@@ -19,34 +19,39 @@
  *
  */
 
-/*global gettext, Wirecloud*/
+/* global gettext, StyledElements, Wirecloud */
 
-(function () {
+(function (ns, se, utils) {
 
     "use strict";
 
     /**
+     * Create a new instance of class ConnectionLogManager.
+     * @extends {LogManager}
      *
+     * @constructor
+     * @param {Connection} connection
+     *      [TODO: description]
+     * @param {Wiring} wiringEngine
+     *      [TODO: description]
      */
-    var ConnectionLogManager = function ConnectionLogManager(wiring) {
-        Wirecloud.LogManager.call(this, wiring.logManager);
-        Object.defineProperty(this, 'wiring', {value: wiring});
-    };
-    ConnectionLogManager.prototype = new Wirecloud.LogManager();
+    ns.ConnectionLogManager = utils.defineClass({
 
-    ConnectionLogManager.prototype.buildExtraInfo = function buildExtraInfo() {
-        var extraInfo = document.createElement('div');
+        constructor: function ConnectionLogManager(connection, wiringEngine) {
+            this.superClass(wiringEngine.logManager);
+            this.connection = connection;
+        },
 
-        return extraInfo;
-    };
+        inherit: Wirecloud.LogManager,
 
-    ConnectionLogManager.prototype.buildTitle = function buildTitle() {
-        return gettext('Connection logs');
-    };
+        members: {
 
-    ConnectionLogManager.prototype.close = function close() {
-    };
+            buildTitle: function buildTitle() {
+                return utils.gettext("Connection's logs");
+            }
 
-    Wirecloud.wiring.ConnectionLogManager = ConnectionLogManager;
+        }
 
-})();
+    });
+
+})(Wirecloud.wiring, StyledElements, StyledElements.Utils);

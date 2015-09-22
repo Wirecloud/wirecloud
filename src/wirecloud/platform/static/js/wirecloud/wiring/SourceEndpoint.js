@@ -41,16 +41,19 @@
             this.outputList.push(out);
             this.connections.push(connection);
             out._addInput(this);
+            connection._connect();
         }
     };
 
     SourceEndpoint.prototype.disconnect = function disconnect(out) {
-        var index = this.outputList.indexOf(out);
+        var connection, index = this.outputList.indexOf(out);
 
         if (index !== -1) {
             this.outputList.splice(index, 1);
+            connection = this.connections[index];
             this.connections.splice(index, 1);
             out._removeInput(this);
+            connection._disconnect();
         }
     };
 

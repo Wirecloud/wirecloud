@@ -58,3 +58,9 @@
     height:  $input-height-large;
     padding: $padding-vertical-large $padding-horizontal-large;
 }
+
+.btn-group-sm .se-btn {
+    font-size: 12px;
+    line-height: 16px;
+    padding: 1px 10px;
+}

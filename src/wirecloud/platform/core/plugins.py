@@ -56,23 +56,25 @@ CATALOGUE_CSS = (
 WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor.js',
     'js/wirecloud/ui/WiringEditor/Behaviour.js',
+    'js/wirecloud/ui/WiringEditor/BehaviourPrefs.js',
+    'js/wirecloud/ui/WiringEditor/BehaviourLogManager.js',
     'js/wirecloud/ui/WiringEditor/BehaviourEngine.js',
-    'js/wirecloud/ui/WiringEditor/ComponentManager.js',
-    'js/wirecloud/ui/WiringEditor/ComponentPreferences.js',
-    'js/wirecloud/ui/WiringEditor/Anchor.js',
-    'js/wirecloud/ui/WiringEditor/Arrow.js',
-    'js/wirecloud/ui/WiringEditor/ArrowCreator.js',
-    'js/wirecloud/ui/WiringEditor/Canvas.js',
-    'js/wirecloud/ui/WiringEditor/GenericInterface.js',
-    'js/wirecloud/ui/WiringEditor/WidgetInterface.js',
-    'js/wirecloud/ui/WiringEditor/OperatorInterface.js',
-    'js/wirecloud/ui/WiringEditor/SourceAnchor.js',
-    'js/wirecloud/ui/WiringEditor/TargetAnchor.js',
-    'js/wirecloud/ui/WiringEditor/MiniInterfaceSettingsMenuItems.js',
-    'js/wirecloud/ui/WiringPreview.js',
-    'js/wirecloud/ui/ColorSmartBox.js',
-    'js/wirecloud/ui/BasicRecommendations.js',
-    'js/wirecloud/ui/RecommendationManager.js',
+    'js/wirecloud/ui/WiringEditor/Endpoint.js',
+    'js/wirecloud/ui/WiringEditor/SourceEndpoint.js',
+    'js/wirecloud/ui/WiringEditor/TargetEndpoint.js',
+    'js/wirecloud/ui/WiringEditor/EndpointGroup.js',
+    'js/wirecloud/ui/WiringEditor/Component.js',
+    'js/wirecloud/ui/WiringEditor/ComponentPrefs.js',
+    'js/wirecloud/ui/WiringEditor/ComponentMeta.js',
+    'js/wirecloud/ui/WiringEditor/ComponentGroup.js',
+    'js/wirecloud/ui/WiringEditor/ComponentShowcase.js',
+    'js/wirecloud/ui/WiringEditor/ComponentDraggable.js',
+    'js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js',
+    'js/wirecloud/ui/WiringEditor/Connection.js',
+    'js/wirecloud/ui/WiringEditor/ConnectionPrefs.js',
+    'js/wirecloud/ui/WiringEditor/ConnectionHandle.js',
+    'js/wirecloud/ui/WiringEditor/ConnectionEngine.js',
+    'js/wirecloud/ui/WiringEditor/KeywordSuggestion.js',
 )
 
 TUTORIAL_FILES = (
@@ -104,6 +106,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/GUIBuilder.js',
     'js/StyledElements/Tooltip.js',
     'js/StyledElements/Button.js',
+    'js/StyledElements/SVGPlainButton.js',
     'js/StyledElements/FileButton.js',
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',
@@ -162,10 +165,7 @@ BASE_CSS = (
 
 WIRING_EDITOR_CSS = (
     'css/wiring/wiring_layout.scss',
-    'css/wiring/wiring_sidebar.scss',
-    'css/wiring/wiring_bottombar.scss',
     'css/wiring/wiring_components.scss',
-    'css/wiring/wiring_endpoints.scss',
     'css/wiring/wiring_connections.scss',
     'css/wiring/wiring_behaviours.scss',
     'css/wiring/wiringPreview.css',
@@ -206,6 +206,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_tooltip.css',
     'css/styledelements/styled_expander.scss',
     'css/styledelements/styled_offcanvas_layout.scss',
+    'css/styledelements/styled_thumbnail.scss',
 )
 
 
@@ -420,6 +421,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/WorkspaceCatalogue.js',
             'js/wirecloud/wiring/LogManager.js',
+            'js/wirecloud/wiring/Connection.js',
             'js/wirecloud/wiring/ConnectionLogManager.js',
             'js/wirecloud/wiring/Endpoint.js',
             'js/wirecloud/wiring/EndpointDoesNotExistError.js',
@@ -427,7 +429,9 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/EndpointValueError.js',
             'js/wirecloud/wiring/SourceEndpoint.js',
             'js/wirecloud/wiring/TargetEndpoint.js',
-            'js/wirecloud/wiring/GhostEndpoint.js',
+            'js/wirecloud/wiring/MissingEndpoint.js',
+            'js/wirecloud/wiring/MissingComponent.js',
+            'js/wirecloud/wiring/MissingComponentLogManager.js',
             'js/wirecloud/wiring/OperatorFactory.js',
             'js/wirecloud/wiring/OperatorLogManager.js',
             'js/wirecloud/wiring/Operator.js',
@@ -436,6 +440,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/OperatorTargetEndpoint.js',
             'js/wirecloud/wiring/WidgetSourceEndpoint.js',
             'js/wirecloud/wiring/WidgetTargetEndpoint.js',
+            'js/wirecloud/wiring/KeywordSuggestion.js',
         )
 
         if view in ('classic', 'embedded'):

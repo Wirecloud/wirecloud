@@ -42,7 +42,9 @@
 
         Object.defineProperty(this, 'widget', {value: widget});
         Object.defineProperty(this, 'meta', {value: widget});
+        Object.defineProperty(this, 'missing', {value: false});
         Object.defineProperty(this, 'tab', {value: tab});
+        Object.defineProperty(this, 'volatile', {value: options.volatile ? true : false});
         Object.defineProperty(this, 'workspace', {value: tab.workspace});
         this.id = options.id;
         this.loaded = false;
@@ -155,6 +157,10 @@
         } else {
             return false;
         }
+    };
+
+    WidgetBase.prototype.is = function is(component) {
+        return this.meta.type == component.meta.type && this.id == component.id;
     };
 
     WidgetBase.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
@@ -272,6 +278,28 @@
         for (key in connectables) {
             connectables[key].fullDisconnect();
         }
+    };
+
+    WidgetBase.prototype.hasSettings = function hasSettings() {
+        return this.preferenceList.length > 0;
+    };
+
+    WidgetBase.prototype.showLogs = function showLogs() {
+        var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
+
+        modal.htmlElement.classList.add("component-logmanager");
+        modal.show();
+
+        return this;
+    };
+
+    WidgetBase.prototype.showSettings = function showSettings() {
+        var modal = new Wirecloud.Widget.PreferencesWindowMenu();
+
+        modal.htmlElement.classList.add("component-update-form");
+        modal.show(this);
+
+        return this;
     };
 
     Wirecloud.WidgetBase = WidgetBase;

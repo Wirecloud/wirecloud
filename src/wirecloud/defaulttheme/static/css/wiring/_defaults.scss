@@ -1,181 +1,135 @@
-/*
- *  This file is part of Wirecloud.
- *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
- *
- *  Wirecloud is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  License, or (at your option) any later version.
- *
- *  Wirecloud is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 @import 'defaults';
 
-
-// ============================================================================
-// WIRING VIEW - GLOBALS
-// ============================================================================
-
-$panel-components-heading-height:   48px;
-
-$panel-components-component-margin-vertical:    8px;
-$panel-components-component-font-color:         #555;
-$panel-components-component-background-color:   #fff;
-$panel-components-component-border:             1px solid #ddd;
-$panel-components-component-border-radius:      4px;
-
-$panel-components-mousedover-component-background-color:    #f5f5f5;
-$panel-components-mousedover-component-border-color:        #ccc;
-
-$panel-components-disabled-component-background-color:  #e6e6e6;
-$panel-components-disabled-component-border-color:      #999;
-$panel-components-disabled-component-box-shadow:        inset 0 1px 4px rgba(0, 0, 0, 0.25);
-
-$panel-legend-max-width: 250px;
 
 // ============================================================================
 // WIRING VIEW - COMPONENTS
 // ============================================================================
 
-$component-opacity:             0.9;
-$component-background-color:    rgba(255, 255, 255, $component-opacity);
-$component-border-radius:       4px;
-$component-box-shadow:          0 1px 4px rgba(0, 0, 0, .25);
-$component-zindex:              10;
+$component-title-max-width: 180px !default;
+$component-body-bg:         rgba(255, 255, 255, 0.9) !default;
+$component-z-index:         10 !default;
 
-$component-heading-padding-vertical:    7px;
-$component-heading-padding-horizontal:  8px;
-$component-heading-font-max-width:      180px;
-$component-heading-font-size:           14px;
-$component-heading-font-color:          #fff;
-$component-heading-font-shadow:         0 -1px 0 rgba(0, 0, 0, .15);
-$component-heading-border-radius:       3px;
+$component-options-padding-horizontal: 10px !default;
 
-$component-heading-subtitle-font-size:  12px;
+$component-text-color:        rgb(255, 255, 255) !default;
+$component-text-shadow:       0 -1px 0 rgba(0, 0, 0, 0.2) !default;
+$component-text-hover-shadow: 0 1px 0 rgba(0, 0, 0, 0.75) !default;
 
-$component-options-padding-horizontal:  5px;
-$component-options-margin-horizontal:   5px;
+$component-operator-bg:           rgba(70, 170, 90, 0.9) !default;
+$component-operator-border-color: darken($component-operator-bg, 15%) !default;
+$component-operator-text-color:   darken($component-operator-bg, 25%) !default;
 
-$component-mousedover-options-font-color:   #fff;
-$component-mousedover-options-font-shadow:  0 1px 0 rgba(0, 0, 0, .25);
+$component-operator-hover-bg:           darken($component-operator-bg, 5%) !default;
+$component-operator-hover-border-color: darken($component-operator-border-color, 10%) !default;
 
-$component-operator-border-color:       #398439;
-$component-operator-background-color:   rgba(67, 172, 106, 0.9);
-$component-operator-options-font-color: #dff0d8;
+$component-widget-bg:           rgba(240, 170, 70, 0.9) !default;
+$component-widget-border-color: darken($component-widget-bg, 15%) !default;
+$component-widget-text-color:   darken($component-widget-bg, 25%) !default;
 
-$component-widget-background-color:     rgba(240, 173, 78, 0.9);
-$component-widget-border-color:         #e38d13;
-$component-widget-options-font-color:   #fcf8e3;
+$component-widget-hover-bg:           darken($component-widget-bg, 5%) !default;
+$component-widget-hover-border-color: darken($component-widget-border-color, 10%) !default;
 
-$highlighted-component-border-color:    #66afe9;
-$highlighted-component-box-shadow:      0 0 8px rgba(102, 175, 233, .6);
-$highlighted-component-zindex:          15;
+$component-background-text-color: transparent !default;
+$component-background-body-bg:    transparent !default;
+$component-background-z-index:    ($component-z-index / 2) !default;
 
-$highlighted-component-heading-background-color:    #d9edf7;
-$highlighted-component-heading-font-color:          #31708f;
+$component-background-operator-bg:           transparentize(lighten($component-operator-bg, 25%), 0.5) !default;
+$component-background-operator-border-color: transparentize(lighten($component-operator-border-color, 25%), 0.5) !default;
 
-$highlighted-component-mousedover-options-font-color:   #204d74;
+$component-background-widget-bg:           transparentize(lighten($component-widget-bg, 25%), 0.5) !default;
+$component-background-widget-border-color: transparentize(lighten($component-widget-border-color, 25%), 0.5) !default;
 
-$component-onbackground-font-color: rgb(255, 255, 255);
-$component-onbackground-font-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1);
-$component-onbackground-options-font-color: rgba(255, 255, 255, 0.9);
-$component-onbackground-body-background-color: rgba(255, 255, 255, 0.4);
-$component-onbackground-box-shadow: 0 0px 3px rgba(0, 0, 0, 0.1);
-$component-onbackground-zindex: 10;
+$component-active-bg:           rgb(180, 230, 250) !default;
+$component-active-border-color: darken($component-active-bg, 20%) !default;
+$component-active-z-index:      ($component-z-index / 2) * 3 !default;
 
-$component-operator-onbackground-border-color: rgba(57, 132, 57, 0.3);
-$component-operator-onbackground-heading-background-color: rgba(67, 172, 106, 0.3);
-
-$component-widget-onbackground-border-color: rgba(227, 141, 19, 0.3);
-$component-widget-onbackground-heading-background-color: rgba(240, 173, 78, 0.3);
+$component-active-text-color:       rgb(050, 150, 200) !default;
+$component-active-text-shadow:      0 1px 0 rgb(255, 255, 255) !default;
+$component-active-text-hover-color: darken($component-active-text-color, 10%) !default;
 
 // ============================================================================
 // WIRING VIEW - ENDPOINTS
 // ============================================================================
 
-$endpoints-padding-horizontal: 2px;
+$endpoint-margin-vertical:    5px !default;
+$endpoint-padding-horizontal: 5px !default;
+$endpoint-max-width:          120px !default;
 
-$endpoint-margin-vertical:      5px;
-$endpoint-padding-horizontal:   5px;
-$endpoint-displacement-width:   -11px;
-$endpoint-font-color:           #333;
-$endpoint-max-width:            120px;
+$endpoint-text-size:   12px !default;
+$endpoint-text-height: 20px !default;
+$endpoint-text-color:  rgb(70, 70, 70) !default;
 
-$endpoint-anchor-padding-horizontal: 5px;
-$endpoint-anchor-padding-vertical: 10px;
+$endpoint-anchor-width:       10px !default;
+$endpoint-anchor-offsetwidth: - ($endpoint-anchor-width + 1) !default;
 
-$source-endpoint-background-color:  #5bc0de;
-$target-endpoint-background-color:  #1aacda;
+$source-endpoint-anchor-bg:   rgba(100, 200, 230, 0.9) !default;
+$target-endpoint-anchor-bg:   rgba(030, 170, 220, 0.9) !default;
 
-$editable-endpoint-box-shadow:  0 1px 5px rgba(0, 0, 0, 0.25);
+$endpoint-active-bg:         rgb(090, 155, 235) !default;
+$endpoint-active-text-color: rgb(255, 255, 255) !default;
 
-$highlighted-endpoint-background-color: #5d9cec;
-$highlighted-endpoint-font-color:       #fff;
+$endpoint-background-text-color:       rgba(0, 0, 0, 0.3) !default;
+$source-endpoint-background-anchor-bg: transparentize(lighten($source-endpoint-anchor-bg, 20%), 0.3) !default;
+$target-endpoint-background-anchor-bg: transparentize(lighten($target-endpoint-anchor-bg, 20%), 0.3) !default;
 
-$misplaced-endpoint-background-color:   #a94442;
-$misplaced-endpoint-font-color:         #f2dede;
+$endpoint-missing-bg:            rgba($brand-danger, 0.9) !default;
+$endpoint-missing-active-bg:     darken($brand-danger, 10%) !default;
+$endpoint-missing-background-bg: transparentize(lighten($endpoint-missing-bg, 20%), 0.3) !default;
 
-$selected-endpoint-box-shadow:          inset 0px 0px 5px rgba(0, 0, 0, 0.35);
-$selected-endpoint-background-color:    #f9f9f9;
+$endpoint-sortable-box-shadow:        0 1px 5px rgba(0, 0, 0, 0.25) !default;
+$endpoint-sortable-active-box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.35) !default;
+$endpoint-sortable-active-bg:         #f9f9f9 !default;
 
-$cloned-endpoint-zindex: 15;
+$endpoint-sortable-active-text-color: transparentize($endpoint-text-color, 0.3) !default;
 
-$endpoint-onbackground-font-color: rgba(51, 51, 51, 0.3);
-$endpoint-onbackground-background-color: rgba(26, 172, 218, 0.3);
+$endpoint-cloned-z-index: ($component-z-index / 2) * 4 !default;
 
 // ============================================================================
 // WIRING VIEW - CONNECTIONS
 // ============================================================================
 
-$stroke-default-width: 2px !default;
+$connection-base-bg: rgb(90, 150, 180) !default;
 
-$connection-width:              4px;
-$connection-opacity:            0.9;
-$connection-background-color:   rgba(92, 150, 188, $connection-opacity);
-$connection-border-width:       2 * $stroke-default-width + $connection-width;
-$connection-border-color:       rgba(33, 100, 119, $connection-opacity);
-$connection-border-dasharray:   none;
+$connection-width:        4px !default;
+$connection-bg:           transparentize($connection-base-bg, 0.1) !default;
+$connection-border-width: 2 * $connection-width !default;
+$connection-border-color: darken($connection-bg, 20%) !default;
 
-$highlighted-connection-opacity:            1;
-$highlighted-connection-background-color:   rgba(199, 230, 245, $highlighted-connection-opacity);
-$highlighted-connection-border-color:       rgba(102, 175, 233, $highlighted-connection-opacity);
-$highlighted-connection-border-dasharray:   4, 2;
+$connection-text-color:        rgb(255, 255, 255) !default;
+$connection-text-hover-shadow: 0 1px 0 rgba(0, 0, 0, 0.75) !default;
 
-$misplaced-connection-background-color: rgba(255, 255, 255, $connection-opacity);
-$misplaced-connection-border-color:     rgba(170, 170, 170, $connection-opacity);
+$connection-options-bg:           transparentize(lighten($connection-bg, 5%), 0.1) !default;
+$connection-options-border-color: $connection-border-color !default;
 
-$connection-remove-background-color:            rgba(217, 83, 79, $highlighted-connection-opacity);
-$connection-remove-border-color:                rgba(212, 63, 58, $highlighted-connection-opacity);
-$connection-mousedover-remove-background-color: rgba(201, 48, 44, $highlighted-connection-opacity);
-$connection-mousedover-remove-border-color:     rgba(172, 41, 37, $highlighted-connection-opacity);
+$connection-background-bg: transparentize(lighten($connection-bg, 55%), 0.5) !default;
+$connection-background-border-color: transparentize(lighten($connection-border-color, 45%), 0.5) !default;
 
-$connection-controller-background-color:            rgba(51, 122, 183, $highlighted-connection-opacity);
-$connection-controller-border-color:                rgba(46, 109, 164, $highlighted-connection-opacity);
-$connection-mousedover-controller-background-color: rgba(40, 96, 144, $highlighted-connection-opacity);
-$connection-mousedover-controller-border-color:     rgba(32, 77, 116, $highlighted-connection-opacity);
+$connection-background-options-bg:           transparentize(lighten($connection-bg, 35%), 0.5) !default;
+$connection-background-options-border-color: transparentize(lighten($connection-border-color, 35%), 0.5) !default;
 
-$connection-onbackground-background-color: rgba(250, 250, 250, 0.8);
-$connection-onbackground-border-color: rgba(220, 220, 220, 0.5);
+$connection-background-text-color: rgba(0, 0, 0, 0.2) !default;
 
-$connection-bg-optrm-background-color: rgba(245, 245, 245, 0.8);
-$connection-bg-optrm-border-color: rgba(220, 220, 220, 0.8);
+$connection-active-bg:           rgb(180, 230, 250) !default;
+$connection-active-border-color: darken($component-active-bg, 20%) !default;
 
-$connection-bg-optrm-mousedover-background-color: rgba(50, 175, 210, 1.0);
-$connection-bg-optrm-mousedover-border-color: rgba(40, 150, 190, 1.0);
+$connection-active-options-bg:           transparentize($connection-active-bg, 0.2) !default;
+$connection-active-options-border-color: $connection-active-border-color !default;
 
-$behavior-title-width: 75%;
-$behavior-description-height: 40px;
-$behavior-description-font-color: rgb(70, 80, 90);
+$connection-active-text-color:       rgb(050, 150, 200) !default;
+$connection-active-text-shadow:      0 1px 0 rgb(255, 255, 255) !default;
+$connection-active-text-hover-color: darken($connection-active-text-color, 10%) !default;
 
-$behavior-hover-border-color: rgb(200, 200, 200);
-$behavior-hover-heading-bg-color: rgb(230, 230, 230);
+$connection-editable-border-dasharray: 4, 2 !default;
+
+$connection-handle-width: 2px !default;
+$connection-handle-border-dasharray: 6, 3 !default;
+
+// ============================================================================
+// WIRING VIEW - BEHAVIOURS
+// ============================================================================
+
+$behaviour-description-height: 40px !default;
+$behaviour-description-font-color: rgb(70, 80, 90) !default;
 
 $wiring-panel-title-width: 75%;
 $wiring-diagram-bg-color: rgb(250, 250, 250);

@@ -16,9 +16,55 @@
     }
 
     .wiring-connections {
-        @include positioned-element(0, 0);
+        position: absolute;
         width: 100%;
         height: 100%;
+    }
+}
+
+// ============================================================================
+// WIRING SIDEBAR - PANEL
+// ============================================================================
+
+.wiring-sidebar > .panel {
+    @include positioned-element(0, 0, 0, 0);
+    margin-bottom: 0px;
+    background-color: $panel-default-heading-bg;
+    border-radius: 0px;
+    padding: $panel-padding-vertical $panel-padding-horizontal;
+    box-shadow: $panel-box-shadow;
+
+    & > .panel-heading {
+        padding: 0px 0px $panel-padding-vertical;
+        border-radius: 0px;
+
+        .panel-title {
+            width: $wiring-panel-title-width;
+        }
+    }
+
+    & > .panel-body {
+        @include positioned-element(40px, $panel-padding-horizontal, $panel-padding-vertical, $panel-padding-horizontal);
+        border: solid 1px $panel-default-border-color;
+        box-shadow: $panel-box-shadow-inset;
+        background-color: $panel-bg;
+        overflow-y: auto;
+
+        .section {
+            position: relative;
+            display: block;
+        }
+    }
+}
+
+.wiring-sidebar > .panel-behaviours.disabled {
+    opacity: 1;
+}
+
+.wiring-sidebar > .panel-components {
+
+    & > .panel-body {
+        top: 80px;
     }
 }
 
@@ -41,7 +87,7 @@
         span {
             display: block;
             @include font-truncate();
-            max-width: 200px;
+            max-width: 250px;
         }
     }
 
@@ -49,5 +95,69 @@
         @include positioned-element($top: 0, $bottom: 0, $right: 0);
         height: 20px;
         margin: auto $panel-padding-horizontal;
+    }
+}
+
+// ============================================================================
+// WIRING-FOOTER - LEGEND ELEMENTS
+// ============================================================================
+
+.wiring-footer .wiring-element {
+    display: inline-block;
+    @include font($weight: "bold");
+    color: $panel-default-heading-text-color;
+    vertical-align: middle;
+    margin: 0px ($panel-padding-horizontal * 2) 0px 0px;
+
+    &:last-child {
+        margin-right: 0px;
+    }
+
+    .color {
+        padding: 0px $panel-padding-horizontal;
+        color: rgb(255, 255, 255);
+        border: solid 1px transparent;
+        border-radius: $panel-border-radius;
+        box-sizing: border-box;
+    }
+
+    .title {
+        margin-left: ($panel-padding-horizontal / 2);
+    }
+}
+
+// ============================================================================
+// WIRING-FOOTER - LEGEND CONNECTIONS
+// ============================================================================
+
+.wiring-footer .element-connection {
+
+    .color {
+        background-color: $connection-bg;
+        border-color: $connection-border-color;
+    }
+}
+
+// ============================================================================
+// WIRING-FOOTER - LEGEND OPERATORS
+// ============================================================================
+
+.wiring-footer .element-operator {
+
+    .color {
+        background-color: $component-operator-bg;
+        border-color: $component-operator-border-color;
+    }
+}
+
+// ============================================================================
+// WIRING-FOOTER - LEGEND WIDGETS
+// ============================================================================
+
+.wiring-footer .element-widget {
+
+    .color {
+        background-color: $component-widget-bg;
+        border-color: $component-widget-border-color;
     }
 }
