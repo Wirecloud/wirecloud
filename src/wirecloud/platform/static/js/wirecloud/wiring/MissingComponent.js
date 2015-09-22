@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud */
+/* global StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -206,104 +206,10 @@
     });
 
     // ==================================================================================
-    // CLASS DEFINITION
-    // ==================================================================================
-
-    /**
-     * Create a new instance of class MissingOperator.
-     * @extends {MissingComponent}
-     *
-     * @constructor
-     * @param {Number} id
-     *      [TODO: description]
-     * @param {Wiring} wiringEngine
-     *      [TODO: description]
-     * @param {PlainObject} businessInfo
-     *      [TODO: description]
-     * @param {String} reason
-     *      [TODO: description]
-     */
-    ns.MissingOperator = utils.defineClass({
-
-        constructor: function MissingOperator(id, wiringEngine, businessInfo, reason) {
-            this.superClass(id, 'operator', wiringEngine, reason);
-            this.loadBusinessInfo(businessInfo);
-            Object.defineProperties(this, {
-                reason: {value: utils.interpolate(reason, {id: this.id, uri: this.meta.uri})},
-            });
-            this.logManager.log(this.reason, Wirecloud.constants.LOGGING.ERROR_MSG);
-        },
-
-        inherit: ns.MissingComponent,
-
-        members: {
-
-            /**
-             * [TODO: toJSON description]
-             *
-             * @returns {PlainObject}
-             *      [TODO: description]
-             */
-            toJSON: function toJSON() {
-                var name, preferences = {};
-
-                for (name in this.preferences) {
-                    preferences[name] = {
-                        hidden: this.preferences[name].hidden,
-                        readonly: this.preferences[name].readonly,
-                        value: this.preferences[name].value
-                    };
-                }
-
-                return {
-                    id: this.id,
-                    name: this.meta.uri,
-                    preferences: preferences
-                };
-            }
-
-        }
-
-    });
-
-    // ==================================================================================
-    // CLASS DEFINITION
-    // ==================================================================================
-
-    /**
-     * Create a new instance of class MissingWidget.
-     * @extends {MissingComponent}
-     *
-     * @constructor
-     * @param {Number} id
-     *      [TODO: description]
-     * @param {Wiring} wiringEngine
-     *      [TODO: description]
-     * @param {PlainObject} visualInfo
-     *      [TODO: description]
-     * @param {String} reason
-     *      [TODO: description]
-     */
-    ns.MissingWidget = utils.defineClass({
-
-        constructor: function MissingWidget(id, wiringEngine, visualInfo, reason) {
-            this.superClass(id, 'widget', wiringEngine, reason);
-            this.loadVisualInfo(visualInfo);
-            Object.defineProperties(this, {
-                reason: {value: utils.interpolate(reason, {id: this.id, uri: this.meta.uri})},
-            });
-            this.logManager.log(this.reason, Wirecloud.constants.LOGGING.ERROR_MSG);
-        },
-
-        inherit: ns.MissingComponent
-
-    });
-
-    // ==================================================================================
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    function fillComponentMeta(uri) {
+    var fillComponentMeta = function fillComponentMeta(uri) {
         var splitURI = uri.split('/');
 
         this.meta.uri = uri;
@@ -315,6 +221,6 @@
         this.meta.version = {text: splitURI[2]};
 
         return this;
-    }
+    };
 
 })(Wirecloud.wiring, StyledElements, StyledElements.Utils);
