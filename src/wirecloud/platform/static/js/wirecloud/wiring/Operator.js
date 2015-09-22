@@ -189,6 +189,36 @@
             },
 
             /**
+             * [TODO: registerLog description]
+             *
+             * @param {String} level
+             *      [TODO: description]
+             * @param {String} message
+             *      [TODO: description]
+             * @returns {Operator}
+             *      The instance on which the member is called.
+             */
+            registerLog: function registerLog(level, message) {
+                var levelNumber;
+
+                switch (level) {
+                case 'error':
+                    levelNumber = Wirecloud.constants.LOGGING.ERROR_MSG;
+                    break;
+                case 'info':
+                    levelNumber = Wirecloud.constants.LOGGING.INFO_MSG;
+                    break;
+                case 'warning':
+                    levelNumber = Wirecloud.constants.LOGGING.WARN_MSG;
+                    break;
+                }
+
+                this.logManager.log(utils.interpolate(message, this), levelNumber);
+
+                return this;
+            },
+
+            /**
              * [TODO: registerPrefCallback description]
              *
              * @param {[type]} prefCallback [description]
@@ -295,16 +325,16 @@
         this.loaded = true;
         this.pending_events = [];
 
-        this.logManager.log(gettext("An operator was loaded."), Wirecloud.constants.LOGGING.INFO_MSG);
-        this.trigger('load');
+        this.registerLog('info', gettext("The operator (%(title)s) was loaded."))
+            .trigger('load');
     }
 
     function operator_onunload() {
 
         this.loaded = false;
 
-        this.logManager.log(gettext("An operator was unloaded."), Wirecloud.constants.LOGGING.INFO_MSG);
-        this.trigger('unload');
+        this.registerLog('info', gettext("The operator (%(title)s) was unloaded."))
+            .trigger('unload');
     }
 
 })(Wirecloud, StyledElements, StyledElements.Utils);
