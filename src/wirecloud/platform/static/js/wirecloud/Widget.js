@@ -85,6 +85,8 @@
     /**
      */
     var Widget = function Widget(widget, tab, options) {
+        options = options || {};
+        options.volatile = false;
         Wirecloud.WidgetBase.call(this, widget, tab, options);
     };
     Wirecloud.Utils.inherit(Widget, Wirecloud.WidgetBase);

@@ -44,6 +44,7 @@
         Object.defineProperty(this, 'meta', {value: widget});
         Object.defineProperty(this, 'missing', {value: false});
         Object.defineProperty(this, 'tab', {value: tab});
+        Object.defineProperty(this, 'volatile', {value: options.volatile ? true : false});
         Object.defineProperty(this, 'workspace', {value: tab.workspace});
         this.id = options.id;
         this.loaded = false;
