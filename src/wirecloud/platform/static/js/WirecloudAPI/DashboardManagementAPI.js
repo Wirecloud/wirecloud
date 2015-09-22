@@ -161,10 +161,7 @@
         if (operator_def == null || operator_def.type !== 'operator') {
             throw new TypeError('invalid operator ref');
         }
-        var operator = operator_def.instantiate(resource.id + '/' + counter++, undefined, resource_workspace.wiring);
-        // TODO remove manual volatile attribute and manual registration of the operator on the wiring module
-        operator.volatile = true;
-        resource_workspace.wiring.ioperators[operator.id] = operator;
+        var operator = resource_workspace.wiring._instantiate_operator(resource.id + '/' + counter++, operator_def, {volatile: true});
         resource.addEventListener('unload', operator.destroy.bind(operator));
         return (new Operator(operator));
     };

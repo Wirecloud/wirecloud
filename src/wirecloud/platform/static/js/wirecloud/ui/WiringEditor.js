@@ -204,6 +204,10 @@ Wirecloud.ui = Wirecloud.ui || {};
                     wiringStatus.connections.push(connection._connection);
                 });
 
+                this.volatileConnections.forEach(function (wiringConnection) {
+                    wiringStatus.connections.push(wiringConnection);
+                })
+
                 this.componentManager.forEachComponent(function (component) {
 
                     if (component.type === 'operator' && !component.enabled) {
@@ -400,6 +404,7 @@ Wirecloud.ui = Wirecloud.ui || {};
     function tearDownView() {
 
         this.workspace.wiring.load(this.toJSON()).save();
+        this.volatileConnections = [];
         readyView.call(this);
 
         return this;
@@ -423,6 +428,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.workspace = Wirecloud.activeWorkspace;
         this.errorMessages = [];
+        this.volatileConnections = [];
 
         readyView.call(this);
         loadWiringStatus.call(this);
@@ -461,6 +467,11 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         connections.forEach(function (c, i) {
             var source, target, errorCount = 0;
+
+            if (c.volatile) {
+                this.volatileConnections.push(c);
+                return;
+            }
 
             try {
                 source = findEndpoint.call(this, 'source', c.source.toJSON());
@@ -540,10 +551,12 @@ Wirecloud.ui = Wirecloud.ui || {};
                 this.componentManager.addWiringComponent(operatorsInUse[id]);
             }
 
-            this.createComponent(operatorsInUse[id], vInfo.components.operator[id]);
+            if (!operatorsInUse[id].volatile) {
+                this.createComponent(operatorsInUse[id], vInfo.components.operator[id]);
 
-            if (id >= this.autoOperatorId) {
-                this.autoOperatorId = id + 1;
+                if (id >= this.autoOperatorId) {
+                    this.autoOperatorId = id + 1;
+                }
             }
         }, this);
 

@@ -68,7 +68,14 @@
                     if (outputendpoint instanceof OutputEndpoint && (this.internal && outputendpoint.internal)) {
                         throw new TypeError();
                     }
-                    outputendpoint.connect(real_endpoint);
+
+                    if (outputendpoint instanceof Wirecloud.wiring.SourceEndpoint) {
+                        var connection = Wirecloud.activeWorkspace.wiring.createConnection(false, outputendpoint, real_endpoint);
+                        Wirecloud.activeWorkspace.wiring.status.connections.push(connection);
+                        connection.establish();
+                    } else {
+                        outputendpoint.connect(real_endpoint);
+                    }
                 }
             }
         });
@@ -94,7 +101,14 @@
                     if (inputendpoint instanceof InputEndpoint && (this.internal && inputendpoint.internal)) {
                         throw new TypeError();
                     }
-                    inputendpoint.connect(real_endpoint);
+
+                    if (inputendpoint instanceof Wirecloud.wiring.TargetEndpoint) {
+                        var connection = Wirecloud.activeWorkspace.wiring.createConnection(false, real_endpoint, inputendpoint);
+                        Wirecloud.activeWorkspace.wiring.status.connections.push(connection);
+                        connection.establish();
+                    } else {
+                        inputendpoint.connect(real_endpoint);
+                    }
                 }
             }
         });

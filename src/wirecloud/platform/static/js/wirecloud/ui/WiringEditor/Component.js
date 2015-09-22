@@ -72,6 +72,10 @@
                 type: {value: wiringComponent.meta.type},
 
             });
+
+            if (wiringComponent.volatile) {
+                this.disable();
+            }
         },
 
         inherit: se.Panel,
@@ -84,7 +88,7 @@
             _onenabled: function _onenabled(enabled) {
 
                 if (!enabled) {
-                    this.badge.textContent = gettext("in use");
+                    this.badge.textContent = formatDisabledMessage.call(this);
                     this.heading.append(this.badge);
                 } else {
                     this.heading.remove(this.badge);
@@ -114,5 +118,13 @@
         }
 
     });
+
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    function formatDisabledMessage() {
+        return this._component.volatile ? gettext("volatile") : gettext("in use");
+    }
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

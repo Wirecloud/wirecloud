@@ -197,10 +197,36 @@
                     method: 'PUT',
                     contentType: 'application/json',
                     requestHeaders: {Accept: 'application/json'},
-                    postBody: JSON.stringify(this.status)
+                    postBody: JSON.stringify(this.toJSON())
                 });
 
                 return this;
+            },
+
+            toJSON: function toJSON() {
+                var connection, i, id, operator, status;
+
+                status = ns.Wiring.normalize();
+
+                for (id in this.status.operators) {
+                    operator = this.status.operators[id];
+
+                    if (!operator.volatile) {
+                        status.operators[id] = operator;
+                    }
+                }
+
+                for (i = this.status.connections.length - 1; i >= 0; i--) {
+                    connection = this.status.connections[i];
+
+                    if (!connection.volatile) {
+                        status.connections.push(connection);
+                    }
+                }
+
+                status.visualdescription = this.status.visualdescription;
+
+                return status;
             },
 
             unmarshall: function unmarshall(status) {

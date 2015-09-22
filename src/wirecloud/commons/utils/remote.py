@@ -565,8 +565,16 @@ class WiringComponentItemTester(object):
         self.element = element
 
     @property
+    def in_use(self):
+        return self.element.find_element_by_css_selector(".badge").text == "in use"
+
+    @property
     def title(self):
         return self.element.find_element_by_css_selector('.panel-heading .panel-title').text
+
+    @property
+    def volatile(self):
+        return self.element.find_element_by_css_selector(".badge").text == "volatile"
 
 
 class WiringComponentGroupTester(object):

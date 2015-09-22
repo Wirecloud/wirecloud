@@ -79,6 +79,7 @@
                 preferenceList: {value: Object.freeze(preferenceList)},
                 preferences: {value: Object.freeze(preferences)},
                 title: {value: meta.title}, // TODO: businessInfo.title ? businessInfo.title : meta.title
+                volatile: {value: businessInfo.volatile},
                 wiring: {value: wiringEngine} // TODO: remove this property.
             });
 
@@ -100,7 +101,8 @@
             JSON_TEMPLATE: {
                 id: null,
                 name: "",
-                preferences: {}
+                preferences: {},
+                volatile: false
             }
 
         },
