@@ -51,7 +51,7 @@
             this.wrapperElement.className = "component-group";
 
             this.meta = new ns.ComponentMeta(meta);
-            this.meta.on('versionchanged', verion_onchange.bind(this));
+            this.meta.version.on('change', verion_onchange.bind(this));
             this.append(this.meta);
 
             this.layout = layout;
@@ -111,10 +111,8 @@
              *      The instance on which the member is called.
              */
             appendVersion: function appendVersion(meta) {
-                var versionText = meta.version.text;
-
-                this.meta.version.appendChild(createVersionElement(versionText));
-                this.versions[versionText] = meta;
+                this.versions[meta.version] = meta;
+                this.meta.version.addEntries([meta.version]);
 
                 if (this.latestVersion == null || this.latestVersion.version.compareTo(meta.version) < 0) {
                     showLatestVersion.call(this, meta);
@@ -208,26 +206,15 @@
         this.layout.slideIn(0);
     }
 
-    function createVersionElement(versionText) {
-        var option = document.createElement('option');
-
-        option.value = versionText;
-        option.textContent = "v" + versionText;
-
-        return option;
-    }
-
-    function verion_onchange(version) {
-        this.currentVersion = this.versions[version];
+    function verion_onchange(select) {
+        this.currentVersion = this.versions[select.getValue()];
         this.meta.showVersion(this.currentVersion);
     }
 
     function showLatestVersion(meta) {
         this.latestVersion = meta;
         this.currentVersion = meta;
-
-        this.meta.version.value = meta.version.text;
-        this.meta.showVersion(meta);
+        this.meta.version.setValue(meta.version);
 
         return this;
     }

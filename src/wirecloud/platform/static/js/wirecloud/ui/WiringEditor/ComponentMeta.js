@@ -49,7 +49,7 @@
 
             this.superClass({
                 extraClass: "component-meta",
-                events: ['versionchanged'],
+                events: [],
                 title: meta.title
             });
 
@@ -69,12 +69,8 @@
             versionGroup = document.createElement('div');
             versionGroup.className = "btn-group btn-group-sm component-version-list";
 
-            this.version = document.createElement('select');
-            this.version.className = "se-select component-version";
-            this.version.addEventListener('change', function (event) {
-                this.trigger('versionchanged', event.currentTarget.value);
-            }.bind(this));
-            versionGroup.appendChild(this.version);
+            this.version = new se.Select({'class': 'component-version'});
+            this.version.insertInto(versionGroup);
             versionGroup.appendChild(this.btnAdd.get());
 
             this.vendor = document.createElement('div');
