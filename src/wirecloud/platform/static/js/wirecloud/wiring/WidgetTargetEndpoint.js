@@ -60,6 +60,10 @@
     };
     WidgetTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
+    WidgetTargetEndpoint.prototype.toString = function toString() {
+        return this.id;
+    };
+
     WidgetTargetEndpoint.prototype.toJSON = function toJSON() {
         return {
             type: this.component.meta.type,

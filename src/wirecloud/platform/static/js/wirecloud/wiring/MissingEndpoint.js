@@ -40,6 +40,10 @@
     };
     GhostSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
+    GhostSourceEndpoint.prototype.toString = function toString() {
+        return this.id;
+    };
+
     GhostSourceEndpoint.prototype.toJSON = function toJSON() {
         return {
             type: this.component.meta.type,
@@ -66,6 +70,10 @@
 
     GhostTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
         // Do nothing
+    };
+
+    GhostTargetEndpoint.prototype.toString = function toString() {
+        return this.id;
     };
 
     GhostTargetEndpoint.prototype.toJSON = function toJSON() {

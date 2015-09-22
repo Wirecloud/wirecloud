@@ -44,6 +44,10 @@
     };
     OperatorSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
+    OperatorSourceEndpoint.prototype.toString = function toString() {
+        return this.id;
+    };
+
     OperatorSourceEndpoint.prototype.toJSON = function toJSON() {
         return {
             type: this.component.meta.type,
