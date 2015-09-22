@@ -56,18 +56,6 @@
             this.loaded = false;
             this.pending_events = [];
 
-            this.title = meta.title; // TODO: businessInfo.title ? businessInfo.title : meta.title
-
-            this.inputs = {};
-            meta.inputList.forEach(function (endpoint) {
-                this.inputs[endpoint.name] = new Wirecloud.wiring.OperatorTargetEndpoint(this, endpoint);
-            }, this);
-
-            this.outputs = {};
-            meta.outputList.forEach(function (endpoint) {
-                this.outputs[endpoint.name] = new Wirecloud.wiring.OperatorSourceEndpoint(this, endpoint);
-            }, this);
-
             meta.preferenceList.forEach(function (option) {
                 var hidden = false, readonly = false, value;
 
@@ -89,10 +77,20 @@
                 meta: {value: meta},
                 missing: {value: false},
                 preferenceList: {value: Object.freeze(preferenceList)},
-                preferences: {value: Object.freeze(preferences)}
+                preferences: {value: Object.freeze(preferences)},
+                title: {value: meta.title}, // TODO: businessInfo.title ? businessInfo.title : meta.title
+                wiring: {value: wiringEngine} // TODO: remove this property.
             });
 
-            this.logManager.log(utils.gettext("An operator was added."), Wirecloud.constants.LOGGING.INFO_MSG);
+            this.inputs = {};
+            meta.inputList.forEach(function (endpoint) {
+                this.inputs[endpoint.name] = new Wirecloud.wiring.OperatorTargetEndpoint(this, endpoint);
+            }, this);
+
+            this.outputs = {};
+            meta.outputList.forEach(function (endpoint) {
+                this.outputs[endpoint.name] = new Wirecloud.wiring.OperatorSourceEndpoint(this, endpoint);
+            }, this);
         },
 
         inherit: se.ObjectWithEvents,
