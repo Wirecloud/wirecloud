@@ -474,14 +474,14 @@ Wirecloud.ui = Wirecloud.ui || {};
             }
 
             try {
-                source = findEndpoint.call(this, 'source', c.source.toJSON());
+                source = findEndpoint.call(this, 'source', c.source.toJSON(), c.source);
             } catch (e) {
                 this.errorMessages.push(e);
                 errorCount++;
             }
 
             try {
-                target = findEndpoint.call(this, 'target', c.target.toJSON());
+                target = findEndpoint.call(this, 'target', c.target.toJSON(), c.target);
             } catch (e) {
                 this.errorMessages.push(e);
                 errorCount++;
@@ -591,7 +591,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         return this;
     }
 
-    function findEndpoint(type, bInfo) {
+    function findEndpoint(type, bInfo, wiringEndpoint) {
         var component, endpoint;
 
         component = this.behaviourEngine.components[bInfo.type][bInfo.id];
@@ -606,10 +606,16 @@ Wirecloud.ui = Wirecloud.ui || {};
             component = this.createComponent(component._component);
         }
 
-        // TODO: create missing endpoint
-        endpoint = component.getEndpoint(type, bInfo.endpoint, true);
-
-        return endpoint;
+        endpoint = component.getEndpoint(type, bInfo.endpoint);
+        if (endpoint == null) {
+            if (wiringEndpoint != null) {
+                return component.appendEndpoint(type, wiringEndpoint).getEndpoint(type, bInfo.endpoint);
+            } else {
+                throw new Error("Missing endpoint from view info.");
+            }
+        } else {
+            return endpoint;
+        }
     }
 
     function findEndpointById(type, id) {
