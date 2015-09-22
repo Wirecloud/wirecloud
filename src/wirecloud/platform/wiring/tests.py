@@ -1325,3 +1325,67 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 sidebar.create_behaviour(title="Title for behaviour 1", description="Description for behaviour 1")
+
+
+@wirecloud_selenium_test_case
+class ComponentVolatileTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
+
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
+    def test_dashboard_management_api_support(self):
+
+        # This test checks that the wiring editor behaves correctly when using
+        # the dashboard management API, that its, the Wiring Editor loads and
+        # serializes correctly the wiring status on the presence of volatile
+        # widgets and operators.
+        #
+        # Volatile widgets and operators should be displayed in the showcase
+        # using a volatile label and being disabled
+        self.login()
+
+        initial_iwidgets = self.get_current_iwidgets()
+        initial_iwidget_count = len(initial_iwidgets)
+
+        with initial_iwidgets[1]:
+            # use execute_script as we are not testing if the button is visible
+            # and directly clickable without scrolling the view
+            self.driver.execute_script("document.getElementById('dashboard_management_button').click();")
+            # Two widgets are created when clicking the dashboard management button
+            # one of them is connected directly, the other is connected through and
+            # operator
+
+        WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.get_current_iwidgets()) == (initial_iwidget_count + 2))
+
+        with self.wiring_view as wiring:
+            operators = wiring.filter_components_by_type('operator')
+            widgets = wiring.filter_components_by_type('widget')
+            connections = wiring.find_connections()
+            self.assertEqual(len(operators), 1)
+            self.assertEqual(len(widgets), 3)
+            self.assertEqual(len(connections), 2)
+
+            with wiring.component_sidebar as sidebar:
+                operators = sidebar.get_components_of('operator', "TestOperator")
+                self.assertEqual(len(operators), 2)
+                self.assertEqual(len([operator for operator in operators if operator.volatile]), 1)
+                widgets = sidebar.get_components_of('widget', "Wirecloud API test")
+                self.assertEqual(len(widgets), 3)
+                self.assertEqual(len([widget for widget in widgets if widget.volatile]), 2)
+
+        # Check dynamic connections created by the dashboard_management_button works as expected
+        with initial_iwidgets[1]:
+            self.driver.execute_script("document.getElementById('wiring_pushevent_button').click();")
+
+        # Add WebDriverWait until the event arrive both widgets
+
+        iwidgets = self.get_current_iwidgets()
+        with iwidgets[3]:
+            text_div = self.driver.find_element_by_id('registercallback_test')
+            self.assertEqual(text_div.text, 'Success!!')
+
+        with iwidgets[4]:
+            text_div = self.driver.find_element_by_id('registercallback_test')
+            self.assertEqual(text_div.text, 'Success!!')
