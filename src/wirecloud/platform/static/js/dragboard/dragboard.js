@@ -234,10 +234,11 @@
                 return;
             }
 
-            var width = widget.default_width;
-            var height = widget.default_height;
             var layout_id = this.tab.preferences.get('initiallayout') === "Free" ? 1 : 0;
             var layout = layout_id === 1 ? this.freeLayout : this.baseLayout;
+
+            var width = layout.adaptWidth(widget.default_width).inLU;
+            var height = layout.adaptHeight(widget.default_height).inLU;
             var initial_position = null;
 
             // Check if the widget doesn't fit in the dragboard
