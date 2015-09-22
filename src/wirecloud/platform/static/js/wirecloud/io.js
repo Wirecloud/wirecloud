@@ -134,7 +134,6 @@ Wirecloud.location = {
     var Request = function Request(url, options) {
         var key;
 
-        this.url = url;
         this.options = Wirecloud.Utils.merge({
             method:       'POST',
             asynchronous: true,
@@ -161,13 +160,18 @@ Wirecloud.location = {
                     this.options.encoding = 'UTF-8';
                 }
             } else {
-                if (this.url.indexOf('?') !== -1) {
-                    this.url += '&' + toQueryString(this.options.parameters);
+                if (url.indexOf('?') !== -1) {
+                    url += '&' + toQueryString(this.options.parameters);
                 }  else {
-                    this.url += '?' + toQueryString(this.options.parameters);
+                    url += '?' + toQueryString(this.options.parameters);
                 }
             }
         }
+
+        Object.defineProperties(this, {
+            url: {value: url},
+            abort: {value: function () {this.transport.abort();}}
+        });
 
         this.transport = new XMLHttpRequest();
         if (this.options.withCredentials === true && this.options.supportsAccessControl) {
