@@ -59,6 +59,8 @@
 
             this.btnGroupElement = document.createElementNS(ns.Connection.SVG_NS, 'rect');
             this.btnGroupElement.setAttribute('class', "btn-svg-group");
+            this.btnGroupElement.setAttribute('height', "20px");
+            this.btnGroupElement.setAttribute('width', "45px");
             this.optionsElement.appendChild(this.btnGroupElement);
 
             this.btnPrefs = new se.SVGPlainButton({

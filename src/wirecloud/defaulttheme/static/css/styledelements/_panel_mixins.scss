@@ -1,0 +1,47 @@
+
+
+@mixin panel-variant(
+    $border-color,
+    $background-color,
+    $text-color,
+    $text-shadow,
+    $text-hover-color
+) {
+
+    border-color: $border-color;
+
+    & > .panel-heading {
+        background-color: $background-color;
+
+        .panel-title {
+            color: $text-color;
+            text-shadow: $text-shadow;
+        }
+
+        .panel-options .se-btn {
+            color: $text-color;
+            text-shadow: $text-shadow;
+
+            &:hover,
+            &:focus {
+                color: $text-hover-color;
+            }
+        }
+    }
+
+}
+
+@mixin panel-selectable(
+    $border-color,
+    $background-color
+) {
+
+    &.panel-selectable:hover {
+        border-color: darken($border-color, 6%);
+
+        & > .panel-heading {
+            background-color: darken($background-color, 6%);
+        }
+    }
+
+}
