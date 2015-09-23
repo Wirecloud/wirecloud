@@ -96,7 +96,7 @@
         }
     };
 
-    var searchBestPosition = function(refPosition, positions) {
+    var searchBestPosition = function searchBestPosition(refPosition, positions) {
         var i = 0, weights = [];
 
         do {

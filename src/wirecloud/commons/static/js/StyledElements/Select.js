@@ -61,8 +61,7 @@
             'idFunc': function (value) {
                 return value == null ? '' : value.toString();
             }
-        },
-        options);
+        },  options);
 
         StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 

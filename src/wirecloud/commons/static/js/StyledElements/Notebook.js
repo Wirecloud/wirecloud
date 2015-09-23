@@ -595,7 +595,7 @@
 
     Notebook.prototype.repaint = function repaint(temporal) {
         var i, height;
-        temporal = temporal !== undefined ? temporal: false;
+        temporal = temporal != null ? temporal : false;
 
         if (this.wrapperElement.classList.contains('full') && this.fullscreen !== true) {
             height = this._getUsableHeight();

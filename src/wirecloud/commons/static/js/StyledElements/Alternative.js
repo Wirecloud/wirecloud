@@ -43,7 +43,7 @@
 
         this.superClass(utils.updateObject({useFullHeight: true}, options));
 
-        this.addClass('hidden');
+        this.addClassName('hidden');
         this.altId = id;
     };
 

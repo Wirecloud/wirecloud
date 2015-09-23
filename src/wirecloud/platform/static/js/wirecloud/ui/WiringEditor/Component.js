@@ -58,7 +58,7 @@
                 buttons: [this.btnPrefs]
             });
 
-            this.subtitle.addClass("component-version");
+            this.subtitle.addClassName("component-version");
 
             this.badge = document.createElement('span');
             this.badge.className = "badge badge-success";
@@ -89,9 +89,9 @@
 
                 if (!enabled) {
                     this.badge.textContent = formatDisabledMessage.call(this);
-                    this.heading.append(this.badge);
+                    this.heading.appendChild(this.badge);
                 } else {
-                    this.heading.remove(this.badge);
+                    this.heading.removeChild(this.badge);
                 }
 
                 return this.superMember(se.Panel, '_onenabled', enabled);

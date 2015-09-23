@@ -75,28 +75,28 @@
             };
 
             this.body
-                .append(this.endpoints.target)
-                .append(this.endpoints.source);
+                .appendChild(this.endpoints.target)
+                .appendChild(this.endpoints.source);
 
             Object.defineProperties(this, {
 
                 id: {value: wiringComponent.id},
 
                 background: {
-                    get: function get() {return this.hasClass('background');},
+                    get: function get() {return this.hasClassName('background');},
                     set: function set(value) {this._onbackground(value);}
                 },
 
                 collapsed: {
-                    get: function get() {return this.hasClass('collapsed');},
+                    get: function get() {return this.hasClassName('collapsed');},
                     set: function set(value) {this._oncollapsed(value);}
                 },
 
                 missing: {value: wiringComponent.missing},
 
                 readonly: {
-                    get: function get() {return this.hasClass('readonly');},
-                    set: function set(value) {this.toggleClass('readonly', value);}
+                    get: function get() {return this.hasClassName('readonly');},
+                    set: function set(value) {this.toggleClassName('readonly', value);}
                 },
 
                 sortingEndpoints: {
@@ -135,7 +135,7 @@
                 this.endpoints.source.sortEndpoints(options.endpoints.source);
                 this.endpoints.target.sortEndpoints(options.endpoints.target);
             } else {
-                this.addClass("missing");
+                this.addClassName("missing");
             }
 
             if (!this.hasEndpoints()) {
@@ -196,16 +196,16 @@
                     return this;
                 }
 
-                this.toggleClass('background', background);
+                this.toggleClassName('background', background);
 
                 if (background) {
                     this.btnRemove
-                        .replaceClass('btn-remove', 'btn-share')
+                        .replaceClassName('btn-remove', 'btn-share')
                         .replaceIconClass('icon-remove-sign', 'icon-plus-sign')
                         .setTitle(gettext("Share"));
                 } else {
                     this.btnRemove
-                        .replaceClass('btn-share', 'btn-remove')
+                        .replaceClassName('btn-share', 'btn-remove')
                         .replaceIconClass('icon-plus-sign', 'icon-remove-sign')
                         .setTitle(gettext("Remove"));
                 }
@@ -229,7 +229,7 @@
                     return this;
                 }
 
-                this.toggleClass('collapsed', collapsed);
+                this.toggleClassName('collapsed', collapsed);
 
                 if (collapsed) {
                     collapseEndpoints.call(this, offsetWidth);
@@ -439,7 +439,7 @@
              */
             remove: function remove(childElement) {
 
-                if (!arguments.length && !this.hasClass('cloned')) {
+                if (!arguments.length && !this.hasClassName('cloned')) {
                     this.trigger('remove');
                 }
 
@@ -456,7 +456,7 @@
 
             toFirst: function toFirst() {
 
-                this.parentElement.remove(this).append(this);
+                this.parentElement.removeChild(this).appendChild(this);
 
                 return this;
             },
@@ -483,35 +483,35 @@
 
     var events = ['change', 'dragstart', 'drag', 'dragend', 'optremove', 'optshare', 'remove', 'sortstart', 'sortend'];
 
-    function appendEndpoints(type, endpoints) {
+    var appendEndpoints = function appendEndpoints(type, endpoints) {
 
         endpoints.forEach(function (endpoint) {
             this.appendEndpoint(type, endpoint);
         }, this);
 
         return this;
-    }
+    };
 
-    function btnremove_onclick() {
+    var btnremove_onclick = function btnremove_onclick() {
 
         if (this.background) {
             this.trigger('optshare');
         } else {
             this.trigger('optremove');
         }
-    }
+    };
 
-    function collapseEndpoints(expandedWidth) {
+    var collapseEndpoints = function collapseEndpoints(expandedWidth) {
         var offsetWidth;
 
         this.body
-            .remove(this.endpoints.target)
-            .remove(this.endpoints.source)
+            .removeChild(this.endpoints.target)
+            .removeChild(this.endpoints.source)
             .remove();
 
         this.heading
-            .append(this.endpoints.target)
-            .append(this.endpoints.source);
+            .appendChild(this.endpoints.target)
+            .appendChild(this.endpoints.source);
 
         offsetWidth = expandedWidth - this.get().offsetWidth;
 
@@ -520,26 +520,26 @@
         }
 
         return this;
-    }
+    };
 
-    function endpoint_onconnectionadded(endpoint, connection) {
+    var endpoint_onconnectionadded = function endpoint_onconnectionadded(endpoint, connection) {
 
         if (connection.readonly) {
             this.btnRemove.disable();
         }
 
-    }
+    };
 
-    function expandEndpoints(collapsedWidth) {
+    var expandEndpoints = function expandEndpoints(collapsedWidth) {
         var offsetWidth;
 
         this.heading
-            .remove(this.endpoints.target)
-            .remove(this.endpoints.source);
+            .removeChild(this.endpoints.target)
+            .removeChild(this.endpoints.source);
 
         this.body
-            .append(this.endpoints.target)
-            .append(this.endpoints.source)
+            .appendChild(this.endpoints.target)
+            .appendChild(this.endpoints.source)
             .appendTo(this);
 
         offsetWidth = this.get().offsetWidth - collapsedWidth;
@@ -549,18 +549,18 @@
         }
 
         return this;
-    }
+    };
 
-    function isClicked(position1, position2) {
+    var isClicked = function isClicked(position1, position2) {
         return !((position1.x - position2.x) + (position1.y - position2.y));
-    }
+    };
 
-    function makeDraggable() {
+    var makeDraggable = function makeDraggable() {
         this.draggable = new Wirecloud.ui.Draggable(this.get(), {component: this},
             function dragstart(draggable, context, event) {
                 context.active = context.component.active;
                 context.component.btnPrefs.getPopupMenu().hide();
-                context.position = context.component.addClass('dragging').position();
+                context.position = context.component.addClassName('dragging').position();
 
                 if (!context.active) {
                     context.component.active = true;
@@ -577,7 +577,7 @@
                     .trigger('drag', x, y, event);
             },
             function dragend(draggable, context, event) {
-                var position = context.component.removeClass('dragging')
+                var position = context.component.removeClassName('dragging')
                     .toFirst().position();
 
                 if (isClicked(context.position, position)) {
@@ -602,21 +602,21 @@
         );
 
         return this;
-    }
+    };
 
-    function noticetitle_onclick(event) {
+    var noticetitle_onclick = function noticetitle_onclick(event) {
         event.preventDefault();
         this.showLogs();
         event.stopPropagation();
-    }
+    };
 
-    function notifyErrors() {
+    var notifyErrors = function notifyErrors() {
         var title, count = this._component.logManager.getErrorCount();
 
         if (count || this.missing) {
 
             if (!this.heading.has(this.heading.notice)) {
-                this.heading.append(this.heading.notice);
+                this.heading.appendChild(this.heading.notice);
             }
 
             if (this.missing) {
@@ -629,6 +629,6 @@
 
             this.heading.noticeTitle.textContent = title;
         }
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

@@ -46,7 +46,7 @@
 
         constructor: function EndpointGroup(type, component, EndpointClass) {
             this.superClass({extraClass: "endpoints"});
-            this.addClass(type + "-endpoints");
+            this.addClassName(type + "-endpoints");
 
             this.endpoints = {};
             this.component = component;
@@ -57,14 +57,11 @@
             this.modified = false;
 
             Object.defineProperties(this, {
-
                 sortable: {
-                    get: function get() {return this.hasClass('sortable');},
-                    set: function set(value) {this.toggleClass('sortable', value)}
+                    get: function get() {return this.hasClassName('sortable');},
+                    set: function set(value) {this.toggleClassName('sortable', value)}
                 },
-
                 type: {value: type}
-
             });
         },
 
@@ -92,7 +89,7 @@
                 endpoint.index = this.children.length;
 
                 this.endpoints[endpoint.name] = endpoint;
-                this.append(endpoint);
+                this.appendChild(endpoint);
 
                 this.originalOrder.push(endpoint.name);
 
@@ -167,7 +164,7 @@
                     var endpoint = this.endpoints[name];
 
                     endpoint.index = index;
-                    this.remove(endpoint).append(endpoint);
+                    this.removeChild(endpoint).appendChild(endpoint);
                 }, this);
 
                 this.modified = true;
@@ -263,8 +260,8 @@
             function dragstart(draggable, context, event) {
                 var endpointBCR, layout, layoutBCR;
 
-                // endpoints > panel-body > panel > layout
-                context.layout = context.group.parentElement.parentElement.parentElement;
+                // endpoints > component > layout
+                context.layout = context.group.component.parentElement;
 
                 endpointBCR = endpoint.get().getBoundingClientRect();
                 layout = context.layout.get();
@@ -279,11 +276,11 @@
                 context.clonedEndpoint.classList.add(endpoint.type + "-endpoint");
                 context.clonedEndpoint.classList.add("cloned");
 
-                context.layout.append(context.clonedEndpoint);
+                context.layout.appendChild(context.clonedEndpoint);
                 context.clonedEndpoint.style.left = context.x + 'px';
                 context.clonedEndpoint.style.top = context.y + 'px';
 
-                endpoint.addClass("dragging");
+                endpoint.addClassName("dragging");
 
                 context.marginVertical = 5;
 
@@ -317,8 +314,8 @@
                 }
             },
             function dragend(draggable, context) {
-                endpoint.removeClass("dragging");
-                context.layout.remove(context.clonedEndpoint);
+                endpoint.removeClassName("dragging");
+                context.layout.removeChild(context.clonedEndpoint);
             },
             function canDrag() {
                 return true;

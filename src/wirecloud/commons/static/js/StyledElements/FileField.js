@@ -40,7 +40,7 @@
 
     onchange = function onchange() {
         var file, filename;
-        
+
         file = this.getValue();
         if (file != null) {
             filename = file.name;

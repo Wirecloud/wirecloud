@@ -54,10 +54,10 @@
 
         Object.defineProperty(this, 'active', {
             get: function get() {
-                return this.hasClass('active');
+                return this.hasClassName('active');
             },
             set: function set(value) {
-                this.toggleClass('active', value)
+                this.toggleClassName('active', value)
                     ._onactive(value);
             }
         });
@@ -71,11 +71,11 @@
 
         if (this.active !== active) {
             if (this.icon) {
-                this.icon.src = active ? this._checkedIcon: this._icon;
+                this.icon.src = active ? this._checkedIcon : this._icon;
             }
 
             if (this.label) {
-                this.label.textContent = active ? this._checkedText: this._text;
+                this.label.textContent = active ? this._checkedText : this._text;
             }
         }
 

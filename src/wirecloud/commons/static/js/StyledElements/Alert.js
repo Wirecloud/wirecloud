@@ -46,26 +46,24 @@
             this.wrapperElement.className = 'alert';
 
             if (options.state) {
-                this.addClass('alert-' + options.state);
+                this.addClassName('alert-' + options.state);
             }
 
             if (options.alignment) {
-                this.addClass('se-alert-' + options.alignment);
+                this.addClassName('se-alert-' + options.alignment);
             }
 
-            if (options.extraClass) {
-                this.addClass(options.extraClass);
-            }
+            this.addClassName(options.extraClass);
 
             this.heading = new se.Container({
                 extraClass: "se-alert-heading"
             });
-            this.append(this.heading.append(options.title));
+            this.heading.appendChild(options.title).insertInto(this.wrapperElement);
 
             this.body = new se.Container({
                 extraClass: "se-alert-body"
             });
-            this.append(this.body.append(options.message));
+            this.body.appendChild(options.message).insertInto(this.wrapperElement);
         },
 
         inherit: se.StyledElement,
@@ -84,7 +82,7 @@
                 var blockquote = document.createElement('blockquote');
 
                 blockquote.textContent = textContent;
-                this.body.append(blockquote);
+                this.body.appendChild(blockquote);
 
                 return this;
             }

@@ -49,21 +49,18 @@
 
             this.wrapperElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'g');
             this.wrapperElement.setAttribute('class', "connection-handle");
-            this.addClass(endpoint.type + "-handle");
-
-            if (options.extraClass) {
-                this.addClass(options.extraClass);
-            }
+            this.addClassName(endpoint.type + "-handle");
+            this.addClassName(options.extraClass);
 
             this.lineElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'path');
             this.lineElement.setAttribute('class', "handle-line");
-            this.append(this.lineElement);
+            this.wrapperElement.appendChild(this.lineElement);
 
             this.ballElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'circle');
             this.ballElement.setAttribute('class', "handle-ball");
             this.ballElement.setAttribute('r', options.radius);
             this.ballElement.addEventListener('click', utils.stopPropagationListener);
-            this.append(this.ballElement);
+            this.wrapperElement.appendChild(this.ballElement);
 
             this.auto = true;
             this.endpoint = endpoint;
@@ -198,15 +195,15 @@
 
     var events = ['dragstart', 'drag', 'dragend'];
 
-    function formatDistance(endpoint, handle) {
+    var formatDistance = function formatDistance(endpoint, handle) {
         return "M " + endpoint.x + "," + endpoint.y + " " + handle.x + "," + handle.y;
-    }
+    };
 
-    function is2DPosition(position) {
+    var is2DPosition = function is2DPosition(position) {
         return utils.isPlainObject(position) && Number.isInteger(position.x) && Number.isInteger(position.y);
-    }
+    };
 
-    function setRelativePosition(position) {
+    var setRelativePosition = function setRelativePosition(position) {
 
         if (is2DPosition(position)) {
             this.relativePosition = position;
@@ -214,9 +211,9 @@
         }
 
         return this;
-    }
+    };
 
-    function startDraggableElement() {
+    var startDraggableElement = function startDraggableElement() {
 
         this.draggable = new Wirecloud.ui.Draggable(this.ballElement, {handle: this},
             function ondragstart(draggable, context) {
@@ -241,6 +238,6 @@
         );
 
         return this;
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

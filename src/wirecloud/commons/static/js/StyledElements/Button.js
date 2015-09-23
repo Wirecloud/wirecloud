@@ -112,23 +112,18 @@
         this.wrapperElement.className = "se-btn";
 
         if (options.state) {
-            this.addClass('btn-' + options.state);
+            this.addClassName('btn-' + options.state);
         }
 
-        if (options['class']) {
-            this.addClass(options['class']);
-        }
-
-        if (options.extraClass) {
-            this.addClass(options.extraClass);
-        }
+        this.addClassName(options['class']);
+        this.addClassName(options.extraClass);
 
         if (options.id) {
             this.wrapperElement.setAttribute('id', options.id);
         }
 
         if (options.plain) {
-            this.addClass("plain");
+            this.addClassName("plain");
         }
 
         if (options.icon != null) {
@@ -181,10 +176,10 @@
 
             visible: {
                 get: function get() {
-                    return !this.hasClass('invisible');
+                    return !this.hasClassName('invisible');
                 },
                 set: function set(value) {
-                    this.toggleClass('invisible', !value)
+                    this.toggleClassName('invisible', !value)
                         ._onvisible(value);
                 }
             }
@@ -228,7 +223,7 @@
     };
 
     /**
-     * @version 0.2.0
+     * @version 0.6.0
      * @abstract
      */
     Button.prototype._onvisible = function _onvisible(visible) {
@@ -245,7 +240,7 @@
 
     /**
      * [setLabel description]
-     * @version 0.2.0
+     * @version 0.6.0
      *
      * @param {String} [textContent]
      *      [description]
@@ -339,7 +334,7 @@
 
     var events = ['blur', 'click', 'dblclick', 'focus', 'mouseenter', 'mouseleave'];
 
-    function removeLabel() {
+    var removeLabel = function removeLabel() {
 
         if (this.label != null) {
             this.remove(this.label);
@@ -347,18 +342,18 @@
         }
 
         return this;
-    }
+    };
 
-    function addLabel(textContent) {
+    var addLabel = function addLabel(textContent) {
 
         if (this.label == null) {
             this.label = document.createElement('span');
-            this.append(this.label);
+            this.wrapperElement.appendChild(this.label);
         }
 
         this.label.textContent = textContent;
 
         return this;
-    }
+    };
 
 })(StyledElements, StyledElements.Utils);

@@ -67,7 +67,7 @@
                 iconClass: "icon-reorder",
                 menuItems: new ns.ConnectionPrefs(this)
             });
-            this.optionsElement.appendChild(this.btnPrefs.get());
+            this.btnPrefs.appendTo(this.optionsElement);
 
             this.btnRemove = new se.SVGPlainButton({
                 title: gettext("Remove"),
@@ -75,7 +75,7 @@
                 iconClass: "icon-remove-sign"
             });
             this.btnRemove.on('click', btnremove_onclick.bind(this));
-            this.optionsElement.appendChild(this.btnRemove.get());
+            this.btnRemove.appendTo(this.optionsElement);
 
             this.activeCount = 0;
 
@@ -85,12 +85,12 @@
             Object.defineProperties(this, {
 
                 active: {
-                    get: function get() {return this.hasClass('active');},
+                    get: function get() {return this.hasClassName('active');},
                     set: function set(value) {this._onactive(value)}
                 },
 
                 background: {
-                    get: function get() {return this.hasClass('background');},
+                    get: function get() {return this.hasClassName('background');},
                     set: function set(value) {this._onbackground(value);}
                 },
 
@@ -103,7 +103,7 @@
                 },
 
                 editable: {
-                    get: function get() {return this.hasClass('editable');},
+                    get: function get() {return this.hasClassName('editable');},
                     set: function set(value) {this._oneditable(value);}
                 },
 
@@ -158,7 +158,7 @@
                     return this;
                 }
 
-                this.toggleClass('active', active).toFirst();
+                this.toggleClassName('active', active).toFirst();
                 toggleActiveEndpoints.call(this, active);
 
                 return this;
@@ -179,16 +179,16 @@
                     return this;
                 }
 
-                this.toggleClass('background', background);
+                this.toggleClassName('background', background);
 
                 if (background) {
                     this.btnRemove
-                        .replaceClass("btn-remove", "btn-share")
+                        .replaceClassName("btn-remove", "btn-share")
                         .iconClass("icon-plus-sign")
                         .title(gettext("Share"));
                 } else {
                     this.btnRemove
-                        .replaceClass('btn-share', 'btn-remove')
+                        .replaceClassName('btn-share', 'btn-remove')
                         .iconClass("icon-remove-sign")
                         .title(gettext("Remove"));
                 }
@@ -211,16 +211,16 @@
                     return this;
                 }
 
-                this.toggleClass('editable', editable).toFirst();
+                this.toggleClassName('editable', editable).toFirst();
                 toggleActiveEndpoints.call(this, editable);
 
                 if (editable) {
-                    this.append(this.source.handle);
-                    this.append(this.target.handle);
+                    this.source.handle.appendTo(this.wrapperElement);
+                    this.target.handle.appendTo(this.wrapperElement);
                     this.trigger('customizestart');
                 } else {
-                    this.remove(this.source.handle);
-                    this.remove(this.target.handle);
+                    this.source.handle.remove();
+                    this.target.handle.remove();
                     this.trigger('customizeend');
                 }
 
@@ -440,7 +440,7 @@
                 var parentElement;
 
                 if (this.parentElement != null) {
-                    this.parentElement.remove(this).append(this);
+                    this.parentElement.removeChild(this).appendChild(this);
                 } else {
                     parentElement = this.get().parentElement;
 
@@ -541,7 +541,7 @@
 
     var events = ['change', 'click', 'customizestart', 'customizeend', 'optremove', 'optshare', 'remove'];
 
-    function appendEndpoint(endpoint, options) {
+    var appendEndpoint = function appendEndpoint(endpoint, options) {
 
         this[endpoint.type] = {
             endpoint: endpoint,
@@ -549,9 +549,9 @@
         };
 
         return this;
-    }
+    };
 
-    function bindWiringConnection(wiringConnection) {
+    var bindWiringConnection = function bindWiringConnection(wiringConnection) {
 
         Object.defineProperties(this, {
 
@@ -564,14 +564,14 @@
         this._connection = wiringConnection;
 
         if (this.readonly) {
-            this.addClass("readonly");
+            this.addClassName("readonly");
             this.btnRemove.disable();
         }
 
         return this;
-    }
+    };
 
-    function btnremove_onclick(event) {
+    var btnremove_onclick = function btnremove_onclick(event) {
 
         if (this.background) {
             this.trigger('optshare', event);
@@ -580,9 +580,9 @@
                 this.trigger('optremove', event);
             }
         }
-    }
+    };
 
-    function calculateMiddle(source, sourceHandle, target, targetHandle) {
+    var calculateMiddle = function calculateMiddle(source, sourceHandle, target, targetHandle) {
         var B1, B2, B3, B4, bezier;
 
         B1 = function B1(t) { return t * t * t; };
@@ -597,9 +597,9 @@
         };
 
         return bezier(0.5, source, sourceHandle, targetHandle, target);
-    }
+    };
 
-    function connection_onclick(event) {
+    var connection_onclick = function connection_onclick(event) {
 
         event.preventDefault();
         event.stopPropagation();
@@ -607,15 +607,15 @@
         if (this.enabled && event.which === 1) {
             this.trigger('click');
         }
-    }
+    };
 
-    function establishConnection(wiringConnection) {
+    var establishConnection = function establishConnection(wiringConnection) {
 
         if (wiringConnection == null) {
             return this;
         }
 
-        this.append(this.optionsElement);
+        this.wrapperElement.appendChild(this.optionsElement);
 
         this.source.handle.on('drag', handle_ondrag.bind(this));
         this.source.handle.on('dragend', handle_ondragend.bind(this));
@@ -629,34 +629,34 @@
         this.target.endpoint.appendConnection(this);
 
         return this;
-    }
+    };
 
-    function handle_ondrag(position, handle) {
+    var handle_ondrag = function handle_ondrag(position, handle) {
         return this.refresh();
-    }
+    };
 
-    function handle_ondragend() {
+    var handle_ondragend = function handle_ondragend() {
         return this.trigger('change', this.toJSON());
-    }
+    };
 
-    function formatDistance(s, sHandle, t, tHandle) {
+    var formatDistance = function formatDistance(s, sHandle, t, tHandle) {
         return "M " + s.x + "," + s.y + " C " + sHandle.x + "," + sHandle.y + " " + tHandle.x + "," + tHandle.y + " " + t.x + "," + t.y;
-    }
+    };
 
-    function getHandlePosition(start, end, invert) {
+    var getHandlePosition = function getHandlePosition(start, end, invert) {
         var position = ns.ConnectionHandle.getRelativePosition(start, end, invert);
 
         return {x: start.x + position.x, y: start.y + position.y};
-    }
+    };
 
-    function removeEndpoint(endpoint) {
+    var removeEndpoint = function removeEndpoint(endpoint) {
 
         this[endpoint.type] = {};
 
         return this;
-    }
+    };
 
-    function toggleActiveEndpoints(active) {
+    var toggleActiveEndpoints = function toggleActiveEndpoints(active) {
 
         if (this.source.endpoint != null) {
             this.source.endpoint.toggleActive(active);
@@ -667,9 +667,9 @@
         }
 
         return this;
-    }
+    };
 
-    function updateDistance(source, sourceHandle, target, targetHandle) {
+    var updateDistance = function updateDistance(source, sourceHandle, target, targetHandle) {
 
         this.borderElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
         this.bodyElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
@@ -685,6 +685,6 @@
         }
 
         return this;
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

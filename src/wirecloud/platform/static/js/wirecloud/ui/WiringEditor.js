@@ -126,7 +126,7 @@ Wirecloud.ui = Wirecloud.ui || {};
                 this.initialMessage.hide();
 
                 if (options.commit) {
-                    this.layout.content.append(component);
+                    this.layout.content.appendChild(component);
                     this.behaviourEngine.updateComponent(component, component.toJSON());
                     disableComponent.call(this, component);
                 }
@@ -290,14 +290,14 @@ Wirecloud.ui = Wirecloud.ui || {};
     function createAndSetUpLayout() {
 
         this.layout = new se.OffCanvasLayout();
-        this.layout.sidebar.addClass("wiring-sidebar");
-        this.layout.content.addClass("wiring-diagram");
-        this.layout.footer.addClass("wiring-footer");
+        this.layout.sidebar.addClassName("wiring-sidebar");
+        this.layout.content.addClassName("wiring-diagram");
+        this.layout.footer.addClassName("wiring-footer");
 
         setUpNavbarView.call(this);
 
         this.initialMessage = createInitialMessage();
-        this.layout.content.append(this.initialMessage);
+        this.layout.content.appendChild(this.initialMessage);
 
         this.layout
             .on('slideOut', function () {
@@ -305,8 +305,8 @@ Wirecloud.ui = Wirecloud.ui || {};
                 this.btnListBehaviours.active = false;
             }.bind(this))
             .on('slideIn', function (offcanvas, panel) {
-                this.btnFindComponents.active = panel.hasClass("panel-components");
-                this.btnListBehaviours.active = panel.hasClass("panel-behaviours");
+                this.btnFindComponents.active = panel.hasClassName("panel-components");
+                this.btnListBehaviours.active = panel.hasClassName("panel-behaviours");
             }.bind(this));
 
         var wiringLegend = document.createElement('div');
@@ -340,11 +340,11 @@ Wirecloud.ui = Wirecloud.ui || {};
         };
 
         this.layout.footer
-            .append(wiringLogger)
-            .append(wiringLegend);
+            .appendChild(wiringLogger)
+            .appendChild(wiringLegend);
 
         this.layout.content.get().addEventListener('click', layout_onclick.bind(this));
-        this.append(this.layout);
+        this.appendChild(this.layout);
 
         return this;
     }
@@ -357,7 +357,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             alignment: 'static-top'
         });
 
-        alert.heading.addClass('text-center');
+        alert.heading.addClassName('text-center');
         alert.addNote(gettext("Only if a web application provides input or output endpoints, it will be connectable with others."));
 
         return alert;
@@ -409,9 +409,9 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.layout.slideOut();
 
-        this.behaviourEngine.empty().disable();
+        this.behaviourEngine.clear().disable();
 
-        this.componentManager.empty().setUp();
+        this.componentManager.clear().setUp();
 
         this.sortableComponent = null;
         this.autoOperatorId = 1;

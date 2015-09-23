@@ -49,7 +49,7 @@
         return null;
     };
 
-    Wirecloud.ui.Tutorial.Utils = {
+    var Utils = {
         basic_actions: {
             sleep: function sleep(milliseconds) {
                 return function (autoAction, element) {

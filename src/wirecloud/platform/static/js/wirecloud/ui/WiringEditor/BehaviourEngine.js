@@ -101,7 +101,7 @@
                         .setTitle(gettext("Enable"))
                         .replaceIconClass('icon-unlock', 'icon-lock');
                     this.btnCreate.hide();
-                    this.body.append(this.disabledAlert);
+                    this.body.appendChild(this.disabledAlert);
                 }
 
                 return this;
@@ -162,7 +162,7 @@
             /**
              * @override
              */
-            empty: function empty() {
+            clear: function clear() {
                 var i;
 
                 if (this.enabled) {
@@ -216,7 +216,7 @@
                         _removeComponent.call(this, component);
                     }
                 }.bind(this));
-                behaviour.empty();
+                behaviour.clear();
 
                 if (_behaviour != null) {
                     this.activate(_behaviour);
@@ -674,7 +674,7 @@
 
     function insertBehaviour(behaviour) {
 
-        this.body.append(behaviour);
+        this.body.appendChild(behaviour);
         this.behaviours.push(behaviour);
 
         if (behaviour.active || !this.behaviour) {

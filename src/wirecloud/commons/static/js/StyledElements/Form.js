@@ -534,8 +534,8 @@
         var fieldId, inputInterface;
 
         if (this.enabled != disabled) {
-          // Nothing to do
-          return;
+            // Nothing to do
+            return;
         }
 
         if (disabled) {

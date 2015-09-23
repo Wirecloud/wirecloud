@@ -51,13 +51,8 @@
                 this.wrapperElement.setAttribute('id', options.id);
             }
 
-            if (options.extraClass) {
-                this.addClass(options.extraClass);
-            }
-
-            if (options['class']) {
-                this.addClass(options['class']);
-            }
+            this.addClassName(options['class']);
+            this.addClassName(options.extraClass);
         },
 
         inherit: se.StyledElement,
@@ -65,28 +60,22 @@
         members: {
 
             /**
-             * @override
+             * Check if an element is a descendant of the wrapperElement.
+             * @version 0.6
+             *
+             * @param {StyledElement|HTMLElement} childElement
+             *      An element that may be contained.
+             * @returns {Boolean}
+             *      If the given element is a descendant of the wrapperElement, even so
+             *      it is a direct child or nested more deeply.
              */
-            append: function append(newElement, refElement) {
+            has: function has(childElement) {
 
-                if (newElement instanceof se.StyledElement) {
-                    this.children.push(newElement);
+                if (childElement instanceof se.StyledElement && this.children.indexOf(childElement) !== -1) {
+                    return true;
                 }
 
-                return this.superMember(se.StyledElement, 'append', newElement, refElement);
-            },
-
-            /**
-             * @override
-             */
-            empty: function empty() {
-                var i = this.children.length
-
-                while (i--) {
-                    this.remove(this.children[i]);
-                }
-
-                return this.superMember(se.StyledElement, 'empty');
+                return childElement.parentElement == this.get();
             },
 
             /**
@@ -107,26 +96,47 @@
             remove: function remove(childElement) {
                 var index;
 
+                if (childElement == null) {
+                    return this.superMember(se.StyledElement, 'remove', childElement);
+                }
+
                 if (childElement instanceof se.StyledElement) {
-                    if ((index=this.children.indexOf(childElement)) < 0) {
+                    if ((index = this.children.indexOf(childElement)) === -1) {
                         return this;
                     }
 
                     this.children.splice(index, 1);
+                    childElement.parentElement = null;
+
+                    // Get the DOM element
+                    childElement = childElement.get();
                 }
 
-                return this.superMember(se.StyledElement, 'remove', childElement);
+                if (childElement.parentElement === this.get()) {
+                    this.get().removeChild(childElement);
+                }
+
+                return this;
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * Insert an element at the end of this container or before the
+             * refElement if provided.
+             *
+             * @param {StyledElement|HTMLElement|String} newElement
+             *      An element to insert into the wrapperElement.
+             * @param {StyledElement|HTMLElement} [refElement]
+             *      Optional. An element after which newElement is inserted.
+             * @returns {StyledElement}
+             *      The instance on which the member is called.
              */
             appendChild: function appendChild(element, refElement) {
                 if (element instanceof StyledElements.StyledElement) {
                     element.insertInto(this.wrapperElement, refElement);
+                    element.parentElement = this;
                     this.children.push(element);
 
-                    return element;
+                    return this;
                 }
 
                 if (typeof element === "string") {
@@ -134,7 +144,7 @@
                 }
 
                 if (refElement instanceof StyledElements.StyledElement) {
-                    refElement = refElement.wrapperElement;
+                    refElement = refElement.get();
                 }
 
                 if (refElement != null) {
@@ -143,29 +153,32 @@
                     this.wrapperElement.appendChild(element);
                 }
 
-                return element;
-            },
-
-            /**
-             * @deprecated since version 0.2.0
-             */
-            removeChild: function removeChild(element) {
-                var index;
-
-                if (element instanceof StyledElements.StyledElement) {
-                    index = this.children.indexOf(element);
-                    this.children.splice(index, 1);
-                    this.wrapperElement.removeChild(element.wrapperElement);
-                } else {
-                    this.wrapperElement.removeChild(element);
-                }
-
                 return this;
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * Inserts a new element to the beginning of this Container
+             * @version 0.6
+             *
+             * @param {StyledElement|HTMLElement|String} newElement
+             *      An element to insert into the wrapperElement.
+             * @param {StyledElement|HTMLElement} [refElement]
+             *      Optional. An element before which newElement is inserted.
+             * @returns {StyledElement}
+             *      The instance on which the member is called.
              */
+            prependChild: function prependChild(newElement, refElement) {
+                return this.appendChild(newElement, this.get().firstChild);
+            },
+
+            removeChild: function removeChild(element) {
+                if (element == null) {
+                    throw new TypeError('missing element parameter');
+                }
+
+                return this.remove(element);
+            },
+
             repaint: function repaint(temporal) {
                 temporal = temporal !== undefined ? temporal : false;
 
@@ -193,9 +206,6 @@
                 }
             },
 
-            /**
-             * @deprecated since version 0.2.0
-             */
             clear: function clear() {
                 this.children = [];
                 this.wrapperElement.innerHTML = "";
@@ -208,15 +218,24 @@
                 return this;
             },
 
+            text: function (text) {
+                  if (text == null) {
+                      return this.get().textContent;
+                  }
+
+                  this.children = []
+                  this.wrapperElement.textContent = "" + text;
+            },
+
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6.0
              */
             isDisabled: function isDisabled() {
                 return this.disabledLayer != null;
             },
 
             /**
-             * @deprecated since version 0.2.0
+             * @deprecated since version 0.6.0
              */
             setDisabled: function setDisabled(disabled) {
                 if (this.isDisabled() == disabled) {
@@ -243,16 +262,10 @@
                 this.enabled = !disabled;
             },
 
-            /**
-             * @deprecated since version 0.2.0
-             */
             enable: function enable() {
                 this.setDisabled(false);
             },
 
-            /**
-             * @deprecated since version 0.2.0
-             */
             disable: function disable() {
                 this.setDisabled(true);
             }

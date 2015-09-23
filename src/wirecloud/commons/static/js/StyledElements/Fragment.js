@@ -43,6 +43,9 @@
     };
     Fragment.prototype = new StyledElements.StyledElement();
 
+    /*
+     * @override
+     */
     Fragment.prototype.insertInto = function insertInto(element, refElement) {
         var i, currentElement;
 

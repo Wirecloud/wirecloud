@@ -53,7 +53,7 @@
                 title: meta.title
             });
 
-            this.heading.title.addClass("component-title");
+            this.heading.title.addClassName("component-title");
 
             thumbnailElement = document.createElement('div');
             thumbnailElement.className = "thumbnail thumbnail-rounded thumbnail-sm";
@@ -82,10 +82,10 @@
             this.description.textContent = meta.description;
 
             this.body
-                .append(thumbnailElement)
-                .append(versionGroup)
-                .append(this.vendor)
-                .append(this.description);
+                .appendChild(thumbnailElement)
+                .appendChild(versionGroup)
+                .appendChild(this.vendor)
+                .appendChild(this.description);
         },
 
         inherit: se.Panel,

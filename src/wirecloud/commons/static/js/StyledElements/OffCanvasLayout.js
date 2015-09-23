@@ -43,14 +43,14 @@
             this.superClass(['slideIn', 'slideOut']);
 
             this.wrapperElement = document.createElement('div');
-            this.addClass("se-offcanvas " + options.sideway + "-sideway");
+            this.addClassName("se-offcanvas " + options.sideway + "-sideway");
 
             Object.defineProperty(this, 'slipped', {
                 get: function get() {
-                    return this.hasClass('slipped');
+                    return this.hasClassName('slipped');
                 },
                 set: function set(value) {
-                    this.toggleClass('slipped', value);
+                    this.toggleClassName('slipped', value);
                 }
             });
 
@@ -63,9 +63,9 @@
                 footer: {value: new se.Container({extraClass: 'se-offcanvas-footer'})}
             });
 
-            this.append(this.sidebar);
-            this.append(this.content);
-            this.append(this.footer);
+            this.sidebar.insertInto(this.wrapperElement);
+            this.content.insertInto(this.wrapperElement);
+            this.footer.insertInto(this.wrapperElement);
         },
 
         inherit: se.StyledElement,
@@ -81,7 +81,7 @@
              *      The instance on which the member is called.
              */
             addPanel: function addPanel(panel) {
-                this.sidebar.append(panel);
+                this.sidebar.appendChild(panel);
                 this.panels.push(panel);
 
                 return this;

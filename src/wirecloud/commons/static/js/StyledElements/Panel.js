@@ -46,19 +46,17 @@
             this.wrapperElement.className = 'panel';
 
             if (options.state) {
-                this.addClass('panel-' + options.state);
+                this.addClassName('panel-' + options.state);
             }
 
             if (options.selectable) {
-                this.addClass('panel-selectable');
+                this.addClassName('panel-selectable');
             }
 
-            if (options.extraClass) {
-                this.addClass(options.extraClass);
-            }
+            this.addClassName(options.extraClass);
 
             this.heading = new se.Container({extraClass: "panel-heading"});
-            this.append(this.heading);
+            this.heading.insertInto(this.wrapperElement);
 
             if (options.title) {
                 this.setTitle(options.title);
@@ -67,28 +65,28 @@
             if (options.buttons.length) {
                 this.buttons = new se.Container({extraClass: "panel-options"});
                 options.buttons.forEach(function (button) {
-                    this.buttons.append(button);
+                    this.buttons.appendChild(button);
                 }, this);
-                this.heading.append(this.buttons);
+                this.heading.appendChild(this.buttons);
             }
 
             if (options.subtitle) {
                 this.subtitle = new se.Container({extraClass: "panel-subtitle"});
-                this.heading.append(this.subtitle.append(options.subtitle));
+                this.heading.appendChild(this.subtitle.appendChild(options.subtitle));
             }
 
             if (!options.noBody) {
                 this.body = new se.Container({extraClass: "panel-body"});
-                this.append(this.body);
+                this.body.insertInto(this.wrapperElement);
             }
 
             Object.defineProperties(this, {
 
                 active: {
-                    get: function get() {return this.hasClass('active');},
+                    get: function get() {return this.hasClassName('active');},
                     set: function set(value) {
                         if (this.active !== value) {
-                            this.toggleClass('active', value)._onactive(value);
+                            this.toggleClassName('active', value)._onactive(value);
                         }
                     }
                 },
@@ -107,7 +105,7 @@
         members: {
 
             /**
-             * @version 0.2.0
+             * @version 0.6.0
              * @abstract
              */
             _onactive: function _onactive(active) {
@@ -124,10 +122,10 @@
             /**
              * @override
              */
-            empty: function empty() {
+            clear: function clear() {
 
                 if (this.body != null) {
-                    this.body.empty();
+                    this.body.clear();
                 }
 
                 return this;
@@ -135,7 +133,7 @@
 
             setTitle: function setTitle(title) {
                 this.heading.title = new se.Container({extraClass: "panel-title"});
-                this.heading.append(this.heading.title.append(title));
+                this.heading.appendChild(this.heading.title.appendChild(title));
 
                 return this;
             }
@@ -156,7 +154,6 @@
         selectable: false,
         extraClass: "",
         noBody: false,
-        events: [],
         buttons: []
     };
 

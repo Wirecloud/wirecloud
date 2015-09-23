@@ -55,7 +55,7 @@
             this.endpoints = {source: [], target: []};
 
             this.container = container;
-            this.container.append(this.wrapperElement);
+            this.container.appendChild(this.wrapperElement);
             this.container.get().addEventListener('scroll', container_onscroll.bind(this));
 
             this._ondrag = connection_ondrag.bind(this);
@@ -178,7 +178,7 @@
             /**
              * @override
              */
-            empty: function empty() {
+            clear: function clear() {
                 var i;
 
                 this.setUp();
@@ -267,7 +267,7 @@
 
     var events = ['detach', 'dragstart', 'dragend', 'duplicate', 'establish'];
 
-    function appendConnection(connection) {
+    var appendConnection = function appendConnection(connection) {
 
         this.connections.push(connection);
 
@@ -277,9 +277,9 @@
             .on('remove', connection_onremove.bind(this));
 
         return this.trigger('establish', connection);
-    }
+    };
 
-    function connection_onclick(connection) {
+    var connection_onclick = function connection_onclick(connection) {
 
         if (!connection.editable) {
 
@@ -293,9 +293,9 @@
                 this.activate(connection);
             }
         }
-    }
+    };
 
-    function connection_onremove(connection) {
+    var connection_onremove = function connection_onremove(connection) {
         var index = this.connections.indexOf(connection);
 
         if (index != -1) {
@@ -305,23 +305,23 @@
 
             this.connections.splice(index, 1);
         }
-    }
+    };
 
-    function stopCustomizing() {
+    var stopCustomizing = function stopCustomizing() {
 
         if (this.editableConnection != null) {
             this.editableConnection.editable = false;
             delete this.editableConnection;
         }
-    }
+    };
 
-    function connection_oncustomizestart(connection) {
+    var connection_oncustomizestart = function connection_oncustomizestart(connection) {
 
         this.setUp();
         this.editableConnection = connection;
-    }
+    };
 
-    function endpoint_ondragstart(initialEndpoint) {
+    var endpoint_ondragstart = function endpoint_ondragstart(initialEndpoint) {
         var connection = new ns.Connection();
 
         if (!this.enabled) {
@@ -343,9 +343,9 @@
 
         this.temporalInitialEndpoint = initialEndpoint;
         this.temporalConnection = connection;
-    }
+    };
 
-    function connection_ondrag(event) {
+    var connection_ondrag = function connection_ondrag(event) {
         var parent    = this.container.get(),
             parentBCR = parent.getBoundingClientRect();
 
@@ -353,13 +353,13 @@
             x: event.clientX + parent.scrollLeft - parentBCR.left,
             y: event.clientY + parent.scrollTop - parentBCR.top
         });
-    }
+    };
 
-    function connection_ondragend(event) {
+    var connection_ondragend = function connection_ondragend(event) {
         endpoint_ondragend.call(this, null);
-    }
+    };
 
-    function endpoint_ondragend(finalEndpoint) {
+    var endpoint_ondragend = function endpoint_ondragend(finalEndpoint) {
 
         if (!this.enabled || !this.temporalConnection) {
             return;
@@ -390,9 +390,9 @@
 
         delete this.temporalInitialEndpoint;
         delete this.temporalConnection;
-    }
+    };
 
-    function container_onscroll(event) {
+    var container_onscroll = function container_onscroll(event) {
         var parent  = this.container.get(),
             scrollX = parent.scrollLeft
             scrollY = parent.scrollTop;
@@ -401,45 +401,45 @@
 
         this.wrapperElement.style.top = scrollY + 'px';
         this.wrapperElement.style.left = scrollX + 'px';
-    }
+    };
 
-    function disableEndpoints(type) {
+    var disableEndpoints = function disableEndpoints(type) {
 
         this.endpoints[type].forEach(function (endpoint) {
             endpoint.disable();
         });
 
         return this;
-    }
+    };
 
-    function enableEndpoints(type) {
+    var enableEndpoints = function enableEndpoints(type) {
 
         this.endpoints[type].forEach(function (endpoint) {
             endpoint.enable();
         });
 
         return this;
-    }
+    };
 
-    function endpoint_ondragenter(endpoint) {
+    var endpoint_ondragenter = function endpoint_ondragenter(endpoint) {
 
         if (this.temporalConnection != null) {
             endpoint.activate();
             this.temporalConnection.stickEndpoint(endpoint, {establish: false});
             document.removeEventListener('mousemove', this._ondrag);
         }
-    }
+    };
 
-    function endpoint_ondragleave(endpoint) {
+    var endpoint_ondragleave = function endpoint_ondragleave(endpoint) {
 
         if (this.temporalConnection != null) {
             endpoint.deactivate();
             this.temporalConnection.unstickEndpoint(endpoint);
             document.addEventListener('mousemove', this._ondrag);
         }
-    }
+    };
 
-    function validateConnection(initialEndpoint, finalEndpoint) {
+    var validateConnection = function validateConnection(initialEndpoint, finalEndpoint) {
         var i;
 
         if (initialEndpoint == null || finalEndpoint == null) {
@@ -459,6 +459,6 @@
         }
 
         return ns.ConnectionEngine.CONNECTION_ESTABLISHED;
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

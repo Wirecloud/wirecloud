@@ -57,7 +57,7 @@
 
             btnGroupElement = document.createElement('div');
             btnGroupElement.className = "btn-group btn-group-justified";
-            this.append(btnGroupElement);
+            this.wrapperElement.appendChild(btnGroupElement);
 
             this.components.operator.button = new se.ToggleButton({
                 state: 'primary',
@@ -73,7 +73,7 @@
             this.components.operator.container = new se.Container({
                 extraClass: "section operator-group"
             });
-            this.body.append(this.components.operator.container);
+            this.body.appendChild(this.components.operator.container);
 
             this.components.operator.alert = new se.Alert({
                 state: 'info',
@@ -81,7 +81,7 @@
                 message: gettext("No operator in your current account. Go to inventory for uploading at least one.")
             });
             this.components.operator.container
-                .append(this.components.operator.alert);
+                .appendChild(this.components.operator.alert);
 
             this.components.widget.button = new se.ToggleButton({
                 state: "primary",
@@ -97,7 +97,7 @@
             this.components.widget.container = new se.Container({
                 extraClass: "section widget-group"
             });
-            this.body.append(this.components.widget.container);
+            this.body.appendChild(this.components.widget.container);
 
             this.components.widget.alert = new se.Alert({
                 state: 'info',
@@ -105,7 +105,7 @@
                 message: gettext("No widget in your current workspace. Go to dashboard for adding at least one.")
             });
             this.components.widget.container
-                .append(this.components.widget.alert);
+                .appendChild(this.components.widget.alert);
 
             this.setUp();
         },
@@ -124,7 +124,7 @@
                     component = new ns.ComponentGroup(meta, this.layout, utils.updateObject({canCreate: this.components[meta.type].canCreate}, this.componentOptions));
 
                     this.components[meta.type].elements[component.id] = component;
-                    this.components[meta.type].container.append(component);
+                    this.components[meta.type].container.appendChild(component);
                 }
 
                 component.appendVersion(meta);
@@ -146,12 +146,15 @@
                 return this;
             },
 
-            empty: function empty() {
+            /**
+             * @override
+             */
+            clear: function clear() {
 
                 Object.keys(this.components).forEach(function (type) {
                     this.components[type].container
-                        .empty()
-                        .append(this.components[type].alert);
+                        .clear()
+                        .appendChild(this.components[type].alert);
                     this.components[type].elements = {};
                 }, this);
 

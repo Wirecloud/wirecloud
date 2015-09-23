@@ -53,11 +53,11 @@
 
             this.titleElement = document.createElement('span');
             this.titleElement.className = "endpoint-title";
-            this.append(this.titleElement);
+            this.wrapperElement.appendChild(this.titleElement);
 
             this.anchorElement = document.createElement('span');
             this.anchorElement.className = "endpoint-anchor";
-            this.append(this.anchorElement);
+            this.wrapperElement.appendChild(this.anchorElement);
 
             this._endpoint = wiringEndpoint;
             this.component = component;
@@ -68,8 +68,8 @@
             Object.defineProperties(this, {
 
                 active: {
-                    get: function get() {return this.hasClass('active');},
-                    set: function set(value) {this.toggleClass('active', value);}
+                    get: function get() {return this.hasClassName('active');},
+                    set: function set(value) {this.toggleClassName('active', value);}
                 },
 
                 anchorPosition: {
@@ -90,8 +90,8 @@
                 keywords: {value: wiringEndpoint.friendcode.trim().split(/\s+/)},
 
                 missing: {
-                    get: function get() {return this.hasClass('missing');},
-                    set: function set(value) {this.toggleClass('missing', value);}
+                    get: function get() {return this.hasClassName('missing');},
+                    set: function set(value) {this.toggleClassName('missing', value);}
                 },
 
                 name: {value: wiringEndpoint.name},
@@ -374,15 +374,15 @@
 
     var events = ['click', 'connectionadded', 'dragenter', 'dragleave', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup'];
 
-    function endpoint_onmousedown(event) {
+    var endpoint_onmousedown = function endpoint_onmousedown(event) {
 
         if (this.enabled && event.which === 1) {
             event.stopPropagation();
             this.trigger('mousedown', event);
         }
-    }
+    };
 
-    function endpoint_onmouseenter(event) {
+    var endpoint_onmouseenter = function endpoint_onmouseenter(event) {
 
         if (this.enabled) {
             event.stopPropagation();
@@ -399,9 +399,9 @@
                 break;
             }
         }
-    }
+    };
 
-    function endpoint_onmouseleave(event) {
+    var endpoint_onmouseleave = function endpoint_onmouseleave(event) {
 
         if (this.enabled) {
             event.stopPropagation();
@@ -418,17 +418,17 @@
                 break;
             }
         }
-    }
+    };
 
-    function endpoint_onmouseup(event) {
+    var endpoint_onmouseup = function endpoint_onmouseup(event) {
 
         if (this.enabled && event.which === 1) {
             event.stopPropagation();
             this.trigger('mouseup', event);
         }
-    }
+    };
 
-    function getAnchorPosition() {
+    var getAnchorPosition = function getAnchorPosition() {
         var layout    = this.component.parent(),
             layoutBCR = layout.getBoundingClientRect(),
             anchorBCR = this.anchorElement.getBoundingClientRect();
@@ -443,9 +443,9 @@
         }
 
         return anchorPosition;
-    }
+    };
 
-    function getEditableConnection() {
+    var getEditableConnection = function getEditableConnection() {
         var connection, i;
 
         for (i = 0; connection == null && i < this.connections.length; i++) {
@@ -455,6 +455,6 @@
         }
 
         return connection;
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

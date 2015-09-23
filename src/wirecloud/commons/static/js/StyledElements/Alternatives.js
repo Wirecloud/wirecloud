@@ -168,7 +168,7 @@
     StyledAlternatives.NONE = "HorizontalSlice";
 
     StyledAlternatives.prototype.repaint = function repaint(temporal) {
-        temporal = temporal !== undefined ? temporal: false;
+        temporal = temporal != null ? temporal : false;
 
         var height = this._getUsableHeight();
         if (height == null) {

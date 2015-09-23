@@ -53,7 +53,7 @@
             }
 
             if (options.extraClass) {
-                this.addClass(options.extraClass);
+                this.addClassName(options.extraClass);
             }
 
             if (options.title) {
@@ -69,7 +69,7 @@
             Object.defineProperties(this, {
 
                 active: {
-                    get: function get() {return this.hasClass('active');},
+                    get: function get() {return this.hasClassName('active');},
                     set: function set(value) {this._onactive(value)}
                 }
 
@@ -90,7 +90,7 @@
         members: {
 
             _onactive: function _onactive(active) {
-                return this.active === active ? this: this.toggleClass('active', active);
+                return this.active === active ? this : this.toggleClassName('active', active);
             },
 
             iconClass: function iconClass(className) {
@@ -142,7 +142,7 @@
         "icon-reorder": "\uf0c9"
     };
 
-    function appendTitle(title) {
+    var appendTitle = function appendTitle(title) {
 
         if (this.tooltip == null) {
             this.tooltip = new se.Tooltip({placement: ['top']});
@@ -152,9 +152,9 @@
         this.tooltip.options.content = title;
 
         return this;
-    }
+    };
 
-    function removeTitle() {
+    var removeTitle = function removeTitle() {
 
         if (this.tooltip != null) {
             this.tooltip.destroy();
@@ -162,9 +162,9 @@
         }
 
         return this;
-    }
+    };
 
-    function button_onclick(event) {
+    var button_onclick = function button_onclick(event) {
 
         event.preventDefault();
         event.stopPropagation();
@@ -173,14 +173,13 @@
             toggleDropdownMenuVisible.call(this);
             this.trigger('click', event);
         }
-    }
+    };
 
-    function menu_onvisible() {
-
+    var menu_onvisible = function menu_onvisible() {
         this.active = this.dropdownMenu.isVisible();
-    }
+    };
 
-    function toggleDropdownMenuVisible() {
+    var toggleDropdownMenuVisible = function toggleDropdownMenuVisible() {
 
         if (this.dropdownMenu != null) {
             if (this.dropdownMenu.isVisible()) {
@@ -189,6 +188,6 @@
                 this.dropdownMenu.show(this.get().getBoundingClientRect());
             }
         }
-    }
+    };
 
 })(StyledElements, StyledElements.Utils);

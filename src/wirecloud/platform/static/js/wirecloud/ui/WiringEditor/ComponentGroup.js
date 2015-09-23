@@ -51,8 +51,8 @@
             this.wrapperElement.className = "component-group";
 
             this.meta = new ns.ComponentMeta(meta);
-            this.meta.version.on('change', verion_onchange.bind(this));
-            this.append(this.meta);
+            this.meta.version.on('change', version_onchange.bind(this));
+            this.meta.appendTo(this.wrapperElement);
 
             this.layout = layout;
             this.createWiringComponent = options.createWiringComponent;
@@ -131,8 +131,7 @@
             appendWiringComponent: function appendWiringComponent(wiringComponent) {
                 var component = new ns.Component(wiringComponent);
 
-                this.children[component.id] = component;
-                this.append(component);
+                this.children[component.id] = component.appendTo(this.wrapperElement);
 
                 return this._oncomponentadded(component);
             }
@@ -151,15 +150,15 @@
         canCreate: false
     };
 
-    function btncreate_onclick() {
+    var btncreate_onclick = function btncreate_onclick() {
         this.appendWiringComponent(this.createWiringComponent(this.currentVersion));
-    }
+    };
 
-    function component_ondragstart(draggable, context, event) {
+    var component_ondragstart = function component_ondragstart(draggable, context, event) {
         var bcr = this.layout.getBoundingClientRect();
 
         context.element = this.getComponentDraggable(context.component._component);
-        this.layout.slideOut().append(context.element);
+        context.element.appendTo(this.layout.slideOut().get());
 
         context.x = event.clientX - bcr.left - (context.element.wrapperElement.offsetWidth / 2);
         context.y = event.clientY - bcr.top - (context.element.heading.wrapperElement.offsetHeight / 2);
@@ -167,14 +166,14 @@
         context.component.disable();
 
         context.element
-            .addClass("cloned dragging")
+            .addClassName("cloned dragging")
             .position({
                 x: context.x,
                 y: context.y
             });
-    }
+    };
 
-    function component_ondrag(event, draggable, context, xDelta, yDelta) {
+    var component_ondrag = function component_ondrag(event, draggable, context, xDelta, yDelta) {
         var layout;
 
         if (!this.layout.content.has(context.element)) {
@@ -184,39 +183,39 @@
             context.y += layout.scrollTop;
 
             context.element.remove();
-            this.layout.content.append(context.element);
+            this.layout.content.appendChild(context.element);
         }
 
         context.element.position({
             x: context.x + xDelta,
             y: context.y + yDelta
         });
-    }
+    };
 
-    function component_ondragend(draggable, context) {
+    var component_ondragend = function component_ondragend(draggable, context) {
 
         if (!this.layout.content.has(context.element)) {
             context.element.remove();
-            this.layout.content.append(context.element);
+            this.layout.content.appendChild(context.element);
         }
 
-        context.element.removeClass("cloned dragging");
+        context.element.removeClassName("cloned dragging");
         context.element.trigger('change', context.element.toJSON());
 
         this.layout.slideIn(0);
-    }
+    };
 
-    function verion_onchange(select) {
+    var version_onchange = function version_onchange(select) {
         this.currentVersion = this.versions[select.getValue()];
         this.meta.showVersion(this.currentVersion);
-    }
+    };
 
-    function showLatestVersion(meta) {
+    var showLatestVersion = function showLatestVersion(meta) {
         this.latestVersion = meta;
         this.currentVersion = meta;
         this.meta.version.setValue(meta.version);
 
         return this;
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

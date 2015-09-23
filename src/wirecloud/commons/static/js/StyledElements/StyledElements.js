@@ -46,20 +46,20 @@
 
                 enabled: {
                     get: function get() {
-                        return !this.hasClass('disabled');
+                        return !this.hasClassName('disabled');
                     },
                     set: function set(value) {
-                        this.toggleClass('disabled', !value)
+                        this.toggleClassName('disabled', !value)
                             ._onenabled(value);
                     }
                 },
 
                 hidden: {
                     get: function get() {
-                        return this.hasClass('hidden');
+                        return this.hasClassName('hidden');
                     },
                     set: function set(value) {
-                        this.toggleClass('hidden', value)
+                        this.toggleClassName('hidden', value)
                             ._onhidden(value);
                     }
                 }
@@ -74,99 +74,59 @@
         members: {
 
             /**
-             * @version 0.6
-             * @abstract
+             * @protected
              */
             _onenabled: function _onenabled(enabled) {
                 // This member can be implemented by subclass.
             },
 
             /**
-             * @version 0.6
-             * @abstract
+             * @protected
              */
             _onhidden: function _onhidden(hidden) {
                 // This member can be implemented by subclass.
             },
 
             /**
-             * Add one or more classes to the wrapperElement.
-             * @version 0.6
+             * Adds one or more classes to this StyledElement.
              *
-             * @param {String} classList
+             * @param {String|String[]} classList
              *      One or more space-separated classes to be added to the
              *      wrapperElement.
              * @returns {StyledElement}
              *      The instance on which the member is called.
              */
-            addClass: function addClass(classList) {
-                classList = typeof classList !== 'string' ? "" : classList.trim();
+            addClassName: function addClassName(classList) {
 
-                if (classList) {
-                    classList.split(/\s+/).forEach(function (className) {
-                        this.get().classList.add(className);
-                    }, this);
+                if (!Array.isArray(classList)) {
+                    classList = classList == null ? "" : classList.toString().trim();
+                    if (classList === "") {
+                        return;
+                    }
+                    classList = classList.split(/\s+/);
                 }
+
+                classList.forEach(add_individual_class, this);
 
                 return this;
             },
 
             /**
-             * Insert a new element to the end of the wrapperElement children.
+             * Inserts this StyledElement to the end of the targetElement
              * @version 0.6
              *
-             * @param {StyledElement|HTMLElement|String} newElement
-             *      An element to insert into the wrapperElement.
-             * @param {StyledElement|HTMLElement} [refElement]
-             *      Optional. An element after which newElement is inserted.
-             * @returns {StyledElement}
-             *      The instance on which the member is called.
-             */
-            append: function append(newElement, refElement) {
-
-                if (newElement instanceof se.StyledElement) {
-                    newElement.parentElement = this;
-                    newElement = newElement.get();
-                }
-
-                if (typeof newElement === 'string') {
-                    newElement = document.createTextNode(newElement);
-                }
-
-                if (refElement instanceof se.StyledElement) {
-                    refElement = refElement.get();
-                }
-
-                if (refElement != null) {
-                    this.get().insertBefore(newElement, refElement.nextSibling);
-                } else {
-                    this.get().appendChild(newElement);
-                }
-
-                return this;
-            },
-
-            /**
-             * Insert the wrapperElement to the end of the targetElement children.
              * @param {StyledElement|HTMLElement} targetElement
              *      An element to insert the wrapperElement.
              * @returns {StyledElement}
              *      The instance on which the member is called.
              */
             appendTo: function appendTo(targetElement) {
-
-                if (targetElement instanceof se.StyledElement) {
-                    targetElement.append(this.get());
-                } else {
-                    targetElement.appendChild(this.get());
-                }
-
-                return this;
+                return this.insertInto(targetElement);
             },
 
             /**
-             * Disable the wrapperElement.
-             * @version 0.6
+             * Disables this StyledElement
+             * @version 0.5
              *
              * @returns {StyledElement}
              *      The instance on which the member is called.
@@ -181,7 +141,7 @@
             },
 
             /**
-             * Enable the wrapperElement.
+             * Enables this StyledElement
              * @version 0.6
              *
              * @returns {StyledElement}
@@ -197,23 +157,7 @@
             },
 
             /**
-             * Remove all children of the wrapperElement from the DOM.
-             * @version 0.6
-             *
-             * @returns {StyledElement}
-             *      The instance on which the member is called.
-             */
-            empty: function empty() {
-
-                while (this.wrapperElement.firstChild) {
-                    this.wrapperElement.removeChild(this.wrapperElement.firstChild);
-                }
-
-                return this;
-            },
-
-            /**
-             * Get the attached wrapperElement.
+             * Gets the root element for this StyledElement
              * @version 0.6
              *
              * @returns {HTMLElement}
@@ -221,56 +165,11 @@
              *      throws TypeError exception.
              */
             get: function get() {
-
-                if (!(this.wrapperElement instanceof HTMLElement)) {
-
-                    if (this.wrapperElement instanceof SVGElement) {
-                        return this.wrapperElement;
-                    }
-
-                    throw new TypeError("The wrapperElement must be instance of HTMLElement.");
-                }
-
                 return this.wrapperElement;
             },
 
             /**
-             * Check if an element is a descendant of the wrapperElement.
-             * @version 0.6
-             *
-             * @param {StyledElement|HTMLElement} childElement
-             *      An element that may be contained.
-             * @returns {Boolean}
-             *      If the given element is a descendant of the wrapperElement, even so
-             *      it is a direct child or nested more deeply.
-             */
-            has: function has(childElement) {
-
-                if (childElement instanceof se.StyledElement) {
-                    childElement = childElement.get();
-                }
-
-                return this.get().contains(childElement);
-            },
-
-            /**
-             * Check if the wrapperElement is assigned a class.
-             * @version 0.6
-             *
-             * @param {String} className
-             *      A class name to search for.
-             * @returns {Boolean}
-             *      If the class is assigned to the wrapperElement, even if other classes
-             *      also are.
-             */
-            hasClass: function hasClass(className) {
-                className = typeof className !== 'string' ? "" : className.trim();
-
-                return this.get().classList.contains(className);
-            },
-
-            /**
-             * Display the wrapperElement.
+             * Displays this StyledElement
              * @version 0.6
              *
              * @returns {StyledElement}
@@ -287,7 +186,7 @@
             },
 
             /**
-             * Get the parent of the wrapperElement.
+             * Gets the parent of this StyledElement
              * @version 0.6
              *
              * @returns {HTMLElement}
@@ -303,41 +202,6 @@
             },
 
             /**
-             * Insert a new element to the beginning of the wrapperElement children.
-             * @version 0.6
-             *
-             * @param {StyledElement|HTMLElement|String} newElement
-             *      An element to insert into the wrapperElement.
-             * @param {StyledElement|HTMLElement} [refElement]
-             *      Optional. An element before which newElement is inserted.
-             * @returns {StyledElement}
-             *      The instance on which the member is called.
-             */
-            prepend: function prepend(newElement, refElement) {
-
-                if (newElement instanceof se.StyledElement) {
-                    newElement.parentElement = this;
-                    newElement = newElement.get();
-                }
-
-                if (typeof newElement === 'string') {
-                    newElement = document.createTextNode(newElement);
-                }
-
-                if (refElement instanceof se.StyledElement) {
-                    refElement = refElement.get();
-                }
-
-                if (refElement == null) {
-                    refElement = this.get().firstChild;
-                }
-
-                this.get().insertBefore(newElement, refElement);
-
-                return this;
-            },
-
-            /**
              * Insert the wrapperElement to the beginning of the targetElement children.
              * @param {StyledElement|HTMLElement} targetElement
              *      An element to insert the wrapperElement.
@@ -345,43 +209,27 @@
              *      The instance on which the member is called.
              */
             prependTo: function prependTo(targetElement) {
-
                 if (targetElement instanceof se.StyledElement) {
-                    targetElement.prepend(this.get());
+                    return targetElement.prependChild(this);
                 } else {
-                    targetElement.insertBefore(this.get(), targetElement.firstChild);
+                    return this.insertInto(targetElement, targetElement.firstChild);
                 }
-
-                return this;
             },
 
             /**
-             * Remove the wrapperElement or a specified child from the DOM.
+             * Remove this StyledElement from the DOM.
              * @version 0.6
              *
-             * @param {StyledElement|HTMLElement} [childElement]
-             *      An element to be removed from the DOM.
              * @returns {StyledElement}
              *      The instance on which the member is called.
              */
-            remove: function remove(childElement) {
+            remove: function remove() {
 
-                if (childElement instanceof se.StyledElement) {
-                    childElement.parentElement = null;
-                    childElement = childElement.get();
-                }
-
-                if (!arguments.length || childElement == null) {
-                    if (this.parentElement != null) {
-                        this.parentElement.remove(this);
-                    } else {
-                        if (this.get().parentElement != null) {
-                            this.get().parentElement.removeChild(this.get());
-                        }
-                    }
+                if (this.parentElement != null) {
+                    this.parentElement.remove(this);
                 } else {
-                    if (this.get().contains(childElement)) {
-                        this.get().removeChild(childElement);
+                    if (this.get().parentElement != null) {
+                        this.get().parentElement.removeChild(this.get());
                     }
                 }
 
@@ -389,52 +237,19 @@
             },
 
             /**
-             * Remove multiple or all classes from the wrapperElement.
+             * Replaces CSS classes with others.
              * @version 0.6
              *
-             * @param {String} [classList]
-             *      Optional. One or more space-separated classes to be removed from the
-             *      wrapperElement. If no class names are given, all classes will be
-             *      removed.
+             * @param {String|String[]} removeList
+             *      classes to remove
+             * @param {String|String[]} addList
+             *      classes to add
              * @returns {StyledElement}
              *      The instance on which the member is called.
              */
-            removeClass: function removeClass(classList) {
-                classList = typeof classList !== 'string' ? "" : classList.trim();
-
-                if (classList) {
-                    classList.split(/\s+/).forEach(function (className) {
-                        this.get().classList.remove(className);
-                    }, this);
-                } else {
-                    this.get().removeAttribute('class');
-                }
-
-                return this;
-            },
-
-            /**
-             * Replace a existing class with other class.
-             * @version 0.6
-             *
-             * @param {String} className1
-             *      A existing class name to be removed.
-             * @param {String} className2
-             *      A new class name to be added.
-             * @returns {StyledElement}
-             *      The instance on which the member is called.
-             */
-            replaceClass: function replaceClass(className1, className2) {
-                className1 = typeof className1 !== 'string' ? "" : className1.trim();
-                className2 = typeof className2 !== 'string' ? "" : className2.trim();
-
-                if (className1) {
-                    this.get().classList.remove(className1);
-                }
-
-                if (className2) {
-                    this.get().classList.add(className2);
-                }
+            replaceClassName: function replaceClassName(removeList, addList) {
+                this.removeClassName(removeList);
+                this.addClassName(addList);
 
                 return this;
             },
@@ -486,29 +301,10 @@
             },
 
             /**
-             * Get the text content or set a text as the content of the wrapperElement.
-             * @version 0.6
-             *
-             * @param {String|Number|Boolean} [text]
-             *      A text to set as the content of the wrapperElement. When Number or
-             *      Boolean is given, it will be converted to a string.
-             * @returns {StyledElement|String}
-             *      The instance on which the member is called or the text content.
-             */
-            text: function text(text) {
-
-                if (!arguments.length || text == null) {
-                    return this.get().textContent;
-                }
-
-                this.get().textContent = "" + text;
-
-                return this;
-            },
-
-            /**
-             * Add or remove one or more classes from the wrapperElement, depending on
-             * either the class's presence.
+             * Add or remove one or more classes from this StyledElement,
+             * depending on either the class's presence. Additionaly, you can
+             * use the state parameter for indicating if you want to add or
+             * delete them.
              * @version 0.6
              *
              * @param {String} classList
@@ -519,7 +315,7 @@
              * @returns {StyledElement}
              *      The instance on which the member is called.
              */
-            toggleClass: function toggleClass(classList, state) {
+            toggleClassName: function toggleClassName(classList, state) {
                 classList = typeof classList !== 'string' ? "" : classList.trim();
 
                 if (classList.length) {
@@ -586,44 +382,37 @@
                 return width;
             },
 
-            /**
-             * @deprecated since version 0.6
-             */
-            addClassName: function addClassName(className) {
-                var i, tokens;
-
-                className = className.trim();
-                if (className === '') {
-                    return;
-                }
-
-                tokens = className.split(/\s+/);
-                for (i = 0; i < tokens.length; i++) {
-                    this.wrapperElement.classList.add(tokens[i]);
-                }
-
-                return this;
-            },
-
             getBoundingClientRect: function getBoundingClientRect() {
                 return this.wrapperElement.getBoundingClientRect();
             },
 
             /**
-             * @deprecated since version 0.6
+             * Check if this StyledElement is assigned a class.
+             *
+             * @param {String} className
+             *      A class name to search for.
+             * @returns {Boolean}
+             *      If the class is assigned to the wrapperElement, even if other classes
+             *      also are.
              */
             hasClassName: function hasClassName(className) {
-                return this.wrapperElement.classList.contains(className);
+                className = className == null ? "" : className.toString().trim();
+
+                return this.get().classList.contains(className);
             },
 
             /**
-             * Inserta el elemento con estilo dentro del elemento indicado.
+             * Inserts this StyledElement at the end of the given element. If
+             * the refElement parameter is used, then this StyledElement will be
+             * inserted before refElement.
              *
-             * @param element Este será el elemento donde se insertará el elemento con
-             * estilo.
-             * @param refElement Este parámetro es opcional. En caso de ser usado, sirve
-             * para indicar delante de que elemento se tiene que añadir este elemento con
-             * estilo.
+             * @param {Container|HTMLElement} element
+             *      An element where this StyledElement will be inserted.
+             * @param {StyledElement|HTMLElement} [refElement]
+             *      Optional. An element after which newElement is going to be
+             *      inserted.
+             * @returns {StyledElement}
+             *      The instance on which the member is called.
              */
             insertInto: function insertInto(element, refElement) {
                 if (element instanceof StyledElements.StyledElement) {
@@ -644,41 +433,44 @@
             },
 
             /**
-             * @deprecated since version 0.6
+             * Removes multiple or all classes from this StyledElement
+             * @version 0.6
+             *
+             * @param {String|String[]} [classList]
+             *      Optional. One or more space-separated classes to be removed from this
+             *      StyledElement. If you pass an empty string as the classList parameter,
+             *      all classes will be removed.
+             * @returns {StyledElement}
+             *      The instance on which the member is called.
              */
-            removeClassName: function removeClassName(className) {
-                var i, tokens;
-
-                className = className.trim();
-                if (className === '') {
-                    return;
+            removeClassName: function removeClassName(classList) {
+                if (!Array.isArray(classList)) {
+                    classList = classList == null ? "" : classList.toString().trim();
+                    if (classList === "") {
+                        this.get().removeAttribute('class');
+                    }
+                    classList = classList.split(/\s+/);
                 }
 
-                tokens = className.split(/\s+/);
-                for (i = 0; i < tokens.length; i++) {
-                    this.wrapperElement.classList.remove(tokens[i]);
-                }
+                classList.forEach(remove_individual_class, this);
 
                 return this;
             },
 
             /**
-             * Esta función sirve para repintar el componente.
+             * Repaints this StyledElement.
              *
-             * @param {Boolean} temporal Indica si se quiere repintar el componente de
-             * forma temporal o de forma permanente. Por ejemplo, cuando mientras se está
-             * moviendo el tirador de un HPaned se llama a esta función con el parámetro
-             * temporal a <code>true</code>, permitiendo que los componentes intenten hacer
-             * un repintado más rápido (mejorando la experiencia del usuario); y cuando el
-             * usuario suelta el botón del ratón se ejecuta una última vez esta función con
-             * el parámetro temporal a <code>false</code>, indicando que el usuario ha
-             * terminado de mover el tirador y que se puede llevar a cabo un repintado más
-             * inteligente. Valor por defecto: <code>false</code>.
+             * @param {Boolean} temporal `true` if the repaint should be
+             * handled as temporal repaint that will be followed, in a short
+             * period of time, by more calls to this method. In that case, the
+             * sequence should end with a call to this method using `false`
+             * for the temporal parameter. `false` by default.
              */
-            repaint: function repaint(temporal) {},
+            repaint: function repaint(temporal) {return this},
 
             /**
              * @deprecated since version 0.6
+             * @see enabled property
              */
             setDisabled: function setDisabled(disable) {
                 if (disable) {
@@ -691,5 +483,17 @@
         }
 
     });
+
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var add_individual_class = function (className) {
+        this.get().classList.add(className);
+    };
+
+    var remove_individual_class = function (className) {
+        this.get().classList.remove(className);
+    };
 
 })(StyledElements, StyledElements.Utils);

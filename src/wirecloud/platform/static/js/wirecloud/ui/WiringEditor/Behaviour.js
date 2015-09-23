@@ -75,12 +75,12 @@
                 buttons: [this.btnPrefs, this.btnRemove]
             });
 
-            this.heading.title.addClass("se-link behaviour-title");
+            this.heading.title.addClassName("se-link behaviour-title");
 
             descriptionElement = document.createElement('p');
             descriptionElement.className = "behaviour-description";
             descriptionElement.textContent = options.description;
-            this.body.append(descriptionElement);
+            this.body.appendChild(descriptionElement);
 
             Object.defineProperties(this, {
 
@@ -130,7 +130,7 @@
             /**
              * @override
              */
-            empty: function empty() {
+            clear: function clear() {
 
                 this.components = {operator: {}, widget: {}};
                 this.connections = [];
