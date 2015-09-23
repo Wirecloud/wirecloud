@@ -37,10 +37,6 @@
     & > .panel-heading {
         padding: 0px 0px $panel-padding-vertical;
         border-radius: 0px;
-
-        .panel-title {
-            width: $wiring-panel-title-width;
-        }
     }
 
     & > .panel-body {
@@ -57,8 +53,15 @@
     }
 }
 
-.wiring-sidebar > .panel-behaviours.disabled {
-    opacity: 1;
+.wiring-sidebar > .panel-behaviours {
+
+    & > .panel-heading .panel-title {
+        width: $behaviour-title-width;
+    }
+
+    &.disabled {
+        opacity: 1;
+    }
 }
 
 .wiring-sidebar > .panel-components {
