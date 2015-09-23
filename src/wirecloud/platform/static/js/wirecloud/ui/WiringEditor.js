@@ -413,6 +413,8 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.componentManager.clear().setUp();
 
+        this.suggestionManager.enable();
+
         this.sortableComponent = null;
         this.autoOperatorId = 1;
 
@@ -888,10 +890,12 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.sortableComponent = component;
         this.connectionEngine.enabled = false;
+        this.suggestionManager.disable();
     }
 
     function component_onsortend(component) {
         this.connectionEngine.enabled = true;
+        this.suggestionManager.enable();
     }
 
     /*
