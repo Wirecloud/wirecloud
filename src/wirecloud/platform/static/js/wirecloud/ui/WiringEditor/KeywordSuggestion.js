@@ -40,11 +40,26 @@
 
         constructor: function KeywordSuggestion() {
             this.superClass();
+            this.enabled = true;
         },
 
         inherit: Wirecloud.wiring.KeywordSuggestion,
 
         members: {
+
+            disable: function disable() {
+
+                this.enabled = false;
+
+                return this;
+            },
+
+            enable: function enable() {
+
+                this.enabled = true;
+
+                return this;
+            },
 
             /**
              * [TODO: hideSuggestions description]
@@ -54,6 +69,10 @@
              *      The instance on which the member is called.
              */
             hideSuggestions: function hideSuggestions(endpoint) {
+
+                if (!this.enabled) {
+                    return this;
+                }
 
                 endpoint.deactivate();
 
@@ -70,6 +89,10 @@
              *      The instance on which the member is called.
              */
             showSuggestions: function showSuggestions(endpoint) {
+
+                if (!this.enabled) {
+                    return this;
+                }
 
                 endpoint.activate();
 

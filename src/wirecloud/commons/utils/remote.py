@@ -642,6 +642,18 @@ class WiringComponentTester(object):
         return WiringComponentEditableTester(self.testcase, self)
 
     @property
+    def source_endpoints(self):
+        return [WiringEndpointTester(self.testcase, e) for e in self.element.find_elements_by_css_selector(".source-endpoints .endpoint")]
+
+    @property
+    def target_endpoints(self):
+        return [WiringEndpointTester(self.testcase, e) for e in self.element.find_elements_by_css_selector(".target-endpoints .endpoint")]
+
+    @property
+    def endpoints(self):
+        return self.target_endpoints + self.source_endpoints
+
+    @property
     def title(self):
         return self.element.find_element_by_css_selector('.panel-heading .panel-title').text
 
@@ -705,6 +717,7 @@ class WiringComponentEditableTester(object):
 
     def __exit__(self, type, value, traceback):
         self.component.display_preferences().click_entry("Stop ordering")
+        self.testcase.assertEqual(len([e for e in self.component.endpoints if e.active]), 0)
 
     def move_endpoint(self, endpoint_type, endpoint_start_title, endpoint_end_title):
         endpoint_start = self.component.find_endpoint_by_title(endpoint_type, endpoint_start_title)
