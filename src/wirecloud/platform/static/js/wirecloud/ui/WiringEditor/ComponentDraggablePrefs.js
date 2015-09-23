@@ -46,7 +46,7 @@
 
         members: {
 
-            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled){
+            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
                 var item;
 
                 item = new se.MenuItem(title, onclick);
@@ -94,32 +94,32 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    function canCollapseEndpoints() {
+    var canCollapseEndpoints = function canCollapseEndpoints() {
         return this.hasEndpoints() && !this.background && !this.sortingEndpoints;
-    }
+    };
 
-    function canSortEndpoints() {
+    var canSortEndpoints = function canSortEndpoints() {
         return this.hasSortableEndpoints() && !this.background && !this.missing && !this.collapsed;
-    }
+    };
 
-    function canShowSettings() {
-        return this.hasSettings();
-    }
+    var canShowSettings = function canShowSettings() {
+        return this.hasSettings() && this._component.isAllowed('configure');
+    };
 
-    function getItemCollapse() {
+    var getItemCollapse = function getItemCollapse() {
         if (this.collapsed) {
             return {title: gettext("Expand"), icon: "collapse-top"};
         } else {
             return {title: gettext("Collapse"), icon: "collapse"};
         }
-    }
+    };
 
-    function getItemSortEndpoints() {
+    var getItemSortEndpoints = function getItemSortEndpoints() {
         if (this.sortingEndpoints) {
             return {title: gettext("Stop ordering"), icon: "sort"};
         } else {
             return {title: gettext("Order endpoints"), icon: "sort"};
         }
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

@@ -56,6 +56,12 @@
             this.loaded = false;
             this.pending_events = [];
 
+            this.permissions = Wirecloud.Utils.merge({
+                'close': true,
+                'configure': true,
+                'rename': true
+            }, businessInfo.permissions);
+
             meta.preferenceList.forEach(function (option) {
                 var hidden = false, readonly = false, value;
 
@@ -161,6 +167,21 @@
 
             is: function is(component) {
                 return this.meta.type == component.meta.type && this.id == component.id;
+            },
+
+            /**
+             * Returns whether an user can carry out a given action over this
+             * operator
+             *
+             * @returns {Boolean}
+             *      true if the user is able to do the queried action
+             */
+            isAllowed: function isAllowed(action) {
+                if (action in this.permissions) {
+                    return this.permissions[action];
+                } else {
+                    return false;
+                }
             },
 
             /**

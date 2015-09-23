@@ -84,11 +84,11 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    function canShowSettings() {
-        return this.component.hasSettings();
-    }
+    var canShowSettings = function canShowSettings() {
+        return this.component.hasSettings() && this.component._component.isAllowed('configure');
+    };
 
-    function showRenameModal() {
+    var showRenameModal = function showRenameModal() {
         var dialog = new Wirecloud.ui.FormWindowMenu([
                 {name: 'title', label: gettext("Title"), type: 'text'},
             ],
@@ -101,6 +101,6 @@
 
         dialog.show();
         dialog.setValue({title: this.component.title});
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);
