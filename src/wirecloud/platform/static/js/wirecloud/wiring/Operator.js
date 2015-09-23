@@ -312,9 +312,8 @@
 
         delete this.loading;
 
-        this.pending_events.forEach(send_pending_event, this);
-
         this.loaded = true;
+        this.pending_events.forEach(send_pending_event, this);
         this.pending_events = [];
 
         var msg = utils.interpolate(utils.gettext("The operator (%(title)s) was loaded."), this);
