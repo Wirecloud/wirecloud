@@ -55,7 +55,7 @@ def login(request):
     if request.user.is_authenticated():
         url = request.GET.get(REDIRECT_FIELD_NAME, '/')
     else:
-        url = reverse('socialauth_begin', kwargs={'backend': 'fiware'}) + '?' + request.GET.urlencode() 
+        url = reverse('social:begin', kwargs={'backend': 'fiware'}) + '?' + request.GET.urlencode()
 
     return HttpResponseRedirect(url)
 
