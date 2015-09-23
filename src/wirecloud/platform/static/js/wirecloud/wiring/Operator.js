@@ -253,10 +253,9 @@
              *      The instance on which the member is called.
              */
             showLogs: function showLogs() {
-                var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
-
-                modal.htmlElement.classList.add("component-logmanager");
-                modal.show();
+                var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
+                dialog.htmlElement.classList.add("wc-component-logs-dialog");
+                dialog.show();
 
                 return this;
             },
@@ -268,10 +267,8 @@
              *      The instance on which the member is called.
              */
             showSettings: function showSettings() {
-                var modal = new Wirecloud.ui.OperatorPreferencesWindowMenu();
-
-                modal.htmlElement.classList.add("component-update-form");
-                modal.show(this);
+                var dialog = new Wirecloud.ui.OperatorPreferencesWindowMenu();
+                dialog.show(this);
 
                 return this;
             },

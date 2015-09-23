@@ -285,19 +285,16 @@
     };
 
     WidgetBase.prototype.showLogs = function showLogs() {
-        var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
-
-        modal.htmlElement.classList.add("component-logmanager");
-        modal.show();
+        var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
+        dialog.htmlElement.classList.add("wc-component-logs-dialog");
+        dialog.show();
 
         return this;
     };
 
     WidgetBase.prototype.showSettings = function showSettings() {
-        var modal = new Wirecloud.Widget.PreferencesWindowMenu();
-
-        modal.htmlElement.classList.add("component-update-form");
-        modal.show(this);
+        var dialog = new Wirecloud.Widget.PreferencesWindowMenu();
+        dialog.show(this);
 
         return this;
     };

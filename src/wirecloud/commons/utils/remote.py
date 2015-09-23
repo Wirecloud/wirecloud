@@ -683,12 +683,12 @@ class WiringComponentTester(object):
     def show_logger_modal(self):
         self.btn_notify.click()
 
-        return BaseModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".component-logmanager"))
+        return BaseModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-logs-dialog"))
 
     def show_settings_modal(self):
         self.display_preferences().click_entry('Settings')
 
-        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".component-update-form"))
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
 
 
 class WiringComponentEditableTester(object):
