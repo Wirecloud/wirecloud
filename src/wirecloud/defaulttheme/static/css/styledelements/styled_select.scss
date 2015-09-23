@@ -26,7 +26,7 @@
     height:   $line-height-base;
     position: absolute;
     right:    6px;
-    top:      4px;
+    top:      $padding-vertical-base;
     padding:  0px 5px;
     z-index:  2;
 }
@@ -81,4 +81,24 @@
 .btn-group > .se-select:last-child {
     border-top-right-radius: $border-radius-base;
     border-bottom-right-radius: $border-radius-base;
+}
+
+.se-select.se-select-sm, .btn-group-sm .se-select {
+    font-size: $font-size-small;
+    height:  $input-height-small;
+    padding: $padding-vertical-small $padding-horizontal-small;
+
+    .se-select-arrow {
+        top:      $padding-vertical-small;
+    }
+}
+
+.se-select.se-select-xs, .btn-group-xs .se-select {
+    font-size: $font-size-xs;
+    height:  $input-height-xs;
+    padding: $padding-vertical-xs $padding-horizontal-xs;
+
+    .se-select-arrow {
+        top:      $padding-vertical-xs;
+    }
 }

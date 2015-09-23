@@ -58,3 +58,13 @@
     height:  $input-height-large;
     padding: $padding-vertical-large $padding-horizontal-large;
 }
+
+.btn-group-sm .add-on, .btn-group-sm .box {
+    height:  $input-height-small;
+    padding: $padding-vertical-small $padding-horizontal-small;
+}
+
+.btn-group-xs .add-on, .btn-group-xs .box {
+    height:  $input-height-xs;
+    padding: $padding-vertical-xs $padding-horizontal-xs;
+}
