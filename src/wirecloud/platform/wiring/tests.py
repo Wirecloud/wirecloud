@@ -1016,7 +1016,7 @@ class EndpointBasicRecommendationTestCase(WirecloudSeleniumTestCase):
 class EndpointCollapsedTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     @classmethod
     def setUpClass(cls):
@@ -1061,7 +1061,7 @@ class EndpointCollapsedTestCase(WirecloudSeleniumTestCase):
             source.drop_connection()
 
     @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
-    def test_component_with_endpoints_collapsed_cannot_display_option_sort_endpoints(self):
+    def test_component_with_endpoints_collapsed_cannot_display_option_order_endpoints(self):
         self.login()
 
         with self.wiring_view as wiring:
@@ -1071,13 +1071,13 @@ class EndpointCollapsedTestCase(WirecloudSeleniumTestCase):
 
             menu_dropdown = operator.display_preferences()
 
-            self.assertFalse('disabled' in menu_dropdown.get_entry('Sort endpoints').get_attribute('class').split())
+            self.assertFalse('disabled' in menu_dropdown.get_entry('Order endpoints').get_attribute('class').split())
             menu_dropdown.close()
 
             operator.collapse_endpoints()
 
             menu_dropdown = operator.display_preferences()
-            self.assertTrue('disabled' in menu_dropdown.get_entry('Sort endpoints').get_attribute('class').split())
+            self.assertTrue('disabled' in menu_dropdown.get_entry('Order endpoints').get_attribute('class').split())
 
 
 @wirecloud_selenium_test_case
