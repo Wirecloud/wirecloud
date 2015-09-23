@@ -233,15 +233,14 @@ class ResourceChangelogEntry(Resource):
         localized_doc_path = doc_filename_root + '.' + get_language() + doc_filename_ext
 
         try:
-            doc_code = download_local_file(localized_doc_path)
+            doc_code = download_local_file(localized_doc_path).decode('utf-8')
         except:
             try:
-                doc_code = download_local_file(doc_path)
+                doc_code = download_local_file(doc_path).decode('utf-8')
             except:
                 msg = _('Error opening the changelog file')
                 doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
-        doc_code = doc_code.decode('utf-8')
         doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
 
         if from_version:
@@ -274,15 +273,14 @@ class ResourceDocumentationEntry(Resource):
             localized_doc_path = doc_filename_root + '.' + get_language() + doc_filename_ext
 
             try:
-                doc_code = download_local_file(localized_doc_path)
+                doc_code = download_local_file(localized_doc_path).decode('utf-8')
             except:
                 try:
-                    doc_code = download_local_file(doc_path)
+                    doc_code = download_local_file(doc_path).decode('utf-8')
                 except:
                     msg = _('Error opening the userguide file')
                     doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
-        doc_code = doc_code.decode('utf-8')
         doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
         doc = clean_html(doc_pre_html, base_url=doc_base_url)
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
