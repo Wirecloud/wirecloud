@@ -171,7 +171,7 @@ function Workspace(workspaceState, resources) {
             this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
         }
         this._buildInterface();
-        this.wiring.load(this.workspaceState.wiring);
+        this.wiring.load(this.wiring.unmarshall(this.workspaceState.wiring));
 
         for (i = 0; i < this.tabInstances.length; i += 1) {
             this.tabInstances[i].paint(this.layout.getCenterContainer(), scrolling, i);
