@@ -350,7 +350,9 @@
             loadBehaviours: function loadBehaviours(behaviours) {
 
                 behaviours.forEach(function (info) {
-                    this.createBehaviour(info).logManager.log("The behaviour was loaded.", Wirecloud.constants.LOGGING.INFO_MSG);
+                    var behaviour = this.createBehaviour(info);
+
+                    behaviour.logManager.log(utils.interpolate(utils.gettext("The behaviour (%(title)s) was loaded."), behaviour), Wirecloud.constants.LOGGING.INFO_MSG);
                 }, this);
 
                 if (behaviours.length) {
