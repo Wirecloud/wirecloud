@@ -43,7 +43,7 @@
         extraInfo.appendChild(extraInfoText);
         extraInfoIcon.className = "iwidget_info";
         extraInfoText.innerHTML = this.iWidget.id;
-        extraInfoText.setAttribute('title', this.iWidget.name + "\n " + this.iWidget.widget.getInfoString());
+        extraInfoText.setAttribute('title', this.iWidget.title + "\n " + this.iWidget.widget.getInfoString());
         extraInfo.style.cursor = "pointer";
 
         return extraInfo;
@@ -54,7 +54,7 @@
 
         if (this.iWidget) {
             title = gettext('%(iwidget_name)s\'s logs');
-            title = interpolate(title, {iwidget_name: this.iWidget.name}, true);
+            title = interpolate(title, {iwidget_name: this.iWidget.title}, true);
             return title;
         } else {
             return this.title;

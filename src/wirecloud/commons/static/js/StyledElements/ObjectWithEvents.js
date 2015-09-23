@@ -108,7 +108,7 @@
                     }));
                 }
 
-                handlerArgs = Array.prototype.slice.call(arguments, 1);
+                handlerArgs = [this].concat(Array.prototype.slice.call(arguments, 1));
                 this.events[name].trigger.apply(this.events[name], handlerArgs);
 
                 return this;

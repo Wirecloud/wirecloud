@@ -19,57 +19,60 @@
  *
  */
 
-/*global StyledElements*/
+/* global StyledElements */
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
     /**
      * Este compontente representa al contenedor para una alternativa usable por el
      * componente StyledAlternatives.
+     * @extends {Container}
+     *
+     * @param {Number} id
+     *      [TODO: description]
+     * @param {PlainObject} [options]
+     *      [TODO: description]
      */
     var Alternative = function Alternative(id, options) {
-        var defaultOptions;
 
-        if (arguments.length === 0) {
+        if (!arguments.length) {
             return;
         }
 
-        defaultOptions = {
-            useFullHeight: true
-        };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        this.superClass(utils.updateObject({useFullHeight: true}, options));
 
+        this.addClass('hidden');
         this.altId = id;
-
-        /* call to the parent constructor */
-        StyledElements.Container.call(this, options, ['show', 'hide']);
-
-        this.wrapperElement.classList.add("hidden"); // TODO
     };
-    Alternative.prototype = new StyledElements.Container({extending: true});
 
-    Alternative.prototype.setVisible = function setVisible(newStatus) {
-        if (newStatus) {
-            this.wrapperElement.classList.remove("hidden");
+    utils.inherit(Alternative, se.Container);
+
+    /**
+     * @override
+     */
+    Alternative.prototype._onhidden = function _onhidden(hidden) {
+
+        if (!hidden) {
             this.repaint(false);
-            this.events.show.dispatch(this);
-        } else {
-            this.wrapperElement.classList.add("hidden");
-            this.repaint(false);
-            this.events.hide.dispatch(this);
         }
+
+        return this.superMember(se.Container, '_onhidden', hidden);
     };
 
-    Alternative.prototype.isVisible = function isVisible(newStatus) {
-        return !this.wrapperElement.classList.contains("hidden");
+    Alternative.prototype.setVisible = function setVisible(visible) {
+        return visible ? this.show() : this.hide();
+    };
+
+    Alternative.prototype.isVisible = function isVisible() {
+        return !this.hidden;
     };
 
     Alternative.prototype.getId = function getId() {
         return this.altId;
     };
 
-    StyledElements.Alternative = Alternative;
+    se.Alternative = Alternative;
 
-})();
+})(StyledElements, StyledElements.Utils);

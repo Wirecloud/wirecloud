@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -21,40 +21,39 @@
 
 /* global gettext, StyledElements, Wirecloud */
 
-(function (ns, utils) {
+(function (ns, se, utils) {
 
     "use strict";
 
     /**
-     * [OperatorLogManager description]
-     * @constructor
+     * Create a new instance of class OperatorLogManager.
+     * @extends {LogManager}
      *
-     * @param {Operator} ioperator
-     *      [description]
+     * @constructor
+     * @param {Operator} operator
+     *      [TODO: description]
+     * @param {Wiring} wiringEngine
+     *      [TODO: description]
      */
-    var OperatorLogManager = function OperatorLogManager(ioperator) {
-        Wirecloud.LogManager.call(this, ioperator.wiring.logManager);
-        this.ioperator = ioperator;
-    };
-    OperatorLogManager.prototype = new Wirecloud.LogManager();
+    ns.OperatorLogManager = utils.defineClass({
 
-    OperatorLogManager.prototype.buildTitle = function buildTitle() {
-        var title;
+        constructor: function OperatorLogManager(operator, wiringEngine) {
+            this.superClass(wiringEngine.logManager);
+            this.operator = operator;
+        },
 
-        if (this.ioperator) {
-            title = gettext('%(ioperator_title)s\'s logs');
-            title = utils.interpolate(title, { ioperator_title: this.ioperator.title });
-            return title;
-        } else {
-            return this.title;
+        inherit: Wirecloud.LogManager,
+
+        members: {
+
+            buildTitle: function buildTitle() {
+                return utils.interpolate(utils.gettext("%(operator_title)s's logs"), {
+                    operator_title: this.operator.title
+                });
+            }
+
         }
-    };
 
-    OperatorLogManager.prototype.close = function close() {
-        this.title = this.buildTitle();
-        this.ioperator = null;
-    };
+    });
 
-    ns.OperatorLogManager = OperatorLogManager;
-
-})(Wirecloud.wiring, StyledElements.Utils);
+})(Wirecloud.wiring, StyledElements, StyledElements.Utils);

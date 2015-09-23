@@ -19,24 +19,44 @@
  *
  */
 
-/*globals gettext, Wirecloud*/
+/* global gettext, Wirecloud */
 
-(function () {
+(function (ns) {
 
     "use strict";
 
-    var OperatorMeta = function OperatorMeta(desc) {
-        if (desc.type !== 'operator') {
+    /**
+     * Create a new instance of class OperatorMeta.
+     * @extends {MashableApplicationComponent}
+     *
+     * @constructor
+     * @param {PlainObject} description
+     *      [TODO: description]
+     */
+    ns.OperatorMeta = function OperatorMeta(description) {
+
+        if (description.type !== 'operator') {
             throw new TypeError('Invalid operator description');
         }
-        Wirecloud.MashableApplicationComponent.call(this, desc);
 
+        Wirecloud.MashableApplicationComponent.call(this, description);
         Object.freeze(this);
     };
 
-    OperatorMeta.prototype.instantiate = function instantiate(id, operator_status, wiring) {
-        return new Wirecloud.Operator(this, id, operator_status, wiring);
+    /**
+     * [TODO: instantiate description]
+     *
+     * @param {Number} operatorId
+     *      [TODO: description]
+     * @param {StyledElement} targetView
+     *      [TODO: description]
+     * @param {PlainObject} [businessInfo]
+     *      [TODO: description]
+     * @returns {Operator}
+     *      [TODO: description]
+     */
+    ns.OperatorMeta.prototype.instantiate = function instantiate(operatorId, targetView, businessInfo) {
+        return new Wirecloud.Operator(operatorId, this, targetView, businessInfo);
     };
 
-    Wirecloud.wiring.OperatorMeta = OperatorMeta;
-})();
+})(Wirecloud.wiring);

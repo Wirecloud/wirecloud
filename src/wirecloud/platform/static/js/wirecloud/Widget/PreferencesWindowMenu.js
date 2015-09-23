@@ -25,8 +25,8 @@
 
     "use strict";
 
-    var PreferencesWindowMenu = function PreferencesWindowMenu(css_class) {
-        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Widget Settings'), css_class);
+    var PreferencesWindowMenu = function PreferencesWindowMenu() {
+        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Widget Settings'), 'wc-component-preferences-dialog');
     };
     PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 

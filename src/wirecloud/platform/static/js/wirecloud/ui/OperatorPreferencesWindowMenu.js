@@ -25,8 +25,8 @@
 
     "use strict";
 
-    var OperatorPreferencesWindowMenu = function OperatorPreferencesWindowMenu(css_class) {
-        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Operator Settings'), css_class);
+    var OperatorPreferencesWindowMenu = function OperatorPreferencesWindowMenu() {
+        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Operator Settings'), 'wc-component-preferences-dialog');
     };
     OperatorPreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 

@@ -84,6 +84,7 @@
     @include button-variant($button-background-default, $button-border-default);
     box-sizing: border-box;
     white-space: nowrap;
+    box-sizing: border-box;
 
     @if ($button-gradients) {
         text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -140,7 +141,7 @@
     vertical-align: middle;
 }
 
-.se-btn.btn-large, .se-btn.btn-lg {
+.se-btn.btn-large, .se-btn.btn-lg, .btn-group-lg .se-btn {
     font-size: $font-size-large;
     padding: $padding-vertical-large $padding-horizontal-large;
     @include border-radius($border-radius-large);
@@ -154,7 +155,7 @@
     }
 }
 
-.se-btn.btn-small, .se-btn.btn-sm {
+.se-btn.btn-small, .se-btn.btn-sm, .btn-group-sm .se-btn {
     font-size: $font-size-small;
     padding: $padding-vertical-small $padding-horizontal-small;
     @include border-radius($border-radius-small);
@@ -168,7 +169,7 @@
     }
 }
 
-.se-btn.btn-mini, .se-btn.btn-xs {
+.se-btn.btn-mini, .se-btn.btn-xs, .btn-group-xs .se-btn {
     font-size: $font-size-xs;
     padding: $padding-vertical-xs $padding-horizontal-xs;
     @include border-radius($border-radius-xs);

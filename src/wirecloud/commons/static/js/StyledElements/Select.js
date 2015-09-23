@@ -59,15 +59,7 @@
             'initialEntries': [],
             'initialValue': null,
             'idFunc': function (value) {
-                if (typeof value === 'string') {
-                    return value;
-                } else if (value === null || value === undefined) {
-                    return '';
-                } else if (typeof value === 'number') {
-                    return '' + value;
-                } else {
-                    throw new TypeError();
-                }
+                return value == null ? '' : value.toString();
             }
         },
         options);
@@ -159,7 +151,7 @@
      * newEntries is null.
      */
     Select.prototype.addEntries = function addEntries(newEntries) {
-        var oldSelectedIndex, optionValue, optionLabel;
+        var oldSelectedIndex, optionValue, optionLabel, newEntry;
 
         oldSelectedIndex = this.inputElement.options.selectedIndex;
 
@@ -168,13 +160,17 @@
         }
 
         for (var i = 0; i < newEntries.length; i++) {
+            newEntry = newEntries[i];
             var option = document.createElement("option");
-            if (newEntries[i] instanceof Array) {
-                optionValue = newEntries[i][0];
-                optionLabel = newEntries[i][1];
+            if ('value' in newEntry) {
+                optionValue = newEntry.value;
+                optionLabel = newEntry.label;
+            } else if (Array.isArray(newEntry)) {
+                optionValue = newEntry[0];
+                optionLabel = newEntry[1];
             } else {
-                optionValue = newEntries[i].value;
-                optionLabel = newEntries[i].label;
+                optionValue = newEntry;
+                optionLabel = newEntry;
             }
             optionLabel = optionLabel ? optionLabel : optionValue;
 

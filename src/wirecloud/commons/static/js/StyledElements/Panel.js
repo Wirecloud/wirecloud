@@ -57,41 +57,46 @@
                 this.addClass(options.extraClass);
             }
 
-            this.heading = new se.Container({
-                extraClass: "panel-heading"
-            });
+            this.heading = new se.Container({extraClass: "panel-heading"});
             this.append(this.heading);
 
             if (options.title) {
-                this.title = new se.Container({
-                    extraClass: "panel-title"
-                });
-                this.heading.append(this.title.append(options.title));
+                this.setTitle(options.title);
             }
 
-            if (options.optionList.length) {
-                this.options = new se.Container({
-                    extraClass: "panel-options"
-                });
-                options.optionList.forEach(function (button) {
-                    this.options.append(button);
+            if (options.buttons.length) {
+                this.buttons = new se.Container({extraClass: "panel-options"});
+                options.buttons.forEach(function (button) {
+                    this.buttons.append(button);
                 }, this);
-                this.heading.append(this.options);
+                this.heading.append(this.buttons);
             }
 
-            this.body = new se.Container({
-                extraClass: "panel-body"
-            });
-            this.append(this.body);
+            if (options.subtitle) {
+                this.subtitle = new se.Container({extraClass: "panel-subtitle"});
+                this.heading.append(this.subtitle.append(options.subtitle));
+            }
 
-            Object.defineProperty(this, 'active', {
-                get: function get() {
-                    return this.hasClass('active');
+            if (!options.noBody) {
+                this.body = new se.Container({extraClass: "panel-body"});
+                this.append(this.body);
+            }
+
+            Object.defineProperties(this, {
+
+                active: {
+                    get: function get() {return this.hasClass('active');},
+                    set: function set(value) {
+                        if (this.active !== value) {
+                            this.toggleClass('active', value)._onactive(value);
+                        }
+                    }
                 },
-                set: function set(value) {
-                    this.toggleClass('active', value)
-                        ._onactive(value);
+
+                title: {
+                    get: function get() {return this.heading.title.text();}
                 }
+
             });
 
             this.wrapperElement.addEventListener('click', this._onclick.bind(this));
@@ -113,14 +118,24 @@
              * @override
              */
             _onclick: function _onclick(event) {
-                return this.events.click.trigger(this);
+                return this.trigger('click', event);
             },
 
             /**
              * @override
              */
             empty: function empty() {
-                this.body.empty();
+
+                if (this.body != null) {
+                    this.body.empty();
+                }
+
+                return this;
+            },
+
+            setTitle: function setTitle(title) {
+                this.heading.title = new se.Container({extraClass: "panel-title"});
+                this.heading.append(this.heading.title.append(title));
 
                 return this;
             }
@@ -136,10 +151,13 @@
     var defaults = {
         events: [],
         title: "",
+        subtitle: "",
         state: 'default',
         selectable: false,
         extraClass: "",
-        optionList: []
+        noBody: false,
+        events: [],
+        buttons: []
     };
 
 })(StyledElements, StyledElements.Utils);

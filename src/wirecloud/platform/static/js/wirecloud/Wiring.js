@@ -19,389 +19,470 @@
  *
  */
 
-/*global gettext, interpolate, Wirecloud*/
+/* global StyledElements, Wirecloud */
 
-(function () {
+
+(function (ns, se, utils) {
 
     "use strict";
 
-    var Wiring, findEntity, unload, addIWidget, removeIWidget,
-        iwidget_added_listener, iwidget_removed_listener,
-        iwidget_unload_listener, restore_connections, unload_operators;
+    ns.wiring = {}; // TODO: move to another file
 
-    /*****************
-     * Private methods
-     *****************/
-    findEntity = function findEntity(desc) {
-        switch (desc.type) {
-        case 'widget':
-            return this.iwidgets[desc.id];
-        case 'operator':
-            return this.ioperators[desc.id];
-        }
-    };
-
-    var findEndpoint = function findEndpoint(entity, desc, type) {
-        if (entity instanceof Wirecloud.wiring.GhostEntity) {
-            if (!(desc.endpoint in entity[type])) {
-                if (type === 'outputs') {
-                    entity[type][desc.endpoint] = new Wirecloud.wiring.GhostSourceEndpoint(entity, desc.endpoint);
-                } else {
-                    entity[type][desc.endpoint] = new Wirecloud.wiring.GhostTargetEndpoint(entity, desc.endpoint);
-                }
-            }
-        }
-
-        return entity[type][desc.endpoint];
-    };
-
-    restore_connections = function restore_connections(entity) {
-        var i, connection, sourceEntity, sourceEndpoint, targetEntity,
-            targetEndpoint, msg;
-
-        for (i = 0; i < this.status.connections.length; i += 1) {
-            connection = this.status.connections[i];
-            sourceEntity = findEntity.call(this, connection.source);
-            targetEntity = findEntity.call(this, connection.target);
-
-            if (entity != null && sourceEntity != entity && targetEntity != entity) {
-                // This connection has nothing to do with the especified entity, ignore it
-                continue;
-            }
-
-            if (sourceEntity == null || targetEntity == null) {
-                msg = gettext('The connection between %(source)s and %(target)s could not be established');
-                msg = interpolate(msg, {
-                    source: JSON.stringify(connection.source),
-                    target: JSON.stringify(connection.target)
-                }, true);
-                this.logManager.log(msg);
-                continue;
-            }
-
-            sourceEndpoint = findEndpoint(sourceEntity, connection.source, 'outputs');
-            targetEndpoint = findEndpoint(targetEntity, connection.target, 'inputs');
-            if (sourceEndpoint != null && targetEndpoint != null) {
-                if (connection.logManager == null) {
-                    connection.logManager = new Wirecloud.wiring.ConnectionLogManager(this);
-                }
-                if (connection.successcount == null) {
-                    connection.successcount = 0;
-                }
-                sourceEndpoint.connect(targetEndpoint, connection);
-            } else {
-                msg = gettext('The connection between %(source)s and %(target)s could not be established');
-                msg = interpolate(msg, {
-                    source: JSON.stringify(connection.source),
-                    target: JSON.stringify(connection.target)
-                }, true);
-                this.logManager.log(msg);
-            }
-        }
-    };
-
-    unload = function unload() {
-        var widgets, key, i;
-
-        if (this.status == null) {
-            return;
-        }
-
-        this.events.unload.dispatch();
-
-        widgets = this.workspace.getIWidgets();
-        for (i = 0; i < widgets.length; i++) {
-            this.iwidgets[widgets[i].id].fullDisconnect();
-        }
-
-        for (key in this.ioperators) {
-            this.ioperators[key].fullDisconnect();
-        }
-
-        this.events.unloaded.dispatch();
-        this.logManager.newCycle();
-
-        this.status = null;
-    };
-
-    addIWidget = function addIWidget(iwidget) {
-
-        if (iwidget.id in this.iwidgets) {
-            var msg = gettext("Error adding iWidget into the wiring module of the workspace: Widget instance already exists.");
-            this.logManager.log(msg);
-            return;
-        }
-
-        iwidget.addEventListener('unload', this._iwidget_unload_listener);
-        this.iwidgets[iwidget.id] = iwidget;
-    };
-
-    removeIWidget = function removeIWidget(iwidget) {
-        var widgetEntry, i, connection;
-
-        if (!(iwidget.id in this.iwidgets)) {
-            var msg = gettext("Error: trying to remove an inexistant iWidget from the wiring module.");
-            this.logManager.log(msg);
-            return;
-        }
-
-        iwidget.fullDisconnect();
-
-        delete this.status.visualdescription.components.widget[iwidget.id];
-
-        for (i = this.status.connections.length - 1; i >= 0 ; i -= 1) {
-            connection = this.status.connections[i];
-
-            if (connection.source.type === 'widget' && connection.source.id === iwidget.id) {
-                this.status.connections.splice(i, 1);
-                this.status.visualdescription.connections.splice(i, 1);
-            } else if (connection.target.type === 'widget' && connection.target.id === iwidget.id) {
-                this.status.connections.splice(i, 1);
-                this.status.visualdescription.connections.splice(i, 1);
-            }
-        }
-
-        iwidget.removeEventListener('unload', this._iwidget_unload_listener);
-        delete this.iwidgets[iwidget.id];
-    };
-
-    iwidget_added_listener = function iwidget_added_listener(workspace, iwidget) {
-        addIWidget.call(this, iwidget);
-    };
-
-    iwidget_removed_listener = function iwidget_removed_listener(workspace, iwidget) {
-        removeIWidget.call(this, iwidget);
-    };
-
-    iwidget_unload_listener = function iwidget_unload_listener(iWidget) {
-        var key, entry = this.iwidgets[iWidget.id];
-
-        for (key in entry.inputs) {
-            entry.inputs[key].callback = null;
-        }
-    };
-
-    unload_operators = function unload_operators(resource_details, version) {
-        var id, operator, msg, ghost_operator, i, endpoint, key, uri;
-
-        uri = resource_details.vendor + '/' + resource_details.name + '/' + version;
-
-        for (id in this.ioperators) {
-            if (this.ioperators[id].meta.uri === uri) {
-                operator = this.ioperators[id];
-                this.ioperators[id].destroy();
-
-                ghost_operator = new Wirecloud.wiring.GhostOperator(id, this.status.operators[id]);
-                this.ioperators[id] = ghost_operator;
-
-                // Preserve preferences
-                ghost_operator.preferences = {};
-                for (key in operator.preferences) {
-                    ghost_operator.preferences[key] = {
-                        "readonly": operator.preferences[key].readonly,
-                        "hidden": operator.preferences[key].hidden,
-                        "value": operator.preferences[key].value
-                    };
-                }
-
-                // GhostEndpoints
-                for (i = 0; i < operator.meta.inputs.length; i++) {
-                    endpoint = new Wirecloud.wiring.GhostTargetEndpoint(ghost_operator, operator.meta.inputs[i].name);
-                    ghost_operator.inputs[endpoint.name] = endpoint;
-                }
-                for (i = 0; i < operator.meta.outputs.length; i++) {
-                    endpoint = new Wirecloud.wiring.GhostSourceEndpoint(ghost_operator, operator.meta.outputs[i].name);
-                    ghost_operator.outputs[endpoint.name] = endpoint;
-                }
-
-                msg = gettext('operator instance %(ioperator_id)s was unloaded as %(operator)s operator has been uninstalled');
-                msg = interpolate(msg, {ioperator_id: id, operator: operator.meta.uri}, true);
-                this.logManager.log(msg);
-            }
-        }
-    };
-
-    /*************
-     * Constructor
-     *************/
-
-    Wiring = function Wiring(workspace) {
-        this.status = null;
-        this.workspace = workspace;
-        this.iwidgets = {};
-        this.ioperators = {};
-        Object.defineProperty(this, 'logManager', {value: new Wirecloud.wiring.LogManager(this)});
-
-        this._iwidget_unload_listener = iwidget_unload_listener.bind(this);
-        this._iwidget_added_listener = iwidget_added_listener.bind(this);
-        this._iwidget_removed_listener = iwidget_removed_listener.bind(this);
-
-        this.workspace.addEventListener('iwidgetadded', this._iwidget_added_listener);
-        this.workspace.addEventListener('iwidgetremoved', this._iwidget_removed_listener);
-
-        StyledElements.ObjectWithEvents.call(this, ['load', 'loaded', 'unload', 'unloaded']);
-    };
+    // ==================================================================================
+    // CLASS DEFINITION
+    // ==================================================================================
 
     /**
-     * [normalize description]
+     * Create a new instance of class Wiring.
+     * @extends {ObjectWithEvents}
      *
-     * @param {Object.<String, *>} [status]
-     *      [description]
-     * @returns {Object.<String, *>}
-     *      [description]
+     * @constructor
+     * @param {Workspace} workspace
+     *      [TODO: description]
      */
-    Wiring.normalize = function normalize(status) {
-        return StyledElements.Utils.updateObject({
-            version: '2.0',
-            connections: [],
-            operators: {},
-            visualdescription: {
-                behaviours: [],
-                components: {
-                    operator: {},
-                    widget: {}
+    ns.Wiring = utils.defineClass({
+
+        constructor: function Wiring(workspace) {
+            this.superClass(['load', 'loaded', 'unload', 'unloaded']);
+            this.widgets = {};
+
+            Object.defineProperties(this, {
+                // TODO: remove this properties.
+                ioperators: {get: function get() {return this.operators;}},
+                iwidgets: {get: function get() {return this.widgets;}},
+                // TODO: remove this properties.
+                connections: {
+                    get: function get() {return this.status.connections;}
                 },
-                connections: []
+                logManager: {value: new ns.wiring.LogManager(this)},
+                operators: {
+                    get: function get() {return this.status.operators;}
+                },
+                status: {value: ns.Wiring.normalize(), writable: true},
+                workspace: {value: workspace}
+            });
+
+            this._component_onunload = component_onunload.bind(this);
+            this._widget_onadded = widget_onadded.bind(this);
+            this._widget_onremoved = widget_onremoved.bind(this);
+
+            this.workspace.addEventListener('iwidgetadded', this._widget_onadded);
+            this.workspace.addEventListener('iwidgetremoved', this._widget_onremoved);
+        },
+
+        inherit: se.ObjectWithEvents,
+
+        statics: {
+
+            normalize: function normalize(status) {
+                return utils.updateObject({
+                    version: '2.0',
+                    connections: [],
+                    operators: {},
+                    visualdescription: {
+                        behaviours: [],
+                        components: {
+                            operator: {},
+                            widget: {}
+                        },
+                        connections: []
+                    }
+                }, status);
             }
-        }, status);
-    };
 
-    Wiring.prototype = new StyledElements.ObjectWithEvents();
+        },
 
-    Wiring.prototype.load = function load(status) {
-        var operators, id, operator_info, old_operators, msg;
+        members: {
 
-        if (status == null || status === '') {
-            unload.call(this);
-            return;
-        }
+            _notifyOperatorInstall: function _notifyOperatorInstall(operatorMeta) {
+                var id, missing_operator, operator;
 
-        if (typeof status === 'string') {
-            status = JSON.parse(status);
-        }
+                for (id in this.status.operators) {
+                    missing_operator = this.status.operators[id];
 
-        unload.call(this);
+                    if (missing_operator.missing && missing_operator.meta.uri === operatorMeta.uri) {
+                        missing_operator.fullDisconnect();
 
-        this.events.load.dispatch();
+                        // create a new operator
+                        operator = operatorMeta.instantiate(id, this, missing_operator.toJSON());
+                        operator.load();
+                        this.status.operators[id] = operator;
 
-        status = Wiring.normalize(status);
+                        // TODO: This code remove operator not available error counts (Search a better way)
+                        this.logManager.errorCount -= 1;
 
-        if (this.workspace.owned) {
-            operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
-        } else {
-            operators = this.workspace.resources.getAvailableResourcesByType('operator');
-        }
-        old_operators = this.ioperators;
-        this.ioperators = {};
-        for (id in status.operators) {
-            operator_info = status.operators[id];
-            if (id in old_operators) {
-                this.ioperators[id] = old_operators[id];
-                delete old_operators[id];
-
-                if (this.ioperators[id] instanceof Wirecloud.wiring.GhostOperator) {
-                    msg = gettext('%(operator)s operator is not available for this account');
-                    msg = interpolate(msg, {operator: operator_info.name}, true);
-                    this.logManager.log(msg);
+                        // restore operator connections
+                        reconnect.call(this, operator);
+                    }
                 }
-            } else {
-                if (operator_info.name in operators) {
-                    try {
-                        this.ioperators[id] = operators[operator_info.name].instantiate(id, operator_info, this);
-                    } catch (e) {
-                        msg = gettext('Error instantiating the %(operator)s operator');
-                        msg = interpolate(msg, {operator: operator_info.name}, true);
-                        this.logManager.log(msg);
-                        this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
+            },
+
+            _notifyOperatorUninstall: function _notifyOperatorUninstall(resourceDetails, versions) {
+                var i;
+
+                for (i = 0; i < versions.length; i++) {
+                    operatormeta_uninstall.call(this, resourceDetails.vendor, resourceDetails.name, versions[i]);
+                }
+            },
+
+            _instantiate_operator: function _instantiate_operator(id, operatorMeta, businessInfo) {
+                var operator = operatorMeta.instantiate(id, this, businessInfo);
+
+                operator
+                    .on('unload', component_onunload)
+                    .on('remove', operator_onremove.bind(this))
+                    .load();
+
+                this.status.operators[operator.id] = operator;
+
+                return operator;
+            },
+
+            createConnection: function createConnection(readonly, source, target) {
+                return new ns.wiring.Connection(readonly, source, target, this);
+            },
+
+            destroy: function destroy() {
+                var id;
+
+                for (id in this.widgets) {
+                    this.widgets[id].fullDisconnect();
+                }
+
+                for (id in this.status.operators) {
+                    this.status.operators[id].destroy();
+                }
+
+                this.workspace.removeEventListener('iwidgetadded', this._widget_onadded);
+                this.workspace.removeEventListener('iwidgetremoved', this._widget_onremoved);
+
+                return this;
+            },
+
+            load: function load(status) {
+                var connection, i, id, old_operators, operator;
+
+                wiring_onunload.call(this);
+                old_operators = this.status.operators;
+
+                this.trigger('load');
+
+                for (id in status.operators) {
+                    operator = status.operators[id];
+
+                    if (id in old_operators) {
+                        delete old_operators[id];
+                    }
+
+                    if (operator instanceof ns.wiring.MissingOperator) {
+                        this.logManager.log(operator.reason);
+                    }
+
+                    operator.load();
+                }
+
+                for (id in old_operators) {
+                    operator = old_operators[id];
+                    if (operator.volatile) {
+                        status.operators[id] = operator;
+                    } else {
+                        operator.remove();
+                    }
+                }
+
+                for (i = this.status.connections.length - 1; i >= 0; i--) {
+                    connection = this.status.connections[i];
+
+                    if (connection.volatile) {
+                        status.connections.push(connection);
+                    }
+                }
+
+                this.status = status;
+                reconnect.call(this);
+
+                return this.trigger('loaded');
+            },
+
+            save: function save() {
+
+                Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({workspace_id: this.workspace.id}), {
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    requestHeaders: {Accept: 'application/json'},
+                    postBody: JSON.stringify(this.toJSON())
+                });
+
+                return this;
+            },
+
+            toJSON: function toJSON() {
+                var connection, i, id, operator, status;
+
+                status = ns.Wiring.normalize();
+
+                for (id in this.status.operators) {
+                    operator = this.status.operators[id];
+
+                    if (!operator.volatile) {
+                        status.operators[id] = operator;
+                    }
+                }
+
+                for (i = this.status.connections.length - 1; i >= 0; i--) {
+                    connection = this.status.connections[i];
+
+                    if (!connection.volatile) {
+                        status.connections.push(connection);
+                    }
+                }
+
+                status.visualdescription = this.status.visualdescription;
+
+                return status;
+            },
+
+            unmarshall: function unmarshall(status) {
+                var connection_info, errorCount, i, id, operator_info, operators, source, target;
+
+                status = ns.Wiring.normalize(status);
+
+                if (this.workspace.owned) {
+                    operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+                } else {
+                    operators = this.workspace.resources.getAvailableResourcesByType('operator');
+                }
+
+                // Convert operator into instances
+                for (id in status.operators) {
+                    operator_info = status.operators[id];
+
+                    if (operator_info.name in operators) {
+                        try {
+                            status.operators[id] = operators[operator_info.name].instantiate(id, this, operator_info);
+                        } catch (e) {
+                            status.operators[id] = new ns.wiring.MissingOperator(id, this, operator_info, utils.gettext("Operator %(id)s (%(uri)s) couldn't be loaded."));
+                            if (id in status.visualdescription.components.operator) {
+                                status.operators[id].loadVisualInfo(status.visualdescription.components.operator[id]);
+                            }
+                        }
+                    } else {
+                        status.operators[id] = new ns.wiring.MissingOperator(id, this, operator_info, utils.gettext("Operator %(id)s couldn't be loaded as %(uri)s does not exist."));
                         if (id in status.visualdescription.components.operator) {
-                            this.ioperators[id].fillFromViewInfo(status.visualdescription.components.operator[id]);
+                            status.operators[id].loadVisualInfo(status.visualdescription.components.operator[id]);
                         }
                     }
-                } else {
-                    msg = gettext('%(operator)s operator is not available for this account');
-                    msg = interpolate(msg, {operator: operator_info.name}, true);
-                    this.logManager.log(msg);
-                    this.ioperators[id] = new Wirecloud.wiring.GhostOperator(id, operator_info);
-                    if (id in status.visualdescription.components.operator) {
-                        this.ioperators[id].fillFromViewInfo(status.visualdescription.components.operator[id]);
+                }
+
+                // Convert connections into instances
+                for (i = status.connections.length - 1; i >= 0; i--) {
+                    connection_info = utils.updateObject(ns.wiring.Connection.JSON_TEMPLATE, status.connections[i]);
+                    errorCount = 0;
+
+                    try {
+                        source = getEndpoint.call(this, status.operators, this.widgets, 'outputs', connection_info.source);
+                    } catch (e) {
+                        this.logManager.log(e.toString());
+                        status.connections.splice(i, 1);
+                        errorCount++;
+                    }
+
+                    try {
+                        target = getEndpoint.call(this, status.operators, this.widgets, 'inputs', connection_info.target);
+                    } catch (e) {
+                        this.logManager.log(e.toString());
+                        errorCount++;
+                    }
+
+                    if (!errorCount) {
+                        status.connections[i] = new ns.wiring.Connection(connection_info.readonly, source, target, this);
+                    } else {
+                        status.connections.splice(i, 1);
                     }
                 }
+
+                return status;
+            }
+
+        }
+
+    });
+
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var getEndpoint = function getEndpoint(operators, widgets, endpointGroup, endpointInfo) {
+        var component;
+
+        switch (endpointInfo.type) {
+        case 'widget':
+            component = widgets[endpointInfo.id];
+            break;
+        case 'operator':
+            component = operators[endpointInfo.id];
+            break;
+        }
+
+        if (component == null) {
+            throw new Error(utils.interpolate(utils.gettext("The %(type)s (%(id)s) does not exist."), {
+                type: endpointInfo.type,
+                id: endpointInfo.id
+            }));
+        }
+
+        if (!(endpointInfo.endpoint in component[endpointGroup])) {
+            if (component instanceof ns.wiring.MissingComponent) {
+                component.addMissingEndpoint(endpointGroup, endpointInfo.endpoint);
+            } else if (endpointGroup === 'inputs') {
+                return new Wirecloud.wiring.GhostTargetEndpoint(component, endpointInfo.endpoint);
+            } else { // if (endpointGroup === 'outputs')
+                return new Wirecloud.wiring.GhostSourceEndpoint(component, endpointInfo.endpoint);
             }
         }
-        for (id in old_operators) {
-            old_operators[id].destroy();
-        }
 
-        this.status = status;
-        restore_connections.call(this);
-
-        this.events.loaded.dispatch();
+        return component[endpointGroup][endpointInfo.endpoint];
     };
 
-    Wiring.prototype.save = function save() {
-        Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({workspace_id: this.workspace.id}), {
-            method: 'PUT',
-            contentType: 'application/json',
-            requestHeaders: {'Accept': 'application/json'},
-            postBody: JSON.stringify(this.status)
+    var reconnect = function reconnect(component) {
+
+        this.status.connections.forEach(function (connection) {
+            connection.refreshEndpoint(component);
+            connection.establish();
         });
+
+        return this;
     };
 
-    Wiring.prototype.destroy = function destroy() {
-        var key, i;
-
-        for (key in this.iwidgets) {
-            this.iwidgets[key].fullDisconnect();
-        }
-        this.iwidgets = null;
-
-        for (key in this.ioperators) {
-            this.ioperators[key].destroy();
-        }
-        this.ioperators = null;
-
-
-        this.workspace.removeEventListener('iwidgetadded', this._iwidget_added_listener);
-        this.workspace.removeEventListener('iwidgetremoved', this._iwidget_removed_listener);
-
-        this.workspace = null;
-    };
-
-    Wiring.prototype._notifyOperatorInstall = function _notifyOperatorInstall(operator) {
-        var id, operator_info, ioperator, msg;
-
-        for (id in this.status.operators) {
-            operator_info = this.status.operators[id];
-            if (operator_info.name === operator.uri) {
-                this.ioperators[id].fullDisconnect();
-                try {
-                    ioperator = operator.instantiate(id, operator_info, this);
-                    this.ioperators[id] = ioperator;
-                    // TODO
-                    // This code remove operator not available error counts
-                    // Search a better way
-                    this.logManager.errorCount -= 1;
-                } catch (e) {
-                    msg = gettext('Error instantiating the %(operator)s operator');
-                    msg = interpolate(msg, {operator: operator_info.name}, true);
-                    this.logManager.log(msg);
-                }
-
-                // Restore ioperators connections
-                restore_connections.call(this, ioperator);
-            }
-        }
-    };
-
-    Wiring.prototype._notifyOperatorUninstall = function _notifyOperatorUninstall(resource_details, versions) {
+    var disconnect = function disconnect() {
         var i;
 
-        for (i = 0; i < versions.length; i++) {
-            unload_operators.call(this, resource_details, versions[i]);
+        for (i = this.status.connections.length - 1; i >= 0; i--) {
+            this.status.connections[i].detach();
+        }
+
+        return this;
+    };
+
+    var wiring_onunload = function wiring_onunload() {
+
+        this.trigger('unload');
+
+        disconnect.call(this);
+        this.logManager.newCycle();
+
+        this.trigger('unloaded');
+    };
+
+    var operatormeta_uninstall = function operatormeta_uninstall(vendor, name, version) {
+        var id, missing_operator, operator, uri;
+
+        uri = vendor + '/' + name + '/' + version;
+
+        for (id in this.status.operators) {
+            if (this.status.operators[id].meta.uri === uri) {
+                operator = this.status.operators[id];
+                operator.destroy();
+
+                missing_operator = new ns.wiring.MissingOperator(id, this, operator.toJSON(), utils.gettext("Operator %(id)s couldn't be loaded as %(uri)s does not exist."));
+                this.status.operators[id] = missing_operator;
+
+                operator.meta.outputList.forEach(function (endpoint) {
+                    missing_operator.addMissingEndpoint('outputs', endpoint.name);
+                });
+                operator.meta.inputList.forEach(function (endpoint) {
+                    missing_operator.addMissingEndpoint('inputs', endpoint.name);
+                });
+            }
         }
     };
 
-    Wirecloud.Wiring = Wiring;
-    Wirecloud.wiring = {}; // TODO
+    var getEndpointInfo = function getEndpointInfo(endpointName) {
+        var splitText = endpointName.split("/");
 
-})();
+        return {type: splitText[0], id: splitText[1], endpoint: splitText[2]};
+    };
+
+    var connection_hasComponent = function connection_hasComponent(connectionInfo, component) {
+        var source = getEndpointInfo(connectionInfo.sourcename),
+            target = getEndpointInfo(connectionInfo.targetname);
+
+        if (source.type === component.meta.type && source.id === component.id) {
+            return true;
+        }
+
+        if (target.type === component.meta.type && target.id === component.id) {
+            return true;
+        }
+
+        return false;
+    };
+
+    var removeComponent = function removeComponent(component) {
+        var connection, i;
+
+        component.fullDisconnect();
+
+        for (i = this.status.connections.length - 1; i >= 0; i--) {
+            connection = this.status.connections[i];
+
+            if (connection.source.component === component || connection.target.component === component) {
+                this.status.connections.splice(i, 1);
+            }
+        }
+
+        removeComponentInfo(component, this.status.visualdescription);
+
+        for (i = this.status.visualdescription.behaviours.length - 1; i >= 0; i--) {
+            removeComponentInfo(component, this.status.visualdescription.behaviours[i]);
+        }
+
+        return this;
+    };
+
+    var removeComponentInfo = function removeComponentInfo(component, status) {
+        var connection, i;
+
+        for (i = status.connections.length - 1; i >= 0; i--) {
+            if (connection_hasComponent(status.connections[i], component)) {
+                status.connections.splice(i, 1);
+            }
+        }
+
+        delete status.components[component.meta.type][component.id];
+    };
+
+    var operator_onremove = function operator_onremove(operator) {
+        delete this.status.operators[operator.id];
+    };
+
+    var widget_onadded = function widget_onadded(workspace, widget) {
+
+        if (widget.id in this.widgets) {
+            this.logManager.log(utils.interpolate(utils.gettext("The widget (%(title)s) already exist."), widget));
+        } else {
+            widget.on('unload', this._component_onunload);
+            this.widgets[widget.id] = widget;
+        }
+    };
+
+    var widget_onremoved = function widget_onremoved(workspace, widget) {
+
+        if (widget.id in this.widgets) {
+            removeComponent.call(this, widget);
+            widget.off('unload', this._component_onunload);
+            delete this.widgets[widget.id];
+        } else {
+            this.logManager.log(utils.interpolate(utils.gettext("The widget (%(title)s) to remove does not exist."), widget));
+        }
+    };
+
+    var component_onunload = function component_onunload(component) {
+        var name;
+
+        for (name in component.inputs) {
+            component.inputs[name].callback = null;
+        }
+    };
+
+})(Wirecloud, StyledElements, StyledElements.Utils);

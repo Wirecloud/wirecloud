@@ -1,7 +1,7 @@
 /*
  *     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
  *
- *     Copyright (c) 2012-2014 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 Universidad Politécnica de Madrid
  *     Copyright (c) 2012-2014 the Center for Open Middleware
  *
  *     Licensed under the Apache License, Version 2.0 (the
@@ -18,426 +18,297 @@
  *     under the License.
  */
 
-/*global LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext */
-if (!Wirecloud.ui) {
-    // TODO this line should live in another file
-    Wirecloud.ui = {};
-}
+/* global gettext, LayoutManagerFactory, StyledElements, Wirecloud */
 
-Wirecloud.ui.WiringEditor = (function (se) {
+
+Wirecloud.ui = Wirecloud.ui || {};
+
+(function (ns, se, utils) {
 
     "use strict";
 
     // ==================================================================================
-    // CLASS CONSTRUCTOR
+    // CLASS DEFINITION
     // ==================================================================================
 
     /**
      * Create a new instance of class WiringEditor.
-     * @class
+     * @extends {Alternative}
      *
-     * @param {String} id
-     * @param {Object.<String, *>} [options]
+     * @constructor
+     * @param {Number} id
+     *      [TODO: description]
+     * @param {PlainObject} [options]
+     *      [TODO: description]
      */
-    var WiringEditor = function WiringEditor(id, options) {
-        var i;
+    ns.WiringEditor = utils.defineClass({
 
-        options['class'] = 'wiring-view';
-        StyledElements.Alternative.call(this, id, options);
+        constructor: function WiringEditor(id, options) {
 
-        for (i = 0; i < WiringEditor.defaults.eventList.length; i++) {
-            this.events[WiringEditor.defaults.eventList[i]] = new StyledElements.Event();
+            options = utils.updateObject({}, options);
+            options.extraClass = "wiring-view";
+
+            this.superClass(id, options);
+
+            createAndSetUpLayout.call(this);
+
+            createAndSetUpComponentManager.call(this);
+            createAndSetUpBehaviourEngine.call(this);
+            createAndSetUpConnectionEngine.call(this);
+
+            this.suggestionManager = new ns.WiringEditor.KeywordSuggestion();
+
+            this.selectedComponents = {operator: {}, widget: {}};
+            this.selectedCount = 0;
+
+            this.sortableComponent = null;
+            this.autoOperatorId = 1;
+        },
+
+        inherit: se.Alternative,
+
+        members: {
+
+            view_name: "wiring",
+
+            /**
+             * @override
+             */
+            _onhidden: function _onhidden(hidden) {
+
+                this.superMember(se.Alternative, '_onhidden', hidden);
+
+                if (hidden) {
+                    tearDownView.call(this);
+                } else {
+                    setUpView.call(this);
+                }
+
+                return this;
+            },
+
+            /**
+             * [TODO: createComponent description]
+             *
+             * @param {Wiring.Component} wiringComponent
+             *      [TODO: description]
+             * @param {PlainObject} [options]
+             *      [TODO: description]
+             * @returns {ComponentDraggable}
+             *      [description]
+             */
+            createComponent: function createComponent(wiringComponent, options) {
+                var component;
+
+                options = utils.updateObject({commit: true}, options);
+
+                component = new ns.WiringEditor.ComponentDraggable(wiringComponent, options);
+                component
+                    // TODO: .on('endpointadded', component_onendpointadded.bind(this))
+                    .on('change', function () {
+                        this.behaviourEngine.updateComponent(component, component.toJSON());
+                    }.bind(this))
+                    .on('click', component_onclick.bind(this))
+                    .on('dragstart', component_ondragstart.bind(this))
+                    .on('drag', component_ondrag.bind(this))
+                    .on('dragend', component_ondragend.bind(this))
+                    .on('sortstart', component_onsortstart.bind(this))
+                    .on('sortend', component_onsortend.bind(this))
+                    .on('optremove', function () {
+                        this.behaviourEngine.removeComponent(component);
+                    }.bind(this))
+                    .on('optshare', function () {
+                        this.behaviourEngine.updateComponent(component, component.toJSON(), true);
+                    }.bind(this))
+                    .on('remove', component_onremove.bind(this));
+
+                component.forEachEndpoint(bindEndpoint.bind(this));
+                this.initialMessage.hide();
+
+                if (options.commit) {
+                    this.layout.content.append(component);
+                    this.behaviourEngine.updateComponent(component, component.toJSON());
+                    disableComponent.call(this, component);
+                }
+
+                return component;
+            },
+
+            /**
+             * @override
+             */
+            buildStateData: function buildStateData() {
+                var currentState = Wirecloud.HistoryManager.getCurrentState();
+
+                return {
+                    workspace_creator: currentState.workspace_creator,
+                    workspace_name: currentState.workspace_name,
+                    view: this.view_name
+                };
+            },
+
+            /**
+             * @override
+             */
+            getBreadcrum: function getBreadcrum() {
+                var i, workspace_breadcrum = LayoutManagerFactory.getInstance()
+                    .viewsByName.workspace.getBreadcrum();
+
+                for (i = 0; i < workspace_breadcrum.length; i += 1) {
+                    delete workspace_breadcrum[i].menu;
+                }
+
+                workspace_breadcrum.push({
+                    label: this.view_name
+                });
+
+                return workspace_breadcrum;
+            },
+
+            /**
+             * @override
+             */
+            getTitle: function getTitle() {
+                return utils.interpolate(gettext("%(workspace_title)s - Wiring"), {
+                    workspace_title: LayoutManagerFactory.getInstance().viewsByName.workspace.getTitle()
+                });
+            },
+
+            /**
+             * @override
+             */
+            getToolbarButtons: function getToolbarButtons() {
+                return [this.btnFindComponents, this.btnListBehaviours];
+            },
+
+            /**
+             * @override
+             */
+            goUp: function goUp() {
+
+                LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+
+                return this;
+            },
+
+            /**
+             * [TODO: toJSON description]
+             *
+             * @returns {PlainObject}
+             *      [TODO: description]
+             */
+            toJSON: function toJSON() {
+                var wiringStatus = Wirecloud.Wiring.normalize();
+
+                this.connectionEngine.forEachConnection(function (connection) {
+                    wiringStatus.connections.push(connection._connection);
+                });
+
+                this.behaviourEngine.forEachComponent(function (component) {
+
+                    if (component.type === 'operator') {
+                        wiringStatus.operators[component.id] = component._component;
+                    }
+                });
+
+                wiringStatus.visualdescription = this.behaviourEngine.toJSON();
+
+                return wiringStatus;
+            }
+
         }
+
+    });
+
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    function bindEndpoint(endpoint) {
+
+        this.connectionEngine.appendEndpoint(endpoint);
+        this.suggestionManager.appendEndpoint(endpoint);
+
+        endpoint
+            .on('mouseenter', function () {
+                if (!this.connectionEngine.temporalConnection) {
+                    this.suggestionManager.showSuggestions(endpoint);
+                }
+            }.bind(this))
+            .on('mouseleave', function () {
+                if (!this.connectionEngine.temporalConnection) {
+                    this.suggestionManager.hideSuggestions(endpoint);
+                }
+            }.bind(this));
+    }
+
+    function createAndSetUpBehaviourEngine() {
+
+        this.behaviourEngine = new ns.WiringEditor.BehaviourEngine();
+        this.behaviourEngine
+            .on('activate', behaviour_onactivate.bind(this))
+            .on('change', behaviour_onchange.bind(this))
+            .on('enable', behaviourengine_onenable.bind(this));
+
+        this.layout.addPanel(this.behaviourEngine);
+
+        return this;
+    }
+
+    function createAndSetUpComponentManager() {
+
+        this.componentManager =  new ns.WiringEditor.ComponentShowcase(this.layout, {
+            getComponentDraggable: function (component) {
+                return this.createComponent(component, {commit: false});
+            }.bind(this),
+            createWiringComponent: function (meta) {
+                return meta.instantiate(this.autoOperatorId++, this.workspace.wiring);
+            }.bind(this)
+        });
+
+        this.layout.addPanel(this.componentManager);
+
+        return this;
+    }
+
+    function createAndSetUpConnectionEngine() {
+
+        this.connectionEngine = new ns.WiringEditor.ConnectionEngine(this.layout.content, findWiringEngine.bind(this));
+        this.connectionEngine
+            .on('dragstart', connection_ondragstart.bind(this))
+            .on('dragend', connection_ondragend.bind(this))
+            .on('establish', connection_onestablish.bind(this))
+            .on('duplicate', connection_onduplicate.bind(this));
+
+        return this;
+    }
+
+    function findWiringEngine() {
+        return this.workspace.wiring;
+    }
+
+    function createAndSetUpLayout() {
 
         this.layout = new se.OffCanvasLayout();
-        this.appendChild(this.layout);
-
-        buildWirecloudToolbar.call(this);
-
-        buildWiringSidebar.call(this);
-        buildWiringBottombar.call(this);
-
-        this.layout.content.addClass('wiring-diagram');
-        this.layout.footer.addClass('wiring-footer');
-
-        // Manage the alert for an empty wiring
-        this.entitiesNumber = 0;
-
-        this.alertEmptyWiring = new StyledElements.Alert({
-            state: 'info',
-            alignment: 'static-top',
-            title: "Hi, welcome to the mashup's wiring view!",
-            message: "In this edition area, you can add web applications (widgets/operators) from the sidebar and then, connect them each other."
-        });
-        this.alertEmptyWiring
-            .addNote("Only if a web application provides input or output endpoints, it will be connectable with others.")
-            .hide();
-        this.alertEmptyWiring.heading
-            .addClass('text-center');
-        this.layout.content.append(this.alertEmptyWiring);
-
-        /* CONNECTION ENGINE SETTING */
-
-        this.connectionEngine = new WiringEditor.Canvas(this.layout.content);
-
-        this.connectionEngine.addEventListener('establish', function (eventTarget) {
-            this.connections.push(eventTarget.connection);
-            shareConnection.call(this, eventTarget.connection);
-        }.bind(this));
-
-        this.connectionEngine.addEventListener('duplicate', function (eventTarget) {
-            var connection, found, i;
-
-            for (found = false, i = 0; !found && i < this.connections.length; i++) {
-                if (this.connections[i].sourceName == eventTarget.sourceName &&
-                    this.connections[i].targetName == eventTarget.targetName) {
-                    connection = this.connections[i];
-                    found = true;
-                }
-            }
-
-            if (found && connection.onbackground) {
-                shareConnection.call(this, connection);
-            }
-        }.bind(this));
-
-        this.connectionEngine.addEventListener('detach', function (eventTarget) {
-            var found, i, index;
-
-            for (found = false, i = 0; !found && i < this.connections.length; i++) {
-                if (this.connections[i].sourceName == eventTarget.sourceName &&
-                    this.connections[i].targetName == eventTarget.targetName) {
-                    found = true;
-                    index = i;
-                }
-            }
-
-            if (found) {
-                switch (this.behaviorEngine.removeConnection(eventTarget.sourceName, eventTarget.targetName, eventTarget.cascadeRemove)) {
-                case WiringEditor.BehaviorEngine.CONNECTION_REMOVED:
-                    eventTarget.connection.onbackground = true;
-                    break;
-                case WiringEditor.BehaviorEngine.CONNECTION_REMOVED_FULLY:
-                    this.connections.splice(index, 1);
-                }
-            }
-        }.bind(this));
-
-        this.connectionEngine.addEventListener('share', function (eventTarget) {
-            shareConnection.call(this, eventTarget.connection);
-        }.bind(this));
-
-        this.connectionEngine.addEventListener('unselectall', function () {
-            this.layout.slideOut();
-            this.ChangeObjectEditing(null);
-        }.bind(this));
-
-        this.connectionEngine.addEventListener('update', function (eventTarget) {
-            if (!eventTarget.connection.onbackground) {
-                this.behaviorEngine.updateConnection(eventTarget.connection.serialize(), true);
-            }
-        }.bind(this));
-
-        this.enableAnchors = this.enableAnchors.bind(this);
-        this.disableAnchors = this.disableAnchors.bind(this);
-
-        this.componentsCollapsed = [];
-
-        this.components = {
-            operator: {},
-            widget: {}
-        };
-
-        this.arrowCreator = new Wirecloud.ui.WiringEditor.ArrowCreator(this.connectionEngine, this,
-            function () {
-                var component, componentId, componentType;
-
-                this.componentsCollapsed = [];
-
-                for (componentType in this.components) {
-                    for (componentId in this.components[componentType]) {
-                        component = this.components[componentType][componentId];
-                        if (component.collapsed) {
-                            component.collapsed = false;
-                            this.componentsCollapsed.push(component);
-                        }
-                    }
-                }
-            }.bind(this),
-            function () {},
-            this.enableAnchors
-        );
-        this._startdrag_map_func = function (anchor) {
-            anchor.addEventListener('startdrag', this.disableAnchors);
-        }.bind(this);
-
-        // Initialize key listener
-        this._keydownListener = keydownListener.bind(this);
-        this._keyupListener = keyupListener.bind(this);
-
-        this.addEventListener('show', renewInterface.bind(this));
-        this.addEventListener('hide', clearInterface.bind(this));
-    };
-
-    WiringEditor.OPERATOR_TYPE = 'operator';
-    WiringEditor.WIDGET_TYPE = 'widget';
-
-    WiringEditor.COMPONENT_TYPES = [
-        WiringEditor.OPERATOR_TYPE,
-        WiringEditor.WIDGET_TYPE
-    ];
-
-    WiringEditor.defaults = {
-
-        eventList: [
-            'operatoradded', 'operatoraddfail', 'componentremoved',
-            'widgetadded', 'widgetaddfail'
-        ]
-
-    };
-
-    WiringEditor.prototype = new StyledElements.Alternative();
-
-    // ==================================================================================
-    // PUBLIC METHODS
-    // ==================================================================================
-
-    WiringEditor.prototype.view_name = 'wiring';
-
-    WiringEditor.prototype.buildStateData = function buildStateData() {
-        var currentState, data;
-
-        currentState = Wirecloud.HistoryManager.getCurrentState();
-        data = {
-            workspace_creator: currentState.workspace_creator,
-            workspace_name: currentState.workspace_name,
-            view: 'wiring'
-        };
-
-        return data;
-    };
-
-    WiringEditor.prototype.goUp = function goUp() {
-        LayoutManagerFactory.getInstance().changeCurrentView('workspace');
-    };
-
-    WiringEditor.prototype.getToolbarButtons = function getToolbarButtons() {
-        if (this.behaviorEngine.enabled) {
-            if (this.behaviorEngine.viewpoint === 0) {
-                return [this.btnAddComponents, this.btnListBehaviors, this.btnToggleViewpoint, this.btnEmptyBehavior];
-            } else {
-                return [this.btnListBehaviors, this.btnToggleViewpoint];
-            }
-        } else {
-            return [this.btnAddComponents, this.btnListBehaviors];
-        }
-    };
-
-    // ==================================================================================
-    // PRIVATE METHODS
-    // ==================================================================================
-
-    var startBehaviorEngine = function startBehaviorEngine() {
-        this.behaviorEngine
-            .on('activate', function (behavior, viewpoint) {
-            var component, componentId, componentType, connection, i;
-
-                LayoutManagerFactory.getInstance().header.refresh();
-                this.connectionEngine.unselectArrow();
-
-            if (viewpoint === 0) {
-
-                for (i = 0; i < this.connections.length; i++) {
-                    connection = this.connections[i];
-                    if (behavior.hasConnection(connection.sourceName, connection.targetName)) {
-                        connection.onbackground = false;
-                    } else {
-                        connection.onbackground = true;
-                    }
-                }
-
-                for (componentType in this.components) {
-                    for (componentId in this.components[componentType]) {
-                        component = this.components[componentType][componentId];
-                        component.setVisualInfo(this.behaviorEngine.findComponent(componentType, componentId));
-
-                        if (behavior.hasComponent(componentType, componentId)) {
-                            component.onbackground = false;
-                        } else {
-                            component.onbackground = true;
-                        }
-                    }
-                }
-
-                for (componentType in this.components) {
-                    for (componentId in this.components[componentType]) {
-                        component = this.components[componentType][componentId];
-                        component.repaint();
-                    }
-                }
-            } else {
-
-                for (componentType in this.components) {
-                    for (componentId in this.components[componentType]) {
-                        component = this.components[componentType][componentId];
-
-                        if (behavior.hasComponent(componentType, componentId)) {
-                            component.sleek = true;
-                            component.setVisualInfo(this.behaviorEngine.findComponent(componentType, componentId));
-                        } else {
-                            component.hidden = true;
-                        }
-                    }
-                }
-
-                for (i = 0; i < this.connections.length; i++) {
-                    connection = this.connections[i];
-                    if (behavior.hasConnection(connection.sourceName, connection.targetName)) {
-                        connection.onbackground = false;
-                    } else {
-                        connection.hidden = true;
-                    }
-                }
-
-                for (componentType in this.components) {
-                    for (componentId in this.components[componentType]) {
-                        component = this.components[componentType][componentId];
-
-                        if (behavior.hasComponent(componentType, componentId)) {
-                            component.repaint();
-                        }
-                    }
-                }
-
-            }
-
-            }.bind(this))
-            .on('beforeEmpty', function (behavior) {
-                Object.keys(this.components).forEach(function (type) {
-                    Object.keys(this.components[type]).forEach(function (id) {
-                        var component = this.components[type][id];
-
-                        if (behavior.hasComponent(type, id)) {
-                            this.removeComponent(type, id, false);
-                        }
-                    }, this);
-                }, this);
-            }.bind(this))
-            .on('enable', function (enabled) {
-                LayoutManagerFactory.getInstance().header.refresh();
-                this.connectionEngine.unselectArrow();
-
-                Object.keys(this.components).forEach(function (type) {
-                    Object.keys(this.components[type]).forEach(function (id) {
-                        var component = this.components[type][id];
-
-                        this.behaviorEngine.updateComponent(type, id, component.serialize());
-
-                        if (!enabled) {
-                            component.onbackground = false;
-                        }
-                    }, this);
-                }, this);
-
-                this.connections.forEach(function (connection) {
-                    this.behaviorEngine.updateConnection(connection.serialize());
-
-                    if (!enabled) {
-                        connection.onbackground = false;
-                    }
-                }, this);
-            }.bind(this));
-    };
-
-    var buildWirecloudToolbar = function buildWirecloudToolbar() {
-        this.btnAddComponents = new StyledElements.ToggleButton({
-            'iconClass': 'icon-archive',
-            'stackedIconClass': 'icon-plus-sign',
-            'stackedIconposition': 'bottom-right',
-            'title': gettext("Add components"),
-            'class': "btn-add-components"
-        });
-        this.btnAddComponents.on('click', function (element) {
-            if (!element.active) {
-                this.layout.slideOut();
-            } else {
-                this.layout.slideIn(0);
-            }
-        }.bind(this));
-
-        this.btnListBehaviors = new StyledElements.ToggleButton({
-            'iconClass': 'icon-sitemap',
-            'title': gettext("List behaviors"),
-            'class': "btn-list-behaviors"
-        });
-        this.btnListBehaviors.on('click', function (element) {
-            if (!element.active) {
-                this.layout.slideOut();
-            } else {
-                this.layout.slideIn(1);
-            }
-        }.bind(this));
-
-        this.btnToggleViewpoint = new StyledElements.ToggleButton({
-            'iconClass': 'icon-picture',
-            'title': gettext("Toggle viewpoint"),
-            'class': "btn-toggle-viewpoint",
-            'stackedIconClass': 'icon-globe'
-        });
-        this.btnToggleViewpoint.on('click', function () {
-            this.layout.slideOut();
-            this.behaviorEngine.toggleViewpoint();
-        }.bind(this));
-
-        this.btnEmptyBehavior = new StyledElements.Button({
-            'iconClass': 'icon-eraser',
-            'title': gettext("Empty behavior"),
-            'class': "btn-empty-behavior"
-        });
-        this.btnEmptyBehavior.on('click', function () {
-            var dialog, message;
-
-            message = gettext("The following operation is irreversible " +
-                "and cleans all components and connections belonging to the current behavior. " +
-                "Would you like to continue?");
-
-            dialog = new Wirecloud.ui.AlertWindowMenu({
-                'acceptLabel': gettext("Yes"),
-                'cancelLabel': gettext("No, thank you")
-            });
-
-            dialog.setMsg(message);
-            dialog.acceptHandler = function () {
-                this.behaviorEngine.emptyBehavior();
-            }.bind(this);
-
-            this.layout.slideOut();
-            dialog.show();
-        }.bind(this));
-    };
-
-    var buildWiringSidebar = function buildWiringSidebar() {
         this.layout.sidebar.addClass("wiring-sidebar");
+        this.layout.content.addClass("wiring-diagram");
+        this.layout.footer.addClass("wiring-footer");
 
-        this.componentManager = new WiringEditor.ComponentManager();
-        this.behaviorEngine = new WiringEditor.BehaviorEngine();
+        setUpNavbarView.call(this);
+
+        this.initialMessage = createInitialMessage();
+        this.layout.content.append(this.initialMessage);
 
         this.layout
-            .addPanel(this.componentManager)
-            .addPanel(this.behaviorEngine)
             .on('slideOut', function () {
-                this.btnAddComponents.active = false;
-                this.btnListBehaviors.active = false;
+                this.btnFindComponents.active = false;
+                this.btnListBehaviours.active = false;
             }.bind(this))
-            .on('slideIn', function (panel) {
-                this.btnAddComponents.active = panel.hasClass("panel-components");
-                this.btnListBehaviors.active = panel.hasClass("panel-behaviors");
+            .on('slideIn', function (offcanvas, panel) {
+                this.btnFindComponents.active = panel.hasClass("panel-components");
+                this.btnListBehaviours.active = panel.hasClass("panel-behaviours");
             }.bind(this));
 
-        startBehaviorEngine.call(this);
-    };
-
-    var buildWiringBottombar = function buildWiringBottombar() {
         var wiringLegend = document.createElement('div');
 
         wiringLegend.className = "wiring-legend";
@@ -456,732 +327,574 @@ Wirecloud.ui.WiringEditor = (function (se) {
             '</span>';
 
         var wiringLogger = document.createElement('div');
-        var currentBehavior = document.createElement('span');
+        var currentBehaviour = document.createElement('span');
 
         wiringLogger.className = 'wiring-logger';
-        wiringLogger.appendChild(currentBehavior);
+        wiringLogger.appendChild(currentBehaviour);
 
-        this.behaviorEngine.addLogger(currentBehavior,
-            wiringLegend.querySelector('.element-connection .color'),
-            wiringLegend.querySelector('.element-operator .color'),
-            wiringLegend.querySelector('.element-widget .color'));
+        this.legend = {
+            title: currentBehaviour,
+            connections: wiringLegend.querySelector('.element-connection .color'),
+            operators: wiringLegend.querySelector('.element-operator .color'),
+            widgets: wiringLegend.querySelector('.element-widget .color')
+        };
 
         this.layout.footer
             .append(wiringLogger)
             .append(wiringLegend);
-    };
 
-    /**
-     * @Private
-     * keydown handler for ctrl Multiselection
-     */
-    var keydownListener = function keydownListener(event) {
-        if (event.keyCode == 17) {
-            this.ctrlPushed = true;
-            this.layout.content.addClass('selecting');
-        }
-    };
+        this.layout.content.get().addEventListener('click', layout_onclick.bind(this));
+        this.append(this.layout);
 
-    /**
-     * @Private
-     * keyup handler for ctrl Multiselection
-     */
-    var keyupListener = function keyupListener(event) {
-        if (event.keyCode == 17) {
-            this.ctrlPushed = false;
-            this.layout.content.removeClass('selecting');
-        }
-    };
+        return this;
+    }
 
-    /**
-     * @Private
-     * Create Mini Operator for menubar
-     */
-    var generateMiniOperator = function generateMiniOperator (operator) {
-        var operator_interface, comp, versionInfo;
+    function createInitialMessage() {
+        var alert = new se.Alert({
+            title: gettext("Hello, welcome to the Mashup Wiring's view!"),
+            message: gettext("In this edition area, you can drag & drop web applications (widgets/operators) from the sidebar and then, connect them each other."),
+            state: 'info',
+            alignment: 'static-top'
+        });
 
-        try {
-            versionInfo = this.operatorVersions[operator.vendor + '/' + operator.name];
-            if (!versionInfo) {
-                // New operator
-                operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-                this.componentManager.addComponent('operator', operator_interface);
-                this.operatorVersions[operator.vendor + '/' + operator.name] = {
-                    'lastVersion': operator.version,
-                    'currentVersion': operator.version,
-                    'versions': [{'version': operator.version, 'operatorInterface': operator_interface}],
-                    'miniOperator': operator_interface
-                };
-            } else {
-                // Other operator version
-                comp = versionInfo.lastVersion.compareTo(operator.version);
-                if (comp < 0) {
-                    // upgrade
-                    this.componentManager.removeComponent('operator', versionInfo.miniOperator);
-                    operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-                    this.componentManager.addComponent('operator', operator_interface);
-                    this.operatorVersions[operator.vendor + '/' + operator.name].lastVersion = operator.version;
-                    this.operatorVersions[operator.vendor + '/' + operator.name].currentVersion = operator.version;
-                    this.operatorVersions[operator.vendor + '/' + operator.name].versions.push({'version': operator.version, 'operatorInterface': operator_interface});
-                    this.operatorVersions[operator.vendor + '/' + operator.name].miniOperator = operator_interface;
-                } else if (comp > 0) {
-                    // old version
-                    operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-                    this.operatorVersions[operator.vendor + '/' + operator.name].versions.push({'version': operator.version, 'operatorInterface': operator_interface});
-                } else {
-                    // Same version. weird...
-                    return;
-                }
-            }
+        alert.heading.addClass('text-center');
+        alert.addNote(gettext("Only if a web application provides input or output endpoints, it will be connectable with others."));
 
-        } catch (e){
-            throw new Error('WiringEditor error (critical). Creating MiniOperator: ' + e.message);
-        }
-    };
+        return alert;
+    }
 
-    /**
-     * @Private
-     * Create New Operator or Ghost Operator
-     */
-    var generateOperator = function generateOperator (id, operator, reallyInUseOperators, availableOperators) {
-        var operator_instance, op_id, i, endpoint_order, position, is_minimized, operator_interface;
+    function setUpNavbarView() {
 
-        try {
-            operator_instance = reallyInUseOperators[id];
-            // Get operator id
-            op_id = parseInt(operator_instance.id, 10);
-            if (this.nextOperatorId <= op_id) {
-                // Make this.nextOperatorId is always greater than the highest of all operators
-                this.nextOperatorId = op_id + 1;
-            }
+        this.btnFindComponents = new se.ToggleButton({
+            title: gettext("Find components"),
+            extraClass: "btn-find-components",
+            iconClass: "icon-archive",
+            stackedIconClass: "icon-plus-sign"
+        });
+        this.btnFindComponents.on('click', function (button) {
+            showSelectedPanel.call(this, button, 0);
+        }.bind(this));
 
-            // Add the new operator
-            operator_interface = this.addIOperator(operator_instance, operator.endpoints, operator.position);
-        } catch (e) {
-            var errorMainmsg, detailmsg, msg;
+        this.btnListBehaviours = new se.ToggleButton({
+            title: gettext("List behaviours"),
+            extraClass: "btn-list-behaviours",
+            iconClass: "icon-sitemap"
+        });
+        this.btnListBehaviours.on('click', function (button) {
+            showSelectedPanel.call(this, button, 1);
+        }.bind(this));
 
-            errorMainmsg = 'WiringEditor error (critical).'
-            detailmsg = ' [id: ' + id +'; name: ' + operator_instance +';] ';
-            if (operator_instance.ghost) {
-                // Error creating GhostOperator
-                msg = ' Operator Not Found. GhostOperator creation Failed';
-                throw new Error(errorMainmsg + msg + detailmsg + e.message);
-            } else {
-                // Error creating Operator
-                msg = ' Operator creation Failed';
-                throw new new Error(errorMainmsg + msg + detailmsg + e.message);
-            }
+        return this;
+    }
+
+    function disableComponent(component) {
+        var item = this.componentManager.getComponent(component.type, component.id);
+
+        if (item != null) {
+            item.disable();
         }
 
-    };
+        return this;
+    }
 
-    /**
-     * @Private
-     * Add Ghost Endpoint in theEndpoint widget or operator
-     */
-    var insertGhostEndpoint = function insertGhostEndpoint(connection, isSource) {
-        var entity, theEndpoint, anchor;
+    function tearDownView() {
 
-        if(isSource) {
-            theEndpoint = connection.source;
-        } else {
-            theEndpoint = connection.target;
-        }
-        if (theEndpoint.type == 'ioperator') {
-            entity = this.components.operator[theEndpoint.id];
-        } else {
-            entity = this.components.widget[theEndpoint.id];
-        }
-        anchor = entity.addGhostEndpoint(theEndpoint, isSource);
+        this.workspace.wiring.load(this.toJSON()).save();
+        readyView.call(this);
 
-        // Coherency of the recommendations
-        this.recommendations.add_anchor_to_recommendations(anchor);
-        this._startdrag_map_func(anchor);
-    };
+        return this;
+    }
 
-    /**
-     * @private
-     * @function
-     */
-    var isConnectionEndpoint = function isConnectionEndpoint(type, id, connectionList) {
-        var found, i, source, target;
+    function readyView() {
 
-        for (found = false, i = 0; !found && i < connectionList.length; i++) {
-            source = connectionList[i].source;
-            target = connectionList[i].target;
+        this.layout.slideOut();
 
-            if (source.type == type && source.id == id || target.type == type && target.id == id) {
-                found = true;
-            }
-        }
+        this.behaviourEngine.empty().disable();
 
-        return found;
-    };
+        this.componentManager.empty().setUp();
 
-    /**
-     * @Private
-     * load wiring from status and workspace info
-     */
-    var loadWiring = function loadWiring(workspace, status) {
-        var availableOperatorGroup, componentId, componentObj, componentType,
-            connectionList, connection, i, operatorGroup, pk, sourceName,
-            status, targetName, widgetList;
+        this.sortableComponent = null;
+        this.autoOperatorId = 1;
 
-        this.targetsOn = true;
-        this.sourcesOn = true;
-        this.targetAnchorList = [];
-        this.sourceAnchorList = [];
-        this.selectedOps = {};
-        this.selectedOps.length = 0;
-        this.selectedWids = {};
-        this.selectedWids.length = 0;
-        this.selectedCount = 0;
-        this.headerHeight = document.getElementById('wirecloud_header').offsetHeight;
-        this.ctrlPushed = false;
-        this.nextOperatorId = 0;
-        this.EditingObject = null;
-        this.entitiesNumber = 0;
-        this.recommendationsActivated = false;
-        this.recommendations = new Wirecloud.ui.RecommendationManager();
-        this.operatorVersions = {};
+        return this;
+    }
 
-        this.componentManager
-            .empty()
-            .setUp();
-        this.btnToggleViewpoint.active = false;
+    function setUpView() {
 
-        this.gridFullHeight = parseFloat(this.layout.content.style('height'));
-        this.gridFullWidth = parseFloat(this.layout.content.style('width'));
-        this.fullHeaderHeight = LayoutManagerFactory.getInstance().mainLayout.getNorthContainer().wrapperElement.getBoundingClientRect().height;
+        this.workspace = Wirecloud.activeWorkspace;
+        this.errorMessages = [];
 
-        status = this.behaviorEngine.setUp(status);
+        readyView.call(this);
+        loadWiringStatus.call(this);
 
-        this.behaviorEngine.readonly = true;
-        this.components = {};
-        this.componentsMissingCount = 0;
+        /*this.errorMessages.forEach(function (error) {
+            console.error(error);
+        });*/
 
-        // Loading the widgets that are being used in the workspace...
-        componentType = WiringEditor.WIDGET_TYPE;
-        this.components[componentType] = {};
+        return this;
+    }
 
-        // Get all widgets available in the workspace.
-        widgetList = workspace.getIWidgets();
+    function loadWiringStatus() {
+        var wiringEngine = this.workspace.wiring,
+            visualStatus = wiringEngine.status.visualdescription;
 
-        // Get the existing connections in the wiring's trading description.
-        connectionList = status.connections;
+        // Loading the widgets used in the workspace...
+        loadWidgets.call(this, wiringEngine.widgets, visualStatus.components.widget);
+        // ...completed.
 
-        for (i = 0; i < widgetList.length; i++) {
-            componentId = widgetList[i].id;
-
-            // Add the widget into panel of components.
-            componentObj = new WiringEditor.WidgetInterface(this, widgetList[i], this, true);
-            this.componentManager.addComponent(componentType, componentObj);
-
-            // If the widget is already available in the mashup's wiring...
-            if (this.behaviorEngine.hasComponent(componentType, componentId)) {
-                // it will be disabled from panel of components.
-                componentObj.disable();
-                // it will be added into wiring's diagram.
-                this.addComponent(componentType, componentId, widgetList[i]);
-            }
-            // If the widget exists as connection endpoint
-            else if (isConnectionEndpoint.call(this, componentType, componentId, connectionList)) {
-                // it will be disabled from panel of components.
-                componentObj.disable();
-                // it will be added into wiring's diagram.
-                this.behaviorEngine.readonly = false;
-                this.addComponent(componentType, componentId, widgetList[i]);
-                this.behaviorEngine.readonly = true;
-            }
-        }
-
-        var currentComponents = Object.keys(this.components[componentType]);
-
-        // Paint the reference of widgets that are missing.
-        for (pk in this.behaviorEngine.description.components[componentType]) {
-            if (currentComponents.indexOf(pk) == -1) {
-                addMissingWidget.call(this, pk, this.behaviorEngine.findComponent(componentType, pk));
-            }
-        }
-        // ...load completed.
-
-        // Loading the operators that are being used in the workspace...
-        componentType = WiringEditor.OPERATOR_TYPE;
-        this.components[componentType] = {};
-
-        // Get all operators available in the user's account.
-        availableOperatorGroup = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
-
-        // Get all operators available in the workspace (trading description).
-        operatorGroup = workspace.wiring.ioperators;
-
-        // Add all operators into panel of components.
-        for (pk in availableOperatorGroup) {
-            generateMiniOperator.call(this, availableOperatorGroup[pk]);
-        }
-
-        // Add the operators in use into wiring's diagram.
-        for (componentId in operatorGroup) {
-            // If the operator has visual description...
-            if (this.behaviorEngine.hasComponent(componentType, componentId)) {
-                // it will be added into wiring's diagram.
-                this.addComponent(componentType, componentId, operatorGroup[componentId]);
-            }
-            // otherwise, the operator does not have visual description...
-            else {
-                // it will be added into wiring's diagram.
-                this.behaviorEngine.readonly = false;
-                this.addComponent(componentType, componentId, operatorGroup[componentId]);
-                this.behaviorEngine.readonly = true;
-            }
-        }
+        // Loading the operators uploaded in this account...
+        var operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+        loadOperators.call(this, operators, wiringEngine.operators, visualStatus);
+        // ...completed.
 
         // Loading the connections established in the workspace...
-        this.connections = [];
+        loadConnections.call(this, wiringEngine.connections, visualStatus);
+        // ...completed.
 
-        for (i = 0; i < connectionList.length; i++) {
-            connection = connectionList[i];
-            // Get the absolute name of each endpoint.
-            sourceName = getEndpointName.call(this, connection.source);
-            targetName = getEndpointName.call(this, connection.target);
+        this.behaviourEngine.loadBehaviours(visualStatus.behaviours);
 
-            // If the connection can be established...
-            if (connectionAvailable.call(this, connection)) {
-                // and if the connection has visual description...
-                if (this.behaviorEngine.hasConnection(sourceName, targetName)) {
-                    // it will be added into wiring's diagram.
-                    this.generateConnection(connection, sourceName, targetName);
-                }
-                // otherwise, the connection does not have visual description.
-                else {
-                    this.behaviorEngine.readonly = false;
-                    this.generateConnection(connection, sourceName, targetName);
-                    this.behaviorEngine.readonly = true;
-                }
+        return this;
+    }
+
+    function loadConnections(connections, vInfo) {
+        var list1 = [], list2 = [];
+
+        connections.forEach(function (c, i) {
+            var source, target, errorCount = 0;
+
+            if (c.volatile) {
+                return;
             }
-            // otherwise, the connection has an endpoint misplaced...
-            else {
-                // and it will remove of the behavior engine.
-                this.behaviorEngine.removeConnection(sourceName, targetName, true);
-            }
-        }
-        // ...load completed.
-
-        this.behaviorEngine.readonly = false;
-        this.behaviorEngine.activate();
-        this.activateCtrlMultiSelect();
-
-        this.valid = true;
-        if (this.entitiesNumber === 0) {
-            this.alertEmptyWiring.show();
-        }
-
-        this.recommendations.init(widgetList, availableOperatorGroup);
-        this.removeClassName('disabled');
-    };
-
-    /**
-     * @Private
-     * repaint the wiringEditor interface
-     */
-    var renewInterface = function renewInterface() {
-        var workspace, wiringStatus, layoutManager, msg, dialog;
-
-        layoutManager = LayoutManagerFactory.getInstance();
-        this.valid = false;
-
-        try {
-
-            workspace = Wirecloud.activeWorkspace;
-            wiringStatus = workspace.wiring.status;
-            loadWiring.call(this, workspace, wiringStatus);
-
-        } catch (err) {
-            try {
-                clearInterface.call(this);
-            } catch (e1) {
-                msg = gettext('Unrecoverable error while loading wiring data into the wiring editor');
-                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-            }
-
-            var yesHandler = function () {
-                wiringStatus = Wirecloud.Utils.clone(wiringStatus);
-                delete wiringStatus.views;
-                try {
-                    loadWiring.call(this, workspace, wiringStatus);
-                } catch (e2) {
-                    setTimeout(function () {
-                        try {
-                            clearInterface.call(this);
-                        } catch (e1) {
-                            msg = gettext('Fatal error loading wiring data');
-                            (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                        }
-                        // private functions
-                        var yesHandler2 = function () {
-                            wiringStatus = null;
-                            try {
-                                loadWiring.call(this, workspace, wiringStatus);
-                            } catch (e4) {
-                                try {
-                                    clearInterface.call(this);
-                                } catch (e5) {}
-                                // Use setTimeout as at the end of the yesHandler all window menus are closed including the one we are opening now
-                                setTimeout(function () {
-                                    msg = gettext('Fatal error loading wiring data');
-                                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
-                                }, 0);
-                            }
-                        }.bind(this);
-                        var noHandler2 = function () {
-                            layoutManager.changeCurrentView('workspace');
-                        }.bind(this);
-                        var msg = gettext("Unrecoverable error while loading wiring data. Do you want to start with an empty wiring?");
-                        var dialog = new Wirecloud.ui.AlertWindowMenu();
-                        dialog.setMsg(msg);
-                        dialog.setHandler(yesHandler2, noHandler2);
-                        dialog.show();
-                    }.bind(this), 0);
-                }
-            }.bind(this);
-            var noHandler = function () {
-                layoutManager.changeCurrentView('workspace');
-            };
-            var msg = new StyledElements.Fragment(gettext("<p>There was an error loading the wiring status. Do you want WireCloud to try to recover the state of your connections automatically?</p>"));
-            var details = new StyledElements.Expander({title: gettext('Details')});
-            msg.appendChild(details);
-            details.appendChild(document.createTextNode(err.message));
-
-            var dialog = new Wirecloud.ui.AlertWindowMenu();
-            dialog.setMsg(msg);
-            dialog.setHandler(yesHandler, noHandler);
-            dialog.show();
-        }
-    };
-
-    /**
-     * @Private
-     * clean the WiringEditor interface.
-     */
-    var clearInterface = function clearInterface() {
-        var key, workspace;
-
-        this.addClassName('disabled');
-        workspace = Wirecloud.activeWorkspace;
-        if (this.valid) {
-            workspace.wiring.load(this.serialize());
-            workspace.wiring.save();
-        }
-        for (key in this.components.widget) {
-            this.layout.content.remove(this.components.widget[key]);
-            this.components.widget[key].destroy();
-        }
-        for (key in this.components.operator) {
-            this.layout.content.remove(this.components.operator[key]);
-            this.components.operator[key].destroy();
-        }
-
-        this.deactivateCtrlMultiSelect();
-
-        this.connectionEngine.clear();
-        this.componentManager.empty();
-        this.arrows = [];
-        this.connections = [];
-        this.components = {
-            'operator': {},
-            'widget': {}
-        };
-        this.recommendations.destroy();
-    };
-
-    /**
-     * @Private
-     * set max width for widget or operator sources and targets Div
-     */
-    var setSourceTargetMaxWidths = function setSourceTargetMaxWidths(theInterface, maxWidth) {
-        var sources, targets, sourcesVirginDims, targetsVirginDims, currentFontSize;
-
-        // Current font-size from css
-        currentFontSize = parseFloat(this.layout.content.style('fontSize')) * parseInt(getComputedStyle(this.wrapperElement).fontSize);
-
-        // Sources
-        sources = theInterface.wrapperElement.getElementsByClassName('sources')[0];
-        sourcesVirginDims = sources.getBoundingClientRect();
-
-        // Targets
-        targets = theInterface.wrapperElement.getElementsByClassName('targets')[0];
-        targetsVirginDims = targets.getBoundingClientRect();
-
-        // Check the problem
-        if ((sourcesVirginDims.width / currentFontSize > maxWidth / 2) && (targetsVirginDims.width / currentFontSize > maxWidth / 2)) {
-            // Both divs are too wide
-            setMaxWidth.call(this, sources, maxWidth / 2, currentFontSize);
-            setMaxWidth.call(this, targets, maxWidth / 2, currentFontSize);
-        } else if (sourcesVirginDims.width / currentFontSize <= maxWidth / 2) {
-            // Targets div is too wide
-            setMaxWidth.call(this, targets, maxWidth - (sourcesVirginDims.width / currentFontSize), currentFontSize);
-        } else if (targetsVirginDims.width / currentFontSize <= maxWidth / 2) {
-            // Sources div is too wide
-            setMaxWidth.call(this, sources, maxWidth - (targetsVirginDims.width / currentFontSize), currentFontSize);
-        }
-    };
-
-    /**
-     * @Private
-     * set max width for each span in source or target div
-     */
-    var setMaxWidth = function setMaxWidth(theDiv, width, currentFontSize) {
-        var theSpans, i, balancedWidth, acumulatedPaddings, theDivComputed, theSpanParentComputed;
-
-        theSpans = theDiv.getElementsByTagName('span');
-
-        theDivComputed = getComputedStyle(theDiv);
-        theSpanParentComputed = getComputedStyle(theSpans[0].parentElement);
-        acumulatedPaddings = 0;
-        // Add paddings of theDiv element in acumulatedPaddings var
-        acumulatedPaddings += (parseFloat(theDivComputed.paddingRight) + parseFloat(theDivComputed.paddingLeft)) / currentFontSize;
-        // Add margins of theDiv element in acumulatedPaddings var
-        acumulatedPaddings += (parseFloat(theDivComputed.marginRight) + parseFloat(theDivComputed.marginLeft)) / currentFontSize;
-
-        // Add paddings of theSpans.parent element in acumulatedPaddings var
-        acumulatedPaddings += (parseFloat(theSpanParentComputed.paddingRight) + parseFloat(theSpanParentComputed.paddingLeft)) / currentFontSize;
-        // Add margins of theSpans.parent element in acumulatedPaddings var
-        acumulatedPaddings += (parseFloat(theSpanParentComputed.marginRight) + parseFloat(theSpanParentComputed.marginLeft)) / currentFontSize;
-
-        balancedWidth = width - acumulatedPaddings;
-
-        for (i = 0; i < theSpans.length; i++){
-            if (theSpans[i].offsetWidth / currentFontSize > balancedWidth) {
-                // change only the too wide spans
-                theSpans[i].style.width = balancedWidth + 'em';
-            }
-        }
-    };
-
-    var resetMaxWidth = function resetMaxWidth(theInterface) {
-        var theSourcesSpans, theTargetSpans, targets, sources, i;
-
-        // Sources
-        sources = theInterface.wrapperElement.getElementsByClassName('sources')[0];
-        theSourcesSpans = sources.getElementsByTagName('span');
-
-        // Targets
-        targets = theInterface.wrapperElement.getElementsByClassName('targets')[0];
-        theTargetSpans = targets.getElementsByTagName('span');
-
-        for (i = 0; i < theSourcesSpans.length; i++){
-            theSourcesSpans[i].style.width =  '';
-        }
-
-        for (i = 0; i < theTargetSpans.length; i++){
-            theTargetSpans[i].style.width =  '';
-        }
-    };
-
-    /**
-     * Change Operator miniInterface version in menubar
-     */
-    WiringEditor.prototype.setOperatorVersion = function setOperatorVersion(miniOperator, versionInfo) {
-        var versionIndex;
-
-        versionIndex = miniOperator.ioperator.vendor + '/' + miniOperator.ioperator.name;
-        if (this.operatorVersions[versionIndex].currentVersion.compareTo(versionInfo.version) == 0) {
-            // Same Version
-            return;
-        }
-
-        //Change Version
-        this.componentManager.removeComponent('operator', miniOperator);
-        if (this.operatorVersions[versionIndex].lastVersion.compareTo(versionInfo.version) > 0) {
-            // Old Version
-            versionInfo.operatorInterface.wrapperElement.classList.add('old');
-        }
-        this.componentManager.addComponent('operator', versionInfo.operatorInterface);
-        this.operatorVersions[versionIndex].currentVersion = versionInfo.version;
-        this.operatorVersions[versionIndex].miniOperator = versionInfo.operatorInterface;
-        return;
-    };
-
-    /**
-     * returns the dom element asociated with the grid
-     */
-    WiringEditor.prototype.getGridElement = function getGridElement() {
-        return this.layout.content.get();
-    };
-
-    /**
-     * Create New Connection
-     */
-    WiringEditor.prototype.generateConnection = function generateConnection(connection, sourceName, targetName) {
-        var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget, entity, isGhost;
-        var connectionView;
-
-        startAnchor = findEndpoint.call(this, connection.source);
-
-        endAnchor = findEndpoint.call(this, connection.target);
-
-        if (startAnchor !== null && endAnchor !== null) {
-            connectionView = this.behaviorEngine.findConnection(sourceName, targetName);
 
             try {
-                if ('readonly' in connection && connection.readonly) {
-                    // Increase ReadOnly connection count in each entity
-                    startAnchor.getComponent().incReadOnlyConnectionsCount();
-                    endAnchor.getComponent().incReadOnlyConnectionsCount();
-                }
-
-                // Create arrow
-                isGhost = startAnchor.context.data instanceof Wirecloud.wiring.GhostSourceEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostTargetEndpoint;
-                arrow = this.connectionEngine.drawArrow(startAnchor.getCoordinates(this.layout.content.get()),
-                                              endAnchor.getCoordinates(this.layout.content.get()), "connection", connection.readonly, isGhost);
-
-                // Set arrow anchors
-                arrow.setStartAnchor(startAnchor);
-                startAnchor.addArrow(arrow);
-                arrow.setEndAnchor(endAnchor);
-                endAnchor.addArrow(arrow);
-
-                // Set arrow pullers
-                if (connectionView != null) {
-                    arrow.setPullerStart(connectionView.sourcehandle);
-                    arrow.setPullerEnd(connectionView.targethandle);
-                }
-
-                // Draw the arrow
-                arrow.redraw();
-
-                this.connectionEngine.events.establish.dispatch({
-                    'connection': arrow,
-                    'sourceComponent': arrow.sourceComponent,
-                    'sourceEndpoint': arrow.startAnchor,
-                    'sourceName': arrow.sourceName,
-                    'targetComponent': arrow.targetComponent,
-                    'targetEndpoint': arrow.endAnchor,
-                    'targetName': arrow.targetName
-                });
+                source = findEndpoint.call(this, 'source', c.source.toJSON(), c.source);
             } catch (e) {
-                // TODO: Warning remove view for this connection and redo
-                msg = 'Creating connection. betwen [' + startAnchor.context.data.id + '] and [' + endAnchor.context.data.id + ']. ';
-                throw new Error('WiringEditor error.' + msg + e.message);
+                this.errorMessages.push(e);
+                errorCount++;
+            }
+
+            try {
+                target = findEndpoint.call(this, 'target', c.target.toJSON(), c.target);
+            } catch (e) {
+                this.errorMessages.push(e);
+                errorCount++;
+            }
+
+            if (!errorCount) {
+                list1.push({
+                    source: source,
+                    target: target,
+                    meta: c,
+                    options: {}
+                });
+            }
+        }, this);
+
+        vInfo.connections.forEach(function (v, i) {
+            var source, target, found;
+
+            try {
+                v = utils.updateObject(ns.WiringEditor.Connection.VISUAL_INFO, v);
+
+                found = list1.some(function (c) {
+                    if (c.source.id == v.sourcename && c.target.id == v.targetname) {
+                        c.options.sourceHandle = v.sourcehandle;
+                        c.options.targetHandle = v.targethandle;
+
+                        return true;
+                    }
+                });
+
+                if (!found) {
+                    source = findEndpointById.call(this, 'source', v.sourcename);
+                    target = findEndpointById.call(this, 'target', v.targetname);
+
+                    list2.push({
+                        source: source,
+                        target: target,
+                        meta: this.workspace.wiring.createConnection(false, source._endpoint, target._endpoint),
+                        options: {
+                            sourceHandle: v.sourcehandle,
+                            targetHandle: v.targethandle
+                        }
+                    });
+                }
+            } catch (e) {
+                this.errorMessages.push(e);
+            }
+        }, this);
+
+        list1.concat(list2).forEach(function (c) {
+            var connection = this.connectionEngine.connect(c.meta, c.source, c.target, c.options);
+        }, this);
+
+        return this;
+    }
+
+    function loadOperators(operators, operatorsInUse, vInfo) {
+        var component, id, instance;
+
+        Object.keys(operators).forEach(function (uri) {
+            this.componentManager.addMeta(operators[uri]);
+        }, this);
+
+        Object.keys(operatorsInUse).forEach(function (id) {
+
+            if (!operatorsInUse[id].missing) {
+                this.componentManager.addWiringComponent(operatorsInUse[id]);
+            }
+
+            if (!operatorsInUse[id].volatile) {
+                this.createComponent(operatorsInUse[id], vInfo.components.operator[id]);
+
+                if (id >= this.autoOperatorId) {
+                    this.autoOperatorId = id + 1;
+                }
+            }
+        }, this);
+
+        // TODO: for id vInfo.components.operator && operatorInfo.name != ""
+
+        return this;
+    }
+
+    function loadWidgets(wiringWidgets, visualWidgets) {
+        var id, message, widget;
+
+        for (id in wiringWidgets) {
+            widget = wiringWidgets[id];
+
+            this.componentManager
+                .addMeta(widget.meta)
+                .addWiringComponent(widget);
+
+            if (widget.id in visualWidgets) {
+                this.createComponent(widget, visualWidgets[widget.id]);
+            }
+
+            delete visualWidgets[id];
+        }
+
+        for (id in visualWidgets) {
+            message = utils.gettext("The widget (%(id)s) of '%(uri)s' does not exist.");
+            widget = new Wirecloud.wiring.MissingWidget(id, this.workspace.wiring, visualWidgets[id], message);
+            this.createComponent(widget, visualWidgets[id]);
+        }
+
+        return this;
+    }
+
+    function findEndpoint(type, bInfo, wiringEndpoint) {
+        var component, endpoint;
+
+        component = this.behaviourEngine.components[bInfo.type][bInfo.id];
+
+        if (!component) {
+            component = this.componentManager.getComponent(bInfo.type, bInfo.id);
+
+            if (!component) {
+                throw new Error("A missing component could not recover.");
+            }
+
+            component = this.createComponent(component._component);
+        }
+
+        endpoint = component.getEndpoint(type, bInfo.endpoint);
+        if (endpoint == null) {
+            if (wiringEndpoint != null) {
+                return component.appendEndpoint(type, wiringEndpoint).getEndpoint(type, bInfo.endpoint);
+            } else {
+                throw new Error("Missing endpoint from view info.");
             }
         } else {
-            // Ghost Endpoint
-            if (!startAnchor) {
-                insertGhostEndpoint.call(this, connection, true);
+            return endpoint;
+        }
+    }
+
+    function findEndpointById(type, id) {
+        var view, kwargs = id.split("/");
+
+        if (kwargs.length != 3) {
+            throw utils.createError('EndpointError', "A %(type)s-endpoint is malformed.", {
+                type: type
+            });
+        }
+
+        return findEndpoint.call(this, type, {
+            type: kwargs[0],
+            id: parseInt(kwargs[1]),
+            endpoint: kwargs[2]
+        });
+    }
+
+    function behaviourengine_onenable() {
+
+        this.connectionEngine.forEachConnection(function (connection) {
+            connection.background = false;
+            this.behaviourEngine.updateConnection(connection, connection.toJSON());
+        }.bind(this));
+
+        this.behaviourEngine.forEachComponent(function (component) {
+            component.background = false;
+            this.behaviourEngine.updateComponent(component, component.toJSON());
+        }.bind(this));
+    }
+
+    function behaviour_onactivate(behaviourEngine, behaviour, viewpoint) {
+        var component, connection, i, id, type;
+        var currentStatus = behaviour.getCurrentStatus();
+
+        //LayoutManagerFactory.getInstance().header.refresh();
+
+        switch (viewpoint) {
+        case ns.WiringEditor.BehaviourEngine.GLOBAL:
+
+            this.connectionEngine.forEachConnection(function (connection) {
+                connection.show().background = !behaviour.hasConnection(connection);
+            });
+
+            this.behaviourEngine.forEachComponent(function (component) {
+                component.background = !behaviour.hasComponent(component);
+            });
+
+            break;
+        }
+
+        behaviour_onchange.call(this, behaviourEngine, currentStatus, true);
+    }
+
+    function connection_onduplicate(connectionEngine, connection) {
+        if (connection.background) {
+            this.behaviourEngine.updateConnection(connection, connection.toJSON(), true);
+        }
+    }
+
+    function connection_onestablish(connectionEngine, connection) {
+        this.behaviourEngine.updateConnection(connection, connection.toJSON());
+
+        connection
+            .on('change', function () {
+                this.behaviourEngine.updateConnection(connection, connection.toJSON());
+            }.bind(this))
+            .on('optremove', function () {
+                this.behaviourEngine.removeConnection(connection);
+            }.bind(this))
+            .on('optshare', function () {
+                this.behaviourEngine.updateConnection(connection, connection.toJSON(), true);
+            }.bind(this));
+    }
+
+    function component_onremove(component) {
+        component.forEachEndpoint(function (endpoint) {
+            this.connectionEngine.removeEndpoint(endpoint);
+            this.suggestionManager.removeEndpoint(endpoint);
+        }.bind(this));
+
+        if (component.id in this.selectedComponents[component.type]) {
+            delete this.selectedComponents[component.type][component.id];
+            this.selectedCount--;
+        }
+
+        if (!component.missing) {
+            this.componentManager.getComponent(component.type, component.id).enable();
+        }
+
+        if (!this.behaviourEngine.hasComponents()) {
+            this.initialMessage.show();
+        }
+    }
+
+    function connection_ondragstart(connectionEngine, connection, initialEndpoint) {
+        var component, id, type;
+
+        this.collapsedComponents = [];
+
+        this.behaviourEngine.forEachComponent(function (component) {
+
+            if (component.collapsed) {
+                component.collapsed = false;
+                this.collapsedComponents.push(component);
             }
-            if (!endAnchor) {
-                insertGhostEndpoint.call(this, connection, false);
-            }
-            this.generateConnection(connection, connectionView);
+        }.bind(this));
+    }
+
+    function connection_ondragend(connectionEngine, connection, initialEndpoint) {
+
+        if (this.collapsedComponents != null) {
+
+            this.collapsedComponents.forEach(function (component) {
+                component.collapsed = true;
+            });
+
+            delete this.collapsedComponents;
         }
-    };
 
-    /**
-     * activate handlers for ctrl Multiselection
-     */
-    WiringEditor.prototype.activateCtrlMultiSelect = function activateCtrlMultiSelect() {
-        document.addEventListener("keydown", this._keydownListener, false);
-        document.addEventListener("keyup", this._keyupListener, false);
-    };
+        this.suggestionManager.hideSuggestions(initialEndpoint);
+    }
 
-    /**
-     * deactivate handlers for ctrl Multiselection
-     */
-    WiringEditor.prototype.deactivateCtrlMultiSelect = function deactivateCtrlMultiSelect() {
-        document.removeEventListener("keydown", this._keydownListener, false);
-        document.removeEventListener("keyup", this._keyupListener, false);
-        this.ctrlPushed = false;
-        this.layout.content.removeClass('selecting');
-    };
+    function behaviour_onchange(behaviourEngine, currentStatus, enabled) {
 
-    /**
-     * Saves the wiring state.
-     */
-    WiringEditor.prototype.serialize = function serialize() {
-        var wiringState, key, i, ioperator, pref;
+        if (enabled) {
+            currentStatus.title = "<strong>Behaviour:</strong> " + currentStatus.title;
+        }
 
-        this.layout.slideOut(0);
-        wiringState = this.behaviorEngine.serialize();
+        this.legend.title.innerHTML = currentStatus.title;
+        this.legend.connections.textContent = currentStatus.connections;
+        this.legend.operators.textContent = currentStatus.components.operator;
+        this.legend.widgets.textContent = currentStatus.components.widget;
 
-        for (key in this.components.operator) {
-            ioperator = this.components.operator[key].getIOperator();
+        return this;
+    }
 
-            wiringState.operators[key] = {
-                'id': key,
-                'name': ioperator.meta.uri,
-                'preferences': {}
-            };
-            for (pref in ioperator.preferences) {
-                wiringState.operators[key].preferences[pref] = {
-                    "readonly": ioperator.preferences[pref].readonly,
-                    "hidden": ioperator.preferences[pref].hidden,
-                    "value": ioperator.preferences[pref].value
-                };
+    function layout_onclick() {
+        var type, id;
+
+        this.layout.slideOut();
+
+        for (type in this.selectedComponents) {
+            for (id in this.selectedComponents[type]) {
+                this.selectedComponents[type][id].setUp();
+                delete this.selectedComponents[type][id].initialPosition;
+                delete this.selectedComponents[type][id];
             }
         }
 
-        for (i = 0; i < this.connections.length; i++) {
-            wiringState.connections.push(this.connections[i].getBusinessInfo());
+        if (this.sortableComponent != null) {
+            this.sortableComponent.setUp();
+            this.sortableComponent = null;
         }
 
-        return wiringState;
-    };
+        this.connectionEngine.setUp();
+        this.selectedCount = 0;
+    }
 
-    /**
-     * add selectd object.
-     */
-    WiringEditor.prototype.addSelectedObject = function addSelectedObject(object) {
-        if (object instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            this.selectedWids[object.getId()] = object;
-            this.selectedWids.length += 1;
-        } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
-            this.selectedOps[object.getId()] = object;
-            this.selectedOps.length += 1;
-        }
-        this.selectedCount += 1;
-    };
+    function showSelectedPanel(button, panelIndex) {
 
-    /**
-     * remove selected object.
-     */
-    WiringEditor.prototype.removeSelectedObject = function removeSelectedObject(object) {
-        if (object instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            delete this.selectedWids[object.getId()];
-            this.selectedWids.length -= 1;
-        } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
-            delete this.selectedOps[object.getId()];
-            this.selectedOps.length -= 1;
-        }
-        if (this.selectedCount > 0) {
-            this.selectedCount -= 1;
+        if (button.active) {
+            this.layout.slideIn(panelIndex);
         } else {
-            //error
+            this.layout.slideOut();
         }
-    };
 
-    /**
-     * reset selected object.
-     */
-    WiringEditor.prototype.resetSelection = function resetSelection() {
-        var key;
-        for (key in this.selectedOps) {
-            if (key != 'length') {
-                this.selectedOps[key].unselect(false);
+        return this;
+    }
+
+    function component_onclick(component, event) {
+        var type, id, selectedComponent;
+
+        if (!component.active && component.id in this.selectedComponents[component.type]) {
+            if (event.ctrlKey) {
+                delete component.initialPosition;
+                delete this.selectedComponents[component.type][component.id];
+                this.selectedCount--;
+            } else {
+                if (this.selectedCount > 1) {
+                    for (type in this.selectedComponents) {
+                        for (id in this.selectedComponents[type]) {
+                            this.selectedComponents[type][id].active = false;
+                            delete this.selectedComponents[type][id].initialPosition;
+                            delete this.selectedComponents[type][id];
+                        }
+                    }
+                    this.selectedCount = 0;
+                    component.active = true;
+                } else {
+                    delete component.initialPosition;
+                    delete this.selectedComponents[component.type][component.id];
+                    this.selectedCount = 0;
+                }
             }
         }
-        for (key in this.selectedWids) {
-            if (key != 'length') {
-                this.selectedWids[key].unselect(false);
+
+        if (component.active && !(component.id in this.selectedComponents[component.type])) {
+            this.selectedComponents[component.type][component.id] = component;
+            this.selectedCount++;
+        }
+    }
+
+    function component_ondragstart(component, event) {
+        var type, id, selectedComponent;
+
+        if (this.sortableComponent != null) {
+            this.sortableComponent.setUp();
+            this.sortableComponent = null;
+        }
+
+        if (event.ctrlKey) {
+            if (!(component.id in this.selectedComponents[component.type])) {
+                this.selectedComponents[component.type][component.id] = component;
+                this.selectedCount++;
+            }
+        } else {
+            if (!(component.id in this.selectedComponents[component.type])) {
+                for (type in this.selectedComponents) {
+                    for (id in this.selectedComponents[type]) {
+                        this.selectedComponents[type][id].active = false;
+                        delete this.selectedComponents[type][id].initialPosition;
+                        delete this.selectedComponents[type][id];
+                    }
+                }
+                this.selectedCount = 0;
             }
         }
-        if ((this.selectedOps.length !== 0) || (this.selectedWids.length !== 0)) {
-            //('error resetSelection' + this.selectedOps + this.selectedWids);
-        }
-    };
 
-    /**
-     * check if the position of the event occurred within the grid
-     */
+        if (component.id in this.selectedComponents[component.type]) {
+
+            for (type in this.selectedComponents) {
+                for (id in this.selectedComponents[type]) {
+                    selectedComponent = this.selectedComponents[type][id];
+                    selectedComponent.initialPosition = selectedComponent.position();
+                }
+            }
+        }
+    }
+
+    function component_ondrag(component, x, y) {
+        var type, id, selectedComponent;
+
+        for (type in this.selectedComponents) {
+            for (id in this.selectedComponents[type]) {
+                if (component.type !== type || component.id != id) {
+                    selectedComponent = this.selectedComponents[type][id];
+                    selectedComponent.position({
+                        x: selectedComponent.initialPosition.x + x,
+                        y: selectedComponent.initialPosition.y + y
+                    });
+                }
+            }
+        }
+    }
+
+    function component_ondragend(component) {
+        var type, id, selectedComponent;
+
+        for (type in this.selectedComponents) {
+            for (id in this.selectedComponents[type]) {
+                selectedComponent = this.selectedComponents[type][id];
+                selectedComponent.active = true;
+
+                if (component.type !== type || component.id != id) {
+                    selectedComponent.trigger('change', {position: selectedComponent.position()});
+                }
+            }
+        }
+    }
+
+    function component_onsortstart(component) {
+
+        if (this.sortableComponent != null && !this.sortableComponent.equals(component)) {
+            this.sortableComponent.setUp();
+        }
+
+        this.sortableComponent = component;
+        this.connectionEngine.enabled = false;
+    }
+
+    function component_onsortend(component) {
+        this.connectionEngine.enabled = true;
+    }
+
+    /*
     WiringEditor.prototype.withinGrid = function withinGrid(event) {
         var clientX, clientY, box;
 
@@ -1197,823 +910,6 @@ Wirecloud.ui.WiringEditor = (function (se) {
         return (clientX > box.left) && (clientX < box.right) &&
                (clientY > box.top) && (clientY < box.bottom);
     };
+    */
 
-    var shareComponent = function shareComponent(component) {
-        this.behaviorEngine.updateComponent(component.componentType, component.componentId, component.serialize());
-        component.onbackground = false;
-
-        return this;
-    };
-
-    var shareConnection = function shareConnection(connection) {
-        if (this.behaviorEngine.enabled) {
-            shareComponent.call(this, connection.sourceComponent);
-            shareComponent.call(this, connection.targetComponent);
-
-            this.behaviorEngine.updateConnection(connection.serialize());
-            connection.onbackground = false;
-        } else {
-            this.behaviorEngine.updateConnection(connection.serialize());
-        }
-
-        return this;
-    };
-
-    /**
-     * add IWidget.
-     */
-    WiringEditor.prototype.addIWidget = function addIWidget(iwidget, enpPointPos, position, collapsed) {
-        var widget_interface, i, anchor;
-
-        widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(this, iwidget, this.arrowCreator, false, enpPointPos);
-
-        widget_interface.addEventListener('dragstop', function (eventTarget) {
-            widget_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
-            widget_interface.repaint();
-
-            if (this.behaviorEngine.viewpoint === 0) {
-                this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), widget_interface.onbackground);
-            } else {
-                this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize(), true);
-            }
-        }.bind(this));
-
-        widget_interface.addEventListener('dragstart', function (eventTarget) {
-            var connection;
-
-            if (this.connectionEngine.hasSelected()) {
-                connection = this.connectionEngine.getSelected();
-
-                //if (connection.)
-                this.connectionEngine.unselectArrow();
-
-            }
-        }.bind(this));
-
-        widget_interface.addEventListener('collapse', function (componentInfo) {
-            this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize(), true);
-        }.bind(this));
-
-        widget_interface.addEventListener('expand', function (componentInfo) {
-            this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, componentInfo.id, widget_interface.serialize(), true);
-        }.bind(this));
-
-        widget_interface.addEventListener('sortstop', function (eventTarget) {
-            this.behaviorEngine.updateComponent(WiringEditor.WIDGET_TYPE, eventTarget.componentId, widget_interface.serialize());
-        }.bind(this));
-
-        widget_interface.addEventListener('optremove', function (eventTarget) {
-            var dialog, message, componentType, componentId;
-
-            componentId = eventTarget.componentId;
-            componentType = WiringEditor.WIDGET_TYPE;
-
-            if (this.behaviorEngine.findBehaviorByComponent(componentType, componentId).length > 1) {
-                message = gettext('This component belongs to other behaviors. ' +
-                    'Do you want to delete it from them too?');
-
-                dialog = new Wirecloud.ui.AlertWindowMenu({
-                    'cancelLabel': gettext("No, just here")
-                });
-                dialog.setMsg(message);
-                dialog.acceptHandler = this.removeComponent.bind(this, componentType, componentId, true);
-                dialog.cancelHandler = this.removeComponent.bind(this, componentType, componentId);
-                dialog.show();
-            } else {
-                this.removeComponent(componentType, componentId);
-            }
-        }.bind(this));
-
-        widget_interface.addEventListener('optshare', function (eventTarget) {
-            shareComponent.call(this, widget_interface);
-        }.bind(this));
-
-        this.layout.content.append(widget_interface);
-
-        if (typeof collapsed == 'boolean') {
-            widget_interface.collapsed = collapsed;
-        }
-
-        widget_interface.setPosition(_correctComponentPosition.call(this, position));
-
-        this.events.widgetadded.dispatch();
-
-        this.components.widget[iwidget.id] = widget_interface;
-        this.behaviorEngine.updateComponent('widget', iwidget.id, widget_interface.serialize());
-
-        for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
-            anchor = widget_interface.sourceAnchors[i];
-            this.recommendations.add_anchor_to_recommendations(anchor);
-        }
-        for (i = 0; i < widget_interface.targetAnchors.length; i += 1) {
-            anchor = widget_interface.targetAnchors[i];
-            this.recommendations.add_anchor_to_recommendations(anchor);
-        }
-
-        widget_interface.sourceAnchors.map(this._startdrag_map_func);
-        widget_interface.targetAnchors.map(this._startdrag_map_func);
-
-        this.targetAnchorList = this.targetAnchorList.concat(widget_interface.targetAnchors);
-        this.sourceAnchorList = this.sourceAnchorList.concat(widget_interface.sourceAnchors);
-
-        this.entitiesNumber += 1;
-        this.alertEmptyWiring.hide();
-
-        return widget_interface;
-    };
-
-    var _correctComponentPosition = function _correctComponentPosition(position) {
-        var min_x_coord = 15, min_y_coord = 5;
-
-        if (typeof position !== 'object') {
-            position = {
-                'x': min_x_coord,
-                'y': min_y_coord
-            };
-        }
-
-        if (position.x < min_x_coord) {
-            position.x = min_x_coord;
-        }
-
-        if (position.y < min_y_coord) {
-            position.y = min_y_coord;
-        }
-
-        return position;
-    };
-
-    var _removeComponent = function _removeComponent(componentType, componentId) {
-        var anchor, component, i;
-
-        component = this.components[componentType][componentId];
-        component.unselect(false);
-        this.layout.content.remove(component);
-
-        for (i = 0; i < component.sourceAnchors.length; i += 1) {
-            anchor = component.sourceAnchors[i];
-            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(anchor), 1);
-            this.recommendations.remove_anchor_to_recommendations(anchor);
-        }
-
-        for (i = 0; i < component.targetAnchors.length; i += 1) {
-            anchor = component.targetAnchors[i];
-            this.targetAnchorList.splice(this.targetAnchorList.indexOf(anchor), 1);
-            this.recommendations.remove_anchor_to_recommendations(anchor);
-        }
-
-        delete this.components[componentType][componentId];
-        component.destroy();
-
-        this.entitiesNumber -= 1;
-        if (!this.entitiesNumber) {
-            this.alertEmptyWiring.show();
-        }
-
-        if (componentType == WiringEditor.WIDGET_TYPE) {
-            this.componentManager.enableWidget(componentId);
-        }
-
-        return this;
-    };
-
-    WiringEditor.prototype.connectComponents = function connectComponents(sourceEndpoint, targetEndpoint) {
-        var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget, entity, isGhost;
-        var connectionView;
-
-        startAnchor = findComponent.call(this, sourceEndpoint.type, sourceEndpoint.name).getEndpointByName('source', sourceEndpoint.endpointName).endpointAnchor;
-        endAnchor = findComponent.call(this, targetEndpoint.type, targetEndpoint.name).getEndpointByName('target', targetEndpoint.endpointName).endpointAnchor;
-
-        arrow = this.connectionEngine.drawArrow(startAnchor.getCoordinates(this.layout.content.get()),
-            endAnchor.getCoordinates(this.layout.content.get()), "connection", false, false);
-
-        // Set arrow anchors
-        arrow.setStartAnchor(startAnchor);
-        startAnchor.addArrow(arrow);
-        arrow.setEndAnchor(endAnchor);
-        endAnchor.addArrow(arrow);
-
-        // Draw the arrow
-        arrow.redraw();
-
-        this.connectionEngine.events.establish.dispatch({
-            'connection': arrow,
-            'sourceComponent': arrow.sourceComponent,
-            'sourceEndpoint': arrow.startAnchor,
-            'sourceName': arrow.sourceName,
-            'targetComponent': arrow.targetComponent,
-            'targetEndpoint': arrow.endAnchor,
-            'targetName': arrow.targetName
-        });
-
-        return arrow;
-    };
-
-    WiringEditor.prototype.addComponentByName = function addComponentByName(type, name, x, y) {
-        var component, obj, endpoints, position;
-
-        endpoints = {
-            'source': [],
-            'target': []
-        };
-        position = {
-            'x': x,
-            'y': y
-        };
-
-        switch (type) {
-        case WiringEditor.OPERATOR_TYPE:
-            obj = this.componentManager.getComponent(type, name);
-            component = this.addIOperator(obj.ioperator, endpoints, position);
-            break;
-        case WiringEditor.WIDGET_TYPE:
-            obj = this.componentManager.getComponent(type, name);
-            component = this.addIWidget(obj.iwidget, endpoints, position);
-            obj.disable();
-            break;
-        }
-
-        return component;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {Number} componentId
-     * @param {Object.<String *>} componentObj
-     * @returns {WiringEditor} The instance on which this function was called.
-     */
-    WiringEditor.prototype.addComponent = function addComponent(componentType, componentId, componentObj) {
-        var componentView, operatorId;
-
-        if (WiringEditor.COMPONENT_TYPES.indexOf(componentType) == -1) {
-            return this;
-        }
-
-        if (!(componentView=this.behaviorEngine.findComponent(componentType, componentId))) {
-            componentView = {
-                collapsed: false,
-                endpoints: {
-                    'source': [],
-                    'target': []
-                },
-                position: _correctComponentPosition({
-                    'x': -1,
-                    'y': -1
-                })
-            };
-
-            componentView.position.x += (this.componentsMissingCount * 10);
-            componentView.position.y += (this.componentsMissingCount * 30);
-
-            this.componentsMissingCount += 1;
-            // TODO: attach this error to wirecloud logger.
-        }
-
-        if (!('endpoints' in componentView)) {
-            componentView.endpoints = {
-                'source': [],
-                'target': []
-            };
-        }
-
-        if (!('collapsed' in componentView)) {
-            componentView.collapsed = false;
-        }
-
-        switch (componentType) {
-        case WiringEditor.OPERATOR_TYPE:
-            operatorId = parseInt(componentId, 10);
-
-            if (this.nextOperatorId <= operatorId) {
-                // Make this.nextOperatorId is always greater than the highest of all operators
-                this.nextOperatorId = operatorId + 1;
-            }
-
-            this.addIOperator(componentObj, componentView.endpoints, componentView.position, componentView.collapsed);
-            break;
-        case WiringEditor.WIDGET_TYPE:
-            this.addIWidget(componentObj, componentView.endpoints, componentView.position, componentView.collapsed);
-            break;
-        }
-
-        return this;
-    };
-
-    /**
-     * @public
-     * @function
-     *
-     * @param {String} componentType
-     * @param {Number} componentId
-     * @param {Boolean} [cascadeRemove=false]
-     * @returns {WiringEditor} The instance on which this function was called.
-     */
-    WiringEditor.prototype.removeComponent = function removeComponent(componentType, componentId, cascadeRemove) {
-        var dialog, message;
-
-        if (WiringEditor.COMPONENT_TYPES.indexOf(componentType) == -1) {
-            return this;
-        }
-
-        if (typeof cascadeRemove !== 'boolean') {
-            cascadeRemove = false;
-        }
-
-        switch (this.behaviorEngine.removeComponent(componentType, componentId, cascadeRemove)) {
-        case WiringEditor.BehaviorEngine.COMPONENT_REMOVED:
-            this.components[componentType][componentId].emptyConnections().onbackground = true;
-            break;
-        case WiringEditor.BehaviorEngine.COMPONENT_REMOVED_FULLY:
-            _removeComponent.call(this, componentType, componentId);
-            this.events.componentremoved.dispatch({
-                'componentType': componentType,
-                'componentId': componentId
-            });
-            break;
-        case WiringEditor.BehaviorEngine.COMPONENT_UNREACHABLE:
-            // TODO
-            break;
-        case WiringEditor.BehaviorEngine.COMPONENT_NOT_FOUND:
-            // TODO
-            break;
-        }
-
-        return this;
-    };
-
-    /**
-     * add IOperator.
-     */
-    WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos, position, collapsed) {
-        var instantiated_operator, operator_interface, i, anchor;
-
-        if (ioperator instanceof Wirecloud.wiring.OperatorMeta) {
-            instantiated_operator = ioperator.instantiate(this.nextOperatorId, null, this);
-            this.nextOperatorId++;
-        } else {
-            instantiated_operator = ioperator;
-        }
-
-        operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
-
-        operator_interface.addEventListener('collapse', function (componentInfo) {
-            this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, componentInfo.id, operator_interface.serialize());
-        }.bind(this));
-
-        operator_interface.addEventListener('expand', function (componentInfo) {
-            this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, componentInfo.id, operator_interface.serialize());
-        }.bind(this));
-
-        operator_interface.addEventListener('dragstart', function (eventTarget) {
-            this.connectionEngine.unselectArrow();
-        }.bind(this));
-
-        operator_interface.addEventListener('dragstop', function (eventTarget) {
-            operator_interface.setPosition(_correctComponentPosition.call(this, eventTarget.componentPosition));
-            operator_interface.repaint();
-
-            if (this.behaviorEngine.viewpoint === 0) {
-                this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), operator_interface.onbackground);
-            } else {
-                this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize(), true);
-            }
-        }.bind(this));
-
-        operator_interface.addEventListener('sortstop', function (eventTarget) {
-            this.behaviorEngine.updateComponent(WiringEditor.OPERATOR_TYPE, eventTarget.componentId, operator_interface.serialize());
-        }.bind(this));
-
-        operator_interface.addEventListener('optremove', function (eventTarget) {
-            var dialog, message, componentType, componentId;
-
-            componentId = eventTarget.componentId;
-            componentType = WiringEditor.OPERATOR_TYPE;
-
-            if (this.behaviorEngine.findBehaviorByComponent(componentType, componentId).length > 1) {
-                message = gettext('This component belongs to other behaviors. ' +
-                    'Do you want to delete it from them too?');
-
-                dialog = new Wirecloud.ui.AlertWindowMenu({
-                    'cancelLabel': gettext("No, just here")
-                });
-                dialog.setMsg(message);
-                dialog.acceptHandler = this.removeComponent.bind(this, componentType, componentId, true);
-                dialog.cancelHandler = this.removeComponent.bind(this, componentType, componentId);
-                dialog.show();
-            } else {
-                this.removeComponent(componentType, componentId);
-            }
-        }.bind(this));
-
-        operator_interface.addEventListener('optshare', function (eventTarget) {
-            shareComponent.call(this, operator_interface);
-        }.bind(this));
-
-        this.layout.content.append(operator_interface);
-
-        if (typeof collapsed == 'boolean') {
-            operator_interface.collapsed = collapsed;
-        }
-
-        operator_interface.setPosition(_correctComponentPosition.call(this, position));
-
-        this.events.operatoradded.dispatch();
-
-        for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
-            anchor = operator_interface.sourceAnchors[i];
-            this.recommendations.add_anchor_to_recommendations(anchor);
-        }
-        for (i = 0; i < operator_interface.targetAnchors.length; i += 1) {
-            anchor = operator_interface.targetAnchors[i];
-            this.recommendations.add_anchor_to_recommendations(anchor);
-        }
-
-        operator_interface.sourceAnchors.map(this._startdrag_map_func);
-        operator_interface.targetAnchors.map(this._startdrag_map_func);
-
-        this.targetAnchorList = this.targetAnchorList.concat(operator_interface.targetAnchors);
-        this.sourceAnchorList = this.sourceAnchorList.concat(operator_interface.sourceAnchors);
-
-        this.components.operator[operator_interface.getId()] = operator_interface;
-
-        this.behaviorEngine.updateComponent('operator', operator_interface.getId(), operator_interface.serialize());
-
-        this.entitiesNumber += 1;
-        this.alertEmptyWiring.hide();
-
-        return operator_interface;
-    };
-
-    /**
-     * starDrag all selected objects.
-     */
-    WiringEditor.prototype.onStarDragSelected = function starDragSelected() {
-        var key, pos;
-        if (this.selectedCount <= 1) {
-            return;
-        }
-
-        for (key in this.selectedOps) {
-            if (key != 'length') {
-                pos = this.selectedOps[key].initPos;
-                pos.y = this.selectedOps[key].wrapperElement.style.top === "" ? 0 : parseInt(this.selectedOps[key].wrapperElement.style.top, 10);
-                pos.x = this.selectedOps[key].wrapperElement.style.left === "" ? 0 : parseInt(this.selectedOps[key].wrapperElement.style.left, 10);
-            }
-        }
-        for (key in this.selectedWids) {
-            if (key != 'length') {
-                pos = this.selectedWids[key].initPos;
-                pos.y = this.selectedWids[key].wrapperElement.style.top === "" ? 0 : parseInt(this.selectedWids[key].wrapperElement.style.top, 10);
-                pos.x = this.selectedWids[key].wrapperElement.style.left === "" ? 0 : parseInt(this.selectedWids[key].wrapperElement.style.left, 10);
-            }
-        }
-    };
-
-    /**
-     * drag all selected objects.
-     */
-    WiringEditor.prototype.onDragSelectedObjects = function dragSelectedObjects(xDelta, yDelta) {
-        var key;
-        if (this.selectedCount <= 1) {
-            return;
-        }
-
-        for (key in this.selectedOps) {
-            if (key != 'length') {
-                this.selectedOps[key].setPosition({x: this.selectedOps[key].initPos.x + xDelta, y: this.selectedOps[key].initPos.y + yDelta});
-                this.selectedOps[key].repaint();
-            }
-        }
-
-        for (key in this.selectedWids) {
-            if (key != 'length') {
-                this.selectedWids[key].setPosition({x: this.selectedWids[key].initPos.x + xDelta, y: this.selectedWids[key].initPos.y + yDelta});
-                this.selectedWids[key].repaint();
-            }
-        }
-    };
-
-    /**
-     * drag all selected objects.
-     */
-    WiringEditor.prototype.onFinishSelectedObjects = function onFinishSelectedObjects() {
-        var key, position, desp;
-        var min_x_coord = 15, min_y_coord = 5;
-
-        if (this.selectedCount <= 1) {
-            return;
-        }
-
-        //find the most negative X and Y
-        desp = {'x': min_x_coord, 'y': min_y_coord};
-        for (key in this.selectedOps) {
-            if (key != 'length') {
-                position = this.selectedOps[key].getStylePosition();
-
-                if (position.x < desp.x) {
-                    desp.x = position.x;
-                }
-
-                if (position.y < desp.y) {
-                    desp.y = position.y;
-                }
-            }
-        }
-
-        for (key in this.selectedWids) {
-            if (key != 'length') {
-                position = this.selectedWids[key].getStylePosition();
-
-                if (position.x < desp.x) {
-                    desp.x = position.x;
-                }
-
-                if (position.y < desp.y) {
-                    desp.y = position.y;
-                }
-            }
-        }
-
-        if (desp.y >= min_y_coord) {
-            desp.y = 0;
-        } else {
-            desp.y = Math.abs(desp.y - min_y_coord);
-        }
-        if (desp.x >= min_x_coord) {
-            desp.x = 0;
-        } else {
-            desp.x = Math.abs(desp.x - min_x_coord);
-        }
-
-        //set position of the selected group
-        for (key in this.selectedOps) {
-            if (key != 'length') {
-                position = this.selectedOps[key].getStylePosition();
-                position.x += desp.x;
-                position.y += desp.y;
-                this.selectedOps[key].setPosition(position);
-                this.selectedOps[key].repaint();
-            }
-        }
-
-        for (key in this.selectedWids) {
-            if (key != 'length') {
-                position = this.selectedWids[key].getStylePosition();
-                position.x += desp.x;
-                position.y += desp.y;
-                this.selectedWids[key].setPosition(position);
-                this.selectedWids[key].repaint();
-            }
-        }
-    };
-
-    /**
-     * Reenables all anchor disabled previously.
-     */
-    WiringEditor.prototype.ChangeObjectEditing = function ChangeObjectEditing(obj) {
-        this.resetSelection();
-        if (obj == null) {
-            if (this.EditingObject != null) {
-                this.EditingObject.editPos();
-                this.EditingObject = null;
-            }
-        } else {
-            if (this.EditingObject === obj) {
-                this.EditingObject.editPos();
-                this.EditingObject = null;
-            } else {
-                obj.editPos();
-                if (this.EditingObject != null) {
-                    this.EditingObject.editPos();
-                }
-                this.EditingObject = obj;
-            }
-        }
-    };
-
-    /**
-     * Reenables all anchor disabled previously.
-     */
-    WiringEditor.prototype.enableAnchors = function enableAnchors() {
-        var i;
-
-        if (!this.sourcesOn) {
-            for (i = 0; i < this.sourceAnchorList.length; i++) {
-                this.sourceAnchorList[i].enable();
-                this.sourcesOn = true;
-            }
-        } else if (!this.targetsOn) {
-            for (i = 0; i < this.targetAnchorList.length; i++) {
-                this.targetAnchorList[i].enable();
-                this.targetsOn = true;
-            }
-        }
-
-        for (i = 0; i < this.componentsCollapsed.length; i++) {
-            this.componentsCollapsed[i].collapsed = true;
-        }
-
-        this.componentsCollapsed = [];
-    };
-
-    /**
-     * Disables all anchor that cannot be connected to the given anchor.
-     */
-    WiringEditor.prototype.disableAnchors = function disableAnchors(anchor) {
-        var i, anchorList, anchor_aux;
-        anchorList = [];
-        anchor_aux = anchor;
-
-        if (anchor_aux instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
-            anchorList = this.targetAnchorList;
-            this.targetsOn = false;
-        } else {
-            anchorList = this.sourceAnchorList;
-            this.sourcesOn = false;
-        }
-        for (i = 0; i < anchorList.length; i++) {
-            anchorList[i].disable();
-        }
-    };
-
-    /**
-     * getBreadcrum
-     */
-    WiringEditor.prototype.getBreadcrum = function getBreadcrum() {
-        var i, workspace_breadcrum = LayoutManagerFactory.getInstance().viewsByName.workspace.getBreadcrum();
-
-        for (i = 0; i < workspace_breadcrum.length; i += 1) {
-            delete workspace_breadcrum[i].menu;
-        }
-
-        workspace_breadcrum.push({
-            'label': 'wiring'
-        });
-
-        return workspace_breadcrum;
-    };
-
-    /**
-     * getTitle
-     */
-    WiringEditor.prototype.getTitle = function getTitle() {
-        var workspace_title = LayoutManagerFactory.getInstance().viewsByName.workspace.getTitle();
-        return Wirecloud.Utils.interpolate(gettext('%(workspace_title)s - Wiring'), {workspace_title: workspace_title});
-    };
-
-    /**
-     *  Set Zoom level
-     */
-    WiringEditor.prototype.setZoomLevel = function setZoomLevel(percent) {
-        var key, invertPercent, calculatedHeight, calculatedWidth, calculatedLeft, top, left, currentSize;
-
-        // Initial size
-        currentSize = parseFloat(this.layout.content.style('fontSize'));
-        // Change general grid zoom
-        changeZoom(this.layout.content.get(), percent);
-        for (key in this.components.operator) {
-            this.layout.content.remove(this.components.operator[key]);
-            setEntityMaxWidth.call(this, this.components.operator[key]);
-            this.layout.content.append(this.components.operator[key]);
-            // To avoid scroll problems
-            this.components.operator[key].wrapperElement.style.minWidth = this.components.operator[key].getBoundingClientRect().width + 'px';
-            // Calculate new position
-            top = parseFloat(this.components.operator[key].wrapperElement.style.top);
-            left = parseFloat(this.components.operator[key].wrapperElement.style.left);
-            this.components.operator[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
-            this.components.operator[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
-            this.components.operator[key].repaint();
-        }
-        for (key in this.components.widget) {
-            this.layout.content.remove(this.components.widget[key]);
-            setEntityMaxWidth.call(this, this.components.widget[key]);
-            this.layout.content.append(this.components.widget[key]);
-            // To avoid scroll problems
-            this.components.widget[key].wrapperElement.style.minWidth = this.components.widget[key].getBoundingClientRect().width + 'px';
-            // Calculate new position
-            top = parseFloat(this.components.widget[key].wrapperElement.style.top);
-            left = parseFloat(this.components.widget[key].wrapperElement.style.left);
-            this.components.widget[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
-            this.components.widget[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
-            this.components.widget[key].repaint();
-        }
-    };
-
-    var addMissingWidget = function addMissingWidget(componentId, componentView) {
-        var name, endpoints, componentObj;
-
-        if ('name' in componentView) {
-            name = componentView.name;
-        } else {
-            name = gettext('Unknown Name');
-        }
-
-        if (!('endpoints' in componentView)) {
-            componentView.endpoints = {
-                'source': [],
-                'target': []
-            };
-        }
-
-        try {
-            componentObj = {
-                'id': componentId,
-                'name': name,
-                'ghost': true,
-                'widget': {
-                    'id': name,
-                    'uri': name
-                }
-            };
-            componentObj.meta = componentObj.widget;
-            this.addIWidget(componentObj, componentView.endpoints, componentView.position);
-        } catch (e) {
-            throw new Error('WiringEditor error (critical). Creating GhostWidget: [id: ' + componentId + '; name: ' + name + '] ' + e.message);
-        }
-    };
-
-    /**
-     * @private
-     * @function
-     *
-     * @param {Object.<String, *>} connection
-     * @returns {Boolean}
-     */
-    var connectionAvailable = function connectionAvailable(connection) {
-        var sourceEndpoint, targetEndpoint;
-
-        try {
-            sourceEndpoint = findEndpoint.call(this, connection.source);
-            targetEndpoint = findEndpoint.call(this, connection.target);
-        } catch(e) {
-            return false;
-        }
-
-        return sourceEndpoint != null && targetEndpoint != null;
-    };
-
-    /**
-     * @private
-     * @function
-     *
-     * @param {Object.<String, *>} endpointView
-     * @returns {Endpoint}
-     */
-    var findEndpoint = function findEndpoint(endpointView) {
-        var component, wiringError;
-
-        if (WiringEditor.COMPONENT_TYPES.indexOf(endpointView.type) == -1) {
-            wiringError = new Error("Looking for the endpoint <" + endpointView.endpoint + "> of a connection.");
-            wiringError.name = 'Type Unsupported';
-
-            throw wiringError;
-        }
-
-        if (!(endpointView.id in this.components[endpointView.type])) {
-            wiringError = new Error("Looking for the endpoint <" + endpointView.endpoint + "> of a connection.");
-            wiringError.name = 'Component Not Found';
-
-            throw wiringError;
-        }
-
-        component = this.components[endpointView.type][endpointView.id];
-
-        return component.getAnchor(endpointView.endpoint);
-    };
-
-    var findComponent = function findComponent(type, name) {
-        var id, component = null;
-
-        for (id in this.components[type]) {
-            if (this.components[type][id].title == name) {
-                return this.components[type][id];
-            }
-        }
-
-        return null;
-    };
-
-    /**
-     * @private
-     * @function
-     *
-     * @param {Object.<String, *>} endpointView
-     * @returns {Endpoint}
-     */
-    var getEndpointName = function getEndpointName(endpointView) {
-        return [endpointView.type, endpointView.id, endpointView.endpoint].join('/');
-    };
-
-    /**
-     *  Generic zoom setter
-     */
-    var changeZoom = function changeZoom(element, level) {
-        element.style.fontSize = level + 'em';
-    };
-
-    return WiringEditor;
-
-})(StyledElements);
+})(Wirecloud.ui, StyledElements, StyledElements.Utils);
