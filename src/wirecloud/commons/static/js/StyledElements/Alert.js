@@ -81,10 +81,10 @@
             addNote: function addNote(textContent) {
                 var blockquote = document.createElement('blockquote');
 
-                blockquote.textContent = textContent;
+                blockquote.innerHTML = textContent;
                 this.body.appendChild(blockquote);
 
-                return this;
+                return blockquote;
             }
 
         }

@@ -103,6 +103,11 @@
         return interpolate(msg, transObj, true);
     };
 
+    WidgetMeta.prototype.hasEndpoints = function hasEndpoints() {
+        return (this.inputList.length + this.outputList.length) > 0;
+    };
+
+
     Wirecloud.WidgetMeta = WidgetMeta;
 
 })();
