@@ -523,7 +523,7 @@ class BaseModalTester(object):
 
     @property
     def btn_accept(self):
-        return ButtonTester(self.testcase, self.bottom.find_element_by_css_selector(".btn-primary"))
+        return ButtonTester(self.testcase, self.bottom.find_element_by_css_selector(".btn-accept"))
 
     def find_alerts(self):
         return self.content.find_elements_by_css_selector(".alert")

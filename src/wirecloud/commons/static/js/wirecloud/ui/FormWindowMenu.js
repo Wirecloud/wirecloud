@@ -45,6 +45,7 @@
 
         this.form = new StyledElements.Form(fields, options);
         this.form.insertInto(this.windowContent);
+        this.form.acceptButton.addClassName('btn-accept');
         this.form.addEventListener('submit', function (form, data) {
             this.form.acceptButton.disable();
             this.form.cancelButton.disable();

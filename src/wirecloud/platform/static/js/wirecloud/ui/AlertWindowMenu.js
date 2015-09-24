@@ -22,7 +22,7 @@
 
         this.acceptButton = new StyledElements.Button({
             text: options.acceptLabel,
-            'class': 'btn-danger'
+            'class': 'btn-danger btn-accept'
         });
         this._acceptListener = this._acceptListener.bind(this);
         this.acceptButton.addEventListener("click", this._acceptListener);

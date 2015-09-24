@@ -87,7 +87,7 @@
         // Accept button
         this.button = new StyledElements.Button({
             text: gettext('Close'),
-            'class': 'btn-primary'
+            'class': 'btn-primary btn-accept'
         });
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);

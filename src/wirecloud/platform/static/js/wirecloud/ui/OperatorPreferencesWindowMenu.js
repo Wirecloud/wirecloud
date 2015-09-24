@@ -72,6 +72,7 @@
             buttonArea: this.windowBottom
         });
         this._current_form.insertInto(this.windowContent);
+        this._current_form.acceptButton.addClassName('btn-accept');
         this._current_form.addEventListener('submit', this._savePrefs.bind(this));
         this._current_form.addEventListener('cancel', this.hide.bind(this));
 
