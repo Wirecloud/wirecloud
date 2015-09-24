@@ -549,8 +549,8 @@ Wirecloud.ui = Wirecloud.ui || {};
             if (!operatorsInUse[id].volatile) {
                 this.createComponent(operatorsInUse[id], vInfo.components.operator[id]);
 
-                if (id >= this.autoOperatorId) {
-                    this.autoOperatorId = id + 1;
+                if (parseInt(id, 10) >= this.autoOperatorId) {
+                    this.autoOperatorId = parseInt(id, 10) + 1;
                 }
             }
         }, this);
