@@ -74,6 +74,8 @@
             if (wiringComponent.volatile) {
                 this.disable();
             }
+
+            this.get().setAttribute('data-id', wiringComponent.id);
         },
 
         inherit: se.Panel,

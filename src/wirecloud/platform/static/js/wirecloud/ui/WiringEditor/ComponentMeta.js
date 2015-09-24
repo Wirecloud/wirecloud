@@ -86,6 +86,8 @@
                 .appendChild(versionGroup)
                 .appendChild(this.vendor)
                 .appendChild(this.description);
+
+            this.get().setAttribute('data-id', meta.vendor + "/" + meta.name);
         },
 
         inherit: se.Panel,
