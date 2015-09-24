@@ -99,6 +99,12 @@
                 this.image.onerror = showDefaultImage.bind(this);
                 this.image.src = version.image;
 
+                if (version.hasEndpoints()) {
+                    this.btnAdd.show();
+                } else {
+                    this.btnAdd.hide();
+                }
+
                 return this;
             }
 

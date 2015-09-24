@@ -67,7 +67,7 @@
             if (options.canCreate) {
                 this.meta.btnAdd.on('click', btncreate_onclick.bind(this));
             } else {
-                this.meta.btnAdd.remove();
+                this.meta.btnAdd.hide();
             }
 
             Object.defineProperties(this, {
