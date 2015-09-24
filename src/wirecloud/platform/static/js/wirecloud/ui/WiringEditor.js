@@ -315,15 +315,15 @@ Wirecloud.ui = Wirecloud.ui || {};
         wiringLegend.innerHTML =
             '<span class="wiring-element element-connection">' +
                 '<span class="color"></span>' +
-                '<span class="title">Connections</span>' +
+                '<span class="title">'+ utils.gettext("Connections") + '</span>' +
             '</span>' +
             '<span class="wiring-element element-operator">' +
                 '<span class="color"></span>' +
-                '<span class="title">Operators</span>' +
+                '<span class="title">' + utils.gettext("Operators") + '</span>' +
             '</span>' +
             '<span class="wiring-element element-widget">' +
                 '<span class="color"></span>' +
-                '<span class="title">Widgets</span>' +
+                '<span class="title">' + utils.gettext("Widgets") + '</span>' +
             '</span>';
 
         var wiringLogger = document.createElement('div');
@@ -737,7 +737,7 @@ Wirecloud.ui = Wirecloud.ui || {};
     function behaviour_onchange(behaviourEngine, currentStatus, enabled) {
 
         if (enabled) {
-            currentStatus.title = "<strong>Behaviour:</strong> " + currentStatus.title;
+            currentStatus.title = "<strong>" + utils.gettext("Behaviour") + ":</strong> " + currentStatus.title;
         }
 
         this.legend.title.innerHTML = currentStatus.title;
