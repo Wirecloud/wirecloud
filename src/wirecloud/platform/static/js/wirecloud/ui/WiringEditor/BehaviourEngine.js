@@ -39,6 +39,7 @@
     ns.BehaviourEngine = utils.defineClass({
 
         constructor: function BehaviourEngine() {
+            var note;
 
             this.btnCreate = new se.Button({
                 title: gettext("Create behaviour"),
@@ -65,6 +66,11 @@
                 state: 'info',
                 title: gettext("New feature"),
                 message: gettext("Enable the behaviours to enjoy with a new way to handle connections.")
+            });
+
+            note = this.disabledAlert.addNote(utils.gettext("A quick guide on how to use it, <a>click here for tutorial</a>."));
+            note.firstElementChild.addEventListener('click', function () {
+                Wirecloud.TutorialCatalogue.get('mashup-wiring-design').start();
             });
 
             this.viewpoint = ns.BehaviourEngine.GLOBAL;
