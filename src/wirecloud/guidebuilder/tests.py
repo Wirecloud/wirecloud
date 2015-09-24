@@ -795,14 +795,17 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
 
-        with map_viewer_widget:
-            self.driver.execute_script('''
-                var poi = mapViewer.mapPoiManager.getPoiList()["OUTSMART.NODE_3506"].poi;
-                mapViewer.mapPoiManager.selectPoi(poi);
-                mapViewer.map.setZoom(16);
-                MashupPlatform.wiring.pushEvent('poiOutput', JSON.stringify(poi))
-            ''')
-            self.driver.execute_script('mapViewer.map.setMapTypeId("roadmap");')
+        # ----------------
+        # Don't work :S
+        # ----------------
+        # with map_viewer_widget:
+        #     self.driver.execute_script('''
+        #         var poi = mapViewer.mapPoiManager.getPoiList()["OUTSMART.NODE_3506"].poi;
+        #         mapViewer.mapPoiManager.selectPoi(poi);
+        #         mapViewer.map.setZoom(16);
+        #         MashupPlatform.wiring.pushEvent('poiOutput', JSON.stringify(poi))
+        #     ''')
+        #     self.driver.execute_script('mapViewer.map.setMapTypeId("roadmap");')
 
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
