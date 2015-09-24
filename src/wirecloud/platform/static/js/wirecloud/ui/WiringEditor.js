@@ -262,7 +262,12 @@ Wirecloud.ui = Wirecloud.ui || {};
                 return this.createComponent(component, {commit: false});
             }.bind(this),
             createWiringComponent: function (meta) {
-                return meta.instantiate(this.autoOperatorId++, this.workspace.wiring);
+                var operator;
+
+                operator = meta.instantiate(this.autoOperatorId++, this.workspace.wiring);
+                operator.logManager.log(utils.interpolate(utils.gettext("The operator (%(title)s) was created."), operator), Wirecloud.constants.LOGGING.INFO_MSG)
+
+                return operator;
             }.bind(this)
         });
 
