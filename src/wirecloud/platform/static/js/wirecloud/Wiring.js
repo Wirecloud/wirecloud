@@ -135,6 +135,10 @@
 
                 this.status.operators[operator.id] = operator;
 
+                if (operator.volatile) {
+                    operator.logManager.log(utils.interpolate(utils.gettext("The operator (%(title)s) was created as volatile."), operator), Wirecloud.constants.LOGGING.INFO_MSG);
+                }
+
                 return operator;
             },
 
