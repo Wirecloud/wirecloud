@@ -31,34 +31,3 @@
     @if $left { left: $left; }
     @if $bottom { bottom: $bottom; }
 }
-
-@mixin panel-variant(
-    $border-color,
-    $background-color,
-    $text-color,
-    $text-shadow,
-    $text-hover-color
-) {
-
-    border-color: $border-color;
-
-    & > .panel-heading {
-        background-color: $background-color;
-
-        .panel-title {
-            color: $text-color;
-            text-shadow: $text-shadow;
-        }
-
-        .panel-options .se-btn {
-            color: $text-color;
-            text-shadow: $text-shadow;
-
-            &:hover,
-            &:focus {
-                color: $text-hover-color;
-            }
-        }
-    }
-
-}

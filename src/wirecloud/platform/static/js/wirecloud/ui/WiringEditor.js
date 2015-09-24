@@ -352,13 +352,13 @@ Wirecloud.ui = Wirecloud.ui || {};
     function createInitialMessage() {
         var alert = new se.Alert({
             title: gettext("Hello, welcome to the Mashup Wiring's view!"),
-            message: gettext("In this edition area, you can drag & drop web applications (widgets/operators) from the sidebar and then, connect them each other."),
+            message: gettext("In this edition area, you can drag & drop components (operators/widgets) from the sidebar and then, connect them each other."),
             state: 'info',
             alignment: 'static-top'
         });
 
         alert.heading.addClassName('text-center');
-        alert.addNote(gettext("Only if a web application provides input or output endpoints, it will be connectable with others."));
+        alert.addNote(gettext("If a component has no input or output endpoints, it does not make sense to use it."));
 
         return alert;
     }
@@ -412,6 +412,8 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.behaviourEngine.clear().disable();
 
         this.componentManager.clear().setUp();
+
+        this.suggestionManager.enable();
 
         this.sortableComponent = null;
         this.autoOperatorId = 1;
@@ -888,10 +890,12 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.sortableComponent = component;
         this.connectionEngine.enabled = false;
+        this.suggestionManager.disable();
     }
 
     function component_onsortend(component) {
         this.connectionEngine.enabled = true;
+        this.suggestionManager.enable();
     }
 
     /*
