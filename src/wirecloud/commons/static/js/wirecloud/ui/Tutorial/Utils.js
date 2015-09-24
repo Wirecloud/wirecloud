@@ -19,6 +19,8 @@
  *
  */
 
+/* global LayoutManagerFactory, Wirecloud */
+
 (function () {
 
     "use strict";
@@ -41,7 +43,7 @@
 
     var findElementByTextContent = function findElementByTextContent(nodes, text) {
         var i;
-        for (i = 0; i < nodes.length; i ++) {
+        for (i = 0; i < nodes.length; i++) {
             if (nodes[i].textContent.toLowerCase() == text.toLowerCase()) {
                 return nodes[i];
             }
@@ -56,7 +58,7 @@
                     setTimeout(function () {
                         autoAction.nextHandler();
                     }, milliseconds);
-                }
+                };
             },
             click: function click(milliseconds) {
                 return function (autoAction, element) {
@@ -64,7 +66,23 @@
                         element.click();
                         autoAction.nextHandler();
                     }, milliseconds);
-                }
+                };
+            },
+            create_workspace: function create_workspace(options) {
+                return function (autoAction, element) {
+                    options = Wirecloud.Utils.merge({
+                        allow_renaming: true
+                    },  options);
+                    options.onSuccess = function (workspace) {
+                        Wirecloud.changeActiveWorkspace(workspace, null, {
+                            onSuccess: autoAction.nextHandler,
+                            onFailure: autoAction.errorHandler
+                        });
+                    };
+                    options.onFailure = autoAction.errorHandler;
+
+                    Wirecloud.createWorkspace(options);
+                };
             },
             input: function input(text) {
                 return function (autoAction, element) {
@@ -92,43 +110,66 @@
                     }, timeout);
 
                     timeout += 1600;
-                    setTimeout(function() {
+                    setTimeout(function () {
                         autoAction.nextHandler();
                     }, timeout);
-                }
+                };
             },
             uploadComponent: function uploadComponent(id) {
                 return function (autoAction, element) {
                     if (!Wirecloud.LocalCatalogue.resourceExistsId(id)) {
                         Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/' + id.split('/').join('_') + '.wgt'), {
-                            onSuccess: autoAction.nextHandler.bind(autoAction)/*,
-                            onFailure: autoAction.errorHandler.bind(autoAction)*/
+                            onSuccess: autoAction.nextHandler,
+                            onFailure: autoAction.errorHandler
                         });
                     } else {
                         autoAction.nextHandler();
                     }
                 };
+            },
+            wiringView: {
+                open_component_sidebar: function open_component_sidebar(type) {
+                    return function (autoAction, element) {
+                        var sidebar_button = Utils.basic_selectors.toolbar_button('icon-archive')();
+                        if (!sidebar_button.classList.contains('active')) {
+                            sidebar_button.click();
+                        }
+                        var component_type_button = Utils.basic_selectors.button('.wiring-sidebar .btn-list-' + type + '-group')();
+                        if (!component_type_button.classList.contains('active')) {
+                            component_type_button.click();
+                        }
+                        autoAction.nextHandler();
+                    };
+                }
             }
         },
         basic_selectors: {
             back_button: function back_button() {
-                return document.querySelector("#wirecloud_header .icon-caret-left").parentElement;
+                return Utils.basic_selectors.button("#wirecloud_header .icon-caret-left");
             },
-            toolbar_button: function toolbar_button(button_class) {
+            button: function button(selector) {
                 return function () {
-                    var element = document.querySelector("#wirecloud_header .wc-toolbar").getElementsByClassName(button_class)[0];
-                    if (element.classList.contains('se-btn')) {
-                        return element;
-                    } else {
-                        return element.parentElement;
+                    var element = document.querySelector(selector);
+                    if (element != null) {
+                        if (element.classList.contains('se-btn')) {
+                            return element;
+                        } else {
+                            return element.parentElement;
+                        }
                     }
-                }
+                    return null;
+                };
+            },
+            element: function element(selector) {
+                return function () {
+                    return document.querySelector(selector);
+                };
             },
             mac_wallet_close_button: function mac_wallet_close_button() {
-                return document.querySelector('.widget_wallet .icon-remove');
+                return Utils.basic_selectors.button('.widget_wallet .icon-remove');
             },
             mac_wallet_input: function mac_wallet_input() {
-                return document.querySelector('.widget_wallet .se-text-field');
+                return Utils.basic_selectors.element('.widget_wallet .se-text-field');
             },
             mac_wallet_resource_mainbutton: function mac_wallet_resource_mainbutton(resource_title) {
                 var resources, widget, element;
@@ -139,9 +180,12 @@
 
                 return element;
             },
+            toolbar_button: function toolbar_button(button_class) {
+                return Utils.basic_selectors.button("#wirecloud_header .wc-toolbar ." + button_class);
+            },
             workspaceView: {
                 widget_by_title: function widget_by_title(title) {
-                    return function() {
+                    return function () {
                         var i, widgetList;
 
                         widgetList = document.querySelectorAll('.workspace .iwidget');
@@ -154,9 +198,91 @@
 
                         return null;
                     };
+                },
+                widget_element: function widget_element(index, selector) {
+                    return function () {
+                        var widget = Wirecloud.activeWorkspace.getIWidgets()[index];
+                        var element = widget.content.contentDocument.querySelector(selector);
+                        return new Wirecloud.ui.Tutorial.WidgetElement(widget, element);
+                    };
+                }
+            },
+            wiringView: {
+                behaviour_engine: function behaviour_engine() {
+                    return function () {
+                        return LayoutManagerFactory.getInstance().viewsByName.wiring.behaviourEngine;
+                    };
+                },
+                component_by_id: function component_by_id(type, id_) {
+                    return function () {
+                        var components, i, id;
+
+                        // TODO
+                        id = "" + id_;
+                        if (type === 'widget') {
+                            id = "" + Wirecloud.activeWorkspace.getIWidgets()[id_].id;
+                        }
+                        components = document.querySelectorAll('.wiring-diagram .component-' + type);
+
+                        for (i = 0; i < components.length; i++) {
+                            if (components[i].getAttribute('data-id') === id) {
+                                return components[i];
+                            }
+                        }
+                        return null;
+                    };
+                },
+                connection_engine: function connection_engine() {
+                    return function () {
+                        return LayoutManagerFactory.getInstance().viewsByName.wiring.connectionEngine;
+                    };
+                },
+                endpoint_by_name: function endpoint_by_name(component_type, component_id, endpoint_type, endpoint_name) {
+                    return function () {
+                        var component = Utils.basic_selectors.wiringView.component_by_id(component_type, component_id)();
+                        if (component != null) {
+                            var endpoints = component.querySelectorAll('.' + endpoint_type + '-endpoints .endpoint');
+
+                            for (var i = 0; i < endpoints.length; i++) {
+                                if (endpoints[i].getAttribute('data-name') === endpoint_name) {
+                                    return endpoints[i].querySelector('.endpoint-anchor');
+                                }
+                            }
+                        }
+
+                        return null;
+                    };
+                },
+                sidebarcomponentgroup_by_id: function sidecomponentgroup(id) {
+                    return function () {
+                        var i, componentgroups, componentgroup;
+
+                        componentgroups = document.querySelectorAll('.panel-components .component-group');
+
+                        for (i = 0; i < componentgroups.length; i++) {
+                            componentgroup = componentgroups[i];
+                            if (componentgroup.getAttribute('data-id') === id) {
+                                return componentgroup;
+                            }
+                        }
+                    };
+                },
+                sidebarcomponent_by_id: function sidebarcomponent_by_id(component_meta_id, component_id) {
+                    return function () {
+                        var componentgroup, components;
+
+                        componentgroup = Utils.basic_selectors.wiringView.sidebarcomponentgroup_by_id(component_meta_id)();
+                        if (componentgroup != null) {
+                            components = componentgroup.querySelectorAll('.component');
+                            return components[component_id]; // TODO use real id
+                        }
+                        return null;
+                    };
                 }
             }
         }
     };
+
+    Wirecloud.ui.Tutorial.Utils = Utils;
 
 })();

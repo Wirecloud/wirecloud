@@ -71,10 +71,9 @@
             }
 
             Object.defineProperties(this, {
-
                 id: {value: meta.vendor + '/' + meta.name}
-
             });
+            this.get().setAttribute('data-id', this.id);
         },
 
         inherit: se.StyledElement,

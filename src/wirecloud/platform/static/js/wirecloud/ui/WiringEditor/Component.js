@@ -66,12 +66,10 @@
             this._component = wiringComponent;
 
             Object.defineProperties(this, {
-
                 id: {value: wiringComponent.id},
-
                 type: {value: wiringComponent.meta.type},
-
             });
+            this.get().setAttribute('data-id', this.id);
 
             if (wiringComponent.volatile) {
                 this.disable();

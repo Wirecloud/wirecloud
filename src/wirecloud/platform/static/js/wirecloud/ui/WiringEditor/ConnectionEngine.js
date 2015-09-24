@@ -265,7 +265,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['detach', 'dragstart', 'dragend', 'duplicate', 'establish'];
+    var events = ['cancel', 'dragstart', 'dragend', 'duplicate', 'establish'];
 
     var appendConnection = function appendConnection(connection) {
 
@@ -381,6 +381,7 @@
             this.trigger('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint));
         default:
             this.temporalConnection.remove();
+            this.trigger('cancel');
         }
 
         document.removeEventListener('mousemove', this._ondrag);

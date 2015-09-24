@@ -29,29 +29,6 @@
         return LayoutManagerFactory.getInstance().viewsByName["wiring"];
     };
 
-    var getSourceEndpoint = function getSourceEndpoint(type, name, endpoint_name) {
-        var instances = document.querySelectorAll('.wiring-diagram .component-' + type);
-        var iSource = null;
-
-        for (var i = 0; i < instances.length; i++) {
-            if (instances[i].querySelector('.component-name').textContent == name) {
-                iSource = instances[i];
-                break;
-            }
-        }
-
-        if (iSource != null) {
-            var endpoints = iSource.querySelectorAll('.source-endpoints .endpoint');
-
-            for (var i = 0; i < endpoints.length; i++) {
-                if (endpoints[i].textContent == endpoint_name) {
-                    return endpoints[i].querySelector('.endpoint-anchor');
-                }
-            }
-        }
-
-        return null;
-    };
 
     var addBehaviour = function addBehaviour(title, description) {
         var behaviour = get_wiring().behaviourEngine.createBehaviour({
@@ -116,30 +93,6 @@
         var connections = document.querySelectorAll('.wiring-connections .connection.on-background');
 
         return connections[connectionIndex].querySelector('.option-remove');
-    };
-
-    var getTargetEndpoint = function getTargetEndpoint(type, name, endpoint_name) {
-        var instances = document.querySelectorAll('.wiring-diagram .component-' + type);
-        var iSource = null;
-
-        for (var i = 0; i < instances.length; i++) {
-            if (instances[i].querySelector('.component-name').textContent == name) {
-                iSource = instances[i];
-                break;
-            }
-        }
-
-        if (iSource != null) {
-            var endpoints = iSource.querySelectorAll('.target-endpoints .endpoint');
-
-            for (var i = 0; i < endpoints.length; i++) {
-                if (endpoints[i].textContent == endpoint_name) {
-                    return endpoints[i].querySelector('.endpoint-anchor');
-                }
-            }
-        }
-
-        return null;
     };
 
     var get_wiring_canvas = function get_wiring_canvas() {
@@ -207,42 +160,6 @@
 
     };
 
-    /**
-     * @function
-     * @private
-     */
-    var createWorkspaceFromMashup = function createWorkspaceFromMashup(name, mashup, autoAction) {
-        LayoutManagerFactory.getInstance().changeCurrentView('workspace');
-
-        Wirecloud.createWorkspace({
-            name: name,
-            mashup: mashup,
-            onSuccess: function (workspace) {
-                Wirecloud.changeActiveWorkspace(workspace, null, {
-                    onSuccess: function () {
-                        autoAction.nextHandler();
-                    },
-                    onFailure: function () {
-                        autoAction.fail();
-                    }
-                });
-            },
-            onFailure: function (msg, details) {
-                var dialog;
-
-                if (details != null && 'missingDependencies' in details) {
-                    dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(retry.bind(null, data), details);
-                } else {
-                    dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
-                }
-
-                dialog.show();
-            }
-        });
-
-    };
-
-
     Wirecloud.TutorialCatalogue.add('mashup-wiring-design', new Wirecloud.ui.Tutorial(gettext("Mashup Wiring Design"), [
 
         // Step 0: get ready the workspace
@@ -269,7 +186,7 @@
         },
         {
             type: 'autoAction',
-            action: createWorkspaceFromMashup.bind(null, 'MWD Tutorial', 'CoNWeT/Mashup-Wiring-Design-Tutorial/0.0.1')
+            action: BA.create_workspace({name: 'MWD Tutorial', mashup: 'CoNWeT/Mashup-Wiring-Design-Tutorial/0.0.1'})
         },
         {
             type: 'simpleDescription',
@@ -518,7 +435,7 @@
         {
             type: 'userAction',
             msg: gettext("<strong>You:</strong> Drag the output-endpoint <strong>Technician</strong>..."),
-            elem: getSourceEndpoint.bind(null, 'operator', 'Technical Service', 'Technician'),
+            elem: BS.wiringView.endpoint_by_name('operator', 'Technical Service', 'source', 'Technician'),
             pos: 'downRight',
             'eventToDeactivateLayer': 'mousedown',
             'restartHandlers': [
@@ -526,7 +443,7 @@
             ],
             'disableElems': [],
             nextStepMsg: gettext("...and drop in this input-endpoint <strong>Technician</strong>."),
-            elemToApplyNextStepEvent: getTargetEndpoint.bind(null, 'widget', 'Technicians', 'Technician'),
+            elemToApplyNextStepEvent: BS.wiringView.endpoint_by_name('operator', 'Technicians', 'target', 'Technician'),
             'event': 'mouseup',
             secondPos: 'downLeft',
         },
@@ -763,7 +680,7 @@
         {
             type: 'userAction',
             msg: gettext("Click <strong>back</strong> to continue"),
-            elem: BS.back_button, 
+            elem: BS.back_button(),
             pos: 'downRight'
         }
 

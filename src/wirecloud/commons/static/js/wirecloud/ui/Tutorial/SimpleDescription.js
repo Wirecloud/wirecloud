@@ -155,8 +155,8 @@
      */
     SimpleDescription.prototype.setNext = function setNext() {
         this.nextButton.addEventListener('click', function () {
-            if (this.element != null) {
-                this.element.classList.remove('tuto_highlight');
+            if (this.currentElement != null) {
+                this.currentElement.classList.remove('tuto_highlight');
             }
             this.tutorial.nextStep();
         }.bind(this));
@@ -170,14 +170,14 @@
 
         this.htmlElement.classList.add("activeStep");
         if (typeof this.element === 'function') {
-            this.element = this.element();
-            this.tutorial.setControlLayer(this.element, true);
-            this.element.classList.add('tuto_highlight');
+            this.currentElement = this.element();
+            this.tutorial.setControlLayer(this.currentElement, true);
+            this.currentElement.classList.add('tuto_highlight');
         } else {
             this.tutorial.resetControlLayer(false);
         }
-        if (this.element != null) {
-            ref_pos = this.element.getBoundingClientRect();
+        if (this.currentElement != null) {
+            ref_pos = this.currentElement.getBoundingClientRect();
             weights = [];
             positions = ['down', 'left', 'top', 'right'];
             do {
