@@ -280,6 +280,10 @@
         }
     };
 
+    WidgetBase.prototype.hasEndpoints = function hasEndpoints() {
+        return this.meta.hasEndpoints();
+    };
+
     WidgetBase.prototype.hasSettings = function hasSettings() {
         return this.preferenceList.length > 0;
     };

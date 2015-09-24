@@ -155,6 +155,10 @@
                 return this;
             },
 
+            hasEndpoints: function hasEndpoints() {
+                return this.meta.hasEndpoints();
+            },
+
             /**
              * [TODO: hasSettings description]
              *
