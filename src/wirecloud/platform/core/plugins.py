@@ -168,8 +168,6 @@ WIRING_EDITOR_CSS = (
     'css/wiring/wiring_components.scss',
     'css/wiring/wiring_connections.scss',
     'css/wiring/wiring_behaviours.scss',
-    'css/wiring/wiringPreview.css',
-    'css/wiring/colorSmartBox.css',
 )
 
 TUTORIAL_CSS = (
