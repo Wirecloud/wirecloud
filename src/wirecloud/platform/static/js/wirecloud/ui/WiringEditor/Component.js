@@ -61,7 +61,6 @@
             this.subtitle.addClassName("component-version");
 
             this.badge = document.createElement('span');
-            this.badge.className = "badge badge-success";
 
             this._component = wiringComponent;
 
@@ -71,9 +70,11 @@
             });
             this.get().setAttribute('data-id', this.id);
 
-            if (wiringComponent.volatile) {
+            if (wiringComponent.volatile || !wiringComponent.hasEndpoints()) {
                 this.disable();
             }
+
+            this.get().setAttribute('data-id', wiringComponent.id);
         },
 
         inherit: se.Panel,
@@ -86,7 +87,7 @@
             _onenabled: function _onenabled(enabled) {
 
                 if (!enabled) {
-                    this.badge.textContent = formatDisabledMessage.call(this);
+                    formatDisabledMessage.call(this);
                     this.heading.appendChild(this.badge);
                 } else {
                     this.heading.removeChild(this.badge);
@@ -122,7 +123,23 @@
     // ==================================================================================
 
     function formatDisabledMessage() {
-        return this._component.volatile ? gettext("volatile") : gettext("in use");
+
+        if (this._component.volatile) {
+            this.badge.textContent = utils.gettext("volatile");
+            this.badge.className = "badge badge-info";
+            return this;
+        }
+
+        if (!this._component.hasEndpoints()) {
+            this.badge.textContent = utils.gettext("no endpoints");
+            this.badge.className = "badge badge-warning";
+            return this;
+        }
+
+        this.badge.textContent = utils.gettext("in use");
+        this.badge.className = "badge badge-success";
+
+        return this;
     }
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

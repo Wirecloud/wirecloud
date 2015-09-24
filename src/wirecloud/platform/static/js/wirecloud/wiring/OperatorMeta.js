@@ -59,4 +59,14 @@
         return new Wirecloud.Operator(operatorId, this, targetView, businessInfo);
     };
 
+    /**
+     * [TODO: hasEndpoints description]
+     *
+     * @returns {Boolean}
+     *      [TODO: description]
+     */
+    ns.OperatorMeta.prototype.hasEndpoints = function hasEndpoints() {
+        return (this.inputList.length + this.outputList.length) > 0;
+    };
+
 })(Wirecloud.wiring);

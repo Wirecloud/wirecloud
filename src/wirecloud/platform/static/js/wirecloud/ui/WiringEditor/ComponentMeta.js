@@ -86,6 +86,8 @@
                 .appendChild(versionGroup)
                 .appendChild(this.vendor)
                 .appendChild(this.description);
+
+            this.get().setAttribute('data-id', meta.vendor + "/" + meta.name);
         },
 
         inherit: se.Panel,
@@ -98,6 +100,12 @@
 
                 this.image.onerror = showDefaultImage.bind(this);
                 this.image.src = version.image;
+
+                if (version.hasEndpoints()) {
+                    this.btnAdd.show();
+                } else {
+                    this.btnAdd.hide();
+                }
 
                 return this;
             }

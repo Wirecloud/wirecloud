@@ -135,6 +135,10 @@
 
                 this.status.operators[operator.id] = operator;
 
+                if (operator.volatile) {
+                    operator.logManager.log(utils.interpolate(utils.gettext("The operator (%(title)s) was created as volatile."), operator), Wirecloud.constants.LOGGING.INFO_MSG);
+                }
+
                 return operator;
             },
 
@@ -260,6 +264,7 @@
                     if (operator_info.name in operators) {
                         try {
                             status.operators[id] = operators[operator_info.name].instantiate(id, this, operator_info);
+                            status.operators[id].logManager.log(utils.interpolate(utils.gettext("The operator (%(title)s) was created."), status.operators[id]), Wirecloud.constants.LOGGING.INFO_MSG);
                         } catch (e) {
                             status.operators[id] = new ns.wiring.MissingOperator(id, this, operator_info, utils.gettext("Operator %(id)s (%(uri)s) couldn't be loaded."));
                             if (id in status.visualdescription.components.operator) {
