@@ -8,7 +8,7 @@ WireCloud
 
 This project is part of [FIWARE](http://www.fiware.org). Check it out in the [Catalogue](http://catalogue.fiware.org/enablers/application-mashup-wirecloud)
 
-Please visit https://conwet.fi.upm.es/wirecloud for more info.
+You can find the User & Programmer's Manual and the Install & Administration Guide on [readthedocs.org](wirecloud.readthedocs.org)
 
 ## Install
 
