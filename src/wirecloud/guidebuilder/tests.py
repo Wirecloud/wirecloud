@@ -788,10 +788,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             # Configure all other elements
             with wiring.component_sidebar as sidebar:
-                sidebar.add_component("widget", "Linear Graph", 750, 10)
+                sidebar.add_component("widget", "Linear Graph", 500, 10)
             with wiring.component_sidebar as sidebar:
                 sidebar.create_operator("History Module to Linear Graph")
-                sidebar.add_component("operator", "History Module to Linear Graph", 750, 100)
+                sidebar.add_component("operator", "History Module to Linear Graph", 500, 100)
 
             mapw = wiring.find_component_by_title("widget", "Map Viewer")
             linw = wiring.find_component_by_title("widget", "Linear Graph")
