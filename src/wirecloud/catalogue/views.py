@@ -241,7 +241,7 @@ class ResourceChangelogEntry(Resource):
                 msg = _('Error opening the changelog file')
                 doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
-        doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
+        doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite', 'fenced_code'])
 
         if from_version:
             doc_pre_html = filter_changelog(doc_pre_html, from_version)
@@ -281,6 +281,6 @@ class ResourceDocumentationEntry(Resource):
                     msg = _('Error opening the userguide file')
                     doc_code = '<div class="margin-top: 10px"><p>%s</p></div>' % msg
 
-        doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite'])
+        doc_pre_html = markdown.markdown(doc_code, output_format='xhtml5', extensions=['codehilite', 'fenced_code'])
         doc = clean_html(doc_pre_html, base_url=doc_base_url)
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
