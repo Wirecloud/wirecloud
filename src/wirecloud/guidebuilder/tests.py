@@ -28,7 +28,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
-from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case, DynamicWebServer, LocalFileSystemServer, RealWebServer
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case, DynamicWebServer, LocalFileSystemServer, RealWebServer, uses_extra_workspace
 from wirecloud.catalogue.models import CatalogueResource
 
 __test__ = 'wirecloud.guidebuilder' in settings.INSTALLED_APPS
@@ -47,22 +47,39 @@ list_resources = ['CoNWeT_simple-history-module2linear-graph_2.3.2.wgt',
 # Common functions
 
 
-def image_path(name='Wirecloud_UG.png', extra=None, resource=False):
+def image_path(name='Wirecloud_UG.png', extra=None, resource=False, prepath=None):
     if extra is not None:
         name = name if not name.endswith('.png') else name[:-4]
-        name = '{}_{}.png'.format(name, extra)
+        name = '{}_{}.png'.format(name, extra) if name != "" else "{}.png".format(extra)
     name = name if name.endswith('.png') else "{}.png".format(name)
     if not resource:
         basepath = os.path.join(settings.BASEDIR, USER_GUIDE_IMAGES_PATH)
     else:
         basepath = os.path.join(os.path.dirname(__file__), 'resources')
+    if prepath is not None:
+        basepath = os.path.join(basepath, prepath)
+        if not os.path.exists(basepath):
+            os.mkdir(basepath)
     return os.path.join(basepath, name)
 
 
-def take_capture(driver, name='Wirecloud_UG.png', extra=None):
-    path = image_path(name, extra)
+def take_capture(driver, name='Wirecloud_UG.png', extra=None, prepath = None):
+    path = image_path(name, extra, prepath=prepath)
     driver.save_screenshot(path)
     return path
+
+
+def midd_take_capture(*args, **kargs):
+    name = kargs.get("name") or ""
+    if kargs.get("name"):
+        kargs.pop("name")
+    prepath = kargs.get("prepath")
+    if kargs.get("prepath"):
+        kargs.pop("prepath")
+    if len(args) > 1: # args have name
+        name = args[1]
+        args = (args[0],) + args[2:]
+    return globals()["take_capture"](*args, name=name, prepath=prepath, **kargs)
 
 
 def merge_images(img1, img2, position):
@@ -240,6 +257,9 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_creating_new_workspace(self):
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath="create_workspace", **kargs)
+
         # Intitialization
         self.driver.set_window_size(1024, 768)
         self.login()
@@ -303,6 +323,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_browsing_marketplace(self):
+        prepath = "browsing_marketplace"
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath=prepath, **kargs)
+
         self.driver.set_window_size(1024, 768)
         self.login()
 
@@ -329,7 +353,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_down(imgp, popup_menu.element, 80)
 
             # Copy the previous to other one that uses it after
-            shutil.copy2(imgp, image_path(extra=10))
+            shutil.copy2(imgp, image_path(extra=10, prepath=prepath))
 
             # Add marketplace
             m_menu = popup_menu.get_entry('Add new marketplace')
@@ -429,6 +453,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_building_mashup(self):
+        prepath = "building_mashup"
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath=prepath, **kargs)
+
         self.driver.set_window_size(1024, 768)
         self.login()
         self.create_workspace('History Info')
@@ -526,6 +554,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
         crop_down(imgp, btn, 60)
 
+        prepath = "wiring"
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath=prepath, **kargs)
+
         with self.wiring_view:
             ActionChains(self.driver).move_by_offset(20, 20).perform()
             time.sleep(0.2)
@@ -586,7 +618,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 conf_widg = get_by_contains(self.driver, ".panel.panel-default.component-draggable.component-operator", "NGSI source")
 
                 # Add map iwidget
-                mapsercvcomp = sidebar.add_component("widget", "Map Viewer", 250, 10)
+                mapsercvcomp = sidebar.add_component("widget", "Map Viewer", 500, 10)
                 mapservc = mapsercvcomp.element
                 imgp = take_capture(self.driver, extra='Wiring_NGSISource_MapViewer')
                 add_pointer(imgp, get_position(mapservc, 0.5, 0.15), False)
@@ -664,8 +696,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         with map_viewer_widget:
             self.driver.execute_script('mapViewer.mapPoiManager.selectPoi(new Poi({id:"OUTSMART.NODE_3509"}));mapViewer.map.setZoom(16);');
-        # with widget:
-        with map_viewer_widget:
+        with widget:
+        # with map_viewer_widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
         imgp = take_capture(self.driver, extra='MapViewerWithEntities')
 
@@ -756,10 +788,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             # Configure all other elements
             with wiring.component_sidebar as sidebar:
-                sidebar.add_component("widget", "Linear Graph", 500, 10)
+                sidebar.add_component("widget", "Linear Graph", 750, 10)
             with wiring.component_sidebar as sidebar:
                 sidebar.create_operator("History Module to Linear Graph")
-                sidebar.add_component("operator", "History Module to Linear Graph", 500, 100)
+                sidebar.add_component("operator", "History Module to Linear Graph", 750, 100)
 
             mapw = wiring.find_component_by_title("widget", "Map Viewer")
             linw = wiring.find_component_by_title("widget", "Linear Graph")
@@ -795,27 +827,24 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
 
-        # ----------------
-        # Don't work :S
-        # ----------------
-        # with map_viewer_widget:
-        #     self.driver.execute_script('''
-        #         var poi = mapViewer.mapPoiManager.getPoiList()["OUTSMART.NODE_3506"].poi;
-        #         mapViewer.mapPoiManager.selectPoi(poi);
-        #         mapViewer.map.setZoom(16);
-        #         MashupPlatform.wiring.pushEvent('poiOutput', JSON.stringify(poi))
-        #     ''')
-        #     self.driver.execute_script('mapViewer.map.setMapTypeId("roadmap");')
+        with map_viewer_widget:
+            self.driver.execute_script('''
+                var poi = mapViewer.mapPoiManager.getPoiList()["OUTSMART.NODE_3506"].poi;
+                mapViewer.mapPoiManager.selectPoi(poi);
+                mapViewer.map.setZoom(16);
+                MashupPlatform.wiring.pushEvent('poiOutput', JSON.stringify(poi))
+            ''')
+            self.driver.execute_script('mapViewer.map.setMapTypeId("roadmap");')
 
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
         imgp = take_capture(self.driver, extra=34)
 
-        lg_path = image_path(extra=35)
+        lg_path = image_path(extra=35, prepath=prepath)
         shutil.copy2(imgp, lg_path)
         crop_image(
             lg_path, *create_box(get_by_contains(self.driver, '.fade.iwidget.in', 'Linear Graph')))
-        shutil.copy2(lg_path, image_path(extra='LinearGraphZoom1'))
+        shutil.copy2(lg_path, image_path(extra='LinearGraphZoom1', prepath=prepath))
 
         # Public workspace!
         popup_menu = self.open_menu()
@@ -849,3 +878,19 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         dialog.find_element_by_css_selector('.btn-primary').click()
 
     test_building_mashup.tags = ('wirecloud-guide', 'ui-build-mashup')
+
+    @uses_extra_resources(list_resources)
+    @uses_extra_workspace('admin', 'CoNWeT_History_Info_2.0.wgt')
+    def test_behaviour_mashup(self):
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath="behaviour_oriented_wiring", **kargs)
+        self.driver.set_window_size(1024, 768)
+        self.login(username="admin", next="/admin/History Info")
+
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as behaviour:
+                for i, beh in enumerate(behaviour.behaviour_list):
+                    beh.activate()
+                    take_capture(self.driver, extra="santander_behaviour{}".format(i + 1))
+
+    test_behaviour_mashup.tags = ('wirecloud-guide', 'ui-behaviour')
