@@ -338,7 +338,7 @@ the workspace and the set of operators currently available:
 
 One of the most important characteristics that should be intrinsic to
 the design of widgets is that they must be as generic as possible. For
-example, it makes much more sense to have a generic Map Viewer widget
+example, it makes much more sense to have a generic *Map Viewer* widget
 that can be wired through an operator to any source of information of
 your choice, than to have an specific one that has hard-coded the source
 of data. Operators represents the means to achieve this generality,
@@ -349,16 +349,28 @@ the context of a particular mashup.
 In this case, we have an *NGSI source* operator that is going to
 provide the data information to the *Map Viewer* widget. This kind of
 operators are called piping operators. So we have to add it to the
-wiring. To do so, drag the operator from the operator list to wiring
-canvas:
+wiring.
+
+To do so, open the components side panel and search the *NGSI source* operator,
+then click on the *Create* button:
+
+![Create operator](images/user_guide/wiring/create_operator.png)
+
+This will create an instance of that operator and will appear in the bottom of
+the box associated with the "NGSI Operator". You can see that it is highlighted
+incating that the new operator is not used in the wiring configuration. All
+operators not used when leaving the wiring editor will be removed from the
+wiring configuration.
+
+Now drag the operator from the operator list to the wiring canvas:
 
 ![Wirecloud_UG_Wiring_NGSISource_drag.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource_drag.png)
 ![Wirecloud_UG_Wiring_NGSISource.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource.png)
 
 Now, we have the source of information that is going to be presented in
 the *Map Viewer* widget. So we need to add it to the wiring status
-following the same process for the operator, but dragging the widget
-instead of the operator:
+following the same process for the operator, except that you do not have to
+create the widget (as widgets are created in the editor view):
 
 ![Wirecloud_UG_Wiring_NGSISource_MapViewer.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource_MapViewer.png)
 
@@ -413,21 +425,30 @@ going to give us a great flexibility.
 
 One of the most common operations is the task of getting the connections
 removed in the wiring. For example, when you make some mistake for some
-reason, you can fix it by selecting the connection (by clicking on it)
-and then by clicking the red dot that appears in the middle of it.
+reason, you can fix it by clicking the remove button that appears in the middle
+of the connection.
 
 ![Wirecloud_UG_delete_arrow1.png](images/user_guide/Wirecloud_UG_delete_arrow1.png)
-![Wirecloud_UG_delete_arrow2.png](images/user_guide/Wirecloud_UG_delete_arrow2.png)
 
-Another common task is to change the shape of connections. This can be
-accomplished by moving the handles that appear when they are selected.
+Another common task is to change the shape of connections. To do so, you have to
+click on the *Customize* option of the connection:
+
+![Wirecloud_UG_reshape_arrow1.png](images/user_guide/Wirecloud_UG_reshape_arrow_pre.png)
+
+Once enabled, you only have to move the handles that appear to modify the shape
+of the connection.
 
 ![Wirecloud_UG_reshape_arrow1.png](images/user_guide/Wirecloud_UG_reshape_arrow1.png)
 ![Wirecloud_UG_reshape_arrow2.png](images/user_guide/Wirecloud_UG_reshape_arrow2.png)
 
+If you want to stop customising the connection, click outside the connection or
+use the *Stop Customising* option:
+
+![Wirecloud_UG_reshape_arrow2.png](images/user_guide/Wirecloud_UG_reshape_arrow_stop.png)
+
 You can also minimize operators with the intention of improving space
-usage. This can be accomplished using the "Minimize" option that appears
-in the Widget's menu:
+usage. This can be accomplished using the *Minimize* option that appears
+in the component menu:
 
 ![Wirecloud_UG_minimize_option.png](images/user_guide/Wirecloud_UG_minimize_option.png)
 ![Wirecloud_UG_33.png](images/user_guide/Wirecloud_UG_33.png)
@@ -452,6 +473,123 @@ Now you can play with your new workspace.
 ![Wirecloud_UG_34.png](images/user_guide/Wirecloud_UG_34.png)
 ![Wirecloud_UG_35.png](images/user_guide/Wirecloud_UG_35.png)
 ![Wirecloud_UG_LinearGraphZoom1.png](images/user_guide/Wirecloud_UG_LinearGraphZoom1.png)
+
+Behaviour Oriented Wiring
+-------------------------
+
+Starting at WireCloud 0.8.0, you can create wiring configurations by means of
+compositing several *behaviours*.
+
+A *behaviour* is a set of components jointly with the connections established
+between them for adding a feature or behaviour to the application mashup. For
+example, we can split the wiring configuration used by the dashboard created on
+the previous section into two behaviours:
+
+- The first one can be called: **Show lampposts on map**. This behaviour is
+  composed of the `NGSI Source`, `NGSI Entity To PoI` and `Map Viewer` components
+  as well as the connections between those components:
+
+  ![*Show lampposts on map* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/intro1.png]
+
+- The second one can be called: **Show lamppost details**. This behaviour is
+  composed of the `Map Viewer`, `History Module to Linear Graph` and `Linear
+  Graph` components as well as the connections between those components: 
+
+  ![*Show lampposts details* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/intro2.png]
+
+> Take into account that components and connections can be present in more than
+> one behaviour. For example, in the previous example the *Map Viewer* widgets
+> was used in both behaviours.
+
+WireCloud will continue supporting the creation of application mashups without
+having to use the behaviour methodology. However, by using this brand new
+feature WireCloud provides several benefits:
+
+- Splitting the wiring configuration into severals behaviours helps to provide a
+  more organised and structured diagram as well as a way for documenting the
+  reasons for using and connecting components in a particular way.
+- Ignoring the fact that using the behaviour oriented wiring has a harder
+  learning curve, using it eases the development of wiring configurations as it
+  allows you to develop them using several phases.
+- This documentation is also a good starting point for novice developers and
+  experiences developers wanting to replicate the behaviour of a given
+  application mashup. They only need to access the application mashups developed
+  by other users and learn how the wiring configuration works by reading the
+  behaviour descriptions.
+
+### Enabling/disabling the behaviour engine
+
+Before using the Behaviour Oriented methodology, it must be enabled. To do so,
+go to the wiring editor view and click on the *List behaviours* button.
+
+![*List behaviours* button](images/user_guide/behaviour_oriented_wiring/list_behaviours_button.png)
+
+This will display a side panel, currently without any behaviour. Click on the
+*Enable* button:
+
+![*Enable* behaviour engine button](images/user_guide/behaviour_oriented_wiring/enable_behaviours_button.png)
+
+Once enabled, you will have a first behaviour with all the components and
+connections previously added into the wiring configuration.
+
+> *Note:* You can always go back to not use the behaviour engine by clicking on
+> the *disable* button.
+>
+> ![*Disable* behaviour engine button](images/user_guide/behaviour_oriented_wiring/disable_behaviours_button.png)
+>
+> If you disable the behaviour engine, all components and connections will be
+> squashed into a single view.
+>
+> Take into account that this operation cannot be undo.
+
+### Using the behaviour oriented wiring user interface
+
+![General aspect of the behaviour oriented wiring user interface](images/user_guide/behaviour_oriented_wiring/general_aspect.png)
+
+This is the look of the wiring editor interface when the behaviour engine is
+enabled. Each of the panels in the *Identified behaviours* section represents a
+behaviour and displays the name and the description of the represented
+behaviour.
+
+Noticed that one of the behaviours is highlighted, this is because
+you can edit only a behaviour at a time, this is the active behaviour. The name
+of the active behaviour is also displayed in the footer of the wiring editor, so
+you can know which is the active behaviour all the time (i.e. including when the
+behaviour list panel is hidden). Changing the active behaviour is just a matter
+of clicking on the panel representing the behaviour.
+
+The other important thing to notice is that there are some "faded" components
+inside the wiring canvas (e.g the ***TODO*** widget). Background components are
+faded because they don't form part of the current behaviour, although they form
+part of other behaviours.
+
+#### Adding components and creating connections
+
+You can add new components into a behaviour in the same way they are added when
+the behaviour engine is disabled. That is, by draging them from the component
+side panel. The only thing you have to take into account is that those
+components are only added into the active behaviour.
+
+If you want to use a component already involved in other behaviour, you can use
+the ***TODO*** button:
+
+![](images/user_guide/behaviour_oriented_wiring/component_share_button.png)
+
+The same applies to the connections, if you create a new connection, that
+connection is added only into the active behaviour. If you want to include a
+connection already available on other behaviour, you can click on the ***TODO***
+button:
+
+![](images/user_guide/behaviour_oriented_wiring/connection_share_button.png)
+
+#### Creating a new behaviour
+
+You can create new behaviours by clicking on the *Create behaviour* button
+available on the list behaviour side panel: 
+
+![]()
+
+ 
 
 Sharing your mashups
 --------------------

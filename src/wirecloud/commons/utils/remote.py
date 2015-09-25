@@ -1727,13 +1727,17 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         component = self.find_component_by_title(component_type, component_title)
         self.testcase.assertIsNotNone(component)
 
+        # Drag and drop the component
         x, y = (x + 50, y + 30,)
         old_components = len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type))
-        ActionChains(self.testcase.driver).click_and_hold(component.element).move_to_element_with_offset(self.section_diagram, x, y).release().perform()
-        WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)))
+        ActionChains(self.testcase.driver).click_and_hold(component.element).perform()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.section_diagram))
+        ActionChains(self.testcase.driver).move_to_element_with_offset(self.section_diagram, x, y).release().perform()
 
+        # Wait until the component is added to the diagram
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)))
         new_component = self._find_component_by_title(component_type, component_title)
-        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(new_component.element))
+
         return new_component
 
     def create_operator(self, group_title):

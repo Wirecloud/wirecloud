@@ -389,7 +389,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
                 widget1 = sidebar.add_component('widget', "Test (1)")
-                widget2 = sidebar.add_component('widget', "Test (2)", x=400)
+                widget2 = sidebar.add_component('widget', "Test (2)", x=650)
 
             source = widget1.find_endpoint_by_title('source', "Output")
             target = widget2.find_endpoint_by_title('target', "Input")
@@ -483,8 +483,8 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
             with wiring.component_sidebar as sidebar:
                 widget1 = sidebar.add_component('widget', "Test (1)")
-                widget2 = sidebar.add_component('widget', "Test (2)", x=400)
-                widget3 = sidebar.add_component('widget', "Test (3)", x=100, y=200)
+                widget2 = sidebar.add_component('widget', "Test (2)", x=650)
+                widget3 = sidebar.add_component('widget', "Test (3)", x=350, y=200)
 
             source = widget1.find_endpoint_by_title('source', "Output")
             target = widget2.find_endpoint_by_title('target', "Input")
@@ -967,8 +967,8 @@ class EndpointBasicRecommendationTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
                 widget1 = sidebar.add_component('widget', 'Test (1)')
-                widget2 = sidebar.add_component('widget', 'Test (2)', x=400)
-                widget3 = sidebar.add_component('widget', 'Test (3)', x=100, y=200)
+                widget2 = sidebar.add_component('widget', 'Test (2)', x=650)
+                widget3 = sidebar.add_component('widget', 'Test (3)', x=350, y=200)
 
             target1 = widget1.find_endpoint_by_title('target', 'Input')
             source2 = widget2.find_endpoint_by_title('source', 'Output')
@@ -991,8 +991,8 @@ class EndpointBasicRecommendationTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
                 widget1 = sidebar.add_component('widget', 'Test (1)')
-                widget2 = sidebar.add_component('widget', 'Test (2)', x=400)
-                widget3 = sidebar.add_component('widget', 'Test (3)', x=100, y=200)
+                widget2 = sidebar.add_component('widget', 'Test (2)', x=650)
+                widget3 = sidebar.add_component('widget', 'Test (3)', x=350, y=200)
 
             target1 = widget1.find_endpoint_by_title('target', 'Input')
             source2 = widget2.find_endpoint_by_title('source', 'Output')
@@ -1214,7 +1214,7 @@ class EndpointStickyEffectTestCase(WirecloudSeleniumTestCase):
             with wiring.component_sidebar as sidebar:
                 sidebar.create_operator("TestOperator")
                 operator = sidebar.add_component('operator', "TestOperator")
-                widget = sidebar.add_component('widget', "Test 1", x=400)
+                widget = sidebar.add_component('widget', "Test 1", x=650)
 
             target1 = operator.find_endpoint_by_title('target', "input")
             source1 = operator.find_endpoint_by_title('source', "output")
