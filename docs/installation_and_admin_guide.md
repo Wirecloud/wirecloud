@@ -1,6 +1,3 @@
-WireCloud Installation and Administration Guide
-===============================================
-
 ## Introduction
 
 This Installation and Administration Guide covers WireCloud version 0.8 (starting from FIWARE release 4.4). Any feedback on this document is highly welcomed, including bugs, typos or things you think should be included but are not. Please send it to the "Contact Person" email that appears in the [Catalogue page for this GEi](http://catalogue.fiware.org/enablers/application-mashup-wirecloud).

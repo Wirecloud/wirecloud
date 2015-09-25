@@ -1,6 +1,3 @@
-User Guide
-==========
-
 Web mashups integrate heterogeneous data, application logic, and UI
 components (widgets/gadgets) sourced from the Web to create new coherent
 and value-adding composite applications.
