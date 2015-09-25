@@ -712,7 +712,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_down(imgp, mapservc, 10)
 
             minb = [x for x in wiring.find_connections() if "editable" in x.class_list][0].display_preferences().get_entry("Stop customizing")
-            imgp = take_capture(self.driver, extra='reshape_arrow_minimize')
+            imgp = take_capture(self.driver, extra='reshape_arrow_stop')
             add_pointer(imgp, get_position(minb, 0.3, 0.3), False)
             crop_down(imgp, mapservc, 10)
             minb.click()
@@ -795,17 +795,14 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
 
-        # ----------------
-        # Don't work :S
-        # ----------------
-        # with map_viewer_widget:
-        #     self.driver.execute_script('''
-        #         var poi = mapViewer.mapPoiManager.getPoiList()["OUTSMART.NODE_3506"].poi;
-        #         mapViewer.mapPoiManager.selectPoi(poi);
-        #         mapViewer.map.setZoom(16);
-        #         MashupPlatform.wiring.pushEvent('poiOutput', JSON.stringify(poi))
-        #     ''')
-        #     self.driver.execute_script('mapViewer.map.setMapTypeId("roadmap");')
+        with map_viewer_widget:
+            self.driver.execute_script('''
+                var poi = mapViewer.mapPoiManager.getPoiList()["OUTSMART.NODE_3506"].poi;
+                mapViewer.mapPoiManager.selectPoi(poi);
+                mapViewer.map.setZoom(16);
+                MashupPlatform.wiring.pushEvent('poiOutput', JSON.stringify(poi))
+            ''')
+            self.driver.execute_script('mapViewer.map.setMapTypeId("roadmap");')
 
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
