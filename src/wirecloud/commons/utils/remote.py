@@ -882,18 +882,22 @@ class WiringBehaviourTester(object):
 
     @property
     def heading(self):
-        return self.element.find_element_by_css_selector(".behaviour-title")
+        return self.title_element
 
     @property
     def title(self):
-        return self.heading.text
+        return self.title_element.text
+
+    @property
+    def title_element(self):
+        return self.element.find_element_by_css_selector(".behaviour-title")
 
     @property
     def description(self):
         return self.element.find_element_by_css_selector(".behaviour-description").text
 
     def activate(self):
-        self.btn_activate.click()
+        self.title_element.click()
 
     def display_preferences(self):
         button = self.btn_show_preferences
