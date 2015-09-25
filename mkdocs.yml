@@ -1,0 +1,10 @@
+site_name: WireCloud
+
+pages:
+- 'Introduction': 'index.md'
+- 'Installation and Administration Guide': 'installation_and_admin_guide.md'
+- 'User Guide': 'user_guide.md'
+
+markdown_extensions:
+    - codehilite
+    - fenced_code
