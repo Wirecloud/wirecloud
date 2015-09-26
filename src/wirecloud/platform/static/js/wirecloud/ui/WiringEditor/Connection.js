@@ -606,7 +606,7 @@
         event.preventDefault();
         event.stopPropagation();
 
-        if (this.enabled && event.which === 1) {
+        if (this.enabled && event.button === 0) {
             this.trigger('click');
         }
     };

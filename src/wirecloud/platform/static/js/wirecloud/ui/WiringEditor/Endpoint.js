@@ -377,7 +377,7 @@
 
     var endpoint_onmousedown = function endpoint_onmousedown(event) {
 
-        if (this.enabled && event.which === 1) {
+        if (this.enabled && event.button === 0) {
             event.stopPropagation();
             this.trigger('mousedown', event);
         }
@@ -388,17 +388,16 @@
         if (this.enabled) {
             event.stopPropagation();
 
-            switch (event.which) {
-            case 0: // No button pressed.
+            var buttons = 'buttons' in event ? event.buttons : event.which;
+            if (buttons === 0) {
+                // No button pressed
                 this.trigger('mouseenter', event);
-                break;
-            case 1: // Left mouse button pressed.
+            } else if (buttons | 1) {
+                // Left mouse button pressed
                 this.trigger('dragenter', event);
-                break;
-            default:
-                // Otherwise, do nothing.
-                break;
-            }
+            } /* else {
+                // do nothing.
+            } */
         }
     };
 
@@ -407,23 +406,22 @@
         if (this.enabled) {
             event.stopPropagation();
 
-            switch (event.which) {
-            case 0: // No button pressed.
+            var buttons = 'buttons' in event ? event.buttons : event.which;
+            if (buttons === 0) {
+                // No button pressed
                 this.trigger('mouseleave', event);
-                break;
-            case 1: // Left mouse button pressed.
+            } else if (buttons | 1) {
+                // Left mouse button pressed
                 this.trigger('dragleave', event);
-                break;
-            default:
-                // Otherwise, do nothing.
-                break;
-            }
+            } /* else {
+                // do nothing.
+            } */
         }
     };
 
     var endpoint_onmouseup = function endpoint_onmouseup(event) {
 
-        if (this.enabled && event.which === 1) {
+        if (this.enabled && event.button === 0) {
             event.stopPropagation();
             this.trigger('mouseup', event);
         }
