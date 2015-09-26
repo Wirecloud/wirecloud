@@ -182,16 +182,18 @@ The following examples show you how to configure SQLite and PostgreSQL databases
 
 Setting up a SQLite database can be just accomplished within seconds by using the following parameters into the `settings.py` file:
 
-    DATABASES = {
-          'default': {
-                 'ENGINE': 'django.db.backends.sqlite3',
-                 'NAME': '<dbfile>',
-                 'USER': '',
-                 'PASSWORD': '',
-                 'HOST': '',
-                 'PORT': '',
-         }
-    }
+```python
+DATABASES = {
+      'default': {
+             'ENGINE': 'django.db.backends.sqlite3',
+             'NAME': '<dbfile>',
+             'USER': '',
+             'PASSWORD': '',
+             'HOST': '',
+             'PORT': '',
+     }
+}
+```
 
 where `<dbfile>` is the full path to the database file.
 
@@ -206,16 +208,18 @@ Finally, please take into account that SQLite database is **not recommended for 
 
 For production purposes, PostgreSQL database is a much better choice. To do so, the following parameters must be set in `settings.py`:
 
-    DATABASES = {
-          'default': {
-                 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                 'NAME': '<dbname>',
-                 'USER': '<dbuser>',
-                 'PASSWORD': '<dbpassword>',
-                 'HOST': '<dbhost>',
-                 'PORT': '<dbport>',
-         }
-    }
+```python
+DATABASES = {
+      'default': {
+             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+             'NAME': '<dbname>',
+             'USER': '<dbuser>',
+             'PASSWORD': '<dbpassword>',
+             'HOST': '<dbhost>',
+             'PORT': '<dbport>',
+     }
+}
+```
 
 where `<dbname>` represents the name of the database, `<dbuser>` is the name of the user with privileges on the database and `<dbpassword>` is the password to use for authenticating the user. `<dbhost>` and `<dbport>` are the host and the port of the database server to use (leave these settings empty if the server is running on the same machine as WireCloud).
 
@@ -298,7 +302,9 @@ Here’s a list of general settings available in WireCloud and their default val
 
 A tuple that lists people who get code error notifications. When `DEBUG=False` and a view raises an exception, WireCloud will email these people with the full exception information. Each member of the tuple should be a tuple of (Full name, email address). Example:
 
-    (('John', 'john@example.com'), ('Mary', 'mary@example.com'))
+```python
+(('John', 'john@example.com'), ('Mary', 'mary@example.com'))
+```
 
 Note that Django will email all of these people whenever an error happens.
 
@@ -394,7 +400,9 @@ You should use this setting as replacement of the Django's MIDDLEWARE_CLASSES se
 
 Currently available groups are "default", "api" and "proxy". For example, if you want to add a middleware class to the "api" group, you can use the following code:
 
-    URL_MIDDLEWARE_CLASSES['api'] += ('my.middleware.module.MyMiddlware',)
+```python
+URL_MIDDLEWARE_CLASSES['api'] += ('my.middleware.module.MyMiddlware',)
+```
 
 
 #### WIRECLOUD_HTTPS_VERIFY
@@ -417,30 +425,40 @@ Finally, you can compress css and javascript code files for better performance u
 
     $ python manage.py compress
 
-> NOTE: Don't forget to rerun the collectstatic and compress commands each time the WireCloud code is updated, this include each time an add-on is added or remove or the default theme is changed.
+> NOTE: Don't forget to rerun the collectstatic and compress commands each time
+> the WireCloud code is updated, this include each time an add-on is added or
+> remove or the default theme is changed.
 
 
 ### Advanced configurations
 
 #### Installing the WireCloud Pub Sub add-on
 
-The development of the Pub Sub add-on is carried out at they own [github repository](https://github.com/conwetlab/wirecloud-pubsub). You can always find the latest information about how to install and use it on the main page of the repository.
+The development of the Pub Sub add-on is carried out at they own [github
+repository](https://github.com/conwetlab/wirecloud-pubsub). You can always find
+the latest information about how to install and use it on the main page of the
+repository.
 
 Newer versions of the Pub Sub add-on can be installed directly using pip:
 
     $ pip install wirecloud-pubsub
 
-Since wirecloud_pubsub uses `django.contrib.static` functionalities, you should add it to your `INSTALLED_APPS` in `settings.py`:
+Since wirecloud_pubsub uses `django.contrib.static` functionalities, you should
+add it to your `INSTALLED_APPS` in `settings.py`:
 
-    INSTALLED_APPS = (
-        ...
-        'wirecloud_pubsub',
-       ...
-    )
+```python
+INSTALLED_APPS = (
+    # ...
+    'wirecloud_pubsub',
+    # ...
+)
+```
 
 As last step, add a `DEFAULT_SILBOPS_BROKER` setting with the URL of the broker to use:
 
-    DEFAULT_SILBOPS_BROKER = 'http://pubsub.server.com:8080/silbops/CometAPI'
+```python
+DEFAULT_SILBOPS_BROKER = 'http://pubsub.server.com:8080/silbops/CometAPI'
+```
 
 Don't forget to run the collectstatic and compress commands on your WireCloud installation:
 
@@ -450,9 +468,16 @@ Don't forget to run the collectstatic and compress commands on your WireCloud in
 
 #### NGSI proxy
 
-WireCloud comes with a javascript library that allows widgets and operators to connect to NGSI-9/10 servers. This support works out of the box when installing WireCloud except for receiving notification directly to widgets and operators. To enable it WireCloud requires what is called NGSI proxy, this proxy is a facade that receives NGSI notifications and passes them to Widgets or Operators.
+WireCloud comes with a javascript library that allows widgets and operators to
+connect to NGSI-9/10 servers. This support works out of the box when installing
+WireCloud except for receiving notification directly to widgets and operators.
+To enable it WireCloud requires what is called NGSI proxy, this proxy is a
+facade that receives NGSI notifications and passes them to Widgets or Operators.
 
-This NGSI proxy doesn't need to be installed in the same machine as WireCloud and can be shared with other WireCloud instances. WireCloud will use the NGSI proxy passed to the ngsi_proxy_url option of the NGSI.Connection object. This URL can be obtained from Widget/Operator preference defined in its `config.xml`.
+This NGSI proxy doesn't need to be installed in the same machine as WireCloud
+and can be shared with other WireCloud instances. WireCloud will use the NGSI
+proxy passed to the ngsi_proxy_url option of the NGSI.Connection object. This
+URL can be obtained from Widget/Operator preference defined in its `config.xml`.
 
 You can install a NGSI proxy following those steps:
 
@@ -478,16 +503,20 @@ Create a new Application using the IdM server to use (for example: `https://acco
     - Add `social.apps.django_app.default` to `INSTALLED_APPS`
     - Add `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` to `AUTHENTICATION_BACKENDS`. example:
 
-            AUTHENTICATION_BACKENDS = (
-                'wirecloud.fiware.social_auth_backend.FIWAREOAuth2',
-                'django.contrib.auth.backends.ModelBackend',
-            )
+        ```python
+        AUTHENTICATION_BACKENDS = (
+            'wirecloud.fiware.social_auth_backend.FIWAREOAuth2',
+            'django.contrib.auth.backends.ModelBackend',
+        )
+        ```
 
     - Add a `FIWARE_IDM_SERVER` setting pointing to the IdM server to use (e.g. `FIWARE_IDM_SERVER = "https://account.lab.fiware.org"`)
     - Add `SOCIAL_AUTH_FIWARE_KEY` and `SOCIAL_AUTH_FIWARE_SECRET` settings using the id and secret values provided by the IdM. You should end having something like this:
 
-            SOCIAL_AUTH_FIWARE_KEY = "43"
-            SOCIAL_AUTH_FIWARE_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc8225e2cf940f746e6b229158b5e3828e2716b915d2c4762a34219e1792b85e4d3cdf66d70d72840b"
+        ```python
+        SOCIAL_AUTH_FIWARE_KEY = "43"
+        SOCIAL_AUTH_FIWARE_SECRET = "a6ded8771f7438ce430dd93067a328fd282c6df8c6c793fc8225e2cf940f746e6b229158b5e3828e2716b915d2c4762a34219e1792b85e4d3cdf66d70d72840b"
+        ```
 
 4. Edit `urls.py`:
     - Replace the login endpoint:
@@ -499,7 +528,15 @@ Create a new Application using the IdM server to use (for example: `https://acco
 <a id="running_wirecloud" />
 ### Running WireCloud
 
-We recommend running WireCloud based on an Apache Web Server. However, it is also possible to run it using the Django internal web server, just for testing purposes. In any case, WireCloud should be configured for being served over HTTPS, this can be accomplished in severals ways as you can use another server as frontend and configure the encryption on that server. We recommend you to visit the [Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) page from mozilla for more information about how to configure efficiently your https security parameters.
+We recommend running WireCloud based on an Apache Web Server. However, it is
+also possible to run it using the Django internal web server, just for testing
+purposes. In any case, WireCloud should be configured for being served over
+HTTPS, this can be accomplished in severals ways as you can use another server
+as frontend and configure the encryption on that server. We recommend you to
+visit the [Security/Server Side
+TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) page from mozilla for
+more information about how to configure efficiently your https security
+parameters.
 
 #### Running WireCloud using the Django internal web server
 
@@ -525,7 +562,12 @@ Once you have installed Apache and mod_wsgi you have to enable the latest:
 
     $ a2enmod wsgi
 
-The next step is the creation of a `VirtualHost` for WireCloud using the Apache's configuration files. On Debian and Ubuntu the configuration files for the VirtualHosts are stored at `/etc/apache2/sites-available` and enabled and disabled using `a2enmod` and `a2dissite`. The syntax of the `VirtualHost` definition depends on the version of Apache 2 of your system, so they are going to be described in different sections.
+The next step is the creation of a `VirtualHost` for WireCloud using the
+Apache's configuration files. On Debian and Ubuntu the configuration files for
+the VirtualHosts are stored at `/etc/apache2/sites-available` and enabled and
+disabled using `a2enmod` and `a2dissite`. The syntax of the `VirtualHost`
+definition depends on the version of Apache 2 of your system, so they are going
+to be described in different sections.
 
 ##### Installing Apache 2 on CentOS/RedHat
 
@@ -535,69 +577,73 @@ The next step is the creation of a `VirtualHost` for WireCloud using the Apache'
 
 You can use this template as starting point:
 
-    <VirtualHost *:80>
-            ...
-            ### Wirecloud ###
-            WSGIPassAuthorization On
+```ApacheConf
+<VirtualHost *:80>
+        ...
+        ### Wirecloud ###
+        WSGIPassAuthorization On
 
-            WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud> user=<wirecloud_user> group=<wirecloud_group>
-            WSGIScriptAlias / <path_to_wirecloud_wsgi.py>
-            <Location />
-                    WSGIProcessGroup wirecloud
-            </Location>
+        WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud> user=<wirecloud_user> group=<wirecloud_group>
+        WSGIScriptAlias / <path_to_wirecloud_wsgi.py>
+        <Location />
+                WSGIProcessGroup wirecloud
+        </Location>
 
-            Alias /static <path_to_wirecloud>/static
-            <Location "/static">
-                    SetHandler None
-                    <IfModule mod_expires.c>
-                            ExpiresActive On
-                            ExpiresDefault "access plus 1 week"
-                    </IfModule>
-                    <IfModule mod_headers.c>
-                            Header append Cache-Control "public"
-                    </IfModule>
-            </Location>
-            <Location "/static/cache">
-                    <IfModule mod_expires.c>
-                            ExpiresDefault "access plus 3 years"
-                    </IfModule>
-            </Location>
-            ...
-    </VirtualHost>
+        Alias /static <path_to_wirecloud>/static
+        <Location "/static">
+                SetHandler None
+                <IfModule mod_expires.c>
+                        ExpiresActive On
+                        ExpiresDefault "access plus 1 week"
+                </IfModule>
+                <IfModule mod_headers.c>
+                        Header append Cache-Control "public"
+                </IfModule>
+        </Location>
+        <Location "/static/cache">
+                <IfModule mod_expires.c>
+                        ExpiresDefault "access plus 3 years"
+                </IfModule>
+        </Location>
+        ...
+</VirtualHost>
+```
 
 Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`
 and you created a `wirecloud` user on the system, you should have something
 similar to:
 
-    <VirtualHost *:80>
-            ...
-            ### Wirecloud ###
-            WSGIPassAuthorization On
+```ApacheConf
+<VirtualHost *:80>
+        ...
+        ### Wirecloud ###
+        WSGIPassAuthorization On
 
-            WSGIDaemonProcess wirecloud python-path=/opt/wirecloud_instance user=wirecloud group=wirecloud
-            WSGIScriptAlias / /opt/wirecloud_instance/wirecloud_instance/wsgi.py
-            <Location />
-                    WSGIProcessGroup wirecloud
-            </Location>
+        WSGIDaemonProcess wirecloud python-path=/opt/wirecloud_instance user=wirecloud group=wirecloud
+        WSGIScriptAlias / /opt/wirecloud_instance/wirecloud_instance/wsgi.py
+        <Location />
+                WSGIProcessGroup wirecloud
+        </Location>
 
-            Alias /static /opt/wirecloud_instance/static
-            <Location "/static">
-                    SetHandler None
-                    <IfModule mod_expires.c>
-                            ExpiresActive On
-                            ExpiresDefault "access plus 1 week"
-                    </IfModule>
-                    <IfModule mod_headers.c>
-                            Header append Cache-Control "public"
-                    </IfModule>
-            </Location>
-            <Location "/static/cache">
-                    <IfModule mod_expires.c>
-                            ExpiresDefault "access plus 3 years"
-                    </IfModule>
-            </Location>
-            ...
-    </VirtualHost>
+        Alias /static /opt/wirecloud_instance/static
+        <Location "/static">
+                SetHandler None
+                <IfModule mod_expires.c>
+                        ExpiresActive On
+                        ExpiresDefault "access plus 1 week"
+                </IfModule>
+                <IfModule mod_headers.c>
+                        Header append Cache-Control "public"
+                </IfModule>
+        </Location>
+        <Location "/static/cache">
+                <IfModule mod_expires.c>
+                        ExpiresDefault "access plus 3 years"
+                </IfModule>
+        </Location>
+        ...
+</VirtualHost>
+```
 
 Once you have the site enabled, restart Apache
 
@@ -605,93 +651,101 @@ Once you have the site enabled, restart Apache
 
 and go to `http://computer_name_or_IP_address/` to get into WireCloud.
 
-See the [Apache 2.2 documentation about how to configure the TLS encryption](http://httpd.apache.org/docs/2.2/ssl/ssl_howto.html) and the [Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) page from mozilla for more information about how to configure efficiently your https security parameters.
+See the [Apache 2.2 documentation about how to configure the TLS
+encryption](http://httpd.apache.org/docs/2.2/ssl/ssl_howto.html) and the
+[Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS)
+page from mozilla for more information about how to configure efficiently your
+https security parameters.
 
 
 ##### Apache 2.4
 
 You can use this template as starting point:
 
-    <VirtualHost *:80>
-            ...
+```ApacheConf
+<VirtualHost *:80>
+        ...
 
-            <Directory <path_to_wirecloud>/<instance_name>
-                    <Files "wsgi.py">
-                            Require all granted
-                            Order allow,deny
-                            Allow from all
-                    </Files>
-            </Directory>
-            ### Wirecloud ###
-            WSGIPassAuthorization On
+        <Directory <path_to_wirecloud>/<instance_name>
+                <Files "wsgi.py">
+                        Require all granted
+                        Order allow,deny
+                        Allow from all
+                </Files>
+        </Directory>
+        ### Wirecloud ###
+        WSGIPassAuthorization On
 
-            WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud> user=<wirecloud_user> group=<wirecloud_group>
-            WSGIScriptAlias / <path_to_wirecloud_wsgi.py>
-            <Location />
-                    WSGIProcessGroup wirecloud
-            </Location>
+        WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud> user=<wirecloud_user> group=<wirecloud_group>
+        WSGIScriptAlias / <path_to_wirecloud_wsgi.py>
+        <Location />
+                WSGIProcessGroup wirecloud
+        </Location>
 
-            Alias /static <path_to_wirecloud>/static
-            <Location "/static">
-                    SetHandler None
-                    <IfModule mod_expires.c>
-                            ExpiresActive On
-                            ExpiresDefault "access plus 1 week"
-                    </IfModule>
-                    <IfModule mod_headers.c>
-                            Header append Cache-Control "public"
-                    </IfModule>
-            </Location>
-            <Location "/static/cache">
-                    <IfModule mod_expires.c>
-                            ExpiresDefault "access plus 3 years"
-                    </IfModule>
-            </Location>
-            ...
-    </VirtualHost>
+        Alias /static <path_to_wirecloud>/static
+        <Location "/static">
+                SetHandler None
+                <IfModule mod_expires.c>
+                        ExpiresActive On
+                        ExpiresDefault "access plus 1 week"
+                </IfModule>
+                <IfModule mod_headers.c>
+                        Header append Cache-Control "public"
+                </IfModule>
+        </Location>
+        <Location "/static/cache">
+                <IfModule mod_expires.c>
+                        ExpiresDefault "access plus 3 years"
+                </IfModule>
+        </Location>
+        ...
+</VirtualHost>
+```
 
 Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`
 and you created a `wirecloud` user on the system, you should have something
 similar to:
 
-    <VirtualHost *:80>
-            ...
+```ApacheConf
+<VirtualHost *:80>
+        ...
 
-            <Directory /opt/wirecloud_instance/wirecloud_instance>
-                    <Files "wsgi.py">
-                            Require all granted
-                            Order allow,deny
-                            Allow from all
-                    </Files>
-            </Directory>
+        <Directory /opt/wirecloud_instance/wirecloud_instance>
+                <Files "wsgi.py">
+                        Require all granted
+                        Order allow,deny
+                        Allow from all
+                </Files>
+        </Directory>
 
-            ### Wirecloud ###
-            WSGIPassAuthorization On
+        ### Wirecloud ###
+        WSGIPassAuthorization On
 
-            WSGIDaemonProcess wirecloud python-path=/opt/wirecloud_instance
-            WSGIScriptAlias / /opt/wirecloud_instance/wirecloud_instance/wsgi.py
-            <Location />
-                    WSGIProcessGroup wirecloud
-            </Location>
+        WSGIDaemonProcess wirecloud python-path=/opt/wirecloud_instance
+        WSGIScriptAlias / /opt/wirecloud_instance/wirecloud_instance/wsgi.py
+        <Location />
+                WSGIProcessGroup wirecloud
+        </Location>
 
-            Alias /static /opt/wirecloud_instance/static
-            <Location "/static">
-                    SetHandler None
-                    <IfModule mod_expires.c>
-                            ExpiresActive On
-                            ExpiresDefault "access plus 1 week"
-                    </IfModule>
-                    <IfModule mod_headers.c>
-                            Header append Cache-Control "public"
-                    </IfModule>
-            </Location>
-            <Location "/static/cache">
-                    <IfModule mod_expires.c>
-                            ExpiresDefault "access plus 3 years"
-                    </IfModule>
-            </Location>
-            ...
-    </VirtualHost>
+        Alias /static /opt/wirecloud_instance/static
+        <Location "/static">
+                SetHandler None
+                <IfModule mod_expires.c>
+                        ExpiresActive On
+                        ExpiresDefault "access plus 1 week"
+                </IfModule>
+                <IfModule mod_headers.c>
+                        Header append Cache-Control "public"
+                </IfModule>
+        </Location>
+        <Location "/static/cache">
+                <IfModule mod_expires.c>
+                        ExpiresDefault "access plus 3 years"
+                </IfModule>
+        </Location>
+        ...
+</VirtualHost>
+```
 
 Once you have the site enabled, restart Apache
 
@@ -699,7 +753,11 @@ Once you have the site enabled, restart Apache
 
 and go to `http://computer_name_or_IP_address/` to get into WireCloud.
 
-See the [Apache 2.4 documentation about how to configure the TLS encryption](http://httpd.apache.org/docs/2.2/ssl/ssl_howto.html) and the [Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS) page from mozilla for more information about how to configure efficiently your https security parameters..
+See the [Apache 2.4 documentation about how to configure the TLS
+encryption](http://httpd.apache.org/docs/2.2/ssl/ssl_howto.html) and the
+[Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS)
+page from mozilla for more information about how to configure efficiently your
+https security parameters.
 
 
 ### FAQ
@@ -780,18 +838,22 @@ Remove `MIDDLEWARE` configuration from your `settings.py` file.
 
 ### Administration commands
 
-WireCloud provides a set of command line tools that can be used from the command line (manually or by scripts) on the folder of the WireCloud instance.
+WireCloud provides a set of command line tools that can be used from the command
+line (manually or by scripts) on the folder of the WireCloud instance.
 
 #### addtocatalogue
 
-Adds one or more packaged mashable application components into the catalogue. At least one of the following flags:
+Adds one or more packaged mashable application components into the catalogue. At
+least one of the following flags:
 
 - **redeploy**
   Replace mashable application components files with the new ones.
 - **users**=USERS
-  Comma separated list of users that will obtain access to the uploaded mashable application components
+  Comma separated list of users that will obtain access to the uploaded mashable
+  application components
 - **groups**=GROUPS
-  Comma separated list of groups that will obtain access rights to the uploaded mashable application components
+  Comma separated list of groups that will obtain access rights to the uploaded
+  mashable application components
 - **public**
   Allow any user to access the mashable application components.
 
@@ -927,20 +989,24 @@ instructions if you are using the IdM integration:
 1. Install `python-social-auth` (e.g. `pip install python-social-auth`)
 2. Edit your `settings.py` making the following changes:
     1. replace `social_auth` with `social.apps.django_app.default` in the
-    `INSTALLED_APPS` setting.
+    `INSTALLED_APPS` setting
     2. replace `wirecloud.fiware.social_auth_backend.FiwareBackend` with
     `wirecloud.fiware.social_auth_backend.FIWAREOAuth2`
     3. rename `FIWARE_APP_ID` to `SOCIAL_AUTH_FIWARE_KEY` and
-    `FIWARE_APP_SECRET` to `SOCIAL_AUTH_FIWARE_SECRET`.
+    `FIWARE_APP_SECRET` to `SOCIAL_AUTH_FIWARE_SECRET`
 3. Edit your `urls.py` file and replace:
 
+    ```python
         url(r'', include('social_auth.urls')),
+    ```
 
     with
 
+    ```python
         url('', include('social.apps.django_app.urls', namespace='social'))
+    ```
 
-4. Now you can remove django-social-auth :). E.g. `pip uninstal
+4. Now you can remove django-social-auth :). E.g. `pip uninstall
    django-social-auth`.
 
 ### From 0.6.x to 0.7.x
