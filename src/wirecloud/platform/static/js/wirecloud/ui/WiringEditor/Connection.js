@@ -187,7 +187,7 @@
                     this.btnRemove
                         .replaceClassName("btn-remove", "btn-share")
                         .iconClass("icon-plus-sign")
-                        .title(gettext("Share"));
+                        .title(gettext("Add"));
                 } else {
                     this.btnRemove
                         .replaceClassName('btn-share', 'btn-remove')
