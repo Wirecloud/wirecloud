@@ -208,6 +208,21 @@
                 }
             },
             wiringView: {
+                btn_create_behaviour: function btn_create_behaviour() {
+                    return function () {
+                        return document.querySelector(".panel-behaviours .panel-options .btn-create");
+                    };
+                },
+                btn_enable_behaviours: function btn_enable_behaviours() {
+                    return function () {
+                        return document.querySelector(".panel-behaviours .panel-options .btn-enable");
+                    };
+                },
+                btn_show_behaviours: function btn_show_behaviours() {
+                    return function () {
+                        return document.querySelector(".wc-toolbar .btn-list-behaviours");
+                    };
+                },
                 behaviour_engine: function behaviour_engine() {
                     return function () {
                         return LayoutManagerFactory.getInstance().viewsByName.wiring.behaviourEngine;
