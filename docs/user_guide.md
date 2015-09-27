@@ -486,13 +486,13 @@ the previous section into two behaviours:
   composed of the `NGSI Source`, `NGSI Entity To PoI` and `Map Viewer` components
   as well as the connections between those components:
 
-  ![*Show lampposts on map* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/intro1.png]
+  ![*Show lampposts on map* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/intro1.png)
 
 - The second one can be called: **Show lamppost details**. This behaviour is
-  composed of the `Map Viewer`, `History Module to Linear Graph` and `Linear
-  Graph` components as well as the connections between those components: 
+  composed of the `Map Viewer`, `History Module to Linear Graph` and
+  `Linear Graph` components as well as the connections between those components:
 
-  ![*Show lampposts details* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/intro2.png]
+  ![*Show lampposts details* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/intro2.png)
 
 > Take into account that components and connections can be present in more than
 > one behaviour. For example, in the previous example the *Map Viewer* widgets
@@ -537,7 +537,7 @@ connections previously added into the wiring configuration.
 > If you disable the behaviour engine, all components and connections will be
 > squashed into a single view.
 >
-> Take into account that this operation cannot be undo.
+> Take into account that this operation cannot be undone.
 
 ### Using the behaviour oriented wiring user interface
 
@@ -557,7 +557,7 @@ of clicking on the panel representing the behaviour.
 
 The other important thing to notice is that there are some "faded" components
 inside the wiring canvas (e.g the ***TODO*** widget). Background components are
-faded because they don't form part of the current behaviour, although they form
+faded because they do not form part of the active behaviour, although they form
 part of other behaviours.
 
 #### Adding components and creating connections
@@ -568,25 +568,64 @@ side panel. The only thing you have to take into account is that those
 components are only added into the active behaviour.
 
 If you want to use a component already involved in other behaviour, you can use
-the ***TODO*** button:
+the *Add* button of the background component you want to include:
 
-![](images/user_guide/behaviour_oriented_wiring/component_share_button.png)
+![Component *Add* button](images/user_guide/behaviour_oriented_wiring/component_share_button.png)
 
 The same applies to the connections, if you create a new connection, that
 connection is added only into the active behaviour. If you want to include a
-connection already available on other behaviour, you can click on the ***TODO***
-button:
+connection already available on other behaviour, you can click on the **Add**
+button of the background connection:
 
-![](images/user_guide/behaviour_oriented_wiring/connection_share_button.png)
+![Connection *Add* button](images/user_guide/behaviour_oriented_wiring/connection_share_button.png)
+
+> **Note:** If a background connection implies background components, adding
+> that connection will also add that background components into the active
+> behaviour.
 
 #### Creating a new behaviour
 
 You can create new behaviours by clicking on the *Create behaviour* button
 available on the list behaviour side panel: 
 
-![]()
+![*Create* behaviour button](images/user_guide/behaviour_oriented_wiring/create_behaviour_button.png)
 
- 
+![Behaviour form](images/user_guide/behaviour_oriented_wiring/behaviour_form.png)
+
+If you want to edit the title and the description of a behaviour, you can open
+the preferences menu and click on the *Settings* option:
+
+![Behaviour *Settings* option](images/user_guide/behaviour_oriented_wiring/behaviour_settings_option.png)
+
+### Removing behaviours
+
+You can always remove a behaviour at any time, except when there is only one
+behaviour (at least one behaviour must be present in a wiring configuration when
+the behaviour engine is enabled). To do so, click on the *Remove* button of the
+behaviour you want to remove:
+
+![*Remove* behaviour button](images/user_guide/behaviour_oriented_wiring/remove_behaviour_button.png)
+
+> **Note:** All the components not used on other behaviour will be removed from
+> the wiring configuration. Also take into account that this operation cannot be
+> undone.
+
+### Removing components and connections
+
+To remove a component from a behaviour, click on the *Remove* button:
+
+![*Remove* component button](images/user_guide/behaviour_oriented_wiring/remove_component.png)
+
+Components are only totaly removed from the wiring configuration when they are
+not used in any of the available behaviours.
+
+The same applies to connections, you can remove them from the active behaviour
+using the *Remove* button:
+
+![*Remove* component button](images/user_guide/behaviour_oriented_wiring/remove_component.png)
+
+Again, connections are remove from the wiring configuration when the are removed
+from all the behaviours.
 
 Sharing your mashups
 --------------------
