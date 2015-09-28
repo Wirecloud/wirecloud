@@ -83,6 +83,7 @@
         if (msg) {
             this.popup = new Wirecloud.ui.Tutorial.PopUp(this.next_element, {
                 highlight: true,
+                user: true,
                 msg: msg,
                 position: this.nextPosition,
                 closable: !this.withoutCloseButton

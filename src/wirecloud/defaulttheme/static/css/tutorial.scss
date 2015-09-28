@@ -1,3 +1,5 @@
+@import 'variables';
+
 .controlLayerUp, .controlLayerDown, .controlLayerLeft, .controlLayerRight {
     top: 0;
     left: 0;
@@ -63,8 +65,8 @@
     max-width: 500px;
     display: block;
     margin: 0px;
-    padding: 4px 26px 4px 10px;
-    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    padding: $padding-vertical-base ($padding-horizontal-base + 16) $padding-vertical-base $padding-horizontal-base;
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
     z-index: 200100;
     box-sizing: border-box;
 }
@@ -82,11 +84,12 @@
 
 .pop-up .pop-up-arrow {
     position: absolute;
-    color: #2390B0;
+    color: $state-primary-bg;
+    background-color: white;
     font-size: 22px;
     line-height: 16px;
-    background-color: #fff;
-    border-radius: 50%;
+    border-radius: 2px;
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
     pointer-events: none;
 }
 

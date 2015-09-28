@@ -43,7 +43,13 @@
         }
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = 'pop-up alert alert-info';
+        this.wrapperElement.className = 'pop-up alert';
+
+        if (options.user) {
+            this.wrapperElement.classList.add('alert-warning');
+        } else {
+            this.wrapperElement.classList.add('alert-info');
+        }
 
         // Close button
         if (options.closable) {

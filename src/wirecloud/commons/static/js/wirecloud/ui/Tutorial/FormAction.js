@@ -149,6 +149,7 @@
                 highlight: false,
                 msg: this.actionMsgs[i],
                 position: this.actionElementsPos[i],
+                user: true,
                 closable: false
             });
 
