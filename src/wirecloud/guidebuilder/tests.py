@@ -28,7 +28,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
-from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case, DynamicWebServer, LocalFileSystemServer, RealWebServer
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case, DynamicWebServer, LocalFileSystemServer, RealWebServer, uses_extra_workspace
 from wirecloud.catalogue.models import CatalogueResource
 
 __test__ = 'wirecloud.guidebuilder' in settings.INSTALLED_APPS
@@ -47,22 +47,39 @@ list_resources = ['CoNWeT_simple-history-module2linear-graph_2.3.2.wgt',
 # Common functions
 
 
-def image_path(name='Wirecloud_UG.png', extra=None, resource=False):
+def image_path(name='Wirecloud_UG.png', extra=None, resource=False, prepath=None):
     if extra is not None:
         name = name if not name.endswith('.png') else name[:-4]
-        name = '{}_{}.png'.format(name, extra)
+        name = '{}_{}.png'.format(name, extra) if name != "" else "{}.png".format(extra)
     name = name if name.endswith('.png') else "{}.png".format(name)
     if not resource:
         basepath = os.path.join(settings.BASEDIR, USER_GUIDE_IMAGES_PATH)
     else:
         basepath = os.path.join(os.path.dirname(__file__), 'resources')
+    if prepath is not None:
+        basepath = os.path.join(basepath, prepath)
+        if not os.path.exists(basepath):
+            os.mkdir(basepath)
     return os.path.join(basepath, name)
 
 
-def take_capture(driver, name='Wirecloud_UG.png', extra=None):
-    path = image_path(name, extra)
+def take_capture(driver, name='Wirecloud_UG.png', extra=None, prepath = None):
+    path = image_path(name, extra, prepath=prepath)
     driver.save_screenshot(path)
     return path
+
+
+def midd_take_capture(*args, **kargs):
+    name = kargs.get("name") or ""
+    if kargs.get("name"):
+        kargs.pop("name")
+    prepath = kargs.get("prepath")
+    if kargs.get("prepath"):
+        kargs.pop("prepath")
+    if len(args) > 1: # args have name
+        name = args[1]
+        args = (args[0],) + args[2:]
+    return globals()["take_capture"](*args, name=name, prepath=prepath, **kargs)
 
 
 def merge_images(img1, img2, position):
@@ -196,7 +213,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         WirecloudSeleniumTestCase.setUpClass.__func__(cls)
 
     def setUp(self):
-
         User.objects.get(username='admin').social_auth.create(provider='fiware', uid='admin', extra_data={"access_token": "BdNiSTjfjsZJfdxyeYsTqDrIZyFUxa"})
         components = ['TestOperator', 'test-mashup', 'Test', 'test-mashup-dependencies']
         for c in components:
@@ -219,9 +235,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             'GET', '/offering/store/FIWARE/offerings', {'content': self.store2_offerings})
 
     def configure_ngsi_source(self, source):
-        source.find_element_by_css_selector('.icon-cog').click()
-        get_by_text(self.driver.find_element_by_css_selector(
-            '.se-popup-menu.se-popup-menu-bottom-left'), '.se-popup-menu-item', 'Settings').click()
+        source.show_settings_modal()
+
         dialog = get_first_displayed(self.driver, '.window_menu')
         self.fill_form_input(dialog.find_element_by_css_selector('input[name="ngsi_server"]'),
                              'http://orion.lab.fiware.org:1026/')
@@ -234,9 +249,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         dialog.find_element_by_css_selector('.btn-primary').click()
 
     def configure_ngsi_entity(self, source):
-        source.find_element_by_css_selector('.icon-cog').click()
-        get_by_text(self.driver.find_element_by_css_selector(
-            '.se-popup-menu.se-popup-menu-bottom-left'), '.se-popup-menu-item', 'Settings').click()
+        source.show_settings_modal()
         dialog = get_first_displayed(self.driver, '.window_menu')
         self.fill_form_input(dialog.find_element_by_css_selector('input[name="coordinates_attr"]'),
                              'Latitud, Longitud')
@@ -244,6 +257,9 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_creating_new_workspace(self):
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath="create_workspace", **kargs)
+
         # Intitialization
         self.driver.set_window_size(1024, 768)
         self.login()
@@ -307,6 +323,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_browsing_marketplace(self):
+        prepath = "browsing_marketplace"
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath=prepath, **kargs)
+
         self.driver.set_window_size(1024, 768)
         self.login()
 
@@ -333,7 +353,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_down(imgp, popup_menu.element, 80)
 
             # Copy the previous to other one that uses it after
-            shutil.copy2(imgp, image_path(extra=10))
+            shutil.copy2(imgp, image_path(extra=10, prepath=prepath))
 
             # Add marketplace
             m_menu = popup_menu.get_entry('Add new marketplace')
@@ -393,7 +413,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             # Click in a widget for details
             container = get_first_displayed(
-                self.driver, '.se-container.resource_list')
+                # self.driver, '.se-bl-center-container .resource_list')
+                self.driver, '.resource_list')
             widg = get_by_contains(
                 container, '.resource.click_for_details', 'widget')
             # widg = container.find_element_by_css_selector('.resource.click_for_details')
@@ -432,6 +453,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_building_mashup(self):
+        prepath = "building_mashup"
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath=prepath, **kargs)
+
         self.driver.set_window_size(1024, 768)
         self.login()
         self.create_workspace('History Info')
@@ -448,8 +473,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Add to workspace
         with self.wallet as wallet:
             resource = wallet.search_in_results('Linear Graph')
-            
-            btn = resource.element.find_element_by_css_selector('.mainbutton') 
+
+            btn = resource.element.find_element_by_css_selector('.mainbutton')
             ActionChains(self.driver).move_to_element(btn).perform()
             time.sleep(0.3) # wait tooltip animation
             imgp = take_capture(self.driver, extra=20)
@@ -529,101 +554,115 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
         crop_down(imgp, btn, 60)
 
+        prepath = "wiring"
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath=prepath, **kargs)
+
         with self.wiring_view:
+            ActionChains(self.driver).move_by_offset(20, 20).perform()
+            time.sleep(0.2)
             imgp = take_capture(self.driver, extra='Empty_Wiring_Operators')
             crop_down(
-                imgp, self.driver.find_element_by_css_selector('.wiringEmptyBox'), 40)
+                # imgp, self.driver.find_element_by_css_selector('.wiringEmptyBox'), 40)
+                imgp, self.driver.find_element_by_css_selector(".alert.alert-info.se-alert-static-top"), 40)
 
-            panel = self.driver.find_element_by_css_selector(
-                '.se-container.se-bl-west-container.menubar')
-            label_widg = get_by_text(panel, '.se-container.title', 'Widgets')
-            # label_widg.click()
-            operators_widg = get_by_text(
-                panel, '.se-container.title', 'Operators')
-            operators_widg.click()
+            # Click in Find Components
+            dialog = self.driver.find_element_by_css_selector('.wirecloud_app_bar')
+            btn = dialog.find_element_by_css_selector('.wc-toolbar .icon-archive')
+            ActionChains(self.driver).move_to_element(btn).perform()
+            time.sleep(0.3)
+            imgp = take_capture(self.driver, extra="Open_Find_Components")
+            add_pointer(imgp, get_position(btn, 0.8, 0.5))
+            crop_down(imgp, btn, 60)
 
-            # Dragging the NGSI source operator
-            ent_oper = get_by_text(
-                panel, '.se-container.ioperator', 'NGSI source')
-            # pos = get_position(ent_oper, 1.0, 1.0)
-            ActionChains(self.driver).click_and_hold(
-                ent_oper).move_by_offset(40, 20).perform()
-            imgp = take_capture(self.driver, extra='Wiring_NGSISource_drag')
-            clon = get_by_text(
-                self.driver, '.se-container.ioperator.clon', 'NGSI source')
-            add_pointer(imgp, get_position(clon, 0.5, 0.6), False)
-            crop_down(imgp, clon, 100)
+            with self.wiring_view.component_sidebar as sidebar:
+                # Create operator
+                panel = self.driver.find_element_by_css_selector(".panel.panel-default.panel-components")
+                btn = panel.find_element_by_css_selector(".se-btn.btn-create")
+                ActionChains(self.driver).move_to_element(btn).perform()
+                time.sleep(0.3)
+                imgp = take_capture(self.driver, extra="Click_Create_Operator")
+                add_pointer(imgp, get_position(btn, 0.8, 0.5))
+                crop_down(imgp, btn, 60)
 
-            # NGSI source added
-            container = self.driver.find_element_by_css_selector('.se-container.se-bl-center-container.grid')
-            offset = container.location['y'] - clon.location['y'] - 10;
-            ActionChains(self.driver).move_by_offset(160, offset).release().perform()
-            time.sleep(0.2)
-            entservc = get_by_contains(container, '.se-container.ioperator', 'NGSI source')
-            imgp = take_capture(self.driver, extra='Wiring_NGSISource')
-            add_pointer(imgp, get_position(entservc, 0.5, 0.5), False)
-            crop_down(imgp, entservc, 250)
+                sidebar.create_operator("NGSI source")
 
-            conf_widg = get_by_contains(
-                container, '.se-container.ioperator', 'NGSI source')
+                # Dragging the NGSI source operator
+                ent_oper = sidebar.find_operator_group_by_title("NGSI source").components[0].element
+                ActionChains(self.driver).move_to_element(ent_oper).perform()
 
-            # Add map iwidget
-            label_widg.click()
-            map_op = get_by_text(panel, '.se-container.iwidget', 'Map Viewer')
-            move_elem(self.driver, map_op, 480, -90)
-            # ActionChains(self.driver).click_and_hold(map_op).move_by_offset(450, -90).perform()
-            # ActionChains(self.driver).release().perform()
-            mapservc = get_by_contains(
-                container, '.se-container.iwidget', 'Map Viewer')
-            imgp = take_capture(
-                self.driver, extra='Wiring_NGSISource_MapViewer')
-            add_pointer(imgp, get_position(mapservc, 0.5, 0.15), False)
-            crop_down(imgp, mapservc, 10)
+                time.sleep(0.3)
 
-            labelprovideent = get_by_text(
-                entservc, '.labelDiv', 'Provide entity')
-            ActionChains(self.driver).move_to_element(
-                labelprovideent).perform()
-            time.sleep(0.6)  # wait for color transition
-            imgp = take_capture(
-                self.driver, extra='Wiring_NGSISource_MapViewer_rec')
-            add_image(
-                imgp, get_position(labelprovideent, 0.7, 0.7), 'popup1.png')
-            add_pointer(imgp, get_position(labelprovideent, 0.6, 0.5), False)
-            crop_down(imgp, mapservc, 10)
+                imgp = take_capture(self.driver, extra="Wiring_NGSISource_Show")
+                add_pointer(imgp, get_position(ent_oper, 0.8, 0.5))
+                crop_down(imgp, ent_oper, 60)
 
-            operators_widg.click()
-            poi_oper = get_by_text(
-                panel, '.se-container.ioperator', 'NGSI Entity To PoI')
-            move_elem(self.driver, poi_oper, 200, 0)
+                # ActionChains(self.driver).click_and_hold(ent_oper).move_by_offset(40, 20).perform()
+                ActionChains(self.driver).click_and_hold(ent_oper).perform()
+                imgp = take_capture(self.driver, extra='Wiring_NGSISource_drag')
 
-            poiservc = get_by_contains(
-                container, '.se-container.ioperator', 'NGSI Entity To PoI')
+                clon = get_by_contains(self.driver, ".panel.panel-default.component-draggable.component-operator.cloned.dragging", "NGSI source")
+                add_pointer(imgp, get_position(clon, 0.5, 0.6), False)
+                crop_down(imgp, clon, 100)
 
-            # configure
-            self.configure_ngsi_source(conf_widg)
-            self.configure_ngsi_entity(poiservc)
+                # NGSI source added
+                ActionChains(self.driver).move_to_element_with_offset(sidebar.section_diagram, 10, 10).release().perform()
+                time.sleep(0.2)
+
+                # NGSI source added
+                entservc = get_by_contains(self.driver, ".panel.panel-default.component-draggable.component-operator", "NGSI source")
+                imgp = take_capture(self.driver, extra='Wiring_NGSISource')
+                add_pointer(imgp, get_position(entservc, 0.5, 0.5), False)
+                crop_down(imgp, entservc, 250)
+
+                conf_widg = get_by_contains(self.driver, ".panel.panel-default.component-draggable.component-operator", "NGSI source")
+
+                # Add map iwidget
+                mapsercvcomp = sidebar.add_component("widget", "Map Viewer", 500, 10)
+                mapservc = mapsercvcomp.element
+                imgp = take_capture(self.driver, extra='Wiring_NGSISource_MapViewer')
+                add_pointer(imgp, get_position(mapservc, 0.5, 0.15), False)
+                crop_down(imgp, mapservc, 10)
+
+
+                # Over label
+                labelprovideent = get_by_text(entservc, '.endpoint', 'Provide entity')
+                ActionChains(self.driver).move_to_element(labelprovideent).perform()
+                time.sleep(0.6)  # wait for color transition
+                imgp = take_capture(self.driver, extra='Wiring_NGSISource_MapViewer_rec')
+                # add_image(imgp, get_position(labelprovideent, 0.7, 0.7), 'popup1.png')
+                add_pointer(imgp, get_position(labelprovideent, 0.6, 0.5), False)
+                crop_down(imgp, mapservc, 10)
+
+                sidebar.create_operator("NGSI Entity To PoI")
+                poi_temp = sidebar.find_operator_group_by_title("NGSI Entity To PoI").components[0].element
+                ActionChains(self.driver).click_and_hold(poi_temp).move_to_element_with_offset(sidebar.section_diagram, -30, 210).release().perform()
+                time.sleep(0.2)
+
+                poi_oper_w = sidebar._find_component_by_title("operator", "NGSI Entity To PoI")
+                poiservc = poi_oper_w.element
+                conf_widg = sidebar._find_component_by_title("operator", "NGSI source")
+
+                # configure
+                self.configure_ngsi_source(conf_widg)
+                self.configure_ngsi_entity(poi_oper_w)  # poiservc)
 
             imgp = take_capture(self.driver, extra='Wiring_NGSIEntity2PoI')
             add_pointer(imgp, get_position(poiservc, 0.5, 0.45), False)
             crop_down(imgp, mapservc, 10)
 
-            ActionChains(self.driver).move_to_element(
-                labelprovideent).perform()
+            ActionChains(self.driver).move_to_element(labelprovideent).perform()
             time.sleep(0.6)  # wait for color transition
             imgp = take_capture(self.driver, extra='Wiring_NGSIEntity2PoI_rec')
             add_pointer(imgp, get_position(labelprovideent, 0.6, 0.5), False)
             crop_down(imgp, mapservc, 10)
 
             # PoI connection
-            fromc = labelprovideent.find_element_by_css_selector(
-                '.anchor.icon-circle')
-            labelentity = get_by_text(poiservc, '.labelDiv', 'Entity')
-            toc = labelentity.find_element_by_css_selector(
-                '.anchor.icon-circle')
+            fromc = labelprovideent.find_element_by_css_selector('.endpoint-anchor')
+            labelentity = get_by_text(poiservc, '.endpoint', 'Entity')
+            toc = labelentity.find_element_by_css_selector('.endpoint-anchor')
 
-            ActionChains(self.driver).click_and_hold(
-                fromc).move_by_offset(-100, 100).perform()
+            ActionChains(self.driver).click_and_hold(fromc).move_by_offset(-100, 100).perform()
             time.sleep(0.2)
             imgp = take_capture(
                 self.driver, extra='Wiring_NGSIEntity2PoI_connection')
@@ -637,13 +676,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             add_pointer(imgp, get_position(labelentity, 0.6, 0.5), False)
             crop_down(imgp, mapservc, 10)
 
-            labelPoI = get_by_text(poiservc, '.labelDiv', 'PoI')
-            fromc = labelPoI.find_element_by_css_selector(
-                '.anchor.icon-circle')
-            labelInsertUpdate = get_by_text(
-                mapservc, '.labelDiv', 'Insert/Update PoI')
-            toc = labelInsertUpdate.find_element_by_css_selector(
-                '.anchor.icon-circle')
+            labelPoI = get_by_text(poiservc, '.endpoint', 'PoI')
+            fromc = labelPoI.find_element_by_css_selector('.endpoint-anchor')
+            labelInsertUpdate = get_by_text(mapservc, '.endpoint', 'Insert/Update PoI')
+            toc = labelInsertUpdate.find_element_by_css_selector('.endpoint-anchor')
             ActionChains(self.driver).drag_and_drop(
                 fromc, toc).move_to_element(labelInsertUpdate).perform()
             time.sleep(0.6)
@@ -661,143 +697,132 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         with map_viewer_widget:
             self.driver.execute_script('mapViewer.mapPoiManager.selectPoi(new Poi({id:"OUTSMART.NODE_3509"}));mapViewer.map.setZoom(16);');
         with widget:
+        # with map_viewer_widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
         imgp = take_capture(self.driver, extra='MapViewerWithEntities')
 
-        with self.wiring_view:
-            container = self.driver.find_element_by_css_selector(
-                '.se-container.se-bl-center-container.grid')
-            poiservc = get_by_contains(
-                container, '.se-container.ioperator', 'NGSI Entity To PoI')
-            mapservc = get_by_contains(
-                container, '.se-container.iwidget', 'Map Viewer')
-            mapheader = mapservc.find_element_by_css_selector(
-                '.se-container.se-bl-north-container.header')
-            move_elem(self.driver, mapheader, 80, 100)
-            svgpath = container.find_elements_by_css_selector('.arrow')[1]
+        with self.wiring_view as wiring:
+            cons = wiring.find_connections()
+            mapservcw = wiring.find_component_by_title("widget", "Map Viewer")
+            mapservc = mapservcw.element
 
             #
             # Reshape arrow screenshots
             #
-            svgbody = svgpath.find_element_by_css_selector('.arrowbody')
-            svgbody.click()
 
-            svgselect = container.find_element_by_css_selector(
-                '.arrow.selected')
+            mycon = cons[1]  # Can we know exactly if it's this?
+            cprefs = mycon.display_preferences()
 
-            upball, downball = svgselect.find_elements_by_css_selector(
-                '.pullerBall')
-            move_elem(self.driver, upball, 50, -50)
-            # ActionChains(self.driver).click_and_hold(upball).move_by_offset(50, -50).release().perform()
-            upball, downball = svgselect.find_elements_by_css_selector(
-                '.pullerBall')
+            custb  = cprefs.get_entry("Customize")
+            ActionChains(self.driver).move_to_element(custb).perform()
+            time.sleep(0.2)
+            imgp = take_capture(self.driver, extra='reshape_arrow_pre')
+            add_pointer(imgp, get_position(custb, 0.3, 0.3), False)
+            crop_down(imgp, mapservc, 10)
+            # Captura reshape_arrow_pre
+            cprefs.click_entry("Customize")
+
+            editablecon = [x for x in wiring.find_connections() if "editable" in x.class_list][0]
+
+            upball, downball = editablecon.element.find_elements_by_css_selector(".handle-ball")
+
+            move_elem(self.driver, downball, 30, -30)
+            upball, downball = editablecon.element.find_elements_by_css_selector(".handle-ball")
             imgp = take_capture(self.driver, extra='reshape_arrow1')
             add_pointer(imgp, get_position(upball, 0.3, 0.3), False)
             crop_down(imgp, mapservc, 10)
 
-            move_elem(self.driver, downball, -50, 50)
-            # ActionChains(self.driver).click_and_hold(downball).move_by_offset(-50, 50).release().perform()
-            upball, downball = svgselect.find_elements_by_css_selector(
-                '.pullerBall')
+            move_elem(self.driver, downball, -30, 30)
+            editablecons = [x for x in wiring.find_connections() if "editable" in x.class_list]
+            if len(editablecons) == 0:
+                wiring.find_connections()[1].display_preferences().click_entry("Customize")
+                editablecon = [x for x in wiring.find_connections() if "editable" in x.class_list][0]
+
+            upball, downball = editablecon.element.find_elements_by_css_selector(".handle-ball")
             imgp = take_capture(self.driver, extra='reshape_arrow2')
             add_pointer(imgp, get_position(downball, 0.3, 0.3), False)
             crop_down(imgp, mapservc, 10)
 
-            container.find_element_by_css_selector('.canvas').click()
+            minb = [x for x in wiring.find_connections() if "editable" in x.class_list][0].display_preferences().get_entry("Stop customizing")
+            imgp = take_capture(self.driver, extra='reshape_arrow_stop')
+            add_pointer(imgp, get_position(minb, 0.3, 0.3), False)
+            crop_down(imgp, mapservc, 10)
+            minb.click()
 
             #
             # Delete arrow screenshots
             #
 
+            delcon = wiring.find_connections()[1]
+            rmbtn = delcon.btn_remove
+            ActionChains(self.driver).move_to_element(rmbtn.element).perform()
+            time.sleep(0.2)
             imgp = take_capture(self.driver, extra='delete_arrow1')
-            add_pointer(imgp, get_position(svgpath, 0.5, 0.4), False)
+            add_pointer(imgp, get_position(rmbtn.element, 0.5, 0.4), False)
             crop_down(imgp, mapservc, 10)
-
-            svgbody.click()
-
-            svgselect = container.find_element_by_css_selector('.arrow.selected')
-            delete_arrow_button = svgselect.find_element_by_css_selector('.closer')
-            imgp = take_capture(self.driver, extra='delete_arrow2')
-            add_pointer(imgp, get_position(delete_arrow_button, 0.5, 0.5), False)
-            crop_down(imgp, mapservc, 10)
-
-            delete_arrow_button.click()
-            connect_anchors(self.driver, poiservc, mapservc, 'PoI', 'Insert/Update PoI')
 
             #
             # Minimize screenshots
             #
 
-            entservc = get_by_contains(
-                container, '.se-container.ioperator', 'NGSI source')
-            setbutt = entservc.find_element_by_css_selector('.icon-cog')
-            setbutt.click()
-            popupmenu = self.driver.find_element_by_css_selector(
-                '.se-popup-menu.se-popup-menu-bottom-left')
-            minb = get_by_text(popupmenu, '.se-popup-menu-item', 'Minimize')
-            ActionChains(self.driver).move_to_element(minb).perform()
+            ngsisw = wiring.find_component_by_title("operator", "NGSI source")
+            collbtn = ngsisw.display_preferences().get_entry("Collapse")
+            ActionChains(self.driver).move_to_element(collbtn).perform()
+            time.sleep(0.2)
             imgp = take_capture(self.driver, extra='minimize_option')
-            add_pointer(imgp, get_position(minb, 0.7, 0.5), True)
+            add_pointer(imgp, get_position(collbtn, 0.3, 0.3), False)
             crop_down(imgp, mapservc, 10)
-            minb.click()
+            collbtn.click()
 
-            setbutt = poiservc.find_element_by_css_selector('.icon-cog')
-            setbutt.click()
-            popupmenu = self.driver.find_element_by_css_selector(
-                '.se-popup-menu.se-popup-menu-bottom-left')
-            minb = get_by_text(popupmenu, '.se-popup-menu-item', 'Minimize')
-            minb.click()
-            time.sleep(0.4)
+            wiring.find_component_by_title("operator", "NGSI Entity To PoI").collapse_endpoints()
+
             imgp = take_capture(self.driver, extra=33)
             crop_down(imgp, mapservc, 10)
 
+
+            movew = wiring.find_component_by_title("widget", "Map Viewer")
+            move_elem(self.driver, movew.element, -70, 0)
+
+            movew = wiring.find_component_by_title("operator", "NGSI Entity To PoI")
+            move_elem(self.driver, movew.element, -20, 0)
+
             # Configure all other elements
-            # Move minimized
-            mins_elems = container.find_elements_by_css_selector(
-                '.se-container.reducedInt')
-            map(lambda e, x: move_elem(self.driver, e, x, 0),
-                zip(mins_elems, [-100, -60]))
-            move_elem(self.driver, mapheader, -240, 0)
-            panel = self.driver.find_element_by_css_selector(
-                '.se-container.se-bl-west-container.menubar')
-            hm_oper = get_by_text(
-                panel, '.se-container.ioperator', 'History Module to Linear Graph')
-            move_elem(self.driver, hm_oper, 650, 100)
-            label_widg = get_by_text(panel, '.se-container.title', 'Widgets')
-            label_widg.click()
-            lg_oper = get_by_text(
-                panel, '.se-container.iwidget', 'Linear Graph')
-            move_elem(self.driver, lg_oper, 690, 0)
+            with wiring.component_sidebar as sidebar:
+                sidebar.add_component("widget", "Linear Graph", 500, 10)
+            with wiring.component_sidebar as sidebar:
+                sidebar.create_operator("History Module to Linear Graph")
+                sidebar.add_component("operator", "History Module to Linear Graph", 500, 100)
 
-            hm_wid = get_by_contains(
-                container, '.se-container.ioperator', 'History Module to Linear Graph')
-            lg_wid = get_by_contains(
-                container, '.se-container.iwidget', 'Linear Graph')
+            mapw = wiring.find_component_by_title("widget", "Map Viewer")
+            linw = wiring.find_component_by_title("widget", "Linear Graph")
+            histw = wiring.find_component_by_title("operator", "History Module to Linear Graph")
 
-            connect_anchors(self.driver, mapservc, hm_wid, 'PoI selected', 'Sensor Id')
-            connect_anchors(self.driver, hm_wid, lg_wid, 'Historic Info', 'Data in')
-            ActionChains(self.driver).move_to_element(self.driver.find_element_by_css_selector('.fiware-logo')).perform()
+            endp1 = mapw.find_endpoint_by_title("source", "PoI selected")
+            endp2 = histw.find_endpoint_by_title("target", "Sensor Id")
+            endp3 = histw.find_endpoint_by_title("source", "Historic Info")
+            endp4 = linw.find_endpoint_by_title("target", "Data in")
+
+            endp1.connect(endp2)
+            endp3.connect(endp4)
+
+            move_elem(self.driver, histw.element, 0, 35)
+
             take_capture(self.driver, extra='FinalWiring')
 
-            hm_wid.find_element_by_css_selector('.icon-cog').click()
-            popup_menu = self.driver.find_element_by_css_selector(
-                '.se-popup-menu.se-popup-menu-bottom-left')
-            setts_btn = get_by_text(
-                popup_menu, '.se-popup-menu-item', 'Settings')
+            popup = histw.display_preferences()
+            setts_btn = popup.get_entry("Settings")
             ActionChains(self.driver).move_to_element(setts_btn).perform()
             imgp = take_capture(self.driver, extra='HistoryOperatorSettings1')
-            box = create_box(popup_menu, 40)
+            box = create_box(popup.element, 40)
             box = (box[0], box[1], box[2] + 60, box[3])
             add_pointer(imgp, get_position(setts_btn, 0.7, 0.5), True)
             crop_image(imgp, *box)
-
             setts_btn.click()
+
             dialog = get_first_displayed(self.driver, '.window_menu')
-            # self.fill_form_input(dialog.find_element_by_css_selector('input[name="number_of_days"]'), '15')
             imgp = take_capture(self.driver, extra='HistoryOperatorSettings2')
             crop_image(imgp, *create_box(dialog))
-            dialog.find_element_by_css_selector(
-                'button.btn-primary.se-btn').click()
+            dialog.find_element_by_css_selector('button.btn-primary.se-btn').click()
 
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
@@ -815,11 +840,11 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
         imgp = take_capture(self.driver, extra=34)
 
-        lg_path = image_path(extra=35)
+        lg_path = image_path(extra=35, prepath=prepath)
         shutil.copy2(imgp, lg_path)
         crop_image(
             lg_path, *create_box(get_by_contains(self.driver, '.fade.iwidget.in', 'Linear Graph')))
-        shutil.copy2(lg_path, image_path(extra='LinearGraphZoom1'))
+        shutil.copy2(lg_path, image_path(extra='LinearGraphZoom1', prepath=prepath))
 
         # Public workspace!
         popup_menu = self.open_menu()
@@ -853,3 +878,19 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         dialog.find_element_by_css_selector('.btn-primary').click()
 
     test_building_mashup.tags = ('wirecloud-guide', 'ui-build-mashup')
+
+    @uses_extra_resources(list_resources)
+    @uses_extra_workspace('admin', 'CoNWeT_History_Info_2.0.wgt')
+    def test_behaviour_mashup(self):
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath="behaviour_oriented_wiring", **kargs)
+        self.driver.set_window_size(1024, 768)
+        self.login(username="admin", next="/admin/History Info")
+
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as behaviour:
+                for i, beh in enumerate(behaviour.behaviour_list):
+                    beh.activate()
+                    take_capture(self.driver, extra="santander_behaviour{}".format(i + 1))
+
+    test_behaviour_mashup.tags = ('wirecloud-guide', 'ui-behaviour')
