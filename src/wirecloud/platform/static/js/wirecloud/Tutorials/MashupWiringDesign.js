@@ -190,7 +190,7 @@
         {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>Our <strong>first behaviour (1 of 4)</strong> is going to be: Allow technician searches</p>")},
         {type: 'autoAction', msg: utils.gettext("We want to be able to <strong>type the name of a technician</strong> ..."), elem: BS.workspaceView.widget_by_title("Search For"), pos: 'topRight', action: BA.sleep(4000)},
         {type: 'autoAction', msg: utils.gettext("... and <strong>find him</strong> in the technician list."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
-        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>Out <strong>second behaviour (2 of 4)</strong> is going to be: Display techinican profiles.</p>")},
+        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>Our <strong>second behaviour (2 of 4)</strong> is going to be: Display techinican profiles.</p>")},
         {type: 'autoAction', msg: utils.gettext("When we <strong>select a technician</strong> ..."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
         {type: 'autoAction', msg: utils.gettext("... <strong>the profile of the technician should appear</strong> in the <em>Technician Profile</em> widget."), elem: BS.workspaceView.widget_by_title("Technician Profile"), pos: 'topRight', action: BA.sleep(4000)},
         {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>Our <strong>third behaviour (3 of 4)</strong> is going to be: Locate technicians.</p>")},
