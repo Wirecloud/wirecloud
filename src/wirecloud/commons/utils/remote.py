@@ -771,6 +771,10 @@ class WiringConnectionTester(object):
         return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".connection-options .btn-remove"))
 
     @property
+    def btn_prefs(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".connection-options .btn-show-prefs"))
+
+    @property
     def class_list(self):
         return self.element.get_attribute('class').split()
 
@@ -785,6 +789,11 @@ class WiringConnectionTester(object):
     @property
     def selected(self):
         return "selected" in self.class_list
+
+    def display_preferences(self):
+        button = self.btn_prefs
+        button.click()
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.se-popup-menu'), button)
 
     def click(self):
         if self.element.is_displayed():
@@ -873,18 +882,22 @@ class WiringBehaviourTester(object):
 
     @property
     def heading(self):
-        return self.element.find_element_by_css_selector(".behaviour-title")
+        return self.title_element
 
     @property
     def title(self):
-        return self.heading.text
+        return self.title_element.text
+
+    @property
+    def title_element(self):
+        return self.element.find_element_by_css_selector(".behaviour-title")
 
     @property
     def description(self):
         return self.element.find_element_by_css_selector(".behaviour-description").text
 
     def activate(self):
-        self.btn_activate.click()
+        self.title_element.click()
 
     def display_preferences(self):
         button = self.btn_show_preferences
@@ -1788,6 +1801,9 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
                 return group
 
         return None
+
+    def find_operator_group_by_title(self, group_title):
+        return self.find_component_group_by_title("operator", group_title)
 
     def get_components_of(self, component_type, group_title):
         self.display_component_group(component_type)
