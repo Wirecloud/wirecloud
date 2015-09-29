@@ -62,7 +62,13 @@
             this.ballElement.addEventListener('click', utils.stopPropagationListener);
             this.wrapperElement.appendChild(this.ballElement);
 
-            this.auto = true;
+            Object.defineProperties(this, {
+                auto: {
+                    get: function get() {return this.hasClassName("auto");},
+                    set: function set(value) {this.toggleClassName("auto", value);}
+                }
+            });
+
             this.endpoint = endpoint;
 
             this.tooltip = new se.Tooltip({content: gettext("Drag & Drop"), placement: ['top']});
@@ -189,7 +195,7 @@
     var defaults = {
         events: [],
         extraClass: "",
-        radius: "6px",
+        radius: "8px",
         position: null
     };
 
@@ -208,6 +214,8 @@
         if (is2DPosition(position)) {
             this.relativePosition = position;
             this.auto = false;
+        } else {
+            this.auto = true;
         }
 
         return this;

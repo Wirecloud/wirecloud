@@ -232,16 +232,22 @@
             },
 
             /**
-             * [TODO: filterBehaviours description]
+             * [TODO: filterByComponent description]
              *
              * @param {Component} component
              *      [TODO: description]
              * @returns {Behaviour[]}
              *      [TODO: description]
              */
-            filterBehaviours: function filterBehaviours(component) {
+            filterByComponent: function filterByComponent(component) {
                 return this.behaviours.filter(function (behaviour) {
                     return behaviour.hasComponent(component);
+                });
+            },
+
+            filterByConnection: function filterByConnection(connection) {
+                return this.behaviours.filter(function (behaviour) {
+                    return behaviour.hasConnection(connection);
                 });
             },
 
@@ -418,12 +424,12 @@
 
                 if (this.enabled) {
                     if (cascade) {
-                        _removeComponent.call(this, component, true);
+                        showComponentDeleteCascadeModal.call(this, component);
                     } else {
-                        if (this.filterBehaviours(component).length > 1) {
-                            showComponentDeleteModal.call(this, component);
-                        } else {
+                        if (this.filterByComponent(component).length > 1) {
                             _removeComponent.call(this, component, false);
+                        } else {
+                            showComponentRemoveModal.call(this, component);
                         }
                     }
                 } else {
@@ -520,6 +526,7 @@
                         if (!component.background || beShared) {
                             this.behaviour.updateComponent(component);
                             component.background = false;
+                            component._showButtonDelete();
                         }
                         break;
                     case ns.BehaviourEngine.INDEPENDENT:
@@ -570,6 +577,7 @@
                             this.updateComponent(connection.sourceComponent, {}, true);
                             this.updateComponent(connection.targetComponent, {}, true);
                             connection.background = false;
+                            connection._showButtonDelete();
                         }
                         break;
                     case ns.BehaviourEngine.INDEPENDENT:
@@ -652,12 +660,11 @@
         var dialog, message;
 
         if (this.enabled) {
-            message = gettext("The following operation is irreversible and removes all identified behaviours. " +
-                "Would you like to continue?");
+            message = utils.gettext("The behaviours will be removed but the components and connections will still exist, would you like to continue?");
 
             dialog = new Wirecloud.ui.AlertWindowMenu({
-                'acceptLabel': gettext("Yes"),
-                'cancelLabel': gettext("No, thank you")
+                acceptLabel: utils.gettext("Continue"),
+                cancelLabel: utils.gettext("Cancel")
             });
             dialog.setMsg(message);
             dialog.acceptHandler = function () {
@@ -718,17 +725,39 @@
         return this;
     }
 
-    function showComponentDeleteModal(component) {
+    function showComponentRemoveModal(component) {
         var modal, message;
 
-        message = gettext("The component belongs to other behaviours. Do you want to delete it from them too?");
+        message = utils.interpolate(utils.gettext("The %(type)s <strong>\"%(title)s\"</strong> will be removed, would you like to continue?"), {
+                type: component.type,
+                title: component.title
+            });
 
         modal = new Wirecloud.ui.AlertWindowMenu({
-            cancelLabel: gettext("No, just here")
+            acceptLabel: utils.gettext("Continue"),
+            cancelLabel: utils.gettext("Cancel")
         });
-        modal.setMsg(message);
+        modal.setMsg(new se.Fragment(message));
+        modal.acceptHandler = _removeComponent.bind(this, component, false);
+        modal.show();
+
+        return this;
+    }
+
+    function showComponentDeleteCascadeModal(component) {
+        var modal, message;
+
+        message = utils.interpolate(utils.gettext("The %(type)s <strong>\"%(title)s\"</strong> will be <strong>definitely</strong> removed, would you like to continue?"), {
+                type: component.type,
+                title: component.title
+            });
+
+        modal = new Wirecloud.ui.AlertWindowMenu({
+            acceptLabel: utils.gettext("Continue"),
+            cancelLabel: utils.gettext("Cancel")
+        });
+        modal.setMsg(new se.Fragment(message));
         modal.acceptHandler = _removeComponent.bind(this, component, true);
-        modal.cancelHandler = _removeComponent.bind(this, component);
         modal.show();
 
         return this;

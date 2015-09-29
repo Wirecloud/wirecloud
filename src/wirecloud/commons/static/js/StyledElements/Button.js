@@ -259,10 +259,14 @@
 
     Button.prototype.addIconClassName = function addIconClassName(classname) {
         this.icon.classList.add(classname);
+
+        return this;
     };
 
     Button.prototype.removeIconClassName = function removeIconClassName(classname) {
         this.icon.classList.remove(classname);
+
+        return this;
     };
 
     Button.prototype.replaceIconClass = function replaceIconClass(className, newClassName) {

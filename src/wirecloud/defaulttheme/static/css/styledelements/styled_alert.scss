@@ -23,6 +23,11 @@
     background: $background;
     border-color: $border;
 
+    a,
+    .alert-link {
+        color: darken($color, 5%);
+    }
+
     blockquote {
         border-left-color: $color;
     }
@@ -49,6 +54,11 @@
         top: -2px;
         right: -21px;
         line-height: $line-height-base;
+    }
+
+    a,
+    .alert-link {
+        font-weight: 700;
     }
 
     &::after {

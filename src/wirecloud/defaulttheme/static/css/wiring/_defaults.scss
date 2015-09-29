@@ -29,7 +29,7 @@ $component-widget-text-color:   darken($component-widget-bg, 25%) !default;
 $component-widget-hover-bg:           darken($component-widget-bg, 5%) !default;
 $component-widget-hover-border-color: darken($component-widget-border-color, 10%) !default;
 
-$component-background-text-color: transparent !default;
+$component-background-text-color: rgba(0, 0, 0, 0.2) !default;
 $component-background-body-bg:    transparent !default;
 $component-background-z-index:    ($component-z-index / 2) !default;
 
@@ -119,16 +119,16 @@ $connection-active-text-color:       rgb(050, 150, 200) !default;
 $connection-active-text-shadow:      0 1px 0 rgb(255, 255, 255) !default;
 $connection-active-text-hover-color: darken($connection-active-text-color, 10%) !default;
 
-$connection-editable-border-dasharray: 4, 2 !default;
+$connection-editable-border-dasharray: 6, 2 !default;
 
 $connection-handle-width: 2px !default;
-$connection-handle-border-dasharray: 6, 3 !default;
+$connection-handle-border-dasharray: $connection-editable-border-dasharray !default;
 
 // ============================================================================
 // WIRING VIEW - BEHAVIOURS
 // ============================================================================
 
-$behaviour-description-height: 40px !default;
+$behaviour-description-maxheight: ($line-height-base * 5) !default;
 $behaviour-description-font-color: rgb(70, 80, 90) !default;
 $behaviour-title-width: 75%;
 

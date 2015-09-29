@@ -16,7 +16,7 @@
     }
 
     .behaviour-description {
-        height: $behaviour-description-height;
+        max-height: $behaviour-description-maxheight;
         margin-bottom: 0px;
         @include font($type: "h6");
         color: $behaviour-description-font-color;

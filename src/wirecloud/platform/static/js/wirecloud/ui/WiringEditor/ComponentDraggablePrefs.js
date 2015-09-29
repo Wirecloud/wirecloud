@@ -66,7 +66,7 @@
                 var item1 = getItemCollapse.call(this.component),
                     item2 = getItemSortEndpoints.call(this.component);
 
-                return [
+                var list = [
                     this._createMenuItem(item1.title, item1.icon, function () {
                         this.collapsed = !this.collapsed;
                     }.bind(this.component), canCollapseEndpoints),
@@ -84,6 +84,14 @@
                         this.showSettings();
                     }.bind(this.component), canShowSettings)
                 ];
+
+                if (this.component.removeCascadeAllowed) {
+                    list = list.concat(this._createMenuItem(gettext("Delete cascade"), "trash", function () {
+                        this.trigger("optremovecascade");
+                    }.bind(this.component), canDeleteCascade));
+                }
+
+                return list;
             }
 
         }
@@ -96,6 +104,10 @@
 
     var canCollapseEndpoints = function canCollapseEndpoints() {
         return this.hasEndpoints() && !this.background && !this.sortingEndpoints;
+    };
+
+    var canDeleteCascade = function canDeleteCascade() {
+        return !this.readonly && !this.background;
     };
 
     var canSortEndpoints = function canSortEndpoints() {

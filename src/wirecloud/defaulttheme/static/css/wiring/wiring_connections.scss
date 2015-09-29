@@ -26,7 +26,7 @@
 
     .connection-options {
         font-family: "FontAwesome";
-        font-size: 14px;
+        font-size: $font-size-base;
 
         .btn-svg-group {
             fill: $connection-options-bg;
@@ -130,19 +130,38 @@
     .handle-line {
         cursor: default;
         fill: none;
-        stroke: transparentize($connection-active-text-color, 0.4);
-        stroke-width: $connection-handle-width;
-        stroke-dasharray: $connection-handle-border-dasharray;
     }
 
     .handle-ball {
         cursor: pointer;
-        fill: $connection-active-text-color;
-        stroke-width: $connection-width;
+        fill: $connection-active-bg;
+    }
+
+    .handle-line,
+    .handle-ball {
+        stroke: $connection-active-border-color;
+        stroke-width: $connection-handle-width;
+    }
+}
+
+.connection-handle.auto {
+
+    .handle-line,
+    .handle-ball {
+        stroke-dasharray: $connection-handle-border-dasharray;
+    }
+}
+
+.connection-handle,
+.connection-handle.auto {
+
+    .handle-ball {
 
         &:hover,
         &.active {
             fill: $connection-active-text-hover-color;
+            stroke: $connection-active-border-color;
+            stroke-dasharray: initial;
         }
     }
 }
