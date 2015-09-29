@@ -549,6 +549,7 @@
 
         if (connection.readonly) {
             this.btnRemove.disable();
+            this.readonly = true;
         }
 
     };
