@@ -29,7 +29,7 @@ $component-widget-text-color:   darken($component-widget-bg, 25%) !default;
 $component-widget-hover-bg:           darken($component-widget-bg, 5%) !default;
 $component-widget-hover-border-color: darken($component-widget-border-color, 10%) !default;
 
-$component-background-text-color: transparent !default;
+$component-background-text-color: rgba(0, 0, 0, 0.2) !default;
 $component-background-body-bg:    transparent !default;
 $component-background-z-index:    ($component-z-index / 2) !default;
 
