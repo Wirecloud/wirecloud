@@ -99,6 +99,8 @@
                     set: function set(value) {this.toggleClassName('readonly', value);}
                 },
 
+                removeCascadeAllowed: {value: options.removecascade_allowed, writable: true},
+
                 sortingEndpoints: {
                     get: function get() {return this.endpoints.source.sortable || this.endpoints.target.sortable;}
                 },
@@ -166,7 +168,8 @@
                 endpoints: {
                     source: [],
                     target: []
-                }
+                },
+                removecascade_allowed: false
             },
 
             MINOFFSET_X: 20,
@@ -192,25 +195,9 @@
 
             _onbackground: function _onbackground(background) {
 
-                if (this.background === background) {
-                    return this;
-                }
-
                 this.toggleClassName('background', background);
 
-                if (background) {
-                    this.btnRemove
-                        .replaceClassName('btn-remove', 'btn-share')
-                        .replaceIconClass('icon-remove-sign', 'icon-plus-sign')
-                        .setTitle(gettext("Add"));
-                } else {
-                    this.btnRemove
-                        .replaceClassName('btn-share', 'btn-remove')
-                        .replaceIconClass('icon-plus-sign', 'icon-remove-sign')
-                        .setTitle(gettext("Remove"));
-                }
-
-                return this;
+                return background ? this._showButtonAdd() : this._showButtonRemove();
             },
 
             _onclick: function _onclick(event) {
@@ -241,6 +228,42 @@
                     collapsed: collapsed,
                     position: this.position()
                 });
+
+                return this;
+            },
+
+            _showButtonAdd: function _showButtonAdd() {
+
+                this.btnRemove
+                    .replaceClassName('btn-remove', 'btn-share')
+                    .removeIconClassName('icon-trash')
+                    .removeIconClassName('icon-remove-sign')
+                    .addIconClassName('icon-plus-sign')
+                    .setTitle(utils.gettext("Add"));
+
+                return this;
+            },
+
+            _showButtonDelete: function _showButtonDelete() {
+
+                this.btnRemove
+                    .replaceClassName('btn-share', 'btn-remove')
+                    .removeIconClassName('icon-plus-sign')
+                    .removeIconClassName('icon-trash')
+                    .addIconClassName('icon-remove-sign')
+                    .setTitle(utils.gettext("Delete"));
+
+                return this;
+            },
+
+            _showButtonRemove: function _showButtonRemove() {
+
+                this.btnRemove
+                    .replaceClassName('btn-share', 'btn-remove')
+                    .removeIconClassName('icon-plus-sign')
+                    .removeIconClassName('icon-remove-sign')
+                    .addIconClassName('icon-trash')
+                    .setTitle(utils.gettext("Remove"));
 
                 return this;
             },
@@ -481,7 +504,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['change', 'dragstart', 'drag', 'dragend', 'optremove', 'optshare', 'remove', 'sortstart', 'sortend'];
+    var events = ['change', 'dragstart', 'drag', 'dragend', 'optremove', 'optremovecascade', 'optshare', 'remove', 'sortstart', 'sortend'];
 
     var appendEndpoints = function appendEndpoints(type, endpoints) {
 

@@ -177,25 +177,9 @@
              */
             _onbackground: function _onbackground(background) {
 
-                if (this.background === background) {
-                    return this;
-                }
-
                 this.toggleClassName('background', background);
 
-                if (background) {
-                    this.btnRemove
-                        .replaceClassName("btn-remove", "btn-share")
-                        .iconClass("icon-plus-sign")
-                        .title(gettext("Add"));
-                } else {
-                    this.btnRemove
-                        .replaceClassName('btn-share', 'btn-remove')
-                        .iconClass("icon-remove-sign")
-                        .title(gettext("Remove"));
-                }
-
-                return this;
+                return background ? this._showButtonAdd() : this._showButtonRemove();
             },
 
             /**
@@ -225,6 +209,36 @@
                     this.target.handle.remove();
                     this.trigger('customizeend');
                 }
+
+                return this;
+            },
+
+            _showButtonAdd: function _showButtonAdd() {
+
+                this.btnRemove
+                    .replaceClassName("btn-remove", "btn-share")
+                    .iconClass("icon-plus-sign")
+                    .title(utils.gettext("Add"));
+
+                return this;
+            },
+
+            _showButtonDelete: function _showButtonDelete() {
+
+                this.btnRemove
+                    .replaceClassName('btn-share', 'btn-remove')
+                    .iconClass("icon-remove-sign")
+                    .title(utils.gettext("Delete"));
+
+                return this;
+            },
+
+            _showButtonRemove: function _showButtonRemove() {
+
+                this.btnRemove
+                    .replaceClassName('btn-share', 'btn-remove')
+                    .iconClass("icon-trash")
+                    .title(utils.gettext("Remove"));
 
                 return this;
             },

@@ -100,7 +100,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             createComponent: function createComponent(wiringComponent, options) {
                 var component;
 
-                options = utils.updateObject({commit: true}, options);
+                options = utils.updateObject({commit: true, removecascade_allowed: this.behaviourEngine.enabled}, options);
 
                 component = new ns.WiringEditor.ComponentDraggable(wiringComponent, options);
                 component
@@ -116,6 +116,9 @@ Wirecloud.ui = Wirecloud.ui || {};
                     .on('sortend', component_onsortend.bind(this))
                     .on('optremove', function () {
                         this.behaviourEngine.removeComponent(component);
+                    }.bind(this))
+                    .on('optremovecascade', function () {
+                        this.behaviourEngine.removeComponent(component, true);
                     }.bind(this))
                     .on('optshare', function () {
                         this.behaviourEngine.updateComponent(component, component.toJSON(), true);
@@ -629,7 +632,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         });
     }
 
-    function behaviourengine_onenable() {
+    function behaviourengine_onenable(behaviourEngine, enabled) {
 
         this.connectionEngine.forEachConnection(function (connection) {
             connection.background = false;
@@ -638,6 +641,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.behaviourEngine.forEachComponent(function (component) {
             component.background = false;
+            component.removeCascadeAllowed = enabled;
             this.behaviourEngine.updateComponent(component, component.toJSON());
         }.bind(this));
     }
@@ -653,10 +657,19 @@ Wirecloud.ui = Wirecloud.ui || {};
 
             this.connectionEngine.forEachConnection(function (connection) {
                 connection.show().background = !behaviour.hasConnection(connection);
+
+                if (!connection.background && (behaviourEngine.filterByConnection(connection).length > 1)) {
+                    connection._showButtonDelete();
+                }
             });
 
             this.behaviourEngine.forEachComponent(function (component) {
                 component.background = !behaviour.hasComponent(component);
+                component.removeCascadeAllowed = true;
+
+                if (!component.background && (behaviourEngine.filterByComponent(component).length > 1)) {
+                    component._showButtonDelete();
+                }
             });
 
             break;

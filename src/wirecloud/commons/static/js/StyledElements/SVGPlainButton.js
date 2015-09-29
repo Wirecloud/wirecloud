@@ -139,7 +139,8 @@
     var fontawesomeIcons = {
         "icon-plus-sign": "\uf055",
         "icon-remove-sign": "\uf057",
-        "icon-reorder": "\uf0c9"
+        "icon-reorder": "\uf0c9",
+        "icon-trash": "\uf014"
     };
 
     var appendTitle = function appendTitle(title) {
