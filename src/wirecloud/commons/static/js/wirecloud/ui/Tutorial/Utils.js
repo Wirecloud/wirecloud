@@ -41,6 +41,10 @@
         element.value += character;
     };
 
+    var fill_input = function fill_input(element, new_value) {
+        element.value = new_value;
+    };
+
     var findElementByTextContent = function findElementByTextContent(nodes, text) {
         var i;
         for (i = 0; i < nodes.length; i++) {
@@ -84,36 +88,55 @@
                     Wirecloud.createWorkspace(options);
                 };
             },
-            input: function input(text) {
+            input: function input(text, options) {
+                options = Wirecloud.Utils.merge({
+                    'timeout': 4000,
+                    'step': 200,
+                    'send': false
+                }, options);
+
                 return function (autoAction, element) {
                     var timeout, i;
 
-                    if (element.tagName !== 'input') {
-                        element = element.querySelector('input');
+                    if (['input', 'textarea'].indexOf(element.tagName) === -1) {
+                        element = element.querySelector('input, textarea');
                     }
 
                     element.value = "";
                     timeout = 0;
-                    for (i = 0; i < text.length; i++) {
-                        timeout += 300;
+                    for (i = 0; i < text.length && ((timeout + options.step) < options.timeout); i++) {
+                        timeout += options.step;
                         setTimeout(append_character.bind(null, element, text[i]), timeout);
                     }
-                    setTimeout(function () {
-                        var evt = document.createEvent("KeyboardEvent");
-                        if (evt.initKeyEvent != null) {
-                            evt.initKeyEvent("keypress", true, true, window, false, false, false, false, 13, 0);
-                        } else {
-                            Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
-                            evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
-                        }
-                        element.dispatchEvent(evt);
-                    }, timeout);
+                    if (i != text.length) {
+                        setTimeout(fill_input.bind(null, element, text), options.timeout);
+                        timeout = options.timeout;
+                    }
+                    if (options.send) {
+                        setTimeout(function () {
+                            var evt = document.createEvent("KeyboardEvent");
+                            if (evt.initKeyEvent != null) {
+                                evt.initKeyEvent("keypress", true, true, window, false, false, false, false, 13, 0);
+                            } else {
+                                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
+                                evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
+                            }
+                            element.dispatchEvent(evt);
+                        }, timeout);
+                        timeout += options.step;
+                    }
 
-                    timeout += 1600;
+                    timeout += 1300;
                     setTimeout(function () {
                         autoAction.nextHandler();
                     }, timeout);
                 };
+            },
+            switch_view: function switch_view(view) {
+                return function(autoAction) {
+                    LayoutManagerFactory.getInstance().changeCurrentView(view);
+                    autoAction.nextHandler();
+                }
             },
             uploadComponent: function uploadComponent(id) {
                 return function (autoAction, element) {
@@ -165,6 +188,12 @@
                     return document.querySelector(selector);
                 };
             },
+            form_field: function form_field(fieldName) {
+                return function () {
+                    var currentWindowMenu = Wirecloud.UserInterfaceManager.currentWindowMenu;
+                    return currentWindowMenu.form.fieldInterfaces[fieldName].inputElement.inputElement;
+                }
+            },
             mac_wallet_close_button: function mac_wallet_close_button() {
                 return Utils.basic_selectors.button('.widget_wallet .icon-remove');
             },
@@ -179,6 +208,19 @@
                 element = widget.parentNode.getElementsByClassName("mainbutton")[0];
 
                 return element;
+            },
+            menu_item: function menu_item(title) {
+                return function () {
+                    var i, items = document.querySelectorAll(".se-popup-menu-item");
+
+                    for (i = items.length - 1; i >= 0; i--) {
+                        if (items[i].textContent == title) {
+                            return items[i];
+                        }
+                    }
+
+                    return null;
+                };
             },
             toolbar_button: function toolbar_button(button_class) {
                 return Utils.basic_selectors.button("#wirecloud_header .wc-toolbar ." + button_class);
@@ -208,20 +250,14 @@
                 }
             },
             wiringView: {
-                btn_create_behaviour: function btn_create_behaviour() {
-                    return function () {
-                        return document.querySelector(".panel-behaviours .panel-options .btn-create");
-                    };
+                create_behaviour_button: function create_behaviour_button() {
+                    return Utils.basic_selectors.button(".panel-behaviours .panel-options .btn-create");
                 },
-                btn_enable_behaviours: function btn_enable_behaviours() {
-                    return function () {
-                        return document.querySelector(".panel-behaviours .panel-options .btn-enable");
-                    };
+                enable_behaviours_button: function enable_behaviours_button() {
+                    return Utils.basic_selectors.button(".panel-behaviours .panel-options .btn-enable");
                 },
-                btn_show_behaviours: function btn_show_behaviours() {
-                    return function () {
-                        return document.querySelector(".wc-toolbar .btn-list-behaviours");
-                    };
+                show_behaviours_button: function show_behaviours_button() {
+                    return Utils.basic_selectors.button(".wc-toolbar .btn-list-behaviours");
                 },
                 behaviour_engine: function behaviour_engine() {
                     return function () {
@@ -266,6 +302,13 @@
                         }
 
                         return null;
+                    };
+                },
+                show_behaviour_prefs_button: function show_behaviour_prefs_button(behaviourId) {
+                    return function () {
+                        var behaviour = document.querySelectorAll(".panel-behaviours .behaviour")[behaviourId];
+
+                        return behaviour.querySelector(".btn-show-prefs");
                     };
                 },
                 sidebarcomponentgroup_by_id: function sidecomponentgroup(id) {

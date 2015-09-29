@@ -56,11 +56,6 @@
         return iwidget.element.getElementsByClassName('icon-cogs')[0];
     };
 
-    var get_menu_item = function get_menu_item(label) {
-        var popup_menu = document.getElementsByClassName('se-popup-menu')[0];
-        return findElementByTextContent(popup_menu.getElementsByClassName('se-popup-menu-item'), label);
-    };
-
     var enter_keypress = function (e) {
         return e.keyCode === 13;
     };
@@ -70,16 +65,11 @@
 
         interval = setInterval(function () {
             var currentWindowMenu = Wirecloud.UserInterfaceManager.currentWindowMenu;
-            if (currentWindowMenu != null && "_current_form" in currentWindowMenu) {
+            if (currentWindowMenu != null && "form" in currentWindowMenu) {
                 clearInterval(interval);
-                callback(currentWindowMenu._current_form);
+                callback(currentWindowMenu.form);
             }
         }, 200);
-    };
-
-    var getField = function getField(inputName) {
-        var currentWindowMenu = Wirecloud.UserInterfaceManager.currentWindowMenu;
-        return currentWindowMenu._current_form.fieldInterfaces[inputName].inputElement.inputElement;
     };
 
     var isNotEmpty = function isNotEmpty(input) {
@@ -89,19 +79,20 @@
     Wirecloud.TutorialCatalogue.add('basic-concepts', new Wirecloud.ui.Tutorial(gettext('Basic concepts'), [
             // Editor
             {type: 'simpleDescription', title: gettext('WireCloud Basic Tutorial'), msg: gettext("<p>Welcome to WireCloud!!</p><p>This tutorial will show you the basic concepts behind WireCloud.</p>")},
+            {type: 'autoAction', action: BA.switch_view('workspace')},
             {type: 'autoAction', action: BA.create_workspace({name: 'Basic concepts tutorial'})},
-            {type: 'simpleDescription', title: gettext('WireCloud Basic Tutorial'), msg: gettext('<p>This is the <em>Editor</em> view. In this view, you can use and modify your workspaces. Currently you are in a newly created workspace: <em>Basic concepts tutorial</em>. This workspace is empty, so the first step is to add some widgets.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you in the catalogue. You can safetly uninstall these widgets after finishing the tutorial.</p></div>')},
+            {type: 'simpleDescription', title: gettext('WireCloud Basic Tutorial'), msg: gettext('<p>This is the <em>Editor</em> view. In this view, you can use and modify your workspaces. Currently you are in a newly created workspace: <em>Basic concepts tutorial</em>. This workspace is empty, so the first step is to add some widgets.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you. You can safetly uninstall these widgets after finishing the tutorial.</p></div>')},
 
             // Marketplace
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/input-box/1.0')},
             {'type': 'autoAction', 'action': BA.uploadComponent('CoNWeT/youtube-browser/3.0')},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace.</p>")},
-            {'type': 'userAction', 'msg': gettext("Click the <em>add widget button</em>"), 'elem': BS.toolbar_button('icon-plus'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'action': BA.sleep(0.5)},
-            {'type': 'autoAction', 'msg': gettext('Typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input(), 'pos': 'downRight', 'action': BA.input('browser')},
+            {'type': 'userAction', 'msg': gettext("Click the <em>Add widget</em> button"), 'elem': BS.toolbar_button('icon-plus'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('icon-plus'), 'action': BA.sleep(500)},
+            {'type': 'autoAction', 'msg': gettext('By typing "browser" we can filter widgets that contains in their name or description these words'), 'elem': BS.mac_wallet_input(), 'pos': 'downRight', 'action': BA.input('browser', {send: true})},
             {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton.bind(null, "YouTube Browser"), 'pos': 'downRight'},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p><span class=\"label label-success\">Great!</span> That was easy, wasn't it?.</p><p>Let's continue adding the <em>Input Box</em> widget.</p>"), 'elem': null},
-            {'type': 'autoAction', 'msg': gettext('Typing <em>input box</em>...'), 'elem': BS.mac_wallet_input(), 'pos': 'downRight', 'action': BA.input('input box')},
+            {'type': 'autoAction', 'msg': gettext('Typing <em>input box</em>...'), 'elem': BS.mac_wallet_input(), 'pos': 'downRight', 'action': BA.input('input box', {send: true})},
             {'type': 'userAction', 'msg': gettext("Click <em>Add to workspace</em>"), 'elem': BS.mac_wallet_resource_mainbutton.bind(null, "Input Box"), 'pos': 'downRight'},
             {'type': 'userAction', 'msg': gettext("Close the widget wallet"), 'elem': BS.mac_wallet_close_button(), 'pos': 'downRight'},
 
@@ -109,15 +100,15 @@
             {'type': 'userAction', 'msg': gettext("Drag &amp; drop to resize the widget"), 'elem': BS.element(".rightResizeHandle"), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown'},
             {'type': 'userAction', 'msg': gettext("Drag &amp; drop to move the widget"), 'elem': widget_title.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
             {'type': 'userAction', 'msg': gettext("Open <em>Input Box</em> menu"), 'elem': widget_menu.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
-            {'type': 'userAction', 'msg': gettext("Click <em>Rename</em>"), 'elem': get_menu_item.bind(null, gettext('Rename')), 'pos': 'downRight', 'event': 'click'},
-            {'type': 'userAction', 'msg': gettext("Enter a new name for the widget (e.g <em>Search</em>) and press Enter"), 'elem': widget_title.bind(null, 1), 'pos': 'downRight', 'event': 'blur'},
+            {'type': 'userAction', 'msg': gettext("Click <em>Rename</em>"), 'elem': BS.menu_item(gettext('Rename')), 'pos': 'downRight', 'event': 'click'},
+            {'type': 'userAction', 'msg': gettext("Enter a new name for the widget (e.g <em>Search</em>) and press <kbd>Enter</kbd> or click outside the title"), 'elem': widget_title.bind(null, 1), 'pos': 'downRight', 'event': 'blur'},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>Also, some widgets can be parameterized through settings giving you the chance to use them for very general purporses.</p>"), 'elem': null},
             {'type': 'userAction', 'msg': gettext("Open <em>Input Box</em> menu"), 'elem': widget_menu.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
-            {'type': 'userAction', 'msg': gettext("Click <em>Settings</em>"), 'elem': get_menu_item.bind(null, gettext('Settings')), 'pos': 'downRight', 'event': 'click'},
+            {'type': 'userAction', 'msg': gettext("Click <em>Settings</em>"), 'elem': BS.menu_item(gettext('Settings')), 'pos': 'downRight', 'event': 'click'},
             {
                 'type': 'formAction',
                 'form': windowForm,
-                'actionElements': [getField.bind(null, 'input_label_pref'), getField.bind(null,'input_placeholder_pref'), getField.bind(null,'button_label_pref')],
+                'actionElements': [BS.form_field('input_label_pref'), BS.form_field('input_placeholder_pref'), BS.form_field('button_label_pref')],
                 'actionElementsValidators': [isNotEmpty, isNotEmpty, isNotEmpty],
                 'actionMsgs': [gettext("Write a label for the input, e.g. <em>Multimedia</em>."), gettext("Write a better placeholder text for the input, e.g. <em>Keywords</em>"), gettext("Write a better label for the button, e.g <em>Search</em>.")],
                 'actionElementsPos': ['topRight', 'topRight', 'topRight'],
@@ -131,7 +122,7 @@
             // WiringEditor
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>")},
             {'type': 'userAction', 'msg': gettext("Click <em>Find components</em> to open the sidebar"), 'elem': BS.toolbar_button('icon-archive'), 'pos': 'downLeft'},
-            {'type': 'autoAction', 'action': BA.sleep(0.25)},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('icon-archive'), 'action': BA.sleep(250)},
             {'type': 'userAction', 'msg': gettext("Click <em>Widgets</em>"), 'elem': BS.button('.wiring-sidebar .btn-list-widget-group'), 'pos': 'downLeft'},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>In this sidebar you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets as well as a combination of these behaviours.</p>"), 'elem': get_menubar},
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
@@ -144,7 +135,7 @@
                 'eventToDeactivateLayer': 'mousedown',
                 'elemToApplyNextStepEvent': BS.wiringView.behaviour_engine(),
             },
-            {'type': 'autoAction', 'action': BA.sleep(0.2)},
+            {'type': 'autoAction', 'action': BA.sleep(200)},
             {
                 'type': 'userAction',
                 'msg': gettext("Drag &amp; drop the <em>YouTube Browser</em> widget"),
@@ -164,7 +155,8 @@
                     {'element': BS.wiringView.connection_engine(), 'event': 'cancel'}
                 ],
                 'nextStepMsg': gettext("... to <em>YouTube Browser</em>'s <em>keyword</em> endpoint"),
-                'elemToApplyNextStepEvent': BS.wiringView.endpoint_by_name('widget', 0, 'target', 'keyword'), 'event': 'mouseup', 'secondPos': 'downLeft',
+                'elemToApplyNextStepEvent': BS.wiringView.behaviour_engine(), 'event': 'change',
+                'targetElement': BS.wiringView.endpoint_by_name('widget', 0, 'target', 'keyword'), 'secondPos': 'downLeft'
             },
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("Now it's time to test our creation.")},
             {'type': 'userAction', 'msg': gettext("Click <em>Back</em>"), 'elem': BS.back_button(), 'pos': 'downRight'},
@@ -172,7 +164,7 @@
 
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext('<p><span class="label label-success">Congratulations!</span> you have finished your first <em>application mashup</em>.</p><p>As you can see, the <em>YouTube Browser</em> widget has been updated successfuly.</p>'), 'elem': BS.workspaceView.widget_by_title('YouTube Browser')},
             {'type': 'autoAction', 'action': BA.click(100), 'elem': BS.button('#wirecloud_header .arrow-down-settings, #wirecloud_header .btn-success')},
-            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext('<p>This is the end of this tutorial. Remember that you can always go to the Tutorial menu for others.</p>'), 'elem': get_menu_item.bind(null, gettext('Tutorials'))}
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext('<p>This is the end of this tutorial. Remember that you can always go to the Tutorial menu for others.</p>'), 'elem': BS.menu_item(gettext('Tutorials'))}
     ]));
 
 })();

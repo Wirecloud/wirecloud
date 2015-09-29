@@ -29,99 +29,15 @@
     var BS = Wirecloud.ui.Tutorial.Utils.basic_selectors;
     var BA = Wirecloud.ui.Tutorial.Utils.basic_actions;
 
-    var get_wiring = function get_wiring() {
-        return LayoutManagerFactory.getInstance().viewsByName["wiring"];
-    };
-
-
-    var addBehaviour = function addBehaviour(title, description) {
-        var behaviour = get_wiring().behaviourEngine.createBehaviour({
-            'title': title,
-            'description': description
-        });
-
-        get_wiring().behaviourEngine.appendBehaviour(behaviour);
-
-        return behaviour.wrapperElement;
-    };
-
-    var updateBehaviour = function updateBehaviour() {
-        var form = document.querySelector('.behaviour-update-form');
-
-        return form.querySelectorAll('.window_bottom .se-btn')[0];
-    };
-
-    var getBehaviourUpdateFormTitle = function getBehaviourUpdateFormTitle(title) {
-        var form = document.querySelector('.behaviour-update-form');
-        var fieldTitle = form.querySelector('input[name="title"]');
-
-        fieldTitle.value = title;
-
-        return fieldTitle;
-    };
-
-    var getBehaviourUpdateFormDescription = function getBehaviourUpdateFormDescription(description) {
-        var form = document.querySelector('.behaviour-update-form');
-        var fieldDescription = form.querySelector('textarea[name="description"]');
-
-        fieldDescription.value = description;
-
-        return fieldDescription;
-    };
-
-    var createBehaviour = function createBehaviour() {
-        var form = document.querySelector('.behaviour-registration-form');
-
-        return form.querySelectorAll('.window_bottom .se-btn')[0];
-    };
-
-    var getBehaviourRegistrationFormTitle = function getBehaviourRegistrationFormTitle(title) {
-        var form = document.querySelector('.behaviour-registration-form');
-        var fieldTitle = form.querySelector('input[name="title"]');
-
-        fieldTitle.value = title;
-
-        return fieldTitle;
-    };
-
-    var getBehaviourRegistrationFormDescription = function getBehaviourRegistrationFormDescription(description) {
-        var form = document.querySelector('.behaviour-registration-form');
-        var fieldDescription = form.querySelector('textarea[name="description"]');
-
-        fieldDescription.value = description;
-
-        return fieldDescription;
-    };
-
-    var shareConnection = function shareConnection(connectionIndex) {
-        var connections = document.querySelectorAll('.wiring-connections .connection.on-background');
-
-        return connections[connectionIndex].querySelector('.option-remove');
-    };
-
-    var get_wiring_canvas = function get_wiring_canvas() {
-        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-        return wiringEditor.connectionEngine;
-    };
-
     var wiringView = {
-
-        type_formfield: function type_formfield(formSelector, fieldName, fieldValue) {
-            return function () {
-                var form = document.querySelector(formSelector),
-                    field = form.querySelector('[name="' + fieldName + '"]');
-
-                field.value = fieldValue;
-
-                return field;
-            };
-        },
 
         auto_create_behaviour: function auto_create_behaviour(title, description, connections) {
             return function () {
-                var behaviourEngine = LayoutManagerFactory.getInstance().viewsByName.wiring.behaviourEngine,
-                    behaviour = createAndActivateBehaviour(title, description);
+                var behaviourEngine, behaviour;
 
+                behaviourEngine = BS.wiringView.behaviour_engine()();
+                behaviour = behaviourEngine.createBehaviour({title: title, description: description});
+                behaviourEngine.activate(behaviour);
                 connections.forEach(function (context) {
                     var connection = findConnection(context.source, context.target);
                     behaviourEngine.updateConnection(connection, connection.toJSON(), true);
@@ -142,28 +58,6 @@
                 var behaviour = document.querySelectorAll(".panel-behaviours .behaviour")[behaviourId];
 
                 return behaviour.querySelector(".behaviour-title");
-            };
-        },
-
-        btn_show_behaviour_prefs: function btn_show_behaviour_prefs(behaviourId) {
-            return function () {
-                var behaviour = document.querySelectorAll(".panel-behaviours .behaviour")[behaviourId];
-
-                return behaviour.querySelector(".btn-show-prefs");
-            };
-        },
-
-        popup_menu: function popup_menu(title) {
-            return function () {
-                var i, items = document.querySelectorAll(".se-popup-menu .se-popup-menu-item");
-
-                for (i = items.length - 1; i >= 0; i--) {
-                    if (items[i].textContent == title) {
-                        return items[i];
-                    }
-                }
-
-                return null;
             };
         },
 
@@ -222,22 +116,8 @@
             };
         },
 
-        'addComponent': function addComponent(type, name, x , y) {
-            document.querySelector('.wiring-sidebar .btn-display-' + type + '-group').click();
-
-            var component = get_wiring().addComponentByName(type, name, x, y);
-
-            return component.wrapperElement;
-        },
-
         'openBehaviourRegistrationForm': function openBehaviourRegistrationForm() {
             return document.querySelector('.wiring-sidebar .behaviour-panel .btn-create-behaviour');
-        },
-
-        'connect': function connect(sourceEndpoint, targetEndpoint) {
-            var connect = get_wiring().connectComponents(sourceEndpoint, targetEndpoint);
-
-            return connect.wrapperElement;
         },
 
         'getOperatorByName': function getOperatorByName(operatorName) {
@@ -281,9 +161,11 @@
     };
 
     var findConnection = function findConnection(source, target) {
-        var behaviourEngine = LayoutManagerFactory.getInstance().viewsByName.wiring.behaviourEngine,
-            foundConnection = null;
+        var behaviourEngine, foundConnection;
 
+        behaviourEngine = BS.wiringView.behaviour_engine()();
+
+        foundConnection = null;
         behaviourEngine.forEachComponent(function (component) {
             if (component.type == source.type && component.title == source.title) {
                 component.getEndpoint('source', source.endpoint).forEachConnection(function (connection) {
@@ -295,80 +177,77 @@
         });
 
         return foundConnection;
-    }
-
-    var createAndActivateBehaviour = function createAndActivateBehaviour(title, description) {
-        var behaviourEngine = LayoutManagerFactory.getInstance().viewsByName.wiring.behaviourEngine,
-            behaviour = behaviourEngine.createBehaviour({title: title, description: description});
-
-        behaviourEngine.activate(behaviour);
-
-        return behaviour;
     };
 
     ns.TutorialCatalogue.add('mashup-wiring-design', new Wirecloud.ui.Tutorial(utils.gettext("Mashup Wiring Design"), [
-        {type: 'simpleDescription', title: utils.gettext("Mashup Wiring Design Tutorial"), msg: utils.gettext("<p>Welcome to this Step-by-Step Interactive Tutorial!</p><p>Next, you will learn how to perform a <strong>mashup wiring design</strong> using the behaviours, a new concept introduced.</p><p>First, a new workspace will be created and used as scenario to explain the mentioned concept earlier.</p>")},
+        {type: 'simpleDescription', title: utils.gettext("Mashup Wiring Design Tutorial"), msg: utils.gettext("<p>Welcome to this Step-by-Step Interactive Tutorial!</p><p>In this tutorial you will learn how to build a <strong>behaviour oriented</strong> wiring configuration, a new feature added in WireCloud v0.8.0.</p><p>To do so, we are going to convert an application mashup created using a wiring configuration that doesn't use the behaviour engine to one that does.</p>")},
         {type: 'autoAction', action: BA.uploadComponent('CoNWeT/MWD-Tutorial/0.0.3')},
+        {type: 'autoAction', action: BA.switch_view('workspace')},
         {type: 'autoAction', action: BA.create_workspace({name: utils.gettext("MWD Tutorial"), mashup: 'CoNWeT/MWD-Tutorial/0.0.3'})},
-        {type: 'simpleDescription', title: utils.gettext("Mashup Wiring Design Tutorial"), msg: utils.gettext("<p>Great! As you can see, the workspace was created successfully. To make this possible, the mashup <strong>MWD-Tutorial</strong> was uploaded before.</p><p>Next, let's identify the behaviours ocurring here.</p>")},
+        {type: 'simpleDescription', title: utils.gettext("Mashup Wiring Design Tutorial"), msg: utils.gettext('<p><span class="label label-success">Great!</span> We are now ready to start. Let\'s start by identifying the behaviours we want to model.</p><div class="alert alert-info">We have installed a mashup into your account (<strong>MWD-Tutorial</strong>), you can remove it safetly.</div>')},
 
         // Step 1: identify behaviours
-        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>The <strong>first behaviour (1 of 4)</strong> could be to search for a technician available.</p>")},
-        {type: 'autoAction', msg: utils.gettext("The behaviour could be to <strong>type the technician's name</strong>..."), elem: BS.workspaceView.widget_by_title("Search For"), pos: 'topRight', action: BA.sleep(4000)},
-        {type: 'autoAction', msg: utils.gettext("...and <strong>find him</strong> here."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
-        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>The <strong>second behaviour (2 of 4)</strong> could be to view the profile of a technician available.</p>")},
-        {type: 'autoAction', msg: utils.gettext("The behaviour could be to <strong>select a technician</strong>..."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
-        {type: 'autoAction', msg: utils.gettext("...and <strong>know his profile</strong> here."), elem: BS.workspaceView.widget_by_title("Technician Profile"), pos: 'topRight', action: BA.sleep(4000)},
-        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>The <strong>third behaviour (3 of 4)</strong> could be to view the current location of a technician available.</p>")},
-        {type: 'autoAction', msg: utils.gettext("The behaviour could be to <strong>select a technician</strong>..."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
-        {type: 'autoAction', msg: utils.gettext("...and <strong>locate him</strong> here."), elem: BS.workspaceView.widget_by_title("Technician Location"), pos: 'topLeft', action: BA.sleep(4000)},
-        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>The <strong>last behaviour (4 of 4)</strong> could be to make a videocall to a technician available.</p>")},
-        {type: 'autoAction', msg: utils.gettext("The behaviour could be to <strong>select a technician</strong>..."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
-        {type: 'autoAction', msg: utils.gettext("...and <strong>call him</strong> here."), elem: BS.workspaceView.widget_by_title("Technician VideoCall"), pos: 'topLeft', action: BA.sleep(4000)},
-        {type: 'simpleDescription', title: utils.gettext("Mashup Wiring Design Tutorial"), msg: utils.gettext("<p>As next step, let's design the mashup wiring using behaviours.</p>")},
-        {type: 'userAction', msg: utils.gettext("Show <strong>Mashup Wiring</strong>"), elem: BS.toolbar_button('btn-display-wiring-view'), pos: 'downRight'},
+        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>Our <strong>first behaviour (1 of 4)</strong> is going to be: Allow technician searches</p>")},
+        {type: 'autoAction', msg: utils.gettext("We want to be able to <strong>type the name of a technician</strong> ..."), elem: BS.workspaceView.widget_by_title("Search For"), pos: 'topRight', action: BA.sleep(4000)},
+        {type: 'autoAction', msg: utils.gettext("... and <strong>find him</strong> in the technician list."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
+        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>Out <strong>second behaviour (2 of 4)</strong> is going to be: Display techinican profiles.</p>")},
+        {type: 'autoAction', msg: utils.gettext("When we <strong>select a technician</strong> ..."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
+        {type: 'autoAction', msg: utils.gettext("... <strong>the profile of the technician should appear</strong> in the <em>Technician Profile</em> widget."), elem: BS.workspaceView.widget_by_title("Technician Profile"), pos: 'topRight', action: BA.sleep(4000)},
+        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>Our <strong>third behaviour (3 of 4)</strong> is going to be: Locate technicians.</p>")},
+        {type: 'autoAction', msg: utils.gettext("When we <strong>select a technician</strong> ..."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
+        {type: 'autoAction', msg: utils.gettext("... <strong>his location should appear</strong> in the <em>Technician Location</em> widget."), elem: BS.workspaceView.widget_by_title("Technician Location"), pos: 'topLeft', action: BA.sleep(4000)},
+        {type: 'simpleDescription', title: utils.gettext("Step 1: Identify the behaviours"), msg: utils.gettext("<p>Our <strong>fourth and last behaviour (4 of 4)</strong> is going to be: Allow videocalls with the technicians.</p>")},
+        {type: 'autoAction', msg: utils.gettext("After <strong>selecting a technician</strong> ..."), elem: BS.workspaceView.widget_by_title("Technician List"), pos: 'topRight', action: BA.sleep(4000)},
+        {type: 'autoAction', msg: utils.gettext("... we want to be able to <strong>call him</strong> using the <em>Technician VideoCall</em> widget."), elem: BS.workspaceView.widget_by_title("Technician VideoCall"), pos: 'topLeft', action: BA.sleep(4000)},
 
-        {type: 'simpleDescription', title: utils.gettext("Mashup Wiring Design Tutorial"), msg: utils.gettext("<p>In this view, you're going to design the identified behaviours. First of all, you need to enable the behaviours.")},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>List Behaviours</strong>"), elem: BS.wiringView.btn_show_behaviours(), pos: 'downRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Enable Behaviours</strong>"), elem: BS.wiringView.btn_enable_behaviours(), pos: 'topRight'},
+        // Step 1 to Step 2 transition
+
+        {type: 'simpleDescription', title: utils.gettext("Mashup Wiring Design Tutorial"), msg: utils.gettext("<p>Once identified the desired behaviours, we're going to create them in the Wiring Editor view.</p>")},
+        {type: 'userAction', msg: utils.gettext("Click <em>Wiring</em>"), elem: BS.toolbar_button('btn-display-wiring-view'), pos: 'downRight'},
+
+        {type: 'simpleDescription', title: utils.gettext("Mashup Wiring Design Tutorial"), msg: utils.gettext("<p>As you can see, we already have all the connections and components needed for implementing all the identified behaviours. The first step for converting this wiring configuration into a behaviour oriented configuration is enabling the behaviour engine.</p>")},
+        {type: 'userAction', msg: utils.gettext("Click <em>List Behaviours</em>"), elem: BS.wiringView.show_behaviours_button(), pos: 'downRight'},
+        {type: 'autoAction', elem: BS.wiringView.show_behaviours_button(), action: BA.sleep(300)},
+        {type: 'userAction', msg: utils.gettext("Enable the behaviour engine"), elem: BS.wiringView.enable_behaviours_button(), pos: 'topRight'},
 
         // Step 2 - design behaviours
 
-        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>When you enable the behaviour engine, a default behaviour will be created with all existing components and connections.</p><p>Next, let's <strong>create the second behaviour</strong> mentioned earlier.</p>")},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Create behaviour</strong>"), elem: BS.wiringView.btn_create_behaviour(), pos: 'topRight'},
-        {type: 'autoAction', msg: utils.gettext("Typing a <strong>title</strong>."), elem: wiringView.type_formfield(".behaviour-create-form", "title", utils.gettext("View a technician's profile")), pos: 'downRight', action: BA.sleep(3000)},
-        {type: 'autoAction', msg: utils.gettext("Typing a <strong>description</strong>."), elem: wiringView.type_formfield(".behaviour-create-form", "description", utils.gettext("View the technician' vCard selected on a list.")), pos: 'downRight', action: BA.sleep(3000)},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Accept</strong>"), elem: wiringView.accept_form(".behaviour-create-form"), pos: 'topRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Second Behaviour</strong>"), elem: wiringView.behaviour_title_by_id(1), pos: 'topRight'},
-        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>Now, you're going to share the connections that belong to this behaviour too.</p>")},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Share Connection</strong>"), elem: wiringView.connection_button_by_id({type: "operator", title: utils.gettext("Technical Service"), endpoint: "technician"}, {type: "widget", title: utils.gettext("Technician List"), endpoint: "technician"}, "share"), pos: 'topRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Share Connection</strong>"), elem: wiringView.connection_button_by_id({type: "widget", title: utils.gettext("Technician List"), endpoint: "technician-profile"}, {type: "widget", title: utils.gettext("Technician Profile"), endpoint: "technician"}, "share"), pos: 'topRight'},
-        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>You've already added the connections belonging to this behaviour.</p><p>Next, the platform will create and design the two following behaviours because you would do the same actions.</p>")},
-        {type: 'autoAction', msg: utils.gettext("The <strong>third behaviour</strong> was created."), elem: wiringView.auto_create_behaviour(utils.gettext("Locate a technician"), utils.gettext("Show the current location of a selected technician."), [
+        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>When you enable the behaviour engine, a default behaviour will be created with all existing components and connections.</p><p>Let's continue <strong>creating the second behaviour</strong> (Display technician profiles).</p>")},
+        {type: 'userAction', msg: utils.gettext("Click <em>Create behaviour</em>"), elem: BS.wiringView.create_behaviour_button(), pos: 'topRight'},
+        {type: 'autoAction', msg: utils.gettext("We have to fill the <strong>title</strong> ..."), elem: BS.form_field("title"), pos: 'downRight', action: BA.input(utils.gettext("Display technician profiles"), {step: 100})},
+        {type: 'autoAction', msg: utils.gettext("... and the <strong>description</strong>."), elem: BS.form_field("description"), pos: 'downRight', action: BA.input(utils.gettext("Display technician profiles when they are selected in other widgets, e.g. in the technician list widget."), {step: 100})},
+        {type: 'userAction', msg: utils.gettext("Click <em>Accept</em>"), elem: wiringView.accept_form(".behaviour-create-form"), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Active the second behaviour"), elem: wiringView.behaviour_title_by_id(1), pos: 'topRight'},
+        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>Now, we have to include some of the components and connections currently used by the default behaviour created when we enabled the behaviour engine.</p>")},
+        {type: 'userAction', msg: utils.gettext("Click <em>Add</em>"), elem: wiringView.connection_button_by_id({type: "operator", title: utils.gettext("Technical Service"), endpoint: "technician"}, {type: "widget", title: utils.gettext("Technician List"), endpoint: "technician"}, "share"), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>Add</em>"), elem: wiringView.connection_button_by_id({type: "widget", title: utils.gettext("Technician List"), endpoint: "technician-profile"}, {type: "widget", title: utils.gettext("Technician Profile"), endpoint: "technician"}, "share"), pos: 'topRight'},
+        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p><span class=\"label label-success\">Great!</span> We have finished our first behaviour. Have you noticed that when we added the connections also the affected components were added? That saved us some steps :).</p><p>Anyway, you can also directly add components in a similar way clicking on theirs <em>Add</em> button (take into account that associated connections are no added automatically in that case)</p><div class=\"alert alert-info\">The third and the fourth behaviour can be created the same way, so we are going to create them for you.</div>")},
+        {type: 'autoAction', msg: utils.gettext("The <strong>third behaviour</strong> was created."), elem: wiringView.auto_create_behaviour(utils.gettext("Locate technicians"), utils.gettext("Show the current location of the selected technician."), [
                 {source: {type: "operator", title: utils.gettext("Technical Service"), endpoint: "technician"}, target: {type: "widget", title: utils.gettext("Technician List"), endpoint: "technician"}},
                 {source: {type: "widget", title: utils.gettext("Technician List"), endpoint: "technician-location"}, target: {type: "widget", title: utils.gettext("Technician Location"), endpoint: "poiInputCenter"}}
             ]), pos: 'topRight', action: BA.sleep(2000)},
-        {type: 'autoAction', msg: utils.gettext("The <strong>last behaviour</strong> was created."), elem: wiringView.auto_create_behaviour(utils.gettext("Call a technician"), utils.gettext("Make a videocall to a selected technician."), [
+        {type: 'autoAction', msg: utils.gettext("The <strong>fourth behaviour</strong> was created."), elem: wiringView.auto_create_behaviour(utils.gettext("Call a technician"), utils.gettext("Make a videocall to a selected technician."), [
                 {source: {type: "operator", title: utils.gettext("Technical Service"), endpoint: "technician"}, target: {type: "widget", title: utils.gettext("Technician List"), endpoint: "technician"}},
                 {source: {type: "widget", title: utils.gettext("Technician List"), endpoint: "technician-username"}, target: {type: "widget", title: utils.gettext("Technician VideoCall"), endpoint: "call-user"}}
             ]), pos: 'topRight', action: BA.sleep(2000)},
-        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>As last step, you will design the first identified behaviour.</p><p>First, you're going to update the behaviour's information.</p>")},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>First Behaviour</strong>"), elem: wiringView.behaviour_title_by_id(0), pos: 'topRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Preferences</strong>"), elem: wiringView.btn_show_behaviour_prefs(0), pos: 'topRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Settings</strong>"), elem: wiringView.popup_menu(utils.gettext("Settings")), pos: 'topRight'},
-        {type: 'autoAction', msg: utils.gettext("Typing a <strong>title</strong>."), elem: wiringView.type_formfield(".behaviour-update-form", "title", utils.gettext("Search for a technician")), pos: 'downRight', action: BA.sleep(3000)},
-        {type: 'autoAction', msg: utils.gettext("Typing a <strong>description</strong>."), elem: wiringView.type_formfield(".behaviour-update-form", "description", utils.gettext("Find a technician by a name at the technician list.")), pos: 'downRight', action: BA.sleep(3000)},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Accept</strong>"), elem: wiringView.accept_form(".behaviour-update-form"), pos: 'topRight'},
-        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>Next, you're going to remove the components that don't belong to first behaviour.</p>")},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Remove component</strong>"), elem: wiringView.component_button_by_title("widget", utils.gettext("Technician VideoCall"), "remove"), pos: 'topRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>No, only in this behaviour</strong>"), elem: wiringView.cancel_alert(), pos: 'topRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Remove component</strong>"), elem: wiringView.component_button_by_title("widget", utils.gettext("Technician Profile"), "remove"), pos: 'topRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>No, only in this behaviour</strong>"), elem: wiringView.cancel_alert(), pos: 'topRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Remove component</strong>"), elem: wiringView.component_button_by_title("widget", utils.gettext("Technician Location"), "remove"), pos: 'topRight'},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>No, only in this behaviour</strong>"), elem: wiringView.cancel_alert(), pos: 'topRight'},
+        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>The last step is cleaning up our first behaviour as it currently contains all the components and connections of the wiring configuration. We have to convert it into our real first behaviour: Allow techinican searches<strong></strong>.</p><p>We're going to start by updating the behaviour's details.</p>")},
+        {type: 'userAction', msg: utils.gettext("Active the first behaviour"), elem: wiringView.behaviour_title_by_id(0), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>Preferences</em>"), elem: BS.wiringView.show_behaviour_prefs_button(0), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>Settings</em>"), elem: BS.menu_item(utils.gettext("Settings")), pos: 'topRight'},
+        {type: 'autoAction', msg: utils.gettext("We have to change the <strong>title</strong> ..."), elem: BS.form_field("title"), pos: 'downRight', action: BA.input(utils.gettext("Allow technician searches"), {step: 100})},
+        {type: 'autoAction', msg: utils.gettext("... and the <strong>description</strong>."), elem: BS.form_field("description"), pos: 'downRight', action: BA.input(utils.gettext("Find a technician by a name at the technician list."), {step: 100})},
+        {type: 'userAction', msg: utils.gettext("Click <em>Accept</em>"), elem: wiringView.accept_form(".behaviour-update-form"), pos: 'topRight'},
+        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>In this case there are components and connections that are not part of this behaviour. Let's remove them.</p>")},
+        {type: 'userAction', msg: utils.gettext("Click <em>Remove</em>"), elem: wiringView.component_button_by_title("widget", utils.gettext("Technician VideoCall"), "remove"), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>No, just here</em>"), elem: wiringView.cancel_alert(), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>Remove</em>"), elem: wiringView.component_button_by_title("widget", utils.gettext("Technician Profile"), "remove"), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>No, just here</em>"), elem: wiringView.cancel_alert(), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>Remove</em>"), elem: wiringView.component_button_by_title("widget", utils.gettext("Technician Location"), "remove"), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>No, just here</em>"), elem: wiringView.cancel_alert(), pos: 'topRight'},
+        {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p><span class=\"label label-success\">Great!</span> We have cleaned up this behaviour successfully. Have you noticed that when we removed the components also the affected connections were removed? That saved us, again, some steps :).</p><p>Anyway, you can also directly remove connections in a similar way clicking on their <em>Remove</em> button (take into account that associated components are no removed automatically in that case)</p>")},
 
-        {type: 'simpleDescription', title: utils.gettext("Try It Yourself"), msg: utils.gettext("<p>Finally, it's time to check that the global behaviour of the mashup keep working.</p>")},
-        {type: 'userAction', msg: utils.gettext("<strong>You:</strong> click <strong>Back</strong>"), elem: BS.back_button(), pos: 'downRight'}
+        {type: 'userAction', msg: utils.gettext("Click <em>Back</em>"), elem: BS.back_button(), pos: 'downRight'},
+        {type: 'simpleDescription', title: utils.gettext("Try It Yourself"), msg: utils.gettext('<p><span class="label label-success">Congratulations!</span> you have finished your first <em>behaviour oriented</em> wiring configuration.</p><p>This is the end of this tutorial, but you can play with the example dashboard and check if it follow the described behaviours.</p>')}
     ]));
 
 })(Wirecloud, StyledElements, StyledElements.Utils);
