@@ -146,8 +146,10 @@ the context menu.
 
 If you have only Local marketplace available, you can add the FIWARE Lab
 marketplace using "Add new marketplace", as shown in the following
-screenshots.
+screenshots:
+
 ![Wirecloud_UG_AddNewMarketplace.png](images/user_guide/Wirecloud_UG_AddNewMarketplace.png)
+
 ![Wirecloud_UG_AddingFiwareMarketplace.png](images/user_guide/Wirecloud_UG_AddingFiwareMarketplace.png)
 
 WireCloud offers a built-in local catalogue called "My Resources", which
@@ -163,6 +165,7 @@ easily upload your new widgets to the built-in local catalogue through
 the "Upload" button available on the "My Resources" view.
 
 ![Wirecloud_UG_UploadButton.png](images/user_guide/Wirecloud_UG_UploadButton.png)
+
 ![Wirecloud_UG_uploadNew.png](images/user_guide/Wirecloud_UG_uploadNew.png)
 
 ### Choosing an available store
@@ -201,7 +204,7 @@ see the global offer at a glance by selecting the “All stores” option.
 
 1.  That's all!. Now you will be able to create new offerings at the
     selected Store using the uploaded resource. See the [WStore
-    documentation](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Store_-_W-Store_-_User_and_Programmer_Guide#Creating_an_offering)
+    documentation](http://wstore.readthedocs.org/en/latest/user-programmer-guide.html#creating-an-offering)
     for more information on how to create offering using the uploaded
     resources.
 
@@ -209,7 +212,7 @@ Building a new mashup
 ---------------------
 
 If you followed the instructions documented in the "[Creating a new
-workspace](#Creating_a_new_workspace)" section, you should
+workspace](#creating-a-new-workspace)" section, you should
 have a "History Info" workspace. Let's assume that we start from this
 point:
 
@@ -362,6 +365,7 @@ wiring configuration.
 Now drag the operator from the operator list to the wiring canvas:
 
 ![Wirecloud_UG_Wiring_NGSISource_drag.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource_drag.png)
+
 ![Wirecloud_UG_Wiring_NGSISource.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource.png)
 
 Now, we have the source of information that is going to be presented in
