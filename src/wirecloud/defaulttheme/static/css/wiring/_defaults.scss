@@ -128,7 +128,7 @@ $connection-handle-border-dasharray: $connection-editable-border-dasharray !defa
 // WIRING VIEW - BEHAVIOURS
 // ============================================================================
 
-$behaviour-description-height: 40px !default;
+$behaviour-description-maxheight: ($line-height-base * 5) !default;
 $behaviour-description-font-color: rgb(70, 80, 90) !default;
 $behaviour-title-width: 75%;
 
