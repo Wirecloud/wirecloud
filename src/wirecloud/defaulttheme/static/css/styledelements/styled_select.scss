@@ -102,3 +102,8 @@
         top:      $padding-vertical-xs;
     }
 }
+
+.btn-group .se-select:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
