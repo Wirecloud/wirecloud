@@ -630,6 +630,9 @@
         this.source.endpoint.appendConnection(this);
         this.target.endpoint.appendConnection(this);
 
+        this.get().setAttribute('data-sourceid', this.sourceId);
+        this.get().setAttribute('data-targetid', this.targetId);
+
         return this;
     };
 

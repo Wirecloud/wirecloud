@@ -644,9 +644,7 @@
             gettext("New behaviour"),
             'behaviour-create-form');
 
-        dialog.executeOperation = function (data) {
-            this.appendBehaviour(this.createBehaviour(data));
-        }.bind(this);
+        dialog.executeOperation = this.createBehaviour.bind(this);
         dialog.show();
     }
 

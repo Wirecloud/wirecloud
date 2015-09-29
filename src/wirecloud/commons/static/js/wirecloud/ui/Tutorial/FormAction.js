@@ -115,10 +115,8 @@
         }
         //main action for next step
         this.endAction = new Wirecloud.ui.Tutorial.UserAction(this.tutorial, {'type': 'userAction', 'msg': this.endElementMsg, 'elem': form.acceptButton, 'pos': this.endElementPos});
-
         this.endAction.setNext();
-        var withoutCloseButton = true;
-        this.endAction.activate(withoutCloseButton);
+        this.endAction.activate();
 
         // substeps in this form action
         var activateSubFormAction = function (index) {
@@ -149,6 +147,7 @@
                 highlight: false,
                 msg: this.actionMsgs[i],
                 position: this.actionElementsPos[i],
+                user: true,
                 closable: false
             });
 

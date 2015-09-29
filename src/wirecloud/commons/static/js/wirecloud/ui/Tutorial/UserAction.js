@@ -59,7 +59,7 @@
     };
 
     var configure_next_step_phase = function configure_next_step_phase() {
-        var msg;
+        var msg, targetElement;
 
         if (this.popup) {
             this.popup.destroy();
@@ -81,11 +81,17 @@
         }
 
         if (msg) {
-            this.popup = new Wirecloud.ui.Tutorial.PopUp(this.next_element, {
+            if (this.options.targetElement != null) {
+                targetElement = get_simple_element(this.options.targetElement);
+            } else {
+                targetElement = this.next_element;
+            }
+            this.popup = new Wirecloud.ui.Tutorial.PopUp(targetElement, {
                 highlight: true,
+                user: true,
                 msg: msg,
                 position: this.nextPosition,
-                closable: !this.withoutCloseButton
+                closable: true
             });
             this.layer.appendChild(this.popup.wrapperElement);
             this.popup.repaint();
@@ -105,9 +111,10 @@
         this.tutorial.setControlLayer(this.start_element);
         this.popup = new Wirecloud.ui.Tutorial.PopUp(this.start_element, {
             highlight: true,
+            user: true,
             msg: this.options.msg,
             position: this.position,
-            closable: !this.withoutCloseButton
+            closable: true
         });
         this.layer.appendChild(this.popup.wrapperElement);
         this.popup.repaint();
@@ -261,11 +268,10 @@
         this.tutorial.nextStep();
     };
 
-    var _activate = function _activate(element, withoutCloseButton) {
+    var _activate = function _activate(element) {
         if (element != null) {
             this.start_element = element;
         }
-        this.withoutCloseButton = withoutCloseButton;
 
         if (this.options.eventToDeactivateLayer != null) {
             configure_start_phase.call(this);
@@ -277,11 +283,11 @@
     /**
      * activate this step
      */
-    UserAction.prototype.activate = function activate(withoutCloseButton) {
+    UserAction.prototype.activate = function activate() {
         if (this.options.asynchronous) {
             this.element(_activate.bind(this));
         } else {
-            _activate.call(this, null, withoutCloseButton);
+            _activate.call(this, null);
         }
     };
 

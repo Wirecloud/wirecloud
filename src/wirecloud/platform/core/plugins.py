@@ -171,7 +171,7 @@ WIRING_EDITOR_CSS = (
 )
 
 TUTORIAL_CSS = (
-    'css/tutorial.css',
+    'css/tutorial.scss',
 )
 
 

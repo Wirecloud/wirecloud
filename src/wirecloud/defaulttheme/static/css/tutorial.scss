@@ -1,3 +1,6 @@
+@import 'variables';
+@import 'compass/css3';
+
 .controlLayerUp, .controlLayerDown, .controlLayerLeft, .controlLayerRight {
     top: 0;
     left: 0;
@@ -63,8 +66,8 @@
     max-width: 500px;
     display: block;
     margin: 0px;
-    padding: 4px 26px 4px 10px;
-    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    padding: $padding-vertical-base ($padding-horizontal-base + 16) $padding-vertical-base $padding-horizontal-base;
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
     z-index: 200100;
     box-sizing: border-box;
 }
@@ -82,47 +85,39 @@
 
 .pop-up .pop-up-arrow {
     position: absolute;
-    color: #2390B0;
+    color: $state-primary-bg;
+    background-color: white;
     font-size: 22px;
     line-height: 16px;
-    background-color: #fff;
-    border-radius: 50%;
+    border-radius: 2px;
     pointer-events: none;
 }
 
 /* Arrows */
 .pop-up .pop-up-arrow.downLeft {
-    -webkit-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
+    @include transform(rotate(0deg));
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
     top: -12px;
     right: -12px;
 }
 
 .pop-up .pop-up-arrow.downRight {
-    -webkit-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    transform: rotate(-90deg);
+    @include transform(rotate(-90deg));
+    box-shadow: -2px 3px 3px rgba(0,0,0,0.3);
     top: -12px;
     left: -12px;
 }
 
 .pop-up .pop-up-arrow.topLeft {
-    -webkit-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    transform: rotate(90deg);
+    @include transform(rotate(90deg));
+    box-shadow: 3px -5px 3px rgba(0,0,0,0.3);
     bottom: -12px;
     right: -12px;
 }
 
 .pop-up .pop-up-arrow.topRight {
-    -webkit-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
-    -o-transform: rotate(180deg);
-    transform: rotate(180deg);
+    @include transform(rotate(180deg));
+    box-shadow: -2px -5px 3px rgba(0,0,0,0.3);
     bottom: -12px;
     left: -12px;
 }

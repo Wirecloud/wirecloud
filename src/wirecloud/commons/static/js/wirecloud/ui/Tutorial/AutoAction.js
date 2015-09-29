@@ -65,22 +65,23 @@
         this.tutorial.nextStep();
     };
 
-    var _activate = function _activate(element, withoutCloseButton) {
+    var _activate = function _activate(element) {
         if (element != null) {
             this.element = element;
         }
 
         if (element != null) {
-            this.popup = new Wirecloud.ui.Tutorial.PopUp(this.element, {
-                highlight: true,
-                msg: this.options.msg,
-                position: this.position,
-                closable: !withoutCloseButton
-            });
-            this.layer.appendChild(this.popup.wrapperElement);
-            this.popup.repaint();
-            this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
-
+            if (this.options.msg) {
+                this.popup = new Wirecloud.ui.Tutorial.PopUp(this.element, {
+                    highlight: true,
+                    msg: this.options.msg,
+                    position: this.position,
+                    closable: true
+                });
+                this.layer.appendChild(this.popup.wrapperElement);
+                this.popup.repaint();
+                this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
+            }
             this.tutorial.setControlLayer(element, true);
         } else {
             //transparent Control Layer
@@ -93,13 +94,13 @@
     /**
      * activate this step
      */
-    AutoAction.prototype.activate = function activate(withoutCloseButton) {
+    AutoAction.prototype.activate = function activate() {
         if (this.element == null) {
-            _activate.call(this, null, withoutCloseButton);
+            _activate.call(this, null);
         } else if (this.options.asynchronous) {
             this.element(_activate.bind(this));
         } else {
-            _activate.call(this, this.element(), withoutCloseButton);
+            _activate.call(this, this.element());
         }
     };
 

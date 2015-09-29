@@ -67,14 +67,14 @@
             }
         }
         this._current_ioperator = ioperator;
-        this._current_form = new StyledElements.Form(fields, {
+        this.form = new StyledElements.Form(fields, {
             setdefaultsButton: true,
             buttonArea: this.windowBottom
         });
-        this._current_form.insertInto(this.windowContent);
-        this._current_form.acceptButton.addClassName('btn-accept');
-        this._current_form.addEventListener('submit', this._savePrefs.bind(this));
-        this._current_form.addEventListener('cancel', this.hide.bind(this));
+        this.form.insertInto(this.windowContent);
+        this.form.acceptButton.addClassName('btn-accept');
+        this.form.addEventListener('submit', this._savePrefs.bind(this));
+        this.form.addEventListener('cancel', this.hide.bind(this));
 
         Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
     };
