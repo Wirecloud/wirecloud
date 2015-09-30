@@ -1,1 +1,1 @@
-mdx_headerid_github
+wirecloud-markdown-github

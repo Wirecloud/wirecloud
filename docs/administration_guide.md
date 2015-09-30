@@ -168,8 +168,11 @@ instructions if you are using the IdM integration:
         url('', include('social.apps.django_app.urls', namespace='social'))
     ```
 
-4. Now you can remove django-social-auth :). E.g. `pip uninstall
-   django-social-auth`.
+4. Now you can remove django-social-auth :). E.g.:
+
+    ```
+    pip uninstall django-social-auth
+    ```
 
 ## From 0.6.x to 0.7.x
 

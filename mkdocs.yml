@@ -4,8 +4,8 @@ extra_css: ['css/mkdocs.css']
 
 pages:
 - 'Introduction': 'index.md'
-- 'Installation': 'installation_guide.md'
-- 'Administration': 'administration_guide.md'
+- 'Installation Guide': 'installation_guide.md'
+- 'Administration Guide': 'administration_guide.md'
 - 'User Guide': 'user_guide.md'
 - 'Programmer Guide':
     - 'Application Mashup RESTful API': 'restapi/index.md'
@@ -13,9 +13,11 @@ pages:
     - 'Widget & Operator Development': 'development/widget_and_operators.md'
 
 markdown_extensions:
-    - headerid_github
-    - codehilite
-    - fenced_code
+    - markdown_github.headerid
+    - markdown_github.superfences
+    - markdown_github.magiclink
+    - codehilite:
+        guess_lang: False
     - toc:
         permalink: True
         separator: "."

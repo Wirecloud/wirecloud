@@ -4,6 +4,10 @@
     padding-left: 3.236em;
 }
 
+.wy-menu-vertical .subnav li.toctree-l1.current>a {
+    padding: 0.4045em 2.427em;
+}
+
 /* Content */
 
 @font-face {
@@ -41,8 +45,7 @@ h1, h2, h3 {
 
 .rst-content .section img {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto 12px auto;
     border-radius: 2px;
     border: 1px solid rgb(227, 227, 227);
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
@@ -106,14 +109,22 @@ p {
     margin-bottom: 12px;
 }
 
-blockquote {
+.rst-content h3 + blockquote {
+    margin-top: -12px;
+    font-size: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-left: 0px;
+}
+
+.rst-content blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
     font-size: 17.5px;
     border-left: 5px solid rgb(238, 238, 238);
 }
 
-blockquote ol:last-child, blockquote p:last-child, blockquote ul:last-child {
+.rst-content blockquote ol:last-child, .rst-content blockquote p:last-child, .rst-content blockquote ul:last-child {
     margin-bottom: 0px;
 }
 

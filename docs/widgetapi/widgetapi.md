@@ -4,15 +4,15 @@ Date: 30th September 2015
 
 This version:
 
-    https://github.com/Wirecloud/wirecloud/tree/0.8.x/docs/widgetapi/
+https://github.com/Wirecloud/wirecloud/tree/0.8.x/docs/widgetapi/
 
 Previous version:
 
-    https://github.com/Wirecloud/wirecloud/tree/0.7.x/docs/widgetapi/
+https://github.com/Wirecloud/wirecloud/tree/0.7.x/docs/widgetapi/
 
 Latest version:
 
-    https://github.com/Wirecloud/wirecloud/tree/develop/docs/widgetapi/
+https://github.com/Wirecloud/wirecloud/tree/develop/docs/widgetapi/
 
 The Application Mashup GE offers two separate APIs that cannot be combined
 because of their different nature: The Widget API (the subject of this
@@ -20,7 +20,7 @@ document) is a JavaScript API, while the Application Mashup API is a
 RESTful one. You can find the Application Mashup RESTful API in the
 following link:
 
-    http://docs.fiwareapplicationmashup.apiary.io/
+http://docs.fiwareapplicationmashup.apiary.io/
 
 The Widget API is a JavaScript API that allows widgets/operators to gain access
 to the functionalities provided by the Application Mashup GE (wiring,

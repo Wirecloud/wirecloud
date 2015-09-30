@@ -32,18 +32,19 @@ All these dependencies are available for Linux, Mac OS and Windows, so WireCloud
 - Ubuntu 12.04
 - CentOS 6.3
 - CentOS 6.5
+- CentOS 7
 - Debian Wheezy
 - Debian Jessie
-- Mac OS 10.9
+- Mac OS 10.9+
 
 > **NOTE:** WireCloud can make use of the Marketplace, Store and Repository GEs. If you want to exploit this support, you can choose between installing these GEs or using any of the instances publicly available, for example, on FIWARE Lab (see the "Instances" tab of the corresponding entries at [http://catalogue.fiware.org](http://catalogue.fiware.org)).
 
 
 ## Installing basic dependencies
 
-Before installing WireCloud, you will need to have some basic dependencies installed: python and pip.
+Before installing WireCloud, you will need to have some basic dependencies installed: python and [pip](http://www.pip-installer.org/en/latest/installing.html).
 
-> **NOTE:** Although virtualenv is not required, you should install it before installing WireCloud if you intend to use it. It is highly recommended to use virtualenv (see the using [virtualenv section](#using_virtualenv) for more info) when installing WireCloud in CentOS/RedHat as those systems usually raise problems when installing python packages using their official repositories and pip (a common case, as some packages should be updated for being compatible with WireCloud). Anyway, it is possible to install WireCloud in those systems without using virtual environments.
+> **NOTE:** Although virtualenv is not required, you should install it before installing WireCloud if you intend to use it. It is highly recommended to use virtualenv (see the using [virtualenv section](#using-virtualenv) for more info) when installing WireCloud in CentOS/RedHat as those systems usually raise problems when installing python packages from their official repositories and, at the same time, from pip (a common case in those systems, as some packages should be updated for being compatible with WireCloud, but are requirements of other system applications). Anyway, although harder, it is possible to install WireCloud in those systems without using virtual environments.
 
 
 ### Debian/Ubuntu
@@ -52,9 +53,13 @@ This guide assumes you system's package list is up to date. Otherwise, run the f
 
 	$ apt-get update
 
-before installing software in Debian/Ubuntu.
+before installing software in Debian/Ubuntu:
 
-    $ apt-get install python python-pip
+    $ apt-get install python python-pip --no-install-recommends
+
+It's also recommended to install the following packages:
+
+    $ apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev libpcre3-dev
 
 
 ### CentOS/RedHat
@@ -66,6 +71,11 @@ Python itself can be found in the official CentOS/RedHat repositories:
 Whereas pip and other packages should be installed from 3rd party repositories. The most common one is the EPEL repository (see http://fedoraproject.org/wiki/EPEL for instructions about how to add it). If you has such a repository, you will be able to install pip using the following command:
 
     $ yum install python-pip
+
+
+It's also recommended to install the following packages:
+
+    $ yum install gcc python-devel libxslt-devel zlib-devel pcre-devel
 
 
 ### Mac OS
@@ -80,7 +90,10 @@ However, we recommend you to upgrade your python installation using the [Homebre
 
 This command will install, as bonus, the pip command tool.
 
-<a id="using_virtualenv"/>
+It's also recommended to install the followig packages:
+
+    $ brew install pcre
+
 ### Using virtualenv
 
 [virtualenv](http://virtualenv.readthedocs.org/en/latest/virtualenv.html) is a tool to create isolated Python environments. Those Virtual Environments, are an isolated working copy of Python which allows you to work on a specific project without worry of affecting other projects.
@@ -106,15 +119,9 @@ This puts you back to the system’s default Python interpreter with all its ins
 To delete a virtual environment, just delete its folder.
 
 
-## Installing WireCloud using pip
+## Installing WireCloud using pip (recommended)
 
-WireCloud can be easily installed using [pip](http://www.pip-installer.org/en/latest/installing.html). To install WireCloud from a FIWARE release, download the desired version from the [FIWARE PPP Public Files area](https://forge.fiware.org/frs/?group_id=7).
-
-Once downloaded, you can install it using the following command (assuming you downloaded APPS-Application-Mashup-Wirecloud-4.2.3.tar.gz):
-
-    $ sudo pip install APPS-Application-Mashup-Wirecloud-4.2.3.tar.gz
-
-You can always install the latest version of WireCloud from PyPI using the following command:
+You can always install the latest stable version of WireCloud using pip:
 
     $ sudo pip install wirecloud
 
@@ -135,14 +142,14 @@ To get the latest development version of the code, you can choose between two op
 Once downloaded the source code, you can install WireCloud using the `setup.py` script (this step requires root privileges):
 
     $ cd <path/to/source/code>/src
-    $ sudo python setup.py sdist
-    $ sudo pip install dist/wirecloud-<version>.tar.gz
+    $ sudo python setup.py bdist_whell
+    $ sudo pip install dist/wirecloud-<version>-py2.py3-none-any.whl
 
 Where `<version>` is the version of WireCloud to install.
 
 ## Installing WireCloud using Docker
 
-WireCloud can also be deployed using [Docker](https://www.docker.com/), the images can be found on [docker hub](https://hub.docker.com/r/wirecloud/fiware-wirecloud/). This guide doesn't cover WireCloud installation using docker, please refere to the documentation available on docker hub for more info about how to procede in this case. Anyway, once installed WireCloud using docker, you can make use of any of the administration procedures described in this guide.
+WireCloud can also be deployed using [Docker](https://www.docker.com/), the images can be found on [docker hub](https://hub.docker.com/r/fiware/wirecloud/). This guide doesn't cover WireCloud installation using docker, please refere to the [docker's documentation](https://docs.docker.com/userguide/dockerimages/), as it can be used as any other docker image (e.g. it can also be used with docker-machine); and to the documentation available on docker hub about the WireCloud's image for more info about how to procede in this case. Anyway, once installed, you can make changes in the configuration of your WireCloud container following the steps described in this guide as well as make use of any of the administration procedures described in the [Administration Guide](administration_guide.md) section.
 
 > WireCloud's DockerFiles and image documentation are hosted on the [docker-wirecloud](https://github.com/Wirecloud/docker-wirecloud/) repository.
 
@@ -292,7 +299,7 @@ Here’s a list of general settings available in WireCloud and their default val
 
 
 ### ADMINS
-(Tuple, default: `()` [Empty tuple])
+> (Tuple, default: `()` [Empty tuple])
 
 A tuple that lists people who get code error notifications. When `DEBUG=False` and a view raises an exception, WireCloud will email these people with the full exception information. Each member of the tuple should be a tuple of (Full name, email address). Example:
 
@@ -304,13 +311,13 @@ Note that Django will email all of these people whenever an error happens.
 
 
 ### ALLOW_ANONYMOUS_USER
-(Boolean; default: `True`)
+> (Boolean; default: `True`)
 
 A boolean that turns on/off anonymous user access. Take into account that disabling anonymous access will reduce the usefulness of embedded and public workspaces as they will require users to be logged in.
 
 
 ### DEBUG
-(Boolean; default: `False`)
+> (Boolean; default: `False`)
 
 A boolean that turns on/off debug mode.
 
@@ -320,13 +327,13 @@ One of the main features of debug mode is the display of detailed error pages. I
 
 
 ### DEFAULT_LANGUAGE
-(String; default: "browser")
+> (String; default: "browser")
 
 Language code to use by default (e.g. "en"). This setting also support other values: "browser", meaning "use the language detected from browser" and "default" for using the value of the `LANGUAGE_CODE` setting.
 
 
 ### FORCE_DOMAIN
-(String, default: `None`)
+> (String, default: `None`)
 
 Set `FORCE_DOMAIN` using an string if you want to force WireCloud to use a
 concrete domain name (without including the port) when building internal URLs.
@@ -340,7 +347,7 @@ extracted from the request.
 
 
 ### FORCE_PORT
-(Integer, default: `None`)
+> (Integer, default: `None`)
 
 Set `FORCE_PORT` using a number if you want to force WireCloud to use
 that port when building internal URLs.
@@ -353,7 +360,7 @@ incoming requests for building internal URLs.
 
 
 ### FORCE_PROTO
-(String, default: `None`)
+> (String, default: `None`)
 
 Set `FORCE_PROTO` to "http" or to "https" if you want to force WireCloud to use
 one of those schemes when building internal URLs.
@@ -368,25 +375,25 @@ http as the scheme for the internal URLs.
 
 
 ### LANGUAGE_CODE
-(String; default: "en-us")
+> (String; default: "en-us")
 
 A string representing the language code to use as fallback when no translation exist for a given literal to the user’s preferred language. For example, U.S. English is "en-us".
 
 
 ### SERVER_EMAIL
-(String; default: 'root@localhost')
+> (String; default: 'root@localhost')
 
 The email address that error messages come from, such as those sent to `ADMINS`.
 
 
 ### THEME_ACTIVE
-(String, default: "wirecloud.defaulttheme")
+> (String, default: "wirecloud.defaulttheme")
 
 A string representing the module that will be use for theming WireCloud. Current themes shipped with WireCloud are "wirecloud.defaulttheme", "wirecloud.fiwaretheme" and "wirecloud.oiltheme".
 
 
 ### URL_MIDDLEWARE_CLASSES
-(Dictionary; default: A middleware configuration dictionary)
+> (Dictionary; default: A middleware configuration dictionary)
 
 A data structure containing the middleware configuration per URL group where the URL group name are the keys of the dictionary and the value should be a tuple of middleware classes to use for that group.
 
@@ -400,11 +407,17 @@ URL_MIDDLEWARE_CLASSES['api'] += ('my.middleware.module.MyMiddlware',)
 
 
 ### WIRECLOUD_HTTPS_VERIFY
-*new in WireCloud 0.7.0*
+> *new in WireCloud 0.7.0*
+>
+> (Boolean or String, default: `True`)
 
-(Boolean or String, default: True)
-
-Set `WIRECLOUD_HTTPS_VERIFY` to False if you want WireCloud not validate HTTPS certificates. If this setting is True (the default), WireCloud will verify https certificates using the CA certificates bundled with python requests or using the certificates provided by the system (this depends on the procedure followed for installing the python requests module). You can also provide a path to a CA bundle file to use instead (e.g. `WIRECLOUD_HTTPS_VERIFY = "/etc/ssl/certs/ca-certificates.crt"`).
+Set `WIRECLOUD_HTTPS_VERIFY` to `False` if you want WireCloud not validate HTTPS
+certificates. If this setting is `True` (the default), WireCloud will verify
+https certificates using the CA certificates bundled with python requests or
+using the certificates provided by the system (this depends on the procedure
+followed for installing the python requests module). You can also provide a path
+to a CA bundle file to use instead (e.g.
+`WIRECLOUD_HTTPS_VERIFY = "/etc/ssl/certs/ca-certificates.crt"`).
 
 
 ## Django configuration
@@ -419,9 +432,9 @@ Finally, you can compress css and javascript code files for better performance u
 
     $ python manage.py compress
 
-> NOTE: Don't forget to rerun the collectstatic and compress commands each time
-> the WireCloud code is updated, this include each time an add-on is added or
-> remove or the default theme is changed.
+> **NOTE:** Don't forget to rerun the collectstatic and compress commands each
+> time the WireCloud code is updated, this include each time an add-on is added
+> or remove or the default theme is changed.
 
 
 ## Advanced configurations
@@ -470,7 +483,7 @@ facade that receives NGSI notifications and passes them to Widgets or Operators.
 
 This NGSI proxy doesn't need to be installed in the same machine as WireCloud
 and can be shared with other WireCloud instances. WireCloud will use the NGSI
-proxy passed to the ngsi_proxy_url option of the NGSI.Connection object. This
+proxy passed to the `ngsi_proxy_url` option of the `NGSI.Connection` object. This
 URL can be obtained from Widget/Operator preference defined in its `config.xml`.
 
 You can install a NGSI proxy following those steps:
@@ -491,7 +504,7 @@ After this, you can run the NGSI proxy issuing the following command:
 Create a new Application using the IdM server to use (for example: `https://account.lab.fiware.org`).
 
 1. Redirect URI must be: http(s)://<wirecloud_server>/complete/fiware/
-2. Install the `python-social-auth` module (e.g. `pip install python-social-auth`)
+2. Install the `python-social-auth` module (e.g. `pip install "python-social-auth<0.3,>=0.2.2"`)
 3. Edit `settings.py`:
     - Remove `wirecloud.oauth2provider` from `INSTALLED_APPS`
     - Add `social.apps.django_app.default` to `INSTALLED_APPS`
@@ -826,3 +839,124 @@ Check your python requests module version.
 #### AttributeError: This StreamingHttpResponse instance has no \`content\` attribute. Use \`streaming_content\` instead.
 
 Remove `MIDDLEWARE` configuration from your `settings.py` file.
+
+
+## Sanity check procedures
+
+The Sanity Check Procedures are the steps that a System Administrator will take to verify that an installation is ready to be tested. This is therefore a preliminary set of tests to ensure that obvious or basic malfunctioning is fixed before proceeding to unit tests, integration tests and user validation.
+
+### End to End testing
+
+Please note that the following information is required before carrying out this procedure:
+
+- computer_name_or_IP_address is the name or IP address of the computer on which WireCloud has been installed.
+- Valid credentials for the WireCloud instance to test (e.g. user: `admin` / password: `admin`, as stated in the [Database population](#database-population) section of this guide).
+
+The following files:
+
+- https://conwet.fi.upm.es/docs/download/attachments/1278018/CoNWeT_weather-example_1.0.3.wgt
+- https://conwet.fi.upm.es/docs/download/attachments/1278018/CoNWeT_wms-viewer-geowidget_0.5.2.2.wgt
+- https://conwet.fi.upm.es/docs/download/attachments/1278018/CoNWeT_weather-mashup-example_2.0.wgt
+
+To quickly check if the application is running, follow these steps:
+
+1. Open a browser and type `http://<computer_name_or_IP_address>/login` in the address bar.
+2. The following user login form should appear:
+
+3. Enter the credentials and click on the *Log in* button.
+4. Click on the *Marketplace* button.
+5. Open the local catalogue uploader view using the path selector as depicted in the following figure:
+
+6. Upload CoNWeT_weather-example_1.0.3.wgt file using the "Adding widgets from packages" form.
+
+7. The new widget should be now available on the local catalogue.
+
+8. Repeat steps 6 and 7 using the `CoNWeT_wms-viewer-geowidget_0.5.2.2.wgt` and `CoNWeT_weather-mashup-example_2.0.wgt` files.
+All the widgets and mashups should be now available on the local catalogue.
+
+Click on the "Add to Workspace" button of the "Weather Example Mashup".
+Click on the "New workspace" button.
+
+The view should automatically change to the "Weather Example Mashup" view and widgets should appear in it.
+
+Select the pin tool in the "Web Map Service" widget clicking the appropriated button as shown in the image.
+
+And click the desired location. The "Weather Widget Example" should update the forecast info.
+
+By performing this sequence of steps, you will check that the WireCloud Mashup platform is running and correctly deployed, and its database has been properly set up and populated.
+
+### List of Running Processes
+
+We need to check that the Apache web server and the Postgres database are running. WireCloud uses a python interpreter, but it will not be listed as it runs embedded into apache2. If we execute the following command:
+
+    ps -ewF | grep 'apache2\|postgres' | grep -v grep
+
+It should show something similar to the following:
+
+    $ ps -ewF | grep 'apache2\|postgres' | grep -v grep
+    postgres  1631     1  0 25212  9452   0 Jul03 ?        00:00:19 /usr/lib/postgresql/9.1/bin/postgres -D /var/lib/postgresql/9.1/main -c config_file=/etc/postgresql/9.1/main/postgresql.conf
+    postgres  1702  1631  0 25208  3784   0 Jul03 ?        00:00:47 postgres: writer process
+    postgres  1703  1631  0 25208  1452   0 Jul03 ?        00:00:39 postgres: wal writer process
+    postgres  1704  1631  0 25462  2964   0 Jul03 ?        00:00:16 postgres: autovacuum launcher process
+    postgres  1705  1631  0 17370  1660   0 Jul03 ?        00:00:18 postgres: stats collector process
+    root      3811     1  0 50067 10848   0 13:13 ?        00:00:00 /usr/sbin/apache2 -k start
+    www-data  3818  3811  0 68663 39820   0 13:13 ?        00:00:00 /usr/sbin/apache2 -k start
+    www-data  3819  3811  0 68687 39448   0 13:13 ?        00:00:00 /usr/sbin/apache2 -k start
+    www-data  3822  3811  0 68901 40160   0 13:13 ?        00:00:00 /usr/sbin/apache2 -k start
+
+
+### Network interfaces Up & Open
+
+To check the ports in use and listening, execute the command:
+
+    $ sudo netstat -ltp
+
+The expected results must be something similar to the following:
+
+    Active Internet connections (only servers)
+    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    tcp        0      0 localhost:postgresql    *:*                     LISTEN      1631/postgres
+    tcp        0      0 *:https                 *:*                     LISTEN      3811/apache2
+
+or these ones in case the machine is configured to use IPv6:
+
+    Active Internet connections (only servers)
+    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    tcp        0      0 localhost:postgresql    *:*                     LISTEN      1631/postgres
+    tcp6       0      0 [::]:https              [::]:*                  LISTEN      3811/apache2
+
+
+### Databases
+
+The last step in the sanity check, once that we have identified the processes and ports, is to check the different databases that have to be up and accepting queries. If we execute the following command:
+
+    $ psql -U wc_user wirecloud
+
+It should show a message text similar to the following:
+
+    psql (9.1.4)
+    Type "help" for help.
+
+    wirecloud=>
+
+
+## Diagnosis Procedures
+
+The Diagnosis Procedures are the first steps that a System Administrator will take to locate the source of an error in a GE. Once the nature of the error is identified with these tests, the system admin will very often have to resort to more concrete and specific testing to pinpoint the exact point of error and a possible solution. Such specific testing is out of the scope of this section.
+
+### Resource availability
+
+WireCloud runs fine with a minimun of 512 MB of available RAM (1024 MB recommended) and 10 GB of hard disk space. Nevertheless memory usage strongly depends on the number of concurrent users. According to normal usage patterns taken from the log history, memory usage exceeding 256 MB per user are to be considered abnormally high. WireCloud is not CPU-intensive and thus CPU usages over 5% per user is considered abnormal. WireCloud is I/O-intensive and performances below 12 http requests per second are considered abnormal.
+
+The results from monitoring the FIWARE Lab Mashup portal usage shows that the aforementioned ranges remains valid.
+
+### Resource consumption
+
+Resource consumption strongly depends on the load, especially on the number of concurrent users logged in.
+
+- The main memory consumption of the Apache Web server should be between 64 MB and 1024 MB.
+- Postgresql should consume a small amount of memory, not more than 64 MB.
+
+### I/O flows
+
+The only expected I/O flow is of type HTTP or HTTPS, on port defined in Apache Web Server configuration files.
