@@ -64,7 +64,7 @@ def get_market_user_data(user, market_user, market_name):
             user_data[user_data_entry.name] = None
 
     try:
-        user_data['idm_token'] = user.social_auth.filter(provider='fiware').get().tokens['access_token']
+        user_data['idm_token'] = user.social_auth.filter(provider='fiware').get().access_token
     except:
         pass
 
