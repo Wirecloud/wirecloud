@@ -279,40 +279,44 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
     def check_basic_xml_workspace_template_info(self, template):
 
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'Wirecloud Test Suite')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Mashup')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
+        self.assertXPathAttr(template, '/mashup', 'vendor', 'Wirecloud Test Suite')
+        self.assertXPathAttr(template, '/mashup', 'name', 'Test Mashup')
+        self.assertXPathAttr(template, '/mashup', 'version', '1')
+        self.assertXPathText(template, '/mashup/details/authors', 'test')
+        self.assertXPathText(template, '/mashup/details/email', 'a@b.com')
 
     def check_workspace_xml_wiring(self, template):
 
-        self.assertXPathCount(template, '/Template/Platform.Wiring/Connection', 0)
-        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator', 2)
+        self.assertXPathCount(template, '/mashup/structure/wiring/connection', 0)
+        self.assertXPathCount(template, '/mashup/structure/wiring/operator', 2)
 
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]', 'name', 'Wirecloud/TestOperator/1.0')
-        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference', 3)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="pref_with_val"]', 'value', 'value1')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="pref_with_val"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="pref_with_val"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="readonly_pref"]', 'value', 'value2')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="readonly_pref"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="readonly_pref"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'value', 'value3')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]', 'vendor', 'Wirecloud')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]', 'name', 'TestOperator')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]', 'version', '1.0')
+        self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue', 3)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'value', 'value1')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'value', 'value2')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'value', 'value3')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'false', optional=True)
 
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]', 'name', 'Wirecloud/TestOperator/1.0')
-        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference', 3)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="pref_with_val"]', 'value', 'value1')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="pref_with_val"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="pref_with_val"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'value', 'value2')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'value', 'value3')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]', 'vendor', 'Wirecloud')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]', 'name', 'TestOperator')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]', 'version', '1.0')
+        self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue', 3)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'value', 'value1')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'value', 'value2')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'value', 'value3')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'false', optional=True)
 
     def get_rdf_element(self, graph, base, ns, predicate):
         element = None
@@ -387,16 +391,16 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'authors': 'test',
             'email': 'a@b.com',
         }
-        template = build_xml_template_from_workspace(options, self.workspace, self.user)
+        template = build_xml_template_from_workspace(options, self.workspace, self.user, raw=True)
 
         self.check_basic_xml_workspace_template_info(template)
-        self.assertXPathCount(template, '/Template/Platform.Wiring/Connection', 0)
-        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator', 0)
+        self.assertXPathCount(template, '/mashup/structure/wiring/connection', 0)
+        self.assertXPathCount(template, '/mashup/structure/wiring/operator', 0)
 
         # IWidgets
-        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'Tab')
-        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/IWidget', 0)
+        self.assertXPathCount(template, '/mashup/structure/tab', 1)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'Tab')
+        self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 0)
 
         # Workspace with iwidgets
         options = {
@@ -408,16 +412,16 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'doc': 'http://example.com/test-mashup/docs/index.html',
             'readOnlyWidgets': False,
         }
-        template = build_xml_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        template = build_xml_template_from_workspace(options, self.workspace_with_iwidgets, self.user, raw=True)
 
         self.check_basic_xml_workspace_template_info(template)
 
         # IWidgets
-        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'tab')
-        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource', 2)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]', 'readonly', 'false', optional=True)
+        self.assertXPathCount(template, '/mashup/structure/tab', 1)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
+        self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 2)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]', 'readonly', 'false', optional=True)
 
         self.check_workspace_xml_wiring(template)
 
@@ -433,73 +437,73 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'doc': 'http://example.com/test-mashup/docs/index.html',
             'readOnlyWidgets': True,
         }
-        template = build_xml_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        template = build_xml_template_from_workspace(options, self.workspace_with_iwidgets, self.user, raw=True)
 
         self.check_basic_xml_workspace_template_info(template)
 
         # IWidgets
-        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'tab')
-        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource', 2)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]', 'readonly', 'true')
+        self.assertXPathCount(template, '/mashup/structure/tab', 1)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
+        self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 2)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]', 'readonly', 'true')
 
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'value', 'test_username')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'value', 'test_password')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'value', 'test_username')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="password"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="password"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="password"]', 'value', 'test_password')
 
         self.check_workspace_xml_wiring(template)
 
     def test_build_xml_template_from_workspace_forced_values(self):
 
         # Workspace with iwidgets
-        template = build_xml_template_from_workspace(self.forced_value_options, self.workspace_with_iwidgets, self.user)
+        template = build_xml_template_from_workspace(self.forced_value_options, self.workspace_with_iwidgets, self.user, raw=True)
         self.check_basic_xml_workspace_template_info(template)
 
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="username"]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="username"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="username"]', 'value', 'default')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="password"]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="password"]', 'hidden', 'true')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="password"]', 'value', 'initial text')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="list"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="list"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="list"]', 'value', 'default')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="boolean"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="boolean"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="boolean"]', 'value', 'false')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="username"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="username"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="username"]', 'value', 'default')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="password"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="password"]', 'hidden', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="password"]', 'value', 'initial text')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="list"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="list"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="list"]', 'value', 'default')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="boolean"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="boolean"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="1"]/preferencevalue[@name="boolean"]', 'value', 'false')
 
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'hidden', 'false', optional=True)
-        self.assertXPathMissingAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="username"]', 'value')
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'readonly', 'true', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'hidden', 'true', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="password"]', 'value', 'test_password')
-        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="list"]', 0)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="boolean"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="boolean"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="2"]/Preference[@name="boolean"]', 'value', 'false')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'hidden', 'false', optional=True)
+        self.assertXPathMissingAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'value')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="password"]', 'readonly', 'true', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="password"]', 'hidden', 'true', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="password"]', 'value', 'test_password')
+        self.assertXPathCount(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="list"]', 0)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="boolean"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="boolean"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="boolean"]', 'value', 'false')
 
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="pref_with_val"]', 'value', 'new_value1')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="pref_with_val"]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="pref_with_val"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="readonly_pref"]', 'value', 'new_value2')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="readonly_pref"]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="readonly_pref"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'value', 'new_value3')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="1"]/Preference[@name="hidden_pref"]', 'hidden', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'value', 'new_value1')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'value', 'new_value2')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="readonly_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'value', 'new_value3')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'true')
 
-        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="pref_with_val"]', 0)
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'value', 'value2')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="readonly_pref"]', 'hidden', 'false', optional=True)
-        self.assertXPathMissingAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'value')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/Template/Platform.Wiring/Operator[@id="2"]/Preference[@name="hidden_pref"]', 'hidden', 'true')
+        self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 0)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'value', 'value2')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathMissingAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'value')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'true')
 
 
     def test_build_rdf_template_from_workspace(self):

@@ -321,11 +321,11 @@ def build_json_template_from_workspace(options, workspace, user):
     return options
 
 
-def build_xml_template_from_workspace(options, workspace, user):
+def build_xml_template_from_workspace(options, workspace, user, raw=False):
 
     build_json_template_from_workspace(options, workspace, user)
 
-    return xml.build_xml_document(options)
+    return xml.write_xml_description(options, raw=raw)
 
 
 def build_rdf_template_from_workspace(options, workspace, user):

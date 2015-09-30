@@ -27,11 +27,11 @@ import rdflib
 from django.utils.unittest import TestCase
 
 from wirecloud.commons.utils.template.parsers import TemplateParser, TemplateParseException
-from wirecloud.commons.utils.template.parsers.next_xml import WIRECLOUD_TEMPLATE_NS
+from wirecloud.commons.utils.template.parsers.xml import WIRECLOUD_TEMPLATE_NS
 from wirecloud.commons.utils.template.writers.json import write_json_description
 from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
+from wirecloud.commons.utils.template.writers.old_xml import write_xml_description as write_old_xml_description
 from wirecloud.commons.utils.template.writers.xml import write_xml_description
-from wirecloud.commons.utils.template.writers.next_xml import write_xml_description as write_next_xml_description
 
 WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
 
@@ -1419,7 +1419,7 @@ class TemplateUtilsTestCase(TestCase):
         if mashup_format == "rdf":
             template = TemplateParser(write_rdf_description(mashup_data))
         elif mashup_format == "xml":
-            template = TemplateParser(write_next_xml_description(mashup_data))
+            template = TemplateParser(write_xml_description(mashup_data))
         elif mashup_format == "json":
             template = TemplateParser(write_json_description(mashup_data))
 
@@ -1468,7 +1468,7 @@ class TemplateUtilsTestCase(TestCase):
     def check_missing_xml_element(self, query):
         from lxml import etree
 
-        document = write_next_xml_description(read_json_fixtures('mashup_with_behaviours_data'), raw=True)
+        document = write_xml_description(read_json_fixtures('mashup_with_behaviours_data'), raw=True)
 
         for element_to_remove in document.xpath(query, namespaces={'t': WIRECLOUD_TEMPLATE_NS}):
             element_to_remove.getparent().remove(element_to_remove)
@@ -1712,6 +1712,84 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.minimal_property_info)
 
+    def test_old_xml_parser_writer_basic_mashup(self):
+
+        xml_description = write_old_xml_description(self.basic_mashup_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_mashup_info)
+    test_old_xml_parser_writer_basic_mashup.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
+
+    def test_old_xml_parser_writer_mashup(self):
+
+        xml_description = write_old_xml_description(self.mashup_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.check_full_mashup(processed_info, self.mashup_info)
+    test_old_xml_parser_writer_mashup.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
+
+    def test_old_xml_parser_writer_mashup_with_translations(self):
+
+        xml_description = write_old_xml_description(self.mashup_with_translations_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.check_full_mashup(processed_info, self.mashup_with_translations_info)
+    test_old_xml_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
+
+    def test_old_xml_parser_writer_mashup_with_params(self):
+
+        xml_description = write_old_xml_description(self.mashup_with_params)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.check_full_mashup(processed_info, self.mashup_with_params)
+    test_old_xml_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
+
+    def test_old_xml_parser_writer_basic_widget(self):
+
+        xml_description = write_old_xml_description(self.basic_widget_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_widget_info)
+    test_old_xml_parser_writer_basic_widget.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
+
+    def test_old_xml_parser_writer_widget(self):
+
+        xml_description = write_old_xml_description(self.widget_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.widget_info)
+    test_old_xml_parser_writer_widget.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
+
+    def test_xml_parser_writer_basic_operator(self):
+
+        xml_description = write_xml_description(self.basic_operator_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_operator_info)
+
+    def test_xml_parser_writer_operator(self):
+
+        xml_description = write_xml_description(self.operator_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.operator_info)
+
+    def test_xml_parser_writer_operator_with_translations(self):
+
+        xml_description = write_json_description(self.operator_with_translation_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.operator_with_translation_info)
+
     def test_xml_parser_writer_basic_mashup(self):
 
         xml_description = write_xml_description(self.basic_mashup_info)
@@ -1719,7 +1797,6 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_mashup_info)
-    test_xml_parser_writer_basic_mashup.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup(self):
 
@@ -1728,7 +1805,18 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_info)
-    test_xml_parser_writer_mashup.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
+
+    def test_xml_parser_writer_mashup_with_behaviours(self):
+        self.compare_input_and_output_mashup("mashup_with_behaviours_data", "xml")
+
+    def test_xml_parser_writer_mashup_with_behaviours_and_minimal_data(self):
+        self.check_minimal_mashup_data("mashup_with_behaviours_minimal_data", "xml")
+
+    def test_xml_parser_missing_mashup_connection_target(self):
+        self.check_missing_xml_element('/mashup/structure/wiring/connection[1]/target')
+
+    def test_xml_parser_missing_mashup_connection_source(self):
+        self.check_missing_xml_element('/mashup/structure/wiring/connection[1]/source')
 
     def test_xml_parser_writer_mashup_with_translations(self):
 
@@ -1737,7 +1825,6 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
-    test_xml_parser_writer_mashup_with_translations.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_xml_parser_writer_mashup_with_params(self):
 
@@ -1746,7 +1833,6 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_params)
-    test_xml_parser_writer_mashup_with_params.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_xml_parser_writer_basic_widget(self):
 
@@ -1755,7 +1841,6 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_widget_info)
-    test_xml_parser_writer_basic_widget.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
     def test_xml_parser_writer_widget(self):
 
@@ -1764,93 +1849,8 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.widget_info)
-    test_xml_parser_writer_widget.tags = ('wirecloud-template', 'wirecloud-noselenium', 'fiware-ut-14')
 
-    def test_next_xml_parser_writer_basic_operator(self):
-
-        xml_description = write_next_xml_description(self.basic_operator_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.assertEqual(processed_info, self.basic_operator_info)
-
-    def test_next_xml_parser_writer_operator(self):
-
-        xml_description = write_next_xml_description(self.operator_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.assertEqual(processed_info, self.operator_info)
-
-    def test_next_xml_parser_writer_operator_with_translations(self):
-
-        xml_description = write_json_description(self.operator_with_translation_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.assertEqual(processed_info, self.operator_with_translation_info)
-
-    def test_next_xml_parser_writer_basic_mashup(self):
-
-        xml_description = write_next_xml_description(self.basic_mashup_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.assertEqual(processed_info, self.basic_mashup_info)
-
-    def test_next_xml_parser_writer_mashup(self):
-
-        xml_description = write_next_xml_description(self.mashup_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.check_full_mashup(processed_info, self.mashup_info)
-
-    def test_next_xml_parser_writer_mashup_with_behaviours(self):
-        self.compare_input_and_output_mashup("mashup_with_behaviours_data", "xml")
-
-    def test_next_xml_parser_writer_mashup_with_behaviours_and_minimal_data(self):
-        self.check_minimal_mashup_data("mashup_with_behaviours_minimal_data", "xml")
-
-    def test_next_xml_parser_missing_mashup_connection_target(self):
-        self.check_missing_xml_element('/mashup/structure/wiring/connection[1]/target')
-
-    def test_next_xml_parser_missing_mashup_connection_source(self):
-        self.check_missing_xml_element('/mashup/structure/wiring/connection[1]/source')
-
-    def test_next_xml_parser_writer_mashup_with_translations(self):
-
-        xml_description = write_next_xml_description(self.mashup_with_translations_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.check_full_mashup(processed_info, self.mashup_with_translations_info)
-
-    def test_next_xml_parser_writer_mashup_with_params(self):
-
-        xml_description = write_next_xml_description(self.mashup_with_params)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.check_full_mashup(processed_info, self.mashup_with_params)
-
-    def test_next_xml_parser_writer_basic_widget(self):
-
-        xml_description = write_next_xml_description(self.basic_widget_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.assertEqual(processed_info, self.basic_widget_info)
-
-    def test_next_xml_parser_writer_widget(self):
-
-        xml_description = write_next_xml_description(self.widget_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.assertEqual(processed_info, self.widget_info)
-
-    def test_next_xml_parser_minimal_endpoint_info(self):
+    def test_xml_parser_minimal_endpoint_info(self):
 
         xml_description = read_template('minimal_endpoint_info.xml')
         template = TemplateParser(xml_description)
@@ -1858,7 +1858,7 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.minimal_endpoint_info)
 
-    def test_next_xml_parser_minimal_preference_info(self):
+    def test_xml_parser_minimal_preference_info(self):
 
         xml_description = read_template('minimal_preference_info.xml')
         template = TemplateParser(xml_description)
@@ -1866,7 +1866,7 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.minimal_preference_info)
 
-    def test_next_xml_parser_minimal_property_info(self):
+    def test_xml_parser_minimal_property_info(self):
 
         xml_description = read_template('minimal_property_info.xml')
         template = TemplateParser(xml_description)

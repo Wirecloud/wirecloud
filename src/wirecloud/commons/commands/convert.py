@@ -26,7 +26,7 @@ from django.core.management.base import CommandError
 
 from wirecloud.commons.utils.commands import BaseCommand
 from wirecloud.commons.utils.template.parsers import TemplateParser
-from wirecloud.commons.utils.template.writers import json, rdf, next_xml as xml, xml as old_xml
+from wirecloud.commons.utils.template.writers import json, old_xml, rdf, xml
 
 
 class ConvertCommand(BaseCommand):

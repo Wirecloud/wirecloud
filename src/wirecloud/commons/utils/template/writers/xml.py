@@ -17,60 +17,112 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
+from django.utils.translation import ugettext as _
 from lxml import etree
 import six
 
 from wirecloud.commons.utils.template.base import stringify_contact_info
 
 
-def write_mashup_tree(resources, options):
+def processOption(options, field, required=False, type='string'):
+    if options.get(field, None) is None:
+        if required:
+            raise Exception(_('Missing %s option') % field)
+        else:
+            return None
+    else:
+        if type == 'string':
+            return six.text_type(options[field])
+        elif type == 'boolean':
+            return 'true' if options[field] else 'false'
+        elif type == 'people':
+            return stringify_contact_info(options[field])
+
+
+def addAttribute(options, element, field, attr_name=None, default='', ignore_default=True, **other_options):
+    if attr_name is None:
+        attr_name = field
+
+    value = processOption(options, field, **other_options)
+    if ignore_default and value == default:
+        return
+    elif value is not None:
+        element.set(attr_name, value)
+
+
+def addAttributes(options, element, attrs, **other_options):
+    for attr in attrs:
+        addAttribute(options, element, attr, **other_options)
+
+
+def addElement(options, element, field, attr_name=None, default='', ignore_default=True, **other_options):
+    if attr_name is None:
+        attr_name = field
+
+    value = processOption(options, field, **other_options)
+    if ignore_default and value == default:
+        return
+    elif value is not None:
+        new_element = etree.SubElement(element, attr_name)
+        new_element.text = value
+
+
+def addElements(options, element, attrs, **other_options):
+    for attr in attrs:
+        addElement(options, element, attr, **other_options)
+
+
+def addPreferenceValues(resource, preferences):
+    for pref_name, pref in six.iteritems(preferences):
+        element = etree.SubElement(resource, 'preferencevalue', name=pref_name)
+        addAttribute(pref, element, 'value', type='string', required=False)
+        addAttributes(pref, element, ('readonly', 'hidden'), default='false', type='boolean')
+
+
+def write_mashup_tree(doc, resources, options):
 
     # Params
-    for param in options['params']:
-        etree.SubElement(resources, 'Param', name=param['name'], label=param['label'], type=param['type'])
+    if len(options['params']) > 0:
+        preferences = etree.SubElement(doc, 'preferences')
+        for pref in options['params']:
+            pref_element = etree.SubElement(preferences, 'preference', name=pref['name'])
+            addAttributes(pref, pref_element, ('type', 'label', 'description', 'default'))
+            addAttribute(pref, pref_element, 'readonly', default='false', type='boolean')
 
     # Embedded resources
     if len(options['embedded']) > 0:
-        embedded_element = etree.SubElement(resources, 'Embedded')
+        embedded_element = etree.SubElement(doc, 'embedded')
         for resource in options['embedded']:
-            etree.SubElement(embedded_element, 'Resource',
-                vendor=resource['vendor'],
-                name=resource['name'],
-                version=resource['version'],
-                src=resource['src'])
+            etree.SubElement(embedded_element, 'resource',
+                    vendor=resource['vendor'],
+                    name=resource['name'],
+                    version=resource['version'],
+                    src=resource['src'])
 
     # Tabs & resources
     for tab_index, tab in enumerate(options['tabs']):
-        tabElement = etree.SubElement(resources, 'Tab', name=tab['name'], id=str(tab_index))
+        tabElement = etree.SubElement(resources, 'tab', name=tab['name'], id=str(tab_index))
 
         for preference_name, preference_value in six.iteritems(tab['preferences']):
-            etree.SubElement(tabElement, 'Preference', name=preference_name, value=preference_value)
+            etree.SubElement(tabElement, 'preferencevalue', name=preference_name, value=preference_value)
 
         for iwidget in tab['resources']:
-            resource = etree.SubElement(tabElement, 'Resource', id=iwidget['id'], vendor=iwidget['vendor'], name=iwidget['name'], version=iwidget['version'], title=iwidget['title'])
+            resource = etree.SubElement(tabElement, 'resource', id=iwidget['id'], vendor=iwidget['vendor'], name=iwidget['name'], version=iwidget['version'], title=iwidget['title'])
 
             if iwidget.get('readonly', False):
                 resource.set('readonly', 'true')
 
-            etree.SubElement(resource, 'Position', x=str(iwidget['position']['x']), y=str(iwidget['position']['y']), z=str(iwidget['position']['z']))
-            etree.SubElement(resource, 'Rendering', height=str(iwidget['rendering']['height']),
-                width=str(iwidget['rendering']['height']), minimized=str(iwidget['rendering']['minimized']),
-                fulldragboard=str(iwidget['rendering']['fulldragboard']), layout=str(iwidget['rendering']['layout']))
+            etree.SubElement(resource, 'position', x=str(iwidget['position']['x']), y=str(iwidget['position']['y']), z=str(iwidget['position']['z']))
+            rendering = etree.SubElement(resource, 'rendering')
+            addAttributes(iwidget['rendering'], rendering, ('height', 'width', 'layout'), required=True)
+            addAttributes(iwidget['rendering'], rendering, ('minimized', 'fulldragboard'), type='boolean')
 
-            for pref_name, pref in six.iteritems(iwidget['preferences']):
-                element = etree.SubElement(resource, 'Preference', name=pref_name)
-
-                if pref.get('value', None) is not None:
-                    element.set('value', pref['value'])
-
-                if pref.get('readonly', False):
-                    element.set('readonly', 'true')
-
-                if pref.get('hidden', False):
-                    element.set('hidden', 'true')
+            addPreferenceValues(resource, iwidget['preferences'])
 
             for prop_name, prop in six.iteritems(iwidget.get('properties', {})):
-                element = etree.SubElement(resource, 'Property', name=prop_name)
+                element = etree.SubElement(resource, 'variablevalue', name=prop_name)
 
                 if prop.get('value', None) is not None:
                     element.set('value', prop['value'])
@@ -79,161 +131,177 @@ def write_mashup_tree(resources, options):
                     element.set('readonly', 'true')
 
 
-def write_mashup_wiring_tree(wiring, options):
+def write_mashup_wiring_tree(mashup, options):
+
+    wiring = etree.SubElement(mashup, 'wiring')
+
+    wiring.set('version', options['wiring']['version'])
 
     for op_id, operator in six.iteritems(options['wiring']['operators']):
-        operator_element = etree.SubElement(wiring, 'Operator', id=op_id, name=operator['name'])
-
-        for pref_name, pref in six.iteritems(operator['preferences']):
-            element = etree.SubElement(operator_element, 'Preference', name=pref_name)
-
-            if pref.get('value', None) is not None:
-                element.set('value', pref['value'])
-
-            if pref.get('readonly', False):
-                element.set('readonly', 'true')
-
-            if pref.get('hidden', False):
-                element.set('hidden', 'true')
+        (vendor, name, version) = operator['name'].split('/')
+        operator_element = etree.SubElement(wiring, 'operator', id=op_id, vendor=vendor, name=name, version=version)
+        addPreferenceValues(operator_element, operator['preferences'])
 
     for connection in options['wiring']['connections']:
-        element = etree.SubElement(wiring, 'Connection')
+        element = etree.SubElement(wiring, 'connection')
         if connection.get('readonly', False):
             element.set('readonly', 'true')
 
-        source_type = "iwidget" if connection['source']['type'] == 'widget' else 'operator'
-        target_type = "iwidget" if connection['target']['type'] == 'widget' else 'operator'
+        etree.SubElement(element, 'source', type=connection['source']['type'], id=str(connection['source']['id']), endpoint=connection['source']['endpoint'])
+        etree.SubElement(element, 'target', type=connection['target']['type'], id=str(connection['target']['id']), endpoint=connection['target']['endpoint'])
 
-        etree.SubElement(element, 'Source', type=source_type, id=str(connection['source']['id']), endpoint=connection['source']['endpoint'])
-        etree.SubElement(element, 'Target', type=target_type, id=str(connection['target']['id']), endpoint=connection['target']['endpoint'])
+    visual_description = etree.SubElement(wiring, 'visualdescription')
+    write_mashup_wiring_visualdescription_tree(visual_description, options['wiring']['visualdescription'])
+
+
+def write_mashup_wiring_visualdescription_tree(target, visualdescription):
+
+    write_mashup_wiring_components_tree(target, 'operator', visualdescription['components'])
+    write_mashup_wiring_components_tree(target, 'widget', visualdescription['components'])
+    write_mashup_wiring_connections_tree(target, visualdescription['connections'])
+    write_mashup_wiring_behaviours_tree(target, visualdescription['behaviours'])
+
+
+def write_mashup_wiring_behaviours_tree(target, behaviours):
+
+    for behaviour in behaviours:
+        behaviour_element = etree.SubElement(target, 'behaviour', title=behaviour['title'], description=behaviour['description'])
+
+        write_mashup_wiring_components_tree(behaviour_element, 'operator', behaviour['components'])
+        write_mashup_wiring_components_tree(behaviour_element, 'widget', behaviour['components'])
+        write_mashup_wiring_connections_tree(behaviour_element, behaviour['connections'])
+
+
+def write_mashup_wiring_connections_tree(target, connections):
+
+    for connection in connections:
+        connectionview = etree.SubElement(target, 'connection', sourcename=connection['sourcename'], targetname=connection['targetname'])
+
+        if connection.get('sourcehandle', 'auto') != 'auto':
+            etree.SubElement(connectionview, 'sourcehandle', x=str(connection['sourcehandle']['x']), y=str(connection['sourcehandle']['y']))
+
+        if connection.get('targethandle', 'auto') != 'auto':
+            etree.SubElement(connectionview, 'targethandle', x=str(connection['targethandle']['x']), y=str(connection['targethandle']['y']))
+
+
+def write_mashup_wiring_components_tree(target, type, components):
+
+    for c_id, component in six.iteritems(components[type]):
+        componentview = etree.SubElement(target, 'component', id=str(c_id), type=type)
+
+        if component.get('collapsed', False):
+            componentview.set('collapsed', 'true')
+
+        if 'position' in component:
+            etree.SubElement(componentview, 'position', x=str(component['position']['x']), y=str(component['position']['y']))
+
+        if 'endpoints' in component:
+            sources = etree.SubElement(componentview, 'sources')
+
+            for endpointname in component['endpoints']['source']:
+                endpoint = etree.SubElement(sources, 'endpoint')
+                endpoint.text = endpointname
+
+            targets = etree.SubElement(componentview, 'targets')
+
+            for endpointname in component['endpoints']['target']:
+                endpoint = etree.SubElement(targets, 'endpoint')
+                endpoint.text = endpointname
 
 
 def build_xml_document(options):
 
-    template = etree.Element('Template', xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#")
-    desc = etree.Element('Catalog.ResourceDescription')
-    template.append(desc)
-    etree.SubElement(desc, 'Vendor').text = options.get('vendor')
-    etree.SubElement(desc, 'Name').text = options.get('name')
-    etree.SubElement(desc, 'Version').text = options.get('version')
-    etree.SubElement(desc, 'DisplayName').text = options.get('title')
+    if options.get('type') not in ('widget', 'operator', 'mashup'):
+        raise Exception(_('Unsupported resource type: %s') % options.get('type'))
 
-    authors = options.get('authors', ())
-    if len(authors) > 0:
-        etree.SubElement(desc, 'Author').text = stringify_contact_info(authors)
+    template = etree.Element(options['type'], xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1")
+    template.set('vendor', options.get('vendor'))
+    template.set('name', options.get('name'))
+    template.set('version', options.get('version'))
 
-    contributors = options.get('contributors', ())
-    if len(contributors) > 0:
-        etree.SubElement(desc, 'Contributors').text = stringify_contact_info(contributors)
-
-    etree.SubElement(desc, 'Mail').text = options.get('email')
-    etree.SubElement(desc, 'LongDescription').text = options.get('longdescription')
-    etree.SubElement(desc, 'Description').text = options.get('description')
-    etree.SubElement(desc, 'ImageURI').text = options.get('image', '')
-    etree.SubElement(desc, 'iPhoneImageURI').text = options.get('smartphoneimage', '')
-    etree.SubElement(desc, 'Homepage').text = options.get('homepage', '')
-    etree.SubElement(desc, 'WikiURI').text = options.get('doc', '')
-    etree.SubElement(desc, 'License').text = options.get('license', '')
-    etree.SubElement(desc, 'LicenseURL').text = options.get('licenseurl', '')
-    etree.SubElement(desc, 'IssueTracker').text = options.get('issuetracker', '')
-    etree.SubElement(desc, 'ChangeLogURL').text = options.get('changelog', '')
+    desc = etree.SubElement(template, 'details')
+    addElements(options, desc, ('title', 'email', 'image', 'smartphoneimage', 'description', 'longdescription', 'homepage', 'doc', 'license', 'licenseurl', 'changelog', 'issuetracker'))
+    addElements(options, desc, ('authors', 'contributors'), type='people')
 
     if len(options['requirements']) > 0:
-        requirements = etree.SubElement(desc, 'Requirements')
+        requirements = etree.SubElement(template, 'requirements')
         for requirement in options['requirements']:
-            etree.SubElement(requirements, 'Feature', name=requirement['name'])
+            etree.SubElement(requirements, 'feature', name=requirement['name'])
 
     if options['type'] == 'mashup':
-        resources = etree.SubElement(desc, 'IncludedResources')
+        resources = etree.SubElement(template, 'structure')
         for pref_name, pref_value in six.iteritems(options['preferences']):
-            etree.SubElement(resources, 'Preference', name=pref_name, value=pref_value)
+            etree.SubElement(resources, 'preferencevalue', name=pref_name, value=pref_value)
     else:
 
         if len(options['preferences']) > 0:
 
-            preferences_element = etree.SubElement(template, 'Platform.Preferences')
+            preferences_element = etree.SubElement(template, 'preferences')
             for pref in options['preferences']:
-                pref_element = etree.SubElement(preferences_element, 'Preference',
-                    name=pref['name'],
-                    type=pref['type'],
-                    label=pref['label'],
-                    description=pref['description'],
-                    readonly=str(pref['readonly']).lower(),
-                    default=pref['default'])
-
-                if pref['secure']:
-                    pref_element.set('secure', 'true')
+                pref_element = etree.SubElement(preferences_element, 'preference', name=pref['name'])
+                addAttributes(pref, pref_element, ('type', 'label', 'description', 'default'))
+                addAttributes(pref, pref_element, ('readonly', 'secure'), default='false', type='boolean')
 
                 if pref['type'] == 'list':
                     for option in pref['options']:
-                        etree.SubElement(pref_element, 'Option', label=option['label'], value=option['value'])
+                        etree.SubElement(pref_element, 'option', label=option['label'], value=option['value'])
 
                 if pref['value'] is not None:
                     pref_element.set('value', pref['value'])
 
         if len(options['properties']) > 0:
 
-            properties_element = etree.SubElement(template, 'Platform.StateProperties')
+            properties_element = etree.SubElement(template, 'persistentvariables')
             for prop in options['properties']:
-                etree.SubElement(properties_element, 'Property',
-                    name=prop['name'],
-                    type=prop['type'],
-                    label=prop['label'],
-                    description=prop['description'],
-                    default=prop['default'],
-                    secure=str(prop['secure']).lower())
+                prop_element = etree.SubElement(properties_element, 'variable', name=prop['name'])
+                addAttributes(prop, prop_element, ('type', 'label', 'description', 'description', 'default'))
+                addAttribute(prop, prop_element, 'secure', default='false', type='boolean')
 
     if options['type'] == 'mashup':
-        write_mashup_tree(resources, options)
+        write_mashup_tree(template, resources, options)
 
     # Wiring info
-    wiring = etree.SubElement(template, 'Platform.Wiring')
+    wiring = etree.SubElement(template, 'wiring')
 
     for output_endpoint in options['wiring']['outputs']:
-        etree.SubElement(wiring, 'OutputEndpoint',
-                name=output_endpoint['name'],
-                type=output_endpoint['type'],
-                label=output_endpoint['label'],
-                description=output_endpoint['description'],
-                friendcode=output_endpoint['friendcode'])
+        endpoint = etree.SubElement(wiring, 'outputendpoint', name=output_endpoint['name'])
+        addAttributes(output_endpoint, endpoint, ('type', 'label', 'description', 'friendcode'))
 
     for input_endpoint in options['wiring']['inputs']:
-        etree.SubElement(wiring, 'InputEndpoint',
-                name=input_endpoint['name'],
-                type=input_endpoint['type'],
-                label=input_endpoint['label'],
-                description=input_endpoint['description'],
-                actionlabel=input_endpoint['actionlabel'],
-                friendcode=input_endpoint['friendcode'])
+        endpoint = etree.SubElement(wiring, 'inputendpoint', name=input_endpoint['name'])
+        addAttributes(input_endpoint, endpoint, ('type', 'label', 'description', 'actionlabel', 'friendcode'))
 
     if options['type'] == 'mashup':
-        write_mashup_wiring_tree(wiring, options)
-    else:
+        # Mashup
+        write_mashup_wiring_tree(resources, options)
+    elif options['type'] == 'widget':
         # Widget code
-        link = etree.SubElement(template, 'Platform.Link')
-        xhtml = etree.SubElement(link, 'XHTML', href=options['contents']['src'])
-        xhtml.set('content-type', options['contents']['contenttype'])
-        xhtml.set('charset', options['contents']['charset'])
-        if options['contents']['cacheable'] is False:
-            xhtml.set('cacheable', 'false')
-        if options['contents']['useplatformstyle']:
-            xhtml.set('use-platform-style', 'true')
+        xhtml = etree.SubElement(template, 'contents', src=options['contents']['src'])
+        addAttribute(options['contents'], xhtml, 'contenttype', default='text/html')
+        addAttribute(options['contents'], xhtml, 'charset', default='utf-8')
+        addAttribute(options['contents'], xhtml, 'cacheable', default='true', type='boolean')
+        addAttribute(options['contents'], xhtml, 'useplatformstyle', default='false', type='boolean')
 
-        for altcontents in options['altcontents']:
-            altcontents_element = etree.SubElement(link, 'AltContents', scope=altcontents['scope'], href=altcontents['src'])
-            altcontents_element.set('content-type', altcontents['contenttype'])
-            altcontents_element.set('charset', altcontents['charset'])
+        for altcontents in options.get('altcontents', ()):
+            altcontents_element = etree.SubElement(xhtml, 'altcontents', scope=altcontents['scope'], src=altcontents['src'])
+            addAttribute(altcontents, altcontents_element, 'contenttype', default='text/html')
+            addAttribute(altcontents, altcontents_element, 'charset', default='utf-8')
 
         # Widget rendering
-        etree.SubElement(template, 'Platform.Rendering', width=options['widget_width'], height=options['widget_height'])
+        etree.SubElement(template, 'rendering', width=options['widget_width'], height=options['widget_height'])
+    else:
+        # Operator
+        scripts = etree.SubElement(template, 'scripts')
+        for script in options['js_files']:
+            etree.SubElement(scripts, 'script', src=script)
 
     # Translations
     if len(options['translations']) > 0:
 
-        translations_element = etree.SubElement(template, 'Translations', default=options['default_lang'])
+        translations_element = etree.SubElement(template, 'translations', default=options['default_lang'])
 
         for lang, catalogue in six.iteritems(options['translations']):
-            catalogue_element = etree.SubElement(translations_element, 'Translation', lang=lang)
+            catalogue_element = etree.SubElement(translations_element, 'translation', lang=lang)
 
             for msg_name, msg in six.iteritems(catalogue):
                 msg_element = etree.SubElement(catalogue_element, 'msg', name=msg_name)
@@ -242,10 +310,10 @@ def build_xml_document(options):
     return template
 
 
-def write_xml_description(options):
+def write_xml_description(options, raw=False):
 
-    if options['type'] not in ('widget', 'mashup'):
+    if options['type'] not in ('widget', 'operator', 'mashup'):
         raise Exception('Unsupported resource type: ' + options['type'])
 
     doc = build_xml_document(options)
-    return etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True).decode('utf-8')
+    return doc if raw is True else etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True).decode('utf-8')

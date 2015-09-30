@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -24,9 +24,9 @@ import six
 
 from wirecloud.commons.utils.template.base import TemplateParseException
 from wirecloud.commons.utils.template.parsers.json import JSONTemplateParser
-from wirecloud.commons.utils.template.parsers.next_xml import ApplicationMashupTemplateParser
+from wirecloud.commons.utils.template.parsers.xml import ApplicationMashupTemplateParser
 from wirecloud.commons.utils.template.parsers.rdf import RDFTemplateParser
-from wirecloud.commons.utils.template.parsers.xml import WirecloudTemplateParser
+from wirecloud.commons.utils.template.parsers.old_xml import WirecloudTemplateParser
 
 
 __all__ = ('TemplateParseException', 'TemplateParser')
