@@ -43,7 +43,7 @@ from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.wiring.utils import get_wiring_skeleton
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_rdf_template_from_workspace
+from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_xml_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, get_workspace_data, get_global_workspace_data, setVisibleTab
 from wirecloud.platform.markets.utils import get_local_catalogue
@@ -501,12 +501,12 @@ class WorkspacePublisherEntry(Resource):
             smartphoneimage_filename = 'images/smartphone' + os.path.splitext(smartphoneimage_file.name)[1]
             options['smartphoneimage'] = smartphoneimage_filename
 
-        description = build_rdf_template_from_workspace(options, workspace, request.user)
+        description = build_xml_template_from_workspace(options, workspace, request.user)
 
         # Build mashup wgt file
         f = BytesIO()
         zf = zipfile.ZipFile(f, 'w')
-        zf.writestr('config.xml', bytes(description.serialize(format='pretty-xml')))
+        zf.writestr('config.xml', description.encode('utf-8'))
         if image_file is not None:
             zf.writestr(image_filename, image_file.read())
         if smartphoneimage_file is not None:
