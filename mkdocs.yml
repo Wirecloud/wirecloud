@@ -9,8 +9,11 @@ pages:
 - 'User Guide': 'user_guide.md'
 - 'Programmer Guide':
     - 'Application Mashup RESTful API': 'restapi/index.md'
-    - 'Widget API': 'widgetapi/widgetapi.md'
-    - 'Widget & Operator Development': 'development/widget_and_operators.md'
+    - 'Widget & Operator Development':
+        - 'Basic Concepts': 'development/widget_and_operators.md'
+        - 'Widget API': 'widgetapi/widgetapi.md'
+        - 'NGSI API': 'ngsi_api.md'
+        - 'ObjectStorage API': 'object_storage_api.md'
 
 markdown_extensions:
     - markdown_github.headerid

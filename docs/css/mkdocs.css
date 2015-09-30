@@ -4,8 +4,12 @@
     padding-left: 3.236em;
 }
 
-.wy-menu-vertical .subnav li.toctree-l1.current>a {
-    padding: 0.4045em 2.427em;
+.wy-menu-vertical .subnav a {
+    padding: 0.4045em 1.618em;
+}
+
+.wy-menu-vertical .subnav li.toctree-l1 {
+    padding-left: 14px;
 }
 
 /* Content */
@@ -33,6 +37,18 @@ h1, h2, h3, h4, h5, h6 {
 
 h1, h2, h3 {
     margin-top: 24px;
+}
+
+.rst-content h2 {
+    font-size: 27px;
+}
+
+.rst-content h3 {
+    font-size: 22px;
+}
+
+.rst-content h3 {
+    font-size: 18px;
 }
 
 .section a:visited {
@@ -88,25 +104,28 @@ pre, .gist .gist-file .gist-data {
   border-bottom-left-radius: 3px;
   -moz-border-radius-bottomleft: 3px;
   -webkit-border-bottom-left-radius: 3px;
-  font-size: 16px;
+  font-size: 14px;
   padding: 6px 12px;
   overflow: auto;
   margin: 0 0 12px;
 }
 
-.rst-content .section ul, .rst-content .section ol {
+.rst-content ul, .rst-content ol {
     margin-top: 0;
     margin-bottom: 12px;
     line-height: 24px;
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 ul ul, ol ul, ol ol, ul ol {
     margin-bottom: 0;
 }
 
-p {
+.rst-content p {
     margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .rst-content h3 + blockquote {

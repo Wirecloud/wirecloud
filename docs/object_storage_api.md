@@ -1,20 +1,3 @@
-# ObjectStorage JavaScript API
-
-.fx: cover
-
-@conwet
-
----
-
-
-## Introduction
-
-.fx: section-title
-
----
-<!-- SLIDE 3 -->
-## Introduction
-
 Object Storage offers persistent storage for digital objects that can be files,
 databases or other datasets which need to be archived. Objects are stored in
 named locations known as containers. Containers can be nested thus objects can
@@ -27,21 +10,14 @@ description file of the widget/operator. See the [Using Object
 Storage](3.2.2_Using Object Storage) tutorial for more detailed documentation
 (and examples) on how to use this API.
 
----
 
-
-## Keystone API
-
-.fx: section-title
-
----
-<!-- SLIDE 5 -->
 ## KeystoneAPI
 
 A new **KeystoneAPI** can be instantiated using the following constructor:
 
-	!javascript
-	KeystoneAPI(url, options)
+```javascript
+KeystoneAPI(url[, options])
+```
 
 - `url` is the url of the Keystone server
 - `options`:
@@ -56,27 +32,25 @@ The `token` and `use_user_fiware_token` options are optional. When passed to the
 default value in the invocation of its methods. In any case, these options can
 also be passed to the `KeystoneAPI` methods for not using the default values.
 
----
-<!-- SLIDE 6 -->
-## KeystoneAPI
+
 ### getTenants
 
 List all of the tenants in the Keystone server available for the authenticated user.
 
-	!javascript
-	getTenants([options])
+```javascript
+getTenants([options])
+```
 
 The `onSuccess` callback will receive the list of tenants as the first argument.
 
----
-<!-- SLIDE 7 -->
-## KeystoneAPI
+
 ### getAuthToken
 
 Gets an authentication token that permits access to the Object Storage API.
 
-	!javascript
-	getAuthToken([options])
+```javascript
+getAuthToken([options])
+```
 
 Extra options:
 
@@ -89,22 +63,14 @@ Extra options:
 
 The `onSuccess` callback will receive auth token info as the first argument.
 
----
 
-## Object Storage API
-
-.fx: section-title
-
----
-<!-- SLIDE 9 -->
 ## ObjectStorageAPI
-
-.fx: font-size-small
 
 A new `ObjectStorageAPI` can be instantiated using the following constructor:
 
-	!javascript
-	ObjectStorageAPI(url[, options])
+```javascript
+ObjectStorageAPI(url[, options])
+```
 
 - `url` is the url of the Object Storage server
 - `options`:
@@ -123,51 +89,47 @@ and the following callbacks:
 - `onComplete` is called when the request finish regardless of whether the
   request is successful or not
 
----
-<!-- SLIDE 10 -->
-## ObjectStorageAPI
+
 ### createContainer
 
 Creates a container in which other containers and objects can be stored.
 
-	!javascript
-	createContainer(container[, options])
+```javascript
+createContainer(container[, options])
+```
 
 - `container` is the name of the container to create
 
----
-<!-- SLIDE 11 -->
-## ObjectStorageAPI
+
 ### listContainer
 
 Returns a list of the contents of a container.
 
-	!javascript
-	listContainer(container[, options])
+```javascript
+listContainer(container[, options])
+```
 
 - `container` is the name of the container to list
 
----
-<!-- SLIDE 12 -->
-## ObjectStorageAPI
+
 ### deleteContainer
 
 Deletes a specified container from the storage system.
 
-	!javascript
-	deleteContainer(container[, options])
+```javascript
+deleteContainer(container[, options])
+```
 
 - `container` is the name of the container to delete
 
----
-<!-- SLIDE 13 -->
-## ObjectStorageAPI
+
 ### getFile
 
 Retrieves a specified object from the storage system.
 
-	!javascript
-	getFile(container, file_name[, options])
+```javascript
+getFile(container, file_name[, options])
+```
 
 * `container` is the name of the container where the file is
 * `file_name` is the name of the file to download
@@ -178,17 +140,16 @@ Extra options:
   by the `responseType` option (see the [request option section][request_options]
   for more details), except ""
 
-[request_options]: 3.3.1_JavaScript%20API#slide9
+[request_options]: widgetapi/widgetapi.md#request-options-general-options
 
----
-<!-- SLIDE 14 -->
-## ObjectStorageAPI
+
 ### uploadFile
 
 Stores a binary object in the specified location.
 
-	!javascript
-	uploadFile(container, file[, options])
+```javascript
+uploadFile(container, file[, options])
+```
 
 - `container` is the name of the container where the file is going to be uploaded
 - `file` is the content to be uploaded. Must be an instance of
@@ -205,28 +166,14 @@ Extra options:
 [JavaScript_Blob]: https://developer.mozilla.org/en/docs/Web/API/Blob
 [JavaScript_File]: https://developer.mozilla.org/en/docs/Web/API/File
 
----
-<!-- SLIDE 15 -->
-## ObjectStorageAPI
+
 ### deleteFile
 
 Deletes a specified object from the storage system.
 
-	!javascript
-	deleteFile(container, file_name[, options])
+```javascript
+deleteFile(container, file_name[, options])
+```
 
 * `container` is the name of the container where the file is going to be deleted
 * `file_name` is the name of the file to delete
-
----
-
-.fx: back-cover
-
-Thanks!
-
-FIWARE                                FIWARE Lab
-OPEN APIs FOR OPEN MINDS              Spark your imagination
-
-         www.fiware.org               FIWARE Ops
-twitter: @Fiware                      Easing your operations
-
