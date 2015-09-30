@@ -56,12 +56,12 @@ screenshot shows a workspace named "Workspace", pertaining the user
 "admin" and running in the FIWARE Lab’s instance of WireCloud, i.e. it
 is named admin/Workspace.
 
-![Wirecloud_UG_1.png](images/user_guide/Wirecloud_UG_1.png)
+![create_workspace/1.png](images/user_guide/create_workspace/1.png)
 
 Near the workspace name there is a button that you can click on to
 expand the workspace dropdown menu:
 
-![Wirecloud_UG_3.png](images/user_guide/Wirecloud_UG_3.png)
+![create_workspace/3.png](images/user_guide/create_workspace/3.png)
 
 Once expanded, the menu shows a list of the already created workspaces
 (see *Workspace*, *My Multimedia Workspace* and *IssueTrouble* in the
@@ -80,22 +80,22 @@ by a list of options:
 If you want to create a new workspace named "History Info", choose "New
 workspace" in the dropdown menu:
 
-![Wirecloud_UG_4.png](images/user_guide/Wirecloud_UG_4.png)
+![create_workspace/4.png](images/user_guide/create_workspace/4.png)
 
 A dialog will pop up requiring a name for the new workspace. Type the
 desired name and click the accept button:
 
-![Wirecloud_UG_5.png](images/user_guide/Wirecloud_UG_5.png)
+![create_workspace/5.png](images/user_guide/create_workspace/5.png)
 
 Once accepted, the name of the new workspace is shown in the upper area of
 the window:
 
-![Wirecloud_UG_HistoryInfoWorkspace.png](images/user_guide/Wirecloud_UG_HistoryInfoWorkspace.png)
+![create_workspace/HistoryInfoWorkspace.png](images/user_guide/create_workspace/HistoryInfoWorkspace.png)
 
 The following screenshot show the "Settings" menu, where you can set
 workspace features:
 
-![Wirecloud_UG_WorkspaceSettings.png](images/user_guide/Wirecloud_UG_WorkspaceSettings.png)
+![create_workspace/WorkspaceSettings.png](images/user_guide/create_workspace/WorkspaceSettings.png)
 
 Browsing the Marketplace
 ------------------------
@@ -128,7 +128,7 @@ The following figure shows a screenshot of WireCloud where you can see
 the FIWARE Lab marketplace and the different stores made available through
 it.
 
-![Wirecloud_Marketplace_plus_stores.png](images/user_guide/Wirecloud_Marketplace_plus_stores.png)
+![Wirecloud_Marketplace_plus_stores.png](images/user_guide/browsing_marketplace/Wirecloud_Marketplace_plus_stores.png)
 
 ### Managing marketplaces
 
@@ -136,7 +136,7 @@ When looking for an offer of widgets, operators and mashups, you first
 need to choose a marketplace. Use the dropdown menu shown in the
 workspace path for this purpose.
 
-![Wirecloud_UG_8.png](images/user_guide/Wirecloud_UG_8.png)
+![browsing_marketplace/8.png](images/user_guide/browsing_marketplace/8.png)
 
 As shown in the previous screenshot, this menu allows you to choose
 among the different marketplaces you have access to. To add a new
@@ -148,25 +148,25 @@ If you have only Local marketplace available, you can add the FIWARE Lab
 marketplace using "Add new marketplace", as shown in the following
 screenshots:
 
-![Wirecloud_UG_AddNewMarketplace.png](images/user_guide/Wirecloud_UG_AddNewMarketplace.png)
+![browsing_marketplace/AddNewMarketplace.png](images/user_guide/browsing_marketplace/AddNewMarketplace.png)
 
-![Wirecloud_UG_AddingFiwareMarketplace.png](images/user_guide/Wirecloud_UG_AddingFiwareMarketplace.png)
+![browsing_marketplace/AddingFiwareMarketplace.png](images/user_guide/browsing_marketplace/AddingFiwareMarketplace.png)
 
 WireCloud offers a built-in local catalogue called "My Resources", which
 allows you to search among the widgets, operators and mashups currently
 available for the user. The following figure shows a screenshot of the
 "My Resources" for a user in a given instance of WireCloud.
 
-![Wirecloud_UG_9.png](images/user_guide/Wirecloud_UG_9.png)
+![browsing_marketplace/9.png](images/user_guide/browsing_marketplace/9.png)
 
 If you are a widget developer with brand new widgets to share, or you
 just have downloaded a WireCloud-compliant widget from anywhere, you can
 easily upload your new widgets to the built-in local catalogue through
 the "Upload" button available on the "My Resources" view.
 
-![Wirecloud_UG_UploadButton.png](images/user_guide/Wirecloud_UG_UploadButton.png)
+![browsing_marketplace/UploadButton.png](images/user_guide/browsing_marketplace/UploadButton.png)
 
-![Wirecloud_UG_uploadNew.png](images/user_guide/Wirecloud_UG_uploadNew.png)
+![browsing_marketplace/uploadNew.png](images/user_guide/browsing_marketplace/uploadNew.png)
 
 ### Choosing an available store
 
@@ -175,14 +175,14 @@ to surf a store you first need to choose the FIWARE Lab marketplace that
 publishes it. In the following figure, the user uses the dropdown menu
 to choose FIWARE Lab’s marketplace:
 
-![Wirecloud_UG_10.png](images/user_guide/Wirecloud_UG_10.png)
+![browsing_marketplace/10.png](images/user_guide/browsing_marketplace/Wirecloud_UG_10.png)
 
 Once in the FIWARE Lab marketplace, the store dropdown menu shows all
 its available stores (CoNWeT, WStore FIWARE Lab and Another Store). The
 following figure shows the options available in the stores dropdown
 menu:
 
-![Wirecloud_Marketplace_plus_stores.png](images/user_guide/Wirecloud_Marketplace_plus_stores.png)
+![browsing_marketplace/Wirecloud_Marketplace_plus_stores.png](images/user_guide/browsing_marketplace/Wirecloud_Marketplace_plus_stores.png)
 
 Last, but not least, you can return to surf the entire marketplace and
 see the global offer at a glance by selecting the “All stores” option.
@@ -190,17 +190,17 @@ see the global offer at a glance by selecting the “All stores” option.
 ### Publishing mashable application components into Stores
 
 1.  Go to the local catalogue:
-    ![Wirecloud_switch_to_local.png](images/user_guide/Wirecloud_switch_to_local.png)
+    ![browsing_marketplace/Wirecloud_switch_to_local.png](images/user_guide/browsing_marketplace/Wirecloud_switch_to_local.png)
 
 1.  Open the mashable application component details clicking on it:
-    ![Wirecloud_open_details.png](images/user_guide/Wirecloud_open_details.png)
+    ![browsing_marketplace/Wirecloud_open_details.png](images/user_guide/browsing_marketplace/Wirecloud_open_details.png)
 
 1.  Click on Publish:
-     ![Wirecloud_click_publish.png](images/user_guide/Wirecloud_click_publish.png)
+     ![browsing_marketplace/Wirecloud_click_publish.png](images/user_guide/browsing_marketplace/Wirecloud_click_publish.png)
 
 1.  Check the marketplace and the Store where the mashable application
     component is going to be uploaded
-    ![Wirecloud_publish_resource_store_select.png](images/user_guide/Wirecloud_publish_resource_store_select.png)
+    ![browsing_marketplace/Wirecloud_publish_resource_store_select.png](images/user_guide/browsing_marketplace/Wirecloud_publish_resource_store_select.png)
 
 1.  That's all!. Now you will be able to create new offerings at the
     selected Store using the uploaded resource. See the [WStore
@@ -216,12 +216,12 @@ workspace](#creating-a-new-workspace)" section, you should
 have a "History Info" workspace. Let's assume that we start from this
 point:
 
-![Wirecloud_UG_HistoryInfoWorkspace.png](images/user_guide/Wirecloud_UG_HistoryInfoWorkspace.png)
+![create_workspace/Wirecloud_UG_HistoryInfoWorkspace.png](images/user_guide/create_workspace/HistoryInfoWorkspace.png)
 
 Go then to the Marketplace to choose among the widgets available in the
 catalogue those you want to use in your mashup:
 
-![Wirecloud_UG_17.png](images/user_guide/Wirecloud_UG_17.png)
+![create_workspace/17.png](images/user_guide/create_workspace/17.png)
 
 To ensure that you find the required widgets/operators for this example
 mashup, go to the FIWARE Lab marketplace and install them using the
@@ -237,21 +237,21 @@ You can also download them using the following URLs:
 Once installed, you should be able to see all the widgets/operators used
 in this example in the "My Resources" view:
 
-![Wirecloud_UG_9.png](images/user_guide/Wirecloud_UG_9.png)
+![browsing_marketplace/9.png](images/user_guide/browsing_marketplace/9.png)
 
 Go to the editor view and click on the "Add widget" button:
 
-![Wirecloud_UG_19.png](images/user_guide/Wirecloud_UG_19.png)
+![building_mashup/19.png](images/user_guide/building_mashup/19.png)
 
 Look for the *Linear Graph* widget and click on the "Add to workspace"
 button:
 
-![Wirecloud_UG_20.png](images/user_guide/Wirecloud_UG_20.png)
+![building_mashup/20.png](images/user_guide/building_mashup/20.png)
 
 This will add the *Linear Graph* widget into the dashboard, you can move
 and resize it until you obtain the desired layout:
 
-![Wirecloud_UG_21.png](images/user_guide/Wirecloud_UG_21.png)
+![building_mashup/21.png](images/user_guide/building_mashup/21.png)
 
 Add the "Map Viewer" widget to the dashboard following the same steps
 for adding the *Linear Graph* widget. After rearranging it you will be
@@ -260,7 +260,7 @@ the default tab. You can see the tabs used in your workspace at the
 footer bar, and you can create new tabs to better organize the
 distribution of the widgets in your mashup.
 
-![Wirecloud_UG_22.png](images/user_guide/Wirecloud_UG_22.png)
+![building_mashup/22.png](images/user_guide/building_mashup/22.png)
 
 ### Changing the settings of a widget
 
@@ -270,11 +270,11 @@ choice, you can change their settings. To do so, go to the upper-right
 corner of the widget and click the properties icon as shown in the
 following screen shot
 
-![Wirecloud_UG_23.png](images/user_guide/Wirecloud_UG_23.png)
+![building_mashup/23.png](images/user_guide/building_mashup/23.png)
 
 You will then be presented with a dropdown menu with several options.
 
-![Wirecloud_UG_24.png](images/user_guide/Wirecloud_UG_24.png)
+![building_mashup/24.png](images/user_guide/building_mashup/24.png)
 
 -   **Rename** changes the widget name shown in workspace editor and
     wiring Editor views
@@ -299,12 +299,12 @@ customised dialog for the settings of the widget. In this example, the
 *Map Viewer* should be provided with initial location, zoom level and
 mark shadow radius to customise the visualisation.
 
-![Wirecloud_UG_25.png](images/user_guide/Wirecloud_UG_25.png)
+![building_mashup/25.png](images/user_guide/building_mashup/25.png)
 
 After configuring the settings, the widget will show the new location,
 Santander, with the new zoom.
 
-![Wirecloud_UG_26.png](images/user_guide/Wirecloud_UG_26.png)
+![building_mashup/26.png](images/user_guide/building_mashup/26.png)
 
 At this time, you have created a mashup with two individual widgets. The
 Linear Graph widget is empty and need to be wired with something that
@@ -312,7 +312,7 @@ provides information to draw, and the Map Viewer is a good option to
 show any kind of "Points of Interest" and allow the user to select them
 easily.
 
-![Wirecloud_UG_27.png](images/user_guide/Wirecloud_UG_27.png)
+![building_mashup/27.png](images/user_guide/building_mashup/27.png)
 
 ### Wiring widgets and operators
 
@@ -329,12 +329,12 @@ from the first one (i.e. the output or source endpoint).
 To wire the widgets and add operators to your mashup go to the Wiring
 view of the tool:
 
-![Wirecloud_UG_28.png](images/user_guide/Wirecloud_UG_28.png)
+![building_mashup/28.png](images/user_guide/building_mashup/28.png)
 
 You will then be presented with the set of widgets currently added to
 the workspace and the set of operators currently available:
 
-![Wirecloud_UG_Empty_Wiring_Operators.png](images/user_guide/Wirecloud_UG_Empty_Wiring_Operators.png)
+![wiring/Empty_Wiring_Operators.png](images/user_guide/wiring/Empty_Wiring_Operators.png)
 
 One of the most important characteristics that should be intrinsic to
 the design of widgets is that they must be as generic as possible. For
@@ -354,7 +354,7 @@ wiring.
 To do so, open the components side panel and search the *NGSI source* operator,
 then click on the *Create* button:
 
-![Create operator](images/user_guide/wiring/create_operator.png)
+![Create operator](images/user_guide/wiring/Click_Create_Operator.png)
 
 This will create an instance of that operator and will appear in the bottom of
 the box associated with the "NGSI Operator". You can see that it is highlighted
@@ -364,16 +364,16 @@ wiring configuration.
 
 Now drag the operator from the operator list to the wiring canvas:
 
-![Wirecloud_UG_Wiring_NGSISource_drag.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource_drag.png)
+![wiring/Wiring_NGSISource_drag.png](images/user_guide/wiring/Wiring_NGSISource_drag.png)
 
-![Wirecloud_UG_Wiring_NGSISource.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource.png)
+![wiring/Wiring_NGSISource.png](images/user_guide/wiring/Wiring_NGSISource.png)
 
 Now, we have the source of information that is going to be presented in
 the *Map Viewer* widget. So we need to add it to the wiring status
 following the same process for the operator, except that you do not have to
 create the widget (as widgets are created in the editor view):
 
-![Wirecloud_UG_Wiring_NGSISource_MapViewer.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource_MapViewer.png)
+![wiring/Wiring_NGSISource_MapViewer.png](images/user_guide/wiring/Wiring_NGSISource_MapViewer.png)
 
 The wiring editor comes with a recommendation system for connections.
 For example, move the pointer to the *Provide entity* endpoint. You will
@@ -381,7 +381,7 @@ see that the endpoint get highlighted, this means that te recommendation
 system is searching for compatible endpoints. In this case there are no
 compatible endpoints.
 
-![Wirecloud_UG_Wiring_NGSISource_MapViewer_rec.png](images/user_guide/Wirecloud_UG_Wiring_NGSISource_MapViewer_rec.png)
+![wiring/Wiring_NGSISource_MapViewer_rec.png](images/user_guide/wiring/Wiring_NGSISource_MapViewer_rec.png)
 
 This is because the output of the *NGSI source* cannot be connected
 directly with the *Map Viewer* widget. We can use a transform operator
@@ -390,36 +390,36 @@ the format used by the *Map Viewer* widget. In this example, the
 operator that is going to perform this transformation is *Entity to
 PoI*:
 
-![Wirecloud_UG_Wiring_NGSIEntity2PoI.png](images/user_guide/Wirecloud_UG_Wiring_NGSIEntity2PoI.png)
+![wiring/Wiring_NGSIEntity2PoI.png](images/user_guide/wiring/Wiring_NGSIEntity2PoI.png)
 
 After adding the operator, we can move the pointer to the *Provide
 entity* endpoint to see that now we have a connection recommendation:
 
-![Wirecloud_UG_Wiring_NGSIEntity2PoI_rec.png](images/user_guide/Wirecloud_UG_Wiring_NGSIEntity2PoI_rec.png)
+![wiring/Wiring_NGSIEntity2PoI_rec.png](images/user_guide/wiring/Wiring_NGSIEntity2PoI_rec.png)
 
 So, we can connect it. To do so, push down the mouse button on the
 *Provide entity* endpoint and drag the arrow to the *Entity* endpoint:
 
-![Wirecloud_UG_Wiring_NGSIEntity2PoI_connection.png](images/user_guide/Wirecloud_UG_Wiring_NGSIEntity2PoI_connection.png)
-![Wirecloud_UG_Wiring_NGSIEntity2PoI_c_done.png](images/user_guide/Wirecloud_UG_Wiring_NGSIEntity2PoI_c_done.png)
+![wiring/Wiring_NGSIEntity2PoI_connection.png](images/user_guide/wiring/Wiring_NGSIEntity2PoI_connection.png)
+![wiring/Wiring_NGSIEntity2PoI_c_done.png](images/user_guide/wiring/Wiring_NGSIEntity2PoI_c_done.png)
 
 And we can also connect also the *PoI* endpoint of the *NGSI Entity To PoI*
 operator to the *Insert/Update PoI* endpoint on the *Map Viewer* widget:
 
-![Wirecloud_UG_Wiring_End_1st_ph.png](images/user_guide/Wirecloud_UG_Wiring_End_1st_ph.png)
+![wiring/Wiring_End_1st_ph.png](images/user_guide/wiring/Wiring_End_1st_ph.png)
 
 If you return to the *Editor* view, you will see that the map widget has
 been updated and is showing the PoIs obtained from the *NGSI source*
 operator.
 
-![Wirecloud_UG_32.png](images/user_guide/Wirecloud_UG_32.png)
+![wiring/32.png](images/user_guide/wiring/32.png)
 
 You can use the *Map Viewer* moving the viewport, selecting PoI's, etc.
 But in really, what we have is just the *Map Viewer* widget connected to
 a source of data, but using piping and transformation operators that is
 going to give us a great flexibility.
 
-![Wirecloud_UG_MapViewerWithEntities.png](images/user_guide/Wirecloud_UG_MapViewerWithEntities.png)
+![wiring/MapViewerWithEntities.png](images/user_guide/wiring/MapViewerWithEntities.png)
 
 
 #### Other wiring common tasks
@@ -429,30 +429,30 @@ removed in the wiring. For example, when you make some mistake for some
 reason, you can fix it by clicking the remove button that appears in the middle
 of the connection.
 
-![Wirecloud_UG_delete_arrow1.png](images/user_guide/Wirecloud_UG_delete_arrow1.png)
+![wiring/delete_arrow1.png](images/user_guide/wiring/delete_arrow1.png)
 
 Another common task is to change the shape of connections. To do so, you have to
 click on the *Customize* option of the connection:
 
-![Wirecloud_UG_reshape_arrow1.png](images/user_guide/Wirecloud_UG_reshape_arrow_pre.png)
+![wiring/reshape_arrow1.png](images/user_guide/wiring/reshape_arrow_pre.png)
 
 Once enabled, you only have to move the handles that appear to modify the shape
 of the connection.
 
-![Wirecloud_UG_reshape_arrow1.png](images/user_guide/Wirecloud_UG_reshape_arrow1.png)
-![Wirecloud_UG_reshape_arrow2.png](images/user_guide/Wirecloud_UG_reshape_arrow2.png)
+![wiring/reshape_arrow1.png](images/user_guide/wiring/reshape_arrow1.png)
+![wiring/reshape_arrow2.png](images/user_guide/wiring/reshape_arrow2.png)
 
 If you want to stop customising the connection, click outside the connection or
 use the *Stop Customising* option:
 
-![Wirecloud_UG_reshape_arrow2.png](images/user_guide/Wirecloud_UG_reshape_arrow_stop.png)
+![wiring/reshape_arrow2.png](images/user_guide/wiring/reshape_arrow_stop.png)
 
 You can also minimize operators with the intention of improving space
 usage. This can be accomplished using the *Minimize* option that appears
 in the component menu:
 
-![Wirecloud_UG_minimize_option.png](images/user_guide/Wirecloud_UG_minimize_option.png)
-![Wirecloud_UG_33.png](images/user_guide/Wirecloud_UG_33.png)
+![wiring/minimize_option.png](images/user_guide/wiring/minimize_option.png)
+![wiring/33.png](images/user_guide/wiring/33.png)
 
 #### Cloncluding our example
 
@@ -461,19 +461,19 @@ intuition, the documentation and the contextual help offered by each
 widget/operator. Anyway, just in case you have difficulties, you can see
 the final result in the following screenshot:
 
-![Wirecloud_UG_FinalWiring.png](images/user_guide/Wirecloud_UG_FinalWiring.png)
+![wiring/FinalWiring.png](images/user_guide/wiring/FinalWiring.png)
 
 Operators, like widget has also settings that can be modified using the
 following steps:
 
-![Wirecloud_UG_HistoryOperatorSettings1.png](images/user_guide/Wirecloud_UG_HistoryOperatorSettings1.png)
-![Wirecloud_UG_HistoryOperatorSettings2.png](images/user_guide/Wirecloud_UG_HistoryOperatorSettings2.png)
+![wiring/HistoryOperatorSettings1.png](images/user_guide/wiring/HistoryOperatorSettings1.png)
+![wiring/HistoryOperatorSettings2.png](images/user_guide/wiring/HistoryOperatorSettings2.png)
 
 Now you can play with your new workspace.
 
-![Wirecloud_UG_34.png](images/user_guide/Wirecloud_UG_34.png)
-![Wirecloud_UG_35.png](images/user_guide/Wirecloud_UG_35.png)
-![Wirecloud_UG_LinearGraphZoom1.png](images/user_guide/Wirecloud_UG_LinearGraphZoom1.png)
+![wiring/34.png](images/user_guide/wiring/34.png)
+![wiring/35.png](images/user_guide/wiring/Wirecloud_UG_35.png)
+![wiring/LinearGraphZoom1.png](images/user_guide/wiring/Wirecloud_UG_LinearGraphZoom1.png)
 
 Behaviour Oriented Wiring
 -------------------------
@@ -490,13 +490,13 @@ the previous section into two behaviours:
   composed of the `NGSI Source`, `NGSI Entity To PoI` and `Map Viewer` components
   as well as the connections between those components:
 
-  ![*Show lampposts on map* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/intro1.png)
+  ![*Show lampposts on map* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/santander_behaviour1.png)
 
 - The second one can be called: **Show lamppost details**. This behaviour is
   composed of the `Map Viewer`, `History Module to Linear Graph` and
   `Linear Graph` components as well as the connections between those components:
 
-  ![*Show lampposts details* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/intro2.png)
+  ![*Show lampposts details* behaviour (Santander example)](images/user_guide/behaviour_oriented_wiring/santander_behaviour2.png)
 
 > Take into account that components and connections can be present in more than
 > one behaviour. For example, in the previous example the *Map Viewer* widgets
@@ -590,7 +590,7 @@ button of the background connection:
 #### Creating a new behaviour
 
 You can create new behaviours by clicking on the *Create behaviour* button
-available on the list behaviour side panel: 
+available on the list behaviour side panel:
 
 ![*Create* behaviour button](images/user_guide/behaviour_oriented_wiring/create_behaviour_button.png)
 
@@ -638,11 +638,11 @@ Workspaces can be made public by means of modifying their settings as
 Follows:
 
 1.  Click on the workspace menu button and click *Settings*:
-    ![Wirecloud_UG_Public_Workspace_Menu.png](images/user_guide/Wirecloud_UG_Public_Workspace_Menu.png)
+    ![wiring/Public_Workspace_Menu.png](images/user_guide/wiring/Public_Workspace_Menu.png)
 
 1.  You will be presented with a dialog for editing workspace's
     settings:
-    ![Wirecloud_UG_Public_Workspace_Settings.png](images/user_guide/Wirecloud_UG_Public_Workspace_Settings.png)
+    ![wiring/Public_Workspace_Settings.png](images/user_guide/wiring/Public_Workspace_Settings.png)
 
 After making a workspace public, you will be able to share the workspace
 URL with other users.
@@ -660,11 +660,11 @@ You can also obtain the code you have to copy & paste into other web
 pages following those steps:
 
 1.  Click on the workspace menu button and click *Embed*:
-    ![Wirecloud_UG_Embed_Workspace_Menu.png](images/user_guide/Wirecloud_UG_Embed_Workspace_Menu.png)
+    ![wiring/Embed_Workspace_Menu.png](images/user_guide/wiring/Embed_Workspace_Menu.png)
 
 1.  A new window showing you the code for embedding the mashup. Copy &
     paste it into you HTML document.
-    ![Wirecloud_UG_Embed_Dialog.png](images/user_guide/Wirecloud_UG_Embed_Dialog.png)
+    ![wiring/Embed_Dialog.png](images/user_guide/wiring/Embed_Dialog.png)
 
 Additional sources of information
 ---------------------------------
