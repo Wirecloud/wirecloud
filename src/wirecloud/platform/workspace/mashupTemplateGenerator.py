@@ -49,7 +49,7 @@ def get_workspace_description(workspace):
 def get_current_operator_pref_value(operator, preference):
 
     if preference['name'] in operator['preferences']:
-        return operator['preferences'][preference['name']]['value']
+        return "%s" % operator['preferences'][preference['name']]['value']
     else:
         return preference['default']
 
