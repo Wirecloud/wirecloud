@@ -36,7 +36,7 @@ import wirecloud.commons
 from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.testcases import uses_extra_resources, DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase, wirecloud_selenium_test_case
-from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user, install_resource_to_group, install_resource_to_all_users
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
@@ -388,6 +388,11 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(resource.short_name, 'Test Mashup')
         self.assertEqual(resource.version, '1')
         self.assertTrue(resource.is_available_for(self.user))
+
+    def test_mashup_with_missing_embedded_resources(self):
+
+        file_contents = self.build_simple_wgt('mashup_with_missing_embedded_resources.xml')
+        self.assertRaises(InvalidContents, install_resource_to_user, self.user, file_contents=file_contents)
 
 
 class PackagedResourcesTestCase(WirecloudTestCase):

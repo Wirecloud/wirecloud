@@ -126,6 +126,17 @@ def check_invalid_doc_content(wgt_file, resource_info, key):
                 check_invalid_doc_entry(wgt_file, filename)
 
 
+def check_invalid_embedded_resources(wgt_file, resource_info):
+
+    if resource_info['type'] != 'mashup':
+        return
+
+    files = wgt_file.namelist()
+    for embedded_resource in resource_info['embedded']:
+        if embedded_resource['src'] not in files:
+            raise InvalidContents('Missing embedded file: %s' % embedded_resource['src'])
+
+
 def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=False):
 
     close_wgt = False
@@ -157,6 +168,7 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
     check_invalid_doc_content(wgt_file, resource_info, 'longdescription')
     check_invalid_doc_content(wgt_file, resource_info, 'doc')
     check_invalid_doc_content(wgt_file, resource_info, 'changelog')
+    check_invalid_embedded_resources(wgt_file, resource_info)
 
     resource_id = (
         template.get_resource_vendor(),
