@@ -38,13 +38,15 @@ from django.test.client import Client
 from django.utils import translation
 from six import text_type
 
-from wirecloud.platform.localcatalogue.utils import install_resource
+from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
 from wirecloud.platform.widget import utils as showcase
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.searchers import get_available_search_engines
+from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import REASON_PHRASES
 from wirecloud.commons.utils.remote import MobileWirecloudRemoteTestCase, WirecloudRemoteTestCase
+from wirecloud.commons.utils.template.parsers import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
 
@@ -492,12 +494,24 @@ def uses_extra_workspace(owner, file_name, shared=False, public=False, users=(),
             else:
                 base = self.test_data_dir
 
-            wgt_file = open(os.path.join(base, file_name), 'rb')
-            wgt = WgtFile(wgt_file)
-            template = wgt.get_template()
-            buildWorkspaceFromTemplate(template, owner_user)
+            with open(os.path.join(base, file_name), 'rb') as f:
+                wgt = WgtFile(f)
+                template = TemplateParser(wgt.get_template())
 
-            wgt_file.close()
+                resource_info = template.get_resource_processed_info(process_urls=False)
+                if resource_info["type"] != 'mashup':
+                    raise Exception
+
+                for embedded_resource in resource_info['embedded']:
+                    if embedded_resource['src'].startswith('https://'):
+                        resource_file = download_http_content(embedded_resource['src'])
+                    else:
+                        resource_file = BytesIO(wgt.read(embedded_resource['src']))
+
+                    extra_resource_contents = WgtFile(resource_file)
+                    install_resource_to_user(owner_user, file_contents=extra_resource_contents)
+
+                buildWorkspaceFromTemplate(template, owner_user)
 
             return test_func(self, *args, **kwargs)
 

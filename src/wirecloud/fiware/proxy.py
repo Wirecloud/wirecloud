@@ -30,9 +30,9 @@ def get_access_token(user, error_msg):
     "Gets the access_token of a user using python-social-auth"
     try:
         oauth_info = user.social_auth.get(provider='fiware')
-        if oauth_info.token is None:
+        if oauth_info.access_token is None:
             raise Exception
-        return oauth_info.token
+        return oauth_info.access_token
     except:
         raise ValidationError(error_msg)
 

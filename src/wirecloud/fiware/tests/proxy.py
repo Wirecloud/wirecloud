@@ -65,12 +65,12 @@ class ProxyTestCase(WirecloudTestCase):
 
     def setUp(self):
         admin_tokens_mock = Mock()
-        admin_tokens_mock.token = TEST_TOKEN
+        admin_tokens_mock.access_token = TEST_TOKEN
         self.admin_mock = Mock()
         self.admin_mock.social_auth.get.return_value = admin_tokens_mock
 
         user_with_workspaces_tokens_mock = Mock()
-        user_with_workspaces_tokens_mock.token = TEST_WORKSPACE_TOKEN
+        user_with_workspaces_tokens_mock.access_token = TEST_WORKSPACE_TOKEN
         self.user_with_workspaces_mock = Mock()
         self.user_with_workspaces_mock.social_auth.get.return_value = user_with_workspaces_tokens_mock
 
@@ -240,7 +240,7 @@ class ProxyTestCase(WirecloudTestCase):
     def test_fiware_idm_token_from_workspace_owner_no_token(self):
 
         # Remove user_with_workspaces access_token
-        self.user_with_workspaces_mock.social_auth.get(provider='fiware').token = None
+        self.user_with_workspaces_mock.social_auth.get(provider='fiware').access_token = None
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
