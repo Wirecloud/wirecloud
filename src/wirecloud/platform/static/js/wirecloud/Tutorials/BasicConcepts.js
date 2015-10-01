@@ -146,6 +146,8 @@
                 'elemToApplyNextStepEvent': BS.wiringView.behaviour_engine(),
 
             },
+            {'type': 'userAction', 'msg': gettext("Click <em>Find components</em> to close the sidebar"), 'elem': BS.toolbar_button('icon-archive'), 'pos': 'downLeft'},
+            {'type': 'autoAction', 'elem': BS.toolbar_button('icon-archive'), 'action': BA.sleep(250)},
             {
                 'type': 'userAction',
                 'msg': gettext("Drag &amp; drop a new connection from <em>Search Box</em>'s <em>keyword</em> endpoint ..."),
@@ -155,7 +157,7 @@
                     {'element': BS.wiringView.connection_engine(), 'event': 'cancel'}
                 ],
                 'nextStepMsg': gettext("... to <em>YouTube Browser</em>'s <em>keyword</em> endpoint"),
-                'elemToApplyNextStepEvent': BS.wiringView.behaviour_engine(), 'event': 'change',
+                'elemToApplyNextStepEvent': BS.wiringView.connection_engine(), 'event': 'establish',
                 'targetElement': BS.wiringView.endpoint_by_name('widget', 0, 'target', 'keyword'), 'secondPos': 'downLeft'
             },
             {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("Now it's time to test our creation.")},
