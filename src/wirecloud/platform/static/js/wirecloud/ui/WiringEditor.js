@@ -360,14 +360,14 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     var createInitialMessage = function createInitialMessage() {
         var alert = new se.Alert({
-            title: gettext("Hello, welcome to the Mashup Wiring's view!"),
-            message: gettext("In this edition area, you can drag & drop components (operators/widgets) from the sidebar and then, connect them each other."),
+            title: gettext("Hello, welcome to the Wiring Editor view!"),
+            message: gettext("In this view you can connect all the components of your dashboard in a visual way."),
             state: 'info',
             alignment: 'static-top'
         });
 
         alert.heading.addClassName('text-center');
-        alert.addNote(gettext("If a component has no input or output endpoints, it does not make sense to use it."));
+        alert.addNote(new StyledElements.Fragment(utils.gettext("Open the sidebar using the <em>Find components</em> button and drag &amp; drop components (operators/widgets) from the sidebar for being able to connect them as you wish.")));
 
         return alert;
     };

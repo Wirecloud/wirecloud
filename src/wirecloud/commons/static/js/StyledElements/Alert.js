@@ -73,7 +73,7 @@
             /**
              * [addNote description]
              *
-             * @param {String} textContent
+             * @param {StyledElement|String} textContent
              *      [description]
              * @returns {Alert}
              *      The instance on which the member is called.
@@ -81,7 +81,11 @@
             addNote: function addNote(textContent) {
                 var blockquote = document.createElement('blockquote');
 
-                blockquote.innerHTML = textContent;
+                if (textContent instanceof StyledElements.StyledElement) {
+                    textContent.appendTo(blockquote);
+                } else {
+                    blockquote.innerHTML = textContent;
+                }
                 this.body.appendChild(blockquote);
 
                 return blockquote;

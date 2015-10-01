@@ -255,9 +255,8 @@ function Workspace(workspaceState, resources) {
     var iwidget_removed = function iwidget_removed(iwidget) {
         this.events.iwidgetremoved.dispatch(this, iwidget);
 
-        // emptyWorkspaceInfoBox
         if (this.getIWidgets().length == 0) {
-            this.emptyWorkspaceInfoBox.classList.remove('hidden');
+            this.emptyWorkspaceInfoBox.show();
         }
     };
 
@@ -357,26 +356,27 @@ function Workspace(workspaceState, resources) {
         }.bind(this));
 
         // tutorial layer for empty workspaces
-        this.emptyWorkspaceInfoBox = document.createElement('div');
-        this.emptyWorkspaceInfoBox.className = 'emptyWorkspaceInfoBox';
-        var subBox = document.createElement('div');
-        subBox.className = 'alert alert-info alert-block';
         var builder = new StyledElements.GUIBuilder();
+        var message = gettext("<p>The first step for creating impressive mashup applications is to add widgets into this area. To do so, click on the add widget button (<t:addwidgetbutton/>) available on the top right part of the user interface.</p>");
+        var message_fragment = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, {addwidgetbutton: workspace_view.buildAddWidgetButton.bind(workspace_view)});
+        this.emptyWorkspaceInfoBox = new StyledElements.Alert({
+            title: gettext('Hey! Welcome to WireCloud! This is an empty workspace'),
+            message: message_fragment,
+            extraClass: 'emptyWorkspaceInfoBox',
+            state: 'info',
+            alignment: 'static-top'
+        });
+        this.emptyWorkspaceInfoBox.heading.addClassName('text-center');
 
         if (this.isAllowed('edit')) {
             this.notebook.addEventListener('newTab', this.addTab.bind(this));
 
-            var message = gettext("<h4>Hey! Welcome to WireCloud! This is an empty workspace</h4><p>The first step for creating impressive mashup applications is to add widgets into this area. To do so, click on the add widget button (<t:addwidgetbutton/>) available on the top right part of the user interface.</p>");
-            var message_fragment = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, {addwidgetbutton: workspace_view.buildAddWidgetButton.bind(workspace_view)});
-            message_fragment.insertInto(subBox);
-
             var references = Wirecloud.TutorialCatalogue.buildTutorialReferences(['basic-concepts']);
-            references.insertInto(subBox);
+            this.emptyWorkspaceInfoBox.addNote(references);
 
-            this.emptyWorkspaceInfoBox.appendChild(subBox);
-            this.notebook.getTabByIndex(0).wrapperElement.appendChild(this.emptyWorkspaceInfoBox);
+            this.notebook.getTabByIndex(0).appendChild(this.emptyWorkspaceInfoBox);
             if (this.getIWidgets().length !== 0) {
-                this.emptyWorkspaceInfoBox.classList.add('hidden');
+                this.emptyWorkspaceInfoBox.hide();
             }
         }
 
@@ -551,8 +551,7 @@ function Workspace(workspaceState, resources) {
     }
 
     Workspace.prototype.addIWidget = function addIWidget(tab, iwidget) {
-        // emptyWorkspaceInfoBox
-        this.emptyWorkspaceInfoBox.classList.add('hidden');
+        this.emptyWorkspaceInfoBox.hide();
 
         iwidget.internal_iwidget.addEventListener('removed', this._iwidget_removed);
         this.events.iwidgetadded.dispatch(this, iwidget.internal_iwidget);
