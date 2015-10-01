@@ -70,7 +70,7 @@
 
                 active: {
                     get: function get() {return this.hasClassName('active');},
-                    set: function set(value) {this._onactive(value)}
+                    set: function set(value) {this._onactive(value);}
                 }
 
             });
@@ -106,8 +106,8 @@
                 return this;
             },
 
-            title: function title(title) {
-                return title ? appendTitle.call(this, title) : removeTitle.call(this);
+            title: function title(new_title) {
+                return new_title ? appendTitle.call(this, new_title) : removeTitle.call(this);
             },
 
             position: function position(x, y) {
@@ -170,7 +170,7 @@
         event.preventDefault();
         event.stopPropagation();
 
-        if (this.enabled && event.button == 0) {
+        if (this.enabled && event.button === 0) {
             toggleDropdownMenuVisible.call(this);
             this.trigger('click', event);
         }

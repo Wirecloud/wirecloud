@@ -395,7 +395,7 @@
 
     var container_onscroll = function container_onscroll(event) {
         var parent  = this.container.get(),
-            scrollX = parent.scrollLeft
+            scrollX = parent.scrollLeft,
             scrollY = parent.scrollTop;
 
         this.connectionsElement.setAttribute('transform', "translate(" + (-scrollX) + " " + (-scrollY) + ")");
@@ -437,12 +437,11 @@
             endpoint.deactivate();
             this.temporalConnection.unstickEndpoint(endpoint);
             document.addEventListener('mousemove', this._ondrag);
+            document.addEventListener('touchmove', this._ondrag);
         }
     };
 
     var validateConnection = function validateConnection(initialEndpoint, finalEndpoint) {
-        var i;
-
         if (initialEndpoint == null || finalEndpoint == null) {
             return ns.ConnectionEngine.CONNECTION_INVALID;
         }
