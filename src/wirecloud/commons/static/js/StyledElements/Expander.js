@@ -27,10 +27,11 @@
 
     var Expander = function Expander(options) {
         var defaultOptions = {
-            'class': '',
-            'listenOnTitle': false,
-            'expandButton': true,
             'buttonFloat': 'left',
+            'class': '',
+            'expandButton': true,
+            'listenOnTitle': false,
+            'state': 'default',
             'title': null
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
@@ -42,6 +43,10 @@
 
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = StyledElements.Utils.appendWord("panel se-expander", options['class']);
+
+        if (options.state != null && options.state.trim() !== "") {
+            this.addClassName('panel-' + options.state);
+        }
 
         var header = document.createElement('div');
         header.className = 'panel-heading';

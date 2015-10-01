@@ -96,7 +96,7 @@
     // ==================================================================================
 
     var defaults = {
-        state: 'default',
+        state: 'warning',
         alignment: "",
         extraClass: "",
         title: "",
