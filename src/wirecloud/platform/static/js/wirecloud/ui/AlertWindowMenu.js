@@ -32,7 +32,7 @@
         // Cancel button
         this.cancelButton = new StyledElements.Button({
             text: options.cancelLabel,
-            state: 'default',
+            state: 'primary',
             extraClass: "btn-cancel"
         });
         this.cancelButton.addEventListener("click", this._closeListener);
