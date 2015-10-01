@@ -69,7 +69,7 @@
 
             this._component = wiringComponent;
 
-            this.endpoints ={
+            this.endpoints = {
                 source: new ns.EndpointGroup('source', this, ns.SourceEndpoint),
                 target: new ns.EndpointGroup('target', this, ns.TargetEndpoint)
             };
@@ -344,8 +344,10 @@
              * @override
              */
             setTitle: function setTitle(title) {
-                var truncatedTitle = document.createElement('span');
-                    truncatedTitle.textContent = title;
+                var truncatedTitle;
+
+                truncatedTitle = document.createElement('span');
+                truncatedTitle.textContent = title;
 
                 return this.superMember(se.Panel, 'setTitle', truncatedTitle);
             },
@@ -575,8 +577,8 @@
         return this;
     };
 
-    var isClicked = function isClicked(position1, position2) {
-        return !((position1.x - position2.x) + (position1.y - position2.y));
+    var isClick = function isClick(position1, position2) {
+        return (position1.x === position2.x) && (position1.y === position2.y);
     };
 
     var makeDraggable = function makeDraggable() {
@@ -604,7 +606,8 @@
                 var position = context.component.removeClassName('dragging')
                     .toFirst().position();
 
-                if (isClicked(context.position, position)) {
+                // Check this drag & drop action can be considered a click action instead
+                if (isClick(context.position, position)) {
                     context.component.active = !context.active;
                     context.component.trigger('click', event);
                 } else {

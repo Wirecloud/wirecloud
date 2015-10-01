@@ -21,7 +21,7 @@
 
 /*global Wirecloud */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -36,7 +36,7 @@
             Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
             Object.defineProperty(this, 'keywords', {value: meta.friendcode.trim().split(/\s+/)});
             Object.defineProperty(this, 'label', {value: meta.label});
-            Object.defineProperty(this, 'description', {value: meta.description ? meta.description : gettext("No description provided.")});
+            Object.defineProperty(this, 'description', {value: meta.description ? meta.description : utils.gettext("No description provided.")});
             Object.defineProperty(this, 'id', {value: 'widget/' + iwidget.id + '/' + this.meta.name});
         }
 
@@ -58,4 +58,4 @@
 
     Wirecloud.wiring.WidgetSourceEndpoint = WidgetSourceEndpoint;
 
-})();
+})(Wirecloud.Utils);

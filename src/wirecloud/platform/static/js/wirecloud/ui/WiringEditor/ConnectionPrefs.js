@@ -63,7 +63,7 @@
              * @returns {MenuItem}
              *      [TODO: description]
              */
-            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled){
+            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
                 var item;
 
                 item = new se.MenuItem(title, onclick);
@@ -101,16 +101,19 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    function canCustomize() {
+    var canCustomize = function canCustomize() {
+        /*jshint validthis:true */
         return !this.readonly && !this.background;
-    }
+    };
 
-    function canRestore() {
+    var canRestore = function canRestore() {
+        /*jshint validthis:true */
         return !this.readonly && !this.background;
-    }
+    };
 
-    function getCustomizeTitle() {
+    var getCustomizeTitle = function getCustomizeTitle() {
+        /*jshint validthis:true */
         return this.editable ? gettext("Stop customizing") : gettext("Customize");
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

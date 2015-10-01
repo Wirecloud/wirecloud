@@ -177,7 +177,7 @@
             },
 
             getComponent: function getComponent(type, id) {
-                var id1, id2, item;
+                var id1, id2;
 
                 for (id1 in this.components[type].elements) {
                     for (id2 in this.components[type].elements[id1].children) {
@@ -203,7 +203,7 @@
             },
 
             show: function show(type) {
-                type = typeof type !== 'string' ? "": type;
+                type = typeof type !== 'string' ? "" : type;
 
                 if (arguments.length && type) {
                     Object.keys(this.components).forEach(function (existingType) {
@@ -226,8 +226,8 @@
 
     });
 
-    function getMetaId(meta) {
+    var getMetaId = function getMetaId(meta) {
         return meta.vendor + '/' + meta.name;
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

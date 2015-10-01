@@ -88,7 +88,7 @@
 
                 active: {
                     get: function get() {return this.hasClassName('active');},
-                    set: function set(value) {this._onactive(value)}
+                    set: function set(value) {this._onactive(value);}
                 },
 
                 background: {
@@ -347,10 +347,10 @@
                     return this;
                 }
 
-                sourcePosition = this.source.endpoint.anchorPosition,
+                sourcePosition = this.source.endpoint.anchorPosition;
                 targetPosition = this.target.endpoint.anchorPosition;
 
-                sourceHandle = this.source.handle.updateDistance(targetPosition).position(),
+                sourceHandle = this.source.handle.updateDistance(targetPosition).position();
                 targetHandle = this.target.handle.updateDistance(sourcePosition, true).position();
 
                 updateDistance.call(this, sourcePosition, sourceHandle, targetPosition, targetHandle);
@@ -609,7 +609,7 @@
         bezier = function bezier(percent, C1, C2, C3, C4) {
             var X = C1.x * B1(percent) + C2.x * B2(percent) + C3.x * B3(percent) + C4.x * B4(percent);
             var Y = C1.y * B1(percent) + C2.y * B2(percent) + C3.y * B3(percent) + C4.y * B4(percent);
-            return {x : Math.round(X), y : Math.round(Y)};
+            return {x: Math.round(X), y: Math.round(Y)};
         };
 
         return bezier(0.5, source, sourceHandle, targetHandle, target);

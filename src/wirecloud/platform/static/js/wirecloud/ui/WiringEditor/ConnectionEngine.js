@@ -379,6 +379,7 @@
             break;
         case ns.ConnectionEngine.CONNECTION_DUPLICATE:
             this.trigger('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint));
+            /* falls through */
         default:
             this.temporalConnection.remove();
             this.trigger('cancel');

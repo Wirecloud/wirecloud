@@ -19,7 +19,7 @@
  *
  */
 
-/* global gettext, StyledElement, Wirecloud */
+/* global StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -71,7 +71,7 @@
 
             this.endpoint = endpoint;
 
-            this.tooltip = new se.Tooltip({content: gettext("Drag & Drop"), placement: ['top']});
+            this.tooltip = new se.Tooltip({content: utils.gettext("Drag & Drop"), placement: ['top']});
             this.tooltip.bind(this.ballElement);
 
             setRelativePosition.call(this, options.position);

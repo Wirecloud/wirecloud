@@ -19,7 +19,7 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* global StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -42,7 +42,7 @@
             var thumbnailElement, versionGroup;
 
             this.btnAdd = new se.Button({
-                title: gettext("Create"),
+                title: utils.gettext("Create"),
                 iconClass: 'icon-plus',
                 extraClass: 'btn-create'
             });
@@ -112,12 +112,13 @@
 
     });
 
-    function showDefaultImage() {
+    var showDefaultImage = function showDefaultImage() {
+        /*jshint validthis:true */
 
         this.image.onerror = "";
         this.image.src = "/static/images/noimage.png";
 
         return true;
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

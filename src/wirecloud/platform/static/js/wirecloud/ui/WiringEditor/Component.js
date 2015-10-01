@@ -120,7 +120,8 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    function formatDisabledMessage() {
+    var formatDisabledMessage = function formatDisabledMessage() {
+        /*jshint validthis:true */
 
         if (this._component.volatile) {
             this.badge.textContent = utils.gettext("volatile");
@@ -138,6 +139,6 @@
         this.badge.className = "badge badge-success";
 
         return this;
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

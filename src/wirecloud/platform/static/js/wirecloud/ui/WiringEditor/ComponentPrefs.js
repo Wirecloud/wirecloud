@@ -46,7 +46,7 @@
 
         members: {
 
-            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled){
+            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
                 var item;
 
                 item = new se.MenuItem(title, onclick);
@@ -86,21 +86,6 @@
 
     var canShowSettings = function canShowSettings() {
         return this.component.hasSettings() && this.component._component.isAllowed('configure');
-    };
-
-    var showRenameModal = function showRenameModal() {
-        var dialog = new Wirecloud.ui.FormWindowMenu([
-                {name: 'title', label: gettext("Title"), type: 'text'},
-            ],
-            gettext("Rename component"),
-            "component-rename-form");
-
-        dialog.executeOperation = function (data) {
-            // TODO: this.component.setTitle(data.title);
-        }.bind(this);
-
-        dialog.show();
-        dialog.setValue({title: this.component.title});
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

@@ -19,7 +19,7 @@
  *
  */
 
-/* global gettext, Wirecloud */
+/* global Wirecloud */
 
 (function (ns) {
 

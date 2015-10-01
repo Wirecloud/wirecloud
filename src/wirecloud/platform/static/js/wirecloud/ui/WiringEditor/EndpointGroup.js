@@ -59,7 +59,7 @@
             Object.defineProperties(this, {
                 sortable: {
                     get: function get() {return this.hasClassName('sortable');},
-                    set: function set(value) {this.toggleClassName('sortable', value)}
+                    set: function set(value) {this.toggleClassName('sortable', value);}
                 },
                 type: {value: type}
             });
@@ -237,7 +237,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    function equalsLists(list1, list2, sorted) {
+    var equalsLists = function equalsLists(list1, list2, sorted) {
 
         if (typeof sorted !== 'boolean') {
             sorted = true;
@@ -252,9 +252,9 @@
         }
 
         return list1.join() === list2.join();
-    }
+    };
 
-    function makeEndpointDraggable(endpoint) {
+    var makeEndpointDraggable = function makeEndpointDraggable(endpoint) {
 
         endpoint.draggable = new Wirecloud.ui.Draggable(endpoint.get(), {group: this},
             function dragstart(draggable, context, event) {
@@ -323,9 +323,9 @@
         );
 
         return this;
-    }
+    };
 
-    function moveDownEndpoint(endpoint) {
+    var moveDownEndpoint = function moveDownEndpoint(endpoint) {
         var nextEndpoint, index = endpoint.index;
 
         if (index == (this.children.length - 1)) {
@@ -342,12 +342,14 @@
         this.children[index] = nextEndpoint;
 
         return this.refresh();
-    }
+    };
 
-    function moveUpEndpoint(endpoint) {
-        var previousEndpoint, index = endpoint.index;
+    var moveUpEndpoint = function moveUpEndpoint(endpoint) {
+        var previousEndpoint, index;
 
-        if (index == 0) {
+        index = endpoint.index;
+
+        if (index === 0) {
             return this;
         }
 
@@ -361,6 +363,6 @@
         this.children[index] = previousEndpoint;
 
         return this.refresh();
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

@@ -19,7 +19,7 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* global StyledElements, Wirecloud */
 
 (function (ns, se, utils) {
 

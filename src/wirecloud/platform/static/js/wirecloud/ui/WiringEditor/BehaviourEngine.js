@@ -219,7 +219,7 @@
                 this.forEachComponent(function (component) {
 
                     if (behaviour.hasComponent(component)) {
-                        _removeComponent.call(this, component);
+                        removeComponent.call(this, component);
                     }
                 }.bind(this));
                 behaviour.clear();
@@ -260,7 +260,7 @@
              *      The instance on which the member is called.
              */
             forEachComponent: function forEachComponent(callback) {
-                var component, id, type;
+                var id, type;
 
                 for (type in this.components) {
                     for (id in this.components[type]) {
@@ -326,7 +326,7 @@
              *      [TODO: description]
              */
             hasComponents: function hasComponents() {
-                return (Object.keys(this.components.operator).length + Object.keys(this.components.widget).length) > 0
+                return (Object.keys(this.components.operator).length + Object.keys(this.components.widget).length) > 0;
             },
 
             /**
@@ -394,7 +394,8 @@
 
                 if (this.behaviour.equals(behaviour)) {
                     this.behaviours.some(function (existingBehaviour) {
-                        return !behaviour.equals((_behaviour=existingBehaviour));
+                        _behaviour = existingBehaviour;
+                        return !behaviour.equals(existingBehaviour);
                     });
                 } else {
                     _behaviour = this.behaviour;
@@ -427,7 +428,7 @@
                         showComponentDeleteCascadeModal.call(this, component);
                     } else {
                         if (this.filterByComponent(component).length > 1) {
-                            _removeComponent.call(this, component, false);
+                            removeComponent.call(this, component, false);
                         } else {
                             showComponentRemoveModal.call(this, component);
                         }
@@ -609,15 +610,18 @@
 
     var events = ['activate', 'change', 'enable'];
 
-    function _removeConnection(index, connection) {
+    var _removeConnection = function _removeConnection(index, connection) {
+        /*jshint validthis:true */
 
         this.description.connections.splice(index, 1);
         connection.remove();
 
         return this;
-    }
+    };
 
-    function desactivateAllExcept(behaviour) {
+    var desactivateAllExcept = function desactivateAllExcept(behaviour) {
+        /*jshint validthis:true */
+
         var i, found;
 
         for (found = false, i = 0; i < this.behaviours.length; i++) {
@@ -632,9 +636,11 @@
         this.behaviour.active = true;
 
         return this;
-    }
+    };
 
-    function enableToRemoveBehaviour() {
+    var enableToRemoveBehaviour = function enableToRemoveBehaviour() {
+        /*jshint validthis:true */
+
         var enabled = this.behaviours.length > 1;
 
         this.behaviours.forEach(function (behaviour) {
@@ -642,9 +648,11 @@
         });
 
         return this;
-    }
+    };
 
-    function btncreate_onclick() {
+    var btncreate_onclick = function btncreate_onclick() {
+        /*jshint validthis:true */
+
         var dialog = new Wirecloud.ui.FormWindowMenu([
                 {name: 'title', label: gettext("Title"), type: 'text'},
                 {name: 'description', label: gettext("Description"), type: 'longtext'}
@@ -654,9 +662,11 @@
 
         dialog.executeOperation = this.createBehaviour.bind(this);
         dialog.show();
-    }
+    };
 
-    function btnenable_onclick() {
+    var btnenable_onclick = function btnenable_onclick() {
+        /*jshint validthis:true */
+
         var dialog, message;
 
         if (this.enabled) {
@@ -683,9 +693,10 @@
             this.createBehaviour();
             this.trigger('enable', this.enabled);
         }
-    }
+    };
 
-    function insertBehaviour(behaviour) {
+    var insertBehaviour = function insertBehaviour(behaviour) {
+        /*jshint validthis:true */
 
         this.body.appendChild(behaviour);
         this.behaviours.push(behaviour);
@@ -697,9 +708,10 @@
         enableToRemoveBehaviour.call(this);
 
         return behaviour;
-    }
+    };
 
-    function _removeComponent(component, cascade) {
+    var removeComponent = function removeComponent(component, cascade) {
+        /*jshint validthis:true */
 
         if (cascade) {
             this.behaviours.forEach(function (behaviour) {
@@ -723,9 +735,10 @@
         component.remove();
 
         return this;
-    }
+    };
 
-    function showComponentRemoveModal(component) {
+    var showComponentRemoveModal = function showComponentRemoveModal(component) {
+        /*jshint validthis:true */
         var modal, message;
 
         message = utils.interpolate(utils.gettext("The %(type)s <strong>\"%(title)s\"</strong> will be removed, would you like to continue?"), {
@@ -738,13 +751,14 @@
             cancelLabel: utils.gettext("Cancel")
         });
         modal.setMsg(new se.Fragment(message));
-        modal.acceptHandler = _removeComponent.bind(this, component, false);
+        modal.acceptHandler = removeComponent.bind(this, component, false);
         modal.show();
 
         return this;
-    }
+    };
 
-    function showComponentDeleteCascadeModal(component) {
+    var showComponentDeleteCascadeModal = function showComponentDeleteCascadeModal(component) {
+        /*jshint validthis:true */
         var modal, message;
 
         message = utils.interpolate(utils.gettext("The %(type)s <strong>\"%(title)s\"</strong> will be <strong>definitely</strong> removed, would you like to continue?"), {
@@ -757,19 +771,19 @@
             cancelLabel: utils.gettext("Cancel")
         });
         modal.setMsg(new se.Fragment(message));
-        modal.acceptHandler = _removeComponent.bind(this, component, true);
+        modal.acceptHandler = removeComponent.bind(this, component, true);
         modal.show();
 
         return this;
-    }
+    };
 
-    function removeConnections(component, cascade) {
+    var removeConnections = function removeConnections(component, cascade) {
 
         component.forEachConnection(function (connection) {
             this.removeConnection(connection, cascade);
         }.bind(this));
 
         return this;
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

@@ -46,7 +46,7 @@
 
         members: {
 
-            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled){
+            _createMenuItem: function _createMenuItem(title, iconClass, onclick, isEnabled) {
                 var item;
 
                 item = new se.MenuItem(gettext(title), onclick);

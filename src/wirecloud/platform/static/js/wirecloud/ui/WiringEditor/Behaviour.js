@@ -257,7 +257,7 @@
              */
             showLogs: function showLogs() {
                 var modal = new Wirecloud.ui.LogWindowMenu(this.logManager);
-                    modal.show();
+                modal.show();
 
                 return this;
             },
@@ -328,7 +328,9 @@
              *      The instance on which the member is called.
              */
             updateConnection: function updateConnection(connection, view) {
-                var name, vInfo, index = this.getConnectionIndex(connection);
+                var name, index;
+
+                index = this.getConnectionIndex(connection);
 
                 if (index < 0) {
                     index = this.connections.push({
@@ -356,7 +358,8 @@
 
     var events = ['change', 'optremove'];
 
-    function btnremove_onclick(event) {
+    var btnremove_onclick = function btnremove_onclick(event) {
+        /* jshint validthis:true */
         var dialog, message;
 
         message = gettext("The following operation is irreversible " +
@@ -372,9 +375,10 @@
             this.trigger('optremove');
         }.bind(this);
         dialog.show();
-    }
+    };
 
-    function displayUpdateForm() {
+    var displayUpdateForm = function displayUpdateForm() {
+        /* jshint validthis:true */
         var dialog = new Wirecloud.ui.FormWindowMenu([
                 {name: 'title', label: gettext("Title"), type: 'text'},
                 {name: 'description', label: gettext("Description"), type: 'longtext'}
@@ -391,12 +395,13 @@
             title: this.title,
             description: this.description
         });
-    }
+    };
 
-    function updateInfo(data) {
+    var updateInfo = function updateInfo(data) {
+        /* jshint validthis:true */
         this.heading.title.text(data.title ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
         this.description = data.description;
         this.trigger('change');
-    }
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);
