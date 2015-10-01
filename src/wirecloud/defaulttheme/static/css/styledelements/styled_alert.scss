@@ -86,8 +86,8 @@
     padding-bottom: 14px;
 }
 
-.alert > p,
-.alert > ul {
+.alert > p:last-child,
+.alert > ul:last-child {
     margin-bottom: 0;
 }
 
