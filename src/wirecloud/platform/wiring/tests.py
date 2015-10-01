@@ -720,6 +720,43 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
                 sidebar.add_component('operator', "TestOperator", y=-450)
                 sidebar.add_component('widget', "Test (1)", x=-450)
 
+    def test_widget_rename_from_component_prefs(self):
+        self.login(username='user_with_workspaces')
+
+        component_id = 1
+        component_title = "New title"
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                # Rename the widget available in sidebar.
+                component = sidebar.find_component_by_id('widget', component_id)
+                component.rename(component_title)
+            # Check if the widget draggable's title is changed too.
+            component = wiring.find_component_by_id('widget', component_id)
+            self.assertEqual(component.title, component_title)
+        # Check if the widget interface's title is changed too.
+        widget = self.find_widget_by_id(component_id)
+        self.assertEqual(widget.title, component_title)
+
+    def test_widget_rename_from_component_draggable_prefs(self):
+        self.login(username='user_with_workspaces')
+
+        component_id = 1
+        component_title = "New title"
+
+        with self.wiring_view as wiring:
+            # Rename the widget draggable available in wiring diagram.
+            component = wiring.find_component_by_id('widget', component_id)
+            component.rename(component_title)
+
+            with wiring.component_sidebar as sidebar:
+                # Check if the widget 's title of in sidebar is changed too.
+                component = sidebar.find_component_by_id('widget', component_id)
+                self.assertEqual(component.title, component_title)
+        # Check if the widget interface's title is changed too.
+        widget = self.find_widget_by_id(component_id)
+        self.assertEqual(widget.title, component_title)
+
 
 @wirecloud_selenium_test_case
 class ComponentMissingTestCase(WirecloudSeleniumTestCase):

@@ -150,6 +150,10 @@
 
             this.position(options.position);
 
+            if (this.type == 'widget') {
+                wiringComponent.on('title_changed', component_onrename.bind(this));
+            }
+
             notifyErrors.call(this);
             makeDraggable.call(this);
         },
@@ -656,6 +660,10 @@
 
             this.heading.noticeTitle.textContent = title;
         }
+    };
+
+    var component_onrename = function component_onrename(title) {
+        this.setTitle(title).refresh();
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

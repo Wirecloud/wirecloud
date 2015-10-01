@@ -70,6 +70,10 @@
             });
             this.get().setAttribute('data-id', this.id);
 
+            if (this.type == 'widget') {
+                wiringComponent.on('title_changed', component_onrename.bind(this));
+            }
+
             if (wiringComponent.volatile || !wiringComponent.hasEndpoints()) {
                 this.disable();
             }
@@ -139,6 +143,10 @@
         this.badge.className = "badge badge-success";
 
         return this;
+    };
+
+    var component_onrename = function component_onrename(title) {
+        this.setTitle(title);
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);
