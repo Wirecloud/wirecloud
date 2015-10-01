@@ -66,6 +66,9 @@
 
             });
 
+            if (!Array.isArray(events)) {
+                events = [];
+            }
             this.mixinClass(0, ['hide', 'show'].concat(events));
         },
 
