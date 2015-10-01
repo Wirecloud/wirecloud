@@ -19,7 +19,7 @@
  *
  */
 
-/*global IWidget*/
+/* global IWidget, Wirecloud */
 
 /////////////////////////////////////
 // FreeLayout
@@ -123,7 +123,7 @@
 
     FreeLayout.prototype.adaptHeight = function adaptHeight(size) {
         var pixels, parsedSize;
-        
+
         parsedSize = this.parseSize(size);
         switch (parsedSize[1]) {
         case "%":

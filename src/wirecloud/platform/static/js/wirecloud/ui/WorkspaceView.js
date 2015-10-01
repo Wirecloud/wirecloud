@@ -19,9 +19,9 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud */
+/* global LayoutManagerFactory, StyledElements, Wirecloud */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -42,7 +42,7 @@
         this.wiringButton = new StyledElements.Button({
             'class': "btn-display-wiring-view",
             'iconClass': 'icon-puzzle-piece',
-            'title': gettext('Wiring')
+            'title': utils.gettext('Wiring')
         });
         this.wiringButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('wiring');
@@ -50,7 +50,7 @@
 
         this.myresourcesButton = new StyledElements.Button({
             'iconClass': 'icon-archive',
-            'title': gettext('My Resources')
+            'title': utils.gettext('My Resources')
         });
         this.myresourcesButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('myresources');
@@ -58,7 +58,7 @@
 
         this.marketButton = new StyledElements.Button({
             'iconClass': 'icon-shopping-cart',
-            'title': gettext('Marketplace')
+            'title': utils.gettext('Marketplace')
         });
         this.marketButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
@@ -95,7 +95,7 @@
         var button = new StyledElements.Button({
             'class': 'btn-primary',
             'iconClass': 'icon-plus',
-            'title': gettext('Add widget')
+            'title': utils.gettext('Add widget')
         });
         button.addEventListener('click', function () {
             this.wallet.show();
@@ -114,7 +114,7 @@
     };
 
     WorkspaceView.prototype.getBreadcrum = function getBreadcrum() {
-        var workspace_name, entries, current_state;
+        var entries, current_state;
 
         current_state = Wirecloud.HistoryManager.getCurrentState();
         if ('workspace_creator' in current_state) {
@@ -127,7 +127,7 @@
             ];
         } else {
             entries = [{
-                'label': gettext('loading...')
+                'label': utils.gettext('loading...')
             }];
         }
 
@@ -139,12 +139,12 @@
         if ('workspace_creator' in current_state) {
             return current_state.workspace_creator + '/' + current_state.workspace_name;
         } else {
-            return gettext('loading...');
+            return utils.gettext('loading...');
         }
     };
 
     WorkspaceView.prototype.getToolbarMenu = function getToolbarMenu() {
-        var context, current_state, menu;
+        var context, current_state;
         current_state = Wirecloud.HistoryManager.getCurrentState();
         if ('workspace_creator' in current_state) {
             context = Wirecloud.contextManager;
@@ -166,7 +166,7 @@
     };
 
     WorkspaceView.prototype.onHistoryChange = function onHistoryChange(newState) {
-        var target_tab, current_tab, nextWorkspace, alert_msg;
+        var target_tab, nextWorkspace, alert_msg;
 
         nextWorkspace = Wirecloud.workspacesByUserAndName[newState.workspace_creator][newState.workspace_name];
         if (nextWorkspace == null) {
@@ -176,9 +176,9 @@
             }
             alert_msg = document.createElement('div');
             alert_msg.className = 'alert alert-info';
-            alert_msg.textContent = gettext('The requested workspace is no longer available (it was deleted).');;
-            LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
-            LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(alert_msg);
+            alert_msg.textContent = utils.gettext('The requested workspace is no longer available (it was deleted).');
+            LayoutManagerFactory.getInstance().viewsByName.workspace.clear();
+            LayoutManagerFactory.getInstance().viewsByName.workspace.appendChild(alert_msg);
             LayoutManagerFactory.getInstance().header.refresh();
         } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
             Wirecloud.changeActiveWorkspace(nextWorkspace, newState.tab, {replaceNavigationState: 'leave'});
@@ -203,4 +203,4 @@
 
     Wirecloud.ui.WorkspaceView = WorkspaceView;
 
-})();
+})(Wirecloud.Utils);

@@ -19,7 +19,7 @@
  *
  */
 
-/*global Wirecloud*/
+/* global StyledElements, Wirecloud */
 
 (function () {
 

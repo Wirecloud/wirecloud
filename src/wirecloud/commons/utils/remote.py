@@ -134,8 +134,12 @@ class IWidgetTester(object):
         self.testcase.driver.switch_to.default_content()
 
     @property
+    def title_element(self):
+        return self.element.find_element_by_css_selector('.widget_menu > span')
+
+    @property
     def name(self):
-        return self.element.find_element_by_css_selector('.widget_menu > span').text
+        return self.title_element.text
 
     @property
     def error_count(self):

@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,9 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* global Wirecloud */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -29,7 +29,7 @@
 
         var fields = {
             'name': {
-                label: gettext('New Name'),
+                label: utils.gettext('New Name'),
                 type: 'text',
                 required: true,
                 initialValue: what.getName()
@@ -37,7 +37,7 @@
         };
         this.what = what;
         this.rename_method = rename_method;
-        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Rename Workspace'));
+        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Rename Workspace'));
 
     };
     RenameWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
@@ -51,4 +51,5 @@
     };
 
     Wirecloud.ui.RenameWindowMenu = RenameWindowMenu;
-})();
+
+})(Wirecloud.Utils);

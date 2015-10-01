@@ -62,7 +62,7 @@
      * Init
      */
     RecommendationManager.prototype.init = function init(iwidgets, availableOperators) {
-        var i, url, entitiesIds, iwidget, onSuccess, onFailure;
+        var i, url, onSuccess, onFailure;
 
         // Semantic Status
         this.semanticStatus = {};

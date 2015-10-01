@@ -19,9 +19,9 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
+/*global StyledElements, Wirecloud*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -72,7 +72,7 @@
             this.menu.appendChild(wrapper);
 
             login_button = new StyledElements.Button({
-                text: gettext('Sign in')
+                text: utils.gettext('Sign in')
             });
             login_button.addEventListener('click', function () {
                 window.location = Wirecloud.URLs.LOGIN_VIEW + '?next=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
@@ -92,19 +92,19 @@
 
 
             user_menu = this.user_button.getPopupMenu();
-            user_menu.append(new StyledElements.MenuItem(gettext('Settings'), function () {
+            user_menu.append(new StyledElements.MenuItem(utils.gettext('Settings'), function () {
                 var dialog = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
                 dialog.show();
             }));
 
             if (Wirecloud.contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
-                user_menu.append(new StyledElements.MenuItem(gettext('DJango Admin panel'), function () {
+                user_menu.append(new StyledElements.MenuItem(utils.gettext('DJango Admin panel'), function () {
                     window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
                 }));
             }
             user_menu.append(new Wirecloud.ui.TutorialSubMenu());
 
-            user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), Wirecloud.logout));
+            user_menu.append(new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout));
         }
     };
 
@@ -126,7 +126,7 @@
     };
 
     WirecloudHeader.prototype._paintBreadcrum = function _paintBreadcrum(newView) {
-        var i, breadcrum, breadcrum_entry;
+        var i, breadcrum;
 
         this.breadcrum.innerHTML = '';
 
@@ -210,4 +210,4 @@
 
     Wirecloud.ui.WirecloudHeader = WirecloudHeader;
 
-})();
+})(Wirecloud.Utils);

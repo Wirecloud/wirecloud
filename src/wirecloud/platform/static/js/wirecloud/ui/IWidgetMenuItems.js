@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,9 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* global LayoutManagerFactory, StyledElements, Wirecloud */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -39,7 +39,7 @@
         items = [];
 
         item = new StyledElements.MenuItem(
-            gettext('Rename'),
+            utils.gettext('Rename'),
             function () {
                 this.titleelement.enableEdition();
             }.bind(this.iWidget)
@@ -48,7 +48,7 @@
         items.push(item);
 
         item = new StyledElements.MenuItem(
-            gettext("Settings"),
+            utils.gettext("Settings"),
             function () {
                 var dialog = new Wirecloud.Widget.PreferencesWindowMenu();
                 dialog.show(this);
@@ -58,7 +58,7 @@
         items.push(item);
 
         items.push(new StyledElements.MenuItem(
-            gettext("Logs"),
+            utils.gettext("Logs"),
             function () {
                 var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
                 dialog.show();
@@ -66,7 +66,7 @@
         ));
 
         items.push(new StyledElements.MenuItem(
-            gettext("Reload"),
+            utils.gettext("Reload"),
             function () {
                 try {
                     var prev = this.content.src;
@@ -79,7 +79,7 @@
         ));
 
         item = new StyledElements.MenuItem(
-            gettext("User's Manual"),
+            utils.gettext("User's Manual"),
             function () {
                 var myresources_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
                 myresources_view.createUserCommand('showDetails', this.widget, {
@@ -92,9 +92,9 @@
         items.push(item);
 
         if (this.iWidget.isInFullDragboardMode()) {
-            fulldragboard_label = gettext("Exit Full Dragboard");
+            fulldragboard_label = utils.gettext("Exit Full Dragboard");
         } else {
-            fulldragboard_label = gettext("Full Dragboard");
+            fulldragboard_label = utils.gettext("Full Dragboard");
         }
         item = new StyledElements.MenuItem(
             fulldragboard_label,
@@ -107,9 +107,9 @@
 
         if (!this.iWidget.isInFullDragboardMode()) {
             if (this.iWidget.onFreeLayout()) {
-                layout_label = gettext("Snap to grid");
+                layout_label = utils.gettext("Snap to grid");
             } else {
-                layout_label = gettext("Extract from grid");
+                layout_label = utils.gettext("Extract from grid");
             }
             item = new StyledElements.MenuItem(
                 layout_label,
@@ -124,4 +124,4 @@
 
     Wirecloud.ui.IWidgetMenuItems = IWidgetMenuItems;
 
-})();
+})(Wirecloud.Utils);

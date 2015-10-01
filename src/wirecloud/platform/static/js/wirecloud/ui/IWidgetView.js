@@ -19,11 +19,16 @@
  *
  */
 
-(function () {
+/* global StyledElements, Wirecloud */
+
+(function (utils) {
+
+    "use strict";
 
     var builder = new StyledElements.GUIBuilder();
 
-    var IWidgetView = function IWidgetView(iwidget, template, /* TODO */ view) {
+    /* TODO remove view parameter */
+    var IWidgetView = function IWidgetView(iwidget, template, view) {
 
         var tmp = {};
 
@@ -32,7 +37,7 @@
                 var button = new StyledElements.Button({
                     'plain': true,
                     'class': 'icon-remove',
-                    'title': gettext('Close')
+                    'title': utils.gettext('Close')
                 });
 
                 button.addEventListener("click",
@@ -62,7 +67,7 @@
                 var button = new StyledElements.Button({
                     'plain': true,
                     'class': 'icon-cogs',
-                    'title': gettext('Menu')
+                    'title': utils.gettext('Menu')
                 });
                 button.addEventListener("click",
                     function (button) {
@@ -89,19 +94,19 @@
                 return element;
             },
             'bottomresizehandle': function () {
-                var handle = new IWidgetResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
+                var handle = new Wirecloud.ui.IWidgetResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
                 tmp.bottomresizehandle = handle;
                 handle.addClassName("bottomResizeHandle");
                 return handle;
             },
             'leftresizehandle': function () {
-                var handle = new IWidgetResizeHandle(view, {resizeLeftSide: true});
+                var handle = new Wirecloud.ui.IWidgetResizeHandle(view, {resizeLeftSide: true});
                 tmp.leftresizehandle = handle;
                 handle.addClassName("leftResizeHandle");
                 return handle;
             },
             'rightresizehandle': function () {
-                var handle = new IWidgetResizeHandle(view, {resizeLeftSide: false});
+                var handle = new Wirecloud.ui.IWidgetResizeHandle(view, {resizeLeftSide: false});
                 tmp.rightresizehandle = handle;
                 handle.addClassName("rightResizeHandle");
                 return handle;
@@ -140,4 +145,5 @@
     };
 
     Wirecloud.ui.IWidgetView = IWidgetView;
-})();
+
+})(Wirecloud.Utils);

@@ -236,7 +236,7 @@
     };
 
     MarketplaceView.prototype.getBreadcrum = function getBreadcrum() {
-        var label, breadcrum, current_alternative;
+        var breadcrum, current_alternative;
 
         current_alternative = this.alternatives.getCurrentAlternative();
         if (current_alternative === this.emptyAlternative) {

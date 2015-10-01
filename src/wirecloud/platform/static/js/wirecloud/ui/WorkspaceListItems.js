@@ -21,7 +21,7 @@
 
 /*global StyledElements, Wirecloud*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -42,7 +42,7 @@
 
         if (user_workspaces == null || Object.keys(user_workspaces).length === 0) {
             items.push(new StyledElements.MenuItem(
-                gettext('Empty workspace list'),
+                utils.gettext('Empty workspace list'),
                 this.handler,
                 null
             ));
@@ -65,4 +65,4 @@
 
     Wirecloud.ui.WorkspaceListItems = WorkspaceListItems;
 
-})();
+})(Wirecloud.Utils);

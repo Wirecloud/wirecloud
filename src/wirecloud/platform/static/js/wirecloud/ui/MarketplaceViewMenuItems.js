@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var MarketplaceViewMenuItems, clickCallback;
+    var MarketplaceViewMenuItems;
 
     MarketplaceViewMenuItems = function MarketplaceViewMenuItems(marketplace_view) {
         this.market = marketplace_view;
@@ -65,7 +65,7 @@
 
         if (!this.loading && !this.error) {
             items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
-                var menu, fields, type_entries;
+                var menu, fields;
 
                 fields = {
                     'name': {
@@ -90,7 +90,7 @@
                     fields['public'] = {
                         'type': 'boolean',
                         'label': gettext('Public')
-                    }
+                    };
                 }
                 menu = new Wirecloud.ui.FormWindowMenu(fields, gettext('Add Marketplace'));
 
@@ -105,9 +105,9 @@
                         }
                     };
                     if (data['public'] === true) {
-                        market_info.options['user'] = null;
+                        market_info.options.user = null;
                     } else {
-                        market_info.options['user'] = Wirecloud.contextManager.get('username');
+                        market_info.options.user = Wirecloud.contextManager.get('username');
                     }
                     Wirecloud.MarketManager.addMarket(market_info, this.market.addMarket.bind(this.market, market_info.options));
                 }.bind(this);

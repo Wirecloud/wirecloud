@@ -19,7 +19,7 @@
  *
  */
 
-/*global ResizeHandle, StyledElements*/
+/* global StyledElements, Wirecloud */
 
 (function () {
 
@@ -36,7 +36,7 @@
         options.iWidget = iWidget;
 
         if (options.fixWidth && options.fixHeight) {
-            throw new Exception('fixWidth and fixHeight cannot be true at the same time');
+            throw new Error('fixWidth and fixHeight cannot be true at the same time');
         }
 
         StyledElements.StyledElement.call(this, []);
@@ -124,6 +124,6 @@
         data.dragboard._notifyWindowResizeEvent();
     };
 
-    window.IWidgetResizeHandle = IWidgetResizeHandle;
+    Wirecloud.ui.IWidgetResizeHandle = IWidgetResizeHandle;
 
 })();

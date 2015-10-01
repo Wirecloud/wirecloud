@@ -63,7 +63,7 @@
         }
 
         clearMatrix.call(this);         // Matrix of iWidgets
-        this._buffers["base"] = {
+        this._buffers.base = {
             matrix: this.matrix,
         };
         this.dragboardCursor = null;
@@ -193,7 +193,7 @@
 
     var clearMatrix = function clearMatrix() {
         this.matrix = [];
-        this._buffers["base"].matrix = this.matrix;
+        this._buffers.base.matrix = this.matrix;
 
         for (var x = 0; x < this.columns; x++) {
             this.matrix[x] = [];
@@ -254,7 +254,7 @@
         this._compressColumns(_matrix, position.x, width);
     };
 
-    GridLayout.prototype._compressColumns = function(_matrix, x, width) {
+    GridLayout.prototype._compressColumns = function _compressColumns(_matrix, x, width) {
         var i, y;
 
         for (i = 0; i < width; i++) {
@@ -693,7 +693,7 @@
     };
 
     GridLayout.prototype.initializeMove = function (iwidget, draggable) {
-        var msg, key, i, lastWidget, lastY, tmp;
+        var msg, i, lastWidget, lastY, tmp;
 
         draggable = draggable || null; // default value of draggable argument
 
@@ -707,16 +707,16 @@
         this.iwidgetToMove = iwidget;
 
         // Make a copy of the positions of the widgets
-        this._buffers["backup"] = {};
-        this._buffers["backup"]["positions"] = this._clonePositions(this.matrix);
-        this._buffers["shadow"] = {
+        this._buffers.backup = {};
+        this._buffers.backup.positions = this._clonePositions(this.matrix);
+        this._buffers.shadow = {
             "matrix": this.matrix
         };
 
         // Shadow matrix = current matrix without the widget to move
         // Initialize shadow matrix and searchInsertPointCache
         lastY = 0;
-        this._buffers["backup"]["matrix"] = this._cloneMatrix(this.matrix);
+        this._buffers.backup.matrix = this._cloneMatrix(this.matrix);
         this._removeFromMatrix("backup", iwidget);
 
         this.searchInsertPointCache = [];
@@ -786,16 +786,16 @@
             var cursorpos = this.dragboardCursor.getPosition();
 
             if ((cursorpos.y !== y) || (cursorpos.x !== x)) {
-                this._buffers["shadow"]["positions"] = this._clonePositions("backup");
-                this._buffers["shadow"]["matrix"] = this._cloneMatrix(this._buffers["backup"]["matrix"]);
+                this._buffers.shadow.positions = this._clonePositions("backup");
+                this._buffers.shadow.matrix = this._cloneMatrix(this._buffers.backup.matrix);
 
                 // Change cursor position
                 this._insertAt(this.dragboardCursor, x, y, "shadow");
                 this._setPositions();
             }
         } else {
-            this._buffers["shadow"]["positions"] = this._clonePositions("backup");
-            this._buffers["shadow"]["matrix"] = this._cloneMatrix(this._buffers["backup"]["matrix"]);
+            this._buffers.shadow.positions = this._clonePositions("backup");
+            this._buffers.shadow.matrix = this._cloneMatrix(this._buffers.backup.matrix);
 
             this.dragboardCursor = new Wirecloud.ui.DragboardCursor(this.iwidgetToMove);
             this.dragboardCursor.paint(this.dragboard.dragboardElement);
@@ -835,8 +835,8 @@
 
         // Update iwidgets positions in persistence
         if (oldposition.y !== newposition.y || oldposition.x !== newposition.x) {
-            this.matrix = this._buffers["shadow"].matrix;
-            this._buffers["base"].matrix = this.matrix;
+            this.matrix = this._buffers.shadow.matrix;
+            this._buffers.base.matrix = this.matrix;
             this._reserveSpace("base", this.iwidgetToMove);
             this.dragboard._commitChanges();
         }

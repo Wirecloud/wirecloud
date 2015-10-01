@@ -21,7 +21,7 @@
 
 /*global StyledElements, Wirecloud*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -129,10 +129,10 @@
                 if (!(provider in contextFields)) {
                     contextFields[provider] = [];
                 }
-                label = interpolate('%(label)s (%(concept)s)', {
+                label = utils.interpolate('%(label)s (%(concept)s)', {
                     label: concept._label,
                     concept: conceptName
-                }, true);
+                });
                 contextFields[provider].push({
                     label: label,
                     description: concept._description,
@@ -250,4 +250,4 @@
 
     Wirecloud.ui.ParametrizedTextInputInterface = ParametrizedTextInputInterface;
 
-})();
+})(Wirecloud.Utils);

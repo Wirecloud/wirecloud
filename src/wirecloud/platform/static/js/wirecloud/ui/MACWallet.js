@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,18 +19,14 @@
  *
  */
 
-/*global gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud*/
+/*global LayoutManagerFactory, StyledElements, Wirecloud*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
     var buttontitle = function buttontitle(resource) {
-        if (resource.type === 'widget') {
-            return gettext('Add to workspace');
-        } else {
-            return gettext('Merge');
-        }
+        return resource.type === 'widget' ? utils.gettext('Add to workspace') : utils.gettext('Merge');
     };
 
     var buttonlistener = function buttonlistener(resource) {
@@ -67,7 +63,7 @@
                 addmore: function () {
                     var div = document.createElement('div');
                     div.className = 'widget_wallet_addmore';
-                    var button = new StyledElements.Button({text: gettext('Get more resources'), "class": "btn-success"});
+                    var button = new StyledElements.Button({text: utils.gettext('Get more resources'), "class": "btn-success"});
                     button.addEventListener('click', function () {
                         LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
                     });
@@ -128,4 +124,4 @@
 
     Wirecloud.ui.MACWallet = MACWallet;
 
-})();
+})(Wirecloud.Utils);

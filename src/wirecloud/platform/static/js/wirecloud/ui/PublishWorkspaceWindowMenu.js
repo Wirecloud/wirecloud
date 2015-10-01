@@ -19,9 +19,9 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, Wirecloud*/
+/* global Wirecloud */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -30,53 +30,53 @@
      */
     var PublishWorkspaceWindowMenu = function PublishWorkspaceWindowMenu(workspace) {
 
-        var fields, user_name, marketFields;
+        var fields, user_name;
 
         user_name = Wirecloud.contextManager.get('username');
         fields = [
             {
                 'type': 'group',
-                'shortTitle': gettext('General info'),
+                'shortTitle': utils.gettext('General info'),
                 'fields': [
-                    {name: 'name', label: gettext('Mashup Name'), type: 'text', required: true, initialValue: workspace.getName(), defaultValue: workspace.getName()},
-                    {name: 'vendor', label: gettext('Vendor'), type: 'text',  required: true},
-                    {name: 'version', label: gettext('Version'), type: 'version',  required: true},
-                    {name: 'email', label: gettext('Email'), type: 'text'},
-                    {name: 'description', label: gettext('Description'), type: 'longtext'},
-                    {name: 'doc', label: gettext('Home page'), type: 'text'},
-                    {name: 'authors', label: gettext('Author'), type: 'text',  initialValue: user_name, defaultValue: user_name}
+                    {name: 'name', label: utils.gettext('Mashup Name'), type: 'text', required: true, initialValue: workspace.getName(), defaultValue: workspace.getName()},
+                    {name: 'vendor', label: utils.gettext('Vendor'), type: 'text',  required: true},
+                    {name: 'version', label: utils.gettext('Version'), type: 'version',  required: true},
+                    {name: 'email', label: utils.gettext('Email'), type: 'text'},
+                    {name: 'description', label: utils.gettext('Description'), type: 'longtext'},
+                    {name: 'doc', label: utils.gettext('Home page'), type: 'text'},
+                    {name: 'authors', label: utils.gettext('Author'), type: 'text',  initialValue: user_name, defaultValue: user_name}
                 ]
             },
             {
                 'type': 'group',
-                'shortTitle': gettext('Media'),
+                'shortTitle': utils.gettext('Media'),
                 'fields': [
                     {
                         name: 'image',
-                        label: gettext('Image shown in catalogue (170x80 px)'),
+                        label: utils.gettext('Image shown in catalogue (170x80 px)'),
                         type: 'file'
                     }
                 ]
             },
             {
                 'type': 'group',
-                'shortTitle': gettext('Advanced'),
+                'shortTitle': utils.gettext('Advanced'),
                 'fields': [
-                    {name: 'readOnlyWidgets', label: gettext('Block widgets'), type: 'boolean'},
-                    {name: 'readOnlyConnectables', label: gettext('Block connections'), type: 'boolean'},
-                    {name: 'embedmacs', label: gettext('Embed used widgets/operators'), type: 'boolean'}
+                    {name: 'readOnlyWidgets', label: utils.gettext('Block widgets'), type: 'boolean'},
+                    {name: 'readOnlyConnectables', label: utils.gettext('Block connections'), type: 'boolean'},
+                    {name: 'embedmacs', label: utils.gettext('Embed used widgets/operators'), type: 'boolean'}
                 ]
             }
         ];
 
         // Disable preference and property parametrization for now
         //this._addVariableParametrization(workspace, fields);
-        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Upload workspace to my resources'), 'publish_workspace', {autoHide: false});
+        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Upload workspace to my resources'), 'publish_workspace', {autoHide: false});
 
         //fill a warning message
         var warning = document.createElement('div');
         warning.className = 'alert';
-        warning.innerHTML = gettext("<strong>Warning!</strong> Configured and stored data in your workspace (properties and preferences except passwords) will be shared by default!");
+        warning.innerHTML = utils.gettext("<strong>Warning!</strong> Configured and stored data in your workspace (properties and preferences except passwords) will be shared by default!");
         this.windowContent.insertBefore(warning, this.form.wrapperElement);
     };
     PublishWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
@@ -96,8 +96,7 @@
 
     PublishWorkspaceWindowMenu.prototype._parseTab = function _parseTab(tab) {
 
-        var i, j, iwidget, iwidgets, iwidget_params, pref_params,
-            prop_params, var_elements, fields;
+        var i, j, iwidget, iwidgets, pref_params, prop_params, var_elements, fields;
 
         iwidgets = tab.getDragboard().getIWidgets();
         fields = [];
@@ -128,14 +127,14 @@
             var_elements = {};
             if (pref_params.length !== 0) {
                 var_elements.pref = {
-                    label: gettext('Preferences'),
+                    label: utils.gettext('Preferences'),
                     type: 'fieldset',
                     fields: pref_params
                 };
             }
             if (prop_params.length !== 0) {
                 var_elements.props = {
-                    label: gettext('Persistent variables'),
+                    label: utils.gettext('Persistent variables'),
                     type: 'fieldset',
                     fields: prop_params.sort(this._sortVariables)
                 };
@@ -203,4 +202,5 @@
     };
 
     Wirecloud.ui.PublishWorkspaceWindowMenu = PublishWorkspaceWindowMenu;
-})();
+
+})(Wirecloud.Utils);

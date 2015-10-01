@@ -1,5 +1,5 @@
 /*
- *     Copyright 2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2013-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,9 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, Wirecloud*/
+/* global LayoutManagerFactory, StyledElements, Wirecloud */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -33,7 +33,7 @@
         this.resource = resource;
 
         var fields = this._loadAvailableMarkets();
-        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Upload resource'), 'publish_resource', {legend: false});
+        Wirecloud.ui.FormWindowMenu.call(this, fields, utils.gettext('Upload resource'), 'publish_resource', {legend: false});
     };
     PublishResourceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
@@ -45,7 +45,7 @@
         for (key in views) {
             endpoints = views[key].getPublishEndpoints();
             if (endpoints != null && endpoints.length > 0) {
-                endpoints.forEach(function (endpoint) { endpoint.value = key + '#' + endpoint.value; });
+                endpoints.forEach(assign_endpoint_value, key);
                 secondInput = new StyledElements.Select({initialEntries: endpoints});
             } else {
                 secondInput = null;
@@ -89,8 +89,8 @@
         var layoutManager;
 
         layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager._startComplexTask(gettext("Publishing resource"), 3);
-        layoutManager.logSubTask(gettext('Publishing resource'));
+        layoutManager._startComplexTask(utils.gettext("Publishing resource"), 3);
+        layoutManager.logSubTask(utils.gettext('Publishing resource'));
 
         Wirecloud.io.makeRequest(url, {
             method: 'POST',
@@ -98,18 +98,18 @@
             requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify(data),
             onSuccess: function () {
-                layoutManager.logSubTask(gettext('Resource published successfully'));
+                layoutManager.logSubTask(utils.gettext('Resource published successfully'));
                 layoutManager.getInstance().logStep('');
             },
             onFailure: function (response) {
-                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error publishing resource: %(errorMsg)s."), response, null);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(utils.gettext("Error publishing resource: %(errorMsg)s."), response, null);
                 var dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
 
                 // TODO
                 dialog.msgElement.textContent = msg;
                 var response_data = JSON.parse(response.responseText);
                 if ('details' in response_data) {
-                    var expander = new StyledElements.Expander({title: gettext('Details')});
+                    var expander = new StyledElements.Expander({title: utils.gettext('Details')});
                     expander.insertInto(dialog.msgElement);
                     for (var key in response_data.details) {
                         expander.appendChild(new StyledElements.Fragment('<p><b>' + key + '</b>' + response_data.details[key] + '</p>'));
@@ -125,5 +125,11 @@
         });
     };
 
+    var assign_endpoint_value = function assign_endpoint_value(endpoint) {
+        /*jshint validthis:true */
+        endpoint.value = this + '#' + endpoint.value;
+    };
+
     Wirecloud.ui.PublishResourceWindowMenu = PublishResourceWindowMenu;
-})();
+
+})(Wirecloud.Utils);

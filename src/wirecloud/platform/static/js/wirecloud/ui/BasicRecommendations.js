@@ -62,7 +62,7 @@
     /**
      * Add anchor in AnchorsByFriendCode.
      */
-    BasicRecommendations.prototype.add_anchor_to_recommendations = function(anchor) {
+    BasicRecommendations.prototype.add_anchor_to_recommendations = function add_anchor_to_recommendations(anchor) {
         var friendCode;
 
         friendCode = anchor.context.data.friendcode;
@@ -82,7 +82,7 @@
     /**
      * Remove anchor in AnchorsByFriendCode.
      */
-    BasicRecommendations.prototype.remove_anchor_to_recommendations = function(anchor) {
+    BasicRecommendations.prototype.remove_anchor_to_recommendations = function remove_anchor_to_recommendations(anchor) {
         var anchorList;
 
         if (anchor instanceof Wirecloud.ui.WiringEditor.SourceAnchor) {

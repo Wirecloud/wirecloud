@@ -116,7 +116,7 @@
         } else if (typeof value === 'string') {
             value = value.trim();
             matches = value.match(UNIT_RE);
-            if (matches[2] != '') {
+            if (matches[2] !== '') {
                 return [Number(matches[1]), matches[2]];
             } else {
                 return [Number(matches[1]), "cells"];

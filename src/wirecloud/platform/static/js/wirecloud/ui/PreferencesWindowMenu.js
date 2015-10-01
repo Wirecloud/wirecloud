@@ -1,15 +1,36 @@
-/*global gettext, StyledElements, Wirecloud*/
+/*
+ *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
 
-(function () {
+/* global StyledElements, Wirecloud */
+
+(function (utils) {
 
     "use strict";
 
     var build_pref_label = function build_pref_label(preference) {
-       var label = document.createElement("label");
-       label.appendChild(document.createTextNode(preference.label));
-       label.setAttribute("title", gettext(preference.description));
-       //label.setAttribute("for", preference.name);
-       return label;
+        var label = document.createElement("label");
+        label.appendChild(document.createTextNode(preference.label));
+        label.setAttribute("title", utils.gettext(preference.description));
+        //label.setAttribute("for", preference.name);
+        return label;
     };
 
     var build_inherit_input = function build_inherit_input(preference) {
@@ -21,6 +42,8 @@
     };
 
     var build_form = function build_form() {
+        var columnLabel, columnValue;
+
         // Build a form for changing this gruop of preferences
         var table = document.createElement('table');
         table.classList.add('styled_form');
@@ -44,9 +67,9 @@
             };
             if (!preference.inheritable) {
                 var row = tbody.insertRow(-1);
-                var columnLabel = row.insertCell(-1);
+                columnLabel = row.insertCell(-1);
                 columnLabel.className = "label-cell";
-                var columnValue = row.insertCell(-1);
+                columnValue = row.insertCell(-1);
                 columnLabel.appendChild(build_pref_label(preference));
                 input_interface.insertInto(columnValue);
             } else {
@@ -65,7 +88,7 @@
                 complexTable.appendChild(complexTBody);
 
                 var labelRow = complexTBody.insertRow(-1);
-                var columnLabel = labelRow.insertCell(-1);
+                columnLabel = labelRow.insertCell(-1);
                 columnLabel.className = "label-cell";
                 columnLabel.colSpan = "2";
 
@@ -76,14 +99,14 @@
                 var inheritInput = build_inherit_input(preference);
                 this.interfaces[preference.name].inherit = inheritInput;
                 inheritInput.insertInto(inheritCell);
-                inheritCell.appendChild(document.createTextNode(gettext('Inherit')));
+                inheritCell.appendChild(document.createTextNode(utils.gettext('Inherit')));
                 inheritInput.inputElement.addEventListener(
                     'change',
-                    function() {
+                    function () {
                         this.input_interface.setDisabled(this.inherit_interface.getValue());
                     }.bind({input_interface: input_interface, inherit_interface: inheritInput}));
 
-                var columnValue = prefRow.insertCell(-1);
+                columnValue = prefRow.insertCell(-1);
                 columnLabel.appendChild(build_pref_label(preference));
                 input_interface.insertInto(columnValue);
             }
@@ -165,7 +188,7 @@
 
         // Reset button
         this.resetButton = new StyledElements.Button({
-            text: gettext('Set Defaults'),
+            text: utils.gettext('Set Defaults'),
         });
         this.resetButton.addEventListener("click", function () {
             var pref_name, preference;
@@ -184,7 +207,7 @@
 
         // Accept button
         this.acceptButton = new StyledElements.Button({
-            text: gettext('Save'),
+            text: utils.gettext('Save'),
             'class': 'btn-primary'
         });
         this.acceptButton.addEventListener("click", _executeOperation.bind(this));
@@ -192,7 +215,7 @@
 
         // Cancel button
         this.cancelButton = new StyledElements.Button({
-            text: gettext('Cancel')
+            text: utils.gettext('Cancel')
         });
 
         this.cancelButton.addEventListener("click", this._closeListener);
@@ -236,4 +259,4 @@
 
     Wirecloud.ui.PreferencesWindowMenu = PreferencesWindowMenu;
 
-})();
+})(Wirecloud.Utils);

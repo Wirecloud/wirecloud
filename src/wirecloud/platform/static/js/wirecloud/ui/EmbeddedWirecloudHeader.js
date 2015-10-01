@@ -19,15 +19,11 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
+/* global Wirecloud */
 
 (function () {
 
     "use strict";
-
-    var onMenuClick = function onMenuClick(view_name) {
-        LayoutManagerFactory.getInstance().changeCurrentView(view_name);
-    };
 
     var WirecloudHeader = function WirecloudHeader() {
     };
