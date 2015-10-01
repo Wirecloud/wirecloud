@@ -40,7 +40,7 @@
     se.Container = utils.defineClass({
 
         constructor: function Container(options, events) {
-            options = utils.updateObject(defaults, options);
+            options = utils.merge(utils.clone(defaults), options);
             this.superClass(events);
 
             this.wrapperElement = document.createElement('div');
@@ -219,12 +219,12 @@
             },
 
             text: function (text) {
-                  if (text == null) {
-                      return this.get().textContent;
-                  }
+                if (text == null) {
+                    return this.get().textContent;
+                }
 
-                  this.children = []
-                  this.wrapperElement.textContent = "" + text;
+                this.children = [];
+                this.wrapperElement.textContent = "" + text;
             },
 
             /**

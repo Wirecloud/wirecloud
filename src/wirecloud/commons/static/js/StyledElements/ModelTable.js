@@ -170,7 +170,7 @@
         } else {
             this.pClearTable();
             var message = document.createElement('div');
-            message.className = "alert alert-danger"
+            message.className = "alert alert-danger";
             message.textContent = error;
             this.tableBody.appendChild(message);
         }

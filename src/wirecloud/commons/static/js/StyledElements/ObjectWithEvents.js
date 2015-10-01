@@ -50,9 +50,12 @@
              * @version 0.6
              *
              * @param {String} [names]
-             *      Optional. One or more space-separated event names.
+             *      Optional. One or more space-separated event names. If not
+             *      provided, this method will be applied to all the events.
              * @param {Function} [handler]
-             *      Optional. An event handler previously attached.
+             *      Optional. An event handler previously attached. If not
+             *      provided, all the event handlers registered for the affected
+             *      events will be removed
              * @returns {ObjectWithEvents}
              *      The instance on which the member is called.
              */
@@ -115,7 +118,15 @@
             },
 
             /**
-             * @deprecated since version 0.6
+             * Attach an event handler for a given event.
+             * @version 0.5
+             *
+             * @param {String} name
+             *      Event name
+             * @param {Function} handler
+             *      An event handler to execute when the event is triggered
+             * @returns {ObjectWithEvents}
+             *      The instance on which the member is called
              */
             addEventListener: function addEventListener(name, handler) {
 
@@ -131,7 +142,13 @@
             },
 
             /**
-             * @deprecated since version 0.6
+             * Remove all event handlers for a given event
+             * @version 0.5
+             *
+             * @param {String} name
+             *      event name
+             * @returns {ObjectWithEvents}
+             *      The instance on which the member is called
              */
             clearEventListeners: function clearEventListeners(name) {
 
@@ -164,7 +181,15 @@
             },
 
             /**
-             * @deprecated since version 0.6
+             * Remove an event handler from an event
+             * @version 0.5
+             *
+             * @param {String} name
+             *      Event name
+             * @param {Function} handler
+             *      A previously attached event
+             * @returns {ObjectWithEvents}
+             *      The instance on which the member is called
              */
             removeEventListener: function removeEventListener(name, handler) {
 

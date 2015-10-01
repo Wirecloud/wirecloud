@@ -19,7 +19,7 @@
  *
  */
 
-/*global ActiveXObject, alert, Attr, CSSPrimitiveValue, StyledElements*/
+/*global ActiveXObject, alert, Attr, StyledElements*/
 
 // TODO
 if (window.StyledElements == null) {
@@ -141,7 +141,7 @@ if (window.StyledElements == null) {
 
     Utils.split = function split(str, separator, limit) {
         // if `separator` is not a regex, use the native `split`
-        if (!separator instanceof RegExp) {
+        if (!(separator instanceof RegExp)) {
             return str.split(separator, limit);
         }
 
@@ -756,7 +756,7 @@ if (window.StyledElements == null) {
             ParentClass = function ParentClass() {};
             ParentClass.prototype = parentPrototype;
 
-            return new ParentClass;
+            return new ParentClass();
         };
     }
 

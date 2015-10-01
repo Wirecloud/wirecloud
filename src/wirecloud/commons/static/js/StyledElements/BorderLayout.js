@@ -56,7 +56,7 @@
 
     BorderLayout.prototype.repaint = function repaint(temporal) {
         var usableArea = {
-            'width' : this.wrapperElement.offsetWidth,
+            'width': this.wrapperElement.offsetWidth,
             'height': this.wrapperElement.offsetHeight
         };
 

@@ -65,16 +65,10 @@
         }
     };
 
-    /**
-     * @deprecated since version 0.6
-     */
     Event.prototype.addEventListener = function addEventListener(handler) {
         this.on(handler);
     };
 
-    /**
-     * @deprecated since version 0.6
-     */
     Event.prototype.removeEventListener = function removeEventListener(handler) {
         if (typeof handler !== 'function') {
             throw new TypeError('Handlers must be functions');
@@ -83,16 +77,10 @@
         this.off(handler);
     };
 
-    /**
-     * @deprecated since version 0.6
-     */
     Event.prototype.clearEventListeners = function clearEventListeners() {
         this.off();
     };
 
-    /**
-     * @deprecated since version 0.6
-     */
     Event.prototype.dispatch = function dispatch() {
         this.trigger.apply(this, arguments);
     };

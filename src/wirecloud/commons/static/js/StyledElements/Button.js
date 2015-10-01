@@ -93,7 +93,7 @@
      *      - click: evento lanzado cuando se pulsa el botón.
      */
     var Button = function Button(options) {
-        options = StyledElements.Utils.updateObject(defaults, options);
+        options = utils.merge(utils.clone(defaults), options);
 
         // Support hirerarchy
         if (options.extending) {
@@ -118,7 +118,7 @@
         this.addClassName(options['class']);
         this.addClassName(options.extraClass);
 
-        if (options.id) {
+        if (options.id.trim() !== "") {
             this.wrapperElement.setAttribute('id', options.id);
         }
 
@@ -135,7 +135,7 @@
             this.wrapperElement.appendChild(this.icon);
         }
 
-        if (options.iconClass) {
+        if (options.iconClass != null && options.iconClass.trim() !== "") {
             this.icon = document.createElement('i');
             this.icon.classList.add('se-icon');
             var classes = options.iconClass.trim().split(/\s+/);
@@ -165,10 +165,10 @@
         Object.defineProperties(this, {
 
             tabindex: {
-                get: function() {
+                get: function get() {
                     return tabindex;
                 },
-                set: function(new_tabindex) {
+                set: function set(new_tabindex) {
                     tabindex = new_tabindex;
                     update_tabindex.call(this);
                 }

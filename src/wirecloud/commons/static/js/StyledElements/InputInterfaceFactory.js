@@ -60,7 +60,7 @@
         };
 
         this.addFieldType = function addFieldType(type, class_) {
-            if (!class_ instanceof StyledElements.InputInterface) {
+            if (!(class_.prototype instanceof StyledElements.InputInterface)) {
                 throw new TypeError();
             }
             if (mapping[type] !== undefined) {

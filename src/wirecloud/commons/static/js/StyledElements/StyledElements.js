@@ -466,7 +466,7 @@
              * sequence should end with a call to this method using `false`
              * for the temporal parameter. `false` by default.
              */
-            repaint: function repaint(temporal) {return this},
+            repaint: function repaint(temporal) {return this;},
 
             /**
              * @deprecated since version 0.6

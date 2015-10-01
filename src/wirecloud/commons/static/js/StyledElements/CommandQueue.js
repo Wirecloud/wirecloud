@@ -41,7 +41,7 @@
         var step = 0;
         var stepTimes = null;
 
-        function doStep() {
+        var doStep = function doStep() {
             if (stepFunc(step, context)) {
                 var timeDiff = stepTimes[step] - (new Date()).getTime();
                 if (timeDiff < 0) {
@@ -53,9 +53,9 @@
             } else {
                 doInit();
             }
-        }
+        };
 
-        function doInit() {
+        var doInit = function doInit() {
             var command;
             do {
                 command = elements.shift();
@@ -71,7 +71,7 @@
             } else {
                 running = false;
             }
-        }
+        };
 
         /**
          * Añade un comando a la cola de procesamiento. El comando será procesado

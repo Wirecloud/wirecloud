@@ -39,7 +39,7 @@
     se.OffCanvasLayout = utils.defineClass({
 
         constructor: function OffCanvasLayout(options) {
-            options = utils.updateObject(defaults, options);
+            options = utils.merge(utils.clone(defaults), options);
             this.superClass(['slideIn', 'slideOut']);
 
             this.wrapperElement = document.createElement('div');

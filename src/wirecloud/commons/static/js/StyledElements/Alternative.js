@@ -41,7 +41,7 @@
             return;
         }
 
-        this.superClass(utils.updateObject({useFullHeight: true}, options));
+        this.superClass(utils.merge({useFullHeight: true}, options));
 
         this.addClassName('hidden');
         this.altId = id;

@@ -39,13 +39,13 @@
     se.Alert = utils.defineClass({
 
         constructor: function Alert(options) {
-            options = utils.updateObject(defaults, options);
+            options = utils.merge(utils.clone(defaults), options);
             this.superClass();
 
             this.wrapperElement = document.createElement('div');
             this.wrapperElement.className = 'alert';
 
-            if (options.state) {
+            if (options.state != null && options.state.trim() !== "") {
                 this.addClassName('alert-' + options.state);
             }
 

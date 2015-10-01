@@ -42,7 +42,7 @@
 
         constructor: function SVGPlainButton(options) {
 
-            options = utils.updateObject(defaults, options);
+            options = utils.merge(utils.clone(defaults), options);
             this.superClass(events.concat(options.events));
 
             this.wrapperElement = document.createElementNS(se.SVGPlainButton.SVG_NS, 'text');

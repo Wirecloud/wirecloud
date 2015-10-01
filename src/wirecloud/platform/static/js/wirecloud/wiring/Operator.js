@@ -51,7 +51,7 @@
 
             this.superClass(['load', 'remove', 'unload']);
 
-            businessInfo = utils.updateObject(ns.Operator.JSON_TEMPLATE, businessInfo);
+            businessInfo = utils.merge(ns.Operator.JSON_TEMPLATE, businessInfo);
 
             this.loaded = false;
             this.pending_events = [];

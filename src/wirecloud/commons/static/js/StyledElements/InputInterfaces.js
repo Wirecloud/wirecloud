@@ -19,7 +19,7 @@
  *
  */
 
-/*global interpolate, Form, StyledElements, Wirecloud */
+/*global Form, StyledElements */
 
 (function () {
 

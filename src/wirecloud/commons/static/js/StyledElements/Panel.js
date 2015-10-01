@@ -39,7 +39,7 @@
     se.Panel = utils.defineClass({
 
         constructor: function Panel(options) {
-            options = utils.updateObject(defaults, options);
+            options = utils.merge(utils.clone(defaults), options);
             this.superClass(['click'].concat(options.events));
 
             this.wrapperElement = document.createElement('div');
