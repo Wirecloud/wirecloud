@@ -147,7 +147,7 @@
              *      [TODO: description]
              */
             equals: function equals(behaviour) {
-                return behaviour instanceof ns.Behaviour && Object.is(this, behaviour);
+                return (behaviour instanceof ns.Behaviour) && (this === behaviour);
             },
 
             getConnectionIndex: function getConnectionIndex(connection) {
