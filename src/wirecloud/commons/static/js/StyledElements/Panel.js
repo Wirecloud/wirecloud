@@ -132,8 +132,13 @@
             },
 
             setTitle: function setTitle(title) {
-                this.heading.title = new se.Container({extraClass: "panel-title"});
-                this.heading.appendChild(this.heading.title.appendChild(title));
+
+                if (this.heading.title == null) {
+                    this.heading.title = new se.Container({extraClass: "panel-title"});
+                    this.heading.appendChild(this.heading.title);
+                }
+
+                this.heading.title.clear().appendChild(title);
 
                 return this;
             }
