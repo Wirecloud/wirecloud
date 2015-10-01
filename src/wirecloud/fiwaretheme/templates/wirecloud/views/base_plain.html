@@ -25,7 +25,6 @@
         <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>
         {% compress js %}
         {% wirecloud_bootstrap "classic" %}
-        {% include "wirecloud/views/js_includes.js" %}
         {% extra_javascripts "classic" %}
         {% endcompress %}
     {% endblock %}

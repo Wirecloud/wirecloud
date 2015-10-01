@@ -445,6 +445,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         if view in ('classic', 'embedded'):
             scripts = common + (
+                'js/interfaceLayout/LayoutManager.js',
+                'js/dragboard/iGadget.js',
                 'js/opManager/Workspace.js',
                 'js/wirecloud/ui/WorkspaceListItems.js',
                 'js/wirecloud/ui/WorkspaceViewItems.js',
