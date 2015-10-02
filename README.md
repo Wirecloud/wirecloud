@@ -14,7 +14,7 @@ You can find the User & Programmer's Manual and the Install & Administration Gui
 
     $ sudo pip install wirecloud
 
-See the [installation and administration guide](docs/installation_and_admin_guide.md) for more info.
+See the [installation guide](https://wirecloud.readthedocs.org/en/latest/installation_guide/) for more info.
 
 ## Bugs and feature requests
 
