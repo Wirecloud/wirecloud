@@ -55,6 +55,15 @@
             this.logManager.log(this.reason, Wirecloud.constants.LOGGING.ERROR_MSG);
         },
 
+        statics: {
+            DEFAULT_PERMISSIONS: {
+                'close': true,
+                'move': true,
+                'rename': true,
+                'resize': true
+            }
+        },
+
         inherit: ns.MissingComponent
 
     });

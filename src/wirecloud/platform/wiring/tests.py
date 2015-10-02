@@ -789,10 +789,15 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         self.login(username='user_with_workspaces')
 
         with self.wiring_view as wiring:
-            self.assertTrue(wiring.find_component_by_title('widget', "Test").missing)
+            widget = wiring.find_component_by_title('widget', "Test")
+            self.assertTrue(widget.missing)
+            widget.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
+
 
         with self.wiring_view as wiring:
-            self.assertTrue(wiring.find_component_by_title('widget', "Test").missing)
+            widget = wiring.find_component_by_title('widget', "Test")
+            self.assertTrue(widget.missing)
+            widget.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
 
     def test_widget_with_visualinfo_and_connections_is_not_in_workspace(self):
         workspace = Workspace.objects.get(id=2)
@@ -803,7 +808,10 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         self.assertFalse(self.find_navbar_button("display-wiring-view").badge.is_displayed())
 
         with self.wiring_view as wiring:
-            self.assertTrue(wiring.find_component_by_title('widget', "Test").missing)
+            widget = wiring.find_component_by_title('widget', "Test")
+            self.assertTrue(widget.missing)
+            self.assertTrue(widget.missing)
+            widget.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
             self.assertEqual(len(wiring.find_connections()), 3)
 
     def test_operator_uninstalled_with_tradeinfo(self):
@@ -818,6 +826,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
             operator = wiring.find_component_by_title('operator', "TestOperatorDePalo")
 
             self.assertTrue(operator.missing)
+            operator.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
             self.assertEqual(len(operator.filter_endpoints_by_type('source')), 1)
             self.assertEqual(len(operator.filter_endpoints_by_type('target')), 1)
 
@@ -825,6 +834,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
             operator = wiring.find_component_by_title('operator', "TestOperatorDePalo")
 
             self.assertTrue(operator.missing)
+            operator.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
             self.assertEqual(len(operator.filter_endpoints_by_type('source')), 1)
             self.assertEqual(len(operator.filter_endpoints_by_type('target')), 1)
 
@@ -839,6 +849,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             operator = wiring.find_component_by_title('operator', "TestOperatorDePalo")
             self.assertTrue(operator.missing)
+            operator.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
 
             self.assertEqual(len(operator.filter_endpoints_by_type('source')), 1)
             self.assertEqual(len(operator.filter_endpoints_by_type('target')), 1)

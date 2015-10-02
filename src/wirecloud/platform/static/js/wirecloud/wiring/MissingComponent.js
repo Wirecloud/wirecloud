@@ -75,6 +75,7 @@
             BUSINESS_TEMPLATE: {
                 id: 0,
                 name: "",
+                permissions: {},
                 preferences: {}
             },
 
@@ -142,6 +143,16 @@
                 return this.meta.type == component.meta.type && this.id == component.id;
             },
 
+            isAllowed: function isAllowed(action) {
+                if (action === 'configure') {
+                    return false;
+                } else if (action in this.permissions) {
+                    return this.permissions[action];
+                } else {
+                    return false;
+                }
+            },
+
             load: function load() {
                 return this;
             },
@@ -149,6 +160,10 @@
             loadBusinessInfo: function loadBusinessInfo(businessInfo) {
 
                 businessInfo = utils.updateObject(ns.MissingComponent.BUSINESS_TEMPLATE, businessInfo);
+
+                Object.defineProperty(this, 'permissions',
+                    {value: utils.updateObject(this.constructor.DEFAULT_PERMISSIONS, businessInfo.permissions)});
+                Object.freeze(this.permissions);
 
                 if (businessInfo.name && !this.meta.name) {
                     fillComponentMeta.call(this, businessInfo.name);
@@ -165,6 +180,12 @@
             loadVisualInfo: function loadVisualInfo(visualInfo) {
 
                 visualInfo = utils.updateObject(ns.MissingComponent.VISUAL_TEMPLATE, visualInfo);
+
+                /* TODO this should be initialized in loadBusinessInfo but, for now, MissingWidgets does not call this method */
+                if (!('permissions' in this)) {
+                    Object.defineProperty(this, 'permissions', {value: utils.clone(this.constructor.DEFAULT_PERMISSIONS)});
+                    Object.freeze(this.permissions);
+                }
 
                 if (visualInfo.name && !this.meta.name) {
                     fillComponentMeta.call(this, visualInfo.name);

@@ -57,6 +57,14 @@
 
         inherit: ns.MissingComponent,
 
+        statics: {
+            DEFAULT_PERMISSIONS: {
+                'close': true,
+                'configure': true,
+                'rename': true
+            }
+        },
+
         members: {
 
             /**
