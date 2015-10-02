@@ -684,11 +684,11 @@ class WiringComponentTester(object):
 
     @property
     def source_endpoints(self):
-        return [WiringEndpointTester(self.testcase, e) for e in self.element.find_elements_by_css_selector(".source-endpoints .endpoint")]
+        return [WiringEndpointTester(self.testcase, e, self) for e in self.element.find_elements_by_css_selector(".source-endpoints .endpoint")]
 
     @property
     def target_endpoints(self):
-        return [WiringEndpointTester(self.testcase, e) for e in self.element.find_elements_by_css_selector(".target-endpoints .endpoint")]
+        return [WiringEndpointTester(self.testcase, e, self) for e in self.element.find_elements_by_css_selector(".target-endpoints .endpoint")]
 
     @property
     def endpoints(self):
@@ -715,10 +715,10 @@ class WiringComponentTester(object):
     def get_all_endpoints(self, endpoint_type):
         endpoints = self.element.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)
 
-        return [WiringEndpointTester(self.testcase, element) for element in endpoints]
+        return [WiringEndpointTester(self.testcase, element, self) for element in endpoints]
 
     def filter_endpoints_by_type(self, endpoint_type):
-        return [WiringEndpointTester(self.testcase, e) for e in self.element.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)]
+        return [WiringEndpointTester(self.testcase, e, self) for e in self.element.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)]
 
     def find_endpoint_by_title(self, endpoint_type, endpoint_title):
         for endpoint in self.filter_endpoints_by_type(endpoint_type):
@@ -793,6 +793,8 @@ class WiringComponentEditableTester(object):
 
 class WiringOperatorTester(WiringComponentTester):
 
+    type = "operator"
+
     @property
     def error_count(self):
         return self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.wiring.ioperators[%s].logManager.errorCount' % self.id)
@@ -806,6 +808,8 @@ class WiringOperatorTester(WiringComponentTester):
 
 
 class WiringWidgetTester(WiringComponentTester):
+
+    type = "widget"
 
     @property
     def error_count(self):
@@ -853,6 +857,9 @@ class WiringConnectionTester(object):
     def selected(self):
         return "selected" in self.class_list
 
+    def _get_btn_by_class(self, class_name):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".connection-options .{}".format(class_name)))
+
     def display_preferences(self):
         button = self.btn_prefs
         button.click()
@@ -874,16 +881,33 @@ class WiringConnectionTester(object):
 
         return self
 
+    @property
+    def sourceid(self):
+        return self.element.get_attribute("data-sourceid")
+
+    @property
+    def targetid(self):
+        return self.element.get_attribute("data-targetid")
+
 
 class WiringEndpointTester(object):
 
-    def __init__(self, testcase, element):
+    def __init__(self, testcase, element, component):
         self.testcase = testcase
         self.element = element
+        self.component = component
 
     @property
     def _title(self):
         return self.element.find_element_by_css_selector(".endpoint-title")
+
+    @property
+    def name(self):
+        return self.element.get_attribute("data-name")
+
+    @property
+    def id(self):
+        return "{}/{}/{}".format(self.component.type, self.component.id, self.name)
 
     @property
     def anchor(self):
@@ -1652,7 +1676,11 @@ class BaseWiringViewTester(object):
         return self.testcase.driver.find_element_by_css_selector(".wiring-view .wiring-sidebar")
 
     def _build_component(self, component_type, element):
+        if component_type is None:
+            component_type = "widget" if ".component-widget" in element.get_attribute().split() else "operator"
+
         return WiringWidgetTester(self.testcase, element) if component_type == 'widget' else WiringOperatorTester(self.testcase, element)
+
 
 class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
@@ -1959,7 +1987,7 @@ class WiringViewTester(BaseWiringViewTester):
         return [c for c in self.find_connections() for p in args if hasattr(c, p) and getattr(c, p)]
 
     def find_components(self):
-        return [WiringComponentTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".component")]
+        return [self._build_component(None, e) for e in self.section_diagram.find_elements_by_css_selector(".component")]
 
     def find_component_by_title(self, component_type, component_title):
 
