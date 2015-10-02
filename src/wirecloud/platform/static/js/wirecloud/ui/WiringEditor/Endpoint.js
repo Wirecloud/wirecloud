@@ -373,7 +373,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['click', 'connectionadded', 'dragenter', 'dragleave', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup'];
+    var events = ['click', 'connectionadded', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup'];
 
     var endpoint_onmousedown = function endpoint_onmousedown(event) {
 
@@ -387,17 +387,7 @@
 
         if (this.enabled) {
             event.stopPropagation();
-
-            var buttons = 'buttons' in event ? event.buttons : event.which;
-            if (buttons === 0) {
-                // No button pressed
-                this.trigger('mouseenter', event);
-            } else if (buttons | 1) {
-                // Left mouse button pressed
-                this.trigger('dragenter', event);
-            } /* else {
-                // do nothing.
-            } */
+            this.trigger('mouseenter', event);
         }
     };
 
@@ -405,17 +395,7 @@
 
         if (this.enabled) {
             event.stopPropagation();
-
-            var buttons = 'buttons' in event ? event.buttons : event.which;
-            if (buttons === 0) {
-                // No button pressed
-                this.trigger('mouseleave', event);
-            } else if (buttons | 1) {
-                // Left mouse button pressed
-                this.trigger('dragleave', event);
-            } /* else {
-                // do nothing.
-            } */
+            this.trigger('mouseleave', event);
         }
     };
 

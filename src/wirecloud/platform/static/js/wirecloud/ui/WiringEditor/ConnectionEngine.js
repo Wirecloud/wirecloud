@@ -70,8 +70,8 @@
             });
 
             this.endpoint_ondragstart = endpoint_ondragstart.bind(this);
-            this.endpoint_ondragenter = endpoint_ondragenter.bind(this);
-            this.endpoint_ondragleave = endpoint_ondragleave.bind(this);
+            this.endpoint_onmouseenter = endpoint_onmouseenter.bind(this);
+            this.endpoint_onmouseleave = endpoint_onmouseleave.bind(this);
             this.endpoint_ondragend = endpoint_ondragend.bind(this);
         },
 
@@ -121,8 +121,8 @@
 
                 endpoint
                     .on('mousedown', this.endpoint_ondragstart)
-                    .on('dragenter', this.endpoint_ondragenter)
-                    .on('dragleave', this.endpoint_ondragleave)
+                    .on('mouseenter', this.endpoint_onmouseenter)
+                    .on('mouseleave', this.endpoint_onmouseleave)
                     .on('mouseup', this.endpoint_ondragend);
 
                 return this;
@@ -233,8 +233,8 @@
                 if (index != -1) {
                     endpoint
                         .off('mousedown', this.endpoint_ondragstart)
-                        .off('dragenter', this.endpoint_ondragenter)
-                        .off('dragleave', this.endpoint_ondragleave)
+                        .off('mouseenter', this.endpoint_onmouseenter)
+                        .off('mouseleave', this.endpoint_onmouseleave)
                         .off('mouseup', this.endpoint_ondragend);
 
                     this.endpoints[endpoint.type].splice(index, 1);
@@ -423,7 +423,7 @@
         return this;
     };
 
-    var endpoint_ondragenter = function endpoint_ondragenter(endpoint) {
+    var endpoint_onmouseenter = function endpoint_onmouseenter(endpoint) {
 
         if (this.temporalConnection != null) {
             endpoint.activate();
@@ -432,7 +432,7 @@
         }
     };
 
-    var endpoint_ondragleave = function endpoint_ondragleave(endpoint) {
+    var endpoint_onmouseleave = function endpoint_onmouseleave(endpoint) {
 
         if (this.temporalConnection != null) {
             endpoint.deactivate();
