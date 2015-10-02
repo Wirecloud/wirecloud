@@ -600,7 +600,7 @@ not used in any of the available behaviours.
 The same applies to connections, you can remove them from the active behaviour
 using the *Remove* button:
 
-![*Remove* component button](images/user_guide/behaviour_oriented_wiring/remove_component.png)
+![*Remove* connection button](images/user_guide/behaviour_oriented_wiring/remove_connection.png)
 
 Again, connections are remove from the wiring configuration when the are removed
 from all the behaviours.

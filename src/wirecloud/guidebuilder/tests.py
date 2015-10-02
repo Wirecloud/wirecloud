@@ -930,14 +930,79 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 panelheads = create_box(panelhead, 7)
                 crop_image(imgp, left=panelheads[0], upper=panelheads[1], right=get_position(tooltip, 1.0, 1.0)[0] + 10, lower=get_position(tooltip, 1.0, 1.0)[1] + 10)
 
-        self.open_menu().click_entry('MWD Tutorial')
-        time.sleep(0.4)
+        self.change_current_workspace('MWD Tutorial')
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as behaviour:
                 beh = behaviour.behaviour_list[2]
                 beh.activate()
                 time.sleep(1)
                 take_capture(self.driver, extra="general_aspect")
+
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as behaviour:
+                btncreate = behaviour.btn_create_behaviour
+                ActionChains(self.driver).move_to_element(btncreate.element).perform()
+                time.sleep(0.2)
+                imgp = take_capture(self.driver, extra="create_behaviour_button")
+                add_pointer(imgp, get_position(btncreate.element, 0.5, 0.5))
+                btncreate.click()
+
+                createform = self.driver.find_element_by_css_selector(".behaviour-create-form")
+                imgp = take_capture(self.driver, extra="behaviour_form")
+                crop_image(imgp, *create_box(createform))
+                get_by_text(createform, '.se-btn', 'Cancel').click()
+
+                firstbehav = behaviour.active_behaviour
+                prefs = firstbehav.display_preferences()
+                btnprefs = prefs.get_entry("Settings")
+                ActionChains(self.driver).move_to_element(btnprefs).perform()
+                time.sleep(0.2)
+                imgp = take_capture(self.driver, extra="behaviour_settings_option")
+                add_pointer(imgp, get_position(btnprefs, 0.5, 0.5))
+                prefs.close()
+
+                btnrm = firstbehav.btn_remove
+                ActionChains(self.driver).move_to_element(btnrm.element).perform()
+                time.sleep(0.2)
+                imgp = take_capture(self.driver, extra="remove_behaviour_button")
+                add_pointer(imgp, get_position(btnrm.element, 0.5, 0.5))
+
+
+            techniciancomponent = wiring.find_component_by_title("widget", "Technician List")
+            rmbtn = techniciancomponent.btn_remove
+            ActionChains(self.driver).move_to_element(rmbtn.element).perform()
+            time.sleep(0.2)
+            imgp = take_capture(self.driver, extra="remove_component")
+            add_pointer(imgp, get_position(rmbtn.element, 0.5, 0.5))
+
+            targetend = techniciancomponent.find_endpoint_by_title("target", "Technician")
+            connection = [x for x in wiring.find_connections() if x.targetid == targetend.id][0]
+            rmbtn = connection.btn_remove
+            ActionChains(self.driver).move_to_element(rmbtn.element).perform()
+            time.sleep(0.2)
+            imgp = take_capture(self.driver, extra="remove_connection")
+            add_pointer(imgp, get_position(rmbtn.element, 0.5, 0.5))
+
+
+            with wiring.behaviour_sidebar as behaviour:
+                behaviour.create_behaviour("Test", "Testing")
+                lastbehav = behaviour.behaviour_list[-1]
+                lastbehav.activate()
+
+            techniciancomponent = wiring.find_component_by_title("widget", "Technician List")
+            addbtn = techniciancomponent.btn_add
+            ActionChains(self.driver).move_to_element(addbtn.element).perform()
+            time.sleep(0.2)
+            imgp = take_capture(self.driver, extra="component_share_button")
+            add_pointer(imgp, get_position(addbtn.element, 0.5, 0.5))
+
+            targetend = techniciancomponent.find_endpoint_by_title("target", "Query")
+            connection = [x for x in wiring.find_connections() if x.targetid == targetend.id][0]
+            addbtn = connection.btn_add
+            ActionChains(self.driver).move_to_element(addbtn.element).perform()
+            time.sleep(0.2)
+            imgp = take_capture(self.driver, extra="connection_share_button")
+            add_pointer(imgp, get_position(addbtn.element, 0.5, 0.5))
 
         self.create_workspace('Enable Behaviour Work')
         with self.wiring_view as wiring:
