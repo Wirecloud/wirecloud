@@ -762,7 +762,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def _read_json_fixtures(self, *args):
         testdir_path = os.path.join(os.path.dirname(__file__), 'test-data')
@@ -861,7 +861,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def test_operator_available_after_being_installed(self):
         self.login()
@@ -960,7 +960,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
 class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def _set_connection_readonly(self, workspace_id, connection_index):
         workspace = Workspace.objects.get(id=workspace_id)
@@ -999,7 +999,7 @@ class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
 class EndpointBasicRecommendationTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     @classmethod
     def setUpClass(cls):
@@ -1132,7 +1132,7 @@ class EndpointCollapsedTestCase(WirecloudSeleniumTestCase):
 class EndpointMissingTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def check_input_endpoint_exceptions(self):
 
@@ -1141,8 +1141,8 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         source_iwidget = iwidgets[0]
         target_iwidget = iwidgets[1]
-        self.assertIsNotNone(source_iwidget.element)
-        self.assertIsNotNone(target_iwidget.element)
+        source_iwidget.wait_loaded()
+        target_iwidget.wait_loaded()
 
         self.assertEqual(source_iwidget.error_count, 0)
         self.assertEqual(target_iwidget.error_count, 0)
