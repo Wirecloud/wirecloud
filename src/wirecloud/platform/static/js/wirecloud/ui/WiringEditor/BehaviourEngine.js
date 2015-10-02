@@ -219,7 +219,7 @@
                 this.forEachComponent(function (component) {
 
                     if (behaviour.hasComponent(component)) {
-                        removeComponent.call(this, component);
+                        _removeComponent.call(this, component);
                     }
                 }.bind(this));
                 behaviour.clear();
@@ -428,7 +428,7 @@
                         showComponentDeleteCascadeModal.call(this, component);
                     } else {
                         if (this.filterByComponent(component).length > 1) {
-                            removeComponent.call(this, component, false);
+                            _removeComponent.call(this, component, false);
                         } else {
                             showComponentRemoveModal.call(this, component);
                         }
@@ -710,7 +710,7 @@
         return behaviour;
     };
 
-    var removeComponent = function removeComponent(component, cascade) {
+    var _removeComponent = function _removeComponent(component, cascade) {
         /*jshint validthis:true */
 
         if (cascade) {
@@ -751,7 +751,7 @@
             cancelLabel: utils.gettext("Cancel")
         });
         modal.setMsg(new se.Fragment(message));
-        modal.acceptHandler = removeComponent.bind(this, component, false);
+        modal.acceptHandler = _removeComponent.bind(this, component, false);
         modal.show();
 
         return this;
@@ -771,7 +771,7 @@
             cancelLabel: utils.gettext("Cancel")
         });
         modal.setMsg(new se.Fragment(message));
-        modal.acceptHandler = removeComponent.bind(this, component, true);
+        modal.acceptHandler = _removeComponent.bind(this, component, true);
         modal.show();
 
         return this;
