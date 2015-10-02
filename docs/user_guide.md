@@ -1,3 +1,21 @@
+Supported browsers
+------------------
+
+WireCloud 0.8 supports the following desktop browsers:
+
+- Firefox 38+
+- Chrome 37+
+- Safari 8+
+- Opera 23+
+
+WireCloud 0.8 also works on the mobile version of the previous browsers, except
+the wiring editor that currently does not work with touch screens. On
+smartphones, an experimental and not ready for production view is provided.
+
+> **Note:** Although WireCloud supports those browsers, some widgets and operators
+> may not support all of them. Read each widget and operators documentation for
+> knowing if they have any restriction on the used browser.
+
 Creating a new workspace
 ------------------------
 
