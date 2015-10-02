@@ -853,6 +853,9 @@ class WiringConnectionTester(object):
     def selected(self):
         return "selected" in self.class_list
 
+    def haveEndpoint(self, endpoint_type, endpoint):
+        return self.element.get_attribute("data-{}id".format(endpoint_type)) == endpoint.data_id
+
     def display_preferences(self):
         button = self.btn_prefs
         button.click()
@@ -884,6 +887,10 @@ class WiringEndpointTester(object):
     @property
     def _title(self):
         return self.element.find_element_by_css_selector(".endpoint-title")
+
+    @property
+    def data_id(self):
+        return self.element.get_attribute("data-id")
 
     @property
     def anchor(self):
