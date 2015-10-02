@@ -105,6 +105,7 @@
 
             });
             this.get().setAttribute('data-name', this._endpoint.name);
+            this.get().setAttribute('data-id', this.id);
 
             this.title = wiringEndpoint.label;
             if (wiringEndpoint.missing) {

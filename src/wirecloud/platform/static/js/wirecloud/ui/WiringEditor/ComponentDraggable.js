@@ -150,7 +150,7 @@
 
             this.position(options.position);
 
-            if (this.type == 'widget') {
+            if (this.type == 'widget' && !wiringComponent.missing) {
                 wiringComponent.on('title_changed', component_onrename.bind(this));
             }
 

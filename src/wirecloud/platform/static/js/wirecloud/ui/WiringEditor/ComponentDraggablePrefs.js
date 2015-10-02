@@ -106,7 +106,7 @@
     // ==================================================================================
 
     var canRename = function canRename() {
-        return this.type == 'widget';
+        return this.type == 'widget' && !this._component.missing;
     };
 
     var canCollapseEndpoints = function canCollapseEndpoints() {
