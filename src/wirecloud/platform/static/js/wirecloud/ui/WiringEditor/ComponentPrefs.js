@@ -64,9 +64,9 @@
              */
             build: function build() {
                 return [
-                    /* TODO: this._createMenuItem(gettext("Rename"), "pencil", function () {
+                    this._createMenuItem(gettext("Rename"), "pencil", function () {
                         showRenameModal.call(this);
-                    }.bind(this)),*/
+                    }.bind(this), canRename),
                     this._createMenuItem(gettext("Logs"), "tags", function () {
                         this.component.showLogs();
                     }.bind(this)),
@@ -84,8 +84,29 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
+    var canRename = function canRename() {
+        return !this.component._component.volatile && this.component.type == 'widget';
+    };
+
     var canShowSettings = function canShowSettings() {
         return this.component.hasSettings() && this.component._component.isAllowed('configure');
+    };
+
+    var showRenameModal = function showRenameModal() {
+        var dialog = new Wirecloud.ui.FormWindowMenu([
+                {name: 'title', label: utils.gettext("Title"), type: 'text', placeholder: this.component.title},
+            ],
+            utils.interpolate(utils.gettext("Rename %(type)s"), this.component),
+            "wc-component-rename-dialog");
+
+        dialog.executeOperation = function (data) {
+            if (data.title) {
+                this.component._component.setTitle(data.title);
+            }
+        }.bind(this);
+
+        dialog.show();
+        dialog.setValue({title: this.component.title});
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

@@ -67,6 +67,9 @@
                     item2 = getItemSortEndpoints.call(this.component);
 
                 var list = [
+                    this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
+                        showRenameModal.call(this);
+                    }.bind(this), canRename),
                     this._createMenuItem(item1.title, item1.icon, function () {
                         this.collapsed = !this.collapsed;
                     }.bind(this.component), canCollapseEndpoints),
@@ -102,6 +105,10 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
+    var canRename = function canRename() {
+        return this.type == 'widget';
+    };
+
     var canCollapseEndpoints = function canCollapseEndpoints() {
         return this.hasEndpoints() && !this.background && !this.sortingEndpoints;
     };
@@ -132,6 +139,23 @@
         } else {
             return {title: gettext("Order endpoints"), icon: "sort"};
         }
+    };
+
+    var showRenameModal = function showRenameModal() {
+        var dialog = new Wirecloud.ui.FormWindowMenu([
+                {name: 'title', label: utils.gettext("Title"), type: 'text', placeholder: this.component.title},
+            ],
+            utils.interpolate(utils.gettext("Rename %(type)s"), this.component),
+            "wc-component-rename-dialog");
+
+        dialog.executeOperation = function (data) {
+            if (data.title) {
+                this.component._component.setTitle(data.title);
+            }
+        }.bind(this);
+
+        dialog.show();
+        dialog.setValue({title: this.component.title});
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

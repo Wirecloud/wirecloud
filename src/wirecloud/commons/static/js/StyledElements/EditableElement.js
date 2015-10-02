@@ -64,8 +64,7 @@
         StyledElements.StyledElement.call(this, ['change']);
 
         this.wrapperElement = document.createElement('span');
-
-        this.wrapperElement.textContent = options.initialContent;
+        this.setTextContent(options.initialContent);
 
         this._onFocus = onFocus.bind(this);
         this._onKeydown = onKeydown.bind(this);
@@ -94,6 +93,12 @@
             this._prev_content = this.wrapperElement.textContent;
         }
         this.wrapperElement.focus();
+    };
+
+    EditableElement.prototype.setTextContent = function setTextContent(textContent) {
+        this.wrapperElement.textContent = textContent;
+
+        return this;
     };
 
     EditableElement.prototype.destroy = function destroy() {

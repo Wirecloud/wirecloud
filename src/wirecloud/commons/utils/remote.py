@@ -142,6 +142,10 @@ class IWidgetTester(object):
         return self.title_element.text
 
     @property
+    def title(self):
+        return self.name
+
+    @property
     def error_count(self):
         driver = self.testcase.driver
 
@@ -569,6 +573,14 @@ class WiringComponentItemTester(object):
         self.element = element
 
     @property
+    def btn_show_menu_prefs(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".btn-show-prefs"))
+
+    @property
+    def id(self):
+        return int(self.element.get_attribute('data-id'))
+
+    @property
     def in_use(self):
         return self.element.find_element_by_css_selector(".badge").text == "in use"
 
@@ -580,6 +592,27 @@ class WiringComponentItemTester(object):
     def volatile(self):
         return self.element.find_element_by_css_selector(".badge").text == "volatile"
 
+    def rename(self, title):
+        modal = self.show_modal_rename()
+
+        modal.set_field_value('title', title)
+        modal.accept()
+
+        self.testcase.assertEqual(self.title, title)
+
+        return self
+
+    def show_menu_prefs(self):
+        button = self.btn_show_menu_prefs
+        button.click()
+
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".se-popup-menu"), button)
+
+    def show_modal_rename(self):
+        menu = self.show_menu_prefs()
+        menu.click_entry("Rename")
+
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-rename-dialog"))
 
 class WiringComponentGroupTester(object):
 
@@ -608,6 +641,10 @@ class WiringComponentTester(object):
     def __init__(self, testcase, element):
         self.testcase = testcase
         self.element = element
+
+    @property
+    def btn_show_menu_prefs(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".btn-show-prefs"))
 
     @property
     def id(self):
@@ -705,6 +742,28 @@ class WiringComponentTester(object):
         self.display_preferences().click_entry('Settings')
 
         return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+
+    def rename(self, title):
+        modal = self.show_modal_rename()
+
+        modal.set_field_value('title', title)
+        modal.accept()
+
+        self.testcase.assertEqual(self.title, title)
+
+        return self
+
+    def show_menu_prefs(self):
+        button = self.btn_show_menu_prefs
+        button.click()
+
+        return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".se-popup-menu"), button)
+
+    def show_modal_rename(self):
+        menu = self.show_menu_prefs()
+        menu.click_entry("Rename")
+
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-rename-dialog"))
 
 
 class WiringComponentEditableTester(object):
@@ -986,6 +1045,14 @@ class RemoteTestCase(object):
             return self.get_current_iwidgets(tab)
 
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
+
+    def find_widget_by_id(self, widget_id):
+
+        for widget in self.get_current_iwidgets():
+            if widget.id == widget_id:
+                return widget
+
+        return None
 
     def send_basic_event(self, widget, event='hello world!!'):
         with widget:
@@ -1823,6 +1890,28 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
         return len(components) > 0
 
+    def find_component_by_id(self, component_type, component_id):
+
+        for component in self.find_components_by_type(component_type):
+            if component.id == component_id:
+                return component
+
+        return None
+
+    def find_components_by_type(self, component_type):
+        self.show_components_of(component_type)
+
+        return [WiringComponentItemTester(self.testcase, e) for e in self.panel.find_elements_by_css_selector(".component-%s" % component_type)]
+
+    def show_components_of(self, component_type):
+        button = getattr(self, "btn_show_%s_group" % component_type)
+
+        if not button.active:
+            WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".panel-components .btn-list-%s-group" % component_type)))
+            button.click()
+
+        return self
+
 
 class WiringViewTester(BaseWiringViewTester):
 
@@ -1882,6 +1971,17 @@ class WiringViewTester(BaseWiringViewTester):
 
     def find_connections(self):
         return [WiringConnectionTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".connection")]
+
+    def find_component_by_id(self, component_type, component_id):
+
+        for component in self.find_components_by_type(component_type):
+            if component.id == component_id:
+                return component
+
+        return None
+
+    def find_components_by_type(self, component_type):
+        return [self._build_component(component_type, e) for e in self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)]
 
 
 class MobileWirecloudRemoteTestCase(RemoteTestCase):
