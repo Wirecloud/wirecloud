@@ -110,3 +110,36 @@ CACHES = {
 }
 
 FORCE_SCRIPT_NAME = ""
+
+
+#WIRECLOUD_SELENIUM_TEST_BROWSERS = {
+#
+#    # Old versions of Firefox can be found here:
+#    # http://archive.mozilla.org/pub/mozilla.org/firefox/releases/
+#
+#    'Firefox': {
+#        'CLASS': 'selenium.webdriver.Firefox',
+#    },
+#
+#    # Download chrome driver from the following URL:
+#    # https://sites.google.com/a/chromium.org/chromedriver/
+#    # Old versions of chrome can be found here:
+#    # http://google-chrome.en.uptodown.com/mac/old
+#    'GoogleChrome': {
+#        'CLASS': 'selenium.webdriver.Chrome',
+#    },
+#
+#    # Download opera driver from the following URL:
+#    # https://github.com/operasoftware/operachromiumdriver/releases
+#    # Old versions of Opera can be found here:
+#    # http://get.geo.opera.com.global.prod.fastly.net/pub/opera/
+#
+#    'Opera': {
+#        'CLASS': 'selenium.webdriver.Opera',
+#    },
+#
+#    # https://blog.codecentric.de/en/2015/02/selenium-webdriver-safari-8/
+#    'Safari': {
+#        'CLASS': 'selenium.webdriver.Safari',
+#    },
+#}

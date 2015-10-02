@@ -702,9 +702,6 @@ DEFAULT_BROWSER_CONF = {
     'Firefox': {
         'CLASS': 'selenium.webdriver.Firefox',
     },
-    'GoogleChrome': {
-        'CLASS': 'selenium.webdriver.Chrome',
-    },
 }
 
 
@@ -712,7 +709,7 @@ def get_configured_browsers():
 
     from django.conf import settings
 
-    return getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', DEFAULT_BROWSER_CONF)
+    return getattr(settings, 'WIRECLOUD_SELENIUM_TESTS_BROWSERS', DEFAULT_BROWSER_CONF)
 
 
 def wirecloud_selenium_test_case(klass_instance, browsers=None):
