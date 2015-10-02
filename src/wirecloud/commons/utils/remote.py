@@ -667,6 +667,10 @@ class WiringComponentTester(object):
         return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".btn-remove"))
 
     @property
+    def btn_add(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".icon-plus-sign"))
+
+    @property
     def class_list(self):
         return self.element.get_attribute('class').split()
 
@@ -831,11 +835,15 @@ class WiringConnectionTester(object):
 
     @property
     def btn_remove(self):
-        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".connection-options .btn-remove"))
+        return self._get_btn_by_class("btn-remove")
+
+    @property
+    def btn_add(self):
+        return self._get_btn_by_class("btn-share")
 
     @property
     def btn_prefs(self):
-        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".connection-options .btn-show-prefs"))
+        return self._get_btn_by_class("btn-show-prefs")
 
     @property
     def class_list(self):
@@ -852,6 +860,9 @@ class WiringConnectionTester(object):
     @property
     def selected(self):
         return "selected" in self.class_list
+
+    def _get_btn_by_class(self, class_name):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".connection-options {}".format(class_name if class_name.startswith(".") else ".{}".format(class_name))))
 
     def haveEndpoint(self, endpoint_type, endpoint):
         return self.element.get_attribute("data-{}id".format(endpoint_type)) == endpoint.data_id
@@ -949,6 +960,10 @@ class WiringBehaviourTester(object):
     @property
     def btn_show_preferences(self):
         return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".btn-show-prefs"))
+
+    @property
+    def btn_remove(self):
+        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".btn-remove"))
 
     @property
     def heading(self):
