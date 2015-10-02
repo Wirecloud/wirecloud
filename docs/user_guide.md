@@ -202,11 +202,11 @@ mashup, go to the FIWARE Lab marketplace and install them using the
 [WireCloudUserGuide offering](https://store.lab.fiware.org/offering/CoNWeT/WireCloudUserGuide/1.0).
 You can also download them using the following URLs:
 
--   [CoNWeT_simple-history-module2linear-graph_2.3.2.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_simple-history-module2linear-graph_2.3.2.wgt)
--   [CoNWeT_ngsi-source_3.0.2.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_ngsi-source_3.0.2.wgt)
--   [CoNWeT_ngsientity2poi_3.0.3.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_ngsientity2poi_3.0.3.wgt)
--   [CoNWeT_map-viewer_2.5.6.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_map-viewer_2.5.3.wgt)
--   [CoNWeT_linear-graph_3.0.0b3.wgt](https://wirecloud.conwet.etsiinf.upm.es/slides/attachments/CoNWeT_linear-graph_3.0.0b3.wgt)
+-   [CoNWeT_simple-history-module2linear-graph_2.3.2.wgt](attachments/CoNWeT_simple-history-module2linear-graph_2.3.2.wgt)
+-   [CoNWeT_ngsi-source_3.0.2.wgt](attachments/CoNWeT_ngsi-source_3.0.2.wgt)
+-   [CoNWeT_ngsientity2poi_3.0.3.wgt](attachments/CoNWeT_ngsientity2poi_3.0.3.wgt)
+-   [CoNWeT_map-viewer_2.5.6.wgt](attachments/CoNWeT_map-viewer_2.5.6.wgt)
+-   [CoNWeT_linear-graph_3.0.0b3.wgt](attachments/CoNWeT_linear-graph_3.0.0b3.wgt)
 
 Once installed, you should be able to see all the widgets/operators used
 in this example in the "My Resources" view:
