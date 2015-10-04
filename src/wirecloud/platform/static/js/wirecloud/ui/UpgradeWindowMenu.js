@@ -63,6 +63,16 @@
             parameters: {
                 from: from_version
             },
+            on404: function (response) {
+                this.changelog.removeClassName(['upgrade', 'downgrade']);
+                var msg = utils.gettext('There is not change information between versions %(from_version)s and %(to_version)s');
+                this.changelog.clear().appendChild(utils.interpolate(msg, {from_version: from_version, to_version: to_version}));
+            }.bind(this),
+            onFailure: function (response) {
+                this.changelog.removeClassName(['upgrade', 'downgrade']);
+                var msg = utils.gettext('Unable to retrieve change log information');
+                this.changelog.clear().appendChild(msg);
+            }.bind(this),
             onSuccess: function (response) {
                 this.changelog.clear().appendChild(new se.Fragment(response.responseText));
             }.bind(this),

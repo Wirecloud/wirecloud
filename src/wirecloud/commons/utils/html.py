@@ -79,12 +79,13 @@ def filter_changelog(code, from_version):
     doc = fragment_fromstring(code, create_parent=True, parser=parser)
 
     for header in doc.xpath('/div/h1'):
+        title = header.text[1:] if header.text.startswith('v') else header.text
         try:
-            version = Version(VERSION_HEADER_RE.split(header.text, 1)[0])
+            version = Version(VERSION_HEADER_RE.split(title, 1)[0])
         except:
             continue
 
-        if version == from_version:
+        if version <= from_version:
             for elem in header.itersiblings():
                 elem.drop_tree()
             header.drop_tree()

@@ -89,9 +89,31 @@ class HTMLCleanupTestCase(TestCase):
 
     def test_filter_changelog_version_not_found(self):
         initial_code = '<h1>1.0.2</h1><p>1.0.2 change list</p><h1>1.0.1</h1><p>1.0.1 change list</p><h1>1.0.0</h1><p>Initial release</p>'
-        expected_code = '<h1>1.0.2</h1><p>1.0.2 change list</p><h1>1.0.1</h1><p>1.0.1 change list</p><h1>1.0.0</h1><p>Initial release</p>'
+        expected_code = initial_code
         self.assertEqual(filter_changelog(initial_code, Version('0.9.0')), expected_code)
 
+    def test_filter_changelog_not_exact_version(self):
+        # Filter html, exact version not found, but there is a lower version.
+        initial_code = '<h1>1.0.2</h1><p>1.0.2 change list</p><h1>1.0.1</h1><p>1.0.1 change list</p><h1>1.0.0</h1><p>Initial release</p>'
+        expected_code = '<h1>1.0.2</h1><p>1.0.2 change list</p><h1>1.0.1</h1><p>1.0.1 change list</p>'
+        self.assertEqual(filter_changelog(initial_code, Version('1.0.0.1')), expected_code)
+
+    def test_filter_changelog_no_changes(self):
+        # Filter html, exact version not found, but there is a lower version.
+        initial_code = '<h1>1.0.2</h1><p>1.0.2 change list</p><h1>1.0.1</h1><p>1.0.1 change list</p><h1>1.0.0</h1><p>Initial release</p>'
+        expected_code = ''
+        self.assertEqual(filter_changelog(initial_code, Version('1.0.3')), expected_code)
+
+    def test_filter_changelog_headers_with_extra_content_v(self):
+        initial_code = '<h1>v1.0.2 (2015-05-01)</h1><p>v1.0.2 change list</p><h1>v1.0.1 (2015-04-01)</h1><p>v1.0.1 change list</p><h1>v1.0.0 (2015-03-01)</h1><p>Initial release</p>'
+        expected_code = '<h1>v1.0.2 (2015-05-01)</h1><p>v1.0.2 change list</p>'
+        self.assertEqual(filter_changelog(initial_code, Version('1.0.1')), expected_code)
+
+    def test_filter_changelog_not_exact_version_v(self):
+        # Filter html, exact version not found, but there is a lower version.
+        initial_code = '<h1>v1.0.2</h1><p>v1.0.2 change list</p><h1>v1.0.1</h1><p>v1.0.1 change list</p><h1>v1.0.0</h1><p>Initial release</p>'
+        expected_code = '<h1>v1.0.2</h1><p>v1.0.2 change list</p><h1>v1.0.1</h1><p>v1.0.1 change list</p>'
+        self.assertEqual(filter_changelog(initial_code, Version('1.0.0.1')), expected_code)
 
 class GeneralUtilsTestCase(TestCase):
 

@@ -245,6 +245,8 @@ class ResourceChangelogEntry(Resource):
 
         if from_version:
             doc_pre_html = filter_changelog(doc_pre_html, from_version)
+            if doc_pre_html.strip() == '':
+                raise Http404
 
         doc = clean_html(doc_pre_html, base_url=doc_base_url)
         return HttpResponse(doc, content_type='application/xhtml+xml; charset=UTF-8')
