@@ -43,7 +43,7 @@
             options = utils.merge(utils.clone(defaults), options);
             this.superClass(events);
 
-            this.wrapperElement = document.createElement('div');
+            this.wrapperElement = document.createElement(options.tagname);
             this.wrapperElement.className = 'se-container';
             this.children = [];
             this.useFullHeight = options.useFullHeight;
@@ -265,6 +265,7 @@
         'class': "",
         id: "",
         extraClass: "",
+        tagname: 'div',
         useFullHeight: false
     };
 
