@@ -807,22 +807,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertEqual(template['preferences'], {'pref1': 'value1'})
         self.assertEqual(template['tabs'][0]['preferences'], {'pref2': 'value2'})
 
-    def test_build_template_from_workspace_with_preferences(self):
-
-        options = {
-            'vendor': 'Wirecloud Test Suite',
-            'name': 'Test Mashup',
-            'version': '1'
-        }
-        self.workspace_with_iwidgets.workspacepreference_set.create(inherit=True, name='ignoreme', value='ignoreme')
-        self.workspace_with_iwidgets.workspacepreference_set.create(inherit=False, name='pref1', value='value1')
-        tab = self.workspace_with_iwidgets.tab_set.all()[0]
-        tab.tabpreference_set.create(inherit=True, name='ignoreme', value='ignoreme')
-        tab.tabpreference_set.create(inherit=False, name='pref2', value='value2')
-        template = build_json_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
-        self.assertEqual(template['preferences'], {'pref1': 'value1'})
-        self.assertEqual(template['tabs'][0]['preferences'], {'pref2': 'value2'})
-
     def test_build_template_from_workspace_stateproperties_parametrization(self):
 
         options = {
@@ -1008,7 +992,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(len(data['tabs']), 4)
         self.assertNotEqual(data['tabs'][2]['name'], data['tabs'][3]['name'])
 
-    def test_build_workspace_from_template(self):
+    def test_build_workspace_from_old_template(self):
         template = self.read_template('wt1.old.xml')
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 

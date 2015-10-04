@@ -50,7 +50,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         Market.objects.all().delete()
 
         self.login('normuser')
-        with self.marketplace_view as marketplace:
+        with self.marketplace_view:
             alert = self.wait_element_visible_by_css_selector('.marketplace-error-view .alert')
             self.assertIsNotNone(alert)
             self.assertTrue(alert.is_displayed())
@@ -122,10 +122,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login(username='normuser')
 
         with self.myresources_view as myresources:
-            catalogue_base_element = myresources.wait_catalogue_ready()
-
             with myresources.search_in_results('Test') as resource:
-
                 resource.advanced_operation('Publish')
                 window_menu = self.wait_element_visible_by_css_selector('.window_menu.message')
                 self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()

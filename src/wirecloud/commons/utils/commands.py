@@ -21,7 +21,6 @@ from optparse import make_option, OptionParser
 import sys
 import traceback
 
-from django.core.management.base import CommandError
 from django.core.management.color import color_style
 from django.utils.encoding import smart_str
 

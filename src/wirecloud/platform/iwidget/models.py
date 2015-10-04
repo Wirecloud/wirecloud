@@ -17,12 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
-from six import text_type
 
 from wirecloud.commons.fields import JSONField
 from wirecloud.platform.wiring.utils import remove_related_iwidget_connections

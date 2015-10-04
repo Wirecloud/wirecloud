@@ -20,7 +20,6 @@
 from django import template
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _
 
 from wirecloud.platform.plugins import get_constants, get_extra_javascripts, get_platform_css, get_wirecloud_ajax_endpoints
 

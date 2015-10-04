@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 import errno
 
 from django.test import TestCase
-from mock import MagicMock, Mock, patch, DEFAULT
+from mock import Mock, patch, DEFAULT
 import six
 
 from wirecloud.catalogue.utils import add_packaged_resource, update_resource_catalogue_cache

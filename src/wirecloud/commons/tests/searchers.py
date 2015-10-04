@@ -50,10 +50,10 @@ class UserSearcherTestCase(WirecloudTestCase):
         response = self.client.get(self.url, HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 400)
-        result_json = json.loads(response.content.decode('utf-8'))
+        json.loads(response.content.decode('utf-8'))
 
     def test_invalid_namespace_parameters(self):
         response = self.client.get(self.url + '?namespace=invalid', HTTP_ACCEPT="application/json")
 
         self.assertEqual(response.status_code, 422)
-        result_json = json.loads(response.content.decode('utf-8'))
+        json.loads(response.content.decode('utf-8'))

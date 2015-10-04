@@ -20,7 +20,6 @@
 from django.test import TestCase
 from mock import Mock, patch, DEFAULT
 from south.migration import Migrations
-import six
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)

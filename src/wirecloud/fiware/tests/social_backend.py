@@ -20,8 +20,6 @@
 from __future__ import unicode_literals
 
 from copy import deepcopy
-from io import StringIO
-import sys
 
 from django.test import TestCase
 from mock import patch, MagicMock

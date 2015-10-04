@@ -25,8 +25,6 @@ from six.moves.urllib.parse import parse_qsl
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.urlresolvers import reverse
-from django.utils import unittest
-from django.utils.importlib import import_module
 from mock import MagicMock, Mock, patch
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase

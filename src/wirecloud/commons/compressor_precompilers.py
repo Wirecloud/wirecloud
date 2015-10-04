@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from itertools import product
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 import os
 
 from compressor.filters.css_default import CssAbsoluteFilter

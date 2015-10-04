@@ -19,7 +19,6 @@
 
 from __future__ import unicode_literals
 
-import random
 import time
 
 from django.contrib.auth.models import User, Group

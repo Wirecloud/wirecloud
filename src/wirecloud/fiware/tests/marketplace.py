@@ -207,7 +207,6 @@ class MarketplaceTestCase(WirecloudTestCase):
     def test_marketplace_get_all_stores_emtpy(self):
 
         self.network._servers['http']['marketplace.example.com'].clear()
-        url = reverse('wirecloud.fiware.store_collection', kwargs={'market_user': 'user_with_markets', 'market_name': 'fiware'})
 
         response = self.market_adaptor.get_all_stores()
         self.assertEqual(response, [])

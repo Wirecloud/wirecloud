@@ -132,8 +132,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
-        iwidgets = self.get_current_iwidgets()
-
         tab = self.get_workspace_tab_by_name('Tab 1')
         tab.open_menu().click_entry('Remove')
         # Confirm tab deletion

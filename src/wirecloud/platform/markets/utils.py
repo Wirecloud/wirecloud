@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -18,8 +18,6 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
-
-import json
 
 from django.db.models import Q
 import six

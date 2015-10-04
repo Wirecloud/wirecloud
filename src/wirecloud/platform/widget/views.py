@@ -25,7 +25,6 @@ import os
 from six.moves.urllib.parse import urljoin
 from six.moves.urllib.request import url2pathname
 
-from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404

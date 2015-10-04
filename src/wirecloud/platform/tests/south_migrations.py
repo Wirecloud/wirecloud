@@ -19,7 +19,6 @@
 
 import json
 import os
-import six
 
 from django.test import TestCase
 from mock import Mock, patch, DEFAULT

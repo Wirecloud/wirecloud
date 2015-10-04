@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
-
 from south.v2 import DataMigration
 
 from wirecloud.platform.iwidget.utils import parse_value_from_text

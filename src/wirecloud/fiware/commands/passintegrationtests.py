@@ -23,6 +23,7 @@ import time
 from six.moves.urllib.parse import urljoin
 
 from django.utils import unittest
+from django.utils.importlib import import_module
 from six import string_types
 
 from wirecloud.commons.utils.commands import BaseCommand

@@ -20,9 +20,8 @@
 import json
 from six.moves.urllib.parse import parse_qs, urlparse
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.test import Client, TestCase
+from django.test import Client
 from django.test.utils import override_settings
 from django.utils import unittest
 from django.utils.http import urlencode

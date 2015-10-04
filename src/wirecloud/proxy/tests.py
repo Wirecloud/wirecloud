@@ -26,7 +26,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import Client
-from django.utils import unittest
 from django.utils.importlib import import_module
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase

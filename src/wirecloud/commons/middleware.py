@@ -20,8 +20,6 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.middleware import get_user
-from django.contrib.auth.models import AnonymousUser
-from django.core.exceptions import MiddlewareNotUsed
 from django.core.urlresolvers import reverse
 from django.utils.importlib import import_module
 from django.utils.functional import SimpleLazyObject

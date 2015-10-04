@@ -156,7 +156,7 @@ class GeneralUtilsTestCase(TestCase):
 
         self.assertEqual(best_match(['application/xbel+xml', 'text/xml'], 'text/*;q=0.5, , */*; q=0.1'), 'text/xml')
 
-    def test_mimeparser_best_match_should_ignore_blank_media_ranges(self):
+    def test_mimeparser_best_match_should_ignore_blank_media_ranges_params(self):
 
         self.assertEqual(best_match(['application/xbel+xml; a=1; b=2', 'application/xml'], 'application/*, application/xbel+xml; a=1; b=2'), 'application/xbel+xml; a=1; b=2')
 
@@ -341,7 +341,7 @@ class HTTPUtilsTestCase(TestCase):
 
     def test_build_sendfile_response_not_found(self):
 
-        with patch('wirecloud.commons.utils.http.os.path.isfile', return_value=False) as isfile_mock:
+        with patch('wirecloud.commons.utils.http.os.path.isfile', return_value=False):
             self.assertRaises(Http404, build_sendfile_response, 'js/notfound.js', '/folder')
 
     def test_build_sendfile_response_redirect_on_invalid_path(self):
@@ -489,7 +489,7 @@ class HTTPUtilsTestCase(TestCase):
         self.assertEqual(get_current_scheme(request), 'https')
 
     @override_settings(FORCE_PROTO='https')
-    def test_get_current_scheme_forced_http(self):
+    def test_get_current_scheme_forced_https(self):
         request = self._prepare_request_mock()
         request.is_secure.return_value = False
         self.assertEqual(get_current_scheme(request), 'https')

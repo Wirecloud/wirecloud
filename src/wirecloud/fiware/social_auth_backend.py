@@ -34,7 +34,7 @@ field, check OAuthBackend class for details on how to extend it.
 import base64
 import json
 import requests
-from six.moves.urllib.parse import urlencode, urljoin, urlparse
+from six.moves.urllib.parse import urljoin
 
 from django.conf import settings
 

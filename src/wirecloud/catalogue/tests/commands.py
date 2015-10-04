@@ -18,18 +18,12 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import io
-import os
-import shutil
 import sys
-from tempfile import mkdtemp
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 from mock import Mock, patch, DEFAULT
-from whoosh import fields, index
-
-from wirecloud.commons.searchers import get_available_search_engines
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/catalogue/tests/__init__.py)
