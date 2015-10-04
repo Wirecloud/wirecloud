@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import errno
+from io import BytesIO
 import json
 import os
 import re
@@ -136,19 +137,20 @@ def check_invalid_embedded_resources(wgt_file, resource_info):
         if embedded_resource['src'] not in files:
             raise InvalidContents('Missing embedded file: %s' % embedded_resource['src'])
 
+        embedded_wgt = WgtFile(BytesIO(wgt_file.read(embedded_resource['src'])))
+        try:
+            check_packaged_resource(embedded_wgt)
+        except Exception as e:
+            raise InvalidContents('Invalid embedded file: %s' % embedded_resource['src'], details=e)
 
-def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=False):
 
-    close_wgt = False
-    if wgt_file is None:
-        wgt_file = WgtFile(file)
-        close_wgt = True
+def check_packaged_resource(wgt_file, resource_info=None):
 
-    if template is None:
+    if resource_info is None:
         template_contents = wgt_file.get_template()
         template = TemplateParser(template_contents)
+        resource_info = template.get_resource_info()
 
-    resource_info = template.get_resource_info()
     if resource_info['type'] == 'widget':
         code_url = resource_info['contents']['src']
         if not code_url.startswith(('http://', 'https://')):
@@ -169,6 +171,21 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
     check_invalid_doc_content(wgt_file, resource_info, 'doc')
     check_invalid_doc_content(wgt_file, resource_info, 'changelog')
     check_invalid_embedded_resources(wgt_file, resource_info)
+
+
+def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=False):
+
+    close_wgt = False
+    if wgt_file is None:
+        wgt_file = WgtFile(file)
+        close_wgt = True
+
+    if template is None:
+        template_contents = wgt_file.get_template()
+        template = TemplateParser(template_contents)
+
+    resource_info = template.get_resource_info()
+    check_packaged_resource(wgt_file, resource_info)
 
     resource_id = (
         template.get_resource_vendor(),

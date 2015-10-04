@@ -179,7 +179,8 @@ class ResourceCollection(Resource):
 
         except (InvalidContents, UnsupportedFeature) as e:
 
-            return build_error_response(request, 400, e)
+            details = e.details if hasattr(e, 'details') else None
+            return build_error_response(request, 400, e, details=six.text_type(details))
 
         if install_embedded_resources:
 

@@ -23,11 +23,20 @@ from shutil import rmtree
 from six.moves.urllib.request import pathname2url
 import zipfile
 
+from django.utils.encoding import python_2_unicode_compatible
+
 from wirecloud.commons.utils.template import TemplateParser
 
 
+@python_2_unicode_compatible
 class InvalidContents(Exception):
-    pass
+
+    def __init__(self, message, details=None):
+        self.message = message
+        self.details = details
+
+    def __str__(self):
+        return self.message
 
 
 class WgtFile(object):

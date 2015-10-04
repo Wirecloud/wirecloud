@@ -65,16 +65,14 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.user2 = User.objects.get(username='test2')
         self.group = Group.objects.get(name='normusers')
 
-    def read_template(self, *template):
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data', *template))
-        contents = f.read()
-        f.close()
-
-        return contents
+    def read_file(self, *template):
+        path = os.path.normpath(os.path.join(os.path.dirname(__file__), 'test-data', *template))
+        with open(path) as f:
+            return f.read()
 
     def build_simple_wgt(self, template_name, html_content=None, other_files=()):
 
-        template = self.read_template(template_name)
+        template = self.read_file(template_name)
 
         f = BytesIO()
         zf = zipfile.ZipFile(f, 'w')
@@ -150,7 +148,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.check_basic_widget_info(resource)
 
     def test_basic_operator_creation_from_rdf(self):
-        template = self.read_template('operatorTemplate1.rdf')
+        template = self.read_file('operatorTemplate1.rdf')
         parser = TemplateParser(template)
         data = parser.get_resource_info()
 
@@ -393,6 +391,15 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         file_contents = self.build_simple_wgt('mashup_with_missing_embedded_resources.xml')
         self.assertRaises(InvalidContents, install_resource_to_user, self.user, file_contents=file_contents)
+
+    def test_mashup_with_invalid_embedded_resources(self):
+
+        file_contents = WgtFile(BytesIO(self.read_file("..", "..", "..", "commons", "test-data", "Wirecloud_mashup-with-invalid-macs_1.0.wgt")))
+        try:
+            install_resource_to_user(self.user, file_contents=file_contents)
+            self.fail('InvalidContents exception not raised')
+        except InvalidContents as e:
+            self.assertIn('Invalid embedded file: ', e.message)
 
 
 class PackagedResourcesTestCase(WirecloudTestCase):

@@ -24,6 +24,7 @@ class Http403(Exception):
     pass
 
 
+@python_2_unicode_compatible
 class HttpBadCredentials(Exception):
 
     def __init__(self, message, error_info=None):
