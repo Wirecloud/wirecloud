@@ -44,6 +44,7 @@
             this.superClass(events);
 
             this.wrapperElement = document.createElement('div');
+            this.wrapperElement.className = 'se-container';
             this.children = [];
             this.useFullHeight = options.useFullHeight;
 
@@ -234,16 +235,12 @@
                 return this.disabledLayer != null;
             },
 
-            /**
-             * @deprecated since version 0.6.0
-             */
-            setDisabled: function setDisabled(disabled) {
-                if (this.isDisabled() == disabled) {
-                    // Nothing to do
-                    return;
-                }
-
-                if (disabled) {
+            _onenabled: function _onenabled(enabled) {
+                if (enabled) {
+                    this.disabledLayer.parentNode.removeChild(this.disabledLayer);
+                    this.disabledLayer = null;
+                    this.disable_icon = null;
+                } else {
                     this.disabledLayer = document.createElement('div');
                     this.disabledLayer.className = 'se-container-disable-layer';
 
@@ -254,22 +251,8 @@
                     this.wrapperElement.appendChild(this.disabledLayer);
                     this.disabledLayer.style.height = this.wrapperElement.scrollHeight + 'px';
                     this.disabledLayer.style.lineHeight = this.wrapperElement.clientHeight + 'px';
-                } else {
-                    this.disabledLayer.parentNode.removeChild(this.disabledLayer);
-                    this.disabledLayer = null;
-                    this.disable_icon = null;
                 }
-                this.enabled = !disabled;
-            },
-
-            enable: function enable() {
-                this.setDisabled(false);
-            },
-
-            disable: function disable() {
-                this.setDisabled(true);
             }
-
         }
 
     });

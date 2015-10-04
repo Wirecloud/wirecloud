@@ -49,8 +49,11 @@
                         return !this.hasClassName('disabled');
                     },
                     set: function set(value) {
-                        this.toggleClassName('disabled', !value)
-                            ._onenabled(value);
+                        value = !!value; // Convert into boolean
+                        if (this.enabled !== value) {
+                            this.toggleClassName('disabled', !value)
+                                ._onenabled(value);
+                        }
                     }
                 },
 
@@ -135,10 +138,7 @@
              *      The instance on which the member is called.
              */
             disable: function disable() {
-
-                if (this.enabled) {
-                    this.enabled = false;
-                }
+                this.enabled = false;
 
                 return this;
             },
@@ -151,10 +151,7 @@
              *      The instance on which the member is called.
              */
             enable: function enable() {
-
-                if (!this.enabled) {
-                    this.enabled = true;
-                }
+                this.enabled = true;
 
                 return this;
             },
