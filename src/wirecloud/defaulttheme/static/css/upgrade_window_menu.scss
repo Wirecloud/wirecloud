@@ -14,10 +14,13 @@
 }
 
 .wc-upgrade-component-dialog article {
-    color: $state-success-text;
 
-    h1, h2, h3, h4, h5, h6 {
+    &.uprade {
         color: $state-success-text;
+
+        h1, h2, h3, h4, h5, h6 {
+            color: $state-success-text;
+        }
     }
 
     &.downgrade {

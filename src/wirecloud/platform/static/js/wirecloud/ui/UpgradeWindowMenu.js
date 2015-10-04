@@ -35,13 +35,14 @@
         }
 
         this.changelog.disable();
-        this.changelog.removeClassName('downgrade');
+        this.changelog.removeClassName(['downgrade', 'upgrade']);
         this.acceptButton.removeClassName(['btn-success', 'btn-danger']);
 
         version = this.version_selector.getValue();
         if (this.component.meta.version.compareTo(version) < 0) {
             this.acceptButton.setLabel(utils.gettext('Upgrade'));
             this.acceptButton.addClassName('btn-success');
+            this.changelog.addClassName('upgrade');
             to_version = version;
             from_version = this.component.meta.version;
         } else {
