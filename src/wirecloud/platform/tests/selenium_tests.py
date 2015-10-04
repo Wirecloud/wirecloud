@@ -995,11 +995,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
         ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(310, 0).release().perform()
+        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(iwidgets[0].element))
 
         self.assertEqual(iwidgets[0].layout_position, (6, 0))
         self.assertEqual(iwidgets[1].layout_position, (6, 24))
 
         ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(-310, 300).release().perform()
+        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(iwidgets[0].element))
 
         self.assertEqual(iwidgets[0].layout_position, (0, 0))
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
@@ -1022,12 +1024,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         title_location = iwidgets[0].title_element.location
         TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(330, title_location['y'] + 10).release(990, 300).perform()
+        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(iwidgets[0].element))
 
         self.assertEqual(iwidgets[0].layout_position, (6, 0))
         self.assertEqual(iwidgets[1].layout_position, (6, 24))
 
         title_location = iwidgets[0].title_element.location
         TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(0, 300).release(0, 300).perform()
+        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(iwidgets[0].element))
 
         self.assertEqual(iwidgets[0].layout_position, (0, 0))
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
