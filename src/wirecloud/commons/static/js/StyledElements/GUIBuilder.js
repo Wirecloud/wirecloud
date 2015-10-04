@@ -47,10 +47,10 @@
             new_component = tcomponent;
         }
 
-        if (['string', 'number', 'boolean'].indexOf(typeof new_component) !== -1) {
-            new_component = element.ownerDocument.createTextNode(new_component);
-        } else if (new_component != null) {
+        if ((new_component instanceof StyledElements.StyledElement) || (new_component instanceof HTMLElement)) {
             new_component = new_component;
+        } else if (new_component != null) {
+            new_component = element.ownerDocument.createTextNode(new_component);
         } else {
             new_component = element.ownerDocument.createTextNode('');
         }
