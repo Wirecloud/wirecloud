@@ -301,10 +301,6 @@ IWidget.prototype.build = function () {
     this.leftResizeHandle = contents.tmp.leftresizehandle;
     this.rightResizeHandle = contents.tmp.rightresizehandle;
 
-    this.internal_iwidget.on('title_changed', function (title) {
-        this.titleelement.setTextContent(title);
-    }.bind(this));
-
     this.element.addEventListener('transitionend', function (e) {
         if (this.layout.iwidgetToMove == null && ['width', 'height', 'top', 'left'].indexOf(e.propertyName) !== -1) {
             this._notifyWindowResizeEvent();

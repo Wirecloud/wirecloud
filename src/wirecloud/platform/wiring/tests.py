@@ -753,9 +753,9 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
                 # Check if the widget 's title of in sidebar is changed too.
                 component = sidebar.find_component_by_id('widget', component_id)
                 self.assertEqual(component.title, component_title)
-        # Check if the widget interface's title is changed too.
+        # Check if the widget interface's title has changed too
         widget = self.find_widget_by_id(component_id)
-        self.assertEqual(widget.title, component_title)
+        WebDriverWait(self.driver, timeout=3).until(lambda driver: widget.title == component_title)
 
 
 @wirecloud_selenium_test_case

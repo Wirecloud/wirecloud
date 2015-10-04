@@ -148,6 +148,10 @@
         this.element.classList.add('iwidget');
         this.tmp = tmp;
 
+        iwidget.addEventListener('title_changed', function (title) {
+            this.titleelement.setTextContent(title);
+        }.bind(this));
+
         iwidget.addEventListener('upgraded', this.reload.bind(this));
     };
 
