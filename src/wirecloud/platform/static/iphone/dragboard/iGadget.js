@@ -49,7 +49,6 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
         'title': {get: function () {return this.internal_iwidget.title;}},
         'alternative': {value: alternative}
     });
-    this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
     this.loaded = false;
     this.alternative.addEventListener('show', function () {
         this.dragboard._updateIWidgetInfo(this);
@@ -82,7 +81,7 @@ IWidget.prototype.paint = function () {
         });
     }.bind(this));
 
-    this.content.setAttribute("src", this.codeURL);
+    this.content.setAttribute("src", this.internal_iwidget.codeURL);
 };
 
 IWidget.prototype.load = IWidget.prototype.paint;

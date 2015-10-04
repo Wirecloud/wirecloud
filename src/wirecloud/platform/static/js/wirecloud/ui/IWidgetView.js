@@ -30,6 +30,10 @@
     /* TODO remove view parameter */
     var IWidgetView = function IWidgetView(iwidget, template, view) {
 
+        Object.defineProperties(this, {
+            widget: {value: iwidget}
+        });
+
         var tmp = {};
 
         var ui_fragment = builder.parse(template, {
@@ -90,9 +94,9 @@
             'title': function () {
                 var element = new StyledElements.EditableElement({initialContent: iwidget.title});
                 element.addEventListener('change', function (element, new_title) { iwidget.setTitle(new_title); });
-                tmp.titleelement = element;
+                this.titleelement = element;
                 return element;
-            },
+            }.bind(this),
             'bottomresizehandle': function () {
                 var handle = new Wirecloud.ui.IWidgetResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
                 tmp.bottomresizehandle = handle;
@@ -125,8 +129,9 @@
                         break;
                     }
                 }
+                this.content = content;
                 return content;
-            }
+            }.bind(this)
         }, iwidget);
 
         if ('bottomresizehandle' in tmp) {
@@ -142,6 +147,17 @@
         this.element = ui_fragment.elements[1];
         this.element.classList.add('iwidget');
         this.tmp = tmp;
+
+        iwidget.addEventListener('upgraded', this.reload.bind(this));
+    };
+
+    IWidgetView.prototype.reload = function () {
+        var prev = this.content.src;
+        this.content.src = this.widget.codeURL;
+        this.content.setAttribute("type", this.widget.meta.code_content_type);
+        if (this.content.src === prev) {
+            this.content.contentDocument.location.reload();
+        }
     };
 
     Wirecloud.ui.IWidgetView = IWidgetView;

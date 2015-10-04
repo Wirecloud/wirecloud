@@ -19,18 +19,43 @@
  *
  */
 
-/*global gettext, interpolate, Tab, StyledElements, Wirecloud*/
+/*global gettext, Tab, StyledElements, Wirecloud*/
 
 (function () {
 
     "use strict";
 
+    var build_endpoints = function build_endpoints() {
+        this.inputs = {};
+        this.meta.inputList.forEach(function (endpoint) {
+            this.inputs[endpoint.name] = new Wirecloud.wiring.WidgetTargetEndpoint(this, endpoint);
+        }, this);
+        this.outputs = {};
+        this.meta.outputList.forEach(function (endpoint) {
+            this.outputs[endpoint.name] = new Wirecloud.wiring.WidgetSourceEndpoint(this, endpoint);
+        }, this);
+    };
+
+    var build_prefs = function build_prefs(initial_values) {
+        this.preferenceList = [];
+        this.preferences = {};
+        this.meta.preferenceList.forEach(function (preference) {
+            var iwidget_pref_info = initial_values[preference.name];
+            if (iwidget_pref_info != null) {
+                this.preferences[preference.name] = new Wirecloud.UserPref(preference, iwidget_pref_info.readonly, iwidget_pref_info.hidden, iwidget_pref_info.value);
+            } else {
+                this.preferences[preference.name] = new Wirecloud.UserPref(preference, false, false, preference.default);
+            }
+
+            this.preferenceList.push(this.preferences[preference.name]);
+        }, this);
+    };
+
     /**
      */
     var WidgetBase = function WidgetBase(widget, tab, options) {
 
-
-        var key, i, preferences, iwidget_pref_info, properties, iwidget_prop_info;
+        var i, preferences, iwidget_pref_info, properties, iwidget_prop_info, get_meta, set_meta;
 
         if (typeof options !== 'object' || !(widget instanceof Wirecloud.WidgetMeta)) {
             throw new TypeError();
@@ -40,12 +65,43 @@
             throw new TypeError();
         }
 
-        Object.defineProperty(this, 'widget', {value: widget});
-        Object.defineProperty(this, 'meta', {value: widget});
-        Object.defineProperty(this, 'missing', {value: false});
-        Object.defineProperty(this, 'tab', {value: tab});
-        Object.defineProperty(this, 'volatile', {value: options.volatile ? true : false});
-        Object.defineProperty(this, 'workspace', {value: tab.workspace});
+        if (options.persist == null) {
+            options.persist = function (changes, onSuccess, onFailure) {
+                onSuccess();
+            };
+        }
+
+        get_meta = function get_meta() {return widget;};
+        set_meta = function set_meta(new_widget) {
+            if (!(new_widget instanceof Wirecloud.WidgetMeta)) {
+                throw new TypeError();
+            }
+
+            options.persist.call(this, {widget: new_widget.id}, function () {
+                widget = new_widget;
+                build_endpoints.call(this);
+                build_prefs.call(this, this.preferences);
+                this.trigger('upgraded', new_widget);
+            }.bind(this), function (error) {
+                this.events.upgradeerror.dispatch(error);
+            }.bind(this));
+        };
+
+        Object.defineProperties(this, {
+            'widget': {
+                get: get_meta,
+                set: set_meta
+            },
+            'meta': {
+                get: get_meta,
+                set: set_meta
+            },
+            'missing': {value: false},
+            'codeURL': {get: function () {return this.meta.code_url + "#id=" + this.id;}},
+            'tab': {value: tab},
+            'volatile': {value: options.volatile ? true : false},
+            'workspace': {get: function () {return tab.workspace;}}
+        });
         this.id = options.id;
         this.loaded = false;
         this.title = options.title;
@@ -65,28 +121,8 @@
             this.permissions.resize = false;
         }
 
-        this.inputs = {};
-        for (key in this.meta.inputs) {
-            this.inputs[key] = new Wirecloud.wiring.WidgetTargetEndpoint(this, this.meta.inputs[key]);
-        }
-        this.outputs = {};
-        for (key in this.meta.outputs) {
-            this.outputs[key] = new Wirecloud.wiring.WidgetSourceEndpoint(this, this.meta.outputs[key]);
-        }
-
-        preferences = this.meta.preferenceList;
-        this.preferenceList = [];
-        this.preferences = {};
-        for (i = 0; i < preferences.length; i++) {
-            iwidget_pref_info = options.preferences[preferences[i].name];
-            if (iwidget_pref_info != null) {
-                this.preferenceList[i] = new Wirecloud.UserPref(preferences[i], iwidget_pref_info.readonly, iwidget_pref_info.hidden, iwidget_pref_info.value);
-            } else {
-                this.preferenceList[i] = new Wirecloud.UserPref(preferences[i], false, false, preferences[i].default);
-            }
-
-            this.preferences[preferences[i].name] = this.preferenceList[i];
-        }
+        build_endpoints.call(this);
+        build_prefs.call(this, options.preferences);
 
         properties = this.meta.propertyList;
         this.propertyList = [];
@@ -147,7 +183,7 @@
         Object.defineProperty(this, 'logManager', {value: new Wirecloud.Widget.LogManager(this)});
         this.prefCallback = null;
 
-        StyledElements.ObjectWithEvents.call(this, ['load', 'unload', 'removed', 'title_changed']);
+        StyledElements.ObjectWithEvents.call(this, ['load', 'unload', 'removed', 'title_changed', 'upgraded', 'upgradeerror']);
     };
     WidgetBase.prototype = new StyledElements.ObjectWithEvents();
 

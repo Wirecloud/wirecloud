@@ -199,7 +199,9 @@
                 }
 
                 this.status = status;
-                reconnect.call(this);
+                this.status.connections.forEach(function (connection) {
+                    connection.establish();
+                });
 
                 return this.trigger('loaded');
             },
@@ -345,13 +347,9 @@
     };
 
     var reconnect = function reconnect(component) {
-
         this.status.connections.forEach(function (connection) {
             connection.refreshEndpoint(component);
-            connection.establish();
         });
-
-        return this;
     };
 
     var disconnect = function disconnect() {
@@ -461,9 +459,15 @@
         if (widget.id in this.widgets) {
             this.logManager.log(utils.interpolate(utils.gettext("The widget (%(title)s) already exist."), widget));
         } else {
+            widget.on('upgraded', component_onupgraded.bind(this));
             widget.on('unload', this._component_onunload);
             this.widgets[widget.id] = widget;
         }
+    };
+
+    var component_onupgraded = function component_onupgraded(component, new_meta) {
+        component.fullDisconnect();
+        reconnect.call(this, component);
     };
 
     var widget_onremoved = function widget_onremoved(workspace, widget) {

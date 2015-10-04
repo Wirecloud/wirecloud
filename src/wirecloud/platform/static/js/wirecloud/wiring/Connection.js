@@ -138,15 +138,24 @@
                 }
 
                 if (this.source.component.is(component)) {
-                    this.source = component.outputs[this.source.name];
-                    return this;
+                    this.detach();
+                    if (this.source.name in component.outputs) {
+                        this.source = component.outputs[this.source.name];
+                    } else {
+                        this.source = new Wirecloud.wiring.GhostSourceEndpoint(component, this.source.name);
+                    }
+                    return this.establish();
                 }
 
                 if (this.target.component.is(component)) {
-                    this.target = component.inputs[this.target.name];
-                    return this;
+                    this.detach();
+                    if (this.target.name in component.inputs) {
+                        this.target = component.inputs[this.target.name];
+                    } else {
+                        this.target = new Wirecloud.wiring.GhostTargetEndpoint(component, this.target.name);
+                    }
+                    return this.establish();
                 }
-
                 return this;
             },
 

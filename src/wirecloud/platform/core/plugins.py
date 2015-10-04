@@ -36,6 +36,7 @@ WORKSPACE_CSS = (
     'css/workspace/dragboard_cursor.css',
     'css/workspace/iwidget.scss',
     'css/workspace/empty_workspace_message.css',
+    'css/upgrade_window_menu.scss',
 )
 
 CLASSIC_CORE_CSS = (
@@ -493,6 +494,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/PublishWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/PublishResourceWindowMenu.js',
                 'js/wirecloud/ui/RenameWindowMenu.js',
+                'js/wirecloud/ui/UpgradeWindowMenu.js',
             ) + WIRING_EDITOR_FILES + TUTORIAL_FILES
 
             if view == 'embedded':
@@ -538,6 +540,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "wallet": "wirecloud/workspace/wallet/wallet.html",
                 "wallet_widget": "wirecloud/workspace/wallet/widget.html",
                 "wirecloud_catalogue_publish_interface": "wirecloud/catalogue/developers.html",
+                "upgrade_window_menu": "wirecloud/ui/upgrade_window_menu.html",
             }
         else:
             return {}

@@ -556,12 +556,8 @@ class FormModalTester(BaseModalTester):
     def set_field_value(self, name, value, tagname='input'):
         field = self.get_field(name, tagname)
 
-        if tagname in ['input', 'textarea']:
-            field.clear()
-            field.send_keys(value)
-
-        if tagname in ['select']:
-            field.find_element_by_css_selector('option[value="%s"]' % value).click()
+        # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
+        self.testcase.driver.execute_script('arguments[0].value = arguments[1]', field, value)
 
         return self
 

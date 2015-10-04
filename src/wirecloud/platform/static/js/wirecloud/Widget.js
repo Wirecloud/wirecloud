@@ -85,8 +85,26 @@
     /**
      */
     var Widget = function Widget(widget, tab, options) {
-        options = options || {};
+        if (options == null) {
+            options = {};
+        }
         options.volatile = false;
+        options.persist = function persist(changes, onSuccess, onFailure) {
+            var url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                workspace_id: this.workspace.id,
+                tab_id: this.tab.id,
+                iwidget_id: this.id
+            });
+            Wirecloud.io.makeRequest(url, {
+                method: 'POST',
+                contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
+                postBody: JSON.stringify(changes),
+                onSuccess: onSuccess,
+                onFailure: onFailure
+            });
+        };
+
         Wirecloud.WidgetBase.call(this, widget, tab, options);
     };
     Wirecloud.Utils.inherit(Widget, Wirecloud.WidgetBase);

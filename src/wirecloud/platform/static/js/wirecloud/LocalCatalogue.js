@@ -30,7 +30,7 @@
      *************************************************************************/
 
     var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(resource, next, result) {
-        var layoutManager, result, i, iwidget, uri;
+        var layoutManager, result, i, iwidget, resource_id, resource_full_id, resource, index;
 
         if (result.affectedVersions == null) {
             result.affectedVersions = [resource.version];
@@ -60,9 +60,14 @@
 
         for (i = 0; i < result.affectedVersions.length; i++) {
             try {
-                uri = resource.vendor + '/' + resource.name + '/' + result.affectedVersions[i];
-                delete this.resources[uri];
-                delete this.resourcesByType[resource.type][uri];
+                resource_id = resource.vendor + '/' + resource.name;
+                resource_full_id = resource_id + '/' + result.affectedVersions[i];
+                resource = this.resources[resource_full_id];
+                delete this.resources[resource_full_id];
+                delete this.resourcesByType[resource.type][resource_full_id];
+
+                index = this.resourceVersions[resource_id].indexOf(resource);
+                this.resourceVersions[resource_id].splice(index, 1);
             } catch (e) {}
         }
 

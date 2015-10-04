@@ -34,7 +34,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils import expected_conditions as WEC
-from wirecloud.commons.utils.remote import PopupMenuTester
+from wirecloud.commons.utils.remote import FormModalTester, PopupMenuTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
@@ -372,7 +372,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         with target_iwidget:
             try:
-                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+                WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
             except:
                 pass
 
@@ -1393,6 +1393,73 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with iwidgets[4]:
             text_div = self.driver.find_element_by_id('registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
+
+    @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
+    def test_upgrade_widget(self):
+
+        self.login(username='user_with_workspaces')
+
+        widget, other_widget = self.get_current_iwidgets()
+
+        # Upgrade to version 3.0
+        widget.open_menu().click_entry('Upgrade')
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-upgrade-component-dialog"))
+        form.accept()
+
+        # Check settings
+        widget.open_menu().click_entry('Settings')
+
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+        self.assertRaises(NoSuchElementException, form.get_field, 'list', tagname="select")
+        self.assertEqual(form.get_field_value("text"), 'initial text')
+        self.assertRaises(NoSuchElementException, form.get_field, 'boolean')
+        self.assertRaises(NoSuchElementException, form.get_field, 'number')
+        self.assertRaises(NoSuchElementException, form.get_field, 'password')
+        self.assertEqual(form.get_field_value("new"), 'initial value')
+        form.accept()
+
+        # Check wiring
+        self.send_basic_event(widget)
+
+        # This should work as the outputendpoint is still available on version 3.0
+        with other_widget:
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+
+        self.send_basic_event(other_widget)
+        time.sleep(3)
+
+        # Instead inputendpoint has been replaced by inputendpoint2
+        with widget:
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, '')
+
+        # Downgrade to version 1.0
+        widget.open_menu().click_entry('Upgrade')
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-upgrade-component-dialog"))
+        form.accept()
+
+        # Check settings
+        widget.open_menu().click_entry('Settings')
+
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+        self.assertEqual(form.get_field_value("list", tagname="select"), 'default')
+        self.assertEqual(form.get_field_value("text"), 'initial text')
+        self.assertRaises(NoSuchElementException, form.get_field, 'new')
+        form.accept()
+
+        # Check wiring
+        self.send_basic_event(widget, 'hello world 2!!')
+
+        # This should still be working
+        with other_widget:
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world 2!!')
+
+        self.send_basic_event(other_widget, 'hello world 2!!')
+
+        # And this connection should be restored
+        with widget:
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world 2!!')
+
 
 
 @wirecloud_selenium_test_case

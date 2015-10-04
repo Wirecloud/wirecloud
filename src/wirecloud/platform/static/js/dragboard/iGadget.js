@@ -83,9 +83,6 @@ function IWidget(widget, layout, description) {
         'widget': {get: function () {return this.internal_iwidget.widget;}},
         'title': {get: function () {return this.internal_iwidget.title;}}
     });
-    if (this.id) {
-        this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
-    }
 
     this.refusedVersion = null;
 
@@ -291,18 +288,18 @@ IWidget.prototype.onFreeLayout = function () {
 IWidget.prototype.build = function () {
     var contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['iwidget'], this);
 
+    this.internal_view = contents;
     this.element = contents.element;
 
     this.widgetMenu = this.element.getElementsByClassName('widget_menu')[0];
     this.contentWrapper = this.element.getElementsByClassName('widget_wrapper')[0];
     this.statusBar = this.element.getElementsByClassName('statusBar')[0];
-    this.content = this.element.getElementsByTagName('iframe')[0];
+    this.content = contents.content;
     this.closeButton = contents.tmp.closebutton;
     this.errorButton = contents.tmp.errorbutton;
     this.minimizeButton = contents.tmp.minimizebutton;
     this.leftResizeHandle = contents.tmp.leftresizehandle;
     this.rightResizeHandle = contents.tmp.rightresizehandle;
-    this.titleelement = contents.tmp.titleelement;
 
     this.internal_iwidget.on('title_changed', function (title) {
         this.titleelement.setTextContent(title);
@@ -431,7 +428,7 @@ IWidget.prototype.paint = function (onInit) {
         }.bind(this),
         true);
 
-    this.content.setAttribute("src", this.codeURL);
+    this.content.setAttribute("src", this.internal_iwidget.codeURL);
     if (!onInit) {
         this.element.classList.add('in');
     }

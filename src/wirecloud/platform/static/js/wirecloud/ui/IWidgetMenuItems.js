@@ -25,11 +25,13 @@
 
     "use strict";
 
-    var IWidgetMenuItems = function IWidgetMenuItems(iWidget) {
+    var IWidgetMenuItems = function IWidgetMenuItems(iwidget) {
         StyledElements.DynamicMenuItems.call(this);
 
-        this.iWidget = iWidget;
-        this.has_prefs = iWidget.widget.preferenceList.length > 0;
+        this.iWidget = iwidget;
+        this.model = iwidget.internal_iwidget;
+        this.view = iwidget.internal_view;
+        this.has_prefs = iwidget.widget.preferenceList.length > 0;
     };
     IWidgetMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
@@ -42,9 +44,9 @@
             utils.gettext('Rename'),
             function () {
                 this.titleelement.enableEdition();
-            }.bind(this.iWidget)
+            }.bind(this.view)
         );
-        item.setDisabled(!this.iWidget.isAllowed('rename'));
+        item.setDisabled(!this.model.isAllowed('rename'));
         items.push(item);
 
         item = new StyledElements.MenuItem(
@@ -52,9 +54,9 @@
             function () {
                 var dialog = new Wirecloud.Widget.PreferencesWindowMenu();
                 dialog.show(this);
-            }.bind(this.iWidget.internal_iwidget)
+            }.bind(this.model)
         );
-        item.setDisabled(!this.has_prefs || !this.iWidget.isAllowed('configure'));
+        item.setDisabled(!this.has_prefs || !this.model.isAllowed('configure'));
         items.push(item);
 
         items.push(new StyledElements.MenuItem(
@@ -62,21 +64,17 @@
             function () {
                 var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
                 dialog.show();
-            }.bind(this.iWidget.internal_iwidget)
+            }.bind(this.model)
         ));
 
         items.push(new StyledElements.MenuItem(
-            utils.gettext("Reload"),
+            utils.gettext("Upgrade"),
             function () {
-                try {
-                    var prev = this.content.src;
-                    this.content.src = this.codeURL;
-                    if (this.content.src === prev) {
-                        this.content.contentDocument.location.reload();
-                    }
-                } catch (e) {}
-            }.bind(this.iWidget)
+                var dialog = new Wirecloud.ui.UpgradeWindowMenu(this);
+                dialog.show();
+            }.bind(this.model)
         ));
+        items.push(new StyledElements.MenuItem(utils.gettext("Reload"), this.view.reload.bind(this.view)));
 
         item = new StyledElements.MenuItem(
             utils.gettext("User's Manual"),
@@ -86,9 +84,9 @@
                         version: this.widget.version,
                         tab: 'Documentation'
                     })();
-            }.bind(this.iWidget)
+            }.bind(this.model)
         );
-        item.setDisabled(this.iWidget.widget.doc === '');
+        item.setDisabled(this.model.meta.doc === '');
         items.push(item);
 
         if (this.iWidget.isInFullDragboardMode()) {
@@ -102,7 +100,7 @@
                 this.setFullDragboardMode(!this.isInFullDragboardMode());
             }.bind(this.iWidget)
         );
-        item.setDisabled(!this.iWidget.isAllowed('move'));
+        item.setDisabled(!this.model.isAllowed('move'));
         items.push(item);
 
         if (!this.iWidget.isInFullDragboardMode()) {
@@ -115,7 +113,7 @@
                 layout_label,
                 this.iWidget.toggleLayout.bind(this.iWidget)
             );
-            item.setDisabled(!this.iWidget.isAllowed('move'));
+            item.setDisabled(!this.model.isAllowed('move'));
             items.push(item);
         }
 
