@@ -63,7 +63,7 @@
             }
         },  options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = StyledElements.Utils.prependWord(options['class'], "se-select");
@@ -109,7 +109,7 @@
             this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
         }
     };
-    Select.prototype = new StyledElements.StyledInputElement();
+    Select.prototype = new StyledElements.InputElement();
 
     Select.prototype.getLabel = function getLabel() {
         return this.textDiv.textContent;
@@ -135,13 +135,13 @@
             } else if (this.inputElement.options.length > 0) {
                 newValue = this.inputElement.options[0].value;
             } else {
-                StyledElements.StyledInputElement.prototype.setValue.call(this, '');
+                StyledElements.InputElement.prototype.setValue.call(this, '');
                 this.textDiv.textContent = '';
                 return;
             }
         }
 
-        StyledElements.StyledInputElement.prototype.setValue.call(this, newValue);
+        StyledElements.InputElement.prototype.setValue.call(this, newValue);
         this.textDiv.textContent = this.optionsByValue[newValue];
     };
 
@@ -219,7 +219,7 @@
         delete this._onfocus;
         delete this._onblur;
 
-        StyledElements.StyledInputElement.prototype.destroy.call(this);
+        StyledElements.InputElement.prototype.destroy.call(this);
     };
 
     StyledElements.Select = Select;

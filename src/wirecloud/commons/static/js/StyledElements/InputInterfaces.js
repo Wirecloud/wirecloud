@@ -120,7 +120,7 @@
 
         StyledElements.InputInterface.call(this, fieldId, options);
 
-        this.inputElement = new StyledElements.StyledPasswordField(options);
+        this.inputElement = new StyledElements.PasswordField(options);
     };
     PasswordInputInterface.prototype = new StyledElements.InputInterface();
 
@@ -139,7 +139,7 @@
 
         StyledElements.InputInterface.call(this, fieldId, options);
 
-        this.inputElement = new StyledElements.StyledList(options);
+        this.inputElement = new StyledElements.List(options);
     };
     ListInputInterface.prototype = new StyledElements.InputInterface();
 
@@ -181,7 +181,7 @@
 
         StyledElements.InputInterface.call(this, fieldId, options);
 
-        this.inputElement = new StyledElements.StyledNumericField(options);
+        this.inputElement = new StyledElements.NumericField(options);
     };
     NumberInputInterface.prototype = new StyledElements.InputInterface();
 
@@ -209,7 +209,7 @@
     var LongTextInputInterface = function LongTextInputInterface(fieldId, options) {
         StyledElements.InputInterface.call(this, fieldId, options);
 
-        this.inputElement = new StyledElements.StyledTextArea(options);
+        this.inputElement = new StyledElements.TextArea(options);
         this.events.blur = this.inputElement.events.blur;
     };
     LongTextInputInterface.prototype = new StyledElements.InputInterface();
@@ -269,7 +269,7 @@
         } else if (typeof options.initialValue === 'boolean') {
             options.initiallyChecked = options.initialValue;
         }
-        this.inputElement = new StyledElements.StyledCheckBox(options);
+        this.inputElement = new StyledElements.CheckBox(options);
     };
     BooleanInputInterface.prototype = new StyledElements.InputInterface();
 
@@ -399,10 +399,10 @@
 
         switch (fieldDesc.kind) {
         case 'radio':
-            ButtonClass = StyledElements.StyledRadioButton;
+            ButtonClass = StyledElements.RadioButton;
             break;
         case 'checkbox':
-            ButtonClass = StyledElements.StyledCheckBox;
+            ButtonClass = StyledElements.CheckBox;
             break;
         default:
             throw new Error();

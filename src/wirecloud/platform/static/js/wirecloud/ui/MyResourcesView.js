@@ -32,7 +32,7 @@
         StyledElements.Alternative.call(this, id, options);
 
         this.catalogue = Wirecloud.LocalCatalogue;
-        this.alternatives = new StyledElements.StyledAlternatives();
+        this.alternatives = new StyledElements.Alternatives();
         this.appendChild(this.alternatives);
 
         var search_options = {

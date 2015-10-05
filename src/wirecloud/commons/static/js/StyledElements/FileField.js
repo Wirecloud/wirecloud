@@ -71,7 +71,7 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
         this.layout = new StyledElements.HorizontalLayout({'class': 'se-file-field input input-append'});
         this.wrapperElement = this.layout.wrapperElement;
@@ -119,14 +119,14 @@
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
     };
-    StyledFileField.prototype = new StyledElements.StyledInputElement();
+    StyledFileField.prototype = new StyledElements.InputElement();
 
     StyledFileField.prototype.repaint = function repaint() {
         this.layout.repaint();
     };
 
     StyledFileField.prototype.insertInto = function insertInto(element, refElement) {
-        StyledElements.StyledInputElement.prototype.insertInto.call(this, element, refElement);
+        StyledElements.InputElement.prototype.insertInto.call(this, element, refElement);
         this.repaint();
     };
 
@@ -146,7 +146,7 @@
         delete this._onfocus;
         delete this._onblur;
 
-        StyledElements.StyledInputElement.prototype.destroy.call(this);
+        StyledElements.InputElement.prototype.destroy.call(this);
     };
 
     StyledElements.StyledFileField = StyledFileField;

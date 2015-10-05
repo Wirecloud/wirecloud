@@ -28,7 +28,7 @@
     var EmbedCodeWindowMenu = function EmbedCodeWindowMenu(title, msg) {
         Wirecloud.ui.WindowMenu.call(this, title, 'embed-code-window-menu');
 
-        this.code = new StyledElements.StyledTextArea();
+        this.code = new StyledElements.TextArea();
         this.code.insertInto(this.windowContent);
 
         // Accept button

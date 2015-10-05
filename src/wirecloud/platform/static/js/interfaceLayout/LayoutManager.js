@@ -43,7 +43,7 @@ var LayoutManagerFactory = function () {
         this.mainLayout = new StyledElements.BorderLayout();
         this.mainLayout.getNorthContainer().appendChild(document.getElementById('wirecloud_header'));
 
-        this.alternatives = new StyledElements.StyledAlternatives();
+        this.alternatives = new StyledElements.Alternatives();
         this.mainLayout.getCenterContainer().appendChild(this.alternatives);
         this.mainLayout.insertInto(document.body);
 

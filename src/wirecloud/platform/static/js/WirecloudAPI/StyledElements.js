@@ -31,8 +31,9 @@
     var iwidget = platform.Wirecloud.activeWorkspace.getIWidget(MashupPlatform.widget.id);
 
     window.StyledElements = {
-        'Addon': window.parent.StyledElements.Addon,
         'Accordion': window.parent.StyledElements.Accordion,
+        'Addon': window.parent.StyledElements.Addon,
+        'Alternatives': window.parent.StyledElements.Alternatives,
         'ButtonsGroup': window.parent.StyledElements.ButtonsGroup,
         'Container': window.parent.StyledElements.Container,
         'DynamicMenuItems': window.parent.StyledElements.DynamicMenuItems,
@@ -40,18 +41,18 @@
         'Fragment': window.parent.StyledElements.Fragment,
         'Form': window.parent.StyledElements.Form,
         'ObjectWithEvents': window.parent.StyledElements.ObjectWithEvents,
-        'StyledAlternatives': window.parent.StyledElements.StyledAlternatives,
-        'StyledCheckBox': window.parent.StyledElements.StyledCheckBox,
-        'StyledElement': window.parent.StyledElements.StyledElement,
-        'StyledInputElement': window.parent.StyledElements.StyledInputElement,
-        'StyledList': window.parent.StyledElements.StyledList,
-        'StyledNumericField': window.parent.StyledElements.StyledNumericField,
-        'StyledTextField': window.parent.StyledElements.StyledTextField,
-        'StyledPasswordField': window.parent.StyledElements.StyledPasswordField,
-        'StyledRadioButton': window.parent.StyledElements.StyledRadioButton,
         'Select': window.parent.StyledElements.Select,
+        'StyledAlternatives': window.parent.StyledElements.Alternatives, // backward compatibility alias
+        'StyledCheckBox': window.parent.StyledElements.CheckBox, // backward compatibility alias
+        'StyledElement': window.parent.StyledElements.StyledElement,
+        'StyledInputElement': window.parent.StyledElements.InputElement, // backward compatibility alias
+        'StyledList': window.parent.StyledElements.List, // backward compatibility alias
+        'StyledNumericField': window.parent.StyledElements.NumericField, // backward compatibility alias
+        'StyledTextField': window.parent.StyledElements.TextField, // backward compatibility alias
+        'StyledPasswordField': window.parent.StyledElements.PasswordField, // backward compatibility alias
+        'StyledRadioButton': window.parent.StyledElements.RadioButton, // backward compatibility alias
         'StyledSelect': window.parent.StyledElements.Select, // backward compatibility alias
-        'StyledTextArea': window.parent.StyledElements.StyledTextArea,
+        'StyledTextArea': window.parent.StyledElements.TextArea, // backward compatibility alias
         'PaginatedSource': window.parent.StyledElements.PaginatedSource,
         'PaginationInterface': window.parent.StyledElements.PaginationInterface,
         'StaticPaginatedSource': window.parent.StyledElements.StaticPaginatedSource,

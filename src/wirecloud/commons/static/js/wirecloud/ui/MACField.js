@@ -65,7 +65,7 @@
         };
         options = Wirecloud.Utils.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
         this.layout = new StyledElements.HorizontalLayout({'class': 'se-mac-field input input-prepend input-append'});
         this.wrapperElement = this.layout.wrapperElement;
@@ -116,14 +116,14 @@
         button.addEventListener('focus', onfocus.bind(this));
         button.addEventListener('blur', onblur.bind(this));
     };
-    MACField.prototype = new StyledElements.StyledInputElement();
+    MACField.prototype = new StyledElements.InputElement();
 
     MACField.prototype.repaint = function repaint() {
         this.layout.repaint();
     };
 
     MACField.prototype.insertInto = function insertInto(element, refElement) {
-        StyledElements.StyledInputElement.prototype.insertInto.call(this, element, refElement);
+        StyledElements.InputElement.prototype.insertInto.call(this, element, refElement);
         this.repaint();
     };
 

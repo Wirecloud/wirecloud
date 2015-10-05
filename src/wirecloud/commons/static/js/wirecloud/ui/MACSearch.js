@@ -129,7 +129,7 @@
         var template = Wirecloud.currentTheme.templates[options.template];
         this.wrapperElement = builder.parse(template, Wirecloud.Utils.merge({
             searchinput: function () {
-                input = new StyledElements.StyledTextField({'placeholder': gettext('Keywords...')});
+                input = new StyledElements.TextField({'placeholder': gettext('Keywords...')});
                 input.inputElement.addEventListener('keypress', _onSearchInputKeyPress.bind(this, input));
                 input.addEventListener('change', _onSearchInput.bind(this));
                 return input;

@@ -30,7 +30,7 @@
      * contenedores, de los cuales sólo uno estará visible en el area asociada al
      * componente Alternatives.
      */
-    var StyledAlternatives = function StyledAlternatives(options) {
+    var Alternatives = function Alternatives(options) {
         var defaultOptions = {
             'class': '',
             'full': true,
@@ -129,7 +129,7 @@
             var stepTimes = [];
             // TODO
             switch (context.alternativesObject.defaultEffect) {
-            case StyledAlternatives.HORIZONTAL_SLICE:
+            case Alternatives.HORIZONTAL_SLICE:
                 context.steps = 6;
                 for (var i = 0; i <= context.steps; i++) {
                     stepTimes[i] = baseTime + (i * 150);
@@ -144,7 +144,7 @@
                 }
             // TODO
                 break;
-            //case StyledAlternatives.NONE:
+            //case Alternatives.NONE:
             default:
                 context.steps = 1;
                 stepTimes[0] = baseTime;
@@ -163,11 +163,11 @@
 
         this.transitionsQueue = new StyledElements.CommandQueue(context, initFunc, stepFunc);
     };
-    StyledAlternatives.prototype = new StyledElements.StyledElement();
-    StyledAlternatives.HORIZONTAL_SLICE = "HorizontalSlice";
-    StyledAlternatives.NONE = "HorizontalSlice";
+    Alternatives.prototype = new StyledElements.StyledElement();
+    Alternatives.HORIZONTAL_SLICE = "HorizontalSlice";
+    Alternatives.NONE = "HorizontalSlice";
 
-    StyledAlternatives.prototype.repaint = function repaint(temporal) {
+    Alternatives.prototype.repaint = function repaint(temporal) {
         temporal = temporal != null ? temporal : false;
 
         var height = this._getUsableHeight();
@@ -183,7 +183,7 @@
         }
     };
 
-    StyledAlternatives.prototype.createAlternative = function createAlternative(options) {
+    Alternatives.prototype.createAlternative = function createAlternative(options) {
         var defaultOptions = {
             'containerOptions': {},
             'alternative_constructor': StyledElements.Alternative
@@ -211,7 +211,7 @@
         return alt;
     };
 
-    StyledAlternatives.prototype.removeAlternative = function removeAlternative(alternative) {
+    Alternatives.prototype.removeAlternative = function removeAlternative(alternative) {
         var index, id, nextAlternative = null;
 
         if (alternative instanceof StyledElements.Alternative) {
@@ -250,7 +250,7 @@
         }
     };
 
-    StyledAlternatives.prototype.clear = function clear() {
+    Alternatives.prototype.clear = function clear() {
         this.alternatives = {};
         this.alternativeList = [];
         this.nextAltId = 0;
@@ -258,7 +258,7 @@
         this.contentArea.innerHTML = '';
     };
 
-    StyledAlternatives.prototype.getCurrentAlternative = function getCurrentAlternative() {
+    Alternatives.prototype.getCurrentAlternative = function getCurrentAlternative() {
         return this.visibleAlt;
     };
 
@@ -266,9 +266,9 @@
      * Changes current visible alternative.
      *
      * @param {Number|StyledElements.Alternative} Alternative to show. Must belong
-     * to this instance of StyledAlternatives.
+     * to this instance of Alternatives.
      */
-    StyledAlternatives.prototype.showAlternative = function showAlternative(alternative, options) {
+    Alternatives.prototype.showAlternative = function showAlternative(alternative, options) {
         var command = {};
 
         if (options == null) {
@@ -292,5 +292,6 @@
         this.transitionsQueue.addCommand(command);
     };
 
-    StyledElements.StyledAlternatives = StyledAlternatives;
+    StyledElements.Alternatives = Alternatives;
+
 })();

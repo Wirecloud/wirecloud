@@ -121,7 +121,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/NumericField.js',
     'js/StyledElements/TextField.js',
     'js/StyledElements/TextArea.js',
-    'js/StyledElements/StyledList.js',
+    'js/StyledElements/List.js',
     'js/StyledElements/PasswordField.js',
     'js/StyledElements/Select.js',
     'js/StyledElements/ToggleButton.js',

@@ -29,48 +29,48 @@
      * @abstract
      *
      */
-    var StyledInputElement = function StyledInputElement(defaultValue, events) {
+    var InputElement = function InputElement(defaultValue, events) {
         this.inputElement = null;
         this.defaultValue = defaultValue;
 
         StyledElements.StyledElement.call(this, events);
     };
-    StyledInputElement.prototype = new StyledElements.StyledElement();
+    InputElement.prototype = new StyledElements.StyledElement();
 
-    StyledInputElement.prototype.getValue = function getValue() {
+    InputElement.prototype.getValue = function getValue() {
         return this.inputElement.value;
     };
 
-    StyledInputElement.prototype.setValue = function setValue(newValue) {
+    InputElement.prototype.setValue = function setValue(newValue) {
         this.inputElement.value = newValue;
 
         return this;
     };
 
-    StyledInputElement.prototype.reset = function reset() {
+    InputElement.prototype.reset = function reset() {
         return this.setValue(this.defaultValue);
     };
 
-    StyledInputElement.prototype.enable = function enable() {
+    InputElement.prototype.enable = function enable() {
         StyledElements.StyledElement.prototype.enable.call(this);
         this.inputElement.disabled = false;
 
         return this;
     };
 
-    StyledInputElement.prototype.disable = function disable() {
+    InputElement.prototype.disable = function disable() {
         StyledElements.StyledElement.prototype.disable.call(this);
         this.inputElement.disabled = true;
 
         return this;
     };
 
-    StyledInputElement.prototype.focus = function focus() {
+    InputElement.prototype.focus = function focus() {
         this.inputElement.focus();
 
         return this;
     };
 
-    StyledElements.StyledInputElement = StyledInputElement;
+    StyledElements.InputElement = InputElement;
 
 })();

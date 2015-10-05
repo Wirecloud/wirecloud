@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var StyledTextArea, oninput, onfocus, onblur;
+    var TextArea, oninput, onfocus, onblur;
 
     oninput = function oninput() {
         this.events.change.dispatch(this);
@@ -42,14 +42,14 @@
     /**
      * Styled Text Area.
      */
-    StyledTextArea = function StyledTextArea(options) {
+    TextArea = function TextArea(options) {
         var defaultOptions = {
             'initialValue': '',
             'class': ''
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['blur', 'change', 'focus']);
+        StyledElements.InputElement.call(this, options.initialValue, ['blur', 'change', 'focus']);
 
         this.inputElement = document.createElement("textarea");
         this.wrapperElement = this.inputElement;
@@ -79,13 +79,13 @@
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
     };
-    StyledTextArea.prototype = new StyledElements.StyledInputElement();
+    TextArea.prototype = new StyledElements.InputElement();
 
-    StyledTextArea.prototype.select = function select() {
+    TextArea.prototype.select = function select() {
         this.inputElement.select();
     };
 
-    StyledTextArea.prototype.destroy = function destroy() {
+    TextArea.prototype.destroy = function destroy() {
 
         this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('click', StyledElements.Utils.stopPropagationListener, true);
@@ -97,9 +97,9 @@
         delete this._onfocus;
         delete this._onblur;
 
-        StyledElements.StyledInputElement.prototype.destroy.call(this);
+        StyledElements.InputElement.prototype.destroy.call(this);
     };
 
-    StyledElements.StyledTextArea = StyledTextArea;
+    StyledElements.TextArea = TextArea;
 
 })();

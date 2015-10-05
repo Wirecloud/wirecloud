@@ -133,7 +133,7 @@
         StyledElements.Alternative.call(this, id, options);
 
         this.viewsByName = {};
-        this.alternatives = new StyledElements.StyledAlternatives();
+        this.alternatives = new StyledElements.Alternatives();
         this.emptyAlternative = this.alternatives.createAlternative();
         this.errorsAlternative = this.alternatives.createAlternative({containerOptions: {'class': 'marketplace-error-view'}});
         this.temporalAlternatives = [this.emptyAlternative, this.errorsAlternative];

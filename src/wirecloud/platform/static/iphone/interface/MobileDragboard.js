@@ -22,7 +22,7 @@
 var MobileDragboard = function () {
     this.layout = new StyledElements.BorderLayout({'class': 'dragboard'});
     this.toolbar = new StyledElements.NavigationHeader();
-    this.alternatives = new StyledElements.StyledAlternatives();
+    this.alternatives = new StyledElements.Alternatives();
 
     this.layout.getNorthContainer().appendChild(this.toolbar);
     this.layout.getCenterContainer().appendChild(this.alternatives);

@@ -42,7 +42,7 @@
     /**
      * A list
      */
-    var StyledList = function StyledList(options) {
+    var List = function List(options) {
         options = StyledElements.Utils.merge({
             'class':            '',
             'id':               null,
@@ -83,12 +83,12 @@
             this.allowEmpty = options.allowEmpty;
         }
     };
-    StyledList.prototype = new StyledElements.StyledElement();
+    List.prototype = new StyledElements.StyledElement();
 
     /**
      * Añade las entradas indicadas en la lista.
      */
-    StyledList.prototype.addEntries = function addEntries(entries) {
+    List.prototype.addEntries = function addEntries(entries) {
         var entryValue, entryText;
 
         if (entries == null || entries.length === 0) {
@@ -125,7 +125,7 @@
         this.entries = this.entries.concat(entries);
     };
 
-    StyledList.prototype.removeEntryByValue = function removeEntryByValue(value) {
+    List.prototype.removeEntryByValue = function removeEntryByValue(value) {
         var entry, index;
 
         entry = this.entriesByValue[value];
@@ -140,9 +140,9 @@
     };
 
     /**
-     * Removes all entries of this StyledList
+     * Removes all entries of this List
      */
-    StyledList.prototype.clear = function clear() {
+    List.prototype.clear = function clear() {
         this.cleanSelection();
 
         this.content.innerHTML = '';
@@ -153,14 +153,14 @@
     /**
      * Devuelve una copia de la selección actual.
      */
-    StyledList.prototype.getSelection = function getSelection() {
+    List.prototype.getSelection = function getSelection() {
         return StyledElements.Utils.clone(this.currentSelection);
     };
 
     /**
      * Borra la seleccion actual.
      */
-    StyledList.prototype.cleanSelection = function cleanSelection() {
+    List.prototype.cleanSelection = function cleanSelection() {
         if (this.currentSelection.length === 0) {
             return;  // Nothing to do
         }
@@ -177,7 +177,7 @@
      *
      * @param {Array} selection lista de valores a seleccionar.
      */
-    StyledList.prototype.select = function select(selection) {
+    List.prototype.select = function select(selection) {
         _cleanSelection.call(this);
 
         this.addSelection(selection);
@@ -186,7 +186,7 @@
     /**
      * Añade un conjunto de valores a la selección actual.
      */
-    StyledList.prototype.addSelection = function addSelection(selection) {
+    List.prototype.addSelection = function addSelection(selection) {
         var i, entry, addedValues = [], removedValues = [];
 
         if (selection.length === 0) {
@@ -222,7 +222,7 @@
     /**
      * Elimina un conjunto de valores de la selección actual.
      */
-    StyledList.prototype.removeSelection = function removeSelection(selection) {
+    List.prototype.removeSelection = function removeSelection(selection) {
         var i, entry, index, removedValues = [];
 
         if (selection.length === 0) {
@@ -250,7 +250,7 @@
      * ya selecionado o no. En caso de que la entrada estuviese selecionado, el
      * elemento se eliminiaria de la selección y viceversa.
      */
-    StyledList.prototype.toggleElementSelection = function toggleElementSelection(element) {
+    List.prototype.toggleElementSelection = function toggleElementSelection(element) {
         if (!this.entriesByValue[element].element.classList.contains("selected")) {
             this.addSelection([element]);
         } else if (this.allowEmpty) {
@@ -258,5 +258,5 @@
         }
     };
 
-    StyledElements.StyledList = StyledList;
+    StyledElements.List = List;
 })();

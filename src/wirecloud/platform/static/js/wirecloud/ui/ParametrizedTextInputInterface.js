@@ -92,7 +92,7 @@
         this.descriptionDiv.className = 'description';
         this.wrapperElement.appendChild(this.descriptionDiv);
 
-        this.inputElement = new StyledElements.StyledTextArea();
+        this.inputElement = new StyledElements.TextArea();
         this.wrapperElement.appendChild(this.inputElement);
 
         // Initialize

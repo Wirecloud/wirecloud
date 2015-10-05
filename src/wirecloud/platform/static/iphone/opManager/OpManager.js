@@ -93,7 +93,7 @@ var OpManagerFactory = (function () {
         // workspace menu element
         this.workspaceMenuElement = document.getElementById('workspace_menu');
         this.workspaceListElement = document.getElementById('workspace_list');
-        this.alternatives = new StyledElements.StyledAlternatives();
+        this.alternatives = new StyledElements.Alternatives();
         this.workspaceListAlternative = this.alternatives.createAlternative();
         this.workspaceListAlternative.appendChild(this.workspaceMenuElement);
 

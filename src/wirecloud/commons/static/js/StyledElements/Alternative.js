@@ -27,7 +27,7 @@
 
     /**
      * Este compontente representa al contenedor para una alternativa usable por el
-     * componente StyledAlternatives.
+     * componente Alternatives.
      * @extends {Container}
      *
      * @param {Number} id

@@ -28,7 +28,7 @@
     /**
      *
      */
-    var CheckBox = function StyledCheckBox(options) {
+    var CheckBox = function CheckBox(options) {
 
         var defaultOptions = {
             'initialValue': false,
@@ -43,7 +43,7 @@
         if ('initiallyChecked' in options) {
             options.initialValue = options.initiallyChecked;
         }
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
+        StyledElements.InputElement.call(this, options.initialValue, ['change']);
 
         this.wrapperElement = document.createElement("input");
         this.wrapperElement.className = 'checkbox';
@@ -86,7 +86,7 @@
                                     true);
     };
 
-    CheckBox.prototype = new StyledElements.StyledInputElement();
+    CheckBox.prototype = new StyledElements.InputElement();
 
     CheckBox.prototype.reset = function reset() {
         this.setValue(this.defaultValue);
@@ -112,5 +112,6 @@
         }
     };
 
-    StyledElements.StyledCheckBox = CheckBox;
+    StyledElements.CheckBox = CheckBox;
+
 })();

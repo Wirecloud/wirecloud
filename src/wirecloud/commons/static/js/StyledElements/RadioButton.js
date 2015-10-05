@@ -28,7 +28,7 @@
     /**
      *
      */
-    var StyledRadioButton = function StyledRadioButton(options) {
+    var RadioButton = function RadioButton(options) {
         var defaultOptions = {
             'initiallyChecked': false,
             'class': '',
@@ -37,7 +37,7 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initiallyChecked, ['change']);
+        StyledElements.InputElement.call(this, options.initiallyChecked, ['change']);
 
         this.wrapperElement = document.createElement("input");
 
@@ -77,26 +77,26 @@
                                     }.bind(this),
                                     true);
     };
-    StyledRadioButton.prototype = new StyledElements.StyledInputElement();
+    RadioButton.prototype = new StyledElements.InputElement();
 
-    StyledRadioButton.prototype.insertInto = function insertInto(element, refElement) {
+    RadioButton.prototype.insertInto = function insertInto(element, refElement) {
         var checked = this.inputElement.checked; // Necesario para IE
         StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
         this.inputElement.checked = checked; // Necesario para IE
     };
 
-    StyledRadioButton.prototype.reset = function reset() {
+    RadioButton.prototype.reset = function reset() {
         this.inputElement.checked = this.defaultValue;
 
         return this;
     };
 
-    StyledRadioButton.prototype.setValue = function setValue(newValue) {
+    RadioButton.prototype.setValue = function setValue(newValue) {
         this.inputElement.checked = newValue;
 
         return this;
     };
 
-    StyledElements.StyledRadioButton = StyledRadioButton;
+    StyledElements.RadioButton = RadioButton;
 
 })();

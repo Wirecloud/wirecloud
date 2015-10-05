@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var StyledTextField, oninput, onfocus, onblur, onkeypress;
+    var TextField, oninput, onfocus, onblur, onkeypress;
 
     oninput = function oninput() {
         this.events.change.dispatch(this);
@@ -48,7 +48,7 @@
     /**
      * Añade un campo de texto.
      */
-    StyledTextField = function StyledTextField(options) {
+    TextField = function TextField(options) {
         var defaultOptions = {
             'initialValue': '',
             'class': '',
@@ -56,7 +56,7 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur', 'submit']);
+        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur', 'submit']);
 
         this.inputElement = document.createElement("input");
         this.inputElement.setAttribute("type", "text");
@@ -94,13 +94,13 @@
         this.inputElement.addEventListener('blur', this._onblur, true);
         this.inputElement.addEventListener('keypress', this._onkeypress, true);
     };
-    StyledTextField.prototype = new StyledElements.StyledInputElement();
+    TextField.prototype = new StyledElements.InputElement();
 
-    StyledTextField.prototype.setPlaceholder = function setPlaceholder(placeholder) {
+    TextField.prototype.setPlaceholder = function setPlaceholder(placeholder) {
         this.inputElement.setAttribute('placeholder', placeholder);
     };
 
-    StyledTextField.prototype.destroy = function destroy() {
+    TextField.prototype.destroy = function destroy() {
 
         this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('click', StyledElements.Utils.stopPropagationListener, true);
@@ -114,9 +114,9 @@
         delete this._onblur;
         delete this._onkeypress;
 
-        StyledElements.StyledInputElement.prototype.destroy.call(this);
+        StyledElements.InputElement.prototype.destroy.call(this);
     };
 
-    StyledElements.StyledTextField = StyledTextField;
+    StyledElements.TextField = TextField;
 
 })();

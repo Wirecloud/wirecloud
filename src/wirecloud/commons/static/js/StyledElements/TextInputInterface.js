@@ -35,7 +35,7 @@
 
         StyledElements.InputInterface.call(this, fieldId, options);
 
-        this.inputElement = new StyledElements.StyledTextField(options);
+        this.inputElement = new StyledElements.TextField(options);
         this.inputElement.addEventListener('change', function () {
             if (this.timeout != null) {
                 clearTimeout(this.timeout);

@@ -35,7 +35,7 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, []);
+        StyledElements.InputElement.call(this, options.initialValue, []);
 
         this.wrapperElement = document.createElement("div");
 
@@ -56,7 +56,7 @@
 
         this.wrapperElement.appendChild(this.inputElement);
     };
-    HiddenField.prototype = new StyledElements.StyledInputElement();
+    HiddenField.prototype = new StyledElements.InputElement();
 
     StyledElements.HiddenField = HiddenField;
 

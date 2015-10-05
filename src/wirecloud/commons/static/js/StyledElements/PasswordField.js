@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var StyledPasswordField, oninput, onfocus, onblur;
+    var PasswordField, oninput, onfocus, onblur;
 
     oninput = function oninput() {
         this.events.change.dispatch(this);
@@ -42,14 +42,14 @@
     /**
      * Añade un campo de texto.
      */
-    StyledPasswordField = function StyledPasswordField(options) {
+    PasswordField = function PasswordField(options) {
         var defaultOptions = {
             'initialValue': '',
             'class': ''
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
         this.inputElement = document.createElement("input");
         this.inputElement.setAttribute("type", "password");
@@ -81,9 +81,9 @@
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
     };
-    StyledPasswordField.prototype = new StyledElements.StyledInputElement();
+    PasswordField.prototype = new StyledElements.InputElement();
 
-    StyledPasswordField.prototype.destroy = function destroy() {
+    PasswordField.prototype.destroy = function destroy() {
 
         this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('click', StyledElements.Utils.stopPropagationListener, true);
@@ -91,9 +91,9 @@
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);
 
-        StyledElements.StyledInputElement.prototype.destroy.call(this);
+        StyledElements.InputElement.prototype.destroy.call(this);
     };
 
-    StyledElements.StyledPasswordField = StyledPasswordField;
+    StyledElements.PasswordField = PasswordField;
 
 })();

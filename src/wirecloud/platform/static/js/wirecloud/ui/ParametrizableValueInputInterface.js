@@ -89,7 +89,7 @@
             this.visibilityIcon.style.visibility = 'hidden';
         }
 
-        this.inputElement = new StyledElements.StyledTextField();
+        this.inputElement = new StyledElements.TextField();
         this.inputElement.disable();
         this.inputElement.insertInto(this.wrapperElement);
 

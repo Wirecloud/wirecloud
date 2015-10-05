@@ -38,7 +38,7 @@
             this.market_id = this.desc.name;
         }
         this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);
-        this.alternatives = new StyledElements.StyledAlternatives();
+        this.alternatives = new StyledElements.Alternatives();
         this.appendChild(this.alternatives);
 
         resource_extra_context = {

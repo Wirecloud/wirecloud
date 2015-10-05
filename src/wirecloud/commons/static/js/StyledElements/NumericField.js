@@ -84,7 +84,7 @@
         options.inc = Number(options.inc);
         options.initialValue = Number(options.initialValue);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = "se-numeric-field";
@@ -114,7 +114,7 @@
         topButton.insertInto(this.wrapperElement);
         bottomButton.insertInto(this.wrapperElement);
     };
-    StyledNumericField.prototype = new StyledElements.StyledInputElement();
+    StyledNumericField.prototype = new StyledElements.InputElement();
 
     StyledNumericField.prototype.getValue = function getValue() {
         return Number(this.inputElement.value);

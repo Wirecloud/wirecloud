@@ -8,12 +8,12 @@
      * Virtual input field grouping a set of radio buttons or checkboses
      */
     var ButtonsGroup = function ButtonsGroup(name) {
-        StyledElements.StyledInputElement.call(this, "", ['change']);
+        StyledElements.InputElement.call(this, "", ['change']);
 
         Object.defineProperty(this, 'name', {value: name});
         this.buttons = [];
     };
-    ButtonsGroup.prototype = new StyledElements.StyledInputElement();
+    ButtonsGroup.prototype = new StyledElements.InputElement();
 
     /**
      * @private
@@ -31,7 +31,7 @@
     ButtonsGroup.prototype.getValue = function getValue() {
         var i, result = [];
 
-        if (this.buttons[0] instanceof StyledElements.StyledCheckBox) {
+        if (this.buttons[0] instanceof StyledElements.CheckBox) {
 
             for (i = 0; i < this.buttons.length; i++) {
                 if (this.buttons[i].inputElement.checked) {
@@ -78,10 +78,10 @@
     };
 
     /**
-     * Devuelve una lista de los elementos StyledCheckBox o StyledRadioButton
+     * Devuelve una lista de los elementos CheckBox o RadioButton
      * seleccionados. En caso de que la selección este vacía, este método devolverá
      * una lista vacía y en caso de que este ButtonGroup este formado por
-     * StyledRadioButtons, la selección será como mucho de un elemento.
+     * RadioButtons, la selección será como mucho de un elemento.
      */
     ButtonsGroup.prototype.getSelectedButtons = function getSelectedButtons() {
         var i;
@@ -90,7 +90,7 @@
             return [];
         }
 
-        if (this.buttons[0] instanceof StyledElements.StyledCheckBox) {
+        if (this.buttons[0] instanceof StyledElements.CheckBox) {
             var result = [];
 
             for (i = 0; i < this.buttons.length; i++) {

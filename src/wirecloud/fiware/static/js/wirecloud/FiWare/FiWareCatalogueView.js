@@ -94,7 +94,7 @@
         StyledElements.Alternative.call(this, id, options);
 
         this.mainview = options.catalogue;
-        this.alternatives = new StyledElements.StyledAlternatives();
+        this.alternatives = new StyledElements.Alternatives();
         this.appendChild(this.alternatives);
         this.currentStore = 'All stores';
         Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
