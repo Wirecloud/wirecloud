@@ -67,7 +67,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def read_file(self, *template):
         path = os.path.normpath(os.path.join(os.path.dirname(__file__), 'test-data', *template))
-        with open(path) as f:
+        with open(path, 'rb') as f:
             return f.read()
 
     def build_simple_wgt(self, template_name, html_content=None, other_files=()):
