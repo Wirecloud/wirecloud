@@ -180,6 +180,34 @@ class GeneralUtilsTestCase(TestCase):
         self.assertEqual(Version('1.0'), Version('1.0.0'))
         self.assertEqual(Version('1.0', reverse=True), Version('1.0.0', reverse=True))
 
+    def test_version_ge(self):
+        self.assertGreaterEqual(Version('1'), '1.0.0')
+        self.assertGreaterEqual(Version('1'), Version('1.0.0'))
+        self.assertGreaterEqual(Version('1'), '0.9')
+        self.assertGreaterEqual(Version('1'), Version('0.9'))
+
+        self.assertFalse(Version('1') >= '1.1')
+        self.assertFalse(Version('1') >= Version('1.1'))
+
+    def test_version_le(self):
+        self.assertLessEqual(Version('1'), '1')
+        self.assertLessEqual(Version('1'), '1.0.0')
+        self.assertLessEqual(Version('1'), Version('1.0.0'))
+        self.assertLessEqual(Version('1'), '1.1')
+        self.assertLessEqual(Version('1'), Version('1.1'))
+
+        self.assertFalse(Version('1') <= '0.9')
+        self.assertFalse(Version('1') <= Version('0.9'))
+
+    def test_version_ne(self):
+        self.assertNotEqual(Version('1'), '1.1')
+        self.assertNotEqual(Version('1'), Version('1.1'))
+        self.assertNotEqual(Version('1'), '0.9')
+        self.assertNotEqual(Version('1'), Version('0.9'))
+
+        self.assertFalse(Version('1') != '1.0')
+        self.assertFalse(Version('1') != Version('1'))
+
     def test_version_invalid_values(self):
 
         self.assertRaises(ValueError, Version, '-0')
