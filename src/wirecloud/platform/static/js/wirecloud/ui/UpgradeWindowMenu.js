@@ -86,7 +86,7 @@
 
     var UpgradeWindowMenu = function UpgradeWindowMenu(component) {
 
-        var title, component_id, versions;
+        var title, versions;
 
         title = utils.gettext('Upgrading %(component)s');
         title = utils.interpolate(title, {component: component.title});
@@ -96,8 +96,7 @@
         Wirecloud.ui.WindowMenu.call(this, title, 'wc-upgrade-component-dialog');
 
         // Get all available versions
-        component_id = component.meta.vendor + '/' + component.meta.name;
-        versions = Wirecloud.LocalCatalogue.resourceVersions[component_id].map(function (component) {return component.version});
+        versions = Wirecloud.LocalCatalogue.resourceVersions[this.component.meta.group_id].map(function (component) {return component.version});
         // Remove current version
         versions = versions.filter(function (version) { return component.meta.version.compareTo(version) !== 0});
         // Sort versions

@@ -1404,7 +1404,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         widget, other_widget = self.get_current_iwidgets()
 
         # Upgrade to version 3.0
-        widget.open_menu().click_entry('Upgrade')
+        widget.open_menu().click_entry('Upgrade/Downgrade')
         form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-upgrade-component-dialog"))
         form.accept()
 
@@ -1436,7 +1436,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, '')
 
         # Downgrade to version 1.0
-        widget.open_menu().click_entry('Upgrade')
+        widget.open_menu().click_entry('Upgrade/Downgrade')
         form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-upgrade-component-dialog"))
         form.accept()
 

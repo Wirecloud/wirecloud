@@ -71,7 +71,7 @@
             }
 
             Object.defineProperties(this, {
-                id: {value: meta.vendor + '/' + meta.name}
+                id: {value: this.meta.group_id}
             });
             this.get().setAttribute('data-id', this.id);
         },
