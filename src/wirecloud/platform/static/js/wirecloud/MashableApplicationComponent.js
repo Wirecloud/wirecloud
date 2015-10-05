@@ -26,7 +26,7 @@
     "use strict";
 
     var MashableApplicationComponent = function MashableApplicationComponent(desc) {
-        var vendor, name, version, uri, title, description, changelog, i, inputs, outputs, preference;
+        var vendor, name, version, title, description, changelog, i, inputs, outputs, preference;
 
         // Vendor
         if (!('vendor' in desc) || desc.vendor.trim() === '') {
@@ -49,9 +49,11 @@
         version = new Wirecloud.Version(desc.version.trim());
         Object.defineProperty(this, 'version', {value: version});
 
-        // URI
-        uri = desc.name.trim();
-        Object.defineProperty(this, 'uri', {value: vendor + '/' + name + '/' + version.text});
+        // URI && group_id
+        Object.defineProperties(this, {
+            uri: {value: vendor + '/' + name + '/' + version.text},
+            group_id: {value: vendor + '/' + name}
+        });
 
         // Type
         if (typeof desc.type !== 'string') {

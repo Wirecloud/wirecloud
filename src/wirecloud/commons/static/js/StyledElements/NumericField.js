@@ -70,7 +70,7 @@
      *   - max: valor máximo que permitirá este Numeric Field.
      *
      */
-    var StyledNumericField = function StyledNumericField(options) {
+    var NumericField = function NumericField(options) {
         var defaultOptions = {
             'initialValue': 0,
             'class': '',
@@ -114,12 +114,12 @@
         topButton.insertInto(this.wrapperElement);
         bottomButton.insertInto(this.wrapperElement);
     };
-    StyledNumericField.prototype = new StyledElements.InputElement();
+    NumericField.prototype = new StyledElements.InputElement();
 
-    StyledNumericField.prototype.getValue = function getValue() {
+    NumericField.prototype.getValue = function getValue() {
         return Number(this.inputElement.value);
     };
 
-    StyledElements.StyledNumericField = StyledNumericField;
+    StyledElements.NumericField = NumericField;
 
 })();

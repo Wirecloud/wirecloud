@@ -727,11 +727,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(len(iwidgets), 2)
         source_iwidget = iwidgets[1]
         target_iwidget = iwidgets[0]
-        self.assertIsNotNone(source_iwidget.element)
-        self.assertIsNotNone(target_iwidget.element)
+        source_iwidget.wait_loaded()
+        target_iwidget.wait_loaded()
 
-        source_iwidget.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Full Dragboard', 'Extract from grid')).close()
-        target_iwidget.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Full Dragboard', 'Extract from grid'))
+        source_iwidget.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Upgrade/Downgrade', 'Full Dragboard', 'Extract from grid')).close()
+        target_iwidget.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Upgrade/Downgrade', 'Full Dragboard', 'Extract from grid'))
 
         tab = self.get_workspace_tab_by_name('Tab')
         self.assertRaises(NoSuchElementException, tab.element.find_element_by_css_selector, '.icon-tab-menu')

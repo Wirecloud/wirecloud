@@ -112,13 +112,15 @@
             'configure': true,
             'move': true,
             'rename': true,
-            'resize': true
+            'resize': true,
+            'upgrade': true
         }, options.permissions);
 
         if (options.readonly) {
             this.permissions.close = false;
             this.permissions.move = false;
             this.permissions.resize = false;
+            this.permissions.upgrade = false;
         }
 
         build_endpoints.call(this);

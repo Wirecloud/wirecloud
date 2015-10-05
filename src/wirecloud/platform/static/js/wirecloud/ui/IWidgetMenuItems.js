@@ -68,13 +68,13 @@
         ));
 
         item = new StyledElements.MenuItem(
-            utils.gettext("Upgrade/Disable"),
+            utils.gettext("Upgrade/Downgrade"),
             function () {
                 var dialog = new Wirecloud.ui.UpgradeWindowMenu(this);
                 dialog.show();
             }.bind(this.model)
         );
-        item.setDisabled(Wirecloud.LocalCatalogue.resourceVersions[this.model.meta.group_id].length === 1);
+        item.setDisabled(!this.model.isAllowed('upgrade') || Wirecloud.LocalCatalogue.resourceVersions[this.model.meta.group_id].length === 1);
         items.push(item);
 
         items.push(new StyledElements.MenuItem(utils.gettext("Reload"), this.view.reload.bind(this.view)));

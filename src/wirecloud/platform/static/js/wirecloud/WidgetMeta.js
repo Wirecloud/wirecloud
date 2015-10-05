@@ -32,7 +32,6 @@
         Wirecloud.MashableApplicationComponent.call(this, data);
 
         this.id = this.uri;
-        this.group_id = this.vendor + '/' + this.name;
 
         this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
             vendor: this.vendor,

@@ -71,7 +71,7 @@
             }
 
             Object.defineProperties(this, {
-                id: {value: this.meta.group_id}
+                id: {value: meta.group_id}
             });
             this.get().setAttribute('data-id', this.id);
         },
