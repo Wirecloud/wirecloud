@@ -195,6 +195,7 @@
         for (i = 0; i < fields.length; i += 1) {
             field = fields[i];
             tab = notebook.createTab({name: field.shortTitle, closable: false});
+            tab.addEventListener('show', this.repaint.bind(this));
             if (field.nested === true) {
                 tmp_field = {
                     'name': field.name,
@@ -338,6 +339,8 @@
             return;
         }
 
+        inputInterface = this.factory.createInterface(fieldId, field);
+
         // Label Cell
         labelCell = row.insertCell(-1);
         labelCell.classList.add('label-cell');
@@ -360,7 +363,6 @@
         inputCell = document.createElement('td');
         row.appendChild(inputCell);
 
-        inputInterface = this.factory.createInterface(fieldId, field);
         inputInterface.assignDefaultButton(this.acceptButton);
         inputInterface.insertInto(inputCell);
         if (this.readOnly || inputInterface._readOnly) {
