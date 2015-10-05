@@ -250,7 +250,7 @@
     };
     EMailInputInterface.prototype = new StyledElements.TextInputInterface();
 
-    EMailInputInterface.prototype._EMailChecker = /[\w\d][\w\-]*@[\w\d\-]+\.[\w\d]+/;
+    EMailInputInterface.prototype._EMailChecker = /^[\w\d._%+-]+@[\w\d.\-]+\.[\w]{2,4}$/;
 
     EMailInputInterface.prototype._checkValue = function _checkValue(newValue) {
         return this._EMailChecker.test(newValue) ? StyledElements.InputValidationError.NO_ERROR : StyledElements.InputValidationError.EMAIL_ERROR;

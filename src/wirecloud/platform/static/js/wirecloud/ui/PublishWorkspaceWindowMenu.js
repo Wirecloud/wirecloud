@@ -32,7 +32,7 @@
 
         var fields, user_name;
 
-        user_name = Wirecloud.contextManager.get('username');
+        user_name = Wirecloud.contextManager.get('fullname').trim() !== '' ? Wirecloud.contextManager.get('fullname') : Wirecloud.contextManager.get('username');
         fields = [
             {
                 'type': 'group',
@@ -41,10 +41,11 @@
                     {name: 'name', label: utils.gettext('Mashup Name'), type: 'text', required: true, initialValue: workspace.getName(), defaultValue: workspace.getName()},
                     {name: 'vendor', label: utils.gettext('Vendor'), type: 'text',  required: true},
                     {name: 'version', label: utils.gettext('Version'), type: 'version',  required: true},
-                    {name: 'email', label: utils.gettext('Email'), type: 'text'},
-                    {name: 'description', label: utils.gettext('Description'), type: 'longtext'},
-                    {name: 'doc', label: utils.gettext('Home page'), type: 'text'},
-                    {name: 'authors', label: utils.gettext('Author'), type: 'text',  initialValue: user_name, defaultValue: user_name}
+                    {name: 'email', label: utils.gettext('Email'), type: 'email'},
+                    {name: 'description', label: utils.gettext('Short Description (plain text)'), type: 'longtext'},
+                    {name: 'longdescription', label: utils.gettext('Detailed description (Markdown)'), type: 'longtext'},
+                    {name: 'homepage', label: utils.gettext('Home page'), type: 'url'},
+                    {name: 'authors', label: utils.gettext('Authors'), type: 'text',  initialValue: user_name, defaultValue: user_name}
                 ]
             },
             {

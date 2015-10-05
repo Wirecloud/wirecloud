@@ -186,8 +186,6 @@ def build_json_template_from_workspace(options, workspace, user):
     description = options.get('description', '').strip()
     if description == '':
         options['description'] = get_workspace_description(workspace)
-    else:
-        options['description'] = description + '\n' + get_workspace_description(workspace)
 
     if 'authors' not in options:
         options['authors'] = ({'name': six.text_type(user)},)
