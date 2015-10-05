@@ -749,7 +749,7 @@ class WiringComponentTester(object):
         modal.set_field_value('title', title)
         modal.accept()
 
-        self.testcase.assertEqual(self.title, title)
+        WebDriverWait(self.driver, timeout=3).until(lambda driver: self.title == title)
 
         return self
 
