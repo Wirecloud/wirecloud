@@ -14,6 +14,7 @@ pages:
         - 'Widget API': 'widgetapi/widgetapi.md'
         - 'NGSI API': 'ngsi_api.md'
         - 'ObjectStorage API': 'object_storage_api.md'
+        - 'WireCloud IDE': 'eclipse_ide.md'
 
 markdown_extensions:
     - markdown_github.headerid
