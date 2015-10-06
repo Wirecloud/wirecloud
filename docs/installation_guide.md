@@ -169,7 +169,7 @@ After creating the new instance, you have to configure it choosing a database, p
     $ cd /opt
     $ wirecloud-admin startproject wirecloud_instance --quick-start
 
-If you make use of the `--quick-start` option, you should be able to go directly to the [Running WireCloud](#running_wirecloud) section.
+If you make use of the `--quick-start` option, you should be able to go directly to the [Running WireCloud](#running-wirecloud) section.
 
 
 ## Database installation and configuration
@@ -501,9 +501,9 @@ After this, you can run the NGSI proxy issuing the following command:
 
 ### Integration with the IdM GE
 
-Create a new Application using the IdM server to use (for example: `https://account.lab.fiware.org`).
+Create a new Application using the IdM server to use (for example: `https://account.lab.fiware.org`). See the [KeyRock's User and Programmers Guide] for more info.
 
-1. Redirect URI must be: http(s)://<wirecloud_server>/complete/fiware/
+1. Redirect URI must be: `http(s)://<wirecloud_server>/complete/fiware/`
 2. Install the `python-social-auth` module (e.g. `pip install "python-social-auth<0.3,>=0.2.2"`)
 3. Edit `settings.py`:
     - Remove `wirecloud.oauth2provider` from `INSTALLED_APPS`
@@ -532,7 +532,8 @@ Create a new Application using the IdM server to use (for example: `https://acco
     - Add `python-social-auth` url endpoints at the end of the pattern list: `url('', include('social.apps.django_app.urls', namespace='social')),`
 5. Run `python manage.py syncdb --migrate; python manage.py collectstatic --noinput; python manage.py compress --force`
 
-<a id="running_wirecloud" />
+
+[KeyRock's User and Programmers Guide]: https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application
 ## Running WireCloud
 
 We recommend running WireCloud based on an Apache Web Server. However, it is
