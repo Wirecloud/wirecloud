@@ -141,11 +141,11 @@ To get the latest development version of the code, you can choose between two op
 
 Once downloaded the source code, you can install WireCloud using the `setup.py` script (this step requires root privileges):
 
-    $ cd <path/to/source/code>/src
+    $ cd ${path_to_source_code}/src
     $ sudo python setup.py bdist_whell
-    $ sudo pip install dist/wirecloud-<version>-py2.py3-none-any.whl
+    $ sudo pip install dist/wirecloud-${version}-py2.py3-none-any.whl
 
-Where `<version>` is the version of WireCloud to install.
+Where `${version}` is the version of WireCloud to install.
 
 ## Installing WireCloud using Docker
 
@@ -187,7 +187,7 @@ Setting up a SQLite database can be just accomplished within seconds by using th
 DATABASES = {
       'default': {
              'ENGINE': 'django.db.backends.sqlite3',
-             'NAME': '<dbfile>',
+             'NAME': '${dbfile}',
              'USER': '',
              'PASSWORD': '',
              'HOST': '',
@@ -196,7 +196,7 @@ DATABASES = {
 }
 ```
 
-where `<dbfile>` is the full path to the database file.
+where `${dbfile}` is the full path to the database file.
 
 Python directly comes with support for SQLite, but we recommend you to install the pysqlite2 module as it provides a more updated driver:
 
@@ -213,16 +213,16 @@ For production purposes, PostgreSQL database is a much better choice. To do so, 
 DATABASES = {
       'default': {
              'ENGINE': 'django.db.backends.postgresql_psycopg2',
-             'NAME': '<dbname>',
-             'USER': '<dbuser>',
-             'PASSWORD': '<dbpassword>',
-             'HOST': '<dbhost>',
-             'PORT': '<dbport>',
+             'NAME': '${dbname}',
+             'USER': '${dbuser}',
+             'PASSWORD': '${dbpassword}',
+             'HOST': '${dbhost}',
+             'PORT': '${dbport}',
      }
 }
 ```
 
-where `<dbname>` represents the name of the database, `<dbuser>` is the name of the user with privileges on the database and `<dbpassword>` is the password to use for authenticating the user. `<dbhost>` and `<dbport>` are the host and the port of the database server to use (leave these settings empty if the server is running on the same machine as WireCloud).
+where `${dbname}` represents the name of the database, `${dbuser}` is the name of the user with privileges on the database and `${dbpassword}` is the password to use for authenticating the user. `${dbhost}` and `${dbport}` are the host and the port of the database server to use (leave these settings empty if the server is running on the same machine as WireCloud).
 
 The only thing that remains is installing the python bindings for PostgreSQL:
 
@@ -242,8 +242,8 @@ Afterwards you have to create the project Database. We assume that your user has
 
 Both the PostgreSQL database and its user can be created with the following commands:
 
-    $ createuser <dbuser> [-P]
-    $ createdb --owner=<dbuser> <dbname>
+    $ createuser ${dbuser} [-P]
+    $ createdb --owner=${dbuser} ${dbname}
 
 If you want to create a password protected user you must use the `-P` option.
 
@@ -422,15 +422,24 @@ to a CA bundle file to use instead (e.g.
 
 ## Django configuration
 
-The `settings.py` file allows you to set several options in WireCloud. If `DEBUG` is `False` you will need to collect WireCloud static files using the following command and answering 'yes' when asked:
+The `settings.py` file allows you to set several options in WireCloud. If
+`DEBUG` is `False` you will need to collect WireCloud static files using the
+following command and answering 'yes' when asked:
 
     $ python manage.py collectstatic
 
-In addition, you should serve the static files with a fast performance http server like [Nginx](http://nginx.org/) or [Apache](http://httpd.apache.org/). Django has documentation for this [topic](https://docs.djangoproject.com/en/dev/howto/deployment/).
+In addition, you should serve the static files with a fast performance http
+server like [Apache](http://httpd.apache.org/), [Nginx](http://nginx.org/),
+[Gunicorn](http://gunicorn.org/), etc. We provide documentation on
+[how to serve WireCloud using Apache 2](#running-wirecloud-using-apache-2).
+Anyway, if you want to use any of the other http servers (e.g using Gunicorn),
+Django provides
+[documentation on how to do it](https://docs.djangoproject.com/en/dev/howto/deployment/).
 
-Finally, you can compress css and javascript code files for better performance using the following command:
+Finally, you can compress css and javascript code files for better performance
+using the following command:
 
-    $ python manage.py compress
+    $ python manage.py compress --force
 
 > **NOTE:** Don't forget to rerun the collectstatic and compress commands each
 > time the WireCloud code is updated, this include each time an add-on is added
@@ -503,7 +512,7 @@ After this, you can run the NGSI proxy issuing the following command:
 
 Create a new Application using the IdM server to use (for example: `https://account.lab.fiware.org`). See the [KeyRock's User and Programmers Guide] for more info.
 
-1. Redirect URI must be: `http(s)://<wirecloud_server>/complete/fiware/`
+1. Redirect URI must be: `http(s)://${wirecloud_server}/complete/fiware/`
 2. Install the `python-social-auth` module (e.g. `pip install "python-social-auth<0.3,>=0.2.2"`)
 3. Edit `settings.py`:
     - Remove `wirecloud.oauth2provider` from `INSTALLED_APPS`
@@ -591,13 +600,13 @@ You can use this template as starting point:
         ### Wirecloud ###
         WSGIPassAuthorization On
 
-        WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud> user=<wirecloud_user> group=<wirecloud_group>
-        WSGIScriptAlias / <path_to_wirecloud_wsgi.py>
+        WSGIDaemonProcess wirecloud python-path=${path_to_wirecloud_instance} user=${wirecloud_user} group=${wirecloud_group}
+        WSGIScriptAlias / ${path_to_wirecloud_instance}/${wirecloud_instance}/wsgi.py
         <Location />
                 WSGIProcessGroup wirecloud
         </Location>
 
-        Alias /static <path_to_wirecloud>/static
+        Alias /static ${path_to_wirecloud_instance}/static
         <Location "/static">
                 SetHandler None
                 <IfModule mod_expires.c>
@@ -618,8 +627,14 @@ You can use this template as starting point:
 ```
 
 Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`
-and you created a `wirecloud` user on the system, you should have something
-similar to:
+and you created a `wirecloud` user on the system, then we have the following values:
+
+- `${path_to_wirecloud_instance}` = `/opt/wirecloud_instance`
+- `${wirecloud_instance}` = `wirecloud_instance`
+- `${wirecloud_user}` = `wirecloud`
+- `${wirecloud_group}` = `wirecloud`
+
+You should end with something similar to:
 
 ```ApacheConf
 <VirtualHost *:80>
@@ -674,7 +689,7 @@ You can use this template as starting point:
 <VirtualHost *:80>
         ...
 
-        <Directory <path_to_wirecloud>/<instance_name>
+        <Directory ${path_to_wirecloud_instance}/${instance_name}>
                 <Files "wsgi.py">
                         Require all granted
                         Order allow,deny
@@ -684,13 +699,13 @@ You can use this template as starting point:
         ### Wirecloud ###
         WSGIPassAuthorization On
 
-        WSGIDaemonProcess wirecloud python-path=<path_to_wirecloud> user=<wirecloud_user> group=<wirecloud_group>
-        WSGIScriptAlias / <path_to_wirecloud_wsgi.py>
+        WSGIDaemonProcess wirecloud python-path=${path_to_wirecloud_instance} user=${wirecloud_user} group=${wirecloud_group}
+        WSGIScriptAlias / ${path_to_wirecloud_instance}/${instance_name}/wsgi.py
         <Location />
                 WSGIProcessGroup wirecloud
         </Location>
 
-        Alias /static <path_to_wirecloud>/static
+        Alias /static ${path_to_wirecloud_instance}/static
         <Location "/static">
                 SetHandler None
                 <IfModule mod_expires.c>
@@ -711,8 +726,14 @@ You can use this template as starting point:
 ```
 
 Assuming that your wirecloud instance is available at `/opt/wirecloud_instance`
-and you created a `wirecloud` user on the system, you should have something
-similar to:
+and you created a `wirecloud` user on the system, then we have the following values:
+
+- `${path_to_wirecloud_instance}` = `/opt/wirecloud_instance`
+- `${wirecloud_instance}` = `wirecloud_instance`
+- `${wirecloud_user}` = `wirecloud`
+- `${wirecloud_group}` = `wirecloud`
+
+You should end with something similar to:
 
 ```ApacheConf
 <VirtualHost *:80>
@@ -729,7 +750,7 @@ similar to:
         ### Wirecloud ###
         WSGIPassAuthorization On
 
-        WSGIDaemonProcess wirecloud python-path=/opt/wirecloud_instance
+        WSGIDaemonProcess wirecloud python-path=/opt/wirecloud_instance user=wirecloud group=wirecloud
         WSGIScriptAlias / /opt/wirecloud_instance/wirecloud_instance/wsgi.py
         <Location />
                 WSGIProcessGroup wirecloud
@@ -861,7 +882,7 @@ The following files:
 
 To quickly check if the application is running, follow these steps:
 
-1. Open a browser and type `http://<computer_name_or_IP_address>/login` in the address bar.
+1. Open a browser and type `http://${computer_name_or_IP_address}/login` in the address bar.
 2. The following user login form should appear:
 
 3. Enter the credentials and click on the *Log in* button.

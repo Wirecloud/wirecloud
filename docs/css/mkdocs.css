@@ -78,6 +78,13 @@ code {
     background-color: #F9F2F4;
     border-radius: 4px;
     border: none;
+    white-space: inherit;
+    word-wrap: inherit;
+}
+
+/* Override word-wrap from theme_extra.css */
+p code {
+    word-wrap: inherit;
 }
 
 a:hover code {

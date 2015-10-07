@@ -97,7 +97,7 @@ WireCloud provides the following tools to ease this process:
   it. Remember that you can always fork those templates for adapting them to
   your needs (or requesting new features, bug fixes, etc. through the issue
   tracker of the template repo).
-- An [Ecplise plugin](../eclipse_ide.md) for those preferring a full IDE.
+- An [Ecplise plugin](eclipse_ide.md) for those preferring a full IDE.
 
 
 What next?

@@ -140,7 +140,7 @@ Extra options:
   by the `responseType` option (see the [request option section][request_options]
   for more details), except ""
 
-[request_options]: widgetapi/widgetapi.md#request-options-general-options
+[request_options]: ../widgetapi/widgetapi.md#request-options-general-options
 
 
 ### uploadFile

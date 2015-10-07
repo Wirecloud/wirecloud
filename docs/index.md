@@ -18,6 +18,6 @@ This project is part of [FIWARE](https://www.fiware.org). Check it out in the
     - Widget & Operator Development:
         - [Basic Concepts](development/widget_and_operators.md)
         - [Widget API](widgetapi/widgetapi.md)
-        - [NGSI API](ngsi_api.md)
-        - [ObjectStorage API](object_storage_api.md)
-        - [WireCloud IDE](eclipse_ide.md)
+        - [NGSI API](development/ngsi_api.md)
+        - [ObjectStorage API](development/object_storage_api.md)
+        - [WireCloud IDE](development/eclipse_ide.md)
