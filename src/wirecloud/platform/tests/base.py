@@ -316,6 +316,17 @@ class BasicViewsAPI(WirecloudTestCase):
             self.assertEqual(get_default_view(request), 'smartphone')
             self.assertEqual(request.session['default_mode'], 'smartphone')
 
+    @override_settings(ALLOW_ANONYMOUS_ACCESS=True)
+    def test_session_created_public_workspace_anonymous_users(self):
+        '''
+        A session is created when an anonymous user access a public workspace
+        '''
+
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Public Workspace'}) + '?mode=embedded'
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(self.client.cookies), 0)
+
 
 @wirecloud_selenium_test_case
 class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):

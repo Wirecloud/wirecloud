@@ -146,6 +146,9 @@ def render_workspace_view(request, owner, name):
             return build_error_response(request, 403, 'forbidden')
         else:
             return redirect_to_login(request.get_full_path())
+    elif not request.user.is_authenticated():
+        # Ensure user has a session
+        request.session['django_language'] = request.session.get('django_language', None)
 
     return render_wirecloud(request)
 
