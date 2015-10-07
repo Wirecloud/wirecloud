@@ -24,11 +24,10 @@ from io import BytesIO
 import json
 from lxml import etree
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test.client import RequestFactory
-from django.utils import unittest
+from django.test.utils import override_settings
 from mock import Mock, patch
 
 from wirecloud.commons.authentication import logout
@@ -122,7 +121,7 @@ class BasicViewsAPI(WirecloudTestCase):
         self.assertIn('Location', response)
         self.assertTrue(response['Location'].endswith('?a=b'))
 
-    @patch('wirecloud.platform.views.ALLOW_ANONYMOUS_ACCESS', new=True)
+    @override_settings(ALLOW_ANONYMOUS_ACCESS=True)
     def test_workspace_view_public_anonymous_allowed(self):
 
         url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Public Workspace'})
@@ -130,7 +129,7 @@ class BasicViewsAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml', HTTP_USER_AGENT='')
         self.assertEqual(response.status_code, 200)
 
-    @patch('wirecloud.platform.views.ALLOW_ANONYMOUS_ACCESS', new=False)
+    @override_settings(ALLOW_ANONYMOUS_ACCESS=False)
     def test_workspace_view_public_anonymous_not_allowed(self):
 
         url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Public Workspace'})
@@ -144,7 +143,7 @@ class BasicViewsAPI(WirecloudTestCase):
         with patch('wirecloud.platform.views.get_default_view', return_value="classic"):
             render_wirecloud(request, view_type='invalid')
 
-    @patch('wirecloud.platform.views.ALLOW_ANONYMOUS_ACCESS', new=True)
+    @override_settings(ALLOW_ANONYMOUS_ACCESS=True)
     def test_root_view_anonymous_allowed(self):
 
         url = reverse('wirecloud.root')
@@ -152,7 +151,7 @@ class BasicViewsAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 200)
 
-    @patch('wirecloud.platform.views.ALLOW_ANONYMOUS_ACCESS', new=False)
+    @override_settings(ALLOW_ANONYMOUS_ACCESS=False)
     def test_root_view_anonymous_not_allowed(self):
 
         url = reverse('wirecloud.root')
@@ -323,53 +322,39 @@ class BasicViewsSeleniumTestCase(WirecloudSeleniumTestCase):
 
     tags = ('wirecloud-base-views', 'wirecloud-base-views-selenium')
 
-    @unittest.skipIf(settings.ALLOW_ANONYMOUS_ACCESS is False, 'Anonymous access disabled')
+    def check_login_behaviour(self):
+
+        sign_in_button = self.wait_element_visible_by_css_selector('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
+
+        if sign_in_button.text != 'Sign in':
+            # Oiltheme
+            sign_in_button.click()
+            popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
+            popup_menu = PopupMenuTester(self, popup_menu_element)
+            popup_menu.click_entry('Sign in')
+        else:
+            sign_in_button.click()
+
+        username_input = self.wait_element_visible_by_css_selector('#id_username')
+        self.fill_form_input(username_input, 'user_with_workspaces')
+        password_input = self.driver.find_element_by_id('id_password')
+        self.fill_form_input(password_input, 'admin')
+        password_input.submit()
+
+    @override_settings(ALLOW_ANONYMOUS_ACCESS=True)
     def test_root_view_anonymous_allowed(self):
+
         url = self.live_server_url + reverse('wirecloud.root')
         self.driver.get(url)
-        sign_in_button = self.wait_element_visible_by_css_selector('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
 
-        if sign_in_button.text != 'Sign in':
-            # Oiltheme
-            sign_in_button.click()
-            popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
-            popup_menu = PopupMenuTester(self, popup_menu_element)
-            popup_menu.click_entry('Sign in')
-        else:
-            sign_in_button.click()
-
-        username_input = self.wait_element_visible_by_css_selector('#id_username')
-        self.fill_form_input(username_input, 'user_with_workspaces')
-        password_input = self.driver.find_element_by_id('id_password')
-        self.fill_form_input(password_input, 'admin')
-        password_input.submit()
-
+        self.check_login_behaviour()
         self.wait_wirecloud_ready()
 
-    def check_login_behaviour(self, initial_url):
-
-        sign_in_button = self.wait_element_visible_by_css_selector('#wirecloud_header .user_menu_wrapper .se-btn, #wirecloud_header .arrow-down-settings')
-
-        if sign_in_button.text != 'Sign in':
-            # Oiltheme
-            sign_in_button.click()
-            popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
-            popup_menu = PopupMenuTester(self, popup_menu_element)
-            popup_menu.click_entry('Sign in')
-        else:
-            sign_in_button.click()
-
-        username_input = self.wait_element_visible_by_css_selector('#id_username')
-        self.fill_form_input(username_input, 'user_with_workspaces')
-        password_input = self.driver.find_element_by_id('id_password')
-        self.fill_form_input(password_input, 'admin')
-        password_input.submit()
-
-        self.assertEqual(self.driver.current_url, initial_url)
-
+    @override_settings(ALLOW_ANONYMOUS_ACCESS=True)
     def test_workspace_not_found_view_not_logged(self):
 
         url = self.live_server_url + reverse('wirecloud.workspace_view', kwargs={'owner': 'noexistent_user', 'name': 'NonexistingWorkspace'})
         self.driver.get(url)
 
-        self.check_login_behaviour(url)
+        self.check_login_behaviour()
+        self.assertEqual(self.driver.current_url, url)

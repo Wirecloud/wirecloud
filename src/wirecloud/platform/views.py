@@ -39,7 +39,6 @@ from wirecloud.commons.utils.http import build_error_response
 from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.plugins import get_active_features_info, get_plugins
 from wirecloud.platform.models import Workspace
-from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.workspace.utils import get_workspace_list
 
 
@@ -113,7 +112,7 @@ def render_root_page(request):
 
 def auto_select_workspace(request, mode=None):
 
-    if ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
+    if settings.ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
         return redirect_to_login(request.get_full_path())
 
     _junk1, active_workspace = get_workspace_list(request.user)
@@ -136,7 +135,7 @@ def auto_select_workspace(request, mode=None):
 
 def render_workspace_view(request, owner, name):
 
-    if ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
+    if settings.ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
         return redirect_to_login(request.get_full_path())
 
     get_workspace_list(request.user)
