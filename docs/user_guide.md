@@ -255,6 +255,7 @@ You will then be presented with a dropdown menu with several options.
 -   **Settings** shows a form for changing the settings of the current
     widget
 -   **Log** shows a dialog with the log history of the widget
+-   **Upgrade/Downgrade** allows you to change the version of the widget
 -   **Reload** reloads the widget
 -   **User's Manual** will open the widget documentation
 -   **Full Dragboard** maximises the selected widget, so it will take up
@@ -266,7 +267,7 @@ You will then be presented with a dropdown menu with several options.
     you to place it wherever you want on the canvas, even on top of
     other widgets. This option becomes **Snap to grid** if the widget is
     currently outside the grid, in this case, this option docks the
-    widget into the grid.W
+    widget into the grid.
 
 Finally, click on the settings and you will be prompted with a
 customised dialog for the settings of the widget. In this example, the

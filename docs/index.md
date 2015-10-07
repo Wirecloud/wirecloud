@@ -11,5 +11,13 @@ This project is part of [FIWARE](https://www.fiware.org). Check it out in the
 - [User Guide](user_guide.md)
 - Programmer Guide:
     - [Application Mashup RESTful API](restapi/index.md)
-    - [Widget API](widgetapi/widgetapi.md)
-    - [Widget & Operator Development](development/widget_and_operators.md)
+    - MACDL:
+        - [Introduction](development/macdl.md)
+        - [MACDL (XML)](development/macdl_xml.md)
+        - [MACDL (RDF)](development/macdl_rdf.md)
+    - Widget & Operator Development:
+        - [Basic Concepts](development/widget_and_operators.md)
+        - [Widget API](widgetapi/widgetapi.md)
+        - [NGSI API](ngsi_api.md)
+        - [ObjectStorage API](object_storage_api.md)
+        - [WireCloud IDE](eclipse_ide.md)

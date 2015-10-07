@@ -9,6 +9,10 @@ pages:
 - 'User Guide': 'user_guide.md'
 - 'Programmer Guide':
     - 'Application Mashup RESTful API': 'restapi/index.md'
+    - 'MAC Description Language':
+        - 'Introduction': 'development/macdl.md'
+        - 'MACDL (XML)': 'development/macdl_xml.md'
+        - 'MACDL (RDF)': 'development/macdl_rdf.md'
     - 'Widget & Operator Development':
         - 'Basic Concepts': 'development/widget_and_operators.md'
         - 'Widget API': 'widgetapi/widgetapi.md'
