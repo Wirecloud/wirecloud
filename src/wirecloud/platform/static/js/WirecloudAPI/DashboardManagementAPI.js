@@ -95,8 +95,9 @@
     // Workspace facade
     var Workspace = function Workspace(workspace) {
         Object.defineProperties(this, {
-            'owner': {value: workspace.creator},
+            'owner': {value: workspace.owner},
             'name': {value: workspace.name},
+            'url': {value: workspace.url}
         });
     };
 

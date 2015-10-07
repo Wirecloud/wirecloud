@@ -683,6 +683,16 @@ function Workspace(workspaceState, resources) {
     Object.defineProperty(this, 'resources', {value: resources});
     Object.defineProperty(this, 'owned', {value: workspaceState.owned});
     Object.defineProperty(this, '_iwidget_removed', {value: iwidget_removed.bind(this)});
+    Object.defineProperties(this, {
+        'owner': {get: function () {return this.contextManager.get('owner');}},
+        'name': {get: function () {return this.contextManager.get('name');}},
+        'url': {
+            get: function () {
+                var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.owner), name: encodeURIComponent(this.name)});
+                return document.location.protocol + '//' + document.location.host + path;
+            }
+        }
+    });
     this.workspaceState = workspaceState;
     this.tabInstances = {};
     this.tabsByName = {};
