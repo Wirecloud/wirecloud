@@ -1,3 +1,8 @@
+<p align="center">
+    <a href="http://conwet.fi.upm.es/wirecloud">
+        <img width="256" style="border: 0px none; box-shadow: none;" src="images/wc-logo.png">
+    </a>
+</p>
 
 This project is part of [FIWARE](https://www.fiware.org). Check it out in the
 [Catalogue](https://catalogue.fiware.org/enablers/application-mashup-wirecloud)

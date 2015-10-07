@@ -1,3 +1,9 @@
+<p align="center">
+    <a href="http://conwet.fi.upm.es/wirecloud">
+        <img width="256" src="src/wirecloud/defaulttheme/static/images/logos/wc1.png">
+    </a>
+</p>
+
 WireCloud
 =========
 
