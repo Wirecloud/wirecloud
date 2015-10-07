@@ -11,6 +11,7 @@ This section describes all the requirements of a basic WireCloud installation. *
     - Django 1.5+
     - South 0.7.4+
     - lxml 2.3.0+
+    - django-appconf 1.0.1+
     - django-compressor 1.4+
     - rdflib 3.2.0+
     - requests 2.1.0+
