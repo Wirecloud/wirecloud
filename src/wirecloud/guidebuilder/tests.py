@@ -560,13 +560,13 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         def take_capture(*args, **kargs):
             return midd_take_capture(*args, prepath=prepath, **kargs)
 
-        with self.wiring_view:
-            ActionChains(self.driver).move_by_offset(20, 20).perform()
+        with self.wiring_view as wiring_view:
+            ActionChains(self.driver).move_by_offset(0, 50).perform()
+            self.wait_element_visible_by_css_selector('.wiring-view .se-alert-static-top')
             time.sleep(0.2)
             imgp = take_capture(self.driver, extra='Empty_Wiring_Operators')
             crop_down(
-                # imgp, self.driver.find_element_by_css_selector('.wiringEmptyBox'), 40)
-                imgp, self.driver.find_element_by_css_selector(".alert.alert-info.se-alert-static-top"), 40)
+                imgp, self.driver.find_element_by_css_selector(".wiring-view .se-alert-static-top"), 40)
 
             # Click in Find Components
             dialog = self.driver.find_element_by_css_selector('.wirecloud_app_bar')
@@ -843,13 +843,18 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
-        imgp = take_capture(self.driver, extra=34)
+        take_capture(self.driver, extra=34)
 
-        lg_path = image_path(extra=35, prepath=prepath)
-        shutil.copy2(imgp, lg_path)
-        crop_image(
-            lg_path, *create_box(get_by_contains(self.driver, '.fade.iwidget.in', 'Linear Graph')))
-        shutil.copy2(lg_path, image_path(extra='LinearGraphZoom1', prepath=prepath))
+        with widget:
+            ActionChains(self.driver).move_to_element_with_offset(self.driver.find_element_by_css_selector('canvas'), -50, 0).click_and_hold().move_by_offset(50, 0).perform()
+
+        lg_path = take_capture(self.driver, extra='linear_graph_zoom1')
+        add_pointer(lg_path, get_position(widget.element, 0.31, 0.5), False)
+        crop_image(lg_path, *create_box(widget.element))
+
+        ActionChains(self.driver).release().perform()
+        lg_path = take_capture(self.driver, extra='linear_graph_zoom2')
+        crop_image(lg_path, *create_box(widget.element))
 
         # Public workspace!
         popup_menu = self.open_menu()

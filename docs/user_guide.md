@@ -401,7 +401,7 @@ going to give us a great flexibility.
 
 One of the most common operations is the task of getting the connections
 removed in the wiring. For example, when you make some mistake for some
-reason, you can fix it by clicking the remove button that appears in the middle
+reason, you can fix it by clicking the *Remove* button that appears in the middle
 of the connection.
 
 ![wiring/delete_arrow1.png](images/user_guide/wiring/delete_arrow1.png)
@@ -423,7 +423,7 @@ use the *Stop Customising* option:
 ![wiring/reshape_arrow2.png](images/user_guide/wiring/reshape_arrow_stop.png)
 
 You can also minimize operators with the intention of improving space
-usage. This can be accomplished using the *Minimize* option that appears
+usage. This can be accomplished using the *Collapse* option that appears
 in the component menu:
 
 ![wiring/minimize_option.png](images/user_guide/wiring/minimize_option.png)
@@ -447,8 +447,10 @@ following steps:
 Now you can play with your new workspace.
 
 ![wiring/34.png](images/user_guide/wiring/34.png)
-![wiring/35.png](images/user_guide/wiring/Wirecloud_UG_35.png)
-![wiring/LinearGraphZoom1.png](images/user_guide/wiring/Wirecloud_UG_LinearGraphZoom1.png)
+
+![wiring/linear_graph_zoom1.png](images/user_guide/wiring/linear_graph_zoom1.png)
+
+![wiring/linear_graph_zoom2.png](images/user_guide/wiring/linear_graph_zoom2.png)
 
 Behaviour Oriented Wiring
 -------------------------
@@ -535,7 +537,7 @@ behaviour list panel is hidden). Changing the active behaviour is just a matter
 of clicking on the panel representing the behaviour.
 
 The other important thing to notice is that there are some "faded" components
-inside the wiring canvas (e.g the ***TODO*** widget). Background components are
+inside the wiring canvas (e.g. the *Search For* widget). Background components are
 faded because they do not form part of the active behaviour, although they form
 part of other behaviours.
 
@@ -553,7 +555,7 @@ the *Add* button of the background component you want to include:
 
 The same applies to the connections, if you create a new connection, that
 connection is added only into the active behaviour. If you want to include a
-connection already available on other behaviour, you can click on the **Add**
+connection already available on other behaviour, you can click on the *Add*
 button of the background connection:
 
 ![Connection *Add* button](images/user_guide/behaviour_oriented_wiring/connection_share_button.png)
@@ -591,7 +593,7 @@ behaviour you want to remove:
 
 ### Removing components and connections
 
-To remove a component from a behaviour, click on the *Remove* button:
+To remove a component from a behaviour, click on the *Delete* button:
 
 ![*Remove* component button](images/user_guide/behaviour_oriented_wiring/remove_component.png)
 
@@ -599,7 +601,7 @@ Components are only totaly removed from the wiring configuration when they are
 not used in any of the available behaviours.
 
 The same applies to connections, you can remove them from the active behaviour
-using the *Remove* button:
+using the *Delete* button:
 
 ![*Remove* connection button](images/user_guide/behaviour_oriented_wiring/remove_connection.png)
 
