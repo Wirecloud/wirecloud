@@ -41,7 +41,7 @@ list_resources = ['CoNWeT_simple-history-module2linear-graph_2.3.2.wgt',
                   'CoNWeT_ngsi-source_3.0.2.wgt',
                   'CoNWeT_ngsientity2poi_3.0.3.wgt',
                   'CoNWeT_linear-graph_3.0.0b3.wgt',
-                  'CoNWeT_map-viewer_2.5.6.wgt']
+                  'CoNWeT_map-viewer_2.5.7.wgt']
 
 
 # Common functions

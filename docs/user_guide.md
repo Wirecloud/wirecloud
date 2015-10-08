@@ -205,7 +205,7 @@ You can also download them using the following URLs:
 -   [CoNWeT_simple-history-module2linear-graph_2.3.2.wgt](attachments/CoNWeT_simple-history-module2linear-graph_2.3.2.wgt)
 -   [CoNWeT_ngsi-source_3.0.2.wgt](attachments/CoNWeT_ngsi-source_3.0.2.wgt)
 -   [CoNWeT_ngsientity2poi_3.0.3.wgt](attachments/CoNWeT_ngsientity2poi_3.0.3.wgt)
--   [CoNWeT_map-viewer_2.5.6.wgt](attachments/CoNWeT_map-viewer_2.5.6.wgt)
+-   [CoNWeT_map-viewer_2.5.7.wgt](attachments/CoNWeT_map-viewer_2.5.7.wgt)
 -   [CoNWeT_linear-graph_3.0.0b3.wgt](attachments/CoNWeT_linear-graph_3.0.0b3.wgt)
 
 Once installed, you should be able to see all the widgets/operators used
