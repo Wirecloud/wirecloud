@@ -20,6 +20,7 @@
 from __future__ import unicode_literals
 
 from copy import deepcopy
+import sys
 
 from django.test import TestCase
 from mock import patch, MagicMock
@@ -98,6 +99,8 @@ class TestSocialAuthBackend(TestCase):
 
         self.module_patcher = patch.dict('sys.modules', modules)
         self.module_patcher.start()
+        if 'wirecloud.fiware.social_auth_backend' in sys.modules:
+            del sys.modules['wirecloud.fiware.social_auth_backend']
 
         from wirecloud.fiware.social_auth_backend import FIWAREOAuth2
         self.fiwareauth_module = FIWAREOAuth2
