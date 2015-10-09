@@ -37,8 +37,10 @@ import requests
 from six.moves.urllib.parse import urljoin
 
 from django.conf import settings
-
 from social.backends.oauth import BaseOAuth2
+from social.apps.django_app.default.models import UserSocialAuth
+
+from wirecloud.platform.models import Organization
 
 
 FIWARE_LAB_IDM_SERVER = 'https://account.lab.fiware.org'
@@ -46,6 +48,25 @@ FIWARE_LAB_IDM_SERVER = 'https://account.lab.fiware.org'
 FIWARE_AUTHORIZATION_ENDPOINT = 'oauth2/authorize'
 FIWARE_ACCESS_TOKEN_ENDPOINT = 'oauth2/token'
 FIWARE_USER_DATA_ENDPOINT = 'user'
+
+
+def create_organizations(strategy, backend, user, response, *args, **kwargs):
+
+    if backend.name != 'fiware':
+        return
+
+    for organization in response.get('organizations', []):
+        try:
+            social = UserSocialAuth.objects.select_related('user').get(provider='fiware', uid=organization['id'])
+        except UserSocialAuth.DoesNotExist:
+            social =  None
+
+        if social is None:
+            org_name = Organization.objects.search_available_name(organization['displayName'])
+            org = Organization.objects.create_organization(org_name)
+            social = UserSocialAuth.objects.create(user=org, uid=organization['id'])
+
+        social.user.group.add(user)
 
 
 class FIWAREOAuth2(BaseOAuth2):
@@ -102,6 +123,11 @@ class FIWAREOAuth2(BaseOAuth2):
         # of KeyRock. Store the appropiated field in username to simplify
         # the rest of the code
         data['username'] = data['nickName'] if 'nickName' in data else data['id']
+
+        # Something similar happens with Organizations, previous versions of the
+        # IdM used to provide an actorId, unify this behaviour...
+        for organization in data['organizations']:
+            organization["id"] = organization['actorId'] if 'actorId' in organization else organization['id']
 
         return data
 

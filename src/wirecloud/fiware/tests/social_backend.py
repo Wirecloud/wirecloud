@@ -22,9 +22,9 @@ from __future__ import unicode_literals
 from copy import deepcopy
 import sys
 
-from django.test import TestCase
-from mock import patch, MagicMock
+from mock import patch, MagicMock, Mock
 
+from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 class BasicClass(object):
 
@@ -36,7 +36,7 @@ class BasicClass(object):
         return ('client', 'secret')
 
 
-class TestSocialAuthBackend(TestCase):
+class TestSocialAuthBackend(WirecloudTestCase):
 
     tags = ('wirecloud-fiware-social-auth',)
 
@@ -102,11 +102,12 @@ class TestSocialAuthBackend(TestCase):
         if 'wirecloud.fiware.social_auth_backend' in sys.modules:
             del sys.modules['wirecloud.fiware.social_auth_backend']
 
-        from wirecloud.fiware.social_auth_backend import FIWAREOAuth2
+        from wirecloud.fiware.social_auth_backend import FIWAREOAuth2, create_organizations
         self.fiwareauth_module = FIWAREOAuth2
         self.fiwareauth_module._request_user_info = self.fiwareauth_module.request_user_info
         self.fiwareauth_module.request_user_info = MagicMock()
         self.instance = self.fiwareauth_module()
+        self.create_organizations = create_organizations
 
     def tearDown(self):
 
@@ -119,6 +120,8 @@ class TestSocialAuthBackend(TestCase):
 
         self.assertIn('username', data)
         self.assertEqual(data['username'], 'demo')
+        self.assertIn('id', data['organizations'][0])
+        self.assertEqual(data['organizations'][0]['id'], 2)
 
     def test_get_user_data_new_version(self):
 
@@ -127,6 +130,8 @@ class TestSocialAuthBackend(TestCase):
 
         self.assertIn('username', data)
         self.assertEqual(data['username'], 'demo')
+        self.assertIn('id', data['organizations'][0])
+        self.assertEqual(data['organizations'][0]['id'], "00000000000000000000000000000001")
 
     def test_get_user_data_invalid_response(self):
 
@@ -183,3 +188,36 @@ class TestSocialAuthBackend(TestCase):
             backend_mock._user_data.return_value = self.USER_DATA
             from wirecloud.fiware.plugins import auth_fiware_token
             self.assertEqual(auth_fiware_token('Bearer', 'token'), auth_user_mock.user)
+
+    def test_organizations_are_created(self):
+        backend = Mock()
+        backend.name = "fiware"
+        strategy = Mock()
+        user = Mock()
+        response = deepcopy(self.NEW_RESPONSE)
+
+        UserSocialAuth = self.social.apps.django_app.default.models.UserSocialAuth
+        UserSocialAuth.DoesNotExist = Exception
+        select_related_mock = Mock()
+        select_related_mock.get.side_effect = UserSocialAuth.DoesNotExist
+        UserSocialAuth.objects.select_related.return_value = select_related_mock
+
+        self.create_organizations(strategy, backend, user, response)
+
+        self.assertEqual(UserSocialAuth.objects.create.call_count, 1)
+
+    def test_existing_organization(self):
+        backend = Mock()
+        backend.name = "fiware"
+        strategy = Mock()
+        user = Mock()
+        response = deepcopy(self.NEW_RESPONSE)
+
+        org_social = Mock()
+        UserSocialAuth = self.social.apps.django_app.default.models.UserSocialAuth
+        UserSocialAuth.objects.select_related().get.return_value = org_social
+
+        self.create_organizations(strategy, backend, user, response)
+
+        self.assertEqual(UserSocialAuth.objects.create.call_count, 0)
+        org_social.user.group.add.assert_called_with(user)
