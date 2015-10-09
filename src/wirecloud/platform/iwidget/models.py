@@ -28,8 +28,9 @@ from wirecloud.platform.wiring.utils import remove_related_iwidget_connections
 @python_2_unicode_compatible
 class IWidget(models.Model):
 
+    widget = models.ForeignKey('platform.Widget', verbose_name=_('Widget'), null=True)
+    widget_uri = models.CharField(_('Widget URI'), max_length=250, null=False, blank=False)
     name = models.CharField(_('Name'), max_length=250)
-    widget = models.ForeignKey('platform.Widget', verbose_name=_('Widget'))
     tab = models.ForeignKey('platform.Tab', verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
     positions = JSONField(blank=True)
@@ -60,6 +61,9 @@ class IWidget(models.Model):
         self.variables[var_name] = value
 
     def save(self, *args, **kwargs):
+
+        if self.widget is not None:
+            self.widget_uri = self.widget.resource.local_uri_part
 
         super(IWidget, self).save(*args, **kwargs)
         self.tab.workspace.save()  # Invalidate workspace cache

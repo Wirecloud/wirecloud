@@ -478,3 +478,30 @@ class PlatformSouthMigrationsTestCase(TestCase):
 
     def test_add_organization_models_backwards(self):
         self.check_basic_migration_backwards('0026_add_organization_models')
+
+    def test_add_field_iwidget_widget_uri_forwards(self):
+        iwidget1 = Mock(widget=Mock(resource=Mock(vendor="Wirecloud", short_name="Test", version="1.0")))
+        iwidget2 = Mock(widget=Mock(resource=Mock(vendor="Other", short_name="widget", version="2.0")))
+
+        migration = self._pick_migration('0027_add_field_iwidget_widget_uri')
+        orm = Mock(autospec=migration.orm())
+        select_related_mock = Mock()
+        select_related_mock.all.return_value = TestQueryResult([iwidget1, iwidget2])
+        orm.IWidget.objects.select_related.return_value = select_related_mock
+        migration.migration_instance().forwards(orm)
+
+        self.assertEqual(iwidget1.save.call_count, 1)
+        self.assertEqual(iwidget1.widget_uri, "Wirecloud/Test/1.0")
+        self.assertEqual(iwidget2.save.call_count, 1)
+        self.assertEqual(iwidget2.widget_uri, "Other/widget/2.0")
+
+    def test_add_field_iwidget_widget_uri_backwards(self):
+        self.check_basic_migration_backwards('0027_add_field_iwidget_widget_uri')
+
+    def test_allow_null_field_iwidget_widget_forwards(self):
+        self.check_basic_migration_forwards('0028_allow_null_field_iwidget_widget')
+
+    def test_allow_null_field_iwidget_widget_backwards(self):
+        migration = self._pick_migration('0028_allow_null_field_iwidget_widget')
+        orm = Mock(autospec=migration.prev_orm())
+        self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
