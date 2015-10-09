@@ -81,7 +81,7 @@
             actionlabel = interpolate(actionlabel, {endpointName: this.meta.label}, true);
         }
 
-        result = this.serialize();
+        result = this.toJSON();
         result.actionlabel = actionlabel;
         result.iWidgetName = this.iwidget.name;
 
