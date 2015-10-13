@@ -1,3 +1,5 @@
+## Introduction
+
 The latest version of the XML Schema described in the following sections
 is available at:
 
@@ -265,6 +267,7 @@ subelement) that will be use instead of the one provided in the main
 `contents` element if the conditions are met (controlled by the `scope`
 attribute).
 
+
 ### The `rendering` element
 
 The `rendering` element specifies the default width and height of the
@@ -283,6 +286,7 @@ The `contents` element supports the following attributes:
     v0.8.0 you can use also pixel units (e.g. `200px`) and percentage units
     (e.g. `30%`). It's recommended to use pixel or percentage units if you don't
     need to support previous versions of WireCloud.
+
 
 ## Specific Operator metadata
 
@@ -303,3 +307,144 @@ is declared using the `scripts` element that is composed of one or more
 attributes:
 
 -   `src`: description-file-relative URL of the JavaScript file.
+
+
+## Specific Mashup metadata
+
+The figure below depicts the structure followed by `mashup` elements (and
+therefore, the structure followed by mashup descriptions):
+
+![](../images/mac_description_mashup_element.png)
+<div style="text-align: center; font-weight: bold;">The `mashup` element</div>
+
+
+### The `structure` element
+
+The `structure` element is in charge of describing the structure of the
+mashup. The figure below depicts what it looks like:
+
+![](../images/mac_description_structure_element.png)
+<div style="text-align: center; font-weight: bold;">The `structure` element</div>
+
+The `preferencevalue` element allows the modification of the initial
+values of the preferences of the final workspace.
+
+The `tab` element is used for describing each of the tab that build up
+the mashup. So this is the key element for describing the visual part of
+a mashup.
+
+The `wiring` element is used for describing the wiring/piping
+configuration of the mashup. This element also is used for describing
+the operators used in the mashup. Note that this element has the same
+name to the `wiring` element used on the root of the description, but
+this element is different in structure.
+
+
+### The `tab` element
+
+![](../images/mac_description_tab_element.png)
+<div style="text-align: center; font-weight: bold;">The `tab` element</div>
+
+The `structure` element should contain at least one `tab` element
+that represents tabs in Application Mashup GE dashboard. It has the
+following attributes
+
+-   `name`: the name of the tab
+-   `id`: the identification of the tab; this id is internal to
+    the description.
+
+The `tab` element may contain any number of `resource` elements which represent
+widget instances used in the mashup. It has the following attributes:
+
+-   `vendor`: the widget distributor
+-   `name`: name of the widget
+-   `version`: version of the widget
+-   `title`: name to be displayed in the dashboard.
+-   `readonly`: indicates if the widget can be remove from
+    the dashboard.
+-   `id`: the widget identification; this id is internal to the
+    mashup description.
+
+The `preferencevalues` and the `variablevalues` elements allows the modification
+of the initial values and the behaviour of the preferences an persistent
+variables respectively. The parametrisation of each preference/persistent
+variable is controlled by one of those elements and their attributes:
+
+-   `name`: name of the preference/persisten variable to parameterise.
+-   `value`: initial value for the preference/persistent variable. If
+    not provided, the initial value of the preference (obtained from the
+    widget description) will be used.
+-   `readonly`: indicates if the preference/persistent variable can
+    be modified.
+-   `hidden`: indicates if the user will be able to see the value for
+    this preference/persistent variable on the user interface of the
+    Application Mashup GE.
+
+The `position` element describes the widget position into the
+dashboard. It has the following attributes:
+
+-   `x`: the widget's X coordinate.
+-   `y`: the widget's Y coordinate.
+-   `z`: the widget's Z coordinate.
+
+The `rendering` element describes some characteristics of the
+widget representation. It has the following attributes:
+
+-   `width`: widget width in the dashboard.
+-   `minimized`: Boolean attribute that defines whether the widget is
+    minimized in the dashboard
+-   `layout`: widget layout in the dashboard
+-   `height`: widget height in the dashboard
+-   `fulldragboard`: Boolean attribute that describes whether the
+    widget is using all the dashboard.
+
+
+##### The Mashup's `wiring` structure element
+
+This element describes how widgets and operators in the mashup are
+connected using their output and input endpoints.
+
+![](../images/mac_description_mashup_wiring_element.png)
+<div style="text-align: center; font-weight: bold;">The mashup `wiring` element</div>
+
+The `wiring` element may contain any number of `operator` elements. An
+`operator` element defines an operator that is used in the wiring. It has the
+following attributes:
+
+-   `id`: identification of the operator; this id is internal to the
+    mashup description.
+-   `vendor`: the distributor of the operator.
+-   `name`: operator name.
+-   `version`: version of the operator.
+
+Fields `vendor`, `name` and `version` follows the same pattern defined in the
+[introduction](#introduction).
+
+The `wiring` element may contain any number of `connection`
+elements. These elements describe which output endpoints are connected
+with which input endpoints. The `connection` elements are composed
+of a `source` element and a `target` element.
+
+The `source` element defines the output endpoint of the
+connection. It has the following attributes.
+
+-   `type`: type of the element that has the output endpoint; this
+    attribute could have the values `widget` or `operator`.
+-   `id`: id of the element that has the output endpoint; this id is
+    the same as the id defined in the `resource` element if the
+    element is a widget, whereas this id is the same as the id defined
+    in the `operator` element if the element is an operator.
+-   `endpoint`: the name of the output endpoint. This name is the same
+    as the defined in the `outputenpoint` element.
+
+The `target` element defines the input endpoint of the connection.
+It has the following attributes:
+
+-   `type`: type of element that has the input endpoint; the possible
+    values of this attribute are `widget` or `operator`.
+-   `id`: id of the element that has the input endpoint; this id is
+    the same as the id defined in the `resource` element if the
+    element is a widget, whereas this id is the same as the id defined
+    in the `operator` element if the element is an operator.
+-   `endpoint`: the name of the input endpoint; this name is the same
+    as the defined in the `inputenpoint` element.
