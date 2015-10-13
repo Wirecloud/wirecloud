@@ -1120,18 +1120,18 @@ msgstr ""
 
 #: static/js/wirecloud/Tutorials/BasicConcepts.js:169
 msgid "Tutorials"
-msgstr "Tutoiales"
+msgstr "Ver tutoriales"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:182
-msgid "Mashup Wiring Design"
+msgid "Behaviour Oriented Wiring"
 msgstr "Wiring Orientado a Comportamientos"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:183
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:187
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:205
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:208
-msgid "Mashup Wiring Design Tutorial"
-msgstr "Tutorial de Wiring Orientado a Comportamientos"
+msgid "Behaviour Oriented Wiring Tutorial"
+msgstr "Tutorial del Wiring Orientado a Comportamientos"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:183
 msgid ""
@@ -1141,28 +1141,28 @@ msgid ""
 "are going to convert an application mashup created using a wiring "
 "configuration that doesn't use the behaviour engine to one that does.</p>"
 msgstr ""
-"<p>¡Bienvenido a este tutoría interactivo!</p><p>En este tutoría vas a "
-"aprender como construir una configuración de wiring <strong>orientada a "
-"comportamientos</strong>, una nueva funcionalidad añadida en la versión "
-"0.8.0 de WireCloud.</p><p>Para esto, vamos a convertir una aplicación "
-"composicional que usa una configuración de wiring que no usa el motor de "
-"comportamientos en una que sí.</p>"
+"<p>¡Bienvenido a este tutorial interactivo!</p><p>En este tutorial vamos a"
+" aprender a cómo configurar un <strong>wiring orientado a"
+" comportamientos</strong>; una nueva funcionalidad disponible a partir de"
+" WireCloud v0.8.0.</p><p>Para ello, vamos a convertir un mashup cuyo"
+" wiring no hace uso del motor de comportamientos en uno que sí lo haga.</p>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:186
-msgid "MWD Tutorial"
-msgstr "Tutorial WOC"
+msgid "BOW Tutorial"
+msgstr "Tutorial del WOC"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:187
 msgid ""
 "<p><span class=\"label label-success\">Great!</span> We are now ready to "
 "start. Let's start by identifying the behaviours we want to model.</p><div "
 "class=\"alert alert-info\">We have installed a mashup into your account "
-"(<strong>MWD-Tutorial</strong>), you can remove it safetly.</div>"
+"(<strong>BOW-Tutorial</strong>), you can remove it safetly.</div>"
 msgstr ""
-"<p><span class=\"label label-success\">Genial!</span> Ya estamos listos para "
-"comenzar. Empecemos por identificar los comportamientos que queremos modelar."
-"</p><div class=\"alert alert-info\">Hemos instalado un mashup en tu cuenta "
-"(<strong>MWD-Tutorial</strong>), puedes eliminarlo sin peligro.</div>"
+"<p><span class=\"label label-success\">Excelente!</span> Una vez listo el"
+" entorno de trabajo, vamos a identificar los comportamientos visibles en este"
+" mashup.</p><div class=\"alert alert-info\">Se ha instalado el mashup"
+" <strong>BOW-Tutorial</strong> en esta cuenta, el cual puedes borrar sin"
+" problemas.</div>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:190
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:193
@@ -1183,11 +1183,11 @@ msgstr ""
 msgid ""
 "We want to be able to <strong>type the name of a technician</strong> ..."
 msgstr ""
-"Queremos se capaces de <strong>introducir el nombre de un técnico</strong> …"
+"Queremos ser capaces de <strong>escribir el nombre de un técnico</strong> …"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:192
 msgid "... and <strong>find him</strong> in the technician list."
-msgstr "… y <strong>encontrarlo</strong> en la lista de técnicos."
+msgstr "… y <strong>encontrarlo</strong> en esta lista de técnicos."
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:193
 msgid ""
@@ -1251,8 +1251,8 @@ msgid ""
 "<p>Once identified the desired behaviours, we're going to create them in the "
 "Wiring Editor view.</p>"
 msgstr ""
-"<p>Una vez identificados los comportamientos deseados, vamos a crearlos en "
-"la vista del Editor de Wiring<p>"
+"<p>Una vez identificados los comportamientos deseados, vamos a diseñarlos desde"
+" la vista de <em>Editor del Wiring</em>.</p>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:206
 msgid "Click <em>Wiring</em>"
@@ -1265,15 +1265,14 @@ msgid ""
 "converting this wiring configuration into a behaviour oriented configuration "
 "is enabling the behaviour engine.</p>"
 msgstr ""
-"<p>Como puedes ver, ya tenemos todas las conexiones y componentes que "
-"necesitamos para implementar los comportamientos identificados. El primer "
-"paso para convertir esta configuración de wiring en una configuración de "
-"wiring orientada a comportamientos es activar el motor de comportamientos.</"
-"p>"
+"<p>Como podemos ver, las conexiones necesarias para crear los comportamientos"
+" identificados anteriormente ya estan presentes en el wiring.</p><p>El"
+" primer paso para convertir la configuración del wiring en una orientada a"
+" comportamientos es activar el motor de comportamientos.</p>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:209
 msgid "Click <em>List Behaviours</em>"
-msgstr "Haz click en <em>Lista de comportamientos</em>"
+msgstr "Haz click en <em>Listar comportamientos</em>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:211
 msgid "Enable the behaviour engine"
@@ -1295,10 +1294,10 @@ msgid ""
 "<strong>creating the second behaviour</strong> (Display technician profiles)."
 "</p>"
 msgstr ""
-"<p>Cuando se activa el motor de comportamientos, se crea un comportamiento "
-"por defecto con todas los componentes y conexiones existentes.</p><p>Vamos a "
-"continuar <strong>creando el segundo comportamiento</strong> (Mostrar los "
-"perfiles de los técnicos).</p>"
+"<p>Una vez activado el motor de comportamientos, se crea un comportamiento"
+" por defecto que incluye todos los componentes y las conexiones existentes."
+"</p><p>Ahora, vamos a <strong>diseñar el segundo comportamiento</strong>"
+" (Mostrar los perfiles de los técnicos).</p>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:216
 msgid "Click <em>Create behaviour</em>"
@@ -1306,7 +1305,7 @@ msgstr "Haz click en <em>Crear comportamiento</em>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:217
 msgid "We have to fill the <strong>title</strong> ..."
-msgstr "Tenemos que rellenar el <strong>titulo</strong> …"
+msgstr "Rellenamos el <strong>título</strong> …"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:217
 msgid "Display technician profiles"
@@ -1340,14 +1339,14 @@ msgid ""
 "used by the default behaviour created when we enabled the behaviour engine.</"
 "p>"
 msgstr ""
-"<p>Ahora lo que tenemos que hacer es añadir algunos de los componentes y "
-"conexiones que esta ahora mismo en el comportamiento creado por defecto al "
-"activar el motor de comportamientos.</p>"
+"<p>Ahora vamos a añadir las conexiones necesarias para este comportamiento,"
+" las cuales ya se encuentran disponibles en el comportamiento creado por"
+" defecto.</p>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:222
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:223
 msgid "Click <em>Add</em>"
-msgstr "Haz click en <em>Añadir</em>"
+msgstr "Haz click en <em>Añadir conexión</em>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:224
 msgid ""
@@ -1360,15 +1359,15 @@ msgid ""
 "\">The third and the fourth behaviour can be created the same way, so we are "
 "going to create them for you.</div>"
 msgstr ""
-"<p><span class=\"label label-success\">Genial!</span> Hemos terminado "
-"nuestro primer comportamiento. ¿Te has dado cuenta que cuando hemos añadido "
+"<p><span class=\"label label-success\">Excelente!</span> Ya tenemos nuestro"
+" primer comportamiento terminado. ¿Te has dado cuenta que cuando hemos añadido "
 "las conexiones también se han añadido los componentes implicados? Esto nos "
 "ha evitado algunos pasos :).</p><p>De todas formas, también puedes añadir "
 "directamente los componentes, de una forma muy similar, haciendo click en su "
 "botón <em>Añadir</em> (en este caso las conexiones implicadas no se añaden "
-"de forma automática)</p><div class=\"alert alert-info\">El tercer y el "
-"cuarto comportamiento se puede crear de la misma forma, así que vamos a "
-"crearlos por ti.</div>"
+"de forma automática)</p><div class=\"alert alert-info\">A continuación, el"
+" tercer y el cuarto comportamiento serán creados automaticamente dado que el"
+" diseño es similar.</div>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:225
 msgid "The <strong>third behaviour</strong> was created."
@@ -1402,11 +1401,11 @@ msgid ""
 "convert it into our real first behaviour: Allow techinican searches.</"
 "p><p>We're going to start by updating the behaviour's details.</p>"
 msgstr ""
-"<p>El último paso es limpiar nuestro primer comportamiento dado que "
-"actualmente contiene todos los componentes y todas las conexiones de la "
-"configuración del wiring. Tenemos que convertirlo en nuestro primer "
-"comportamiento: Permitir la búsqueda de técnicos.</p><p>Vamos a empezar por "
-"actualizar los detalles del comportamiento.</p>"
+"<p>Como último paso, vamos a configurar el comportamiento creado por defecto"
+" como nuestro primer comportamiento (Permitir la búsqueda de técnicos).</p><p>Para"
+" ello, vamos a modificar los detalles del comportamiento y también, limpiar"
+" el wiring del comportamiento debido a que actualmente contiene todos los"
+" componentes y las conexiones de la configuración del wiring.</p>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:234
 msgid "Active the first behaviour"
@@ -1418,7 +1417,7 @@ msgstr "Haz click en <em>Preferencias</em>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:237
 msgid "We have to change the <strong>title</strong> ..."
-msgstr "Tenemos que cambiar el <strong>titulo</strong> …"
+msgstr "Cambiamos el <strong>título</strong> …"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:237
 msgid "Allow technician searches"
@@ -1433,13 +1432,13 @@ msgid ""
 "<p>In this case there are components and connections that are not part of "
 "this behaviour. Let's remove them.</p>"
 msgstr ""
-"<p>En este caso, hay componentes y conexiones que no forman parte de este "
-"comportamiento. Vamos a eliminarlos.</p>"
+"<p>Esta vez vamos a borrar los componentes que no forman parte de este "
+"comportamiento.</p>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:241
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:243
 msgid "Click <em>Delete</em>"
-msgstr "Haz click en <em>Borrar</em>"
+msgstr "Haz click en <em>Borrar componente</em>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:244
 msgid ""
@@ -1450,13 +1449,13 @@ msgid ""
 "similar way clicking on their <em>Remove</em> button (take into account that "
 "associated components are no removed automatically in that case)</p>"
 msgstr ""
-"<p><span class=\"label label-success\">Genial!</span> Hemos limpiado este "
-"comportamiento con éxito. ¿Te has dado cuenta de que cuando hemos eliminado "
+"<p><span class=\"label label-success\">Excelente!</span> Ya tenemos listo el"
+" primer comportamiento. ¿Te has dado cuenta de que cuando hemos eliminado "
 "los componentes también se han eliminado las conexiones implicadas? Esta nos "
 "ha evitado, otra vez, algunos pasos :).</p><p>De todas formas, también "
 "puedes eliminar directamente las conexiones, de una forma muy similar, "
 "haciendo click en su botón <em>Eliminar</em> (en este caso, los componentes "
-"no serán eliminados de forma automática)</p>"
+"no serán eliminados de forma automática).</p>"
 
 #: static/js/wirecloud/Tutorials/MashupWiringDesign.js:247
 msgid "Try It Yourself"
@@ -1469,10 +1468,9 @@ msgid ""
 "p><p>This is the end of this tutorial, but you can play with the example "
 "dashboard and check if it follow the described behaviours.</p>"
 msgstr ""
-"<p><span class=\"label label-success\">¡Enhorabuena!</span> has terminado tu "
-"primera configuración de wiring <em>orientada a comportamientos</em>.</"
-"p><p>Este es el final de este tutorial, pero puedes continuar jugando con el "
-"panel de ejemplo para comprobar si este sigue los comportamientos descritos."
+"<p><span class=\"label label-success\">¡Enhorabuena!</span> Has terminado tu "
+"primera configuración de un wiring <em>orientado a comportamientos</em>.</"
+"p><p>Aunque este tutorial acabe aquí, usted puede continuar jugando con este ejemplo y de este modo, comprobar si sigue los comportamientos descritos anteriormente."
 "</p>"
 
 #: static/js/wirecloud/Tutorials/uploadMashup.js:100
@@ -1542,7 +1540,7 @@ msgstr "Aceptar"
 #: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:70
 #: static/js/wirecloud/ui/WiringEditor/ConnectionPrefs.js:87
 msgid "Logs"
-msgstr "Registros"
+msgstr "Ver registros"
 
 #: static/js/wirecloud/ui/IWidgetMenuItems.js:71
 msgid "Upgrade/Downgrade"
@@ -2119,15 +2117,16 @@ msgstr "Conexiones"
 
 #: static/js/wirecloud/ui/WiringEditor.js:363
 msgid "Hello, welcome to the Wiring Editor view!"
-msgstr "Hola, ¡Bienvenido al editor de Wiring!"
+msgstr "¡Bienvenido al editor del wiring!"
 
 #: static/js/wirecloud/ui/WiringEditor.js:364
 msgid ""
 "In this view you can connect all the components of your dashboard in a "
 "visual way."
 msgstr ""
-"En esta vista puedes conectar todos los componentes del panel de una forma "
-"visual."
+"Desde esta pantalla, usted puede conectar visualmente todos los componentes"
+" (operadores/widgets), accesibles desde el entorno de trabajo actual, de una"
+" forma fácil e intuitiva."
 
 #: static/js/wirecloud/ui/WiringEditor.js:370
 msgid ""
@@ -2135,9 +2134,8 @@ msgid ""
 "drop components (operators/widgets) from the sidebar for being able to "
 "connect them as you wish."
 msgstr ""
-"Abre el panel lateral usando el botón <em>Buscar componentes</em> para poder "
-"arrastrar y soltar componentes (operadores/widgets) desde el panel lateral y "
-"poder conectarlos como quieras."
+"Haz click en el botón <em>Buscar componentes</em> para arrastrar y soltar los"
+" componentes desde un panel lateral y después conectarlos como usted desee."
 
 #: static/js/wirecloud/ui/WiringEditor.js:379
 msgid "Find components"
@@ -2145,7 +2143,7 @@ msgstr "Buscar componentes"
 
 #: static/js/wirecloud/ui/WiringEditor.js:389
 msgid "List behaviours"
-msgstr "Lista de comportamientos"
+msgstr "Listar comportamientos"
 
 #: static/js/wirecloud/ui/WiringEditor.js:599
 msgid "The widget %(id)s (%(uri)s) does not exist."
@@ -2216,8 +2214,8 @@ msgid ""
 "The following operation is irreversible and removes the behaviour "
 "completely. Would you like to continue?"
 msgstr ""
-"Esta operación es irreversible y eliminara el comportamiento por completo. "
-"¿Deseas continuar?"
+"Esta operación es irreversible y elimina el comportamiento por completo. "
+"¿Desea continuar?"
 
 #: static/js/wirecloud/ui/WiringEditor/Behaviour.js:369
 msgid "No, thank you"
@@ -2243,7 +2241,7 @@ msgstr "Activar"
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:61
 msgid "Identified behaviours"
-msgstr "Comportamientos identificados"
+msgstr "Comportamientos"
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:67
 msgid "New feature"
@@ -2264,34 +2262,34 @@ msgstr ""
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:101
 msgid "Disable"
-msgstr "Deshabilitar"
+msgstr "Desactivar"
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:367
 msgid "The behaviour (%(title)s) was loaded."
-msgstr "El comportamiento (%(title)s) fue cargado."
+msgstr "El comportamiento (%(title)s) ha sido cargado correctamente."
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:673
 msgid ""
 "The behaviours will be removed but the components and connections will still "
 "exist, would you like to continue?"
 msgstr ""
-"El comportamiento será eliminado, pero los componentes y las conexiones "
-"seguirán existiendo. ¿Deseas continuar?"
+"Los comportamientos serán eliminados pero los componentes y las conexiones "
+"seguirán existiendo. ¿Desea continuar?"
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:744
 msgid ""
 "The %(type)s <strong>\"%(title)s\"</strong> will be removed, would you like "
 "to continue?"
 msgstr ""
-"El %(tope)s <strong>”%(title)s”</strong> será borrado. ¿Quieres continuar?"
+"El %(type)s <strong>”%(title)s”</strong> será borrado. ¿Desea continuar?"
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:764
 msgid ""
 "The %(type)s <strong>\"%(title)s\"</strong> will be <strong>definitely</"
 "strong> removed, would you like to continue?"
 msgstr ""
-"El %(tope)s <strong>”%(title)s”</strong> será borrado de forma "
-"<strong>definitiva</strong>. ¿Quieres continuar?"
+"El %(type)s <strong>”%(title)s”</strong> será borrado de forma "
+"<strong>definitiva</strong>. ¿Desea continuar?"
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourLogManager.js:41
 msgid "%(behaviour_title)s's logs"
@@ -2303,7 +2301,7 @@ msgstr "volátil"
 
 #: static/js/wirecloud/ui/WiringEditor/Component.js:137
 msgid "no endpoints"
-msgstr "Sin conectores"
+msgstr "sin conectores"
 
 #: static/js/wirecloud/ui/WiringEditor/Component.js:142
 msgid "in use"
@@ -2330,11 +2328,11 @@ msgstr "Borrar en cascada"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:130
 msgid "Expand"
-msgstr "Expandir"
+msgstr "Expandir conectores"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:132
 msgid "Collapse"
-msgstr "Plegar"
+msgstr "Contraer conectores"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:138
 msgid "Stop ordering"
@@ -2342,20 +2340,20 @@ msgstr "Dejar de ordenar"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:140
 msgid "Order endpoints"
-msgstr "Ordenar los endpoints"
+msgstr "Ordenar conectores"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:148
 #: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:99
 msgid "Rename %(type)s"
-msgstr "Renombre %(tope)s"
+msgstr "Renombrar %(type)s"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentMeta.js:45
 msgid "Create"
-msgstr "Crear"
+msgstr "Crear componente"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:48
 msgid "Available components"
-msgstr "Componentes disponibles"
+msgstr "Componentes"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:80
 msgid "No operators"
@@ -2366,7 +2364,7 @@ msgid ""
 "No operator in your current account. Go to the Marketplace view or the My "
 "Resources view to install or uploading at least one operator."
 msgstr ""
-"No tienes operadores en tu cuenta. Ve a la vista de Marketplace o a la vista "
+"No hay ningún operador en tu cuenta. Ve a la vista de Marketplace o a la vista "
 "de Mis Recursos para instalar o subir al menos un operador."
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:104
@@ -2395,7 +2393,7 @@ msgstr "Arrastrar & soltar"
 
 #: static/js/wirecloud/ui/WiringEditor/ConnectionPrefs.js:90
 msgid "Restore defaults"
-msgstr "Restaurar"
+msgstr "Restaurar valores por defecto"
 
 #: static/js/wirecloud/ui/WiringEditor/ConnectionPrefs.js:116
 msgid "Stop customizing"
@@ -2407,7 +2405,7 @@ msgstr "Personalizar"
 
 #: static/js/wirecloud/wiring/Connection.js:90
 msgid "The connection ('%(source)s'-'%(target)s') was established."
-msgstr "La conexión (‘%(source)s’-‘%(target)s’) se ha establecido."
+msgstr "La conexión (‘%(source)s’-‘%(target)s’) se ha establecido correctamente."
 
 #: static/js/wirecloud/wiring/Connection.js:98
 msgid "The connection ('%(source)s'-'%(target)s') was detached."
@@ -2416,11 +2414,11 @@ msgstr "La conexión (‘%(source)s’-‘%(target)s’) se ha eliminado."
 #: static/js/wirecloud/wiring/Connection.js:121
 msgid "The connection ('%(source)s'-'%(target)s') has a missing endpoint."
 msgstr ""
-"La conexión (‘%(source)s’-‘%(target)s’) implica a un endpoint inexistente."
+"La conexión (‘%(source)s’-‘%(target)s’) implica a un conector inexistente."
 
 #: static/js/wirecloud/wiring/ConnectionLogManager.js:50
 msgid "Connection's logs"
-msgstr "Registro de la conexión"
+msgstr "Registros de la conexión"
 
 #: static/js/wirecloud/wiring/Endpoint.js:41
 msgid "Unimplemented function: %(funcName)s"
@@ -2437,15 +2435,15 @@ msgstr "Registros de %(component_type)s"
 #: static/js/wirecloud/wiring/MissingEndpoint.js:36
 #: static/js/wirecloud/wiring/MissingEndpoint.js:64
 msgid "No description provided"
-msgstr "No se ha proporcionado una descripción"
+msgstr "No se ha proporcionado una descripción."
 
 #: static/js/wirecloud/wiring/Operator.js:323
 msgid "The operator (%(title)s) was loaded."
-msgstr "El operador (%(title)s) fue cargado"
+msgstr "El operador (%(title)s) ha sido cargado correctamente."
 
 #: static/js/wirecloud/wiring/Operator.js:332
 msgid "The operator (%(title)s) was unloaded."
-msgstr "El operador (%(title)s) fue descargado."
+msgstr "El operador (%(title)s) ha sido descargado."
 
 #: static/js/wirecloud/wiring/OperatorLogManager.js:50
 msgid "%(operator_title)s's logs"
