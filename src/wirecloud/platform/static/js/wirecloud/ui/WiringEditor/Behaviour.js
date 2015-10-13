@@ -19,7 +19,7 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* global StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -54,14 +54,14 @@
             }
 
             this.btnPrefs = new se.PopupButton({
-                title: gettext("Preferences"),
+                title: utils.gettext("Preferences"),
                 extraClass: "btn-show-prefs",
                 iconClass: "icon-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.BehaviourPrefs(this));
 
             this.btnRemove = new se.Button({
-                title: gettext("Remove"),
+                title: utils.gettext("Remove"),
                 extraClass: "btn-remove",
                 iconClass: "icon-remove-sign"
             });
@@ -104,8 +104,8 @@
         statics: {
 
             JSON_TEMPLATE: {
-                title: gettext("New behaviour"),
-                description: gettext("No description provided."),
+                title: utils.gettext("New behaviour"),
+                description: utils.gettext("No description provided."),
                 active: false,
                 components: {operator: {}, widget: {}},
                 connections: []
@@ -362,13 +362,11 @@
         /* jshint validthis:true */
         var dialog, message;
 
-        message = gettext("The following operation is irreversible " +
-            "and removes the behaviour completely. " +
-            "Would you like to continue?");
+        message = utils.gettext("The following operation is irreversible and removes the behaviour completely. Would you like to continue?");
 
         dialog = new Wirecloud.ui.AlertWindowMenu({
-            acceptLabel: gettext("Continue"),
-            cancelLabel: gettext("No, thank you")
+            acceptLabel: utils.gettext("Continue"),
+            cancelLabel: utils.gettext("No, thank you")
         });
         dialog.setMsg(message);
         dialog.acceptHandler = function () {
@@ -380,10 +378,10 @@
     var displayUpdateForm = function displayUpdateForm() {
         /* jshint validthis:true */
         var dialog = new Wirecloud.ui.FormWindowMenu([
-                {name: 'title', label: gettext("Title"), type: 'text'},
-                {name: 'description', label: gettext("Description"), type: 'longtext'}
+                {name: 'title', label: utils.gettext("Title"), type: 'text'},
+                {name: 'description', label: utils.gettext("Description"), type: 'longtext'}
             ],
-            gettext("Behaviour settings"),
+            utils.gettext("Behaviour settings"),
             'behaviour-update-form');
 
         dialog.executeOperation = function (data) {

@@ -78,7 +78,7 @@
             this.components.operator.alert = new se.Alert({
                 state: 'info',
                 title: gettext("No operators"),
-                message: gettext("No operator in your current account. Go to inventory for uploading at least one.")
+                message: gettext("No operator in your current account. Go to the Marketplace view or the My Resources view to install or uploading at least one operator.")
             });
             this.components.operator.container
                 .appendChild(this.components.operator.alert);
@@ -102,7 +102,7 @@
             this.components.widget.alert = new se.Alert({
                 state: 'info',
                 title: gettext("No widgets"),
-                message: gettext("No widget in your current workspace. Go to dashboard for adding at least one.")
+                message: gettext("No widget in your current workspace. Go to the Editor view for adding at least one view.")
             });
             this.components.widget.container
                 .appendChild(this.components.widget.alert);

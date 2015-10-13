@@ -331,7 +331,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             _create_new_behaviour(workspace.wiringStatus['visualdescription'], _("Original wiring"), _("This is the wiring description of the original workspace"))
 
         if len(mashup_description['wiring']['visualdescription']['behaviours']) == 0:
-            _create_new_behaviour(mashup_description['wiring']['visualdescription'], _("Merged wiring"), _("This is the wiring descriptoin of the merged mashup."))
+            _create_new_behaviour(mashup_description['wiring']['visualdescription'], _("Merged wiring"), _("This is the wiring description of the merged mashup."))
 
         workspace.wiringStatus['visualdescription']['behaviours'] += mashup_description['wiring']['visualdescription']['behaviours']
 

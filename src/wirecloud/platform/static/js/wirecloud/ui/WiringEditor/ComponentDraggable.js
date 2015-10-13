@@ -19,7 +19,7 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* global StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -47,14 +47,14 @@
             options = utils.updateObject(ns.ComponentDraggable.JSON_TEMPLATE, options);
 
             this.btnPrefs = new se.PopupButton({
-                title: gettext("Preferences"),
+                title: utils.gettext("Preferences"),
                 extraClass: "btn-show-prefs",
                 iconClass: "icon-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.ComponentDraggablePrefs(this));
 
             this.btnRemove = new se.Button({
-                title: gettext("Remove"),
+                title: utils.gettext("Remove"),
                 extraClass: "btn-remove",
                 iconClass: "icon-remove-sign"
             });
@@ -642,8 +642,9 @@
     };
 
     var notifyErrors = function notifyErrors() {
-        var title, count = this._component.logManager.getErrorCount();
+        var title, label, count;
 
+        count = this._component.logManager.getErrorCount();
         if (count || this.missing) {
 
             if (!this.heading.has(this.heading.notice)) {
@@ -651,9 +652,10 @@
             }
 
             if (this.missing) {
-                title = gettext("Missing");
+                title = utils.gettext("Missing");
             } else {
-                title = utils.interpolate(gettext("%(count)s error(s)"), {
+                label = utils.ngettext("%(count)s error", "%(count)s errors", count);
+                title = utils.interpolate(label, {
                     count: count
                 });
             }

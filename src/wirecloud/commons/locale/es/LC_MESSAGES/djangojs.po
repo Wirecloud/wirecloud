@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-06 20:25+0200\n"
+"POT-Creation-Date: 2015-10-13 11:17+0200\n"
 "PO-Revision-Date: 2015-03-26 20:36+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -55,7 +55,8 @@ msgstr "Los siguientes campos no continene un e-mail válido: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:78
 msgid "The following field do not contain a valid version number: %(fields)s."
-msgstr "Los siguientes campos no continen un número de versión válido: %(fields)s."
+msgstr ""
+"Los siguientes campos no continen un número de versión válido: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:81
 msgid "The following fields contain invalid characters: %(fields)s."
@@ -63,7 +64,8 @@ msgstr "Los siguientes campos contienen carácteres inválidos: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:84
 msgid "The following fields do not contain a valid color value: %(fields)s."
-msgstr "Los siguientes campos no contienen un valor de color válido: %(fields)s."
+msgstr ""
+"Los siguientes campos no contienen un valor de color válido: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:87
 msgid "The following fields does contain an out of range value: %(fields)s."
@@ -72,6 +74,11 @@ msgstr "Los siguientes campos contienen un valor fuera de rango: %(fields)s."
 #: static/js/StyledElements/ModelTable.js:52
 msgid "Sort by %(column_name)s"
 msgstr "Ordenar por %(column_name)s"
+
+#: static/js/StyledElements/Notebook.js:104
+#: static/js/StyledElements/Notebook.js:107
+msgid "Add Tab"
+msgstr "Añadir pestaña"
 
 #: static/js/StyledElements/PaginationInterface.js:81
 msgid ""
@@ -85,12 +92,7 @@ msgstr ""
 "org/1999/xhtml\"><t:firstBtn/><t:prevBtn/><div class=\"box\">Página: <t:"
 "currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>"
 
-#: static/js/StyledElements/StyledNotebook.js:104
-#: static/js/StyledElements/StyledNotebook.js:107
-msgid "Add Tab"
-msgstr "Añadir pestaña"
-
-#: static/js/StyledElements/Utils.js:678
+#: static/js/StyledElements/Utils.js:869
 msgid "N/A"
 msgstr "N/A"
 
@@ -152,10 +154,6 @@ msgstr ""
 msgid "Keywords..."
 msgstr "Texto de búsqueda"
 
-#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:82
-msgid "Next"
-msgstr "Siguiente"
-
 #: static/js/wirecloud/ui/TutorialCatalogue.js:51
 msgid "If you prefer, you can follow some of these tutorials:"
 msgstr "Si lo prefieres, puedes seguir alguno de los siguientes tutoriales:"
@@ -163,3 +161,7 @@ msgstr "Si lo prefieres, puedes seguir alguno de los siguientes tutoriales:"
 #: static/js/wirecloud/ui/TutorialSubMenu.js:8
 msgid "Tutorials"
 msgstr "Tutoriales"
+
+#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:82
+msgid "Next"
+msgstr "Siguiente"

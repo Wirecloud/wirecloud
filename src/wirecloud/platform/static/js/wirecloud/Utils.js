@@ -22,3 +22,4 @@
 Wirecloud.Utils = StyledElements.Utils;
 
 Wirecloud.Utils.gettext = gettext;
+Wirecloud.Utils.ngettext = ngettext;

@@ -596,7 +596,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
 
         for (id in visualWidgets) {
-            message = utils.gettext("The widget (%(id)s) of '%(uri)s' does not exist.");
+            message = utils.gettext("The widget %(id)s (%(uri)s) does not exist.");
             widget = new Wirecloud.wiring.MissingWidget(id, this.workspace.wiring, visualWidgets[id], message);
             this.createComponent(widget, visualWidgets[id]);
         }

@@ -33,10 +33,17 @@ if (window.StyledElements == null) {
     var Utils = {};
 
     /**
-     * Overwrite this method for supporting translations
+     * Overwrite the following method for supporting translations
      */
     Utils.gettext = function gettext(text) {
         return text;
+    };
+
+    /**
+     * Overwrite the following method for supporting translations
+     */
+    Utils.ngettext = function ngettext(singular, plural, count) {
+        return (count == 1) ? singular : plural;
     };
 
     /**

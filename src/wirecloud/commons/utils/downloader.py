@@ -46,7 +46,7 @@ def download_http_content(url, user=None):
 
     parsed_url = urlparse(url)
     if parsed_url.scheme not in ('http', 'https'):
-        raise requests.exceptions.InvalidSchema(_('Invalid schema: %s') % parsed_url.scheme)
+        raise requests.exceptions.InvalidSchema(_('Invalid schema: %(schema)s') % {"schema": parsed_url.scheme})
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (%(system)s %(machine)s;U) Wirecloud/%(wirecloud_version)s python-requests/%(requests_version)s' % VERSIONS,

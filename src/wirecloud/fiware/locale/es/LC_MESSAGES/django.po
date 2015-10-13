@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-30 17:59+0200\n"
+"POT-Creation-Date: 2015-10-13 11:23+0200\n"
 "PO-Revision-Date: 2015-03-30 18:00+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.7.5\n"
 
-#: plugins.py:164
+#: plugins.py:188
 msgid "FIWARE version"
 msgstr "Versión de FIWARE"
 
-#: plugins.py:165
+#: plugins.py:189
 msgid "FIWARE version of the platform"
 msgstr "La versión de FIWARE de la plataforma"
 
-#: plugins.py:168
+#: plugins.py:192
 msgid "FIWARE token available"
 msgstr "Token de FIWARE disponible"
 
-#: plugins.py:169
+#: plugins.py:193
 msgid ""
 "Indicates if the current user has associated a FIWARE auth token that can be "
 "used for accessing other FIWARE resources"
@@ -38,11 +38,11 @@ msgstr ""
 "Indica si el usuario actual tiene asociado un token de autenticación de "
 "FIWARE que puede ser usado para acceder a otros servicios de FIWARE"
 
-#: proxy.py:36
+#: proxy.py:48
 msgid "IdM support not enabled"
 msgstr "Integración con el IdM no activado"
 
-#: proxy.py:38
+#: proxy.py:50
 msgid ""
 "IdM tokens can only be inyected on Ajax requests coming from authorized "
 "widgets"
@@ -50,28 +50,28 @@ msgstr ""
 "Los tokens del IdM solo pueden ser inyectados en las peticiones Ajax que "
 "venga de widget autorizados"
 
-#: proxy.py:50
+#: proxy.py:59
 msgid "Current user has not an active FIWARE profile"
 msgstr "El usuario actual no tiene un perfil de FIWARE activo"
 
-#: proxy.py:55
+#: proxy.py:61
 msgid "Workspace owner has not an active FIWARE profile"
 msgstr "El dueño del entorno de trabajo no tiene un perfil de FIWARE activo"
 
-#: proxy.py:57
+#: proxy.py:63
 msgid "Invalid FIWARE OAuth token source"
 msgstr "Token OAuth de FIWARE inválido"
 
-#: marketAdaptor/usdlParser.py:76
+#: marketAdaptor/usdlParser.py:77
 msgid "Error the document has not a valid rdf format"
 msgstr "Error - El documento no tiene un formato RDF válido"
 
-#: marketAdaptor/usdlParser.py:82
+#: marketAdaptor/usdlParser.py:83
 #, python-format
 msgid "Error parsing rdf document: %s"
 msgstr "Error pareando el documento RDF: %s"
 
-#: marketAdaptor/usdlParser.py:91
+#: marketAdaptor/usdlParser.py:92
 msgid "Error the document is not a valid usdl document"
 msgstr "Error - el documento no es un documento USDL válido"
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-27 11:31+0100\n"
-"PO-Revision-Date: 2015-03-26 20:31+0100\n"
+"POT-Creation-Date: 2015-10-13 11:16+0200\n"
+"PO-Revision-Date: 2015-10-13 11:17+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,54 +16,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.5\n"
 
-#: models.py:61
+#: models.py:60
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: models.py:62
+#: models.py:61
 msgid "Name"
 msgstr "Nombre"
 
-#: models.py:63
+#: models.py:62
 msgid "Version"
 msgstr "Versión"
 
-#: models.py:64
+#: models.py:63
 msgid "Type"
 msgstr "Tipo"
 
-#: models.py:68
+#: models.py:67
 msgid "Available to all users"
 msgstr "Disponible para todos los usuarios"
 
-#: models.py:69
+#: models.py:68
 msgid "Users"
 msgstr "Usuarios"
 
-#: models.py:70
+#: models.py:69
 msgid "Groups"
 msgstr "Grupos"
 
-#: models.py:73
+#: models.py:72
 msgid "templateURI"
 msgstr "templateURI"
 
-#: models.py:75
+#: models.py:74
 msgid "popularity"
 msgstr "popularidad"
 
-#: models.py:77
+#: models.py:76
 msgid "JSON description"
 msgstr "Descripción en JSON"
 
-#: utils.py:111
+#: utils.py:161
 #, python-format
 msgid "Missing contents file: %(file_name)s."
 msgstr "Falta el fichero con los contenidos: %(file_name)s."
 
-#: utils.py:117
+#: utils.py:167
 #, python-format
 msgid ""
 "%(file_name)s was not encoded using the specified charset (%(charset)s "
@@ -72,63 +72,58 @@ msgstr ""
 "El fichero %(file_name)s no está codificado usando el conjunto de caracteres "
 "indicado (%(charset)s según el fichero de descripción del widget)."
 
-#: utils.py:163
+#: utils.py:233
 #, python-format
 msgid "user %(username)s is not the owner of the resource %(resource_id)s"
 msgstr "el usuario %(username)s no es el dueño del recurso %(resource_id)s"
 
-#: views.py:94
+#: views.py:87 views.py:221
 msgid "Missing parameter: template_uri or file"
 msgstr "Faltan el parámetro template_uri o file"
 
-#: views.py:102
+#: views.py:95
 msgid "Resource already exists"
 msgstr "Ya existe el recurso"
 
-#: views.py:121
+#: views.py:114
 #, python-format
 msgid "Orderby value not supported: %s"
 msgstr "Valor para el parámetro orderby no soportado: %s"
 
-#: views.py:127
+#: views.py:120
 #, python-format
 msgid "Scope value not supported: %s"
 msgstr "Valor para el parámetro scope no soportado: %s"
 
-#: views.py:130
+#: views.py:123
 msgid "Forbidden"
 msgstr "Prohibido"
 
-#: views.py:181
+#: views.py:177
 msgid "Invalid prefix value (it cannot contain spaces)"
 msgstr "Valor inválido para el parámetro limit (no puede contener espacios)"
 
-#: views.py:188
+#: views.py:184
 msgid "Invalid limit value (it must be positive integer)"
 msgstr ""
 "Valor inválido para el parámetro limit (tiene que ser un entero positivo)"
 
-#: views.py:203
-#, python-format
-msgid "malformed json data: %s"
-msgstr "datos json malformados: %s"
-
-#: views.py:238
+#: views.py:241
 msgid "Error opening the changelog file"
 msgstr "Error abriendo el fichero de registro de cambios"
 
-#: views.py:258
+#: views.py:267
 #, python-format
 msgid ""
-"You can find the documentation of this resource in this external <a target="
+"You can find the userguide of this component in this external <a target="
 "\"_blank\" href=\"%s\">link</a>"
 msgstr ""
 "Puedes encontrar la documentación de este recurso in este <a target=\"_blank"
-"\" href=\"%s\">enlace externo</a>."
+"\" href=\"%s\">enlace externo</a>"
 
-#: views.py:274
-msgid "Error opening the documentation file"
-msgstr "Error abriendo el fichero de documentación"
+#: views.py:283
+msgid "Error opening the userguide file"
+msgstr "Error abriendo el fichero de la guía de usuario"
 
 #: management/commands/addtocatalogue.py:65
 msgid "Wrong number of arguments"
@@ -158,6 +153,12 @@ msgid "Failed to import the mashable application component from %(file_name)s"
 msgstr ""
 "Fallo la importación del componente de aplicación mashable desde "
 "%(file_name)s"
+
+#~ msgid "malformed json data: %s"
+#~ msgstr "datos json malformados: %s"
+
+#~ msgid "Error opening the documentation file"
+#~ msgstr "Error abriendo el fichero de documentación"
 
 #~ msgid "Description"
 #~ msgstr "Descripción"
