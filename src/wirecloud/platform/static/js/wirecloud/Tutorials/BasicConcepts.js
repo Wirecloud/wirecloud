@@ -120,7 +120,7 @@
             {'type': 'userAction', 'msg': gettext("Click <em>Wiring</em> to continue"), 'elem': BS.toolbar_button('icon-puzzle-piece'), 'pos': 'downLeft'},
 
             // WiringEditor
-            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>")},
+            {'type': 'simpleDescription', 'title': gettext('WireCloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring Editor</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>")},
             {'type': 'userAction', 'msg': gettext("Click <em>Find components</em> to open the sidebar"), 'elem': BS.toolbar_button('icon-archive'), 'pos': 'downLeft'},
             {'type': 'autoAction', 'elem': BS.toolbar_button('icon-archive'), 'action': BA.sleep(250)},
             {'type': 'userAction', 'msg': gettext("Click <em>Widgets</em>"), 'elem': BS.button('.wiring-sidebar .btn-list-widget-group'), 'pos': 'downLeft'},
