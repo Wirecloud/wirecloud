@@ -183,7 +183,7 @@
         {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext("<p>Welcome to this Step-by-Step Interactive Tutorial!</p><p>In this tutorial you will learn how to build a <strong>behaviour oriented</strong> wiring configuration, a new feature added in WireCloud v0.8.0.</p><p>To do so, we are going to convert an application mashup created using a wiring configuration that doesn't use the behaviour engine to one that does.</p>")},
         {type: 'autoAction', action: BA.uploadComponent('CoNWeT/BOW-Tutorial/0.0.3')},
         {type: 'autoAction', action: BA.switch_view('workspace')},
-        {type: 'autoAction', action: BA.create_workspace({name: utils.gettext("Behaviour Wiring Tutorial"), mashup: 'CoNWeT/BOW-Tutorial/0.0.3'})},
+        {type: 'autoAction', action: BA.create_workspace({name: utils.gettext("BOW Tutorial"), mashup: 'CoNWeT/BOW-Tutorial/0.0.3'})},
         {type: 'simpleDescription', title: utils.gettext("Behaviour Oriented Wiring Tutorial"), msg: utils.gettext('<p><span class="label label-success">Great!</span> We are now ready to start. Let\'s start by identifying the behaviours we want to model.</p><div class="alert alert-info">We have installed a mashup into your account (<strong>BOW-Tutorial</strong>), you can remove it safetly.</div>')},
 
         // Step 1: identify behaviours
@@ -228,7 +228,7 @@
             ]), pos: 'topRight', action: BA.sleep(2000)},
         {type: 'autoAction', msg: utils.gettext("The <strong>fourth behaviour</strong> was created."), elem: wiringView.auto_create_behaviour(utils.gettext("Allow videocalls with the technicians"), utils.gettext("Allow to stablish a videocall with the selected technician."), [
                 {source: {type: "operator", title: "Technical Service", endpoint: "technician"}, target: {type: "widget", title: "Technician List", endpoint: "technician"}},
-                {source: {type: "widget", title: "Technician List"), endpoint: "technician-username"}, target: {type: "widget", title: "Technician VideoCall", endpoint: "call-user"}}
+                {source: {type: "widget", title: "Technician List", endpoint: "technician-username"}, target: {type: "widget", title: "Technician VideoCall", endpoint: "call-user"}}
             ]), pos: 'topRight', action: BA.sleep(2000)},
         {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>The last step is cleaning up our first behaviour as it currently contains all the components and connections of the wiring configuration. We have to convert it into our real first behaviour: Allow techinican searches.</p><p>We're going to start by updating the behaviour's details.</p>")},
         {type: 'userAction', msg: utils.gettext("Active the first behaviour"), elem: wiringView.behaviour_title_by_id(0), pos: 'topRight'},
@@ -239,7 +239,7 @@
         {type: 'userAction', msg: utils.gettext("Click <em>Accept</em>"), elem: wiringView.accept_form(".behaviour-update-form"), pos: 'topRight'},
         {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>In this case there are components and connections that are not part of this behaviour. Let's remove them.</p>")},
         {type: 'userAction', msg: utils.gettext("Click <em>Delete</em>"), elem: wiringView.component_button_by_title("widget", "Technician VideoCall", "remove"), pos: 'topRight'},
-        {type: 'userAction', msg: "Click <em>Delete</em>", elem: wiringView.component_button_by_title("widget", "Technician Profile", "remove"), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>Delete</em>"), elem: wiringView.component_button_by_title("widget", "Technician Profile", "remove"), pos: 'topRight'},
         {type: 'userAction', msg: utils.gettext("Click <em>Delete</em>"), elem: wiringView.component_button_by_title("widget", "Technician Location", "remove"), pos: 'topRight'},
         {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p><span class=\"label label-success\">Great!</span> We have cleaned up this behaviour successfully. Have you noticed that when we removed the components also the affected connections were removed? That saved us, again, some steps :).</p><p>Anyway, you can also directly remove connections in a similar way clicking on their <em>Remove</em> button (take into account that associated components are no removed automatically in that case)</p>")},
 
