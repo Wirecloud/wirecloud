@@ -1,6 +1,6 @@
 FIWARE Application Mashup - Widget API Specification
 ====================================================
-Date: 30th September 2015
+Date: 13th January 2015
 
 This version:
 
