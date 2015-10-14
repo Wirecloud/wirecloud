@@ -41,6 +41,12 @@ class TestQueryResult(object):
     def __iter__(self):
         return self.result.__iter__()
 
+    def __getitem__(self, index):
+        return self.result[index]
+
+    def exists(self):
+        return len(self.result) > 0
+
     def count(self):
         return len(self.result)
 
@@ -540,3 +546,18 @@ class PlatformSouthMigrationsTestCase(TestCase):
         migration = self._pick_migration('0028_allow_null_field_iwidget_widget')
         orm = Mock(autospec=migration.prev_orm())
         self.assertRaises(RuntimeError, migration.migration_instance().backwards, orm)
+
+    def test_remove_local_catalogue_from_markets_forwards(self):
+        migration = self._pick_migration('0029_remove_local_catalogue_from_markets')
+        orm = Mock(autospec=migration.orm())
+        orm.Market.objects.filter.return_value = TestQueryResult([])
+        migration.migration_instance().forwards(orm)
+
+    def test_remove_local_catalogue_from_markets_forwards_exists(self):
+        migration = self._pick_migration('0029_remove_local_catalogue_from_markets')
+        orm = Mock(autospec=migration.orm())
+        orm.Market.objects.filter.return_value = TestQueryResult([Mock(url=None)])
+        migration.migration_instance().forwards(orm)
+
+    def test_remove_local_catalogue_from_markets_backwards(self):
+        self.check_basic_migration_backwards('0029_remove_local_catalogue_from_markets')
