@@ -1406,6 +1406,24 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("cached hello world!", response.content.decode('utf-8'))
 
+    def test_widget_code_entry_html_in_folder(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
+        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+
+        HTML_CODE = b"<html><head></head><body>infolder test!</body></html>"
+        xhtml = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0').widget.xhtml
+        xhtml.url = "Wirecloud/Test/1.0/html/index.html"
+        xhtml.save()
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        with patch('wirecloud.platform.widget.views.download_local_file', return_value=HTML_CODE):
+            response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("infolder test!", response.content.decode('utf-8'))
+
     def test_widget_code_absolute_url(self):
 
         widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}

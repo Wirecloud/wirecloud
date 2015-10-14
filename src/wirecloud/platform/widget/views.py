@@ -83,7 +83,7 @@ class WidgetCodeEntry(Resource):
             # Newer versions of Django urlencode urls created using reverse
             # Fix double encoding
             base_url = urlunquote(base_url)
-            base_url = get_absolute_reverse_url('wirecloud.showcase_media', args=(base_url.split('/', 4)), request=request)
+            base_url = get_absolute_reverse_url('wirecloud.showcase_media', args=(base_url.split('/', 3)), request=request)
             force_base = True
 
         code = xhtml.code
