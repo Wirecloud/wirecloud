@@ -126,30 +126,29 @@ def parse_wiring_old_version(wiring_status):
 
     # set up business description
 
-    if 'operators' in wiring_status:
-        for operator_id, operator in wiring_status['operators'].items():
-            for preference_id, preference in operator['preferences'].items():
-                if 'readOnly' in preference and 'readonly' not in preference:
-                    preference['readonly'] = preference['readOnly']
-                    del preference['readOnly']
+    for operator_id, operator in wiring_status.get('operators', {}).items():
+        for preference_id, preference in operator.get('preferences', {}).items():
+            if 'readOnly' in preference and 'readonly' not in preference:
+                preference['readonly'] = preference['readOnly']
+            if 'readOnly' in preference:
+                del preference['readOnly']
 
-            new_version['operators'][operator_id] = operator
+        new_version['operators'][operator_id] = operator
 
-    if 'connections' in wiring_status:
-        for connection in wiring_status['connections']:
-            new_version['connections'].append({
-                'readonly': connection.get('readonly', connection.get('readOnly', False)),
-                'source': {
-                    'type': rename_component_type(connection['source']['type']),
-                    'id': connection['source']['id'],
-                    'endpoint': connection['source']['endpoint']
-                },
-                'target': {
-                    'type': rename_component_type(connection['target']['type']),
-                    'id': connection['target']['id'],
-                    'endpoint': connection['target']['endpoint']
-                }
-            })
+    for connection in wiring_status.get('connections', []):
+        new_version['connections'].append({
+            'readonly': connection.get('readonly', connection.get('readOnly', False)),
+            'source': {
+                'type': rename_component_type(connection['source']['type']),
+                'id': connection['source']['id'],
+                'endpoint': connection['source']['endpoint']
+            },
+            'target': {
+                'type': rename_component_type(connection['target']['type']),
+                'id': connection['target']['id'],
+                'endpoint': connection['target']['endpoint']
+            }
+        })
 
     # set up visual description
 
