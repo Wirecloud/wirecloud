@@ -9,17 +9,17 @@ class Migration(DataMigration):
             icon_position = widget.icon_position
             if icon_position is not None:
                 widget.positions['icon'] = {
-                    'top': icon_position.posX,
-                    'left': icon_position.posY
+                    'top': icon_position.posX if icon_position.posX >= 0 else 0,
+                    'left': icon_position.posY if icon_position.posY >= 0 else 0,
                 }
 
             position = widget.position
             widget.positions['widget'] = {
-                'top': position.posX,
-                'left': position.posY,
-                'zIndex': position.posZ,
-                'height': position.height,
-                'width': position.width,
+                'top': position.posX if position.posX >= 0 else 0,
+                'left': position.posY if position.posY >= 0 else 0,
+                'zIndex': position.posZ if position.posZ >= 0 else 0,
+                'height': position.height if position.height > 0 else 1,
+                'width': position.width if position.width > 0 else 1,
                 'minimized': position.minimized,
                 'fulldragboard': position.fulldragboard,
             }

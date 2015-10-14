@@ -453,15 +453,43 @@ class PlatformSouthMigrationsTestCase(TestCase):
         iwidget2.position.minimized = False
         iwidget2.position.fulldragboard = False
 
+        iwidget3 = Mock()
+        iwidget3.positions = {}
+        iwidget3.icon_position.posX = -1
+        iwidget3.icon_position.posY = 5
+        iwidget3.position.posX = -7
+        iwidget3.position.posY = 2
+        iwidget3.position.posZ = 3
+        iwidget3.position.height = 10
+        iwidget3.position.width = 20
+        iwidget3.position.minimized = False
+        iwidget3.position.fulldragboard = False
+
+        iwidget4 = Mock()
+        iwidget4.positions = {}
+        iwidget4.icon_position.posX = 3
+        iwidget4.icon_position.posY = -5
+        iwidget4.position.posX = 1
+        iwidget4.position.posY = -2
+        iwidget4.position.posZ = -3
+        iwidget4.position.height = 0
+        iwidget4.position.width = -4
+        iwidget4.position.minimized = False
+        iwidget4.position.fulldragboard = False
+
         migration = self._pick_migration('0023_widget_positions')
         orm = Mock(autospec=migration.orm())
-        orm.IWidget.objects.all.return_value = TestQueryResult([iwidget1, iwidget2])
+        orm.IWidget.objects.all.return_value = TestQueryResult([iwidget1, iwidget2, iwidget3, iwidget4])
         migration.migration_instance().forwards(orm)
 
         self.assertEqual(iwidget1.save.call_count, 1)
         self.assertEqual(iwidget1.positions, {"widget": {"top": 1, "left": 2, "zIndex": 3, "height": 10, "width": 20, "minimized": False, "fulldragboard": False}})
         self.assertEqual(iwidget2.save.call_count, 1)
         self.assertEqual(iwidget2.positions, {"icon": {"top": 0, "left": 0}, "widget": {"top": 1, "left": 2, "zIndex": 3, "height": 10, "width": 20, "minimized": False, "fulldragboard": False}})
+        self.assertEqual(iwidget3.save.call_count, 1)
+        self.assertEqual(iwidget3.positions, {"icon": {"top": 0, "left": 5}, "widget": {"top": 0, "left": 2, "zIndex": 3, "height": 10, "width": 20, "minimized": False, "fulldragboard": False}})
+        self.assertEqual(iwidget4.save.call_count, 1)
+        self.assertEqual(iwidget4.positions, {"icon": {"top": 3, "left": 0}, "widget": {"top": 1, "left": 0, "zIndex": 0, "height": 1, "width": 1, "minimized": False, "fulldragboard": False}})
 
     def test_widget_positions_backwards(self):
         migration = self._pick_migration('0023_widget_positions')
