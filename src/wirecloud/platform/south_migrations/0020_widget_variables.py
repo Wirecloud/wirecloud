@@ -21,7 +21,8 @@ class Migration(DataMigration):
             variables = {}
 
             for variable in iwidget.variable_set.all():
-                variables[variable.vardef.name] = parse_value_from_text({"type": TYPE_MAPPING[variable.vardef.type]}, variable.value)
+                variables[variable.vardef.name] = parse_value_from_text({"type": TYPE_MAPPING[variable.vardef.type], "default": variable.vardef.default_value}, variable.value)
+
 
             iwidget.variables = variables
             iwidget.save()

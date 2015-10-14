@@ -26,12 +26,15 @@ from wirecloud.platform.models import IWidget, Tab
 
 def parse_value_from_text(info, value):
     if info['type'] == 'boolean':
-        if isinstance(value, text_type):
-            return value.strip().lower() in ('true', '1', 'on')
-        else:
-            return bool(value)
+        return value.strip().lower() in ('true', '1', 'on')
     elif info['type'] == 'number':
-        return float(value)
+        try:
+            return float(value)
+        except:
+            try:
+                return float(info['default'])
+            except:
+                return 0
     elif info['type'] in ('list', 'text', 'password'):
         return text_type(value)
 

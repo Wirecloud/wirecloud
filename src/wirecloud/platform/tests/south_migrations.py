@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import json
 import os
 
@@ -374,26 +376,24 @@ class PlatformSouthMigrationsTestCase(TestCase):
 
     def test_widget_variables_forwards(self):
 
-        var1 = Mock()
+        var1 = Mock(vardef=Mock(type='B'), value='true')
         var1.vardef.name = 'bool'
-        var1.vardef.type = 'B'
-        var1.value = "true"
-
-        var2 = Mock()
+        var2 = Mock(vardef=Mock(type='N'), value='2')
         var2.vardef.name = 'number'
-        var2.vardef.type = 'N'
-        var2.value = "2"
-
-        var3 = Mock()
+        var3 = Mock(vardef=Mock(name='text', type='S'), value='hello world')
         var3.vardef.name = 'text'
-        var3.vardef.type = 'S'
-        var3.value = "hello world"
+        var4 = Mock(vardef=Mock(type='B'), value='2')
+        var4.vardef.name = 'bool2'
+        var5 = Mock(vardef=Mock(type='N', default_value='3'), value='true')
+        var5.vardef.name = 'number2'
+        var6 = Mock(vardef=Mock(type='N'), value='true')
+        var6.vardef.name = 'number3'
 
         empty_iwidget = Mock()
         empty_iwidget.variable_set.all.return_value = []
 
         iwidget = Mock()
-        iwidget.variable_set.all.return_value = [var1, var2, var3]
+        iwidget.variable_set.all.return_value = [var1, var2, var3, var4, var5, var6]
 
         migration = self._pick_migration('0020_widget_variables')
         orm = Mock(autospec=migration.orm())
@@ -402,7 +402,14 @@ class PlatformSouthMigrationsTestCase(TestCase):
 
         self.assertEqual(empty_iwidget.save.call_count, 1)
         self.assertEqual(iwidget.save.call_count, 1)
-        self.assertEqual(iwidget.variables, {"bool": True, "number": 2.0, "text": "hello world"})
+        self.assertEqual(iwidget.variables, {
+            "bool": True,
+            "bool2": False,
+            "number": 2.0,
+            "number2": 3,
+            "number3": 0,
+            "text": "hello world",
+        })
 
     def test_widget_variables_backwards(self):
         migration = self._pick_migration('0020_widget_variables')
