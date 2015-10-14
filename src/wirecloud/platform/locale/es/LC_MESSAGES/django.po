@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-13 10:58+0200\n"
+"POT-Creation-Date: 2015-10-14 22:37+0200\n"
 "PO-Revision-Date: 2015-10-13 11:00+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -231,17 +231,17 @@ msgstr "Versión rechazada"
 msgid "Read Only"
 msgstr "Sólo lectura"
 
-#: iwidget/utils.py:70 iwidget/utils.py:83
+#: iwidget/utils.py:73 iwidget/utils.py:86
 #, python-format
 msgid "Field %(field)s must contain a number value"
 msgstr "El campo %(field)s tiene que contener un valor númerico"
 
-#: iwidget/utils.py:73 iwidget/utils.py:86
+#: iwidget/utils.py:76 iwidget/utils.py:89
 #, python-format
 msgid "Invalid value for %(field)s"
 msgstr "Valor inválido para el campo %(field)s"
 
-#: iwidget/utils.py:123
+#: iwidget/utils.py:126
 #, python-format
 msgid "%(uri)s is not a widget"
 msgstr "%(uri)s no es un widget"
@@ -251,7 +251,7 @@ msgid "You have not enough permission for adding iwidgets to the workspace"
 msgstr ""
 "No tienes permisos suficientes para añadir nuevos widgets en el workspace"
 
-#: iwidget/views.py:70 iwidget/views.py:124
+#: iwidget/views.py:70 iwidget/views.py:129
 #, python-format
 msgid "refered widget %(widget_uri)s does not exist."
 msgstr "el widget referenciado %(widget_uri)s no existe."
@@ -263,37 +263,41 @@ msgstr ""
 "No tienes suficientes permisos para actualizar las instancias de los widgets "
 "de este entorno de trabajo"
 
-#: iwidget/views.py:117
+#: iwidget/views.py:93
+msgid "Widget {id} does not exist"
+msgstr "El widget {id} no existe"
+
+#: iwidget/views.py:122
 msgid "You have not enough permission for updating the iwidget"
 msgstr ""
 "No tienes suficientes permisos para actualizar está instancia de widget"
 
-#: iwidget/views.py:140
+#: iwidget/views.py:145
 msgid "You have not enough permission for removing iwidgets from the workspace"
 msgstr ""
 "No tienes suficientes permisos para eliminar widgets del entorno de trabajo"
 
-#: iwidget/views.py:144
+#: iwidget/views.py:149
 msgid "IWidget cannot be deleted"
 msgstr "El Widget no puede ser borrado"
 
-#: iwidget/views.py:161
+#: iwidget/views.py:166
 msgid ""
 "You have not enough permission for updating the preferences of the iwidget"
 msgstr ""
 "No tienes suficientes permisos para actualizar las preferencias del widget"
 
-#: iwidget/views.py:173
+#: iwidget/views.py:178
 #, python-format
 msgid "Invalid preference: \"%s\""
 msgstr "Preferencia inválida: \"%s\""
 
-#: iwidget/views.py:177
+#: iwidget/views.py:182
 #, python-format
 msgid "\"%s\" preference is read only."
 msgstr "La preferencia \"%s\" es de sólo lectura."
 
-#: iwidget/views.py:195
+#: iwidget/views.py:200
 msgid ""
 "You have not enough permission for updating the persistent variables of this "
 "widget"
@@ -301,7 +305,7 @@ msgstr ""
 "No tienes permisos suficientes para actualizar la variable persistente del "
 "widget"
 
-#: iwidget/views.py:205
+#: iwidget/views.py:210
 #, python-format
 msgid "Invalid persistent variable: \"%s\""
 msgstr "Variable persistente inválida: \"%s\""

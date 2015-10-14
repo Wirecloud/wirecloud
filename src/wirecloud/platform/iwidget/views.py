@@ -90,7 +90,7 @@ class IWidgetCollection(Resource):
             try:
                 UpdateIWidget(iwidget, request.user, tab)
             except IWidget.DoesNotExist:
-                return build_error_response(request, 422, _("Widget %(id)s does not exist.").format(id=iwidget.get('id')))
+                return build_error_response(request, 422, _("Widget {id} does not exist").format(id=iwidget.get('id')))
             except ValueError as e:
                 return build_error_response(request, 422, e)
 
