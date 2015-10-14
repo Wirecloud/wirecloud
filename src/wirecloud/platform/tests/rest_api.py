@@ -1362,10 +1362,40 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_iwidget_collection_put_requires_permission(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
-        data = {
-            '1': {}
-        }
+        data = [
+            {'id': 1, 'icon_left': 0}
+        ]
         check_put_requires_permission(self, url, json.dumps(data))
+
+    def test_iwidget_collection_put_invalid_value(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 2, 'tab_id': 101})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = [
+            {'id': 1, 'icon_left': -1}
+        ]
+        response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_iwidget_collection_put_nonexistent_iwidget(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 2, 'tab_id': 101})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = [
+            {'id': 1234, 'icon_left': 0}
+        ]
+        response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
 
     def test_iwidget_collection_put_bad_request_content_type(self):
 

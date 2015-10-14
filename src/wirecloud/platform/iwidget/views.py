@@ -87,7 +87,12 @@ class IWidgetCollection(Resource):
             return build_error_response(request, 403, msg)
 
         for iwidget in iwidgets:
-            UpdateIWidget(iwidget, request.user, tab)
+            try:
+                UpdateIWidget(iwidget, request.user, tab)
+            except IWidget.DoesNotExist:
+                return build_error_response(request, 422, _("Widget %(id)s does not exist.").format(id=iwidget.get('id')))
+            except ValueError as e:
+                return build_error_response(request, 422, e)
 
         return HttpResponse(status=204)
 
