@@ -19,12 +19,13 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from distutils.cmd import Command
-from distutils.command.sdist import sdist as distutils_sdist
 from distutils.command.install import INSTALL_SCHEMES
 import os
 import re
 from setuptools import setup
-from setuptools.command.install import install as distutils_install
+from distutils.command.build import build as distutils_build
+from setuptools.command.install import install as setuptools_install
+from setuptools.command.sdist import sdist as setuptools_sdist
 import sys
 
 import wirecloud.platform
@@ -50,11 +51,18 @@ class bcolors:
         self.ENDC = ''
 
 
-class sdist(distutils_sdist):
+class build(distutils_build):
 
     """Customized setuptools build command - compile po files before creating the distribution package."""
 
-    sub_commands = [('compiletranslations', None)] + distutils_sdist.sub_commands
+    sub_commands = [('compiletranslations', None)] + distutils_build.sub_commands
+
+
+class sdist(setuptools_sdist):
+
+    """Customized setuptools sdist command - compile po files before creating the distribution package."""
+
+    sub_commands = [('compiletranslations', None)] + setuptools_sdist.sub_commands
 
 
 class compiletranslations(Command):
@@ -92,11 +100,11 @@ class compiletranslations(Command):
         os.chdir(oldwd)
 
 
-class install(distutils_install):
+class install(setuptools_install):
 
     """Customized setuptools install command - prints info about the license of Wirecloud after installing it."""
     def run(self):
-        distutils_install.run(self)
+        setuptools_install.run(self)
 
         print('')
         print(bcolors.HEADER + 'License' + bcolors.ENDC)
@@ -189,6 +197,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ),
     cmdclass={
+        'build': build,
         'install': install,
         'sdist': sdist,
         'compiletranslations': compiletranslations
