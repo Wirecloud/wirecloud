@@ -153,7 +153,8 @@ instructions if you are using the IdM integration:
     1. replace `social_auth` with `social.apps.django_app.default` in the
     `INSTALLED_APPS` setting
     2. replace `wirecloud.fiware.social_auth_backend.FiwareBackend` with
-    `wirecloud.fiware.social_auth_backend.FIWAREOAuth2`
+    `wirecloud.fiware.social_auth_backend.FIWAREOAuth2` in the
+    `AUTHENTICATION_BACKENDS` setting.
     3. rename `FIWARE_APP_ID` to `SOCIAL_AUTH_FIWARE_KEY` and
     `FIWARE_APP_SECRET` to `SOCIAL_AUTH_FIWARE_SECRET`
 3. Edit your `urls.py` file and replace:
@@ -168,7 +169,13 @@ instructions if you are using the IdM integration:
         url('', include('social.apps.django_app.urls', namespace='social'))
     ```
 
-4. Now you can remove django-social-auth :). E.g.:
+4. Fake `python-social-auth` migrations (it uses the same dabase schema than `django-social-auth`):
+
+   ```
+   python manage.py migrate default --fake
+   ```
+
+5. Now you can remove django-social-auth :). E.g.:
 
     ```
     pip uninstall django-social-auth
