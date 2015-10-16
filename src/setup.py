@@ -22,6 +22,7 @@ from distutils.cmd import Command
 from distutils.command.sdist import sdist as distutils_sdist
 from distutils.command.install import INSTALL_SCHEMES
 import os
+import re
 from setuptools import setup
 from setuptools.command.install import install as distutils_install
 import sys
@@ -112,17 +113,18 @@ for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
 
-def include_data_files(path):
+def include_data_files(path, exclude):
+    exclude = re.compile(exclude)
     for dirpath, dirnames, filenames in os.walk(path):
         # Ignore dirnames that start with '.'
         for i, dirname in enumerate(dirnames):
-            if dirname.startswith('.'):
+            if dirname.startswith('.') or dirname in ("__pycache__", "guidebuilder"):
                 del dirnames[i]
         if '__init__.py' not in filenames:
-            data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
+            data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames if not exclude.match(f)]])
 
 data_files.append(['wirecloud', ['LICENSE']])
-include_data_files('wirecloud')
+include_data_files('wirecloud', exclude=".*\.(py[co]|po)")
 
 
 extra_requirements = ()
