@@ -203,7 +203,7 @@ mashup, go to the FIWARE Lab marketplace and install them using the
 You can also download them using the following URLs:
 
 -   [CoNWeT_simple-history-module2linear-graph_2.3.2.wgt](attachments/CoNWeT_simple-history-module2linear-graph_2.3.2.wgt)
--   [CoNWeT_ngsi-source_3.0.2.wgt](attachments/CoNWeT_ngsi-source_3.0.2.wgt)
+-   [CoNWeT_ngsi-source_3.0.4.wgt](attachments/CoNWeT_ngsi-source_3.0.4.wgt)
 -   [CoNWeT_ngsientity2poi_3.0.3.wgt](attachments/CoNWeT_ngsientity2poi_3.0.3.wgt)
 -   [CoNWeT_map-viewer_2.5.7.wgt](attachments/CoNWeT_map-viewer_2.5.7.wgt)
 -   [CoNWeT_linear-graph_3.0.0b3.wgt](attachments/CoNWeT_linear-graph_3.0.0b3.wgt)
@@ -269,21 +269,27 @@ You will then be presented with a dropdown menu with several options.
     currently outside the grid, in this case, this option docks the
     widget into the grid.
 
-Finally, click on the settings and you will be prompted with a
+Finally, click on the **Settings** and you will be prompted with a
 customised dialog for the settings of the widget. In this example, the
 *Map Viewer* should be provided with initial location, zoom level and
 mark shadow radius to customise the visualisation.
 
 ![building_mashup/25.png](images/user_guide/building_mashup/25.png)
 
-After configuring the settings, the widget will show the new location,
-Santander, with the new zoom.
+As we have configure the initial position and the initial zoom, we need to
+reload the widget. To do so, we click again on the properties icon and then on
+the *Reload* option:
 
-![building_mashup/26.png](images/user_guide/building_mashup/26.png)
+![Reload option](images/user_guide/building_mashup/MapViewer_reload.png)
+
+Now we have our widget centered in the new location, Santander, and using the
+configured initial zoom level.
+
+![MapViewer widget after being configured](images/user_guide/building_mashup/MapViewer_configured.png)
 
 At this time, you have created a mashup with two individual widgets. The
-Linear Graph widget is empty and need to be wired with something that
-provides information to draw, and the Map Viewer is a good option to
+*Linear Graph* widget is empty and need to be wired with something that
+provides information to draw, and the *Map Viewer* is a good option to
 show any kind of "Points of Interest" and allow the user to select them
 easily.
 
@@ -306,8 +312,8 @@ view of the tool:
 
 ![building_mashup/28.png](images/user_guide/building_mashup/28.png)
 
-You will then be presented with the set of widgets currently added to
-the workspace and the set of operators currently available:
+You will then be presented with an empty wiring configuration (denoted by an
+empty canvas displaying a welcome message):
 
 ![wiring/Empty_Wiring_Operators.png](images/user_guide/wiring/Empty_Wiring_Operators.png)
 
@@ -332,16 +338,32 @@ then click on the *Create* button:
 ![Create operator](images/user_guide/wiring/Click_Create_Operator.png)
 
 This will create an instance of that operator and will appear in the bottom of
-the box associated with the "NGSI Operator". You can see that it is highlighted
-incating that the new operator is not used in the wiring configuration. All
-operators not used when leaving the wiring editor will be removed from the
-wiring configuration.
+the box associated with the *NGSI Source* operator. You can see that it is
+highlighted indicating that the new operator is not used in the wiring
+configuration. All operators not used when leaving the wiring editor will be
+removed from the wiring configuration.
 
 Now drag the operator from the operator list to the wiring canvas:
 
 ![wiring/Wiring_NGSISource_drag.png](images/user_guide/wiring/Wiring_NGSISource_drag.png)
 
 ![wiring/Wiring_NGSISource.png](images/user_guide/wiring/Wiring_NGSISource.png)
+
+Once added, we need to configure it so it knows what info to retrieve from the
+[Orion Context Broker] and from what instance. To do so, click on the
+**Settings** menu entry:
+
+![NGSI Source Settings option](images/user_guide/wiring/NGSISource_settings.png)
+
+And make sure the following configuration is used:
+
+- **NGSI server URL**: `http://orion.lab.fiware.org:1026/`
+- **NGSI proxy URL**: `https://ngdsfsiproxy.lab.fiware.org`
+- **Use the FIWARE credentials of the user**: Enabled
+- **Use the FIWARE credentials of the workspace owner**: Disabled
+- **NGSI entity types**: `Node, AMMS, Regulator`
+- **Id pattern**: Empty
+- **Monitored NGSI attributes**: `Latitud, Longitud, presence, batteryCharge, illuminance, ActivePower, ReactivePower, electricPotential, electricalCurrent`
 
 Now, we have the source of information that is going to be presented in
 the *Map Viewer* widget. So we need to add it to the wiring status
@@ -383,19 +405,28 @@ operator to the *Insert/Update PoI* endpoint on the *Map Viewer* widget:
 
 ![wiring/Wiring_End_1st_ph.png](images/user_guide/wiring/Wiring_End_1st_ph.png)
 
+Once again, we need to configure the *NGSI Entity To PoI* operator, this is done
+in the same way as we have done with the *NGSI Source*. In this case the values
+should be:
+
+- **Coordinates attribute**: `Latitud, Longitud`
+- **Marker Icon**: Empty
+
 If you return to the *Editor* view, you will see that the map widget has
 been updated and is showing the PoIs obtained from the *NGSI source*
 operator.
 
-![wiring/32.png](images/user_guide/wiring/32.png)
+![Map Viewer widget displaying shome PoIs](images/user_guide/wiring/MapViewer_with_entities.png)
 
 You can use the *Map Viewer* moving the viewport, selecting PoI's, etc.
 But in really, what we have is just the *Map Viewer* widget connected to
 a source of data, but using piping and transformation operators that is
 going to give us a great flexibility.
 
-![wiring/MapViewerWithEntities.png](images/user_guide/wiring/MapViewerWithEntities.png)
+![Map Viewer widget displaying the details of an entity](images/user_guide/wiring/MapViewer_entity_details.png)
 
+
+[Orion Context Broker]: http://catalogue.fiware.org/enablers/publishsubscribe-context-broker-orion-context-broker
 
 #### Other wiring common tasks
 
@@ -437,12 +468,6 @@ widget/operator. Anyway, just in case you have difficulties, you can see
 the final result in the following screenshot:
 
 ![wiring/FinalWiring.png](images/user_guide/wiring/FinalWiring.png)
-
-Operators, like widget has also settings that can be modified using the
-following steps:
-
-![wiring/HistoryOperatorSettings1.png](images/user_guide/wiring/HistoryOperatorSettings1.png)
-![wiring/HistoryOperatorSettings2.png](images/user_guide/wiring/HistoryOperatorSettings2.png)
 
 Now you can play with your new workspace.
 

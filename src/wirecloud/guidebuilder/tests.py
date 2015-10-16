@@ -38,7 +38,7 @@ if __test__ is True:
 
 USER_GUIDE_IMAGES_PATH = '../docs/images/user_guide'
 list_resources = ['CoNWeT_simple-history-module2linear-graph_2.3.2.wgt',
-                  'CoNWeT_ngsi-source_3.0.2.wgt',
+                  'CoNWeT_ngsi-source_3.0.4.wgt',
                   'CoNWeT_ngsientity2poi_3.0.3.wgt',
                   'CoNWeT_linear-graph_3.0.0b3.wgt',
                   'CoNWeT_map-viewer_2.5.7.wgt']
@@ -63,7 +63,7 @@ def image_path(name='Wirecloud_UG.png', extra=None, resource=False, prepath=None
     return os.path.join(basepath, name)
 
 
-def take_capture(driver, name='Wirecloud_UG.png', extra=None, prepath = None):
+def take_capture(driver, name='Wirecloud_UG.png', extra=None, prepath=None):
     path = image_path(name, extra, prepath=prepath)
     driver.save_screenshot(path)
     return path
@@ -76,7 +76,7 @@ def midd_take_capture(*args, **kargs):
     prepath = kargs.get("prepath")
     if kargs.get("prepath"):
         kargs.pop("prepath")
-    if len(args) > 1: # args have name
+    if len(args) > 1:  # args have name
         name = args[1]
         args = (args[0],) + args[2:]
     return globals()["take_capture"](*args, name=name, prepath=prepath, **kargs)
@@ -110,6 +110,7 @@ def crop_image(imgp, left=0, upper=0, right=None, lower=None):
     right = right if right is not None else w
     lower = lower if lower is not None else h
     image.crop((left, upper, right, lower)).save(imgp)
+
 
 def crop_down(imgp, widg, offs=10):
     lower_cut = get_position(widg, 1.0, 1.0)[1] + offs
@@ -235,7 +236,15 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             'GET', '/offering/store/FIWARE/offerings', {'content': self.store2_offerings})
 
     def configure_ngsi_source(self, source):
-        source.show_settings_modal()
+        popup = source.display_preferences()
+        setts_btn = popup.get_entry("Settings")
+        ActionChains(self.driver).move_to_element(setts_btn).perform()
+        imgp = take_capture(self.driver, prepath="wiring", name='NGSISource_settings')
+        box = create_box(popup.element, 40)
+        box = (box[0] - 120, box[1], box[2], box[3])
+        add_pointer(imgp, get_position(setts_btn, 0.8, 0.5), True)
+        crop_image(imgp, *box)
+        setts_btn.click()
 
         dialog = get_first_displayed(self.driver, '.window_menu')
         self.fill_form_input(dialog.find_element_by_css_selector('input[name="ngsi_server"]'),
@@ -323,9 +332,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_browsing_marketplace(self):
-        prepath = "browsing_marketplace"
         def take_capture(*args, **kargs):
-            return midd_take_capture(*args, prepath=prepath, **kargs)
+            return midd_take_capture(*args, prepath="browsing_marketplace", **kargs)
 
         self.driver.set_window_size(1024, 768)
         self.login()
@@ -380,12 +388,11 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             button = dialog.find_element_by_css_selector('button.se-btn:not(.btn-primary)')
             button.click()
 
-            #marketplace.switch_to('FIWARE Lab')
             # Where are my resources
             btn = self.driver.find_element_by_css_selector(
                 '.wc-toolbar .icon-archive')
             ActionChains(self.driver).move_to_element(btn).perform()
-            time.sleep(0.3) # wait tooltip animation
+            time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "Wirecloud_switch_to_local")
             add_pointer(imgp, get_position(btn, 0.8, 0.5))
             crop_down(imgp, select, 80)
@@ -398,7 +405,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 '.wc-toolbar .icon-cloud-upload')
             # Where are upload button
             ActionChains(self.driver).move_to_element(btn).perform()
-            time.sleep(0.3) # wait tooltip animation
+            time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, extra="UploadButton")
             add_pointer(imgp, get_position(btn, 0.5, 0.5))
             crop_down(imgp, myresources.search_in_results('Map Viewer').element, 80)
@@ -454,9 +461,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(list_resources)
     def test_building_mashup(self):
-        prepath = "building_mashup"
         def take_capture(*args, **kargs):
-            return midd_take_capture(*args, prepath=prepath, **kargs)
+            return midd_take_capture(*args, prepath="building_mashup", **kargs)
 
         self.driver.set_window_size(1024, 768)
         self.login()
@@ -466,7 +472,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         add_widget_button = self.driver.find_element_by_css_selector('.wc-toolbar .icon-plus')
         ActionChains(self.driver).move_to_element(add_widget_button).perform()
-        time.sleep(0.3) # wait tooltip animation
+        time.sleep(0.3)  # wait tooltip animation
         imgp = take_capture(self.driver, extra="19")
         add_pointer(imgp, get_position(add_widget_button, 0.8, 0.5))
         crop_down(imgp, self.driver.find_element_by_css_selector('.emptyWorkspaceInfoBox'))
@@ -477,7 +483,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             btn = resource.element.find_element_by_css_selector('.mainbutton')
             ActionChains(self.driver).move_to_element(btn).perform()
-            time.sleep(0.3) # wait tooltip animation
+            time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, extra=20)
             add_pointer(imgp, get_position(btn, 0.8, 0.8))
             crop_down(imgp, resource.element)
@@ -495,7 +501,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         resize_widget(self.driver, map_viewer_widget, 8, 41)
         # get the widget and crop down
         ActionChains(self.driver).move_to_element(self.driver.find_element_by_css_selector('.fiware-logo')).perform()
-        time.sleep(0.3) # Wait widget menu transition
+        time.sleep(0.3)  # Wait widget menu transition
         imgp = take_capture(self.driver, extra=22)
 
         widg_menu = map_viewer_widget.element.find_element_by_css_selector('.widget_menu')
@@ -536,10 +542,19 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         time.sleep(0.2)
 
         # Reload map viewer widget so it updates the view using the initial zoom and initial location
-        map_viewer_widget.open_menu().get_entry('Reload').click()
+        popup = map_viewer_widget.open_menu()
+        setts_btn = popup.get_entry("Reload")
+        ActionChains(self.driver).move_to_element(setts_btn).perform()
+        imgp = take_capture(self.driver, name='MapViewer_reload')
+        box = create_box(popup.element, 40)
+        box = (box[0] - 60, box[1], box[2], box[3])
+        add_pointer(imgp, get_position(setts_btn, 0.8, 0.5), True)
+        crop_image(imgp, *box)
+        setts_btn.click()
+
+        # Take a capture now that the map viewer widget is correctly placed
         map_viewer_widget.wait_loaded()
-        time.sleep(0.3)
-        imgp = take_capture(self.driver, extra=26)
+        imgp = take_capture(self.driver, name="MapViewer_configured")
         crop_image(imgp, *create_box(map_viewer_widget.element))
 
         imgp = take_capture(self.driver, extra=27)
@@ -556,11 +571,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
         crop_down(imgp, btn, 60)
 
-        prepath = "wiring"
         def take_capture(*args, **kargs):
-            return midd_take_capture(*args, prepath=prepath, **kargs)
+            return midd_take_capture(*args, prepath="wiring", **kargs)
 
-        with self.wiring_view as wiring_view:
+        with self.wiring_view:
             ActionChains(self.driver).move_by_offset(0, 50).perform()
             self.wait_element_visible_by_css_selector('.wiring-view .se-alert-static-top')
             time.sleep(0.2)
@@ -599,7 +613,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 add_pointer(imgp, get_position(ent_oper, 0.8, 0.5))
                 crop_down(imgp, ent_oper, 60)
 
-                # ActionChains(self.driver).click_and_hold(ent_oper).move_by_offset(40, 20).perform()
                 ActionChains(self.driver).click_and_hold(ent_oper).perform()
                 imgp = take_capture(self.driver, extra='Wiring_NGSISource_drag')
 
@@ -617,7 +630,10 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 add_pointer(imgp, get_position(entservc, 0.5, 0.5))
                 crop_down(imgp, entservc, 250)
 
-                conf_widg = get_by_contains(self.driver, ".panel.panel-default.component-draggable.component-operator", "NGSI source")
+                ngsi_source_operator = sidebar._find_component_by_title("operator", "NGSI source")
+
+                # Configure NGSI source
+                self.configure_ngsi_source(ngsi_source_operator)
 
                 # Add map iwidget
                 mapsercvcomp = sidebar.add_component("widget", "Map Viewer", 500, 10)
@@ -625,7 +641,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 imgp = take_capture(self.driver, extra='Wiring_NGSISource_MapViewer')
                 add_pointer(imgp, get_position(mapservc, 0.5, 0.15), False)
                 crop_down(imgp, mapservc, 10)
-
 
                 # Over label
                 labelprovideent = get_by_text(entservc, '.endpoint', 'Provide entity')
@@ -643,11 +658,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
                 poi_oper_w = sidebar._find_component_by_title("operator", "NGSI Entity To PoI")
                 poiservc = poi_oper_w.element
-                conf_widg = sidebar._find_component_by_title("operator", "NGSI source")
 
-                # configure
-                self.configure_ngsi_source(conf_widg)
-                self.configure_ngsi_entity(poi_oper_w)  # poiservc)
+                self.configure_ngsi_entity(poi_oper_w)
 
             imgp = take_capture(self.driver, extra='Wiring_NGSIEntity2PoI')
             add_pointer(imgp, get_position(poiservc, 0.5, 0.45))
@@ -691,18 +703,16 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_down(imgp, mapservc, 10)
 
         # Out wiring_view
-        time.sleep(1)
         with map_viewer_widget:
-            self.driver.execute_script('mapViewer.map.setMapTypeId("satellite");');
+            self.driver.execute_script('mapViewer.map.setMapTypeId("satellite");')
             WebDriverWait(self.driver, timeout=60).until(lambda driver: driver.execute_script('return Object.keys(mapViewer.mapPoiManager.getPoiList()).length !== 0;'))
-        time.sleep(1)
-        imgp = take_capture(self.driver, extra='32')
+        imgp = take_capture(self.driver, extra='MapViewer_with_entities')
 
         with map_viewer_widget:
-            self.driver.execute_script('mapViewer.mapPoiManager.selectPoi(new Poi({id:"OUTSMART.NODE_3509"}));mapViewer.map.setZoom(16);');
+            self.driver.execute_script('mapViewer.mapPoiManager.selectPoi(new Poi({id:"OUTSMART.NODE_3509"}));mapViewer.map.setZoom(16);')
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
-        imgp = take_capture(self.driver, extra='MapViewerWithEntities')
+        imgp = take_capture(self.driver, extra='MapViewer_entity_details')
 
         with self.wiring_view as wiring:
             cons = wiring.find_connections()
@@ -716,7 +726,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             mycon = cons[1]  # Can we know exactly if it's this?
             cprefs = mycon.display_preferences()
 
-            custb  = cprefs.get_entry("Customize")
+            custb = cprefs.get_entry("Customize")
             ActionChains(self.driver).move_to_element(custb).perform()
             time.sleep(0.2)
             imgp = take_capture(self.driver, extra='reshape_arrow_pre')
@@ -783,7 +793,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             imgp = take_capture(self.driver, extra=33)
             crop_down(imgp, mapservc, 10)
 
-
             movew = wiring.find_component_by_title("widget", "Map Viewer")
             move_elem(self.driver, movew.element, -70, 0)
 
@@ -809,25 +818,9 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             endp1.connect(endp2)
             endp3.connect(endp4)
 
-
             move_elem(self.driver, histw.element, 0, 35)
 
             take_capture(self.driver, extra='FinalWiring')
-
-            popup = histw.display_preferences()
-            setts_btn = popup.get_entry("Settings")
-            ActionChains(self.driver).move_to_element(setts_btn).perform()
-            imgp = take_capture(self.driver, extra='HistoryOperatorSettings1')
-            box = create_box(popup.element, 40)
-            box = (box[0], box[1], box[2] + 60, box[3])
-            add_pointer(imgp, get_position(setts_btn, 0.7, 0.5), True)
-            crop_image(imgp, *box)
-            setts_btn.click()
-
-            dialog = get_first_displayed(self.driver, '.window_menu')
-            imgp = take_capture(self.driver, extra='HistoryOperatorSettings2')
-            crop_image(imgp, *create_box(dialog))
-            dialog.find_element_by_css_selector('button.btn-primary.se-btn').click()
 
         with widget:
             WebDriverWait(self.driver, timeout=30).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '#loadLayer.on')))
@@ -972,7 +965,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 imgp = take_capture(self.driver, extra="remove_behaviour_button")
                 add_pointer(imgp, get_position(btnrm.element, 0.5, 0.5))
 
-
             techniciancomponent = wiring.find_component_by_title("widget", "Technician List")
             rmbtn = techniciancomponent.btn_remove
             ActionChains(self.driver).move_to_element(rmbtn.element).perform()
@@ -987,7 +979,6 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             time.sleep(0.2)
             imgp = take_capture(self.driver, extra="remove_connection")
             add_pointer(imgp, get_position(rmbtn.element, 0.5, 0.5))
-
 
             with wiring.behaviour_sidebar as behaviour:
                 behaviour.create_behaviour("Test", "Testing")
