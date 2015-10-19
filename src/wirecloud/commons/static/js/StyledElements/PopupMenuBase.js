@@ -175,6 +175,25 @@
         this.append(new StyledElements.Separator());
     };
 
+    /**
+     * Remove all child nodes from the wrapperElement.
+     * @version 0.6.1
+     *
+     * @returns {PopupMenuBase}
+     *      The instance on which the member is called.
+     */
+    PopupMenuBase.prototype.clear = function clear() {
+        var i;
+
+        if (!this.hidden) {
+            hideContent.call(this);
+        }
+
+        this._items = [];
+
+        return this;
+    };
+
     PopupMenuBase.prototype.setContext = function setContext(context) {
         this._context = context;
     };
