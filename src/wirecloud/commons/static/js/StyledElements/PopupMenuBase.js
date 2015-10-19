@@ -21,7 +21,7 @@
 
 /*global StyledElements, Wirecloud*/
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
@@ -137,6 +137,10 @@
             }
         }
 
+        Object.defineProperties(this, {
+            hidden: {get: property_hidden_get}
+        });
+
         this._items = [];
         this._dynamicItems = [];
         this._submenus = [];
@@ -189,7 +193,7 @@
     };
 
     PopupMenuBase.prototype.isVisible = function isVisible() {
-        return StyledElements.Utils.XML.isElement(this.wrapperElement.parentNode);
+        return !this.hidden;
     };
 
     PopupMenuBase.prototype.show = function show(refPosition) {
@@ -254,33 +258,19 @@
     };
 
     PopupMenuBase.prototype.hide = function hide() {
-        var i, aux;
 
-        if (!this.isVisible()) {
-            return; // This Popup Menu is already hidden => nothing to do
+        if (this.hidden) {
+            return this;
         }
 
-        this.wrapperElement.classList.add('hidden');
+        this.wrapperElement.classList.add("hidden");
         this.wrapperElement.style.bottom = "";
+        hideContent.call(this);
 
-        for (i = 0; i < this._submenus.length; i += 1) {
-            this._submenus[i].hide();
-        }
-
-        for (i = 0; i < this._dynamicItems.length; i += 1) {
-            aux = this._dynamicItems[i];
-            if (aux instanceof StyledElements.SubMenuItem) {
-                aux.hide();
-            }
-            aux.destroy();
-        }
-        this._dynamicItems = [];
-        this._submenus = [];
-        this.wrapperElement.innerHTML = '';
-        StyledElements.Utils.removeFromParent(this.wrapperElement);
-
+        utils.removeFromParent(this.wrapperElement);
         Wirecloud.UserInterfaceManager._unregisterPopup(this);
-        this.events.visibilityChange.dispatch(this);
+
+        return this.trigger('visibilityChange');
     };
 
     PopupMenuBase.prototype._menuItemEnterCallback = function _menuItemEnterCallback(menuItem) {
@@ -304,5 +294,36 @@
         StyledElements.StyledElement.prototype.destroy.call(this);
     };
 
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var property_hidden_get = function property_hidden_get() {
+        return !utils.XML.isElement(this.wrapperElement.parentNode);
+    };
+
+    var hideContent = function hideContent() {
+        var i, item;
+
+        for (i = this._submenus.length - 1; i >= 0; i--) {
+            this._submenus[i].hide();
+            this._submenus.splice(i, 1);
+        }
+
+        for (i = this._dynamicItems.length - 1; i >= 0; i--) {
+            item = this._dynamicItems[i];
+
+            if (item instanceof se.SubMenuItem) {
+                item.hide();
+            }
+
+            item.destroy();
+            this._dynamicItems.splice(i, 1);
+        }
+
+        this.wrapperElement.innerHTML = "";
+    };
+
     StyledElements.PopupMenuBase = PopupMenuBase;
-})();
+
+})(StyledElements, StyledElements.Utils);
