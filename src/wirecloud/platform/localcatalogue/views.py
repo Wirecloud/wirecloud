@@ -75,7 +75,7 @@ class ResourceCollection(Resource):
         return HttpResponse(json.dumps(resources), content_type='application/json; chatset=UTF-8')
 
     @authentication_required
-    @consumes(('application/x-www-form-urlencoded', 'application/json', 'multipart/form-data', 'application/octet-stream'))
+    @consumes(('application/json', 'multipart/form-data', 'application/octet-stream'))
     @produces(('application/json',))
     @commit_on_http_success
     def create(self, request):
@@ -108,22 +108,16 @@ class ResourceCollection(Resource):
 
             force_create = request.GET.get('force_create', 'false').strip().lower() == 'true'
             install_embedded_resources = request.GET.get('install_embedded_resources', 'false').strip().lower() == 'true'
-        else:
+        else:  # if content_type == 'application/json'
 
             market_endpoint = None
 
-            if content_type == 'application/json':
-                data = parse_json_request(request)
+            data = parse_json_request(request)
 
-                install_embedded_resources = normalize_boolean_param(request, 'install_embedded_resources', data.get('install_embedded_resources', False))
-                force_create = data.get('force_create', False)
-                templateURL = data.get('url')
-                market_endpoint = data.get('market_endpoint', None)
-
-            else:
-                force_create = request.POST.get('force_create', False) == 'true'
-                if 'url' in request.POST:
-                    templateURL = request.POST['url']
+            install_embedded_resources = normalize_boolean_param(request, 'install_embedded_resources', data.get('install_embedded_resources', False))
+            force_create = data.get('force_create', False)
+            templateURL = data.get('url')
+            market_endpoint = data.get('market_endpoint', None)
 
             if market_endpoint is not None:
 
