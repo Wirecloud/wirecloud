@@ -2255,6 +2255,55 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('name', response_data)
         self.assertIn('version', response_data)
 
+    def test_resource_collection_post_using_multipart(self):
+
+        url = reverse('wirecloud.resource_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, {"file": f}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertIn('type', response_data)
+        self.assertIn(response_data['type'], CatalogueResource.RESOURCE_TYPES)
+        self.assertIn('vendor', response_data)
+        self.assertIn('name', response_data)
+        self.assertIn('version', response_data)
+
+    def test_resource_collection_post_using_multipart_missing_file(self):
+
+        url = reverse('wirecloud.resource_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        response = self.client.post(url, data={'install_embedded_resources': True}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['description'], 'Missing component file in the request')
+
+    def test_resource_collection_post_using_multipart_invalid_zip_file(self):
+
+        url = reverse('wirecloud.resource_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'iframe_test.html'), 'rb') as f:
+            response = self.client.post(url, data={'install_embedded_resources': True, "file": f}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['description'], 'The uploaded file is not a zip file')
+
     def test_resource_collection_post_duplicated(self):
 
         url = reverse('wirecloud.resource_collection')
