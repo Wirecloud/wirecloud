@@ -189,10 +189,7 @@ class ResourceCollection(Resource):
             if resource.resource_type() == 'mashup':
                 resource_info = resource.get_processed_info(process_urls=False)
                 for embedded_resource in resource_info['embedded']:
-                    if embedded_resource['src'].startswith('https://'):
-                        resource_file = download_http_content(embedded_resource['src'])
-                    else:
-                        resource_file = BytesIO(file_contents.read(embedded_resource['src']))
+                    resource_file = BytesIO(file_contents.read(embedded_resource['src']))
 
                     extra_resource_contents = WgtFile(resource_file)
                     extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
