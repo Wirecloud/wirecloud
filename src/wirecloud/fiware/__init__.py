@@ -29,4 +29,4 @@ DEFAULT_FIWARE_PORTALS = (
     {'name': 'Help&info', 'url': 'http://help.lab.fiware.org'},
 )
 
-DEFAULT_FIWARE_HOME = 'https://lab.fiware.org';
+DEFAULT_FIWARE_HOME = 'https://lab.fiware.org'
