@@ -35,9 +35,10 @@ ALLOWED_ORIGINS = [portal['url'] for portal in getattr(settings, 'FIWARE_PORTALS
 @require_GET
 def oauth_discovery(request):
 
-    from social_auth.backends import get_backends
+    from social.apps.django_app.utils import BACKENDS
+    from social.backends.utils import get_backend
+    fiware_auth_backend = get_backend(BACKENDS, 'fiware')
 
-    fiware_auth_backend = get_backends()['fiware']
     endpoints = {
         'flows': ["Authorization Code Grant", "Resource Owner Password Credentials Grant"],
         'auth_endpoint': fiware_auth_backend.AUTHORIZATION_URL,
