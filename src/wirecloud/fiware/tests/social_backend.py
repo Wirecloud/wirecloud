@@ -20,6 +20,7 @@
 from __future__ import unicode_literals
 
 from copy import deepcopy
+import json
 import sys
 
 from mock import patch, MagicMock, Mock
@@ -90,10 +91,12 @@ class TestSocialAuthBackend(WirecloudTestCase):
             'social': self.social,
             'social.backends': self.social.backends,
             'social.backends.oauth': self.social.backends.oauth,
+            'social.backends.utils': self.social.backends.utils,
             'social.apps': self.social.apps,
             'social.apps.django_app': self.social.apps.django_app,
             'social.apps.django_app.default': self.social.apps.django_app.default,
             'social.apps.django_app.default.models': self.social.apps.django_app.default.models,
+            'social.apps.django_app.utils': self.social.apps.django_app.utils,
         }
         self.social.backends.oauth.BaseOAuth2 = BasicClass
 
@@ -202,6 +205,58 @@ class TestSocialAuthBackend(WirecloudTestCase):
 
         self.assertEqual(UserSocialAuth.objects.select_related.call_count, 0)
         self.assertEqual(UserSocialAuth.objects.create.call_count, 0)
+
+    def test_oauth_discovery(self):
+
+        from wirecloud.fiware.views import oauth_discovery
+
+        backend = self.social.backends.utils.get_backend()
+        backend.AUTHORIZATION_URL = "https://auth.example.com"
+        backend.ACCESS_TOKEN_URL = "https://token.example.com"
+
+        with patch("wirecloud.fiware.views.get_absolute_reverse_url", return_value="https://default_redirect.example.com"):
+            response = oauth_discovery(Mock(method="GET"))
+
+        info = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(info, {
+            "flows": ["Authorization Code Grant", "Resource Owner Password Credentials Grant"],
+            "auth_endpoint": "https://auth.example.com",
+            "token_endpoint": "https://token.example.com",
+            "default_redirect_uri": "https://default_redirect.example.com",
+            "version": "2.0",
+        })
+
+    @patch('wirecloud.fiware.plugins.IDM_SUPPORT_ENABLED', new=True)
+    def test_plugin_idm_enabled(self):
+
+        from wirecloud.fiware.plugins import FiWarePlugin
+
+        plugin = FiWarePlugin()
+
+        urls = plugin.get_urls()
+        self.assertEqual(len(urls), 2)
+
+        constants = plugin.get_constants()
+        self.assertIn('FIWARE_HOME', constants)
+        self.assertIn('FIWARE_PORTALS', constants)
+        self.assertIn('FIWARE_OFFICIAL_PORTAL', constants)
+        self.assertIn('FIWARE_IDM_SERVER', constants)
+
+    @patch('wirecloud.fiware.plugins.IDM_SUPPORT_ENABLED', new=False)
+    def test_plugin_idm_disabled(self):
+
+        from wirecloud.fiware.plugins import FiWarePlugin
+
+        plugin = FiWarePlugin()
+
+        urls = plugin.get_urls()
+        self.assertEqual(len(urls), 1)
+
+        constants = plugin.get_constants()
+        self.assertIn('FIWARE_HOME', constants)
+        self.assertIn('FIWARE_PORTALS', constants)
+        self.assertNotIn('FIWARE_OFFICIAL_PORTAL', constants)
+        self.assertNotIn('FIWARE_IDM_SERVER', constants)
 
     def test_organizations_are_created(self):
         backend = Mock()
