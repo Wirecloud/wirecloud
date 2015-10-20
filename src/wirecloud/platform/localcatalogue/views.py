@@ -163,6 +163,10 @@ class ResourceCollection(Resource):
             elif not added:
                 status_code = 200
 
+        except zipfile.BadZipfile as e:
+
+            return build_error_response(request, 400, _('The uploaded file is not a valid zip file'), details=e.message)
+
         except OSError as e:
 
             if e.errno == errno.EACCES:
