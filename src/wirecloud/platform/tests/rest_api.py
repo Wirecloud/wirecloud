@@ -3323,6 +3323,36 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         smartphone_image_path = os.path.join(base_dir, test_mashup_info['smartphoneimage'])
         self.assertTrue(filecmp.cmp(original_smartphone_image, smartphone_image_path))
 
+    def test_workspace_publish_including_longdescription(self):
+
+        url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        longdescription = 'Description using *MarkDown* syntax'
+        data = {
+            'vendor': 'Wirecloud',
+            'name': 'test-published-mashup',
+            'version': '1.0.5',
+            'email': 'test@example.com',
+            'description': 'Short description',
+            'longdescription': longdescription
+        }
+
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+
+        self.assertEqual(response.status_code, 201)
+
+        # Check long description field has been converted into a file
+        test_mashup = CatalogueResource.objects.get(short_name='test-published-mashup')
+        base_dir = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'test-published-mashup', '1.0.5')
+        test_mashup_info = json.loads(test_mashup.json_description)
+
+        image_path = os.path.join(base_dir, test_mashup_info['longdescription'])
+        with open(image_path, 'rb') as f:
+            self.assertEqual(f.read(), longdescription.encode('utf-8'))
+
     @uses_extra_resources(('Wirecloud_Test_1.0.wgt', 'Wirecloud_TestOperator_1.0.zip'), shared=True, deploy_only=True)
     def test_workspace_publish_embedmacs(self):
 

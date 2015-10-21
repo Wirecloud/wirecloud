@@ -467,6 +467,8 @@ class WorkspacePublisherEntry(Resource):
         content_type = get_content_type(request)[0]
         image_file = None
         smartphoneimage_file = None
+        extra_files = []
+
         if content_type == 'application/json':
             received_json = request.body.decode('utf-8')
         else:
@@ -495,11 +497,14 @@ class WorkspacePublisherEntry(Resource):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if image_file is not None:
-            image_filename = 'images/catalogue' + os.path.splitext(image_file.name)[1]
-            options['image'] = image_filename
+            options['image'] = 'images/catalogue' + os.path.splitext(image_file.name)[1]
+            extra_files.append((options['image'], image_file))
         if smartphoneimage_file is not None:
-            smartphoneimage_filename = 'images/smartphone' + os.path.splitext(smartphoneimage_file.name)[1]
-            options['smartphoneimage'] = smartphoneimage_filename
+            options['smartphoneimage'] = 'images/smartphone' + os.path.splitext(smartphoneimage_file.name)[1]
+            extra_files.append((options['smartphoneimage'], smartphoneimage_file))
+        if 'longdescription' in options:
+            extra_files.append(('DESCRIPTION.md', BytesIO(options['longdescription'].encode('utf-8'))))
+            options['longdescription'] = 'DESCRIPTION.md'
 
         description = build_xml_template_from_workspace(options, workspace, request.user)
 
@@ -507,10 +512,8 @@ class WorkspacePublisherEntry(Resource):
         f = BytesIO()
         zf = zipfile.ZipFile(f, 'w')
         zf.writestr('config.xml', description.encode('utf-8'))
-        if image_file is not None:
-            zf.writestr(image_filename, image_file.read())
-        if smartphoneimage_file is not None:
-            zf.writestr(smartphoneimage_filename, smartphoneimage_file.read())
+        for filename, extra_file in extra_files:
+            zf.writestr(filename, extra_file.read())
         for resource_info in options['embedded']:
             (vendor, name, version) = (resource_info['vendor'], resource_info['name'], resource_info['version'])
             resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
