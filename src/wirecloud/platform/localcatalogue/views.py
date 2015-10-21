@@ -159,7 +159,7 @@ class ResourceCollection(Resource):
 
         except zipfile.BadZipfile as e:
 
-            return build_error_response(request, 400, _('The uploaded file is not a valid zip file'), details=e.message)
+            return build_error_response(request, 400, _('The uploaded file is not a valid zip file'), details="{}".format(e))
 
         except OSError as e:
 
