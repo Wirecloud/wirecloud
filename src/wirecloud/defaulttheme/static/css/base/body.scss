@@ -1,9 +1,15 @@
 @import 'variables';
+@import 'utils';
+
+@if ($context == 'widget') {
+    $body-bg: $widget-bg;
+}
 
 body {
+    background: $body-bg;
     font-family: $font-family-base;
-    font-size: $font-size-base;
-    line-height: $line-height-base;
+    @include font-styled("base", "normal");
+    color: contrast-text-color($body-bg);
 }
 
 h1, h2, h3, h4, h5, h6 {
