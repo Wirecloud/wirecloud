@@ -19,84 +19,240 @@
  *
  */
 
-/*global StyledElements*/
+/* global StyledElements */
 
-(function () {
+
+(function (se, utils) {
 
     "use strict";
 
+    // ==================================================================================
+    // CLASS DEFINITION
+    // ==================================================================================
+
     /**
+     * Create a new instance of class MenuItem.
      *
+     * @constructor
+     * @extends {StyledElements.StyledElement}
+     *
+     * @version 0.5.0
+     * @alias StyledElements.MenuItem
+     *
+     * @param {String} title - [TODO: description]
+     * @param {Object} [options] - [TODO: description]
      */
-    var MenuItem = function MenuItem(text, handler, context) {
-        StyledElements.StyledElement.call(this, ['click', 'mouseover', 'mouseout']);
+    se.MenuItem = function MenuItem(title, handler, context) {
+        this.superClass(events);
 
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.classList.add("se-popup-menu-item");
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = "se-popup-menu-item";
 
-        var span = document.createElement("span");
-        span.appendChild(document.createTextNode(text));
-        this.wrapperElement.appendChild(span);
+        this.thumbnailElement = document.createElement('div');
+        this.thumbnailElement.className = "se-popup-menu-item-thumbnail";
+
+        this.bodyElement = document.createElement('div');
+        this.bodyElement.className = "se-popup-menu-item-body";
+        this.wrapperElement.appendChild(this.bodyElement);
+
+        Object.defineProperties(this, {
+            active: {get: property_active_get, set: property_active_set},
+            description: {get: property_description_get},
+            title: {get: property_title_get}
+        });
+
+        this.setTitle(title);
 
         this.run = handler;
         this.context = context;
-        this.icon = null;
 
         // Internal events
         this._mouseoverEventHandler = function (event) {
             if (this.enabled) {
-                this.wrapperElement.classList.add("hovered");
+                this.active = true;
                 this.events.mouseover.dispatch(this);
             }
         }.bind(this);
         this.wrapperElement.addEventListener("mouseover", this._mouseoverEventHandler, false);
         this._mouseoutEventHandler = function (event) {
             if (this.enabled) {
-                this.wrapperElement.classList.remove("hovered");
+                this.active = false;
                 this.events.mouseout.dispatch(this);
             }
         }.bind(this);
         this.wrapperElement.addEventListener("mouseout", this._mouseoutEventHandler, false);
 
-        this._clickHandler = function (event) {
+        this._onclick = function (event) {
             event.stopPropagation();
-            if (this.enabled) {
-                this.wrapperElement.classList.remove("hovered");
-                this.events.mouseout.dispatch(this);
-                this.events.click.dispatch(this);
-            }
+            this.select();
         }.bind(this);
-        this.wrapperElement.addEventListener("click", this._clickHandler, true);
+        this.wrapperElement.addEventListener('click', this._onclick, true);
     };
-    MenuItem.prototype = new StyledElements.StyledElement();
 
-    MenuItem.prototype.addIconClass = function addIconClass(iconClass) {
+    // ==================================================================================
+    // PUBLIC MEMBERS
+    // ==================================================================================
 
-        if (this.icon === null) {
-            this.icon = document.createElement('span');
-            this.wrapperElement.insertBefore(this.icon, this.wrapperElement.firstChild);
+    utils.inherit(se.MenuItem, se.StyledElement, /** @lends StyledElements.MenuItem.prototype */{
+
+        /**
+         * [TODO: activate description]
+         *
+         * @since 0.6.2
+         *
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        activate: function activate() {
+            this.active = true;
+            return this;
+        },
+
+        /**
+         * [TODO: addIconClass description]
+         *
+         * @since 0.6.2
+         *
+         * @param {String} iconClass - [TODO: description]
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        addIconClass: function addIconClass(iconClass) {
+
+            if (this.iconElement == null) {
+                this.iconElement = document.createElement('span');
+                this.thumbnailElement.appendChild(this.iconElement);
+            }
+
+            if (this.thumbnailElement.parentElement == null) {
+                this.wrapperElement.insertBefore(this.thumbnailElement, this.wrapperElement.firstChild);
+            }
+
+            this.iconElement.className = "se-icon " + iconClass;
+
+            return this;
+        },
+
+        /**
+         * [TODO: deactivate description]
+         *
+         * @since 0.6.2
+         *
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        deactivate: function deactivate() {
+            this.active = false;
+            return this;
+        },
+
+        /**
+         * [TODO: destroy description]
+         *
+         * @since 0.5.0
+         *
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        destroy: function destroy() {
+
+            if (this.wrapperElement.parentElement != null) {
+                this.wrapperElement.parentElement.removeChild(this.wrapperElement);
+            }
+
+            this.wrapperElement.removeEventListener('click', this._onclick, true);
+            this.wrapperElement.removeEventListener("mouseover", this._mouseoverEventHandler, false);
+            this.wrapperElement.removeEventListener("mouseout", this._mouseoutEventHandler, false);
+
+            this._onclick = null;
+            this._mouseoverEventHandler = null;
+            this._mouseoutEventHandler = null;
+
+            se.StyledElement.prototype.destroy.call(this);
+
+            return this;
+        },
+
+        /**
+         * [TODO: select description]
+         *
+         * @since 0.6.2
+         *
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        select: function select() {
+
+            if (this.enabled) {
+                this.active = false;
+                this.events.mouseout.dispatch(this);
+                this.trigger('click');
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: setDescription description]
+         *
+         * @since 0.6.2
+         *
+         * @param {String} description - [TODO: description]
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        setDescription: function setDescription(description) {
+
+            if (this.descriptionElement == null) {
+                this.descriptionElement = document.createElement('div');
+                this.descriptionElement.className = "se-popup-menu-item-description";
+                this.bodyElement.appendChild(this.descriptionElement);
+            }
+
+            this.descriptionElement.innerHTML = description;
+
+            return this;
+        },
+
+        /**
+         * [TODO: setTitle description]
+         *
+         * @since 0.6.2
+         *
+         * @param {String} title - [TODO: description]
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        setTitle: function setTitle(title) {
+
+            if (this.titleElement == null) {
+                this.titleElement = document.createElement('div');
+                this.titleElement.className = "se-popup-menu-item-title";
+                this.bodyElement.insertBefore(this.titleElement, this.bodyElement.firstChild);
+            }
+
+            this.titleElement.innerHTML = title;
+
+            return this;
         }
 
-        this.icon.className = "se-icon " + iconClass;
+    });
 
-        return this;
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var events = ['click', 'mouseout', 'mouseover'];
+
+    var property_active_get = function property_active_get() {
+        return this.hasClassName("active");
     };
 
-    MenuItem.prototype.destroy = function destroy() {
-        if (StyledElements.Utils.XML.isElement(this.wrapperElement.parentNode)) {
-            StyledElements.Utils.removeFromParent(this.wrapperElement);
+    var property_active_set = function property_active_set(active) {
+        if (active !== this.active) {
+            this.toggleClassName("active", active);
         }
-        this.wrapperElement.removeEventListener("mouseover", this._mouseoverEventHandler, false);
-        this.wrapperElement.removeEventListener("mouseout", this._mouseoutEventHandler, false);
-        this.wrapperElement.removeEventListener("click", this._clickHandler, true);
-
-        this._mouseoverEventHandler = null;
-        this._mouseoutEventHandler = null;
-        this._clickHandler = null;
-
-        StyledElements.StyledElement.prototype.destroy.call(this);
     };
 
-    StyledElements.MenuItem = MenuItem;
+    var property_description_get = function property_description_get() {
+        return this.descriptionElement != null ? this.descriptionElement.textContent : "";
+    };
 
-})();
+    var property_title_get = function property_title_get() {
+        return this.titleElement != null ? this.titleElement.textContent : "";
+    }
+
+})(StyledElements, StyledElements.Utils);

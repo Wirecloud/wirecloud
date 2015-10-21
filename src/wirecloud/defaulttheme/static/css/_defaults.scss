@@ -287,3 +287,16 @@ $widget-borders:           true !default;
 $resource-bg:              $panel-bg !default;
 $resource-header-bg:       $panel-default-heading-bg !default;
 $resource-border:          #CDCED1 !default;
+
+// ======================================================================================
+// STYLED ELEMENT - POPUP-MENU
+// ======================================================================================
+
+$popup-menu-margin-base:      4px !default;
+$popup-menu-padding-vertical: ($line-height-base / 4) !default;
+$popup-menu-bg:               rgb(255, 255, 255) !default;
+$popup-menu-border-color:     $state-default-border !default;
+
+$popup-menu-item-padding-horizontal:     (2 * $popup-menu-padding-vertical) !default;
+$popup-menu-item-description-text-color: $gray-light !default;
+$popup-menu-item-active-bg:              $brand-primary !default;
