@@ -1,25 +1,26 @@
 @import 'variables';
-@import 'compass/utilities/color/contrast';
+@import 'utils';
+
+
+// ======================================================================================
+// STYLED ELEMENT - POPUP-MENU
+// ======================================================================================
 
 .se-popup-menu {
     position: absolute;
     z-index: 111112;
-    margin: 4px;
-    white-space: nowrap;
-    padding: 5px 0;
-    background: #FFFFFF;
-    border: 1px solid #BEBEBE;
+    margin: $popup-menu-margin-base;
+    padding: $popup-menu-padding-vertical 0;
+    background: $popup-menu-bg;
+    border: 1px solid $popup-menu-border-color;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    color: contrast-color(#FFFFFF, $text-color-light, $text-color-dark, $text-color-threshold);
-    font-size: $font-size-base;
-    font-family: arial, sans-serif;
     border-radius: $border-radius-base;
     box-sizing: border-box;
     min-width: 160px;
 
     &.se-popup-menu-left-bottom {
         margin-top: 0;
-        margin-left: -4px;
+        margin-left: - ($popup-menu-margin-base);
     }
 
     &.se-popup-menu-right-bottom {
@@ -27,12 +28,12 @@
     }
 
     &.se-popup-menu-top-left {
-        margin-top: -4px;
+        margin-top: - ($popup-menu-margin-base);
         margin-left: 0;
     }
 
     &.se-popup-menu-top-right {
-        margin-top: -4px;
+        margin-top: - ($popup-menu-margin-base);
         margin-left: 0;
     }
 
@@ -47,51 +48,89 @@
     &.se-popup-submenu {
         margin: 0;
     }
+
+    // Divider (basically an hr)
+    > hr,
+    > .divider {
+        display: block;
+        height: 1px;
+        margin: (floor($line-height-base / 2) - 1) 0 floor($line-height-base / 2) 0;
+        background-color: $popup-menu-border-color;
+        border: none;
+    }
 }
 
+// ======================================================================================
+// STYLED ELEMENT - POPUP-MENU-ITEM
+// ======================================================================================
+
 .se-popup-menu-item {
-    padding: 5px 10px;
+    position: relative;
+    display: block;
+    padding: $popup-menu-padding-vertical $popup-menu-item-padding-horizontal;
     cursor: pointer;
+    @include font-styled("base", "normal");
+    color: contrast-text-color($popup-menu-bg);
 
-    > span {
-        display: inline-block;
-        line-height: 20px;
-    }
-
-    > .se-icon {
-        width: 20px;
-        margin-right: 5px;
+    .se-popup-menu-item-thumbnail {
+        display: table-cell;
+        vertical-align: middle;
+        padding-right: ($popup-menu-item-padding-horizontal / 2);
+        width: $line-height-base;
         text-align: center;
     }
 
-    &.submenu:after {
-        display: block;
-        content: " ";
-        float: right;
-        width: 0;
-        height: 0;
-        border-color: transparent;
-        border-style: solid;
-        border-width: 5px 0 5px 5px;
-        border-left-color: #ccc;
-        margin-top: 3px;
-        margin-right: -5px;
-    }
+    .se-popup-menu-item-body {
+        display: table-cell;
+        vertical-align: middle;
 
-    &.hovered {
-        color: contrast-color($brand-primary, $text-color-light, $text-color-dark, $text-color-threshold);
-        background: $brand-primary;
-    }
+        .se-popup-menu-item-title {
+            white-space: nowrap;
+        }
 
-    &.disabled {
-        cursor: default;
+        .se-popup-menu-item-description {
+            @include font-styled("small", "normal");
+            color: $popup-menu-item-description-text-color;
+        }
     }
 }
 
-.se-popup-menu > hr {
-    height: 1px;
-    background-color: #BEBEBE;
-    outline: none;
-    border: none;
-    margin: (floor($line-height-base / 2) - 1) 0;
+// TYPES - POPUP-MENU-ITEM SUBMENU
+
+.se-popup-menu-item.submenu {
+
+    &:after {
+        position: absolute;
+        content: " ";
+        top: $popup-menu-padding-vertical + $popup-menu-padding-vertical;
+        right: ($popup-menu-item-padding-horizontal / 2);
+        border: $popup-menu-padding-vertical solid transparent;
+        border-right-width: 0;
+        border-left-width: ($popup-menu-item-padding-horizontal / 2);
+        border-left-color: $popup-menu-border-color;
+    }
+}
+
+// STATES - POPUP-MENU-ITEM ACTIVE
+
+.se-popup-menu-item.active {
+    background: $popup-menu-item-active-bg;
+    color: contrast-text-color($popup-menu-item-active-bg);
+
+    .se-popup-menu-item-body .se-popup-menu-item-description {
+        color: contrast-text-color($popup-menu-item-active-bg);
+    }
+}
+
+.se-popup-menu-item.submenu.active {
+
+    &:after {
+        border-left-color: contrast-text-color($popup-menu-item-active-bg);
+    }
+}
+
+// STATES - POPUP-MENU-ITEM DISABLED
+
+.se-popup-menu-item.disabled {
+    cursor: default;
 }
