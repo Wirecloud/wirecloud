@@ -791,14 +791,13 @@ if (window.StyledElements == null) {
         };
     };
 
-    Utils.inherit = function inherit(constructor, superConstructor) {
+    Utils.inherit = function inherit(constructor, superConstructor, members) {
         var counter = 0;
 
         constructor.prototype = Object.create(superConstructor.prototype);
+        constructor.prototype.constructor = constructor;
 
         addMembers(constructor, {
-
-            constructor: constructor,
 
             superConstructor: superConstructor,
 
@@ -828,6 +827,8 @@ if (window.StyledElements == null) {
             }
 
         });
+
+        addMembers(constructor, members);
     };
 
     /**
