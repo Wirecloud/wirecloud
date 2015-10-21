@@ -2076,7 +2076,7 @@ msgstr "Actualizar"
 
 #: static/js/wirecloud/ui/UpgradeWindowMenu.js:49
 msgid "Downgrade"
-msgstr "Descatolizar"
+msgstr "Desactualizar"
 
 #: static/js/wirecloud/ui/UpgradeWindowMenu.js:69
 msgid ""
@@ -2100,7 +2100,7 @@ msgstr "Actualizando a la versión %(version)s"
 
 #: static/js/wirecloud/ui/UpgradeWindowMenu.js:136
 msgid "Downgrading to version %(version)s"
-msgstr "Descatolizando a la versión %(version)s"
+msgstr "Desactualizando a la versión %(version)s"
 
 #: static/js/wirecloud/ui/WirecloudHeader.js:75
 msgid "Sign in"
@@ -2322,8 +2322,8 @@ msgstr "Ausente"
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:657
 msgid "%(count)s error"
 msgid_plural "%(count)s errors"
-msgstr[0] "%(errorCount)s error"
-msgstr[1] "%(errorCount)s errores"
+msgstr[0] "%(count)s error"
+msgstr[1] "%(count)s errores"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:92
 msgid "Delete cascade"
