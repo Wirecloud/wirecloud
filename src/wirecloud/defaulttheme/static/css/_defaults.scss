@@ -17,13 +17,23 @@ $border-radius-large:       6px !default;
 $border-radius-small:       3px !default;
 $border-radius-xs:          3px !default;
 
+// ======================================================================================
+// TYPOGRAPHY
+// ======================================================================================
+
 $font-size-base:           14px !default;
 $font-size-large:          ceil($font-size-base * 1.25) !default; // ~18px
 $font-size-small:          ceil($font-size-base * 0.85) !default; // ~12px
 $font-size-xs:             ceil($font-size-base * 0.75) !default; // ~11px
 
 $line-height-factor-base:  1.42857143 !default;
-$line-height-base:         floor($font-size-base * $line-height-factor-base) !default; // 20px
+$line-height-factor-large: 1.35 !default;
+$line-height-factor-small: 1.5 !default;
+$line-height-factor-xs:    1.5 !default;
+$line-height-base:         floor($font-size-base * $line-height-factor-base) !default;   // ~20px
+$line-height-large:        floor($font-size-large * $line-height-factor-large) !default; // ~24px
+$line-height-small:        floor($font-size-small * $line-height-factor-small) !default; // ~18px
+$line-height-xs:           floor($font-size-xs * $line-height-factor-xs) !default;       // ~16px
 
 $padding-vertical-base:     6px !default;
 $padding-horizontal-base:  12px !default;
@@ -36,6 +46,9 @@ $padding-horizontal-small: 10px !default;
 
 $padding-vertical-xs:       1px !default;
 $padding-horizontal-xs:     5px !default;
+
+$font-weight-base: 400;
+$font-weight-bold: 700;
 
 /* Global settings */
 

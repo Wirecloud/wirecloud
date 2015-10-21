@@ -1,5 +1,6 @@
-@import "base/font_mixins";
-@import "variables";
+@import 'variables';
+@import 'base/font_mixins';
+
 
 @mixin children-display(
     $selectors: (),
