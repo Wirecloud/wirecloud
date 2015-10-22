@@ -152,10 +152,10 @@
     PopupMenuBase.prototype._append = function _append(child, where) {
         if (child instanceof StyledElements.MenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.addEventListener('mouseover', this._menuItemEnterCallback);
+            child.addEventListener('mouseenter', this._menuItemEnterCallback);
         } else if (child instanceof StyledElements.SubMenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.addEventListener('mouseover', this._menuItemEnterCallback);
+            child.addEventListener('mouseenter', this._menuItemEnterCallback);
             child._setParentPopupMenu(this);
         } else if (child instanceof StyledElements.DynamicMenuItems || child instanceof StyledElements.Separator) {
             // nothing to do

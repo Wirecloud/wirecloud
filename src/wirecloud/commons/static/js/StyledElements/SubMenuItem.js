@@ -81,7 +81,7 @@
 
     SubMenuItem.prototype.addEventListener = function addEventListener(eventId, handler) {
         switch (eventId) {
-        case 'mouseover':
+        case 'mouseenter':
         case 'click':
             return this.menuItem.addEventListener(eventId, handler);
         default:
