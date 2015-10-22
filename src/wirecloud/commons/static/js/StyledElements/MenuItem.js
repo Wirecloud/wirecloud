@@ -67,20 +67,21 @@
         this.context = context;
 
         // Internal events
-        this._mouseoverEventHandler = function (event) {
+        this._onmouseenter = function (event) {
             if (this.enabled) {
                 this.active = true;
-                this.events.mouseover.dispatch(this);
+                this.trigger('mouseenter');
             }
         }.bind(this);
-        this.wrapperElement.addEventListener("mouseover", this._mouseoverEventHandler, false);
-        this._mouseoutEventHandler = function (event) {
+        this.wrapperElement.addEventListener('mouseenter', this._onmouseenter, false);
+
+        this._onmouseleave = function (event) {
             if (this.enabled) {
                 this.active = false;
-                this.events.mouseout.dispatch(this);
+                this.trigger('mouseleave');
             }
         }.bind(this);
-        this.wrapperElement.addEventListener("mouseout", this._mouseoutEventHandler, false);
+        this.wrapperElement.addEventListener('mouseleave', this._onmouseleave, false);
 
         this._onclick = function (event) {
             event.stopPropagation();
@@ -157,12 +158,12 @@
             }
 
             this.wrapperElement.removeEventListener('click', this._onclick, true);
-            this.wrapperElement.removeEventListener("mouseover", this._mouseoverEventHandler, false);
-            this.wrapperElement.removeEventListener("mouseout", this._mouseoutEventHandler, false);
+            this.wrapperElement.removeEventListener('mouseenter', this._onmouseenter, false);
+            this.wrapperElement.removeEventListener('mouseleave', this._onmouseleave, false);
 
             this._onclick = null;
-            this._mouseoverEventHandler = null;
-            this._mouseoutEventHandler = null;
+            this._onmouseenter = null;
+            this._onmouseleave = null;
 
             se.StyledElement.prototype.destroy.call(this);
 
@@ -180,7 +181,6 @@
 
             if (this.enabled) {
                 this.active = false;
-                this.events.mouseout.dispatch(this);
                 this.trigger('click');
             }
 
@@ -235,7 +235,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['click', 'mouseout', 'mouseover'];
+    var events = ['click', 'mouseenter', 'mouseleave'];
 
     var property_active_get = function property_active_get() {
         return this.hasClassName("active");
