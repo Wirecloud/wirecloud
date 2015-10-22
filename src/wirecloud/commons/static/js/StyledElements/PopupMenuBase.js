@@ -146,6 +146,7 @@
         this._submenus = [];
         this._menuItemCallback = this._menuItemCallback.bind(this);
         this._menuItemEnterCallback = this._menuItemEnterCallback.bind(this);
+        this._menuItem_onmouseleave = menuItem_onmouseleave.bind(this);
     };
     PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
 
@@ -153,9 +154,11 @@
         if (child instanceof StyledElements.MenuItem) {
             child.addEventListener('click', this._menuItemCallback);
             child.addEventListener('mouseenter', this._menuItemEnterCallback);
+            child.addEventListener('mouseleave', this._menuItem_onmouseleave);
         } else if (child instanceof StyledElements.SubMenuItem) {
             child.addEventListener('click', this._menuItemCallback);
             child.addEventListener('mouseenter', this._menuItemEnterCallback);
+            child.addEventListener('mouseleave', this._menuItem_onmouseleave);
             child._setParentPopupMenu(this);
         } else if (child instanceof StyledElements.DynamicMenuItems || child instanceof StyledElements.Separator) {
             // nothing to do
@@ -199,9 +202,10 @@
     };
 
     PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback(menuItem) {
-        if (menuItem.wrapperElement.classList.contains('submenu')) {
+        if (menuItem.hasClassName('submenu')) {
+            // This is necessary for touch screens where mouseenter and mouseleave events are not raised
             this.show();
-            menuItem.wrapperElement.classList.add("hovered");
+            menuItem.activate();
         } else {
             this.hide();
         }
@@ -222,6 +226,8 @@
             return; // This Popup Menu is already visible => nothing to do
         }
 
+        this._selectableItems = [];
+
         for (i = 0; i < this._items.length; i += 1) {
             item = this._items[i];
             if (item instanceof StyledElements.DynamicMenuItems) {
@@ -233,15 +239,24 @@
 
                     if (generatedItem instanceof StyledElements.MenuItem || generatedItem instanceof StyledElements.Separator) {
                         generatedItem.insertInto(this.wrapperElement);
+                        if (generatedItem instanceof StyledElements.MenuItem && generatedItem.enabled) {
+                            this._selectableItems.push(generatedItem);
+                        }
                     } else if (generatedItem instanceof StyledElements.SubMenuItem) {
                         generatedItem._getMenuItem().insertInto(this.wrapperElement);
+                        this._selectableItems.push(generatedItem.menuItem);
                     }
                 }
             } else if (item instanceof StyledElements.MenuItem || item instanceof StyledElements.Separator) {
                 item.insertInto(this.wrapperElement);
+
+                if (item instanceof StyledElements.MenuItem && item.enabled) {
+                    this._selectableItems.push(item);
+                }
             } else if (item instanceof StyledElements.SubMenuItem) {
                 item._getMenuItem().insertInto(this.wrapperElement);
                 this._submenus.push(item);
+                this._selectableItems.push(item.menuItem);
             } else {
                 this.wrapperElement.appendChild(item);
             }
@@ -293,7 +308,14 @@
     };
 
     PopupMenuBase.prototype._menuItemEnterCallback = function _menuItemEnterCallback(menuItem) {
-        this.events.itemOver.dispatch(this, menuItem);
+        var i;
+
+        for (i = 0; i < this._selectableItems.length; i++) {
+            this._selectableItems[i].deactivate();
+        }
+
+        menuItem.activate();
+        this.trigger('itemOver', menuItem);
     };
 
     PopupMenuBase.prototype.destroy = function destroy() {
@@ -340,7 +362,12 @@
             this._dynamicItems.splice(i, 1);
         }
 
+        this._selectableItems = [];
         this.wrapperElement.innerHTML = "";
+    };
+
+    var menuItem_onmouseleave = function menuItem_onmouseleave(menuItem) {
+        menuItem.deactivate();
     };
 
     StyledElements.PopupMenuBase = PopupMenuBase;
