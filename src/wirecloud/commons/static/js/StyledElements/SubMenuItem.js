@@ -68,7 +68,7 @@
 
         this.parentMenu.addEventListener('itemOver', function (popupMenu, item) {
             if (item === this.menuItem) {
-                this.show(this.menuItem.wrapperElement.getBoundingClientRect());
+                this.show(this.menuItem.getBoundingClientRect());
             } else {
                 this.hide();
             }
@@ -82,6 +82,7 @@
     SubMenuItem.prototype.addEventListener = function addEventListener(eventId, handler) {
         switch (eventId) {
         case 'mouseenter':
+        case 'mouseleave':
         case 'click':
             return this.menuItem.addEventListener(eventId, handler);
         default:

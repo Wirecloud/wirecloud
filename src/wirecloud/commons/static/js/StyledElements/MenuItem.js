@@ -69,7 +69,6 @@
         // Internal events
         this._onmouseenter = function (event) {
             if (this.enabled) {
-                this.active = true;
                 this.trigger('mouseenter');
             }
         }.bind(this);
@@ -77,7 +76,6 @@
 
         this._onmouseleave = function (event) {
             if (this.enabled) {
-                this.active = false;
                 this.trigger('mouseleave');
             }
         }.bind(this);
@@ -180,7 +178,6 @@
         select: function select() {
 
             if (this.enabled) {
-                this.active = false;
                 this.trigger('click');
             }
 
@@ -242,7 +239,7 @@
     };
 
     var property_active_set = function property_active_set(active) {
-        if (active !== this.active) {
+        if (this.enabled && this.active !== active) {
             this.toggleClassName("active", active);
         }
     };
