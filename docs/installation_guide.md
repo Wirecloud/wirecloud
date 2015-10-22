@@ -697,6 +697,7 @@ You can use this template as starting point:
                         Allow from all
                 </Files>
         </Directory>
+
         ### Wirecloud ###
         WSGIPassAuthorization On
 
@@ -709,6 +710,7 @@ You can use this template as starting point:
         Alias /static ${path_to_wirecloud_instance}/static
         <Location "/static">
                 SetHandler None
+                Require all granted
                 <IfModule mod_expires.c>
                         ExpiresActive On
                         ExpiresDefault "access plus 1 week"
@@ -718,6 +720,7 @@ You can use this template as starting point:
                 </IfModule>
         </Location>
         <Location "/static/cache">
+                Require all granted
                 <IfModule mod_expires.c>
                         ExpiresDefault "access plus 3 years"
                 </IfModule>
@@ -760,6 +763,7 @@ You should end with something similar to:
         Alias /static /opt/wirecloud_instance/static
         <Location "/static">
                 SetHandler None
+                Require all granted
                 <IfModule mod_expires.c>
                         ExpiresActive On
                         ExpiresDefault "access plus 1 week"
@@ -769,6 +773,7 @@ You should end with something similar to:
                 </IfModule>
         </Location>
         <Location "/static/cache">
+                Require all granted
                 <IfModule mod_expires.c>
                         ExpiresDefault "access plus 3 years"
                 </IfModule>
