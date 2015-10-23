@@ -105,6 +105,7 @@
      */
     var PopupMenuBase = function PopupMenuBase(options) {
         var defaultOptions = {
+            oneActiveAtLeast: false,
             'placement': null
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
@@ -142,6 +143,7 @@
             firstEnabledItem: {get: property_firstEnabledItem_get},
             hidden: {get: property_hidden_get},
             lastEnabledItem: {get: property_lastEnabledItem_get},
+            oneActiveAtLeast: {value: options.oneActiveAtLeast}
         });
 
         this._items = [];
@@ -263,6 +265,10 @@
             } else {
                 this.wrapperElement.appendChild(item);
             }
+        }
+
+        if (this.hasEnabledItem() && this.oneActiveAtLeast) {
+            activateMenuItem.call(this, this.firstEnabledItem);
         }
 
         this.wrapperElement.classList.remove('hidden');
@@ -412,6 +418,11 @@
         return !utils.XML.isElement(this.wrapperElement.parentNode);
     };
 
+    var activateMenuItem = function activateMenuItem(menuItem) {
+        this._activeMenuItem = menuItem.activate();
+        this.trigger('itemOver', menuItem);
+    };
+
     var hideContent = function hideContent() {
         var i, item;
 
@@ -444,17 +455,21 @@
             this._enabledItems[i].deactivate();
         }
 
-        this._activeMenuItem = menuItem.activate();
-        this.trigger('itemOver', menuItem);
+        activateMenuItem.call(this, menuItem);
     };
 
     var menuItem_ondeactivate = function menuItem_ondeactivate(menuItem) {
 
-        if (this._activeMenuItem === menuItem) {
-            this._activeMenuItem = null;
+        if (this.oneActiveAtLeast) {
+            if (this._activeMenuItem !== menuItem) {
+                menuItem.deactivate();
+            }
+        } else {
+            if (this._activeMenuItem === menuItem) {
+                this._activeMenuItem = null;
+            }
+            menuItem.deactivate();
         }
-
-        menuItem.deactivate();
     };
 
     StyledElements.PopupMenuBase = PopupMenuBase;
