@@ -93,6 +93,12 @@
                 this._clickCallback(event);
             }
             break;
+        case 'Tab':
+            if (this.popup_menu.hasSelectableChildren()) {
+                event.preventDefault();
+                this.popup_menu.firstSelectableChild.focus();
+            }
+            break;
         default:
             // Quit when this doesn't handle the key event.
         }
