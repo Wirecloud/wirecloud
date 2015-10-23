@@ -138,6 +138,7 @@
         }
 
         Object.defineProperties(this, {
+            activeItem: {get: property_activeItem_get},
             firstEnabledItem: {get: property_firstEnabledItem_get},
             hidden: {get: property_hidden_get},
             lastEnabledItem: {get: property_lastEnabledItem_get},
@@ -147,27 +148,21 @@
         this._dynamicItems = [];
         this._submenus = [];
         this._menuItemCallback = this._menuItemCallback.bind(this);
-        this._menuItemEnterCallback = this._menuItemEnterCallback.bind(this);
-        this._menuItem_onmouseleave = menuItem_onmouseleave.bind(this);
 
-        this._menuItem_onblur_bound = menuItem_onblur.bind(this);
-        this._menuItem_onfocus_bound = menuItem_onfocus.bind(this);
+        this._menuItem_onactivate_bound = menuItem_onactivate.bind(this);
+        this._menuItem_ondeactivate_bound = menuItem_ondeactivate.bind(this);
     };
     PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
 
     PopupMenuBase.prototype._append = function _append(child, where) {
         if (child instanceof StyledElements.MenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.addEventListener('mouseenter', this._menuItemEnterCallback);
-            child.addEventListener('mouseleave', this._menuItem_onmouseleave);
-            child.addEventListener('blur', this._menuItem_onblur_bound);
-            child.addEventListener('focus', this._menuItem_onfocus_bound);
+            child.on('mouseenter focus', this._menuItem_onactivate_bound);
+            child.on('mouseleave blur', this._menuItem_ondeactivate_bound);
         } else if (child instanceof StyledElements.SubMenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.addEventListener('mouseenter', this._menuItemEnterCallback);
-            child.addEventListener('mouseleave', this._menuItem_onmouseleave);
-            child.addEventListener('blur', this._menuItem_onblur_bound);
-            child.addEventListener('focus', this._menuItem_onfocus_bound);
+            child.menuItem.on('mouseenter focus', this._menuItem_onactivate_bound);
+            child.menuItem.on('mouseleave blur', this._menuItem_ondeactivate_bound);
             child._setParentPopupMenu(this);
         } else if (child instanceof StyledElements.DynamicMenuItems || child instanceof StyledElements.Separator) {
             // nothing to do
@@ -234,6 +229,7 @@
         }
 
         this._enabledItems = [];
+        this._activeMenuItem = null;
 
         for (i = 0; i < this._items.length; i += 1) {
             item = this._items[i];
@@ -298,6 +294,58 @@
         this.wrapperElement.style.display = 'block';
     };
 
+    PopupMenuBase.prototype.moveCursorDown = function moveCursorDown() {
+        var index;
+
+        if (!this.hasEnabledItem()) {
+            return this;
+        }
+
+        if (this._activeMenuItem != null) {
+            this._activeMenuItem.deactivate();
+            index = this._enabledItems.indexOf(this._activeMenuItem);
+
+            if (index !== (this._enabledItems.length - 1)) {
+                this._activeMenuItem = this._enabledItems[index + 1];
+            } else {
+                this._activeMenuItem = this.firstEnabledItem;
+            }
+        } else {
+            this._activeMenuItem = this.firstEnabledItem;
+        }
+
+        this._activeMenuItem.activate();
+        this.trigger('itemOver', this._activeMenuItem);
+
+        return this;
+    };
+
+    PopupMenuBase.prototype.moveCursorUp = function moveCursorUp() {
+        var index;
+
+        if (!this.hasEnabledItem()) {
+            return this;
+        }
+
+        if (this._activeMenuItem != null) {
+            this._activeMenuItem.deactivate();
+            index = this._enabledItems.indexOf(this._activeMenuItem);
+
+            if (index !== 0) {
+                this._activeMenuItem = this._enabledItems[index - 1];
+            } else {
+                this._activeMenuItem = this.lastEnabledItem;
+            }
+        } else {
+            this._activeMenuItem = this.lastEnabledItem;
+        }
+
+        this._activeMenuItem.activate();
+        this.trigger('itemOver', this._activeMenuItem);
+
+        return this;
+    };
+
     PopupMenuBase.prototype.hide = function hide() {
 
         if (this.hidden) {
@@ -312,17 +360,6 @@
         Wirecloud.UserInterfaceManager._unregisterPopup(this);
 
         return this.trigger('visibilityChange');
-    };
-
-    PopupMenuBase.prototype._menuItemEnterCallback = function _menuItemEnterCallback(menuItem) {
-        var i;
-
-        for (i = 0; i < this._enabledItems.length; i++) {
-            this._enabledItems[i].deactivate();
-        }
-
-        menuItem.activate();
-        this.trigger('itemOver', menuItem);
     };
 
     PopupMenuBase.prototype.destroy = function destroy() {
@@ -358,6 +395,11 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
+
+    var property_activeItem_get = function property_activeItem_get() {
+        return !this.hidden ? this._activeMenuItem : null;
+    };
+
     var property_firstEnabledItem_get = function property_firstEnabledItem_get() {
         return this.hasEnabledItem() ? this._enabledItems[0] : null;
     };
@@ -390,25 +432,28 @@
         }
 
         this._enabledItems = [];
+        this._activeMenuItem = null;
 
         this.wrapperElement.innerHTML = "";
     };
 
-    var menuItem_onblur = function menuItem_onblur(menuItem) {
-        menuItem.deactivate();
-    };
-
-    var menuItem_onfocus = function menuItem_onfocus(menuItem) {
+    var menuItem_onactivate = function menuItem_onactivate(menuItem) {
         var i;
 
         for (i = 0; i < this._enabledItems.length; i++) {
             this._enabledItems[i].deactivate();
         }
 
-        this._menuItem = menuItem.activate();
+        this._activeMenuItem = menuItem.activate();
+        this.trigger('itemOver', menuItem);
     };
 
-    var menuItem_onmouseleave = function menuItem_onmouseleave(menuItem) {
+    var menuItem_ondeactivate = function menuItem_ondeactivate(menuItem) {
+
+        if (this._activeMenuItem === menuItem) {
+            this._activeMenuItem = null;
+        }
+
         menuItem.deactivate();
     };
 
