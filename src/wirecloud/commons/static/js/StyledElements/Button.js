@@ -53,13 +53,9 @@
         }
     };
 
-    var keydownCallback = function keydownCallback(e) {
-        if (this.enabled && e.keyCode === 13) {
-            if (this.inputElement != null) {
-                this.inputElement.click();
-            }
-
-            this._clickCallback(e);
+    var element_onkeydown = function element_onkeydown(event) {
+        if (this.enabled) {
+            this._onkeydown(event, utils.normalizeKey(event));
         }
     };
 
@@ -196,13 +192,13 @@
         } else {
             this._clickCallback = clickCallback.bind(this);
         }
-        this._keydownCallback = keydownCallback.bind(this);
+        this._onkeydown_bound = element_onkeydown.bind(this);
 
         this.wrapperElement.addEventListener('touchstart', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, false);
         this.wrapperElement.addEventListener('dblclick', dblclickCallback.bind(this), true);
-        this.wrapperElement.addEventListener('keydown', this._keydownCallback, false);
+        this.wrapperElement.addEventListener('keydown', this._onkeydown_bound, false);
         this.wrapperElement.addEventListener('focus', onfocus.bind(this), true);
         this.wrapperElement.addEventListener('blur', onblur.bind(this), true);
         this.wrapperElement.addEventListener('mouseenter', onmouseenter.bind(this), false);
@@ -220,6 +216,16 @@
         }
 
         return this;
+    };
+
+    Button.prototype._onkeydown = function _onkeydown(event, key) {
+        switch (key) {
+        case 'Enter':
+            this._clickCallback(event);
+            break;
+        default:
+            // Quit when this doesn't handle the key event.
+        }
     };
 
     /**
@@ -304,10 +310,10 @@
         this.wrapperElement.removeEventListener('touchstart', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('click', this._clickCallback, true);
-        this.wrapperElement.removeEventListener('keydown', this._keydownCallback, false);
+        this.wrapperElement.removeEventListener('keydown', this._onkeydown_bound, false);
 
         delete this._clickCallback;
-        delete this._keydownCallback;
+        delete this._onkeydown_bound;
 
         StyledElements.StyledElement.prototype.destroy.call(this);
     };
