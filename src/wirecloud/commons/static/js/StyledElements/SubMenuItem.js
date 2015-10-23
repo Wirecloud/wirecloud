@@ -84,6 +84,8 @@
         case 'mouseenter':
         case 'mouseleave':
         case 'click':
+        case 'blur':
+        case 'focus':
             return this.menuItem.addEventListener(eventId, handler);
         default:
             return StyledElements.PopupMenuBase.prototype.addEventListener.call(this, eventId, handler);
