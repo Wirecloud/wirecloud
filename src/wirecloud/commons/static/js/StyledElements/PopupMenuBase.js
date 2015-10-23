@@ -105,6 +105,7 @@
      */
     var PopupMenuBase = function PopupMenuBase(options) {
         var defaultOptions = {
+            oneActiveAtLeast: false,
             'placement': null
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
@@ -141,6 +142,7 @@
             firstSelectableChild: {get: property_firstSelectableChild_get},
             hidden: {get: property_hidden_get},
             lastSelectableChild: {get: property_lastSelectableChild_get},
+            oneActiveAtLeast: {value: options.oneActiveAtLeast}
         });
 
         this._items = [];
@@ -289,6 +291,10 @@
             }
         }
 
+        if ((this._selectableChildren.length > 0) && this.oneActiveAtLeast) {
+            activateMenuItem.call(this, this._selectableChildren[0]);
+        }
+
         this.wrapperElement.classList.remove('hidden');
         try {
             window.parent.document.body.appendChild(this.wrapperElement);
@@ -430,6 +436,11 @@
         return !utils.XML.isElement(this.wrapperElement.parentNode);
     };
 
+    var activateMenuItem = function activateMenuItem(menuItem) {
+        this._activeMenuItem = menuItem.activate();
+        this.trigger('itemOver', menuItem);
+    };
+
     var hideContent = function hideContent() {
         var i, item;
 
@@ -462,17 +473,21 @@
             this._selectableChildren[i].deactivate();
         }
 
-        this._activeMenuItem = menuItem.activate();
-        this.trigger('itemOver', menuItem);
+        activateMenuItem.call(this, menuItem);
     };
 
     var menuItem_ondeactivate = function menuItem_ondeactivate(menuItem) {
 
-        if (this._activeMenuItem === menuItem) {
-            this._activeMenuItem = null;
+        if (this.oneActiveAtLeast) {
+            if (this._activeMenuItem !== menuItem) {
+                menuItem.deactivate();
+            }
+        } else {
+            if (this._activeMenuItem === menuItem) {
+                this._activeMenuItem = null;
+            }
+            menuItem.deactivate();
         }
-
-        menuItem.deactivate();
     };
 
     StyledElements.PopupMenuBase = PopupMenuBase;
