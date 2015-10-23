@@ -90,6 +90,14 @@
             this.click();
         }.bind(this);
         this.wrapperElement.addEventListener('click', this._onclick, true);
+
+        // Set up FocusEvent internal handlers and status
+        this._onblur_bound = element_onblur.bind(this);
+        this._onfocus_bound = element_onfocus.bind(this);
+
+        this.wrapperElement.addEventListener('blur', this._onblur_bound);
+        this.wrapperElement.addEventListener('focus', this._onfocus_bound);
+        this._onenabled(true);
     };
 
     // ==================================================================================
@@ -97,6 +105,17 @@
     // ==================================================================================
 
     utils.inherit(se.MenuItem, se.StyledElement, /** @lends StyledElements.MenuItem.prototype */{
+
+        /**
+         * @override
+         */
+        _onenabled: function _onenabled(enabled) {
+            if (enabled) {
+                this.wrapperElement.setAttribute('tabindex', 0);
+            } else {
+                this.wrapperElement.removeAttribute('tabindex');
+            }
+        },
 
         /**
          * Activates (highlights) this Menu Item
@@ -168,6 +187,34 @@
         },
 
         /**
+         * Assigns the focus to this menu item
+         *
+         * @since 0.6.2
+         *
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        focus: function focus() {
+
+            if (this.enabled && !this.hasFocus()) {
+                this.wrapperElement.focus();
+                this.trigger('focus').activate();
+            }
+
+            return this;
+        },
+
+        /**
+         * Checks if this menu item is currently focused
+         *
+         * @since 0.6.2
+         *
+         * @returns {Boolean} true if this menu item has the focus
+         */
+        hasFocus: function hasFocus() {
+            return utils.hasFocus(this.wrapperElement);
+        },
+
+        /**
          * Simulates a click event over this Menu Item from the user interface.
          * This means that if the Menu Item is disalbed, this method will do nothing.
          *
@@ -232,7 +279,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['click', 'mouseenter', 'mouseleave'];
+    var events = ['blur', 'click', 'focus', 'mouseenter', 'mouseleave'];
 
     var property_active_get = function property_active_get() {
         return this.hasClassName("active");
@@ -251,5 +298,17 @@
     var property_title_get = function property_title_get() {
         return this.titleElement != null ? this.titleElement.textContent : "";
     }
+
+    var element_onblur = function element_onblur(event) {
+        if (this.enabled) {
+            this.trigger('blur');
+        }
+    };
+
+    var element_onfocus = function element_onfocus(event) {
+        if (this.enabled) {
+            this.trigger('focus');
+        }
+    };
 
 })(StyledElements, StyledElements.Utils);

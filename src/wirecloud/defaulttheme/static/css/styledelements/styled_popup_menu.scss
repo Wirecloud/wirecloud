@@ -95,6 +95,10 @@
     }
 }
 
+.se-popup-menu-item:focus {
+    outline: none;
+}
+
 // TYPES - POPUP-MENU-ITEM SUBMENU
 
 .se-popup-menu-item.submenu {
@@ -113,7 +117,8 @@
 
 // STATES - POPUP-MENU-ITEM ACTIVE
 
-.se-popup-menu-item.active {
+.se-popup-menu-item.active,
+.se-popup-menu-item.active:focus {
     background: $popup-menu-item-active-bg;
     color: contrast-text-color($popup-menu-item-active-bg);
 
@@ -122,7 +127,8 @@
     }
 }
 
-.se-popup-menu-item.submenu.active {
+.se-popup-menu-item.submenu.active
+.se-popup-menu-item.submenu.active:focus {
 
     &:after {
         border-left-color: contrast-text-color($popup-menu-item-active-bg);

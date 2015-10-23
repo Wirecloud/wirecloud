@@ -632,6 +632,22 @@ if (window.StyledElements == null) {
         return true;
     };
 
+    // ==================================================================================
+    // DOCUMENT - HELPERS
+    // ==================================================================================
+
+    /**
+     * Checks if *element* has the focus
+     *
+     * @since 0.6.2
+     *
+     * @param {Element} element element to test
+     * @returns {Boolean} true if element is focused
+     */
+    Utils.hasFocus = function hasFocus(element) {
+        return document.activeElement === element;
+    };
+
     /**
      * Elimina un nodo DOM de su elemento padre. Esta funcion no comprueba que el
      * nodo DOM tenga un padre, por lo que en caso de no ser así el código lanzaría
