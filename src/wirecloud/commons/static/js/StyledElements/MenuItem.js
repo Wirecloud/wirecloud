@@ -58,10 +58,13 @@
         Object.defineProperties(this, {
             active: {get: property_active_get, set: property_active_set},
             description: {get: property_description_get},
+            selectable: {get: property_selectable_get},
+            tabIndex: {get: property_tabIndex_get},
             title: {get: property_title_get}
         });
 
         this.setTitle(title);
+        this.setFocusable(true);
 
         this.run = handler;
         this.context = context;
@@ -86,6 +89,13 @@
             this.select();
         }.bind(this);
         this.wrapperElement.addEventListener('click', this._onclick, true);
+
+        // Set up FocusEvent internal handlers.
+        this._onblur_bound = element_onblur.bind(this);
+        this._onfocus_bound = element_onfocus.bind(this);
+
+        this.wrapperElement.addEventListener('blur', this._onblur_bound);
+        this.wrapperElement.addEventListener('focus', this._onfocus_bound);
     };
 
     // ==================================================================================
@@ -93,6 +103,13 @@
     // ==================================================================================
 
     utils.inherit(se.MenuItem, se.StyledElement, /** @lends StyledElements.MenuItem.prototype */{
+
+        /**
+         * @override
+         */
+        _onenabled: function _onenabled(enabled) {
+            this.setFocusable(enabled);
+        },
 
         /**
          * [TODO: activate description]
@@ -169,6 +186,34 @@
         },
 
         /**
+         * [TODO: focus description]
+         *
+         * @since 0.6.2
+         *
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        focus: function focus() {
+
+            if (this.selectable && !this.hasFocus()) {
+                this.wrapperElement.focus();
+                this.trigger('focus');
+            }
+
+            return this;
+        },
+
+        /**
+         * [TODO: hasFocus description]
+         *
+         * @since 0.6.2
+         *
+         * @returns {Boolean} - [TODO: description]
+         */
+        hasFocus: function hasFocus() {
+            return utils.hasFocus(this.wrapperElement);
+        },
+
+        /**
          * [TODO: select description]
          *
          * @since 0.6.2
@@ -177,7 +222,7 @@
          */
         select: function select() {
 
-            if (this.enabled) {
+            if (this.selectable) {
                 this.trigger('click');
             }
 
@@ -201,6 +246,25 @@
             }
 
             this.descriptionElement.innerHTML = description;
+
+            return this;
+        },
+
+        /**
+         * [TODO: setFocusable description]
+         *
+         * @since 0.6.2
+         *
+         * @param {Boolean} focusable - [TODO: description]
+         * @returns {StyledElements.MenuItem} - The instance on which the member is called.
+         */
+        setFocusable: function setFocusable(focusable) {
+
+            if (this.enabled && focusable) {
+                this.wrapperElement.setAttribute('tabindex', 0);
+            } else {
+                this.wrapperElement.removeAttribute('tabindex');
+            }
 
             return this;
         },
@@ -232,7 +296,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['click', 'mouseenter', 'mouseleave'];
+    var events = ['blur', 'click', 'focus', 'mouseenter', 'mouseleave'];
 
     var property_active_get = function property_active_get() {
         return this.hasClassName("active");
@@ -248,8 +312,28 @@
         return this.descriptionElement != null ? this.descriptionElement.textContent : "";
     };
 
+    var property_selectable_get = function property_selectable_get() {
+        return this.enabled && this.tabIndex !== -1;
+    };
+
+    var property_tabIndex_get = function property_tabIndex_get() {
+        return this.wrapperElement.tabIndex;
+    };
+
     var property_title_get = function property_title_get() {
         return this.titleElement != null ? this.titleElement.textContent : "";
     }
+
+    var element_onblur = function element_onblur(event) {
+        if (this.selectable) {
+            this.trigger('blur');
+        }
+    };
+
+    var element_onfocus = function element_onfocus(event) {
+        if (this.selectable) {
+            this.trigger('focus');
+        }
+    };
 
 })(StyledElements, StyledElements.Utils);
