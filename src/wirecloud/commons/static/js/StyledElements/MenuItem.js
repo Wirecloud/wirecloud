@@ -96,6 +96,10 @@
 
         this.wrapperElement.addEventListener('blur', this._onblur_bound);
         this.wrapperElement.addEventListener('focus', this._onfocus_bound);
+
+        // Set up KeyboardEvent internal handlers.
+        this._onkeydown_bound = element_onkeydown.bind(this);
+        this.wrapperElement.addEventListener('keydown', this._onkeydown_bound);
     };
 
     // ==================================================================================
@@ -333,6 +337,13 @@
     var element_onfocus = function element_onfocus(event) {
         if (this.selectable) {
             this.trigger('focus');
+        }
+    };
+
+    var element_onkeydown = function element_onkeydown(event) {
+        if (this.selectable && utils.isPressedEnterKey(event)) {
+            event.preventDefault();
+            this.select();
         }
     };
 
