@@ -106,7 +106,8 @@
     var PopupMenuBase = function PopupMenuBase(options) {
         var defaultOptions = {
             oneActiveAtLeast: false,
-            'placement': null
+            placement: null,
+            useRefElementWidth: false
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
@@ -143,7 +144,8 @@
             firstEnabledItem: {get: property_firstEnabledItem_get},
             hidden: {get: property_hidden_get},
             lastEnabledItem: {get: property_lastEnabledItem_get},
-            oneActiveAtLeast: {value: options.oneActiveAtLeast}
+            oneActiveAtLeast: {value: options.oneActiveAtLeast},
+            useRefElementWidth: {value:options.useRefElementWidth}
         });
 
         this._items = [];
@@ -297,6 +299,11 @@
                 fixPosition.call(this, refPosition, weights, this._placement);
             }
         }
+
+        if (this.useRefElementWidth) {
+            this.wrapperElement.style.width = refPosition.width + "px";
+        }
+
         this.wrapperElement.style.display = 'block';
     };
 
