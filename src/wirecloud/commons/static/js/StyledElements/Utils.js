@@ -896,6 +896,51 @@ if (window.StyledElements == null) {
         return size.toFixed(2) + ' ' + SIZE_UNITS[i];
     };
 
+    // ==================================================================================
+    // Event helpers
+    // ==================================================================================
+
+    var keyCodeMap = {
+        9: 'Tab',
+        13: 'Enter',
+        37: 'ArrowLeft',
+        38: 'ArrowUp',
+        39: 'ArrowRight',
+        40: 'ArrowDown'
+    };
+
+    var keyFixes = {
+        'Left': 'ArrowLeft',
+        'Right': 'ArrowRight',
+        'Up': 'ArrowUp',
+        'Down': 'ArrowDown'
+    };
+
+    /**
+     * Normalizes the key code info from keyboard events
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event keypress event
+     * @returns {String} normalized key identifier
+     */
+    Utils.normalizeKey = function normalizeKey(event) {
+        var key;
+
+        key = event.key;
+        if (key) {
+            if (key in keyFixes) {
+                key = keyFixes[key];
+            }
+        } else {
+            key = 'Unidentified';
+            if (event.keyCode in keyCodeMap) {
+                key = keyCodeMap[event.keyCode];
+            }
+        }
+        return key;
+    };
+
     StyledElements.Utils = Utils;
 
 })();
