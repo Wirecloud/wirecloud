@@ -138,7 +138,9 @@
         }
 
         Object.defineProperties(this, {
-            hidden: {get: property_hidden_get}
+            firstSelectableChild: {get: property_firstSelectableChild_get},
+            hidden: {get: property_hidden_get},
+            lastSelectableChild: {get: property_lastSelectableChild_get},
         });
 
         this._items = [];
@@ -147,6 +149,9 @@
         this._menuItemCallback = this._menuItemCallback.bind(this);
         this._menuItemEnterCallback = this._menuItemEnterCallback.bind(this);
         this._menuItem_onmouseleave = menuItem_onmouseleave.bind(this);
+
+        this._menuItem_onblur_bound = menuItem_onblur.bind(this);
+        this._menuItem_onfocus_bound = menuItem_onfocus.bind(this);
     };
     PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
 
@@ -155,10 +160,14 @@
             child.addEventListener('click', this._menuItemCallback);
             child.addEventListener('mouseenter', this._menuItemEnterCallback);
             child.addEventListener('mouseleave', this._menuItem_onmouseleave);
+            child.addEventListener('blur', this._menuItem_onblur_bound);
+            child.addEventListener('focus', this._menuItem_onfocus_bound);
         } else if (child instanceof StyledElements.SubMenuItem) {
             child.addEventListener('click', this._menuItemCallback);
             child.addEventListener('mouseenter', this._menuItemEnterCallback);
             child.addEventListener('mouseleave', this._menuItem_onmouseleave);
+            child.addEventListener('blur', this._menuItem_onblur_bound);
+            child.addEventListener('focus', this._menuItem_onfocus_bound);
             child._setParentPopupMenu(this);
         } else if (child instanceof StyledElements.DynamicMenuItems || child instanceof StyledElements.Separator) {
             // nothing to do
@@ -222,7 +231,7 @@
             return; // This Popup Menu is already visible => nothing to do
         }
 
-        this._selectableItems = [];
+        this._selectableChildren = [];
 
         for (i = 0; i < this._items.length; i += 1) {
             item = this._items[i];
@@ -235,24 +244,24 @@
 
                     if (generatedItem instanceof StyledElements.MenuItem || generatedItem instanceof StyledElements.Separator) {
                         generatedItem.insertInto(this.wrapperElement);
-                        if (generatedItem instanceof StyledElements.MenuItem && generatedItem.enabled) {
-                            this._selectableItems.push(generatedItem);
+                        if (generatedItem instanceof StyledElements.MenuItem && generatedItem.selectable) {
+                            this._selectableChildren.push(generatedItem);
                         }
                     } else if (generatedItem instanceof StyledElements.SubMenuItem) {
                         generatedItem._getMenuItem().insertInto(this.wrapperElement);
-                        this._selectableItems.push(generatedItem.menuItem);
+                        this._selectableChildren.push(generatedItem.menuItem);
                     }
                 }
             } else if (item instanceof StyledElements.MenuItem || item instanceof StyledElements.Separator) {
                 item.insertInto(this.wrapperElement);
 
-                if (item instanceof StyledElements.MenuItem && item.enabled) {
-                    this._selectableItems.push(item);
+                if (item instanceof StyledElements.MenuItem && item.selectable) {
+                    this._selectableChildren.push(item);
                 }
             } else if (item instanceof StyledElements.SubMenuItem) {
                 item._getMenuItem().insertInto(this.wrapperElement);
                 this._submenus.push(item);
-                this._selectableItems.push(item.menuItem);
+                this._selectableChildren.push(item.menuItem);
             } else {
                 this.wrapperElement.appendChild(item);
             }
@@ -306,8 +315,8 @@
     PopupMenuBase.prototype._menuItemEnterCallback = function _menuItemEnterCallback(menuItem) {
         var i;
 
-        for (i = 0; i < this._selectableItems.length; i++) {
-            this._selectableItems[i].deactivate();
+        for (i = 0; i < this._selectableChildren.length; i++) {
+            this._selectableChildren[i].deactivate();
         }
 
         menuItem.activate();
@@ -331,9 +340,28 @@
         StyledElements.StyledElement.prototype.destroy.call(this);
     };
 
+    /**
+     * [TODO: hasSelectableChildren description]
+     *
+     * @since 0.6.2
+     *
+     * @returns {Boolean} - [TODO: description]
+     */
+    PopupMenuBase.prototype.hasSelectableChildren = function hasSelectableChildren() {
+        return !this.hidden && (this._selectableChildren.length > 0);
+    };
+
     // ==================================================================================
     // PRIVATE MEMBERS
     // ==================================================================================
+
+    var property_firstSelectableChild_get = function property_firstSelectableChild_get() {
+        return this.hasSelectableChildren() ? this._selectableChildren[0] : null;
+    };
+
+    var property_lastSelectableChild_get = function property_lastSelectableChild_get() {
+        return this.hasSelectableChildren() ? this._selectableChildren[this._selectableChildren.length - 1] : null;
+    };
 
     var property_hidden_get = function property_hidden_get() {
         return !utils.XML.isElement(this.wrapperElement.parentNode);
@@ -358,8 +386,23 @@
             this._dynamicItems.splice(i, 1);
         }
 
-        this._selectableItems = [];
+        this._selectableChildren = [];
+
         this.wrapperElement.innerHTML = "";
+    };
+
+    var menuItem_onblur = function menuItem_onblur(menuItem) {
+        menuItem.deactivate();
+    };
+
+    var menuItem_onfocus = function menuItem_onfocus(menuItem) {
+        var i;
+
+        for (i = 0; i < this._selectableChildren.length; i++) {
+            this._selectableChildren[i].deactivate();
+        }
+
+        this._menuItem = menuItem.activate();
     };
 
     var menuItem_onmouseleave = function menuItem_onmouseleave(menuItem) {
