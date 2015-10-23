@@ -693,8 +693,6 @@ You can use this template as starting point:
         <Directory ${path_to_wirecloud_instance}/${instance_name}>
                 <Files "wsgi.py">
                         Require all granted
-                        Order allow,deny
-                        Allow from all
                 </Files>
         </Directory>
 
@@ -746,8 +744,6 @@ You should end with something similar to:
         <Directory /opt/wirecloud_instance/wirecloud_instance>
                 <Files "wsgi.py">
                         Require all granted
-                        Order allow,deny
-                        Allow from all
                 </Files>
         </Directory>
 
