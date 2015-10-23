@@ -69,6 +69,35 @@
     PopupButton.prototype = new StyledElements.Button({extending: true});
     PopupButton.prototype.PopupMenu = StyledElements.PopupMenu;
 
+    /**
+     * @override
+     */
+    PopupButton.prototype._onkeydown = function _onkeydown(event, key) {
+
+        switch (key) {
+        case 'ArrowDown':
+            if (!this.popup_menu.hidden) {
+                this.popup_menu.moveCursorDown();
+            }
+            break;
+        case 'ArrowUp':
+            if (!this.popup_menu.hidden) {
+                this.popup_menu.moveCursorUp();
+            }
+            break;
+        case 'Enter':
+            if (this.popup_menu.hasActiveChild()) {
+                event.preventDefault();
+                this.popup_menu.selectActiveChild();
+            } else {
+                this._clickCallback(event);
+            }
+            break;
+        default:
+            // Quit when this doesn't handle the key event.
+        }
+    };
+
     PopupButton.prototype.getPopupMenu = function getPopupMenu() {
         return this.popup_menu;
     };
