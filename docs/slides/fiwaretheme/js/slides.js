@@ -15,7 +15,6 @@ function main() {
     var tocOpened = false;
     var helpOpened = false;
     var overviewActive = false;
-    var modifierKeyDown = false;
     var scale = 1;
     var showingPresenterView = false;
     var presenterViewWin = null;
@@ -362,33 +361,8 @@ function main() {
         blanked = !blanked;
     };
 
-    var isModifierKey = function(keyCode) {
-        switch (keyCode) {
-            case 16: // shift
-            case 17: // ctrl
-            case 18: // alt
-            case 91: // command
-                return true;
-                break;
-            default:
-                return false;
-                break;
-        }
-    };
-
-    var checkModifierKeyUp = function(event) {
-        if (isModifierKey(event.keyCode)) {
-            modifierKeyDown = false;
-        }
-    };
-
-    var checkModifierKeyDown = function(event) {
-        if (isModifierKey(event.keyCode)) {
-            modifierKeyDown = true;
-        }
-    };
-
     var handleBodyKeyDown = function(event) {
+        var modifierKeyDown = event.shiftKey || event.ctrlKey || event.altKey || event.metaKey;
         switch (event.keyCode) {
             case 13: // Enter
                 if (overviewActive) {
@@ -555,9 +529,7 @@ function main() {
             currentSlideNo = Number(window.location.hash.replace('#slide', ''));
         }
 
-        document.addEventListener('keyup', checkModifierKeyUp, false);
         document.addEventListener('keydown', handleBodyKeyDown, false);
-        document.addEventListener('keydown', checkModifierKeyDown, false);
 
         window.onresize = expandSlides;
 
