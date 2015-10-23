@@ -69,26 +69,14 @@
         this.run = handler;
         this.context = context;
 
-        // Internal events
-        this._onmouseenter = function (event) {
-            if (this.enabled) {
-                this.trigger('mouseenter');
-            }
-        }.bind(this);
-        this.wrapperElement.addEventListener('mouseenter', this._onmouseenter, false);
+        // Set up MouseEvent internal handlers.
+        this._onclick_bound = element_onclick.bind(this);
+        this._onmouseenter_bound = element_onmouseenter.bind(this);
+        this._onmouseleave_bound = element_onmouseleave.bind(this);
 
-        this._onmouseleave = function (event) {
-            if (this.enabled) {
-                this.trigger('mouseleave');
-            }
-        }.bind(this);
-        this.wrapperElement.addEventListener('mouseleave', this._onmouseleave, false);
-
-        this._onclick = function (event) {
-            event.stopPropagation();
-            this.select();
-        }.bind(this);
-        this.wrapperElement.addEventListener('click', this._onclick, true);
+        this.wrapperElement.addEventListener('click', this._onclick_bound, true);
+        this.wrapperElement.addEventListener('mouseenter', this._onmouseenter_bound);
+        this.wrapperElement.addEventListener('mouseleave', this._onmouseleave_bound);
 
         // Set up FocusEvent internal handlers.
         this._onblur_bound = element_onblur.bind(this);
@@ -176,13 +164,13 @@
                 this.wrapperElement.parentElement.removeChild(this.wrapperElement);
             }
 
-            this.wrapperElement.removeEventListener('click', this._onclick, true);
-            this.wrapperElement.removeEventListener('mouseenter', this._onmouseenter, false);
-            this.wrapperElement.removeEventListener('mouseleave', this._onmouseleave, false);
+            this.wrapperElement.removeEventListener('click', this._onclick_bound, true);
+            this.wrapperElement.removeEventListener('mouseenter', this._onmouseenter_bound, false);
+            this.wrapperElement.removeEventListener('mouseleave', this._onmouseleave_bound, false);
 
-            this._onclick = null;
-            this._onmouseenter = null;
-            this._onmouseleave = null;
+            this._onclick_bound = null;
+            this._onmouseenter_bound = null;
+            this._onmouseleave_bound = null;
 
             se.StyledElement.prototype.destroy.call(this);
 
@@ -327,6 +315,23 @@
     var property_title_get = function property_title_get() {
         return this.titleElement != null ? this.titleElement.textContent : "";
     }
+
+    var element_onclick = function element_onclick(event) {
+        event.stopPropagation();
+        this.select();
+    };
+
+    var element_onmouseenter = function element_onmouseenter(event) {
+        if (this.selectable) {
+            this.trigger('mouseenter');
+        }
+    };
+
+    var element_onmouseleave = function element_onmouseleave(event) {
+        if (this.selectable) {
+            this.trigger('mouseleave');
+        }
+    };
 
     var element_onblur = function element_onblur(event) {
         if (this.selectable) {
