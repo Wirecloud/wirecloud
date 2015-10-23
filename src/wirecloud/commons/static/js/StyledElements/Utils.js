@@ -896,6 +896,98 @@ if (window.StyledElements == null) {
         return size.toFixed(2) + ' ' + SIZE_UNITS[i];
     };
 
+    // ==================================================================================
+    // EVENT TARGET - KEYBOARD EVENT
+    // ==================================================================================
+
+    /**
+     * [TODO: isPressedKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @param {String|String[]} keyList - [TODO: description]
+     * @param {Number} keyCode - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedKey = function isPressedKey(event, keyList, keyCode) {
+        var keys = (typeof keyList === 'string') ? [keyList] : keyList;
+
+        return keyList.indexOf(event.key || event.keyIdentifier) !== -1 || event.keyCode === keyCode;
+    };
+
+    /**
+     * [TODO: isPressedTabKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedTabKey = function isPressedTabKey(event) {
+        return Utils.isPressedKey(event, 'Tab', 9);
+    };
+
+    /**
+     * [TODO: isPressedEnterKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedEnterKey = function isPressedEnterKey(event) {
+        return Utils.isPressedKey(event, 'Enter', 13);
+    };
+
+    /**
+     * [TODO: isPressedArrowLeftKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedArrowLeftKey = function isPressedArrowLeftKey(event) {
+        return Utils.isPressedKey(event, ['ArrowLeft', 'Left'], 37);
+    };
+
+    /**
+     * [TODO: isPressedArrowUpKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedArrowUpKey = function isPressedArrowUpKey(event) {
+        return Utils.isPressedKey(event, ['ArrowDown', 'Down'], 38);
+    };
+
+    /**
+     * [TODO: isPressedArrowRightKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedArrowRightKey = function isPressedArrowRightKey(event) {
+        return Utils.isPressedKey(event, ['ArrowRight', 'Right'], 39);
+    };
+
+    /**
+     * [TODO: isPressedArrowDownKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedArrowDownKey = function isPressedArrowDownKey(event) {
+        return Utils.isPressedKey(event, ['ArrowDown', 'Down'], 40);
+    };
+
     StyledElements.Utils = Utils;
 
 })();
