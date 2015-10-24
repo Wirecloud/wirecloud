@@ -55,14 +55,18 @@
 
             this.addClassName(options.extraClass);
 
-            this.heading = new se.Container({
-                extraClass: "se-alert-heading"
-            });
-            this.heading.appendChild(options.title).insertInto(this.wrapperElement);
+            this.heading = new se.Container({extraClass: "se-alert-heading"});
 
-            this.body = new se.Container({
-                extraClass: "se-alert-body"
-            });
+            if (options.title) {
+                this.heading.appendChild(options.title).insertInto(this.wrapperElement);
+            }
+
+            this.body = new se.Container({extraClass: "se-alert-body"});
+
+            if (options.state in defaultIcons && options.defaultIcon) {
+                this.body.appendChild(createDefaultIcon(defaultIcons[options.state]));
+            }
+
             this.body.appendChild(options.message).insertInto(this.wrapperElement);
         },
 
@@ -101,10 +105,22 @@
 
     var defaults = {
         state: 'warning',
+        defaultIcon: false,
         alignment: "",
         extraClass: "",
         title: "",
         message: ""
+    };
+
+    var defaultIcons = {
+        info: "icon-info-sign"
+    };
+
+    var createDefaultIcon = function createDefaultIcon(className) {
+        var icon = document.createElement('i');
+        icon.className = "se-alert-icon " + className;
+
+        return icon;
     };
 
 })(StyledElements, StyledElements.Utils);
