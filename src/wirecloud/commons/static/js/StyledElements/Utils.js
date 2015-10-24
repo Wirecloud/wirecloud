@@ -874,6 +874,25 @@ if (window.StyledElements == null) {
         return features.constructor;
     };
 
+    // ==================================================================================
+    // STRING - HELPERS
+    // ==================================================================================
+
+    /**
+     * [TODO: highlight description]
+     *
+     * @since 0.6.2
+     *
+     * @param {String} text - [TODO: description]
+     * @param {String} substring - [TODO: description]
+     * @returns {String} - [TODO: description]
+     */
+    Utils.highlight = function highlight(text, substring) {
+        return text.replace(new RegExp(substring, 'i'), function (match) {
+            return '<strong class="text-highlighted">' + match + '</strong>';
+        });
+    };
+
     Utils.capitalize = function capitalize(text) {
         return text.charAt(0).toUpperCase() + text.substring(1);
     };
