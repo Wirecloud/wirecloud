@@ -79,6 +79,10 @@
             this.wrapperElement.setAttribute("id", options.id);
         }
 
+        Object.defineProperties(this, {
+            value: {get: property_value_get}
+        });
+
         this.inputElement.setAttribute("value", options.initialValue);
 
         /* Internal events */
@@ -100,6 +104,11 @@
         this.inputElement.setAttribute('placeholder', placeholder);
     };
 
+    TextField.prototype.setValue = function setValue(value) {
+        this.wrapperElement.value = value;
+        return this.trigger('change');
+    };
+
     TextField.prototype.destroy = function destroy() {
 
         this.inputElement.removeEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
@@ -118,5 +127,13 @@
     };
 
     StyledElements.TextField = TextField;
+
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var property_value_get = function property_value_get() {
+        return this.wrapperElement.value;
+    };
 
 })();
