@@ -115,7 +115,7 @@
             return;
         }
 
-        StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange']);
+        StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange', 'select']);
 
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = 'se-popup-menu hidden';
@@ -210,6 +210,7 @@
 
     PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback(menuItem) {
         if (!menuItem.hasClassName("submenu")) {
+            this.trigger('select', menuItem);
             this.hide();
         }
 
