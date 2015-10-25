@@ -79,7 +79,7 @@
                 return this.windowContent;
             }.bind(this),
             'closebutton': function (options) {
-                var button = new StyledElements.Button({plain: true, extraClass: 'icon-remove'});
+                var button = new StyledElements.Button({plain: true, extraClass: 'icon-remove', title: StyledElements.Utils.gettext("Close")});
                 button.addEventListener('click', this._closeListener);
                 return button;
             }.bind(this),
