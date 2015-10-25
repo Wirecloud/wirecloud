@@ -153,6 +153,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Panel.js',
     'js/StyledElements/OffCanvasLayout.js',
     'js/StyledElements/Alert.js',
+    'js/StyledElements/Typeahead.js',
 )
 
 BASE_CSS = (
