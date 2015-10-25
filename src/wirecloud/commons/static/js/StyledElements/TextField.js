@@ -21,7 +21,7 @@
 
 /*global StyledElements */
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
@@ -40,8 +40,8 @@
     };
 
     onkeypress = function onkeypress(event) {
-        if (event.keyCode === 13) { // enter
-            this.events.submit.dispatch(this);
+        if (utils.isPressedEnterKey(event)) {
+            this.trigger('submit');
         }
     };
 
@@ -56,7 +56,7 @@
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
-        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur', 'submit']);
+        StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur', 'submit', 'keydown']);
 
         this.inputElement = document.createElement("input");
         this.inputElement.setAttribute("type", "text");
@@ -97,6 +97,9 @@
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
         this.inputElement.addEventListener('keypress', this._onkeypress, true);
+
+        this._onkeydown_bound = element_onkeydown.bind(this);
+        this.wrapperElement.addEventListener('keydown', this._onkeydown_bound, true);
     };
     TextField.prototype = new StyledElements.InputElement();
 
@@ -117,11 +120,13 @@
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);
         this.inputElement.removeEventListener('keypress', this._onkeypress, true);
+        this.wrapperElement.removeEventListener('keydown', this._onkeydown_bound, true);
 
         delete this._oninput;
         delete this._onfocus;
         delete this._onblur;
         delete this._onkeypress;
+        delete this._onkeydown_bound;
 
         StyledElements.InputElement.prototype.destroy.call(this);
     };
@@ -136,4 +141,16 @@
         return this.wrapperElement.value;
     };
 
-})();
+    var element_onkeydown = function element_onkeydown(event) {
+        if (this.enabled) {
+            if (utils.isPressedTabKey(event)) {
+                this.trigger('keydown', event, 'Tab');
+            } else if (utils.isPressedArrowDownKey(event)) {
+                this.trigger('keydown', event, 'ArrowDown');
+            } else if (utils.isPressedArrowUpKey(event)) {
+                this.trigger('keydown', event, 'ArrowUp');
+            }
+        }
+    };
+
+})(StyledElements, StyledElements.Utils);
