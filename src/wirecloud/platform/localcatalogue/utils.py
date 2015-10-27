@@ -16,11 +16,31 @@
 
 # You should have received a copy of the GNU Affero General Public License
 
+import sys
+
+from django.db import IntegrityError
+import six
+
 from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.platform.localcatalogue.signals import resource_installed
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
+
+
+def add_m2m(field, item):
+    # Work around for https://code.djangoproject.com/ticket/19544
+    if field.filter(pk=item.pk).exists():
+        return False
+
+    try:
+        field.add(item)
+        return True
+    except IntegrityError:
+        exc_info = sys.exc_info()
+        if field.filter(pk=item.pk).exists():
+            return False
+        six.reraise(*exc_info)
 
 
 def install_resource(wgt_file, executor_user):
@@ -49,11 +69,8 @@ def install_resource_to_user(user, **kwargs):
     downloaded_file = kwargs.get('file_contents', None)
 
     resource = install_resource(downloaded_file, executor_user)
-    if resource.users.filter(pk=user.pk).exists():
-        added = False
-    else:
-        added = True
-        resource.users.add(user)
+    added = add_m2m(resource.users, user)
+    if added:
         resource_installed.send(sender=resource, user=user)
 
     return added, resource
@@ -65,11 +82,8 @@ def install_resource_to_group(group, **kwargs):
     downloaded_file = kwargs.get('file_contents', None)
 
     resource = install_resource(downloaded_file, executor_user)
-    if resource.groups.filter(pk=group.pk).exists():
-        added = False
-    else:
-        added = True
-        resource.groups.add(group)
+    added = add_m2m(resource.groups, group)
+    if added:
         resource_installed.send(sender=resource, group=group)
 
     return added, resource

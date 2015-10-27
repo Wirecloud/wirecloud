@@ -26,7 +26,9 @@ import zipfile
 
 from django.contrib.auth.models import User, Group
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
 from django.test import Client
+from mock import Mock
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -37,7 +39,7 @@ from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.testcases import uses_extra_resources, DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase, wirecloud_selenium_test_case
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
-from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user, install_resource_to_group, install_resource_to_all_users
+from wirecloud.platform.localcatalogue.utils import add_m2m, install_resource, install_resource_to_user, install_resource_to_group, install_resource_to_all_users
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
 
@@ -228,6 +230,22 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertTrue(added)
         self.assertTrue(resource.is_available_for(self.user))
         self.assertTrue(resource.is_available_for(self.user2))
+
+    def test_add_m2m_race(self):
+
+        # Check add_m2m handles race conditions
+        field = Mock()
+        field.filter().exists.side_effect = (False, True)
+        field.add.side_effect = IntegrityError
+        add_m2m(field, Mock())
+
+    def test_add_m2m_integrity_exception(self):
+
+        # Check add_m2m reraise not handled exceptions
+        field = Mock()
+        field.filter().exists.return_value = False
+        field.add.side_effect = IntegrityError
+        self.assertRaises(IntegrityError, add_m2m, field, Mock())
 
     def test_install_resource_to_group_duplicated(self):
 
