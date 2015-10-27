@@ -136,7 +136,8 @@ MashupPlatform.http.makeRequest('http://api.example.com', {
   may have to tweak this.
 - `method` (*string; default `POST`*): The HTTP method to use for the request.
 - `responseType` (*string; default: ""*): Can be set to change the response type.
-  The valid values for this options are: "", "arraybuffer", "blob" and "text".
+  The valid values for this options are: "", "arraybuffer", "blob", "document",
+  "json" and "text".
 - `parameters` (*object*): The parameters for the request, which will be encoded
   into the URL for a `GET` method, or into the request body when using the `PUT`
   and `POST` methods.
@@ -183,23 +184,41 @@ MashupPlatform.http.makeRequest('http://api.example.com', {
   request as the first argument, and the exception object as the second one
 
 
+#### Request object
+
+The request object returned by the `MashupPlatform.http.makeRequest` method
+provides the following attributes:
+
+- `method` (*string*): The HTTP method use by the request, such as "GET",
+  "POST", "PUT",  "DELETE", etc.
+- `url` (*string*): The final URL where the request has been sent to
+
+And the following method:
+
+- `abort()`: Aborts the request if it has already been sent
+
+
 #### Response object
 
-The response object returned by the `MashupPlatform.http.makeRequest` method
-provides the following attributes:
+The response object passed to the callbacks used with the
+`MashupPlatform.http.makeRequest` method provides the following attributes:
 
 - `request` (*Request*): The request for the current response
 - `status` (*number*): The status of the response to the request. This is the
   HTTP result code
 - `statusText` (*string*): The response string returned by the HTTP server.
   Unlike status, this includes the entire text of the response message
-- `response` (*`ArrayBuffer`, `Blob`, `String`*): The response entity body
-  according to `responseType`, as an `ArrayBuffer`, `Blob` or `String`. This is
-  `null` if the request is not complete, was not successful or the
-  `responseType` option of the requests was ""
+- `response` (*`ArrayBuffer`, `Blob`, `Document`, *object*, `String`*): The
+  response entity body according to `responseType`, as an `ArrayBuffer`, `Blob`
+  or a `String`. This is `null` if the request is not complete, was not
+  successful or the `responseType` option of the requests was ""
 - `responseText` (*string*): The response to the request as text, or `null` if
-  the request was unsuccessful or the responseType option of the requests was
+  the request was unsuccessful or the `responseType` option of the requests was
   different to ""
+- `responseXML` (*Document*): The response to the request as a *Document*, or
+  `null` if the request was unsuccessful or cannot be parsed as XML or HTML.
+  The response is parsed as if it were a `text/xml` stream. This attribute is
+  not available if `responseType` is different to "".
 
 
 ### MashupPlatform.log
