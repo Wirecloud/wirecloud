@@ -136,7 +136,7 @@
                 return function(autoAction) {
                     LayoutManagerFactory.getInstance().changeCurrentView(view);
                     autoAction.nextHandler();
-                }
+                };
             },
             uploadComponent: function uploadComponent(id) {
                 return function (autoAction, element) {
@@ -149,6 +149,19 @@
                         autoAction.nextHandler();
                     }
                 };
+            },
+            editorView: {
+                wait_mac_wallet_ready: function wait_mac_wallet_ready() {
+                    return function (autoAction, element) {
+                        var interval = setInterval(function () {
+                            var widget_list = document.querySelector(".widget_wallet .widget_wallet_list:not(.disabled)");
+                            if (widget_list) {
+                                clearInterval(interval);
+                                autoAction.nextHandler();
+                            }
+                        }, 1000);
+                    };
+                },
             },
             wiringView: {
                 open_component_sidebar: function open_component_sidebar(type) {
@@ -192,7 +205,7 @@
                 return function () {
                     var currentWindowMenu = Wirecloud.UserInterfaceManager.currentWindowMenu;
                     return currentWindowMenu.form.fieldInterfaces[fieldName].inputElement.inputElement;
-                }
+                };
             },
             mac_wallet_close_button: function mac_wallet_close_button() {
                 return Utils.basic_selectors.button('.widget_wallet .icon-remove');
@@ -201,13 +214,15 @@
                 return Utils.basic_selectors.element('.widget_wallet .se-text-field');
             },
             mac_wallet_resource_mainbutton: function mac_wallet_resource_mainbutton(resource_title) {
-                var resources, widget, element;
+                return function () {
+                    var resources, widget, element;
 
-                resources = document.querySelectorAll('.widget_wallet .widget_wallet_list .resource_name');
-                widget = findElementByTextContent(resources, resource_title);
-                element = widget.parentNode.getElementsByClassName("mainbutton")[0];
+                    resources = document.querySelectorAll('.widget_wallet .widget_wallet_list .resource_name');
+                    widget = findElementByTextContent(resources, resource_title);
+                    element = widget.parentNode.getElementsByClassName("mainbutton")[0];
 
-                return element;
+                    return element;
+                };
             },
             menu_item: function menu_item(title) {
                 return function () {
