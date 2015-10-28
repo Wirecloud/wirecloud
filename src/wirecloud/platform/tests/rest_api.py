@@ -1359,6 +1359,23 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
         check_post_bad_request_syntax(self, url)
 
+    def test_iwidget_collection_put(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 2, 'tab_id': 101})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        def place_iwidgets():
+            data = [
+                {'id': 1, 'left': 0, 'top': 0, 'width': 10, 'height': 10},
+                {'id': 2, 'left': 9.5, 'top': 10.5, 'width': 10.5, 'height': 10.5}
+            ]
+            response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+        check_cache_is_purged(self, 2, place_iwidgets)
+
     def test_iwidget_collection_put_requires_permission(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})

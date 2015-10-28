@@ -69,7 +69,7 @@ def update_position_value(model, data, field, data_field=None):
     if data_field in data:
         size = data[data_field]
 
-        if type(size) != int:
+        if type(size) not in (int, float):
             raise TypeError(_('Field %(field)s must contain a number value') % {"field": data_field})
 
         if size < 0:
@@ -82,7 +82,7 @@ def update_size_value(model, data, field):
     if field in data:
         size = data[field]
 
-        if type(size) != int:
+        if type(size) not in (int, float):
             raise TypeError(_('Field %(field)s must contain a number value') % {"field": field})
 
         if size <= 0:
