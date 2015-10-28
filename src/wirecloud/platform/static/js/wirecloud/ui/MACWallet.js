@@ -100,6 +100,7 @@
         setTimeout(function () {
             this.wallet.focus();
             this.wallet.addClassName('in');
+            this.wallet.repaint();
         }.bind(this), 0);
     };
 

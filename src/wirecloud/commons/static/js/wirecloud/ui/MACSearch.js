@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,42 +26,28 @@
     var builder = new StyledElements.GUIBuilder();
 
     var _search = function _search(keywords) {
-        this._list.classList.add('disabled');
-        Wirecloud.LocalCatalogue.search({
+        if (this._request != null) {
+            this._request.abort();
+        }
+        this._list.disable();
+        this._request = Wirecloud.LocalCatalogue.search({
             scope: this.search_scope,
             search_criteria: keywords,
             onSuccess: function (widgets, search_info) {
                 var i, msg;
 
-                if (this.resource_painter == null) {
-                    this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates.wallet_widget, null, {
-                        'mainbutton': function (options, context, resource) {
-                            var tooltip = this.resourceButtonTooltip;
-                            if (typeof tooltip === 'function') {
-                                tooltip = tooltip(resource);
-                            }
-                            var button = new StyledElements.Button({
-                                'class': 'mainbutton btn-primary',
-                                'iconClass': this.resourceButtonIconClass,
-                                'title': tooltip
-                            });
-                            button.addEventListener('click', this.resourceButtonListener.bind(null, resource));
-                            return button;
-                        }.bind(this)
-                    });
-                }
-
-                this._list.innerHTML = '';
+                _load_resource_painter.call(this);
+                this._list.clear();
                 if (search_info.total_count !== 0) {
                     if ('corrected_query' in search_info) {
                         msg = gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
-                        this.resource_painter.paintInfo(msg, {
+                        this._list.appendChild(this.resource_painter.paintInfo(msg, {
                             corrected_query: search_info.corrected_query
-                        }).insertInto(this._list);
+                        }));
                     }
 
                     for (i = 0; i < widgets.length; i += 1) {
-                        this.resource_painter.paint(widgets[i]).insertInto(this._list);
+                        this._list.appendChild(this.resource_painter.paint(widgets[i]));
                     }
                 } else {
                     if (keywords != "") {
@@ -73,13 +59,41 @@
                     } else {
                         msg = gettext("<p>Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
                     }
-                    this.resource_painter.paintError(new StyledElements.Fragment(msg)).insertInto(this._list);
+                    this._list.appendChild(this.resource_painter.paintError(new StyledElements.Fragment(msg)));
                 }
             }.bind(this),
+            onFailure: function () {
+                var msg = Wirecloud.Utils.gettext("Connection error: No resource retrieved");
+
+                _load_resource_painter.call(this);
+                this._list.clear();
+                this._list.appendChild(this.resource_painter.paintError(msg));
+            }.bind(this),
             onComplete: function () {
-                this._list.classList.remove('disabled');
+                this._request = null;
+                this._list.enable();
             }.bind(this)
         });
+    };
+
+    var _load_resource_painter = function _load_resource_painter() {
+        if (this.resource_painter == null) {
+            this.resource_painter = new Wirecloud.ui.ResourcePainter(null, Wirecloud.currentTheme.templates.wallet_widget, null, {
+                'mainbutton': function (options, context, resource) {
+                    var tooltip = this.resourceButtonTooltip;
+                    if (typeof tooltip === 'function') {
+                        tooltip = tooltip(resource);
+                    }
+                    var button = new StyledElements.Button({
+                        'class': 'mainbutton btn-primary',
+                        'iconClass': this.resourceButtonIconClass,
+                        'title': tooltip
+                    });
+                    button.addEventListener('click', this.resourceButtonListener.bind(null, resource));
+                    return button;
+                }.bind(this)
+            });
+        }
     };
 
     var _keywordTimeoutHandler = function _keywordTimeoutHandler(input) {
@@ -121,8 +135,7 @@
 
         StyledElements.StyledElement.call(this, []);
 
-        this._list = document.createElement('div');
-        this._list.className = 'widget_wallet_list';
+        this._list = new StyledElements.Container({'class': 'widget_wallet_list loading'});
 
         var input;
 
@@ -149,6 +162,10 @@
         _search.call(this, '');
     };
     MACSearch.prototype = new StyledElements.StyledElement();
+
+    MACSearch.prototype.repaint = function repaint() {
+        this._list.repaint();
+    };
 
     MACSearch.prototype.refresh = function refresh() {
         _keywordTimeoutHandler.call(this, this.input);

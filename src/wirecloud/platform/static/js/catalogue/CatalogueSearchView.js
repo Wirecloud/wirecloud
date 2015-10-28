@@ -89,7 +89,7 @@
             var msg;
 
             if (error != null) {
-                this.resource_painter.setError(gettext('Connection error: No resources retrieved.'));
+                this.resource_painter.setError(gettext('Connection error: No resource retrieved.'));
             }
 
             if (pagination.totalCount === 0 && pagination.pOptions.keywords.trim() === "" && pagination.pOptions.scope === 'all') {

@@ -44,7 +44,7 @@
     };
 
     _onSearchFailure = function _onSearchFailure(reponse) {
-        this.onFailure();
+        Wirecloud.Utils.callCallback(this.onFailure);
     };
 
     deleteSuccessCallback = function deleteSuccessCallback(response) {
@@ -131,7 +131,7 @@
             params.pagenum = options.pagenum;
         }
 
-        Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
+        return Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
             parameters: params,
