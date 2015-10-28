@@ -103,11 +103,13 @@ MashupPlatform.http.makeRequest(url, options)
 * `url` (*required, string*): the URL to which to send the request
 * `options` (*optional, object*): an object with a list of request options (shown later)
 
+This method returns a *Request* object
+
 **Example usage:**
 
 ```javascript
 $('loading').show();
-MashupPlatform.http.makeRequest('http://api.example.com', {
+var request = MashupPlatform.http.makeRequest('http://api.example.com', {
     method: "POST",
     postBody: JSON.stringify({key: value}),
     contentType: "application/json",
@@ -162,6 +164,8 @@ MashupPlatform.http.makeRequest('http://api.example.com', {
 
 #### Request options: Callback options
 
+- `onAbort` (new in WireCloud 0.8.2): Invoked when the `abort()` method of the
+  Request object returned by `MashupPlatform.http.makeRequest()` is called
 - `onSuccess`: Invoked when a request completes and its status code belongs in
   the 2xy family. This is skipped if a code-specific callback is defined, and
   happens before `onComplete`. Receives the response object as the first

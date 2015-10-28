@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -55,8 +55,24 @@ Wirecloud.location = {
         }
     };
 
+    var onAbort = function onAbort(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        var response = new Response(this);
+
+        Wirecloud.Utils.callCallback(this.options.onAbort);
+        if (this.options.onComplete) {
+            try {
+                this.options.onComplete(response);
+            } catch (e) {
+                Wirecloud.Utils.callCallback(this.options.onException, response, e);
+            }
+        }
+    };
+
     var onReadyStateChange = function onReadyStateChange() {
-        if (this.transport.readyState == 4) {
+        if (this.transport.readyState == 4 && this.transport.aborted !== true) {
 
             var response = new Response(this);
 
@@ -69,22 +85,14 @@ Wirecloud.location = {
                     this.options.onFailure(response);
                 }
             } catch (e) {
-                if (this.options.onException) {
-                    try {
-                        this.options.onException(response, e);
-                    } catch (e2) {}
-                }
+                Wirecloud.Utils.callCallback(this.options.onException, response, e);
             }
 
             if (this.options.onComplete) {
                 try {
                     this.options.onComplete(response);
                 } catch (e) {
-                    if (this.options.onException) {
-                        try {
-                            this.options.onException(response, e);
-                        } catch (e2) {}
-                    }
+                    Wirecloud.Utils.callCallback(this.options.onException, response, e);
                 }
             }
         }
@@ -170,7 +178,10 @@ Wirecloud.location = {
 
         Object.defineProperties(this, {
             url: {value: url},
-            abort: {value: function () {this.transport.abort();}}
+            abort: {value: function () {
+                this.transport.aborted = true;
+                this.transport.abort();
+            }}
         });
 
         this.transport = new XMLHttpRequest();
@@ -181,6 +192,7 @@ Wirecloud.location = {
         if (this.options.responseType) {
             this.transport.responseType = this.options.responseType;
         }
+        this.transport.addEventListener('abort', onAbort.bind(this), true);
         this.transport.addEventListener('readystatechange', onReadyStateChange.bind(this), true);
         if (typeof this.options.onUploadProgress === 'function') {
             this.transport.upload.addEventListener('progress', options.onUploadProgress, false);
