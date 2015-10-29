@@ -7,7 +7,7 @@ This Installation WireCloud version 0.8 (starting from FIWARE release 4.4). Any 
 This section describes all the requirements of a basic WireCloud installation. **However, these dependencies are not meant to be installed manually in this step, as they will be installed throughout the documentation:**
 
 - A Database Manager (MySQL, PostgreSQL, SQLite3...)
-- Python 2.6 or 2.7. WireCloud 0.8.0 adds support for python 3.4+. In any case, the following python packages must be installed:
+- Python 2.7 or python 3.4+. In any case, the following python packages must be installed:
     - Django 1.5+
     - South 0.7.4+
     - lxml 2.3.0+
@@ -15,7 +15,7 @@ This section describes all the requirements of a basic WireCloud installation. *
     - django-compressor 1.4+
     - rdflib 3.2.0+
     - requests 2.1.0+
-    - futures 2.1.3+ (only on python 2)
+    - futures 2.1.3+ (only on python 2.7)
     - selenium 2.41+
     - pytz
     - django_relatives
@@ -31,12 +31,10 @@ All these dependencies are available for Linux, Mac OS and Windows, so WireCloud
 
 - Ubuntu 14.04
 - Ubuntu 12.04
-- CentOS 6.3
-- CentOS 6.5
 - CentOS 7
 - Debian Wheezy
 - Debian Jessie
-- Mac OS 10.9+
+- Mac OS 10.9+ (only recommended for development)
 
 > **NOTE:** WireCloud can make use of the Marketplace, Store and Repository GEs. If you want to exploit this support, you can choose between installing these GEs or using any of the instances publicly available, for example, on FIWARE Lab (see the "Instances" tab of the corresponding entries at [http://catalogue.fiware.org](http://catalogue.fiware.org)).
 
@@ -91,7 +89,11 @@ However, we recommend you to upgrade your python installation using the [Homebre
 
 This command will install, as bonus, the pip command tool.
 
-It's also recommended to install the followig packages:
+You will also need the command line developer tools for xcode. You can install them by running the following command:
+
+    $ xcode-select --install
+
+It's also recommended to install the following package:
 
     $ brew install pcre
 
