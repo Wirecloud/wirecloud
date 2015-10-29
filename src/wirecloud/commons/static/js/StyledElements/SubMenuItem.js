@@ -68,7 +68,7 @@
 
         this.parentMenu.addEventListener('itemOver', function (popupMenu, item) {
             if (item === this.menuItem) {
-                this.show(this.menuItem.wrapperElement.getBoundingClientRect());
+                this.show(this.menuItem.getBoundingClientRect());
             } else {
                 this.hide();
             }
@@ -81,8 +81,11 @@
 
     SubMenuItem.prototype.addEventListener = function addEventListener(eventId, handler) {
         switch (eventId) {
-        case 'mouseover':
+        case 'mouseenter':
+        case 'mouseleave':
         case 'click':
+        case 'blur':
+        case 'focus':
             return this.menuItem.addEventListener(eventId, handler);
         default:
             return StyledElements.PopupMenuBase.prototype.addEventListener.call(this, eventId, handler);

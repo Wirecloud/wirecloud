@@ -632,6 +632,22 @@ if (window.StyledElements == null) {
         return true;
     };
 
+    // ==================================================================================
+    // DOCUMENT - HELPERS
+    // ==================================================================================
+
+    /**
+     * [TODO: hasFocus description]
+     *
+     * @since 0.6.2
+     *
+     * @param {Element} element - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.hasFocus = function hasFocus(element) {
+        return document.activeElement === element;
+    };
+
     /**
      * Elimina un nodo DOM de su elemento padre. Esta funcion no comprueba que el
      * nodo DOM tenga un padre, por lo que en caso de no ser así el código lanzaría
@@ -791,14 +807,13 @@ if (window.StyledElements == null) {
         };
     };
 
-    Utils.inherit = function inherit(constructor, superConstructor) {
+    Utils.inherit = function inherit(constructor, superConstructor, members) {
         var counter = 0;
 
         constructor.prototype = Object.create(superConstructor.prototype);
+        constructor.prototype.constructor = constructor;
 
         addMembers(constructor, {
-
-            constructor: constructor,
 
             superConstructor: superConstructor,
 
@@ -828,6 +843,8 @@ if (window.StyledElements == null) {
             }
 
         });
+
+        addMembers(constructor, members);
     };
 
     /**
@@ -857,6 +874,25 @@ if (window.StyledElements == null) {
         return features.constructor;
     };
 
+    // ==================================================================================
+    // STRING - HELPERS
+    // ==================================================================================
+
+    /**
+     * [TODO: highlight description]
+     *
+     * @since 0.6.2
+     *
+     * @param {String} text - [TODO: description]
+     * @param {String} substring - [TODO: description]
+     * @returns {String} - [TODO: description]
+     */
+    Utils.highlight = function highlight(text, substring) {
+        return text.replace(new RegExp(substring, 'i'), function (match) {
+            return '<strong class="text-highlighted">' + match + '</strong>';
+        });
+    };
+
     Utils.capitalize = function capitalize(text) {
         return text.charAt(0).toUpperCase() + text.substring(1);
     };
@@ -877,6 +913,98 @@ if (window.StyledElements == null) {
         }
 
         return size.toFixed(2) + ' ' + SIZE_UNITS[i];
+    };
+
+    // ==================================================================================
+    // EVENT TARGET - KEYBOARD EVENT
+    // ==================================================================================
+
+    /**
+     * [TODO: isPressedKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @param {String|String[]} keyList - [TODO: description]
+     * @param {Number} keyCode - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedKey = function isPressedKey(event, keyList, keyCode) {
+        var keys = (typeof keyList === 'string') ? [keyList] : keyList;
+
+        return keyList.indexOf(event.key || event.keyIdentifier) !== -1 || event.keyCode === keyCode;
+    };
+
+    /**
+     * [TODO: isPressedTabKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedTabKey = function isPressedTabKey(event) {
+        return Utils.isPressedKey(event, 'Tab', 9);
+    };
+
+    /**
+     * [TODO: isPressedEnterKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedEnterKey = function isPressedEnterKey(event) {
+        return Utils.isPressedKey(event, 'Enter', 13);
+    };
+
+    /**
+     * [TODO: isPressedArrowLeftKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedArrowLeftKey = function isPressedArrowLeftKey(event) {
+        return Utils.isPressedKey(event, ['ArrowLeft', 'Left'], 37);
+    };
+
+    /**
+     * [TODO: isPressedArrowUpKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedArrowUpKey = function isPressedArrowUpKey(event) {
+        return Utils.isPressedKey(event, ['ArrowDown', 'Down'], 38);
+    };
+
+    /**
+     * [TODO: isPressedArrowRightKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedArrowRightKey = function isPressedArrowRightKey(event) {
+        return Utils.isPressedKey(event, ['ArrowRight', 'Right'], 39);
+    };
+
+    /**
+     * [TODO: isPressedArrowDownKey description]
+     *
+     * @since 0.6.2
+     *
+     * @param {KeyboardEvent} event - [TODO: description]
+     * @returns {Boolean} - [TODO: description]
+     */
+    Utils.isPressedArrowDownKey = function isPressedArrowDownKey(event) {
+        return Utils.isPressedKey(event, ['ArrowDown', 'Down'], 40);
     };
 
     StyledElements.Utils = Utils;

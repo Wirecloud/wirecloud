@@ -105,7 +105,9 @@
      */
     var PopupMenuBase = function PopupMenuBase(options) {
         var defaultOptions = {
-            'placement': null
+            oneActiveAtLeast: false,
+            placement: null,
+            useRefElementWidth: false
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
@@ -113,7 +115,7 @@
             return;
         }
 
-        StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange']);
+        StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange', 'select']);
 
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = 'se-popup-menu hidden';
@@ -138,24 +140,32 @@
         }
 
         Object.defineProperties(this, {
-            hidden: {get: property_hidden_get}
+            firstSelectableChild: {get: property_firstSelectableChild_get},
+            hidden: {get: property_hidden_get},
+            lastSelectableChild: {get: property_lastSelectableChild_get},
+            oneActiveAtLeast: {value: options.oneActiveAtLeast},
+            useRefElementWidth: {value:options.useRefElementWidth}
         });
 
         this._items = [];
         this._dynamicItems = [];
         this._submenus = [];
         this._menuItemCallback = this._menuItemCallback.bind(this);
-        this._menuItemEnterCallback = this._menuItemEnterCallback.bind(this);
+
+        this._menuItem_onactivate_bound = menuItem_onactivate.bind(this);
+        this._menuItem_ondeactivate_bound = menuItem_ondeactivate.bind(this);
     };
     PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
 
     PopupMenuBase.prototype._append = function _append(child, where) {
         if (child instanceof StyledElements.MenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.addEventListener('mouseover', this._menuItemEnterCallback);
+            child.on('mouseenter focus', this._menuItem_onactivate_bound);
+            child.on('mouseleave blur', this._menuItem_ondeactivate_bound);
         } else if (child instanceof StyledElements.SubMenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.addEventListener('mouseover', this._menuItemEnterCallback);
+            child.menuItem.on('mouseenter focus', this._menuItem_onactivate_bound);
+            child.menuItem.on('mouseleave blur', this._menuItem_ondeactivate_bound);
             child._setParentPopupMenu(this);
         } else if (child instanceof StyledElements.DynamicMenuItems || child instanceof StyledElements.Separator) {
             // nothing to do
@@ -199,10 +209,8 @@
     };
 
     PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback(menuItem) {
-        if (menuItem.wrapperElement.classList.contains('submenu')) {
-            this.show();
-            menuItem.wrapperElement.classList.add("hovered");
-        } else {
+        if (!menuItem.hasClassName("submenu")) {
+            this.trigger('select', menuItem);
             this.hide();
         }
 
@@ -215,12 +223,42 @@
         return !this.hidden;
     };
 
+    /**
+     * [TODO: hasActiveChild description]
+     *
+     * @since 0.6.2
+     *
+     * @return {Boolean} - [TODO: description]
+     */
+    PopupMenuBase.prototype.hasActiveChild = function hasActiveChild() {
+        return !this.hidden && this._activeMenuItem != null;
+    };
+
+    /**
+     * [TODO: selectActiveChild description]
+     *
+     * @since 0.6.2
+     *
+     * @return {StyledElement.PopupMenuBase} - The instance on which the member is called.
+     */
+    PopupMenuBase.prototype.selectActiveChild = function selectActiveChild() {
+
+        if (this.hasActiveChild()) {
+            this._activeMenuItem.select();
+        }
+
+        return this;
+    };
+
     PopupMenuBase.prototype.show = function show(refPosition) {
         var i, j, item, generatedItems, generatedItem;
 
         if (this.isVisible()) {
             return; // This Popup Menu is already visible => nothing to do
         }
+
+        this._selectableChildren = [];
+        this._activeMenuItem = null;
 
         for (i = 0; i < this._items.length; i += 1) {
             item = this._items[i];
@@ -233,18 +271,31 @@
 
                     if (generatedItem instanceof StyledElements.MenuItem || generatedItem instanceof StyledElements.Separator) {
                         generatedItem.insertInto(this.wrapperElement);
+                        if (generatedItem instanceof StyledElements.MenuItem && generatedItem.selectable) {
+                            this._selectableChildren.push(generatedItem);
+                        }
                     } else if (generatedItem instanceof StyledElements.SubMenuItem) {
                         generatedItem._getMenuItem().insertInto(this.wrapperElement);
+                        this._selectableChildren.push(generatedItem.menuItem);
                     }
                 }
             } else if (item instanceof StyledElements.MenuItem || item instanceof StyledElements.Separator) {
                 item.insertInto(this.wrapperElement);
+
+                if (item instanceof StyledElements.MenuItem && item.selectable) {
+                    this._selectableChildren.push(item);
+                }
             } else if (item instanceof StyledElements.SubMenuItem) {
                 item._getMenuItem().insertInto(this.wrapperElement);
                 this._submenus.push(item);
+                this._selectableChildren.push(item.menuItem);
             } else {
                 this.wrapperElement.appendChild(item);
             }
+        }
+
+        if ((this._selectableChildren.length > 0) && this.oneActiveAtLeast) {
+            activateMenuItem.call(this, this._selectableChildren[0]);
         }
 
         this.wrapperElement.classList.remove('hidden');
@@ -273,7 +324,64 @@
                 fixPosition.call(this, refPosition, weights, this._placement);
             }
         }
+
+        if (this.useRefElementWidth) {
+            this.wrapperElement.style.width = refPosition.width + "px";
+        }
+
         this.wrapperElement.style.display = 'block';
+    };
+
+    PopupMenuBase.prototype.moveCursorDown = function moveCursorDown() {
+        var index;
+
+        if (!this.hasSelectableChildren()) {
+            return this;
+        }
+
+        if (this._activeMenuItem != null) {
+            this._activeMenuItem.deactivate();
+            index = this._selectableChildren.indexOf(this._activeMenuItem);
+
+            if (index !== (this._selectableChildren.length - 1)) {
+                this._activeMenuItem = this._selectableChildren[index + 1];
+            } else {
+                this._activeMenuItem = this._selectableChildren[0];
+            }
+        } else {
+            this._activeMenuItem = this._selectableChildren[0];
+        }
+
+        this._activeMenuItem.activate();
+        this.trigger('itemOver', this._activeMenuItem);
+
+        return this;
+    };
+
+    PopupMenuBase.prototype.moveCursorUp = function moveCursorUp() {
+        var index;
+
+        if (!this.hasSelectableChildren()) {
+            return this;
+        }
+
+        if (this._activeMenuItem != null) {
+            this._activeMenuItem.deactivate();
+            index = this._selectableChildren.indexOf(this._activeMenuItem);
+
+            if (index !== 0) {
+                this._activeMenuItem = this._selectableChildren[index - 1];
+            } else {
+                this._activeMenuItem = this._selectableChildren[(this._selectableChildren.length - 1)];
+            }
+        } else {
+            this._activeMenuItem = this._selectableChildren[(this._selectableChildren.length - 1)];
+        }
+
+        this._activeMenuItem.activate();
+        this.trigger('itemOver', this._activeMenuItem);
+
+        return this;
     };
 
     PopupMenuBase.prototype.hide = function hide() {
@@ -290,10 +398,6 @@
         Wirecloud.UserInterfaceManager._unregisterPopup(this);
 
         return this.trigger('visibilityChange');
-    };
-
-    PopupMenuBase.prototype._menuItemEnterCallback = function _menuItemEnterCallback(menuItem) {
-        this.events.itemOver.dispatch(this, menuItem);
     };
 
     PopupMenuBase.prototype.destroy = function destroy() {
@@ -313,12 +417,36 @@
         StyledElements.StyledElement.prototype.destroy.call(this);
     };
 
+    /**
+     * [TODO: hasSelectableChildren description]
+     *
+     * @since 0.6.2
+     *
+     * @returns {Boolean} - [TODO: description]
+     */
+    PopupMenuBase.prototype.hasSelectableChildren = function hasSelectableChildren() {
+        return !this.hidden && (this._selectableChildren.length > 0);
+    };
+
     // ==================================================================================
     // PRIVATE MEMBERS
     // ==================================================================================
 
+    var property_firstSelectableChild_get = function property_firstSelectableChild_get() {
+        return this.hasSelectableChildren() ? this._selectableChildren[0] : null;
+    };
+
+    var property_lastSelectableChild_get = function property_lastSelectableChild_get() {
+        return this.hasSelectableChildren() ? this._selectableChildren[this._selectableChildren.length - 1] : null;
+    };
+
     var property_hidden_get = function property_hidden_get() {
         return !utils.XML.isElement(this.wrapperElement.parentNode);
+    };
+
+    var activateMenuItem = function activateMenuItem(menuItem) {
+        this._activeMenuItem = menuItem.activate();
+        this.trigger('itemOver', menuItem);
     };
 
     var hideContent = function hideContent() {
@@ -340,7 +468,34 @@
             this._dynamicItems.splice(i, 1);
         }
 
+        this._selectableChildren = [];
+        this._activeMenuItem = null;
+
         this.wrapperElement.innerHTML = "";
+    };
+
+    var menuItem_onactivate = function menuItem_onactivate(menuItem) {
+        var i;
+
+        for (i = 0; i < this._selectableChildren.length; i++) {
+            this._selectableChildren[i].deactivate();
+        }
+
+        activateMenuItem.call(this, menuItem);
+    };
+
+    var menuItem_ondeactivate = function menuItem_ondeactivate(menuItem) {
+
+        if (this.oneActiveAtLeast) {
+            if (this._activeMenuItem !== menuItem) {
+                menuItem.deactivate();
+            }
+        } else {
+            if (this._activeMenuItem === menuItem) {
+                this._activeMenuItem = null;
+            }
+            menuItem.deactivate();
+        }
     };
 
     StyledElements.PopupMenuBase = PopupMenuBase;

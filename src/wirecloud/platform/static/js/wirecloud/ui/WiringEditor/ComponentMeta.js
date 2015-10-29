@@ -53,7 +53,7 @@
                 title: meta.title
             });
 
-            this.heading.title.addClassName("component-title");
+            this.heading.titleElement.classList.add("component-title");
 
             thumbnailElement = document.createElement('div');
             thumbnailElement.className = "thumbnail thumbnail-rounded thumbnail-sm";

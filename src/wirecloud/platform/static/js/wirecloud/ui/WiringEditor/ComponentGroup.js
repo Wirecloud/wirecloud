@@ -67,11 +67,12 @@
             if (options.canCreate) {
                 this.meta.btnAdd.on('click', btncreate_onclick.bind(this));
             } else {
-                this.meta.btnAdd.hide();
+                this.meta.btnAdd.remove();
             }
 
             Object.defineProperties(this, {
-                id: {value: meta.group_id}
+                id: {value: meta.group_id},
+                type: {value: meta.type}
             });
             this.get().setAttribute('data-id', this.id);
         },
@@ -111,7 +112,7 @@
              */
             appendVersion: function appendVersion(meta) {
                 this.versions[meta.version] = meta;
-                this.meta.version.addEntries([meta.version]);
+                this.meta.version.addEntries([{label: 'v' + meta.version.text, value: meta.version.text}]);
 
                 if (this.latestVersion == null || this.latestVersion.version.compareTo(meta.version) < 0) {
                     showLatestVersion.call(this, meta);

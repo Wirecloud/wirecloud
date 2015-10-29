@@ -92,7 +92,7 @@
                 },
 
                 title: {
-                    get: function get() {return this.heading.title.text();}
+                    get: function get() {return this.heading.titleElement.textContent;}
                 }
 
             });
@@ -133,12 +133,19 @@
 
             setTitle: function setTitle(title) {
 
-                if (this.heading.title == null) {
-                    this.heading.title = new se.Container({extraClass: "panel-title"});
-                    this.heading.appendChild(this.heading.title);
+                if (this.heading.titleElement == null) {
+                    this.heading.titleElement = document.createElement('div');
+                    this.heading.titleElement.className ="panel-title";
+                    this.heading.appendChild(this.heading.titleElement);
                 }
 
-                this.heading.title.clear().appendChild(title);
+                this.heading.titleElement.innerHTML = "";
+
+                if (typeof title === 'string') {
+                    this.heading.titleElement.innerHTML = title;
+                } else {
+                    this.heading.titleElement.appendChild(title);
+                }
 
                 return this;
             }

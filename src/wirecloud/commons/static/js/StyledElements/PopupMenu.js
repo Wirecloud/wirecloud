@@ -31,6 +31,8 @@
         document.addEventListener("click", this._disableCallback, true);
 
         StyledElements.PopupMenuBase.prototype.show.call(this, refPosition);
+
+        return this;
     };
 
     PopupMenu.prototype.hide = function hide() {
@@ -38,6 +40,8 @@
 
         document.removeEventListener("click", this._disableCallback, true);
         document.removeEventListener("contextmenu", this._disableCallback, true);
+
+        return this;
     };
 
     PopupMenu.prototype.destroy = function destroy() {

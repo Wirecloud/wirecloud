@@ -66,16 +66,15 @@
             this.wrapperElement.setAttribute("name", options.group);
         }
 
+        Object.defineProperties(this, {
+            checked: {get: property_checked_get, set: property_checked_set},
+            value: {get: property_value_get}
+        });
+
         /* Internal events */
         this.inputElement.addEventListener('mousedown', StyledElements.Utils.stopPropagationListener, true);
         this.inputElement.addEventListener('click', StyledElements.Utils.stopPropagationListener, true);
-        this.inputElement.addEventListener('change',
-                                    function () {
-                                        if (this.enabled) {
-                                            this.events.change.dispatch(this);
-                                        }
-                                    }.bind(this),
-                                    true);
+        this.wrapperElement.addEventListener('change', element_onchange.bind(this));
     };
     RadioButton.prototype = new StyledElements.InputElement();
 
@@ -99,4 +98,30 @@
 
     StyledElements.RadioButton = RadioButton;
 
-})();
+    // ==================================================================================
+    // PRIVATE MEMBERS
+    // ==================================================================================
+
+    var property_checked_get = function property_checked_get() {
+        return this.wrapperElement.checked;
+    };
+
+    var property_checked_set = function property_checked_set(checked) {
+
+        if (typeof checked === 'boolean' && checked !== this.checked) {
+            this.wrapperElement.checked = checked;
+        }
+    };
+
+    var property_value_get = function property_value_get() {
+        return this.wrapperElement.value;
+    };
+
+    var element_onchange = function element_onchange(event) {
+
+        if (this.enabled) {
+            this.trigger('change');
+        }
+    };
+
+})(StyledElements, StyledElements.Utils);

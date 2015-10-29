@@ -75,7 +75,7 @@
                 buttons: [this.btnPrefs, this.btnRemove]
             });
 
-            this.heading.title.addClassName("se-link behaviour-title");
+            this.heading.titleElement.classList.add("se-link", "behaviour-title");
 
             descriptionElement = document.createElement('p');
             descriptionElement.className = "behaviour-description";
@@ -397,7 +397,7 @@
 
     var updateInfo = function updateInfo(data) {
         /* jshint validthis:true */
-        this.heading.title.text(data.title ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
+        this.setTitle(data.title ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
         this.description = data.description;
         this.trigger('change');
     };

@@ -28,3 +28,12 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
+
+.btn-group > .se-text-field {
+    margin: 0;
+}
+
+.btn-group > .se-text-field:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
