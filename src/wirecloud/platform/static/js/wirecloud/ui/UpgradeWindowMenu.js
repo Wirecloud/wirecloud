@@ -125,9 +125,9 @@
             var new_component_id = [this.component.meta.vendor, this.component.meta.name, new_version].join('/');
             var new_component = Wirecloud.LocalCatalogue.getResourceId(new_component_id);
 
-            var onsuccess_listener = function onsuccess_listener() {
-                component.removeEventListener('upgraded', onsuccess_listener);
-                component.removeEventListener('upgradeerror', onfailure_listener);
+            var _onsuccess_listener = function onsuccess_listener() {
+                component.removeEventListener('upgraded', _onsuccess_listener);
+                component.removeEventListener('upgradeerror', _onfailure_listener);
 
                 var msg;
                 if (new_version.compareTo(this.component.meta.version) > 0) {
@@ -141,13 +141,13 @@
                 this._closeListener();
             }.bind(this);
 
-            var onfailure_listener = function onsuccess_listener() {
-                component.removeEventListener('upgraded', onsuccess_listener);
-                component.removeEventListener('upgradeerror', onfailure_listener);
+            var _onfailure_listener = function onsuccess_listener() {
+                component.removeEventListener('upgraded', _onsuccess_listener);
+                component.removeEventListener('upgradeerror', _onfailure_listener);
                 this.acceptButton.enable();
             }.bind(this);
-            component.addEventListener('upgraded', onsuccess_listener);
-            component.addEventListener('upgradeerror', onfailure_listener);
+            component.addEventListener('upgraded', _onsuccess_listener);
+            component.addEventListener('upgradeerror', _onfailure_listener);
             component.meta = new_component;
         }.bind(this));
 
