@@ -37,6 +37,18 @@
     };
     InputElement.prototype = new StyledElements.StyledElement();
 
+    /**
+     * Current value of this Input Element
+     *
+     * @since 0.6.2
+     * @member {String}
+     * @name StyledElements.InputElement#value
+     */
+    Object.defineProperty(InputElement.prototype, 'value', {
+        get: function () {return this.getValue();},
+        set: function (value) {return this.setValue(value);}
+    });
+
     InputElement.prototype.getValue = function getValue() {
         return this.inputElement.value;
     };
