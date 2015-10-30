@@ -83,19 +83,6 @@
             },
 
             /**
-             * @override
-             */
-            prepend: function prepend(newElement, refElement) {
-
-                if (newElement instanceof se.StyledElement) {
-                    this.children.push(newElement);
-                }
-
-                return this.superMember(se.StyledElement, 'prepend', newElement, refElement);
-            },
-
-            /**
-             * @override
              */
             remove: function remove(childElement) {
                 var index;
