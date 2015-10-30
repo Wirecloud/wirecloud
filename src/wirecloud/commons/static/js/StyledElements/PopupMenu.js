@@ -18,7 +18,8 @@
     };
 
     /**
-     *
+     * @since 0.5
+     * @extends StyledElements.PopupMenuBase
      */
     var PopupMenu = function PopupMenu(options) {
         StyledElements.PopupMenuBase.call(this, options);

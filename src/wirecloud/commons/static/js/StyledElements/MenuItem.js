@@ -38,7 +38,7 @@
      * @extends {StyledElements.StyledElement}
      *
      * @since 0.5.0
-     * @alias StyledElements.MenuItem
+     * @name StyledElements.MenuItem
      *
      * @param {String} title - Label to display in the user interface
      * @param {Function} handler - Callback to be called when this Menu Item is

@@ -26,7 +26,9 @@
     "use strict";
 
     /**
-     * @abstract
+     * @constructor
+     * @name StyledElements.InputInterface
+     * @interface
      */
     var InputInterface = function InputInterface(fieldId, options) {
         if (arguments.length === 0) {

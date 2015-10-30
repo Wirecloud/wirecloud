@@ -46,7 +46,9 @@
     };
 
     /**
-     * Añade un campo de texto.
+     * @constructor
+     * @name StyledElements.TextField
+     * @extends StyledElements.InputElement
      */
     TextField = function TextField(options) {
         var defaultOptions = {

@@ -229,7 +229,7 @@
     };
 
     /**
-     * @version 0.6.0
+     * @since 0.6.0
      * @abstract
      */
     Button.prototype._onvisible = function _onvisible(visible) {
@@ -246,7 +246,7 @@
 
     /**
      * [setLabel description]
-     * @version 0.6.0
+     * @since 0.6.0
      *
      * @param {String} [textContent]
      *      [description]

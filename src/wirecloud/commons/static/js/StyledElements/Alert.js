@@ -34,6 +34,8 @@
      * Create a new instance of class Alert.
      *
      * @constructor
+     * @extends StyledElements.StyledElement
+     * @since 0.6
      * @param {Object.<String, *>} [options] [description]
      */
     se.Alert = utils.defineClass({
@@ -68,7 +70,7 @@
 
         inherit: se.StyledElement,
 
-        members: {
+        members: /** @lends StyledElements.Alert.prototype */ {
 
             /**
              * [addNote description]

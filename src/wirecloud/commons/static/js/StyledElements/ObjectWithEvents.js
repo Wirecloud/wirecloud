@@ -26,15 +26,15 @@
     // CLASS DEFINITION
     // ==================================================================================
 
-    /**
-     * Create a new instance of class ObjectWithEvents
-     * @mixin
-     *
-     * @constructor
-     * @param {String[]} names [description]
-     */
     se.ObjectWithEvents = utils.defineClass({
 
+        /**
+         * Create a new instance of class ObjectWithEvents
+         * @mixin
+         *
+         * @name StyledElements.ObjectWithEvents
+         * @param {String[]} names List of event names to handle
+         */
         constructor: function ObjectWithEvents(names) {
             this.events = {};
 
@@ -43,11 +43,11 @@
             }, this);
         },
 
-        members: {
+        members: /** @lends StyledElements.ObjectWithEvents.prototype */ {
 
             /**
              * Remove an event handler from one or more existing events.
-             * @version 0.6
+             * @since 0.6
              *
              * @param {String} [names]
              *      Optional. One or more space-separated event names. If not
@@ -56,7 +56,7 @@
              *      Optional. An event handler previously attached. If not
              *      provided, all the event handlers registered for the affected
              *      events will be removed
-             * @returns {ObjectWithEvents}
+             * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called.
              */
             off: function off(names, handler) {
@@ -71,13 +71,13 @@
 
             /**
              * Attach an event handler for one or more existing events.
-             * @version 0.6
+             * @since 0.6
              *
              * @param {String} names
              *      One or more space-separated event names.
              * @param {Function} handler
              *      An event handler to execute when the event is triggered.
-             * @returns {ObjectWithEvents}
+             * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called.
              */
             on: function on(names, handler) {
@@ -95,11 +95,11 @@
 
             /**
              * Execute all event handlers attached for the existing event.
-             * @version 0.6
+             * @since 0.6
              *
              * @param {String} name
              *      A string containing a existing event.
-             * @returns {ObjectWithEvents}
+             * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called.
              */
             trigger: function trigger(name) {
@@ -119,13 +119,13 @@
 
             /**
              * Attach an event handler for a given event.
-             * @version 0.5
+             * @since 0.5
              *
              * @param {String} name
              *      Event name
              * @param {Function} handler
              *      An event handler to execute when the event is triggered
-             * @returns {ObjectWithEvents}
+             * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called
              */
             addEventListener: function addEventListener(name, handler) {
@@ -143,11 +143,11 @@
 
             /**
              * Remove all event handlers for a given event
-             * @version 0.5
+             * @since 0.5
              *
              * @param {String} name
              *      event name
-             * @returns {ObjectWithEvents}
+             * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called
              */
             clearEventListeners: function clearEventListeners(name) {
@@ -182,13 +182,13 @@
 
             /**
              * Remove an event handler from an event
-             * @version 0.5
+             * @since 0.5
              *
              * @param {String} name
              *      Event name
              * @param {Function} handler
              *      A previously attached event
-             * @returns {ObjectWithEvents}
+             * @returns {StyledElements.ObjectWithEvents}
              *      The instance on which the member is called
              */
             removeEventListener: function removeEventListener(name, handler) {

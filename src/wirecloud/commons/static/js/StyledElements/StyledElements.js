@@ -33,7 +33,9 @@
     /**
      * Create a new instance of class StyledElement.
      *
-     * @constructor
+     * @interface
+     * @mixes StyledElements.ObjectWithEvents
+     * @name StyledElements.StyledElement
      * @param {String[]} events [description]
      */
     se.StyledElement = utils.defineClass({
@@ -77,7 +79,7 @@
 
         mixins: [se.ObjectWithEvents],
 
-        members: {
+        members: /** @lends StyledElements.StyledElement.prototype */ {
 
             /**
              * @protected
@@ -99,7 +101,7 @@
              * @param {String|String[]} classList
              *      One or more space-separated classes to be added to the
              *      wrapperElement.
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             addClassName: function addClassName(classList) {
@@ -119,11 +121,11 @@
 
             /**
              * Inserts this StyledElement to the end of the targetElement
-             * @version 0.6
+             * @since 0.6
              *
-             * @param {StyledElement|HTMLElement} targetElement
+             * @param {StyledElements.StyledElement|HTMLElement} targetElement
              *      An element to insert the wrapperElement.
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             appendTo: function appendTo(targetElement) {
@@ -132,9 +134,9 @@
 
             /**
              * Disables this StyledElement
-             * @version 0.5
+             * @since 0.5
              *
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             disable: function disable() {
@@ -145,9 +147,9 @@
 
             /**
              * Enables this StyledElement
-             * @version 0.6
+             * @since 0.6
              *
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             enable: function enable() {
@@ -158,7 +160,7 @@
 
             /**
              * Gets the root element for this StyledElement
-             * @version 0.6
+             * @since 0.6
              *
              * @returns {HTMLElement}
              *      If the wrapperElement is not instance of HTMLElement, the member
@@ -169,10 +171,10 @@
             },
 
             /**
-             * Displays this StyledElement
-             * @version 0.6
+             * Hides this StyledElement
+             * @since 0.6
              *
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             hide: function hide() {
@@ -187,7 +189,7 @@
 
             /**
              * Gets the parent of this StyledElement
-             * @version 0.6
+             * @since 0.6
              *
              * @returns {HTMLElement}
              *      The parent element of the wrapperElement.
@@ -203,9 +205,9 @@
 
             /**
              * Insert the wrapperElement to the beginning of the targetElement children.
-             * @param {StyledElement|HTMLElement} targetElement
+             * @param {StyledElements.StyledElement|HTMLElement} targetElement
              *      An element to insert the wrapperElement.
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             prependTo: function prependTo(targetElement) {
@@ -218,9 +220,9 @@
 
             /**
              * Remove this StyledElement from the DOM.
-             * @version 0.6
+             * @since 0.6
              *
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             remove: function remove() {
@@ -238,13 +240,13 @@
 
             /**
              * Replaces CSS classes with others.
-             * @version 0.6
+             * @since 0.6
              *
              * @param {String|String[]} removeList
              *      classes to remove
              * @param {String|String[]} addList
              *      classes to add
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             replaceClassName: function replaceClassName(removeList, addList) {
@@ -256,9 +258,9 @@
 
             /**
              * Display the wrapperElement.
-             * @version 0.6
+             * @since 0.6
              *
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             show: function show() {
@@ -274,13 +276,13 @@
             /**
              * Get the value of a computed style property or set one or more CSS
              * properties for the wrapperElement.
-             * @version 0.6
+             * @since 0.6
              *
              * @param {String|Object.<String, *>} properties
              *      A CSS property name or an object of property-value pairs.
              * @param {String|Number} [value]
              *      Optional. A value to set for the property.
-             * @returns {StyledElement|String}
+             * @returns {StyledElements.StyledElement|String}
              *      The instance on which the member is called or the CSS property value.
              */
             style: function style(properties, value) {
@@ -305,14 +307,14 @@
              * depending on either the class's presence. Additionaly, you can
              * use the state parameter for indicating if you want to add or
              * delete them.
-             * @version 0.6
+             * @since 0.6
              *
              * @param {String} classList
              *      One or more space-separated classes to be toggled from the
              *      wrapperElement.
              * @param {Boolean} [state]
              *      A boolean value to determine if the class should be added or removed.
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             toggleClassName: function toggleClassName(classList, state) {
@@ -387,13 +389,14 @@
             },
 
             /**
-             * Check if this StyledElement is assigned a class.
+             * Returns `true` if this StyledElement is usig the CSS class name
+             * `className`, otherwise `false`
              *
              * @param {String} className
              *      A class name to search for.
              * @returns {Boolean}
-             *      If the class is assigned to the wrapperElement, even if other classes
-             *      also are.
+             *      `true` if this StyledElement is usig the CSS class name
+             * `className`, otherwise `false`
              */
             hasClassName: function hasClassName(className) {
                 className = className == null ? "" : className.toString().trim();
@@ -408,10 +411,10 @@
              *
              * @param {Container|HTMLElement} element
              *      An element where this StyledElement will be inserted.
-             * @param {StyledElement|HTMLElement} [refElement]
+             * @param {StyledElements.StyledElement|HTMLElement} [refElement]
              *      Optional. An element after which newElement is going to be
              *      inserted.
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             insertInto: function insertInto(element, refElement) {
@@ -434,13 +437,13 @@
 
             /**
              * Removes multiple or all classes from this StyledElement
-             * @version 0.6
+             * @since 0.6
              *
              * @param {String|String[]} [classList]
              *      Optional. One or more space-separated classes to be removed from this
              *      StyledElement. If you pass an empty string as the classList parameter,
              *      all classes will be removed.
-             * @returns {StyledElement}
+             * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
             removeClassName: function removeClassName(classList) {
@@ -470,7 +473,7 @@
 
             /**
              * @deprecated since version 0.6
-             * @see enabled property
+             * @see {StyledElements.StyledElement#enable} | {StyledElements.StyledElement#disable}
              */
             setDisabled: function setDisabled(disable) {
                 if (disable) {

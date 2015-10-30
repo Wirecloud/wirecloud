@@ -30,15 +30,18 @@
     // CLASS DEFINITION
     // ==================================================================================
 
-    /**
-     * Create a new instance of class Container.
-     *
-     * @constructor
-     * @param {Object.<String, *>} options [description]
-     * @param {String[]} events [description]
-     */
     se.Container = utils.defineClass({
 
+        /**
+         * Create a new instance of class Container.
+         *
+         * @constructor
+         * @extends StyledElements.StyledElement
+         * @name StyledElements.Container
+         * @since 0.5
+         * @param {Object.<String, *>} options [description]
+         * @param {String[]} events [description]
+         */
         constructor: function Container(options, events) {
             options = utils.merge(utils.clone(defaults), options);
             this.superClass(events);
@@ -58,13 +61,13 @@
 
         inherit: se.StyledElement,
 
-        members: {
+        members: /** @lends StyledElements.Container.prototype */ {
 
             /**
              * Check if an element is a descendant of the wrapperElement.
-             * @version 0.6
+             * @since 0.6
              *
-             * @param {StyledElement|HTMLElement} childElement
+             * @param {StyledElements.StyledElement|HTMLElement} childElement
              *      An element that may be contained.
              * @returns {Boolean}
              *      If the given element is a descendant of the wrapperElement, even so
@@ -124,11 +127,12 @@
              * Insert an element at the end of this container or before the
              * refElement if provided.
              *
-             * @param {StyledElement|HTMLElement|String} newElement
+             * @since 0.5
+             * @param {StyledElements.StyledElement|HTMLElement|String} newElement
              *      An element to insert into the wrapperElement.
-             * @param {StyledElement|HTMLElement} [refElement]
+             * @param {StyledElements.StyledElement|HTMLElement} [refElement]
              *      Optional. An element after which newElement is inserted.
-             * @returns {StyledElement}
+             * @returns {StyledElements.Container}
              *      The instance on which the member is called.
              */
             appendChild: function appendChild(element, refElement) {
@@ -159,7 +163,7 @@
 
             /**
              * Inserts a new element to the beginning of this Container
-             * @version 0.6
+             * @since 0.6
              *
              * @param {StyledElement|HTMLElement|String} newElement
              *      An element to insert into the wrapperElement.

@@ -26,8 +26,9 @@
     "use strict";
 
     /**
-     * @abstract
-     *
+     * @interface
+     * @name StyledElements.InputElement
+     * @extends {StyledElements.StyledElement}
      */
     var InputElement = function InputElement(defaultValue, events) {
         this.inputElement = null;
@@ -49,16 +50,47 @@
         set: function (value) {return this.setValue(value);}
     });
 
+    /**
+     * Returns current value of this Input Element
+     *
+     * @since 0.5
+     * @kind function
+     * @name StyledElements.InputElement#getValue
+     * @returns {} current value
+     */
     InputElement.prototype.getValue = function getValue() {
         return this.inputElement.value;
     };
 
+    /**
+     * Sets a new value for this InputElement
+     *
+     * @since 0.5
+     * @kind function
+     * @name StyledElements.InputElement#setValue
+     * @param {} newValue - A new value
+     * @returns {StyledElements.InputElement}
+     *      The instance on which the method has been called
+     */
     InputElement.prototype.setValue = function setValue(newValue) {
+        var oldValue = this.inputElement.value;
+
         this.inputElement.value = newValue;
+
+        if ('change' in this.events && newValue !== oldValue) {
+            this.trigger('change');
+        }
 
         return this;
     };
 
+    /**
+     * Resets the value for this InputElement using the default value
+     *
+     * @since 0.5
+     * @kind function
+     * @name StyledElements.InputElement#reset
+     */
     InputElement.prototype.reset = function reset() {
         return this.setValue(this.defaultValue);
     };

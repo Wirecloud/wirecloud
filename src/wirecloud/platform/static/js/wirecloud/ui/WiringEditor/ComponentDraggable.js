@@ -419,7 +419,6 @@
             /**
              * Get or set the current coordinates of the wrapperElement relative to the
              * offset parent.
-             * @version 0.6.0
              *
              * @param {Number} offsetLeft
              *      [description]

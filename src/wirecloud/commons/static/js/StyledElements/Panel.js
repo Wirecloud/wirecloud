@@ -105,7 +105,7 @@
         members: {
 
             /**
-             * @version 0.6.0
+             * @since 0.6.0
              * @abstract
              */
             _onactive: function _onactive(active) {

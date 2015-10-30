@@ -101,7 +101,8 @@
     };
 
     /**
-     * @abstract
+     * @interface
+     * @mixes StyledElements.ObjectWithEvents
      */
     var PopupMenuBase = function PopupMenuBase(options) {
         var defaultOptions = {
@@ -188,7 +189,7 @@
 
     /**
      * Remove all child nodes from the wrapperElement.
-     * @version 0.6.1
+     * @since 0.6.1
      *
      * @returns {PopupMenuBase}
      *      The instance on which the member is called.
