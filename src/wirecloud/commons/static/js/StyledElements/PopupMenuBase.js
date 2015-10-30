@@ -115,7 +115,7 @@
             return;
         }
 
-        StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange']);
+        StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange', 'click']);
 
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = 'se-popup-menu hidden';
@@ -213,6 +213,7 @@
             this.show();
             menuItem.activate();
         } else {
+            this.trigger('click', menuItem);
             this.hide();
         }
 
