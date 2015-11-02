@@ -84,6 +84,30 @@ NGSI.Connection(url[, options])
 	- `use_user_fiware_token` (Boolean; default: `false`): Use current user
       authentication token retrieved from the IdM system
 
+**Usage example:**
+
+This code creates a connection using the credentials of the user logged in
+WireCloud and supporting subcriptions through the FIWARE Lab's NGSI proxy:
+
+```javascript
+var connection = new NGSI.Connection("http://orion.lab.fiware.org:1026/", {
+    ngsi_proxy_url: "https://ngsiproxy.lab.fiware.org",
+    use_user_fiware_token: true
+});
+```
+
+This code creates a connection using the `FIWARE-Service` header to make use of
+the multitenancy support provided by the context broker:
+
+```javascript
+var connection = new NGSI.Connection("http://<mi_context_broker_ip>:1026/", {
+    request_headers: {
+        "FIWARE-Service": "fiwareiot"
+    }
+});
+```
+
+
 ### Callback options
 
 All the method of `NGSI.Connection` support at least the following callbacks:
