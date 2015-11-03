@@ -633,7 +633,7 @@
                     "offset": parseInt(parsed_details[2])
                 };
             }
-            if (options.offset != null && options.offset !== 0) {
+            if (options.offset !== 0) {
                 throw status_info;
             } else {
                 return [[], details];
@@ -710,8 +710,13 @@
                         "matches": parseInt(parsed_details[1]),
                         "offset": parseInt(parsed_details[2])
                     };
+                } else if (options.details === true && options.offset === 0) {
+                    details = e.details = {
+                        "count": 0
+                    };
                 }
-                if (options.offset != null && options.offset !== 0) {
+
+                if (options.offset !== 0) {
                     throw e;
                 } else {
                     return [data, details];
@@ -813,6 +818,8 @@
                 throw new TypeError('invalid value for the offset option');
             }
             parameters.offset = options.offset;
+        } else {
+            options.offset = 0;
         }
 
         if (options.details != null) {
