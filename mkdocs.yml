@@ -19,6 +19,8 @@ pages:
         - 'NGSI API': 'development/ngsi_api.md'
         - 'ObjectStorage API': 'development/object_storage_api.md'
         - 'WireCloud IDE': 'development/eclipse_ide.md'
+    - 'Platform Development':
+        - 'Creating new themes': 'development/platform/themes.md'
 
 markdown_extensions:
     - markdown_github.headerid

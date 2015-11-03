@@ -33,7 +33,7 @@ from wirecloud.platform.plugins import build_url_template, get_active_features_i
 
 WORKSPACE_CSS = (
     'css/workspace/wallet.scss',
-    'css/workspace/dragboard_cursor.css',
+    'css/workspace/dragboard_cursor.scss',
     'css/workspace/iwidget.scss',
     'css/workspace/empty_workspace_message.css',
     'css/upgrade_window_menu.scss',
