@@ -48,6 +48,13 @@
 
         if (response.status === 201) {
             workspace = JSON.parse(response.responseText);
+            // TODO
+            Object.defineProperty(workspace, 'url', {
+                get: function () {
+                    var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.owner), name: encodeURIComponent(this.name)});
+                    return document.location.protocol + '//' + document.location.host + path;
+                }
+            });
             this.workspaceInstances[workspace.id] = workspace;
             if (!(workspace.owner in this.workspacesByUserAndName)) {
                 this.workspacesByUserAndName[workspace.owner] = {};
