@@ -304,7 +304,7 @@ function Workspace(workspaceState, resources) {
                 this.workspaceState.name = name;
                 this.contextManager.modify({'name': name});
                 state = {
-                    workspace_creator: this.workspaceState.creator,
+                    workspace_owner: this.workspaceState.owner,
                     workspace_name: name,
                     view: "workspace",
                     tab: Wirecloud.HistoryManager.getCurrentState().tab
@@ -411,7 +411,7 @@ function Workspace(workspaceState, resources) {
             });
             this.notebook.addButton(this.seeOnWirecloudButton);
             this.seeOnWirecloudButton.addEventListener('click', function () {
-                var url = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.workspaceState.creator), name: encodeURIComponent(this.workspaceState.name)});
+                var url = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.owner), name: encodeURIComponent(this.name)});
                 window.open(url, '_blank')
             }.bind(this));
         } else {

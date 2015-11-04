@@ -80,7 +80,7 @@
 
         currentState = Wirecloud.HistoryManager.getCurrentState();
         data = {
-            workspace_creator: currentState.workspace_creator,
+            workspace_owner: currentState.workspace_owner,
             workspace_name: currentState.workspace_name,
             view: 'myresources',
             subview: 'search'

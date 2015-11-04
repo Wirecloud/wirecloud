@@ -107,7 +107,7 @@
     WorkspaceView.prototype.buildStateData = function buildStateData() {
         var currentState = Wirecloud.HistoryManager.getCurrentState();
         return {
-            workspace_creator: currentState.workspace_creator,
+            workspace_owner: currentState.workspace_owner,
             workspace_name: currentState.workspace_name,
             view: 'workspace'
         };
@@ -117,10 +117,10 @@
         var entries, current_state;
 
         current_state = Wirecloud.HistoryManager.getCurrentState();
-        if ('workspace_creator' in current_state) {
+        if ('workspace_owner' in current_state) {
             entries = [
                 {
-                    'label': current_state.workspace_creator
+                    'label': current_state.workspace_owner
                 }, {
                     'label': current_state.workspace_name,
                 }
@@ -136,8 +136,8 @@
 
     WorkspaceView.prototype.getTitle = function getTitle() {
         var current_state = Wirecloud.HistoryManager.getCurrentState();
-        if ('workspace_creator' in current_state) {
-            return current_state.workspace_creator + '/' + current_state.workspace_name;
+        if ('workspace_owner' in current_state) {
+            return current_state.workspace_owner + '/' + current_state.workspace_name;
         } else {
             return utils.gettext('loading...');
         }
@@ -146,7 +146,7 @@
     WorkspaceView.prototype.getToolbarMenu = function getToolbarMenu() {
         var context, current_state;
         current_state = Wirecloud.HistoryManager.getCurrentState();
-        if ('workspace_creator' in current_state) {
+        if ('workspace_owner' in current_state) {
             context = Wirecloud.contextManager;
             if (context && context.get('username') !== 'anonymous') {
                 return this.wsMenu;
@@ -168,7 +168,7 @@
     WorkspaceView.prototype.onHistoryChange = function onHistoryChange(newState) {
         var target_tab, nextWorkspace, alert_msg;
 
-        nextWorkspace = Wirecloud.workspacesByUserAndName[newState.workspace_creator][newState.workspace_name];
+        nextWorkspace = Wirecloud.workspacesByUserAndName[newState.workspace_owner][newState.workspace_name];
         if (nextWorkspace == null) {
             if (Wirecloud.activeWorkspace != null) {
                 Wirecloud.activeWorkspace.unload();
@@ -185,9 +185,9 @@
         } else if (newState.tab != null) {
             target_tab = Wirecloud.activeWorkspace.tabsByName[newState.tab];
             Wirecloud.activeWorkspace.notebook.goToTab(target_tab);
-            document.title = newState.workspace_creator + '/' + newState.workspace_name;
+            document.title = newState.workspace_owner + '/' + newState.workspace_name;
         } else {
-            document.title = newState.workspace_creator + '/' + newState.workspace_name;
+            document.title = newState.workspace_owner + '/' + newState.workspace_name;
         }
     };
 

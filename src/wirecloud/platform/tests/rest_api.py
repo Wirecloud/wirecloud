@@ -443,7 +443,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='emptyuser', password='admin')
 
         # Make the request
-        # workspace 4 (creator: user_with_workspaces, name: Public Workspace) is readable and copyable by emptyuser
+        # workspace 4 (owner: user_with_workspaces, name: Public Workspace) is readable and copyable by emptyuser
         data = {
             'workspace': '4',
         }
@@ -451,7 +451,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response_data['creator'], 'emptyuser')
+        self.assertEqual(response_data['owner'], 'emptyuser')
         self.assertEqual(response_data['name'], 'Public Workspace')
         public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
         self.assertEqual(public_preference['value'], 'false')
@@ -463,7 +463,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
-        # workspace 3 (creator: user_with_workspaces, name: Pending Events)
+        # workspace 3 (owner: user_with_workspaces, name: Pending Events)
         data = {
             'allow_renaming': True,
             'workspace': '3',
@@ -472,7 +472,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response_data['creator'], 'user_with_workspaces')
+        self.assertEqual(response_data['owner'], 'user_with_workspaces')
         self.assertEqual(response_data['name'], 'Pending Events 2')
         public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
         self.assertEqual(public_preference['value'], 'false')
@@ -481,7 +481,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_collection')
 
-        # workspace 3 (creator: user_with_workspaces, name: Pending Events) is not readable by emptyuser
+        # workspace 3 (owner: user_with_workspaces, name: Pending Events) is not readable by emptyuser
         data = {
             'workspace': '3',
         }
@@ -805,7 +805,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertTrue('id' in response_data)
         self.assertFalse(response_data['shared'])
         self.assertEqual(response_data['name'], 'ExistingWorkspace')
-        self.assertEqual(response_data['creator'], 'user_with_workspaces')
+        self.assertEqual(response_data['owner'], 'user_with_workspaces')
         self.assertTrue('wiring' in response_data)
 
         self.assertEqual(response_data['description'], 'This is an <b>example</b> of workspace')
@@ -838,7 +838,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertTrue('id' in response_data)
         self.assertTrue(response_data['shared'])
         self.assertEqual(response_data['name'], 'Public Workspace')
-        self.assertEqual(response_data['creator'], 'user_with_workspaces')
+        self.assertEqual(response_data['owner'], 'user_with_workspaces')
 
     def test_workspace_entry_cache(self):
 

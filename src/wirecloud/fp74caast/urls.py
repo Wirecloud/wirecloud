@@ -38,11 +38,11 @@ urlpatterns = patterns('wirecloud.fp74caast.views',
         'undeploy_tenant_ac',
         name='wirecloud.4caast.undeploy_tenant_ac'),
 
-    url(r'^(?P<creator>[^/]+)/(?P<workspace>[^/]+)/4caast-enabling/add_saas_tenant$',
+    url(r'^(?P<owner>[^/]+)/(?P<workspace>[^/]+)/4caast-enabling/add_saas_tenant$',
         'add_saas_tenant',
         name='wirecloud.4caast.add_saas_tenant'),
 
-    url(r'^(?P<creator>[^/]+)/(?P<workspace>[^/]+)/4caast-enabling/remove_saas_tenant$',
+    url(r'^(?P<owner>[^/]+)/(?P<workspace>[^/]+)/4caast-enabling/remove_saas_tenant$',
         'remove_saas_tenant',
         name='wirecloud.4caast.remove_saas_tenant'),
 )

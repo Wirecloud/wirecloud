@@ -144,7 +144,7 @@ Wirecloud.ui = Wirecloud.ui || {};
                 var currentState = Wirecloud.HistoryManager.getCurrentState();
 
                 return {
-                    workspace_creator: currentState.workspace_creator,
+                    workspace_owner: currentState.workspace_owner,
                     workspace_name: currentState.workspace_name,
                     view: this.view_name
                 };

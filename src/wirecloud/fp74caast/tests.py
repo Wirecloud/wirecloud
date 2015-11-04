@@ -148,7 +148,7 @@ class FP74CaastTests(WirecloudTestCase):
 
     def test_saas_enabling(self):
 
-        url = reverse('wirecloud.4caast.add_saas_tenant', kwargs={'creator': '4caast_developer2', 'workspace': 'Workspace'})
+        url = reverse('wirecloud.4caast.add_saas_tenant', kwargs={'owner': '4caast_developer2', 'workspace': 'Workspace'})
         response = self.client.get(url + '?message=4caast.customers.tourist5.services.app55366', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 201)
 
@@ -163,7 +163,7 @@ class FP74CaastTests(WirecloudTestCase):
 
     def test_saas_disabling(self):
 
-        url = reverse('wirecloud.4caast.remove_saas_tenant', kwargs={'creator': '4caast_developer', 'workspace': 'Workspace'})
+        url = reverse('wirecloud.4caast.remove_saas_tenant', kwargs={'owner': '4caast_developer', 'workspace': 'Workspace'})
         response = self.client.get(url + '?message=4caast.customers.4caast_customer.services.app55365', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 204)
 

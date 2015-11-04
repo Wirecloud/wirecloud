@@ -51,7 +51,7 @@
         var key, hash = '';
 
         for (key in data) {
-            if (key === 'workspace_name' || key === 'workspace_creator') {
+            if (key === 'workspace_name' || key === 'workspace_owner') {
                 continue;
             }
             hash += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
@@ -59,7 +59,7 @@
 
         return window.location.protocol + "//" +
             window.location.host +
-            "/" + encodeURIComponent(data.workspace_creator) + '/' + encodeURIComponent(data.workspace_name) +
+            "/" + encodeURIComponent(data.workspace_owner) + '/' + encodeURIComponent(data.workspace_name) +
             window.location.search +
             '#' + hash.substr(1);
     };
@@ -109,7 +109,7 @@
         index = pathname.lastIndexOf('/');
         index2 = pathname.lastIndexOf('/', index - 1);
 
-        status.workspace_creator = decodeURIComponent(pathname.substring(index2 + 1, index));
+        status.workspace_owner = decodeURIComponent(pathname.substring(index2 + 1, index));
         status.workspace_name = decodeURIComponent(pathname.substring(index + 1));
     };
 
