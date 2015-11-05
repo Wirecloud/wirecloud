@@ -1,13 +1,13 @@
+@import 'variables';
+
 .se-mac-field {
-    font-size: 13px;
-    color: #555555;
     margin: 3px 4px 9px 4px;
     position: relative;
     padding: 0;
     width:   10em;
     box-sizing: border-box;
     overflow: visible;
-    border-radius: 6px;
+    border-radius: $button-border-radius;
 }
 
 .se-mac-field > .se-hl-west-container > .preview {

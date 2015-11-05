@@ -43,7 +43,7 @@ CLASSIC_CORE_CSS = (
     'css/window_menu.scss',
     'css/mac_search.css',
     'css/layout_field.css',
-    'css/mac_field.css',
+    'css/mac_field.scss',
     'css/mac_selection_dialog.css',
 )
 
