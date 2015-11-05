@@ -34,33 +34,41 @@
         'Accordion': window.parent.StyledElements.Accordion,
         'Addon': window.parent.StyledElements.Addon,
         'Alternatives': window.parent.StyledElements.Alternatives,
+        'BorderLayout': window.parent.StyledElements.BorderLayout,
         'ButtonsGroup': window.parent.StyledElements.ButtonsGroup,
+        'CheckBox': window.parent.StyledElements.CheckBox,
         'Container': window.parent.StyledElements.Container,
         'DynamicMenuItems': window.parent.StyledElements.DynamicMenuItems,
         'Event': window.parent.StyledElements.Event,
         'Fragment': window.parent.StyledElements.Fragment,
         'Form': window.parent.StyledElements.Form,
+        'HorizontalLayout': window.parent.StyledElements.HorizontalLayout,
+        'InputElement': window.parent.StyledElements.InputElement,
+        'List': window.parent.StyledElements.List,
+        'MenuItem': window.parent.StyledElements.MenuItem,
+        'ModelTable': window.parent.StyledElements.ModelTable,
+        'NumericField': window.parent.StyledElements.NumericField,
         'ObjectWithEvents': window.parent.StyledElements.ObjectWithEvents,
+        'PaginatedSource': window.parent.StyledElements.PaginatedSource,
+        'PaginationInterface': window.parent.StyledElements.PaginationInterface,
+        'PasswordField': window.parent.StyledElements.PasswordField,
+        'RadioButton': window.parent.StyledElements.RadioButton,
         'Select': window.parent.StyledElements.Select,
+        'Separator': window.parent.StyledElements.Separator,
+        'StaticPaginatedSource': window.parent.StyledElements.StaticPaginatedSource,
         'StyledAlternatives': window.parent.StyledElements.Alternatives, // backward compatibility alias
         'StyledCheckBox': window.parent.StyledElements.CheckBox, // backward compatibility alias
         'StyledElement': window.parent.StyledElements.StyledElement,
         'StyledInputElement': window.parent.StyledElements.InputElement, // backward compatibility alias
         'StyledList': window.parent.StyledElements.List, // backward compatibility alias
         'StyledNumericField': window.parent.StyledElements.NumericField, // backward compatibility alias
-        'StyledTextField': window.parent.StyledElements.TextField, // backward compatibility alias
         'StyledPasswordField': window.parent.StyledElements.PasswordField, // backward compatibility alias
         'StyledRadioButton': window.parent.StyledElements.RadioButton, // backward compatibility alias
         'StyledSelect': window.parent.StyledElements.Select, // backward compatibility alias
         'StyledTextArea': window.parent.StyledElements.TextArea, // backward compatibility alias
-        'PaginatedSource': window.parent.StyledElements.PaginatedSource,
-        'PaginationInterface': window.parent.StyledElements.PaginationInterface,
-        'StaticPaginatedSource': window.parent.StyledElements.StaticPaginatedSource,
-        'Separator': window.parent.StyledElements.Separator,
-        'MenuItem': window.parent.StyledElements.MenuItem,
-        'ModelTable': window.parent.StyledElements.ModelTable,
-        'HorizontalLayout': window.parent.StyledElements.HorizontalLayout,
-        'BorderLayout': window.parent.StyledElements.BorderLayout
+        'StyledTextField': window.parent.StyledElements.TextField, // backward compatibility alias
+        'TextArea': window.parent.StyledElements.TextArea,
+        'TextField': window.parent.StyledElements.TextField
     };
 
     var extend = function (parent_class, extra, options) {
