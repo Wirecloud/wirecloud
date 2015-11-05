@@ -78,17 +78,35 @@ def filter_changelog(code, from_version):
     parser = XHTMLParser()
     doc = fragment_fromstring(code, create_parent=True, parser=parser)
 
-    for header in doc.xpath('/div/h1'):
+    parentelement = None
+    for header in doc.xpath('/div/h1|/div/h2|/div/h3'):
         title = header.text[1:] if header.text.startswith('v') else header.text
         try:
             version = Version(VERSION_HEADER_RE.split(title, 1)[0])
         except:
             continue
 
-        if version <= from_version:
-            for elem in header.itersiblings():
-                elem.drop_tree()
-            header.drop_tree()
-            break
+        parentelement = header.getparent()
+        headerelement = header.tag
+        for elem in header.itersiblings(preceding=True):
+            elem.tail = ""
+            elem.drop_tree()
+        break
+
+    if parentelement is not None:
+
+        for header in parentelement.xpath(headerelement):
+            title = header.text[1:] if header.text.startswith('v') else header.text
+            try:
+                version = Version(VERSION_HEADER_RE.split(title, 1)[0])
+            except:
+                continue
+
+            if version <= from_version:
+                for elem in header.itersiblings():
+                    elem.drop_tree()
+                header.tail = ""
+                header.drop_tree()
+                break
 
     return (doc.text or '') + ''.join([etree.tostring(child, method='xml').decode('utf-8') for child in doc.iterchildren()])

@@ -104,6 +104,24 @@ class HTMLCleanupTestCase(TestCase):
         expected_code = ''
         self.assertEqual(filter_changelog(initial_code, Version('1.0.3')), expected_code)
 
+    def test_filter_changelog_no_changes_v(self):
+        # Filter html, exact version found, but there are no change info before
+        initial_code = '<h2>v1.0.2</h2> tail <p>v1.0.2 change list</p><h2>v1.0.1</h2><p>v1.0.1 change list</p><h2>v1.0.0</h2><p>Initial release</p> tail'
+        expected_code = ''
+        self.assertEqual(filter_changelog(initial_code, Version('1.0.2')), expected_code)
+
+    def test_filter_changelog_nested(self):
+        # Filter html, exact version found, there is extra info before that must be discarded
+        initial_code = '<h1>My Widgets changes</h1> my intro<h2>v1.0.2</h2><p>v1.0.2 change list</p><h2>v1.0.1</h2><p>v1.0.1 change list</p><h2>v1.0.0</h2><p>Initial release</p>'
+        expected_code = '<h2>v1.0.2</h2><p>v1.0.2 change list</p>'
+        self.assertEqual(filter_changelog(initial_code, Version('1.0.1')), expected_code)
+
+    def test_filter_changelog_mixed(self):
+        # Filter html, there are mixed sections between version sections
+        initial_code = '<h2>v1.0.2</h2><p>v1.0.2 change list</p><h2>Extra header</h2><p>my extra info</p><h2>v1.0.1</h2><p>v1.0.1 change list</p><h2>v1.0.0</h2><p>Initial release</p>'
+        expected_code = '<h2>v1.0.2</h2><p>v1.0.2 change list</p><h2>Extra header</h2><p>my extra info</p>'
+        self.assertEqual(filter_changelog(initial_code, Version('1.0.1')), expected_code)
+
     def test_filter_changelog_headers_with_extra_content_v(self):
         initial_code = '<h1>v1.0.2 (2015-05-01)</h1><p>v1.0.2 change list</p><h1>v1.0.1 (2015-04-01)</h1><p>v1.0.1 change list</p><h1>v1.0.0 (2015-03-01)</h1><p>Initial release</p>'
         expected_code = '<h1>v1.0.2 (2015-05-01)</h1><p>v1.0.2 change list</p>'
