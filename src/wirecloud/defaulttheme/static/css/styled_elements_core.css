@@ -66,8 +66,6 @@ div.styled_hidden_field {
 /* Styled List */
 
 div.styled_list > div {
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
   border-radius: 4px;
   border:      1px solid #888888;
   background: white;

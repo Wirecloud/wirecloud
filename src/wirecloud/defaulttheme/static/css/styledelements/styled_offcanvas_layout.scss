@@ -16,9 +16,6 @@
  */
 
 
-@import 'compass/css3';
-
-
 $offcanvas-margin-all: 5px;
 $offcanvas-border-radius: 4px;
 
@@ -79,7 +76,7 @@ $offcanvas-footer-height: 40px;
 
     .se-offcanvas-sidebar,
     .se-offcanvas-content {
-        @include transition(left .2s ease-out);
+        transition: left .2s ease-out;
     }
 
     &.slipped {
@@ -102,7 +99,7 @@ $offcanvas-footer-height: 40px;
 
     .se-offcanvas-sidebar,
     .se-offcanvas-content {
-        @include transition(right .2s ease-out);
+        transition: right .2s ease-out;
     }
 
     &.slipped {

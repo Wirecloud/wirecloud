@@ -17,8 +17,8 @@
     width: 317px;
     text-align: left;
     overflow: hidden;
-    @include transition(border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s);
-    @include box-shadow(0 0 8px rgba(50, 50, 50, 0.1));
+    transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
+    box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
     color: contrast-color($resource-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     background: $resource-bg;
     cursor: pointer;
@@ -26,8 +26,6 @@
 }
 
 .resource:hover {
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
     border-color: rgba(82, 168, 236, 0.8);
 }

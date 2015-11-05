@@ -1,6 +1,7 @@
 @import 'variables';
 @import 'compass/css3';
 @import 'compass/css3/images';
+@import 'compass/css3/user-interface';
 @import 'compass/utilities/color/contrast';
 
 @mixin button-variant($background, $border-color) {
@@ -13,7 +14,7 @@
         border-bottom-color: darken($border-color, 10%);
         background-repeat: repeat-x;
         @include background-image(linear-gradient(lighten($background, 10%), $highlight_background));
-        @include box-shadow(inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
     .se-icon {
@@ -34,7 +35,7 @@
         background-color: $highlight_background;
         @if ($button-gradients) {
             background-position: 0 -15px;
-            @include transition(background-position 0.1s linear);
+            transition: background-position 0.1s linear;
         }
 
         .se-stacked-icon {
@@ -69,16 +70,13 @@
 .se-btn {
     font-size: $font-size-base;
     padding: $padding-vertical-base $padding-horizontal-base;
-    @include border-radius($button-border-radius);
+    border-radius: $button-border-radius;
     line-height: $line-height-base;
     font-weight: normal;
     display: inline-block;
     margin: 3px;
     vertical-align: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    @include user-select(none);
     position: relative;
     cursor: pointer;
     @include button-variant($button-background-default, $button-border-default);
@@ -144,7 +142,7 @@
 .se-btn.btn-large, .se-btn.btn-lg, .btn-group-lg .se-btn {
     font-size: $font-size-large;
     padding: $padding-vertical-large $padding-horizontal-large;
-    @include border-radius($border-radius-large);
+    border-radius: $border-radius-large;
 
     .se-icon + span {
         margin-left: $padding-horizontal-large;
@@ -158,7 +156,7 @@
 .se-btn.btn-small, .se-btn.btn-sm, .btn-group-sm .se-btn {
     font-size: $font-size-small;
     padding: $padding-vertical-small $padding-horizontal-small;
-    @include border-radius($border-radius-small);
+    border-radius: $border-radius-small;
 
     .se-icon + span {
         margin-left: $padding-horizontal-small;
@@ -172,7 +170,7 @@
 .se-btn.btn-mini, .se-btn.btn-xs, .btn-group-xs .se-btn {
     font-size: $font-size-xs;
     padding: $padding-vertical-xs $padding-horizontal-xs;
-    @include border-radius($border-radius-xs);
+    border-radius: $border-radius-xs;
 
     .se-icon + span {
         margin-left: $padding-horizontal-xs;

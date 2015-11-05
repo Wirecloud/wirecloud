@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'compass/css3/user-interface';
 @import 'compass/utilities/color/contrast';
 
 $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
@@ -58,10 +59,7 @@ $tabs-wrapper-height: $line-height-base + ($nav-link-padding-vertical * 2) + 2;
     overflow: visible;
     color: rgb(85, 85, 85);
     z-index: 2;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    @include user-select(none);
 
     .move_left {
         margin: 0 3px 0 0;

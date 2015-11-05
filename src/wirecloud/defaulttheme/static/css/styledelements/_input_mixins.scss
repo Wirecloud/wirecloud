@@ -18,17 +18,17 @@
     } @else {
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     }
-    @include transition(border linear 0.2s, box-shadow linear 0.2s);
+    transition: border linear 0.2s, box-shadow linear 0.2s;
 }
 
 @mixin input-variant($color, $border) {
     color: $color;
     border-color: $border;
-    @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075));
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 
     &:focus {
         border-color: darken($border, 10%);
-        @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px $border);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px $border;
     }
 }
 
@@ -46,7 +46,7 @@
         outline: 0;
         z-index: 2;
         border-color: $input-border-color-focus;
-        @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6));
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
     }
 
     &.error {

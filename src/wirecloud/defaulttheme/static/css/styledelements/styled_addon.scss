@@ -1,6 +1,5 @@
 @import 'variables';
 @import 'compass/utilities/color/contrast';
-@import 'compass/css3';
 
 .add-on, .box {
     display: inline-block;
@@ -16,7 +15,7 @@
     border: 1px solid $input-border;
     vertical-align: middle;
     box-sizing: border-box;
-    @include border-radius(0);
+    border-radius: 0;
 
     @if ($button-gradients) {
         box-shadow: $input-external-shadow;
@@ -46,7 +45,7 @@
 }
 
 .input-append > .se-hl-east-container > .add-on:last-child {
-    @include border-radius(0 $border-radius-base $border-radius-base 0);
+    border-radius: 0 $border-radius-base $border-radius-base 0;
 }
 
 .btn-group .add-on:not(:first-child), .btn-group .box:not(:first-child),
