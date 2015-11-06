@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -21,9 +21,11 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 
+@python_2_unicode_compatible
 class Application(models.Model):
 
     client_id = models.CharField(_('Client ID'), max_length=40, blank=False, primary_key=True)
@@ -32,10 +34,11 @@ class Application(models.Model):
     home_url = models.CharField(_('URL'), max_length=255, blank=False)
     redirect_uri = models.CharField(_('Redirect URI'), max_length=255, blank=True)
 
-    def __unicode__(self):
-        return unicode(self.client_id)
+    def __str__(self):
+        return self.client_id
 
 
+@python_2_unicode_compatible
 class Code(models.Model):
 
     client = models.ForeignKey(Application)
@@ -48,10 +51,11 @@ class Code(models.Model):
     class Meta:
         unique_together = ('client', 'code')
 
-    def __unicode__(self):
-        return unicode(self.code)
+    def __str__(self):
+        return self.code
 
 
+@python_2_unicode_compatible
 class Token(models.Model):
 
     token = models.CharField(_('Token'), max_length=40, blank=False, primary_key=True)
@@ -65,8 +69,8 @@ class Token(models.Model):
     creation_timestamp = models.CharField(_('Creation timestamp'), max_length=40, blank=False)
     expires_in = models.CharField(_('Expires in'), max_length=40, blank=True)
 
-    def __unicode__(self):
-        return unicode(self.token)
+    def __str__(self):
+        return self.token
 
 
 @receiver(post_save, sender=Application)

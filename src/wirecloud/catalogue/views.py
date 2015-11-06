@@ -88,7 +88,7 @@ class ResourceCollection(Resource):
 
         except TemplateParseException as e:
 
-            return build_error_response(request, 400, unicode(e.msg))
+            return build_error_response(request, 400, e.msg)
 
         except IntegrityError:
 

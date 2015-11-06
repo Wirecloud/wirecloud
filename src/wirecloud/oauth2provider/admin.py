@@ -27,7 +27,7 @@ admin.site.register(models.Application, ApplicationAdmin)
 
 
 class CodeAdmin(admin.ModelAdmin):
-    list_display = ('client', 'user', '__unicode__')
+    list_display = ('client', 'user', 'code')
     ordering = ('client', 'user')
 admin.site.register(models.Code, CodeAdmin)
 

@@ -219,7 +219,7 @@ def proxy_request(request, protocol, domain, path):
     try:
         response = WIRECLOUD_PROXY.do_request(request, url, request_method, workspace)
     except Exception as e:
-        msg = _("Error processing proxy request: %s") % unicode(e)
+        msg = _("Error processing proxy request: %s") % e
         return build_error_response(request, 500, msg)
 
     # Process cookies

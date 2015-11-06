@@ -19,6 +19,7 @@
 
 from __future__ import unicode_literals
 
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 import six
 
@@ -63,12 +64,13 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=No
     return (workspace, user_workspace)
 
 
+@python_2_unicode_compatible
 class MissingDependencies(Exception):
 
     def __init__(self, missing_dependencies):
         self.missing_dependencies = missing_dependencies
 
-    def __unicode__(self):
+    def __str__(self):
         return _('Missing dependencies')
 
 

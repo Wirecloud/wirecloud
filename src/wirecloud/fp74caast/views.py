@@ -194,7 +194,7 @@ def deploy_tenant_ac(request):
 
     except TemplateParseException as e:
 
-        return build_error_response(request, 400, unicode(e.msg))
+        return build_error_response(request, 400, e.msg)
 
     # Create a workspace if the resource is a mashup
     if resource.resource_type() == 'mashup' and not Workspace.objects.filter(creator=user, name=resource.short_name).exists():
