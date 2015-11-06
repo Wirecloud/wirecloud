@@ -246,7 +246,7 @@ class ProxyTests(ProxyTestsBase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(self.read_response(response), b'')
 
-    def test_connection_refused(self):
+    def test_connection_error(self):
 
         client = Client()
         client.login(username='test', password='test')
@@ -257,8 +257,22 @@ class ProxyTests(ProxyTestsBase):
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', refuse_connection)
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
-        self.assertEqual(response.status_code, 502)
-        self.assertEqual(self.read_response(response), b'')
+        self.assertEqual(response.status_code, 504)
+        self.assertIn('Connection Error', self.read_response(response).decode('utf-8'))
+
+    def test_connection_timeout(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        # Simulating an error connecting to the servers
+        def refuse_connection(method, url, *args, **kwargs):
+            raise requests.exceptions.ConnectTimeout()
+
+        self.network._servers['http']['example.com'].add_response('GET', '/path', refuse_connection)
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        self.assertEqual(response.status_code, 504)
+        self.assertIn('Gateway Timeout', self.read_response(response).decode('utf-8'))
 
     def test_connection_badstatusline(self):
 
@@ -272,7 +286,21 @@ class ProxyTests(ProxyTestsBase):
         self.network._servers['http']['example.com'].add_response('GET', '/path', bad_response)
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 504)
-        self.assertEqual(self.read_response(response), b'')
+        self.assertIn('Connection Error', self.read_response(response).decode('utf-8'))
+
+    def test_connection_refused_ssl_error(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        # Simulating an error connecting to the servers
+        def refuse_connection(method, url, *args, **kwargs):
+            raise requests.exceptions.SSLError()
+
+        self.network._servers['http']['example.com'].add_response('GET', '/path', refuse_connection)
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        self.assertEqual(response.status_code, 502)
+        self.assertIn('SSL Error', self.read_response(response).decode('utf-8'))
 
     def test_encoded_urls(self):
 

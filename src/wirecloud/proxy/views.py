@@ -19,11 +19,12 @@
 
 from __future__ import unicode_literals
 
-from six.moves.http_cookies import SimpleCookie
 import re
 import requests
-import socket
+import six
+from six.moves.http_cookies import SimpleCookie
 from six.moves.urllib.parse import unquote, urlparse
+import socket
 
 from django.conf import settings
 from django.core.urlresolvers import resolve, reverse
@@ -141,10 +142,12 @@ class Proxy():
         # Open the request
         try:
             res = requests.request(request_data['method'], request_data['url'], headers=request_data['headers'], data=request_data['data'], stream=True, verify=getattr(settings, 'WIRECLOUD_HTTPS_VERIFY', True))
-        except requests.exceptions.HTTPError:
-            return HttpResponse(status=504)
-        except requests.exceptions.ConnectionError:
-            return HttpResponse(status=502)
+        except requests.exceptions.Timeout as e:
+            return build_error_response(request, 504, _('Gateway Timeout'), details=six.text_type(e))
+        except requests.exceptions.SSLError as e:
+            return build_error_response(request, 502, _('SSL Error'), details=six.text_type(e))
+        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError, requests.exceptions.TooManyRedirects) as e:
+            return build_error_response(request, 504, _('Connection Error'), details=six.text_type(e))
 
         # Build a Django response
         response = StreamingHttpResponse(res.raw.stream(4096, decode_content=False), status=res.status_code)
