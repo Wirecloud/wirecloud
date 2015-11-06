@@ -76,19 +76,19 @@ $state-primary-border:      darken(spin($state-primary-bg, -5), 10%) !default;
 
 $state-success-text:        darken($brand-success, 20%) !default;
 $state-success-bg:          lighten($brand-success, 35%) !default;
-$state-success-border:      darken(spin($state-success-bg, -5), 47%) !default;
+$state-success-border:      darken(spin($state-success-bg, -5), 40%) !default;
 
 $state-info-text:           darken($brand-info, 20%) !default;
 $state-info-bg:             lighten($brand-info, 35%) !default;
-$state-info-border:         darken(spin($state-info-bg, -5), 47%) !default;
+$state-info-border:         darken(spin($state-info-bg, -5), 40%) !default;
 
 $state-warning-text:        darken($brand-warning, 20%) !default;
 $state-warning-bg:          lighten($brand-warning, 35%) !default;
-$state-warning-border:      darken(spin($state-warning-bg, -5), 47%) !default;
+$state-warning-border:      darken(spin($state-warning-bg, -5), 40%) !default;
 
 $state-danger-text:         darken($brand-danger, 20%) !default;
 $state-danger-bg:           lighten($brand-danger, 35%) !default;
-$state-danger-border:       darken(spin($state-danger-bg, -5), 47%) !default;
+$state-danger-border:       darken(spin($state-danger-bg, -5), 40%) !default;
 
 /* Alerts */
 
