@@ -73,7 +73,7 @@
     };
 
     var highlight_selection = function highlight_selection() {
-        if (this._selected_entry_id in this._current_elements) {
+        if (this._selected_entry_id != null && this._selected_entry_id in this._current_elements) {
             this._current_elements[this._selected_entry_id].row.classList.add('highlight');
         }
     };
@@ -297,7 +297,7 @@
 
     ModelTable.prototype.select = function select(id) {
         // Unhighlihgt previous selection
-        if (this._selected_entry_id !== null) {
+        if (this._selected_entry_id != null) {
             if (this._selected_entry_id in this._current_elements) {
                 this._current_elements[this._selected_entry_id].row.classList.remove('highlight');
             }
