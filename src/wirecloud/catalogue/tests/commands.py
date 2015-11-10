@@ -116,7 +116,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
 
-    def test_addtocatalogue_command_simplewgt_public(self, getdefaultlocale_mock):
+    def check_addtocatalogue_command_simplewgt_public(self):
 
         args = ['file.wgt']
         self.options['public'] = True
@@ -146,6 +146,9 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.assertTrue("Mashable Application Component1" in self.options['stdout'].read())
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
+
+    def test_addtocatalogue_command_simplewgt_public(self, getdefaultlocale_mock):
+        self.check_addtocatalogue_command_simplewgt_public()
 
     def test_addtocatalogue_command_simplewgt_no_action(self, getdefaultlocale_mock):
 
@@ -185,7 +188,7 @@ class AddToCatalogueCommandTestCase(TestCase):
         except SystemExit:
             raise CommandError('')
 
-    def test_addtocatalogue_command_error_reading_file(self, getdefaultlocale_mock):
+    def check_addtocatalogue_command_error_reading_file(self):
 
         self.options['redeploy'] = True
 
@@ -207,6 +210,9 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.assertNotEqual(self.options['stdout'].read(), '')
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
+
+    def test_addtocatalogue_command_error_reading_file(self, getdefaultlocale_mock):
+        self.check_addtocatalogue_command_error_reading_file()
 
     def test_addtocatalogue_command_error_installing_mac(self, getdefaultlocale_mock):
 
@@ -252,3 +258,13 @@ class AddToCatalogueCommandTestCase(TestCase):
         self.assertEqual(self.options['stdout'].read(), '')
         self.options['stderr'].seek(0)
         self.assertEqual(self.options['stderr'].read(), '')
+
+    def test_addtocatalogue_command_error_reading_file_broken_locale_env(self, getdefaultlocale_mock):
+
+        getdefaultlocale_mock.side_effect = TypeError
+        self.check_addtocatalogue_command_error_reading_file()
+
+    def test_addtocatalogue_command_simplewgt_public_broken_locale_env(self, getdefaultlocale_mock):
+
+        getdefaultlocale_mock.side_effect = TypeError
+        self.check_addtocatalogue_command_simplewgt_public()

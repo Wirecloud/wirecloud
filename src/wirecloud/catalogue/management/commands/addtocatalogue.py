@@ -116,7 +116,12 @@ class Command(BaseCommand):
                 self.log(_('Failed to import the mashable application component from %(file_name)s') % {'file_name': file_name}, level=1)
 
     def handle(self, *args, **options):
-        with override(locale.getdefaultlocale()[0][:2]):
+        try:
+            default_locale = locale.getdefaultlocale()[0][:2]
+        except TypeError:
+            default_locale = None
+
+        with override(default_locale):
             return self._handle(*args, **options)
 
     def log(self, msg, level=2):

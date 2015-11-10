@@ -22,12 +22,13 @@ from __future__ import unicode_literals
 import io
 import os
 import shutil
+import sys
 from tempfile import mkdtemp
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
-from mock import patch
+from mock import Mock, patch
 from whoosh import fields, index
 
 from wirecloud.commons.searchers import get_available_search_engines
@@ -56,7 +57,10 @@ class ResetSearchIndexesCommandTestCase(TestCase):
             searcher.clear_cache()
 
     def setUp(self):
-        self.options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
+        if sys.version_info > (3, 0):
+            self.options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
+        else:
+            self.options = {"stdout": io.BytesIO(), "stderr": io.BytesIO()}
         shutil.rmtree(self.new_index_dir, ignore_errors=True)
 
     def test_resetsearchindexes_command_using_args(self, getdefaultlocale_mock):
@@ -68,9 +72,9 @@ class ResetSearchIndexesCommandTestCase(TestCase):
                 call_command('resetsearchindexes', *args, **self.options)
 
         self.options['stdout'].seek(0)
-        self.assertEqual(self.options['stdout'].read(), b'')
+        self.assertEqual(self.options['stdout'].read(), '')
         self.options['stderr'].seek(0)
-        self.assertEqual(self.options['stderr'].read(), b'')
+        self.assertEqual(self.options['stderr'].read(), '')
         self.assertFalse(os.path.exists(self.inexistent_index_dir))
 
     def test_resetsearchindexes_command_existing_dir(self, getdefaultlocale_mock):
@@ -87,9 +91,9 @@ class ResetSearchIndexesCommandTestCase(TestCase):
                 raise CommandError('')
 
         self.options['stdout'].seek(0)
-        self.assertEqual(self.options['stdout'].read(), b'')
+        self.assertEqual(self.options['stdout'].read(), '')
         self.options['stderr'].seek(0)
-        self.assertEqual(self.options['stderr'].read(), b'')
+        self.assertEqual(self.options['stderr'].read(), '')
         self.assertTrue(os.path.exists(self.new_index_dir))
         for search_index in get_available_search_engines():
             self.assertTrue(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
@@ -108,28 +112,49 @@ class ResetSearchIndexesCommandTestCase(TestCase):
                 raise CommandError('')
 
         self.options['stdout'].seek(0)
-        self.assertEqual(self.options['stdout'].read(), b'')
+        self.assertEqual(self.options['stdout'].read(), '')
         self.options['stderr'].seek(0)
-        self.assertEqual(self.options['stderr'].read(), b'')
+        self.assertEqual(self.options['stderr'].read(), '')
         self.assertTrue(os.path.exists(self.new_index_dir))
         self.assertTrue(index.exists_in(self.new_index_dir, indexname='other_index'))
         for search_index in get_available_search_engines():
             self.assertTrue(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
 
-    def test_resetsearchindexes_command_individual_index(self, getdefaultlocale_mock):
+    def check_resetsearchindexes_command_individual_index(self):
         self.options['indexes'] = 'user'
 
-        with self.settings(WIRECLOUD_INDEX_DIR=self.new_index_dir):
-            call_command('resetsearchindexes', **self.options)
+        with patch('wirecloud.commons.management.commands.resetsearchindexes.get_search_engine') as get_search_engine_mock:
+            get_search_engine_mock().get_model().objects.all.return_value = ("indexentry1", "indexentry2")
+            get_search_engine_mock.reset_mock()
+
+            with self.settings(WIRECLOUD_INDEX_DIR=self.new_index_dir):
+                call_command('resetsearchindexes', **self.options)
+
+            get_search_engine_mock.assert_called_once_with('user')
+            get_search_engine_mock().clear_index.assert_called_once_with()
+            get_search_engine_mock().clear_index.assert_called_once_with()
+
+    def test_resetsearchindexes_command_individual_index(self, getdefaultlocale_mock):
+        self.options['verbosity'] = 1
+
+        self.check_resetsearchindexes_command_individual_index()
 
         self.options['stdout'].seek(0)
+        self.assertEqual(self.options['stdout'].read(), '')
         self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
 
-        for search_index in get_available_search_engines():
-            if search_index.indexname != 'user':
-                self.assertFalse(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
+    def test_resetsearchindexes_command_individual_index_verbose(self, getdefaultlocale_mock):
+        self.options['verbosity'] = 2
 
-        self.assertTrue(index.exists_in(self.new_index_dir, indexname='user'))
+        self.check_resetsearchindexes_command_individual_index()
+
+        self.options['stdout'].seek(0)
+        stdout = self.options['stdout'].read()
+        self.assertIn("indexentry1", stdout)
+        self.assertIn("indexentry2", stdout)
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
 
     def test_resetsearchindexes_command_multiple_index(self, getdefaultlocale_mock):
         self.options['indexes'] = 'user,group'
@@ -146,3 +171,53 @@ class ResetSearchIndexesCommandTestCase(TestCase):
 
         self.assertTrue(index.exists_in(self.new_index_dir, indexname='user'))
         self.assertTrue(index.exists_in(self.new_index_dir, indexname='group'))
+
+    def test_resetsearchindexes_command_nonavailable_index(self, getdefaultlocale_mock):
+        self.options['indexes'] = 'user,nonavailable'
+
+        with self.assertRaises(CommandError):
+            with self.settings(WIRECLOUD_INDEX_DIR=self.new_index_dir):
+                call_command('resetsearchindexes', **self.options)
+
+        self.options['stdout'].seek(0)
+        self.options['stderr'].seek(0)
+
+        for search_index in get_available_search_engines():
+            self.assertFalse(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
+
+        self.assertFalse(index.exists_in(self.new_index_dir, indexname='nonavailable'))
+
+    def check_resetsearchindexes_command_interactive_cancel(self):
+        self.options["interactive"] = True
+
+        os.mkdir(self.new_index_dir)
+        self.assertTrue(os.path.exists(self.new_index_dir))
+
+        with patch('wirecloud.commons.management.commands.resetsearchindexes.input', return_value='no'):
+            with self.settings(WIRECLOUD_INDEX_DIR=self.new_index_dir):
+                with self.assertRaises(CommandError):
+                    call_command('resetsearchindexes', **self.options)
+
+        self.options['stdout'].seek(0)
+        self.assertEqual(self.options['stdout'].read(), '')
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
+        self.assertTrue(os.path.exists(self.new_index_dir))
+        for search_index in get_available_search_engines():
+            self.assertFalse(index.exists_in(self.new_index_dir, indexname=search_index.indexname))
+
+    def test_resetsearchindexes_command_interactive_cancel(self, getdefaultlocale_mock):
+        self.check_resetsearchindexes_command_interactive_cancel()
+
+    def test_resetsearchindexes_command_individual_index_broken_locale_env(self, getdefaultlocale_mock):
+        getdefaultlocale_mock.side_effect = TypeError
+        self.check_resetsearchindexes_command_individual_index()
+
+        self.options['stdout'].seek(0)
+        self.assertEqual(self.options['stdout'].read(), '')
+        self.options['stderr'].seek(0)
+        self.assertEqual(self.options['stderr'].read(), '')
+
+    def test_resetsearchindexes_command_interactive_cancel_broken_locale_env(self, getdefaultlocale_mock):
+        getdefaultlocale_mock.side_effect = TypeError
+        self.check_resetsearchindexes_command_interactive_cancel()

@@ -24,8 +24,9 @@ import os
 from optparse import make_option
 
 from django.core.management.base import CommandError, NoArgsCommand
+from django.utils.encoding import force_text
 from django.utils.six.moves import input
-from django.utils.translation import override, ugettext_lazy as _
+from django.utils.translation import override, ugettext, ugettext_lazy as _
 
 from wirecloud.commons.searchers import get_available_search_engines, get_search_engine, is_available
 
@@ -69,19 +70,19 @@ class Command(NoArgsCommand):
 
         if os.path.exists(dirname):
             message = ['\n']
-            message.append(
+            message.append(ugettext(
                 'You have requested to reset indexes found in the location\n'
                 'specified in your settings:\n\n'
                 '    %s\n\n' % dirname
-            )
-            message.append('This will DELETE EXISTING FILES!\n')
-            message.append(
+            ))
+            message.append(ugettext('This will DELETE EXISTING FILES!\n'))
+            message.append(ugettext(
                 'Are you sure you want to do this?\n\n'
                 "Type 'yes' to continue, or 'no' to cancel: "
-            )
+            ))
 
             if self.interactive and input(''.join(message)) != 'yes':
-                raise CommandError("Reset search indexes cancelled.")
+                raise CommandError(_("Reset search indexes cancelled."))
 
         else:
             os.mkdir(dirname)
@@ -100,7 +101,12 @@ class Command(NoArgsCommand):
             self.log(self.update_success_message % indexname)
 
     def handle_noargs(self, **options):
-        with override(locale.getdefaultlocale()[0][:2]):
+        try:
+            default_locale = locale.getdefaultlocale()[0][:2]
+        except TypeError:
+            default_locale = None
+
+        with override(default_locale):
             self._handle_noargs(**options)
 
     def log(self, msg, level=2):
