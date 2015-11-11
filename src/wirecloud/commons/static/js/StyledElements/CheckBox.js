@@ -59,7 +59,7 @@
             this.wrapperElement.setAttribute("id", options.id);
         }
 
-        this.value = options.value;
+        this.checkedValue = options.value;
         this.inputElement.setAttribute("value", options.value);
         this.secondInput = options.secondInput;
         this.setValue(options.initialValue);
@@ -93,10 +93,10 @@
     };
 
     CheckBox.prototype.getValue = function getValue() {
-        if (this.value === true && this.secondInput == null) {
+        if (this.checkedValue === true && this.secondInput == null) {
             return this.inputElement.checked;
         } else if (this.secondInput == null) {
-            return this.inputElement.checked ? this.value : null;
+            return this.inputElement.checked ? this.checkedValue : null;
         } else {
             return this.secondInput.getValue();
         }
