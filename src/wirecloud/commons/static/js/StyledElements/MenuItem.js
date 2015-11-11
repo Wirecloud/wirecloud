@@ -321,9 +321,33 @@
     };
 
     var element_onkeydown = function element_onkeydown(event) {
-        if (utils.normalizeKey(event) === 'Enter') {
+        var key = utils.normalizeKey(event);
+        switch (key) {
+        case 'Enter':
             event.preventDefault();
             this.click();
+            break;
+        case 'ArrowLeft':
+            event.preventDefault();
+            this.parentElement.hide();
+            break;
+        case 'ArrowUp':
+            event.preventDefault();
+            this.parentElement.moveCursorUp();
+            break;
+        case 'ArrowDown':
+            event.preventDefault();
+            this.parentElement.moveCursorDown();
+            break;
+        case 'ArrowRight':
+            event.preventDefault();
+            if ('submenu' in this) {
+                this.submenu.show(this.getBoundingClientRect());
+                if (this.submenu.hasEnabledItem()) {
+                    this.submenu.firstEnabledItem.focus();
+                }
+            }
+            break;
         }
     };
 

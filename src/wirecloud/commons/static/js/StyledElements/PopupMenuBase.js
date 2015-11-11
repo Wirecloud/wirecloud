@@ -248,22 +248,26 @@
 
                     if (generatedItem instanceof StyledElements.MenuItem || generatedItem instanceof StyledElements.Separator) {
                         generatedItem.insertInto(this.wrapperElement);
+                        generatedItem.parentElement = this;
                         if (generatedItem instanceof StyledElements.MenuItem && generatedItem.enabled) {
                             this._enabledItems.push(generatedItem);
                         }
                     } else if (generatedItem instanceof StyledElements.SubMenuItem) {
                         generatedItem._getMenuItem().insertInto(this.wrapperElement);
+                        generatedItem.parentElement = this;
                         this._enabledItems.push(generatedItem.menuItem);
                     }
                 }
             } else if (item instanceof StyledElements.MenuItem || item instanceof StyledElements.Separator) {
                 item.insertInto(this.wrapperElement);
+                item.parentElement = this;
 
                 if (item instanceof StyledElements.MenuItem && item.enabled) {
                     this._enabledItems.push(item);
                 }
             } else if (item instanceof StyledElements.SubMenuItem) {
                 item._getMenuItem().insertInto(this.wrapperElement);
+                item._getMenuItem().parentElement = this;
                 this._submenus.push(item);
                 this._enabledItems.push(item.menuItem);
             } else {
