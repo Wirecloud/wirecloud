@@ -57,7 +57,7 @@ class PopupMenuTester(object):
         items = self.element.find_elements_by_css_selector('.se-popup-menu-item')
 
         for item in items:
-            span = item.find_element_by_css_selector('span:not([class*="se-icon"])')
+            span = item.find_element_by_css_selector('.se-popup-menu-item-title')
             if span and span.text == name:
                 return item
 

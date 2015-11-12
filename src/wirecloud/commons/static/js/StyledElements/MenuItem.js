@@ -40,10 +40,10 @@
      * @since 0.5.0
      * @name StyledElements.MenuItem
      *
-     * @param {String} title - Label to display in the user interface
-     * @param {Function} handler - Callback to be called when this Menu Item is
+     * @param {String} title Label to display in the user interface
+     * @param {Function} handler Callback to be called when this Menu Item is
      * executed
-     * @param {Object} [context] - Object to be passed as the second parameter
+     * @param {Object} [context] Object to be passed as the second parameter
      * of the handler callback
      */
     se.MenuItem = function MenuItem(title, handler, context) {
@@ -58,6 +58,10 @@
         this.bodyElement = document.createElement('div');
         this.bodyElement.className = "se-popup-menu-item-body";
         this.wrapperElement.appendChild(this.bodyElement);
+
+        this.titleElement = document.createElement('div');
+        this.titleElement.className = "se-popup-menu-item-title";
+        this.bodyElement.appendChild(this.titleElement);
 
         Object.defineProperties(this, {
             active: {get: property_active_get, set: property_active_set},
@@ -253,13 +257,6 @@
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
         setTitle: function setTitle(title) {
-
-            if (this.titleElement == null) {
-                this.titleElement = document.createElement('div');
-                this.titleElement.className = "se-popup-menu-item-title";
-                this.bodyElement.insertBefore(this.titleElement, this.bodyElement.firstChild);
-            }
-
             this.titleElement.textContent = title;
 
             return this;
@@ -288,7 +285,7 @@
     };
 
     var property_title_get = function property_title_get() {
-        return this.titleElement != null ? this.titleElement.textContent : "";
+        return this.titleElement.textContent;
     }
 
     var element_onclick = function element_onclick(event) {
