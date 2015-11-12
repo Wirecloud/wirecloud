@@ -283,8 +283,8 @@
             }
         }
 
-        if (this.hasEnabledItem() && this.oneActiveAtLeast) {
-            activateMenuItem.call(this, this.firstEnabledItem);
+        if ((this._enabledItems.length > 0) && this.oneActiveAtLeast) {
+            activateMenuItem.call(this, this._enabledItems[0]);
         }
 
         this.wrapperElement.classList.remove('hidden');
