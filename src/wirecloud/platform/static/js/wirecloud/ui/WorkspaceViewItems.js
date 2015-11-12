@@ -75,6 +75,12 @@
         });
         items.push(item);
 
+        item = new StyledElements.MenuItem(utils.gettext("Share"), function () {
+            var dialog = new Wirecloud.ui.SharingWindowMenu(current_workspace);
+            dialog.show();
+        });
+        items.push(item);
+
         item = new StyledElements.MenuItem(utils.gettext('Upload to my resources'), function () {
             LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady({
                 onComplete: function () {
