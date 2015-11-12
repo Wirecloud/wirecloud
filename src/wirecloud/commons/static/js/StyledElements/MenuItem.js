@@ -239,7 +239,12 @@
                 this.bodyElement.appendChild(this.descriptionElement);
             }
 
-            this.descriptionElement.textContent = description;
+            if (description instanceof se.StyledElement) {
+                this.descriptionElement.innerHTML = "";
+                description.appendTo(this.descriptionElement);
+            } else {
+                this.descriptionElement.textContent = description;
+            }
 
             return this;
         },
@@ -260,7 +265,12 @@
                 this.bodyElement.insertBefore(this.titleElement, this.bodyElement.firstChild);
             }
 
-            this.titleElement.textContent = title;
+            if (title instanceof se.StyledElement) {
+                this.titleElement.innerHTML = "";
+                title.appendTo(this.titleElement);
+            } else {
+                this.titleElement.textContent = title;
+            }
 
             return this;
         }
