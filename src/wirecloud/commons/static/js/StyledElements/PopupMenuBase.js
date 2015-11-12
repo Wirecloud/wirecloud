@@ -156,18 +156,24 @@
 
         this._menuItem_onactivate_bound = menuItem_onactivate.bind(this);
         this._menuItem_ondeactivate_bound = menuItem_ondeactivate.bind(this);
+        this._menuItem_onfocus_bound = menuItem_onfocus.bind(this);
+        this._menuItem_onblur_bound = menuItem_onblur.bind(this);
     };
     PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
 
     PopupMenuBase.prototype._append = function _append(child, where) {
         if (child instanceof StyledElements.MenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.on('mouseenter focus', this._menuItem_onactivate_bound);
-            child.on('mouseleave blur', this._menuItem_ondeactivate_bound);
+            child.on('mouseenter', this._menuItem_onactivate_bound);
+            child.on('mouseleave', this._menuItem_ondeactivate_bound);
+            child.on('focus', this._menuItem_onfocus_bound);
+            child.on('blur', this._menuItem_onblur_bound);
         } else if (child instanceof StyledElements.SubMenuItem) {
             child.addEventListener('click', this._menuItemCallback);
-            child.menuItem.on('mouseenter focus', this._menuItem_onactivate_bound);
-            child.menuItem.on('mouseleave blur', this._menuItem_ondeactivate_bound);
+            child.menuItem.on('mouseenter', this._menuItem_onactivate_bound);
+            child.menuItem.on('mouseleave', this._menuItem_ondeactivate_bound);
+            child.menuItem.on('focus', this._menuItem_onfocus_bound);
+            child.menuItem.on('blur', this._menuItem_onblur_bound);
             child._setParentPopupMenu(this);
         } else if (child instanceof StyledElements.DynamicMenuItems || child instanceof StyledElements.Separator) {
             // nothing to do
@@ -209,12 +215,13 @@
     };
 
     PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback(menuItem) {
-        if (menuItem.hasClassName('submenu')) {
-            // This is necessary for touch screens where mouseenter and mouseleave events are not raised
-            this.show();
-            menuItem.activate();
-        } else {
-            this.trigger('click', menuItem);
+        this.trigger('click', menuItem);
+
+        // This if is necessary for touch screens where mouseenter and
+        // mouseleave events are not raised
+        // In that case, the user will "click" the menu item and
+        // the popup menu should continue to be displayed
+        if (!menuItem.hasClassName('submenu')) {
             this.hide();
         }
 
@@ -236,6 +243,7 @@
 
         this._enabledItems = [];
         this._activeMenuItem = null;
+        this._focusedMenuItem = null;
 
         for (i = 0; i < this._items.length; i += 1) {
             item = this._items[i];
@@ -365,6 +373,50 @@
         return this;
     };
 
+    PopupMenuBase.prototype.moveFocusDown = function moveFocusDown() {
+        var index;
+
+        if (!this.hasEnabledItem()) {
+            return this;
+        }
+
+        if (this._focusedMenuItem != null) {
+            index = this._enabledItems.indexOf(this._focusedMenuItem);
+
+            if (index !== (this._enabledItems.length - 1)) {
+                this._enabledItems[index + 1].focus();
+            } else {
+                this.firstEnabledItem.focus();
+            }
+        } else {
+            this.firstEnabledItem.focus();
+        }
+
+        return this;
+    };
+
+    PopupMenuBase.prototype.moveFocusUp = function moveFocusUp() {
+        var index;
+
+        if (!this.hasEnabledItem()) {
+            return this;
+        }
+
+        if (this._focusedMenuItem != null) {
+            index = this._enabledItems.indexOf(this._focusedMenuItem);
+
+            if (index !== 0) {
+                this._enabledItems[index - 1].focus();
+            } else {
+                this.lastEnabledItem.focus();
+            }
+        } else {
+            this.lastEnabledItem.focus();
+        }
+
+        return this;
+    };
+
     PopupMenuBase.prototype.hide = function hide() {
 
         if (this.hidden) {
@@ -482,6 +534,16 @@
                 this._activeMenuItem = null;
             }
             menuItem.deactivate();
+        }
+    };
+
+    var menuItem_onfocus = function menuItem_onfocus(menuItem) {
+        this._focusedMenuItem = menuItem;
+    };
+
+    var menuItem_onblur = function menuItem_onblur(menuItem) {
+        if (this._focusedMenuItem === menuItem) {
+            this._focusedMenuItem = null;
         }
     };
 

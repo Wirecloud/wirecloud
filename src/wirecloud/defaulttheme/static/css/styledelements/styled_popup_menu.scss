@@ -117,8 +117,7 @@
 
 // STATES - POPUP-MENU-ITEM ACTIVE
 
-.se-popup-menu-item.active,
-.se-popup-menu-item.active:focus {
+.se-popup-menu-item.active {
     background: $popup-menu-item-active-bg;
     color: contrast-text-color($popup-menu-item-active-bg);
 
@@ -127,8 +126,12 @@
     }
 }
 
-.se-popup-menu-item.submenu.active
-.se-popup-menu-item.submenu.active:focus {
+.se-popup-menu-item:focus {
+    box-shadow: inset 0px 0px 2px 2px rgba($input-border-color-focus, 0.6);
+    border-radius: 2px;
+}
+
+.se-popup-menu-item.submenu.active {
 
     &:after {
         border-left-color: contrast-text-color($popup-menu-item-active-bg);

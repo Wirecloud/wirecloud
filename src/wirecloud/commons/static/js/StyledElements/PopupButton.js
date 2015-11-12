@@ -76,18 +76,21 @@
 
         switch (key) {
         case 'ArrowDown':
-            this.popup_menu.show(this.getBoundingClientRect()).moveCursorDown();
+            event.preventDefault();
+            this.popup_menu.show(this.getBoundingClientRect()).moveFocusDown();
             break;
         case 'ArrowUp':
-            this.popup_menu.show(this.getBoundingClientRect()).moveCursorUp();
+            event.preventDefault();
+            this.popup_menu.show(this.getBoundingClientRect()).moveFocusUp();
             break;
+        case ' ':
         case 'Enter':
             this._clickCallback(event);
             break;
         case 'Tab':
             if (this.popup_menu.hasEnabledItem()) {
                 event.preventDefault();
-                this.popup_menu.firstEnabledItem.focus();
+                this.popup_menu.moveFocusDown();
             }
             break;
         default:

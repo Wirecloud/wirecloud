@@ -103,7 +103,7 @@
          */
         _onenabled: function _onenabled(enabled) {
             if (enabled) {
-                this.wrapperElement.setAttribute('tabindex', 0);
+                this.wrapperElement.setAttribute('tabindex', -1);
             } else {
                 this.wrapperElement.removeAttribute('tabindex');
             }
@@ -189,7 +189,7 @@
 
             if (this.enabled && !this.hasFocus()) {
                 this.wrapperElement.focus();
-                this.trigger('focus').activate();
+                this.trigger('focus');
             }
 
             return this;
@@ -321,30 +321,51 @@
     };
 
     var element_onkeydown = function element_onkeydown(event) {
-        var key = utils.normalizeKey(event);
+        var item, key;
+
+        key = utils.normalizeKey(event);
         switch (key) {
+        case ' ':
         case 'Enter':
             event.preventDefault();
             this.click();
             break;
+        case 'Escape':
         case 'ArrowLeft':
+            event.stopPropagation();
             event.preventDefault();
             this.parentElement.hide();
+            if (this.parentElement instanceof StyledElements.SubMenuItem) {
+                this.parentElement.menuItem.focus();
+            }
             break;
         case 'ArrowUp':
             event.preventDefault();
-            this.parentElement.moveCursorUp();
+            this.parentElement.moveFocusUp();
+            break;
+        case 'Tab':
+            event.preventDefault();
+            if ('submenu' in this && this.submenu.isVisible()) {
+                item = this.submenu;
+            } else {
+                item = this.parentElement;
+            }
+            if (event.shiftKey) {
+                item.moveFocusUp();
+            } else {
+                item.moveFocusDown();
+            }
             break;
         case 'ArrowDown':
             event.preventDefault();
-            this.parentElement.moveCursorDown();
+            this.parentElement.moveFocusDown();
             break;
         case 'ArrowRight':
             event.preventDefault();
             if ('submenu' in this) {
                 this.submenu.show(this.getBoundingClientRect());
                 if (this.submenu.hasEnabledItem()) {
-                    this.submenu.firstEnabledItem.focus();
+                    this.submenu.moveFocusDown();
                 }
             }
             break;

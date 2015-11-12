@@ -94,6 +94,8 @@
 
         this.append = function append(element) {
             menu.append.apply(menu, arguments);
+
+            return this;
         };
 
         this.show = function show(refPosition) {
@@ -110,22 +112,46 @@
             Object.freeze(refPosition);
 
             menu.show(refPosition);
+
+            return this;
         };
 
         this.hide = function hide() {
             menu.hide();
+
+            return this;
         };
 
         this.isVisible = function isVisible() {
             return menu.isVisible();
         };
 
+        this.moveFocusDown = function moveFocusDown() {
+            menu.moveFocusDown();
+
+            return this;
+        };
+
+        this.moveFocusUp = function moveFocusUp() {
+            menu.moveFocusUp();
+
+            return this;
+        };
+
+        this.hasEnabledItem = function hasEnabledItem() {
+            return menu.hasEnabledItem();
+        };
+
         this.addEventListener = function addEventListener(event_name, listener) {
             menu.addEventListener(event_name, listener);
+
+            return this;
         };
 
         this.removeEventListener = function removeEventListener(event_name, listener) {
             menu.removeEventListener(event_name, listener);
+
+            return this;
         };
 
         this.destroy = function destroy() {

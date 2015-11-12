@@ -28,7 +28,7 @@
     /**
      *
      */
-    var SubMenuItem = function SubMenuItem(text, handler, options) {
+    var SubMenuItem = function SubMenuItem(text, options) {
 
         if (arguments.length === 0) {
             return true;
@@ -41,7 +41,9 @@
         StyledElements.PopupMenuBase.call(this, options);
         this.wrapperElement.classList.add('se-popup-submenu');
 
-        this.menuItem = new StyledElements.MenuItem(text, handler);
+        this.menuItem = new StyledElements.MenuItem(text, function () {
+            this.submenu.show(this.getBoundingClientRect());
+        });
         this.menuItem.addClassName('submenu');
         this.menuItem.submenu = this;
     };

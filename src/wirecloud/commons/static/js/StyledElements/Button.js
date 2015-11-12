@@ -220,6 +220,7 @@
 
     Button.prototype._onkeydown = function _onkeydown(event, key) {
         switch (key) {
+        case ' ':
         case 'Enter':
             this._clickCallback(event);
             break;
