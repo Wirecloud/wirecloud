@@ -137,7 +137,7 @@
             case "Tab":
             case "ArrowDown":
             case "ArrowUp":
-                this.trigger('keydown', key);
+                this.trigger('keydown', event, key);
             }
         }
     };

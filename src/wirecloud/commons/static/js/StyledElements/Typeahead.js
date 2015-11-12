@@ -58,7 +58,7 @@
         });
 
         this.popupMenu = new se.PopupMenu({oneActiveAtLeast: true, useRefElementWidth: true});
-        this.popupMenu.on('select', popupMenu_onselect.bind(this));
+        this.popupMenu.on('click', popupMenu_onselect.bind(this));
     };
 
     // ==================================================================================
@@ -169,14 +169,14 @@
     };
 
     var createMenuItem = function createMenuItem(data) {
-        var menuItem = new se.MenuItem(utils.highlight(data.title, this.userQuery), null, data.context);
+        var menuItem = new se.MenuItem(new se.Fragment(utils.highlight(data.title, this.userQuery)), null, data.context);
 
         if (data.iconClass) {
             menuItem.addIconClass(data.iconClass);
         }
 
         if (data.description) {
-            menuItem.setDescription(utils.highlight(data.description, this.userQuery));
+            menuItem.setDescription(new se.Fragment(utils.highlight(data.description, this.userQuery)));
         }
 
         return menuItem;
@@ -184,11 +184,11 @@
 
     var textField_onkeydown = function textField_onkeydown(textField, event, key) {
 
-        if (this.popupMenu.hasActiveChild()) {
+        if (this.popupMenu.hasEnabledItem()) {
             switch(key) {
             case 'Tab':
                 event.preventDefault();
-                this.popupMenu.selectActiveChild();
+                this.popupMenu.activeItem.click();
                 break;
             case 'ArrowDown':
                 event.preventDefault();
@@ -206,8 +206,8 @@
 
     var textField_onsubmit = function textField_onsubmit(textField) {
 
-        if (this.popupMenu.hasActiveChild()) {
-            this.popupMenu.selectActiveChild();
+        if (this.popupMenu.hasEnabledItem()) {
+            this.popupMenu.activeItem.click();
         }
     };
 
