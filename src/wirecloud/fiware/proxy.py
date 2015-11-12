@@ -76,7 +76,12 @@ class IDMTokenProcessor(object):
 
         if 'x-fi-ware-oauth-header-name' in request['headers']:
             header_name = request['headers']['x-fi-ware-oauth-header-name']
-            request['headers'][header_name] = token
+
+            if header_name == "Authorization":
+                token_pattern = "Bearer {token}"
+            else:
+                token_pattern = "{token}"
+            request['headers'][header_name] = token_pattern.format(token=token)
             del request['headers']['x-fi-ware-oauth-header-name']
 
         if 'x-fi-ware-oauth-token-body-pattern' in request['headers']:

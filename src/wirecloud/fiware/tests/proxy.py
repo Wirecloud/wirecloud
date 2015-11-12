@@ -136,6 +136,19 @@ class ProxyTestCase(WirecloudTestCase):
         self.assertIn('X-Auth-Token', headers)
         self.assertEqual(headers['X-Auth-Token'], TEST_TOKEN)
 
+    def test_fiware_idm_processor_header_authorization(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
+
+        request = self.prepare_request_mock('{}', extra_headers={
+            "HTTP_X_FI_WARE_OAUTH_HEADER_NAME": 'Authorization',
+        })
+        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
+        self.assertEqual(response.status_code, 200)
+        headers = json.loads(self.read_response(response))
+        self.assertIn('Authorization', headers)
+        self.assertEqual(headers['Authorization'], 'Bearer ' + TEST_TOKEN)
+
     def test_fiware_idm_processor_body(self):
 
         def echo_response(method, url, *args, **kwargs):
