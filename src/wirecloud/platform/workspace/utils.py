@@ -426,6 +426,21 @@ def _get_global_workspace_data(workspaceDAO, user):
     preferences = get_workspace_preference_values(workspaceDAO)
     data_ret['preferences'] = preferences
 
+    data_ret['users'] = []
+
+    for user in workspaceDAO.users.all():
+        user_data = {
+            "full_name": user.get_full_name(),
+            "username": user.username
+        }
+
+        if workspaceDAO.creator == user:
+            user_data.update({
+                'owner': True
+            })
+
+        data_ret['users'].append(user_data)
+
     # Process forced variable values
     concept_values = get_context_values(workspaceDAO, user)
     forced_values = process_forced_values(workspaceDAO, user, concept_values, preferences)
