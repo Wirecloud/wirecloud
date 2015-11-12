@@ -43,7 +43,7 @@
 
             for (i = 0; i < this.buttons.length; i++) {
                 if (this.buttons[i].inputElement.checked) {
-                    return [this.buttons[i].getValue()];
+                    return this.buttons[i].getValue();
                 }
             }
         }
