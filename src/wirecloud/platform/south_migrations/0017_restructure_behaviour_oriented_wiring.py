@@ -2,19 +2,30 @@
 import json
 
 from south.v2 import DataMigration
-from wirecloud.platform.wiring.utils import parse_wiring_old_version
+from wirecloud.platform.wiring.utils import parse_wiring_old_version, get_wiring_skeleton
 
 
 class Migration(DataMigration):
 
     def _need_to_upgrade(self, wiring_status):
-        return 'views' in wiring_status
+        return 'version' not in wiring_status or wiring_status['version'] != '2.0'
 
     def forwards(self, orm):
         for workspace in orm.Workspace.objects.all():
-            wiring_status = json.loads(workspace.wiringStatus)
 
-            # check if this wiring status is old version (1.0) or is empty
+            # check if this wiring status is empty string
+            if not workspace.wiringStatus:
+                wiring_status = {}
+            else:
+                wiring_status = json.loads(workspace.wiringStatus)
+
+            # check if this wiring status is empty object
+            if not wiring_status:
+                workspace.wiringStatus = json.dumps(get_wiring_skeleton())
+                workspace.save()
+                continue
+
+            # check if this wiring status is old version (1.0)
             if not self._need_to_upgrade(wiring_status):
                 continue
 

@@ -348,18 +348,34 @@ class PlatformSouthMigrationsTestCase(TestCase):
     def test_restructure_behaviour_oriented_wiring_forwards(self):
         input_file, output_file = self._read_json_fixtures('wiringstatus_v1.0', 'wiringstatus_v2.0')
 
-        empty_workspace = Mock()
-        empty_workspace.wiringStatus = '{}'
+        empty1_workspace = Mock()
+        empty1_workspace.wiringStatus = '{}'
+
+        empty2_workspace = Mock()
+        empty2_workspace.wiringStatus = ''
+
+        empty_v1_workspace = Mock()
+        empty_v1_workspace.wiringStatus = '{"connections": [], "operators": {}}'
 
         workspace = Mock()
         workspace.wiringStatus = json.dumps(input_file)
 
         migration = self._pick_migration('0017_restructure_behaviour_oriented_wiring')
         orm = Mock(autospec=migration.orm())
-        orm.Workspace.objects.all.return_value = TestQueryResult([empty_workspace, workspace])
+        orm.Workspace.objects.all.return_value = TestQueryResult([empty1_workspace, empty2_workspace, empty_v1_workspace, workspace])
         migration.migration_instance().forwards(orm)
 
-        self.assertEqual(empty_workspace.save.call_count, 0)
+        from wirecloud.platform.wiring.utils import get_wiring_skeleton
+
+        self.assertEqual(empty1_workspace.save.call_count, 1)
+        self.assertEqual(json.loads(empty1_workspace.wiringStatus), get_wiring_skeleton())
+
+        self.assertEqual(empty2_workspace.save.call_count, 1)
+        self.assertEqual(json.loads(empty2_workspace.wiringStatus), get_wiring_skeleton())
+
+        self.assertEqual(empty_v1_workspace.save.call_count, 1)
+        self.assertEqual(json.loads(empty_v1_workspace.wiringStatus), get_wiring_skeleton())
+
         self.assertEqual(workspace.save.call_count, 1)
         self.assertEqual(json.loads(workspace.wiringStatus), output_file)
 
