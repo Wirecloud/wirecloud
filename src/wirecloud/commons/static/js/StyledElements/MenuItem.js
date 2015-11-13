@@ -243,7 +243,12 @@
                 this.bodyElement.appendChild(this.descriptionElement);
             }
 
-            this.descriptionElement.textContent = description;
+            if (description instanceof se.StyledElement) {
+                this.descriptionElement.innerHTML = "";
+                description.appendTo(this.descriptionElement);
+            } else {
+                this.descriptionElement.textContent = description;
+            }
 
             return this;
         },
@@ -257,7 +262,12 @@
          * @returns {StyledElements.MenuItem} - The instance on which the member is called.
          */
         setTitle: function setTitle(title) {
-            this.titleElement.textContent = title;
+            if (title instanceof se.StyledElement) {
+                this.titleElement.innerHTML = "";
+                title.appendTo(this.titleElement);
+            } else {
+                this.titleElement.textContent = title;
+            }
 
             return this;
         }
