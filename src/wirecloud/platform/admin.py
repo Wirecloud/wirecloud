@@ -25,8 +25,24 @@ from wirecloud.platform import models
 
 
 admin.site.register(models.Constant)
-
 admin.site.register(models.IWidget)
+
+class TeamInline(admin.StackedInline):
+
+    model = models.Team
+    fields = ('name', 'users')
+    ordering = ('name',)
+    extra = 0
+
+
+class OrganizationAdmin(admin.ModelAdmin):
+
+    list_display = ('user',)
+    list_display_links = ('user',)
+    ordering = ('user',)
+    inlines = (TeamInline,)
+
+admin.site.register(models.Organization, OrganizationAdmin)
 
 
 class MarketAdmin(admin.ModelAdmin):
