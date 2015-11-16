@@ -19,11 +19,8 @@
 
 import sys
 
+from django.utils.encoding import force_text
 from django.utils.functional import Promise
-try:
-    from django.utils.encoding import force_text
-except:
-    from django.utils.encoding import force_unicode as force_text
 from json import JSONEncoder
 
 
