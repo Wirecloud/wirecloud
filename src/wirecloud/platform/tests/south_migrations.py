@@ -346,38 +346,32 @@ class PlatformSouthMigrationsTestCase(TestCase):
         return tuple(json_fixtures)
 
     def test_restructure_behaviour_oriented_wiring_forwards(self):
-        input_file, output_file = self._read_json_fixtures('wiringstatus_v1.0', 'wiringstatus_v2.0')
+        input_file, output_file, output_file_no_views = self._read_json_fixtures('wiringstatus_v1.0', 'wiringstatus_v2.0', 'wiringstatus_v2.0_no_views')
 
-        empty1_workspace = Mock()
-        empty1_workspace.wiringStatus = '{}'
+        empty1_workspace = Mock(wiringStatus='{}')
+        empty2_workspace = Mock(wiringStatus='')
+        empty_v1_workspace = Mock(wiringStatus='{"connections": [], "operators": {}}')
 
-        empty2_workspace = Mock()
-        empty2_workspace.wiringStatus = ''
+        workspace = Mock(wiringStatus=json.dumps(input_file))
 
-        empty_v1_workspace = Mock()
-        empty_v1_workspace.wiringStatus = '{"connections": [], "operators": {}}'
-
-        workspace = Mock()
-        workspace.wiringStatus = json.dumps(input_file)
+        del input_file['views']
+        workspace_no_views = Mock(wiringStatus=json.dumps(input_file))
 
         migration = self._pick_migration('0017_restructure_behaviour_oriented_wiring')
         orm = Mock(autospec=migration.orm())
-        orm.Workspace.objects.all.return_value = TestQueryResult([empty1_workspace, empty2_workspace, empty_v1_workspace, workspace])
+        orm.Workspace.objects.all.return_value = TestQueryResult([empty1_workspace, empty2_workspace, empty_v1_workspace, workspace, workspace_no_views])
         migration.migration_instance().forwards(orm)
 
         from wirecloud.platform.wiring.utils import get_wiring_skeleton
 
-        self.assertEqual(empty1_workspace.save.call_count, 1)
         self.assertEqual(json.loads(empty1_workspace.wiringStatus), get_wiring_skeleton())
-
-        self.assertEqual(empty2_workspace.save.call_count, 1)
         self.assertEqual(json.loads(empty2_workspace.wiringStatus), get_wiring_skeleton())
-
-        self.assertEqual(empty_v1_workspace.save.call_count, 1)
         self.assertEqual(json.loads(empty_v1_workspace.wiringStatus), get_wiring_skeleton())
-
-        self.assertEqual(workspace.save.call_count, 1)
         self.assertEqual(json.loads(workspace.wiringStatus), output_file)
+        self.assertEqual(json.loads(workspace_no_views.wiringStatus), output_file_no_views)
+
+        for workspace in orm.Workspace.objects.all():
+            self.assertEqual(workspace.save.call_count, 1)
 
     def test_restructure_behaviour_oriented_wiring_backwards(self):
         migration = self._pick_migration('0017_restructure_behaviour_oriented_wiring')

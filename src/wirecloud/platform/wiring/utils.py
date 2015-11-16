@@ -125,7 +125,6 @@ def parse_wiring_old_version(wiring_status):
     new_version = get_wiring_skeleton()
 
     # set up business description
-
     for operator_id, operator in wiring_status.get('operators', {}).items():
         for preference_id, preference in operator.get('preferences', {}).items():
             if 'readOnly' in preference and 'readonly' not in preference:
@@ -151,7 +150,6 @@ def parse_wiring_old_version(wiring_status):
         })
 
     # set up visual description
-
     if 'views' in wiring_status and len(wiring_status['views']) > 0:
         old_view = wiring_status['views'][0]
 
