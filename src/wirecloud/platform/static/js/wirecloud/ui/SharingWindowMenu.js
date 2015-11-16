@@ -42,8 +42,8 @@
         this.windowContent.appendChild(subtitle1);
 
         options = [
-            {name: 'public', iconClass: "icon-globe", title: utils.gettext("Public"), description: utils.gettext("Everybody can view this workspace.")},
-            {name: 'private', iconClass: "icon-lock", title: utils.gettext("Private"), description: utils.gettext("Nobody can view this workspace, except for people chosen.")}
+            {name: 'public', iconClass: "icon-globe", title: utils.gettext("Public"), description: utils.gettext("Anyone on the Internet can find and access this dashboard.")},
+            {name: 'private', iconClass: "icon-lock", title: utils.gettext("Private"), description: utils.gettext("Shared with specific people and organizations.")}
         ];
 
         this.visibilityOptions = new se.ButtonsGroup('visibility');
@@ -54,15 +54,11 @@
         }
 
         subtitle2 = document.createElement('h4');
-        subtitle2.textContent = utils.gettext("Share with others");
+        subtitle2.textContent = utils.gettext("Users and groups with access");
         this.windowContent.appendChild(subtitle2);
 
-        var btnGroup = document.createElement('div');
-        btnGroup.className = "btn-group btn-group-search-user";
-        this.windowContent.appendChild(btnGroup);
-
-        this.inputSearch = new se.TextField({placeholder: utils.gettext("Search for user")});
-        this.inputSearch.appendTo(btnGroup);
+        this.inputSearch = new se.TextField({placeholder: utils.gettext("Add a person or an organization"), class: "wc-dashboard-share-user-input"});
+        this.inputSearch.appendTo(this.windowContent);
 
         this.inputSearchTypeahead = new se.Typeahead({
             autocomplete: false,
@@ -72,9 +68,9 @@
             },
             build: function build(typeahead, data) {
                 return {
-                    title: data.full_name,
+                    title: data.fullname,
                     description: data.username,
-                    iconClass: "icon-user",
+                    iconClass: data.organization ? "icon-building" : "icon-user",
                     context: data
                 };
             }
@@ -82,11 +78,8 @@
         this.inputSearchTypeahead.bind(this.inputSearch);
         this.inputSearchTypeahead.on('select', menuitem_onselect.bind(this));
 
-        this.userGroup = new se.Container({extraClass: "user-group"});
+        this.userGroup = new se.Container({extraClass: "wc-dashboard-share-user-group-list"});
         this.userGroup.appendTo(this.windowContent);
-
-        this.sharingAlert = new se.Alert({state: 'info', defaultIcon: true, message: utils.gettext("No user selected for sharing this workspace.")});
-        this.userGroup.appendChild(this.sharingAlert);
 
         this.sharingUsers = {};
         template = Wirecloud.currentTheme.templates['sharing_user'];
@@ -97,7 +90,7 @@
 
         // windowmenu - footer
 
-        this.btnAccept = new se.Button({text: utils.gettext("Save changes"), state: "primary"});
+        this.btnAccept = new se.Button({text: utils.gettext("Save"), state: "primary"});
         this.btnAccept.appendTo(this.windowBottom);
 
         this.btnCancel = new se.Button({text: utils.gettext("Cancel")});
@@ -144,13 +137,20 @@
         }
 
         createdElement = builder.parse(template, {
-            fullname: data.full_name + (data.owner ? " " + utils.gettext("(You)") : ""),
+            fullname: data.fullname + (data.username === Wirecloud.contextManager.get('username') ? " " + utils.gettext("(You)") : ""),
+            icon: function () {
+                var icon = document.createElement('i');
+                icon.className = data.organization ? "icon-building" : "icon-user";
+                return icon;
+            },
             username: data.username,
             permission: function () {
                 var span = document.createElement('span');
 
-                if (data.owner) {
+                if (data.accesslevel === 'owner') {
                     span.textContent = utils.gettext("Owner");
+                } else {
+                    span.textContent = utils.gettext("Use");
                 }
 
                 return span;
@@ -160,16 +160,12 @@
 
                 this.sharingUsers[data.username] = button;
 
-                if (data.owner) {
+                if (data.accesslevel === 'owner') {
                     button.disable();
                 } else {
                     button.on('click', function () {
                         this.userGroup.removeChild(createdElement);
                         delete this.sharingUsers[data.username];
-
-                        if (!Object.keys(this.sharingUsers).length) {
-                            this.userGroup.appendChild(this.sharingAlert);
-                        }
                     }.bind(this));
                 }
 
@@ -178,10 +174,6 @@
         }).elements[1];
 
         this.userGroup.appendChild(createdElement);
-
-        if (Object.keys(this.sharingUsers).length === 1) {
-            this.userGroup.removeChild(this.sharingAlert);
-        }
 
         return this;
     };
@@ -196,7 +188,8 @@
     };
 
     var searchForUser = function searchForUser(querytext, next) {
-        Wirecloud.io.makeRequest('/api/search?namespace=user&q='+querytext, {
+        Wirecloud.io.makeRequest(Wirecloud.URLs.SEARCH_SERVICE, {
+            parameters: {namespace: 'user', q: querytext},
             method: 'GET',
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'},

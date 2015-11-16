@@ -65,7 +65,7 @@ class ResourceSearch(Resource):
 
         result = get_search_engine(indexname).search(querytext)
 
-        return HttpResponse(json.dumps(result, ensure_ascii=False), status=200, content_type='application/json; charset=utf-8')
+        return HttpResponse(json.dumps(result), status=200, content_type='application/json; charset=utf-8')
 
 
 class SwitchUserService(Service):

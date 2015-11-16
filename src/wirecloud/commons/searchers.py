@@ -25,7 +25,7 @@ import types
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User
-from whoosh.fields import ID, NGRAM, SchemaClass, TEXT
+from whoosh.fields import BOOLEAN, ID, NGRAM, SchemaClass, TEXT
 from whoosh.index import create_in, exists_in, LockError, open_dir
 from whoosh.qparser import QueryParser
 from whoosh.reading import MultiReader
@@ -112,6 +112,22 @@ class IndexWriter(IndexManager):
         return self.model
 
 
+def build_fields_adapter(index):
+
+    bool_fields = []
+    for fieldname in index.schema.stored_names():
+        if isinstance(index.schema[fieldname], BOOLEAN):
+            bool_fields.append(fieldname)
+
+    def adapter(hit):
+        fields = hit.fields()
+        for fieldname in bool_fields:
+            fields[fieldname] = fields[fieldname].lower() == "true"
+        return fields
+
+    return adapter
+
+
 class BaseSearcher(IndexWriter):
 
     fieldname = 'content'
@@ -124,7 +140,8 @@ class BaseSearcher(IndexWriter):
 
         with self.searcher() as searcher:
             hits = searcher.search(user_q)
-            result.update({'results': [hit.fields() for hit in hits]})
+            fields_adapter = build_fields_adapter(ix)
+            result.update({'results': [fields_adapter(hit) for hit in hits]})
 
         return result
 
@@ -248,6 +265,7 @@ class UserSchema(SchemaClass):
     pk = ID(stored=True, unique=True)
     full_name = TEXT(stored=True, spelling=True)
     username = TEXT(stored=True, spelling=True)
+    organization = BOOLEAN(stored=True)
     content = NGRAM(phrase=True)
 
 
@@ -258,10 +276,16 @@ class UserSearcher(BaseSearcher):
     schema_class = UserSchema
 
     def build_compatible_fields(self, resource):
+        try:
+            is_organization = resource.organization is not None
+        except:
+            is_organization = False
+
         fields = {
             'pk': '%s' % resource.pk,
             'full_name': '%s' % (resource.get_full_name()),
             'username': '%s' % resource.username,
+            'organization': '%s' % is_organization,
             'content': '%s %s' % (resource.get_full_name(), resource.username),
         }
 

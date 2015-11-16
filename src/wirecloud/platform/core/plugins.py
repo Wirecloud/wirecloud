@@ -36,6 +36,7 @@ WORKSPACE_CSS = (
     'css/workspace/dragboard_cursor.scss',
     'css/workspace/iwidget.scss',
     'css/workspace/empty_workspace_message.css',
+    'css/workspace/share_window_menu.scss',
     'css/upgrade_window_menu.scss',
 )
 
@@ -575,6 +576,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'WIRING_ENTRY', 'url': build_url_template('wirecloud.workspace_wiring', ['workspace_id'])},
             {'id': 'OPERATOR_ENTRY', 'url': build_url_template('wirecloud.operator_code_entry', ['vendor', 'name', 'version'])},
             {'id': 'MAC_BASE_URL', 'url': build_url_template('wirecloud.showcase_media', ['vendor', 'name', 'version', 'file_path'])},
+            {'id': 'SEARCH_SERVICE', 'url': build_url_template('wirecloud.search_service')},
             {'id': 'WIDGET_CODE_ENTRY', 'url': build_url_template('wirecloud.widget_code_entry', ['vendor', 'name', 'version'])},
             {'id': 'WORKSPACE_COLLECTION', 'url': build_url_template('wirecloud.workspace_collection')},
             {'id': 'WORKSPACE_ENTRY', 'url': build_url_template('wirecloud.workspace_entry', ['workspace_id'])},

@@ -429,17 +429,17 @@ def _get_global_workspace_data(workspaceDAO, user):
     data_ret['users'] = []
 
     for user in workspaceDAO.users.all():
-        user_data = {
-            "full_name": user.get_full_name(),
-            "username": user.username
-        }
+        try:
+            is_organization = resource.organization is not None
+        except:
+            is_organization = False
 
-        if workspaceDAO.creator == user:
-            user_data.update({
-                'owner': True
-            })
-
-        data_ret['users'].append(user_data)
+        data_ret['users'].append({
+            "fullname": user.get_full_name(),
+            "username": user.username,
+            "organization": is_organization,
+            "accesslevel": "owner" if workspaceDAO.creator == user else "read",
+        })
 
     # Process forced variable values
     concept_values = get_context_values(workspaceDAO, user)

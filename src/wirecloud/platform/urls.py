@@ -58,10 +58,10 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.showcase_media'
     ),
 
-    # Resource search
+    # Search service
     url(r'^api/search$',
         ResourceSearch(permitted_methods=('GET',)),
-        name='wirecloud.resource_search'
+        name='wirecloud.search_service'
     ),
 
     # Widgets
