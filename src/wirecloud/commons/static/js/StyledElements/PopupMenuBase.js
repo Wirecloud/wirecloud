@@ -161,7 +161,7 @@
     };
     PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
 
-    PopupMenuBase.prototype._append = function _append(child, where) {
+    var _append = function _append(child, where) {
         if (child instanceof StyledElements.MenuItem) {
             child.addEventListener('click', this._menuItemCallback);
             child.on('mouseenter', this._menuItem_onactivate_bound);
@@ -186,7 +186,16 @@
     };
 
     PopupMenuBase.prototype.append = function append(child) {
-        this._append(child, this._items);
+        _append.call(this, child, this._items);
+
+        if (this.isVisible()) {
+            display.call(this, child);
+
+            if ((this._enabledItems.length > 0) && this.oneActiveAtLeast) {
+                activateMenuItem.call(this, this._enabledItems[0]);
+            }
+
+        }
     };
 
     PopupMenuBase.prototype.appendSeparator = function appendSeparator() {
@@ -234,8 +243,47 @@
         return !this.hidden;
     };
 
+    var display = function display(item) {
+        var i, generatedItems, generatedItem;
+
+        if (item instanceof StyledElements.DynamicMenuItems) {
+            generatedItems = item.build(this._context);
+            for (i = 0; i < generatedItems.length; i += 1) {
+                generatedItem = generatedItems[i];
+
+                _append.call(this, generatedItem, this._dynamicItems);
+
+                if (generatedItem instanceof StyledElements.MenuItem || generatedItem instanceof StyledElements.Separator) {
+                    generatedItem.insertInto(this.wrapperElement);
+                    generatedItem.parentElement = this;
+                    if (generatedItem instanceof StyledElements.MenuItem && generatedItem.enabled) {
+                        this._enabledItems.push(generatedItem);
+                    }
+                } else if (generatedItem instanceof StyledElements.SubMenuItem) {
+                    generatedItem._getMenuItem().insertInto(this.wrapperElement);
+                    generatedItem.parentElement = this;
+                    this._enabledItems.push(generatedItem.menuItem);
+                }
+            }
+        } else if (item instanceof StyledElements.MenuItem || item instanceof StyledElements.Separator) {
+            item.insertInto(this.wrapperElement);
+            item.parentElement = this;
+
+            if (item instanceof StyledElements.MenuItem && item.enabled) {
+                this._enabledItems.push(item);
+            }
+        } else if (item instanceof StyledElements.SubMenuItem) {
+            item._getMenuItem().insertInto(this.wrapperElement);
+            item._getMenuItem().parentElement = this;
+            this._submenus.push(item);
+            this._enabledItems.push(item.menuItem);
+        } else {
+            this.wrapperElement.appendChild(item);
+        }
+    };
+
     PopupMenuBase.prototype.show = function show(refPosition) {
-        var i, j, item, generatedItems, generatedItem;
+        var i;
 
         if (this.isVisible()) {
             return; // This Popup Menu is already visible => nothing to do
@@ -246,41 +294,7 @@
         this._focusedMenuItem = null;
 
         for (i = 0; i < this._items.length; i += 1) {
-            item = this._items[i];
-            if (item instanceof StyledElements.DynamicMenuItems) {
-                generatedItems = item.build(this._context);
-                for (j = 0; j < generatedItems.length; j += 1) {
-                    generatedItem = generatedItems[j];
-
-                    this._append(generatedItem, this._dynamicItems);
-
-                    if (generatedItem instanceof StyledElements.MenuItem || generatedItem instanceof StyledElements.Separator) {
-                        generatedItem.insertInto(this.wrapperElement);
-                        generatedItem.parentElement = this;
-                        if (generatedItem instanceof StyledElements.MenuItem && generatedItem.enabled) {
-                            this._enabledItems.push(generatedItem);
-                        }
-                    } else if (generatedItem instanceof StyledElements.SubMenuItem) {
-                        generatedItem._getMenuItem().insertInto(this.wrapperElement);
-                        generatedItem.parentElement = this;
-                        this._enabledItems.push(generatedItem.menuItem);
-                    }
-                }
-            } else if (item instanceof StyledElements.MenuItem || item instanceof StyledElements.Separator) {
-                item.insertInto(this.wrapperElement);
-                item.parentElement = this;
-
-                if (item instanceof StyledElements.MenuItem && item.enabled) {
-                    this._enabledItems.push(item);
-                }
-            } else if (item instanceof StyledElements.SubMenuItem) {
-                item._getMenuItem().insertInto(this.wrapperElement);
-                item._getMenuItem().parentElement = this;
-                this._submenus.push(item);
-                this._enabledItems.push(item.menuItem);
-            } else {
-                this.wrapperElement.appendChild(item);
-            }
+            display.call(this, this._items[i]);
         }
 
         if ((this._enabledItems.length > 0) && this.oneActiveAtLeast) {
