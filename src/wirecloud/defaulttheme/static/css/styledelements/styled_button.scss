@@ -67,6 +67,11 @@
     }
 }
 
+button::-moz-focus-inner, input::-moz-focus-inner {
+    padding:0;
+    border:0
+}
+
 .se-btn {
     font-size: $font-size-base;
     padding: $padding-vertical-base $padding-horizontal-base;
