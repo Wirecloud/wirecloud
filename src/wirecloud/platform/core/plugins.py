@@ -577,6 +577,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'WIRING_ENTRY', 'url': build_url_template('wirecloud.workspace_wiring', ['workspace_id'])},
             {'id': 'OPERATOR_ENTRY', 'url': build_url_template('wirecloud.operator_code_entry', ['vendor', 'name', 'version'])},
             {'id': 'MAC_BASE_URL', 'url': build_url_template('wirecloud.showcase_media', ['vendor', 'name', 'version', 'file_path'])},
+            {'id': 'ROOT_URL', 'url': build_url_template('wirecloud.root')},
             {'id': 'SEARCH_SERVICE', 'url': build_url_template('wirecloud.search_service')},
             {'id': 'SWITCH_USER_SERVICE', 'url': build_url_template('wirecloud.switch_user_service')},
             {'id': 'WIDGET_CODE_ENTRY', 'url': build_url_template('wirecloud.widget_code_entry', ['vendor', 'name', 'version'])},

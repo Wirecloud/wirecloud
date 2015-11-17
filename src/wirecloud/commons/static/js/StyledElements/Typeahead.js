@@ -80,14 +80,19 @@
          */
         bind: function bind(textField) {
 
-          this.textField = textField;
-          this.textField.on('change', textField_onchange.bind(this));
-          this.textField.on('keydown', textField_onkeydown.bind(this));
-          this.textField.on('submit', textField_onsubmit.bind(this));
-          this.textField.on('focus', textField_onchange.bind(this));
-          this.textField.on('blur', textField_onblur.bind(this));
+            if (!(textField instanceof se.TextField)) {
+                throw new TypeError();
+            }
 
-          return this;
+            this.textField = textField;
+            this.textField.inputElement.setAttribute('autocomplete', 'off'); // TODO
+            this.textField.on('change', textField_onchange.bind(this));
+            this.textField.on('keydown', textField_onkeydown.bind(this));
+            this.textField.on('submit', textField_onsubmit.bind(this));
+            this.textField.on('focus', textField_onchange.bind(this));
+            this.textField.on('blur', textField_onblur.bind(this));
+
+            return this;
         }
 
     });
@@ -175,15 +180,16 @@
     };
 
     var popupMenu_onselect = function popupMenu_onselect(popupMenu, menuItem) {
-
-        this.textField.value = this.autocomplete ? menuItem.title : "";
+        // TODO: this is needed to not firing the change event on the Text Field. Search another way
+        this.textField.inputElement.value = this.autocomplete ? menuItem.context.value : "";
         this.textField.focus();
 
+        menuItem.context = menuItem.context.context;
         this.trigger('select', menuItem);
     };
 
     var createMenuItem = function createMenuItem(data) {
-        var menuItem = new se.MenuItem(new se.Fragment(utils.highlight(data.title, this.userQuery)), null, data.context);
+        var menuItem = new se.MenuItem(new se.Fragment(utils.highlight(data.title, this.userQuery)), null, data);
 
         if (data.iconClass) {
             menuItem.addIconClass(data.iconClass);
@@ -201,6 +207,7 @@
         if (this.popupMenu.hasEnabledItem()) {
             switch(key) {
             case 'Tab':
+            case 'Enter':
                 event.preventDefault();
                 this.popupMenu.activeItem.click();
                 break;

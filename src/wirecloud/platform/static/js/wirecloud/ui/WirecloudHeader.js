@@ -105,14 +105,20 @@
 
             if (Wirecloud.contextManager.get('issuperuser') === true) {
                 user_menu.append(new StyledElements.MenuItem(utils.gettext('Switch User'), function () {
-                    var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'user', label: utils.gettext(), type: 'text'}], utils.gettext('Switch User'), 'wc-switch-user');
+                    var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'username', label: utils.gettext('User'), type: 'text', required: true}], utils.gettext('Switch User'), 'wc-switch-user');
 
-                    var typeahead = new Wirecloud.ui.UserTypeahead();
-                    typeahead.bind(dialog.form.fieldInterfaces['user'].inputElement);
+                    var typeahead = new Wirecloud.ui.UserTypeahead({autocomplete: true});
+                    typeahead.bind(dialog.form.fieldInterfaces['username'].inputElement);
 
-                    // Form data is sent to server
                     dialog.executeOperation = function (data) {
-
+                        Wirecloud.io.makeRequest(Wirecloud.URLs.SWITCH_USER_SERVICE, {
+                            method: 'POST',
+                            contentType: 'application/json',
+                            postBody: JSON.stringify({username: data.username}),
+                            onSuccess: function () {
+                                document.location.assign(Wirecloud.URLs.ROOT_URL);
+                            }
+                        });
                     }.bind(this);
 
                     dialog.show();

@@ -19,9 +19,9 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
+/*global LayoutManagerFactory, StyledElements, Wirecloud*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -86,7 +86,7 @@
         this.user_button.insertInto(wrapper);
 
         user_menu = this.user_button.getPopupMenu();
-        item = new StyledElements.MenuItem(gettext('Settings'), function () {
+        item = new StyledElements.MenuItem(utils.gettext('Settings'), function () {
             var dialog = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
             dialog.show();
         });
@@ -94,20 +94,43 @@
         item.setDisabled(username === 'anonymous');
 
         if (Wirecloud.contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
-            user_menu.append(new StyledElements.MenuItem(gettext('DJango Admin panel'), function () {
+            user_menu.append(new StyledElements.MenuItem(utils.gettext('DJango Admin panel'), function () {
                 window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
             }));
         }
+
+        if (Wirecloud.contextManager.get('issuperuser') === true) {
+            user_menu.append(new StyledElements.MenuItem(utils.gettext('Switch User'), function () {
+                var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'username', label: utils.gettext('User'), type: 'text', required: true}], utils.gettext('Switch User'), 'wc-switch-user');
+
+                var typeahead = new Wirecloud.ui.UserTypeahead({autocomplete: true});
+                typeahead.bind(dialog.form.fieldInterfaces['username'].inputElement);
+
+                dialog.executeOperation = function (data) {
+                    Wirecloud.io.makeRequest(Wirecloud.URLs.SWITCH_USER_SERVICE, {
+                        method: 'POST',
+                        contentType: 'application/json',
+                        postBody: JSON.stringify({username: data.username}),
+                        onSuccess: function () {
+                            document.location.assign(Wirecloud.URLs.ROOT_URL);
+                        }
+                    });
+                }.bind(this);
+
+                dialog.show();
+            }));
+        }
+
         item = new Wirecloud.ui.TutorialSubMenu();
         user_menu.append(item);
         item.setDisabled(username === 'anonymous');
         user_menu.append(new StyledElements.Separator());
         if (username === 'anonymous') {
-            user_menu.append(new StyledElements.MenuItem(gettext('Sign in'), function () {
+            user_menu.append(new StyledElements.MenuItem(utils.gettext('Sign in'), function () {
                 window.location = Wirecloud.URLs.LOGIN_VIEW + '?next=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
             }));
         } else {
-            user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), function () {
+            user_menu.append(new StyledElements.MenuItem(utils.gettext('Sign out'), function () {
                 var portal_logout_urls, i, portal;
 
                 portal_logout_urls = [];
@@ -289,4 +312,4 @@
 
     Wirecloud.ui.WirecloudHeader = WirecloudHeader;
 
-})();
+})(Wirecloud.Utils);

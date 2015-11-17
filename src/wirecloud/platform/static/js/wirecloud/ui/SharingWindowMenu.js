@@ -60,7 +60,7 @@
         this.inputSearch = new se.TextField({placeholder: utils.gettext("Add a person or an organization"), class: "wc-dashboard-share-input"});
         this.inputSearch.appendTo(this.windowContent);
 
-        this.inputSearchTypeahead = new Wirecloud.ui.UserTypeahead();
+        this.inputSearchTypeahead = new Wirecloud.ui.UserTypeahead({autocomplete: false});
 
         this.inputSearchTypeahead.bind(this.inputSearch);
         this.inputSearchTypeahead.on('select', menuitem_onselect.bind(this));

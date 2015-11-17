@@ -26,13 +26,16 @@
 
     "use strict";
 
-    ns.UserTypeahead = function UserTypeahead() {
+    ns.UserTypeahead = function UserTypeahead(options) {
+        options = utils.merge(utils.clone(defaults), options);
+
         this.superClass({
-            autocomplete: false,
+            autocomplete: options.autocomplete,
             dataFiltered: true,
             lookup: searchForUser,
             build: function build(typeahead, data) {
                 return {
+                    value: data.username,
                     title: data.fullname,
                     description: data.username,
                     iconClass: data.organization ? "icon-building" : "icon-user",
@@ -46,6 +49,10 @@
     // ==================================================================================
     // PRIVATE MEMBERS
     // ==================================================================================
+
+    var defaults = {
+        autocomplete: true
+    };
 
     var searchForUser = function searchForUser(querytext, next) {
         return Wirecloud.io.makeRequest(Wirecloud.URLs.SEARCH_SERVICE, {
