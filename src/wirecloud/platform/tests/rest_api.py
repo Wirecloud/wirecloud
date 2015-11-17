@@ -3451,7 +3451,12 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 class AdministrationAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('wirecloud-rest-api',)
+    tags = ('wirecloud-rest-api', 'wirecloud-rest-api-admin')
+
+    @classmethod
+    def setUpClass(cls):
+        super(AdministrationAPI, cls).setUpClass()
+        cls.su_url = reverse('wirecloud.switch_user_service')
 
     def check_current_user(self, user):
 
@@ -3464,62 +3469,49 @@ class AdministrationAPI(WirecloudTestCase):
 
     def test_switch_user(self):
 
-        url = reverse('wirecloud.switch_user')
-
         self.client.login(username='admin', password='admin')
 
-        response = self.client.post(url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        response = self.client.post(self.su_url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
         self.check_current_user('user_with_workspaces')
 
     def test_switch_user_inexistent_user(self):
 
-        url = reverse('wirecloud.switch_user')
-
         self.client.login(username='admin', password='admin')
 
-        response = self.client.post(url, '{"username": "inexistentuser"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        response = self.client.post(self.su_url, '{"username": "inexistentuser"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 404)
         self.check_current_user('admin')
 
     def test_switch_user_requires_permissions(self):
 
-        url = reverse('wirecloud.switch_user')
-
         self.client.login(username='user_with_workspaces', password='admin')
 
-        response = self.client.post(url, '{"username": "admin"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        response = self.client.post(self.su_url, '{"username": "admin"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 403)
         self.check_current_user('user_with_workspaces')
 
     def test_switch_user_bad_request_syntax(self):
 
-        url = reverse('wirecloud.switch_user')
-        check_post_bad_request_syntax(self, url, username="admin")
+        check_post_bad_request_syntax(self, self.su_url, username="admin")
 
     def test_switch_user_bad_request_content(self):
 
-        url = reverse('wirecloud.switch_user')
-
         self.client.login(username='admin', password='admin')
 
-        response = self.client.post(url, json.dumps({}), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        response = self.client.post(self.su_url, json.dumps({}), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
     def test_switch_user_no_backend(self):
-
-        url = reverse('wirecloud.switch_user')
 
         self.client.login(username='admin', password='admin')
 
         with patch('wirecloud.commons.views.auth', autospec=True) as auth:
             auth.get_backends.return_value = ()
-            response = self.client.post(url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            response = self.client.post(self.su_url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 404)
 
     def test_switch_user_no_associated_backend(self):
-
-        url = reverse('wirecloud.switch_user')
 
         self.client.login(username='admin', password='admin')
         backend1 = Mock()
@@ -3529,5 +3521,5 @@ class AdministrationAPI(WirecloudTestCase):
 
         with patch('wirecloud.commons.views.auth', autospec=True) as auth:
             auth.get_backends.return_value = (backend1, backend2)
-            response = self.client.post(url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            response = self.client.post(self.su_url, '{"username": "user_with_workspaces"}', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 404)

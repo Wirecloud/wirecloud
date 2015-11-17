@@ -133,12 +133,7 @@
     var element_onkeydown = function element_onkeydown(event) {
         if (this.enabled) {
             var key = utils.normalizeKey(event);
-            switch (key) {
-            case "Tab":
-            case "ArrowDown":
-            case "ArrowUp":
-                this.trigger('keydown', event, key);
-            }
+            this.trigger('keydown', event, key);
         }
     };
 

@@ -102,6 +102,22 @@
                     window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
                 }));
             }
+
+            if (Wirecloud.contextManager.get('issuperuser') === true) {
+                user_menu.append(new StyledElements.MenuItem(utils.gettext('Switch User'), function () {
+                    var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'user', label: utils.gettext(), type: 'text'}], utils.gettext('Switch User'), 'wc-switch-user');
+
+                    var typeahead = new Wirecloud.ui.UserTypeahead();
+                    typeahead.bind(dialog.form.fieldInterfaces['user'].inputElement);
+
+                    // Form data is sent to server
+                    dialog.executeOperation = function (data) {
+
+                    }.bind(this);
+
+                    dialog.show();
+                }));
+            }
             user_menu.append(new Wirecloud.ui.TutorialSubMenu());
 
             user_menu.append(new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout));

@@ -185,7 +185,7 @@ urlpatterns = patterns('wirecloud.platform.views',
 
     url(r'api/admin/switchuser$',
         SwitchUserService(),
-        name='wirecloud.switch_user'
+        name='wirecloud.switch_user_service'
     ),
 
     url('^oauth2/default_redirect_uri$',
