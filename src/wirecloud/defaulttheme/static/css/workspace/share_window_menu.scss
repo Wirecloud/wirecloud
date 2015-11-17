@@ -46,13 +46,13 @@ $list-group-item-hover-bg: rgb(245, 245, 245);
     }
 }
 
-.wc-dashboard-share-user-input {
+.wc-dashboard-share-input {
     display: block;
     margin: 0 0 10px 0;
     width: 100%;
 }
 
-.wc-dashboard-share-user-group-list {
+.wc-dashboard-share-list {
     display: block;
     margin: 0 0 10px 0;
     overflow-y: auto;
@@ -60,24 +60,25 @@ $list-group-item-hover-bg: rgb(245, 245, 245);
     border: solid 1px $state-default-border;
 }
 
-.sharing-user {
+.wc-dashboard-share-item {
     border-bottom: solid 1px $state-default-border;
     padding: 5px 5px;
 }
 
-.sharing-user:last-child {
+.wc-dashboard-share-item:last-child {
     margin-bottom: -1px;
 }
 
-.sharing-user-icon,
-.sharing-user-description,
-.sharing-user-permission,
-.sharing-user-options {
+.wc-dashboard-share-item-icon,
+.wc-dashboard-share-item-description,
+.wc-dashboard-share-item-permission,
+.wc-dashboard-share-item-options {
     display: table-cell;
     vertical-align: middle;
+    white-space: nowrap;
 }
 
-.sharing-user-icon {
+.wc-dashboard-share-item-icon {
     padding-right: 10px;
 
     .icon-stack {
@@ -86,25 +87,25 @@ $list-group-item-hover-bg: rgb(245, 245, 245);
     }
 }
 
-.sharing-user-description {
+.wc-dashboard-share-item-description {
     padding-right: 10px;
     width: 100%;
 }
 
-.sharing-user-permission {
+.wc-dashboard-share-item-permission {
     padding-right: 10px;
 }
 
-.sharing-user-description .user-fullname {
+.wc-dashboard-share-item-description > .user-fullname {
     font-weight: 700;
 }
 
-.sharing-user-description .user-username {
+.wc-dashboard-share-item-description > .user-username {
     color: #777;
     font-size: 12px;
 }
 
-.sharing-user-options .se-btn {
+.wc-dashboard-share-item-options .se-btn {
     width: 18px;
     text-align: center;
 }

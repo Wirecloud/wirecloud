@@ -48,13 +48,16 @@
         this.lookup = options.lookup;
         this.compare = options.compare;
         this.build = options.build;
+        this.notFoundMessage = options.notFoundMessage;
+
+        this.timeout = null;
+        this.currentRequest = null;
 
         Object.defineProperties(this, {
             autocomplete: {value: options.autocomplete},
             cleanedQuery: {get: property_cleanedQuery_get},
             dataFiltered: {value: options.dataFiltered},
-            minLength: {value: options.minLength},
-            suggestions: {value: options.suggestions}
+            minLength: {value: options.minLength}
         });
 
         this.popupMenu = new se.PopupMenu({oneActiveAtLeast: true, useRefElementWidth: true});
@@ -81,6 +84,8 @@
           this.textField.on('change', textField_onchange.bind(this));
           this.textField.on('keydown', textField_onkeydown.bind(this));
           this.textField.on('submit', textField_onsubmit.bind(this));
+          this.textField.on('focus', textField_onchange.bind(this));
+          this.textField.on('blur', textField_onblur.bind(this));
 
           return this;
         }
@@ -91,13 +96,13 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
+    var builder = new se.GUIBuilder();
     var events = ['select', 'show'];
 
     var defaults = {
         autocomplete: true,
         dataFiltered: false,
-        minLength: 2,
-        suggestions: true
+        minLength: 2
     };
 
     var property_cleanedQuery_get = function property_cleanedQuery_get() {
@@ -105,18 +110,23 @@
     };
 
     var textField_onchange = function textField_onchange() {
+        if (this.timeout != null) {
+            clearTimeout(this.timeout);
+        }
+        this.timeout = setTimeout(search.bind(this), 150);
+    };
+
+    var search = function search() {
+        this.timeout = null;
         this.userQuery = this.cleanedQuery;
 
-        if (this.selecting) {
-            return;
-        }
-
-        if (this.suggestions) {
-            this.popupMenu.hide().clear();
-        }
-
         if (this.userQuery.length >= this.minLength) {
-            this.lookup(this.userQuery, sortResult.bind(this));
+            if (this.currentRequest != null && 'abort' in this.currentRequest) {
+                this.currentRequest.abort();
+            }
+            this.currentRequest = this.lookup(this.userQuery, sortResult.bind(this));
+        } else {
+            this.popupMenu.hide();
         }
     };
 
@@ -138,33 +148,37 @@
     };
 
     var sortResult = function sortResult(data) {
-        var i;
+        var i, msg, item;
 
-        if (!data.length) {
-            return this;
-        }
+        this.currentRequest = null;
+        this.popupMenu.clear();
 
-        if (!this.dataFiltered) {
-            data = filterData.call(this, data);
-        }
+        if (data.length > 0) {
+            if (!this.dataFiltered) {
+                data = filterData.call(this, data);
+            }
 
-        if (this.suggestions) {
             for (i = 0; i < data.length; i++) {
                 this.popupMenu.append(createMenuItem.call(this, this.build(this, data[i])));
             }
-            this.popupMenu.show(this.textField.getBoundingClientRect());
+        } else {
+            msg = this.notFoundMessage != null ? this.notFoundMessage : utils.gettext("No results found for <em><t:query/></em>");
+            msg = builder.DEFAULT_OPENING + msg + builder.DEFAULT_CLOSING;
+            msg = builder.parse(msg, {query: this.cleanedQuery});
+            item = new StyledElements.MenuItem(msg);
+            item.disable();
+            this.popupMenu.append(item);
         }
+        this.popupMenu.show(this.textField.getBoundingClientRect());
 
         return this.trigger('show', data);
     };
 
     var popupMenu_onselect = function popupMenu_onselect(popupMenu, menuItem) {
 
-        this.selecting = true;
-        this.textField.setValue(this.autocomplete ? menuItem.title : "");
-        delete this.selecting;
-
+        this.textField.value = this.autocomplete ? menuItem.title : "";
         this.textField.focus();
+
         this.trigger('select', menuItem);
     };
 
@@ -205,10 +219,21 @@
     };
 
     var textField_onsubmit = function textField_onsubmit(textField) {
-
         if (this.popupMenu.hasEnabledItem()) {
             this.popupMenu.activeItem.click();
         }
+    };
+
+    var textField_onblur = function textField_onblur(textField) {
+        if (this.timeout != null) {
+            clearTimeout(this.timeout);
+        }
+        if (this.currentRequest != null && 'abort' in this.currentRequest) {
+            this.currentRequest.abort();
+        }
+        this.timeout = null;
+        this.currentRequest = null;
+        this.popupMenu.hide();
     };
 
 })(StyledElements, StyledElements.Utils);

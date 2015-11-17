@@ -263,7 +263,7 @@ class GroupSearcher(BaseSearcher):
 class UserSchema(SchemaClass):
 
     pk = ID(stored=True, unique=True)
-    full_name = TEXT(stored=True, spelling=True)
+    fullname = TEXT(stored=True, spelling=True)
     username = TEXT(stored=True, spelling=True)
     organization = BOOLEAN(stored=True)
     content = NGRAM(phrase=True)
@@ -283,7 +283,7 @@ class UserSearcher(BaseSearcher):
 
         fields = {
             'pk': '%s' % resource.pk,
-            'full_name': '%s' % (resource.get_full_name()),
+            'fullname': '%s' % (resource.get_full_name()),
             'username': '%s' % resource.username,
             'organization': '%s' % is_organization,
             'content': '%s %s' % (resource.get_full_name(), resource.username),

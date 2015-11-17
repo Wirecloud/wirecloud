@@ -57,15 +57,13 @@
         subtitle2.textContent = utils.gettext("Users and groups with access");
         this.windowContent.appendChild(subtitle2);
 
-        this.inputSearch = new se.TextField({placeholder: utils.gettext("Add a person or an organization"), class: "wc-dashboard-share-user-input"});
+        this.inputSearch = new se.TextField({placeholder: utils.gettext("Add a person or an organization"), class: "wc-dashboard-share-input"});
         this.inputSearch.appendTo(this.windowContent);
 
         this.inputSearchTypeahead = new se.Typeahead({
             autocomplete: false,
             dataFiltered: true,
-            lookup: function lookup(query, next) {
-                searchForUser.call(this, query, next);
-            },
+            lookup: searchForUser,
             build: function build(typeahead, data) {
                 return {
                     title: data.fullname,
@@ -78,7 +76,7 @@
         this.inputSearchTypeahead.bind(this.inputSearch);
         this.inputSearchTypeahead.on('select', menuitem_onselect.bind(this));
 
-        this.userGroup = new se.Container({extraClass: "wc-dashboard-share-user-group-list"});
+        this.userGroup = new se.Container({extraClass: "wc-dashboard-share-list"});
         this.userGroup.appendTo(this.windowContent);
 
         this.sharingUsers = {};
@@ -150,7 +148,7 @@
                 if (data.accesslevel === 'owner') {
                     span.textContent = utils.gettext("Owner");
                 } else {
-                    span.textContent = utils.gettext("Use");
+                    span.textContent = utils.gettext("Can view");
                 }
 
                 return span;
@@ -188,7 +186,7 @@
     };
 
     var searchForUser = function searchForUser(querytext, next) {
-        Wirecloud.io.makeRequest(Wirecloud.URLs.SEARCH_SERVICE, {
+        return Wirecloud.io.makeRequest(Wirecloud.URLs.SEARCH_SERVICE, {
             parameters: {namespace: 'user', q: querytext},
             method: 'GET',
             contentType: 'application/json',
