@@ -60,19 +60,8 @@
         this.inputSearch = new se.TextField({placeholder: utils.gettext("Add a person or an organization"), class: "wc-dashboard-share-input"});
         this.inputSearch.appendTo(this.windowContent);
 
-        this.inputSearchTypeahead = new se.Typeahead({
-            autocomplete: false,
-            dataFiltered: true,
-            lookup: searchForUser,
-            build: function build(typeahead, data) {
-                return {
-                    title: data.fullname,
-                    description: data.username,
-                    iconClass: data.organization ? "icon-building" : "icon-user",
-                    context: data
-                };
-            }
-        });
+        this.inputSearchTypeahead = new Wirecloud.ui.UserTypeahead();
+
         this.inputSearchTypeahead.bind(this.inputSearch);
         this.inputSearchTypeahead.on('select', menuitem_onselect.bind(this));
 
@@ -183,18 +172,6 @@
         var template = Wirecloud.currentTheme.templates['sharing_user'];
 
         appendUser.call(this, context, builder, template);
-    };
-
-    var searchForUser = function searchForUser(querytext, next) {
-        return Wirecloud.io.makeRequest(Wirecloud.URLs.SEARCH_SERVICE, {
-            parameters: {namespace: 'user', q: querytext},
-            method: 'GET',
-            contentType: 'application/json',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: function (response) {
-                next(JSON.parse(response.responseText).results);
-            }
-        });
     };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

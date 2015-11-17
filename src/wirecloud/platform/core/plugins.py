@@ -498,6 +498,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/PublishResourceWindowMenu.js',
                 'js/wirecloud/ui/RenameWindowMenu.js',
                 'js/wirecloud/ui/UpgradeWindowMenu.js',
+                'js/wirecloud/ui/UserTypeahead.js',
             ) + WIRING_EDITOR_FILES + TUTORIAL_FILES
 
             if view == 'embedded':
