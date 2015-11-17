@@ -37,7 +37,7 @@ class UserSearcherTestCase(WirecloudTestCase):
     @classmethod
     def setUpClass(cls):
         super(UserSearcherTestCase, cls).setUpClass()
-        cls.url = reverse('wirecloud.search')
+        cls.url = reverse('wirecloud.search_service')
 
     def test_simple_search(self):
         response = self.client.get(self.url + '?namespace=user&q=li', HTTP_ACCEPT="application/json")
