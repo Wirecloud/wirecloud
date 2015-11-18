@@ -199,8 +199,8 @@ var LayoutManagerFactory = function () {
             this.mainLayout.repaint();
 
             // Recalculate menu positions
-            if (this.currentMenu) {
-                this.currentMenu.calculatePosition();
+            if (Wirecloud.UserInterfaceManager.currentWindowMenu) {
+                Wirecloud.UserInterfaceManager.currentWindowMenu.calculatePosition();
             }
         }
 
