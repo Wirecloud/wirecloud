@@ -1,49 +1,43 @@
 @import 'variables';
 
-.visibility-option {
-    margin: 0 0 0 20px;
-
-    .option-btn,
-    .option-heading,
-    .option-heading-img,
-    .option-heading-content {
-        display: table-cell;
-        vertical-align: middle;
-    }
-
-    .option-btn input {
-        margin: 0 10px 0 0;
-    }
-
-    .option-heading {
-        cursor: pointer;
-        width: 100%;
-        padding: 5px;
-
-        .option-heading-img {
-            text-align: center;
-            width: 40px;
-
-            span {
-                font-size: 20px;
-            }
-        }
-    }
-
-    .option-description {
-        font-weight: 400;
-    }
-}
-
 $list-group-item-hover-text-color: rgb(75, 75, 75);
 $list-group-item-hover-bg: rgb(245, 245, 245);
 
-.visibility-option:hover {
+.wc-share-visibility-option {
 
-    .option-heading {
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 5px;
+
+    &:hover {
         color: $list-group-item-hover-text-color;
         background-color: $list-group-item-hover-bg;
     }
+
+}
+
+.wc-share-option-btn,
+.wc-share-option-heading-img,
+.wc-share-option-heading-content {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.wc-share-option-btn > input {
+    margin: 0 10px;
+}
+
+.wc-share-option-heading-img {
+    text-align: center;
+    width: 40px;
+
+    span {
+        font-size: 20px;
+    }
+}
+
+.wc-share-option-description {
+    font-weight: 400;
 }
 
 .wc-dashboard-share-input {
@@ -58,6 +52,8 @@ $list-group-item-hover-bg: rgb(245, 245, 245);
     overflow-y: auto;
     height: 156px;
     border: solid 1px $state-default-border;
+    border-radius: $input-border-radius-base;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .wc-dashboard-share-item {

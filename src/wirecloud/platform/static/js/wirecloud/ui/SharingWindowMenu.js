@@ -35,6 +35,7 @@
 
         ns.WindowMenu.call(this, utils.gettext("Sharing settings"));
 
+        this.workspace = workspace;
         builder = new se.GUIBuilder();
 
         subtitle1 = document.createElement('h4');
@@ -68,7 +69,7 @@
         this.userGroup = new se.Container({extraClass: "wc-dashboard-share-list"});
         this.userGroup.appendTo(this.windowContent);
 
-        this.sharingUsers = {};
+        this.sharingUsers = [];
         template = Wirecloud.currentTheme.templates['sharing_user'];
 
         for (i = 0; i < workspace.workspaceState.users.length; i++) {
@@ -79,6 +80,7 @@
 
         this.btnAccept = new se.Button({text: utils.gettext("Save"), state: "primary"});
         this.btnAccept.appendTo(this.windowBottom);
+        this.btnAccept.on('click', accept.bind(this));
 
         this.btnCancel = new se.Button({text: utils.gettext("Cancel")});
         this.btnCancel.appendTo(this.windowBottom);
@@ -93,10 +95,27 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var appendOption = function appendOption(data, builder, template) {
-        var createdElement;
+    var accept = function accept() {
+        var username, sharelist = [];
 
-        createdElement = builder.parse(template, {
+        for (username in this.sharingUsers) {
+            sharelist.push({type: 'user', name: username});
+        }
+
+        this.btnAccept.disable();
+
+        Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this.workspace.id}), {
+            method: 'POST',
+            contentType: 'application/json',
+            postBody: JSON.stringify({public: {value: this.visibilityOptions.value === "public"}, sharelist: {value: sharelist}}),
+            onSuccess: this._closeListener,
+            onComplete: function () {this.btnAccept.enable()}.bind(this)
+        });
+    };
+
+    var appendOption = function appendOption(data, builder, template) {
+
+        builder.parse(template, {
             radiobutton: function () {
                 return new se.RadioButton({id: data.name + '_option', group: this.visibilityOptions, value: data.name});
             }.bind(this),
@@ -107,10 +126,7 @@
             }.bind(this),
             title: data.title,
             description: data.description
-        }).elements[1];
-        createdElement.querySelector(".option-heading").setAttribute('for', data.name + '_option');
-
-        this.windowContent.appendChild(createdElement);
+        }).appendTo(this.windowContent);
 
         return this;
     };
@@ -145,7 +161,7 @@
             btndelete: function () {
                 var button = new se.Button({extraClass: "btn-remove-user", plain: true, iconClass: "icon-remove", title: utils.gettext("Remove")});
 
-                this.sharingUsers[data.username] = button;
+                this.sharingUsers[data.username] = data;
 
                 if (data.accesslevel === 'owner') {
                     button.disable();

@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 import json
 import six
 
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -32,7 +33,7 @@ from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, parse_json_request
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.plugins import get_tab_preferences, get_workspace_preferences
-from wirecloud.platform.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
+from wirecloud.platform.models import Organization, PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, UserWorkspace, Workspace
 
 
 def update_preferences(user, preferences_json):
@@ -237,6 +238,22 @@ class WorkspacePreferencesCollection(Resource):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         preferences_json = parse_json_request(request)
+
+        if 'sharelist' in preferences_json:
+            workspace.users.clear()
+            workspace.groups.clear()
+            for item in preferences_json['sharelist']['value']:
+                try:
+                    user = User.objects.get(username=item['name'])
+                except User.DoesNotExist:
+                    preferences_json['sharelist']['value'].remove(item)
+                    continue
+
+                workspace.userworkspace_set.create(user=user)
+                try:
+                    workspace.groups.add(user.organization.group)
+                except Organization.DoesNotExist:
+                    pass
 
         if 'public' in preferences_json:
             workspace.public = preferences_json['public']['value']
