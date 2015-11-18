@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,9 @@
  *
  */
 
-(function () {
+/* global Wirecloud */
+
+(function (utils) {
 
     "use strict";
 
@@ -61,7 +63,7 @@
 
         // Default escape keypress handler
         document.addEventListener('keydown', function (event) {
-            if (event.keyCode === 27 /* escape */) {
+            if (utils.normalizeKey(event) === "Escape") {
                 Wirecloud.UserInterfaceManager.handleEscapeEvent();
             }
         }, true);
@@ -121,4 +123,4 @@
 
     Wirecloud.UserInterfaceManager = UserInterfaceManager;
 
-})();
+})(Wirecloud.Utils);
