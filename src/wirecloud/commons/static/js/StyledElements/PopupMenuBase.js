@@ -210,8 +210,14 @@
      *      The instance on which the member is called.
      */
     PopupMenuBase.prototype.clear = function clear() {
+        var i;
+
         if (!this.hidden) {
             hideContent.call(this);
+        }
+
+        for (i = 0; i < this._items.length; i++) {
+            this._items[i].removeEventListener('click', this._menuItemCallback);
         }
 
         this._items = [];
