@@ -326,7 +326,16 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "defaultValue":  False,
                 "label":         _("Public"),
                 "type":          "boolean",
-                "description":   _("Allows other users to open this workspace (in read-only mode). (default: disabled)")
+                "hidden":        True,
+                "description":   _("Allow any user to open this workspace (in read-only mode). (default: disabled)")
+            },
+            {
+                "name":          "sharelist",
+                "defaultValue":  [],
+                "label":         _("Share list"),
+                "type":          "layout",
+                "hidden":        True,
+                "description":   _("List of users with access to this workspace. (default: [])")
             },
             {
                 "name":          "initiallayout",

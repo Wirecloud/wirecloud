@@ -28,20 +28,22 @@
     /**
      * @private
      */
-    var onSuccessSavePreferences = function onSuccessSavePreferences() {
+    var onSuccessSavePreferences = function onSuccessSavePreferences(options) {
+        Wirecloud.Utils.callCallback(options.onSuccess, this.preferences);
         this.preferences.events['post-commit'].dispatch(this.preferences, this.modifiedValues);
     };
 
     /**
      * @private
      */
-    var onErrorSavePreferences = function onErrorSavePreferences() {
+    var onErrorSavePreferences = function onErrorSavePreferences(options) {
+        Wirecloud.Utils.callCallback(options.onFailure, this.preferences);
     };
 
     /**
      * @private
      */
-    var persist = function persist(modifiedValues) {
+    var persist = function persist(modifiedValues, options) {
         var context = {
             preferences: this,
             modifiedValues: modifiedValues
@@ -52,8 +54,8 @@
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify(modifiedValues),
-            onSuccess: onSuccessSavePreferences.bind(context),
-            onFailure: onErrorSavePreferences.bind(context)
+            onSuccess: onSuccessSavePreferences.bind(context, options),
+            onFailure: onErrorSavePreferences.bind(context, options)
         });
     };
 
@@ -107,9 +109,13 @@
      *
      * @param {Object} newValues a hash with preferenceName/changes pairs
      */
-    Preferences.prototype.set = function set(newValues) {
+    Preferences.prototype.set = function set(newValues, options) {
         var newEffectiveValues = {};
         var modifiedValues = {};
+
+        if (options == null) {
+            options = {};
+        }
 
         for (var name in newValues) {
             var preference = this.preferences[name];
@@ -129,7 +135,7 @@
         }
 
         this.events['pre-commit'].dispatch(this, newEffectiveValues);
-        persist.call(this, modifiedValues);
+        persist.call(this, modifiedValues, options);
     };
 
     Preferences.prototype._handleParentChanges = function _handleParentChanges(parentPreferences, modifiedValues) {

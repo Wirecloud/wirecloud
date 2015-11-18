@@ -242,11 +242,11 @@ class WorkspacePreferencesCollection(Resource):
         if 'sharelist' in preferences_json:
             workspace.users.clear()
             workspace.groups.clear()
-            for item in preferences_json['sharelist']['value']:
+            sharelist = json.loads(preferences_json['sharelist']['value'])
+            for item in sharelist:
                 try:
                     user = User.objects.get(username=item['name'])
                 except User.DoesNotExist:
-                    preferences_json['sharelist']['value'].remove(item)
                     continue
 
                 workspace.userworkspace_set.create(user=user)
@@ -254,6 +254,7 @@ class WorkspacePreferencesCollection(Resource):
                     workspace.groups.add(user.organization.group)
                 except Organization.DoesNotExist:
                     pass
+            del preferences_json['sharelist']
 
         if 'public' in preferences_json:
             workspace.public = preferences_json['public']['value']

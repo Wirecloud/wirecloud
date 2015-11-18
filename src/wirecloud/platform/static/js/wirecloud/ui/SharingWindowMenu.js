@@ -86,11 +86,9 @@
         this.btnCancel.appendTo(this.windowBottom);
         this.btnCancel.on('click', this._closeListener);
 
-        this.visibilityOptions.setValue(workspace.preferences.preferences.public.value ? 'public' : 'private');
-        this.visibilityOptions.on('change', function (buttons) {
-            this.inputSearch.setDisabled(buttons.value === 'public');
-            this.userGroup.setDisabled(buttons.value === 'public');
-        }.bind(this));
+        this.visibilityOptions.setValue(workspace.preferences.get('public') ? 'public' : 'private');
+        this.visibilityOptions.on('change', on_visibility_option_change.bind(this));
+        on_visibility_option_change.call(this);
     };
 
     ns.SharingWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
@@ -98,6 +96,11 @@
     // ==================================================================================
     // PRIVATE MEMBERS
     // ==================================================================================
+
+    var on_visibility_option_change = function on_visibility_option_change() {
+        this.inputSearch.setDisabled(this.visibilityOptions.value === 'public');
+        this.userGroup.setDisabled(this.visibilityOptions.value === 'public');
+    };
 
     var accept = function accept() {
         var username, sharelist = [];
@@ -107,13 +110,22 @@
         }
 
         this.btnAccept.disable();
+        this.workspace.preferences.set({
+            public: {value: this.visibilityOptions.value === "public"},
+            sharelist: {value: sharelist}
+        }, {
+            onSuccess: function () {
+                this.workspace.workspaceState.users = [];
 
-        Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this.workspace.id}), {
-            method: 'POST',
-            contentType: 'application/json',
-            postBody: JSON.stringify({public: {value: this.visibilityOptions.value === "public"}, sharelist: {value: sharelist}}),
-            onSuccess: this._closeListener,
-            onComplete: function () {this.btnAccept.enable()}.bind(this)
+                for (username in this.sharingUsers) {
+                    this.workspace.workspaceState.users.push(this.sharingUsers[username]);
+                }
+
+                this._closeListener();
+            }.bind(this),
+            onFailure: function () {
+                this.btnAccept.enable();
+            }.bind(this)
         });
     };
 

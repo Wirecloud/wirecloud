@@ -79,6 +79,7 @@
             var dialog = new Wirecloud.ui.SharingWindowMenu(current_workspace);
             dialog.show();
         });
+        item.setDisabled(current_workspace == null || !current_workspace.isAllowed('update_preferences'));
         items.push(item);
 
         item = new StyledElements.MenuItem(utils.gettext('Upload to my resources'), function () {
