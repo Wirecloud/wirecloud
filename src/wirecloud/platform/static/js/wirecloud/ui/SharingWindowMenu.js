@@ -87,6 +87,10 @@
         this.btnCancel.on('click', this._closeListener);
 
         this.visibilityOptions.setValue(workspace.preferences.preferences.public.value ? 'public' : 'private');
+        this.visibilityOptions.on('change', function (buttons) {
+            this.inputSearch.setDisabled(buttons.value === 'public');
+            this.userGroup.setDisabled(buttons.value === 'public');
+        }.bind(this));
     };
 
     ns.SharingWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
