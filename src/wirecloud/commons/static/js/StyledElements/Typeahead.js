@@ -244,7 +244,7 @@
         }
         this.timeout = null;
         this.currentRequest = null;
-        this.popupMenu.hide();
+        setTimeout(this.popupMenu.hide.bind(this.popupMenu), 100);
     };
 
 })(StyledElements, StyledElements.Utils);

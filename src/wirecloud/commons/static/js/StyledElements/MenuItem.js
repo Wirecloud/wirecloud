@@ -172,12 +172,18 @@
             }
 
             this.wrapperElement.removeEventListener('click', this._onclick_bound, true);
-            this.wrapperElement.removeEventListener('mouseenter', this._onmouseenter_bound, false);
-            this.wrapperElement.removeEventListener('mouseleave', this._onmouseleave_bound, false);
+            this.wrapperElement.removeEventListener('mouseenter', this._onmouseenter_bound);
+            this.wrapperElement.removeEventListener('mouseleave', this._onmouseleave_bound);
+            this.wrapperElement.removeEventListener('keydown', this._onkeydown_bound);
+            this.wrapperElement.removeEventListener('blur', this._onblur_bound);
+            this.wrapperElement.removeEventListener('focus', this._onfocus_bound);
 
             this._onclick_bound = null;
             this._onmouseenter_bound = null;
             this._onmouseleave_bound = null;
+            this._onkeydown_bound = null;
+            this._onblur_bound = null;
+            this._onfocus_bound = null;
 
             se.StyledElement.prototype.destroy.call(this);
         },
