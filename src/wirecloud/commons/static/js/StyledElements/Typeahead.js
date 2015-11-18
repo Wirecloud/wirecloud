@@ -85,7 +85,11 @@
             }
 
             this.textField = textField;
-            this.textField.inputElement.setAttribute('autocomplete', 'off'); // TODO
+            // TODO
+            this.textField.inputElement.setAttribute('autocomplete', 'off');
+            this.textField.inputElement.setAttribute('autocorrect', 'off');
+            this.textField.inputElement.setAttribute('spellcheck', 'false');
+
             this.textField.on('change', textField_onchange.bind(this));
             this.textField.on('keydown', textField_onkeydown.bind(this));
             this.textField.on('submit', textField_onsubmit.bind(this));
