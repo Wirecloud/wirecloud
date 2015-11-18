@@ -118,7 +118,7 @@
         var modifiedValues = {};
         var newInheritanceSetting;
 
-        for (var pref_name in this.manager.preferences) {
+        for (var pref_name in this.interfaces) {
             var preference = this.manager.preferences[pref_name];
             var inputs = this.interfaces[pref_name];
 
@@ -158,7 +158,7 @@
     var _executeOperation = function _executeOperation() {
         // Validate input fields
         var validationManager = new StyledElements.ValidationErrorManager();
-        for (var pref_name in this.manager.preferences) {
+        for (var pref_name in this.interfaces) {
             validationManager.validate(this.interfaces[pref_name].base);
         }
 
