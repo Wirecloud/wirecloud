@@ -199,7 +199,7 @@ def proxy_request(request, protocol, domain, path):
         if referer_view_info.url_name == 'wirecloud.workspace_view':
 
             workspace = Workspace.objects.get(creator__username=unquote(referer_view_info.kwargs['owner']), name=unquote(referer_view_info.kwargs['name']))
-            if not workspace.public and workspace.creator != request.user:
+            if not workspace.is_available_for(request.user):
                 raise Exception()
 
         elif referer_view_info.url_name == 'wirecloud.widget_code_entry' or referer_view_info.url_name == 'wirecloud|proxy':
