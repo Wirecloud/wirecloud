@@ -285,9 +285,11 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Workspace list screenshot
         menu = self.open_menu()
-        imgp = take_capture(self.driver, extra=3)
+        imgp = take_capture(self.driver, extra='workspace_menu')
+        box = create_box(menu.element, 10)
+        box = (box[0], box[1] - 40, box[2], box[3])
         add_pointer(imgp, get_position(menu_widg))  # Add the mouse
-        crop_down(imgp, menu.element)  # Crop down the image
+        crop_image(imgp, *box)
 
         # Capture new workspace
         newworkspace_menu = menu.get_entry('New workspace')
@@ -329,6 +331,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             '.window_menu.workspace_preferences')
         imgp = take_capture(self.driver, extra='WorkspaceSettings')
         crop_image(imgp, *create_box(dialog))
+
+    test_creating_new_workspace.tags = ('ui-new-workspace',)
 
     @uses_extra_resources(list_resources)
     def test_browsing_marketplace(self):
@@ -412,8 +416,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             # Upload dialog
             btn.click()
-            dialog = self.driver.find_element_by_css_selector(
-                '.window_menu.wc-upload-mac-dialog.wc-upload-mac-dialog-empty')
+            dialog = self.driver.find_element_by_css_selector('.wc-upload-mac-dialog')
             imgp = take_capture(self.driver, extra='uploadNew')
             crop_image(imgp, *create_box(dialog))
             dialog.find_element_by_css_selector(
@@ -851,15 +854,14 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         # Public workspace!
         popup_menu = self.open_menu()
-        m_menu = popup_menu.get_entry('Settings')
+        m_menu = popup_menu.get_entry('Share')
         ActionChains(self.driver).move_to_element(m_menu).perform()
         imgp = take_capture(self.driver, extra='Public_Workspace_Menu')
         add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
         crop_down(imgp, popup_menu.element, 80)
         m_menu.click()
-        dialog = get_first_displayed(
-            self.driver, '.window_menu.workspace_preferences')
-        public_b = dialog.find_element_by_css_selector('input[name="public"]')
+        dialog = get_first_displayed(self.driver, '.wc-dashboard-share-dialog')
+        public_b = dialog.find_element_by_css_selector('input[value="public"]')
         public_b.click()
         imgp = take_capture(self.driver, extra='Public_Workspace_Settings')
         add_pointer(imgp, get_position(public_b, 0.5, 0.5))

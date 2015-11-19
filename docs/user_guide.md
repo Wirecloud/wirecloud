@@ -35,7 +35,7 @@ is named admin/Workspace.
 Near the workspace name there is a button that you can click on to
 expand the workspace dropdown menu:
 
-![create_workspace/3.png](images/user_guide/create_workspace/3.png)
+![Workspace menu](images/user_guide/create_workspace/workspace_menu.png)
 
 Once expanded, the menu shows a list of the already created workspaces
 (see *Workspace*, *My Multimedia Workspace* and *IssueTrouble* in the
@@ -48,11 +48,12 @@ by a list of options:
 -   **New workspace** creates a new workspace
 -   **Embed** shows info about how to embed current workspace in other
     web pages
+-   **Share** shows the sharing configuration of the current workspace
 -   **Upload to my resources** allows you to save the current
     workspace to the local catalogue for later usage
 
-If you want to create a new workspace named "History Info", choose "New
-workspace" in the dropdown menu:
+If you want to create a new workspace named "History Info", choose *New
+workspace* in the dropdown menu:
 
 ![create_workspace/4.png](images/user_guide/create_workspace/4.png)
 
@@ -639,12 +640,12 @@ Sharing your mashups
 Workspaces can be made public by means of modifying their settings as
 Follows:
 
-1.  Click on the workspace menu button and click *Settings*:
-    ![wiring/Public_Workspace_Menu.png](images/user_guide/wiring/Public_Workspace_Menu.png)
+1.  Click on the workspace menu button and click *Share*:
+    ![Share menu option](images/user_guide/wiring/Public_Workspace_Menu.png)
 
-1.  You will be presented with a dialog for editing workspace's
-    settings:
-    ![wiring/Public_Workspace_Settings.png](images/user_guide/wiring/Public_Workspace_Settings.png)
+2.  You will be presented with a dialog for editing the sharing configuration of
+    the workspace:
+    ![Sharing settings dialog](images/user_guide/wiring/Public_Workspace_Settings.png)
 
 After making a workspace public, you will be able to share the workspace
 URL with other users.

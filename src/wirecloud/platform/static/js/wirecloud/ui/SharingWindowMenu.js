@@ -33,7 +33,7 @@
     ns.SharingWindowMenu = function SharingWindowMenu(workspace) {
         var builder, i, options, subtitle1, subtitle2, template;
 
-        ns.WindowMenu.call(this, utils.gettext("Sharing settings"));
+        ns.WindowMenu.call(this, utils.gettext("Sharing settings"), 'wc-dashboard-share-dialog');
 
         this.workspace = workspace;
         builder = new se.GUIBuilder();
@@ -133,7 +133,7 @@
 
         builder.parse(template, {
             radiobutton: function () {
-                return new se.RadioButton({id: data.name + '_option', group: this.visibilityOptions, value: data.name});
+                return new se.RadioButton({group: this.visibilityOptions, value: data.name});
             }.bind(this),
             image: function () {
                 var icon = document.createElement('span');
