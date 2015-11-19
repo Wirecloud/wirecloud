@@ -257,7 +257,7 @@ class WorkspacePreferencesCollection(Resource):
             del preferences_json['sharelist']
 
         if 'public' in preferences_json:
-            workspace.public = preferences_json['public']['value']
+            workspace.public = preferences_json['public']['value'].strip().lower() == 'true'
             workspace.save()
             del preferences_json['public']
 
