@@ -1,2 +1,2 @@
-{% for file in files %}  <script type="text/javascript" src="{{ STATIC_URL }}{{ file }}"></script>
+{% load static from staticfiles %}{% for file in files %}  <script type="text/javascript" src="{% static file %}"></script>
 {% endfor %}

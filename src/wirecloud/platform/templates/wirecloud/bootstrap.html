@@ -1,3 +1,4 @@
+{% load static from staticfiles %}
 <script type="text/javascript">
     var Wirecloud = {
         constants: {
@@ -6,8 +7,8 @@
         ui: {}
     };
 </script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Utils.js" ></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Utils.js" ></script>
+<script type="text/javascript" src="{% static "js/StyledElements/Utils.js" %}" ></script>
+<script type="text/javascript" src="{% static "js/wirecloud/Utils.js" %}" ></script>
 <script type="text/javascript">
 {{ script }}
 </script>

@@ -1,2 +1,2 @@
-{% for file in files %}  <link rel="stylesheet" href="{{ STATIC_URL }}{{ file.path }}" type="{{ file.type }}" />
+{% load static from staticfiles %}{% for file in files %}  <link rel="stylesheet" href="{% static file.path %}" type="{{ file.type }}" />
 {% endfor %}

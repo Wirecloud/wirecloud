@@ -1,4 +1,4 @@
-{% load compress i18n wirecloudtags %}
+{% load compress i18n wirecloudtags %}{% load static from staticfiles %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="{{ LANGUAGE_CODE }}"
@@ -7,20 +7,22 @@
 <head>
     <title>{% trans "WireCloud Platform - Sign in" %}</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico" %}" />
     {% compress css %}
     {% platform_css "index" %}
     {% endcompress %}
     <script type="text/javascript">
         var Wirecloud = {};
     </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/BaseRequirements.js"></script>
+    <script type="text/javascript" src="{% static "js/wirecloud/BaseRequirements.js" %}"></script>
 </head>
 
 <body>
     <div style="text-align:center;">
 
-        <img style="vertical-align: middle; heigth: 250px; width: 416px;" src="{{ STATIC_URL }}images/logos/wc{{ "123456"|make_list|random }}.png" />
+        {% with wc_logo_id="123456"|make_list|random %}{% with wc_logo="images/logos/wc"|add:wc_logo_id|add:".png" %}
+        <img style="vertical-align: middle; heigth: 250px; width: 416px;" src="{% static wc_logo %}" />
+        {% endwith %}{% endwith %}
 
         <div style="display: inline-block; vertical-align:middle; margin: 4ex 10ex; width: 400px;">
 
