@@ -80,6 +80,14 @@
     vertical-align: middle;
 }
 
+.wc-resource-img-container.se-thumbnail-missing {
+    font-size: $font-size-base;
+}
+
+.wc-resource-img-container.se-thumbnail-missing > .wc-resource-img {
+    display: none;
+}
+
 .resource > .header > .rating {
     position: absolute;
     top: 2px;

@@ -56,12 +56,10 @@
             this.heading.title.addClassName("component-title");
 
             thumbnailElement = document.createElement('div');
-            thumbnailElement.className = "thumbnail thumbnail-rounded thumbnail-sm";
+            thumbnailElement.className = "se-thumbnail se-thumbnail-rounded se-thumbnail-sm";
 
             this.image = document.createElement('img');
-            this.image.className = "image";
-
-            this.image.onerror = showDefaultImage.bind(this);
+            this.image.onerror = onImageError;
             this.image.src = meta.image;
 
             thumbnailElement.appendChild(this.image);
@@ -96,7 +94,7 @@
                 this.heading.title.text(version.title);
                 this.description.textContent = version.description;
 
-                this.image.onerror = showDefaultImage.bind(this);
+                this.image.onerror = onImageError;
                 this.image.src = version.image;
 
                 if (version.hasEndpoints()) {
@@ -112,13 +110,10 @@
 
     });
 
-    var showDefaultImage = function showDefaultImage() {
-        /*jshint validthis:true */
-
-        this.image.onerror = "";
-        this.image.src = "/static/images/noimage.png";
-
-        return true;
+    var onImageError = function onImageError(event) {
+        event.target.parentElement.classList.add('se-thumbnail-missing');
+        event.target.parentElement.textContent = utils.gettext('No image available');
     };
+
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

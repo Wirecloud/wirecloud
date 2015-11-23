@@ -5,32 +5,44 @@
 // COMPONENT - THUMBNAIL
 // ======================================================================================
 
-.thumbnail {
+.se-thumbnail {
     position: relative;
     display: block;
     height: $thumbnail-height;
+    line-height: $thumbnail-height;
     margin: 0 0 $thumbnail-margin-vertical;
     text-align: center;
     background-color: $thumbnail-bg;
 
-    .image {
+    & > img {
         position: relative;
         display: inline-block;
         max-height: 100%;
         max-width: 100%;
     }
 
-    &.thumbnail-rounded {
-        padding: $thumbnail-rounded-padding;
-        border: solid 1px $thumbnail-rounded-border-color;
-        border-radius: $thumbnail-rounded-border-radius;
+}
 
-        .image {
-            border-radius: ($thumbnail-rounded-border-radius - 1);
-        }
+.se-thumbnail-rounded {
+    padding: $thumbnail-rounded-padding;
+    border: solid 1px $thumbnail-rounded-border-color;
+    border-radius: $thumbnail-rounded-border-radius;
+
+    & > img {
+        border-radius: ($thumbnail-rounded-border-radius - 1);
     }
+}
 
-    &.thumbnail-sm {
-        height: $thumbnail-sm-height;
+.se-thumbnail-sm {
+    height: $thumbnail-sm-height;
+    line-height: $thumbnail-sm-height;
+}
+
+.se-thumbnail-missing {
+    color: $brand-info;
+    font-weight: bold;
+
+    & > .image {
+        display: none;
     }
 }

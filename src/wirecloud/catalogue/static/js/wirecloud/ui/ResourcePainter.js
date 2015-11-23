@@ -173,9 +173,7 @@
             'image': function () {
                 var image = document.createElement('img');
                 image.className = 'wc-resource-img';
-                image.onerror = function (event) {
-                    event.target.src = '/static/images/noimage.png';
-                };
+                image.onerror = onImageError;
                 image.src = resource.image;
 
                 return image;
@@ -376,6 +374,11 @@
         }
 
         return stars;
+    };
+
+    var onImageError = function onImageError(event) {
+        event.target.parentElement.classList.add('se-thumbnail-missing');
+        event.target.parentElement.textContent = Wirecloud.Utils.gettext('No image available');
     };
 
     Wirecloud.ui.ResourcePainter = ResourcePainter;
