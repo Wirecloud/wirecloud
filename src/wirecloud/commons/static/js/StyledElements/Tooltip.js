@@ -119,6 +119,8 @@
         document.body.appendChild(this.element);
         searchBestPosition.call(this, refPosition, this.options.placement);
         this.element.classList.add('in');
+
+        return this;
     };
 
     var Tooltip = function Tooltip(options) {
@@ -150,14 +152,14 @@
 
     Tooltip.prototype.toggle = function toggle(refElement) {
         if (this.visible) {
-            this.hide();
+            return this.hide();
         } else {
-            this._show(refElement);
+            return this._show(refElement);
         }
     };
 
     Tooltip.prototype.show = function show(refElement) {
-        this._show(refElement);
+        return this._show(refElement);
     };
 
     var _hide = function _hide() {
@@ -170,7 +172,7 @@
 
     Tooltip.prototype.hide = function hide() {
         if (!this.visible) {
-            return;
+            return this;
         }
 
         if (this.element.classList.contains('in')) {
@@ -179,6 +181,8 @@
         } else {
             _hide.call(this);
         }
+
+        return this;
     };
 
     StyledElements.Tooltip = Tooltip;
