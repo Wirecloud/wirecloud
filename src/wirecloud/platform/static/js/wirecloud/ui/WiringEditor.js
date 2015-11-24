@@ -655,6 +655,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         /*jshint validthis:true */
 
         this.connectionEngine.forEachConnection(function (connection) {
+            connection.removeAllowed = true;
             connection.background = false;
             this.behaviourEngine.updateConnection(connection, connection.toJSON());
         }.bind(this));
@@ -675,11 +676,8 @@ Wirecloud.ui = Wirecloud.ui || {};
         case ns.WiringEditor.BehaviourEngine.GLOBAL:
 
             this.connectionEngine.forEachConnection(function (connection) {
+                connection.removeAllowed = (behaviourEngine.filterByConnection(connection).length == 1);
                 connection.show().background = !behaviour.hasConnection(connection);
-
-                if (!connection.background && (behaviourEngine.filterByConnection(connection).length > 1)) {
-                    connection._showButtonDelete();
-                }
             });
 
             this.behaviourEngine.forEachComponent(function (component) {

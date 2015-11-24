@@ -84,6 +84,8 @@
             this.source = {};
             this.target = {};
 
+            var removeAllowed = true;
+
             Object.defineProperties(this, {
 
                 active: {
@@ -107,6 +109,16 @@
                 editable: {
                     get: function get() {return this.hasClassName('editable');},
                     set: function set(value) {this._oneditable(value);}
+                },
+
+                removeAllowed: {
+                    get: function get() {return removeAllowed;},
+                    set: function set(value) {
+                        removeAllowed = !!value;
+                        if (!this.background) {
+                            updateFlagRemoveAllowed.call(this);
+                        }
+                    }
                 },
 
                 sourceComponent: {
@@ -179,7 +191,7 @@
 
                 this.toggleClassName('background', background);
 
-                return background ? this._showButtonAdd() : this._showButtonRemove();
+                return background ? this._showButtonAdd() : updateFlagRemoveAllowed.call(this);
             },
 
             /**
@@ -227,7 +239,7 @@
 
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
-                    .iconClass("icon-remove-sign")
+                    .iconClass("icon-trash")
                     .title(utils.gettext("Delete"));
 
                 return this;
@@ -237,7 +249,7 @@
 
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
-                    .iconClass("icon-trash")
+                    .iconClass("icon-remove-sign")
                     .title(utils.gettext("Remove"));
 
                 return this;
@@ -556,6 +568,10 @@
     // ==================================================================================
 
     var events = ['change', 'click', 'customizestart', 'customizeend', 'optremove', 'optshare', 'remove'];
+
+    var updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
+        return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();
+    };
 
     var appendEndpoint = function appendEndpoint(endpoint, options) {
 
