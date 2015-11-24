@@ -661,8 +661,9 @@ Wirecloud.ui = Wirecloud.ui || {};
         }.bind(this));
 
         this.behaviourEngine.forEachComponent(function (component) {
-            component.background = false;
             component.removeCascadeAllowed = enabled;
+            component.removeAllowed = true;
+            component.background = false;
             this.behaviourEngine.updateComponent(component, component.toJSON());
         }.bind(this));
     };
@@ -681,12 +682,9 @@ Wirecloud.ui = Wirecloud.ui || {};
             });
 
             this.behaviourEngine.forEachComponent(function (component) {
-                component.background = !behaviour.hasComponent(component);
+                component.removeAllowed = (behaviourEngine.filterByComponent(component).length == 1);
                 component.removeCascadeAllowed = true;
-
-                if (!component.background && (behaviourEngine.filterByComponent(component).length > 1)) {
-                    component._showButtonDelete();
-                }
+                component.background = !behaviour.hasComponent(component);
             });
 
             break;

@@ -78,6 +78,8 @@
                 .appendChild(this.endpoints.target)
                 .appendChild(this.endpoints.source);
 
+            var removeAllowed = true;
+
             Object.defineProperties(this, {
 
                 id: {value: wiringComponent.id},
@@ -97,6 +99,16 @@
                 readonly: {
                     get: function get() {return this.hasClassName('readonly');},
                     set: function set(value) {this.toggleClassName('readonly', value);}
+                },
+
+                removeAllowed: {
+                    get: function get() {return removeAllowed;},
+                    set: function set(value) {
+                        removeAllowed = !!value;
+                        if (!this.background) {
+                            updateFlagRemoveAllowed.call(this);
+                        }
+                    }
                 },
 
                 removeCascadeAllowed: {value: options.removecascade_allowed, writable: true},
@@ -201,7 +213,7 @@
 
                 this.toggleClassName('background', background);
 
-                return background ? this._showButtonAdd() : this._showButtonRemove();
+                return background ? this._showButtonAdd() : updateFlagRemoveAllowed.call(this);
             },
 
             _onclick: function _onclick(event) {
@@ -253,8 +265,8 @@
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
                     .removeIconClassName('icon-plus-sign')
-                    .removeIconClassName('icon-trash')
-                    .addIconClassName('icon-remove-sign')
+                    .removeIconClassName('icon-remove-sign')
+                    .addIconClassName('icon-trash')
                     .setTitle(utils.gettext("Delete"));
 
                 return this;
@@ -265,8 +277,8 @@
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
                     .removeIconClassName('icon-plus-sign')
-                    .removeIconClassName('icon-remove-sign')
-                    .addIconClassName('icon-trash')
+                    .removeIconClassName('icon-trash')
+                    .addIconClassName('icon-remove-sign')
                     .setTitle(utils.gettext("Remove"));
 
                 return this;
@@ -510,6 +522,10 @@
     // ==================================================================================
 
     var events = ['change', 'dragstart', 'drag', 'dragend', 'optremove', 'optremovecascade', 'optshare', 'remove', 'sortstart', 'sortend'];
+
+    var updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
+        return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();
+    };
 
     var appendEndpoints = function appendEndpoints(type, endpoints) {
 

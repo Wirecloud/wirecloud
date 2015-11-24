@@ -526,8 +526,8 @@
                     case ns.BehaviourEngine.GLOBAL:
                         if (!component.background || beShared) {
                             this.behaviour.updateComponent(component);
+                            component.removeAllowed = (this.filterByComponent(component).length == 1);
                             component.background = false;
-                            component._showButtonDelete();
                         }
                         break;
                     case ns.BehaviourEngine.INDEPENDENT:
