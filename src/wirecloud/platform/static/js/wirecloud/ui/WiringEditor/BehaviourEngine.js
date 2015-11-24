@@ -526,8 +526,8 @@
                     case ns.BehaviourEngine.GLOBAL:
                         if (!component.background || beShared) {
                             this.behaviour.updateComponent(component);
+                            component.removeAllowed = (this.filterByComponent(component).length == 1);
                             component.background = false;
-                            component._showButtonDelete();
                         }
                         break;
                     case ns.BehaviourEngine.INDEPENDENT:
@@ -577,8 +577,8 @@
                             this.behaviour.updateConnection(connection);
                             this.updateComponent(connection.sourceComponent, {}, true);
                             this.updateComponent(connection.targetComponent, {}, true);
+                            connection.removeAllowed = (this.filterByConnection(connection).length == 1);
                             connection.background = false;
-                            connection._showButtonDelete();
                         }
                         break;
                     case ns.BehaviourEngine.INDEPENDENT:

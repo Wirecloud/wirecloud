@@ -655,13 +655,15 @@ Wirecloud.ui = Wirecloud.ui || {};
         /*jshint validthis:true */
 
         this.connectionEngine.forEachConnection(function (connection) {
+            connection.removeAllowed = true;
             connection.background = false;
             this.behaviourEngine.updateConnection(connection, connection.toJSON());
         }.bind(this));
 
         this.behaviourEngine.forEachComponent(function (component) {
-            component.background = false;
             component.removeCascadeAllowed = enabled;
+            component.removeAllowed = true;
+            component.background = false;
             this.behaviourEngine.updateComponent(component, component.toJSON());
         }.bind(this));
     };
@@ -675,20 +677,14 @@ Wirecloud.ui = Wirecloud.ui || {};
         case ns.WiringEditor.BehaviourEngine.GLOBAL:
 
             this.connectionEngine.forEachConnection(function (connection) {
+                connection.removeAllowed = (behaviourEngine.filterByConnection(connection).length == 1);
                 connection.show().background = !behaviour.hasConnection(connection);
-
-                if (!connection.background && (behaviourEngine.filterByConnection(connection).length > 1)) {
-                    connection._showButtonDelete();
-                }
             });
 
             this.behaviourEngine.forEachComponent(function (component) {
-                component.background = !behaviour.hasComponent(component);
+                component.removeAllowed = (behaviourEngine.filterByComponent(component).length == 1);
                 component.removeCascadeAllowed = true;
-
-                if (!component.background && (behaviourEngine.filterByComponent(component).length > 1)) {
-                    component._showButtonDelete();
-                }
+                component.background = !behaviour.hasComponent(component);
             });
 
             break;
