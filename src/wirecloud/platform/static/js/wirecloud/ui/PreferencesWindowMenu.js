@@ -28,7 +28,10 @@
     var build_pref_label = function build_pref_label(preference) {
         var label = document.createElement("label");
         label.appendChild(document.createTextNode(preference.label));
-        label.setAttribute("title", utils.gettext(preference.description));
+        if (typeof preference.description === 'string' && preference.description.trim() !== '') {
+            var tooltip = new StyledElements.Tooltip({content: preference.description, placement: ['right', 'bottom', 'top', 'left']});
+            tooltip.bind(label);
+        }
         //label.setAttribute("for", preference.name);
         return label;
     };

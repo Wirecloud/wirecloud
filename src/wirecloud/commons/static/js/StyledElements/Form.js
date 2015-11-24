@@ -313,7 +313,7 @@
      * @private
      */
     Form.prototype.pInsertField = function (fieldId, field, row) {
-        var separator, hr, labelRow, labelCell, label, requiredMark, inputCell, inputInterface;
+        var separator, hr, labelRow, labelCell, label, requiredMark, inputCell, inputInterface, tooltip;
 
         if (field.type === 'separator') {
             separator = row.insertCell(-1);
@@ -349,7 +349,8 @@
         label.textContent = field.label;
         labelCell.appendChild(label);
         if (field.description != null) {
-            label.setAttribute('title', field.description);
+            tooltip = new StyledElements.Tooltip({content: field.description, placement: ['right', 'bottom', 'top', 'left']});
+            tooltip.bind(label);
         }
 
         if (field.required && !this.readOnly) {
