@@ -157,12 +157,7 @@
     };
 
     Tooltip.prototype.show = function show(refElement) {
-
-        if (refElement.enabled) {
-            this._show(refElement);
-        }
-
-        return this;
+        this._show(refElement);
     };
 
     var _hide = function _hide() {
