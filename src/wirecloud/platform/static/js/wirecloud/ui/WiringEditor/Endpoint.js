@@ -246,9 +246,9 @@
              */
             forEachConnection: function forEachConnection(callback) {
 
-                this.connections.forEach(function (connection, index) {
-                    callback(connection, index);
-                });
+                for (var i = this.connections.length - 1; i >= 0; i--) {
+                    callback(this.connections[i], i);
+                }
 
                 return this;
             },

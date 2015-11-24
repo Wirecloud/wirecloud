@@ -757,6 +757,25 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
         widget = self.find_widget_by_id(component_id)
         WebDriverWait(self.driver, timeout=3).until(lambda driver: widget.title == component_title)
 
+    def test_remove_operator_with_two_connections_in_one_endpoint(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            # Get endpoints to connect each other then.
+            component1 = wiring.find_component_by_id('operator', 0)
+            target = component1.find_endpoint_by_title('source', "output")
+            source = wiring.find_component_by_id('widget', 1).find_endpoint_by_title('target', "Not handled endpoint")
+
+            # Connect endpoints.
+            self.assertEqual(len(target.connections), 1)
+            target.connect(source)
+            self.assertEqual(len(target.connections), 2)
+
+            # Remove component with at least one endpoint with two connections.
+            self.assertEqual(len(wiring.find_connections()), 4)
+            component1.remove()
+            self.assertEqual(len(wiring.find_connections()), 1)
+
 
 @wirecloud_selenium_test_case
 class ComponentMissingTestCase(WirecloudSeleniumTestCase):

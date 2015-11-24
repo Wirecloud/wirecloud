@@ -610,6 +610,7 @@ class WiringComponentItemTester(object):
 
         return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-rename-dialog"))
 
+
 class WiringComponentGroupTester(object):
 
     def __init__(self, testcase, element):
@@ -684,11 +685,11 @@ class WiringComponentTester(object):
 
     @property
     def source_endpoints(self):
-        return [WiringEndpointTester(self.testcase, e, self) for e in self.element.find_elements_by_css_selector(".source-endpoints .endpoint")]
+        return [WiringEndpointTester(self.testcase, 'source', e, self) for e in self.element.find_elements_by_css_selector(".source-endpoints .endpoint")]
 
     @property
     def target_endpoints(self):
-        return [WiringEndpointTester(self.testcase, e, self) for e in self.element.find_elements_by_css_selector(".target-endpoints .endpoint")]
+        return [WiringEndpointTester(self.testcase, 'target', e, self) for e in self.element.find_elements_by_css_selector(".target-endpoints .endpoint")]
 
     @property
     def endpoints(self):
@@ -715,10 +716,10 @@ class WiringComponentTester(object):
     def get_all_endpoints(self, endpoint_type):
         endpoints = self.element.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)
 
-        return [WiringEndpointTester(self.testcase, element, self) for element in endpoints]
+        return [WiringEndpointTester(self.testcase, endpoint_type, element, self) for element in endpoints]
 
     def filter_endpoints_by_type(self, endpoint_type):
-        return [WiringEndpointTester(self.testcase, e, self) for e in self.element.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)]
+        return [WiringEndpointTester(self.testcase, endpoint_type, e, self) for e in self.element.find_elements_by_css_selector(".%s-endpoints .endpoint" % endpoint_type)]
 
     def find_endpoint_by_title(self, endpoint_type, endpoint_title):
         for endpoint in self.filter_endpoints_by_type(endpoint_type):
@@ -742,6 +743,9 @@ class WiringComponentTester(object):
         self.display_preferences().click_entry('Settings')
 
         return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+
+    def remove(self):
+        self.btn_remove.click()
 
     def rename(self, title):
         modal = self.show_modal_rename()
@@ -896,8 +900,9 @@ class WiringConnectionTester(object):
 
 class WiringEndpointTester(object):
 
-    def __init__(self, testcase, element, component):
+    def __init__(self, testcase, type, element, component):
         self.testcase = testcase
+        self.type = type
         self.element = element
         self.component = component
 
@@ -922,6 +927,10 @@ class WiringEndpointTester(object):
         return 'active' in self.element.get_attribute('class').split()
 
     @property
+    def connections(self):
+        return [WiringConnectionTester(self.testcase, e) for e in self.testcase.driver.find_elements_by_css_selector(".connection[data-%sid='%s']" % (self.type, self.id))]
+
+    @property
     def position(self):
         return int(self.element.get_attribute('data-index'))
 
@@ -931,6 +940,7 @@ class WiringEndpointTester(object):
 
     def connect(self, endpoint, sticky_effect=False):
         ActionChains(self.testcase.driver).drag_and_drop(self.anchor, endpoint._title if sticky_effect else endpoint.anchor).perform()
+        return WiringConnectionTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".connection[data-%sid='%s'][data-%sid='%s']" % (self.type, self.id, endpoint.type, endpoint.id)))
 
     def drag_connection(self, x, y):
         ActionChains(self.testcase.driver).click_and_hold(self.anchor).move_by_offset(x, y).perform()
