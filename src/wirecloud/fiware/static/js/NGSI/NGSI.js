@@ -625,12 +625,18 @@
 
         status_info = process_status_info_json(data);
         if (status_info.code === 404) {
-            parsed_details = status_info.details.match(NGSI_INVALID_OFFSET_RE);
-            if (parsed_details) {
-                details = status_info.details = {
-                    "text": status_info.details,
-                    "matches": parseInt(parsed_details[1]),
-                    "offset": parseInt(parsed_details[2])
+            if (typeof status_info.details === 'string') {
+                parsed_details = status_info.details.match(NGSI_INVALID_OFFSET_RE);
+                if (parsed_details) {
+                    details = status_info.details = {
+                        "text": status_info.details,
+                        "matches": parseInt(parsed_details[1]),
+                        "offset": parseInt(parsed_details[2])
+                    };
+                }
+            } if (options.details) {
+                details = {
+                    "count": 0
                 };
             }
             if (options.offset !== 0) {
@@ -640,7 +646,7 @@
             }
         } else if (status_info.code !== 200) {
             throw new NGSI.InvalidResponseError('Unexpected error code');
-        } else if (status_info.details != null) {
+        } else if (typeof status_info.details === 'string') {
             parsed_details = status_info.details.match(NGSI_QUERY_COUNT_RE);
             if (parsed_details) {
                 details = {
@@ -833,6 +839,7 @@
             }
         } else {
             parameters.details = default_details;
+            options.details = default_details === 'on';
         }
 
         return parameters;
