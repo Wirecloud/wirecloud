@@ -392,7 +392,15 @@ The email address that error messages come from, such as those sent to `ADMINS`.
 ### THEME_ACTIVE
 > (String, default: "wirecloud.defaulttheme")
 
-A string representing the module that will be use for theming WireCloud. Current themes shipped with WireCloud are "wirecloud.defaulttheme", "wirecloud.fiwaretheme" and "wirecloud.oiltheme".
+A string representing the module that will be use for theming WireCloud. Current
+themes shipped with WireCloud are `wirecloud.defaulttheme`,
+`wirecloud.fiwaretheme` and `wirecloud.fiwarelabtheme`. You can also use [custom
+themes](development/platform/themes).
+
+> **NOTE**: `wirecloud.fiwarelabtheme` was previously (WireCloud 0.8.1-) known as
+> `wirecloud.oiltheme`. Although you can still reference it as
+> `wirecloud.oiltheme` is recommended to switch to the new name:
+> `wirecloud.fiwarelabtheme`.
 
 
 ### URL_MIDDLEWARE_CLASSES

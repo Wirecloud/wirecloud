@@ -1,5 +1,8 @@
 This section describe how to create new themes for WireCloud.
 
+> This documentation is based in WireCloud 0.8.2. Previous versions of WireCloud
+> works in a similiar way, but some details may differ.
+
 ## Basic themes
 
 If you do not require a full customised theme, you can create a new theme by
@@ -32,6 +35,11 @@ to use plain buttons:
 
 ```SCSS
 $brand-primary: rgb(107, 21, 161);
+/*
+This color can also be defined using its hex code or its hsl definition:
+$brand-primary: #6B15A1;
+$brand-primary: hsl(277, 77%, 36%);
+*/
 $button-gradients: false;
 
 @import 'defaults';
@@ -185,6 +193,12 @@ sections.
 
 
 ## Default theme: `wirecloud.defaulttheme`
+
+### Used images
+
+- `favicon.ico`: Image in `image/x-icon` format to use as favicon. Only used
+  when the theme is configured as the main theme.
+- `logos/header.png`: Image in `image/png` used in the header.
 
 ### Available SCSS constants
 
