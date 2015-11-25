@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-13 11:17+0200\n"
-"PO-Revision-Date: 2015-10-13 11:13+0200\n"
+"POT-Creation-Date: 2015-11-25 13:06+0100\n"
+"PO-Revision-Date: 2015-11-25 13:18+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.5\n"
+"X-Generator: Poedit 1.8.6\n"
 
 #: authentication.py:36
 msgid "Logged out"
@@ -41,22 +41,55 @@ msgstr "Espacio de nombres para la búsqueda inválido: %s"
 msgid "You don't have permission to switch current session user"
 msgstr "No tienes permisos para cambiar el usuario de la sesión actual"
 
-#: management/commands/resetsearchindexes.py:45
+#: management/commands/resetsearchindexes.py:46
 #, python-format
 msgid "Reseting \"%s\" index"
 msgstr "Reconstruyendo el índice \"%s\""
 
-#: management/commands/resetsearchindexes.py:46
+#: management/commands/resetsearchindexes.py:47
 #, python-format
 msgid "The \"%s\" index was updated successfully"
 msgstr "El índice \"%s\" ha sido actualizado correctamente"
 
-#: management/commands/resetsearchindexes.py:47
+#: management/commands/resetsearchindexes.py:48
 #, python-format
 msgid "The following indexes are not available: %s"
 msgstr "Los siguientes índices no están disponibles: %s"
 
-#: management/commands/resetsearchindexes.py:97
+#: management/commands/resetsearchindexes.py:74
+#, python-format
+msgid ""
+"You have requested to reset indexes found in the location\n"
+"specified in your settings:\n"
+"\n"
+"    %s\n"
+"\n"
+msgstr ""
+"Estas pidiendo reconstruir los indices de búsqueda disponibles\n"
+"disponibles en la carpeta indicada en la configuración:\n"
+"\n"
+"  %s\n"
+"\n"
+
+#: management/commands/resetsearchindexes.py:78
+msgid "This will DELETE EXISTING FILES!\n"
+msgstr "Esta acción BORRARÁ LOS FICHEROS ACTUALES!\n"
+
+#: management/commands/resetsearchindexes.py:80
+msgid ""
+"Are you sure you want to do this?\n"
+"\n"
+"Type 'yes' to continue, or 'no' to cancel: "
+msgstr ""
+"Estas seguro de que quieres continuar?\n"
+"\n"
+"Escribe ‘yes’ para continuar o ‘no’ para cancelar:"
+
+#: management/commands/resetsearchindexes.py:85
+msgid "Reset search indexes cancelled."
+msgstr "Se ha cancelado el reinicio de los indices de búsqueda."
+
+#: management/commands/resetsearchindexes.py:98
 #, python-format
 msgid "Adding %s\n"
 msgstr "Añadiendo %s\n"

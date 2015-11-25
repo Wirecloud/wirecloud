@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-27 11:31+0100\n"
-"PO-Revision-Date: 2015-03-27 11:31+0100\n"
+"POT-Creation-Date: 2015-11-25 12:51+0100\n"
+"PO-Revision-Date: 2015-11-25 13:33+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.6\n"
 
 #: static/js/wirecloud/WirecloudCatalogue.js:60
 msgid "Error deleting resource: %(errorMsg)s."
@@ -46,37 +46,41 @@ msgstr "Seguimiento de incidencias"
 msgid "License details"
 msgstr "Detalles de la licencia"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:216
+#: static/js/wirecloud/ui/ResourcePainter.js:214
 msgid "Download"
 msgstr "Descargar"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:225
+#: static/js/wirecloud/ui/ResourcePainter.js:223
 msgid "Add to workspace"
 msgstr "Añadir al entorno de trabajo"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:237
+#: static/js/wirecloud/ui/ResourcePainter.js:235
 msgid "Publish"
 msgstr "Publicar"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:247
+#: static/js/wirecloud/ui/ResourcePainter.js:245
 msgid "Uninstall"
 msgstr "Desinstalar"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:256
+#: static/js/wirecloud/ui/ResourcePainter.js:254
 msgid "Uninstall all versions"
 msgstr "Desinstalar todas las versiones"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:265
+#: static/js/wirecloud/ui/ResourcePainter.js:263
 msgid "Delete"
 msgstr "Borrar"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:274
+#: static/js/wirecloud/ui/ResourcePainter.js:272
 msgid "Delete all versions"
 msgstr "Borrar todas las versiones"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:326
+#: static/js/wirecloud/ui/ResourcePainter.js:324
 msgid "N/A"
 msgstr "N/A"
+
+#: static/js/wirecloud/ui/ResourcePainter.js:381
+msgid "No image available"
+msgstr "Imagen no disponible"
 
 #: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:74
 msgid "Main Info"

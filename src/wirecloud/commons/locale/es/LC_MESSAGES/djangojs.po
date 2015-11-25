@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-13 11:17+0200\n"
-"PO-Revision-Date: 2015-03-26 20:36+0100\n"
+"POT-Creation-Date: 2015-11-25 13:06+0100\n"
+"PO-Revision-Date: 2015-11-25 13:10+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.6\n"
 
 #: static/js/StyledElements/FileField.js:106
 #: static/js/wirecloud/ui/MACSelectionWindowMenu.js:40
@@ -92,7 +92,11 @@ msgstr ""
 "org/1999/xhtml\"><t:firstBtn/><t:prevBtn/><div class=\"box\">Página: <t:"
 "currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>"
 
-#: static/js/StyledElements/Utils.js:869
+#: static/js/StyledElements/Typeahead.js:174
+msgid "No results found for <em><t:query/></em>"
+msgstr "No se han encontrado resultados para <em><t:query/></em>"
+
+#: static/js/StyledElements/Utils.js:905
 msgid "N/A"
 msgstr "N/A"
 
@@ -102,6 +106,7 @@ msgstr "Iniciar"
 
 #: static/js/wirecloud/ui/HTMLWindowMenu.js:24
 #: static/js/wirecloud/ui/MACSelectionWindowMenu.js:50
+#: static/js/wirecloud/ui/WindowMenu.js:82
 #: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:144
 msgid "Close"
 msgstr "Cerrar"
@@ -114,11 +119,11 @@ msgstr "Borrar la seleccion actual"
 msgid "Search"
 msgstr "Buscar"
 
-#: static/js/wirecloud/ui/MACSearch.js:57
+#: static/js/wirecloud/ui/MACSearch.js:43
 msgid "<p>Showing results for <b><t:corrected_query/></b></p>"
 msgstr "<p>Mostrando los resultados para <b><t:corrected_query/></b></p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:68
+#: static/js/wirecloud/ui/MACSearch.js:54
 msgid ""
 "<p>We couldn't find anything for your search - <b>%(keywords)s.</b></"
 "p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</"
@@ -129,7 +134,7 @@ msgstr ""
 "palabras estén escritas correctamente.</li><li>Prueba con otras palabras "
 "clave.</li><li>Inténtalo con palabras clave más generales.</li></ul>"
 
-#: static/js/wirecloud/ui/MACSearch.js:71
+#: static/js/wirecloud/ui/MACSearch.js:57
 msgid ""
 "<p>Currently, you do not have access to any %(scope)s component. You can get "
 "components using the Marketplace view or by uploading components manually "
@@ -140,7 +145,7 @@ msgstr ""
 "recursos de forma manual usando el botón Subir en la vista de Mis Recursos.</"
 "p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:74
+#: static/js/wirecloud/ui/MACSearch.js:60
 msgid ""
 "<p>Currently, you do not have access to any component. You can get "
 "components using the Marketplace view or by uploading components manually "
@@ -150,7 +155,11 @@ msgstr ""
 "componentes usando la vista de Marketplace o subiendo recursos de forma "
 "manual usando el botón Subir en la vista de Mis Recursos.</p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:132
+#: static/js/wirecloud/ui/MACSearch.js:66
+msgid "Connection error: No resource retrieved"
+msgstr "Problema de conexión: No se ha recibido ningún recurso"
+
+#: static/js/wirecloud/ui/MACSearch.js:145
 msgid "Keywords..."
 msgstr "Texto de búsqueda"
 

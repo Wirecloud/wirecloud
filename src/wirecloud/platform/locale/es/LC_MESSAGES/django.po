@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-14 22:37+0200\n"
-"PO-Revision-Date: 2015-10-13 11:00+0200\n"
+"POT-Creation-Date: 2015-11-25 13:28+0100\n"
+"PO-Revision-Date: 2015-11-25 13:49+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,9 +16,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.5\n"
+"X-Generator: Poedit 1.8.6\n"
 
-#: admin.py:62
+#: admin.py:78
 msgid "Edit"
 msgstr "Editar"
 
@@ -52,63 +52,63 @@ msgstr "equipo"
 msgid "teams"
 msgstr "equipos"
 
-#: core/plugins.py:229
+#: core/plugins.py:231
 msgid "Language"
 msgstr "Idioma"
 
-#: core/plugins.py:230
+#: core/plugins.py:232
 msgid "Current language used in the platform"
 msgstr "Idioma actualmente utilizado en la plataforma"
 
-#: core/plugins.py:233 templates/registration/login.html:42
+#: core/plugins.py:235
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: core/plugins.py:234
+#: core/plugins.py:236
 msgid "User name of the current logged user"
 msgstr "Nombre de usuario del usuario actual"
 
-#: core/plugins.py:237
+#: core/plugins.py:239
 msgid "Full name"
 msgstr "Nombre completo"
 
-#: core/plugins.py:238
+#: core/plugins.py:240
 msgid "Full name of the logged user"
 msgstr "Nombre completo del usuario actual"
 
-#: core/plugins.py:241
+#: core/plugins.py:243
 msgid "Is Anonymous"
 msgstr "Es anónimo"
 
-#: core/plugins.py:242
+#: core/plugins.py:244
 msgid "Boolean. Designates whether current user is logged in the system."
 msgstr ""
 "Boleano. Indica cuando hay un usuario registrado actualmente en el sistema."
 
-#: core/plugins.py:245
+#: core/plugins.py:247
 msgid "Is Staff"
 msgstr "Es personal"
 
-#: core/plugins.py:246
+#: core/plugins.py:248
 msgid "Boolean. Designates whether current user can access the admin site."
 msgstr ""
 "Boleano. Indica cuando el usuario actual puede acceder al panel de "
 "administración."
 
-#: core/plugins.py:249
+#: core/plugins.py:251
 msgid "Is Superuser"
 msgstr "Es superusuario"
 
-#: core/plugins.py:250
+#: core/plugins.py:252
 msgid "Boolean. Designates whether current user is a super user."
 msgstr ""
 "Booleano. Indica cuando el usuario actualmente registrado es un super usuario"
 
-#: core/plugins.py:253
+#: core/plugins.py:255
 msgid "Mode"
 msgstr "Modo"
 
-#: core/plugins.py:254
+#: core/plugins.py:256
 msgid ""
 "Rendering mode used by the platform (available modes: classic, smartphone "
 "and embedded)"
@@ -116,36 +116,35 @@ msgstr ""
 "Modo de funcionamiento usado por la plataforma (modos disponibles: classic, "
 "smartphone y embedded)"
 
-#: core/plugins.py:257
+#: core/plugins.py:259
 msgid "Orientation"
 msgstr "Orientación"
 
-#: core/plugins.py:258
+#: core/plugins.py:260
 msgid "Current screen orientation"
 msgstr "Orientación actual de la plataforma"
 
-#: core/plugins.py:261
+#: core/plugins.py:263
 msgid "Theme"
 msgstr "Estilo"
 
-#: core/plugins.py:262
+#: core/plugins.py:264
 msgid "Name of the theme used by the platform"
 msgstr "Nombre del estilo usado por la plataforma"
 
-#: core/plugins.py:265 core/plugins.py:269
-#: templates/wirecloud/catalogue/resource_details.html:24
+#: core/plugins.py:267 core/plugins.py:271
 msgid "Version"
 msgstr "Versión"
 
-#: core/plugins.py:266 core/plugins.py:270
+#: core/plugins.py:268 core/plugins.py:272
 msgid "Version of the platform"
 msgstr "Versión de la plataforma"
 
-#: core/plugins.py:273
+#: core/plugins.py:275
 msgid "Version Hash"
 msgstr "Hash de la versión"
 
-#: core/plugins.py:274
+#: core/plugins.py:276
 msgid ""
 "Hash for the current version of the platform. This hash changes when the "
 "platform is updated or when an addon is added or removed"
@@ -153,57 +152,67 @@ msgstr ""
 "Hash asignado a la versión actual de la plataforma. Este bash cambia cuando "
 "la plataforma se actualiza o cuando un adán es activado o desactivado."
 
-#: core/plugins.py:286
+#: core/plugins.py:288
 msgid "Anonymous"
 msgstr "Anónimo"
 
-#: core/plugins.py:305 iwidget/models.py:33 markets/models.py:31
+#: core/plugins.py:307 iwidget/models.py:33 markets/models.py:31
 #: markets/models.py:51 preferences/models.py:33 preferences/models.py:48
-#: preferences/models.py:64 workspace/models.py:37 workspace/models.py:99
+#: preferences/models.py:64 workspace/models.py:37 workspace/models.py:102
 msgid "Name"
 msgstr "Nombre"
 
-#: core/plugins.py:306
+#: core/plugins.py:308
 msgid "Current name of the workspace"
 msgstr "Nombre actual del entorno de trabajo"
 
-#: core/plugins.py:309
+#: core/plugins.py:311
 msgid "Owner"
 msgstr "Dueño"
 
-#: core/plugins.py:310
+#: core/plugins.py:312
 msgid "Workspace's owner username"
 msgstr "Nombre de usuario del dueño del entorno de trabajo"
 
-#: core/plugins.py:325
+#: core/plugins.py:327
 msgid "Public"
 msgstr "Público"
 
-#: core/plugins.py:327
+#: core/plugins.py:330
 msgid ""
-"Allows other users to open this workspace (in read-only mode). (default: "
+"Allow any user to open this workspace (in read-only mode). (default: "
 "disabled)"
 msgstr ""
-"Indica si se permite a cualquier usuario a abrir este entorno de trabajo (en "
-"modo de sólo lectura). (deshabilitado por defecto)."
+"Permite a cualquier usuario acceder a este entorno de trabajo (en modo de "
+"solo lectura). (valor por defecto: deshabilitado) "
 
-#: core/plugins.py:332
+#: core/plugins.py:335
+msgid "Share list"
+msgstr "Lista de compartidos"
+
+#: core/plugins.py:338
+msgid "List of users with access to this workspace. (default: [])"
+msgstr ""
+"Lista de usuarios con acceso a este entorno de trabajo. (valor por defecto: "
+"[])"
+
+#: core/plugins.py:343
 msgid "Default layout"
 msgstr "Esquema por defecto"
 
-#: core/plugins.py:335
+#: core/plugins.py:346
 msgid "Base"
 msgstr "Base"
 
-#: core/plugins.py:336
+#: core/plugins.py:347
 msgid "Free"
 msgstr "Libre"
 
-#: core/plugins.py:338
+#: core/plugins.py:349
 msgid "Default layout for the new widgets."
 msgstr "Distribución por defecto para los nuevos widgets."
 
-#: core/plugins.py:350
+#: core/plugins.py:361
 msgid "Base layout"
 msgstr "Distribución base"
 
@@ -215,7 +224,7 @@ msgstr "Widget"
 msgid "Widget URI"
 msgstr "Widget URI"
 
-#: iwidget/models.py:34 workspace/utils.py:451 workspace/views.py:67
+#: iwidget/models.py:34 workspace/utils.py:466 workspace/views.py:67
 msgid "Tab"
 msgstr "Pestaña"
 
@@ -251,7 +260,7 @@ msgid "You have not enough permission for adding iwidgets to the workspace"
 msgstr ""
 "No tienes permisos suficientes para añadir nuevos widgets en el workspace"
 
-#: iwidget/views.py:70 iwidget/views.py:129
+#: iwidget/views.py:70 iwidget/views.py:131
 #, python-format
 msgid "refered widget %(widget_uri)s does not exist."
 msgstr "el widget referenciado %(widget_uri)s no existe."
@@ -267,37 +276,37 @@ msgstr ""
 msgid "Widget {id} does not exist"
 msgstr "El widget {id} no existe"
 
-#: iwidget/views.py:122
+#: iwidget/views.py:124
 msgid "You have not enough permission for updating the iwidget"
 msgstr ""
 "No tienes suficientes permisos para actualizar está instancia de widget"
 
-#: iwidget/views.py:145
+#: iwidget/views.py:147
 msgid "You have not enough permission for removing iwidgets from the workspace"
 msgstr ""
 "No tienes suficientes permisos para eliminar widgets del entorno de trabajo"
 
-#: iwidget/views.py:149
+#: iwidget/views.py:151
 msgid "IWidget cannot be deleted"
 msgstr "El Widget no puede ser borrado"
 
-#: iwidget/views.py:166
+#: iwidget/views.py:168
 msgid ""
 "You have not enough permission for updating the preferences of the iwidget"
 msgstr ""
 "No tienes suficientes permisos para actualizar las preferencias del widget"
 
-#: iwidget/views.py:178
+#: iwidget/views.py:180
 #, python-format
 msgid "Invalid preference: \"%s\""
 msgstr "Preferencia inválida: \"%s\""
 
-#: iwidget/views.py:182
+#: iwidget/views.py:184
 #, python-format
 msgid "\"%s\" preference is read only."
 msgstr "La preferencia \"%s\" es de sólo lectura."
 
-#: iwidget/views.py:200
+#: iwidget/views.py:202
 msgid ""
 "You have not enough permission for updating the persistent variables of this "
 "widget"
@@ -305,7 +314,7 @@ msgstr ""
 "No tienes permisos suficientes para actualizar la variable persistente del "
 "widget"
 
-#: iwidget/views.py:210
+#: iwidget/views.py:212
 #, python-format
 msgid "Invalid persistent variable: \"%s\""
 msgstr "Variable persistente inválida: \"%s\""
@@ -318,28 +327,32 @@ msgstr "Falta el fichero del componente en la petición"
 msgid "The uploaded file is not a zip file"
 msgstr "El fichero subido no es un fichero zip"
 
-#: localcatalogue/views.py:131
+#: localcatalogue/views.py:125
 msgid "Missing market name"
 msgstr "Falta el nombre del marketplace"
 
-#: localcatalogue/views.py:137
+#: localcatalogue/views.py:131
 #, python-format
 msgid "Unknown market: %s"
 msgstr "Marketplace desconocido: %s"
 
-#: localcatalogue/views.py:147
+#: localcatalogue/views.py:141
 msgid "Content cannot be downloaded from the specified url"
 msgstr "El contenido no pudo ser descargado desde la URL especificada"
 
-#: localcatalogue/views.py:155
+#: localcatalogue/views.py:149
 msgid "The file downloaded from the marketplace is not a zip file"
 msgstr "El fichero descargado desde el marketplace no es un fichero zip"
 
-#: localcatalogue/views.py:162
+#: localcatalogue/views.py:156
 msgid "Resource already exists"
 msgstr "El recurso ya existía"
 
-#: localcatalogue/views.py:169
+#: localcatalogue/views.py:162
+msgid "The uploaded file is not a valid zip file"
+msgstr "El fichero subido no es un fichero zip valido"
+
+#: localcatalogue/views.py:167
 msgid ""
 "Error writing the resource into the filesystem. Please, contact the server "
 "administrator."
@@ -347,11 +360,11 @@ msgstr ""
 "Error escribiendo el recurso en el sistema de ficheros. Por favor, contacte "
 "con el administrador del servidor."
 
-#: localcatalogue/views.py:218
+#: localcatalogue/views.py:213
 msgid "You are not allowed to retrieve info about this resource"
 msgstr "No tienes permisos para obtener la información sobre este recurso"
 
-#: localcatalogue/views.py:291
+#: localcatalogue/views.py:286
 msgid "You don't have access to this workspace"
 msgstr "No tienes acceso a este entorno de trabajo"
 
@@ -387,126 +400,15 @@ msgstr "Algo ha ido mal (mira los detalles para más información)"
 msgid "Inherit"
 msgstr "Heredar"
 
-#: preferences/views.py:223 preferences/views.py:260
+#: preferences/views.py:224 preferences/views.py:278
 msgid "You are not allowed to read this workspace"
 msgstr "No tienes permisos para leer este entorno de trabajo"
 
-#: preferences/views.py:237 preferences/views.py:274 wiring/views.py:45
+#: preferences/views.py:238 preferences/views.py:292 wiring/views.py:45
 #: workspace/views.py:211 workspace/views.py:315 workspace/views.py:319
 #: workspace/views.py:400
 msgid "You are not allowed to update this workspace"
 msgstr "No tienes permisos para actualizar este entorno de trabajo"
-
-#: templates/registration/login.html:8
-msgid "WireCloud Platform - Sign in"
-msgstr "WireCloud Platform - Iniciar sesión"
-
-#: templates/registration/login.html:28
-msgid "Your browser seems to lack some required features"
-msgstr "Tú navegador parece carecer de algunas de las funcionalidad requeridas"
-
-#: templates/registration/login.html:29
-msgid ""
-"We recommend you to upgrade your browser to the newest version of either <a "
-"href=\"https://www.mozilla.org/firefox\">Firefox</a> or <a href=\"www.google."
-"com/chrome\">Google Chrome</a> as these are the browsers currently supported "
-"by WireCloud."
-msgstr ""
-"Te recomendamos actualizar tu navegador a la versión más reciente tanto de "
-"<a href=\"https://www.mozilla.org/firefox\">Firefox</a> como de <a href="
-"\"www.google.com/chrome\">Google Chrome</a> dado que estos navegadores son "
-"los que actualmente soporta WireCloud."
-
-#: templates/registration/login.html:36
-msgid "Your username and password didn't match.<br /> Please try again."
-msgstr ""
-"El usuario y la contraseña no coinciden.<br /> Por favor, prueba de nuevo."
-
-#: templates/registration/login.html:45
-msgid "Password"
-msgstr "Contraseña"
-
-#: templates/registration/login.html:48
-msgid "Log in"
-msgstr "Entrar"
-
-#: templates/wirecloud/catalogue/developers.html:6
-msgid ""
-"Do you have a widget, operator or mashup stored in a wgt file? Then you can "
-"upload it to the catalogue by means of this dialog."
-msgstr ""
-"¿Tienes un widget, operador o mashup empaquetado en un fichero wat? En tal "
-"caso, puede subirlo al catálogo usando esta ventana."
-
-#: templates/wirecloud/catalogue/developers.html:8
-msgid "Drag files here"
-msgstr "Arrastra ficheros aquí"
-
-#: templates/wirecloud/catalogue/main_resource_details.html:3
-#: workspace/models.py:45
-msgid "Description"
-msgstr "Descripción"
-
-#: templates/wirecloud/catalogue/main_resource_details.html:6
-msgid "Tags"
-msgstr "Etiquetas"
-
-#: templates/wirecloud/catalogue/main_resource_details.html:9
-msgid "Detailed data"
-msgstr "Datos detallados"
-
-#: templates/wirecloud/catalogue/main_resource_details.html:11
-msgid "Internal ID"
-msgstr "ID interno"
-
-#: templates/wirecloud/catalogue/main_resource_details.html:13
-msgid "Author(s)"
-msgstr "Autor(es)"
-
-#: templates/wirecloud/catalogue/main_resource_details.html:15
-msgid "Contributor(s)"
-msgstr "Colaborador(es)"
-
-#: templates/wirecloud/catalogue/main_resource_details.html:17
-msgid "Size"
-msgstr "Tamaño"
-
-#: templates/wirecloud/catalogue/main_resource_details.html:21
-msgid "Advanced operations"
-msgstr "Operaciones avanzadas"
-
-#: templates/wirecloud/catalogue/order_by_template.html:3
-msgid "Popularity"
-msgstr "Popularidad"
-
-#: templates/wirecloud/catalogue/order_by_template.html:4
-msgid "Creation date"
-msgstr "Fecha de creación"
-
-#: templates/wirecloud/catalogue/order_by_template.html:5
-msgid "Short name"
-msgstr "Nombre"
-
-#: templates/wirecloud/catalogue/order_by_template.html:6
-#: templates/wirecloud/catalogue/resource_details.html:22
-msgid "Vendor"
-msgstr "Distribuidor"
-
-#: templates/wirecloud/catalogue/resource_details.html:26
-msgid "License"
-msgstr "Licencia"
-
-#: templates/wirecloud/catalogue/resource_details.html:28
-msgid "Last Updated"
-msgstr "Última actualización"
-
-#: templates/wirecloud/catalogue/search_interface.html:18
-msgid "Keywords:"
-msgstr "Términos:"
-
-#: templates/wirecloud/catalogue/search_interface.html:23
-msgid "Type:"
-msgstr "Tipo:"
 
 #: widget/models.py:39
 msgid "URI"
@@ -557,23 +459,23 @@ msgstr "Error procesando el código del widget"
 msgid "You are not allowed to remove read only connections"
 msgstr "No tienes permisos para eliminar conexiones de solo lectura"
 
-#: workspace/mashupTemplateParser.py:72
+#: workspace/mashupTemplateParser.py:74
 msgid "Missing dependencies"
 msgstr "Dependencias incumplidas"
 
-#: workspace/mashupTemplateParser.py:331
+#: workspace/mashupTemplateParser.py:333
 msgid "Original wiring"
 msgstr "Wiring original"
 
-#: workspace/mashupTemplateParser.py:331
+#: workspace/mashupTemplateParser.py:333
 msgid "This is the wiring description of the original workspace"
 msgstr "Esta es la descripción del wiring del espacio de trabajo original"
 
-#: workspace/mashupTemplateParser.py:334
+#: workspace/mashupTemplateParser.py:336
 msgid "Merged wiring"
 msgstr "Wiring mezclado"
 
-#: workspace/mashupTemplateParser.py:334
+#: workspace/mashupTemplateParser.py:336
 msgid "This is the wiring description of the merged mashup."
 msgstr ""
 "Esta es la descripción del comportamiento creado para el mashup mezclado."
@@ -602,23 +504,27 @@ msgstr "Usuarios"
 msgid "Groups"
 msgstr "Grupos"
 
+#: workspace/models.py:45
+msgid "Description"
+msgstr "Descripción"
+
 #: workspace/models.py:46
 msgid "Long description"
 msgstr "Descripción larga"
 
-#: workspace/models.py:84
+#: workspace/models.py:87
 msgid "Active"
 msgstr "Activo"
 
-#: workspace/models.py:85
+#: workspace/models.py:88
 msgid "Manager"
 msgstr "Gestor"
 
-#: workspace/models.py:86
+#: workspace/models.py:89
 msgid "Reason Ref"
 msgstr "Ref.  de razón"
 
-#: workspace/models.py:86
+#: workspace/models.py:89
 msgid ""
 "Reference to the reason why it was added. Used by Workspace Managers to sync "
 "workspaces"
@@ -626,11 +532,11 @@ msgstr ""
 "Referencia a la razón por la que fue añadido. Este campo es usado por los "
 "gestores de entornos de trabajo para sincronizar los entornos de trabajo"
 
-#: workspace/models.py:100
+#: workspace/models.py:103
 msgid "Visible"
 msgstr "Visible"
 
-#: workspace/models.py:102
+#: workspace/models.py:105
 msgid "Workspace"
 msgstr "Entorno de trabajo"
 
@@ -710,24 +616,24 @@ msgstr ""
 msgid "Missing workspace or mashup parameter"
 msgstr "Falta o el parámetro workspace o el parámetro mashup"
 
-#: workspace/views.py:480
+#: workspace/views.py:482
 #, python-format
 msgid "malformed json data: %s"
 msgstr "datos json malformados: %s"
 
-#: workspace/views.py:485
+#: workspace/views.py:487
 #, python-format
 msgid "Malformed JSON. The following field(s) are missing: %(fields)s."
 msgstr "JSON mal formado. Faltan los siguientes campos: %(fields)s."
 
-#: workspace/views.py:488
+#: workspace/views.py:490
 msgid "Invalid vendor"
 msgstr "Distribuidor inválido"
 
-#: workspace/views.py:491
+#: workspace/views.py:493
 msgid "Invalid name"
 msgstr "Nombre inválido"
 
-#: workspace/views.py:494
+#: workspace/views.py:496
 msgid "Invalid version number"
 msgstr "Número de versión inválido"

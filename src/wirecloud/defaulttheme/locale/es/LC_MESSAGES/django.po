@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-31 01:00+0200\n"
-"PO-Revision-Date: 2015-03-31 01:02+0100\n"
+"POT-Creation-Date: 2015-11-25 13:11+0100\n"
+"PO-Revision-Date: 2015-11-25 13:31+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.6\n"
 
 #: templates/400.html:3
 msgid "error400"
@@ -75,6 +75,45 @@ msgstr ""
 #: templates/500.html:3
 msgid "Error 500 - Internal Server Error"
 msgstr "Error 500 - Error interno del servidor"
+
+#: templates/registration/login.html:8
+msgid "WireCloud Platform - Sign in"
+msgstr "Plataforma WireCloud - Iniciar sesión"
+
+#: templates/registration/login.html:30 templates/wirecloud/views/base.html:55
+msgid "Your browser seems to lack some required features"
+msgstr "Parece que tu navegador no soporta ciertas funcionalidades necesarias"
+
+#: templates/registration/login.html:31 templates/wirecloud/views/base.html:56
+msgid ""
+"We recommend you to upgrade your browser to the newest version of either <a "
+"href=\"https://www.mozilla.org/firefox\">Firefox</a> or <a href=\"www.google."
+"com/chrome\">Google Chrome</a> as these are the browsers currently supported "
+"by WireCloud."
+msgstr ""
+"Te recomendamos actualizar tu navegador a la versión más reciente tanto de "
+"<a href=\"https://www.mozilla.org/firefox\">Firefox</a> como de <a href="
+"\"www.google.com/chrome\">Google Chrome</a> dado que estos navegadores son "
+"los que actualmente soporta WireCloud."
+
+#: templates/registration/login.html:40
+msgid ""
+"<h4>Your username and password didn't match.</h4><p>Please try again.</p>"
+msgstr ""
+"<h4>El nombre de usuario y la contraseña no coinciden.</h4><p>Por favor, "
+"prueba de nuevo.</p>"
+
+#: templates/registration/login.html:45
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: templates/registration/login.html:47
+msgid "Password"
+msgstr "Contraseña"
+
+#: templates/registration/login.html:48
+msgid "Log in"
+msgstr "Iniciar sesión"
 
 #: templates/wirecloud/landing_page.html:3
 msgid "WireCloud · Build application mashups"
@@ -161,6 +200,103 @@ msgstr "Soporte para Linked-USDL"
 msgid "Full integration with FIWARE's:"
 msgstr "Integración con FIWARE's:"
 
+#: templates/wirecloud/catalogue/developers.html:6
+msgid ""
+"Do you have a widget, operator or mashup stored in a wgt file? Then you can "
+"upload it to the catalogue by means of this dialog."
+msgstr ""
+"¿Tienes un widget, un operador o un mashap empaquetado en un fichero wgt? "
+"Entonces puedes subirlo al catalogo haciendo uso de esta ventana."
+
+#: templates/wirecloud/catalogue/developers.html:8
+msgid "Drag files here"
+msgstr "Arrastra los ficheros aquí"
+
+#: templates/wirecloud/catalogue/developers.html:9
+msgid "- or -"
+msgstr "- ó -"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:3
+msgid "Description"
+msgstr "Descripción"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:6
+msgid "Tags"
+msgstr "Etiquetas"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:9
+msgid "Detailed data"
+msgstr "Información detallada"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:11
+msgid "Internal ID"
+msgstr "ID interno"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:13
+msgid "Author(s)"
+msgstr "Autor(es)"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:15
+msgid "Contributor(s)"
+msgstr "Colaborador(es)"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:17
+msgid "Size"
+msgstr "Tamaño"
+
+#: templates/wirecloud/catalogue/main_resource_details.html:21
+msgid "Advanced operations"
+msgstr "Operaciones avanzadas"
+
+#: templates/wirecloud/catalogue/order_by_template.html:3
+msgid "Popularity"
+msgstr "Popularidad"
+
+#: templates/wirecloud/catalogue/order_by_template.html:4
+msgid "Creation date"
+msgstr "Fecha de creación"
+
+#: templates/wirecloud/catalogue/order_by_template.html:5
+msgid "Short name"
+msgstr "Nombre"
+
+#: templates/wirecloud/catalogue/order_by_template.html:6
+#: templates/wirecloud/catalogue/resource_details.html:22
+msgid "Vendor"
+msgstr "Distribuidor"
+
+#: templates/wirecloud/catalogue/resource_details.html:24
+msgid "Version"
+msgstr "Versión"
+
+#: templates/wirecloud/catalogue/resource_details.html:26
+msgid "License"
+msgstr "Licencia"
+
+#: templates/wirecloud/catalogue/resource_details.html:28
+msgid "Last Updated"
+msgstr "Última actualización"
+
+#: templates/wirecloud/catalogue/search_interface.html:18
+msgid "Keywords:"
+msgstr "Términos:"
+
+#: templates/wirecloud/catalogue/search_interface.html:23
+msgid "Type:"
+msgstr "Tipo:"
+
+#: templates/wirecloud/ui/upgrade_window_menu.html:3
+msgid "Current version"
+msgstr "Versión actual"
+
+#: templates/wirecloud/ui/upgrade_window_menu.html:3
+msgid "New version"
+msgstr "Nueva versión"
+
+#: templates/wirecloud/ui/upgrade_window_menu.html:4
+msgid "Change Log"
+msgstr "Registro de cambios"
+
 #: templates/wirecloud/views/base.html:7
 #: templates/wirecloud/views/base_plain.html:7
 #: templates/wirecloud/views/classic.html:5
@@ -176,22 +312,6 @@ msgstr "Iniciando WireCloud"
 #: templates/wirecloud/views/base.html:45
 msgid "Retrieving WireCloud code"
 msgstr "Obteniendo el código de WireCloud"
-
-#: templates/wirecloud/views/base.html:55
-msgid "Your browser seems to lack some required features"
-msgstr "Parece que tu navegador no soporta ciertas funcionalidades necesarias"
-
-#: templates/wirecloud/views/base.html:56
-msgid ""
-"We recommend you to upgrade your browser to the newest version of either <a "
-"href=\"https://www.mozilla.org/firefox\">Firefox</a> or <a href=\"www.google."
-"com/chrome\">Google Chrome</a> as these are the browsers currently supported "
-"by WireCloud."
-msgstr ""
-"Te recomendamos actualizar tu navegador a la versión más reciente tanto de "
-"<a href=\"https://www.mozilla.org/firefox\">Firefox</a> como de <a href="
-"\"www.google.com/chrome\">Google Chrome</a> dado que estos navegadores son "
-"los que actualmente soporta WireCloud."
 
 #: templates/wirecloud/views/smartphone.html:38
 msgid "Catalogue"
