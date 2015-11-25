@@ -1,4 +1,4 @@
-{% load compress i18n wirecloudtags %}
+{% load compress i18n wirecloudtags %}{% load static from staticfiles %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 <head>
@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
-    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico" %}" />
 
     {% compress css %}
     {% platform_css VIEW_MODE %}
@@ -52,8 +52,8 @@
 
 </div>
 
-<script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime-locales.js"></script>
+<script type="text/javascript" src="{% static "js/lib/strftime.js" %}"></script>
+<script type="text/javascript" src="{% static "js/lib/strftime-locales.js" %}"></script>
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>
 {% compress js %}
     {% wirecloud_bootstrap "smartphone" %}

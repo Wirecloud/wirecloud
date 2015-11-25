@@ -1,4 +1,4 @@
-{% load compress i18n wirecloudtags %}
+{% load compress i18n wirecloudtags %}{% load static from staticfiles %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="{{ LANGUAGE_CODE }}"
@@ -8,13 +8,13 @@
 
     {% block meta %}
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico" %}" />
     {% endblock %}
 
     {% block basecss %}
         {% compress css %}
-        <link rel="stylesheet" type="text/x-scss" href="{{ STATIC_URL }}css/wirecloud_core.scss" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/static_pages.css" />
+        <link rel="stylesheet" type="text/x-scss" href="{% static "css/wirecloud_core.scss" %}" />
+        <link rel="stylesheet" type="text/css" href="{% static "css/static_pages.css" %}" />
         {% endcompress %}
     {% endblock %}
 
@@ -36,7 +36,7 @@
 <body>
     <div id="wirecloud_header">
         <div class="logo_wrapper">
-            <img src="{{ STATIC_URL }}images/wirecloud_logo.png" alt="WireCloud" />
+            <img src="{% static "images/wirecloud_logo.png" %}" alt="WireCloud" />
             <div>
                 <div>
                     <h2 class="fiware_title"><span>FI</span>WARE</h2>

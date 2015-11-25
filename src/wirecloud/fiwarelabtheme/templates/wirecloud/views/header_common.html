@@ -1,18 +1,19 @@
+{% load static from staticfiles %}
 <header class="navbar fiware-header">
     <div class="container-fluid">
         <div class="logo-fl-header">
             {% if FIWARE_OFFICIAL_PORTAL %}
             <a href="{{ FIWARE_HOME }}" class="brand">
                 {% ifequal FIWARE_IDM_SERVER "https://account.lab.fiware.org" %}
-                <img alt="FIWARE Lab" class="fiware-logo" src="{{ STATIC_URL }}images/fiwarelab.png" />
+                <img alt="FIWARE Lab" class="fiware-logo" src="{% static "images/fiwarelab.png" %}" />
                 {% else %}
-                <img alt="FIWARE Testbed" class="fiware-logo" src="{{ STATIC_URL }}images/fiwaretestbed.png" />
+                <img alt="FIWARE Testbed" class="fiware-logo" src="{% static "images/fiwaretestbed.png" %}" />
                 {% endifequal %}
-                <img alt="FIWARE Lab" class="fiware-symbol" src="{{ STATIC_URL }}images/fiware-symbol.png" />
+                <img alt="FIWARE Lab" class="fiware-symbol" src="{% static "images/fiware-symbol.png" %}" />
             </a>
             {% else %}
             <a href="{{ FIWARE_HOME }}">
-                <img alt="FIWARE" class="fiware-logo" src="{{ STATIC_URL }}images/header-logo.png" />
+                <img alt="FIWARE" class="fiware-logo" src="{% static "images/header-logo.png" %}" />
             </a>
             <a href="{{ FIWARE_HOME }}" class="brand unofficial">
                 <span>FI</span>WARE
