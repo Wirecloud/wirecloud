@@ -112,7 +112,7 @@
     };
 
     FullDragboardLayout.prototype.addIWidget = function addIWidget(iWidget, affectsDragboard) {
-        iWidget.element.classList.add('fulldragboard');
+        iWidget.element.classList.add('wc-widget-fulldragboard');
 
         Wirecloud.ui.DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
 
@@ -124,7 +124,7 @@
     };
 
     FullDragboardLayout.prototype.removeIWidget = function removeIWidget(iWidget, affectsDragboard) {
-        iWidget.element.classList.remove('fulldragboard');
+        iWidget.element.classList.remove('wc-widget-fulldragboard');
 
         Wirecloud.ui.DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
     };

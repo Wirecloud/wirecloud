@@ -190,11 +190,29 @@
     right: auto;
 }
 
+.wc-widget-fulldragboard {
+
+    position: fixed;
+    border: 0px none;
+
+    & > .statusBar {
+      display: none;
+    }
+
+    & > .widget_menu {
+        cursor: default;
+        & > .icon-minus {
+            display: none;
+        }
+    }
+
+}
+
 /*div.dragboard.fixed*/
-div.fixed .iwidget .leftResizeHandle,
-  div.fixed .iwidget .rightResizeHandle,
-{
-  display: none;
+.fixed .iwidget {
+    .leftResizeHandle, .rightResizeHandle, .bottomResizeHandle {
+        display: none;
+    }
 }
 
 .iwidget.highlighted > .widget_shadow {

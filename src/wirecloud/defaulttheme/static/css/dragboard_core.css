@@ -1,12 +1,3 @@
-div.dragboard {
-  overflow: auto;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-div.fulldragboard {
-  position: fixed;
-}
 
 /*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
 div.fixed div.widget_menu {
@@ -31,23 +22,6 @@ div.row {
   display: none;
 }
 
-/********************************************/
-div.fulldragboard div.statusBar {
-  display: none;
-}
-
-div.fulldragboard {
-  border: 0px none;
-}
-
-div.fulldragboard div.widget_menu .icon-minus {
-  display: none;
-}
-
-div.fulldragboard div.widget_menu {
-  cursor: default;
-}
-
 /******************************
  * Locked Dragboard
  ******************************/
@@ -55,29 +29,21 @@ div.fulldragboard div.widget_menu {
 /***
  *
  */
-.floatleft {
-  float: left;
-}
-
-.floatright {
-  float: right;
-}
-
-.floating_widget_icon{
+.floating_widget_icon {
 	position: absolute;
 	width: 75px;
 	text-align: center;
 	display: none;
 }
 
-.floating_widget_icon img{
+.floating_widget_icon img {
 	width: 60px;
 	height: 60px;
 	display: block;
 	padding: 0 5px 2px 5px;
 }
 
-.floating_widget_icon .floating_widget_title{
+.floating_widget_icon .floating_widget_title {
 	display: block;
 	cursor: default;
 	font-size:85%;
