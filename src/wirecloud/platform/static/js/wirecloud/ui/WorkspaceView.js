@@ -58,7 +58,7 @@
 
         this.marketButton = new StyledElements.Button({
             'iconClass': 'icon-shopping-cart',
-            'title': utils.gettext('Marketplace')
+            'title': utils.gettext('Get more components')
         });
         this.marketButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
