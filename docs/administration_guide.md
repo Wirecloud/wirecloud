@@ -140,13 +140,16 @@ versions of the JavaScript and CSS files by running the following command:
 
         $ python manage.py syncdb --migrate; python manage.py collectstatic --noinput; python manage.py compress --force
 
-3. Reload WireCloud (e.g. `$ service apache2 restart`)
+3. Reload WireCloud (e.g. `$ service apache2 graceful`)
+
 
 ## From 0.7.x to 0.8.x
 
-WireCloud 0.8.x migrated FIWARE IdM code to use python-social-auth instead of
-using django-social-auth due to the later being deprecated. Please, follow these
-instructions if you are using the IdM integration:
+### Migrate from `django-social-auth` to `python-social-auth`
+
+WireCloud 0.8.x migrated FIWARE IdM code to use `python-social-auth` instead of
+using `django-social-auth` due to the later being deprecated. Please, follow
+these instructions if you are using the IdM integration:
 
 1. Install `python-social-auth` (e.g. `pip install python-social-auth`)
 2. Edit your `settings.py` making the following changes:
@@ -171,15 +174,24 @@ instructions if you are using the IdM integration:
 
 4. Fake `python-social-auth` migrations (it uses the same dabase schema than `django-social-auth`):
 
-   ```
-   python manage.py migrate default --fake
-   ```
+    ```
+    python manage.py migrate default --fake
+    ```
 
 5. Now you can remove django-social-auth :). E.g.:
 
     ```
     pip uninstall django-social-auth
     ```
+
+### Migrate the user search index
+
+WireCloud 0.8.2 updated the information stored in the user search index, so you
+should run the following command for updating this index:
+
+```
+python manage.py resetsearchindexes --indexes=user
+```
 
 ## From 0.6.x to 0.7.x
 

@@ -42,7 +42,6 @@ WORKSPACE_CSS = (
 )
 
 CLASSIC_CORE_CSS = (
-    'css/window_menu.scss',
     'css/mac_search.css',
     'css/layout_field.css',
     'css/mac_field.scss',
@@ -163,6 +162,7 @@ BASE_CSS = (
     'css/base/body.scss',
     'css/base/fade.css',
     'css/base/code.scss',
+    'css/window_menu.scss',
     'css/windowmenues/logwindowmenu.scss',
     'css/workspace/ioperator.css',
 )
