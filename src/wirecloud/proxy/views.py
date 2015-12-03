@@ -28,11 +28,7 @@ import socket
 
 from django.conf import settings
 from django.core.urlresolvers import resolve, reverse
-from django.http import HttpResponse
-try:
-    from django.http import StreamingHttpResponse
-except: # Django 1.4
-    from django.http import HttpResponse as StreamingHttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 
