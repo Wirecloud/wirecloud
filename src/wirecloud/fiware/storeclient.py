@@ -103,7 +103,7 @@ class StoreClient(object):
             'offering': offering_url,
             'redirect_uri': redirect_uri
         }
-        response = requests.post(urljoin(self._url, 'api/contracting/form'), data=json.dumps(data, ensure_ascii=False), headers=headers)
+        response = requests.post(urljoin(self._url, 'api/contracting/form'), data=json.dumps(data), headers=headers)
 
         if response.status_code == 404:
             raise NotFound
