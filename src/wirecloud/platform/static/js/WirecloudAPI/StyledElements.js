@@ -88,15 +88,25 @@
         return new_class;
     };
 
+    var proxy_method = function (wrapper, instance, method) {
+        wrapper[method] = function () {
+            instance[method].apply(instance, arguments);
+
+            return wrapper;
+        };
+    };
+
+    var proxy_getter = function (wrapper, instance, method) {
+        wrapper[method] = function () {
+            return instance[method].apply(instance, arguments);
+        };
+    };
+
     /* PopupMenu */
     var PopupMenu = function PopupMenu(options) {
         var menu = new RealStyledElements.PopupMenu(options);
 
-        this.append = function append(element) {
-            menu.append.apply(menu, arguments);
-
-            return this;
-        };
+        proxy_method(this, menu, 'append');
 
         this.show = function show(refPosition) {
             var position = iwidget.content.getBoundingClientRect();
@@ -116,16 +126,6 @@
             return this;
         };
 
-        this.hide = function hide() {
-            menu.hide();
-
-            return this;
-        };
-
-        this.isVisible = function isVisible() {
-            return menu.isVisible();
-        };
-
         this.moveFocusDown = function moveFocusDown() {
             menu.moveFocusDown();
 
@@ -142,17 +142,12 @@
             return menu.hasEnabledItem();
         };
 
-        this.addEventListener = function addEventListener(event_name, listener) {
-            menu.addEventListener(event_name, listener);
-
-            return this;
-        };
-
-        this.removeEventListener = function removeEventListener(event_name, listener) {
-            menu.removeEventListener(event_name, listener);
-
-            return this;
-        };
+        proxy_method(this, menu, 'addEventListener');
+        proxy_method(this, menu, 'hide');
+        proxy_getter(this, menu, 'isVisible');
+        proxy_method(this, menu, 'off');
+        proxy_method(this, menu, 'on');
+        proxy_method(this, menu, 'removeEventListener');
 
         this.destroy = function destroy() {
             menu = null;
@@ -192,9 +187,11 @@
             popover.show(refPosition);
         };
 
-        this.hide = function hide() {
-            popover.hide();
-        };
+        proxy_method(this, popover, 'addEventListener');
+        proxy_method(this, popover, 'off');
+        proxy_method(this, popover, 'on');
+        proxy_method(this, popover, 'removeEventListener');
+        proxy_method(this, popover, 'hide');
 
         this.bind = function bind(element, mode) {
             element.addEventListener('click', this.toggle.bind(this));
