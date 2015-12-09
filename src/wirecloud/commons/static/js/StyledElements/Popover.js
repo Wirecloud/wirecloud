@@ -132,6 +132,7 @@
 
         searchBestPosition.call(this, refPosition, this.options.placement);
         this.element.classList.add('in');
+        this.trigger('show');
     };
 
     var Popover = function Popover(options) {
@@ -185,6 +186,7 @@
             document.body.removeChild(this.element);
             this.element = null;
             Wirecloud.UserInterfaceManager._unregisterPopup(this);
+            this.trigger('hide');
         }
     };
 
