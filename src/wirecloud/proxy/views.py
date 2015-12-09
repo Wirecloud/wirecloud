@@ -19,12 +19,14 @@
 
 from __future__ import unicode_literals
 
+import logging
 import re
 import requests
 import six
 from six.moves.http_cookies import SimpleCookie
 from six.moves.urllib.parse import unquote, urlparse
 import socket
+import sys
 
 from django.conf import settings
 from django.core.urlresolvers import resolve, reverse
@@ -36,6 +38,19 @@ from wirecloud.commons.utils.http import build_error_response, get_current_domai
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.plugins import get_request_proxy_processors, get_response_proxy_processors
 from wirecloud.proxy.utils import is_valid_response_header, ValidationError
+
+request_logger = logging.getLogger('django.request')
+
+
+def log_error(request, exc_info):
+
+    request_logger.error('Internal Server Error: %s', request.path,
+        exc_info=exc_info,
+        extra={
+            'status_code': 500,
+            'request': request
+        }
+    )
 
 
 class Proxy():
@@ -70,7 +85,7 @@ class Proxy():
 
         # Extract headers from META
         if 'HTTP_TRANSFER_ENCODING' in request.META:
-            return build_error_response(request, 500, "Wirecloud doesn't support requests using Transfer-Encodings")
+            return build_error_response(request, 422, "Wirecloud doesn't support requests using the Transfer-Encoding header")
 
         for header in request.META.items():
             header_name = header[0].lower()
@@ -218,6 +233,7 @@ def proxy_request(request, protocol, domain, path):
     try:
         response = WIRECLOUD_PROXY.do_request(request, url, request_method, workspace)
     except Exception as e:
+        log_error(request, sys.exc_info())
         msg = _("Error processing proxy request: %s") % e
         return build_error_response(request, 500, msg)
 
