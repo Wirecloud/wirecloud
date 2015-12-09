@@ -696,7 +696,6 @@ function Workspace(workspaceState, resources) {
     this.workspaceState = workspaceState;
     this.tabInstances = {};
     this.tabsByName = {};
-    this.highlightTimeouts = {};
     this.wiring = null;
     this.contextManager = null;
     this.loaded = false;
@@ -752,7 +751,7 @@ Workspace.prototype.drawAttention = function drawAttention(iWidgetId) {
     if (iWidget !== null) {
         this.highlightTab(iWidget.layout.dragboard.tab);
         iWidget.layout.dragboard.raiseToTop(iWidget);
-        iWidget.highlight();
+        iWidget.internal_view.highlight();
     }
 };
 

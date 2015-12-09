@@ -876,18 +876,6 @@ IWidget.prototype.log = function (msg, level) {
     this.internal_iwidget.logManager.log(msg, level);
 };
 
-IWidget.prototype.highlight = function highlight() {
-    if (this.isVisible()) {
-        this.element.classList.add('highlighted');
-    }
-};
-
-IWidget.prototype.unhighlight = function unhighlight() {
-    if (this.isVisible()) {
-        this.element.classList.remove('highlighted');
-    }
-};
-
 /**
  * Increments the error count for this iwidget
  */

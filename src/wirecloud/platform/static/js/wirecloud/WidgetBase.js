@@ -250,7 +250,8 @@
 
         element.contentDocument.defaultView.addEventListener('click', function () {
             Wirecloud.UserInterfaceManager.handleEscapeEvent();
-        });
+            Wirecloud.activeWorkspace.getIWidget(this.id).internal_view.unhighlight();
+        }.bind(this), true);
 
         /* Propagate pending events */
         for (var i = 0; i < this.pending_events.length; i += 1) {

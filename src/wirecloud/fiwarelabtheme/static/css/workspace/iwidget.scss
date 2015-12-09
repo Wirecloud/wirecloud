@@ -1,4 +1,6 @@
 @import 'variables';
+@import 'compass/css3';
+@import 'compass/css3/animation';
 
 .iwidget {
     position: absolute;
@@ -107,31 +109,26 @@
     transition: border-color 0.7s ease-in, background-color 0.7s ease-in;
 }
 
-.iwidget.highlighted > .widget_shadow {
-    -webkit-animation: highlight_iwidget 2s infinite linear;
-    -moz-animation: highlight_iwidget 2s infinite linear;
-    -o-animation: highlight_iwidget 2s infinite linear;
-    animation: highlight_iwidget 2s infinite linear;
+@include keyframes(highlight_iwidget) {
+    0% { }
+    15% { box-shadow: 0 0 8px 0px rgba($state-info-border, 0.6); }
+    35% { box-shadow: 0 0 8px 4px rgba($state-info-border, 0.6); }
+    50% { box-shadow: 0 0 8px 0px rgba($state-info-border, 0.6); }
+    65% { box-shadow: 0 0 8px 4px rgba($state-info-border, 0.6); }
+    100% { box-shadow: 0 0 8px 0px rgba($state-info-border, 0.6); }
 }
 
-.iwidget.highlighted > .widget_shadow > .widget_wrapper {
-    border-color: rgba(82, 168, 236, 0.8);
-}
+.wc-widget-highlight > .widget_shadow {
+    box-shadow: 0 0 8px 0px rgba($state-info-border, 0.6);
+    @include animation(highlight_iwidget 5s linear);
 
-.iwidget.highlighted > .widget_shadow > .statusBar {
-    border-color: rgba(82, 168, 236, 0.8);
-    background-color: rgb(82, 168, 236);
-}
-
-@-webkit-keyframes highlight_iwidget {
-    0% {
-        box-shadow: 0 0 8px 0px rgba(82, 168, 236, 0.6);
+    > .widget_wrapper {
+        border-color: rgba($state-info-border, 0.8);
     }
-    50% {
-        box-shadow: 0 0 8px 4px rgba(82, 168, 236, 0.6);
-    }
-    100% {
-        box-shadow: 0 0 8px 0px rgba(82, 168, 236, 0.6);
+
+    > .statusBar {
+        border-color: rgba($state-info-border, 0.8);
+        background-color: $state-info-border;
     }
 }
 

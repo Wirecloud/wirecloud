@@ -1,5 +1,6 @@
 @import 'variables';
 @import 'compass/css3';
+@import 'compass/css3/animation';
 @import 'compass/css3/images';
 @import 'compass/utilities/color/contrast';
 
@@ -215,21 +216,24 @@
     }
 }
 
-.iwidget.highlighted > .widget_shadow {
-    -webkit-animation: highlight_iwidget 2s infinite linear;
-    -moz-animation: highlight_iwidget 2s infinite linear;
-    -o-animation: highlight_iwidget 2s infinite linear;
-    animation: highlight_iwidget 2s infinite linear;
+@include keyframes(highlight_iwidget) {
+    0% { }
+    15% { box-shadow: 0 0 8px 0px rgba($state-info-border, 0.6); }
+    35% { box-shadow: 0 0 8px 4px rgba($state-info-border, 0.6); }
+    50% { box-shadow: 0 0 8px 0px rgba($state-info-border, 0.6); }
+    65% { box-shadow: 0 0 8px 4px rgba($state-info-border, 0.6); }
+    100% { box-shadow: 0 0 8px 0px rgba($state-info-border, 0.6); }
 }
 
-@-webkit-keyframes highlight_iwidget {
-    0% {
-        box-shadow: 0 0 8px 0px rgba(82, 168, 236, 0.6);
+.wc-widget-highlight > .widget_shadow {
+    box-shadow: 0 0 8px 0px rgba($state-info-border, 0.6);
+    @include animation(highlight_iwidget 5s linear);
+
+    > .widget_wrapper {
+        border-color: $state-info-border;
     }
-    50% {
-        box-shadow: 0 0 8px 4px rgba(82, 168, 236, 0.6);
-    }
-    100% {
-        box-shadow: 0 0 8px 0px rgba(82, 168, 236, 0.6);
+
+    > .statusBar {
+        border-color: $state-info-border;
     }
 }

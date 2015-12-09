@@ -30,6 +30,7 @@
     /* TODO remove view parameter */
     var IWidgetView = function IWidgetView(iwidget, template, view) {
 
+        StyledElements.ObjectWithEvents.call(this, ['highlight', 'unhighlight']);
         Object.defineProperties(this, {
             widget: {value: iwidget}
         });
@@ -152,15 +153,40 @@
             this.titleelement.setTextContent(title);
         }.bind(this));
 
+        iwidget.addEventListener('unload', function (title) {
+            this.unhighlight();
+        }.bind(this));
+
         iwidget.addEventListener('upgraded', this.reload.bind(this));
     };
+    IWidgetView.prototype = new StyledElements.ObjectWithEvents();
 
-    IWidgetView.prototype.reload = function () {
+    IWidgetView.prototype.reload = function reload() {
         var prev = this.content.src;
         this.content.src = this.widget.codeURL;
         this.content.setAttribute("type", this.widget.meta.code_content_type);
         if (this.content.src === prev) {
             this.content.contentDocument.location.reload();
+        }
+    };
+
+    IWidgetView.prototype.highlight = function highlight() {
+        if (!this.element.classList.contains('wc-widget-highlight')) {
+            this.element.classList.add('wc-widget-highlight');
+            this.trigger('highlight');
+        } else {
+            // Reset highlighting animation
+            this.element.classList.remove('wc-widget-highlight');
+            setTimeout(function () {
+                this.element.classList.add('wc-widget-highlight');
+            }.bind(this));
+        }
+    };
+
+    IWidgetView.prototype.unhighlight = function unhighlight() {
+        if (this.element.classList.contains('wc-widget-highlight')) {
+            this.element.classList.remove('wc-widget-highlight');
+            this.trigger('unhighlight');
         }
     };
 
