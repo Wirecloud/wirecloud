@@ -72,8 +72,8 @@ workspace features:
 
 ![create_workspace/WorkspaceSettings.png](images/user_guide/create_workspace/WorkspaceSettings.png)
 
-Browsing the Marketplace
-------------------------
+
+## Accessing FIWARE Marketplaces and Stores
 
 ### Marketplaces and Stores
 
@@ -116,11 +116,11 @@ workspace path for this purpose.
 As shown in the previous screenshot, this menu allows you to choose
 among the different marketplaces you have access to. To add a new
 marketplace, you only need to provide its endpoint (URL). You can also
-delete the current markeplace through the "Delete Marketplace" option in
+delete the current markeplace through the *Delete catalogue* option in
 the context menu.
 
 If you have only Local marketplace available, you can add the FIWARE Lab
-marketplace using "Add new marketplace", as shown in the following
+marketplace using *Add new catalogue*, as shown in the following
 screenshots:
 
 ![browsing_marketplace/AddNewMarketplace.png](images/user_guide/browsing_marketplace/AddNewMarketplace.png)

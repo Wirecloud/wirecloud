@@ -64,7 +64,7 @@
         }
 
         if (!this.loading && !this.error) {
-            items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
+            items.push(new StyledElements.MenuItem(gettext('Add new catalogue'), function () {
                 var menu, fields;
 
                 fields = {
@@ -92,7 +92,7 @@
                         'label': gettext('Public')
                     };
                 }
-                menu = new Wirecloud.ui.FormWindowMenu(fields, gettext('Add Marketplace'));
+                menu = new Wirecloud.ui.FormWindowMenu(fields, gettext('Add catalogue'));
 
                 // Form data is sent to server
                 menu.executeOperation = function (data) {
@@ -115,19 +115,19 @@
                 menu.show();
             }.bind(this)));
 
-            item = new StyledElements.MenuItem(gettext('Delete marketplace'), function () {
-                //First ask if the user really wants to remove the marketplace
-                var msg = gettext('Do you really want to remove the marketplace "%(marketName)s"?');
-                msg = Wirecloud.Utils.interpolate(msg, {'marketName': this.market.alternatives.getCurrentAlternative().getLabel()});
+            item = new StyledElements.MenuItem(gettext('Delete catalogue'), function () {
+                // First ask if the user really wants to remove the marketplace
+                var msg = gettext('Do you really want to remove the "%(catalogueName)s" catalogue?');
+                msg = Wirecloud.Utils.interpolate(msg, {'catalogueName': this.market.alternatives.getCurrentAlternative().getLabel()});
                 var dialog = new Wirecloud.ui.AlertWindowMenu();
                 dialog.setMsg(msg);
                 dialog.setHandler(function () {
-                        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting marketplace"), 1);
-                        LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting marketplace'));
+                        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting catalogue"), 1);
+                        LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting catalogue'));
 
                         Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().desc, {
                             onSuccess: function () {
-                                LayoutManagerFactory.getInstance().logSubTask(gettext('Marketplace deleted successfully'));
+                                LayoutManagerFactory.getInstance().logSubTask(gettext('Catalogue deleted successfully'));
                                 LayoutManagerFactory.getInstance().logStep('');
                                 this.market.refreshViewInfo({
                                     onComplete: function () {
