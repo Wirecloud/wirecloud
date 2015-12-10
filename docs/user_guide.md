@@ -359,7 +359,7 @@ Once added, we need to configure it so it knows what info to retrieve from the
 And make sure the following configuration is used:
 
 - **NGSI server URL**: `http://orion.lab.fiware.org:1026/`
-- **NGSI proxy URL**: `https://ngdsfsiproxy.lab.fiware.org`
+- **NGSI proxy URL**: `https://ngsiproxy.lab.fiware.org`
 - **Use the FIWARE credentials of the user**: Enabled
 - **Use the FIWARE credentials of the workspace owner**: Disabled
 - **NGSI entity types**: `Node, AMMS, Regulator`
