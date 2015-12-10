@@ -38,11 +38,11 @@ class WiringEntry(Resource):
     @consumes(('application/json',))
     def update(self, request, workspace_id):
 
-        wiring_status = parse_json_request(request)
-
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if not request.user.is_superuser and workspace.creator != request.user:
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
+        wiring_status = parse_json_request(request)
 
         old_wiring_status = workspace.wiringStatus
         old_read_only_connections = []

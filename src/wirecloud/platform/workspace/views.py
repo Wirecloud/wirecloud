@@ -206,7 +206,7 @@ class WorkspaceEntry(Resource):
 
         ts = parse_json_request(request)
 
-        workspace = Workspace.objects.get(pk=workspace_id)
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
         if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
@@ -288,7 +288,7 @@ class TabOrderService(Service):
     @commit_on_http_success
     def process(self, request, workspace_id):
 
-        workspace = Workspace.objects.get(pk=workspace_id)
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
         if not (request.user.is_superuser or workspace.creator == request.user):
             return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
 
@@ -385,6 +385,10 @@ class MashupMergeService(Service):
     @commit_on_http_success
     def process(self, request, to_ws_id):
 
+        to_ws = get_object_or_404(Workspace, id=to_ws_id)
+        if not request.user.is_superuser and to_ws.creator != request.user:
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+
         data = parse_json_request(request)
 
         mashup_id = data.get('mashup', '')
@@ -394,10 +398,6 @@ class MashupMergeService(Service):
             return build_error_response(request, 422, _('Missing workspace or mashup parameter'))
         elif  mashup_id != '' and workspace_id != '':
             return build_error_response(request, 422, _('Workspace and mashup parameters cannot be used at the same time'))
-
-        to_ws = get_object_or_404(Workspace, id=to_ws_id)
-        if not request.user.is_superuser and to_ws.creator != request.user:
-            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         if mashup_id != '':
             values = mashup_id.split('/', 3)

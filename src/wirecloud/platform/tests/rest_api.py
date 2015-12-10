@@ -39,6 +39,16 @@ from wirecloud.platform.widget import utils as localcatalogue
 __test__ = False
 
 
+def check_not_found_response(self, method, url, body=None):
+
+    if method in ('get', 'delete'):
+        response = getattr(self.client, method)(url, HTTP_ACCEPT='application/json')
+    else:
+        response = getattr(self.client, method)(url, body, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 404)
+    self.assertEqual(response['Content-Type'], 'application/json; charset=utf-8')
+
+
 def check_get_requires_permission(self, url):
 
     # Authenticate
@@ -824,6 +834,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertTrue('preferences' in response_data)
         self.assertTrue(isinstance(response_data['preferences'], dict))
 
+    def test_workspace_entry_get_not_found(self):
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 404})
+        check_not_found_response(self, 'get', url)
+
     def test_workspace_entry_get_allows_anonymous_requests(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 4})
@@ -899,6 +913,14 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be removed
         self.assertFalse(Workspace.objects.filter(name='ExistingWorkspace').exists())
 
+    def test_workspace_entry_delete_not_found(self):
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'delete', url)
+
     def test_workspace_resource_collection_get(self):
 
         url = reverse('wirecloud.workspace_resource_collection', kwargs={'workspace_id': 2})
@@ -912,6 +934,15 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
         self.assertTrue(response_data["Wirecloud/TestOperator/1.0"]["js_files"][0].startswith('http'))
+
+    def test_workspace_resource_collection_get_not_found(self):
+
+        url = reverse('wirecloud.workspace_resource_collection', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
 
     def test_workspace_resource_collection_get_no_process_urls(self):
 
@@ -994,6 +1025,19 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(workspace.wiringStatus, new_wiring_status)
         check_cache_is_purged(self, 1, update_workspace_wiring)
 
+    def test_workspace_wiring_entry_put_not_found(self):
+
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {
+            'operators': {'0': {'name': 'Operator1'}},
+            'connections': [],
+        }
+        check_not_found_response(self, 'put', url, json.dumps(data))
+
     def test_workspace_wiring_entry_put_bad_request_syntax(self):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
@@ -1046,6 +1090,15 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
         check_cache_is_purged(self, 1, create_workspace_tab)
 
+    def test_tab_collection_post_not_found(self):
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'name': 'rest_api_test'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
     def test_tab_collection_post_conflict(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
@@ -1069,20 +1122,6 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
         check_post_bad_request_syntax(self, url)
-
-    def test_tab_collection_post_inexistent_workspace(self):
-
-        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 666})
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        # Make the request
-        data = {
-            'name': 'ExistingTab',
-        }
-        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 404)
 
     def test_tab_entry_put_requires_authentication(self):
 
@@ -1151,6 +1190,24 @@ class ApplicationMashupAPI(WirecloudTestCase):
         tab1 = Tab.objects.get(pk=102)
         self.assertTrue(tab1.visible)
 
+    def test_tab_entry_put_workspace_not_found(self):
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 404, 'tab_id': 103})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'name': 'new tab name'}
+        check_not_found_response(self, 'put', url, json.dumps(data))
+
+    def test_tab_entry_put_tab_not_found(self):
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 3, 'tab_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'name': 'new tab name'}
+        check_not_found_response(self, 'put', url, json.dumps(data))
+
     def test_tab_entry_put_bad_request_syntax(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
@@ -1184,6 +1241,22 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Tab should be removed
         self.assertFalse(Tab.objects.filter(name='ExistingTab').exists())
+
+    def test_tab_entry_delete_workspace_not_found(self):
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 404, 'tab_id': 103})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'delete', url)
+
+    def test_tab_entry_delete_tab_not_found(self):
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 3, 'tab_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'delete', url)
 
     def test_tab_entry_delete_read_only_widgets(self):
 
@@ -1234,6 +1307,15 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         self.assertEqual(tuple(Workspace.objects.get(pk=3).tab_set.order_by('position').values_list('pk', flat=True)), data)
 
+    def test_tab_order_post_workspace_not_found(self):
+        url = reverse('wirecloud.tab_order', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = (103, 102)
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
     def test_tab_order_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.tab_order', kwargs={'workspace_id': 3})
@@ -1279,6 +1361,24 @@ class ApplicationMashupAPI(WirecloudTestCase):
             response_data = json.loads(response.content.decode('utf-8'))
             self.assertTrue(isinstance(response_data, dict))
         check_cache_is_purged(self, 1, add_iwidget_to_workspace)
+
+    def test_iwidget_collection_post_workspace_not_found(self):
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 404, 'tab_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'widget': 'Wirecloud/Test/1.0'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
+    def test_iwidget_collection_post_tab_not_found(self):
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'widget': 'Wirecloud/Test/1.0'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
 
     def test_iwidget_collection_post_creation_from_nonexistent_widget(self):
 
@@ -1376,6 +1476,24 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(response.status_code, 204)
         check_cache_is_purged(self, 2, place_iwidgets)
 
+    def test_iwidget_collection_put_workspace_not_found(self):
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 404, 'tab_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = [{'id': 1, 'left': 0, 'top': 0, 'width': 10, 'height': 10}]
+        check_not_found_response(self, 'put', url, json.dumps(data))
+
+    def test_iwidget_collection_put_tab_not_found(self):
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = [{'id': 1, 'left': 0, 'top': 0, 'width': 10, 'height': 10}]
+        check_not_found_response(self, 'put', url, json.dumps(data))
+
     def test_iwidget_collection_put_requires_permission(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
@@ -1435,7 +1553,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 404)
 
-    def test_widget_code_entry_cached(self):
+    def test_widget_code_entry_get_cached(self):
 
         widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
         url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
@@ -1453,7 +1571,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("cached hello world!", response.content.decode('utf-8'))
 
-    def test_widget_code_entry_html_in_folder(self):
+    def test_widget_code_entry_get_html_in_folder(self):
 
         widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
         url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
@@ -1471,7 +1589,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("infolder test!", response.content.decode('utf-8'))
 
-    def test_widget_code_absolute_url(self):
+    def test_widget_code_entry_get_absolute_url(self):
 
         widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
         url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
@@ -1577,6 +1695,16 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 502)
         self.assertIn('Error processing widget code', response.content.decode('utf-8'))
 
+    def test_widget_code_entry_get_widget_not_found(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'inexistent', 'version': '1.0'}
+        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
     def test_iwidget_entry_post_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
@@ -1621,6 +1749,33 @@ class ApplicationMashupAPI(WirecloudTestCase):
             iwidget = IWidget.objects.get(pk=2)
             self.assertEqual(iwidget.name, 'New Title')
         check_cache_is_purged(self, 2, update_iwidget_name)
+
+    def test_iwidget_entry_post_workspace_not_found(self):
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'title': 'New Title'}
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 404, 'tab_id': 101, 'iwidget_id': 2})
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
+    def test_iwidget_entry_post_tab_not_found(self):
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'title': 'New Title'}
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 404, 'iwidget_id': 2})
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
+    def test_iwidget_entry_post_iwidget_not_found(self):
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'title': 'New Title'}
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 404})
+        check_not_found_response(self, 'post', url, json.dumps(data))
 
     def test_iwidget_entry_post_emtpy_name(self):
 
@@ -1783,6 +1938,36 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         check_cache_is_purged(self, 2, update_iwidget_preference)
 
+    def test_widget_preferences_post_workspace_not_found(self):
+
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 404, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'text': 'new value'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
+    def test_widget_preferences_post_tab_not_found(self):
+
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 404, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'text': 'new value'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
+    def test_widget_preferences_post_iwidget_not_found(self):
+
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'text': 'new value'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
     def test_iwidget_preferences_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
@@ -1890,6 +2075,36 @@ class ApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(variables['prop'], 'new value')
         check_cache_is_purged(self, 2, update_iwidget_property)
 
+    def test_widget_properties_post_workspace_not_found(self):
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 404, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'prop': 'new value'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
+    def test_widget_properties_post_tab_not_found(self):
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 404, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'prop': 'new value'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
+    def test_widget_properties_post_iwidget_not_found(self):
+
+        url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'text': 'new value'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
     def test_iwidget_properties_entry_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.iwidget_properties', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
@@ -1947,6 +2162,33 @@ class ApplicationMashupAPI(WirecloudTestCase):
             # IWidget should be deleted
             self.assertRaises(IWidget.DoesNotExist, IWidget.objects.get, pk=2)
         check_cache_is_purged(self, 2, delete_iwidget_from_workspace)
+
+    def test_iwidget_entry_delete_workspace_not_found(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 404, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'delete', url)
+
+    def test_iwidget_entry_delete_tab_not_found(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 404, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'delete', url)
+
+    def test_iwidget_entry_delete_iwidget_not_found(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'delete', url)
 
     def test_iwidget_entry_delete_read_only(self):
 
@@ -2410,6 +2652,16 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/x-widget+mashable-application-component')
 
+    def test_resource_entry_get_not_found(self):
+
+        resource_id = ['Wirecloud', 'Test', '404']
+        url = reverse('wirecloud.resource_entry', args=resource_id)
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
     def test_resource_entry_get_requires_permission(self):
 
         resource_id = (
@@ -2452,6 +2704,16 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 204)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
 
+    def test_resource_entry_delete_not_found(self):
+
+        resource_id = ['Wirecloud', 'Test', '404']
+        url = reverse('wirecloud.resource_entry', args=resource_id)
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'delete', url)
+
 
 class ExtraApplicationMashupAPI(WirecloudTestCase):
 
@@ -2475,6 +2737,24 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, list))
 
+    def test_iwidget_collection_get_workspace_not_found(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 404, 'tab_id': 101})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
+    def test_iwidget_collection_get_tab_not_found(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 2, 'tab_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
     def test_iwidget_entry_get_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
@@ -2492,6 +2772,33 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_iwidget_entry_get_workspace_not_found(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 404, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
+    def test_iwidget_entry_get_tab_not_found(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 404, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
+    def test_iwidget_entry_get_iwidget_not_found(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
     def test_resource_description_entry_get(self):
 
         resource_id = ['Wirecloud', 'Test', '1.0']
@@ -2506,6 +2813,16 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(response_data["contents"]["src"].startswith('http'))
+
+    def test_resource_description_entry_get_not_found(self):
+
+        resource_id = ['Wirecloud', 'Test', '404']
+        url = reverse('wirecloud.resource_description_entry', args=resource_id)
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        check_not_found_response(self, 'get', url)
 
     def test_resource_description_entry_get_no_process_urls(self):
 
@@ -2673,12 +2990,12 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
-    def test_market_collection_bad_request_content_type(self):
+    def test_market_collection_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.market_collection')
         check_post_bad_request_content_type(self, url)
 
-    def test_market_collection_bad_request_syntax(self):
+    def test_market_collection_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.market_collection')
         check_post_bad_request_syntax(self, url)
@@ -2714,10 +3031,14 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.delete(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
-    def test_market_collection_post_bad_request_syntax(self):
+    def test_market_entry_delete_not_found(self):
 
-        url = reverse('wirecloud.market_collection')
-        check_post_bad_request_syntax(self, url)
+        url = reverse('wirecloud.market_entry', kwargs={'user': 'user_with_markets', 'market': 'notfound'})
+
+        # Authenticate
+        self.client.login(username='user_with_markets', password='admin')
+
+        check_not_found_response(self, 'delete', url)
 
     def test_market_publish_service_requires_authentication(self):
 
@@ -2912,6 +3233,15 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(user_workspace.active, True)
         check_cache_is_purged(self, 2, mark_workspace_active)
 
+    def test_workspace_entry_post_workspace_not_found(self):
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'name': 'new name'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
     def test_workspace_entry_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
@@ -2966,6 +3296,16 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(tabs[1].iwidget_set.count(), 1)
             self.assertEqual(tabs[2].iwidget_set.count(), 1)
         check_cache_is_purged(self, 2, merge_workspaces)
+
+    def test_workspace_merge_service_post_workspace_not_found(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'mashup': 'Wirecloud/test-mashup/1.0'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
 
     def test_workspace_merge_service_post_required_paramateres(self):
 
@@ -3134,6 +3474,14 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_workspace_prefrences_collection_get_not_found(self):
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
     def test_workspace_preference_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
@@ -3172,6 +3520,15 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(response.status_code, 204)
             self.assertEqual(response.content.decode('utf-8'), '')
         check_cache_is_purged(self, 2, update_workspace_preferences)
+
+    def test_workspace_prefrences_collection_post_not_found(self):
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'pref1': {'inherit': False, 'value': '5'}}
+        check_not_found_response(self, 'post', url, json.dumps(data))
 
     def test_workspace_preference_collection_post_withoutchanges(self):
 
@@ -3226,6 +3583,22 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_tab_preference_collection_get_workspace_not_found(self):
+        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 404, 'tab_id': 101})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
+    def test_tab_preference_collection_get_tab_not_found(self):
+        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        check_not_found_response(self, 'get', url)
+
     def test_tab_preference_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
@@ -3263,6 +3636,24 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(response.content.decode('utf-8'), '')
         check_cache_is_purged(self, 2, update_workspace_tab_preferences)
 
+    def test_tab_preference_collection_post_workspace_not_found(self):
+        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 404, 'tab_id': 101})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'pref1': '5'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
+    def test_tab_preference_collection_post_tab_not_found(self):
+        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {'pref1': '5'}
+        check_not_found_response(self, 'post', url, json.dumps(data))
+
     def test_tab_preference_collection_post_bad_request_content_type(self):
 
         url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
@@ -3297,7 +3688,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'name': 'test-published-mashup',
             'title': 'Mashup (Rest API Test)',
             'version': '1.0.5',
-            'email': 'test@example.com'
         }
         response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
@@ -3306,6 +3696,19 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response_data['name'], 'test-published-mashup')
         self.assertEqual(response_data['title'], 'Mashup (Rest API Test)')
         self.assertEqual(response_data['version'], '1.0.5')
+
+    def test_workspace_publish_workspace_not_found(self):
+        url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 404})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {
+            'vendor': 'Wirecloud',
+            'name': 'test-published-mashup',
+            'version': '1.0.5',
+        }
+        check_not_found_response(self, 'post', url, json.dumps(data))
 
     def test_workspace_publish_including_images(self):
 
@@ -3411,7 +3814,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'vendor': 'Wirecloud',
             'name': '',
             'version': '1.0.5',
-            'email': 'test@example.com'
         }
         check_post_bad_provided_data(self, url, json.dumps(data))
 
@@ -3420,7 +3822,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'vendor': 'Wire/cloud',
             'name': 'test-published-mashup',
             'version': '1.0.5',
-            'email': 'test@example.com'
         }
         check_post_bad_provided_data(self, url, json.dumps(data))
 
@@ -3429,7 +3830,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'vendor': 'Wirecloud',
             'name': 'test/published/mashup',
             'version': '1.0.5',
-            'email': 'test@example.com'
         }
         check_post_bad_provided_data(self, url, json.dumps(data))
 
@@ -3438,7 +3838,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'vendor': 'Wirecloud',
             'name': 'test-published-mashup',
             'version': '1.0.05',
-            'email': 'test@example.com'
         }
         check_post_bad_provided_data(self, url, json.dumps(data))
 

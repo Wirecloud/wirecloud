@@ -19,7 +19,7 @@
 
 import json
 
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
@@ -39,11 +39,13 @@ class IWidgetCollection(Resource):
     @no_cache
     def read(self, request, workspace_id, tab_id):
 
-        workspace = get_object_or_404(Workspace, id=workspace_id)
+        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
+        if not tab.workspace.is_available_for(request.user):
+            return build_error_response(request, 403, _("You don't have permission to access this workspace"))
 
-        cache_manager = VariableValueCacheManager(workspace, request.user)
-        iwidgets = IWidget.objects.filter(tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id)
-        data = [get_iwidget_data(iwidget, workspace, cache_manager) for iwidget in iwidgets]
+        cache_manager = VariableValueCacheManager(tab.workspace, request.user)
+        iwidgets = tab.iwidget_set.all()
+        data = [get_iwidget_data(iwidget, tab.workspace, cache_manager) for iwidget in iwidgets]
 
         return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
 
@@ -134,6 +136,8 @@ class IWidgetEntry(Resource):
             return build_error_response(request, 400, e)
         except ValueError as e:
             return build_error_response(request, 422, e)
+        except IWidget.DoesNotExist:
+            raise Http404
 
         return HttpResponse(status=204)
 
@@ -163,12 +167,15 @@ class IWidgetPreferences(Resource):
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
-        workspace = Workspace.objects.get(id=workspace_id)
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
         if not request.user.is_superuser and workspace.creator != request.user:
             msg = _('You have not enough permission for updating the preferences of the iwidget')
             return build_error_response(request, 403, msg)
 
         iwidget = get_object_or_404(IWidget.objects.select_related('widget__resource'), pk=iwidget_id)
+        if iwidget.tab_id != int(tab_id):
+            raise Http404
+
         iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
 
         new_values = parse_json_request(request)
@@ -197,12 +204,15 @@ class IWidgetProperties(Resource):
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
-        workspace = Workspace.objects.get(id=workspace_id)
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
         if not request.user.is_superuser and workspace.creator != request.user:
             msg = _('You have not enough permission for updating the persistent variables of this widget')
             return build_error_response(request, 403, msg)
 
         iwidget = get_object_or_404(IWidget, pk=iwidget_id)
+        if iwidget.tab_id != int(tab_id):
+            raise Http404
+
         iwidget_info = iwidget.widget.resource.get_processed_info(translate=True, process_variables=True)
 
         new_values = parse_json_request(request)
