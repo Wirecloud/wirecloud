@@ -152,10 +152,6 @@
                 this.addClassName("missing");
             }
 
-            if (!this.hasEndpoints()) {
-                this.body.remove();
-            }
-
             if (options.collapsed) {
                 this.collapsed = true;
             }
@@ -550,8 +546,7 @@
 
         this.body
             .removeChild(this.endpoints.target)
-            .removeChild(this.endpoints.source)
-            .remove();
+            .removeChild(this.endpoints.source);
 
         this.heading
             .appendChild(this.endpoints.target)
@@ -584,8 +579,7 @@
 
         this.body
             .appendChild(this.endpoints.target)
-            .appendChild(this.endpoints.source)
-            .appendTo(this);
+            .appendChild(this.endpoints.source);
 
         offsetWidth = this.get().offsetWidth - collapsedWidth;
 
