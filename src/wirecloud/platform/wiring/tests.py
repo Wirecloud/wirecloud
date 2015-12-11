@@ -1217,6 +1217,21 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
 
         self.check_input_endpoint_exceptions()
 
+    def test_missing_input_and_output_endpoints(self):
+        # Update wiring connections to set (1) a connection bound to missing
+        # input-endpoint and (2) a connection bound to missing output-endpoint.
+        # From wiring editor, those connections must be displayed.
+
+        workspace = Workspace.objects.get(id=2)
+        workspace.wiringStatus['connections'][0]['target']['endpoint'] = 'missing'
+        workspace.wiringStatus['connections'][1]['source']['endpoint'] = 'missing'
+        workspace.save()
+
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            self.assertEqual(len(wiring.filter_connections_by_properties('missing')), 2)
+
 
 @wirecloud_selenium_test_case
 class EndpointSortingTestCase(WirecloudSeleniumTestCase):
