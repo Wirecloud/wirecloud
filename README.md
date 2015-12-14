@@ -11,6 +11,7 @@ WireCloud
 [![WireCloud version](https://img.shields.io/pypi/v/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
 [![WireCloud downloads](https://img.shields.io/pypi/dm/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
 [![WireCloud continuous integration](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-pip-develop-python2.7/badge/icon)](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-pip-develop-python2.7/)
+[![WireCloud Coverage Status](https://coveralls.io/repos/Wirecloud/wirecloud/badge.svg?branch=HEAD&service=github)](https://coveralls.io/github/Wirecloud/wirecloud?branch=HEAD)
 [![Documentation Status](https://readthedocs.org/projects/wirecloud/badge/?version=latest)](https://wirecloud.readthedocs.org/en/latest/?badge=latest)
 
 WireCloud builds on cutting-edge end-user development, RIA and semantic
