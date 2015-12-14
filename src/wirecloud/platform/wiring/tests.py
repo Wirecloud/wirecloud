@@ -976,7 +976,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
 
 
 @wirecloud_selenium_test_case
-class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
+class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
@@ -1012,6 +1012,22 @@ class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(wiring.filter_connections_by_properties("readonly")), 1)
             self.assertTrue(wiring.find_component_by_title('operator', "TestOperator").btn_remove.disabled)
             self.assertTrue(wiring.find_component_by_title('widget', "Test 2").btn_remove.disabled)
+
+    def test_connection_valid_with_only_visual_info(self):
+        # Change the output-endpoint of two connections from the business
+        # description and keep those previous connections into visual
+        # description.
+
+        workspace = Workspace.objects.get(id=2)
+        workspace.wiringStatus['connections'][0]['target']['endpoint'] = 'nothandled'
+        workspace.wiringStatus['connections'][1]['target']['endpoint'] = 'nothandled'
+        workspace.save()
+
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            self.assertEqual(len(wiring.find_connections()), 3)
+            self.assertEqual(len(wiring.filter_connections_by_properties('missing')), 0)
 
 
 @wirecloud_selenium_test_case

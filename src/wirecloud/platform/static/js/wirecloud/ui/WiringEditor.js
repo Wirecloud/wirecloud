@@ -525,18 +525,7 @@ Wirecloud.ui = Wirecloud.ui || {};
                 });
 
                 if (!found) {
-                    source = findEndpointById.call(this, 'source', v.sourcename);
-                    target = findEndpointById.call(this, 'target', v.targetname);
-
-                    list2.push({
-                        source: source,
-                        target: target,
-                        meta: this.workspace.wiring.createConnection(false, source._endpoint, target._endpoint),
-                        options: {
-                            sourceHandle: v.sourcehandle,
-                            targetHandle: v.targethandle
-                        }
-                    });
+                    // The connection does not have business info.
                 }
             } catch (e) {
                 this.errorMessages.push(e);
