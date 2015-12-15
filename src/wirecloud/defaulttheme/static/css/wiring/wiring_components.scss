@@ -226,6 +226,10 @@
         width: 100%;
         padding: 0;
         background-color: $component-body-bg;
+
+        &:empty {
+            display: none;
+        }
     }
 
     &.dragging {
@@ -304,6 +308,10 @@
             right,
             $target-endpoint-anchor-bg
         );
+    }
+
+    &:empty {
+        display: none;
     }
 
     .endpoint:hover,

@@ -1015,18 +1015,18 @@ class ConnectionReadOnlyTestCase(WirecloudSeleniumTestCase):
 
 
 @wirecloud_selenium_test_case
-class EndpointBasicRecommendationTestCase(WirecloudSeleniumTestCase):
+class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     @classmethod
     def setUpClass(cls):
-        super(EndpointBasicRecommendationTestCase, cls).setUpClass()
+        super(EndpointManagementTestCase, cls).setUpClass()
 
         if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
             cls.tearDownClass()
-            raise unittest.SkipTest('EndpointBasicRecommendationTestCase needs to use native events supported on Selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('EndpointManagementTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
     def test_endpoint_are_highlighted_when_the_mouse_is_over(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
@@ -1077,21 +1077,6 @@ class EndpointBasicRecommendationTestCase(WirecloudSeleniumTestCase):
             self.assertTrue(source2.active)
             self.assertTrue(source3.active)
             target1.drop_connection()
-
-
-@wirecloud_selenium_test_case
-class EndpointCollapsedTestCase(WirecloudSeleniumTestCase):
-
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
-
-    @classmethod
-    def setUpClass(cls):
-        super(EndpointCollapsedTestCase, cls).setUpClass()
-
-        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
-            cls.tearDownClass()
-            raise unittest.SkipTest('EndpointCollapsedTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
     def test_component_endpoints_can_be_collapsed_and_expanded(self):
         self.login(username='user_with_workspaces')
@@ -1145,13 +1130,6 @@ class EndpointCollapsedTestCase(WirecloudSeleniumTestCase):
 
             menu_dropdown = operator.display_preferences()
             self.assertTrue('disabled' in menu_dropdown.get_entry('Order endpoints').get_attribute('class').split())
-
-
-@wirecloud_selenium_test_case
-class EndpointMissingTestCase(WirecloudSeleniumTestCase):
-
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def check_input_endpoint_exceptions(self):
 
@@ -1217,20 +1195,20 @@ class EndpointMissingTestCase(WirecloudSeleniumTestCase):
 
         self.check_input_endpoint_exceptions()
 
+    def test_missing_input_and_output_endpoints(self):
+        # Update wiring connections to set (1) a connection bound to missing
+        # input-endpoint and (2) a connection bound to missing output-endpoint.
+        # From wiring editor, those connections must be displayed.
 
-@wirecloud_selenium_test_case
-class EndpointSortingTestCase(WirecloudSeleniumTestCase):
+        workspace = Workspace.objects.get(id=2)
+        workspace.wiringStatus['connections'][0]['target']['endpoint'] = 'missing'
+        workspace.wiringStatus['connections'][1]['source']['endpoint'] = 'missing'
+        workspace.save()
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
+        self.login(username='user_with_workspaces')
 
-    @classmethod
-    def setUpClass(cls):
-        super(EndpointSortingTestCase, cls).setUpClass()
-
-        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
-            cls.tearDownClass()
-            raise unittest.SkipTest('EndpointSortingTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
+        with self.wiring_view as wiring:
+            self.assertEqual(len(wiring.filter_connections_by_properties('missing')), 2)
 
     @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
     def test_endpoint_sorting_in_operators(self):
@@ -1257,21 +1235,6 @@ class EndpointSortingTestCase(WirecloudSeleniumTestCase):
             with widget.sort_endpoints as component_editable:
                 component_editable.move_endpoint('source', "output1", "output2")
                 component_editable.move_endpoint('target', "input1", "input3")
-
-
-@wirecloud_selenium_test_case
-class EndpointStickyEffectTestCase(WirecloudSeleniumTestCase):
-
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium',)
-
-    @classmethod
-    def setUpClass(cls):
-        super(EndpointStickyEffectTestCase, cls).setUpClass()
-
-        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
-            cls.tearDownClass()
-            raise unittest.SkipTest('EndpointStickyEffectTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
     def test_sticky_effect_in_target_endpoint_label(self):
         self.login()

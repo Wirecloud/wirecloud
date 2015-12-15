@@ -36,6 +36,12 @@
         .btn-svg-plain {
             cursor: pointer;
             fill: $connection-text-color;
+
+            &:hover,
+            &.active {
+                fill: $connection-active-text-hover-color;
+                text-shadow: $connection-text-hover-shadow;
+            }
         }
     }
 }
@@ -68,11 +74,44 @@
 }
 
 // ============================================================================
+// WIRING VIEW - CONNECTION - MISSING
+// ============================================================================
+
+.connection.missing {
+
+    .connection-body {
+        stroke: $connection-missing-bg;
+    }
+
+    .connection-border {
+        stroke: $connection-missing-border-color;
+    }
+
+    .connection-options {
+
+        .btn-svg-group {
+            fill: $connection-missing-options-bg;
+            stroke: $connection-missing-options-border-color;
+        }
+
+        .btn-svg-plain {
+            fill: $connection-missing-text-color;
+
+            &:hover,
+            &.active {
+                fill: $connection-missing-text-hover-color;
+            }
+        }
+    }
+}
+
+// ============================================================================
 // WIRING VIEW - CONNECTION - ACTIVE
 // ============================================================================
 
 .connection.active,
 .connection.editable,
+.connection.missing.active,
 .connection.background.active {
 
     .connection-body {
@@ -93,6 +132,12 @@
         .btn-svg-plain {
             fill: $connection-active-text-color;
             text-shadow: $connection-active-text-shadow;
+
+            &:hover,
+            &.active {
+                fill: $connection-active-text-hover-color;
+                text-shadow: $connection-text-hover-shadow;
+            }
         }
     }
 }
@@ -105,15 +150,6 @@
 
     .connection-border {
         stroke-dasharray: $connection-editable-border-dasharray;
-    }
-}
-
-.connection .connection-options .btn-svg-plain {
-
-    &:hover,
-    &.active {
-        fill: $connection-active-text-hover-color;
-        text-shadow: $connection-text-hover-shadow;
     }
 }
 

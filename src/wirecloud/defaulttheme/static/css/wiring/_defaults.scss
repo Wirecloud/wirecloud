@@ -109,6 +109,15 @@ $connection-background-options-border-color: transparentize(lighten($connection-
 
 $connection-background-text-color: rgba(0, 0, 0, 0.2) !default;
 
+$connection-missing-bg:           transparentize($state-danger-bg, 0.1) !default;
+$connection-missing-border-color: transparentize($state-danger-border, 0.1) !default;
+
+$connection-missing-options-bg:           transparentize($state-danger-bg, 0.1) !default;
+$connection-missing-options-border-color: transparentize($state-danger-border, 0.1) !default;
+
+$connection-missing-text-color: lighten($state-danger-text, 5%) !default;
+$connection-missing-text-hover-color: $state-danger-text !default;
+
 $connection-active-bg:           rgb(180, 230, 250) !default;
 $connection-active-border-color: darken($component-active-bg, 20%) !default;
 

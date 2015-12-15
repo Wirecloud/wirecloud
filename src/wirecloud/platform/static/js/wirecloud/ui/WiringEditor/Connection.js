@@ -111,6 +111,12 @@
                     set: function set(value) {this._oneditable(value);}
                 },
 
+                missing: {
+                    get: function get() {
+                        return this.created && (this.source.endpoint.missing || this.target.endpoint.missing);
+                    }
+                },
+
                 removeAllowed: {
                     get: function get() {return removeAllowed;},
                     set: function set(value) {
@@ -358,6 +364,8 @@
                 if (!this.created) {
                     return this;
                 }
+
+                this.toggleClassName('missing', this.missing);
 
                 sourcePosition = this.source.endpoint.anchorPosition;
                 targetPosition = this.target.endpoint.anchorPosition;
