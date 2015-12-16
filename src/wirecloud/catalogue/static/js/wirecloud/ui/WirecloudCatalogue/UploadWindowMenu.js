@@ -96,8 +96,10 @@
         this.acceptButton.setDisabled(empty);
         if (empty) {
             this.htmlElement.classList.add('wc-upload-mac-dialog-empty');
+            this.fileButton.focus();
         } else {
             this.htmlElement.classList.remove('wc-upload-mac-dialog-empty');
+            this.acceptButton.focus();
         }
     };
 
@@ -144,7 +146,7 @@
                 "class": "wc-upload-mac-button-column",
                 "sortable": false,
                 "contentBuilder": function (entry) {
-                    var button = new StyledElements.Button({"iconClass": "icon-remove", plain: true});
+                    var button = new StyledElements.Button({iconClass: "icon-remove", plain: true, title: gettext("Remove this file")});
                     button.addEventListener("click", this.removeFile.bind(this, entry.file));
                     return button;
                 }.bind(this)
@@ -247,7 +249,7 @@
         };
         this.fileTable.source.addElement(entry);
         this.htmlElement.classList.remove('wc-upload-mac-dialog-empty');
-        this.acceptButton.enable();
+        this.acceptButton.enable().focus();
     };
 
     UploadWindowMenu.prototype.removeFile = function removeFile(file) {
