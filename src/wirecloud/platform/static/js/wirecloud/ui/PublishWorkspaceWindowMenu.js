@@ -65,7 +65,7 @@
                 'fields': [
                     {name: 'readOnlyWidgets', label: utils.gettext('Block widgets'), type: 'boolean'},
                     {name: 'readOnlyConnectables', label: utils.gettext('Block connections'), type: 'boolean'},
-                    {name: 'embedmacs', label: utils.gettext('Embed used widgets/operators'), type: 'boolean'}
+                    {name: 'embedmacs', label: utils.gettext('Embed used widgets/operators'), type: 'boolean', initialValue: true}
                 ]
             }
         ];
