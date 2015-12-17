@@ -37,7 +37,7 @@ This project is part of [FIWARE](http://www.fiware.org). Check it out in the [Ca
 
 ## Documentation
 
-You can find the User & Programmer's Manual and the Install & Administration Guide on [readthedocs.org](wirecloud.readthedocs.org)
+You can find the User & Programmer's Manual and the Install & Administration Guide on [readthedocs.org](https://wirecloud.readthedocs.org)
 
 ## Install
 
