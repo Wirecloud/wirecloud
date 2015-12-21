@@ -261,9 +261,9 @@
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
                     .removeIconClassName('icon-plus-sign')
-                    .removeIconClassName('icon-remove-sign')
-                    .addIconClassName('icon-trash')
-                    .setTitle(utils.gettext("Delete"));
+                    .removeIconClassName('icon-trash')
+                    .addIconClassName('icon-remove-sign')
+                    .setTitle(utils.gettext("Remove"));
 
                 return this;
             },
@@ -273,8 +273,8 @@
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
                     .removeIconClassName('icon-plus-sign')
-                    .removeIconClassName('icon-trash')
-                    .addIconClassName('icon-remove-sign')
+                    .removeIconClassName('icon-remove-sign')
+                    .addIconClassName('icon-trash')
                     .setTitle(utils.gettext("Remove"));
 
                 return this;
