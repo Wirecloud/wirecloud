@@ -46,7 +46,6 @@
         'InputElement': window.parent.StyledElements.InputElement,
         'List': window.parent.StyledElements.List,
         'MenuItem': window.parent.StyledElements.MenuItem,
-        'ModelTable': window.parent.StyledElements.ModelTable,
         'NumericField': window.parent.StyledElements.NumericField,
         'ObjectWithEvents': window.parent.StyledElements.ObjectWithEvents,
         'PaginatedSource': window.parent.StyledElements.PaginatedSource,
@@ -276,8 +275,12 @@
 
 
     /* Tooltip */
-    StyledElements.Tooltip = extend(RealStyledElements.Tooltip, {
-        'show': function show(refPosition) {
+    StyledElements.Tooltip = function Tooltip(options) {
+        var tooltip = new RealStyledElements.Tooltip(options);
+
+        this.options = tooltip.options;
+
+        this.show = function show(refPosition) {
             var position = iwidget.content.getBoundingClientRect();
 
             if ('getBoundingClientRect' in refPosition) {
@@ -294,9 +297,25 @@
             refPosition.bottom = refPosition.top + refPosition.height;
             Object.freeze(refPosition);
 
-            RealStyledElements.Tooltip.prototype.show.call(this, refPosition);
-        }
-    });
+            tooltip.show(refPosition);
+        };
+
+        proxy_method(this, tooltip, 'addEventListener');
+        proxy_method(this, tooltip, 'off');
+        proxy_method(this, tooltip, 'on');
+        proxy_method(this, tooltip, 'removeEventListener');
+        proxy_method(this, tooltip, 'hide');
+
+        this.bind = function bind(element) {
+            tooltip.bind.call(this, element);
+        };
+    };
+    StyledElements.Tooltip.prototype = new StyledElements.StyledElement();
+
+    /* ModelTable */
+    StyledElements.ModelTable = extend(RealStyledElements.ModelTable, {
+        Tooltip: StyledElements.Tooltip
+    }, {extending: true});
 
     /* Button */
     StyledElements.Button = extend(RealStyledElements.Button, {

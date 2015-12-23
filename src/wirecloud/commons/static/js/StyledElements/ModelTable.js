@@ -21,12 +21,12 @@
 
 /*global CSSPrimitiveValue, StyledElements*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
     var buildHeader = function buildHeader() {
-        var i, column, cell, label;
+        var i, column, cell, label, tooltip;
 
         this.pHeaderCells = [];
         for (i = 0; i < this.columns.length; i += 1) {
@@ -49,7 +49,11 @@
             cell.textContent = label;
             if (column.sortable !== false) {
                 cell.classList.add('sortable');
-                cell.setAttribute('title', StyledElements.Utils.interpolate(StyledElements.Utils.gettext('Sort by %(column_name)s'), {column_name: label}));
+                tooltip = new this.Tooltip({
+                    content: utils.interpolate(utils.gettext('Sort by %(column_name)s'), {column_name: label}),
+                    placement: ['bottom', 'top', 'right', 'left']
+                });
+                tooltip.bind(cell);
                 cell.callback = this.pSortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
             }
@@ -201,7 +205,7 @@
             'pageSize': 5,
             'emptyMessage': utils.gettext('No data available')
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
 
         StyledElements.StyledElement.call(this, ['click']);
 
@@ -209,7 +213,7 @@
         this.emptyMessage = options.emptyMessage;
 
         if (options['class'] != null) {
-            className = StyledElements.Utils.appendWord('se-model-table', options['class']);
+            className = utils.appendWord('se-model-table', options['class']);
         } else {
             className = 'se-model-table';
         }
@@ -299,6 +303,8 @@
         }
     };
     ModelTable.prototype = new StyledElements.StyledElement();
+
+    ModelTable.prototype.Tooltip = StyledElements.Tooltip;
 
     ModelTable.prototype.repaint = function repaint() {
         this.layout.repaint();
@@ -415,7 +421,7 @@
     };
 
     ModelTable.prototype.pFormatDate = function pFormatDate(item, field, today, dateparser) {
-        var date, formatedDate, sameDay, shortVersion, fullVersion, element;
+        var date, formatedDate, sameDay, shortVersion, fullVersion, element, tooltip;
 
         date = this.pGetFieldValue(item, field);
 
@@ -439,7 +445,11 @@
 
         element = document.createElement('span');
         element.textContent = shortVersion;
-        element.setAttribute('title', fullVersion);
+        tooltip = new StyledElements.Tooltip({
+            content: fullVersion,
+            placement: ['bottom', 'top', 'right', 'left']
+        });
+        tooltip.bind(element);
 
         return element;
     };
@@ -499,4 +509,5 @@
     };
 
     StyledElements.ModelTable = ModelTable;
-})();
+
+})(StyledElements.Utils);
