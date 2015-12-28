@@ -13,19 +13,13 @@ from django.utils.encoding import smart_str
 import sys
 
 
-class CacheClass(locmem.CacheClass):
+class LocMemCache(locmem.LocMemCache):
     def add(self, key, value, timeout=None, version=None):
         if timeout is 0:
             timeout = sys.maxint
-        return super(CacheClass, self).add(smart_str(key), value, timeout, version)
+        return super(LocMemCache, self).add(smart_str(key), value, timeout, version)
 
     def set(self, key, value, timeout=None, version=None):
         if timeout is 0:
             timeout = sys.maxint
-        return super(CacheClass, self).set(smart_str(key), value, timeout, version)
-
-
-class LocMemCache(CacheClass):
-    """Locmem cache interpreting 0 as "a very long time", named according
-    to the Django 1.3 conventions."""
-    pass
+        return super(LocMemCache, self).set(smart_str(key), value, timeout, version)
