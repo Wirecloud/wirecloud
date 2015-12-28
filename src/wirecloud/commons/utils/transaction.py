@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,11 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.transaction import is_dirty, leave_transaction_management, rollback, commit, enter_transaction_management, managed
-from django.db import DEFAULT_DB_ALIAS
 from django.http import HttpResponse
 
 try:
+
+    # Django 1.7+
+
     from django.db.transaction import atomic, set_rollback
 
     def commit_on_http_success(func, using=None):
@@ -39,6 +40,11 @@ try:
         return wrapped_func
 
 except:
+
+    # Django 1.6 and below
+
+    from django.db.transaction import is_dirty, leave_transaction_management, rollback, commit, enter_transaction_management, managed
+    from django.db import DEFAULT_DB_ALIAS
 
     def commit_on_http_success(func, using=None):
         """
