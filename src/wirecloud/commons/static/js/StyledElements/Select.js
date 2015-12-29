@@ -204,7 +204,7 @@
         this.inputElement.textContent = "";
 
         this.optionsByValue = {};
-        this.optionsValues = {};
+        this.optionValues = {};
     };
 
     Select.prototype.destroy = function destroy() {
