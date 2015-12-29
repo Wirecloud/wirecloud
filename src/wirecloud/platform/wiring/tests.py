@@ -776,6 +776,20 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             component1.remove()
             self.assertEqual(len(wiring.find_connections()), 1)
 
+    def test_remove_components_using_key_delete_when_behaviour_engine_enabled(self):
+        pass
+
+    def test_remove_components_using_key_delete_when_behaviour_engine_disabled(self):
+        # From wiring editor, select (1) one component belonging only to the
+        # current behaviour, (2) one component belonging to the current behaviour
+        # and another behaviour, and (3) one component belonging to another
+        # behaviour. Then, press the key 'Delete' to remove such components.
+        #
+        # In the case (1), the platform should ask to the user.
+        # In the case (2), the platform should remove the component selected.
+        # In the case (3), the platform should ignore the component selected.
+        pass
+
 
 @wirecloud_selenium_test_case
 class ComponentMissingTestCase(WirecloudSeleniumTestCase):

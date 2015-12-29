@@ -356,6 +356,10 @@
                 return this.endpoints.source.canSort() || this.endpoints.target.canSort();
             },
 
+            isRemovable = function isRemovable() {
+                return !this.readonly && !this.background;
+            },
+
             /**
              * @override
              */
