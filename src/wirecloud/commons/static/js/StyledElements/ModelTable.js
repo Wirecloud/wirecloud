@@ -80,7 +80,7 @@
 
     var paintTable = function paintTable(items) {
         var i, j, item, row, cell, callback, today, cellContent,
-            column;
+            column, msg;
 
         this.pClearTable();
 
@@ -159,6 +159,14 @@
             this.tableBody.appendChild(row);
         }
 
+        if (items.length === 0) {
+            row = document.createElement('div');
+            row.className = 'alert alert-info se-model-table-msg';
+            row.textContent = this.emptyMessage;
+
+            this.tableBody.appendChild(row);
+        }
+
         highlight_selection.call(this);
         this.resizeColumns();
         this.resizeColumns();
@@ -190,13 +198,15 @@
 
         defaultOptions = {
             'initialSortColumn': -1,
-            'pageSize': 5
+            'pageSize': 5,
+            'emptyMessage': utils.gettext('No data available')
         };
         options = StyledElements.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledElement.call(this, ['click']);
 
         this.columns = columns;
+        this.emptyMessage = options.emptyMessage;
 
         if (options['class'] != null) {
             className = StyledElements.Utils.appendWord('se-model-table', options['class']);
