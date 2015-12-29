@@ -135,11 +135,6 @@ data_files.append(['wirecloud', ['LICENSE']])
 include_data_files('wirecloud', exclude=".*\.(py[co]|po)")
 
 
-extra_requirements = ()
-if sys.version_info < (3, 2):
-    extra_requirements = ('futures>=2.1.3',)
-
-
 setup(
     name='wirecloud',
     version=wirecloud.platform.__version__,
@@ -175,7 +170,10 @@ setup(
         'pycrypto',
         'pyScss>=1.3.4,<2.0',
         'Pygments'
-    ) + extra_requirements,
+    ),
+    extras_require={
+        ":python_version < '3.2'": ('futures>=2.1.3',),
+    },
     tests_require=(
         'django-nose',
         'mock>=1.0,<2.0',
