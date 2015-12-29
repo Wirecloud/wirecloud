@@ -920,6 +920,7 @@ if (window.StyledElements == null) {
     // ==================================================================================
 
     var keyCodeMap = {
+        8: 'Backspace',
         9: 'Tab',
         13: 'Enter',
         27: 'Escape',
@@ -927,7 +928,8 @@ if (window.StyledElements == null) {
         37: 'ArrowLeft',
         38: 'ArrowUp',
         39: 'ArrowRight',
-        40: 'ArrowDown'
+        40: 'ArrowDown',
+        46: 'Delete'
     };
 
     var keyFixes = {

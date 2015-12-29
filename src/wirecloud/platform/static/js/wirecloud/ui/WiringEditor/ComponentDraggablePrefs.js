@@ -114,7 +114,7 @@
     };
 
     var canDeleteCascade = function canDeleteCascade() {
-        return !this.readonly && !this.background;
+        return this.isRemovable();
     };
 
     var canSortEndpoints = function canSortEndpoints() {

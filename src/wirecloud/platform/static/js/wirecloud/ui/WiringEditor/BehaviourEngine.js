@@ -434,13 +434,31 @@
                         }
                     }
                 } else {
-                    delete this.description.components[component.type][component.id];
-                    delete this.components[component.type][component.id];
+                    disabled_removeComponent.call(this, component);
+                }
 
-                    removeConnections.call(this, component, true);
-                    component.remove();
+                return this;
+            },
 
-                    this.trigger('change', this.getCurrentStatus(), this.enabled);
+            removeComponentList: function removeComponentList(componentList) {
+                var i, componentsForModal = [];
+
+                if (this.enabled) {
+                    for (i = 0; i < componentList.length; i++) {
+                        if (this.filterByComponent(componentList[i]).length > 1) {
+                            _removeComponent.call(this, componentList[i], false);
+                        } else {
+                            componentsForModal.push(componentList[i]);
+                        }
+                    }
+
+                    if (componentsForModal.length) {
+                        showComponentListRemoveModal.call(this, componentsForModal);
+                    }
+                } else {
+                    for (i = 0; i < componentList.length; i++) {
+                        disabled_removeComponent.call(this, componentList[i]);
+                    }
                 }
 
                 return this;
@@ -610,11 +628,27 @@
 
     var events = ['activate', 'change', 'enable'];
 
+    var builder = new se.GUIBuilder();
+
     var _removeConnection = function _removeConnection(index, connection) {
         /*jshint validthis:true */
 
         this.description.connections.splice(index, 1);
         connection.remove();
+
+        return this;
+    };
+
+    var disabled_removeComponent = function disabled_removeComponent(component) {
+        /*jshint validthis:true */
+
+        delete this.description.components[component.type][component.id];
+        delete this.components[component.type][component.id];
+
+        removeConnections.call(this, component, true);
+        component.remove();
+
+        this.trigger('change', this.getCurrentStatus(), this.enabled);
 
         return this;
     };
@@ -741,17 +775,47 @@
         /*jshint validthis:true */
         var modal, message;
 
-        message = utils.interpolate(utils.gettext("The %(type)s <strong>\"%(title)s\"</strong> will be removed, would you like to continue?"), {
+        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <t:type/> <strong><t:title/></strong> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
                 type: component.type,
                 title: component.title
             });
 
-        modal = new Wirecloud.ui.AlertWindowMenu({
-            acceptLabel: utils.gettext("Continue"),
-            cancelLabel: utils.gettext("Cancel")
-        });
-        modal.setMsg(new se.Fragment(message));
+        modal = new Wirecloud.ui.AlertWindowMenu();
+        modal.setMsg(message);
         modal.acceptHandler = _removeComponent.bind(this, component, false);
+        modal.show();
+
+        return this;
+    };
+
+    var showComponentListRemoveModal = function showComponentListRemoveModal(componentList) {
+        /*jshint validthis:true */
+        var i, modal, message, components;
+
+        message = new se.Fragment();
+        components = new se.Fragment();
+
+        for (i = 0; i < componentList.length; i++) {
+            components.appendChild(builder.parse(builder.DEFAULT_OPENING + utils.gettext("<li>The <strong><t:title/></strong> <t:type/>.</li>") + builder.DEFAULT_CLOSING, {
+                type: componentList[i].type,
+                title: componentList[i].title
+            }));
+        }
+
+        message.appendChild(builder.parse(builder.DEFAULT_OPENING + utils.gettext("<p>These components only exist within the current behaviour <strong><t:title/></strong>:</p><ul><t:components/></ul><p>Would you like to continue?</p>") + builder.DEFAULT_CLOSING, {
+            title: this.behaviour.title,
+            components: components
+        }));
+
+        modal = new Wirecloud.ui.AlertWindowMenu();
+        modal.setMsg(message);
+        modal.acceptHandler = function () {
+            var i;
+
+            for (i = 0; i < componentList.length; i++) {
+                _removeComponent.call(this, componentList[i], false);
+            }
+        }.bind(this);
         modal.show();
 
         return this;
@@ -761,16 +825,13 @@
         /*jshint validthis:true */
         var modal, message;
 
-        message = utils.interpolate(utils.gettext("The %(type)s <strong>\"%(title)s\"</strong> will be <strong>definitely</strong> removed, would you like to continue?"), {
+        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <t:type/> <strong><t:title/></strong> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
                 type: component.type,
                 title: component.title
             });
 
-        modal = new Wirecloud.ui.AlertWindowMenu({
-            acceptLabel: utils.gettext("Continue"),
-            cancelLabel: utils.gettext("Cancel")
-        });
-        modal.setMsg(new se.Fragment(message));
+        modal = new Wirecloud.ui.AlertWindowMenu();
+        modal.setMsg(message);
         modal.acceptHandler = _removeComponent.bind(this, component, true);
         modal.show();
 
