@@ -27,7 +27,7 @@
         background: $widget-menu-bg;
     }
     font-size: 24px;
-    padding: $widget-menu-padding;
+    padding: $widget-menu-padding-vertical $widget-menu-padding-horizontal;
     cursor: move;
     line-height: 30px;
     position: relative;
@@ -46,7 +46,7 @@
 .iwidget > .widget_menu > .buttons {
     display: block;
     position: absolute;
-    top: 0px;
+    top: $widget-menu-padding-vertical;
     right: 0px;
     @if (opacity($widget-menu-bg) == 0) {
         @include background-image(linear-gradient(to right, rgba($body-bg, 0), $body-bg 38px, $body-bg));
@@ -78,7 +78,7 @@
         @include background-image(linear-gradient(to left, rgba($widget-menu-bg, 0), $widget-menu-bg 38px, $widget-menu-bg));
     }
     position: absolute;
-    top: 0px;
+    top: $widget-menu-padding-vertical;
     left: 0px;
     margin: 0px;
 }

@@ -282,7 +282,8 @@ $widget-bg:                $panel-bg !default;
 $widget-menu-bg:           rgba(white, 0) !default;
 $widget-footer-bg:         $panel-default-footer-bg !default;
 
-$widget-menu-padding:      $padding-vertical-base 0 !default;
+$widget-menu-padding-vertical:      $padding-vertical-base !default;
+$widget-menu-padding-horizontal:    0 !default;
 
 $widget-borders:           true !default;
 
