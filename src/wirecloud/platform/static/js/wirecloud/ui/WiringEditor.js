@@ -815,7 +815,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         var type, id;
 
         if (!component.active && component.id in this.selectedComponents[component.type]) {
-            if (event.ctrlKey) {
+            if (event.ctrlKey || event.metaKey) {
                 delete component.initialPosition;
                 delete this.selectedComponents[component.type][component.id];
                 this.selectedCount--;
@@ -854,7 +854,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             this.sortableComponent = null;
         }
 
-        if (event.ctrlKey) {
+        if (event.ctrlKey || event.metaKey) {
             if (!(component.id in this.selectedComponents[component.type])) {
                 this.selectedComponents[component.type][component.id] = component;
                 this.selectedCount++;
