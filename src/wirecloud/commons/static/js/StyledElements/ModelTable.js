@@ -445,7 +445,7 @@
 
         element = document.createElement('span');
         element.textContent = shortVersion;
-        tooltip = new StyledElements.Tooltip({
+        tooltip = new this.Tooltip({
             content: fullVersion,
             placement: ['bottom', 'top', 'right', 'left']
         });
