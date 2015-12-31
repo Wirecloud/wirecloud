@@ -434,13 +434,31 @@
                         }
                     }
                 } else {
-                    delete this.description.components[component.type][component.id];
-                    delete this.components[component.type][component.id];
+                    disabled_removeComponent.call(this, component);
+                }
 
-                    removeConnections.call(this, component, true);
-                    component.remove();
+                return this;
+            },
 
-                    this.trigger('change', this.getCurrentStatus(), this.enabled);
+            removeComponentList: function removeComponentList(componentList) {
+                var i, componentsForModal = [];
+
+                if (this.enabled) {
+                    for (i = 0; i < componentList.length; i++) {
+                        if (this.filterByComponent(componentList[i]).length > 1) {
+                            _removeComponent.call(this, componentList[i], false);
+                        } else {
+                            componentsForModal.push(componentList[i]);
+                        }
+                    }
+
+                    if (componentsForModal.length) {
+                        showComponentListRemoveModal.call(this, componentsForModal);
+                    }
+                } else {
+                    for (i = 0; i < componentList.length; i++) {
+                        disabled_removeComponent.call(this, componentList[i]);
+                    }
                 }
 
                 return this;
@@ -619,6 +637,20 @@
         return this;
     };
 
+    var disabled_removeComponent = function disabled_removeComponent(component) {
+        /*jshint validthis:true */
+
+        delete this.description.components[component.type][component.id];
+        delete this.components[component.type][component.id];
+
+        removeConnections.call(this, component, true);
+        component.remove();
+
+        this.trigger('change', this.getCurrentStatus(), this.enabled);
+
+        return this;
+    };
+
     var desactivateAllExcept = function desactivateAllExcept(behaviour) {
         /*jshint validthis:true */
 
@@ -752,6 +784,38 @@
         });
         modal.setMsg(new se.Fragment(message));
         modal.acceptHandler = _removeComponent.bind(this, component, false);
+        modal.show();
+
+        return this;
+    };
+
+    var showComponentListRemoveModal = function showComponentListRemoveModal(componentList) {
+        /*jshint validthis:true */
+        var i, modal, message = utils.interpolate(utils.gettext("<p>These components only exist within the current behaviour <strong>\"%(title)s\"</strong>:</p>"), {
+            title: this.behaviour.title
+        });
+
+        for (i = 0; i < componentList.length; i++) {
+            message += utils.interpolate(utils.gettext("<p>- The %(type)s <strong>\"%(title)s\"</strong>.</p>"), {
+                    type: componentList[i].type,
+                    title: componentList[i].title
+                });
+        }
+
+        message += utils.gettext("<p>Would you like to continue?</p>");
+
+        modal = new Wirecloud.ui.AlertWindowMenu({
+            acceptLabel: utils.gettext("Continue"),
+            cancelLabel: utils.gettext("Cancel")
+        });
+        modal.setMsg(new se.Fragment(message));
+        modal.acceptHandler = function () {
+            var i;
+
+            for (i = 0; i < componentList.length; i++) {
+                _removeComponent.call(this, componentList[i], false);
+            }
+        }.bind(this);
         modal.show();
 
         return this;
