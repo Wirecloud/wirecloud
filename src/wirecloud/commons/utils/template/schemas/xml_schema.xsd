@@ -10,7 +10,7 @@
 
     <xs:simpleType name="NonEmpty">
         <xs:restriction base="xs:string">
-            <xs:pattern value="\s*\S+.*"></xs:pattern>
+            <xs:pattern value="\s*\S.*"></xs:pattern>
         </xs:restriction>
     </xs:simpleType>
 
@@ -187,7 +187,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
-                    <xs:attribute name="value" type="macd:NonEmpty" use="required">
+                    <xs:attribute name="value" type="xs:string" use="required">
                         <xs:annotation>
                             <xs:documentation>
                                 The value used when the option is
@@ -258,7 +258,7 @@
     <xs:complexType name="Preference">
         <xs:complexContent>
             <xs:extension base="macd:MashupPreference">
-                <xs:attribute name="value" type="macd:NonEmpty">
+                <xs:attribute name="value" type="xs:string">
                     <xs:annotation>
                         <xs:documentation>
                             Initial value. If not specified, the default value will be used as the initial value.
@@ -823,7 +823,7 @@
             <xs:element name="connection" type="macd:ConnectionView" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
         <xs:attribute name="title" type="macd:NonEmpty" use="required" />
-        <xs:attribute name="description" type="macd:NonEmpty" use="required" />
+        <xs:attribute name="description" type="xs:string" use="required" />
     </xs:complexType>
 
     <xs:complexType name="MashupWiringVisualInfo">
