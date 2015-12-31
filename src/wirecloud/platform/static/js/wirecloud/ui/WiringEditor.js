@@ -63,6 +63,8 @@ Wirecloud.ui = Wirecloud.ui || {};
 
             this.sortableComponent = null;
             this.autoOperatorId = 1;
+
+            this._document_onkeydown_bound = document_onkeydown.bind(this);
         },
 
         inherit: se.Alternative,
@@ -415,6 +417,8 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.workspace.wiring.load(this.toJSON()).save();
         readyView.call(this);
 
+        document.removeEventListener('keydown', this._document_onkeydown_bound);
+
         return this;
     };
 
@@ -443,6 +447,8 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         readyView.call(this);
         loadWiringStatus.call(this);
+
+        document.addEventListener('keydown', this._document_onkeydown_bound);
 
         return this;
     };
@@ -640,6 +646,56 @@ Wirecloud.ui = Wirecloud.ui || {};
         });
     };
 
+    var clearComponentSelection = function clearComponentSelection() {
+        var type, id, component;
+
+        for (type in this.selectedComponents) {
+            for (id in this.selectedComponents[type]) {
+                component = this.selectedComponents[type][id];
+                component.setUp();
+                delete component.initialPosition;
+                delete this.selectedComponents[type][id];
+            }
+        }
+
+        this.selectedCount = 0;
+    };
+
+    var document_onkeydown = function document_onkeydown(event) {
+        var type, id, component, componentsToRemove = [];
+
+        switch (utils.normalizeKey(event)) {
+        case 'Backspace':
+        case 'Delete':
+
+            if (hasSelectedComponents.call(this)) {
+
+                for (type in this.selectedComponents) {
+                    for (id in this.selectedComponents[type]) {
+                        component = this.selectedComponents[type][id];
+
+                        if (component.isRemovable()) {
+                            componentsToRemove.push(component);
+                        }
+                    }
+                }
+
+                if (componentsToRemove.length) {
+                    this.behaviourEngine.removeComponentList(componentsToRemove);
+                    clearComponentSelection.call(this);
+                }
+            }
+
+            event.stopPropagation();
+            event.preventDefault();
+            break;
+        }
+    };
+
+    var hasSelectedComponents = function hasSelectedComponents() {
+        return Object.keys(this.selectedComponents.operator).length > 0 || Object.keys(this.selectedComponents.widget).length > 0;
+    };
+
     var behaviourengine_onenable = function behaviourengine_onenable(behaviourEngine, enabled) {
         /*jshint validthis:true */
 
@@ -780,13 +836,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.layout.slideOut();
 
-        for (type in this.selectedComponents) {
-            for (id in this.selectedComponents[type]) {
-                this.selectedComponents[type][id].setUp();
-                delete this.selectedComponents[type][id].initialPosition;
-                delete this.selectedComponents[type][id];
-            }
-        }
+        clearComponentSelection.call(this);
 
         if (this.sortableComponent != null) {
             this.sortableComponent.setUp();
@@ -794,7 +844,6 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
 
         this.connectionEngine.setUp();
-        this.selectedCount = 0;
     };
 
     var showSelectedPanel = function showSelectedPanel(button, panelIndex) {
@@ -815,7 +864,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         var type, id;
 
         if (!component.active && component.id in this.selectedComponents[component.type]) {
-            if (event.ctrlKey) {
+            if (event.ctrlKey || event.metaKey) {
                 delete component.initialPosition;
                 delete this.selectedComponents[component.type][component.id];
                 this.selectedCount--;
@@ -854,7 +903,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             this.sortableComponent = null;
         }
 
-        if (event.ctrlKey) {
+        if (event.ctrlKey || event.metaKey) {
             if (!(component.id in this.selectedComponents[component.type])) {
                 this.selectedComponents[component.type][component.id] = component;
                 this.selectedCount++;

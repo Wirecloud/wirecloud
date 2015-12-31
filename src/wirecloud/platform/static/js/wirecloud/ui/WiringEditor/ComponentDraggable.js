@@ -352,6 +352,10 @@
                 return this.endpoints.source.canSort() || this.endpoints.target.canSort();
             },
 
+            isRemovable: function isRemovable() {
+                return !this.readonly && !this.background;
+            },
+
             /**
              * @override
              */
@@ -492,7 +496,7 @@
 
             toFirst: function toFirst() {
 
-                this.parentElement.removeChild(this).appendChild(this);
+                this.parentElement.appendChild(this);
 
                 return this;
             },
@@ -616,13 +620,14 @@
                     .trigger('drag', x, y, event);
             },
             function dragend(draggable, context, event) {
-                var position = context.component.removeClassName('dragging')
-                    .toFirst().position();
+                var position = context.component.removeClassName('dragging').position();
+
+                // Work around problems raised by removing and readding the element into the DOM (especially in chrome)
+                setTimeout(context.component.toFirst.bind(context.component), 0);
 
                 // Check this drag & drop action can be considered a click action instead
                 if (isClick(context.position, position)) {
                     context.component.active = !context.active;
-                    context.component.trigger('click', event);
                 } else {
 
                     if (!context.active) {

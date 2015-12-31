@@ -33,8 +33,12 @@ from django.test import Client
 from django.utils import unittest
 from mock import Mock, patch
 import selenium
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from wirecloud.commons.utils.remote import FormModalTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, WirecloudTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 from wirecloud.platform import plugins
 from wirecloud.platform.models import IWidget, Workspace
@@ -48,6 +52,19 @@ SELENIUM_VERSION = tuple([int(number) for number in selenium.__version__.split('
 
 def selenium_supports_draganddrop(driver):
     return driver.capabilities['browserName'] != 'firefox' or SELENIUM_VERSION >= (2, 37, 2) or driver.profile.native_events_enabled
+
+
+def send_basic_key_event(driver, keycode):
+    driver.execute_script('''
+        var evt = document.createEvent("KeyboardEvent");
+        if (evt.initKeyEvent != null) {
+            evt.initKeyEvent("keydown", true, true, window, false, false, false, false, arguments[0], 0);
+        } else {
+            Object.defineProperty(evt, 'keyCode', {get: function () {return arguments[0];}});
+            evt.initKeyboardEvent("keydown", true, true, window, 0, 0, 0, 0, 0, arguments[0]);
+        }
+        document.dispatchEvent(evt);
+    ''', keycode)
 
 
 class WiringTestCase(WirecloudTestCase):
@@ -709,7 +726,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-draggable-component')
 
     def test_component_added_outside_of_diagram(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
@@ -775,6 +792,61 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(wiring.find_connections()), 4)
             component1.remove()
             self.assertEqual(len(wiring.find_connections()), 1)
+
+    def test_remove_components_using_key_delete_when_behaviour_engine_disabled(self):
+
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+
+            # Select one of the widgets and the operator using the control key
+            widget = wiring.find_component_by_id('widget', 1)
+            operator = wiring.find_component_by_id('operator', 0)
+            ActionChains(self.driver).key_down(Keys.CONTROL).click(widget.element).click(operator.element).key_up(Keys.CONTROL).perform()
+
+            # Remove the selection using the delete key
+            send_basic_key_event(self.driver, 46)
+
+            self.assertIsNone(wiring.find_component_by_id('widget', 1))
+            self.assertIsNone(wiring.find_component_by_id('operator', 0))
+
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
+    def test_remove_components_using_key_delete_when_behaviour_engine_enabled(self):
+        # From wiring editor, select (1) one component belonging only to the
+        # current behaviour, (2) one component belonging to the current behaviour
+        # and another behaviour, and (3) one component belonging to another
+        # behaviour.
+        #
+        # This test will use the 'Backspace' key for removing such components.
+        #
+        # In the case (1), the platform should ask to the user
+        # In the case (2), the platform should remove the component selected
+        # In the case (3), the platform should ignore the component selected
+
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
+
+        with self.wiring_view as wiring:
+
+            # Select the components using the command key
+            widget_1 = wiring.find_component_by_title('widget', 'Test 2')
+            operator_2 = wiring.find_component_by_title('operator', 'TestOperator')
+            widget_3 = wiring.find_component_by_title('widget', 'Test 1')
+            ActionChains(self.driver).key_down(Keys.COMMAND).click(widget_1.element).perform();
+            ActionChains(self.driver).click(operator_2.element).perform();
+            ActionChains(self.driver).click(widget_3.element).key_up(Keys.COMMAND).perform()
+
+            # Remove the selection using the backspace key
+            send_basic_key_event(self.driver, 8)
+
+            form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-dialog"))
+            self.assertIn('Test 2', form.content.text)
+            self.assertNotIn('Test 1', form.content.text)
+            self.assertNotIn('TestOperator', form.content.text)
+            form.accept()
+
+            self.assertIsNone(wiring.find_component_by_title('widget', 'Test 2'))
+            self.assertTrue(wiring.find_component_by_title('operator', 'TestOperator').background)
+            self.assertTrue(wiring.find_component_by_title('widget', 'Test 1').background)
 
 
 @wirecloud_selenium_test_case
@@ -1284,30 +1356,6 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
-    @classmethod
-    def setUpClass(cls):
-        super(BehaviourManagementTestCase, cls).setUpClass()
-
-        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
-            cls.tearDownClass()
-            raise unittest.SkipTest('BehaviourManagementTestCase needs to use native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
-
-    def _build_simple_behaviour(self):
-        return {
-            'title': "New behaviour 0",
-            'description': "No description provided.",
-            'components': {
-                'operator': {},
-                'widget': {}
-            },
-            'connections': []
-        }
-
-    def _enable_behaviour_engine_in_workspace(self, workspace_id):
-        workspace = Workspace.objects.get(id=workspace_id)
-        workspace.wiringStatus['visualdescription']['behaviours'].append(self._build_simple_behaviour())
-        workspace.save()
-
     def test_behaviour_engine_is_disabled_by_default(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
@@ -1322,69 +1370,69 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
                 self.assertEqual(len(sidebar.behaviour_list), 1)
                 sidebar.active_behaviour.check_basic_info("New behaviour", "No description provided.")
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviour_basic_info_can_be_updated(self):
-        self._enable_behaviour_engine_in_workspace(5)
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 behaviour = sidebar.active_behaviour
                 sidebar.update_behaviour(behaviour, title="Title for behaviour 0", description="Description for behaviour 0")
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviour_title_can_be_updated_alone(self):
-        self._enable_behaviour_engine_in_workspace(5)
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 behaviour = sidebar.active_behaviour
                 sidebar.update_behaviour(behaviour, title="Title for behaviour 0")
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviour_description_can_be_updated_alone(self):
-        self._enable_behaviour_engine_in_workspace(5)
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 behaviour = sidebar.active_behaviour
                 sidebar.update_behaviour(behaviour, description="Description for behaviour 0")
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviour_title_and_description_cannot_be_emptied(self):
-        self._enable_behaviour_engine_in_workspace(5)
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 behaviour = sidebar.active_behaviour
                 sidebar.update_behaviour(behaviour, title="", description="")
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviour_can_be_created_with_no_basic_info(self):
-        self._enable_behaviour_engine_in_workspace(5)
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 sidebar.create_behaviour()
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviour_can_be_created_with_only_title(self):
-        self._enable_behaviour_engine_in_workspace(5)
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 sidebar.create_behaviour(title="Title for behaviour 1")
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviour_can_be_created_with_only_description(self):
-        self._enable_behaviour_engine_in_workspace(5)
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 sidebar.create_behaviour(description="Description for behaviour 1")
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviour_can_be_created_with_title_and_description(self):
-        self._enable_behaviour_engine_in_workspace(5)
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
