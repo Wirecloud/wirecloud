@@ -56,12 +56,13 @@ def selenium_supports_draganddrop(driver):
 
 def send_basic_key_event(driver, keycode):
     driver.execute_script('''
+        var keycode = arguments[0];
         var evt = document.createEvent("KeyboardEvent");
         if (evt.initKeyEvent != null) {
-            evt.initKeyEvent("keydown", true, true, window, false, false, false, false, arguments[0], 0);
+            evt.initKeyEvent("keydown", true, true, window, false, false, false, false, keycode, 0);
         } else {
-            Object.defineProperty(evt, 'keyCode', {get: function () {return arguments[0];}});
-            evt.initKeyboardEvent("keydown", true, true, window, 0, 0, 0, 0, 0, arguments[0]);
+            Object.defineProperty(evt, 'keyCode', {get: function () {return keycode;}});
+            evt.initKeyboardEvent("keydown", true, true, window, 0, 0, 0, 0, 0, keycode);
         }
         document.dispatchEvent(evt);
     ''', keycode)
