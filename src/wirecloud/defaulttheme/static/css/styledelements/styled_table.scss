@@ -5,6 +5,35 @@
     $body-bg: $widget-bg;
 }
 
+@mixin table-row-variant($state, $background-color, $text-color) {
+
+    .se-model-table-row-$state {
+
+        background-color: $background-color;
+        color: $text-color;
+
+        &:hover {
+            background-color: darken($background-color, 12%);
+        }
+
+        &.highlight, &.highlight:hover {
+            background-color: mix($background-color, #08C, 80%);
+        }
+    }
+
+    .table-striped .se-model-table-row-$state:nth-child(odd) {
+        background-color: darken($background-color, 7%);
+
+        &:hover {
+            background-color: darken($background-color, 12%);
+        }
+
+        &.highlight, &.highlight:hover {
+            background-color: mix(darken($background-color, 12%), #08C, 80%);
+        }
+    }
+}
+
 .se-model-table {
     font-size: $font-size-base;
     line-height: $line-height-base;
@@ -69,16 +98,15 @@
 .se-model-table-row {
     border-bottom: 1px solid #DDD;
     white-space: nowrap;
+
+    &:hover {
+        background-color: darken($body-bg, 12%);
+    }
 }
 
 .se-model-table-row.highlight {
     background-color: #08C;
     color: contrast-color(#08C, $text-color-light, $text-color-dark, $text-color-threshold);
-}
-
-.se-model-table-row:hover {
-    background-color: #f5f5f5;
-    color: contrast-color(#f5f5f5, $text-color-light, $text-color-dark, $text-color-threshold);
 }
 
 .se-model-table-row.highlight:hover {
@@ -90,9 +118,18 @@
 }
 
 .table-striped .se-model-table-row:nth-child(odd) {
-    background-color: #F9F9F9;
+    background-color: darken($body-bg, 7%);
+
+    &:hover {
+        background-color: darken($body-bg, 12%);
+    }
 }
 
 .se-notebook-tab-content.se-container > .se-model-table:first-child > .se-model-table-headrow {
     padding-top: 3px;
 }
+
+@include table-row-variant(success, $state-success-bg, $state-success-text);
+@include table-row-variant(warning, $state-warning-bg, $state-warning-text);
+@include table-row-variant(danger, $state-danger-bg, $state-danger-text);
+@include table-row-variant(info, $state-info-bg, $state-info-text);

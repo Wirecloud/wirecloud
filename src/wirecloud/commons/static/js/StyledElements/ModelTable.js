@@ -84,7 +84,7 @@
 
     var paintTable = function paintTable(items) {
         var i, j, item, row, cell, callback, today, cellContent,
-            column, msg;
+            column, msg, state;
 
         this.pClearTable();
 
@@ -97,6 +97,10 @@
             row.className = 'se-model-table-row';
             if ((i % 2) === 1) {
                 row.classList.add('odd');
+            }
+            state = this._stateFunc(item);
+            if (state != null) {
+                row.classList.add('se-model-table-row-' + state);
             }
 
             for (j = 0; j < this.columns.length; j += 1) {
@@ -300,6 +304,12 @@
             };
         } else if (typeof options.id === 'function') {
             this._extract_id = options.id;
+        }
+
+        if (typeof options.stateFunc === 'function') {
+            this._stateFunc = options.stateFunc;
+        } else {
+            this._stateFunc = function () {}
         }
     };
     ModelTable.prototype = new StyledElements.StyledElement();
