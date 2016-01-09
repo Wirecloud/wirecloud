@@ -77,9 +77,11 @@
     };
 
     var highlight_selection = function highlight_selection() {
-        if (this._selected_entry_id != null && this._selected_entry_id in this._current_elements) {
-            this._current_elements[this._selected_entry_id].row.classList.add('highlight');
-        }
+        this.selection.forEach(function (id) {
+            if (id in this._current_elements) {
+                this._current_elements[id].row.classList.add('highlight');
+            }
+        }, this);
     };
 
     var paintTable = function paintTable(items) {
@@ -216,6 +218,35 @@
         this.columns = columns;
         this.emptyMessage = options.emptyMessage;
 
+        /**
+         * select attribute
+         */
+        var selection = [];
+        Object.defineProperty(this, 'selection', {
+            get: function () {
+                 return selection;
+            },
+            set: function (value) {
+                if (!Array.isArray(value)) {
+                    throw new TypeError();
+                }
+
+                // Unhighlihgt previous selection
+                if (selection != null) {
+                    selection.forEach(function (id) {
+                        if (id in this._current_elements) {
+                            this._current_elements[id].row.classList.remove('highlight');
+                        }
+                    }, this);
+                }
+                selection = value;
+
+                // Highlight the new selection
+                highlight_selection.call(this);
+            }
+        });
+
+
         if (options['class'] != null) {
             className = utils.appendWord('se-model-table', options['class']);
         } else {
@@ -250,6 +281,7 @@
         if (options.source != null) {
             this.source = options.source;
         } else if (options.pagination != null) {
+            // Backwards compatilibity
             this.source = options.pagination;
         } else {
             sort_info = {};
@@ -321,18 +353,18 @@
         this.resizeColumns();
     };
 
+    /**
+     * Changes current selection
+     * @since 0.6.3
+     *
+     * @param {String|String[]} [id]
+     */
     ModelTable.prototype.select = function select(id) {
-        // Unhighlihgt previous selection
-        if (this._selected_entry_id != null) {
-            if (this._selected_entry_id in this._current_elements) {
-                this._current_elements[this._selected_entry_id].row.classList.remove('highlight');
-            }
-        }
-
         if (id != null) {
-            // Highlight selection
-            this._selected_entry_id = id;
-            highlight_selection.call(this);
+            // Update current selection
+            this.selection = Array.isArray(id) ? id : [id];
+        } else {
+            this.selection = [];
         }
     };
 
