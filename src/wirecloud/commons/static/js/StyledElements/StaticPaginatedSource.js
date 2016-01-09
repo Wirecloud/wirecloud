@@ -158,7 +158,7 @@
                 return -this(value1, value2);
             }.bind(sortFunc);
         }
-        this.sortedElements = this.filteredElements.sort(sortFunc);
+        this.sortedElements = this.filteredElements.slice(0).sort(sortFunc);
     };
 
     var requestFunc = function requestFunc(index, options, onSuccess, onError) {
@@ -197,8 +197,8 @@
             this.changeElements(options.initialElements);
         } else {
             this.elements = [];
-            this.filteredElements = [];
-            this.sortedElements = [];
+            this.filteredElements = this.elements;
+            this.sortedElements = this.elements;
         }
     };
     StaticPaginatedSource.prototype = new StyledElements.PaginatedSource();
@@ -243,7 +243,7 @@
                 this.refresh();
             }
         } else {
-            this.filteredElements = this.elements;
+            /* In this case we don't need modify this.filteredElements as it is the same array than this.elements */
             sortElements.call(this, this.pOptions.order);
 
             this.refresh();
