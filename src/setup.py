@@ -151,7 +151,7 @@ setup(
         'Django>=1.4.2,<1.7',
         'south>=1.0,<2.0',
         'lxml>=2.3',
-        'django_compressor>=1.4',
+        'django_compressor>=1.4,<2.0',
         'rdflib>=3.2.0',
         'requests>=2.1.0',
         'selenium>=2.41',
