@@ -8,11 +8,11 @@ This section describes all the requirements of a basic WireCloud installation. *
 
 - A Database Manager (MySQL, PostgreSQL, SQLite3...)
 - Python 2.7 or python 3.4+. In any case, the following python packages must be installed:
-    - Django 1.5+
-    - South 0.7.4+
+    - Django 1.5 or 1.6
+    - South 1.0+
     - lxml 2.3.0+
     - django-appconf 1.0.1+
-    - django-compressor 1.4+
+    - django-compressor 1.4+ (except 2.0+)
     - rdflib 3.2.0+
     - requests 2.1.0+
     - futures 2.1.3+ (only on python 2.7)
