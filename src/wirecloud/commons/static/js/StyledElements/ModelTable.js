@@ -169,7 +169,7 @@
             this.tableBody.appendChild(row);
         }
 
-        if (items.length === 0) {
+        if (items.length === 0 && this.source.currentPage) {
             row = document.createElement('div');
             row.className = 'alert alert-info se-model-table-msg';
             row.textContent = this.emptyMessage;
