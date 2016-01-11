@@ -145,11 +145,18 @@
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'registerStatusCallback', {
         value: function registerCallback(callback) {
+            var wiring;
+
             if (typeof callback !== "function") {
                 throw new TypeError('callback must be a function');
             }
 
-            resource.workspace.wiring.addEventListener('loaded', callback);
+            if ('wiring' in resource) {
+                wiring = resource.wiring;
+            } else {
+                wiring = resource.workspace.wiring;
+            }
+            wiring.addEventListener('loaded', callback);
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {

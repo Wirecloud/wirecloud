@@ -457,7 +457,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
-    def test_wiring_status_change_events_widget_api(self):
+    def test_wiring_status_change_events_from_widgets(self):
 
         self.login()
 
@@ -487,6 +487,28 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, 'false')
             text_div = self.driver.find_element_by_id('wiring_hasoutputconnections_test')
             self.assertEqual(text_div.text, 'true')
+
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_api-test-mashup_1.0.wgt', shared=True)
+    def test_wiring_status_change_events_from_operators(self):
+
+        self.login()
+
+        iwidgets = self.get_current_iwidgets()
+
+        with self.wiring_view as wiring:
+
+            # Make modifications into the wiring
+            test_widget = wiring.find_component_by_title('widget', "Test (connected to the test operator)")
+            test_operator = wiring.find_component_by_title('operator', "TestOperator")
+
+            source = test_operator.find_endpoint_by_title('source', "output")
+            target = test_widget.find_endpoint_by_title('target', "Input")
+            source.connect(target)
+
+        with iwidgets[2]:
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'wiring modified')
 
     def test_wiring_editor_modify_connection_endpoints(self):
 
