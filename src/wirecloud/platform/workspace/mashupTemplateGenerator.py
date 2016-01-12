@@ -227,7 +227,7 @@ def build_json_template_from_workspace(options, workspace, user):
                 preferences[preference.name] = preference.value
 
         resources = []
-        for iwidget in tab.iwidget_set.select_related('widget__resource', 'position').all():
+        for iwidget in tab.iwidget_set.select_related('widget__resource').all():
             resource_info = process_iwidget(workspace, iwidget, options['wiring'], parametrization['iwidgets'], readOnlyWidgets)
             resources.append(resource_info)
             if options['embedmacs']:
