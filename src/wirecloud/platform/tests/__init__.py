@@ -22,10 +22,13 @@ from wirecloud.platform.tests.base import *
 from wirecloud.platform.tests.plugins import WirecloudPluginTestCase
 from wirecloud.platform.tests.rest_api import AdministrationAPI, ApplicationMashupAPI, ResourceManagementAPI, ExtraApplicationMashupAPI
 from wirecloud.platform.tests.selenium_tests import *
-from wirecloud.platform.tests.south_migrations import PlatformSouthMigrationsTestCase
 from wirecloud.platform.localcatalogue.tests import *
 from wirecloud.platform.markets.tests import *
 from wirecloud.platform.wiring.tests import *
 from wirecloud.platform.widget.tests import CodeTransformationTestCase, WidgetModuleTestCase
 from wirecloud.platform.workspace.tests import WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase
 from wirecloud.proxy.tests import ProxyTests, ProxySecureDataTests
+
+import django
+if django.VERSION[1] < 7:
+    from wirecloud.platform.tests.south_migrations import PlatformSouthMigrationsTestCase
