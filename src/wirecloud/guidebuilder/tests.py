@@ -187,7 +187,7 @@ def market_path_base(*args):
 
 @wirecloud_selenium_test_case
 class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
-    fixtures = ('initial_data', 'selenium_test_data', 'guide_test_data')
+    fixtures = ('selenium_test_data', 'guide_test_data')
     servers = {
         'http': {
             'marketplace.example.com': DynamicWebServer(),

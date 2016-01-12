@@ -34,7 +34,7 @@ __test__ = False
 class MarketplaceTestCase(WirecloudTestCase):
 
     tags = ('wirecloud-fiware', 'fiware-ut-8', 'wirecloud-fiware-marketplace')
-    fixtures = ('initial_data', 'selenium_test_data', 'fiware_test_data')
+    fixtures = ('selenium_test_data', 'fiware_test_data')
     servers = {
         'http': {
             'marketplace.example.com': DynamicWebServer(),

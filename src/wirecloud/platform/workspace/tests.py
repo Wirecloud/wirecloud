@@ -833,7 +833,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
 class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('fiware-ut-2', 'wirecloud-template', 'wirecloud-workspace-parse', 'wirecloud-noselenium')
 
     base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')

@@ -41,7 +41,7 @@ def read_response_file(*response):
 @wirecloud_selenium_test_case
 class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'fiware_test_data')
+    fixtures = ('selenium_test_data', 'fiware_test_data')
     servers = {
         'http': {
             'marketplace.example.com': DynamicWebServer(),

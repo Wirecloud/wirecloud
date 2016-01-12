@@ -488,7 +488,7 @@ class PackagedResourcesTestCase(WirecloudTestCase):
 @wirecloud_selenium_test_case
 class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-localcatalogue', 'wirecloud-selenium', 'wirecloud-localcatalogue-selenium')
 
     def test_basic_resource_details(self):

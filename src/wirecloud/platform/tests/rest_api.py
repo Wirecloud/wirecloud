@@ -2717,7 +2717,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
 class ExtraApplicationMashupAPI(WirecloudTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-rest-api', 'wirecloud-extra-rest-api',)
 
     def test_iwidget_collection_get_requires_authentication(self):

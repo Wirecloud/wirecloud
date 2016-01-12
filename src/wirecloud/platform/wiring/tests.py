@@ -361,7 +361,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
 @wirecloud_selenium_test_case
 class WiringLayoutTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def test_user_with_behaviour_engine_disabled(self):
@@ -382,7 +382,7 @@ class WiringLayoutTestCase(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def test_basic_wiring_editor_operations(self):
@@ -695,7 +695,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def _read_json_fixtures(self, filename):
@@ -748,7 +748,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-draggable-component')
 
     def test_component_added_outside_of_diagram(self):
@@ -875,7 +875,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def _read_json_fixtures(self, *args):
@@ -974,7 +974,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def test_operator_available_after_being_installed(self):
@@ -1073,7 +1073,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def _set_connection_readonly(self, workspace_id, connection_index):
@@ -1128,7 +1128,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     @classmethod
@@ -1376,7 +1376,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def test_behaviour_engine_is_disabled_by_default(self):
@@ -1465,7 +1465,7 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class ComponentVolatileTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)

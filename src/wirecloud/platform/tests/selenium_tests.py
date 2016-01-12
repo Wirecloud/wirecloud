@@ -54,7 +54,7 @@ def check_default_settings_values(test):
 @wirecloud_selenium_test_case
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium',)
 
     def test_basic_workspace_operations(self):
@@ -1455,7 +1455,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 @wirecloud_selenium_test_case
 class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-selenium', 'wirecloud-mobile')
 
     def check_basic_workspace(self, frame_id=None):
