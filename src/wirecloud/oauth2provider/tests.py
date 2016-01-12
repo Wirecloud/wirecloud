@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -31,7 +31,7 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.plugins import clear_cache
 
 
-@override_settings(INSTALLED_APPS=BASE_APPS + ('wirecloud.platform', 'wirecloud.oauth2provider'))
+@override_settings(INSTALLED_APPS=BASE_APPS + ('wirecloud.catalogue', 'wirecloud.platform', 'wirecloud.oauth2provider'))
 class Oauth2TestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'oauth2_test_data')
