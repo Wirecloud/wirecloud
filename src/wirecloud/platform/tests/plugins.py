@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,9 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import django
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
+from django.utils import unittest
 from mock import DEFAULT, patch
 
 from wirecloud.platform.plugins import clear_cache, get_active_features, get_plugins, \
@@ -133,6 +135,7 @@ class WirecloudPluginTestCase(TestCase):
 
         self.assertRaises(ImproperlyConfigured, get_plugins)
 
+    @unittest.skipIf(django.VERSION[1] >= 7, "Django 1.7+ already check for insexistent modules")
     def test_find_wirecloud_plugins_inexistant_app(self):
 
         with self.settings(INSTALLED_APPS=('inexistent_module',)):
@@ -142,7 +145,7 @@ class WirecloudPluginTestCase(TestCase):
 
     def test_find_wirecloud_plugins_app_with_extra_import_errors(self):
 
-        with self.settings(INSTALLED_APPS=('module_with_errors',)):
+        with self.settings(INSTALLED_APPS=('wirecloud.platform.tests.module_with_errors',)):
             with patch.multiple('wirecloud.platform.plugins', logger=DEFAULT, import_module=DEFAULT) as mocks:
                 mocks['import_module'].side_effect = ImportError('No module named x')
                 find_wirecloud_plugins()
@@ -150,7 +153,7 @@ class WirecloudPluginTestCase(TestCase):
 
     def test_find_wirecloud_plugins_app_with_syntax_errors(self):
 
-        with self.settings(INSTALLED_APPS=('module_with_errors',)):
+        with self.settings(INSTALLED_APPS=('wirecloud.platform.tests.module_with_errors',)):
             with patch.multiple('wirecloud.platform.plugins', logger=DEFAULT, import_module=DEFAULT) as mocks:
                 mocks['import_module'].side_effect = SyntaxError()
                 find_wirecloud_plugins()
@@ -158,7 +161,7 @@ class WirecloudPluginTestCase(TestCase):
 
     def test_find_wirecloud_plugins_app_with_name_errors(self):
 
-        with self.settings(INSTALLED_APPS=('module_with_errors',)):
+        with self.settings(INSTALLED_APPS=('wirecloud.platform.tests.module_with_errors',)):
             with patch.multiple('wirecloud.platform.plugins', logger=DEFAULT, import_module=DEFAULT) as mocks:
                 mocks['import_module'].side_effect = NameError()
                 find_wirecloud_plugins()
