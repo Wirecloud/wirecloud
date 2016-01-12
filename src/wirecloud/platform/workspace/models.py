@@ -31,12 +31,16 @@ from django.utils.translation import ugettext as _
 from wirecloud.commons.fields import JSONField
 
 
+def now_timestamp():
+    return time.time() * 1000
+
+
 @python_2_unicode_compatible
 class Workspace(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
     creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
-    creation_date = models.BigIntegerField(_('Creation Date'), null=False, blank=False, default=lambda: time.time() * 1000)
+    creation_date = models.BigIntegerField(_('Creation Date'), null=False, blank=False, default=now_timestamp)
     last_modified = models.BigIntegerField(_('Last Modification Date'), null=True, blank=True)
 
     public = models.BooleanField(_('Available to all users'), default=False)
