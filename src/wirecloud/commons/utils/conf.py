@@ -100,7 +100,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         )
 
     settings['TEMPLATE_LOADERS'] = (
-        'wirecloud.platform.themes.load_template_source',
+        'wirecloud.platform.themes.TemplateLoader',
         'django.template.loaders.app_directories.Loader',
     )
 

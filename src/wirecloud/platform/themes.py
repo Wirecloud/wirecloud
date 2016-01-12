@@ -27,6 +27,13 @@ from django.core.files.storage import FileSystemStorage
 from django.template import TemplateDoesNotExist
 from django.utils.importlib import import_module
 from django.utils._os import safe_join
+try:
+    # Django 1.8+
+    from django.template.loaders.base import Loader
+except:
+    # Django 1.7 and below
+    from django.template.loader import BaseLoader as Loader
+
 
 DEFAULT_THEME = 'wirecloud.defaulttheme'
 
@@ -53,42 +60,42 @@ def get_theme_dir(theme_name, dir_type):
     return safe_join(active_theme_dir, dir_type)
 
 
-def get_template_sources(template_name, template_dirs=None):
-    """
-    Look for template into active theme directory
-    """
+class TemplateLoader(Loader):
 
-    def try_template(templates_dir):
-        if templates_dir and os.path.isdir(templates_dir):
+    def get_template_sources(template_name, template_dirs=None):
+        """
+        Look for template into active theme directory
+        """
+
+        def try_template(templates_dir):
+            if templates_dir and os.path.isdir(templates_dir):
+                try:
+                    return safe_join(templates_dir, template_name)
+                except UnicodeDecodeError:
+                    raise
+                except ValueError:
+                    pass
+
+        active_theme_source = try_template(get_theme_dir(get_active_theme_name(), 'templates'))
+        if active_theme_source:
+            yield active_theme_source
+
+        default_theme_location = try_template(get_theme_dir(DEFAULT_THEME, 'templates'))
+        if default_theme_location:
+            yield default_theme_location
+
+    def load_template_source(template_name, template_dirs=None):
+        tried = []
+        for filepath in get_template_sources(template_name, template_dirs):
             try:
-                return safe_join(templates_dir, template_name)
-            except UnicodeDecodeError:
-                raise
-            except ValueError:
-                pass
-
-    active_theme_source = try_template(get_theme_dir(get_active_theme_name(), 'templates'))
-    if active_theme_source:
-        yield active_theme_source
-
-    default_theme_location = try_template(get_theme_dir(DEFAULT_THEME, 'templates'))
-    if default_theme_location:
-        yield default_theme_location
-
-
-def load_template_source(template_name, template_dirs=None):
-    tried = []
-    for filepath in get_template_sources(template_name, template_dirs):
-        try:
-            return (open(filepath, 'rb').read().decode(settings.FILE_CHARSET), filepath)
-        except IOError:
-            tried.append(filepath)
-    if tried:
-        error_msg = "Tried %s" % tried
-    else:
-        error_msg = "Your TEMPLATE_DIRS setting is empty. Change it to point to at least one template directory."
-    raise TemplateDoesNotExist(error_msg)
-load_template_source.is_usable = True
+                return (open(filepath, 'rb').read().decode(settings.FILE_CHARSET), filepath)
+            except IOError:
+                tried.append(filepath)
+        if tried:
+            error_msg = "Tried %s" % tried
+        else:
+            error_msg = "Your TEMPLATE_DIRS setting is empty. Change it to point to at least one template directory."
+        raise TemplateDoesNotExist(error_msg)
 
 
 class ActiveThemeFinder(BaseFinder):
