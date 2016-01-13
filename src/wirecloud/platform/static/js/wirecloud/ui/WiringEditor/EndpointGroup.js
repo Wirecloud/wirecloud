@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -125,7 +125,7 @@
              *      The instance on which the member is called.
              */
             refresh: function refresh() {
-                var currentOrder;
+                var currentOrder, name;
 
                 if (!this.canSort()) {
                     return this;
@@ -136,6 +136,10 @@
                 });
 
                 this.modified = !equalsLists(this.originalOrder, currentOrder);
+
+                for (name in this.endpoints) {
+                    this.endpoints[name].refresh();
+                }
 
                 return this;
             },
