@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -533,6 +533,10 @@ class BaseModalTester(object):
     def btn_accept(self):
         return ButtonTester(self.testcase, self.bottom.find_element_by_css_selector(".btn-accept"))
 
+    @property
+    def btn_cancel(self):
+        return ButtonTester(self.testcase, self.bottom.find_element_by_css_selector(".btn-cancel"))
+
     def find_alerts(self):
         return self.content.find_elements_by_css_selector(".alert")
 
@@ -541,6 +545,11 @@ class BaseModalTester(object):
 
     def accept(self):
         self.btn_accept.click()
+
+        return self
+
+    def cancel(self):
+        self.btn_cancel.click()
 
         return self
 
@@ -728,6 +737,13 @@ class WiringComponentTester(object):
 
         return None
 
+    def find_endpoint_by_name(self, endpoint_type, endpoint_name):
+        for endpoint in self.filter_endpoints_by_type(endpoint_type):
+            if endpoint.name == endpoint_name:
+                return endpoint
+
+        return None
+
     def display_preferences(self):
         button = self.btn_display_preferences
         button.click()
@@ -854,12 +870,28 @@ class WiringConnectionTester(object):
         return self.element.get_attribute('class').split()
 
     @property
+    def active(self):
+        return "active" in self.class_list
+
+    @property
     def missing(self):
         return "missing" in self.class_list
 
     @property
+    def temporal(self):
+        return "temporal" in self.class_list
+
+    @property
     def readonly(self):
         return "readonly" in self.class_list
+
+    @property
+    def sourceid(self):
+        return self.element.get_attribute("data-sourceid")
+
+    @property
+    def targetid(self):
+        return self.element.get_attribute("data-targetid")
 
     @property
     def selected(self):
@@ -874,13 +906,12 @@ class WiringConnectionTester(object):
         return PopupMenuTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.se-popup-menu'), button)
 
     def click(self):
-        if self.element.is_displayed():
-            self.element.find_element_by_css_selector(".connection-border").click()
-        else:
-            ActionChains(self.testcase.driver).click(self.element).perform()
-
-        if self.readonly:
-            self.testcase.assertTrue(self.btn_remove.disabled)
+        # FIXME: This method should click over some point of this connection. For example,
+        # getting the connection path.
+        self.testcase.driver.execute_script('''
+            var connectionEngine = LayoutManagerFactory.getInstance().viewsByName.wiring.connectionEngine;
+            connectionEngine.getConnection("%s", "%s").click();
+        ''' % (self.sourceid, self.targetid))
 
         return self
 
@@ -889,13 +920,11 @@ class WiringConnectionTester(object):
 
         return self
 
-    @property
-    def sourceid(self):
-        return self.element.get_attribute("data-sourceid")
+    def drag_endpoint(self, endpoint, new_endpoint):
+        ActionChains(self.testcase.driver).click_and_hold(endpoint.anchor).move_to_element(new_endpoint.element).perform()
 
-    @property
-    def targetid(self):
-        return self.element.get_attribute("data-targetid")
+    def drop_endpoint(self):
+        ActionChains(self.testcase.driver).release().perform()
 
 
 class WiringEndpointTester(object):
@@ -2017,6 +2046,15 @@ class WiringViewTester(BaseWiringViewTester):
 
     def find_connections(self):
         return [WiringConnectionTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".connection")]
+
+    def find_connection_by_endpoints(self, sourceid, targetid):
+
+        try:
+            element = self.section_diagram.find_element_by_css_selector('.connection[data-sourceid="%s"][data-targetid="%s"]' % (sourceid, targetid))
+        except:
+            return None
+
+        return WiringConnectionTester(self.testcase, element)
 
     def find_component_by_id(self, component_type, component_id):
 
