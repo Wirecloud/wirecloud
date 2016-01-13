@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -53,6 +53,8 @@ class BaseAdminCommandTestCase(TestCase):
             "passintegrationtests": IntegrationTestsCommand(),
         }, prog_name='wirecloud-admin')
         cls.test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+
+        super(BaseAdminCommandTestCase, cls).setUpClass()
 
     def test_general_help(self):
 
@@ -156,6 +158,8 @@ class ConvertCommandTestCase(TestCase):
         cls.tmp_dir = mkdtemp()
         cls.test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
 
+        super(ConvertCommandTestCase, cls).setUpClass()
+
     @classmethod
     def tearDownClass(cls):
 
@@ -230,6 +234,8 @@ class StartprojectCommandTestCase(TestCase):
 
         cls.tmp_dir = mkdtemp()
         cls.test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+
+        super(StartprojectCommandTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):

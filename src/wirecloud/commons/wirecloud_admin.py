@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 import os
 import sys
 
-from django.core.management import LaxOptionParser
+import django
 
 import wirecloud.platform
 
@@ -75,54 +75,73 @@ class CommandLineUtility(object):
         if argv is None:
             argv = sys.argv
 
-        parser = LaxOptionParser(usage="%prog subcommand [options] [args]",
-            version=wirecloud.platform.__version__,
-            option_list=())
-
         if stdout is None:
             stdout = sys.stdout
 
         if stderr is None:
             stderr = sys.stderr
 
-        try:
-            options, args = parser.parse_args(argv)
-        except:
-            pass  # Ignore any option errors at this point.
+        if django.VERSION >= (1, 8):
+            from django.core.management.base import CommandParser
+            parser = CommandParser(None,
+                usage="%(prog)s subcommand [options] [args]",
+                version=wirecloud.platform.__version__)
 
-        try:
+            try:
+                options, argv = parser.parse_known_args(argv)
+            except:
+                pass  # Ignore any option errors at this point.
+        else:
+            from django.core.management import LaxOptionParser
+
+            parser = LaxOptionParser(usage="%prog subcommand [options] [args]",
+                version=wirecloud.platform.__version__,
+                option_list=())
+
+            try:
+                options, argv = parser.parse_args(argv)
+            except:
+                pass  # Ignore any option errors at this point.
+
+        if len(argv) > 1:
             subcommand = argv[1]
-        except IndexError:
+        else:
             subcommand = 'help'  # Display help if no arguments were given.
 
         if subcommand == 'help':
-            if len(args) <= 2:
-                parser.print_lax_help()
+            if len(argv) <= 2:
+                if hasattr(parser, 'print_lax_help'):
+                    parser.print_lax_help()
+                else:
+                    parser.print_help(stdout)
                 stdout.write(self.main_help_text() + '\n')
-            elif args[2] == '--commands':
+            elif argv[2] == '--commands':
                 stdout.write(self.main_help_text(commands_only=True) + '\n')
             else:
-                command = self.fetch_command(args[2])
+                command = self.fetch_command(argv[2])
                 if command is not None:
-                    command.print_help(self.prog_name, args[2], file=stdout)
+                    command.print_help(self.prog_name, argv[2], file=stdout)
                 else:
-                    stdout.write(self.unknown_command_text(args[2]) + '\n')
+                    stdout.write(self.unknown_command_text(argv[2]) + '\n')
 
         elif subcommand == 'version':
-            stdout.write(parser.get_version() + '\n')
-        elif '--version' in argv[1:]:
+            stdout.write(wirecloud.platform.__version__ + '\n')
+        elif '--version' in argv[2:]:
             # LaxOptionParser already takes care of printing the version.
             pass
-        elif '--help' in argv[1:] or '-h' in argv[1:]:
-            if len(args) <= 2:
-                parser.print_lax_help()
+        elif '--help' in argv or '-h' in argv:
+            if len(argv) <= 2:
+                if hasattr(parser, 'print_lax_help'):
+                    parser.print_lax_help()
+                else:
+                    parser.print_help(stdout)
                 stdout.write(self.main_help_text() + '\n')
             else:
-                command = self.fetch_command(args[1])
+                command = self.fetch_command(argv[1])
                 if command is not None:
-                    command.print_help(self.prog_name, args[1], file=stdout)
+                    command.print_help(self.prog_name, argv[1], file=stdout)
                 else:
-                    stdout.write(self.unknown_command_text(args[1]) + '\n')
+                    stdout.write(self.unknown_command_text(argv[1]) + '\n')
 
         else:
             command = self.fetch_command(subcommand)
