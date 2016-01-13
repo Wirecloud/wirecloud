@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -241,7 +241,7 @@ class GroupSchema(SchemaClass):
 
     pk = ID(stored=True, unique=True)
     name = TEXT(stored=True, spelling=True)
-    content = NGRAM(phrase=True)
+    content = NGRAM(minsize=1, phrase=True)
 
 
 class GroupSearcher(BaseSearcher):
@@ -266,7 +266,7 @@ class UserSchema(SchemaClass):
     fullname = TEXT(stored=True, spelling=True)
     username = TEXT(stored=True, spelling=True)
     organization = BOOLEAN(stored=True)
-    content = NGRAM(phrase=True)
+    content = NGRAM(minsize=1, phrase=True)
 
 
 class UserSearcher(BaseSearcher):
