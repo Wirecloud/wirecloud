@@ -136,11 +136,27 @@ You can restore the backup using the following command:
 
 1. Install the new version of WireCloud
 2. Migrate the database, collect the new static files and create the compressed
-versions of the JavaScript and CSS files by running the following command:
+versions of the JavaScript and CSS files by running the following commands:
 
-        $ python manage.py syncdb --migrate; python manage.py collectstatic --noinput; python manage.py compress --force
+        $ python manage.py migrate
+        $ python manage.py collectstatic --noinput
+        $ python manage.py compress --force
 
 3. Reload WireCloud (e.g. `$ service apache2 graceful`)
+
+> **NOTE:** It is strongly recommended to perform a full database backup before
+> starting to migrate WireCloud to a new version.
+
+## From 0.8.x to 0.9.x
+
+Follow the normal procedure for upgrading WireCloud except if you want to
+upgrade to use Django 1.7+. In that case, you will need to migrate your database
+using Django 1.5-1.6 and South before upgrading to the new version of Django.
+
+Once migrated the database and installed the new version of Django, run
+the following command:
+
+    $ python manage.py migrate --fake
 
 
 ## From 0.7.x to 0.8.x

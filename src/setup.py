@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -82,7 +82,7 @@ class compiletranslations(Command):
             from django.core.management import call_command
         except:
             import pip
-            pip.main(['install', 'Django>=1.4.2,<1.10'])
+            pip.main(['install', 'Django>=1.5,<1.10'])
 
             from django.core.management import call_command
 
@@ -153,7 +153,7 @@ setup(
     include_package_data=True,
     data_files=data_files,
     install_requires=(
-        'Django>=1.4.2,<1.10',
+        'Django>=1.5,<1.10',
         'south>=1.0,<2.0',
         'lxml>=2.3',
         'django-appconf>=1.0.1,<2.0',

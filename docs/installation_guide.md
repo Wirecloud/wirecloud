@@ -1,6 +1,12 @@
 ## Introduction
 
-This Installation WireCloud version 0.8 (starting from FIWARE release 4.4). Any feedback on this document is highly welcomed, including bugs, typos or things you think should be included but are not. Please send it to the "Contact Person" email that appears in the [Catalogue page for this GEi](http://catalogue.fiware.org/enablers/application-mashup-wirecloud).
+This Installation WireCloud version 0.9 (starting from FIWARE release 5.2). Any
+feedback on this document is highly welcomed, including bugs, typos or things
+you think should be included but are not. Please send it to the "Contact Person"
+email that appears in the [Catalogue page for this GEi][catalogue].
+
+[catalogue]: http://catalogue.fiware.org/enablers/application-mashup-wirecloud
+
 
 ## Requirements
 
@@ -8,7 +14,7 @@ This section describes all the requirements of a basic WireCloud installation. *
 
 - A Database Manager (MySQL, PostgreSQL, SQLite3...)
 - Python 2.7 or python 3.4+. In any case, the following python packages must be installed:
-    - Django 1.5 or 1.6
+    - Django 1.5-1.9
     - South 1.0+
     - lxml 2.3.0+
     - django-appconf 1.0.1+
@@ -275,11 +281,19 @@ Please, follow the [oficial PostgresSQL installation guide](http://www.postgresq
 
 ## Database population
 
-Before running WireCloud, it is necessary to populate the database. This can be achieved by using this command:
+Before running WireCloud, it is necessary to populate the database. This can be
+achieved by using this command:
 
-    $ python manage.py syncdb --migrate
+    $ python manage.py migrate
 
-This command creates some tables and asks you if you want to create a Django superuser. This user is required to login into WireCloud and to be able to perform administrative tasks; please respond yes. An example of the command output, where user/password are admin/admin, is the following:
+> **NOTE**: use the following command if you are using Django 1.5-1.6:
+>
+>       $ python manage.py syncdb --migrate
+
+This command creates some tables and asks you if you want to create a Django
+superuser. This user is required to login into WireCloud and to be able to
+perform administrative tasks; please respond yes. An example of the command
+output, where `user`/`password` are `admin`/`admin`, is the following:
 
     ...
 
@@ -289,12 +303,6 @@ This command creates some tables and asks you if you want to create a Django sup
     E-mail address: admin@c.com
     Password: ***** (admin)
     Password (again): ***** (admin)
-
-Finally, whenever the WireCloud code is updated, the database must be migrated (and this is one of those times):
-
-    $ python manage.py migrate
-
-> **NOTE:** It is strongly recommended to perform a full database backup before starting to migrate WireCloud to a new version.
 
 ## Extra options
 
@@ -447,14 +455,14 @@ Anyway, if you want to use any of the other http servers (e.g using Gunicorn),
 Django provides
 [documentation on how to do it](https://docs.djangoproject.com/en/dev/howto/deployment/).
 
-Finally, you can compress css and javascript code files for better performance
+Finally, you can compress CSS and JavaScript code files for better performance
 using the following command:
 
     $ python manage.py compress --force
 
 > **NOTE:** Don't forget to rerun the collectstatic and compress commands each
-> time the WireCloud code is updated, this include each time an add-on is added
-> or remove or the default theme is changed.
+> time the WireCloud code is updated, this include each time a WireCloud plugin
+> or Django app is enabled/disabled and when the default theme is changed.
 
 
 ## Advanced configurations
@@ -487,7 +495,8 @@ As last step, add a `DEFAULT_SILBOPS_BROKER` setting with the URL of the broker 
 DEFAULT_SILBOPS_BROKER = 'http://pubsub.server.com:8080/silbops/CometAPI'
 ```
 
-Don't forget to run the collectstatic and compress commands on your WireCloud installation:
+Don't forget to run the collectstatic and compress commands on your WireCloud
+installation:
 
     $ ./manage.py collectstatic
     $ ./manage.py compress
@@ -550,7 +559,7 @@ Create a new Application using the IdM server to use (for example: `https://acco
         - Remove: `url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),`
         - Add: `url(r'^login/?$', 'wirecloud.fiware.views.login', name="login"),`
     - Add `python-social-auth` url endpoints at the end of the pattern list: `url('', include('social.apps.django_app.urls', namespace='social')),`
-5. Run `python manage.py syncdb --migrate; python manage.py collectstatic --noinput; python manage.py compress --force`
+5. Run `python manage.py migrate; python manage.py collectstatic --noinput; python manage.py compress --force`
 
 
 [KeyRock's User and Programmers Guide]: https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application
