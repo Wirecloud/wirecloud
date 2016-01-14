@@ -314,10 +314,15 @@ Wirecloud.ui = Wirecloud.ui || {};
             .on('slideOut', function () {
                 this.btnFindComponents.active = false;
                 this.btnListBehaviours.active = false;
+                this.behaviourEngine.stopOrdering();
             }.bind(this))
             .on('slideIn', function (offcanvas, panel) {
                 this.btnFindComponents.active = panel.hasClassName("panel-components");
                 this.btnListBehaviours.active = panel.hasClassName("panel-behaviours");
+
+                if (this.btnFindComponents.active) {
+                    this.behaviourEngine.stopOrdering();
+                }
             }.bind(this));
 
         var wiringLegend = document.createElement('div');

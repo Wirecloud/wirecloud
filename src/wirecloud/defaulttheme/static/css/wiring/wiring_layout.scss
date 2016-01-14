@@ -44,7 +44,7 @@
         border: solid 1px $panel-default-border-color;
         box-shadow: $panel-box-shadow-inset;
         background-color: $panel-bg;
-        overflow-y: auto;
+        overflow-y: scroll;
 
         .section {
             position: relative;

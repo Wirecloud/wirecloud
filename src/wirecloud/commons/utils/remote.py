@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -990,6 +990,10 @@ class WiringBehaviourTester(object):
         return self.title_element
 
     @property
+    def index(self):
+        return int(self.element.get_attribute('data-index'))
+
+    @property
     def title(self):
         return self.title_element.text
 
@@ -1021,6 +1025,19 @@ class WiringBehaviourTester(object):
 
         if description is not None:
             self.testcase.assertEqual(self.description, self.description if not description else description)
+
+        return self
+
+    def move_to(self, behaviour):
+        new_index = behaviour.index
+
+        actions = ActionChains(self.testcase.driver).click_and_hold(self.title_element)
+
+        for i in range(abs(new_index - self.index)):
+            actions.move_to_element(behaviour.title_element)
+
+        actions.release().perform()
+        self.testcase.assertEqual(self.index, new_index)
 
         return self
 
@@ -1733,6 +1750,10 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
         return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-create"))
 
     @property
+    def btn_order(self):
+        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-order"))
+
+    @property
     def btn_enable_behaviour_engine(self):
         return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-enable"))
 
@@ -1775,6 +1796,14 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
             self.btn_enable_behaviour_engine.click()
 
         return self
+
+    def find_behaviour_by_title(self, title):
+
+        for behaviour in self.behaviour_list:
+            if behaviour.title == title:
+                return behaviour
+
+        return None
 
     def has_behaviours(self):
         behaviours = self.behaviour_list

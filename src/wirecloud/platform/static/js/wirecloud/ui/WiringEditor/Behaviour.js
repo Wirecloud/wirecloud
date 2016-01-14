@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -40,7 +40,7 @@
      */
     ns.Behaviour = utils.defineClass({
 
-        constructor: function Behaviour(options) {
+        constructor: function Behaviour(index, options) {
             var descriptionElement;
 
             options = utils.updateObject(ns.Behaviour.JSON_TEMPLATE, options);
@@ -89,11 +89,21 @@
                     set: function set(value) {descriptionElement.textContent = value ? value : ns.Behaviour.JSON_TEMPLATE.description;}
                 },
 
+                index: {
+                    get: function () {
+                        return this.get().getAttribute('data-index');
+                    },
+                    set: function (value) {
+                        this.get().setAttribute('data-index', value);
+                    }
+                },
+
                 logManager: {value: new ns.BehaviourLogManager(this)}
 
             });
 
             this.active = options.active;
+            this.index = index;
 
             this.components = options.components;
             this.connections = options.connections;
