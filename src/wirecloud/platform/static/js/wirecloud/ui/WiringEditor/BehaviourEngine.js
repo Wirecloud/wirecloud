@@ -41,13 +41,6 @@
         constructor: function BehaviourEngine() {
             var note;
 
-            this.btnCreate = new se.Button({
-                title: gettext("Create behaviour"),
-                extraClass: "btn-create",
-                iconClass: "icon-plus"
-            });
-            this.btnCreate.on('click', btncreate_onclick.bind(this));
-
             this.btnEnable = new se.Button({
                 title: gettext("Enable"),
                 extraClass: "btn-enable",
@@ -59,8 +52,20 @@
                 events: events,
                 extraClass: "panel-behaviours",
                 title: gettext("Identified behaviours"),
-                buttons: [this.btnCreate, this.btnEnable]
+                buttons: [this.btnEnable]
             });
+
+            this.btnGroupElement = document.createElement('div');
+            this.btnGroupElement.className = "btn-group pull-right";
+            this.wrapperElement.appendChild(this.btnGroupElement);
+
+            this.btnCreate = new se.Button({
+                title: gettext("Create behaviour"),
+                extraClass: "btn-create",
+                iconClass: "icon-plus"
+            });
+            this.btnCreate.on('click', btncreate_onclick.bind(this));
+            this.btnCreate.appendTo(this.btnGroupElement);
 
             this.disabledAlert = new se.Alert({
                 state: 'info',
@@ -102,12 +107,14 @@
                         .replaceIconClass('icon-lock', 'icon-unlock');
                     this.btnCreate.show();
                     this.body.remove(this.disabledAlert);
+                    this.wrapperElement.appendChild(this.btnGroupElement);
                 } else {
                     this.btnEnable
                         .setTitle(gettext("Enable"))
                         .replaceIconClass('icon-unlock', 'icon-lock');
                     this.btnCreate.hide();
                     this.body.appendChild(this.disabledAlert);
+                    this.wrapperElement.removeChild(this.btnGroupElement);
                 }
 
                 return this;
