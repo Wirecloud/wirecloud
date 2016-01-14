@@ -51,7 +51,7 @@
             this.superClass({
                 events: events,
                 extraClass: "panel-behaviours",
-                title: gettext("Identified behaviours"),
+                title: gettext("Behaviours"),
                 buttons: [this.btnEnable]
             });
 

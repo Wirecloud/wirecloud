@@ -45,7 +45,7 @@
 
             this.superClass({
                 extraClass: "panel-components",
-                title: gettext("Available components")
+                title: gettext("Components")
             });
 
             this.components = {

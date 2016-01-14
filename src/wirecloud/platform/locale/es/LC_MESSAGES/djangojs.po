@@ -2296,8 +2296,8 @@ msgid "Enable"
 msgstr "Activar"
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:61
-msgid "Identified behaviours"
-msgstr "Comportamientos identificados"
+msgid "Behaviours"
+msgstr "Comportamientos"
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:67
 msgid "New feature"
@@ -2412,7 +2412,7 @@ msgid "No image available"
 msgstr "Imagen no disponible"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:48
-msgid "Available components"
+msgid "Components"
 msgstr "Componentes"
 
 #: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:80
