@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,6 +22,7 @@ import os
 import subprocess
 import sys
 
+import django
 from django.core.management.base import CommandError
 from django.core.management.commands.startproject import Command
 from django.utils.safestring import mark_safe
@@ -75,7 +76,11 @@ class StartprojectCommand(BaseCommand):
             internal_options['db_name'] = mark_safe("path.join(BASEDIR, '%s.db')" % project_name)
 
         command = Command()
-        command.handle(project_name, target, *(), **internal_options)
+        if django.VERSION[1] >= 8:
+            internal_options.update({"name": project_name, "directory": target})
+            command.handle(**internal_options)
+        else:
+            command.handle(project_name, target, *(), **internal_options)
 
         if options['quick_start']:
 
