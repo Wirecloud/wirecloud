@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 12:51+0100\n"
-"PO-Revision-Date: 2015-11-25 13:33+0100\n"
+"POT-Creation-Date: 2016-01-15 11:48+0100\n"
+"PO-Revision-Date: 2016-01-15 11:51+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -102,30 +102,34 @@ msgstr "Subiendo los componentes empaquetados"
 msgid "Error uploading the following components:"
 msgstr "Error subiendo los siguientes componentes:"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:111
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:113
 msgid "Upload mashable application components"
 msgstr "Subir componentes de aplicación mashable"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:116
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:118
 msgid "Select files from your computer"
 msgstr "Selecionar archivos del equipo"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:131
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:133
 msgid "Name"
 msgstr "Nombre"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:136
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:138
 msgid "Size"
 msgstr "Tamaño"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:155
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:149
+msgid "Remove this file"
+msgstr "Eliminar este fichero"
+
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:157
 msgid "Add more files"
 msgstr "Añadir más ficheros"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:165
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:167
 msgid "Upload"
 msgstr "Subir"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:179
+#: static/js/wirecloud/ui/WirecloudCatalogue/UploadWindowMenu.js:181
 msgid "Cancel"
 msgstr "Cancelar"
