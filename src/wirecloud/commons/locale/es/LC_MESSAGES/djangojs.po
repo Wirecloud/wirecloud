@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 13:06+0100\n"
-"PO-Revision-Date: 2015-11-25 13:10+0100\n"
+"POT-Creation-Date: 2016-01-15 11:33+0100\n"
+"PO-Revision-Date: 2016-01-15 11:48+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -19,68 +19,87 @@ msgstr ""
 "X-Generator: Poedit 1.8.6\n"
 
 #: static/js/StyledElements/FileField.js:106
+#: static/js/StyledElements/StyledElements.min.js:2
 #: static/js/wirecloud/ui/MACSelectionWindowMenu.js:40
 msgid "Select"
 msgstr "Seleccionar"
 
 #: static/js/StyledElements/Form.js:59
+#: static/js/StyledElements/StyledElements.min.js:5
 msgid "Set Defaults"
 msgstr "Valores por defecto"
 
 #: static/js/StyledElements/Form.js:70
+#: static/js/StyledElements/StyledElements.min.js:5
 msgid "Reset"
 msgstr "Reiniciar"
 
 #: static/js/StyledElements/Form.js:82
+#: static/js/StyledElements/StyledElements.min.js:5
 msgid "Accept"
 msgstr "Aceptar"
 
 #: static/js/StyledElements/Form.js:93
+#: static/js/StyledElements/StyledElements.min.js:5
 #: static/js/wirecloud/ui/ExternalProcessWindowMenu.js:104
 #: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:101
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: static/js/StyledElements/InputInterfaces.js:69
+#: static/js/StyledElements/StyledElements.min.js:4
 msgid "The following required fields are empty: %(fields)s."
 msgstr "Los siguientes campos obligatorios están vacíos: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:72
+#: static/js/StyledElements/StyledElements.min.js:4
 msgid "The following fields do not contain a valid URL: %(fields)s."
 msgstr "Los siguientes campos no contienen una URL válida: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:75
+#: static/js/StyledElements/StyledElements.min.js:4
 msgid "The following fields do not contain a valid E-Mail address: %(fields)s."
 msgstr "Los siguientes campos no continene un e-mail válido: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:78
+#: static/js/StyledElements/StyledElements.min.js:4
 msgid "The following field do not contain a valid version number: %(fields)s."
 msgstr ""
 "Los siguientes campos no continen un número de versión válido: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:81
+#: static/js/StyledElements/StyledElements.min.js:4
 msgid "The following fields contain invalid characters: %(fields)s."
 msgstr "Los siguientes campos contienen carácteres inválidos: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:84
+#: static/js/StyledElements/StyledElements.min.js:4
 msgid "The following fields do not contain a valid color value: %(fields)s."
 msgstr ""
 "Los siguientes campos no contienen un valor de color válido: %(fields)s."
 
 #: static/js/StyledElements/InputInterfaces.js:87
+#: static/js/StyledElements/StyledElements.min.js:4
 msgid "The following fields does contain an out of range value: %(fields)s."
 msgstr "Los siguientes campos contienen un valor fuera de rango: %(fields)s."
 
-#: static/js/StyledElements/ModelTable.js:52
+#: static/js/StyledElements/ModelTable.js:53
+#: static/js/StyledElements/StyledElements.min.js:4
 msgid "Sort by %(column_name)s"
 msgstr "Ordenar por %(column_name)s"
 
+#: static/js/StyledElements/ModelTable.js:212
+msgid "No data available"
+msgstr "No hay datos disponibles"
+
 #: static/js/StyledElements/Notebook.js:104
 #: static/js/StyledElements/Notebook.js:107
+#: static/js/StyledElements/StyledElements.min.js:3
 msgid "Add Tab"
 msgstr "Añadir pestaña"
 
 #: static/js/StyledElements/PaginationInterface.js:81
+#: static/js/StyledElements/StyledElements.min.js:5
 msgid ""
 "<s:styledgui xmlns:s=\"http://wirecloud.conwet.fi.upm.es/StyledElements\" "
 "xmlns:t=\"http://wirecloud.conwet.fi.upm.es/Template\" xmlns=\"http://www.w3."
@@ -92,13 +111,14 @@ msgstr ""
 "org/1999/xhtml\"><t:firstBtn/><t:prevBtn/><div class=\"box\">Página: <t:"
 "currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>"
 
-#: static/js/StyledElements/Typeahead.js:174
-msgid "No results found for <em><t:query/></em>"
-msgstr "No se han encontrado resultados para <em><t:query/></em>"
-
+#: static/js/StyledElements/StyledElements.min.js:1
 #: static/js/StyledElements/Utils.js:905
 msgid "N/A"
 msgstr "N/A"
+
+#: static/js/StyledElements/Typeahead.js:174
+msgid "No results found for <em><t:query/></em>"
+msgstr "No se han encontrado resultados para <em><t:query/></em>"
 
 #: static/js/wirecloud/ui/ExternalProcessWindowMenu.js:91
 msgid "Start"
@@ -106,8 +126,8 @@ msgstr "Iniciar"
 
 #: static/js/wirecloud/ui/HTMLWindowMenu.js:24
 #: static/js/wirecloud/ui/MACSelectionWindowMenu.js:50
-#: static/js/wirecloud/ui/WindowMenu.js:82
 #: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:144
+#: static/js/wirecloud/ui/WindowMenu.js:82
 msgid "Close"
 msgstr "Cerrar"
 
@@ -163,6 +183,10 @@ msgstr "Problema de conexión: No se ha recibido ningún recurso"
 msgid "Keywords..."
 msgstr "Texto de búsqueda"
 
+#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:82
+msgid "Next"
+msgstr "Siguiente"
+
 #: static/js/wirecloud/ui/TutorialCatalogue.js:51
 msgid "If you prefer, you can follow some of these tutorials:"
 msgstr "Si lo prefieres, puedes seguir alguno de los siguientes tutoriales:"
@@ -170,7 +194,3 @@ msgstr "Si lo prefieres, puedes seguir alguno de los siguientes tutoriales:"
 #: static/js/wirecloud/ui/TutorialSubMenu.js:8
 msgid "Tutorials"
 msgstr "Tutoriales"
-
-#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:82
-msgid "Next"
-msgstr "Siguiente"

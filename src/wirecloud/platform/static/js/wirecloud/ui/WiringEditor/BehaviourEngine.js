@@ -775,7 +775,7 @@
         /*jshint validthis:true */
         var modal, message;
 
-        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <t:type/> <strong><t:title/></strong> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
+        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
                 type: component.type,
                 title: component.title
             });
@@ -825,7 +825,7 @@
         /*jshint validthis:true */
         var modal, message;
 
-        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <t:type/> <strong><t:title/></strong> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
+        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The <strong><t:title/></strong> <t:type/> will be <strong>definitely</strong> removed, would you like to continue?") + builder.DEFAULT_CLOSING, {
                 type: component.type,
                 title: component.title
             });
