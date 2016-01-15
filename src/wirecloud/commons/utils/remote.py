@@ -680,7 +680,7 @@ class WiringComponentTester(object):
         return "missing" in self.class_list
 
     @property
-    def sort_endpoints(self):
+    def order_endpoints(self):
         return WiringComponentEditableTester(self.testcase, self)
 
     @property
@@ -778,7 +778,7 @@ class WiringComponentEditableTester(object):
 
     def __enter__(self):
         self.component.display_preferences().click_entry("Order endpoints")
-        WebDriverWait(self.testcase.driver, 2).until(lambda driver: len(driver.find_elements_by_css_selector('.endpoints.sortable')) > 0)
+        WebDriverWait(self.testcase.driver, 2).until(lambda driver: len(driver.find_elements_by_css_selector('.endpoints.orderable')) > 0)
 
         return self
 

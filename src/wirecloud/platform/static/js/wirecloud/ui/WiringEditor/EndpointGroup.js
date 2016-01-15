@@ -57,9 +57,9 @@
             this.modified = false;
 
             Object.defineProperties(this, {
-                sortable: {
-                    get: function get() {return this.hasClassName('sortable');},
-                    set: function set(value) {this.toggleClassName('sortable', value);}
+                orderable: {
+                    get: function get() {return this.hasClassName('orderable');},
+                    set: function set(value) {this.toggleClassName('orderable', value);}
                 },
                 type: {value: type}
             });
@@ -97,12 +97,12 @@
             },
 
             /**
-             * [TODO: canSort description]
+             * [TODO: canBeOrdered description]
              *
              * @returns {Boolean}
              *      [TODO: description]
              */
-            canSort: function canSort() {
+            canBeOrdered: function canBeOrdered() {
                 return this.children.length > ns.EndpointGroup.MIN_LENGTH;
             },
 
@@ -127,7 +127,7 @@
             refresh: function refresh() {
                 var currentOrder, name;
 
-                if (!this.canSort()) {
+                if (!this.canBeOrdered()) {
                     return this;
                 }
 
@@ -145,14 +145,14 @@
             },
 
             /**
-             * [TODO: sortEndpoints description]
+             * [TODO: orderEndpoints description]
              *
              * @returns {EndpointGroup}
              *      The instance on which the member is called.
              */
-            sortEndpoints: function sortEndpoints(newOrder) {
+            orderEndpoints: function orderEndpoints(newOrder) {
 
-                if (!this.canSort()) {
+                if (!this.canBeOrdered()) {
                     return this;
                 }
 
@@ -177,18 +177,18 @@
             },
 
             /**
-             * [TODO: startSorting description]
+             * [TODO: startOrdering description]
              *
              * @returns {EndpointGroup}
              *      The instance on which the member is called.
              */
-            startSorting: function startSorting() {
+            startOrdering: function startOrdering() {
 
-                if (!this.canSort() || this.sortable) {
+                if (!this.canBeOrdered() || this.orderable) {
                     return this;
                 }
 
-                this.sortable = true;
+                this.orderable = true;
                 this.children.forEach(function (endpoint) {
                     makeEndpointDraggable.call(this, endpoint);
                 }, this);
@@ -197,18 +197,18 @@
             },
 
             /**
-             * [TODO: stopSorting description]
+             * [TODO: stopOrdering description]
              *
              * @returns {EndpointGroup}
              *      The instance on which the member is called.
              */
-            stopSorting: function stopSorting() {
+            stopOrdering: function stopOrdering() {
 
-                if (!this.sortable) {
+                if (!this.orderable) {
                     return this;
                 }
 
-                this.sortable = false;
+                this.orderable = false;
                 this.children.forEach(function (endpoint) {
                     endpoint.draggable.destroy();
                 }, this);

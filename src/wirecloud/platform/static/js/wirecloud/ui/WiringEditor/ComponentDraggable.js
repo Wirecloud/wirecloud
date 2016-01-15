@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -113,8 +113,8 @@
 
                 removeCascadeAllowed: {value: options.removecascade_allowed, writable: true},
 
-                sortingEndpoints: {
-                    get: function get() {return this.endpoints.source.sortable || this.endpoints.target.sortable;}
+                orderingEndpoints: {
+                    get: function get() {return this.endpoints.source.orderable || this.endpoints.target.orderable;}
                 },
 
                 sourceList: {
@@ -146,8 +146,8 @@
             if (!this.missing) {
                 wiringComponent.logManager.addEventListener('newentry', notifyErrors.bind(this));
 
-                this.endpoints.source.sortEndpoints(options.endpoints.source);
-                this.endpoints.target.sortEndpoints(options.endpoints.target);
+                this.endpoints.source.orderEndpoints(options.endpoints.source);
+                this.endpoints.target.orderEndpoints(options.endpoints.target);
             } else {
                 this.addClassName("missing");
             }
@@ -194,7 +194,7 @@
 
             _onactive: function _onactive(active) {
 
-                if (this.sortingEndpoints) {
+                if (this.orderingEndpoints) {
                     return this;
                 }
 
@@ -214,7 +214,7 @@
 
             _onclick: function _onclick(event) {
 
-                if (this.sortingEndpoints) {
+                if (this.orderingEndpoints) {
                     return this;
                 }
 
@@ -348,8 +348,8 @@
                 return this._component.hasSettings();
             },
 
-            hasSortableEndpoints: function hasSortableEndpoints() {
-                return this.endpoints.source.canSort() || this.endpoints.target.canSort();
+            hasOrderableEndpoints: function hasOrderableEndpoints() {
+                return this.endpoints.source.canBeOrdered() || this.endpoints.target.canBeOrdered();
             },
 
             isRemovable: function isRemovable() {
@@ -382,9 +382,9 @@
                 return this;
             },
 
-            startSortableEndpoints: function startSortableEndpoints() {
+            startOrderingEndpoints: function startOrderingEndpoints() {
 
-                if (this.sortingEndpoints || !this.hasSortableEndpoints()) {
+                if (this.orderingEndpoints || !this.hasOrderableEndpoints()) {
                     return this;
                 }
 
@@ -394,17 +394,17 @@
 
                 this.draggable.destroy();
 
-                this.endpoints.target.startSorting();
-                this.endpoints.source.startSorting();
+                this.endpoints.target.startOrdering();
+                this.endpoints.source.startOrdering();
 
                 this.active = true;
 
-                return this.trigger('sortstart');
+                return this.trigger('orderstart');
             },
 
-            stopSortableEndpoints: function stopSortableEndpoints() {
+            stopOrderingEndpoints: function stopOrderingEndpoints() {
 
-                if (!this.sortingEndpoints) {
+                if (!this.orderingEndpoints) {
                     return this;
                 }
 
@@ -413,8 +413,8 @@
                 this.active = this.wasActive;
                 delete this.wasActive;
 
-                this.endpoints.target.stopSorting();
-                this.endpoints.source.stopSorting();
+                this.endpoints.target.stopOrdering();
+                this.endpoints.source.stopOrdering();
 
                 makeDraggable.call(this);
 
@@ -425,7 +425,7 @@
                     }
                 });
 
-                return this.trigger('sortend');
+                return this.trigger('orderend');
             },
 
             /**
@@ -488,7 +488,7 @@
 
             setUp: function setUp() {
 
-                this.stopSortableEndpoints();
+                this.stopOrderingEndpoints();
                 this.active = false;
 
                 return this;
@@ -521,7 +521,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['change', 'dragstart', 'drag', 'dragend', 'optremove', 'optremovecascade', 'optshare', 'remove', 'sortstart', 'sortend'];
+    var events = ['change', 'dragstart', 'drag', 'dragend', 'optremove', 'optremovecascade', 'optshare', 'remove', 'orderstart', 'orderend'];
 
     var updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
         return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();

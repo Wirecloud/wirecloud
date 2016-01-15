@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -64,7 +64,7 @@
              */
             build: function build() {
                 var item1 = getItemCollapse.call(this.component),
-                    item2 = getItemSortEndpoints.call(this.component);
+                    item2 = getItemOrderEndpoints.call(this.component);
 
                 var list = [
                     this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
@@ -74,12 +74,12 @@
                         this.collapsed = !this.collapsed;
                     }.bind(this.component), canCollapseEndpoints),
                     this._createMenuItem(item2.title, item2.icon, function () {
-                        if (this.sortingEndpoints) {
-                            this.stopSortableEndpoints();
+                        if (this.orderingEndpoints) {
+                            this.StopOrderingEndpoints();
                         } else {
-                            this.startSortableEndpoints();
+                            this.startOrderingEndpoints();
                         }
-                    }.bind(this.component), canSortEndpoints),
+                    }.bind(this.component), canOrderEndpoints),
                     this._createMenuItem(gettext("Logs"), "tags", function () {
                         this.showLogs();
                     }.bind(this.component)),
@@ -110,15 +110,15 @@
     };
 
     var canCollapseEndpoints = function canCollapseEndpoints() {
-        return this.hasEndpoints() && !this.background && !this.sortingEndpoints;
+        return this.hasEndpoints() && !this.background && !this.orderingEndpoints;
     };
 
     var canDeleteCascade = function canDeleteCascade() {
         return this.isRemovable();
     };
 
-    var canSortEndpoints = function canSortEndpoints() {
-        return this.hasSortableEndpoints() && !this.background && !this.missing && !this.collapsed;
+    var canOrderEndpoints = function canOrderEndpoints() {
+        return this.hasOrderableEndpoints() && !this.background && !this.missing && !this.collapsed;
     };
 
     var canShowSettings = function canShowSettings() {
@@ -133,11 +133,11 @@
         }
     };
 
-    var getItemSortEndpoints = function getItemSortEndpoints() {
-        if (this.sortingEndpoints) {
-            return {title: gettext("Stop ordering"), icon: "sort"};
+    var getItemOrderEndpoints = function getItemOrderEndpoints() {
+        if (this.orderingEndpoints) {
+            return {title: gettext("Stop ordering"), icon: "order"};
         } else {
-            return {title: gettext("Order endpoints"), icon: "sort"};
+            return {title: gettext("Order endpoints"), icon: "order"};
         }
     };
 

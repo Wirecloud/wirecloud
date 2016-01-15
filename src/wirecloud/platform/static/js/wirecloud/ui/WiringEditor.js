@@ -1,7 +1,7 @@
 /*
  *     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
  *
- *     Copyright (c) 2012-2015 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 Universidad Politécnica de Madrid
  *     Copyright (c) 2012-2014 the Center for Open Middleware
  *
  *     Licensed under the Apache License, Version 2.0 (the
@@ -61,7 +61,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             this.selectedComponents = {operator: {}, widget: {}};
             this.selectedCount = 0;
 
-            this.sortableComponent = null;
+            this.orderableComponent = null;
             this.autoOperatorId = 1;
 
             this._document_onkeydown_bound = document_onkeydown.bind(this);
@@ -114,8 +114,8 @@ Wirecloud.ui = Wirecloud.ui || {};
                     .on('dragstart', component_ondragstart.bind(this))
                     .on('drag', component_ondrag.bind(this))
                     .on('dragend', component_ondragend.bind(this))
-                    .on('sortstart', component_onsortstart.bind(this))
-                    .on('sortend', component_onsortend.bind(this))
+                    .on('orderstart', component_onorderstart.bind(this))
+                    .on('orderend', component_onorderend.bind(this))
                     .on('optremove', function () {
                         this.behaviourEngine.removeComponent(component);
                     }.bind(this))
@@ -433,7 +433,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.suggestionManager.enable();
 
-        this.sortableComponent = null;
+        this.orderableComponent = null;
         this.autoOperatorId = 1;
 
         return this;
@@ -838,9 +838,9 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         clearComponentSelection.call(this);
 
-        if (this.sortableComponent != null) {
-            this.sortableComponent.setUp();
-            this.sortableComponent = null;
+        if (this.orderableComponent != null) {
+            this.orderableComponent.setUp();
+            this.orderableComponent = null;
         }
 
         this.connectionEngine.setUp();
@@ -898,9 +898,9 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         var type, id, selectedComponent;
 
-        if (this.sortableComponent != null) {
-            this.sortableComponent.setUp();
-            this.sortableComponent = null;
+        if (this.orderableComponent != null) {
+            this.orderableComponent.setUp();
+            this.orderableComponent = null;
         }
 
         if (event.ctrlKey || event.metaKey) {
@@ -967,18 +967,18 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
     };
 
-    var component_onsortstart = function component_onsortstart(component) {
+    var component_onorderstart = function component_onorderstart(component) {
 
-        if (this.sortableComponent != null && !this.sortableComponent.equals(component)) {
-            this.sortableComponent.setUp();
+        if (this.orderableComponent != null && !this.orderableComponent.equals(component)) {
+            this.orderableComponent.setUp();
         }
 
-        this.sortableComponent = component;
+        this.orderableComponent = component;
         this.connectionEngine.enabled = false;
         this.suggestionManager.disable();
     };
 
-    var component_onsortend = function component_onsortend(component) {
+    var component_onorderend = function component_onorderend(component) {
         /*jshint validthis:true */
         this.connectionEngine.enabled = true;
         this.suggestionManager.enable();

@@ -1129,7 +1129,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
 class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
+    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium', 'wirecloud-wiring-endpoint-management')
 
     @classmethod
     def setUpClass(cls):
@@ -1322,7 +1322,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(len(wiring.filter_connections_by_properties('missing')), 2)
 
     @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
-    def test_endpoint_sorting_in_operators(self):
+    def test_ordering_operator_endpoints(self):
         self.login()
 
         with self.wiring_view as wiring:
@@ -1330,12 +1330,12 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
                 sidebar.create_operator("TestOp. Multiendpoint")
                 operator = sidebar.add_component('operator', "TestOp. Multiendpoint")
 
-            with operator.sort_endpoints as component_editable:
+            with operator.order_endpoints as component_editable:
                 component_editable.move_endpoint('source', "output1", "output2")
                 component_editable.move_endpoint('target', "input1", "input3")
 
     @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
-    def test_endpoint_sorting_in_widgets(self):
+    def test_ordering_widget_endpoints(self):
         self.login()
         self.add_widget_to_mashup('Test_Multiendpoint')
 
@@ -1352,7 +1352,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 
             connection = wiring.find_connections()[0]
 
-            with widget.sort_endpoints as component_editable:
+            with widget.order_endpoints as component_editable:
                 component_editable.move_endpoint('source', "output1", "output2")
                 self.assertTrue(connection.has_changed())
                 component_editable.move_endpoint('target', "input1", "input3")
