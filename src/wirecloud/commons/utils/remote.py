@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -832,6 +832,7 @@ class WiringConnectionTester(object):
     def __init__(self, testcase, element):
         self.testcase = testcase
         self.element = element
+        self.distance = element.find_element_by_css_selector('.connection-body').get_attribute('d')
 
     @property
     def background(self):
@@ -867,6 +868,11 @@ class WiringConnectionTester(object):
 
     def _get_btn_by_class(self, class_name):
         return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".connection-options .{}".format(class_name)))
+
+    def has_changed(self):
+        old_distance = self.distance
+        self.distance = self.element.find_element_by_css_selector('.connection-body').get_attribute('d')
+        return old_distance != self.distance
 
     def display_preferences(self):
         button = self.btn_prefs
@@ -1867,10 +1873,12 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         # Wait until the component is added to the diagram
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)))
         new_component = self._find_component_by_title(component_type, component_title)
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.panel))
 
         return new_component
 
     def create_operator(self, group_title):
+        self.display_component_group('operator')
 
         group = self.find_component_group_by_title('operator', group_title)
         group.createComponent()
@@ -1879,6 +1887,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     def display_component_group(self, component_type):
         button = getattr(self, "btn_show_%s_group" % component_type)
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.panel))
 
         if not button.active:
             WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".wiring-sidebar .panel-components .btn-list-%s-group" % component_type)))

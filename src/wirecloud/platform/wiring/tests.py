@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -1341,10 +1341,20 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
-                widget = sidebar.add_component('widget', "Test_Multiendpoint")
+                widget = sidebar.add_component('widget', "Test_Multiendpoint", x=100)
+                source = widget.find_endpoint_by_title('source', "output1")
+
+                sidebar.create_operator("TestOperator")
+                operator = sidebar.add_component('operator', "TestOperator", x=400)
+                target = operator.find_endpoint_by_title('target', 'input')
+
+                source.connect(target)
+
+            connection = wiring.find_connections()[0]
 
             with widget.sort_endpoints as component_editable:
                 component_editable.move_endpoint('source', "output1", "output2")
+                self.assertTrue(connection.has_changed())
                 component_editable.move_endpoint('target', "input1", "input3")
 
     def test_sticky_effect_in_target_endpoint_label(self):
