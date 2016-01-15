@@ -1772,6 +1772,26 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(targets_count, len(widget.find_endpoints('target')))
             self.assertEqual(sources_count, len(widget.find_endpoints('source')))
 
+    @uses_extra_resources(('Wirecloud_TestOperator_1.0.1.zip',), shared=True)
+    def test_highlight_suggestions_by_keywords(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                sidebar.create_operator("TestOperatorKeywords")
+                operator1 = sidebar.add_component('operator', "TestOperatorKeywords", x=500, y=200)
+                source1 = operator1.find_endpoint_by_title('source', "output")
+
+            operator2 = wiring.find_component_by_id('operator', 0)
+            target1 = operator2.find_endpoint_by_title('target', "input")
+            target2 = operator2.find_endpoint_by_title('target', "Not handled endpoint")
+
+            source1.drag_connection(80, 80)
+            self.assertTrue(source1.active)
+            self.assertTrue(target1.active)
+            self.assertTrue(target2.active)
+            source1.drop_connection()
+
 
 @wirecloud_selenium_test_case
 class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
