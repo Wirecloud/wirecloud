@@ -24,6 +24,7 @@ import os
 import shutil
 from tempfile import mkdtemp
 
+import django
 from django.core.management.base import CommandError
 from django.test import TestCase
 from mock import DEFAULT, Mock, patch
@@ -274,6 +275,23 @@ class StartprojectCommandTestCase(TestCase):
             self.assertRaises(CommandError, self.command.execute, *args, **options)
             self.assertEqual(mocks['Command'].call_count, 0)
 
+    def assertHandleCall(self, handle_mock, values={}):
+        call_args, call_kwargs = handle_mock.call_args_list[0]
+        options = {
+            "name": 'wirecloud_instance',
+            "directory": None,
+            "verbosity": '1'
+        }
+        options.update(values)
+
+        if django.VERSION[2] >= 8:
+            for key in options:
+                self.assertEqual(call_kwargs.get(key), options[key])
+        else:
+            self.assertEqual(call_args[0], options['name'])
+            self.assertEqual(call_args[1], options['directory'])
+            self.assertEqual(call_kwargs['verbosity'], options['verbosity'])
+
     def test_platform_creation(self):
 
         args = ['wirecloud_instance']
@@ -289,10 +307,7 @@ class StartprojectCommandTestCase(TestCase):
             self.command.execute(*args, **options)
 
             self.assertEqual(command_instance_mock.handle.call_count, 1)
-            call_args, call_kwargs = command_instance_mock.handle.call_args_list[0]
-            self.assertEqual(call_args[0], 'wirecloud_instance')
-            self.assertEqual(call_args[1], None)
-            self.assertEqual(call_kwargs['verbosity'], '1')
+            self.assertHandleCall(command_instance_mock.handle)
             self.assertEqual(mocks['subprocess'].call.call_count, 0)
 
     def test_platform_creation_quick_start(self):
@@ -313,9 +328,7 @@ class StartprojectCommandTestCase(TestCase):
 
             self.assertEqual(command_instance_mock.handle.call_count, 1)
             call_args, call_kwargs = command_instance_mock.handle.call_args_list[0]
-            self.assertEqual(call_args[0], 'wirecloud_instance')
-            self.assertEqual(call_args[1], None)
-            self.assertEqual(call_kwargs['verbosity'], '1')
+            self.assertHandleCall(command_instance_mock.handle)
             self.assertGreaterEqual(mocks['subprocess'].call.call_count, 1)
             for (call_args, call_kwargs) in mocks['subprocess'].call.call_args_list:
                 self.assertTrue(call_args[0].startswith('python-interpreter '))
@@ -337,10 +350,7 @@ class StartprojectCommandTestCase(TestCase):
             self.command.execute(*args, **options)
 
             self.assertEqual(command_instance_mock.handle.call_count, 1)
-            call_args, call_kwargs = command_instance_mock.handle.call_args_list[0]
-            self.assertEqual(call_args[0], 'wirecloud_instance')
-            self.assertEqual(call_args[1], None)
-            self.assertEqual(call_kwargs['verbosity'], '1')
+            self.assertHandleCall(command_instance_mock.handle)
             self.assertGreaterEqual(mocks['subprocess'].call.call_count, 1)
             for (call_args, call_kwargs) in mocks['subprocess'].call.call_args_list:
                 self.assertTrue(call_args[0].startswith('python '))
@@ -362,8 +372,5 @@ class StartprojectCommandTestCase(TestCase):
             self.assertRaises(CommandError, self.command.execute, *args, **options)
 
             self.assertEqual(command_instance_mock.handle.call_count, 1)
-            call_args, call_kwargs = command_instance_mock.handle.call_args_list[0]
-            self.assertEqual(call_args[0], 'wirecloud_instance')
-            self.assertEqual(call_args[1], None)
-            self.assertEqual(call_kwargs['verbosity'], '1')
+            self.assertHandleCall(command_instance_mock.handle)
             self.assertEqual(mocks['subprocess'].call.call_count, 1)
