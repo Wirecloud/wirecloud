@@ -284,7 +284,7 @@ class StartprojectCommandTestCase(TestCase):
         }
         options.update(values)
 
-        if django.VERSION[2] >= 8:
+        if django.VERSION[1] >= 8:
             for key in options:
                 self.assertEqual(call_kwargs.get(key), options[key])
         else:
