@@ -172,7 +172,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
                 'class': 'logging.StreamHandler',
             },
             'null': {
-                'class': 'django.utils.log.NullHandler',
+                'class': 'logging.NullHandler',
             },
             'mail_admins': {
                 'level': 'ERROR',
