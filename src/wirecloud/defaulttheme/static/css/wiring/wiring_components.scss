@@ -594,18 +594,18 @@
 // WIRING VIEW - COMPONENT - SORTABLE ENDPOINTS
 // ============================================================================
 
-.component-draggable .endpoints.sortable {
+.component-draggable .endpoints.orderable {
 
     .endpoint {
-        box-shadow: $endpoint-sortable-box-shadow;
+        box-shadow: $endpoint-orderable-box-shadow;
     }
 
     .endpoint.dragging {
-        background-color: $endpoint-sortable-active-bg;
-        box-shadow: $endpoint-sortable-active-box-shadow;
+        background-color: $endpoint-orderable-active-bg;
+        box-shadow: $endpoint-orderable-active-box-shadow;
 
         .endpoint-title {
-            color: $endpoint-sortable-active-text-color;
+            color: $endpoint-orderable-active-text-color;
         }
     }
 }
@@ -613,7 +613,7 @@
 .endpoint.cloned {
     position: absolute;
     background-color: $component-active-text-hover-color;
-    box-shadow: $endpoint-sortable-box-shadow;
+    box-shadow: $endpoint-orderable-box-shadow;
     cursor: move;
     z-index: $endpoint-cloned-z-index;
 

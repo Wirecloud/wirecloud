@@ -135,9 +135,9 @@
 
     var getItemOrderEndpoints = function getItemOrderEndpoints() {
         if (this.orderingEndpoints) {
-            return {title: gettext("Stop ordering"), icon: "order"};
+            return {title: gettext("Stop ordering"), icon: "sort"};
         } else {
-            return {title: gettext("Order endpoints"), icon: "order"};
+            return {title: gettext("Order endpoints"), icon: "sort"};
         }
     };
 

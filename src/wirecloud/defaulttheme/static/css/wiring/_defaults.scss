@@ -76,11 +76,11 @@ $endpoint-missing-bg:            rgba($brand-danger, 0.9) !default;
 $endpoint-missing-active-bg:     darken($brand-danger, 10%) !default;
 $endpoint-missing-background-bg: transparentize(lighten($endpoint-missing-bg, 20%), 0.3) !default;
 
-$endpoint-sortable-box-shadow:        0 1px 5px rgba(0, 0, 0, 0.25) !default;
-$endpoint-sortable-active-box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.35) !default;
-$endpoint-sortable-active-bg:         #f9f9f9 !default;
+$endpoint-orderable-box-shadow:        0 1px 5px rgba(0, 0, 0, 0.25) !default;
+$endpoint-orderable-active-box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.35) !default;
+$endpoint-orderable-active-bg:         #f9f9f9 !default;
 
-$endpoint-sortable-active-text-color: transparentize($endpoint-text-color, 0.3) !default;
+$endpoint-orderable-active-text-color: transparentize($endpoint-text-color, 0.3) !default;
 
 $endpoint-cloned-z-index: ($component-z-index / 2) * 4 !default;
 
