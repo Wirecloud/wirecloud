@@ -62,7 +62,7 @@ def get_theme_dir(theme_name, dir_type):
 
 class TemplateLoader(Loader):
 
-    def get_template_sources(template_name, template_dirs=None):
+    def get_template_sources(self, template_name, template_dirs=None):
         """
         Look for template into active theme directory
         """
@@ -84,9 +84,9 @@ class TemplateLoader(Loader):
         if default_theme_location:
             yield default_theme_location
 
-    def load_template_source(template_name, template_dirs=None):
+    def load_template_source(self, template_name, template_dirs=None):
         tried = []
-        for filepath in get_template_sources(template_name, template_dirs):
+        for filepath in self.get_template_sources(template_name, template_dirs):
             try:
                 return (open(filepath, 'rb').read().decode(settings.FILE_CHARSET), filepath)
             except IOError:
