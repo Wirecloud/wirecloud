@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2008-2015 Universidad Politécnica de Madrid
+# Copyright 2008-2016 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -24,6 +24,12 @@ from django.db import models
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import check_for_language, gettext_lazy as _
+
+try:
+    # Django 1.7+
+    from django.utils.translation import LANGUAGE_SESSION_KEY
+except:
+    LANGUAGE_SESSION_KEY = 'django_language'
 
 
 @python_2_unicode_compatible
@@ -85,9 +91,9 @@ def update_session_lang(request, user):
         lang_code = settings.DEFAULT_LANGUAGE
 
     if lang_code != 'browser':
-        request.session['django_language'] = lang_code
-    elif 'django_language' in request.session:
-        del request.session['django_language']
+        request.session[LANGUAGE_SESSION_KEY] = lang_code
+    elif LANGUAGE_SESSION_KEY in request.session:
+        del request.session[LANGUAGE_SESSION_KEY]
 
 
 @receiver(user_logged_in)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -38,6 +38,12 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase, wirecloud_selen
 from wirecloud.commons.exceptions import HttpBadCredentials
 from wirecloud.platform.views import get_default_view, render_wirecloud
 from wirecloud.platform.preferences.models import update_session_lang
+
+try:
+    # Django 1.7+
+    from django.utils.translation import LANGUAGE_SESSION_KEY
+except:
+    LANGUAGE_SESSION_KEY = 'django_language'
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -176,8 +182,9 @@ class BasicViewsAPI(WirecloudTestCase):
 
         self.client.get(logout_url, HTTP_ACCEPT='application/xhtml+xml')
         for cookie in old_cookies.values():
-            # Check session id has also changed
+            # Check session id has changed
             self.assertNotEqual(self.client.cookies[cookie.key].value, cookie.value)
+            # Use old session id to be able to check that it has been deleted
             self.client.cookies[cookie.key] = cookie.value
 
         response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
@@ -215,7 +222,7 @@ class BasicViewsAPI(WirecloudTestCase):
         with patch('wirecloud.commons.authentication.render') as render_mock:
             response = logout(request, next_page=None)
             self.assertTrue(render_mock.called)
-        self.assertTrue(request.session.flush.called)
+        self.assertTrue(request.session.cycle_key.called)
 
         # logout with next_page
         request = Mock()
@@ -223,7 +230,7 @@ class BasicViewsAPI(WirecloudTestCase):
         with patch('wirecloud.commons.authentication.render') as render_mock:
             response = logout(request, next_page='newurl')
             self.assertFalse(render_mock.called)
-        self.assertTrue(request.session.flush.called)
+        self.assertTrue(request.session.cycle_key.called)
         self.assertTrue(response['Location'], 'newurl')
 
     def test_update_session_lang_not_user_preference(self):
@@ -237,12 +244,12 @@ class BasicViewsAPI(WirecloudTestCase):
                 platform_preference_mock.objects.filter.return_value = []
                 update_session_lang(request, user)
 
-        self.assertEqual(request.session['django_language'], 'invented')
+        self.assertEqual(request.session[LANGUAGE_SESSION_KEY], 'invented')
 
     def test_update_session_lang_invalid_user_preference(self):
 
         request = Mock()
-        request.session = {'django_language': 'es'}
+        request.session = {LANGUAGE_SESSION_KEY: 'es'}
 
         user = Mock()
         with self.settings(DEFAULT_LANGUAGE='invented', LANGUAGES=(('es', 'Spanish'),)):
@@ -252,12 +259,12 @@ class BasicViewsAPI(WirecloudTestCase):
                 platform_preference_mock.objects.filter.return_value = [lang_pref_mock]
                 update_session_lang(request, user)
 
-        self.assertEqual(request.session['django_language'], 'invented')
+        self.assertEqual(request.session[LANGUAGE_SESSION_KEY], 'invented')
 
     def test_update_session_lang_browser(self):
 
         request = Mock()
-        request.session = {'django_language': 'en'}
+        request.session = {LANGUAGE_SESSION_KEY: 'en'}
 
         user = Mock()
         with self.settings(DEFAULT_LANGUAGE='en', LANGUAGES=(('en', 'English'),)):
@@ -267,7 +274,7 @@ class BasicViewsAPI(WirecloudTestCase):
                 platform_preference_mock.objects.filter.return_value = [lang_pref_mock]
                 update_session_lang(request, user)
 
-        self.assertNotIn('django_language', request.session)
+        self.assertNotIn(LANGUAGE_SESSION_KEY, request.session)
 
     def test_update_session_lang_default_browser(self):
 
@@ -282,7 +289,7 @@ class BasicViewsAPI(WirecloudTestCase):
                 platform_preference_mock.objects.filter.return_value = [lang_pref_mock]
                 update_session_lang(request, user)
 
-        self.assertNotIn('django_language', request.session)
+        self.assertNotIn(LANGUAGE_SESSION_KEY, request.session)
 
     def test_empty_authorization_header(self):
 

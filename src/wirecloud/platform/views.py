@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -148,7 +148,7 @@ def render_workspace_view(request, owner, name):
             return redirect_to_login(request.get_full_path())
     elif not request.user.is_authenticated():
         # Ensure user has a session
-        request.session['django_language'] = request.session.get('django_language', None)
+        request.session[settings.LANGUAGE_COOKIE_NAME] = request.session.get(settings.LANGUAGE_COOKIE_NAME, None)
 
     return render_wirecloud(request)
 

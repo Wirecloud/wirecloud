@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,15 +22,24 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
+try:
+    # Django 1.7+
+    from django.utils.translation import LANGUAGE_SESSION_KEY
+except:
+    LANGUAGE_SESSION_KEY = 'django_language'
+
 
 def logout(request, next_page=getattr(settings, 'LOGOUT_REDIRECT_URL', None), template_name='registration/logged_out.html'):
 
-    old_lang = request.session.get('django_language', None)
+    old_lang = request.session.get(LANGUAGE_SESSION_KEY, None)
 
-    request.session.flush()
+    # Django 1.8+ removes session cookie when calling request.session.flush()
+    # and do not allow to create a new session id
+    request.session.clear()
+    request.session.cycle_key()
 
     if old_lang is not None:
-        request.session['django_language'] = old_lang
+        request.session[LANGUAGE_SESSION_KEY] = old_lang
 
     if next_page is None:
         return render(request, template_name, {'title': _('Logged out')})
