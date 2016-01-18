@@ -67,6 +67,9 @@ class TemplateLoader(Loader):
         Look for template into active theme directory
         """
 
+        if os.path.isabs(template_name):
+            return
+
         def try_template(templates_dir):
             if templates_dir and os.path.isdir(templates_dir):
                 try:
