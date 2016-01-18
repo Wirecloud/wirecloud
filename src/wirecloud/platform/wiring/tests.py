@@ -28,7 +28,6 @@ import time
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django.db import transaction
 from django.test import Client
 from django.utils import unittest
 from mock import Mock, patch
@@ -85,7 +84,6 @@ class WiringTestCase(WirecloudTestCase):
 
         self.workspace_id = 1
         Workspace.objects.filter(id=self.workspace_id).update(wiringStatus=self.empty_wiring)
-        transaction.commit()
 
         self.wiring_url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': self.workspace_id})
 
