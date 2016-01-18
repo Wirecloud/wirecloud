@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from importlib import import_module
 import os
 import shutil
 import sys
@@ -24,7 +25,6 @@ import time
 
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
-from django.utils.importlib import import_module
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By

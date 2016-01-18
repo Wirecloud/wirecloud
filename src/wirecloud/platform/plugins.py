@@ -19,6 +19,7 @@
 
 from __future__ import unicode_literals
 
+from importlib import import_module
 import inspect
 import logging
 import json
@@ -27,7 +28,6 @@ from django.conf.urls import patterns
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import get_ns_resolver, get_resolver, get_script_prefix, NoReverseMatch
 from django.utils.encoding import force_text
-from django.utils.importlib import import_module
 from django.utils.regex_helper import normalize
 from six import string_types, text_type
 

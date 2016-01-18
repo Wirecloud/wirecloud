@@ -18,6 +18,7 @@
 # This code is inspired/stolen from the Merengue
 # project (www.merengueproject.org)
 
+from importlib import import_module
 import os
 
 from django.conf import settings
@@ -25,7 +26,6 @@ from django.contrib.staticfiles.finders import BaseFinder
 from django.contrib.staticfiles import utils
 from django.core.files.storage import FileSystemStorage
 from django.template import TemplateDoesNotExist
-from django.utils.importlib import import_module
 from django.utils._os import safe_join
 try:
     # Django 1.8+

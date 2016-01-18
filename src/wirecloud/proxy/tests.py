@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,6 +19,7 @@
 
 from __future__ import unicode_literals
 
+from importlib import import_module
 import json
 import requests
 
@@ -26,7 +27,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import Client
-from django.utils.importlib import import_module
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
 from wirecloud.platform.models import IWidget

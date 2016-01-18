@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,13 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from importlib import import_module
 import json
 import requests
 import time
 from six.moves.urllib.parse import urljoin
 
 from django.utils import unittest
-from django.utils.importlib import import_module
 from six import string_types
 
 from wirecloud.commons.utils.commands import BaseCommand

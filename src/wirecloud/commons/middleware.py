@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,9 +19,10 @@
 
 from __future__ import unicode_literals
 
+from importlib import import_module
+
 from django.contrib.auth.middleware import get_user
 from django.core.urlresolvers import reverse
-from django.utils.importlib import import_module
 from django.utils.functional import SimpleLazyObject
 from django.utils.http import http_date, parse_http_date_safe
 from django.utils.translation import ugettext as _
