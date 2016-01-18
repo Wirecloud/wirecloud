@@ -22,8 +22,8 @@ import json
 import requests
 import time
 from six.moves.urllib.parse import urljoin
+import unittest
 
-from django.utils import unittest
 from six import string_types
 
 from wirecloud.commons.utils.commands import BaseCommand

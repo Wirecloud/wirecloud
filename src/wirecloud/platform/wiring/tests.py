@@ -24,12 +24,12 @@ import json
 import os
 import re
 import time
+import unittest
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.test import Client
-from django.utils import unittest
 from mock import Mock, patch
 import selenium
 from selenium.webdriver import ActionChains

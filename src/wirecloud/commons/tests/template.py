@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,8 +23,7 @@ import copy
 import json
 import os
 import rdflib
-
-from django.utils.unittest import TestCase
+from unittest import TestCase
 
 from wirecloud.commons.utils.template.parsers import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.template.parsers.xml import WIRECLOUD_TEMPLATE_NS

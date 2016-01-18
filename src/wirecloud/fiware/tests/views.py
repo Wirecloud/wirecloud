@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,8 +19,9 @@
 
 from __future__ import unicode_literals
 
+import unittest
+
 from django.http import HttpResponse
-from django.utils import unittest
 from mock import Mock, patch, DEFAULT
 
 from wirecloud.fiware.views import login, logout
