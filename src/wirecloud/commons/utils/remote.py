@@ -863,6 +863,10 @@ class WiringConnectionTester(object):
         return self._get_btn_by_class("btn-share")
 
     @property
+    def btn_logs(self):
+        return self._get_btn_by_class("btn-show-logs")
+
+    @property
     def btn_prefs(self):
         return self._get_btn_by_class("btn-show-prefs")
 
@@ -899,7 +903,7 @@ class WiringConnectionTester(object):
         return "selected" in self.class_list
 
     def _get_btn_by_class(self, class_name):
-        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".connection-options .{}".format(class_name)))
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".connection-options[data-sourceid='%s'][data-targetid='%s'] .%s" % (self.sourceid, self.targetid, class_name)))
 
     def has_changed(self):
         old_distance = self.distance
@@ -927,6 +931,10 @@ class WiringConnectionTester(object):
         self.btn_remove.click()
 
         return self
+
+    def show_logs(self):
+        self.btn_logs.click()
+        return BaseModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".logwindowmenu"))
 
     def drag_endpoint(self, endpoint, new_endpoint):
         ActionChains(self.testcase.driver).click_and_hold(endpoint.anchor).move_to_element(new_endpoint.element).perform()
@@ -2069,6 +2077,9 @@ class WiringViewTester(BaseWiringViewTester):
 
     def filter_connections_by_properties(self, *args):
         return [c for c in self.find_connections() for p in args if hasattr(c, p) and getattr(c, p)]
+
+    def find_connections_by_css_selector(self, css_selector):
+        return [WiringConnectionTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".connection%s" % css_selector)]
 
     def find_components(self):
         return [self._build_component(None, e) for e in self.section_diagram.find_elements_by_css_selector(".component")]

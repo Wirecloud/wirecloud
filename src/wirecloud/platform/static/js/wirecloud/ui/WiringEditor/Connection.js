@@ -54,30 +54,38 @@
             this.bodyElement.addEventListener('click', connection_onclick.bind(this));
             this.wrapperElement.appendChild(this.bodyElement);
 
-            this.optionsElement = document.createElementNS(ns.Connection.SVG_NS, 'g');
-            this.optionsElement.setAttribute('class', "connection-options");
+            this.options = new se.Container({extraClass: "connection-options btn-group btn-group-circle btn-group-xs"});
+            this.options.hide();
 
-            this.btnGroupElement = document.createElementNS(ns.Connection.SVG_NS, 'rect');
-            this.btnGroupElement.setAttribute('class', "btn-svg-group");
-            this.btnGroupElement.setAttribute('height', "20px");
-            this.btnGroupElement.setAttribute('width', "45px");
-            this.optionsElement.appendChild(this.btnGroupElement);
-
-            this.btnPrefs = new se.SVGPlainButton({
-                title: gettext("Preferences"),
-                extraClass: "btn-show-prefs",
-                iconClass: "icon-reorder",
-                menuItems: new ns.ConnectionPrefs(this)
+            this.btnLogs = new se.Button({
+                title: utils.gettext("Logs"),
+                state: 'default',
+                depth: 1,
+                extraClass: "btn-show-logs",
+                iconClass: "icon-bell-alt"
             });
-            this.btnPrefs.appendTo(this.optionsElement);
+            this.btnLogs.on('click', btnerrors_onclick.bind(this));
+            this.btnLogs.appendTo(this.options);
 
-            this.btnRemove = new se.SVGPlainButton({
-                title: gettext("Remove"),
+            this.btnRemove = new se.Button({
+                title: utils.gettext("Remove"),
+                state: 'danger',
+                depth: 1,
                 extraClass: "btn-remove",
-                iconClass: "icon-remove-sign"
+                iconClass: "icon-remove"
             });
             this.btnRemove.on('click', btnremove_onclick.bind(this));
-            this.btnRemove.appendTo(this.optionsElement);
+            this.btnRemove.appendTo(this.options);
+
+            this.btnPrefs = new se.PopupButton({
+                title: utils.gettext("Preferences"),
+                state: 'default',
+                depth: 1,
+                extraClass: "btn-show-prefs",
+                iconClass: "icon-reorder"
+            });
+            this.btnPrefs.popup_menu.append(new ns.ConnectionPrefs(this));
+            this.btnPrefs.appendTo(this.options);
 
             this.activeCount = 0;
 
@@ -173,10 +181,15 @@
              *      The instance on which the member is called.
              */
             _onactive: function _onactive(active) {
+                var newDepth = active || !this.background ? 1 : 0;
 
                 if (this.active === active) {
                     return this;
                 }
+
+                this.btnLogs.depth = newDepth;
+                this.btnPrefs.depth = newDepth;
+                this.btnRemove.depth = newDepth;
 
                 this.toggleClassName('active', active).toFirst();
                 toggleActiveEndpoints.call(this, active);
@@ -194,8 +207,13 @@
              *      The instance on which the member is called.
              */
             _onbackground: function _onbackground(background) {
+                var newDepth = this.active || !background ? 1 : 0;
 
                 this.toggleClassName('background', background);
+
+                this.btnLogs.depth = newDepth;
+                this.btnPrefs.depth = newDepth;
+                this.btnRemove.depth = newDepth;
 
                 return background ? this._showButtonAdd() : updateFlagRemoveAllowed.call(this);
             },
@@ -235,8 +253,11 @@
 
                 this.btnRemove
                     .replaceClassName("btn-remove", "btn-share")
-                    .iconClass("icon-plus-sign")
-                    .title(utils.gettext("Add"));
+                    .removeIconClassName('icon-trash')
+                    .removeIconClassName('icon-remove')
+                    .addIconClassName('icon-plus')
+                    .setTitle(utils.gettext("Add"));
+                this.btnRemove.state = 'info';
 
                 return this;
             },
@@ -245,8 +266,11 @@
 
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
-                    .iconClass("icon-trash")
-                    .title(utils.gettext("Delete"));
+                    .removeIconClassName('icon-plus')
+                    .removeIconClassName('icon-trash')
+                    .addIconClassName('icon-remove')
+                    .setTitle(utils.gettext("Remove"));
+                this.btnRemove.state = 'danger';
 
                 return this;
             },
@@ -255,8 +279,11 @@
 
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
-                    .iconClass("icon-remove-sign")
-                    .title(utils.gettext("Remove"));
+                    .removeIconClassName('icon-plus')
+                    .removeIconClassName('icon-remove')
+                    .addIconClassName('icon-trash')
+                    .setTitle(utils.gettext("Remove"));
+                this.btnRemove.state = 'danger';
 
                 return this;
             },
@@ -470,6 +497,9 @@
              *      The instance on which the member is called.
              */
             showLogs: function showLogs() {
+                var count = this._connection.logManager.getErrorCount();
+
+                this.btnLogs.setBadge(count ? count : null, 'danger');
                 this._connection.showLogs();
 
                 return this;
@@ -611,6 +641,10 @@
         });
 
         this._connection = wiringConnection;
+        this._connection.logManager.addEventListener('newentry', notifyErrors.bind(this));
+
+        this.options.show();
+        notifyErrors.call(this);
 
         if (this.readonly) {
             this.addClassName("readonly");
@@ -618,6 +652,17 @@
         }
 
         return this;
+    };
+
+    var notifyErrors = function notifyErrors() {
+        var count = this._connection.logManager.getErrorCount();
+
+        this.toggleClassName('has-error', !!count);
+        this.btnLogs.setBadge(count ? count : null, 'danger', true);
+    };
+
+    var btnerrors_onclick = function btnerrors_onclick() {
+        this.showLogs();
     };
 
     var btnremove_onclick = function btnremove_onclick(event) {
@@ -664,8 +709,6 @@
             return this;
         }
 
-        this.wrapperElement.appendChild(this.optionsElement);
-
         this.source.handle.on('drag', handle_ondrag.bind(this));
         this.source.handle.on('dragend', handle_ondragend.bind(this));
 
@@ -679,6 +722,9 @@
 
         this.get().setAttribute('data-sourceid', this.sourceId);
         this.get().setAttribute('data-targetid', this.targetId);
+
+        this.options.get().setAttribute('data-sourceid', this.sourceId);
+        this.options.get().setAttribute('data-targetid', this.targetId);
 
         return this;
     };
@@ -729,11 +775,10 @@
         if (this.established) {
             var middlePosition = calculateMiddle(source, sourceHandle, target, targetHandle);
 
-            this.btnGroupElement.setAttribute('x', middlePosition.x - 20);
-            this.btnGroupElement.setAttribute('y', middlePosition.y - 10);
-
-            this.btnRemove.position(middlePosition.x + 6, middlePosition.y + 5);
-            this.btnPrefs.position(middlePosition.x - 12, middlePosition.y + 5);
+            this.options.style({
+                top: middlePosition.y + 'px',
+                left: middlePosition.x + 'px'
+            });
         }
 
         return this;

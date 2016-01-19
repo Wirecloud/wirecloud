@@ -1,4 +1,5 @@
 @import 'compass/css3/user-interface';
+@import 'compass/css3/transform';
 @import 'wiring/defaults';
 @import "utils";
 
@@ -23,27 +24,11 @@
         stroke: $connection-border-color;
         stroke-width: $connection-border-width;
     }
+}
 
-    .connection-options {
-        font-family: "FontAwesome";
-        font-size: $font-size-base;
-
-        .btn-svg-group {
-            fill: $connection-options-bg;
-            stroke: $connection-options-border-color;
-        }
-
-        .btn-svg-plain {
-            cursor: pointer;
-            fill: $connection-text-color;
-
-            &:hover,
-            &.active {
-                fill: $connection-active-text-hover-color;
-                text-shadow: $connection-text-hover-shadow;
-            }
-        }
-    }
+.connection-options {
+    position: absolute;
+    @include transform(translate(-50%, -50%));
 }
 
 // ============================================================================
@@ -59,25 +44,14 @@
     .connection-border {
         stroke: $connection-background-border-color;
     }
-
-    .connection-options {
-
-        .btn-svg-group {
-            fill: $connection-background-options-bg;
-            stroke: $connection-background-options-border-color;
-        }
-
-        .btn-svg-plain {
-            fill: $connection-background-text-color;
-        }
-    }
 }
 
 // ============================================================================
 // WIRING VIEW - CONNECTION - MISSING
 // ============================================================================
 
-.connection.missing {
+.connection.missing,
+.connection.has-error {
 
     .connection-body {
         stroke: $connection-missing-bg;
@@ -85,23 +59,6 @@
 
     .connection-border {
         stroke: $connection-missing-border-color;
-    }
-
-    .connection-options {
-
-        .btn-svg-group {
-            fill: $connection-missing-options-bg;
-            stroke: $connection-missing-options-border-color;
-        }
-
-        .btn-svg-plain {
-            fill: $connection-missing-text-color;
-
-            &:hover,
-            &.active {
-                fill: $connection-missing-text-hover-color;
-            }
-        }
     }
 }
 
@@ -112,6 +69,7 @@
 .connection.active,
 .connection.editable,
 .connection.missing.active,
+.connection.has-error.active,
 .connection.background.active {
 
     .connection-body {
@@ -120,25 +78,6 @@
 
     .connection-border {
         stroke: $connection-active-border-color;
-    }
-
-    .connection-options {
-
-        .btn-svg-group {
-            fill: $connection-active-options-bg;
-            stroke: $connection-active-options-border-color;
-        }
-
-        .btn-svg-plain {
-            fill: $connection-active-text-color;
-            text-shadow: $connection-active-text-shadow;
-
-            &:hover,
-            &.active {
-                fill: $connection-active-text-hover-color;
-                text-shadow: $connection-text-hover-shadow;
-            }
-        }
     }
 }
 

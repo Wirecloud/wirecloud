@@ -664,9 +664,21 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         self.send_basic_event(iwidgets[2], 'typeerror')
         self.send_basic_event(iwidgets[2], 'valueerror')
 
-        error_badge = self.wait_element_visible_by_css_selector(".wc-toolbar .icon-puzzle-piece + .badge")
+        error_badge = self.wait_element_visible_by_css_selector(".wc-toolbar .btn-display-wiring-view .badge")
         self.assertTrue(error_badge.is_displayed())
         self.find_navbar_button("display-wiring-view").check_badge_text("4")
+
+        with self.wiring_view as wiring:
+            connections = wiring.find_connections_by_css_selector('.has-error')
+            self.assertEqual(len(connections), 2)
+            self._check_connection_errors(connections[0], 2)
+            self._check_connection_errors(connections[1], 2)
+
+    def _check_connection_errors(self, connection, count):
+        dialog = connection.show_logs()
+        alerts = dialog.filter_alerts_by_type('error')
+        self.assertEqual(len(alerts), count)
+        dialog.accept()
 
 
 @wirecloud_selenium_test_case

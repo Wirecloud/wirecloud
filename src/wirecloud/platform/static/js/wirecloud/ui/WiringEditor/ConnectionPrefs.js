@@ -84,9 +84,6 @@
                     this._createMenuItem(getCustomizeTitle.call(this.connection), "magic", function () {
                         this.editable = !this.editable;
                     }.bind(this.connection), canCustomize),
-                    this._createMenuItem(gettext("Logs"), "tags", function () {
-                        this.showLogs();
-                    }.bind(this.connection)),
                     this._createMenuItem(gettext("Restore defaults"), "undo", function () {
                         this.restoreDefaults();
                     }.bind(this.connection), canRestore)
