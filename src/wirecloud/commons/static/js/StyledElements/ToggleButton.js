@@ -83,13 +83,18 @@
     };
 
     StyledElements.ToggleButton.prototype._clickCallback = function _clickCallback(event) {
-        if (!this.enabled) {
-            return;
+        event.stopPropagation();
+        this.click();
+    };
+
+    StyledElements.ToggleButton.prototype.click = function click() {
+
+        if (this.enabled) {
+            this.active = !this.active;
+            this.trigger('click');
         }
 
-        event.stopPropagation();
-        this.active = !this.active;
-        this.events.click.trigger(this);
+        return this;
     };
 
 })();
