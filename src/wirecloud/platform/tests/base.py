@@ -24,6 +24,7 @@ from io import BytesIO
 import json
 from lxml import etree
 
+import django
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test.client import RequestFactory
@@ -65,7 +66,12 @@ class BasicViewsAPI(WirecloudTestCase):
         super(BasicViewsAPI, cls).setUpClass()
         factory = RequestFactory()
         request = factory.get(reverse('login'))
-        cls.login_url = get_absolute_reverse_url('login', request=request)
+        if django.VERSION[1] >= 9:
+            # Django 1.9 doesn't force the use of absolute urls for the location header
+            # https://docs.djangoproject.com/en/1.9/releases/1.9/#http-redirects-no-longer-forced-to-absolute-uris
+            cls.login_url = reverse('login')
+        else:
+            cls.login_url = get_absolute_reverse_url('login', request=request)
 
     def test_workspace_view_redirects_to_login(self):
 
