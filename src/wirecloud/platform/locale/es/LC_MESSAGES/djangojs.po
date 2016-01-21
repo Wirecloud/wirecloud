@@ -2291,7 +2291,7 @@ msgstr ""
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:799
 msgid "<li>The <strong><t:title/></strong> <t:type/>.</li>"
-msgstr "<li>El <t:type/> <strong><t:title/></strong>."
+msgstr "<li>El <t:type/> <strong><t:title/></strong>.</li>"
 
 #: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:805
 msgid ""
