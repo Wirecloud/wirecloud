@@ -143,6 +143,35 @@
 }
 
 // ============================================================================
+// WIRING VIEW - CONNECTION - TEMPORAL
+// ============================================================================
+
+.connection.temporal,
+.connection.background.temporal {
+
+    .connection-body {
+        stroke: $connection-temporal-bg;
+    }
+
+    .connection-border {
+        stroke: $connection-temporal-border-color;
+    }
+
+    .connection-options {
+
+        .btn-svg-group {
+            fill: $connection-temporal-bg;
+            stroke: $connection-temporal-border-color;
+        }
+
+        .btn-svg-plain {
+            fill: $connection-temporal-text-color;
+            text-shadow: $connection-temporal-text-shadow;
+        }
+    }
+}
+
+// ============================================================================
 // WIRING VIEW - CONNECTION - EDITABLE
 // ============================================================================
 

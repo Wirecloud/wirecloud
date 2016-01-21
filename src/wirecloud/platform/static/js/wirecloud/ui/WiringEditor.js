@@ -746,7 +746,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
     };
 
-    var connection_onestablish = function connection_onestablish(connectionEngine, connection) {
+    var connection_onestablish = function connection_onestablish(connectionEngine, connection, connectionBackup) {
         /*jshint validthis:true */
 
         this.behaviourEngine.updateConnection(connection, connection.toJSON());
@@ -761,6 +761,29 @@ Wirecloud.ui = Wirecloud.ui || {};
             .on('optshare', function () {
                 this.behaviourEngine.updateConnection(connection, connection.toJSON(), true);
             }.bind(this));
+
+        if (connectionBackup != null) {
+            this.behaviourEngine.removeConnection(connectionBackup);
+
+            if (this.behaviourEngine.hasConnection(connectionBackup)) {
+                showConnectionChangeModal.call(this, connectionBackup);
+            }
+        }
+    };
+
+    var showConnectionChangeModal = function showConnectionChangeModal(connection) {
+        /*jshint validthis:true */
+        var modal, message;
+        var builder = new se.GUIBuilder();
+
+        message = builder.parse(builder.DEFAULT_OPENING + utils.gettext("The connection will also be modified for the rest of behaviours, would you like to continue?") + builder.DEFAULT_CLOSING);
+
+        modal = new Wirecloud.ui.AlertWindowMenu();
+        modal.setMsg(message);
+        modal.acceptHandler = function () {
+            this.behaviourEngine.removeConnection(connection, true);
+        }.bind(this);
+        modal.show();
     };
 
     var component_onremove = function component_onremove(component) {
@@ -785,7 +808,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
     };
 
-    var connection_ondragstart = function connection_ondragstart(connectionEngine, connection, initialEndpoint) {
+    var connection_ondragstart = function connection_ondragstart(connectionEngine, connection, initialEndpoint, realEndpoint) {
         /*jshint validthis:true */
 
         this.collapsedComponents = [];
@@ -797,6 +820,11 @@ Wirecloud.ui = Wirecloud.ui || {};
                 this.collapsedComponents.push(component);
             }
         }.bind(this));
+
+        if (this.connectionEngine._connectionBackup != null) {
+            this.suggestionManager.hideSuggestions(realEndpoint);
+            this.suggestionManager.showSuggestions(initialEndpoint);
+        }
     };
 
     var connection_ondragend = function connection_ondragend(connectionEngine, connection, initialEndpoint) {

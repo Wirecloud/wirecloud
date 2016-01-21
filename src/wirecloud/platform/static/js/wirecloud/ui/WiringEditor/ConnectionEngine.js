@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -154,6 +154,7 @@
                     .appendTo(this.connectionsElement);
 
                 appendConnection.call(this, connection);
+                this.trigger('establish', connection);
                 connection.logManager.log(gettext("The connection was loaded successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
 
                 return this;
@@ -207,6 +208,18 @@
                 });
 
                 return this;
+            },
+
+            getConnection: function getConnection(sourceId, targetId) {
+                var i, connection;
+
+                for (i = 0; i < this.connections.length && !connection; i++) {
+                    if (this.connections[i].sourceId == sourceId && this.connections[i].targetId == targetId) {
+                        connection = this.connections[i];
+                    }
+                }
+
+                return connection;
             },
 
             /**
@@ -267,6 +280,11 @@
 
     var events = ['cancel', 'dragstart', 'dragend', 'duplicate', 'establish'];
 
+    var opposites = {
+        source: 'target',
+        target: 'source'
+    };
+
     var appendConnection = function appendConnection(connection) {
 
         this.connections.push(connection);
@@ -321,11 +339,20 @@
         this.editableConnection = connection;
     };
 
-    var endpoint_ondragstart = function endpoint_ondragstart(initialEndpoint) {
+    var endpoint_ondragstart = function endpoint_ondragstart(endpoint) {
         var connection = new ns.Connection();
+        var initialEndpoint;
 
         if (!this.enabled) {
             return;
+        }
+
+        if (endpoint.hasConnection(this.activeConnection)) {
+            this.activeConnection.addClassName('temporal');
+            initialEndpoint = this.activeConnection[opposites[endpoint.type]].endpoint;
+            this._connectionBackup = this.activeConnection;
+        } else {
+            initialEndpoint = endpoint;
         }
 
         this.setUp();
@@ -339,7 +366,7 @@
         document.addEventListener('mousemove', this._ondrag);
         document.addEventListener('mouseup', this._ondragend);
 
-        this.trigger('dragstart', connection, initialEndpoint);
+        this.trigger('dragstart', connection, initialEndpoint, endpoint);
 
         this.temporalInitialEndpoint = initialEndpoint;
         this.temporalConnection = connection;
@@ -369,12 +396,17 @@
 
         this.temporalConnection.deactivate();
 
+        if (this._connectionBackup != null) {
+            this._connectionBackup.removeClassName('temporal');
+        }
+
         switch (validateConnection(this.temporalInitialEndpoint, finalEndpoint)) {
         case ns.ConnectionEngine.CONNECTION_ESTABLISHED:
             this.temporalConnection
                 .stickEndpoint(finalEndpoint)
                 .createAndBind(false, this.wiringEngine);
             appendConnection.call(this, this.temporalConnection);
+            this.trigger('establish', this.temporalConnection, this._connectionBackup);
             this.temporalConnection.logManager.log(gettext("The connection was established successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
             break;
         case ns.ConnectionEngine.CONNECTION_DUPLICATE:
@@ -391,6 +423,7 @@
         this.trigger('dragend', this.temporalConnection, this.temporalInitialEndpoint);
 
         delete this.temporalInitialEndpoint;
+        delete this._connectionBackup;
         delete this.temporalConnection;
     };
 

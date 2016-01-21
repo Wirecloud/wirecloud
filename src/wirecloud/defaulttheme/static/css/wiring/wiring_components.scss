@@ -315,8 +315,10 @@
     }
 
     .endpoint:hover,
-    .endpoint.active {
+    .endpoint.active,
+    .endpoint.active.disabled {
         background-color: $endpoint-active-bg;
+        opacity: 1;
 
         .endpoint-title {
             color: $endpoint-active-text-color;

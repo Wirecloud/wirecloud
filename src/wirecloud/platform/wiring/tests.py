@@ -852,8 +852,8 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             widget_1 = wiring.find_component_by_title('widget', 'Test 2')
             operator_2 = wiring.find_component_by_title('operator', 'TestOperator')
             widget_3 = wiring.find_component_by_title('widget', 'Test 1')
-            ActionChains(self.driver).key_down(Keys.COMMAND).click(widget_1.element).perform();
-            ActionChains(self.driver).click(operator_2.element).perform();
+            ActionChains(self.driver).key_down(Keys.COMMAND).click(widget_1.element).perform()
+            ActionChains(self.driver).click(operator_2.element).perform()
             ActionChains(self.driver).click(widget_3.element).key_up(Keys.COMMAND).perform()
 
             # Remove the selection using the backspace key
@@ -904,7 +904,6 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
             widget = wiring.find_component_by_title('widget', "Test")
             self.assertTrue(widget.missing)
             widget.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
-
 
         with self.wiring_view as wiring:
             widget = wiring.find_component_by_title('widget', "Test")
@@ -1121,6 +1120,106 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             self.assertEqual(len(wiring.find_connections()), 3)
             self.assertEqual(len(wiring.filter_connections_by_properties('missing')), 0)
+
+    def test_modify_connection(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            connection = wiring.find_connection_by_endpoints('widget/2/outputendpoint', 'operator/0/input')
+            connection.click()
+            self.assertTrue(connection.active)
+
+            operator = wiring.find_component_by_id('operator', 0)
+            target1 = operator.find_endpoint_by_name('target', 'input')
+            target2 = operator.find_endpoint_by_name('target', 'nothandled')
+
+            widget1 = wiring.find_component_by_id('widget', 1)
+            target3 = widget1.find_endpoint_by_name('target', 'inputendpoint')
+
+            widget2 = wiring.find_component_by_id('widget', 2)
+            source1 = widget2.find_endpoint_by_name('source', 'outputendpoint')
+
+            connection.drag_endpoint(target1, target2)
+            self.assertTrue(connection.temporal)
+            self.assertFalse(target1.active)
+            self.assertTrue(target2.active)
+            self.assertTrue(target3.active)
+            self.assertTrue(source1.active)
+
+            connection.drop_endpoint()
+            self.assertIsNone(wiring.find_connection_by_endpoints('widget/2/outputendpoint', 'operator/0/input'))
+            self.assertIsNotNone(wiring.find_connection_by_endpoints('widget/2/outputendpoint', 'operator/0/nothandled'))
+
+    def test_modify_connection_on_several_behaviours(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
+
+        with self.wiring_view as wiring:
+            connection = wiring.find_connection_by_endpoints('widget/11/outputendpoint', 'operator/0/input')
+            connection.click()
+            self.assertTrue(connection.active)
+
+            operator = wiring.find_component_by_id('operator', 0)
+            target1 = operator.find_endpoint_by_name('target', 'input')
+            target2 = operator.find_endpoint_by_name('target', 'nothandled')
+
+            widget1 = wiring.find_component_by_id('widget', 10)
+            target3 = widget1.find_endpoint_by_name('target', 'inputendpoint')
+
+            widget2 = wiring.find_component_by_id('widget', 11)
+            source1 = widget2.find_endpoint_by_name('source', 'outputendpoint')
+
+            connection.drag_endpoint(target1, target2)
+            self.assertTrue(connection.temporal)
+            self.assertFalse(target1.active)
+            self.assertTrue(target2.active)
+            self.assertTrue(target3.active)
+            self.assertTrue(source1.active)
+
+            connection.drop_endpoint()
+
+            # Now the connection belonging to other behaviours will also be removed. To do this,
+            # the following operation, shown in the window alert, will be accepted.
+            form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-dialog"))
+            form.accept()
+
+            self.assertIsNone(wiring.find_connection_by_endpoints('widget/2/outputendpoint', 'operator/0/input'))
+            self.assertIsNotNone(wiring.find_connection_by_endpoints('widget/11/outputendpoint', 'operator/0/nothandled'))
+
+    def test_modify_connection_on_active_behaviours(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
+
+        with self.wiring_view as wiring:
+            connection = wiring.find_connection_by_endpoints('widget/11/outputendpoint', 'operator/0/input')
+            connection.click()
+            self.assertTrue(connection.active)
+
+            operator = wiring.find_component_by_id('operator', 0)
+            target1 = operator.find_endpoint_by_name('target', 'input')
+            target2 = operator.find_endpoint_by_name('target', 'nothandled')
+
+            widget1 = wiring.find_component_by_id('widget', 10)
+            target3 = widget1.find_endpoint_by_name('target', 'inputendpoint')
+
+            widget2 = wiring.find_component_by_id('widget', 11)
+            source1 = widget2.find_endpoint_by_name('source', 'outputendpoint')
+
+            connection.drag_endpoint(target1, target2)
+            self.assertTrue(connection.temporal)
+            self.assertFalse(target1.active)
+            self.assertTrue(target2.active)
+            self.assertTrue(target3.active)
+            self.assertTrue(source1.active)
+
+            connection.drop_endpoint()
+
+            # Now the connection belonging to other behaviours will be existing. To do this,
+            # the following operation, shown in the window alert, will be cacelled.
+            form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-dialog"))
+            form.cancel()
+
+            connection = wiring.find_connection_by_endpoints('widget/11/outputendpoint', 'operator/0/input')
+            self.assertTrue(connection.background)
+            self.assertIsNotNone(wiring.find_connection_by_endpoints('widget/11/outputendpoint', 'operator/0/nothandled'))
 
 
 @wirecloud_selenium_test_case

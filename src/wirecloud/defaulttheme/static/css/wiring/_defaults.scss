@@ -128,6 +128,12 @@ $connection-active-text-color:       rgb(050, 150, 200) !default;
 $connection-active-text-shadow:      0 1px 0 rgb(255, 255, 255) !default;
 $connection-active-text-hover-color: darken($connection-active-text-color, 10%) !default;
 
+$connection-temporal-border-color: rgba(185, 205, 220, 0.9) !default;
+$connection-temporal-bg:           lighten($connection-temporal-border-color, 10%) !default;
+
+$connection-temporal-text-color:  rgb(185, 205, 220) !default;
+$connection-temporal-text-shadow: 0 1px 0 rgb(255, 255, 255) !default;
+
 $connection-editable-border-dasharray: 6, 2 !default;
 
 $connection-handle-width: 2px !default;
