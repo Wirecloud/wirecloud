@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,6 +26,7 @@
     "use strict";
 
     var UserInterfaceManager = {
+        rootKeydownHandler: null,
         currentWindowMenu: null,
         currentPopups: []
     };
@@ -61,10 +62,33 @@
         coverLayerElement.style.display = 'none';
         document.body.insertBefore(coverLayerElement, document.body.firstChild);
 
-        // Default escape keypress handler
+        // General keydown handler
         document.addEventListener('keydown', function (event) {
-            if (utils.normalizeKey(event) === "Escape") {
-                Wirecloud.UserInterfaceManager.handleEscapeEvent();
+            var modifiers, key, consumed, popup;
+
+            modifiers = {
+                altKey: event.altKey,
+                controlKey: event.controlKey,
+                metaKey: event.metaKey,
+                shiftKey: event.shiftKey
+            };
+            key = utils.normalizeKey(event);
+
+            // if there are not modals, check if the current view can consume this keydown event
+            if (UserInterfaceManager.currentWindowMenu == null) {
+                consumed = utils.callCallback(UserInterfaceManager.rootKeydownHandler, key, modifiers);
+            } else if (key === "Backspace") {
+                // Ignore backspace keydown events if we are in a modals
+                consumed = true;
+            }
+
+            // Handle default shortcuts
+            if (!consumed && key === "Escape") {
+                UserInterfaceManager.handleEscapeEvent();
+            }
+
+            if (consumed) {
+                event.preventDefault();
             }
         }, true);
     };

@@ -63,8 +63,6 @@ Wirecloud.ui = Wirecloud.ui || {};
 
             this.orderableComponent = null;
             this.autoOperatorId = 1;
-
-            this._document_onkeydown_bound = document_onkeydown.bind(this);
         },
 
         inherit: se.Alternative,
@@ -417,7 +415,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.workspace.wiring.load(this.toJSON()).save();
         readyView.call(this);
 
-        document.removeEventListener('keydown', this._document_onkeydown_bound);
+        Wirecloud.UserInterfaceManager.rootKeydownHandler = null;
 
         return this;
     };
@@ -448,7 +446,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         readyView.call(this);
         loadWiringStatus.call(this);
 
-        document.addEventListener('keydown', this._document_onkeydown_bound);
+        Wirecloud.UserInterfaceManager.rootKeydownHandler = document_onkeydown.bind(this);
 
         return this;
     };
@@ -661,10 +659,10 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.selectedCount = 0;
     };
 
-    var document_onkeydown = function document_onkeydown(event) {
+    var document_onkeydown = function document_onkeydown(key, modifiers) {
         var type, id, component, componentsToRemove = [];
 
-        switch (utils.normalizeKey(event)) {
+        switch (key) {
         case 'Backspace':
         case 'Delete':
 
@@ -686,9 +684,7 @@ Wirecloud.ui = Wirecloud.ui || {};
                 }
             }
 
-            event.stopPropagation();
-            event.preventDefault();
-            break;
+            return true;
         }
     };
 

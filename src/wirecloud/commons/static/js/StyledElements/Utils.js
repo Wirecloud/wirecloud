@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -91,10 +91,22 @@ if (window.StyledElements == null) {
         e.preventDefault();
     };
 
-    Utils.callCallback = function callCallback(callback) {
+    /**
+     * This method provides a shortcut for handling common error control
+     * patterns when calling callbacks.
+     *
+     * @since 0.5
+     *
+     * @param {*} [callback] This parameter should provide the callback to call,
+     * if the givent type is not a function, callCallback will do nothing.
+     * @params {...*} var_args Arguments to pass to the callback function
+     *
+     * @return {*} value returned by the callback function
+     */
+    Utils.callCallback = function callCallback(callback, var_args) {
         if (typeof callback === 'function') {
             try {
-                callback.apply(null, Array.prototype.slice.call(arguments, 1));
+                return callback.apply(null, Array.prototype.slice.call(arguments, 1));
             } catch (error) {}
         }
     };
