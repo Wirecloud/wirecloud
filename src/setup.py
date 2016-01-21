@@ -26,13 +26,8 @@ from setuptools import setup
 from distutils.command.build import build as distutils_build
 from setuptools.command.install import install as setuptools_install
 from setuptools.command.sdist import sdist as setuptools_sdist
-import sys
 
 import wirecloud.platform
-
-ROOT = os.path.abspath(os.path.dirname(__file__))
-packages, data_files = [], []
-
 
 class bcolors:
     HEADER = '\033[95m'
@@ -121,20 +116,6 @@ for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
 
-def include_data_files(path, exclude):
-    exclude = re.compile(exclude)
-    for dirpath, dirnames, filenames in os.walk(path):
-        # Ignore dirnames that start with '.'
-        for i, dirname in enumerate(dirnames):
-            if dirname.startswith('.') or dirname in ("__pycache__", "guidebuilder"):
-                del dirnames[i]
-        if '__init__.py' not in filenames:
-            data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames if not exclude.match(f)]])
-
-data_files.append(['wirecloud', ['LICENSE']])
-include_data_files('wirecloud', exclude=".*\.(py[co]|po)")
-
-
 setup(
     name='wirecloud',
     version=wirecloud.platform.__version__,
@@ -151,7 +132,6 @@ setup(
         ),
     },
     include_package_data=True,
-    data_files=data_files,
     install_requires=(
         'Django>=1.4.2,<1.7',
         'south>=1.0,<2.0',
