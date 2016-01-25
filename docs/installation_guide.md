@@ -36,14 +36,14 @@ All these dependencies are available for Linux, Mac OS and Windows, so WireCloud
 - Debian Jessie
 - Mac OS 10.9+
 
-> **NOTE:** WireCloud can make use of the Marketplace, Store and Repository GEs. If you want to exploit this support, you can choose between installing these GEs or using any of the instances publicly available, for example, on FIWARE Lab (see the "Instances" tab of the corresponding entries at [http://catalogue.fiware.org](http://catalogue.fiware.org)).
+> **NOTE**: WireCloud can make use of the Marketplace, Store and Repository GEs. If you want to exploit this support, you can choose between installing these GEs or using any of the instances publicly available, for example, on FIWARE Lab (see the "Instances" tab of the corresponding entries at [http://catalogue.fiware.org](http://catalogue.fiware.org)).
 
 
 ## Installing basic dependencies
 
 Before installing WireCloud, you will need to have some basic dependencies installed: python and [pip](http://www.pip-installer.org/en/latest/installing.html).
 
-> **NOTE:** Although virtualenv is not required, you should install it before installing WireCloud if you intend to use it. It is highly recommended to use virtualenv (see the using [virtualenv section](#using-virtualenv) for more info) when installing WireCloud in CentOS/RedHat as those systems usually raise problems when installing python packages from their official repositories and, at the same time, from pip (a common case in those systems, as some packages should be updated for being compatible with WireCloud, but are requirements of other system applications). Anyway, although harder, it is possible to install WireCloud in those systems without using virtual environments.
+> **NOTE**: Although virtualenv is not required, you should install it before installing WireCloud if you intend to use it. It is highly recommended to use virtualenv (see the using [virtualenv section](#using-virtualenv) for more info) when installing WireCloud in CentOS/RedHat as those systems usually raise problems when installing python packages from their official repositories and, at the same time, from pip (a common case in those systems, as some packages should be updated for being compatible with WireCloud, but are requirements of other system applications). Anyway, although harder, it is possible to install WireCloud in those systems without using virtual environments.
 
 
 ### Debian/Ubuntu
@@ -142,7 +142,7 @@ To get the latest development version of the code, you can choose between two op
         $ cd wirecloud
         $ git checkout 0.8.x
 
-> **NOTE:** The `0.8.x` branch provides the latests development for the `0.8`
+> **NOTE**: The `0.8.x` branch provides the latests development for the `0.8`
 > version of WireCloud (that is, the version described in this guide). The
 > latest version of WireCloud is available in the `develop` branch. It's
 > recommended to check if you are reading the latest version of this guide (e.g.
@@ -157,6 +157,10 @@ Once downloaded the source code, you can install WireCloud using the `setup.py` 
     $ sudo pip install dist/wirecloud-${version}-py2.py3-none-any.whl
 
 Where `${version}` is the version of WireCloud to install.
+
+> **NOTE**: There are extra dependencies for being able to use the `setup.py`
+> script: `setuptools` >= 18.5 and `wheel` > 0.24. You can install them using
+> pip: `pip install "setuptools>18.5" "wheel>=0.24"`
 
 [latest_docs]: https://wirecloud.readthedocs.org/en/latest/installation_guide/
 
@@ -463,7 +467,7 @@ using the following command:
 
     $ python manage.py compress --force
 
-> **NOTE:** Don't forget to rerun the collectstatic and compress commands each
+> **NOTE**: Don't forget to rerun the collectstatic and compress commands each
 > time the WireCloud code is updated, this include each time an add-on is added
 > or remove or the default theme is changed.
 
