@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -41,13 +41,6 @@
         constructor: function BehaviourEngine() {
             var note;
 
-            this.btnCreate = new se.Button({
-                title: gettext("Create behaviour"),
-                extraClass: "btn-create",
-                iconClass: "icon-plus"
-            });
-            this.btnCreate.on('click', btncreate_onclick.bind(this));
-
             this.btnEnable = new se.Button({
                 title: gettext("Enable"),
                 extraClass: "btn-enable",
@@ -58,8 +51,37 @@
             this.superClass({
                 events: events,
                 extraClass: "panel-behaviours",
-                title: gettext("Identified behaviours"),
-                buttons: [this.btnCreate, this.btnEnable]
+                title: gettext("Behaviours"),
+                buttons: [this.btnEnable]
+            });
+
+            this.btnGroupElement = document.createElement('div');
+            this.btnGroupElement.className = "btn-group pull-right";
+            this.wrapperElement.appendChild(this.btnGroupElement);
+
+            this.btnCreate = new se.Button({
+                title: gettext("Create behaviour"),
+                extraClass: "btn-create",
+                iconClass: "icon-plus"
+            });
+            this.btnCreate.on('click', btncreate_onclick.bind(this));
+            this.btnCreate.appendTo(this.btnGroupElement);
+
+            this.btnOrder = new se.ToggleButton({
+                title: gettext("Order behaviours"),
+                extraClass: "btn-order",
+                iconClass: "icon-sort"
+            });
+            this.btnOrder.on('click', btnorder_onclick.bind(this));
+            this.btnOrder.appendTo(this.btnGroupElement);
+            this.btnOrder.disable();
+
+            Object.defineProperties(this, {
+                orderingEnabled: {
+                    get: function () {
+                        return this.btnOrder.active;
+                    }
+                }
             });
 
             this.disabledAlert = new se.Alert({
@@ -102,13 +124,18 @@
                         .replaceIconClass('icon-lock', 'icon-unlock');
                     this.btnCreate.show();
                     this.body.remove(this.disabledAlert);
+                    this.wrapperElement.appendChild(this.btnGroupElement);
                 } else {
                     this.btnEnable
                         .setTitle(gettext("Enable"))
                         .replaceIconClass('icon-unlock', 'icon-lock');
                     this.btnCreate.hide();
                     this.body.appendChild(this.disabledAlert);
+                    this.wrapperElement.removeChild(this.btnGroupElement);
+                    this.stopOrdering();
                 }
+
+                onchange_ordering.call(this);
 
                 return this;
             },
@@ -149,14 +176,16 @@
             createBehaviour: function createBehaviour(behaviourInfo) {
                 var behaviour;
 
-                behaviour = (new ns.Behaviour(behaviourInfo))
+                behaviour = (new ns.Behaviour(this.behaviours.length, behaviourInfo))
                     .on('change', function () {
                         if (this.behaviour.equals(behaviour)) {
                             this.trigger('change', behaviour.getCurrentStatus(), this.enabled);
                         }
                     }.bind(this))
                     .on('click', function () {
-                        this.activate(behaviour);
+                        if (!this.orderingEnabled) {
+                            this.activate(behaviour);
+                        }
                     }.bind(this))
                     .on('optremove', function () {
                         this.removeBehaviour(behaviour);
@@ -179,13 +208,16 @@
 
                     this.behaviours.length = 0;
                     this.viewpoint = ns.BehaviourEngine.GLOBAL;
-
                     delete this.behaviour;
+
+                    this.stopOrdering();
                 } else {
                     this.forEachComponent(function (component) {
                         this.removeComponent(component);
                     }.bind(this));
                 }
+
+                onchange_ordering.call(this);
 
                 this.description = Wirecloud.Wiring.normalize().visualdescription;
 
@@ -386,10 +418,14 @@
              *      The instance on which the member is called.
              */
             removeBehaviour: function removeBehaviour(behaviour) {
-                var _behaviour;
+                var i, _behaviour;
 
                 if (!this.enabled) {
                     return this;
+                }
+
+                if (this.orderingEnabled) {
+                    behaviour.draggable.destroy();
                 }
 
                 if (this.behaviour.equals(behaviour)) {
@@ -407,6 +443,11 @@
                 this.behaviours.splice(this.behaviours.indexOf(behaviour), 1);
 
                 enableToRemoveBehaviour.call(this);
+                onchange_ordering.call(this);
+
+                for (i = 0; i < this.behaviours.length; i++) {
+                    this.behaviours[i].index = i;
+                }
 
                 return this;
             },
@@ -496,6 +537,15 @@
 
                 if (!this.enabled) {
                     this.trigger('change', this.getCurrentStatus(), this.enabled);
+                }
+
+                return this;
+            },
+
+            stopOrdering: function stopOrdering() {
+
+                if (this.orderingEnabled) {
+                    this.btnOrder.click();
                 }
 
                 return this;
@@ -740,8 +790,18 @@
         }
 
         enableToRemoveBehaviour.call(this);
+        onchange_ordering.call(this);
 
         return behaviour;
+    };
+
+    var onchange_ordering = function onchange_ordering() {
+        this.btnOrder.setDisabled(!this.enabled || this.behaviours.length < 2);
+
+        if (!this.btnOrder.enabled) {
+            this.btnCreate.enable();
+            this.btnOrder.active = false;
+        }
     };
 
     var _removeComponent = function _removeComponent(component, cascade) {
@@ -845,6 +905,141 @@
         }.bind(this));
 
         return this;
+    };
+
+    var btnorder_onclick = function btnorder_onclick(button) {
+        var i;
+
+        if (button.active) {
+            for (i = 0; i < this.behaviours.length; i++) {
+                this.behaviours[i].btnPrefs.disable();
+                this.behaviours[i].btnRemove.disable();
+                makeBehaviourDraggable.call(this, this.behaviours[i]);
+            }
+            this.btnCreate.disable();
+        } else {
+            for (i = 0; i < this.behaviours.length; i++) {
+                this.behaviours[i].draggable.destroy();
+                this.behaviours[i].btnPrefs.enable();
+                this.behaviours[i].btnRemove.enable();
+            }
+
+            this.btnCreate.enable();
+        }
+    };
+
+    var makeBehaviourDraggable = function makeBehaviourDraggable(behaviour) {
+
+        behaviour.draggable = new Wirecloud.ui.Draggable(behaviour.get(), {container: this.body},
+            function dragstart(draggable, context, event) {
+                var behaviourBCR, layout, layoutBCR;
+
+                layout = context.container.get();
+
+                context.layout = layout;
+                context.tmpBehaviour = behaviour.get().cloneNode(true);
+                context.tmpBehaviour.classList.add("dragging");
+                context.layout.appendChild(context.tmpBehaviour);
+
+                behaviour.addClassName("temporal");
+
+                behaviourBCR = behaviour.get().getBoundingClientRect();
+                layoutBCR = context.layout.getBoundingClientRect();
+
+                context.x = behaviourBCR.left - layoutBCR.left - ((behaviour.get().offsetWidth - behaviour.get().clientWidth) / 2);
+                context.y = (event.clientY + layout.scrollTop) - (layoutBCR.top + (behaviour.get().offsetHeight / 2));
+
+                context.tmpBehaviour.style.left = context.x + 'px';
+                context.tmpBehaviour.style.width = behaviour.get().offsetWidth + 'px';
+                context.tmpBehaviour.style.top = context.y + 'px';
+
+                var firstBehaviour = this.behaviours[0].get(), lastBehaviour = this.behaviours[this.behaviours.length - 1].get();
+
+                context.upperLimit = firstBehaviour.offsetTop;
+                context.lowerLimit = lastBehaviour.offsetTop;
+
+                context.offsetHeight = event.clientY - (behaviourBCR.top + (behaviour.get().offsetHeight / 2));
+
+                context.marginVertical = 5;
+
+                context.refHeigth = behaviourBCR.height + context.marginVertical;
+                context.refHeigthUp = (behaviourBCR.height / 2) + context.marginVertical;
+                context.refHeigthDown = context.refHeigthUp;
+
+                context.canMoveUp = this.behaviours.indexOf(behaviour);
+                context.canMoveDown = this.behaviours.length - (context.canMoveUp + 1);
+            }.bind(this),
+            function drag(e, draggable, context, xDelta, yDelta) {
+                var offsetTop = Math.round(context.y + yDelta);
+
+                context.tmpBehaviour.style.width = behaviour.get().offsetWidth + 'px';
+
+                if (offsetTop >= context.upperLimit && offsetTop <= context.lowerLimit) {
+                    context.tmpBehaviour.style.top = offsetTop + 'px';
+                }
+
+                if ((context.canMoveUp > 0) && (-(yDelta + context.offsetHeight) > context.refHeigthUp)) {
+                    context.canMoveUp -= 1;
+                    context.refHeigthUp += context.refHeigth;
+
+                    context.canMoveDown += 1;
+                    context.refHeigthDown -= context.refHeigth;
+
+                    moveUpBehaviour.call(this, behaviour);
+                } else if ((context.canMoveDown > 0) && ((yDelta + context.offsetHeight) > context.refHeigthDown)) {
+                    context.canMoveUp += 1;
+                    context.refHeigthUp -= context.refHeigth;
+
+                    context.canMoveDown -= 1;
+                    context.refHeigthDown += context.refHeigth;
+
+                    moveDownBehaviour.call(this, behaviour);
+                }
+            }.bind(this),
+            function dragend(draggable, context) {
+                behaviour.removeClassName("temporal");
+                context.layout.removeChild(context.tmpBehaviour);
+            },
+            function canDrag() {
+                return true;
+            }
+        );
+
+        return this;
+    };
+
+    var moveDownBehaviour = function moveDownBehaviour(behaviour) {
+        var nextBehaviour, index = this.behaviours.indexOf(behaviour);
+
+        if (index == (this.behaviours.length - 1)) {
+            return this;
+        }
+
+        nextBehaviour = this.behaviours[index + 1];
+        behaviour.parent().insertBefore(behaviour.get(), nextBehaviour.get().nextSibling);
+
+        behaviour.index = index + 1;
+        nextBehaviour.index = index;
+
+        this.behaviours[index + 1] = behaviour;
+        this.behaviours[index] = nextBehaviour;
+    };
+
+    var moveUpBehaviour = function moveUpBehaviour(behaviour) {
+        var previousBehaviour, index = this.behaviours.indexOf(behaviour);
+
+        if (index === 0) {
+            return this;
+        }
+
+        previousBehaviour = this.behaviours[index - 1];
+        behaviour.parent().insertBefore(behaviour.get(), previousBehaviour.get());
+
+        behaviour.index = index - 1;
+        previousBehaviour.index = index;
+
+        this.behaviours[index - 1] = behaviour;
+        this.behaviours[index] = previousBehaviour;
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

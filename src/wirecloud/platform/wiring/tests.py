@@ -1566,6 +1566,17 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
             with wiring.behaviour_sidebar as sidebar:
                 sidebar.create_behaviour(title="Title for behaviour 1", description="Description for behaviour 1")
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
+    def test_order_behaviours(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
+
+        with self.wiring_view as wiring:
+            with wiring.behaviour_sidebar as sidebar:
+                sidebar.btn_order.click()
+                behaviour1 = sidebar.find_behaviour_by_title("Behaviour 1")
+                behaviour2 = sidebar.find_behaviour_by_title("Behaviour 2")
+                behaviour1.move_to(behaviour2)
+
 
 @wirecloud_selenium_test_case
 class ComponentVolatileTestCase(WirecloudSeleniumTestCase):
