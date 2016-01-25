@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -107,10 +107,6 @@
 
         this.wrapperElement.className = "se-btn";
 
-        if (options.state) {
-            this.addClassName('btn-' + options.state);
-        }
-
         this.addClassName(options['class']);
         this.addClassName(options.extraClass);
 
@@ -157,8 +153,25 @@
         }
 
         /* Properties */
-        var tabindex;
+        var tabindex, state;
         Object.defineProperties(this, {
+
+            /**
+             * Get or set the contextual state class.
+             *
+             * @memberof StyledElements.Button#
+             * @since 0.7.0
+             *
+             * @type {?String}
+             */
+            state: {
+                get: function get() {
+                    return prop_state_get.call(this, state);
+                },
+                set: function set(newState) {
+                    state = prop_state_set.call(this, state, newState);
+                }
+            },
 
             tabindex: {
                 get: function get() {
@@ -183,6 +196,7 @@
         });
 
         /* Initial status */
+        this.state = options.state;
         this.tabindex = options.tabindex;
 
         /* Event handlers */
@@ -344,6 +358,31 @@
     };
 
     var events = ['blur', 'click', 'dblclick', 'focus', 'mouseenter', 'mouseleave'];
+
+    var prop_state_get = function prop_state_get(state) {
+        return state;
+    };
+
+    var prop_state_set = function prop_state_set(state, newState) {
+        var states = ['default', 'primary', 'success', 'info', 'warning', 'danger'];
+
+        if (states.indexOf(newState) !== -1) {
+            if (newState !== state) {
+                if (state) {
+                    this.removeClassName('btn-' + state);
+                }
+                state = newState;
+                this.addClassName('btn-' + state);
+            }
+        } else {
+            if (state) {
+                this.removeClassName('btn-' + state);
+            }
+            state = null;
+        }
+
+        return state;
+    };
 
     var removeLabel = function removeLabel() {
 
