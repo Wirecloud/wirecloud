@@ -1,14 +1,14 @@
 Supported browsers
 ------------------
 
-WireCloud 0.8 supports the following desktop browsers:
+WireCloud 0.9 supports the following desktop browsers:
 
 - Firefox 38+
 - Chrome 37+
 - Safari 8+
 - Opera 23+
 
-WireCloud 0.8 also works on the mobile version of the previous browsers, except
+WireCloud 0.9 also works on the mobile version of the previous browsers, except
 the wiring editor that currently does not work with touch screens. On
 smartphones, an experimental and not ready for production view is provided.
 
@@ -481,7 +481,7 @@ Now you can play with your new workspace.
 Behaviour Oriented Wiring
 -------------------------
 
-Starting at WireCloud 0.8.0, you can create wiring configurations by means of
+Starting at WireCloud 0.9.0, you can create wiring configurations by means of
 compositing several *behaviours*.
 
 A *behaviour* is a set of components jointly with the connections established
