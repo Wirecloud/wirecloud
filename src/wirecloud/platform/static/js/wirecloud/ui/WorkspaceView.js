@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -65,19 +65,12 @@
         });
 
         // Init wiring error badge
-        this.wiringErrorBadge = document.createElement('span');
-        this.wiringErrorBadge.className = 'badge badge-important hidden';
-        this.wiringButton.wrapperElement.appendChild(this.wiringErrorBadge);
         Wirecloud.events.activeworkspacechanged.addEventListener(function (workspace) {
             this.wallet.hide(true);
 
             this._updateWiringErrors = function () {
-                this.wiringErrorBadge.innerHTML = workspace.wiring.logManager.errorCount;
-                if (workspace.wiring.logManager.errorCount !== 0) {
-                    this.wiringErrorBadge.classList.remove('hidden');
-                } else {
-                    this.wiringErrorBadge.classList.add('hidden');
-                }
+                var errorCount = workspace.wiring.logManager.errorCount;
+                this.wiringButton.setBadge(errorCount ? errorCount : null, 'danger');
             }.bind(this);
 
             workspace.wiring.addEventListener('load', this._updateWiringErrors);

@@ -1004,7 +1004,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
             myresources.upload_resource('Wirecloud_TestOperator_1.0.zip', 'TestOperator', shared=True)
 
         # Check the operator leaves ghost mode
-        error_badge = self.driver.find_element_by_css_selector(".wc-toolbar .icon-puzzle-piece + .badge")
+        error_badge = self.driver.find_element_by_css_selector(".wc-toolbar .btn-display-wiring-view .badge")
         self.assertFalse(error_badge.is_displayed())
 
         # Check operator connections are restored sucessfully
