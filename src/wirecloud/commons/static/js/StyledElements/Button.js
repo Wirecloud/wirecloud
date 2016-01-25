@@ -153,8 +153,25 @@
         }
 
         /* Properties */
-        var tabindex, state;
+        var tabindex, state, depth;
         Object.defineProperties(this, {
+
+            /**
+             * Get or set the z-depth effect value.
+             *
+             * @memberof StyledElements.Button#
+             * @since 0.7.0
+             *
+             * @type {?Number}
+             */
+            depth: {
+                get: function get() {
+                    return prop_depth_get.call(this, depth);
+                },
+                set: function set(newDepth) {
+                    depth = prop_depth_set.call(this, depth, newDepth);
+                }
+            },
 
             /**
              * Get or set the contextual state class.
@@ -197,6 +214,7 @@
 
         /* Initial status */
         this.state = options.state;
+        this.depth = options.depth;
         this.tabindex = options.tabindex;
 
         /* Event handlers */
@@ -349,6 +367,7 @@
         plain: false,
         usedInForm: false,
         text: "",
+        depth: -1,
         'title': '',
         'iconHeight': 24,
         'iconWidth': 24,
@@ -382,6 +401,30 @@
         }
 
         return state;
+    };
+
+    var prop_depth_get = function prop_depth_get(depth) {
+        return depth > 0 ? depth : 0;
+    };
+
+    var prop_depth_set = function prop_depth_set(depth, newDepth) {
+
+        if (newDepth >= 0 && newDepth <= 5) {
+            if (newDepth !== depth) {
+                if (depth >= 0) {
+                    this.removeClassName('z-depth-' + depth);
+                }
+                depth = newDepth;
+                this.addClassName('z-depth-' + depth);
+            }
+        } else {
+            if (depth >= 0) {
+                this.removeClassName('z-depth-' + depth);
+            }
+            depth = -1;
+        }
+
+        return depth;
     };
 
     var removeLabel = function removeLabel() {
