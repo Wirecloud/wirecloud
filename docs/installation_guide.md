@@ -154,13 +154,24 @@ To get the latest development version of the code, you can choose between two op
         $ cd wirecloud
         $ git checkout 0.8.x
 
+> **NOTE:** The `0.8.x` branch provides the latests development for the `0.8`
+> version of WireCloud (that is, the version described in this guide). The
+> latest version of WireCloud is available in the `develop` branch. It's
+> recommended to check if you are reading the latest version of this guide (e.g.
+> following this [link][latest_docs]) if you are going to install the
+> latest version of WireCloud from the `develop` branch instead of using the
+> `0.8.x` branch.
+
 Once downloaded the source code, you can install WireCloud using the `setup.py` script (this step requires root privileges):
 
     $ cd ${path_to_source_code}/src
-    $ sudo python setup.py bdist_whell
+    $ python setup.py bdist_wheel
     $ sudo pip install dist/wirecloud-${version}-py2.py3-none-any.whl
 
 Where `${version}` is the version of WireCloud to install.
+
+[latest_docs]: https://wirecloud.readthedocs.org/en/latest/installation_guide/
+
 
 ## Installing WireCloud using Docker
 
