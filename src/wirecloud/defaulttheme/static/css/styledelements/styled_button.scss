@@ -2,6 +2,7 @@
 @import 'compass/css3';
 @import 'compass/css3/images';
 @import 'compass/css3/user-interface';
+@import 'compass/css3/transform';
 @import 'compass/utilities/color/contrast';
 
 @mixin button-variant($background, $border-color) {
@@ -97,6 +98,15 @@ button::-moz-focus-inner, input::-moz-focus-inner {
         margin-left: $padding-horizontal-base;
     }
 
+    .badge {
+        position: absolute;
+        top: 25%;
+        left: 70%;
+        z-index: 1;
+        margin: 0;
+        @include transform(translate(-50%, -75%));
+    }
+
     .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
         font-size: round($font-size-base * 0.7);
     }
@@ -156,6 +166,10 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
         font-size: round($font-size-large * 0.65);
     }
+
+    .badge {
+        padding: 2px 7px;
+    }
 }
 
 .se-btn.btn-small, .se-btn.btn-sm, .btn-group-sm .se-btn {
@@ -170,6 +184,12 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
         font-size: round($font-size-small * 0.7);
     }
+
+    .badge {
+        padding: 2px 5px;
+        font-size: 10px;
+        line-height: 12px;
+    }
 }
 
 .se-btn.btn-mini, .se-btn.btn-xs, .btn-group-xs .se-btn {
@@ -183,6 +203,12 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 
     .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
         font-size: round($font-size-xs * 0.7);
+    }
+
+    .badge {
+        padding: 1px 4px;
+        font-size: 10px;
+        line-height: 12px;
     }
 }
 

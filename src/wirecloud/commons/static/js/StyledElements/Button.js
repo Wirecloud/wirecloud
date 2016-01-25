@@ -351,6 +351,20 @@
         StyledElements.StyledElement.prototype.destroy.call(this);
     };
 
+    /**
+     * Set a badge on the button to highlight new or unread items.
+     * @since 0.7.0
+     *
+     * @param {String|Number} content The badge's textContent.
+     * @param {String} [state] The badge's contextual state class.
+     * @param {Boolean} [isAlert] Set the button more eye-catching.
+     *
+     * @returns {StyledElements.Button} The instance on which this method is called.
+     */
+    Button.prototype.setBadge = function setBadge(content, state, isAlert) {
+        return content ? insertBadge.call(this, content, state, !!isAlert) : removeBadge.call(this);
+    };
+
     StyledElements.Button = Button;
 
     // ==================================================================================
@@ -445,6 +459,37 @@
         }
 
         this.label.textContent = textContent;
+
+        return this;
+    };
+
+    var insertBadge = function insertBadge(content, state, isAlert) {
+        var states = ['inverse', 'primary', 'success', 'info', 'warning', 'danger'];
+
+        if (this.badgeElement == null) {
+            this.badgeElement = document.createElement('span');
+            this.badgeElement.className = "badge";
+            if (states.indexOf(state) !== -1) {
+                this.badgeElement.classList.add("badge-" + state);
+            }
+            this.badgeElement.classList.add("z-depth-" + (this.depth + 1));
+            this.wrapperElement.insertBefore(this.badgeElement, this.wrapperElement.firstChild);
+        }
+
+        this.toggleClassName('has-alert', isAlert);
+        this.badgeElement.textContent = content;
+
+        return this;
+    };
+
+    var removeBadge = function removeBadge() {
+
+        if (this.badgeElement != null) {
+            this.wrapperElement.removeChild(this.badgeElement);
+            delete this.badgeElement;
+        }
+
+        this.removeClassName('has-alert');
 
         return this;
     };
