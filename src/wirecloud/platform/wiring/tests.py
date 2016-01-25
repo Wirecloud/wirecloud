@@ -1177,9 +1177,8 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
 
             connection.drop_endpoint()
 
-            # Now the connection belonging to other behaviours will also be removed. To do this,
-            # the following operation, shown in the window alert, will be accepted.
             form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-dialog"))
+            # The accept action corresponds to modifying the connection in all the behaviours
             form.accept()
 
             self.assertIsNone(wiring.find_connection_by_endpoints('widget/2/outputendpoint', 'operator/0/input'))
@@ -1212,9 +1211,8 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
 
             connection.drop_endpoint()
 
-            # Now the connection belonging to other behaviours will be existing. To do this,
-            # the following operation, shown in the window alert, will be cacelled.
             form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-alert-dialog"))
+            # The cancel action corresponds to modifying the connection only in the active behaviour
             form.cancel()
 
             connection = wiring.find_connection_by_endpoints('widget/11/outputendpoint', 'operator/0/input')

@@ -913,7 +913,9 @@ class WiringConnectionTester(object):
 
     def click(self):
         # FIXME: This method should click over some point of this connection. For example,
-        # getting the connection path.
+        # getting the connection path. For now, we are using a work around for
+        # not clicking on the connection buttons as they are placed in the
+        # middle of the connection
         self.testcase.driver.execute_script('''
             var connectionEngine = LayoutManagerFactory.getInstance().viewsByName.wiring.connectionEngine;
             connectionEngine.getConnection("%s", "%s").click();
