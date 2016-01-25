@@ -336,3 +336,173 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     opacity: 0;
     cursor: pointer;
 }
+
+// ============================================================================
+// COMPONENT - BUTTON - CIRCLE
+// ============================================================================
+
+.se-btn.btn-circle,
+.btn-group-circle > .se-btn {
+    padding: 0;
+    text-align: center;
+    background-image: none;
+    border-radius: 50%;
+    text-shadow: none;
+
+    &.btn-link {
+        border-width: 0;
+    }
+}
+
+// ============================================================================
+// COMPONENT - BUTTON - CIRCLE - CLASSES
+// ============================================================================
+
+@mixin button-circle-variant(
+    $button-background,
+    $button-border
+) {
+    $button-active-background: darken($button-background, 10%);
+
+    background-color: $button-background;
+    border-color: $button-border;
+    color: contrast-color(
+        $button-background,
+        $button-text-color-light,
+        $button-text-color-dark,
+        $button-text-color-threshold
+    );
+
+    &:hover,
+    &:focus {
+        background-color: $button-border;
+        border-color: $button-border;
+    }
+
+    &:active,
+    &.active {
+
+        &,
+        &:hover,
+        &:focus {
+            background-color: $button-active-background;
+            border-color: $button-active-background;
+        }
+    }
+
+    &.disabled,
+    &[disabled] {
+
+        &,
+        &:hover,
+        &:focus,
+        &:active,
+        &:active:hover,
+        &:active:focus {
+            background-color: $button-background;
+            border-color: $button-border;
+        }
+    }
+}
+
+.btn-circle.btn-default,
+.btn-group-circle > .btn-default {
+    @include button-circle-variant($button-background-default, $button-border-default);
+}
+
+.btn-circle.btn-primary,
+.btn-group-circle > .btn-primary {
+    @include button-circle-variant($button-background-primary, $button-border-primary);
+}
+
+.btn-circle.btn-success,
+.btn-group-circle > .btn-success {
+    @include button-circle-variant($button-background-success, $button-border-success);
+}
+
+.btn-circle.btn-info,
+.btn-group-circle > .btn-info {
+    @include button-circle-variant($button-background-info, $button-border-info);
+}
+
+.btn-circle.btn-warning,
+.btn-group-circle > .btn-warning {
+    @include button-circle-variant($button-background-warning, $button-border-warning);
+}
+
+.btn-circle.btn-danger,
+.btn-group-circle > .btn-danger {
+    @include button-circle-variant($button-background-danger, $button-border-danger);
+}
+
+// ============================================================================
+// COMPONENT - BUTTON - CIRCLE - GROUP
+// ============================================================================
+
+.btn-group > .btn-circle,
+.btn-group-circle > .se-btn {
+
+    &:first-child,
+    &:last-child {
+        border-radius: 50%;
+    }
+
+    &:not(:first-child) {
+        margin-left: 1px;
+    }
+}
+
+// ============================================================================
+// COMPONENT - BUTTON - CIRCLE - SIZES
+// ============================================================================
+
+@mixin button-circle-sizing(
+    $button-line-height,
+    $button-font-size
+) {
+    width: $button-line-height;
+    height: $button-line-height;
+    font-size: $button-font-size;
+    line-height: $button-line-height - 2;
+
+    &.btn-link {
+        line-height: $button-line-height;
+    }
+}
+
+.btn-sm.btn-circle,
+.btn-group-sm > .btn-circle,
+.btn-group-sm.btn-group-circle > .se-btn {
+    @include button-circle-sizing($button-circle-sm-line-height, $font-size-small);
+}
+
+.btn-xs.btn-circle,
+.btn-group-xs > .btn-circle,
+.btn-group-xs.btn-group-circle > .se-btn {
+    @include button-circle-sizing($button-circle-xs-line-height, $font-size-xs);
+}
+
+// ============================================================================
+// COMPONENT - BUTTON - ANIMATIONS
+// ============================================================================
+
+@keyframes btn-has-alert {
+    50% {
+        background-color: $button-border-danger;
+        border-color: $button-border-danger;
+        color: contrast-color(
+            $button-background-danger,
+            $button-text-color-light,
+            $button-text-color-dark,
+            $button-text-color-threshold
+        );
+    }
+}
+
+.se-btn.has-alert {
+
+    &:not(.disabled),
+    &:not([disabled]) {
+        animation: btn-has-alert $button-has-alert-delay infinite;
+    }
+}
