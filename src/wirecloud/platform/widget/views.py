@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -32,6 +32,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.http import urlunquote
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET
+from django.views.generic import TemplateView
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
@@ -39,7 +40,7 @@ from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.http import build_response, build_downloadfile_response, get_absolute_reverse_url, get_current_domain
 import wirecloud.platform.widget.utils as showcase_utils
-from wirecloud.platform.widget.utils import WIDGET_ERROR_FORMATTERS, fix_widget_code
+from wirecloud.platform.widget.utils import WIDGET_ERROR_FORMATTERS, fix_widget_code, get_widget_platform_style
 
 
 def process_requirements(requirements):
@@ -157,3 +158,13 @@ def serve_showcase_media(request, vendor, name, version, file_path):
         response['Location'] = reverse('wirecloud.showcase_media', kwargs= {"vendor": vendor, "name": name, "version": version, "file_path": response['Location']})
 
     return response
+
+
+class MissingWidgetCodeView(TemplateView):
+
+    template_name='wirecloud/workspace/missing_widget.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MissingWidgetCodeView, self).get_context_data(**kwargs)
+        context['style'] = get_widget_platform_style()
+        return context

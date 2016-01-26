@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -157,16 +157,6 @@
 
             hasEndpoints: function hasEndpoints() {
                 return this.meta.hasEndpoints();
-            },
-
-            /**
-             * [TODO: hasSettings description]
-             *
-             * @returns {Operator}
-             *      The instance on which the member is called.
-             */
-            hasSettings: function hasSettings() {
-                return this.preferenceList.length > 0;
             },
 
             is: function is(component) {

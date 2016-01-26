@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -595,30 +595,31 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_resource_uninstall(self):
 
+        user_with_workspaces = User.objects.get(username='user_with_workspaces')
         test_widget = CatalogueResource.objects.get(short_name='Test')
         test_widget.public = False
+        test_widget.users.add(user_with_workspaces)
         test_widget.save()
 
-        self.login(username='normuser')
+        self.login(username='user_with_workspaces')
 
-        # Add a Test widget to the initial workspace and cache it
-        self.add_widget_to_mashup('Test')
-        self.change_current_workspace('Workspace')
+        # WireCloud has cached current workspace
+        initial_workspace_widgets = self.count_iwidgets()
 
-        # Create a new workspace with a test widget
-        self.create_workspace(name='Test')
-        self.add_widget_to_mashup('Test')
+        # Switch to another workspace
+        self.change_current_workspace('Public Workspace')
+        current_workspace_widgets = self.count_iwidgets()
 
         # Uninstall Test widget
         with self.myresources_view as myresources:
             myresources.uninstall_resource('Test')
 
-        # Check current workspace has no widgets
-        self.assertEqual(self.count_iwidgets(), 0)
+        # Check current workspace has no been affected
+        self.assertEqual(self.count_iwidgets(), current_workspace_widgets)
 
-        # Check initial workspace has no widgets
+        # Check WireCloud can load the initial workspace
         self.change_current_workspace('Workspace')
-        self.assertEqual(self.count_iwidgets(), 0)
+        self.assertEqual(self.count_iwidgets(), initial_workspace_widgets)
 
         # Check admin still has access to the Test widget
         self.login()

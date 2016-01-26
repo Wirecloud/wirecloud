@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -97,9 +97,6 @@ class Widget(models.Model):
 
     def delete(self, *args, **kwargs):
 
-        for iwidget in self.iwidget_set.all():
-            iwidget.delete()
-
         try:
             self.xhtml.delete()
         except XHTML.DoesNotExist:
@@ -130,6 +127,11 @@ def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs)
             base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
             wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
             resource.widget = create_widget_from_wgt(wgt_file, resource.creator)
+
+        # Restore any iwidget associated with this widget
+        from wirecloud.platform.iwidget.models import IWidget
+
+        IWidget.objects.filter(widget_uri=resource.local_uri_part).update(widget=resource.widget)
 
 
 @receiver(pre_delete, sender=CatalogueResource)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -439,7 +439,7 @@ class WirecloudTestCase(TransactionTestCase):
         translation.activate(new_language)
 
 
-def uses_extra_resources(resources, shared=False, public=True, users=(), groups=(), deploy_only=False):
+def uses_extra_resources(resources, shared=False, public=True, users=(), groups=(), deploy_only=False, creator=None):
 
     def wrap(test_func):
 
@@ -450,25 +450,27 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
             else:
                 base = self.test_data_dir
 
+            final_creator = User.objects.get(username=creator) if creator is not None else None
+
+            final_users = (User.objects.get(username=user) for user in users)
+            final_groups = (Group.objects.get(name=group) for group in groups)
+
             for resource in resources:
                 wgt_file = open(os.path.join(base, resource), 'rb')
                 wgt = WgtFile(wgt_file)
 
                 if deploy_only:
-                    catalogue.add_packaged_resource(wgt_file, None, wgt_file=wgt, deploy_only=True)
+                    catalogue.add_packaged_resource(wgt_file, final_creator, wgt_file=wgt, deploy_only=True)
                     wgt_file.close()
                     continue
 
-                resource = install_resource(wgt, None)
+                resource = install_resource(wgt, final_creator)
 
                 if public:
                     resource.public = True
                     resource.save()
 
-                final_users = (User.objects.get(username=user) for user in users)
                 resource.users.add(*final_users)
-
-                final_groups = (Group.objects.get(name=group) for group in groups)
                 resource.groups.add(*final_groups)
 
                 wgt_file.close()

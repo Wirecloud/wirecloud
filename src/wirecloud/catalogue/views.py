@@ -40,12 +40,12 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.models import search, suggest
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import get_latest_resource_version, get_resource_data, get_resource_group_data
-from wirecloud.catalogue.utils import add_packaged_resource, delete_resource
+from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.html import clean_html, filter_changelog
-from wirecloud.commons.utils.http import build_error_response, build_downloadfile_response, consumes, force_trailing_slash, parse_json_request, produces
+from wirecloud.commons.utils.http import authentication_required, build_error_response, build_downloadfile_response, consumes, force_trailing_slash, parse_json_request, produces
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.version import Version
@@ -142,25 +142,37 @@ class ResourceEntry(Resource):
 
         return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
 
-    @method_decorator(login_required)
+    @authentication_required
     @commit_on_http_success
     def delete(self, request, vendor, name, version=None):
 
         response_json = {
             'affectedVersions': [],
-            'removedIWidgets': []
         }
         if version is not None:
             # Delete only the specified version of the widget
-            resources = (get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version),)
+            resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
+
+            # Check the user has permissions
+            if not resource.is_removable_by(request.user):
+                msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': request.user.username, 'resource_id': resource.id}
+
+                raise Http403(msg)
+
+            resources = (resource,)
         else:
             # Delete all versions of the widget
             resources = get_list_or_404(CatalogueResource, short_name=name, vendor=vendor)
 
+            # Filter all the resources not remobable by the user
+            resources = tuple(resource for resource in resources if resource.is_removable_by(request.user))
+
+            if len(resources) == 0:
+                raise Http404
+
         for resource in resources:
-            result = delete_resource(resource, request.user)
+            resource.delete()
             response_json['affectedVersions'].append(resource.version)
-            response_json['removedIWidgets'] += result['removedIWidgets']
 
         return HttpResponse(json.dumps(response_json), content_type='application/json; charset=UTF-8')
 

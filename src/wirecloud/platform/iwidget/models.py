@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -28,7 +28,7 @@ from wirecloud.platform.wiring.utils import remove_related_iwidget_connections
 @python_2_unicode_compatible
 class IWidget(models.Model):
 
-    widget = models.ForeignKey('platform.Widget', verbose_name=_('Widget'), null=True)
+    widget = models.ForeignKey('platform.Widget', verbose_name=_('Widget'), null=True, on_delete=models.SET_NULL)
     widget_uri = models.CharField(_('Widget URI'), max_length=250, null=False, blank=False)
     name = models.CharField(_('Name'), max_length=250)
     tab = models.ForeignKey('platform.Tab', verbose_name=_('Tab'))

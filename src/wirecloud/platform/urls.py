@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -80,6 +80,9 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^api/widget/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/xhtml/?$',
         widget_views.WidgetCodeEntry(permitted_methods=('GET',)),
         name='wirecloud.widget_code_entry'),
+    url('^api/widget/missing_widget$',
+        widget_views.MissingWidgetCodeView.as_view(),
+        name='wirecloud.missing_widget_code_entry'),
 
     # IWidgets
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidgets/?$',

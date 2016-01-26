@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -102,6 +102,9 @@ class CatalogueResource(models.Model):
     def is_available_for(self, user):
 
         return self.public or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0
+
+    def is_removable_by(self, user):
+        return user.is_superuser or self.creator == user
 
     def get_template_url(self, request=None, for_base=False):
         return get_template_url(self.vendor, self.short_name, self.version, '' if for_base else self.template_uri, request=request)

@@ -1,0 +1,21 @@
+{% load i18n %}<!DOCTYPE html>
+<html>
+    <head>
+        {% for file in style %}<link rel="stylesheet" type="text/css" href="{{ file }}" />
+        {% endfor %}
+    </head>
+
+    <body style="padding: 10px;">
+        <div class="alert alert-danger alert-block">
+            <h4>{% trans "Missing widget" %}</h4>
+            {% trans "This widget is currently not available. Probably you or an administrator uninstalled it." %}
+            {% blocktrans %}<h5>Suggestions:</h5>
+            <ul>
+                <li>Remove this widget from the dashboard</li>
+                <li>Reinstall the appropiated version of the widget</li>
+                <li>Install another version of the widget and use the <em>Upgrade/Downgrade</em> option</li>
+            </ul>{% endblocktrans %}
+        </div>
+
+    </body>
+</html>

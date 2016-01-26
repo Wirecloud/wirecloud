@@ -265,6 +265,7 @@ function Workspace(workspaceState, resources) {
     // ****************
 
     Workspace.prototype.addInstance = function addInstance(widget, options) {
+        this.resources.addComponent(widget);
         this.getVisibleTab().getDragboard().addInstance(widget, options);
     };
 

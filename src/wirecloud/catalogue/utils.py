@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -224,24 +224,6 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
         )
 
         return resource
-
-
-def delete_resource(resource, user):
-
-    # Delete the resource only if this user is the owner
-    if not user.is_superuser and resource.creator != user:
-        msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': user.username, 'resource_id': resource.id}
-
-        raise Http403(msg)
-
-    result = {'removedIWidgets': []}
-    if 'wirecloud.platform' in settings.INSTALLED_APPS and resource.resource_type() == 'widget':
-        result['removedIWidgets'] = list(resource.widget.iwidget_set.all().values_list('id', flat=True))
-
-    # Delete the object
-    resource.delete()
-
-    return result
 
 
 def get_resource_data(resource, user, request=None):

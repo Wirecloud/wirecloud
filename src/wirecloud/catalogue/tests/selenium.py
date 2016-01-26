@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,7 +27,7 @@ __test__ = False
 @wirecloud_selenium_test_case
 class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
-    tags = ('wirecloud-selenium', 'catalogue', 'catalogue-selenium')
+    tags = ('wirecloud-selenium', 'wirecloud-catalogue', 'wirecloud-catalogue-selenium')
 
     def test_upload_packaged_widget(self):
 

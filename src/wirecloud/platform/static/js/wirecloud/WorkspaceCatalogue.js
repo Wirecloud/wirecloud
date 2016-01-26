@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,11 +29,24 @@
      * Private methods
      *************************************************************************/
 
-    var includeResource = function includeResource(resource_data) {
-        var resource, resource_id, resource_full_id;
+    var _addComponent = function _addComponent(meta) {
+        if (!(meta.group_id in this.resourceVersions)) {
+            this.resourceVersions[meta.group_id] = [];
+        }
 
-        resource_id = resource_data.vendor + '/' + resource_data.name;
-        resource_full_id = resource_id + '/' + resource_data.version;
+        this.resourceVersions[meta.group_id].push(meta);
+        this.resources[meta.uri] = meta;
+
+        if (!(meta.type in this.resourcesByType)) {
+            this.resourcesByType[meta.type] = {};
+        }
+        this.resourcesByType[meta.type][meta.uri] = meta;
+
+        delete this.missingComponents[meta.uri];
+    };
+
+    var loadResource = function loadResource(resource_data) {
+        var resource;
 
         switch (resource_data.type) {
         case 'widget':
@@ -43,20 +56,10 @@
             resource = new Wirecloud.wiring.OperatorMeta(resource_data);
             break;
         default:
-            resource = resource_data;
+            return;
         }
 
-        if (!(resource_id in this.resourceVersions)) {
-            this.resourceVersions[resource_id] = [];
-        }
-
-        this.resourceVersions[resource_id].push(resource);
-        this.resources[resource_full_id] = resource;
-
-        if (!(resource_data.type in this.resourcesByType)) {
-            this.resourcesByType[resource_data.type] = {};
-        }
-        this.resourcesByType[resource_data.type][resource_full_id] = resource;
+        _addComponent.call(this, resource);
     };
 
     var loadSuccessCallback = function loadFailureCallback(context, transport) {
@@ -67,9 +70,10 @@
         this.resources = {};
         this.resourceVersions = {};
         this.resourcesByType = {};
+        this.missingComponents = {};
 
         for (resource_id in resources) {
-            includeResource.call(this, resources[resource_id]);
+            loadResource.call(this, resources[resource_id]);
         }
 
         if (typeof context.onSuccess === 'function') {
@@ -81,6 +85,21 @@
         if (typeof context.onError === 'function') {
             context.onError(this);
         }
+    };
+
+    var createMissing = function createMissing(type, vendor, name, version) {
+        var klass = type === 'widget' ? Wirecloud.WidgetMeta : Wirecloud.wiring.OperatorMeta;
+        return new klass({
+            vendor: vendor,
+            name: name,
+            version: version,
+            type: type,
+            missing: true,
+            preferences: [],
+            properties: [],
+            requirements: [],
+            wiring: {}
+        });
     };
 
     /*************************************************************************
@@ -118,6 +137,50 @@
         } else {
             return {};
         }
+    };
+
+    WorkspaceCatalogue.prototype.remove = function remove(resource) {
+        var index, new_meta;
+
+        if (typeof resource === "string") {
+            resource = this.getResourceId(resource);
+        } else {
+            resource = this.getResourceId(resource.uri);
+        }
+
+        if (resource != null) {
+            delete this.resources[resource.uri];
+            delete this.resourcesByType[resource.type][resource.uri];
+            index = this.resourceVersions[resource.group_id].indexOf(resource);
+            this.resourceVersions[resource.group_id].splice(index, 1);
+
+            this.missingComponents[resource.uri] = createMissing(resource.type, resource.vendor, resource.name, resource.version.text);
+            return new_meta;
+        }
+    };
+
+    WorkspaceCatalogue.prototype.addComponent = function addComponent(meta) {
+        _addComponent.call(this, meta);
+    };
+
+    WorkspaceCatalogue.prototype.restore = function restore(meta) {
+        if (meta.uri in this.missingComponents) {
+            _addComponent.call(this, meta);
+        }
+    };
+
+    WorkspaceCatalogue.prototype.getOrCreateMissing = function getOrCreateMissing(id, type) {
+        var component = this.getResourceId(id);
+
+        if (component == null) {
+            if (!(id in this.missingComponents)) {
+                var id_parts = id.split('/');
+                this.missingComponents[id] = createMissing(type, id_parts[0], id_parts[1], id_parts[2]);
+            }
+            component = this.missingComponents[id];
+        }
+
+        return component;
     };
 
     WorkspaceCatalogue.prototype.getResourceId = function getResourceId(id) {

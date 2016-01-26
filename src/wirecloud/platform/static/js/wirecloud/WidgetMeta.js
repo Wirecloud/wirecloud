@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,95 +19,74 @@
  *
  */
 
-/*global gettext, interpolate, Wirecloud*/
+/* globals Wirecloud */
 
-(function () {
+(function (ns, utils) {
 
     "use strict";
 
-    var WidgetMeta = function WidgetMeta(data) {
+    ns.WidgetMeta = utils.defineClass({
 
-        var i, preference, property;
+        constructor: function WidgetMeta(data) {
 
-        Wirecloud.MashableApplicationComponent.call(this, data);
+            var i, property;
 
-        this.id = this.uri;
-
-        this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
-            vendor: this.vendor,
-            name: this.name,
-            version: this.version.text
-        }) + "?v=" + Wirecloud.contextManager.get('version_hash');
-        this.code_content_type = data.contents.contenttype;
-        this.doc = data.doc;
-
-        // Properties
-        this.properties = {}
-        this.propertyList = [];
-        for (i = 0; i < data.properties.length; i++) {
-            property = new Wirecloud.PersistentVariableDef(data.properties[i].name, data.properties[i].type, data.properties[i]);
-            this.properties[property.name] = property;
-            this.propertyList.push(property);
-        }
-        Object.freeze(this.properties);
-        Object.freeze(this.propertyList);
-
-        this.default_width = data.widget_width;
-        this.default_height = data.widget_height;
-
-        /* FIXME */
-        this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
-        this.getIPhoneImageURI = this.getIcon;
-
-        var lastVersion = this.version;
-        var showcaseLastVersion = this.version;
-        var catalogueLastVersion = null;
-        var upToDate = true;
-
-        this.getLastVersion = function getLastVersion() {
-            if (lastVersion == null) {
-                if (catalogueLastVersion == null || showcaseLastVersion.compareTo(catalogueLastVersion) >= 0) {
-                    lastVersion = showcaseLastVersion;
-                } else {
-                    lastVersion = catalogueLastVersion;
-                }
+            if (data.type == null) {
+                data.type = 'widget';
+            } else if (data.type !== 'widget') {
+                throw new TypeError(utils.interpolate('Invalid component type for a widget: %(type)s.', {type: data.type}));
             }
-            return lastVersion;
-        };
 
-        this.setLastVersion = function setLastVersion(v) {
-            var oldVersion = this.getLastVersion();
+            this.superClass(data);
 
-            if (v.source === 'showcase') {
-                showcaseLastVersion = v;
+            if (this.missing) {
+                this.code_url = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
+                this.code_content_type = "application/xhtml+xml";
             } else {
-                catalogueLastVersion = v;
+                this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
+                    vendor: this.vendor,
+                    name: this.name,
+                    version: this.version.text
+                });
+                this.code_content_type = data.contents.contenttype;
             }
-            lastVersion = null;
+            this.code_url += "?v=" + Wirecloud.contextManager.get('version_hash');
 
-            var newVersion = this.getLastVersion();
-            upToDate = this.version.compareTo(newVersion) === 0;
+            // Properties
+            this.properties = {}
+            this.propertyList = [];
+            for (i = 0; i < data.properties.length; i++) {
+                property = new Wirecloud.PersistentVariableDef(data.properties[i].name, data.properties[i].type, data.properties[i]);
+                this.properties[property.name] = property;
+                this.propertyList.push(property);
+            }
+            Object.freeze(this.properties);
+            Object.freeze(this.propertyList);
 
-            return oldVersion.compareTo(newVersion) !== 0;
-        };
+            Object.defineProperties(this, {
+                "id": {value: this.uri},
+                "default_width": {value: data.widget_width},
+                "default_height": {value: data.widget_height},
+            });
 
-        this.isUpToDate = function isUpToDate() { return upToDate; };
-        /* END FIXME */
+            /* FIXME */
+            this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
+            this.getIPhoneImageURI = this.getIcon;
+            /* END FIXME */
 
-        Object.freeze(this);
-    };
+            Object.freeze(this);
+        },
 
-    WidgetMeta.prototype.getInfoString = function getInfoString() {
-        var transObj = {vendor: this.vendor, name: this.name, version: this.version};
-        var msg = gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
-        return interpolate(msg, transObj, true);
-    };
+        inherit: Wirecloud.MashableApplicationComponent,
 
-    WidgetMeta.prototype.hasEndpoints = function hasEndpoints() {
-        return (this.inputList.length + this.outputList.length) > 0;
-    };
+        members: {
 
+            getInfoString: function getInfoString() {
+                var transObj = {vendor: this.vendor, name: this.name, version: this.version};
+                var msg = gettext("[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]");
+                return utils.interpolate(msg, transObj, true);
+            }
+        }
+    });
 
-    Wirecloud.WidgetMeta = WidgetMeta;
-
-})();
+})(Wirecloud, Wirecloud.Utils);

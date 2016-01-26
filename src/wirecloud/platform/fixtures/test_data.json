@@ -96,6 +96,7 @@
         "pk": "1",
         "fields": {
             "widget": "1",
+            "widget_uri": "Test/Test Widget/1.0.0",
             "name": "Test Widget",
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "tab": "1",
@@ -107,6 +108,7 @@
         "pk": "2",
         "fields": {
             "widget": "1",
+            "widget_uri": "Test/Test Widget/1.0.0",
             "name": "Test Widget 2",
             "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":5,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
             "tab": "1",

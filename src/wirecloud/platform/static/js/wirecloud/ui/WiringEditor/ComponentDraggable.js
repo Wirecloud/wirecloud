@@ -345,7 +345,7 @@
             },
 
             hasSettings: function hasSettings() {
-                return this._component.hasSettings();
+                return this._component.meta.preferenceList.length > 0;
             },
 
             hasOrderableEndpoints: function hasOrderableEndpoints() {

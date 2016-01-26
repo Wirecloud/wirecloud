@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -563,41 +563,42 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, view):
         endpoints = (
-            {'id': 'LOGIN_VIEW', 'url': build_url_template('login')},
-            {'id': 'LOGOUT_VIEW', 'url': build_url_template('logout')},
-            {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
-            {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud.resource_collection')},
-            {'id': 'LOCAL_RESOURCE_ENTRY', 'url': build_url_template('wirecloud.resource_entry', ['vendor', 'name', 'version'])},
-            {'id': 'LOCAL_UNVERSIONED_RESOURCE_ENTRY', 'url': build_url_template('wirecloud.unversioned_resource_entry', ['vendor', 'name'])},
+            {'id': 'GLOBAL_MARKET_ENTRY', 'url': build_url_template('wirecloud.market_entry', ['market'])},
             {'id': 'IWIDGET_COLLECTION', 'url': build_url_template('wirecloud.iwidget_collection', ['workspace_id', 'tab_id'])},
             {'id': 'IWIDGET_ENTRY', 'url': build_url_template('wirecloud.iwidget_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
             {'id': 'IWIDGET_PREFERENCES', 'url': build_url_template('wirecloud.iwidget_preferences', ['workspace_id', 'tab_id', 'iwidget_id'])},
             {'id': 'IWIDGET_PROPERTIES', 'url': build_url_template('wirecloud.iwidget_properties', ['workspace_id', 'tab_id', 'iwidget_id'])},
+            {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
+            {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud.resource_collection')},
+            {'id': 'LOCAL_RESOURCE_ENTRY', 'url': build_url_template('wirecloud.resource_entry', ['vendor', 'name', 'version'])},
+            {'id': 'LOCAL_UNVERSIONED_RESOURCE_ENTRY', 'url': build_url_template('wirecloud.unversioned_resource_entry', ['vendor', 'name'])},
+            {'id': 'LOGIN_VIEW', 'url': build_url_template('login')},
+            {'id': 'LOGOUT_VIEW', 'url': build_url_template('logout')},
+            {'id': 'MAC_BASE_URL', 'url': build_url_template('wirecloud.showcase_media', ['vendor', 'name', 'version', 'file_path'])},
+            {'id': 'MARKET_COLLECTION', 'url': build_url_template('wirecloud.market_collection')},
+            {'id': 'MARKET_ENTRY', 'url': build_url_template('wirecloud.market_entry', ['user', 'market'])},
+            {'id': 'MISSING_WIDGET_CODE_ENTRY', 'url': build_url_template('wirecloud.missing_widget_code_entry')},
+            {'id': 'OPERATOR_ENTRY', 'url': build_url_template('wirecloud.operator_code_entry', ['vendor', 'name', 'version'])},
             {'id': 'PLATFORM_CONTEXT_COLLECTION', 'url': build_url_template('wirecloud.platform_context_collection')},
             {'id': 'PLATFORM_PREFERENCES', 'url': build_url_template('wirecloud.platform_preferences')},
             {'id': 'PROXY', 'url': build_url_template('wirecloud|proxy', ['protocol', 'domain', 'path'])},
-            {'id': 'WORKSPACE_PREFERENCES', 'url': build_url_template('wirecloud.workspace_preferences', ['workspace_id'])},
+            {'id': 'PUBLISH_ON_OTHER_MARKETPLACE', 'url': build_url_template('wirecloud.publish_on_other_marketplace')},
+            {'id': 'ROOT_URL', 'url': build_url_template('wirecloud.root')},
+            {'id': 'SEARCH_SERVICE', 'url': build_url_template('wirecloud.search_service')},
+            {'id': 'SWITCH_USER_SERVICE', 'url': build_url_template('wirecloud.switch_user_service')},
             {'id': 'TAB_COLLECTION', 'url': build_url_template('wirecloud.tab_collection', ['workspace_id'])},
             {'id': 'TAB_ENTRY', 'url': build_url_template('wirecloud.tab_entry', ['workspace_id', 'tab_id'])},
             {'id': 'TAB_PREFERENCES', 'url': build_url_template('wirecloud.tab_preferences', ['workspace_id', 'tab_id'])},
             {'id': 'THEME_ENTRY', 'url': build_url_template('wirecloud.theme_entry', ['name'])},
-            {'id': 'MARKET_COLLECTION', 'url': build_url_template('wirecloud.market_collection')},
-            {'id': 'GLOBAL_MARKET_ENTRY', 'url': build_url_template('wirecloud.market_entry', ['market'])},
-            {'id': 'MARKET_ENTRY', 'url': build_url_template('wirecloud.market_entry', ['user', 'market'])},
-            {'id': 'WIRING_ENTRY', 'url': build_url_template('wirecloud.workspace_wiring', ['workspace_id'])},
-            {'id': 'OPERATOR_ENTRY', 'url': build_url_template('wirecloud.operator_code_entry', ['vendor', 'name', 'version'])},
-            {'id': 'MAC_BASE_URL', 'url': build_url_template('wirecloud.showcase_media', ['vendor', 'name', 'version', 'file_path'])},
-            {'id': 'ROOT_URL', 'url': build_url_template('wirecloud.root')},
-            {'id': 'SEARCH_SERVICE', 'url': build_url_template('wirecloud.search_service')},
-            {'id': 'SWITCH_USER_SERVICE', 'url': build_url_template('wirecloud.switch_user_service')},
             {'id': 'WIDGET_CODE_ENTRY', 'url': build_url_template('wirecloud.widget_code_entry', ['vendor', 'name', 'version'])},
+            {'id': 'WIRING_ENTRY', 'url': build_url_template('wirecloud.workspace_wiring', ['workspace_id'])},
             {'id': 'WORKSPACE_COLLECTION', 'url': build_url_template('wirecloud.workspace_collection')},
             {'id': 'WORKSPACE_ENTRY', 'url': build_url_template('wirecloud.workspace_entry', ['workspace_id'])},
+            {'id': 'WORKSPACE_MERGE', 'url': build_url_template('wirecloud.workspace_merge', ['to_ws_id'])},
+            {'id': 'WORKSPACE_PREFERENCES', 'url': build_url_template('wirecloud.workspace_preferences', ['workspace_id'])},
             {'id': 'WORKSPACE_PUBLISH', 'url': build_url_template('wirecloud.workspace_publish', ['workspace_id'])},
             {'id': 'WORKSPACE_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud.workspace_resource_collection', ['workspace_id'])},
             {'id': 'WORKSPACE_VIEW', 'url': build_url_template('wirecloud.workspace_view', ['owner', 'name'])},
-            {'id': 'PUBLISH_ON_OTHER_MARKETPLACE', 'url': build_url_template('wirecloud.publish_on_other_marketplace')},
-            {'id': 'WORKSPACE_MERGE', 'url': build_url_template('wirecloud.workspace_merge', ['to_ws_id'])},
         )
 
         from django.conf import settings

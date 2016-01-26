@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -33,19 +33,18 @@
     /**
      * Create a new instance of class MissingComponent.
      *
+     * @name Wirecloud.wiring.MissingComponent
+     *
      * @constructor
-     * @param {Number} id
-     *      [TODO: description]
-     * @param {String} type
-     *      [TODO: description]
-     * @param {Wiring} wiringEngine
-     *      [TODO: description]
-     * @param {String} reason
-     *      [TODO: description]
+     * @param {Number} id id of this component
+     * @param {Wirecloud.MashableApplicationComponent} meta Meta description
+     *     associated with this component
+     * @param {Wirecloud.Wiring} wiringEngine Wiring Engine associated to this
+     *     component
      */
     ns.MissingComponent = utils.defineClass({
 
-        constructor: function MissingComponent(id, type, wiringEngine) {
+        constructor: function MissingComponent(id, meta, wiringEngine) {
 
             this.loaded = false;
             this.pending_events = [];
@@ -55,17 +54,9 @@
 
             Object.defineProperties(this, {
                 id: {value: id},
-                type: {value: type},
+                type: {value: meta.type},
                 logManager: {value: new ns.MissingComponentLogManager(this, wiringEngine)},
-                meta: {
-                    value: {
-                        inputList: [],
-                        inputs: {},
-                        outputList: [],
-                        outputs: {},
-                        type: type
-                    }
-                },
+                meta: {value: meta},
                 missing: {value: true}
             });
         },
@@ -135,10 +126,6 @@
                 return this;
             },
 
-            hasSettings: function hasSettings() {
-                return false;
-            },
-
             is: function is(component) {
                 return this.meta.type == component.meta.type && this.id == component.id;
             },
@@ -165,14 +152,10 @@
                     {value: utils.updateObject(this.constructor.DEFAULT_PERMISSIONS, businessInfo.permissions)});
                 Object.freeze(this.permissions);
 
-                if (businessInfo.name && !this.meta.name) {
-                    fillComponentMeta.call(this, businessInfo.name);
-
-                    Object.defineProperties(this, {
-                        preferences: {value: businessInfo.preferences, writable: true},
-                        title: {value: this.meta.title}
-                    });
-                }
+                Object.defineProperties(this, {
+                    preferences: {value: businessInfo.preferences, writable: true},
+                    title: {value: this.meta.title}
+                });
 
                 return this;
             },
@@ -180,21 +163,6 @@
             loadVisualInfo: function loadVisualInfo(visualInfo) {
 
                 visualInfo = utils.updateObject(ns.MissingComponent.VISUAL_TEMPLATE, visualInfo);
-
-                /* TODO this should be initialized in loadBusinessInfo but, for now, MissingWidgets does not call this method */
-                if (!('permissions' in this)) {
-                    Object.defineProperty(this, 'permissions', {value: utils.clone(this.constructor.DEFAULT_PERMISSIONS)});
-                    Object.freeze(this.permissions);
-                }
-
-                if (visualInfo.name && !this.meta.name) {
-                    fillComponentMeta.call(this, visualInfo.name);
-
-                    Object.defineProperties(this, {
-                        preferences: {value: {}, writable: true},
-                        title: {value: this.meta.title}
-                    });
-                }
 
                 visualInfo.endpoints.source.forEach(function (name) {
                     this.addMissingEndpoint('outputs', name);
@@ -225,23 +193,5 @@
         }
 
     });
-
-    // ==================================================================================
-    // PRIVATE MEMBERS
-    // ==================================================================================
-
-    var fillComponentMeta = function fillComponentMeta(uri) {
-        var splitURI = uri.split('/');
-
-        this.meta.uri = uri;
-
-        this.meta.title = splitURI[1];
-
-        this.meta.vendor = splitURI[0];
-        this.meta.name = splitURI[1];
-        this.meta.version = {text: splitURI[2]};
-
-        return this;
-    };
 
 })(Wirecloud.wiring, StyledElements, StyledElements.Utils);

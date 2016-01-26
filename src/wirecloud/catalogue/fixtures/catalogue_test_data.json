@@ -1,11 +1,48 @@
 [
     {
+        "model": "auth.User",
+        "pk": "2",
+        "fields": {
+            "username": "test",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [1],
+            "user_permissions": [],
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
+        "model": "auth.User",
+        "pk": "3",
+        "fields": {
+            "username": "test2",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17T17:21:19Z",
+            "groups": [1],
+            "user_permissions": [],
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "email": "",
+            "date_joined": "2011-03-17T17:21:19Z"
+        }
+    },
+    {
         "model": "catalogue.catalogueresource",
         "pk": 1,
         "fields": {
             "short_name": "widget1",
             "vendor": "Test",
             "version": "1.2",
+            "creator": 2,
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
@@ -20,6 +57,7 @@
             "short_name": "widget1",
             "vendor": "Test",
             "version": "1.10",
+            "creator": 2,
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
@@ -34,6 +72,7 @@
             "short_name": "widget2",
             "vendor": "Test",
             "version": "1.0",
+            "creator": 2,
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
@@ -48,6 +87,7 @@
             "short_name": "awidget",
             "vendor": "Test",
             "version": "1.0",
+            "creator": 2,
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
@@ -62,6 +102,7 @@
             "short_name": "zwidget",
             "vendor": "Test",
             "version": "1.0",
+            "creator": 2,
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
@@ -76,6 +117,7 @@
             "short_name": "test",
             "vendor": "Wirecloud",
             "version": "0.1",
+            "creator": 2,
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",

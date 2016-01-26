@@ -2772,6 +2772,42 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_iwidget_entry_get_missing_widget_deleted(self):
+
+        iwidget = IWidget.objects.get(pk=2)
+        iwidget.widget = None
+        iwidget.save()
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['widget'], "Wirecloud/Test/1.0")
+        self.assertEqual(response_data['preferences'], {})
+        self.assertEqual(response_data['properties'], {})
+
+    def test_iwidget_entry_get_missing_widget_uninstalled(self):
+
+        iwidget = IWidget.objects.get(pk=2)
+        iwidget.widget.resource.public = False
+        iwidget.widget.resource.save()
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['widget'], "Wirecloud/Test/1.0")
+        self.assertEqual(response_data['preferences'], {})
+        self.assertEqual(response_data['properties'], {})
+
     def test_iwidget_entry_get_workspace_not_found(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 404, 'tab_id': 101, 'iwidget_id': 2})

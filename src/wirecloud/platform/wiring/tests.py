@@ -40,7 +40,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from wirecloud.commons.utils.remote import FormModalTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, WirecloudTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 from wirecloud.platform import plugins
-from wirecloud.platform.models import IWidget, Workspace
+from wirecloud.platform.models import CatalogueResource, IWidget, Workspace
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -872,37 +872,34 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
         return tuple(json_fixtures)
 
-    def test_widget_with_visual_info_is_not_in_workspace(self):
-        workspace = Workspace.objects.get(id=2)
-        workspace.wiringStatus = self._read_json_fixtures('wiringstatus_widget_missingtradeinfo')
-        workspace.save()
+    def test_widget_uninstalled_with_tradeinfo(self):
+
+        CatalogueResource.objects.get(vendor="Wirecloud", short_name="Test").delete()
 
         self.login(username='user_with_workspaces')
 
         with self.wiring_view as wiring:
-            widget = wiring.find_component_by_title('widget', "Test")
-            self.assertTrue(widget.missing)
-            widget.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
-
-        with self.wiring_view as wiring:
-            widget = wiring.find_component_by_title('widget', "Test")
-            self.assertTrue(widget.missing)
-            widget.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
+            for widget in wiring.find_components_by_type('widget'):
+                self.assertTrue(widget.missing)
 
     def test_widget_with_visualinfo_and_connections_is_not_in_workspace(self):
+
+        # Set a new wiring configuration containing a widget only referenced in
+        # the visual description of the wiring status (the widget doesn't exist
+        # on the current workspace)
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = self._read_json_fixtures('wiringstatus_widget_missingtradeinfo_with_connections')
         workspace.save()
 
         self.login(username='user_with_workspaces')
+
+        # WireCloud should ignore the extra widget described in the wiring
+        # status
         self.assertFalse(self.find_navbar_button("display-wiring-view").badge.is_displayed())
 
         with self.wiring_view as wiring:
-            widget = wiring.find_component_by_title('widget', "Test")
-            self.assertTrue(widget.missing)
-            self.assertTrue(widget.missing)
-            widget.show_menu_prefs().check(must_be_disabled=('Settings',)).close()
-            self.assertEqual(len(wiring.find_connections()), 3)
+            # Check the Wiring Editor only display the valid widgets
+            self.assertEqual(len(wiring.filter_components_by_type('widget')), 2)
 
     def test_operator_uninstalled_with_tradeinfo(self):
         workspace = Workspace.objects.get(id=2)

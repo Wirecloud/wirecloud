@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -223,6 +223,10 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
         # forced_values uses string keys
         svariwidget = str(iwidget.id)
         values_by_varname[iwidget.id] = {}
+
+        if iwidget.widget is None:
+            continue
+
         iwidget_info = iwidget.widget.resource.get_processed_info()
 
         for vardef in iwidget_info['preferences']:
@@ -509,12 +513,13 @@ def get_tab_data(tab):
 
 def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
 
-    data_ret = {'id': iwidget.id,
+    data_ret = {
+        'id': iwidget.id,
         'title': iwidget.name,
         'tab': iwidget.tab.id,
         'layout': iwidget.layout,
         'refused_version': iwidget.refused_version,
-        'widget': iwidget.widget.uri,
+        'widget': iwidget.widget_uri,
         'top': iwidget.positions['widget']['top'],
         'left': iwidget.positions['widget']['left'],
         'zIndex': iwidget.positions['widget']['zIndex'],
@@ -525,7 +530,13 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         'icon_top': iwidget.positions['icon']['top'],
         'icon_left': iwidget.positions['icon']['left'],
         'readonly': iwidget.readOnly,
+        'preferences': {},
+        'properties': {},
     }
+
+    if iwidget.widget is None or not iwidget.widget.resource.is_available_for(workspace.creator):
+        # The widget used by this iwidget is missing
+        return data_ret
 
     if cache_manager is None:
         cache_manager = VariableValueCacheManager(workspace, user)

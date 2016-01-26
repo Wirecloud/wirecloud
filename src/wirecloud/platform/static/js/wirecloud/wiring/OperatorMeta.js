@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,54 +19,54 @@
  *
  */
 
-/* global Wirecloud */
+/* globals Wirecloud */
 
-(function (ns) {
+(function (ns, utils) {
 
     "use strict";
 
     /**
      * Create a new instance of class OperatorMeta.
-     * @extends {MashableApplicationComponent}
      *
      * @constructor
-     * @param {PlainObject} description
-     *      [TODO: description]
+     * @extends Wirecloud.MashableApplicationComponent
+     * @name Wirecloud.wiring.OperatorMeta
+     *
+     * @param {Object} description metadata information of the Operator
      */
-    ns.OperatorMeta = function OperatorMeta(description) {
+    ns.OperatorMeta = utils.defineClass({
 
-        if (description.type !== 'operator') {
-            throw new TypeError('Invalid operator description');
+        constructor: function OperatorMeta(description) {
+
+            if (description.type !== 'operator') {
+                throw new TypeError('Invalid operator description');
+            }
+
+            this.superClass(description);
+            Object.freeze(this);
+        },
+
+        inherit: Wirecloud.MashableApplicationComponent,
+
+        members: {
+
+            /**
+             * Creates a new instance of this Operator
+             *
+             * @param {Number} operatorId id for the operator
+             * @param {Wiring} wiringEngine wiring engine that is going to manage the new operator instance
+             * @param {PlainObject} [businessInfo] business info for the instance
+             * @returns {Wirecloud.wiring.Operator} a new operator instance
+             */
+            instantiate: function instantiate(operatorId, wiringEngine, businessInfo) {
+                if (this.missing) {
+                    throw new TypeError("Missing operators cannot be instantiated");
+                }
+
+                return new Wirecloud.Operator(operatorId, this, wiringEngine, businessInfo);
+            }
         }
 
-        Wirecloud.MashableApplicationComponent.call(this, description);
-        Object.freeze(this);
-    };
+    });
 
-    /**
-     * [TODO: instantiate description]
-     *
-     * @param {Number} operatorId
-     *      [TODO: description]
-     * @param {StyledElement} targetView
-     *      [TODO: description]
-     * @param {PlainObject} [businessInfo]
-     *      [TODO: description]
-     * @returns {Operator}
-     *      [TODO: description]
-     */
-    ns.OperatorMeta.prototype.instantiate = function instantiate(operatorId, targetView, businessInfo) {
-        return new Wirecloud.Operator(operatorId, this, targetView, businessInfo);
-    };
-
-    /**
-     * [TODO: hasEndpoints description]
-     *
-     * @returns {Boolean}
-     *      [TODO: description]
-     */
-    ns.OperatorMeta.prototype.hasEndpoints = function hasEndpoints() {
-        return (this.inputList.length + this.outputList.length) > 0;
-    };
-
-})(Wirecloud.wiring);
+})(Wirecloud.wiring, Wirecloud.Utils);

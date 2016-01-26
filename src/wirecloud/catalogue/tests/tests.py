@@ -434,12 +434,11 @@ class CatalogueAPITestCase(WirecloudTestCase):
 
         super(CatalogueAPITestCase, self).setUp()
 
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
         self.client = Client()
 
     def test_last_version_query(self):
 
-        self.client.login(username='test', password='test')
+        self.client.login(username='test', password='admin')
         resources = json.dumps([
             {'name': 'widget1', 'vendor': 'Test'},
             {'name': 'inexistantwidget', 'vendor': 'Test'},
@@ -471,7 +470,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test'})
 
         # Authenticate
-        self.client.login(username='test', password='test')
+        self.client.login(username='test', password='admin')
 
         # Make the request
         response = self.client.get(url, HTTP_ACCEPT='application/json')
@@ -485,7 +484,7 @@ class CatalogueAPITestCase(WirecloudTestCase):
         url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test'})
 
         # Authenticate
-        self.client.login(username='test', password='test')
+        self.client.login(username='test', password='admin')
 
         # Make the request
         response = self.client.get(url, HTTP_ACCEPT='application/json')
@@ -504,6 +503,52 @@ class CatalogueAPITestCase(WirecloudTestCase):
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data['versions']), 1)
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, creator="test")
+    def test_resource_entry_delete(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+
+        # Authenticate
+        self.client.login(username='test', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data['affectedVersions']), 1)
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt', 'Wirecloud_Test_2.0.wgt'), shared=True, creator="test")
+    def test_resource_entry_delete_all_versions(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test'})
+
+        # Authenticate
+        self.client.login(username='test', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data['affectedVersions']), 2)
+
+    @uses_extra_resources(('Wirecloud_Test_1.0.wgt',), shared=True, creator="test")
+    @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, creator="test2")
+    def test_resource_entry_delete_all_versions_mixed_owners(self):
+
+        url = reverse('wirecloud_catalogue.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test'})
+
+        # Authenticate
+        self.client.login(username='test', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data['affectedVersions']), 1)
 
     def test_resource_userguide_entry_missing_component(self):
 

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,24 +32,23 @@
 
     /**
      * Create a new instance of class MissingWidget.
-     * @extends {MissingComponent}
+     *
+     * @extend Wirecloud.wiring.MissingComponent
+     * @name Wirecloud.wiring.MissingWidget
      *
      * @constructor
-     * @param {Number} id
-     *      [TODO: description]
-     * @param {Wiring} wiringEngine
-     *      [TODO: description]
-     * @param {PlainObject} visualInfo
-     *      [TODO: description]
-     * @param {String} reason
-     *      [TODO: description]
+     * @param {Wirecloud.Widget} widget real widget instance
+     * @param {Wirecloud.Wiring} wiringEngine Wiring Engine associated to this
+     *     component
+     * @param {String} reason text describing the reason this widget cannot be
+     *     loaded
      */
     ns.MissingWidget = utils.defineClass({
 
-        constructor: function MissingWidget(id, wiringEngine, visualInfo, reason) {
-            this.superClass(id, 'widget', wiringEngine, reason);
-            this.loadVisualInfo(visualInfo);
+        constructor: function MissingWidget(widget, wiringEngine, reason) {
+            this.superClass(widget.id, widget.meta, wiringEngine, reason);
             Object.defineProperties(this, {
+                title: {value: widget.title},
                 reason: {value: utils.interpolate(reason, {id: this.id, uri: this.meta.uri})},
             });
             this.logManager.log(this.reason, Wirecloud.constants.LOGGING.ERROR_MSG);

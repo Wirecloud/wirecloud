@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -44,19 +44,6 @@ from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget, Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
-
-
-def get_iwidgets_to_remove(resource, user):
-
-    query = Widget.objects.filter(resource=resource)
-    if query.exists():
-
-        widget = query.get()
-
-        # Remove all iwidgets that matches the resource
-        return IWidget.objects.filter(widget=widget, tab__workspace__creator=user)
-    else:
-        return ()
 
 
 class ResourceCollection(Resource):
@@ -228,8 +215,7 @@ class ResourceEntry(Resource):
             resources = get_list_or_404(CatalogueResource, vendor=vendor, short_name=name, users=request.user)
 
         result = {
-            "affectedVersions": [],
-            "removedIWidgets": []
+            "affectedVersions": []
         } if request.GET.get('affected', 'false').lower() == 'true' else None
 
         for resource in resources:
@@ -237,15 +223,6 @@ class ResourceEntry(Resource):
             resource_uninstalled.send(sender=resource, user=request.user)
             if result is not None:
                 result['affectedVersions'].append(resource.version)
-
-            if resource.resource_type() == 'widget':
-                iwidgets_to_remove = get_iwidgets_to_remove(resource, request.user)
-                if result is not None:
-                    result['removedIWidgets'] += [iwidget.id for iwidget in iwidgets_to_remove]
-
-                # We need to iterate the iwidget list as currently only the individual delete method removes Workspace cache
-                for iwidget in iwidgets_to_remove:
-                    iwidget.delete()
 
             if resource.public is False and resource.users.count() == 0 and resource.groups.count() == 0:
                 resource.delete()
@@ -303,7 +280,8 @@ class WorkspaceResourceCollection(Resource):
         result = {}
         process_urls = process_urls=request.GET.get('process_urls', 'true') == 'true'
         for resource in resources:
-            options = resource.get_processed_info(request, process_urls=process_urls)
-            result[resource.local_uri_part] = options
+            if resource.is_available_for(workspace.creator):
+                options = resource.get_processed_info(request, process_urls=process_urls)
+                result[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(result), content_type='application/json; chatset=UTF-8')

@@ -583,21 +583,25 @@ Wirecloud.ui = Wirecloud.ui || {};
         for (id in wiringWidgets) {
             widget = wiringWidgets[id];
 
-            this.componentManager
-                .addMeta(widget.meta)
-                .addWiringComponent(widget);
+            if (widget.missing) {
+                if (id in visualWidgets) {
+                    message = utils.gettext("The widget %(id)s (%(uri)s) does not exist.");
+                    widget = new Wirecloud.wiring.MissingWidget(widget, this.workspace.wiring, message);
+                } else {
+                    // For now, missing widgets cannot be used if they are not part of the wiring
+                    continue;
+                }
+            }
+
+            if (!widget.missing) {
+                this.componentManager
+                    .addMeta(widget.meta)
+                    .addWiringComponent(widget);
+            }
 
             if (widget.id in visualWidgets) {
                 this.createComponent(widget, visualWidgets[widget.id]);
             }
-
-            delete visualWidgets[id];
-        }
-
-        for (id in visualWidgets) {
-            message = utils.gettext("The widget %(id)s (%(uri)s) does not exist.");
-            widget = new Wirecloud.wiring.MissingWidget(id, this.workspace.wiring, visualWidgets[id], message);
-            this.createComponent(widget, visualWidgets[id]);
         }
 
         return this;

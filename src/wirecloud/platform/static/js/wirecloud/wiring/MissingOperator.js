@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,22 +32,24 @@
 
     /**
      * Create a new instance of class MissingOperator.
-     * @extends {MissingComponent}
+     *
+     * @extend Wirecloud.wiring.MissingComponent
+     * @name Wirecloud.wiring.MissingOperator
      *
      * @constructor
-     * @param {Number} id
-     *      [TODO: description]
-     * @param {Wiring} wiringEngine
-     *      [TODO: description]
-     * @param {PlainObject} businessInfo
-     *      [TODO: description]
-     * @param {String} reason
-     *      [TODO: description]
+     * @param {Number} id id of this widget
+     * @param {Wirecloud.Wiring} wiringEngine Wiring Engine associated to this
+     *     operator
+     * @param {PlainObject} businessInfo info from the wiring status
+     * @param {String} reason text describing the reason this operator cannot be
+     *     loaded
      */
     ns.MissingOperator = utils.defineClass({
 
         constructor: function MissingOperator(id, wiringEngine, businessInfo, reason) {
-            this.superClass(id, 'operator', wiringEngine, reason);
+            var meta = wiringEngine.workspace.resources.getOrCreateMissing(businessInfo.name, 'operator');
+
+            this.superClass(id, meta, wiringEngine, reason);
             this.loadBusinessInfo(businessInfo);
             Object.defineProperties(this, {
                 reason: {value: utils.interpolate(reason, {id: this.id, uri: this.meta.uri})},
@@ -60,7 +62,7 @@
         statics: {
             DEFAULT_PERMISSIONS: {
                 'close': true,
-                'configure': true,
+                'configure': false,
                 'rename': true
             }
         },

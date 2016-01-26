@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -41,7 +41,7 @@
             curIWidget = tabInfo.iwidgets[i];
 
             // Get widget model
-            widget = this.workspace.resources.getResourceId(curIWidget.widget);
+            widget = this.workspace.resources.getOrCreateMissing(curIWidget.widget, 'widget');
 
             // Parse layout field
             if (curIWidget.layout === 0) {

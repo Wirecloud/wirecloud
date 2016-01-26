@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,9 @@
  *
  */
 
-/*global gettext, Tab, StyledElements, Wirecloud*/
+/* global Tab, StyledElements, Wirecloud */
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
@@ -71,20 +71,30 @@
             };
         }
 
+        var upgrade = function upgrade(new_widget) {
+            widget = new_widget;
+            build_endpoints.call(this);
+            build_prefs.call(this, this.preferences);
+            this.trigger('upgraded', new_widget);
+        };
+
         get_meta = function get_meta() {return widget;};
         set_meta = function set_meta(new_widget) {
             if (!(new_widget instanceof Wirecloud.WidgetMeta)) {
                 throw new TypeError();
             }
 
-            options.persist.call(this, {widget: new_widget.id}, function () {
-                widget = new_widget;
-                build_endpoints.call(this);
-                build_prefs.call(this, this.preferences);
-                this.trigger('upgraded', new_widget);
-            }.bind(this), function (error) {
-                this.events.upgradeerror.dispatch(error);
-            }.bind(this));
+            if (widget.uri !== new_widget.uri) {
+                options.persist.call(this,
+                    {widget: new_widget.id},
+                    upgrade.bind(this, new_widget),
+                    function (error) {
+                        this.events.upgradeerror.dispatch(error);
+                    }.bind(this)
+                );
+            } else {
+                upgrade.call(this, new_widget);
+            }
         };
 
         Object.defineProperties(this, {
@@ -96,7 +106,7 @@
                 get: get_meta,
                 set: set_meta
             },
-            'missing': {value: false},
+            'missing': {get: function () {return this.meta.missing;}},
             'codeURL': {get: function () {return this.meta.code_url + "#id=" + this.id;}},
             'tab': {value: tab},
             'volatile': {value: options.volatile ? true : false},
@@ -147,38 +157,38 @@
         };
         this.contextManager = new Wirecloud.ContextManager(this, {
             'title': {
-                label: gettext("Title"),
-                description: gettext("Widget's title"),
+                label: utils.gettext("Title"),
+                description: utils.gettext("Widget's title"),
                 value: options.title
             },
             'xPosition': {
-                label: gettext("X-Position"),
-                description: gettext("Specifies the x-coordinate at which the widget is placed"),
+                label: utils.gettext("X-Position"),
+                description: utils.gettext("Specifies the x-coordinate at which the widget is placed"),
                 value: 0
             },
             'yPosition': {
-                label: gettext("Y-Position"),
-                description: gettext("Specifies the y-coordinate at which the widget is placed"),
+                label: utils.gettext("Y-Position"),
+                description: utils.gettext("Specifies the y-coordinate at which the widget is placed"),
                 value: 0
             },
             'height': {
-                label: gettext("Height"),
-                description: gettext("Widget's height in layout cells"),
+                label: utils.gettext("Height"),
+                description: utils.gettext("Widget's height in layout cells"),
                 value: 0
             },
             'width': {
-                label: gettext("Width"),
-                description: gettext("Widget's width in layout cells"),
+                label: utils.gettext("Width"),
+                description: utils.gettext("Widget's width in layout cells"),
                 value: 0
             },
             'heightInPixels': {
-                label: gettext("Height in pixels"),
-                description: gettext("Widget's height in pixels"),
+                label: utils.gettext("Height in pixels"),
+                description: utils.gettext("Widget's height in pixels"),
                 value: 0
             },
             'widthInPixels': {
-                label: gettext("Width in pixels"),
-                description: gettext("Widget's width in pixels"),
+                label: utils.gettext("Width in pixels"),
+                description: utils.gettext("Widget's width in pixels"),
                 value: 0
             }
         });
@@ -234,7 +244,11 @@
             return;
         }
 
-        this.logManager.log(gettext('iWidget loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
+        if (this.meta.missing) {
+            this.logManager.log(utils.gettext('Missing widget: This widget is currently not available. Probably you or an administrator uninstalled it.'), {details: new se.Fragment("<h5>Suggestions:</h5><ul><li>Remove this widget from the dashboard</li><li>Reinstall the appropiated version of the widget</li><li>Install another version of the widget and use the <em>Upgrade/Downgrade</em> option</li></ul>")});
+        } else {
+            this.logManager.log(utils.gettext('Widget loaded successfully'), Wirecloud.constants.LOGGING.INFO_MSG);
+        }
 
         this.loaded = true;
 
@@ -269,7 +283,7 @@
             return;
         }
 
-        this.logManager.log(gettext('iWidget unloaded'), Wirecloud.constants.LOGGING.INFO_MSG);
+        this.logManager.log(utils.gettext('Widget unloaded'), Wirecloud.constants.LOGGING.INFO_MSG);
         this.logManager.newCycle();
 
         // Remove context callbacks
@@ -323,10 +337,6 @@
         return this.meta.hasEndpoints();
     };
 
-    WidgetBase.prototype.hasSettings = function hasSettings() {
-        return this.preferenceList.length > 0;
-    };
-
     WidgetBase.prototype.showLogs = function showLogs() {
         var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
         dialog.htmlElement.classList.add("wc-component-logs-dialog");
@@ -344,4 +354,4 @@
 
     Wirecloud.WidgetBase = WidgetBase;
 
-})();
+})(StyledElements, Wirecloud.Utils);

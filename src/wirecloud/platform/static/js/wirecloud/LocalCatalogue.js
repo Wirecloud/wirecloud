@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,7 +30,7 @@
      *************************************************************************/
 
     var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(resource, next, result) {
-        var layoutManager, result, i, iwidget, resource_id, resource_full_id, resource, index;
+        var layoutManager, result, i, iwidget, resource_full_id, resource, index;
 
         if (result.affectedVersions == null) {
             result.affectedVersions = [resource.version];
@@ -40,19 +40,23 @@
         case 'widget':
             layoutManager = LayoutManagerFactory.getInstance();
 
-            layoutManager.logSubTask(gettext('Removing affected iWidgets'));
-            for (i = 0; i < result.removedIWidgets.length; i += 1) {
-                iwidget = Wirecloud.activeWorkspace.getIWidget(result.removedIWidgets[i]);
-                if (iwidget != null) {
-                    iwidget.remove(true);
+            layoutManager.logSubTask(gettext('Unloading affected widgets'));
+            result.affectedVersions.forEach(function (version) {
+                var new_meta = Wirecloud.activeWorkspace.resources.remove(resource.group_id + '/' + version);
+                if (new_meta != null) {
+                    Wirecloud.activeWorkspace.getIWidgets().forEach(function (widget) {
+                        var iwidget_meta = widget.internal_iwidget.meta;
+                        if (iwidget_meta.uri == this.uri) {
+                            widget.internal_iwidget.meta = this;
+                        }
+                    }, new_meta);
                 }
-            }
-
+            });
             layoutManager.logSubTask(gettext('Purging widget info'));
             break;
         case 'operator':
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager.logSubTask(gettext('Uninstantiating affected operators'));
+            layoutManager.logSubTask(gettext('Unloading affected operators'));
             Wirecloud.activeWorkspace.wiring._notifyOperatorUninstall(resource, result.affectedVersions);
             layoutManager.logSubTask(gettext('Purging operator info'));
             break;
@@ -60,14 +64,13 @@
 
         for (i = 0; i < result.affectedVersions.length; i++) {
             try {
-                resource_id = resource.vendor + '/' + resource.name;
-                resource_full_id = resource_id + '/' + result.affectedVersions[i];
+                resource_full_id = resource.group_id + '/' + result.affectedVersions[i];
                 resource = this.resources[resource_full_id];
                 delete this.resources[resource_full_id];
                 delete this.resourcesByType[resource.type][resource_full_id];
 
-                index = this.resourceVersions[resource_id].indexOf(resource);
-                this.resourceVersions[resource_id].splice(index, 1);
+                index = this.resourceVersions[resource.group_id].indexOf(resource);
+                this.resourceVersions[resource.group_id].splice(index, 1);
             } catch (e) {}
         }
 
@@ -278,6 +281,13 @@
         switch (resource_data.type) {
         case 'widget':
             resource = new Wirecloud.WidgetMeta(resource_data);
+            if (Wirecloud.activeWorkspace != null) {
+                Wirecloud.activeWorkspace.getIWidgets().forEach(function (widget) {
+                    if (widget.internal_iwidget.meta.uri == resource.uri) {
+                        widget.internal_iwidget.meta = resource;
+                    }
+                });
+            }
             break;
         case 'operator':
             resource = new Wirecloud.wiring.OperatorMeta(resource_data);
@@ -288,7 +298,10 @@
             }
             break;
         default:
-            resource = resource_data;
+            return;
+        }
+        if (Wirecloud.activeWorkspace != null) {
+            Wirecloud.activeWorkspace.resources.restore(resource);
         }
 
         if (!(resource_id in this.resourceVersions)) {
@@ -302,6 +315,11 @@
             this.resourcesByType[resource_data.type] = {};
         }
         this.resourcesByType[resource_data.type][resource_full_id] = resource;
+    };
+
+    LocalCatalogue.hasAlternativeVersion = function hasAlternativeVersion(mac) {
+        var versions = this.resourceVersions[mac.group_id];
+        return versions != null && (versions.length > 1 || versions.length === 1 && versions[0] !== mac);
     };
 
     LocalCatalogue.getResourceId = function getResourceId(id) {
