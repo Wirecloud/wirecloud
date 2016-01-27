@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -45,7 +45,7 @@ class Workspace(models.Model):
 
     public = models.BooleanField(_('Available to all users'), default=False)
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkspace')
-    groups = models.ManyToManyField(Group, verbose_name=_('Groups'), blank=True, null=True)
+    groups = models.ManyToManyField(Group, verbose_name=_('Groups'), blank=True)
     description = models.TextField(_('Description'), max_length=140, blank=True)
     longdescription = models.TextField(_('Long description'), blank=True)
     forcedValues = JSONField(blank=True)
