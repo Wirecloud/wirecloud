@@ -476,14 +476,9 @@ Anyway, if you want to use any of the other http servers (e.g using Gunicorn),
 Django provides
 [documentation on how to do it](https://docs.djangoproject.com/en/dev/howto/deployment/).
 
-Finally, you can compress CSS and JavaScript code files for better performance
-using the following command:
-
-    $ python manage.py compress --force
-
-> **NOTE**: Don't forget to rerun the collectstatic and compress commands each
-> time the WireCloud code is updated, this include each time a WireCloud plugin
-> or Django app is enabled/disabled and when the default theme is changed.
+> **NOTE**: Don't forget to rerun the collectstatic command each time the
+> WireCloud code is updated, this include each time a WireCloud plugin or Django
+> app is enabled/disabled and when the default theme is changed.
 
 
 ## Advanced configurations
@@ -516,11 +511,9 @@ As last step, add a `DEFAULT_SILBOPS_BROKER` setting with the URL of the broker 
 DEFAULT_SILBOPS_BROKER = 'http://pubsub.server.com:8080/silbops/CometAPI'
 ```
 
-Don't forget to run the collectstatic and compress commands on your WireCloud
-installation:
+Don't forget to run the collectstatic commands on your WireCloud installation:
 
     $ ./manage.py collectstatic
-    $ ./manage.py compress
 
 
 ### NGSI proxy
@@ -580,7 +573,7 @@ Create a new Application using the IdM server to use (for example: `https://acco
         - Remove: `url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),`
         - Add: `url(r'^login/?$', 'wirecloud.fiware.views.login', name="login"),`
     - Add `python-social-auth` url endpoints at the end of the pattern list: `url('', include('social.apps.django_app.urls', namespace='social')),`
-5. Run `python manage.py migrate; python manage.py collectstatic --noinput; python manage.py compress --force`
+5. Run `python manage.py migrate; python manage.py collectstatic --noinput`
 
 
 [KeyRock's User and Programmers Guide]: https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application

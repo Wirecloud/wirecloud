@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,6 +22,7 @@ from wirecloud.platform.tests.base import *
 from wirecloud.platform.tests.plugins import WirecloudPluginTestCase
 from wirecloud.platform.tests.rest_api import AdministrationAPI, ApplicationMashupAPI, ResourceManagementAPI, ExtraApplicationMashupAPI
 from wirecloud.platform.tests.selenium_tests import *
+from wirecloud.platform.tests.themes import ThemesTestCase
 from wirecloud.platform.localcatalogue.tests import *
 from wirecloud.platform.markets.tests import *
 from wirecloud.platform.wiring.tests import *

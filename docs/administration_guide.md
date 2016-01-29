@@ -140,7 +140,6 @@ versions of the JavaScript and CSS files by running the following commands:
 
         $ python manage.py migrate
         $ python manage.py collectstatic --noinput
-        $ python manage.py compress --force
 
 3. Reload WireCloud (e.g. `$ service apache2 graceful`)
 

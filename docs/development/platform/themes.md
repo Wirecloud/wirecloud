@@ -1,6 +1,6 @@
 This section describe how to create new themes for WireCloud.
 
-> This documentation is based in WireCloud 0.8.2. Previous versions of WireCloud
+> This documentation is based in WireCloud 0.9+. Previous versions of WireCloud
 > works in a similiar way, but some details may differ.
 
 ## Basic themes
@@ -8,11 +8,6 @@ This section describe how to create new themes for WireCloud.
 If you do not require a full customised theme, you can create a new theme by
 changing some of the values (colours, default sizes, etc.) used by another
 theme.
-
-> **NOTE:** Currently you can only customise in this way the default theme,
-> although support for parameterizing other themes is work in progress. For now
-> you can copy the theme folder and make the changes as described in this
-> section.
 
 For doing that you have to create a new folder with the following structure:
 
@@ -24,10 +19,21 @@ mytheme
         +-- _variables.scss
 ```
 
-The `__init__.py` file is required by the plugin architecture used by WireCloud
-and should be an empty file (although you know what you do :-). See the next
-section for more details). The `_variables.scss` file is the one that is going
-to allow us to change the values used by the theme.
+The `__init__.py` file is required by the plugin architecture used by WireCloud.
+It can be an empty file, if you want to use the default settings, but MUST exist.
+See the [Theme settings](#theme-settings) section for a full list and
+description of the available settings variables.
+
+By default, all the themes will extend from `wirecloud.defaulttheme`, if you
+want to extend another theme, e.g. the `wirecloud.fiwarelabtheme` theme, you
+will have to add the following content into the `__init__.py` file:
+
+```python
+parent = "wirecloud.fiwarelabtheme"
+```
+
+The `_variables.scss` file is the one that is going to allow us to change the
+values used by the theme.
 
 For example, you can use this `_variables.scss` example file for changing the
 primary color used by the primary buttons, the highlighted menu items, ... and
@@ -113,6 +119,8 @@ mytheme
 
 ```
 
+- `__init__.py`: This file is required as the theme forlder should be also a
+  python module. This file is also used for changing the settings of the theme.
 - `static`: Contains the static files provided by the theme. This is served using
   the [Django's staticfiles app]. Usually, this folder is composed of the
   following subfolders:
@@ -168,6 +176,13 @@ sections.
 [Compass]: http://compass-style.org/help/tutorials/integration/
 [Django's admin app]: https://docs.djangoproject.com/en/1.8/ref/contrib/admin/#admin-overriding-templates
 [Django's staticfiles app]: https://docs.djangoproject.com/en/1.6/ref/contrib/staticfiles/
+
+
+### Theme settings
+
+- `parent` (***New in WireCloud 0.9.0***): Name of the theme to extend. Themes
+  will extend `wirecloud.defaulttheme` by default if you don't provide a value
+  for this setting. Use `parent = None` for creating new root themes.
 
 
 ### Available templates
