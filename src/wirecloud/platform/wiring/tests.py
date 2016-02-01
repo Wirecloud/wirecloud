@@ -1543,22 +1543,6 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
                 sidebar.create_behaviour()
 
     @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
-    def test_behaviour_can_be_created_with_only_title(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
-
-        with self.wiring_view as wiring:
-            with wiring.behaviour_sidebar as sidebar:
-                sidebar.create_behaviour(title="Title for behaviour 1")
-
-    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
-    def test_behaviour_can_be_created_with_only_description(self):
-        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
-
-        with self.wiring_view as wiring:
-            with wiring.behaviour_sidebar as sidebar:
-                sidebar.create_behaviour(description="Description for behaviour 1")
-
-    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
     def test_behaviour_can_be_created_with_title_and_description(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
