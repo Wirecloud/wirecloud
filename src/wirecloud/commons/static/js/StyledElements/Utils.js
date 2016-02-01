@@ -604,7 +604,7 @@ if (window.StyledElements == null) {
     Utils.cloneObject = function cloneObject(source) {
         var target = {};
 
-        if (isNull(source)) {
+        if (source == null) {
             return target;
         }
 
@@ -620,7 +620,7 @@ if (window.StyledElements == null) {
     };
 
     var cloneProp = function cloneProp(sourceValue) {
-        if (isNull(sourceValue)) {
+        if (sourceValue == null) {
             return null;
         }
 
@@ -713,10 +713,6 @@ if (window.StyledElements == null) {
         return target;
     };
 
-    var isNull = function isNull(source) {
-        return typeof source === 'undefined' || source === null;
-    };
-
     Utils.isPlainObject = function isPlainObject(source) {
 
         if (typeof source !== 'object' || source === null) {
@@ -756,27 +752,27 @@ if (window.StyledElements == null) {
     };
 
     var updateProp = function updateProp(targetValue, sourceValue) {
-        if (isNull(sourceValue)) {
-            if (isNull(targetValue)) {
+        if (sourceValue == null) {
+            if (targetValue == null) {
                 targetValue = null;
             }
         } else if (typeof sourceValue === 'function') {
-            if (isNull(targetValue) || isSubClass(targetValue, sourceValue)) {
+            if (targetValue == null || isSubClass(targetValue, sourceValue)) {
                 targetValue = sourceValue;
             }
         } else if (Utils.isPlainObject(sourceValue)) {
-            if (isNull(targetValue) || Utils.isPlainObject(targetValue)) {
+            if (targetValue == null || Utils.isPlainObject(targetValue)) {
                 targetValue = this.updateObject(targetValue, sourceValue);
             }
         } else if (Array.isArray(sourceValue)) {
-            if (isNull(targetValue)) {
+            if (targetValue == null) {
                 targetValue = [];
             }
             if (Array.isArray(targetValue)) {
                 targetValue = targetValue.concat(sourceValue);
             }
         } else {
-            if (isNull(targetValue) || equalsClass(targetValue, sourceValue)) {
+            if (targetValue == null || equalsClass(targetValue, sourceValue)) {
                 targetValue = sourceValue;
             }
         }
