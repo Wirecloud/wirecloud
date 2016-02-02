@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,13 +22,18 @@ from __future__ import unicode_literals
 import locale
 import os
 from optparse import make_option
+import six
 
 from django.core.management.base import CommandError, NoArgsCommand
 from django.utils.encoding import force_text
-from django.utils.six.moves import input
 from django.utils.translation import override, ugettext, ugettext_lazy as _
 
 from wirecloud.commons.searchers import get_available_search_engines, get_search_engine, is_available
+
+if six.PY2:
+    # Python 2 uses bytes instead of strings (unicode)
+    def input(prompt):
+        return raw_input(prompt.encode('utf-8')).decode('utf-8')
 
 
 class Command(NoArgsCommand):
