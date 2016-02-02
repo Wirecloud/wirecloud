@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -33,7 +33,7 @@ __test__ = False
 @patch('wirecloud.catalogue.management.commands.addtocatalogue.locale.getdefaultlocale', return_value=("en_US",))
 class AddToCatalogueCommandTestCase(TestCase):
 
-    tags = ('wirecloud-commands', 'wirecloud-command-addtocatalogue')
+    tags = ('wirecloud-commands', 'wirecloud-command-addtocatalogue', 'wirecloud-noselenium')
 
     def setUp(self):
 

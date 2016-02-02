@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -40,7 +40,7 @@ class TestQueryResult(object):
 
 class CatalogueSouthMigrationsTestCase(TestCase):
 
-    tags = ('catalogue-migrations',)
+    tags = ('catalogue-migrations', 'wirecloud-noselenium')
 
     def _pick_migration(self, migration_name):
         """

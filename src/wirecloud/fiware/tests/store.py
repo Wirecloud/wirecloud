@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -38,7 +38,7 @@ OFFERING_URL = "http://repository.exmaple.com/FiwareRepository/v1/storeOfferingC
 
 class StoreTestCase(WirecloudTestCase):
 
-    tags = ('wirecloud-fiware', 'fiware-ut-13', 'wirecloud-fiware-store')
+    tags = ('wirecloud-fiware', 'wirecloud-fiware-store', 'wirecloud-noselenium')
     servers = {
         'http': {
             'example.com': DynamicWebServer()

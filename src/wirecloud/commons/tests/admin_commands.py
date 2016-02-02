@@ -40,7 +40,7 @@ __test__ = False
 
 class BaseAdminCommandTestCase(TestCase):
 
-    tags = ('wirecloud-commands', 'wirecloud-command-base')
+    tags = ('wirecloud-commands', 'wirecloud-command-base', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -151,7 +151,7 @@ class BaseAdminCommandTestCase(TestCase):
 
 class ConvertCommandTestCase(TestCase):
 
-    tags = ('wirecloud-commands', 'wirecloud-command-convert')
+    tags = ('wirecloud-commands', 'wirecloud-command-convert', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -228,7 +228,7 @@ class ConvertCommandTestCase(TestCase):
 
 class StartprojectCommandTestCase(TestCase):
 
-    tags = ('wirecloud-commands', 'wirecloud-command-startproject')
+    tags = ('wirecloud-commands', 'wirecloud-command-startproject', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):

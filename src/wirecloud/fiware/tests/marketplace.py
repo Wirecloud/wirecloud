@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -33,7 +33,7 @@ __test__ = False
 
 class MarketplaceTestCase(WirecloudTestCase):
 
-    tags = ('wirecloud-fiware', 'fiware-ut-8', 'wirecloud-fiware-marketplace')
+    tags = ('wirecloud-fiware', 'wirecloud-fiware-marketplace', 'wirecloud-noselenium')
     fixtures = ('selenium_test_data', 'fiware_test_data')
     servers = {
         'http': {

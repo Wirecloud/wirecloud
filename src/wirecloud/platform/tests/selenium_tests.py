@@ -90,7 +90,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Now we have only one workspace, so we cannot remove it
         self.open_menu().check(('Rename', 'Settings', 'New workspace'), must_be_disabled=('Remove',))
-    test_basic_workspace_operations.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     def test_move_iwidget_between_tabs(self):
 
@@ -117,7 +116,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
         self.add_widget_to_mashup('Test')
-    test_add_widget_from_catalogue.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     def test_remove_widget_from_workspace(self):
 
@@ -125,7 +123,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidget = self.get_current_iwidgets()[0]
         iwidget.remove()
-    test_remove_widget_from_workspace.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     def test_remove_tab_from_workspace(self):
 
@@ -311,8 +308,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(api_test_iwidget.error_count, 3)
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 5)
 
-    test_basic_widget_functionalities.tags = ('wirecloud-selenium', 'fiware-ut-5')
-
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True)
     def test_widget_navigation_to_doc(self):
 
@@ -464,7 +459,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(self.count_workspace_tabs(), 1)
         self.assertEqual(self.count_iwidgets(), 0)
-    test_http_cache.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     def test_create_workspace_from_catalogue(self):
 
@@ -496,7 +490,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
-    test_create_workspace_from_catalogue.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     @uses_extra_resources(('Wirecloud_ParameterizedMashup_1.0.zip',), shared=True)
     def test_create_workspace_from_catalogue_using_parameters(self):
@@ -543,7 +536,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.create_workspace(name='Test Mashup')
         self.create_workspace(mashup='Test Mashup')
         self.assertNotEqual(self.get_current_workspace_name(), 'Test Mashup')
-    test_create_workspace_from_catalogue_duplicated_workspaces.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     @uses_extra_resources(('Wirecloud_TestMashup2_1.0.zip',), shared=True)
     def test_create_workspace_from_catalogue_missing_dependencies(self):
@@ -568,7 +560,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             'Wirecloud/Test/1.0',
         )
         self.create_workspace(mashup='TestMashup2', expect_missing_dependencies=dependencies)
-    test_create_workspace_from_catalogue_missing_dependencies.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     def test_merge_mashup(self):
 
@@ -592,7 +583,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login')
-    test_merge_mashup.tags = ('wirecloud-selenium', 'fiware-ut-5')
 
     def test_workspace_publish(self):
 
@@ -659,7 +649,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.open_menu().check(must_be_disabled=('Rename', 'Settings', 'Remove')).close()
 
         self.check_public_workspace()
-    test_public_workspaces.tags = ('wirecloud-selenium', 'fiware-ut-18')
 
     def test_public_workspaces_anonymous_user(self):
 
@@ -701,7 +690,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.wait_wirecloud_ready()
         self.assertEqual(self.get_current_workspace_name(), 'Public Workspace')
-    test_public_workspaces_anonymous_user.tags = ('wirecloud-selenium', 'fiware-ut-18')
 
     def test_embedded_view(self):
 
@@ -718,7 +706,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.switch_to.frame(iframe)
         self.wait_wirecloud_ready()
         self.check_public_workspace(frame_id='iframe')
-    test_embedded_view.tags = ('wirecloud-selenium', 'fiware-ut-18')
 
     def check_public_workspace(self, frame_id=None):
         # Check iwidget are loaded correctly
@@ -980,7 +967,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         window_menues = self.driver.find_elements_by_css_selector('.window_menu')
         self.assertEqual(len(window_menues), 1)
-    test_gui_tutorials.tags = ('wirecloud-selenium', 'fiware-ut-15')
 
     def test_move_widget_and_restore(self):
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -41,7 +41,7 @@ __test__ = False
 @patch('wirecloud.commons.management.commands.resetsearchindexes.locale.getdefaultlocale', return_value=("en_US",))
 class ResetSearchIndexesCommandTestCase(TestCase):
 
-    tags = ('wirecloud-commands', 'wirecloud-command-resetsearchindexes')
+    tags = ('wirecloud-commands', 'wirecloud-command-resetsearchindexes', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):

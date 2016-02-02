@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -372,7 +372,7 @@ def check_missing_dependencies_respose(testcase, response):
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-rest-api', 'fiware-ut-11')
+    tags = ('wirecloud-rest-api', 'wirecloud-noselenium')
 
     def setUp(self):
         super(ApplicationMashupAPI, self).setUp()
@@ -2210,7 +2210,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 class ResourceManagementAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('wirecloud-rest-api', 'fiware-ut-11')
+    tags = ('wirecloud-rest-api', 'wirecloud-noselenium')
 
     def test_resource_collection_get_requires_authentication(self):
 
@@ -2718,7 +2718,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 class ExtraApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-rest-api', 'wirecloud-extra-rest-api',)
+    tags = ('wirecloud-rest-api', 'wirecloud-extra-rest-api', 'wirecloud-noselenium')
 
     def test_iwidget_collection_get_requires_authentication(self):
 
@@ -3850,7 +3850,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 class AdministrationAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('wirecloud-rest-api', 'wirecloud-rest-api-admin')
+    tags = ('wirecloud-rest-api', 'wirecloud-rest-api-admin', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):

@@ -60,7 +60,7 @@ class CacheTestCase(WirecloudTestCase):
 class WorkspaceTestCase(CacheTestCase):
 
     fixtures = ('test_data',)
-    tags = ('wirecloud-noselenium', 'fiware-ut-3')
+    tags = ('wirecloud-noselenium', 'wirecloud-workspace')
 
     def setUp(self):
         super(WorkspaceTestCase, self).setUp()
@@ -100,7 +100,7 @@ class WorkspaceTestCase(CacheTestCase):
 class WorkspaceCacheTestCase(CacheTestCase):
 
     fixtures = ('test_data',)
-    tags = ('fiware-ut-3', 'wirecloud-noselenium')
+    tags = ('wirecloud-workspace', 'wirecloud-noselenium')
 
     def setUp(self):
         super(WorkspaceCacheTestCase, self).setUp()
@@ -196,7 +196,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
     VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
 
     fixtures = ('test_data',)
-    tags = ('fiware-ut-1', 'wirecloud-template', 'wirecloud-workspace-write', 'wirecloud-noselenium')
+    tags = ('wirecloud-workspace', 'wirecloud-template', 'wirecloud-workspace-write', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -834,7 +834,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('fiware-ut-2', 'wirecloud-template', 'wirecloud-workspace-parse', 'wirecloud-noselenium')
+    tags = ('wirecloud-workspace', 'wirecloud-template', 'wirecloud-workspace-parse', 'wirecloud-noselenium')
 
     base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt')
 

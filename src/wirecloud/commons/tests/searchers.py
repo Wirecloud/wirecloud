@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -32,7 +32,7 @@ __test__ = False
 class UserSearcherTestCase(WirecloudTestCase):
 
     fixtures = ('user_search_test_data',)
-    tags = ('wirecloud-search-api',)
+    tags = ('wirecloud-search-api', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):

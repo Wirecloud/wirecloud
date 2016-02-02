@@ -35,7 +35,7 @@ from wirecloud.platform.plugins import clear_cache
 class Oauth2TestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'oauth2_test_data')
-    tags = ('wirecloud-oauth2provider',)
+    tags = ('wirecloud-oauth2provider', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):
@@ -284,8 +284,6 @@ class Oauth2TestCase(WirecloudTestCase):
 
         # Make an authenticated request
         self.check_token_is_valid(token)
-
-    test_authorization_code_grant_flow.tags = ('wirecloud-oauth2provider', 'fiware-ut-9')
 
     def test_refresh_token_invalid_client_id(self):
 

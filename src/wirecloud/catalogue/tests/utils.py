@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -48,7 +48,7 @@ class TestQueryResult(object):
 
 class CatalogueUtilsTestCase(TestCase):
 
-    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-noselenium')
+    tags = ('wirecloud-catalogue', 'wirecloud-catalogue-noselenium', 'wirecloud-noselenium')
 
     def test_update_resource_catalogue_cache_no_resources(self):
 

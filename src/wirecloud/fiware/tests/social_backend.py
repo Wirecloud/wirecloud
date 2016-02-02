@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2015 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2015-2016 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -39,7 +39,7 @@ class BasicClass(object):
 
 class TestSocialAuthBackend(WirecloudTestCase):
 
-    tags = ('wirecloud-fiware-social-auth',)
+    tags = ('wirecloud-fiware-social-auth', 'wirecloud-noselenium')
 
     OLD_RESPONSE = {
         "schemas": ["urn:scim:schemas:core:2.0:User"],

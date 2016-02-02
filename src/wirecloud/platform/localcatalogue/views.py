@@ -288,12 +288,15 @@ class WorkspaceResourceCollection(Resource):
         resources = set()
         for tab in workspace.tab_set.all():
             for iwidget in tab.iwidget_set.select_related('widget__resource').all():
-                resources.add(iwidget.widget.resource)
+                if iwidget.widget is not None and iwidget.widget.resource.is_available_for(workspace.creator):
+                    resources.add(iwidget.widget.resource)
 
         for operator_id, operator in six.iteritems(workspace.wiringStatus['operators']):
             vendor, name, version = operator['name'].split('/')
             try:
-                resources.add(CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version))
+                resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+                if resource.is_available_for(workspace.creator):
+                    resources.add(resource)
             except CatalogueResource.DoesNotExist:
                 pass
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -42,7 +42,7 @@ TEST_WORKSPACE_TOKEN = 'rtHdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y..uQ2ig3uIEaP6n
 class ProxyTestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces', 'fiware_proxy_test_data')
-    tags = ('wirecloud-fiware-proxy', 'wirecloud-proxy')
+    tags = ('wirecloud-fiware-proxy', 'wirecloud-proxy', 'wirecloud-noselenium')
 
     @classmethod
     def setUpClass(cls):
