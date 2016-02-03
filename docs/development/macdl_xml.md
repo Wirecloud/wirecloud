@@ -150,7 +150,7 @@ If the `type` attribute is set to `list`, the different choices are
 defined by means of the `option` element. It has the following
 attributes:
 
--   `name`: text to be displayed in the selection list.
+-   `label`: text to be displayed in the selection list.
 -   `value`: value to be used when the option is selected.
 
 
