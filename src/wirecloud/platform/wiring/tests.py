@@ -357,27 +357,6 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
 
 
 @wirecloud_selenium_test_case
-class WiringLayoutTestCase(WirecloudSeleniumTestCase):
-
-    fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
-
-    def test_user_with_behaviour_engine_disabled(self):
-
-        self.login()
-
-        with self.wiring_view as wiring:
-            self.assertTrue(wiring.is_empty)
-
-            with wiring.component_sidebar as sidebar:
-                self.assertFalse(sidebar.has_components('operator'))
-                self.assertFalse(sidebar.has_components('widget'))
-
-            with wiring.behaviour_sidebar as sidebar:
-                self.assertFalse(sidebar.has_behaviours())
-
-
-@wirecloud_selenium_test_case
 class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
@@ -1485,14 +1464,43 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
     tags = ('wirecloud-selenium', 'wirecloud-wiring', 'wirecloud-wiring-selenium')
 
     def test_behaviour_engine_is_disabled_by_default(self):
+
+        self.login()
+
+        # Create a new workspace to ensure we are testing the default status of
+        # the behaviour engine
+        self.create_workspace(name='Test')
+
+        with self.wiring_view as wiring:
+            self.assertTrue(wiring.is_empty)
+
+            with wiring.component_sidebar as sidebar:
+                self.assertFalse(sidebar.has_components('operator'))
+                self.assertFalse(sidebar.has_components('widget'))
+
+            with wiring.behaviour_sidebar as sidebar:
+                # Check the behaviour engine is disabled
+                self.assertTrue(sidebar.disabled)
+                self.assertFalse(sidebar.has_behaviours())
+
+    def test_behaviour_engine_can_be_enabled(self):
+
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WiringTests')
 
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
+                self.assertTrue(sidebar.disabled)
+                # Enable the behaviour engine
                 sidebar.enable()
+                # Check that there is an initial behaviour
                 self.assertEqual(len(sidebar.behaviour_list), 1)
                 sidebar.active_behaviour.check_basic_info("New behaviour", "No description provided.")
 
+        # Check the change is correctly persisted
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
+        with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 self.assertFalse(sidebar.disabled)
                 self.assertEqual(len(sidebar.behaviour_list), 1)
