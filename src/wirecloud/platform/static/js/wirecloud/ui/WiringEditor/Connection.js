@@ -44,6 +44,7 @@
 
             this.wrapperElement = document.createElementNS(ns.Connection.SVG_NS, 'g');
             this.wrapperElement.setAttribute('class', "connection");
+            this.wrapperElement.addEventListener('click', connection_onclick.bind(this));
 
             this.borderElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
             this.borderElement.setAttribute('class', "connection-border");
@@ -51,7 +52,6 @@
 
             this.bodyElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
             this.bodyElement.setAttribute('class', "connection-body");
-            this.bodyElement.addEventListener('click', connection_onclick.bind(this));
             this.wrapperElement.appendChild(this.bodyElement);
 
             this.options = new se.Container({extraClass: "connection-options btn-group btn-group-circle btn-group-xs"});
