@@ -94,11 +94,23 @@
 
             var removeAllowed = true;
 
+            var active;
+            var highlightedCount;
+
             Object.defineProperties(this, {
 
+                /**
+                 * @memberof WiringEditor.Connection#
+                 * @type {!Boolean}
+                 */
                 active: {
-                    get: function get() {return this.hasClassName('active');},
-                    set: function set(value) {this._onactive(value);}
+                    get: function get() {
+                        return prop_active_get.call(this, active);
+                    },
+                    set: function set(isActive) {
+                        active = prop_active_set.call(this, active, !!isActive);
+                        refreshInternally.call(this);
+                    }
                 },
 
                 background: {
@@ -117,6 +129,19 @@
                 editable: {
                     get: function get() {return this.hasClassName('editable');},
                     set: function set(value) {this._oneditable(value);}
+                },
+
+                /**
+                 * @memberof WiringEditor.Connection#
+                 * @type {!Boolean}
+                 */
+                highlighted: {
+                    get: function get() {
+                        return prop_highlighted_get.call(this, highlightedCount);
+                    },
+                    set: function set(isHighlighted) {
+                        highlightedCount = prop_highlighted_set.call(this, highlightedCount, !!isHighlighted);
+                    }
                 },
 
                 missing: {
@@ -152,6 +177,12 @@
                 }
 
             });
+
+            // Initial configuration
+
+            this.highlighted = false;
+            this.active = false;
+            isCreated.call(this);
         },
 
         inherit: se.StyledElement,
@@ -170,32 +201,6 @@
         },
 
         members: {
-
-            /**
-             * [TODO: _onactive description]
-             * @protected
-             *
-             * @param {Boolean} active
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            _onactive: function _onactive(active) {
-                var newDepth = active || !this.background ? 1 : 0;
-
-                if (this.active === active) {
-                    return this;
-                }
-
-                this.btnLogs.depth = newDepth;
-                this.btnPrefs.depth = newDepth;
-                this.btnRemove.depth = newDepth;
-
-                this.toggleClassName('active', active).toFirst();
-                toggleActiveEndpoints.call(this, active);
-
-                return this;
-            },
 
             /**
              * [TODO: _onbackground description]
@@ -288,26 +293,15 @@
                 return this;
             },
 
-            /**
-             * [TODO: activate description]
-             *
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            activate: function activate() {
-
-                if (this.activeCount === 0) {
-                    this.active = true;
-                }
-
-                this.activeCount++;
-
-                return this;
-            },
-
             click: function click() {
 
                 if (this.enabled) {
+                    this.active = !this.active;
+
+                    if (this.active) {
+                        this.toFirst();
+                    }
+
                     this.trigger('click');
                 }
 
@@ -334,27 +328,6 @@
 
                 establishConnection.call(this, wiringEngine.createConnection(readonly, source, target));
                 this.refresh();
-
-                return this;
-            },
-
-            /**
-             * [TODO: deactivate description]
-             *
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            deactivate: function deactivate() {
-
-                if (this.activeCount === 0) {
-                    return this;
-                }
-
-                this.activeCount--;
-
-                if (this.activeCount === 0) {
-                    this.active = false;
-                }
 
                 return this;
             },
@@ -487,6 +460,8 @@
                     this.refresh();
                 }
 
+                isCreated.call(this);
+
                 return this;
             },
 
@@ -570,6 +545,7 @@
                 }
 
                 removeEndpoint.call(this, endpoint);
+                isCreated.call(this);
 
                 return this;
             },
@@ -616,8 +592,72 @@
 
     var events = ['change', 'click', 'customizestart', 'customizeend', 'optremove', 'optshare', 'remove'];
 
+    var prop_active_get = function prop_active_get(active) {
+        return !!active;
+    };
+
+    var prop_active_set = function prop_active_set(active, isActive) {
+
+        if (this.enabled) {
+            active = isActive;
+            this.toggleClassName('active', active);
+        }
+
+        if (active) {
+            showButtonGroup.call(this);
+        } else {
+            hideButtonGroup.call(this);
+        }
+
+        toggleActiveEndpoints.call(this, active);
+
+        return active;
+    };
+
+    var prop_highlighted_get = function prop_highlighted_get(highlightedCount) {
+        return !!highlightedCount;
+    };
+
+    var prop_highlighted_set = function prop_highlighted_set(highlightedCount, isHighlighted) {
+
+        if (highlightedCount == null) {
+            highlightedCount = 0;
+        }
+
+        highlightedCount = highlightedCount + (isHighlighted ? 1 : -1);
+
+        if (highlightedCount < 0) {
+            highlightedCount = 0;
+        }
+
+        this.toggleClassName('highlighted', !!highlightedCount);
+
+        return highlightedCount;
+    };
+
+    var refreshInternally = function refreshInternally() {
+        var newDepth = this.active || this.highlighted || !this.background ? 1 : 0;
+
+        this.btnLogs.depth = newDepth;
+        this.btnPrefs.depth = newDepth;
+        this.btnRemove.depth = newDepth;
+    };
+
     var updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
         return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();
+    };
+
+    var showButtonGroup = function showButtonGroup() {
+        this.btnPrefs.show();
+        this.btnLogs.show();
+    };
+
+    var hideButtonGroup = function hideButtonGroup() {
+        this.btnPrefs.hide();
+
+        if (!this.hasClassName('has-error')) {
+            this.btnLogs.hide();
+        }
     };
 
     var appendEndpoint = function appendEndpoint(endpoint, options) {
@@ -659,6 +699,12 @@
 
         this.toggleClassName('has-error', !!count);
         this.btnLogs.setBadge(count ? count : null, 'danger', true);
+
+        if (count) {
+            this.btnLogs.show();
+        } else {
+            this.btnLogs.hide();
+        }
     };
 
     var btnerrors_onclick = function btnerrors_onclick() {
@@ -754,8 +800,11 @@
         return this;
     };
 
-    var toggleActiveEndpoints = function toggleActiveEndpoints(active) {
+    var isCreated = function isCreated() {
+        this.toggleClassName('incomplete', !this.created);
+    };
 
+    var toggleActiveEndpoints = function toggleActiveEndpoints(active) {
         if (this.source.endpoint != null) {
             this.source.endpoint.toggleActive(active);
         }

@@ -200,7 +200,7 @@
 
                 return this.forEachEndpoint(function (endpoint) {
                     endpoint.forEachConnection(function (connection) {
-                        connection.toggleActive(active);
+                        connection.highlighted = active;
                     });
                 });
             },

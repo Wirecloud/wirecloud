@@ -95,22 +95,6 @@
         members: {
 
             /**
-             * [TODO: activate description]
-             *
-             * @param {Connection} connection
-             *      [TODO: description]
-             * @returns {ConnectionEngine}
-             *      The instance on which the member is called.
-             */
-            activate: function activate(connection) {
-
-                this.deactivateAll();
-                this.activeConnection = connection.activate();
-
-                return this;
-            },
-
-            /**
              * [TODO: appendEndpoint description]
              *
              * @param {Endpoint} endpoint
@@ -172,8 +156,7 @@
             deactivateAll: function deactivateAll() {
 
                 if (this.hasActiveConnection()) {
-                    this.activeConnection.deactivate();
-                    delete this.activeConnection;
+                    this.activeConnection.click();
                 }
 
                 return this;
@@ -281,7 +264,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['cancel', 'dragstart', 'dragend', 'duplicate', 'establish'];
+    var events = ['click', 'cancel', 'dragstart', 'dragend', 'duplicate', 'establish'];
 
     var opposites = {
         source: 'target',
@@ -310,9 +293,13 @@
             }
 
             if (connection.active) {
-                this.deactivateAll();
+                if (this.hasActiveConnection() && !connection.equals(this.activeConnection)) {
+                    this.activeConnection.click();
+                }
+                this.activeConnection = connection;
+                this.trigger('click', connection);
             } else {
-                this.activate(connection);
+                delete this.activeConnection;
             }
         }
     };
@@ -366,8 +353,7 @@
 
         connection
             .stickEndpoint(initialEndpoint)
-            .appendTo(this.connectionsElement)
-            .activate();
+            .appendTo(this.connectionsElement);
 
         document.addEventListener('mousemove', this._ondrag);
         document.addEventListener('mouseup', this._ondragend);
@@ -400,8 +386,6 @@
 
         this.wrapperElement.classList.remove('dragging');
         enableEndpoints.call(this, this.temporalInitialEndpoint.type);
-
-        this.temporalConnection.deactivate();
 
         if (this._connectionBackup != null) {
             this._connectionBackup.removeClassName('temporal');

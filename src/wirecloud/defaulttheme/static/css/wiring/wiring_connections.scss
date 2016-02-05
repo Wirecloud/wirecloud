@@ -72,6 +72,8 @@
 
 .connection.active,
 .connection.editable,
+.connection.incomplete,
+.connection.highlighted,
 .connection.missing.active,
 .connection.has-error.active,
 .connection.background.active {
@@ -82,6 +84,14 @@
 
     .connection-border {
         stroke: $connection-active-border-color;
+    }
+}
+
+.connection.incomplete {
+
+    .connection-body,
+    .connection-border {
+        cursor: -webkit-grabbing;
     }
 }
 
