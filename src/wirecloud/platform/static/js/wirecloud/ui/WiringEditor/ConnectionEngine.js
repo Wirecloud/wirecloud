@@ -362,6 +362,8 @@
         this.setUp();
         disableEndpoints.call(this, initialEndpoint.type);
 
+        this.wrapperElement.classList.add('dragging');
+
         connection
             .stickEndpoint(initialEndpoint)
             .appendTo(this.connectionsElement)
@@ -396,6 +398,7 @@
             return;
         }
 
+        this.wrapperElement.classList.remove('dragging');
         enableEndpoints.call(this, this.temporalInitialEndpoint.type);
 
         this.temporalConnection.deactivate();
