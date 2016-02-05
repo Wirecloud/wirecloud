@@ -63,8 +63,10 @@
     };
 
     NewWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
+        var monitor = LayoutManagerFactory.getInstance()._startComplexTask(gettext("Creating new workspace"), 1);
         Wirecloud.createWorkspace({
             name: data.name,
+            options: monitor,
             mashup: data.mashup,
             onSuccess: function (workspace) {
                 Wirecloud.changeActiveWorkspace(workspace);

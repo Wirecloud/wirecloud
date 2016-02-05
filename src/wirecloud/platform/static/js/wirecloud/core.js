@@ -282,7 +282,9 @@
             replaceNavigationState: false
         }, options);
 
-        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
+        if (options.monitor == null) {
+            options.monitor = LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
+        }
 
         if (this.activeWorkspace != null) {
             this.activeWorkspace.unload();

@@ -55,6 +55,9 @@
         case 'operator':
             resource = new Wirecloud.wiring.OperatorMeta(resource_data);
             break;
+        case 'mashup':
+            resource = resource_data;
+            break;
         default:
             return;
         }
@@ -154,7 +157,8 @@
             index = this.resourceVersions[resource.group_id].indexOf(resource);
             this.resourceVersions[resource.group_id].splice(index, 1);
 
-            this.missingComponents[resource.uri] = createMissing(resource.type, resource.vendor, resource.name, resource.version.text);
+            new_meta = createMissing(resource.type, resource.vendor, resource.name, resource.version.text);
+            this.missingComponents[resource.uri] = new_meta;
             return new_meta;
         }
     };

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,9 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud, LayoutManagerFactory*/
+/* globals StyledElements, Wirecloud, LayoutManagerFactory*/
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
@@ -57,42 +57,42 @@
             items.push(new StyledElements.Separator());
 
             if (typeof current_catalogue.show_upload_view === 'function') {
-                items.push(new StyledElements.MenuItem(gettext('Upload'), function () {
+                items.push(new StyledElements.MenuItem(utils.gettext('Upload'), function () {
                     this.show_upload_view();
                 }.bind(current_catalogue)));
             }
         }
 
         if (!this.loading && !this.error) {
-            items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
+            items.push(new StyledElements.MenuItem(utils.gettext('Add new marketplace'), function () {
                 var menu, fields;
 
                 fields = {
                     'name': {
                         'type': 'text',
-                        'label': gettext('Name'),
+                        'label': utils.gettext('Name'),
                         'required': true
                     },
                     'url': {
                         'type': 'text',
-                        'label': gettext('URL'),
+                        'label': utils.gettext('URL'),
                         'required': true,
                         'initialValue': 'http://'
                     },
                     'type': {
                         'type': 'select',
                         'initialEntries': Wirecloud.MarketManager.getMarketTypes(),
-                        'label': gettext('Type'),
+                        'label': utils.gettext('Type'),
                         'required': true
                     }
                 };
                 if (Wirecloud.contextManager.get('issuperuser')) {
                     fields['public'] = {
                         'type': 'boolean',
-                        'label': gettext('Public')
+                        'label': utils.gettext('Public')
                     };
                 }
-                menu = new Wirecloud.ui.FormWindowMenu(fields, gettext('Add Marketplace'));
+                menu = new Wirecloud.ui.FormWindowMenu(fields, utils.gettext('Add marketplace'), 'wc-add-external-catalogue-dialog');
 
                 // Form data is sent to server
                 menu.executeOperation = function (data) {
@@ -115,19 +115,19 @@
                 menu.show();
             }.bind(this)));
 
-            item = new StyledElements.MenuItem(gettext('Delete marketplace'), function () {
+            item = new StyledElements.MenuItem(utils.gettext('Delete marketplace'), function () {
                 //First ask if the user really wants to remove the marketplace
-                var msg = gettext('Do you really want to remove the marketplace "%(marketName)s"?');
-                msg = Wirecloud.Utils.interpolate(msg, {'marketName': this.market.alternatives.getCurrentAlternative().getLabel()});
+                var msg = utils.gettext('Do you really want to remove the marketplace "%(marketName)s"?');
+                msg = utils.interpolate(msg, {'marketName': this.market.alternatives.getCurrentAlternative().getLabel()});
                 var dialog = new Wirecloud.ui.AlertWindowMenu();
                 dialog.setMsg(msg);
                 dialog.setHandler(function () {
-                        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting marketplace"), 1);
-                        LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting marketplace'));
+                        LayoutManagerFactory.getInstance()._startComplexTask(utils.gettext("Deleting marketplace"), 1);
+                        LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Deleting marketplace'));
 
                         Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().desc, {
                             onSuccess: function () {
-                                LayoutManagerFactory.getInstance().logSubTask(gettext('Marketplace deleted successfully'));
+                                LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Marketplace deleted successfully'));
                                 LayoutManagerFactory.getInstance().logStep('');
                                 this.market.refreshViewInfo({
                                     onComplete: function () {
@@ -153,4 +153,4 @@
 
 
     Wirecloud.ui.MarketplaceViewMenuItems = MarketplaceViewMenuItems;
-})();
+})(StyledElements, Wirecloud.Utils);

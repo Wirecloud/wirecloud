@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,6 +22,7 @@ import os
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.platform.models import Market
+from wirecloud.commons.utils.remote import ModalTester
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
@@ -36,7 +37,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
             'wcatalogue.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'wcatalogue'))),
         },
     }
-    tags = ('wirecloud-selenium', 'markets')
+    tags = ('wirecloud-selenium', 'wirecloud-markets', 'wirecloud-markets-selenium')
 
     def check_resource_buttons(self, marketplace, resources, button_text=None):
         for resource_name in resources:
@@ -124,8 +125,8 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             with myresources.search_in_results('Test') as resource:
                 resource.advanced_operation('Publish')
-                window_menu = self.wait_element_visible_by_css_selector('.window_menu.message')
-                self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+                modal = ModalTester(self, self.wait_element_visible_by_css_selector('.window_menu.message'))
+                modal.accept()
 
     def test_marketplace_navigation(self):
 

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,13 +19,13 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
-    var titles = ['', gettext('Error'), gettext('Warning'), gettext('Info')];
+    var titles = ['', utils.gettext('Error'), utils.gettext('Warning'), utils.gettext('Info')];
 
     /**
      * Specific class representing alert dialogs.
@@ -38,9 +38,10 @@
         this.windowContent.appendChild(this.msgElement);
 
         // Accept button
-        this.button = new StyledElements.Button({
-            text: gettext('Accept'),
-            'class': 'btn-primary'
+        this.button = new se.Button({
+            text: utils.gettext('Accept'),
+            state: 'primary',
+            extraClass: 'btn-accept btn-cancel'
         });
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);
@@ -55,7 +56,7 @@
      */
     MessageWindowMenu.prototype.setMsg = function setMsg(msg) {
 
-        if (msg instanceof StyledElements.StyledElement) {
+        if (msg instanceof se.StyledElement) {
             this.msgElement.innerHTML = '';
             msg.insertInto(this.msgElement);
         } else {
@@ -76,4 +77,4 @@
 
     Wirecloud.ui.MessageWindowMenu = MessageWindowMenu;
 
-})();
+})(StyledElements, Wirecloud.Utils);

@@ -297,8 +297,8 @@
                 } catch (error) {}
             }
             break;
-        default:
-            return;
+        case 'mashup':
+            resource = resource_data;
         }
         if (Wirecloud.activeWorkspace != null) {
             Wirecloud.activeWorkspace.resources.restore(resource);

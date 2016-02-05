@@ -515,7 +515,7 @@ class ButtonTester(object):
         self.testcase.assertEqual(badge.text, badge_text)
 
 
-class BaseModalTester(object):
+class ModalTester(object):
 
     def __init__(self, testcase, element):
         self.testcase = testcase
@@ -554,7 +554,7 @@ class BaseModalTester(object):
         return self
 
 
-class FormModalTester(BaseModalTester):
+class FormModalTester(ModalTester):
 
     def get_field(self, name, tagname='input'):
         return self.element.find_element_by_css_selector('%s[name="%s"]' % (tagname, name))
@@ -1269,19 +1269,18 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
         self.open_menu().click_entry('New workspace')
 
-        dialog = self.driver.find_element_by_css_selector('.window_menu.new_workspace')
-        form = self.driver.find_element_by_css_selector('.styled_form')
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector('.window_menu.new_workspace'))
+
         if name:
-            name_input = form.find_element_by_css_selector('input')
-            self.fill_form_input(name_input, name)
+            form.set_field_value('name', name)
 
         if mashup:
-            with MACFieldTester(self, form.find_element_by_css_selector('.se-mac-field')) as select_dialog:
+            with MACFieldTester(self, form.element.find_element_by_css_selector('.se-mac-field')) as select_dialog:
                 select_dialog.search(mashup)
                 resource = select_dialog.search_in_results(mashup)
                 resource.select()
 
-        dialog.find_element_by_xpath("//*[text()='Accept']").click()
+        form.accept()
 
         if expect_missing_dependencies is not None:
 
@@ -1508,17 +1507,15 @@ class MarketplaceViewTester(object):
 
         self.open_menu().click_entry("Add new marketplace")
 
-        market_name_input = self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')
-        self.testcase.fill_form_input(market_name_input, name)
-        market_url_input = self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form input[name="url"]')
-        self.testcase.fill_form_input(market_url_input, url)
-        market_type_input = self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form select')
-        self.testcase.fill_form_input(market_type_input, type_)
+        form = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.wc-add-external-catalogue-dialog'))
+        form.set_field_value('name', name)
+        form.set_field_value('url', url)
+        form.set_field_value('type', type_, tagname="select")
 
         if public:
-            self.testcase.driver.find_element_by_css_selector('.window_menu .styled_form input[name="public"]').click()
+            form.get_field('public').click()
 
-        self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        form.accept()
         self.testcase.wait_wirecloud_ready()
         time.sleep(0.1)  # work around some problems
 
