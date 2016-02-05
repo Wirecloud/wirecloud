@@ -45,6 +45,8 @@
             this.wrapperElement = document.createElementNS(ns.Connection.SVG_NS, 'g');
             this.wrapperElement.setAttribute('class', "connection");
             this.wrapperElement.addEventListener('click', connection_onclick.bind(this));
+            this.wrapperElement.addEventListener('mouseenter', connection_onmouseenter.bind(this));
+            this.wrapperElement.addEventListener('mouseleave', connection_onmouseleave.bind(this));
 
             this.borderElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
             this.borderElement.setAttribute('class', "connection-border");
@@ -831,6 +833,20 @@
         }
 
         return this;
+    };
+
+    var connection_onmouseenter = function connection_onmouseenter() {
+        if (this.established) {
+            this.highlighted = true;
+            toggleActiveEndpoints.call(this, true);
+        }
+    };
+
+    var connection_onmouseleave = function connection_onmouseleave() {
+        if (this.established) {
+            this.highlighted = false;
+            toggleActiveEndpoints.call(this, false);
+        }
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

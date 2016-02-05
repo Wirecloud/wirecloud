@@ -282,6 +282,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.connectionEngine = new ns.WiringEditor.ConnectionEngine(this.layout.content, findWiringEngine.bind(this));
         this.connectionEngine
+            .on('click', connection_onclick.bind(this))
             .on('dragstart', connection_ondragstart.bind(this))
             .on('dragend', connection_ondragend.bind(this))
             .on('establish', connection_onestablish.bind(this))
@@ -810,6 +811,18 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         if (!this.behaviourEngine.hasComponents()) {
             this.initialMessage.show();
+        }
+    };
+
+    var connection_onclick = function connection_onclick(connectionEngine, connectionClicked) {
+        /*jshint validthis:true */
+
+        this.layout.slideOut();
+        clearComponentSelection.call(this);
+
+        if (this.orderableComponent != null) {
+            this.orderableComponent.setUp();
+            this.orderableComponent = null;
         }
     };
 
