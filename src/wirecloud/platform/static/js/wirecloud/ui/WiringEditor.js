@@ -949,6 +949,8 @@ Wirecloud.ui = Wirecloud.ui || {};
             this.orderableComponent = null;
         }
 
+        this.connectionEngine.setUp();
+
         if (event.ctrlKey || event.metaKey) {
             if (!(component.id in this.selectedComponents[component.type])) {
                 this.selectedComponents[component.type][component.id] = component;
