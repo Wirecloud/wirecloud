@@ -484,8 +484,11 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             source.connect(target)
 
         with iwidgets[2]:
-            text_div = self.driver.find_element_by_id('wiringOut')
-            self.assertEqual(text_div.text, 'wiring modified')
+            try:
+                WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text != '')
+            except:  # pragma: no cover
+                pass
+            self.assertEqual(self.driver.find_element_by_id('wiringOut').text, 'wiring modified')
 
     def test_wiring_editor_modify_connection_endpoints(self):
 
@@ -639,9 +642,11 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             modal.get_field("test_logging").click()
             modal.accept()
 
+            modal = operator.show_logger_modal()
             # Check operator registered correctly the errors raised by the operator
-            self.assertEqual(operator.error_count, 2)
-            self.assertEqual(len(operator.log_entries), 5)
+            self.assertEqual(len(modal.filter_alerts_by_type('error')), 2)
+            self.assertEqual(len(modal.find_alerts()), 5)
+            modal.accept()
 
         with self.get_current_iwidgets()[0]:
             try:
@@ -664,8 +669,6 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         self.send_basic_event(iwidgets[2], 'typeerror')
         self.send_basic_event(iwidgets[2], 'valueerror')
 
-        error_badge = self.wait_element_visible_by_css_selector(".wc-toolbar .btn-display-wiring-view .badge")
-        self.assertTrue(error_badge.is_displayed())
         self.find_navbar_button("display-wiring-view").check_badge_text("4")
 
         with self.wiring_view as wiring:
@@ -727,7 +730,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         workspace.save()
 
         self.login(username='user_with_workspaces')
-        self.assertFalse(self.find_navbar_button("display-wiring-view").badge.is_displayed())
+        self.assertIsNone(self.find_navbar_button("display-wiring-view").badge)
 
         with self.wiring_view as wiring:
             self.assertFalse(wiring.find_component_by_title('operator', "TestOperator").missing)
@@ -907,7 +910,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
 
         # WireCloud should ignore the extra widget described in the wiring
         # status
-        self.assertFalse(self.find_navbar_button("display-wiring-view").badge.is_displayed())
+        self.assertIsNone(self.find_navbar_button("display-wiring-view").badge)
 
         with self.wiring_view as wiring:
             # Check the Wiring Editor only display the valid widgets
@@ -1016,8 +1019,7 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
             myresources.upload_resource('Wirecloud_TestOperator_1.0.zip', 'TestOperator', shared=True)
 
         # Check the operator leaves ghost mode
-        error_badge = self.driver.find_element_by_css_selector(".wc-toolbar .btn-display-wiring-view .badge")
-        self.assertFalse(error_badge.is_displayed())
+        self.assertIsNone(self.find_navbar_button("display-wiring-view").badge)
 
         # Check operator connections are restored sucessfully
         tab = self.get_workspace_tab_by_name('Tab 2')
