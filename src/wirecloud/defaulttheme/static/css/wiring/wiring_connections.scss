@@ -1,7 +1,6 @@
 @import 'compass/css3/user-interface';
 @import 'compass/css3/transform';
-@import 'wiring/defaults';
-@import "utils";
+@import 'variables';
 
 
 .wiring-connections.dragging {
@@ -9,24 +8,16 @@
 }
 
 // ============================================================================
-// WIRING ViEW - CONNECTION
+// WIRING COMPONENT - CONNECTION
 // ============================================================================
 
 .connection {
     @include user-select(none);
 
-    .connection-body {
+    .connection-path {
         cursor: pointer;
         fill: none;
-        stroke: $connection-bg;
-        stroke-width: $connection-width;
-    }
-
-    .connection-border {
-        cursor: pointer;
-        fill: none;
-        stroke: $connection-border-color;
-        stroke-width: $connection-border-width;
+        stroke-width: 6px;
     }
 }
 
@@ -36,111 +27,61 @@
 }
 
 // ============================================================================
-// WIRING VIEW - CONNECTION - BACKGROUND
+// WIRING COMPONENT - CONNECTION - STATES
 // ============================================================================
 
-.connection.background {
+.connection {
 
-    .connection-body {
+    & .connection-path {
+        stroke: $connection-bg;
+    }
+
+    &.temporal .connection-path {
+        stroke: $connection-temporal-bg;
+    }
+
+    &.background .connection-path {
         stroke: $connection-background-bg;
     }
 
-    .connection-border {
-        stroke: $connection-background-border-color;
-    }
-}
+    &.missing,
+    &.has-error {
 
-// ============================================================================
-// WIRING VIEW - CONNECTION - MISSING
-// ============================================================================
+        .connection-path {
+            stroke: $connection-missing-bg;
+        }
 
-.connection.missing,
-.connection.has-error {
-
-    .connection-body {
-        stroke: $connection-missing-bg;
+        &.background .connection-path {
+            stroke: $connection-missing-background-bg;
+        }
     }
 
-    .connection-border {
-        stroke: $connection-missing-border-color;
-    }
-}
+    &,
+    &.missing,
+    &.has-error {
 
-// ============================================================================
-// WIRING VIEW - CONNECTION - ACTIVE
-// ============================================================================
+        &.active,
+        &.editable,
+        &.incomplete,
+        &.highlighted {
 
-.connection.active,
-.connection.editable,
-.connection.incomplete,
-.connection.highlighted,
-.connection.missing.active,
-.connection.has-error.active,
-.connection.background.active {
-
-    .connection-body {
-        stroke: $connection-active-bg;
+            .connection-path {
+                stroke: $connection-active-bg;
+            }
+        }
     }
 
-    .connection-border {
-        stroke: $connection-active-border-color;
+    &.editable .connection-path {
+        cursor: default;
     }
-}
 
-.connection.incomplete {
-
-    .connection-body,
-    .connection-border {
+    &.incomplete .connection-path {
         cursor: -webkit-grabbing;
     }
 }
 
 // ============================================================================
-// WIRING VIEW - CONNECTION - TEMPORAL
-// ============================================================================
-
-.connection.temporal,
-.connection.background.temporal {
-
-    .connection-body {
-        stroke: $connection-temporal-bg;
-    }
-
-    .connection-border {
-        stroke: $connection-temporal-border-color;
-    }
-
-    .connection-options {
-
-        .btn-svg-group {
-            fill: $connection-temporal-bg;
-            stroke: $connection-temporal-border-color;
-        }
-
-        .btn-svg-plain {
-            fill: $connection-temporal-text-color;
-            text-shadow: $connection-temporal-text-shadow;
-        }
-    }
-}
-
-// ============================================================================
-// WIRING VIEW - CONNECTION - EDITABLE
-// ============================================================================
-
-.connection.editable {
-
-    .connection-border {
-        stroke-dasharray: $connection-editable-border-dasharray;
-    }
-}
-
-.wiring-view .connection.hidden {
-    display: none !important;
-}
-
-// ============================================================================
-// WIRING VIEW - CONNECTION - HANDLE
+// WIRING COMPONENT - CONNECTION HANDLE
 // ============================================================================
 
 .connection-handle {
@@ -148,38 +89,27 @@
     .handle-line {
         cursor: default;
         fill: none;
+        stroke: $gray-dark;
+        stroke-width: 1px;
     }
 
     .handle-ball {
         cursor: pointer;
-        fill: $connection-active-bg;
-    }
-
-    .handle-line,
-    .handle-ball {
-        stroke: $connection-active-border-color;
-        stroke-width: $connection-handle-width;
-    }
-}
-
-.connection-handle.auto {
-
-    .handle-line,
-    .handle-ball {
-        stroke-dasharray: $connection-handle-border-dasharray;
-    }
-}
-
-.connection-handle,
-.connection-handle.auto {
-
-    .handle-ball {
+        fill: $button-background-primary;
+        stroke: $button-border-primary;
+        stroke-width: 1px;
 
         &:hover,
         &.active {
-            fill: $connection-active-text-hover-color;
-            stroke: $connection-active-border-color;
-            stroke-dasharray: initial;
+            fill: darken($button-background-primary, 10%);
+            stroke: darken($button-background-primary, 10%);
+        }
+    }
+
+    &.auto {
+
+        .handle-line {
+            stroke-dasharray: 5;
         }
     }
 }

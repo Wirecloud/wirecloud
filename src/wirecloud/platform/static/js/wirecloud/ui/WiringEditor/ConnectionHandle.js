@@ -195,7 +195,7 @@
     var defaults = {
         events: [],
         extraClass: "",
-        radius: "8px",
+        radius: "6px",
         position: null
     };
 

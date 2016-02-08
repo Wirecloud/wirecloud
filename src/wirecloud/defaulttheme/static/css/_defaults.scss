@@ -310,3 +310,16 @@ $popup-menu-border-color:     $state-default-border !default;
 $popup-menu-item-padding-horizontal:     (2 * $popup-menu-padding-vertical) !default;
 $popup-menu-item-description-text-color: $gray-light !default;
 $popup-menu-item-active-bg:              $brand-primary !default;
+
+
+// ============================================================================
+// WIRING COMPONENT - CONNECTION
+// ============================================================================
+
+$connection-bg:            transparentize(#3F51B5, 0.1) !default;
+$connection-active-bg:     transparentize(#81D4FA, 0.1) !default;
+$connection-background-bg: transparentize(#E8EAF6, 0.1) !default;
+$connection-temporal-bg:   transparentize(#C5CAE9, 0.1) !default;
+
+$connection-missing-bg:            transparentize(#E57373, 0.1) !default;
+$connection-missing-background-bg: transparentize(#FFEBEE, 0.1) !default;
