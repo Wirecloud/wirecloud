@@ -452,8 +452,8 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
 
             final_creator = User.objects.get(username=creator) if creator is not None else None
 
-            final_users = (User.objects.get(username=user) for user in users)
-            final_groups = (Group.objects.get(name=group) for group in groups)
+            final_users = tuple(User.objects.get(username=user) for user in users)
+            final_groups = tuple(Group.objects.get(name=group) for group in groups)
 
             for resource in resources:
                 wgt_file = open(os.path.join(base, resource), 'rb')
