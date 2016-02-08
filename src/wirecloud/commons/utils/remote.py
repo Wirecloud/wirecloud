@@ -853,7 +853,7 @@ class WiringConnectionTester(object):
     def __init__(self, testcase, element):
         self.testcase = testcase
         self.element = element
-        self.distance = element.find_element_by_css_selector('.connection-body').get_attribute('d')
+        self.distance = element.find_element_by_css_selector('.connection-path').get_attribute('d')
 
     @property
     def background(self):
@@ -912,7 +912,7 @@ class WiringConnectionTester(object):
 
     def has_changed(self):
         old_distance = self.distance
-        self.distance = self.element.find_element_by_css_selector('.connection-body').get_attribute('d')
+        self.distance = self.element.find_element_by_css_selector('.connection-path').get_attribute('d')
         return old_distance != self.distance
 
     def display_preferences(self):

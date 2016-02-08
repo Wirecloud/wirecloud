@@ -48,13 +48,9 @@
             this.wrapperElement.addEventListener('mouseenter', connection_onmouseenter.bind(this));
             this.wrapperElement.addEventListener('mouseleave', connection_onmouseleave.bind(this));
 
-            this.borderElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
-            this.borderElement.setAttribute('class', "connection-border");
-            this.wrapperElement.appendChild(this.borderElement);
-
-            this.bodyElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
-            this.bodyElement.setAttribute('class', "connection-body");
-            this.wrapperElement.appendChild(this.bodyElement);
+            this.pathElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
+            this.pathElement.setAttribute('class', "connection-path");
+            this.wrapperElement.appendChild(this.pathElement);
 
             this.options = new se.Container({extraClass: "connection-options btn-group btn-group-circle btn-group-xs"});
             this.options.hide();
@@ -819,9 +815,7 @@
     };
 
     var updateDistance = function updateDistance(source, sourceHandle, target, targetHandle) {
-
-        this.borderElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
-        this.bodyElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
+        this.pathElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
 
         if (this.established) {
             var middlePosition = calculateMiddle(source, sourceHandle, target, targetHandle);
