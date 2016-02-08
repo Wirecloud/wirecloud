@@ -25,6 +25,7 @@ from lxml import etree
 import os
 
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 from django.test import Client
 from mock import Mock, patch
 
@@ -2792,8 +2793,10 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
     def test_iwidget_entry_get_missing_widget_uninstalled(self):
 
+        user_with_workspaces = User.objects.get(username='user_with_workspaces')
         iwidget = IWidget.objects.get(pk=2)
         iwidget.widget.resource.public = False
+        iwidget.widget.resource.users.remove(user_with_workspaces)
         iwidget.widget.resource.save()
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
 
