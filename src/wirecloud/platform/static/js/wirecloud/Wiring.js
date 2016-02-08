@@ -350,6 +350,7 @@
         this.status.connections.forEach(function (connection) {
             connection.refreshEndpoint(component);
         });
+        this.logManager.newCycle();
     };
 
     var disconnect = function disconnect() {

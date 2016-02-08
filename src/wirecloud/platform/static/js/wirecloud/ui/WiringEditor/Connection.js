@@ -653,7 +653,7 @@
     var hideButtonGroup = function hideButtonGroup() {
         this.btnPrefs.hide();
 
-        if (!this.hasClassName('has-error')) {
+        if (!this.hasClassName('has-error') && !this.missing) {
             this.btnLogs.hide();
         }
     };

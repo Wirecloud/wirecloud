@@ -946,7 +946,7 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
         workspace.save()
 
         self.login(username='user_with_workspaces')
-        self.find_navbar_button("display-wiring-view").check_badge_text("1")
+        self.find_navbar_button("display-wiring-view").check_badge_text("4")
 
         with self.wiring_view as wiring:
             operator = wiring.find_component_by_title('operator', "TestOperatorDePalo")
