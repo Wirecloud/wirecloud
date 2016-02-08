@@ -236,7 +236,7 @@
                     return this;
                 }
 
-                this.toggleClassName('editable', editable).toFirst();
+                this.toggleClassName('editable', editable);
                 toggleActiveEndpoints.call(this, editable);
 
                 if (editable) {
@@ -295,11 +295,6 @@
 
                 if (this.enabled && !this.editable) {
                     this.active = !this.active;
-
-                    if (this.active) {
-                        this.toFirst();
-                    }
-
                     this.trigger('click');
                 }
 
