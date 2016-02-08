@@ -293,7 +293,7 @@
 
             click: function click() {
 
-                if (this.enabled) {
+                if (this.enabled && !this.editable) {
                     this.active = !this.active;
 
                     if (this.active) {
@@ -830,14 +830,14 @@
     };
 
     var connection_onmouseenter = function connection_onmouseenter() {
-        if (this.established) {
+        if (this.established && !this.editable) {
             this.highlighted = true;
             toggleActiveEndpoints.call(this, true);
         }
     };
 
     var connection_onmouseleave = function connection_onmouseleave() {
-        if (this.established) {
+        if (this.established && !this.editable) {
             this.highlighted = false;
             toggleActiveEndpoints.call(this, false);
         }
