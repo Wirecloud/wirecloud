@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -141,6 +141,7 @@
                         resource.wirecloud = {
                             vendor: parts[0],
                             name: parts[1],
+                            group_id: parts[0] + '/' + parts[1],
                             version: new Wirecloud.Version(parts[2], 'catalogue')
                         };
                         resource.install = installResource.bind(this, resource);
