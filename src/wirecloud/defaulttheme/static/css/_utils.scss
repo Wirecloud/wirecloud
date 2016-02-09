@@ -23,3 +23,11 @@
     @if $left { left: $left; }
     @if $bottom { bottom: $bottom; }
 }
+
+@function adapt-image-size($size) {
+    @if $high-resolution-images {
+        @return $size / 2;
+    } @else {
+        @return $size;
+    }
+}

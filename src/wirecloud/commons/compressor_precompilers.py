@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import fnmatch
 from itertools import product
 from pathlib import Path
 import os
@@ -27,6 +28,14 @@ from django.contrib.staticfiles import finders
 import scss
 
 
+def django_finder(glob):
+    glob = 'images/' + glob
+    for finder in finders.get_finders():
+        for path, storage in finder.list([]):
+            if fnmatch.fnmatchcase(path, glob):
+                yield path, storage
+
+scss.config.IMAGES_ROOT = django_finder
 
 
 def get_scss_compiler(namespace):

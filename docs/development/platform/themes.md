@@ -211,9 +211,11 @@ sections.
 
 ### Used images
 
-- `favicon.ico`: Image in `image/x-icon` format to use as favicon. Only used
-  when the theme is configured as the main theme.
-- `logos/header.png`: Image in `image/png` used in the header.
+- `favicon.ico`: Image in `image/x-icon` format to use as favicon. Remember to
+  provide a multi-resolution image for better results. *This file is used only
+  when the theme is configured as the main theme.*
+- `logos/header.png`: Image in `image/png` used in the header. *This file is
+  used only when the theme is configured as the main theme.*
 
 ### Available SCSS constants
 
@@ -233,4 +235,8 @@ Base colours:
 Misc constants:
 
 - `button-gradients`: `true` for styling buttons using gradients, `false` for
-  plain buttons.
+  plain colour buttons. `true` by default.
+- `high-resoulution-images`: `true` if the theme is going to use high-resolution
+  images (e.g. for the header logo). In that case the theme should provide
+  images files using a 2x resolution (e.g. 800x600 for an image of 400x300
+  pixels). `false` for using standard resolution images. `true` by default.
