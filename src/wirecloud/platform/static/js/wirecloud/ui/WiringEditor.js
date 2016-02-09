@@ -282,6 +282,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
         this.connectionEngine = new ns.WiringEditor.ConnectionEngine(this.layout.content, findWiringEngine.bind(this));
         this.connectionEngine
+            .on('click', connection_onclick.bind(this))
             .on('dragstart', connection_ondragstart.bind(this))
             .on('dragend', connection_ondragend.bind(this))
             .on('establish', connection_onestablish.bind(this))
@@ -813,6 +814,18 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
     };
 
+    var connection_onclick = function connection_onclick(connectionEngine, connectionClicked) {
+        /*jshint validthis:true */
+
+        this.layout.slideOut();
+        clearComponentSelection.call(this);
+
+        if (this.orderableComponent != null) {
+            this.orderableComponent.setUp();
+            this.orderableComponent = null;
+        }
+    };
+
     var connection_ondragstart = function connection_ondragstart(connectionEngine, connection, initialEndpoint, realEndpoint) {
         /*jshint validthis:true */
 
@@ -935,6 +948,8 @@ Wirecloud.ui = Wirecloud.ui || {};
             this.orderableComponent.setUp();
             this.orderableComponent = null;
         }
+
+        this.connectionEngine.setUp();
 
         if (event.ctrlKey || event.metaKey) {
             if (!(component.id in this.selectedComponents[component.type])) {

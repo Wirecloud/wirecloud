@@ -162,6 +162,7 @@ BASE_CSS = (
     'css/base/body.scss',
     'css/base/fade.css',
     'css/base/code.scss',
+    'css/base/z-depth.scss',
     'css/window_menu.scss',
     'css/windowmenues/logwindowmenu.scss',
     'css/workspace/ioperator.css',

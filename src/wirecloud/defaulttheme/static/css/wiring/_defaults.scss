@@ -85,61 +85,6 @@ $endpoint-orderable-active-text-color: transparentize($endpoint-text-color, 0.3)
 $endpoint-cloned-z-index: ($component-z-index / 2) * 4 !default;
 
 // ============================================================================
-// WIRING VIEW - CONNECTIONS
-// ============================================================================
-
-$connection-base-bg: rgb(90, 150, 180) !default;
-
-$connection-width:        4px !default;
-$connection-bg:           transparentize($connection-base-bg, 0.1) !default;
-$connection-border-width: 2 * $connection-width !default;
-$connection-border-color: darken($connection-bg, 20%) !default;
-
-$connection-text-color:        rgb(255, 255, 255) !default;
-$connection-text-hover-shadow: 0 1px 0 rgba(0, 0, 0, 0.75) !default;
-
-$connection-options-bg:           transparentize(lighten($connection-bg, 5%), 0.1) !default;
-$connection-options-border-color: $connection-border-color !default;
-
-$connection-background-bg: transparentize(lighten($connection-bg, 55%), 0.5) !default;
-$connection-background-border-color: transparentize(lighten($connection-border-color, 45%), 0.5) !default;
-
-$connection-background-options-bg:           transparentize(lighten($connection-bg, 35%), 0.5) !default;
-$connection-background-options-border-color: transparentize(lighten($connection-border-color, 35%), 0.5) !default;
-
-$connection-background-text-color: rgba(0, 0, 0, 0.2) !default;
-
-$connection-missing-bg:           transparentize($state-danger-bg, 0.1) !default;
-$connection-missing-border-color: transparentize($state-danger-border, 0.1) !default;
-
-$connection-missing-options-bg:           transparentize($state-danger-bg, 0.1) !default;
-$connection-missing-options-border-color: transparentize($state-danger-border, 0.1) !default;
-
-$connection-missing-text-color: lighten($state-danger-text, 5%) !default;
-$connection-missing-text-hover-color: $state-danger-text !default;
-
-$connection-active-bg:           rgb(180, 230, 250) !default;
-$connection-active-border-color: darken($component-active-bg, 20%) !default;
-
-$connection-active-options-bg:           transparentize($connection-active-bg, 0.2) !default;
-$connection-active-options-border-color: $connection-active-border-color !default;
-
-$connection-active-text-color:       rgb(050, 150, 200) !default;
-$connection-active-text-shadow:      0 1px 0 rgb(255, 255, 255) !default;
-$connection-active-text-hover-color: darken($connection-active-text-color, 10%) !default;
-
-$connection-temporal-border-color: rgba(185, 205, 220, 0.9) !default;
-$connection-temporal-bg:           lighten($connection-temporal-border-color, 10%) !default;
-
-$connection-temporal-text-color:  rgb(185, 205, 220) !default;
-$connection-temporal-text-shadow: 0 1px 0 rgb(255, 255, 255) !default;
-
-$connection-editable-border-dasharray: 6, 2 !default;
-
-$connection-handle-width: 2px !default;
-$connection-handle-border-dasharray: $connection-editable-border-dasharray !default;
-
-// ============================================================================
 // WIRING VIEW - BEHAVIOURS
 // ============================================================================
 

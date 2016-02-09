@@ -501,7 +501,13 @@ class ButtonTester(object):
 
     @property
     def badge(self):
-        return self.element.find_element_by_css_selector(".badge")
+
+        try:
+            element = self.element.find_element_by_css_selector(".badge")
+        except:
+            return None
+
+        return element
 
     def containsIcon(self, icon):
         return icon in self.element.find_element_by_css_selector(".se-icon").get_attribute('class').split()
@@ -510,9 +516,8 @@ class ButtonTester(object):
         self.element.click()
 
     def check_badge_text(self, badge_text):
-        badge = self.badge
-        self.testcase.assertTrue(badge.is_displayed())
-        self.testcase.assertEqual(badge.text, badge_text)
+        WebDriverWait(self.testcase.driver, timeout=3).until(lambda driver: self.badge is not None)
+        self.testcase.assertTrue(self.badge.text == badge_text)
 
 
 class ModalTester(object):
@@ -666,7 +671,7 @@ class WiringComponentTester(object):
 
     @property
     def btn_notify(self):
-        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".component-notice .label"))
+        return ButtonTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.component-notice .label', timeout=30, element=self.element))
 
     @property
     def btn_remove(self):
@@ -753,7 +758,7 @@ class WiringComponentTester(object):
     def show_logger_modal(self):
         self.btn_notify.click()
 
-        return BaseModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-logs-dialog"))
+        return ModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-logs-dialog"))
 
     def show_settings_modal(self):
         self.display_preferences().click_entry('Settings')
@@ -848,7 +853,7 @@ class WiringConnectionTester(object):
     def __init__(self, testcase, element):
         self.testcase = testcase
         self.element = element
-        self.distance = element.find_element_by_css_selector('.connection-body').get_attribute('d')
+        self.distance = element.find_element_by_css_selector('.connection-path').get_attribute('d')
 
     @property
     def background(self):
@@ -861,6 +866,10 @@ class WiringConnectionTester(object):
     @property
     def btn_add(self):
         return self._get_btn_by_class("btn-share")
+
+    @property
+    def btn_logs(self):
+        return self._get_btn_by_class("btn-show-logs")
 
     @property
     def btn_prefs(self):
@@ -899,11 +908,11 @@ class WiringConnectionTester(object):
         return "selected" in self.class_list
 
     def _get_btn_by_class(self, class_name):
-        return ButtonTester(self.testcase, self.element.find_element_by_css_selector(".connection-options .{}".format(class_name)))
+        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".connection-options[data-sourceid='%s'][data-targetid='%s'] .%s" % (self.sourceid, self.targetid, class_name)))
 
     def has_changed(self):
         old_distance = self.distance
-        self.distance = self.element.find_element_by_css_selector('.connection-body').get_attribute('d')
+        self.distance = self.element.find_element_by_css_selector('.connection-path').get_attribute('d')
         return old_distance != self.distance
 
     def display_preferences(self):
@@ -927,6 +936,10 @@ class WiringConnectionTester(object):
         self.btn_remove.click()
 
         return self
+
+    def show_logs(self):
+        self.btn_logs.click()
+        return ModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".logwindowmenu"))
 
     def drag_endpoint(self, endpoint, new_endpoint):
         ActionChains(self.testcase.driver).click_and_hold(endpoint.anchor).move_to_element(new_endpoint.element).perform()
@@ -2069,6 +2082,9 @@ class WiringViewTester(BaseWiringViewTester):
 
     def filter_connections_by_properties(self, *args):
         return [c for c in self.find_connections() for p in args if hasattr(c, p) and getattr(c, p)]
+
+    def find_connections_by_css_selector(self, css_selector):
+        return [WiringConnectionTester(self.testcase, e) for e in self.section_diagram.find_elements_by_css_selector(".connection%s" % css_selector)]
 
     def find_components(self):
         return [self._build_component(None, e) for e in self.section_diagram.find_elements_by_css_selector(".component")]

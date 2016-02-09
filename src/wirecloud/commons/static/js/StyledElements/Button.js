@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -107,10 +107,6 @@
 
         this.wrapperElement.className = "se-btn";
 
-        if (options.state) {
-            this.addClassName('btn-' + options.state);
-        }
-
         this.addClassName(options['class']);
         this.addClassName(options.extraClass);
 
@@ -157,8 +153,42 @@
         }
 
         /* Properties */
-        var tabindex;
+        var tabindex, state, depth;
         Object.defineProperties(this, {
+
+            /**
+             * Get or set the z-depth effect value.
+             *
+             * @memberof StyledElements.Button#
+             * @since 0.7.0
+             *
+             * @type {?Number}
+             */
+            depth: {
+                get: function get() {
+                    return prop_depth_get.call(this, depth);
+                },
+                set: function set(newDepth) {
+                    depth = prop_depth_set.call(this, depth, newDepth);
+                }
+            },
+
+            /**
+             * Get or set the contextual state class.
+             *
+             * @memberof StyledElements.Button#
+             * @since 0.7.0
+             *
+             * @type {?String}
+             */
+            state: {
+                get: function get() {
+                    return prop_state_get.call(this, state);
+                },
+                set: function set(newState) {
+                    state = prop_state_set.call(this, state, newState);
+                }
+            },
 
             tabindex: {
                 get: function get() {
@@ -183,6 +213,8 @@
         });
 
         /* Initial status */
+        this.state = options.state;
+        this.depth = options.depth;
         this.tabindex = options.tabindex;
 
         /* Event handlers */
@@ -319,6 +351,20 @@
         StyledElements.StyledElement.prototype.destroy.call(this);
     };
 
+    /**
+     * Set a badge on the button to highlight new or unread items.
+     * @since 0.7.0
+     *
+     * @param {String|Number} content The badge's textContent.
+     * @param {String} [state] The badge's contextual state class.
+     * @param {Boolean} [isAlert] Set the button more eye-catching.
+     *
+     * @returns {StyledElements.Button} The instance on which this method is called.
+     */
+    Button.prototype.setBadge = function setBadge(content, state, isAlert) {
+        return content ? insertBadge.call(this, content, state, !!isAlert) : removeBadge.call(this);
+    };
+
     StyledElements.Button = Button;
 
     // ==================================================================================
@@ -335,6 +381,7 @@
         plain: false,
         usedInForm: false,
         text: "",
+        depth: -1,
         'title': '',
         'iconHeight': 24,
         'iconWidth': 24,
@@ -344,6 +391,55 @@
     };
 
     var events = ['blur', 'click', 'dblclick', 'focus', 'mouseenter', 'mouseleave'];
+
+    var prop_state_get = function prop_state_get(state) {
+        return state;
+    };
+
+    var prop_state_set = function prop_state_set(state, newState) {
+        var states = ['default', 'primary', 'success', 'info', 'warning', 'danger'];
+
+        if (states.indexOf(newState) !== -1) {
+            if (newState !== state) {
+                if (state) {
+                    this.removeClassName('btn-' + state);
+                }
+                state = newState;
+                this.addClassName('btn-' + state);
+            }
+        } else {
+            if (state) {
+                this.removeClassName('btn-' + state);
+            }
+            state = null;
+        }
+
+        return state;
+    };
+
+    var prop_depth_get = function prop_depth_get(depth) {
+        return depth > 0 ? depth : 0;
+    };
+
+    var prop_depth_set = function prop_depth_set(depth, newDepth) {
+
+        if (newDepth >= 0 && newDepth <= 5) {
+            if (newDepth !== depth) {
+                if (depth >= 0) {
+                    this.removeClassName('z-depth-' + depth);
+                }
+                depth = newDepth;
+                this.addClassName('z-depth-' + depth);
+            }
+        } else {
+            if (depth >= 0) {
+                this.removeClassName('z-depth-' + depth);
+            }
+            depth = -1;
+        }
+
+        return depth;
+    };
 
     var removeLabel = function removeLabel() {
 
@@ -363,6 +459,37 @@
         }
 
         this.label.textContent = textContent;
+
+        return this;
+    };
+
+    var insertBadge = function insertBadge(content, state, isAlert) {
+        var states = ['inverse', 'primary', 'success', 'info', 'warning', 'danger'];
+
+        if (this.badgeElement == null) {
+            this.badgeElement = document.createElement('span');
+            this.badgeElement.className = "badge";
+            if (states.indexOf(state) !== -1) {
+                this.badgeElement.classList.add("badge-" + state);
+            }
+            this.badgeElement.classList.add("z-depth-" + (this.depth + 1));
+            this.wrapperElement.insertBefore(this.badgeElement, this.wrapperElement.firstChild);
+        }
+
+        this.toggleClassName('has-alert', isAlert);
+        this.badgeElement.textContent = content;
+
+        return this;
+    };
+
+    var removeBadge = function removeBadge() {
+
+        if (this.badgeElement != null) {
+            this.wrapperElement.removeChild(this.badgeElement);
+            delete this.badgeElement;
+        }
+
+        this.removeClassName('has-alert');
 
         return this;
     };

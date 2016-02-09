@@ -52,10 +52,13 @@
             this.connectionsElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'g');
             this.wrapperElement.appendChild(this.connectionsElement);
 
+            this.optionsElement = document.createElement('div');
+
             this.endpoints = {source: [], target: []};
 
             this.container = container;
             this.container.appendChild(this.wrapperElement);
+            this.container.appendChild(this.optionsElement);
             this.container.get().addEventListener('scroll', container_onscroll.bind(this));
 
             this._ondrag = connection_ondrag.bind(this);
@@ -90,22 +93,6 @@
         },
 
         members: {
-
-            /**
-             * [TODO: activate description]
-             *
-             * @param {Connection} connection
-             *      [TODO: description]
-             * @returns {ConnectionEngine}
-             *      The instance on which the member is called.
-             */
-            activate: function activate(connection) {
-
-                this.deactivateAll();
-                this.activeConnection = connection.activate();
-
-                return this;
-            },
 
             /**
              * [TODO: appendEndpoint description]
@@ -169,8 +156,7 @@
             deactivateAll: function deactivateAll() {
 
                 if (this.hasActiveConnection()) {
-                    this.activeConnection.deactivate();
-                    delete this.activeConnection;
+                    this.activeConnection.click();
                 }
 
                 return this;
@@ -278,7 +264,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['cancel', 'dragstart', 'dragend', 'duplicate', 'establish'];
+    var events = ['click', 'cancel', 'dragstart', 'dragend', 'duplicate', 'establish'];
 
     var opposites = {
         source: 'target',
@@ -288,6 +274,7 @@
     var appendConnection = function appendConnection(connection) {
 
         this.connections.push(connection);
+        connection.options.appendTo(this.optionsElement);
 
         connection
             .on('click', connection_onclick.bind(this))
@@ -306,9 +293,13 @@
             }
 
             if (connection.active) {
-                this.deactivateAll();
+                if (this.hasActiveConnection() && !connection.equals(this.activeConnection)) {
+                    this.activeConnection.click();
+                }
+                this.activeConnection = connection;
+                this.trigger('click', connection);
             } else {
-                this.activate(connection);
+                delete this.activeConnection;
             }
         }
     };
@@ -320,7 +311,7 @@
             if (connection.equals(this.activeConnection)) {
                 this.deactivateAll();
             }
-
+            this.optionsElement.removeChild(connection.options.get());
             this.connections.splice(index, 1);
         }
     };
@@ -358,10 +349,11 @@
         this.setUp();
         disableEndpoints.call(this, initialEndpoint.type);
 
+        this.wrapperElement.classList.add('dragging');
+
         connection
             .stickEndpoint(initialEndpoint)
-            .appendTo(this.connectionsElement)
-            .activate();
+            .appendTo(this.connectionsElement);
 
         document.addEventListener('mousemove', this._ondrag);
         document.addEventListener('mouseup', this._ondragend);
@@ -392,9 +384,8 @@
             return;
         }
 
+        this.wrapperElement.classList.remove('dragging');
         enableEndpoints.call(this, this.temporalInitialEndpoint.type);
-
-        this.temporalConnection.deactivate();
 
         if (this._connectionBackup != null) {
             this._connectionBackup.removeClassName('temporal');

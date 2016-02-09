@@ -44,40 +44,46 @@
 
             this.wrapperElement = document.createElementNS(ns.Connection.SVG_NS, 'g');
             this.wrapperElement.setAttribute('class', "connection");
+            this.wrapperElement.addEventListener('click', connection_onclick.bind(this));
+            this.wrapperElement.addEventListener('mouseenter', connection_onmouseenter.bind(this));
+            this.wrapperElement.addEventListener('mouseleave', connection_onmouseleave.bind(this));
 
-            this.borderElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
-            this.borderElement.setAttribute('class', "connection-border");
-            this.wrapperElement.appendChild(this.borderElement);
+            this.pathElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
+            this.pathElement.setAttribute('class', "connection-path");
+            this.wrapperElement.appendChild(this.pathElement);
 
-            this.bodyElement = document.createElementNS(ns.Connection.SVG_NS, 'path');
-            this.bodyElement.setAttribute('class', "connection-body");
-            this.bodyElement.addEventListener('click', connection_onclick.bind(this));
-            this.wrapperElement.appendChild(this.bodyElement);
+            this.options = new se.Container({extraClass: "connection-options btn-group btn-group-circle btn-group-xs"});
+            this.options.hide();
 
-            this.optionsElement = document.createElementNS(ns.Connection.SVG_NS, 'g');
-            this.optionsElement.setAttribute('class', "connection-options");
-
-            this.btnGroupElement = document.createElementNS(ns.Connection.SVG_NS, 'rect');
-            this.btnGroupElement.setAttribute('class', "btn-svg-group");
-            this.btnGroupElement.setAttribute('height', "20px");
-            this.btnGroupElement.setAttribute('width', "45px");
-            this.optionsElement.appendChild(this.btnGroupElement);
-
-            this.btnPrefs = new se.SVGPlainButton({
-                title: gettext("Preferences"),
-                extraClass: "btn-show-prefs",
-                iconClass: "icon-reorder",
-                menuItems: new ns.ConnectionPrefs(this)
+            this.btnLogs = new se.Button({
+                title: utils.gettext("Logs"),
+                state: 'default',
+                depth: 1,
+                extraClass: "btn-show-logs",
+                iconClass: "icon-bell-alt"
             });
-            this.btnPrefs.appendTo(this.optionsElement);
+            this.btnLogs.on('click', btnerrors_onclick.bind(this));
+            this.btnLogs.appendTo(this.options);
 
-            this.btnRemove = new se.SVGPlainButton({
-                title: gettext("Remove"),
+            this.btnRemove = new se.Button({
+                title: utils.gettext("Remove"),
+                state: 'danger',
+                depth: 1,
                 extraClass: "btn-remove",
-                iconClass: "icon-remove-sign"
+                iconClass: "icon-remove"
             });
             this.btnRemove.on('click', btnremove_onclick.bind(this));
-            this.btnRemove.appendTo(this.optionsElement);
+            this.btnRemove.appendTo(this.options);
+
+            this.btnPrefs = new se.PopupButton({
+                title: utils.gettext("Preferences"),
+                state: 'default',
+                depth: 1,
+                extraClass: "btn-show-prefs",
+                iconClass: "icon-reorder"
+            });
+            this.btnPrefs.popup_menu.append(new ns.ConnectionPrefs(this));
+            this.btnPrefs.appendTo(this.options);
 
             this.activeCount = 0;
 
@@ -86,11 +92,23 @@
 
             var removeAllowed = true;
 
+            var active;
+            var highlightedCount;
+
             Object.defineProperties(this, {
 
+                /**
+                 * @memberof WiringEditor.Connection#
+                 * @type {!Boolean}
+                 */
                 active: {
-                    get: function get() {return this.hasClassName('active');},
-                    set: function set(value) {this._onactive(value);}
+                    get: function get() {
+                        return prop_active_get.call(this, active);
+                    },
+                    set: function set(isActive) {
+                        active = prop_active_set.call(this, active, !!isActive);
+                        refreshInternally.call(this);
+                    }
                 },
 
                 background: {
@@ -109,6 +127,19 @@
                 editable: {
                     get: function get() {return this.hasClassName('editable');},
                     set: function set(value) {this._oneditable(value);}
+                },
+
+                /**
+                 * @memberof WiringEditor.Connection#
+                 * @type {!Boolean}
+                 */
+                highlighted: {
+                    get: function get() {
+                        return prop_highlighted_get.call(this, highlightedCount);
+                    },
+                    set: function set(isHighlighted) {
+                        highlightedCount = prop_highlighted_set.call(this, highlightedCount, !!isHighlighted);
+                    }
                 },
 
                 missing: {
@@ -144,6 +175,12 @@
                 }
 
             });
+
+            // Initial configuration
+
+            this.highlighted = false;
+            this.active = false;
+            isCreated.call(this);
         },
 
         inherit: se.StyledElement,
@@ -164,27 +201,6 @@
         members: {
 
             /**
-             * [TODO: _onactive description]
-             * @protected
-             *
-             * @param {Boolean} active
-             *      [TODO: description]
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            _onactive: function _onactive(active) {
-
-                if (this.active === active) {
-                    return this;
-                }
-
-                this.toggleClassName('active', active).toFirst();
-                toggleActiveEndpoints.call(this, active);
-
-                return this;
-            },
-
-            /**
              * [TODO: _onbackground description]
              * @protected
              *
@@ -194,8 +210,13 @@
              *      The instance on which the member is called.
              */
             _onbackground: function _onbackground(background) {
+                var newDepth = this.active || !background ? 1 : 0;
 
                 this.toggleClassName('background', background);
+
+                this.btnLogs.depth = newDepth;
+                this.btnPrefs.depth = newDepth;
+                this.btnRemove.depth = newDepth;
 
                 return background ? this._showButtonAdd() : updateFlagRemoveAllowed.call(this);
             },
@@ -215,7 +236,7 @@
                     return this;
                 }
 
-                this.toggleClassName('editable', editable).toFirst();
+                this.toggleClassName('editable', editable);
                 toggleActiveEndpoints.call(this, editable);
 
                 if (editable) {
@@ -235,8 +256,11 @@
 
                 this.btnRemove
                     .replaceClassName("btn-remove", "btn-share")
-                    .iconClass("icon-plus-sign")
-                    .title(utils.gettext("Add"));
+                    .removeIconClassName('icon-trash')
+                    .removeIconClassName('icon-remove')
+                    .addIconClassName('icon-plus')
+                    .setTitle(utils.gettext("Add"));
+                this.btnRemove.state = 'info';
 
                 return this;
             },
@@ -245,8 +269,11 @@
 
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
-                    .iconClass("icon-trash")
-                    .title(utils.gettext("Delete"));
+                    .removeIconClassName('icon-plus')
+                    .removeIconClassName('icon-trash')
+                    .addIconClassName('icon-remove')
+                    .setTitle(utils.gettext("Remove"));
+                this.btnRemove.state = 'danger';
 
                 return this;
             },
@@ -255,32 +282,19 @@
 
                 this.btnRemove
                     .replaceClassName('btn-share', 'btn-remove')
-                    .iconClass("icon-remove-sign")
-                    .title(utils.gettext("Remove"));
-
-                return this;
-            },
-
-            /**
-             * [TODO: activate description]
-             *
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            activate: function activate() {
-
-                if (this.activeCount === 0) {
-                    this.active = true;
-                }
-
-                this.activeCount++;
+                    .removeIconClassName('icon-plus')
+                    .removeIconClassName('icon-remove')
+                    .addIconClassName('icon-trash')
+                    .setTitle(utils.gettext("Remove"));
+                this.btnRemove.state = 'danger';
 
                 return this;
             },
 
             click: function click() {
 
-                if (this.enabled) {
+                if (this.enabled && !this.editable) {
+                    this.active = !this.active;
                     this.trigger('click');
                 }
 
@@ -307,27 +321,6 @@
 
                 establishConnection.call(this, wiringEngine.createConnection(readonly, source, target));
                 this.refresh();
-
-                return this;
-            },
-
-            /**
-             * [TODO: deactivate description]
-             *
-             * @returns {Connection}
-             *      The instance on which the member is called.
-             */
-            deactivate: function deactivate() {
-
-                if (this.activeCount === 0) {
-                    return this;
-                }
-
-                this.activeCount--;
-
-                if (this.activeCount === 0) {
-                    this.active = false;
-                }
 
                 return this;
             },
@@ -460,6 +453,8 @@
                     this.refresh();
                 }
 
+                isCreated.call(this);
+
                 return this;
             },
 
@@ -470,6 +465,9 @@
              *      The instance on which the member is called.
              */
             showLogs: function showLogs() {
+                var count = this._connection.logManager.getErrorCount();
+
+                this.btnLogs.setBadge(count ? count : null, 'danger');
                 this._connection.showLogs();
 
                 return this;
@@ -540,6 +538,7 @@
                 }
 
                 removeEndpoint.call(this, endpoint);
+                isCreated.call(this);
 
                 return this;
             },
@@ -586,8 +585,72 @@
 
     var events = ['change', 'click', 'customizestart', 'customizeend', 'optremove', 'optshare', 'remove'];
 
+    var prop_active_get = function prop_active_get(active) {
+        return !!active;
+    };
+
+    var prop_active_set = function prop_active_set(active, isActive) {
+
+        if (this.enabled) {
+            active = isActive;
+            this.toggleClassName('active', active);
+        }
+
+        if (active) {
+            showButtonGroup.call(this);
+        } else {
+            hideButtonGroup.call(this);
+        }
+
+        toggleActiveEndpoints.call(this, active);
+
+        return active;
+    };
+
+    var prop_highlighted_get = function prop_highlighted_get(highlightedCount) {
+        return !!highlightedCount;
+    };
+
+    var prop_highlighted_set = function prop_highlighted_set(highlightedCount, isHighlighted) {
+
+        if (highlightedCount == null) {
+            highlightedCount = 0;
+        }
+
+        highlightedCount = highlightedCount + (isHighlighted ? 1 : -1);
+
+        if (highlightedCount < 0) {
+            highlightedCount = 0;
+        }
+
+        this.toggleClassName('highlighted', !!highlightedCount);
+
+        return highlightedCount;
+    };
+
+    var refreshInternally = function refreshInternally() {
+        var newDepth = this.active || this.highlighted || !this.background ? 1 : 0;
+
+        this.btnLogs.depth = newDepth;
+        this.btnPrefs.depth = newDepth;
+        this.btnRemove.depth = newDepth;
+    };
+
     var updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
         return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();
+    };
+
+    var showButtonGroup = function showButtonGroup() {
+        this.btnPrefs.show();
+        this.btnLogs.show();
+    };
+
+    var hideButtonGroup = function hideButtonGroup() {
+        this.btnPrefs.hide();
+
+        if (!this.hasClassName('has-error') && !this.missing) {
+            this.btnLogs.hide();
+        }
     };
 
     var appendEndpoint = function appendEndpoint(endpoint, options) {
@@ -611,6 +674,10 @@
         });
 
         this._connection = wiringConnection;
+        this._connection.logManager.addEventListener('newentry', notifyErrors.bind(this));
+
+        this.options.show();
+        notifyErrors.call(this);
 
         if (this.readonly) {
             this.addClassName("readonly");
@@ -618,6 +685,23 @@
         }
 
         return this;
+    };
+
+    var notifyErrors = function notifyErrors() {
+        var count = this._connection.logManager.getErrorCount();
+
+        this.toggleClassName('has-error', !!count);
+        this.btnLogs.setBadge(count ? count : null, 'danger', true);
+
+        if (count) {
+            this.btnLogs.show();
+        } else {
+            this.btnLogs.hide();
+        }
+    };
+
+    var btnerrors_onclick = function btnerrors_onclick() {
+        this.showLogs();
     };
 
     var btnremove_onclick = function btnremove_onclick(event) {
@@ -664,8 +748,6 @@
             return this;
         }
 
-        this.wrapperElement.appendChild(this.optionsElement);
-
         this.source.handle.on('drag', handle_ondrag.bind(this));
         this.source.handle.on('dragend', handle_ondragend.bind(this));
 
@@ -679,6 +761,9 @@
 
         this.get().setAttribute('data-sourceid', this.sourceId);
         this.get().setAttribute('data-targetid', this.targetId);
+
+        this.options.get().setAttribute('data-sourceid', this.sourceId);
+        this.options.get().setAttribute('data-targetid', this.targetId);
 
         return this;
     };
@@ -708,8 +793,11 @@
         return this;
     };
 
-    var toggleActiveEndpoints = function toggleActiveEndpoints(active) {
+    var isCreated = function isCreated() {
+        this.toggleClassName('incomplete', !this.created);
+    };
 
+    var toggleActiveEndpoints = function toggleActiveEndpoints(active) {
         if (this.source.endpoint != null) {
             this.source.endpoint.toggleActive(active);
         }
@@ -722,21 +810,32 @@
     };
 
     var updateDistance = function updateDistance(source, sourceHandle, target, targetHandle) {
-
-        this.borderElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
-        this.bodyElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
+        this.pathElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
 
         if (this.established) {
             var middlePosition = calculateMiddle(source, sourceHandle, target, targetHandle);
 
-            this.btnGroupElement.setAttribute('x', middlePosition.x - 20);
-            this.btnGroupElement.setAttribute('y', middlePosition.y - 10);
-
-            this.btnRemove.position(middlePosition.x + 6, middlePosition.y + 5);
-            this.btnPrefs.position(middlePosition.x - 12, middlePosition.y + 5);
+            this.options.style({
+                top: middlePosition.y + 'px',
+                left: middlePosition.x + 'px'
+            });
         }
 
         return this;
+    };
+
+    var connection_onmouseenter = function connection_onmouseenter() {
+        if (this.established && !this.editable) {
+            this.highlighted = true;
+            toggleActiveEndpoints.call(this, true);
+        }
+    };
+
+    var connection_onmouseleave = function connection_onmouseleave() {
+        if (this.established && !this.editable) {
+            this.highlighted = false;
+            toggleActiveEndpoints.call(this, false);
+        }
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

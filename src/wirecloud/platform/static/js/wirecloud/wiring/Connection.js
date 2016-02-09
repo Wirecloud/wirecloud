@@ -118,7 +118,7 @@
             establish: function establish() {
 
                 if (this.source.missing || this.target.missing) {
-                    this.registerLog('warning', utils.gettext("The connection ('%(source)s'-'%(target)s') has a missing endpoint."));
+                    this.registerLog('error', utils.gettext("The connection ('%(source)s'-'%(target)s') has a missing endpoint."));
                     return this;
                 }
 
@@ -138,6 +138,7 @@
                 }
 
                 if (this.source.component.is(component)) {
+                    this.logManager.newCycle();
                     this.detach();
                     if (this.source.name in component.outputs) {
                         this.source = component.outputs[this.source.name];
@@ -148,6 +149,7 @@
                 }
 
                 if (this.target.component.is(component)) {
+                    this.logManager.newCycle();
                     this.detach();
                     if (this.target.name in component.inputs) {
                         this.target = component.inputs[this.target.name];
