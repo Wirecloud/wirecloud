@@ -149,7 +149,8 @@ setup(
         'whoosh>=2.5.6',
         'pycrypto',
         'pyScss>=1.3.4,<2.0',
-        'Pygments'
+        'Pygments',
+        'PIL',
     ),
     extras_require={
         ":python_version < '3.2'": ('futures>=2.1.3',),
