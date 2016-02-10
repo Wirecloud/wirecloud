@@ -100,11 +100,11 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 
     .badge {
         position: absolute;
-        top: 25%;
-        left: 70%;
+        top: 12%;
+        left: 75%;
         z-index: 1;
         margin: 0;
-        @include transform(translate(-50%, -75%));
+        @include transform(translate(-50%, -50%));
     }
 
     .se-stacked-icon.bottom-left, .se-stacked-icon.bottom-right, .se-stacked-icon.top-left, .se-stacked-icon.top-right {
@@ -186,9 +186,9 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     }
 
     .badge {
-        padding: 2px 5px;
-        font-size: 10px;
-        line-height: 12px;
+        padding: $padding-vertical-xs $padding-horizontal-xs;
+        font-size: $font-size-xs;
+        line-height: $line-height-xs;
     }
 }
 
@@ -207,8 +207,8 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 
     .badge {
         padding: 1px 4px;
-        font-size: 10px;
-        line-height: 12px;
+        font-size: $font-size-xs;
+        line-height: $line-height-xs;
     }
 }
 
