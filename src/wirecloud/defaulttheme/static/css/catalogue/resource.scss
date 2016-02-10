@@ -9,7 +9,6 @@
         border: 1px solid $resource-border;
     }
     padding: 0;
-    border-radius: 6px;
     display: inline-block;
     margin: 6px;
     vertical-align: middle;
@@ -65,7 +64,7 @@
     bottom: 0px;
     left: 0px;
     background: white;
-    border-radius: 0 4px;
+    border-radius: 0 ($panel-border-radius - 1);
     display: inline-block;
     text-align: center;
     overflow: hidden;

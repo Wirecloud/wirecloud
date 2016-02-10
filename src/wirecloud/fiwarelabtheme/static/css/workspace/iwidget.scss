@@ -16,7 +16,7 @@
 }
 
 .iwidget > .widget_menu {
-    color: #888;
+    color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
     font-size: 20px;
     cursor: move;
     line-height: 22px;
