@@ -68,7 +68,7 @@
 
             modifiers = {
                 altKey: event.altKey,
-                controlKey: event.controlKey,
+                ctrlKey: event.ctrlKey,
                 metaKey: event.metaKey,
                 shiftKey: event.shiftKey
             };
@@ -90,7 +90,7 @@
             if (consumed) {
                 event.preventDefault();
             }
-        }, true);
+        }, false);
     };
 
     UserInterfaceManager.handleEscapeEvent = function handleEscapeEvent() {

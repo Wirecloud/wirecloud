@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -78,6 +78,7 @@
         this.inputElement.addEventListener('input', this._oninput, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
+        this.inputElement.addEventListener('keydown', StyledElements.Utils.stopInputKeydownPropagationListener, false);
     };
     TextArea.prototype = new StyledElements.InputElement();
 
@@ -92,6 +93,7 @@
         this.inputElement.removeEventListener('input', this._oninput, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);
+        this.inputElement.removeEventListener('keydown', StyledElements.Utils.stopInputKeydownPropagationListener, false);
 
         delete this._oninput;
         delete this._onfocus;
