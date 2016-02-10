@@ -32,7 +32,7 @@ This section describes all the requirements of a basic WireCloud installation. *
     - pycrypto
     - pyScss 1.3.4+
     - Pygments
-    - PIL
+    - pillow
 
 All these dependencies are available for Linux, Mac OS and Windows, so WireCloud should work on any of these operating systems. However, it is better to use Debian Wheezy+, CentOS 7+, Ubuntu 12.04+ or Mac OS X 10.9 (only recommended for development/testing) as these operating systems are actively tested. Specifically, this installation guide was tested in the following systems:
 
