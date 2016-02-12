@@ -217,6 +217,7 @@ var LayoutManagerFactory = function () {
                 };
             }
 
+            Wirecloud.UserInterfaceManager.rootKeydownHandler = null;
             this.alternatives.showAlternative(this.viewsByName[newView], options);
         };
 
