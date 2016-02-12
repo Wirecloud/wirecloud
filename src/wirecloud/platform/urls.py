@@ -39,7 +39,7 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^$', 'render_root_page', name='wirecloud.root'),
 
     url(r'^api/features$',
-        views.FeatureCollection(permitted_methods=('GET',)),
+        views.feature_collection,
         name='wirecloud.features'),
 
     # i18n

@@ -30,6 +30,7 @@ from django.utils.encoding import force_text
 from django.utils.functional import Promise
 from django.utils.http import urlencode
 from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_GET
 from django.views.i18n import javascript_catalog
 from user_agents import parse as ua_parse
 import six
@@ -42,12 +43,12 @@ from wirecloud.platform.models import Workspace
 from wirecloud.platform.workspace.utils import get_workspace_list
 
 
-class FeatureCollection(Resource):
+@cache_page(60 * 60 * 24, key_prefix='wirecloud-features-%s' % get_version_hash())
+@require_GET
+def feature_collection(request):
+    features = get_active_features_info()
 
-    def read(self, request):
-        features = get_active_features_info()
-
-        return HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
+    return HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
 
 
 def resolve_url(to, *args, **kwargs):  # pragma: no cover
