@@ -19,12 +19,12 @@
 
 import json
 from six.moves.urllib.parse import parse_qs, urlparse
-import unittest
 
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test.utils import override_settings
 from django.utils.http import urlencode
+from mock import patch
 
 from wirecloud.commons.utils.conf import BASE_APPS
 from wirecloud.commons.utils.testcases import WirecloudTestCase
@@ -85,6 +85,28 @@ class Oauth2TestCase(WirecloudTestCase):
         self.assertTrue(isinstance(response_data, dict))
 
         return response
+
+    def check_access_denied_redirection(self, response):
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].startswith('https://customapp.com/oauth/redirect'))
+        response_data = parse_qs(urlparse(response['Location']).query)
+        self.assertNotIn('code', response_data)
+        self.assertNotIn('access_token', response_data)
+        self.assertEqual(len(response_data["error"]), 1)
+        self.assertEqual(response_data["error"][0], "access_denied")
+
+    def test_published_oauth2_info(self):
+
+        url = reverse('oauth.discovery')
+
+        response = self.user_client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['flows'], ["Authorization Code Grant"])
+        self.assertIn('auth_endpoint', response_data)
+        self.assertIn('token_endpoint', response_data)
+        self.assertIn('default_redirect_uri', response_data)
+        self.assertEqual(response_data['version'], '2.0')
 
     def test_authorization_missing_response_type(self):
 
@@ -257,7 +279,7 @@ class Oauth2TestCase(WirecloudTestCase):
         self.assertIn(response['Content-Type'].split(';', 1)[0], ('text/html, application/xhtml+xml'))
 
         # Client Authorization
-        response = self.user_client.post(auth_req_url, {}, HTTP_ACCEPT='text/html, application/xhtml+xml')
+        response = self.user_client.post(auth_req_url, {"action": "auth"}, HTTP_ACCEPT='text/html, application/xhtml+xml')
 
         # Parse returned code
         self.assertEqual(response.status_code, 302)
@@ -284,6 +306,21 @@ class Oauth2TestCase(WirecloudTestCase):
 
         # Make an authenticated request
         self.check_token_is_valid(token)
+
+    def test_authorization_code_grant_flow_deny_access(self):
+
+        # Authorization request
+        query = {
+            'response_type': 'code',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'redirect_uri': 'https://customapp.com/oauth/redirect',
+        }
+        auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
+
+        # Deny authorization
+        response = self.user_client.post(auth_req_url, {}, HTTP_ACCEPT='text/html, application/xhtml+xml')
+
+        self.check_access_denied_redirection(response)
 
     def test_refresh_token_invalid_client_id(self):
 
@@ -332,6 +369,19 @@ class Oauth2TestCase(WirecloudTestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 400)
 
+    @patch('wirecloud.oauth2provider.views.provider.refresh_token', side_effect=Exception)
+    def test_refresh_token_server_error(self, refresh_token_mock):
+
+        url = reverse('oauth2provider.token')
+        data = {
+            'refresh_token': 'expired_token_refresh_token',
+            'grant_type': 'refresh_token',
+            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
+            'client_secret': '9643b7c3f59ef531931d39a3e19bcdd7',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 500)
+
     def test_refresh_token(self):
         url = reverse('oauth2provider.token')
         data = {
@@ -357,15 +407,13 @@ class Oauth2TestCase(WirecloudTestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_authorization_bad_token(self):
-        """
-        Check an error response is returned when using an invalid token for endpoints requiring authentication.
-        """
+        # Check an error response is returned when using an invalid token for endpoints requiring authentication.
+
         self.check_token_is_invalid('invalid_token')
 
     def test_authorization_bad_token_no_auth_required(self):
-        """
-        Check an error response is returned when using an invalid token for endpoints not requiring authentication.
-        """
+        # Check an error response is returned when using an invalid token for endpoints not requiring authentication.
+
         self.check_token_is_invalid('invalid_token', 'wirecloud.workspace_collection')
 
     def test_authorization_expired_token(self):
@@ -388,33 +436,3 @@ class Oauth2TestCase(WirecloudTestCase):
         self.check_token_is_invalid('eternal_token2')
         # eternal_token3 is not owned by app 3faf0fb4c2fe76c1c3bb7d09c21b97c2
         self.check_token_is_valid('eternal_token3')
-
-    @unittest.skip('wip test')
-    def test_implicit_grant_flow(self):
-
-        # Authorization request
-        query = {
-            'response_type': 'token',
-            'client_id': '3faf0fb4c2fe76c1c3bb7d09c21b97c2',
-            'redirect_uri': 'https://customapp.com/oauth/redirect',
-        }
-        auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
-        response = self.user_client.get(auth_req_url)
-
-        # Parse returned code
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].startswith('https://customapp.com/oauth/redirect'))
-        response_data = parse_qs(urlparse(response['Location']).query)
-        token = response_data['access_token'][0]
-        token_type = response_data['token_type'][0]
-        self.assertEqual(token_type, 'Bearer')
-
-        # Make an authenticated request
-        url = reverse('wirecloud.workspace_collection')
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer ' + token)
-        self.assertEqual(response.status_code, 200)
-
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, list))
-        self.assertTrue(isinstance(response_data[0], dict))

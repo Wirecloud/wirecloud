@@ -63,8 +63,8 @@ class WirecloudAuthorizationProvider(object):
 
         return response
 
-    def _make_error_response(self, request, err):
-        return build_error_response(request, 400, err)
+    def _make_error_response(self, request, err, status_code=400):
+        return build_error_response(request, status_code, err)
 
     def _make_redirect_error_response(self, redirect_uri, err):
         """Return a HTTP 302 redirect response object containing the error.
@@ -75,13 +75,7 @@ class WirecloudAuthorizationProvider(object):
         :type err: str
         :rtype: requests.Response
         """
-        params = {
-            'error': err,
-            'response_type': None,
-            'client_id': None,
-            'redirect_uri': None
-        }
-        redirect = utils.build_url(redirect_uri, params)
+        redirect = utils.build_url(redirect_uri, {"error": err})
         return self._make_response(headers={'Location': redirect},
                                    status_code=302)
 
@@ -225,14 +219,12 @@ class WirecloudAuthorizationProvider(object):
         # Check conditions
         # Return proper error responses on invalid conditions
         if not self.validate_access():
-            err = 'access_denied'
-            return self._make_redirect_error_response(redirect_uri, err)
+            return self._make_redirect_error_response(redirect_uri, 'access_denied')
 
         if not self.validate_scope(client, scope):
-            err = 'invalid_scope'
-            return self._make_redirect_error_response(redirect_uri, err)
+            return self._make_redirect_error_response(redirect_uri, 'invalid_scope')
 
-    def get_authorization_code(self, request, user, response_type, client_id, redirect_uri, **params):
+    def get_authorization_code(self, request, user, response_type, client, redirect_uri, **params):
         """Generate authorization code HTTP response.
 
         :param response_type: Desired response type. Must be exactly "code".
@@ -245,12 +237,6 @@ class WirecloudAuthorizationProvider(object):
         """
 
         scope = params.get('scope', '')
-
-        client = self.get_client(client_id)
-
-        error_response = self.validate_authorization_code_request(request, user, response_type, client, redirect_uri, scope)
-        if error_response is not None:
-            return error_response
 
         # Generate authorization code
         code = self.generate_authorization_code()
@@ -419,4 +405,4 @@ class WirecloudAuthorizationProvider(object):
             return self._make_error_response(request, 'invalid_request')
         except Exception as exc:
             # Catch all other server errors
-            return self._make_error_response(request, 'server_error')
+            return self._make_error_response(request, 'server_error', status_code=500)
