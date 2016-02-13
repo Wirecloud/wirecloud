@@ -114,7 +114,7 @@
 
 .wiring-footer .wiring-element {
     display: inline-block;
-    @include font($weight: "bold");
+    font-weight: "bold";
     color: $panel-default-heading-text-color;
     vertical-align: middle;
     margin: 0px ($panel-padding-horizontal * 2) 0px 0px;

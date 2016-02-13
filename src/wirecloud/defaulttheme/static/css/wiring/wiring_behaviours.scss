@@ -18,7 +18,8 @@
     .behaviour-description {
         max-height: $behaviour-description-maxheight;
         margin-bottom: 0px;
-        @include font($type: "h6");
+        font-size: $font-size-h6;
+        line-height: $line-height-base;
         color: $behaviour-description-font-color;
         overflow: hidden;
     }

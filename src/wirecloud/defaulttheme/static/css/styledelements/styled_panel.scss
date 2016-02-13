@@ -27,7 +27,7 @@
     .panel-title {
         position: relative;
         display: block;
-        @include font($weight: "bold");
+        font-weight: "bold";
         @include font-truncate();
         float: left;
     }
