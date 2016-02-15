@@ -58,10 +58,6 @@
     };
     NewWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
-    NewWorkspaceWindowMenu.prototype.setFocus = function setFocus() {
-        this.form.fieldInterfaces.name.focus();
-    };
-
     NewWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
         var monitor = LayoutManagerFactory.getInstance()._startComplexTask(gettext("Creating new workspace"), 1);
         Wirecloud.createWorkspace({

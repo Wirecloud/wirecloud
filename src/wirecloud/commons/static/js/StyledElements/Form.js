@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -99,6 +99,7 @@
         this.childComponents = [];
         this.readOnly = options.readOnly;
         this.fields = {};
+        this.focusField = Array.isArray(fields) ? fields[0].name : Object.keys(fields)[0];
         this.fieldInterfaces = {};
         this.edition = options.edition;
         this.factory = options.factory;
@@ -533,38 +534,36 @@
     /**
      * Enables/disables this Form
      */
-    Form.prototype.setDisabled = function setDisabled(disabled) {
+    Form.prototype._onenabled = function _onenabled(enabled) {
         var fieldId, inputInterface;
 
-        if (this.enabled != disabled) {
-            // Nothing to do
-            return;
-        }
-
-        if (disabled) {
-            this.wrapperElement.classList.add('disabled');
-        } else {
-            this.wrapperElement.classList.remove('disabled');
-        }
         for (fieldId in this.fieldInterfaces) {
             inputInterface = this.fieldInterfaces[fieldId];
-            inputInterface.setDisabled(disabled || this.readOnly || inputInterface._readOnly);
+            inputInterface.setDisabled(!enabled || this.readOnly || inputInterface._readOnly);
         }
         if (this.acceptButton != null) {
-            this.acceptButton.setDisabled(disabled);
+            this.acceptButton.enabled = enabled;
         }
         if (this.cancelButton != null) {
-            this.cancelButton.setDisabled(disabled);
+            this.cancelButton.enabled = enabled;
         }
-        this.enabled = !disabled;
     };
 
-    Form.prototype.enable = function enable() {
-        this.setDisabled(false);
-    };
+    /**
+     * Focus this Form
+     * @since 0.7
+     *
+     * @returns {StyledElements.Form}
+     *      The instance on which the member is called.
+     */
+    Form.prototype.focus = function focus() {
 
-    Form.prototype.disable = function disable() {
-        this.setDisabled(true);
+        var field = this.fieldInterfaces[this.focusField];
+        if (field) {
+            field.focus();
+        }
+
+        return this;
     };
 
     Form.prototype.insertInto = function insertInto(element, refElement) {

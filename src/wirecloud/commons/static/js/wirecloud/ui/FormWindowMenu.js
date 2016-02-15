@@ -64,6 +64,10 @@
         this.form.setData(newValue);
     };
 
+    FormWindowMenu.prototype.setFocus = function setFocus() {
+        this.form.focus();
+    };
+
     FormWindowMenu.prototype.show = function show(parentWindow) {
         this.form.reset();
         this.form.acceptButton.enable();
