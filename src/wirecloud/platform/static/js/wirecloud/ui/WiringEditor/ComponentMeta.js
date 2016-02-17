@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -41,6 +41,8 @@
         constructor: function ComponentMeta(meta) {
             var thumbnailElement, versionGroup;
 
+            this.title_tooltip = new se.Tooltip({placement: ["top", "bottom", "right", "left"]});
+
             this.btnAdd = new se.Button({
                 title: utils.gettext("Create"),
                 iconClass: 'icon-plus',
@@ -53,7 +55,7 @@
                 title: meta.title
             });
 
-            this.heading.title.addClassName("component-title");
+            this.heading.title.addClassName(["component-title", "text-truncate"]);
 
             thumbnailElement = document.createElement('div');
             thumbnailElement.className = "se-thumbnail se-thumbnail-rounded se-thumbnail-sm";
@@ -90,8 +92,22 @@
 
         members: {
 
+            /**
+             * @override
+             */
+            setTitle: function setTitle(title) {
+                var span;
+
+                span = document.createElement('span');
+                span.textContent = title;
+                this.title_tooltip.options.content = title;
+                this.title_tooltip.bind(span);
+
+                return this.superMember(se.Panel, 'setTitle', span);
+            },
+
             showVersion: function showVersion(version) {
-                this.heading.title.text(version.title);
+                this.setTitle(version.title);
                 this.description.textContent = version.description;
 
                 this.image.onerror = onImageError;

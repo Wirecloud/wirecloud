@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,9 @@
  *
  */
 
-/*global LayoutManagerFactory, gettext, StyledElements, Wirecloud */
+/*global LayoutManagerFactory, StyledElements, Wirecloud */
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
@@ -30,7 +30,7 @@
             return;
         }
 
-        this.builder = new StyledElements.GUIBuilder();
+        this.builder = new se.GUIBuilder();
         this.catalogue_view = catalogue_view;
         this.structure_template = resource_template;
         this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-error"><t:message/></div></s:styledgui>';
@@ -70,7 +70,7 @@
         if (typeof this.extra_context === 'function') {
             extra_context = this.extra_context(resource);
         } else {
-            extra_context = Wirecloud.Utils.clone(this.extra_context);
+            extra_context = utils.clone(this.extra_context);
         }
 
         if (resource.license != null && resource.license !== '') {
@@ -79,7 +79,7 @@
             license_text = 'N/A';
         }
 
-        context = Wirecloud.Utils.merge(extra_context, {
+        context = utils.merge(extra_context, {
             'title': resource.title,
             'name': resource.name,
             'internalname': resource.uri,
@@ -89,7 +89,7 @@
             'contributors': this.get_people_list.bind(null, resource.contributors),
             'description': resource.description,
             'longdescription': function () {
-                return new StyledElements.Fragment(resource.longdescription);
+                return new se.Fragment(resource.longdescription);
             },
             'type': function () {
                 var label = document.createElement('div');
@@ -116,10 +116,10 @@
             'home': function () {
                 var button;
 
-                button = new StyledElements.Button({
+                button = new se.Button({
                     'plain': true,
                     'class': 'icon-home',
-                    'title': gettext('Home page')
+                    'title': utils.gettext('Home page')
                 });
                 if (resource.homepage != null && resource.homepage !== '') {
                     button.addEventListener('click', function () {
@@ -134,10 +134,10 @@
             'issuetracker': function () {
                 var button;
 
-                button = new StyledElements.Button({
+                button = new se.Button({
                     'plain': true,
                     'class': 'icon-exclamation-sign',
-                    'title': gettext('Issue tracker')
+                    'title': utils.gettext('Issue tracker')
                 });
                 if (resource.issuetracker != null && resource.issuetracker !== '') {
                     button.addEventListener('click', function () {
@@ -153,10 +153,10 @@
             'license_home': function () {
                 var button;
 
-                button = new StyledElements.Button({
+                button = new se.Button({
                     'plain': true,
                     'class': 'icon-legal',
-                    'title': gettext('License details')
+                    'title': utils.gettext('License details')
                 });
 
                 if (resource.licenseurl != null && resource.licenseurl !== '') {
@@ -182,7 +182,7 @@
                 return this.painter.renderTagList(this.resource, options.max);
             }.bind({painter: this, resource: resource}),
             'advancedops': this.renderAdvancedOperations.bind(this, resource),
-            'size': Wirecloud.Utils.formatSize.bind(this, resource.size),
+            'size': utils.formatSize.bind(this, resource.size),
             'versions': function () {
                 var versions = resource.getAllVersions().map(function (version) { return 'v' + version.text; });
                 return versions.join(', ');
@@ -191,16 +191,18 @@
 
         resource_element = this.builder.parse(this.structure_template, context, resource);
 
-        // TODO "Show details"
-        if (this.catalogue_view) {
-            for (i = 0; i < resource_element.elements.length; i += 1) {
-                if (!Wirecloud.Utils.XML.isElement(resource_element.elements[i])) {
-                    continue;
-                }
+        // TODO "Show details" & tooltip
+        for (i = 0; i < resource_element.elements.length; i += 1) {
+            if (!utils.XML.isElement(resource_element.elements[i])) {
+                continue;
+            }
+            if (this.catalogue_view) {
                 this.create_simple_command(resource_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', resource));
-                if (resource_element.elements[i].classList.contains('click_for_details')) {
-                    resource_element.elements[i].addEventListener('click', this.catalogue_view.createUserCommand('showDetails', resource));
-                }
+            }
+            var title_element = resource_element.elements[i].querySelector('.title-tooltip');
+            if (title_element != null) {
+                var tooltip = new se.Tooltip({content: resource.title, placement: ['top', 'bottom', 'right', 'left']});
+                tooltip.bind(title_element);
             }
         }
 
@@ -208,10 +210,10 @@
     };
 
     ResourcePainter.prototype.renderAdvancedOperations = function renderAdvancedOperations(resource) {
-        var button, fragment = new StyledElements.Fragment();
+        var button, fragment = new se.Fragment();
 
-        button = new StyledElements.Button({
-            'text': gettext('Download')
+        button = new se.Button({
+            'text': utils.gettext('Download')
         });
         button.addEventListener('click', function () {
             window.open(resource.description_url, '_blank');
@@ -219,8 +221,8 @@
         fragment.appendChild(button);
 
         if (resource.type === 'widget') {
-            button = new StyledElements.Button({
-                'text': gettext('Add to workspace')
+            button = new se.Button({
+                'text': utils.gettext('Add to workspace')
             });
             button.addEventListener('click', function () {
                 LayoutManagerFactory.getInstance().changeCurrentView('workspace');
@@ -231,8 +233,8 @@
         }
 
         if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue) {
-            button = new StyledElements.Button({
-                'text': gettext('Publish')
+            button = new se.Button({
+                'text': utils.gettext('Publish')
             });
             button.addEventListener('click', this.catalogue_view.createUserCommand('publishOtherMarket', resource));
             fragment.appendChild(button);
@@ -240,36 +242,36 @@
 
         if (Wirecloud.LocalCatalogue.resourceExists(resource) && resource.isAllow('uninstall')) {
             var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-            button = new StyledElements.Button({
+            button = new se.Button({
                 'class': 'btn-danger',
-                'text': gettext('Uninstall')
+                'text': utils.gettext('Uninstall')
             });
             button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue_view));
             fragment.appendChild(button);
         }
 
         if ((resource.getAllVersions().length > 1) && resource.isAllow('uninstall-all')) {
-            button = new StyledElements.Button({
+            button = new se.Button({
                 'class': 'btn-danger',
-                'text': gettext('Uninstall all versions')
+                'text': utils.gettext('Uninstall all versions')
             });
             button.addEventListener('click', this.catalogue_view.createUserCommand('uninstallall', resource, this.catalogue_view));
             fragment.appendChild(button);
         }
 
         if (resource.isAllow('delete')) {
-            button = new StyledElements.Button({
+            button = new se.Button({
                 'class': 'btn-danger',
-                'text': gettext('Delete')
+                'text': utils.gettext('Delete')
             });
             button.addEventListener('click', this.catalogue_view.createUserCommand('delete', resource));
             fragment.appendChild(button);
         }
 
         if ((resource.getAllVersions().length > 1) && resource.isAllow('delete-all')) {
-            button = new StyledElements.Button({
+            button = new se.Button({
                 'class': 'btn-danger',
-                'text': gettext('Delete all versions')
+                'text': utils.gettext('Delete all versions')
             });
             button.addEventListener('click', this.catalogue_view.createUserCommand('deleteall', resource));
             fragment.appendChild(button);
@@ -281,7 +283,7 @@
     ResourcePainter.prototype.renderTagList = function renderTagList(resource, listener, max) {
         var i, fragment, tags, tag, tag_element, len;
 
-        fragment = new StyledElements.Fragment();
+        fragment = new se.Fragment();
 
         tags = resource.tags.slice();
         tags = tags.sort(function (a, b) {
@@ -305,10 +307,17 @@
     };
 
     ResourcePainter.prototype.create_simple_command = function (element, selector, _event, handler, required) {
-        var i, elements = element.querySelectorAll(selector);
+        var i, elements, root_matches;
 
-        if (required && elements.length < 1) {
+        elements = element.querySelectorAll(selector);
+        root_matches = element.matches(selector);
+
+        if (required && elements.length < 1 && !root_matches) {
             throw new Error();
+        }
+
+        if (root_matches) {
+            element.addEventListener(_event, handler);
         }
 
         for (i = 0; i < elements.length; i += 1) {
@@ -321,10 +330,10 @@
 
         if (people.length === 0) {
             dd = document.createElement('dd');
-            dd.textContent = gettext('N/A');
+            dd.textContent = utils.gettext('N/A');
             return dd;
         }
-        fragment = new StyledElements.Fragment();
+        fragment = new se.Fragment();
 
         for (i = 0; i < people.length; i++) {
             dd = document.createElement('dd');
@@ -378,8 +387,9 @@
 
     var onImageError = function onImageError(event) {
         event.target.parentElement.classList.add('se-thumbnail-missing');
-        event.target.parentElement.textContent = Wirecloud.Utils.gettext('No image available');
+        event.target.parentElement.textContent = utils.gettext('No image available');
     };
 
     Wirecloud.ui.ResourcePainter = ResourcePainter;
-})();
+
+})(StyledElements, Wirecloud.Utils);

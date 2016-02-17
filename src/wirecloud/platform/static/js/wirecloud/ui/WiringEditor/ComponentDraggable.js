@@ -46,6 +46,7 @@
 
             options = utils.updateObject(ns.ComponentDraggable.JSON_TEMPLATE, options);
 
+            this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
             this.btnPrefs = new se.PopupButton({
                 title: utils.gettext("Preferences"),
                 extraClass: "btn-show-prefs",
@@ -130,6 +131,8 @@
             });
 
             this.get().setAttribute('data-id', this.id);
+
+            this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
 
             this.heading.noticeTitle = document.createElement('span');
             this.heading.noticeTitle.className = "label label-danger";
@@ -360,12 +363,14 @@
              * @override
              */
             setTitle: function setTitle(title) {
-                var truncatedTitle;
+                var span;
 
-                truncatedTitle = document.createElement('span');
-                truncatedTitle.textContent = title;
+                span = document.createElement('span');
+                span.textContent = title;
+                this.title_tooltip.options.content = title;
+                this.title_tooltip.bind(span);
 
-                return this.superMember(se.Panel, 'setTitle', truncatedTitle);
+                return this.superMember(se.Panel, 'setTitle', span);
             },
 
             showLogs: function showLogs() {

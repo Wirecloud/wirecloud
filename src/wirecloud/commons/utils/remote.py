@@ -592,7 +592,7 @@ class WiringComponentItemTester(object):
 
     @property
     def in_use(self):
-        return self.element.find_element_by_css_selector(".badge").text == "in use"
+        return self.element.find_element_by_css_selector(".label").text == "in use"
 
     @property
     def title(self):
@@ -600,7 +600,7 @@ class WiringComponentItemTester(object):
 
     @property
     def volatile(self):
-        return self.element.find_element_by_css_selector(".badge").text == "volatile"
+        return self.element.find_element_by_css_selector(".label").text == "volatile"
 
     def rename(self, title):
         modal = self.show_modal_rename()

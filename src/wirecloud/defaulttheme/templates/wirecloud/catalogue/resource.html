@@ -1,6 +1,6 @@
-{% load i18n %}<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="panel panel-default resource click_for_details">
-        <div class="panel-heading header">
-            <h2 class="resource_name"><t:title/><span class="txt-gradient"></span></h2>
+{% load i18n %}<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="panel panel-default panel-selectable resource click_for_details">
+        <div class="panel-heading">
+            <h2 class="resource_name se-link panel-title text-truncate"><span class="title-tooltip"><t:title/></span></h2>
             <t:rating/>
             <t:mainbutton/>
             <t:type/>
@@ -9,5 +9,5 @@
         </div>
 
         <div class="wc-resource-img-container"><t:image/></div>
-        <div class="description"><t:description/><span class="txt-gradient"></span></div>
+        <div class="description text-truncate"><t:description/></div>
     </div></s:styledgui>

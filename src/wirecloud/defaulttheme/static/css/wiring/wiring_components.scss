@@ -1,4 +1,5 @@
 @import 'wiring/defaults';
+@import 'compass/css3/images';
 @import 'compass/css3/user-interface';
 @import 'utils';
 @import 'styledelements/panel_mixins';
@@ -17,26 +18,24 @@
         border-bottom-right-radius: 0;
 
         .panel-title {
-            width: 85%;
+            width: 100%;
+            float: left;
+            white-space: nowrap;
         }
 
         .component-version-list {
             margin: 0 0 5px;
-
-            .component-version {
-                width: 80px;
-            }
         }
 
         .component-vendor {
             font-weight: 700;
-            @include font-truncate();
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .component-description {
             max-height: 40px;
-            font-size: 12px;
-            color: rgb(100, 100, 100);
+            font-size: $font-size-small;
             overflow: hidden;
         }
     }
@@ -50,10 +49,21 @@
             padding: 5px 8px;
             border-top-left-radius: 0;
             border-top-right-radius: 0;
+
+            .label {
+                float: right;
+            }
         }
 
         .panel-title {
             width: 85%;
+            float: left;
+            white-space: nowrap;
+
+            span {
+                display: inline-block;
+                max-width: 100%;
+            }
         }
 
         &:not(:last-child) .panel-heading {
@@ -62,8 +72,7 @@
         }
 
         .component-version {
-            font-size: 12px;
-            line-height: 14px;
+            float: left;
         }
     }
 
@@ -85,10 +94,7 @@
 // WIRING VIEW - COMPONENT
 // ============================================================================
 
-@mixin component-variant(
-    $component-variant-bg,
-    $component-variant-border-color
-) {
+@mixin component-variant($component-variant-bg, $component-variant-border-color) {
 
     border-color: $component-variant-border-color;
 
@@ -101,37 +107,44 @@
             color: $component-text-color;
             text-shadow: $component-text-shadow;
         }
-    }
 
+        @if alpha($component-variant-bg) == 1.0 {
+            .text-truncate:after {
+                @include background-image(linear-gradient(to right, rgba($component-variant-bg, 0), $component-variant-bg));
+            }
+        }
+    }
 }
 
 .component-operator {
-    @include component-variant(
-        $component-operator-bg,
-        $component-operator-border-color
-    );
+    @include component-variant($component-operator-bg, $component-operator-border-color);
 }
 
 .component-widget {
-    @include component-variant(
-        $component-widget-bg,
-        $component-widget-border-color
-    );
+    @include component-variant($component-widget-bg, $component-widget-border-color);
 }
 
-.wiring-sidebar .component-operator:hover {
-    border-color: $component-operator-hover-border-color;
+.wiring-sidebar {
 
-    .panel-heading {
-        background-color: $component-operator-hover-bg;
+
+    .component-operator {
+
+        @include component-variant(rgba($component-operator-bg, 1), rgba($component-operator-border-color, 1));
+
+        &:hover {
+            @include component-variant(rgba(darken($component-operator-bg, 5%), 1), rgba(darken($component-operator-border-color, 10%), 1));
+        }
+
     }
-}
 
-.wiring-sidebar .component-widget:hover {
-    border-color: $component-widget-hover-border-color;
+    .component-widget:hover {
 
-    .panel-heading {
-        background-color: $component-widget-hover-bg;
+        @include component-variant(rgba($component-widget-bg, 1), rgba($component-widget-border-color, 1));
+
+        &:hover {
+            @include component-variant(rgba(darken($component-widget-bg, 5%), 1), rgba(darken($component-widget-border-color, 10%), 1));
+        }
+
     }
 }
 
@@ -142,34 +155,17 @@
 .wiring-sidebar .component {
 
     &.disabled,
-    &:hover.disabled,
-    &:focus.disabled {
+    &.disabled:hover {
         cursor: default;
         opacity: 1;
+        box-shadow: none;
+
         @include panel-variant(
             $panel-default-border-color,
             $panel-default-heading-bg,
             $panel-default-heading-text-color,
-            $panel-default-heading-text-shadow,
             $panel-default-btn-hover-text-color
         );
-
-        .panel-heading {
-
-            .panel-subtitle {
-                color: $panel-default-heading-text-color;
-                text-shadow: $panel-default-heading-text-shadow;
-            }
-
-            .panel-options .se-btn {
-
-                &:hover,
-                &:focus {
-                    text-shadow: $panel-btn-hover-text-shadow;
-                }
-            }
-
-        }
     }
 }
 
@@ -197,10 +193,15 @@
             vertical-align: middle;
         }
 
-        .panel-title span {
-            display: block;
-            @include font-truncate();
+        .panel-title {
             max-width: $component-title-max-width;
+
+            & > span {
+                max-width: 100%;
+                display: block;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
         }
 
         .panel-options {
@@ -269,6 +270,7 @@
 
         .endpoint-title {
             color: $endpoint-text-color;
+            text-overflow: ellipsis;
         }
 
         .endpoint-anchor {
@@ -329,10 +331,11 @@
     .endpoint-title {
         position: relative;
         display: block;
-        padding: 0 $endpoint-padding-horizontal;
+        margin: 0 $endpoint-padding-horizontal;
         font-size: $endpoint-text-size;
         line-height: $endpoint-text-height;
-        @include font-truncate();
+        white-space: nowrap;
+        overflow: hidden;
     }
 }
 

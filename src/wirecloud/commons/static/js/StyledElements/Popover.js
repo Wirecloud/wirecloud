@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -163,6 +163,11 @@
             element.addEventListener('click', this.toggle.bind(this), true);
             break;
         case "hover":
+            element.addEventListener('focus', this.show.bind(this, element), false);
+            element.addEventListener('blur', this.hide.bind(this), false);
+            element.addEventListener('mouseenter', this.show.bind(this, element), true);
+            element.addEventListener('mouseleave', this.hide.bind(this), true);
+            element.addEventListener('click', this.show.bind(this, element), false);
             break;
         default:
             throw new TypeError('Invalid mode: ' + mode);

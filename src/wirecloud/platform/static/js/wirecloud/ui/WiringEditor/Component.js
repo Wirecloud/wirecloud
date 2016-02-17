@@ -32,7 +32,7 @@
 
     /**
      * Create a new instance of class Component.
-     * @extends {Panel}
+     * @extends StyledElements.Panel
      *
      * @constructor
      * @param {Operator|Widget} wiringComponent
@@ -42,6 +42,8 @@
 
         constructor: function Component(wiringComponent) {
 
+            this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
+
             this.btnPrefs = new se.PopupButton({
                 extraClass: "btn-show-prefs",
                 title: gettext("Preferences"),
@@ -50,6 +52,7 @@
             this.btnPrefs.popup_menu.append(new ns.ComponentPrefs(this));
 
             this.superClass({
+                state: null,
                 extraClass: "component component-" + wiringComponent.meta.type,
                 title: wiringComponent.title,
                 subtitle: "v" + wiringComponent.meta.version.text,
@@ -60,7 +63,9 @@
 
             this.subtitle.addClassName("component-version");
 
-            this.badge = document.createElement('span');
+            this.heading.title.addClassName('text-truncate');
+
+            this.label = document.createElement('span');
 
             this._component = wiringComponent;
 
@@ -90,9 +95,9 @@
 
                 if (!enabled) {
                     formatDisabledMessage.call(this);
-                    this.heading.appendChild(this.badge);
+                    this.heading.appendChild(this.label);
                 } else {
-                    this.heading.removeChild(this.badge);
+                    this.heading.removeChild(this.label);
                 }
 
                 return this.superMember(se.Panel, '_onenabled', enabled);
@@ -100,6 +105,20 @@
 
             hasSettings: function hasSettings() {
                 return this._component.meta.preferenceList.length > 0;
+            },
+
+            /**
+             * @override
+             */
+            setTitle: function setTitle(title) {
+                var span;
+
+                span = document.createElement('span');
+                span.textContent = title;
+                this.title_tooltip.options.content = title;
+                this.title_tooltip.bind(span);
+
+                return this.superMember(se.Panel, 'setTitle', span);
             },
 
             showLogs: function showLogs() {
@@ -128,25 +147,26 @@
         /*jshint validthis:true */
 
         if (this._component.volatile) {
-            this.badge.textContent = utils.gettext("volatile");
-            this.badge.className = "badge badge-info";
+            this.label.textContent = utils.gettext("volatile");
+            this.label.className = "label label-info";
             return this;
         }
 
         if (!this._component.hasEndpoints()) {
-            this.badge.textContent = utils.gettext("no endpoints");
-            this.badge.className = "badge badge-warning";
+            this.label.textContent = utils.gettext("no endpoints");
+            this.label.className = "label label-warning";
             return this;
         }
 
-        this.badge.textContent = utils.gettext("in use");
-        this.badge.className = "badge badge-success";
+        this.label.textContent = utils.gettext("in use");
+        this.label.className = "label label-success";
 
         return this;
     };
 
     var component_onrename = function component_onrename(title) {
         this.setTitle(title);
+        this.title_tooltip.options.content = title;
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

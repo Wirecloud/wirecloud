@@ -19,15 +19,9 @@ $component-operator-bg:           rgba(70, 170, 90, 0.9) !default;
 $component-operator-border-color: darken($component-operator-bg, 15%) !default;
 $component-operator-text-color:   darken($component-operator-bg, 25%) !default;
 
-$component-operator-hover-bg:           darken($component-operator-bg, 5%) !default;
-$component-operator-hover-border-color: darken($component-operator-border-color, 10%) !default;
-
 $component-widget-bg:           rgba(240, 170, 70, 0.9) !default;
 $component-widget-border-color: darken($component-widget-bg, 15%) !default;
 $component-widget-text-color:   darken($component-widget-bg, 25%) !default;
-
-$component-widget-hover-bg:           darken($component-widget-bg, 5%) !default;
-$component-widget-hover-border-color: darken($component-widget-border-color, 10%) !default;
 
 $component-background-text-color: rgba(0, 0, 0, 0.2) !default;
 $component-background-body-bg:    transparent !default;

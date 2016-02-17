@@ -113,8 +113,12 @@
 
             this.rightAnchorPoint = false;
 
-            this.tooltip = new se.Tooltip({content: wiringEndpoint.description, placement: ['top']});
-            this.tooltip.bind(this.get());
+            this.tooltip = new se.Popover({
+                title: wiringEndpoint.label,
+                content: wiringEndpoint.description,
+                placement: ['top', 'bottom', 'right', 'left']
+            });
+            this.tooltip.bind(this.get(), 'hover');
 
             this.get().addEventListener('mousedown', endpoint_onmousedown.bind(this));
             this.get().addEventListener('mouseenter', endpoint_onmouseenter.bind(this));

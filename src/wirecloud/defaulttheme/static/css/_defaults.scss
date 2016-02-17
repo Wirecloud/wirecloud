@@ -191,61 +191,54 @@ $nav-disabled-link-hover-color: $gray-light !default;
 // COMPONENT - PANEL
 // ======================================================================================
 
-$panel-margin-vertical:    10px !default;
-$panel-padding-horizontal: 10px !default;
-$panel-padding-vertical:   $padding-vertical-large !default;
-$panel-bg:                 $body-bg !default;
-$panel-border-radius:      $border-radius-base !default;
+$panel-margin-vertical:         10px !default;
+$panel-padding-horizontal:      10px !default;
+$panel-padding-vertical:        $padding-vertical-large !default;
+$panel-bg:                      $body-bg !default;
+$panel-border-radius:           $border-radius-base !default;
 
-$panel-box-shadow:       0 1px 2px rgba(0, 0, 0, 0.1) !default;
-$panel-box-shadow-inset: inset $panel-box-shadow !default;
+$panel-box-shadow:              0 1px 2px rgba(0, 0, 0, 0.1) !default;
+$panel-box-shadow-inset:        inset $panel-box-shadow !default;
 
-$panel-heading-text-shadow: 0 1px 0 rgba(255, 255, 255, 1.0) !default;
+$text-shadow-conf-base:         1px 1px 0px !default;
 
-$panel-btn-width:             16px !default;
-$panel-btn-margin-horizontal: 3px !default;
-$panel-btn-hover-text-shadow: 0 1px 0px rgba(0, 0, 0, 0.75) !default;
+$panel-btn-width:               16px !default;
+$panel-btn-margin-horizontal:   3px !default;
 
 // ======================================================================================
 // COMPONENT - PANEL - CONTEXTUAL CLASSES
 // ======================================================================================
 
-$panel-default-border-color:          $state-default-border !default;
-$panel-default-heading-bg:            $state-default-bg !default;
-$panel-default-heading-text-color:    $state-default-text !default;
-$panel-default-heading-text-shadow:   $panel-heading-text-shadow !default;
-$panel-default-footer-bg:             $state-default-bg !default;
-$panel-default-btn-hover-text-color:  $link-color !default;
+$panel-default-border-color:            $state-default-border !default;
+$panel-default-heading-bg:              $state-default-bg !default;
+$panel-default-heading-text-color:      $state-default-text !default;
+$panel-default-footer-bg:               $state-default-bg !default;
+$panel-default-btn-hover-text-color:    $link-color !default;
 
-$panel-primary-border-color:         $state-primary-border !default;
-$panel-primary-heading-bg:           $state-primary-bg !default;
-$panel-primary-heading-text-color:   $state-primary-text !default;
-$panel-primary-heading-text-shadow:  0px -1px 0px rgba(0, 0, 0, 0.3) !default;
-$panel-primary-btn-hover-text-color: lighten($state-primary-text, 20%) !default;
+$panel-primary-border-color:            $state-primary-border !default;
+$panel-primary-heading-bg:              $state-primary-bg !default;
+$panel-primary-heading-text-color:      $state-primary-text !default;
+$panel-primary-btn-hover-text-color:    lighten($state-primary-text, 20%) !default;
 
-$panel-success-border-color:         $state-success-border !default;
-$panel-success-heading-bg:           $state-success-bg !default;
-$panel-success-heading-text-color:   lighten($state-success-text, 5%) !default;
-$panel-success-heading-text-shadow:  $panel-heading-text-shadow !default;
-$panel-success-btn-hover-text-color: darken($state-success-text, 5%) !default;
+$panel-success-border-color:            $state-success-border !default;
+$panel-success-heading-bg:              $state-success-bg !default;
+$panel-success-heading-text-color:      lighten($state-success-text, 5%) !default;
+$panel-success-btn-hover-text-color:    darken($state-success-text, 5%) !default;
 
-$panel-info-border-color:         darken($state-info-border, 10%) !default;
-$panel-info-heading-bg:           darken($state-info-bg, 5%) !default;
-$panel-info-heading-text-color:   lighten($state-info-text, 5%) !default;
-$panel-info-heading-text-shadow:  $panel-heading-text-shadow !default;
-$panel-info-btn-hover-text-color: darken($state-info-text, 5%) !default;
+$panel-info-border-color:               darken($state-info-border, 10%) !default;
+$panel-info-heading-bg:                 darken($state-info-bg, 5%) !default;
+$panel-info-heading-text-color:         lighten($state-info-text, 5%) !default;
+$panel-info-btn-hover-text-color:       darken($state-info-text, 5%) !default;
 
-$panel-warning-border-color:         darken($state-warning-border, 5%) !default;
-$panel-warning-heading-bg:           darken($state-warning-bg, 5%) !default;
-$panel-warning-heading-text-color:   $state-warning-text !default;
-$panel-warning-heading-text-shadow:  $panel-heading-text-shadow !default;
-$panel-warning-btn-hover-text-color: darken($state-warning-text, 5%) !default;
+$panel-warning-border-color:            darken($state-warning-border, 5%) !default;
+$panel-warning-heading-bg:              darken($state-warning-bg, 5%) !default;
+$panel-warning-heading-text-color:      $state-warning-text !default;
+$panel-warning-btn-hover-text-color:    darken($state-warning-text, 5%) !default;
 
-$panel-danger-border-color:         darken($state-danger-border, 5%) !default;
-$panel-danger-heading-bg:           darken($state-danger-bg, 5%) !default;
-$panel-danger-heading-text-color:   lighten($state-danger-text, 5%) !default;
-$panel-danger-heading-text-shadow:  $panel-heading-text-shadow !default;
-$panel-danger-btn-hover-text-color: darken($state-danger-text, 5%) !default;
+$panel-danger-border-color:             darken($state-danger-border, 5%) !default;
+$panel-danger-heading-bg:               darken($state-danger-bg, 5%) !default;
+$panel-danger-heading-text-color:       lighten($state-danger-text, 5%) !default;
+$panel-danger-btn-hover-text-color:     darken($state-danger-text, 5%) !default;
 
 // ======================================================================================
 // COMPONENT - THUMBNAIL

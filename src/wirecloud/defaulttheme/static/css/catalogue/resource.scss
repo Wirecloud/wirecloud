@@ -22,39 +22,16 @@
     background: $resource-bg;
     cursor: pointer;
     box-sizing: border-box;
-}
 
-.resource:hover {
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-    border-color: rgba(82, 168, 236, 0.8);
-}
-
-.resource .txt-gradient {
-    position: absolute;
-    bottom: 0px;
-    width: 38px;
-    right: 0px;
-}
-
-.resource > .header {
-    padding: $padding-vertical-base 8px;
-    color: contrast-color($resource-header-bg, $text-color-light, $text-color-dark, $text-color-threshold);
-    background: $resource-header-bg;
-}
-
-.resource > .header > h2 > .txt-gradient {
-    @if ($resource-header-bg) {
-        @include background-image(linear-gradient(to right, rgba($resource-header-bg, 0), $resource-header-bg));
-    } @else {
-        @include background-image(linear-gradient(to right, rgba($resource-bg, 0), $resource-bg));
+    & > .panel-heading {
+        padding: floor($panel-padding-vertical / 2) floor($panel-padding-horizontal / 2);
     }
-    height: 26px;
-}
 
-.resource > .description > .txt-gradient {
-    @include background-image(linear-gradient(to right, rgba($resource-bg, 0), $resource-bg));
-    height: 18px;
-    width: 70px;
+    & > .description.text-truncate:after {
+        @include background-image(linear-gradient(to right, rgba($resource-bg, 0), $resource-bg));
+        height: $line-height-small;
+        width: 70px;
+    }
 }
 
 .wc-resource-img-container {
@@ -87,57 +64,61 @@
     display: none;
 }
 
-.resource > .header > .rating {
+.resource > .panel-heading > .rating {
     position: absolute;
-    top: 2px;
-    right: 8px;
+    top: floor($panel-padding-vertical / 2);
+    right: floor($panel-padding-horizontal / 2);
     line-height: 26px;
 }
 
-.resource > .header > .rating.disabled {
+.resource > .panel-heading > .rating.disabled {
     opacity: 0.1;
 }
 
-.resource > .header > .rating > .star {
+.resource > .panel-heading > .rating > .star {
     margin: 0px 1px 0px;
 }
 
-.resource > .header > .vendor {
+.resource > .panel-heading > .vendor {
     font-size: 13px;
 }
 
 .resource > .description {
     position: absolute;
-    font-size: 13px;
-    line-height: 18px;
-    height: 72px;
+    font-size: $font-size-small;
+    line-height: $line-height-small;
+    height: floor(80px / $line-height-small) * $line-height-small;
     overflow: hidden;
     top: 70px;
     left: 178px;
     right: 8px;
 }
 
-.resource > .header > .resource_name {
+.resource > .panel-heading > .panel-title {
+    overflow: hidden;
     white-space: nowrap;
     font-size: 20px;
     line-height: 26px;
+
+    & > span {
+        max-width: 100%;
+        display: inline-block;
+        text-decoration: inherit;
+    }
 }
 
-.resource > .header > .label {
+.resource > .panel-heading > .label {
     margin-left: 0px;
 }
 
-.resource > .header > h2 {
+.resource > .panel-heading > h2 {
     margin: 0px;
     font-size: 24px;
-    overflow: hidden;
-    position: relative;
     width: 192px;
 }
 
 .resource .mainbutton {
     clear: both;
     float: right;
-    margin-top: 0px;
-    margin-right: 0px;
+    margin: 0px;
 }

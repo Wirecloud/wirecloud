@@ -17,6 +17,7 @@
     background-color: $panel-bg;
     border: 1px solid transparent;
     border-radius: $panel-border-radius;
+    color: contrast-color($panel-bg, $text-color-light, $text-color-dark, $text-color-threshold);
 }
 
 .panel-heading {
@@ -28,8 +29,9 @@
         position: relative;
         display: block;
         font-weight: "bold";
-        @include font-truncate();
-        float: left;
+        overflow: hidden;
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     .panel-subtitle {
@@ -83,9 +85,20 @@
 }
 
 .panel-footer {
+    padding: $panel-padding-vertical $panel-padding-horizontal;
     background-color: $panel-default-footer-bg;
     border-bottom-left-radius: ($panel-border-radius - 1);
     border-bottom-right-radius: ($panel-border-radius - 1);
+}
+
+.text-truncate:after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    height: 100%;
+    width: 38px;
+    right: 0px;
 }
 
 // ======================================================================================
@@ -97,11 +110,10 @@
         $panel-default-border-color,
         $panel-default-heading-bg,
         $panel-default-heading-text-color,
-        $panel-default-heading-text-shadow,
         $panel-default-btn-hover-text-color);
 
     @include panel-selectable(
-        $panel-default-border-color,
+        $input-border-color-focus,
         $panel-default-heading-bg);
 
     &.panel-selectable.active {
@@ -109,8 +121,10 @@
             $panel-primary-border-color,
             $panel-primary-heading-bg,
             $panel-primary-heading-text-color,
-            $panel-primary-heading-text-shadow,
             $panel-primary-btn-hover-text-color);
+        @include panel-selectable(
+            $panel-primary-border-color,
+            $panel-primary-heading-bg);
     }
 }
 
@@ -119,7 +133,6 @@
         $panel-primary-border-color,
         $panel-primary-heading-bg,
         $panel-primary-heading-text-color,
-        $panel-primary-heading-text-shadow,
         $panel-primary-btn-hover-text-color);
 
     @include panel-selectable(
@@ -132,7 +145,6 @@
         $panel-success-border-color,
         $panel-success-heading-bg,
         $panel-success-heading-text-color,
-        $panel-success-heading-text-shadow,
         $panel-success-btn-hover-text-color);
 
     @include panel-selectable(
@@ -145,7 +157,6 @@
         $panel-info-border-color,
         $panel-info-heading-bg,
         $panel-info-heading-text-color,
-        $panel-info-heading-text-shadow,
         $panel-info-btn-hover-text-color);
 
     @include panel-selectable(
@@ -158,7 +169,6 @@
         $panel-warning-border-color,
         $panel-warning-heading-bg,
         $panel-warning-heading-text-color,
-        $panel-warning-heading-text-shadow,
         $panel-warning-btn-hover-text-color);
 
     @include panel-selectable(
@@ -171,7 +181,6 @@
         $panel-danger-border-color,
         $panel-danger-heading-bg,
         $panel-danger-heading-text-color,
-        $panel-danger-heading-text-shadow,
         $panel-danger-btn-hover-text-color);
 
     @include panel-selectable(
@@ -181,11 +190,6 @@
 
 .panel.panel-selectable {
     cursor: pointer;
-
-    &:hover,
-    &:focus {
-        z-index: 10;
-    }
 }
 
 .panel, .panel.panel-selectable {
@@ -194,7 +198,6 @@
 
         &:hover,
         &:focus {
-            text-shadow: $panel-btn-hover-text-shadow;
             box-shadow: none;
         }
 

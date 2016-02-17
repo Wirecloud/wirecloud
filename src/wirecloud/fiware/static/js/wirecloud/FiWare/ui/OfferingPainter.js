@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,9 @@
  *
  */
 
-/*global LayoutManagerFactory, gettext, StyledElements, Wirecloud */
+/*global LayoutManagerFactory, StyledElements, Wirecloud */
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
@@ -35,7 +35,7 @@
         var layoutManager, monitor;
 
         layoutManager = LayoutManagerFactory.getInstance();
-        monitor = layoutManager._startComplexTask(gettext("Importing offering resources into local repository"), 3);
+        monitor = layoutManager._startComplexTask(utils.gettext("Importing offering resources into local repository"), 3);
 
         offering.install({
             monitor: monitor,
@@ -55,7 +55,7 @@
 
         layoutManager = LayoutManagerFactory.getInstance();
         local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.myresources;
-        monitor = layoutManager._startComplexTask(gettext("Uninstalling offering resources"), 1);
+        monitor = layoutManager._startComplexTask(utils.gettext("Uninstalling offering resources"), 1);
 
         count = offering.wirecloudresources.length;
         callbacks = {
@@ -115,10 +115,10 @@
         if (typeof this.extra_context === 'function') {
             extra_context = this.extra_context(offering);
         } else {
-            extra_context = Wirecloud.Utils.clone(this.extra_context);
+            extra_context = utils.clone(this.extra_context);
         }
 
-        context = Wirecloud.Utils.merge(extra_context, {
+        context = utils.merge(extra_context, {
             'displayname': offering.getDisplayName(),
             'name': offering.name,
             'owner': offering.owner,
@@ -151,7 +151,7 @@
                 if (offering.publicationdate != null) {
                     return offering.publicationdate.strftime('%x');
                 } else {
-                    return gettext('N/A');
+                    return utils.gettext('N/A');
                 }
             },
             'rating': this.get_popularity_html.bind(this, offering.rating),
@@ -182,14 +182,18 @@
         offering_element = this.builder.parse(this.structure_template, context, offering_entry);
         offering_entry.update_buttons();
 
-        // TODO "Show details"
+        // TODO "Show details" & tooltip
         for (i = 0; i < offering_element.elements.length; i += 1) {
-            if (!Wirecloud.Utils.XML.isElement(offering_element.elements[i])) {
+            if (!utils.XML.isElement(offering_element.elements[i])) {
                 continue;
             }
-            this.create_simple_command(offering_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', offering));
-            if (offering_element.elements[i].classList.contains('click_for_details')) {
-                offering_element.elements[i].addEventListener('click', this.catalogue_view.createUserCommand('showDetails', offering));
+            if (this.catalogue_view) {
+                this.create_simple_command(offering_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', offering));
+            }
+            var title_element = offering_element.elements[i].querySelector('.title-tooltip');
+            if (title_element != null) {
+                var tooltip = new se.Tooltip({content: offering.getDisplayName(), placement: ['top', 'bottom', 'right', 'left']});
+                tooltip.bind(title_element);
             }
         }
 
@@ -215,11 +219,11 @@
 
             if (!this.painter.catalogue_view.catalogue.is_purchased(this.offering) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
                 if (this.offering.pricing.length === 0 || !('priceComponents' in this.offering.pricing[0])) {
-                    button.addClassName('btn-success').setLabel(gettext('Free'));
+                    button.addClassName('btn-success').setLabel(utils.gettext('Free'));
                 } else if (is_single_payment(this.offering)) {
                     button.addClassName('btn-warning').setLabel(this.offering.pricing[0].priceComponents[0].value + ' ' + CURRENCY_SYMBOL[this.offering.pricing[0].priceComponents[0].currency]);
                 } else {
-                    button.addClassName('btn-warning').setLabel(gettext('Purchase'));
+                    button.addClassName('btn-warning').setLabel(utils.gettext('Purchase'));
                 }
                 button.addEventListener('click', this.painter.catalogue_view.createUserCommand('buy', this.offering, this));
                 continue;
@@ -227,14 +231,14 @@
 
             if (this.offering.wirecloudresources.length > 0) {
                 if (!this.offering.installed) {
-                    button.addClassName('btn-primary').setLabel(gettext('Install'));
+                    button.addClassName('btn-primary').setLabel(utils.gettext('Install'));
                     button.addEventListener('click', onInstallClick.bind(this, this.offering, this.painter.catalogue_view));
                 } else {
-                    button.addClassName('btn-danger').setLabel(gettext('Uninstall'));
+                    button.addClassName('btn-danger').setLabel(utils.gettext('Uninstall'));
                     button.addEventListener('click', onUninstallClick.bind(this, this.offering, this.painter.catalogue_view));
                 }
             } else {
-                button.addClassName('btn-info').setLabel(gettext('Details'));
+                button.addClassName('btn-info').setLabel(utils.gettext('Details'));
                 button.addEventListener('click', this.painter.catalogue_view.createUserCommand('showDetails', this.offering));
                 button.setDisabled(this.painter.is_details_view);
             }
@@ -250,10 +254,17 @@
     };
 
     OfferingPainter.prototype.create_simple_command = function (element, selector, _event, handler, required) {
-        var i, elements = element.querySelectorAll(selector);
+        var i, elements, root_matches;
 
-        if (required && elements.length < 1) {
+        elements = element.querySelectorAll(selector);
+        root_matches = element.matches(selector);
+
+        if (required && elements.length < 1 && !root_matches) {
             throw new Error();
+        }
+
+        if (root_matches) {
+            element.addEventListener(_event, handler);
         }
 
         for (i = 0; i < elements.length; i += 1) {
@@ -304,8 +315,9 @@
 
     var onImageError = function onImageError(event) {
         event.target.parentElement.classList.add('se-thumbnail-missing');
-        event.target.parentElement.textContent = Wirecloud.Utils.gettext('No image available');
+        event.target.parentElement.textContent = utils.gettext('No image available');
     };
 
     Wirecloud.FiWare.ui.OfferingPainter = OfferingPainter;
-})();
+
+})(StyledElements, Wirecloud.Utils);

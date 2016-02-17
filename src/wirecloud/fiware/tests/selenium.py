@@ -31,11 +31,8 @@ __test__ = False
 
 
 def read_response_file(*response):
-    f = open(os.path.join(os.path.dirname(__file__), 'test-data', *response))
-    contents = f.read()
-    f.close()
-
-    return contents
+    with open(os.path.join(os.path.dirname(__file__), 'test-data', *response)) as f:
+        return f.read()
 
 
 @wirecloud_selenium_test_case
