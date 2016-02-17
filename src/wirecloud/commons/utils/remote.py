@@ -516,8 +516,7 @@ class ButtonTester(object):
         self.element.click()
 
     def check_badge_text(self, badge_text):
-        WebDriverWait(self.testcase.driver, timeout=3).until(lambda driver: self.badge is not None)
-        self.testcase.assertTrue(self.badge.text == badge_text)
+        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.badge.text == badge_text)
 
 
 class ModalTester(object):
@@ -671,7 +670,7 @@ class WiringComponentTester(object):
 
     @property
     def btn_notify(self):
-        return ButtonTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.component-notice .label', timeout=30, element=self.element))
+        return ButtonTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.component-notice .label', timeout=10, element=self.element))
 
     @property
     def btn_remove(self):
@@ -819,6 +818,15 @@ class WiringComponentEditableTester(object):
 class WiringOperatorTester(WiringComponentTester):
 
     type = "operator"
+
+    def wait_loaded(self, timeout=10):
+
+        def operator_loaded(driver):
+            return driver.execute_script('''
+                return Wirecloud.activeWorkspace.wiring.ioperators[%s].loaded;
+            ''' % self.id)
+
+        WebDriverWait(self.testcase.driver, timeout).until(operator_loaded)
 
     @property
     def error_count(self):

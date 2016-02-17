@@ -603,6 +603,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
             operator = wiring.find_component_by_title('operator', "TestOperator")
+            operator.wait_loaded()
 
             modal = operator.show_settings_modal()
             modal.set_field_value("prefix", "prefix: ")
@@ -635,6 +636,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
             operator = wiring.find_component_by_title('operator', "TestOperator")
+            operator.wait_loaded()
             self.assertEqual(operator.error_count, 0)
 
             # Make test operator log some errors
