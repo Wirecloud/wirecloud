@@ -85,7 +85,9 @@ class CommandLineUtility(object):
             from django.core.management.base import CommandParser
             parser = CommandParser(None,
                 usage="%(prog)s subcommand [options] [args]",
-                version=wirecloud.platform.__version__)
+                add_help=False)
+            parser.add_argument('--version', action='store_true', help="show program's version number and exit")
+            parser.add_argument('-h', '--help', action='store_true', help="show this help message and exit")
 
             try:
                 options, argv = parser.parse_known_args(argv)
@@ -95,8 +97,10 @@ class CommandLineUtility(object):
             from django.core.management import LaxOptionParser
 
             parser = LaxOptionParser(usage="%prog subcommand [options] [args]",
-                version=wirecloud.platform.__version__,
-                option_list=())
+                option_list=(),
+                add_help_option=False)
+            parser.add_option('--version', action='store_true', help="show program's version number and exit")
+            parser.add_option('-h', '--help', action='store_true', help="show this help message and exit")
 
             try:
                 options, argv = parser.parse_args(argv)
@@ -108,7 +112,28 @@ class CommandLineUtility(object):
         else:
             subcommand = 'help'  # Display help if no arguments were given.
 
-        if subcommand == 'help':
+
+        if options.help:
+
+            if subcommand == 'help':
+                if hasattr(parser, 'print_lax_help'):
+                    parser.print_lax_help()
+                else:
+                    parser.print_help(stdout)
+                stdout.write(self.main_help_text() + '\n')
+            else:
+                command = self.fetch_command(subcommand)
+                if command is not None:
+                    command.print_help(self.prog_name, subcommand, file=stdout)
+                else:
+                    stdout.write(self.unknown_command_text(subcommand) + '\n')
+
+        elif subcommand == 'version' or options.version:
+
+            stdout.write(wirecloud.platform.__version__ + '\n')
+
+        elif subcommand == 'help':
+
             if len(argv) <= 2:
                 if hasattr(parser, 'print_lax_help'):
                     parser.print_lax_help()
@@ -123,25 +148,6 @@ class CommandLineUtility(object):
                     command.print_help(self.prog_name, argv[2], file=stdout)
                 else:
                     stdout.write(self.unknown_command_text(argv[2]) + '\n')
-
-        elif subcommand == 'version':
-            stdout.write(wirecloud.platform.__version__ + '\n')
-        elif '--version' in argv[2:]:
-            # LaxOptionParser already takes care of printing the version.
-            pass
-        elif '--help' in argv or '-h' in argv:
-            if len(argv) <= 2:
-                if hasattr(parser, 'print_lax_help'):
-                    parser.print_lax_help()
-                else:
-                    parser.print_help(stdout)
-                stdout.write(self.main_help_text() + '\n')
-            else:
-                command = self.fetch_command(argv[1])
-                if command is not None:
-                    command.print_help(self.prog_name, argv[1], file=stdout)
-                else:
-                    stdout.write(self.unknown_command_text(argv[1]) + '\n')
 
         else:
             command = self.fetch_command(subcommand)

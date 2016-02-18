@@ -66,11 +66,17 @@ class BaseAdminCommandTestCase(TestCase):
         self.assertIn('Available subcommands', first_output)
 
         options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
-        self.command_utility.execute(['wirecloud-admin', '--help'], **options)
+        self.command_utility.execute(['wirecloud-admin', '-h'], **options)
         options['stdout'].seek(0)
         second_output = options['stdout'].read()
 
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
+        self.command_utility.execute(['wirecloud-admin', '--help'], **options)
+        options['stdout'].seek(0)
+        third_output = options['stdout'].read()
+
         self.assertEqual(first_output, second_output)
+        self.assertEqual(second_output, third_output)
 
     def test_command_help(self):
 
@@ -80,16 +86,29 @@ class BaseAdminCommandTestCase(TestCase):
         first_output = options['stdout'].read()
 
         options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
-        self.command_utility.execute(['wirecloud-admin', 'convert', '--help'], **options)
+        self.command_utility.execute(['wirecloud-admin', 'convert', '-h'], **options)
         options['stdout'].seek(0)
         second_output = options['stdout'].read()
 
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
+        self.command_utility.execute(['wirecloud-admin', 'convert', '--help'], **options)
+        options['stdout'].seek(0)
+        third_output = options['stdout'].read()
+
         self.assertEqual(first_output, second_output)
+        self.assertEqual(second_output, third_output)
 
     def test_version(self):
 
         options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
         self.command_utility.execute(['wirecloud-admin', 'version'], **options)
+        options['stdout'].seek(0)
+        self.assertEqual(wirecloud.platform.__version__ + '\n', options['stdout'].read())
+
+    def test_version_as_long_flag(self):
+
+        options = {"stdout": io.StringIO(), "stderr": io.StringIO()}
+        self.command_utility.execute(['wirecloud-admin', '--version'], **options)
         options['stdout'].seek(0)
         self.assertEqual(wirecloud.platform.__version__ + '\n', options['stdout'].read())
 
