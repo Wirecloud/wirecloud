@@ -91,4 +91,3 @@ class StartprojectCommand(BaseCommand):
                 exec_external_python_cmd('manage.py syncdb --migrate --noinput')
             exec_external_python_cmd('manage.py loaddata wirecloud_quick_start')
             exec_external_python_cmd('manage.py collectstatic --noinput')
-            exec_external_python_cmd('manage.py compress --force')
