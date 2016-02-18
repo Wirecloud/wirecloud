@@ -299,7 +299,7 @@ class StartprojectCommandTestCase(TestCase):
         options = {
             "name": 'wirecloud_instance',
             "directory": None,
-            "verbosity": '1'
+            "verbosity": 1
         }
         options.update(values)
 

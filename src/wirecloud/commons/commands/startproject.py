@@ -66,7 +66,7 @@ class StartprojectCommand(BaseCommand):
             'template': template,
             'extensions': ('py',),
             'files': [],
-            'verbosity': options.get('verbosity'),
+            'verbosity': int(options.get('verbosity')),
             'db_engine': mark_safe("'django.db.backends.'"),
             'db_name': mark_safe("''"),
         }
