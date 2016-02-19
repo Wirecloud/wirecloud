@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -75,9 +75,8 @@ class WgtFile(object):
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
-        f = open(output_path, 'wb')
-        f.write(contents)
-        f.close()
+        with open(output_path, 'wb') as f:
+            f.write(contents)
 
     def extract_localized_files(self, file_name, output_dir):
 
