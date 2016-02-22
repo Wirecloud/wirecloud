@@ -57,14 +57,12 @@
 
             this.heading.title.addClassName(["component-title", "text-truncate"]);
 
-            thumbnailElement = document.createElement('div');
-            thumbnailElement.className = "se-thumbnail se-thumbnail-rounded se-thumbnail-sm";
+            this.thumbnailElement = document.createElement('div');
+            this.thumbnailElement.className = "se-thumbnail se-thumbnail-rounded se-thumbnail-sm";
 
             this.image = document.createElement('img');
-            this.image.onerror = onImageError;
-            this.image.src = meta.image;
-
-            thumbnailElement.appendChild(this.image);
+            this.image.onerror = setDefaultNoImage.bind(this);
+            setImage.call(this, meta.image);
 
             versionGroup = document.createElement('div');
             versionGroup.className = "btn-group btn-group-sm component-version-list";
@@ -82,7 +80,7 @@
             this.description.textContent = meta.description;
 
             this.body
-                .appendChild(thumbnailElement)
+                .appendChild(this.thumbnailElement)
                 .appendChild(versionGroup)
                 .appendChild(this.vendor)
                 .appendChild(this.description);
@@ -110,8 +108,7 @@
                 this.setTitle(version.title);
                 this.description.textContent = version.description;
 
-                this.image.onerror = onImageError;
-                this.image.src = version.image;
+                setImage.call(this, version.image);
 
                 if (version.hasEndpoints()) {
                     this.btnAdd.show();
@@ -126,10 +123,23 @@
 
     });
 
-    var onImageError = function onImageError(event) {
-        event.target.parentElement.classList.add('se-thumbnail-missing');
-        event.target.parentElement.textContent = utils.gettext('No image available');
+    var setImage = function setImage(imageURL) {
+        /* jshint validthis: true */
+        this.thumbnailElement.classList.remove('se-thumbnail-missing');
+        this.thumbnailElement.innerHTML = "";
+
+        if (imageURL) {
+            this.image.src = imageURL;
+            this.thumbnailElement.appendChild(this.image);
+        } else {
+            setDefaultNoImage.call(this);
+        }
     };
 
+    var setDefaultNoImage = function setDefaultNoImage() {
+        /* jshint validthis: true */
+        this.thumbnailElement.classList.add('se-thumbnail-missing');
+        this.thumbnailElement.textContent = utils.gettext('No image available');
+    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

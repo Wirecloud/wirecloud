@@ -635,8 +635,16 @@ class WiringComponentGroupTester(object):
         return [WiringComponentItemTester(self.testcase, e) for e in self.element.find_elements_by_css_selector(".component")]
 
     @property
+    def id(self):
+        return self.element.get_attribute('data-id')
+
+    @property
     def title(self):
         return self.element.find_element_by_css_selector('.panel-heading .panel-title').text
+
+    def hasImage(self):
+        thumbnail = self.element.find_element_by_css_selector(".se-thumbnail")
+        return "se-thumbnail-missing" not in thumbnail.get_attribute('class').split()
 
     def createComponent(self):
 
@@ -2002,6 +2010,15 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
         for group in self.filter_component_groups_by_type(component_type):
             if group.title == group_title:
+                return group
+
+        return None
+
+    def find_component_group_by_id(self, component_type, id):
+        self.display_component_group(component_type)
+
+        for group in self.filter_component_groups_by_type(component_type):
+            if group.id == id:
                 return group
 
         return None

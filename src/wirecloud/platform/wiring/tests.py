@@ -1058,6 +1058,18 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
             with wiring.component_sidebar:
                 self.assertEqual(len(wiring.filter_components_by_type('operator')), 0)
 
+    @uses_extra_resources(('Wirecloud_Test_NoImage_3.0.wgt',), shared=True)
+    def test_operator_with_no_image(self):
+        # Add a widget with no image included.
+        self.login()
+        self.add_widget_to_mashup('Test_NoImage')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                operator_group = sidebar.find_component_group_by_id('widget', "Wirecloud/Test_NoImage")
+                # The current version displayed should show the default no-image.
+                self.assertFalse(operator_group.hasImage())
+
 
 @wirecloud_selenium_test_case
 class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
