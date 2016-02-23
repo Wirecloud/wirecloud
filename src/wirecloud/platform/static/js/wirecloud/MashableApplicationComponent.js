@@ -141,6 +141,10 @@
 
         members: {
 
+            is: function is(other) {
+                return other != null && this.type == other.type && this.uri == other.uri;
+            },
+
             hasEndpoints: function hasEndpoints() {
                 return (this.inputList.length + this.outputList.length) > 0;
             }

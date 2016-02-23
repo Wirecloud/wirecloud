@@ -319,7 +319,7 @@
 
     LocalCatalogue.hasAlternativeVersion = function hasAlternativeVersion(mac) {
         var versions = this.resourceVersions[mac.group_id];
-        return versions != null && (versions.length > 1 || versions.length === 1 && versions[0] !== mac);
+        return versions != null && (versions.length > 1 || versions.length === 1 && !versions[0].is(mac));
     };
 
     LocalCatalogue.getResourceId = function getResourceId(id) {
