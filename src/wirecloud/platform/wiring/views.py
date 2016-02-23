@@ -116,14 +116,12 @@ class OperatorEntry(Resource):
             options = json.loads(operator.json_description)
             js_files = options['js_files']
 
-            base_url = operator.template_uri
-            if not base_url.startswith(('http://', 'https://')):
-                base_url = get_absolute_reverse_url('wirecloud.showcase_media', kwargs={
-                    'vendor': operator.vendor,
-                    'name': operator.short_name,
-                    'version': operator.version,
-                    'file_path': operator.template_uri
-                }, request=request)
+            base_url = get_absolute_reverse_url('wirecloud.showcase_media', kwargs={
+                'vendor': operator.vendor,
+                'name': operator.short_name,
+                'version': operator.version,
+                'file_path': operator.template_uri
+            }, request=request)
 
             xhtml = generate_xhtml_operator_code(js_files, base_url, request, process_requirements(options['requirements']), mode)
             cache_timeout = 31536000  # 1 year
