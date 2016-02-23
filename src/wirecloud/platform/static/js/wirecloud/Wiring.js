@@ -62,6 +62,8 @@
                 workspace: {value: workspace}
             });
 
+            this.autoOperatorId = 1;
+
             this._widget_onadded = widget_onadded.bind(this);
             this._widget_onremoved = widget_onremoved.bind(this);
 
@@ -153,8 +155,14 @@
 
                 this.trigger('load');
 
+                this.autoOperatorId = 1;
+
                 for (id in status.operators) {
                     operator = status.operators[id];
+
+                    if (parseInt(id, 10) >= this.autoOperatorId) {
+                        this.autoOperatorId = parseInt(id, 10) + 1;
+                    }
 
                     if (id in old_operators) {
                         delete old_operators[id];

@@ -62,7 +62,6 @@ Wirecloud.ui = Wirecloud.ui || {};
             this.selectedCount = 0;
 
             this.orderableComponent = null;
-            this.autoOperatorId = 1;
         },
 
         inherit: se.Alternative,
@@ -268,7 +267,7 @@ Wirecloud.ui = Wirecloud.ui || {};
                 return this.createComponent(component, {commit: false});
             }.bind(this),
             createWiringComponent: function (meta) {
-                return meta.instantiate(this.autoOperatorId++, this.workspace.wiring);
+                return meta.instantiate(this.workspace.wiring.autoOperatorId++, this.workspace.wiring);
             }.bind(this)
         });
 
@@ -438,7 +437,6 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.suggestionManager.enable();
 
         this.orderableComponent = null;
-        this.autoOperatorId = 1;
 
         return this;
     };
@@ -564,10 +562,6 @@ Wirecloud.ui = Wirecloud.ui || {};
 
             if (!operatorsInUse[id].volatile) {
                 this.createComponent(operatorsInUse[id], vInfo.components.operator[id]);
-
-                if (parseInt(id, 10) >= this.autoOperatorId) {
-                    this.autoOperatorId = parseInt(id, 10) + 1;
-                }
             }
         }, this);
 
