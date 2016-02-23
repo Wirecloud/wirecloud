@@ -107,6 +107,7 @@
                 }
 
                 this.source.disconnect(this.target);
+                this.established = false;
 
                 return this;
             },
@@ -127,38 +128,27 @@
                 }
 
                 this.source.connect(this.target, this);
+                this.established = true;
 
                 return this;
             },
 
-            refreshEndpoint: function refreshEndpoint(component) {
+            updateEndpoint: function updateEndpoint(endpoint) {
 
-                if (component == null) {
-                    return this;
+                if (!(endpoint instanceof Wirecloud.wiring.Endpoint)) {
+                    throw new TypeError("endpoint must be a Wirecloud.wiring.Endpoint instance");
                 }
 
-                if (this.source.component.is(component)) {
-                    this.logManager.newCycle();
-                    this.detach();
-                    if (this.source.name in component.outputs) {
-                        this.source = component.outputs[this.source.name];
-                    } else {
-                        this.source = new Wirecloud.wiring.GhostSourceEndpoint(component, this.source.name);
-                    }
-                    return this.establish();
+                this.detach();
+                this.logManager.newCycle();
+
+                if (endpoint instanceof Wirecloud.wiring.SourceEndpoint) {
+                    this.source = endpoint;
+                } else if (endpoint instanceof Wirecloud.wiring.TargetEndpoint) {
+                    this.target = endpoint;
                 }
 
-                if (this.target.component.is(component)) {
-                    this.logManager.newCycle();
-                    this.detach();
-                    if (this.target.name in component.inputs) {
-                        this.target = component.inputs[this.target.name];
-                    } else {
-                        this.target = new Wirecloud.wiring.GhostTargetEndpoint(component, this.target.name);
-                    }
-                    return this.establish();
-                }
-                return this;
+                return this.establish();
             },
 
             /**

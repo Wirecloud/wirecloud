@@ -33,6 +33,11 @@
         Object.defineProperty(this, 'readonly', {value: !!readonly});
         Object.defineProperty(this, 'hidden', {value: !!hidden});
 
+        if (pref_def == null) {
+            this.value = currentValue;
+            return;
+        }
+
         if (pref_def.type === 'boolean' && typeof currentValue === 'string') {
             this.value = currentValue.trim().toLowerCase() === 'true';
         } else if (pref_def.type === 'number' && typeof currentValue === 'string') {

@@ -424,7 +424,7 @@ IWidget.prototype.paint = function (onInit) {
         }.bind(this),
         true);
 
-    this.content.setAttribute("src", this.internal_iwidget.codeURL);
+    this.content.setAttribute("src", this.internal_iwidget.codeurl);
     if (!onInit) {
         this.element.classList.add('in');
     }

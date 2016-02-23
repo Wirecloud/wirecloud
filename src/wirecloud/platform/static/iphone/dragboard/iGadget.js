@@ -81,7 +81,7 @@ IWidget.prototype.paint = function () {
         });
     }.bind(this));
 
-    this.content.setAttribute("src", this.internal_iwidget.codeURL);
+    this.content.setAttribute("src", this.internal_iwidget.codeurl);
 };
 
 IWidget.prototype.load = IWidget.prototype.paint;

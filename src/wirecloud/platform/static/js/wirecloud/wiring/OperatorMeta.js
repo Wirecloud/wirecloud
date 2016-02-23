@@ -43,6 +43,18 @@
             }
 
             this.superClass(description);
+
+            if (this.missing) {
+                this.codeurl = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
+            } else {
+                this.codeurl = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({
+                    vendor: this.vendor,
+                    name: this.name,
+                    version: this.version.text
+                });
+            }
+            this.codeurl += "?v=" + Wirecloud.contextManager.get('version_hash');
+
             Object.freeze(this);
         },
 
@@ -59,10 +71,6 @@
              * @returns {Wirecloud.wiring.Operator} a new operator instance
              */
             instantiate: function instantiate(operatorId, wiringEngine, businessInfo) {
-                if (this.missing) {
-                    throw new TypeError("Missing operators cannot be instantiated");
-                }
-
                 return new Wirecloud.Operator(operatorId, this, wiringEngine, businessInfo);
             }
         }

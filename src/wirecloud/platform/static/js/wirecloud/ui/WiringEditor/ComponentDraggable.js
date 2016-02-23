@@ -143,6 +143,25 @@
             this.heading.notice.className = "component-notice";
             this.heading.notice.appendChild(this.heading.noticeTitle);
 
+            if (wiringComponent.missing) {
+                wiringComponent.meta.outputList.forEach(function (endpoint_meta) {
+                    var endpoint;
+
+                    if (!(endpoint_meta.name in wiringComponent)) {
+                        endpoint = new Wirecloud.wiring.GhostSourceEndpoint(wiringComponent, endpoint_meta.name);
+                        wiringComponent.outputs[endpoint_meta.name] = endpoint;
+                    }
+                });
+
+                wiringComponent.meta.inputList.forEach(function (endpoint_meta) {
+                    var endpoint;
+
+                    if (!(endpoint_meta.name in wiringComponent)) {
+                        endpoint = new Wirecloud.wiring.GhostTargetEndpoint(wiringComponent, endpoint_meta.name);
+                        wiringComponent.inputs[endpoint_meta.name] = endpoint;
+                    }
+                });
+            }
             appendEndpoints.call(this, 'source', wiringComponent.meta.outputList.map(function (data) {return wiringComponent.outputs[data.name];}));
             appendEndpoints.call(this, 'target', wiringComponent.meta.inputList.map(function (data) {return wiringComponent.inputs[data.name];}));
 
@@ -161,7 +180,7 @@
 
             this.position(options.position);
 
-            if (this.type == 'widget' && !wiringComponent.missing) {
+            if (this.type == 'widget') {
                 wiringComponent.on('title_changed', component_onrename.bind(this));
             }
 

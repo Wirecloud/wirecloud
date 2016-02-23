@@ -62,7 +62,6 @@
                 workspace: {value: workspace}
             });
 
-            this._component_onunload = component_onunload.bind(this);
             this._widget_onadded = widget_onadded.bind(this);
             this._widget_onremoved = widget_onremoved.bind(this);
 
@@ -75,7 +74,7 @@
         statics: {
 
             normalize: function normalize(status) {
-                return utils.updateObject({
+                var new_status = utils.updateObject({
                     version: '2.0',
                     connections: [],
                     operators: {},
@@ -88,6 +87,11 @@
                         connections: []
                     }
                 }, status);
+
+                normalize_object(new_status.visualdescription.components.operator, normalize_visual_component);
+                normalize_object(new_status.visualdescription.components.widget, normalize_visual_component);
+
+                return new_status;
             }
 
         },
@@ -95,33 +99,14 @@
         members: {
 
             _notifyOperatorInstall: function _notifyOperatorInstall(operatorMeta) {
-                var id, missing_operator, operator;
+                var id, current_operator, operator;
 
                 for (id in this.status.operators) {
-                    missing_operator = this.status.operators[id];
+                    current_operator = this.status.operators[id];
 
-                    if (missing_operator.missing && missing_operator.meta.uri === operatorMeta.uri) {
-                        missing_operator.fullDisconnect();
-
-                        // create a new operator
-                        operator = operatorMeta.instantiate(id, this, missing_operator.toJSON());
-                        operator.load();
-                        this.status.operators[id] = operator;
-
-                        // TODO: This code remove operator not available error counts (Search a better way)
-                        this.logManager.errorCount -= 1;
-
-                        // restore operator connections
-                        reconnect.call(this, operator);
+                    if (current_operator.missing && current_operator.meta.uri === operatorMeta.uri) {
+                        current_operator.meta = operatorMeta;
                     }
-                }
-            },
-
-            _notifyOperatorUninstall: function _notifyOperatorUninstall(resourceDetails, versions) {
-                var i;
-
-                for (i = 0; i < versions.length; i++) {
-                    operatormeta_uninstall.call(this, resourceDetails.vendor, resourceDetails.name, versions[i]);
                 }
             },
 
@@ -129,6 +114,7 @@
                 var operator = operatorMeta.instantiate(id, this, businessInfo);
 
                 operator
+                    .on('upgraded', component_onupgraded.bind(this))
                     .on('unload', component_onunload)
                     .on('remove', operator_onremove.bind(this))
                     .load();
@@ -174,11 +160,15 @@
                         delete old_operators[id];
                     }
 
-                    if (operator instanceof ns.wiring.MissingOperator) {
+                    if (operator.missing) {
                         this.logManager.log(operator.reason);
                     }
 
-                    operator.load();
+                    operator
+                        .on('upgraded', component_onupgraded.bind(this))
+                        .on('unload', component_onunload)
+                        .on('remove', operator_onremove.bind(this))
+                        .load();
                 }
 
                 for (id in old_operators) {
@@ -245,34 +235,28 @@
             },
 
             unmarshall: function unmarshall(status) {
-                var connection_info, errorCount, i, id, operator_info, operators, source, target;
+                var connection_info, errorCount, i, id, operator_info,
+                    operator_visual_info, meta, source, target;
 
                 status = ns.Wiring.normalize(status);
-
-                if (this.workspace.owned) {
-                    operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
-                } else {
-                    operators = this.workspace.resources.getAvailableResourcesByType('operator');
-                }
 
                 // Convert operator into instances
                 for (id in status.operators) {
                     operator_info = status.operators[id];
 
-                    if (operator_info.name in operators) {
-                        try {
-                            status.operators[id] = operators[operator_info.name].instantiate(id, this, operator_info);
-                        } catch (e) {
-                            status.operators[id] = new ns.wiring.MissingOperator(id, this, operator_info, utils.gettext("Operator %(id)s (%(uri)s) couldn't be loaded."));
-                            if (id in status.visualdescription.components.operator) {
-                                status.operators[id].loadVisualInfo(status.visualdescription.components.operator[id]);
-                            }
-                        }
-                    } else {
-                        status.operators[id] = new ns.wiring.MissingOperator(id, this, operator_info, utils.gettext("Operator %(id)s couldn't be loaded as %(uri)s does not exist."));
-                        if (id in status.visualdescription.components.operator) {
-                            status.operators[id].loadVisualInfo(status.visualdescription.components.operator[id]);
-                        }
+                    meta = this.workspace.resources.getOrCreateMissing(operator_info.name, 'operator');
+                    status.operators[id] = meta.instantiate(id, this, operator_info);
+
+                    if (meta.missing && id in status.visualdescription.components.operator) {
+                        operator_visual_info = status.visualdescription.components.operator[id];
+
+                        operator_visual_info.endpoints.source.forEach(function (name) {
+                            addMissingEndpoint(this, 'outputs', name);
+                        }, status.operators[id]);
+
+                        operator_visual_info.endpoints.target.forEach(function (name) {
+                            addMissingEndpoint(this, 'inputs', name);
+                        }, status.operators[id]);
                     }
                 }
 
@@ -314,6 +298,65 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
+    var normalize_visual_component = function normalize_visual_component(component) {
+        return utils.updateObject({
+            name: "",
+            position: {
+                x: 0,
+                y: 0
+            },
+            collapsed: false,
+            endpoints: {
+                source: [],
+                target: []
+            }
+        }, component);
+    };
+
+    var normalize_object = function normalize_object(object, normalizer) {
+        for (var key in object) {
+            object[key] = normalizer(object[key]);
+        }
+    };
+
+    var addMissingEndpoint = function addMissingEndpoint(component, endpointGroup, name) {
+        var endpoint, info;
+
+        info = {
+            name: name,
+            friendcode: ''
+        };
+
+        switch (endpointGroup) {
+        case 'inputs':
+            endpoint = new ns.wiring.GhostTargetEndpoint(component, name);
+            component.inputs[name] = endpoint;
+            if (component.meta.missing && !(name in component.meta.inputs)) {
+                component.meta.inputs[name] = info;
+                component.meta.inputList.push(info);
+            }
+            break;
+        case 'outputs':
+            endpoint = new ns.wiring.GhostSourceEndpoint(component, name);
+            component.outputs[name] = endpoint;
+            if (component.meta.missing && !(name in component.meta.outputs)) {
+                component.meta.outputs[name] = info;
+                component.meta.outputList.push(info);
+            }
+            break;
+        }
+
+        return endpoint;
+    };
+
+    var getEndpointOrCreateMissing = function getEndpointOrCreateMissing(component, type, name) {
+        if (name in component[type]) {
+            return component[type][name];
+        } else {
+            return addMissingEndpoint(component, type, name);
+        }
+    };
+
     var getEndpoint = function getEndpoint(operators, widgets, endpointGroup, endpointInfo) {
         var component;
 
@@ -333,22 +376,16 @@
             }));
         }
 
-        if (!(endpointInfo.endpoint in component[endpointGroup])) {
-            if (component instanceof ns.wiring.MissingComponent) {
-                component.addMissingEndpoint(endpointGroup, endpointInfo.endpoint);
-            } else if (endpointGroup === 'inputs') {
-                return new Wirecloud.wiring.GhostTargetEndpoint(component, endpointInfo.endpoint);
-            } else { // if (endpointGroup === 'outputs')
-                return new Wirecloud.wiring.GhostSourceEndpoint(component, endpointInfo.endpoint);
-            }
-        }
-
-        return component[endpointGroup][endpointInfo.endpoint];
+        return getEndpointOrCreateMissing(component, endpointGroup, endpointInfo.endpoint);
     };
 
     var reconnect = function reconnect(component) {
         this.status.connections.forEach(function (connection) {
-            connection.refreshEndpoint(component);
+            if (connection.source.component.is(component)) {
+                connection.updateEndpoint(getEndpointOrCreateMissing(component, 'outputs', connection.source.name));
+            } else if (connection.target.component.is(component)) {
+                connection.updateEndpoint(getEndpointOrCreateMissing(component, 'inputs', connection.target.name));
+            }
         });
         this.logManager.newCycle();
     };
@@ -371,29 +408,6 @@
         this.logManager.newCycle();
 
         this.trigger('unloaded');
-    };
-
-    var operatormeta_uninstall = function operatormeta_uninstall(vendor, name, version) {
-        var id, missing_operator, operator, uri;
-
-        uri = vendor + '/' + name + '/' + version;
-
-        for (id in this.status.operators) {
-            if (this.status.operators[id].meta.uri === uri) {
-                operator = this.status.operators[id];
-                operator.destroy();
-
-                missing_operator = new ns.wiring.MissingOperator(id, this, operator.toJSON(), utils.gettext("Operator %(id)s couldn't be loaded as %(uri)s does not exist."));
-                this.status.operators[id] = missing_operator;
-
-                operator.meta.outputList.forEach(function (endpoint) {
-                    missing_operator.addMissingEndpoint('outputs', endpoint.name);
-                });
-                operator.meta.inputList.forEach(function (endpoint) {
-                    missing_operator.addMissingEndpoint('inputs', endpoint.name);
-                });
-            }
-        }
     };
 
     var getEndpointInfo = function getEndpointInfo(endpointName) {
@@ -460,8 +474,9 @@
         if (widget.id in this.widgets) {
             this.logManager.log(utils.interpolate(utils.gettext("The widget (%(title)s) already exist."), widget));
         } else {
-            widget.on('upgraded', component_onupgraded.bind(this));
-            widget.on('unload', this._component_onunload);
+            widget
+                .on('upgraded', component_onupgraded.bind(this))
+                .on('unload', component_onunload);
             this.widgets[widget.id] = widget;
         }
     };
@@ -475,7 +490,7 @@
 
         if (widget.id in this.widgets) {
             removeComponent.call(this, widget);
-            widget.off('unload', this._component_onunload);
+            widget.off('unload', component_onunload);
             delete this.widgets[widget.id];
         } else {
             this.logManager.log(utils.interpolate(utils.gettext("The widget (%(title)s) to remove does not exist."), widget));

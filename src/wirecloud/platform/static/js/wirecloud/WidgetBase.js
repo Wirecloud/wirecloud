@@ -19,7 +19,7 @@
  *
  */
 
-/* global Tab, StyledElements, Wirecloud */
+/* globals Tab, StyledElements, Wirecloud */
 
 (function (se, utils) {
 
@@ -37,13 +37,18 @@
     };
 
     var build_prefs = function build_prefs(initial_values) {
+        var preference_name, widget_pref_info;
+
         this.preferenceList = [];
         this.preferences = {};
+
+        for (preference_name in initial_values) {
+            widget_pref_info = initial_values[preference_name];
+            this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], widget_pref_info.readonly, widget_pref_info.hidden, widget_pref_info.value);
+        }
+
         this.meta.preferenceList.forEach(function (preference) {
-            var iwidget_pref_info = initial_values[preference.name];
-            if (iwidget_pref_info != null) {
-                this.preferences[preference.name] = new Wirecloud.UserPref(preference, iwidget_pref_info.readonly, iwidget_pref_info.hidden, iwidget_pref_info.value);
-            } else {
+            if (!(preference.name in this.preferences)) {
                 this.preferences[preference.name] = new Wirecloud.UserPref(preference, false, false, preference.default);
             }
 
@@ -55,7 +60,7 @@
      */
     var WidgetBase = function WidgetBase(widget, tab, options) {
 
-        var i, preferences, iwidget_pref_info, properties, iwidget_prop_info, get_meta, set_meta;
+        var i, preferences, iwidget_pref_info, properties, iwidget_prop_info, get_meta, set_meta, upgrade;
 
         if (typeof options !== 'object' || !(widget instanceof Wirecloud.WidgetMeta)) {
             throw new TypeError();
@@ -71,7 +76,7 @@
             };
         }
 
-        var upgrade = function upgrade(new_widget) {
+        upgrade = function upgrade(new_widget) {
             widget = new_widget;
             build_endpoints.call(this);
             build_prefs.call(this, this.preferences);
@@ -107,7 +112,7 @@
                 set: set_meta
             },
             'missing': {get: function () {return this.meta.missing;}},
-            'codeURL': {get: function () {return this.meta.code_url + "#id=" + this.id;}},
+            'codeurl': {get: function () {return this.meta.codeurl + "#id=" + this.id;}},
             'tab': {value: tab},
             'volatile': {value: options.volatile ? true : false},
             'workspace': {get: function () {return tab.workspace;}}

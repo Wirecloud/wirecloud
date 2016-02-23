@@ -119,7 +119,7 @@
             'iframe': function (options, tcomponents, iwidget) {
                 var content = document.createElement("iframe");
                 content.classList.add("widget_object");
-                content.setAttribute("type", iwidget.widget.code_content_type);
+                content.setAttribute("type", iwidget.widget.codecontenttype);
                 content.setAttribute("frameBorder", "0");
                 content.addEventListener("load", iwidget._notifyLoaded.bind(iwidget, content), true);
 
@@ -163,8 +163,8 @@
 
     IWidgetView.prototype.reload = function reload() {
         var prev = this.content.src;
-        this.content.src = this.widget.codeURL;
-        this.content.setAttribute("type", this.widget.meta.code_content_type);
+        this.content.src = this.widget.codeurl;
+        this.content.setAttribute("type", this.widget.meta.codecontenttype);
         if (this.content.src === prev) {
             this.content.contentDocument.location.reload();
         }

@@ -40,17 +40,17 @@
             this.superClass(data);
 
             if (this.missing) {
-                this.code_url = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
-                this.code_content_type = "application/xhtml+xml";
+                this.codeurl = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
+                this.codecontenttype = "application/xhtml+xml";
             } else {
-                this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
+                this.codeurl = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
                     vendor: this.vendor,
                     name: this.name,
                     version: this.version.text
                 });
-                this.code_content_type = data.contents.contenttype;
+                this.codecontenttype = data.contents.contenttype;
             }
-            this.code_url += "?v=" + Wirecloud.contextManager.get('version_hash');
+            this.codeurl += "?v=" + Wirecloud.contextManager.get('version_hash');
 
             // Properties
             this.properties = {}

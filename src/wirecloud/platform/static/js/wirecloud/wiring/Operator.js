@@ -19,7 +19,7 @@
  *
  */
 
-/* global StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -32,27 +32,34 @@
 
     /**
      * Create a new instance of class Operator.
-     * @extends {ObjectWithEvents}
+     *
+     * @extends StyledElements.ObjectWithEvents
+     * @name Wirecloud.wiring.Operator
      *
      * @constructor
-     * @param {Number} id
-     *      [TODO: description]
-     * @param {PlainObject} meta
-     *      [TODO: description]
-     * @param {Wiring} wiringEngine
-     *      [TODO: description]
-     * @param {PlainObject} [businessInfo]
-     *      [TODO: description]
+     * @param {Number} id id of the operator
+     * @param {Wirecloud.wiring.OperatorMeta} meta OperatorMeta used by this operator
+     * @param {Wirecloud.Wiring} wiringEngine Wiring Engine associated with this operator
+     * @param {Object} [businessInfo] operator info from persistence
      */
     ns.Operator = utils.defineClass({
 
         constructor: function Operator(id, meta, wiringEngine, businessInfo) {
-            var preferenceList = [], preferences = {};
+            var upgrade, get_meta, set_meta;
 
-            this.superClass(['load', 'remove', 'unload']);
+            if (!(meta instanceof Wirecloud.wiring.OperatorMeta)) {
+                throw new TypeError('meta must be an instance of Wirecloud.wiring.OperatorMeta');
+            }
+
+            if (!(wiringEngine instanceof Wirecloud.Wiring)) {
+                throw new TypeError('wiringEngine must be an instance of Wirecloud.Wiring');
+            }
+
+            this.superClass(['load', 'remove', 'unload', 'upgraded']);
 
             businessInfo = utils.merge(ns.Operator.JSON_TEMPLATE, businessInfo);
 
+            this.loading = false;
             this.loaded = false;
             this.pending_events = [];
 
@@ -62,42 +69,51 @@
                 'rename': true
             }, businessInfo.permissions);
 
-            meta.preferenceList.forEach(function (option) {
-                var hidden = false, readonly = false, value;
+            upgrade = function upgrade(new_meta) {
+                meta = new_meta;
+                build_endpoints.call(this);
+                build_prefs.call(this, this.preferences);
+                this.trigger('upgraded', new_meta);
+                if (this.loaded) {
+                    this.loading = true;
+                    this.wrapperElement.src = this.meta.codeurl + "#id=" + this.id;
+                }
+            };
 
-                if (option.name in businessInfo.preferences) {
-                    hidden = businessInfo.preferences[option.name].hidden;
-                    readonly = businessInfo.preferences[option.name].readonly;
-                    value = businessInfo.preferences[option.name].value;
-                } else {
-                    value = option.default;
+            get_meta = function get_meta() {return meta;};
+            set_meta = function set_meta(new_meta) {
+                if (!(new_meta instanceof Wirecloud.wiring.OperatorMeta)) {
+                    throw new TypeError();
                 }
 
-                preferences[option.name] = new Wirecloud.UserPref(option, readonly, hidden, value);
-                preferenceList.push(preferences[option.name]);
-            }, this);
+                if (meta.uri !== new_meta.uri) {
+                    this.persist.call(this,
+                        {operator: new_meta.id},
+                        upgrade.bind(this, new_meta),
+                        function (error) {
+                            this.events.upgradeerror.dispatch(error);
+                        }.bind(this)
+                    );
+                } else if (meta !== new_meta) {
+                    upgrade.call(this, new_meta);
+                }
+            };
 
             Object.defineProperties(this, {
                 id: {value: id},
                 logManager: {value: new Wirecloud.wiring.OperatorLogManager(this, wiringEngine)},
-                meta: {value: meta},
-                missing: {value: false},
-                preferenceList: {value: Object.freeze(preferenceList)},
-                preferences: {value: Object.freeze(preferences)},
-                title: {value: meta.title}, // TODO: businessInfo.title ? businessInfo.title : meta.title
+                meta: {
+                    get: get_meta,
+                    set: set_meta
+                },
+                missing: {get: function () {return this.meta.missing;}},
+                title: {get: function () {return this.meta.title}},
                 volatile: {value: businessInfo.volatile},
-                wiring: {value: wiringEngine} // TODO: remove this property.
+                wiring: {value: wiringEngine}
             });
 
-            this.inputs = {};
-            meta.inputList.forEach(function (endpoint) {
-                this.inputs[endpoint.name] = new Wirecloud.wiring.OperatorTargetEndpoint(this, endpoint);
-            }, this);
-
-            this.outputs = {};
-            meta.outputList.forEach(function (endpoint) {
-                this.outputs[endpoint.name] = new Wirecloud.wiring.OperatorSourceEndpoint(this, endpoint);
-            }, this);
+            build_endpoints.call(this);
+            build_prefs.call(this, businessInfo.preferences);
         },
 
         inherit: se.ObjectWithEvents,
@@ -114,6 +130,10 @@
         },
 
         members: {
+
+            persist: function persist(changes, onSuccess, onFailure) {
+                onSuccess();
+            },
 
             /**
              * [TODO: destroy description]
@@ -181,32 +201,24 @@
             /**
              * [TODO: load description]
              *
-             * @returns {Operator}
+             * @returns {Wirecloud.wiring.Operator}
              *      The instance on which the member is called.
              */
             load: function load() {
-                var operatorURL;
 
                 if (this.loaded || this.loading) {
                     return this;
                 }
-
-                operatorURL = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({
-                    vendor: this.meta.vendor,
-                    name: this.meta.name,
-                    version: this.meta.version.text
-                });
 
                 this.loading = true;
 
                 this.wrapperElement = document.createElement('iframe');
                 this.wrapperElement.className = "ioperator";
 
-                this.wrapperElement.setAttribute('type', "text/html");
-                this.wrapperElement.setAttribute('src', operatorURL + "#id=" + this.id);
+                this.wrapperElement.setAttribute('type', "application/xhtml+xml");
+                this.wrapperElement.setAttribute('src', this.meta.codeurl + "#id=" + this.id);
 
                 this.wrapperElement.addEventListener('load', operator_onload.bind(this), true);
-                this.wrapperElement.addEventListener('unload', operator_onunload.bind(this), true);
 
                 document.getElementById('workspace').appendChild(this.wrapperElement);
 
@@ -217,7 +229,7 @@
              * [TODO: registerPrefCallback description]
              *
              * @param {[type]} prefCallback [description]
-             * @returns {Operator}
+             * @returns {Wirecloud.wiring.Operator}
              *      The instance on which the member is called.
              */
             registerPrefCallback: function registerPrefCallback(prefCallback) {
@@ -230,7 +242,7 @@
             /**
              * [TODO: remove description]
              *
-             * @returns {Operator}
+             * @returns {Wirecloud.wiring.Operator}
              *      The instance on which the member is called.
              */
             remove: function remove() {
@@ -243,7 +255,7 @@
             /**
              * [TODO: showLogs description]
              *
-             * @returns {Operator}
+             * @returns {Wirecloud.wiring.Operator}
              *      The instance on which the member is called.
              */
             showLogs: function showLogs() {
@@ -257,7 +269,7 @@
             /**
              * [TODO: showSettings description]
              *
-             * @returns {Operator}
+             * @returns {Wirecloud.wiring.Operator}
              *      The instance on which the member is called.
              */
             showSettings: function showSettings() {
@@ -270,8 +282,7 @@
             /**
              * [TODO: toJSON description]
              *
-             * @returns {PlainObject}
-             *      [TODO: description]
+             * @returns {Object}
              */
             toJSON: function toJSON() {
                 var name, preferences = {};
@@ -298,15 +309,48 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
+    var build_endpoints = function build_endpoints() {
+        this.inputs = {};
+        this.meta.inputList.forEach(function (endpoint) {
+            this.inputs[endpoint.name] = new Wirecloud.wiring.OperatorTargetEndpoint(this, endpoint);
+        }, this);
+        this.outputs = {};
+        this.meta.outputList.forEach(function (endpoint) {
+            this.outputs[endpoint.name] = new Wirecloud.wiring.OperatorSourceEndpoint(this, endpoint);
+        }, this);
+    };
+
+    var build_prefs = function build_prefs(initial_values) {
+        var preference_name, operator_pref_info;
+
+        this.preferenceList = [];
+        this.preferences = {};
+
+        for (preference_name in initial_values) {
+            operator_pref_info = initial_values[preference_name];
+            this.preferences[preference_name] = new Wirecloud.UserPref(this.meta.preferences[preference_name], operator_pref_info.readonly, operator_pref_info.hidden, operator_pref_info.value);
+        }
+
+        this.meta.preferenceList.forEach(function (preference) {
+            if (!(preference.name in this.preferences)) {
+                this.preferences[preference.name] = new Wirecloud.UserPref(preference, false, false, preference.default);
+            }
+
+            this.preferenceList.push(this.preferences[preference.name]);
+        }, this);
+    };
+
     var send_pending_event = function (pendingEvent) {
         this.inputs[pendingEvent.endpoint].propagate(pendingEvent.value);
     };
 
     var operator_onload = function operator_onload() {
 
-        delete this.loading;
-
+        this.loading = false;
         this.loaded = true;
+
+        this.wrapperElement.contentDocument.defaultView.addEventListener('unload', operator_onunload.bind(this), true);
+
         this.pending_events.forEach(send_pending_event, this);
         this.pending_events = [];
 
