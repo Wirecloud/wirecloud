@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,6 +23,7 @@ from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+import six
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
@@ -42,27 +43,52 @@ class WiringEntry(Resource):
         if not request.user.is_superuser and workspace.creator != request.user:
             return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
-        wiring_status = parse_json_request(request)
-
+        new_wiring_status = parse_json_request(request)
         old_wiring_status = workspace.wiringStatus
-        old_read_only_connections = []
-        for connection in old_wiring_status['connections']:
-            if connection.get('readonly', False):
-                old_read_only_connections.append(connection)
 
-        read_only_connections = []
-        for connection in wiring_status['connections']:
-            if connection.get('readonly', False):
-                read_only_connections.append(connection)
+        # Check read only connections
+        old_read_only_connections = [connection for connection in old_wiring_status['connections'] if connection.get('readonly', False)]
+        new_read_only_connections = [connection for connection in new_wiring_status['connections'] if connection.get('readonly', False)]
 
-        if len(old_read_only_connections) > len(read_only_connections):
-            return build_error_response(request, 403, _('You are not allowed to remove read only connections'))
+        if len(old_read_only_connections) > len(new_read_only_connections):
+            return build_error_response(request, 403, _('You are not allowed to remove or update read only connections'))
 
         for connection in old_read_only_connections:
-            if connection not in read_only_connections:
-                return build_error_response(request, 403, _('You are not allowed to remove read only connections'))
+            if connection not in new_read_only_connections:
+                return build_error_response(request, 403, _('You are not allowed to remove or update read only connections'))
 
-        workspace.wiringStatus = wiring_status
+        # Check operator preferences
+        for operator_id, operator in six.iteritems(new_wiring_status['operators']):
+            if operator_id in old_wiring_status['operators']:
+                old_operator = old_wiring_status['operators'][operator_id]
+                added_preferences = set(operator['preferences'].keys()) - set(old_operator['preferences'].keys())
+                removed_preferences = set(old_operator['preferences'].keys()) - set(operator['preferences'].keys())
+                updated_preferences = set(operator['preferences'].keys()).intersection(old_operator['preferences'].keys())
+            else:
+                # New operator
+                added_preferences = operator['preferences'].keys()
+                removed_preferences = ()
+                updated_preferences = ()
+
+            for preference_name in added_preferences:
+                if operator['preferences'][preference_name].get('readonly', False) or operator['preferences'][preference_name].get('hidden', False):
+                    return build_error_response(request, 403, _('Read only and hidden preferences cannot be created using this API'))
+
+            for preference_name in removed_preferences:
+                if old_operator['preferences'][preference_name].get('readonly', False) or old_operator['preferences'][preference_name].get('hidden', False):
+                    return build_error_response(request, 403, _('Read only and hidden preferences cannot be removed'))
+
+            for preference_name in updated_preferences:
+                old_preference = old_operator['preferences'][preference_name]
+                new_preference = operator['preferences'][preference_name]
+
+                if old_preference.get('readonly', False) != new_preference.get('readonly', False) or old_preference.get('hidden', False) != new_preference.get('hidden', False):
+                    return build_error_response(request, 403, _('Read only and hidden status cannot be changed using this API'))
+
+                if new_preference.get('readonly', False) and new_preference.get('value') != old_preference.get('value'):
+                    return build_error_response(request, 403, _('Read only preferences cannot be updated'))
+
+        workspace.wiringStatus = new_wiring_status
         workspace.save()
 
         return HttpResponse(status=204)
