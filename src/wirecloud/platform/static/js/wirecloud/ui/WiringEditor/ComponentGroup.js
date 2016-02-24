@@ -64,11 +64,7 @@
             this.currentVersion = null;
             this.latestVersion = null;
 
-            if (options.canCreate) {
-                this.meta.btnAdd.on('click', btncreate_onclick.bind(this));
-            } else {
-                this.meta.btnAdd.remove();
-            }
+            this.meta.btnAdd.on('click', btncreate_onclick.bind(this));
 
             Object.defineProperties(this, {
                 id: {value: meta.group_id},
@@ -147,11 +143,14 @@
     var defaults = {
         createWiringComponent: null,
         getComponentDraggable: null,
-        canCreate: false
     };
 
     var btncreate_onclick = function btncreate_onclick() {
-        this.appendWiringComponent(this.createWiringComponent(this.currentVersion));
+        this.createWiringComponent(this.currentVersion, {
+            onSuccess: function (wiringComponent) {
+                this.appendWiringComponent(wiringComponent);
+            }.bind(this)
+        });
     };
 
     var component_ondragstart = function component_ondragstart(draggable, context, event) {

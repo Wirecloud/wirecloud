@@ -266,8 +266,8 @@ Wirecloud.ui = Wirecloud.ui || {};
             getComponentDraggable: function (component) {
                 return this.createComponent(component, {commit: false});
             }.bind(this),
-            createWiringComponent: function (meta) {
-                return meta.instantiate(this.workspace.wiring.autoOperatorId++, this.workspace.wiring);
+            createWiringComponent: function (meta, options) {
+                this.workspace.wiring.createComponent(meta, options);
             }.bind(this)
         });
 
