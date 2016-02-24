@@ -23,6 +23,10 @@
             white-space: nowrap;
         }
 
+        .panel-body {
+            @include user-select(none);
+        }
+
         .component-version-list {
             margin: 0 0 5px;
         }
