@@ -114,6 +114,8 @@
 
             build_endpoints.call(this);
             build_prefs.call(this, businessInfo.preferences);
+
+            this.logManager.log(utils.gettext("The operator was created successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
         },
 
         inherit: se.ObjectWithEvents,

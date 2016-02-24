@@ -21,7 +21,7 @@
 
 /*global gettext, interpolate, Tab, StyledElements, Wirecloud*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -106,6 +106,7 @@
         };
 
         Wirecloud.WidgetBase.call(this, widget, tab, options);
+        this.logManager.log(utils.gettext("The widget was created successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
     };
     Wirecloud.Utils.inherit(Widget, Wirecloud.WidgetBase);
 
@@ -196,4 +197,4 @@
 
     Wirecloud.Widget = Widget;
 
-})();
+})(StyledElements.Utils);
