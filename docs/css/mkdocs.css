@@ -14,22 +14,7 @@
 
 /* Content */
 
-@font-face {
-  font-family: 'NeoTech';
-  font-style: normal;
-  font-weight: normal;
-  src: local("Neo Tech"), local("NeoTech"),
-       url("neotech-regular-webfont.eot?#iefix") format("embedded-opentype"),
-       url("neotech-regular-webfont.woff") format("woff"),
-       url("neotech-regular-webfont.ttf") format("truetype");
-}
-
-.section {
-    font-family: Verdana;
-}
-
 h1, h2, h3, h4, h5, h6 {
-    font-family: NeoTech;
     margin: 12px 0;
     line-height: 24px;
     text-rendering: optimizelegibility;
@@ -47,16 +32,8 @@ h1, h2, h3 {
     font-size: 22px;
 }
 
-.rst-content h3 {
+.rst-content h4 {
     font-size: 18px;
-}
-
-.section a:visited {
-    color: rgb(41, 128, 185);
-}
-
-.section a:hover {
-    text-decoration: underline;
 }
 
 .rst-content .section img {
