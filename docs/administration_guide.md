@@ -135,13 +135,22 @@ You can restore the backup using the following command:
 ## Upgrading from previous versions
 
 1. Install the new version of WireCloud
-2. Migrate the database, collect the new static files and create the compressed
-versions of the JavaScript and CSS files by running the following commands:
+2. Migrate the database and collect the new static files by running the
+following commands:
 
         $ python manage.py migrate
         $ python manage.py collectstatic --noinput
 
 3. Reload WireCloud (e.g. `$ service apache2 graceful`)
+
+You can determine your currently installed version using
+`wirecloud-admin --version`:
+
+```
+$ wirecloud-admin --version
+0.9.0
+
+```
 
 > **NOTE:** It is strongly recommended to perform a full database backup before
 > starting to migrate WireCloud to a new version.
