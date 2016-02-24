@@ -971,7 +971,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         old_wiring_status = workspace.wiringStatus
 
         data = json.dumps({
-            'operators': [{'name': 'Operator1'}],
+            'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}},
             'connections': [],
         })
         response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
@@ -999,7 +999,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
         data = {
-            'operators': {'0': {'name': 'Operator1'}},
+            'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}},
             'connections': [],
         }
         check_put_requires_permission(self, url, json.dumps(data))
@@ -1008,7 +1008,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
         new_wiring_status = {
-            'operators': {'0': {'name': 'Operator1'}},
+            'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}},
             'connections': [],
         }
 
@@ -1034,7 +1034,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.client.login(username='user_with_workspaces', password='admin')
 
         data = {
-            'operators': {'0': {'name': 'Operator1'}},
+            'operators': {'0': {'name': 'Wirecloud/TestOperator/1.0', 'preferences': {}}},
             'connections': [],
         }
         check_not_found_response(self, 'put', url, json.dumps(data))
