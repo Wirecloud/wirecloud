@@ -468,8 +468,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         // ...completed.
 
         // Loading the operators uploaded in this account...
-        var operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
-        loadOperators.call(this, operators, wiringEngine.operators, visualStatus);
+        loadOperators.call(this, wiringEngine.operators, visualStatus.components.operator);
         // ...completed.
 
         // Loading the connections established in the workspace...
@@ -547,41 +546,44 @@ Wirecloud.ui = Wirecloud.ui || {};
         return this;
     };
 
-    var loadOperators = function loadOperators(operators, operatorsInUse, vInfo) {
+    var loadOperators = function loadOperators(wiringOperators, visualOperators) {
         /*jshint validthis:true */
+        var metaOperators = Wirecloud.LocalCatalogue.getAvailableResourcesByType('operator');
+        var id, operator;
 
-        Object.keys(operators).forEach(function (uri) {
-            this.componentManager.addMeta(operators[uri]);
-        }, this);
+        for (id in metaOperators) {
+            this.componentManager.addMeta(metaOperators[id]);
+        }
 
-        Object.keys(operatorsInUse).forEach(function (id) {
+        for (id in wiringOperators) {
+            operator = wiringOperators[id];
 
-            if (!operatorsInUse[id].missing) {
-                this.componentManager.addWiringComponent(operatorsInUse[id]);
+            if (!operator.missing) {
+                this.componentManager.addWiringComponent(operator);
             }
 
-            if (!operatorsInUse[id].volatile) {
-                this.createComponent(operatorsInUse[id], vInfo.components.operator[id]);
+            if (!operator.volatile) {
+                this.createComponent(operator, visualOperators[operator.id]);
             }
-        }, this);
-
-        // TODO: for id vInfo.components.operator && operatorInfo.name != ""
+        }
 
         return this;
     };
 
     var loadWidgets = function loadWidgets(wiringWidgets, visualWidgets) {
         /*jshint validthis:true */
+        var metaWidgets = Wirecloud.LocalCatalogue.getAvailableResourcesByType('widget');
+        var id, widget;
 
-        var id, message, widget;
+        for (id in metaWidgets) {
+            this.componentManager.addMeta(metaWidgets[id]);
+        }
 
         for (id in wiringWidgets) {
             widget = wiringWidgets[id];
 
             if (!widget.missing) {
-                this.componentManager
-                    .addMeta(widget.meta)
-                    .addWiringComponent(widget);
+                this.componentManager.addWiringComponent(widget);
             }
 
             if (widget.id in visualWidgets) {
