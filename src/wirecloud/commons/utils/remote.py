@@ -1231,15 +1231,17 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
     def wait_wirecloud_ready(self, start_timeout=10, timeout=10):
 
-        loading_window = self.wait_element_visible_by_css_selector('#loading-window', timeout=2)
+        loading_window = None
 
         def wait_loading_window(driver):
+            loading_window = driver.find_element_by_css_selector('#loading-window')
             return loading_window.get_attribute('class').strip() in ('', 'fadding')
 
         def wait_loading_window_hidden(driver):
             return loading_window.get_attribute('class').strip() in ('fadding', 'disabled')
 
         WebDriverWait(self.driver, start_timeout).until(wait_loading_window)
+        loading_window = self.driver.find_element_by_css_selector('#loading-window')
         WebDriverWait(self.driver, timeout).until(wait_loading_window_hidden)
 
         loading_message = loading_window.find_element_by_id('loading-message')
