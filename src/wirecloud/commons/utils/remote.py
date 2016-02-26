@@ -594,12 +594,20 @@ class WiringComponentItemTester(object):
         return self.element.find_element_by_css_selector(".label").text == "in use"
 
     @property
+    def type(self):
+        return 'widget' if "component-widget" in self.class_list else 'operator'
+
+    @property
     def title(self):
         return self.element.find_element_by_css_selector('.panel-heading .panel-title').text
 
     @property
     def volatile(self):
         return self.element.find_element_by_css_selector(".label").text == "volatile"
+
+    @property
+    def class_list(self):
+        return self.element.get_attribute('class').split()
 
     def rename(self, title):
         modal = self.show_modal_rename()
@@ -651,7 +659,7 @@ class WiringComponentGroupTester(object):
         button = ButtonTester(self.testcase, self.element.find_element_by_css_selector(".component-version-list .btn-create"))
         button.click()
 
-        return self
+        return self.components[-1]
 
 
 class WiringComponentTester(object):
@@ -1947,20 +1955,21 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         return None
 
     def add_component(self, component_type, component_title, x=0, y=0):
+        return self._add_component(self.find_component_by_title(component_type, component_title), x, y)
 
-        component = self.find_component_by_title(component_type, component_title)
+    def _add_component(self, component, x=0, y=0):
         self.testcase.assertIsNotNone(component)
 
         # Drag and drop the component
         x, y = (x + 50, y + 30,)
-        old_components = len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type))
+        old_components = len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component.type))
         ActionChains(self.testcase.driver).click_and_hold(component.element).perform()
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.section_diagram))
         ActionChains(self.testcase.driver).move_to_element_with_offset(self.section_diagram, x, y).release().perform()
 
         # Wait until the component is added to the diagram
-        WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component_type)))
-        new_component = self._find_component_by_title(component_type, component_title)
+        WebDriverWait(self.testcase.driver, 5).until(lambda driver: old_components + 1 == len(self.section_diagram.find_elements_by_css_selector(".component-%s[data-id]" % component.type)))
+        new_component = self._find_component_by_title(component.type, component.title)
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.panel))
 
         return new_component
@@ -1972,6 +1981,10 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         group.createComponent()
 
         return self
+
+    def create_and_add_component(self, component_type, component_id, x=0, y=0):
+        group = self.find_component_group_by_id(component_type, component_id)
+        return self._add_component(group.createComponent(), x, y)
 
     def display_component_group(self, component_type):
         button = getattr(self, "btn_show_%s_group" % component_type)

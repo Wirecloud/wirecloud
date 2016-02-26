@@ -979,6 +979,19 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(len(alerts), count)
         dialog.accept()
 
+    def test_create_and_add_available_widget(self):
+        self.login(username='user_with_workspaces', next="user_with_workspaces/ExistingWorkspace")
+
+        self.assertEqual(len(self.get_current_iwidgets()), 0)
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                sidebar.create_and_add_component('widget', "Wirecloud/Test")
+
+        iwidgets = self.get_current_iwidgets()
+        self.assertEqual(len(iwidgets), 1)
+        self.assertEqual(iwidgets[0].name, "Test")
+
 
 @wirecloud_selenium_test_case
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):

@@ -294,9 +294,14 @@
                     iwidget = new IWidget(widget, layout, iwidgetinfo);
                     this.addIWidget(iwidget, options);
                     iwidget.paint();
+
+                    Wirecloud.Utils.callCallback(options.onSuccess, iwidget.internal_iwidget);
                 }.bind(this),
                 onFailure: function (response) {
-                    Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding iwidget to persistence: %(errorMsg)s."), response);
+                    var message = gettext("Error adding iwidget to persistence: %(errorMsg)s.");
+                    message = Wirecloud.GlobalLogManager.formatAndLog(message, response);
+
+                    Wirecloud.Utils.callCallback(options.onFailure, message);
                 }
             });
         };

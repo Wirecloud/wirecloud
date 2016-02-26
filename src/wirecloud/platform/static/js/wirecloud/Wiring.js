@@ -62,6 +62,8 @@
                 workspace: {value: workspace}
             });
 
+            this.autoOperatorId = 1;
+
             this._widget_onadded = widget_onadded.bind(this);
             this._widget_onremoved = widget_onremoved.bind(this);
 
@@ -124,6 +126,27 @@
                 return operator;
             },
 
+            /**
+             * Create a new instance of the given componentMeta.
+             *
+             * @param {(Wirecloud.wiring.OperatorMeta|Wirecloud.WidgetMeta)} componentMeta A valid component meta.
+             * @param {?Function} [next] A callback that receives the component created.
+             * @return {Wirecloud.Wiring} The instance on which this method is called.
+             */
+            createComponent: function createComponent(componentMeta, options) {
+                var newComponent;
+
+                if (componentMeta.type === 'operator') {
+                    newComponent = componentMeta.instantiate(this.autoOperatorId++, this);
+
+                    utils.callCallback(options.onSuccess, newComponent);
+                } else { // componentMeta.type === 'widget'
+                    componentMeta.instantiate(options);
+                }
+
+                return this;
+            },
+
             createConnection: function createConnection(readonly, source, target) {
                 return new ns.wiring.Connection(readonly, source, target, this);
             },
@@ -153,8 +176,14 @@
 
                 this.trigger('load');
 
+                this.autoOperatorId = 1;
+
                 for (id in status.operators) {
                     operator = status.operators[id];
+
+                    if (parseInt(id, 10) >= this.autoOperatorId) {
+                        this.autoOperatorId = parseInt(id, 10) + 1;
+                    }
 
                     if (id in old_operators) {
                         delete old_operators[id];
