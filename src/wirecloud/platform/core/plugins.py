@@ -524,6 +524,12 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         elif view == 'smartphone':
             return common + (
+                'iphone/interface/LayoutManager.js',
+                'iphone/common/utils.js',
+                'iphone/common/MobileScrollManager.js',
+                'iphone/opManager/OpManager.js',
+                'iphone/dragboard/iGadget.js',
+                'iphone/dragboard/dragboard.js',
                 'iphone/interface/NavigationHeader.js',
                 'iphone/interface/MobileDragboard.js',
                 'iphone/opManager/Workspace.js',

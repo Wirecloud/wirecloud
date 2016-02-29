@@ -57,7 +57,6 @@
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>
 {% compress js %}
     {% wirecloud_bootstrap "smartphone" %}
-    {% include "wirecloud/views/js_smartphone_includes.js" %}
     {% extra_javascripts "smartphone" %}
 {% endcompress %}
 <!-- <script src="http://perseo.ls.fi.upm.es:8484/target/target-script-min.js"></script> -->
