@@ -31,14 +31,14 @@ register = template.Library()
 def extra_javascripts(context, view):
     files = get_extra_javascripts(view)
 
-    return {'files': files, 'STATIC_URL': context['STATIC_URL']}
+    return {'files': files}
 
 
 @register.inclusion_tag('wirecloud/css_includes.html', takes_context=True)
 def platform_css(context, view):
     files = [{'path': filename, 'type': 'text/css' if filename.endswith('.css') else 'text/x-scss'} for filename in get_platform_css(view)]
 
-    return {'files': files, 'STATIC_URL': context['STATIC_URL']}
+    return {'files': files}
 
 
 @register.inclusion_tag('wirecloud/bootstrap.html', takes_context=True)
@@ -63,7 +63,6 @@ def wirecloud_bootstrap(context, view):
     return {
         'script': mark_safe(script),
         'constants': constants,
-        'STATIC_URL': context['STATIC_URL']
     }
 
 
