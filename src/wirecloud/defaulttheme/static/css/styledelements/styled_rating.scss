@@ -1,5 +1,12 @@
 @import 'variables';
 
+.rating {
+    display: inline-block;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+}
+
 .rating > .star {
     margin: 2px;
     display: inline-block;

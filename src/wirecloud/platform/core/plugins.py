@@ -52,6 +52,7 @@ CATALOGUE_CSS = (
     'css/catalogue/emptyCatalogueBox.css',
     'css/catalogue/resource.scss',
     'css/catalogue/resource_details.scss',
+    'css/catalogue/search_interface.scss',
     'css/catalogue/upload_window_menu.scss',
 )
 
