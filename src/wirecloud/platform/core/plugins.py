@@ -158,6 +158,12 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Typeahead.js',
 )
 
+PLATFORM_CORE_CSS = (
+    'css/wirecloud_core.scss',
+    'css/icons.css',
+    'css/font-awesome.css',
+)
+
 BASE_CSS = (
     'css/base/utils.scss',
     'css/base/body.scss',
@@ -606,7 +612,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         return endpoints
 
     def get_platform_css(self, view):
-        common = BASE_CSS + STYLED_ELEMENTS_CSS
+        common = PLATFORM_CORE_CSS + BASE_CSS + STYLED_ELEMENTS_CSS
 
         if view == 'classic':
             return common + WORKSPACE_CSS + CLASSIC_CORE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS + TUTORIAL_CSS

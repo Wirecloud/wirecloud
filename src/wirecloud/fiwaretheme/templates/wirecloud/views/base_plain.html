@@ -13,8 +13,7 @@
 
     {% block basecss %}
         {% compress css %}
-        <link rel="stylesheet" type="text/x-scss" href="{% static "css/wirecloud_core.scss" %}" />
-        <link rel="stylesheet" type="text/css" href="{% static "css/static_pages.css" %}" />
+        {% platform_css VIEW_MODE %}
         {% endcompress %}
     {% endblock %}
 
