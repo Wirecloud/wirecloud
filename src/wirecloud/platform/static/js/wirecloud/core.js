@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, StyledElements, Wirecloud, Workspace*/
+/* globals gettext, LayoutManagerFactory, StyledElements, Wirecloud, Workspace */
 /*jshint -W002 */
 
 (function () {
@@ -34,7 +34,9 @@
 
     Object.defineProperty(Wirecloud, 'events', {
         value: {
-            'activeworkspacechanged': new StyledElements.Event()
+            'contextloaded': new StyledElements.Event(Wirecloud),
+            'loaded': new StyledElements.Event(Wirecloud),
+            'activeworkspacechanged': new StyledElements.Event(Wirecloud)
         }
     });
     Object.freeze(Wirecloud.events);
@@ -180,6 +182,7 @@
         // Init platform context
         Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
             method: 'GET',
+            parameters: {theme: Wirecloud.constants.CURRENT_THEME},
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: function (response) {
                 var url;
@@ -187,7 +190,7 @@
                 options.monitor.nextSubtask(gettext('Processing initial context data'));
                 Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, JSON.parse(response.responseText));
                 Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
-                LayoutManagerFactory.getInstance().header._initUserMenu();
+                Wirecloud.events.contextloaded.trigger();
 
                 // Init theme
                 url =  Wirecloud.URLs.THEME_ENTRY.evaluate({name: Wirecloud.contextManager.get('theme')}) + "?v=" + Wirecloud.contextManager.get('version_hash');

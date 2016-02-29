@@ -28,6 +28,7 @@ from django.utils.translation import get_language, ugettext_lazy as _
 
 import wirecloud.platform
 from wirecloud.platform.core.catalogue_manager import WirecloudCatalogueManager
+from wirecloud.platform.themes import get_active_theme_name
 from wirecloud.platform.plugins import build_url_template, get_active_features_info, WirecloudPlugin
 
 
@@ -161,17 +162,17 @@ STYLED_ELEMENTS_FILES = (
 PLATFORM_CORE_CSS = (
     'css/wirecloud_core.scss',
     'css/icons.css',
-    'css/font-awesome.css',
+    'css/window_menu.scss',
+    'css/windowmenues/logwindowmenu.scss',
 )
 
 BASE_CSS = (
+    'css/font-awesome.css',
     'css/base/utils.scss',
     'css/base/body.scss',
     'css/base/fade.css',
     'css/base/code.scss',
     'css/base/z-depth.scss',
-    'css/window_menu.scss',
-    'css/windowmenues/logwindowmenu.scss',
     'css/workspace/ioperator.css',
 )
 
@@ -305,7 +306,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
             'mode': 'unknown',
-            'theme': settings.THEME_ACTIVE,
+            'theme': get_active_theme_name(),
             'version': wirecloud.platform.__version__,
             'version_hash': get_version_hash(),
         }
@@ -618,12 +619,12 @@ class WirecloudCorePlugin(WirecloudPlugin):
         return endpoints
 
     def get_platform_css(self, view):
-        common = PLATFORM_CORE_CSS + BASE_CSS + STYLED_ELEMENTS_CSS
+        common = BASE_CSS + STYLED_ELEMENTS_CSS
 
         if view == 'classic':
-            return common + WORKSPACE_CSS + CLASSIC_CORE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS + TUTORIAL_CSS
+            return common + PLATFORM_CORE_CSS + WORKSPACE_CSS + CLASSIC_CORE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS + TUTORIAL_CSS
         elif view == 'embedded':
-            return common + WORKSPACE_CSS
+            return common + PLATFORM_CORE_CSS + WORKSPACE_CSS
         elif view == 'smartphone':
             return common + ('css/iphone.css',)
         else:

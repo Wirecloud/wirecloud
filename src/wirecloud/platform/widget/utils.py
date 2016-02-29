@@ -109,36 +109,31 @@ def xpath(tree, query, xmlns):
         return tree.xpath(query, namespaces={'xhtml': xmlns})
 
 
-_widget_platform_style = None
-def get_widget_platform_style():
+_widget_platform_style = {}
+def get_widget_platform_style(theme):
     global _widget_platform_style
 
-    if _widget_platform_style is None or settings.DEBUG is True:
+    if theme not in _widget_platform_style or settings.DEBUG is True:
         from wirecloud.platform.core.plugins import BASE_CSS, STYLED_ELEMENTS_CSS
-        code = '{% load compress %}{% compress css %}\n'
-        code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/gadget.scss" context="widget" type="text/x-scss" />\n'
-        code += '<link rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" context="widget" type="text/css" />\n'
+        code = '{% load compress %}{% compress css %}{% load static from staticfiles %}\n'
 
-        for cssfile in BASE_CSS:
+        for cssfile in ('css/gadget.scss',) + BASE_CSS + STYLED_ELEMENTS_CSS:
             css_type = 'text/x-scss' if cssfile.endswith('.scss') else 'text/css'
-            code += '    <link rel="stylesheet" href="{{ STATIC_URL }}%s" context="widget" type="%s" />\n' % (cssfile, css_type)
+            code += '    <link rel="stylesheet" href="{{% static "theme/{}/{}" %}}" context="widget" type="{}" />\n'.format(theme, cssfile, css_type)
 
-        for cssfile in STYLED_ELEMENTS_CSS:
-            css_type = 'text/x-scss' if cssfile.endswith('.scss') else 'text/css'
-            code += '    <link rel="stylesheet" href="{{ STATIC_URL }}%s" context="widget" type="%s" />\n' % (cssfile, css_type)
         code+= '{% endcompress %}'
 
-        result = Template(code).render(Context({'STATIC_URL': settings.STATIC_URL}))
+        result = Template(code).render(Context({}))
         doc = etree.parse(BytesIO(('<files>' + result + '</files>').encode('utf-8')), etree.XMLParser())
 
         files = [link.get('href') for link in doc.getroot()]
         files.reverse()
-        _widget_platform_style = tuple(files)
+        _widget_platform_style[theme] = tuple(files)
 
-    return _widget_platform_style
+    return _widget_platform_style[theme]
 
 
-def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_platform_style, requirements, force_base, mode):
+def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_platform_style, requirements, force_base, mode, theme):
 
     # This line is here for raising UnicodeDecodeError in case the widget_code is not encoded using the expecified encoding
     widget_code.decode(encoding)
@@ -199,7 +194,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
     head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPIBootstrap.js', request=request, versioned=True)))
 
     if use_platform_style:
-        for file in get_widget_platform_style():
+        for file in get_widget_platform_style(theme):
             head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=file))
 
     # return modified code

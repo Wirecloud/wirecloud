@@ -39,6 +39,7 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.http import build_response, build_downloadfile_response, get_absolute_reverse_url, get_current_domain
+from wirecloud.platform.themes import get_active_theme_name
 import wirecloud.platform.widget.utils as showcase_utils
 from wirecloud.platform.widget.utils import WIDGET_ERROR_FORMATTERS, fix_widget_code, get_widget_platform_style
 
@@ -61,12 +62,13 @@ class WidgetCodeEntry(Resource):
             raise Http404()
 
         mode = request.GET.get('mode', 'classic')
+        theme = request.GET.get('theme', get_active_theme_name())
         widget_info = json.loads(resource.json_description)
 
         # check if the xhtml code has been cached
         if widget_info['contents']['cacheable'] is True:
 
-            cache_key = resource.widget.xhtml.get_cache_key(get_current_domain(request), mode)
+            cache_key = resource.widget.xhtml.get_cache_key(get_current_domain(request), mode, theme)
             cache_entry = cache.get(cache_key)
             if cache_entry is not None:
                 response = HttpResponse(cache_entry['code'], content_type=cache_entry['content_type'])
@@ -116,7 +118,7 @@ class WidgetCodeEntry(Resource):
             xhtml.save()
 
         try:
-            code = fix_widget_code(code, base_url, content_type, request, charset, xhtml.use_platform_style, process_requirements(widget_info['requirements']), force_base, mode)
+            code = fix_widget_code(code, base_url, content_type, request, charset, xhtml.use_platform_style, process_requirements(widget_info['requirements']), force_base, mode, theme)
         except UnicodeDecodeError:
             msg = _('Widget code was not encoded using the specified charset (%(charset)s as stated in the widget description file).') % {'charset': charset}
             return build_response(request, 502, {'error_msg': msg}, WIDGET_ERROR_FORMATTERS)
@@ -166,5 +168,6 @@ class MissingWidgetCodeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(MissingWidgetCodeView, self).get_context_data(**kwargs)
-        context['style'] = get_widget_platform_style()
+        theme = self.request.GET.get('theme', get_active_theme_name())
+        context['style'] = get_widget_platform_style(theme)
         return context

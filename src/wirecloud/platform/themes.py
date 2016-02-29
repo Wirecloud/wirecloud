@@ -30,6 +30,7 @@ from django.core.files.storage import FileSystemStorage
 from django.template import TemplateDoesNotExist
 from django.template.base import Origin
 from django.utils._os import safe_join
+import pkg_resources
 try:
     # Django 1.8+
     from django.template.loaders.base import Loader
@@ -49,6 +50,14 @@ DEFAULT_THEME = 'wirecloud.defaulttheme'
 
 def get_active_theme_name():
     return getattr(settings, "THEME_ACTIVE", DEFAULT_THEME)
+
+
+def get_available_themes():
+    themes = ['wirecloud.defaulttheme', 'wirecloud.fiwarelabtheme']
+    for ep in pkg_resources.iter_entry_points(group='wirecloud.themes'):
+        themes.append(ep.load().__name__)
+
+    return themes
 
 
 def active_theme_context_processor(request):
@@ -87,8 +96,13 @@ class TemplateLoader(Loader):
     def __init__(self, *args, **kwargs):
         super(TemplateLoader, self).__init__(*args, **kwargs)
 
-        self.theme_chain = get_theme_chain()
-        self.template_dirs = [get_theme_dir(theme, 'templates') for theme in self.theme_chain]
+        self.active_theme_chain = get_theme_chain()
+        self.active_template_dirs = [get_theme_dir(theme, 'templates') for theme in self.active_theme_chain]
+        self.themes = {}
+
+        for theme in get_available_themes():
+            theme_chain = get_theme_chain(theme)
+            self.themes[theme] = [get_theme_dir(theme_module, 'templates') for theme_module in theme_chain]
 
     def get_contents(self, origin):
 
@@ -101,7 +115,17 @@ class TemplateLoader(Loader):
             raise
 
     def get_template_sources(self, template_name, template_dirs=None):
-        for template_dir in self.template_dirs:
+        if ':' in template_name:
+            theme, template_name = template_name.split(':', 1)
+
+            if theme not in self.themes:
+                return
+
+            dirs = self.themes[theme]
+        else:
+            dirs = self.active_template_dirs
+
+        for template_dir in dirs:
             try:
                 filepath = safe_join(template_dir, template_name)
             except (SuspiciousFileOperation, ValueError):
@@ -131,20 +155,38 @@ class TemplateLoader(Loader):
 class ActiveThemeFinder(BaseFinder):
 
     def __init__(self, apps=None, *args, **kwargs):
-        self.theme_chain = get_theme_chain()
-        self.staticfiles_dirs = [get_theme_dir(theme, 'static') for theme in self.theme_chain]
+        self.themes = {}
+
+        for theme in get_available_themes():
+            theme_chain = get_theme_chain(theme)
+            self.themes[theme] = [get_theme_dir(theme_module, 'static') for theme_module in theme_chain]
 
     def find(self, path, all=False):
-        for staticfiles_dir in self.staticfiles_dirs:
-            filename = safe_join(staticfiles_dir, path)
-            if os.path.exists(filename):
-                if all:
-                    return [filename]
-                else:
-                    return filename
+        matches = []
 
-    def list(self, ignore_patterns=[]):
-        for location in self.staticfiles_dirs:
+        for theme in self.themes:
+            prefix = 'theme%s%s%s' % (os.sep, theme, os.sep)
+            if not path.startswith(prefix):
+                continue 
+
+            relpath = path[len(prefix):]
+            for staticfiles_dir in self.themes[theme]:
+                filename = safe_join(staticfiles_dir, relpath)
+                if os.path.exists(filename):
+                    if not all:
+                        return filename
+                    matches.append(filename)
+
+        return matches
+
+    def _list(self, dirs, prefix='', ignore_patterns=[]):
+        for location in dirs:
             storage = FileSystemStorage(location=location)
+            storage.prefix = prefix
             for path in utils.get_files(storage, ignore_patterns):
                 yield path, storage
+
+    def list(self, ignore_patterns=[]):
+        for theme in self.themes:
+            for result in self._list(self.themes[theme], prefix='theme%s%s' % (os.sep, theme), ignore_patterns=ignore_patterns):
+                yield result

@@ -58,6 +58,7 @@
         this.wrapperElement.insertBefore(menu_wrapper, this.wrapperElement.firstChild);
 
         this.currentView = null;
+        Wirecloud.events.contextloaded.addEventListener(this._initUserMenu.bind(this));
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {

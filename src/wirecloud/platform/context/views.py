@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,6 +20,7 @@
 import json
 
 from django.http import HttpResponse
+
 from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.baseviews import Resource
 from wirecloud.platform.context.utils import get_platform_context
@@ -30,4 +31,7 @@ class PlatformContextCollection(Resource):
     def read(self, request):
 
         context = get_platform_context(request.user)
+        if 'theme' in request.GET:
+            context['theme']['value'] = request.GET['theme']
+
         return HttpResponse(json.dumps(context, cls=LazyEncoder), content_type='application/json; charset=UTF-8')

@@ -50,7 +50,7 @@
                 });
                 this.codecontenttype = data.contents.contenttype;
             }
-            this.codeurl += "?v=" + Wirecloud.contextManager.get('version_hash');
+            this.codeurl += "?v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
 
             // Properties
             this.properties = {}

@@ -40,6 +40,7 @@ from wirecloud.commons.utils.http import build_error_response
 from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.plugins import get_active_features_info, get_plugins
 from wirecloud.platform.models import Workspace
+from wirecloud.platform.themes import get_active_theme_name
 from wirecloud.platform.workspace.utils import get_workspace_list
 
 
@@ -177,7 +178,13 @@ def render_wirecloud(request, view_type=None):
             view_type = get_default_view(request)
 
     try:
-        return render(request, 'wirecloud/views/%s.html' % view_type, {'VIEW_MODE': view_type, 'WIRECLOUD_VERSION_HASH': get_version_hash()}, content_type="application/xhtml+xml; charset=UTF-8")
+        theme = request.GET.get('theme', get_active_theme_name())
+        context = {
+            'THEME': theme,
+            'VIEW_MODE': view_type,
+            'WIRECLOUD_VERSION_HASH': get_version_hash()
+        }
+        return render(request, theme + ':wirecloud/views/%s.html' % view_type, context, content_type="application/xhtml+xml; charset=UTF-8")
     except TemplateDoesNotExist:
         if 'mode' in request.GET:
             url = urlparse(request.build_absolute_uri())

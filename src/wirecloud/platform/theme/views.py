@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,7 +20,7 @@
 import json
 
 from django.http import HttpResponse
-from django.template import RequestContext
+from django.template import RequestContext, TemplateDoesNotExist
 from django.template.loader import get_template
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -55,7 +55,10 @@ class ThemeEntry(Resource):
         templates = {}
         template_descriptions = get_templates('classic')
         for template_id in template_descriptions:
-            template = get_template(template_descriptions[template_id])
+            try:
+                template = get_template("%s:%s" % (name, template_descriptions[template_id]))
+            except TemplateDoesNotExist:
+                template = get_template(template_descriptions[template_id])
             templates[template_id] = template.render(context)
 
         return HttpResponse(json.dumps(templates), 'application/json')

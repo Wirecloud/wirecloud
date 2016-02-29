@@ -38,12 +38,14 @@ def django_finder(glob):
 scss.config.IMAGES_ROOT = django_finder
 
 
-def get_scss_compiler(namespace):
+def get_scss_compiler(namespace, relpath):
 
-    return scss.compiler.Compiler(
+    compiler = scss.compiler.Compiler(
         namespace=namespace,
         extensions=(scss.extension.core.CoreExtension, scss.extension.compass.CompassExtension, DjangoSCSSExtension)
     )
+    compiler.base_path = '/'.join(relpath.split('/')[:3])
+    return compiler
 
 
 class DjangoSCSSExtension(scss.extension.Extension):
@@ -75,16 +77,17 @@ class DjangoSCSSExtension(scss.extension.Extension):
         paths = self._get_possible_import_paths(rule.source_file, filename)
 
         scss.log.debug('Searching for %s in %s', filename, paths)
-        for name in paths:
-            result = finders.find(os.path.join('css', name))
 
-            if result is not None:
+        for name in paths:
+            result = finders.find(os.path.join(compilation.compiler.base_path, name))
+
+            if result:
                 origin = Path(result[:-len(name)])
                 relpath = Path(name)
 
                 return scss.source.SourceFile.read(origin, relpath)
 
-        return None, None
+        return None
 
 
 class SCSSPrecompiler(object):
@@ -97,6 +100,7 @@ class SCSSPrecompiler(object):
 
     def input(self, filename=None, basename=None, **kwargs):
 
-        compiler = get_scss_compiler(self.namespace)
-        content = compiler.compile_string(self.content)
+        compiler = get_scss_compiler(self.namespace, basename)
+        source = scss.source.SourceFile.from_string(self.content, relpath=basename)
+        content = compiler.compile_sources(source)
         return CssAbsoluteFilter(content).input(filename, basename, **kwargs)

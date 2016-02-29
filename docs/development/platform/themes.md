@@ -78,12 +78,14 @@ There are two options for using your themes:
     and [[pypi]](the official repository for distributing software for the Python
     programming language) for distributing your theme.
 
+    
+
     Once installed the theme package into the system, virtual env, ... used by
     the WireCloud instance, you will be able to use it through the `THEME_ACTIVE`
     setting as usual.
 
     > Take into account that in this case you should provide a good module name
-    > for yout theme to avoid any clash with other python modules.
+    > for your theme to avoid any clash with other python modules.
 
 [setuptools]: http://pythonhosted.org/setuptools/
 [pypi]: https://pypi.python.org/pypi
