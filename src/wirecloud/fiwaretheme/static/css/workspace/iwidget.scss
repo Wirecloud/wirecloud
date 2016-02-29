@@ -202,7 +202,35 @@
 
 /*div.dragboard.fixed*/
 .fixed .iwidget {
+
+    & > .widget_menu {
+        cursor: default;
+    }
+
     .leftResizeHandle, .rightResizeHandle, .bottomResizeHandle {
         display: none;
     }
+}
+
+/***
+ *
+ */
+.floating_widget_icon {
+       position: absolute;
+       width: 75px;
+       text-align: center;
+       display: none;
+}
+
+.floating_widget_icon img {
+       width: 60px;
+       height: 60px;
+       display: block;
+       padding: 0 5px 2px 5px;
+}
+
+.floating_widget_icon .floating_widget_title {
+       display: block;
+       cursor: default;
+       font-size: 85%;
 }
