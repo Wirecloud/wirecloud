@@ -68,6 +68,17 @@
     }
 }
 
+@mixin button-circle-sizing($button-line-height, $button-font-size) {
+    width: $button-line-height;
+    height: $button-line-height;
+    font-size: $button-font-size;
+    line-height: $button-line-height - 2;
+
+    &.btn-link {
+        line-height: $button-line-height;
+    }
+}
+
 button::-moz-focus-inner, input::-moz-focus-inner {
     padding:0;
     border:0
@@ -348,6 +359,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     background-image: none;
     border-radius: 50%;
     text-shadow: none;
+    @include button-circle-sizing($button-circle-base-line-height, $font-size-base);
 
     &.btn-link {
         border-width: 0;
@@ -358,20 +370,13 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 // COMPONENT - BUTTON - CIRCLE - CLASSES
 // ============================================================================
 
-@mixin button-circle-variant(
-    $button-background,
-    $button-border
-) {
+@mixin button-circle-variant($button-background, $button-border) {
+
     $button-active-background: darken($button-background, 10%);
 
     background-color: $button-background;
     border-color: $button-border;
-    color: contrast-color(
-        $button-background,
-        $button-text-color-light,
-        $button-text-color-dark,
-        $button-text-color-threshold
-    );
+    color: contrast-color($button-background, $button-text-color-light, $button-text-color-dark, $button-text-color-threshold);
 
     &:hover,
     &:focus {
@@ -456,24 +461,16 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 // COMPONENT - BUTTON - CIRCLE - SIZES
 // ============================================================================
 
-@mixin button-circle-sizing(
-    $button-line-height,
-    $button-font-size
-) {
-    width: $button-line-height;
-    height: $button-line-height;
-    font-size: $button-font-size;
-    line-height: $button-line-height - 2;
-
-    &.btn-link {
-        line-height: $button-line-height;
-    }
+.btn-lg.btn-circle,
+.btn-group-lg > .btn-circle,
+.btn-group-lg.btn-group-circle > .se-btn {
+    @include button-circle-sizing($button-circle-large-line-height, $font-size-large);
 }
 
 .btn-sm.btn-circle,
 .btn-group-sm > .btn-circle,
 .btn-group-sm.btn-group-circle > .se-btn {
-    @include button-circle-sizing($button-circle-sm-line-height, $font-size-small);
+    @include button-circle-sizing($button-circle-small-line-height, $font-size-small);
 }
 
 .btn-xs.btn-circle,

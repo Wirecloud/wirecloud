@@ -150,8 +150,10 @@ $button-border-warning:     $state-warning-border !default;
 $button-background-danger:  $brand-danger !default;
 $button-border-danger:      $state-danger-border !default;
 
-$button-circle-sm-line-height: 30px;
-$button-circle-xs-line-height: 24px;
+$button-circle-base-line-height:    floor($line-height-base * 1.5) !default;
+$button-circle-large-line-height:   floor($line-height-large * 1.5) !default;
+$button-circle-small-line-height:   floor($line-height-small * 1.5) !default;
+$button-circle-xs-line-height:      floor($line-height-xs * 1.5) !default;
 
 $button-has-alert-delay: 1.5s;
 
