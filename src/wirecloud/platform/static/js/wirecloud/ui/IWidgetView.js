@@ -70,9 +70,10 @@
             }.bind(iwidget),
             'menubutton': function () {
                 var button = new StyledElements.Button({
-                    'plain': true,
-                    'class': 'icon-cogs',
-                    'title': utils.gettext('Menu')
+                    title: utils.gettext("Preferences"),
+                    plain: true,
+                    extraClass: "btn-show-prefs",
+                    iconClass: "icon-cogs"
                 });
                 button.addEventListener("click",
                     function (button) {
