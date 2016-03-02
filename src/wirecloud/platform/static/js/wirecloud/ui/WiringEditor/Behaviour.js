@@ -53,6 +53,8 @@
                 options.description = ns.Behaviour.JSON_TEMPLATE.description;
             }
 
+            this.title_tooltip = new se.Tooltip({content: options.title, placement: ["top", "bottom", "right", "left"]});
+
             this.btnPrefs = new se.PopupButton({
                 title: utils.gettext("Preferences"),
                 extraClass: "btn-show-prefs",
@@ -75,7 +77,7 @@
                 buttons: [this.btnPrefs, this.btnRemove]
             });
 
-            this.heading.title.addClassName("se-link behaviour-title");
+            this.heading.title.addClassName("se-link behaviour-title text-truncate");
 
             descriptionElement = document.createElement('p');
             descriptionElement.className = "behaviour-description";
@@ -146,6 +148,20 @@
                 this.connections = [];
 
                 return this.trigger('change');
+            },
+
+            /**
+             * @override
+             */
+            setTitle: function setTitle(title) {
+                var span;
+
+                span = document.createElement('span');
+                span.textContent = title;
+                this.title_tooltip.options.content = title;
+                this.title_tooltip.bind(span);
+
+                return this.superMember(se.Panel, 'setTitle', span);
             },
 
             /**
@@ -399,15 +415,12 @@
         }.bind(this);
 
         dialog.show();
-        dialog.setValue({
-            title: this.title,
-            description: this.description
-        });
+        dialog.setValue(this);
     };
 
     var updateInfo = function updateInfo(data) {
         /* jshint validthis:true */
-        this.heading.title.text(data.title ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
+        this.setTitle(data.title ? data.title : ns.Behaviour.JSON_TEMPLATE.title);
         this.description = data.description;
         this.trigger('change');
     };

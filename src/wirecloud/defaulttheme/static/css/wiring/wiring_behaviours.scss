@@ -11,11 +11,6 @@
     cursor: pointer;
     @include user-select(none);
 
-    .behaviour-title {
-        width: $behaviour-title-width;
-        float: left;
-    }
-
     .behaviour-description {
         max-height: $behaviour-description-maxheight;
         margin-bottom: 0px;
@@ -27,6 +22,17 @@
 
     &:last-child {
         margin-bottom: 0px;
+    }
+}
+
+.behaviour-title {
+    width: $behaviour-title-width;
+    float: left;
+    white-space: nowrap;
+
+    & > span {
+        display: inline-block;
+        max-width: 100%;
     }
 }
 
