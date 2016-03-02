@@ -1004,8 +1004,8 @@ if (window.StyledElements == null) {
      Utils.stopInputKeydownPropagationListener = function stopInputKeydownPropagationListener(event) {
         var modifiers, key;
 
-        modifiers = utils.extractModifiers(event);
-        key = utils.normalizeKey(event);
+        modifiers = Utils.extractModifiers(event);
+        key = Utils.normalizeKey(event);
 
         if (!modifiers.altKey && !modifiers.metaKey && !modifiers.ctrlKey || key === 'Backspace') {
             event.stopPropagation();
