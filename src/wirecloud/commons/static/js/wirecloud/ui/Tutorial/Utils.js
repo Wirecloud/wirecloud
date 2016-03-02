@@ -323,7 +323,7 @@
                     return function () {
                         var behaviour = document.querySelectorAll(".panel-behaviours .behaviour")[behaviourId];
 
-                        return behaviour.querySelector(".btn-show-prefs");
+                        return behaviour.querySelector(".we-prefs-btn");
                     };
                 },
                 sidebarcomponentgroup_by_id: function sidecomponentgroup(id) {

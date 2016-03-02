@@ -79,7 +79,7 @@
                 title: utils.gettext("Preferences"),
                 state: 'default',
                 depth: 1,
-                extraClass: "btn-show-prefs",
+                extraClass: "we-prefs-btn",
                 iconClass: "icon-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.ConnectionPrefs(this));
