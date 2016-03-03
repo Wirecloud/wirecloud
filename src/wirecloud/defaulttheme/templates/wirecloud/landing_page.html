@@ -3,7 +3,10 @@
 {% block title %}{% trans "WireCloud · Build application mashups" %}{% endblock %}
 {% block path %}{% trans "Welcome to WireCloud!" %}{% endblock %}
 {% block css %}
+    {% compress css %}
+    {% platform_css "classic" %}
     <link rel="stylesheet" type="text/css" href="{% static "css/landing_page.css" %}" />
+    {% endcompress %}
 {% endblock %}
 {% block content %}
 
