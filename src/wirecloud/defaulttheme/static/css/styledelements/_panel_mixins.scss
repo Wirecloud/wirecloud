@@ -41,7 +41,7 @@
             background-color: darken($background-color, 6%);
 
             .text-truncate:after {
-                @include background-image(linear-gradient(to right, rgba(darken($background-color, 5%), 0), darken($background-color, 5%)));
+                @include background-image(linear-gradient(to right, rgba(darken($background-color, 6%), 0), darken($background-color, 6%)));
             }
         }
     }
