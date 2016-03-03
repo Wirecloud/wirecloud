@@ -13,6 +13,8 @@ WireCloud
 [![WireCloud continuous integration](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-pip-develop-python2.7/badge/icon)](https://build.conwet.etsiinf.upm.es/jenkins/view/Wirecloud/job/wirecloud-pip-develop-python2.7/)
 [![WireCloud Coverage Status](https://coveralls.io/repos/Wirecloud/wirecloud/badge.svg?branch=HEAD&service=github)](https://coveralls.io/github/Wirecloud/wirecloud?branch=HEAD)
 [![Documentation Status](https://readthedocs.org/projects/wirecloud/badge/?version=latest)](https://wirecloud.readthedocs.org/en/latest/?badge=latest)
+[![Docker Status](https://img.shields.io/docker/pulls/fiware/wirecloud.svg)](https://hub.docker.com/r/fiware/wirecloud/)
+[![Support Status](https://img.shields.io/badge/support-sof-yellowgreen.svg)](http://stackoverflow.com/questions/tagged/fiware-wirecloud)
 
 WireCloud builds on cutting-edge end-user development, RIA and semantic
 technologies to offer a next-generation end-user centred web application mashup
