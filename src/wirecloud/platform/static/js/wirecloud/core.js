@@ -36,10 +36,12 @@
         value: {
             'contextloaded': new StyledElements.Event(Wirecloud),
             'loaded': new StyledElements.Event(Wirecloud),
-            'activeworkspacechanged': new StyledElements.Event(Wirecloud)
+            'activeworkspacechanged': new StyledElements.Event(Wirecloud),
+            'viewcontextchanged': new StyledElements.Event(Wirecloud)
         }
     });
     Object.freeze(Wirecloud.events);
+    Wirecloud.trigger = StyledElements.ObjectWithEvents.prototype.trigger;
 
     var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(options, response) {
         var workspace = null;
@@ -332,7 +334,7 @@
                                 }
                             }
 
-                            LayoutManagerFactory.getInstance().header.refresh();
+                            Wirecloud.trigger('viewcontextchanged');
                             preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, {workspaceState: workspace_data}, workspace_data.empty_params);
                             preferences.addEventListener('post-commit', function () {
                                 setTimeout(function () {

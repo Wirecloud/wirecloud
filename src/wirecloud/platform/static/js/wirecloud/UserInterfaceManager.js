@@ -91,6 +91,9 @@
                 event.preventDefault();
             }
         }, false);
+
+        // Init old Layout Manager (TODO: remove)
+        LayoutManagerFactory.getInstance();
     };
 
     UserInterfaceManager.handleEscapeEvent = function handleEscapeEvent() {

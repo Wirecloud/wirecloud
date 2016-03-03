@@ -25,12 +25,6 @@ var LayoutManagerFactory = function () {
     var instance = null;
 
     function LayoutManager () {
-        // TODO remove this
-        this.header = {
-            _initUserMenu: function () {},
-            refresh: function () {}
-        };
-        // end TODO
     }
 
     // TODO

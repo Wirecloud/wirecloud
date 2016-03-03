@@ -93,7 +93,7 @@
                 auto_select_initial_market.call(this);
             } else {
                 // Refresh wirecloud header as current marketplace may have been changed
-                LayoutManagerFactory.getInstance().header.refresh();
+                Wirecloud.trigger('viewcontextchanged');
             }
         }
 
@@ -147,7 +147,7 @@
                 Wirecloud.HistoryManager.pushState(new_status);
             }
 
-            LayoutManagerFactory.getInstance().header.refresh();
+            Wirecloud.trigger('viewcontextchanged');
         }.bind(this));
         this.appendChild(this.alternatives);
 
@@ -168,6 +168,10 @@
                 }
             }
         });
+
+        this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
+            setTimeout(Wirecloud.trigger.bind(Wirecloud, 'viewcontextchanged'), 0);
+        }.bind(this));
 
         Object.defineProperty(this, 'error', {
             get: function () {
@@ -337,7 +341,7 @@
         }
 
         this.loading = true;
-        LayoutManagerFactory.getInstance().header.refresh();
+        Wirecloud.trigger('viewcontextchanged');
 
         this.number_of_alternatives = 0;
 

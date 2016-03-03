@@ -310,6 +310,7 @@ class CatalogueEntryTester(object):
 
         if self.catalogue.get_subview() == 'details':
             button.click()
+            WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.catalogue.get_subview() == 'search')
 
         self.details = None
 

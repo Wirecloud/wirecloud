@@ -50,6 +50,7 @@
         this.close_cookie_banner_button = null;
 
         Wirecloud.events.contextloaded.addEventListener(this._initUserMenu.bind(this));
+        Wirecloud.events.viewcontextchanged.addEventListener(this.refresh.bind(this));
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {

@@ -97,7 +97,7 @@ TUTORIAL_FILES = (
 
 STYLED_ELEMENTS_FILES = (
     # 'js/StyledElements/Utils.js', Added on bootstrap.html
-    'js/StyledElements/ObjectWithEvents.js',
+    # 'js/StyledElements/ObjectWithEvents.js', Added as common file
     'js/StyledElements/StyledElements.js',
     'js/StyledElements/InputElement.js',
     'js/StyledElements/CommandQueue.js',
@@ -394,6 +394,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/common/ComputedStyle.js',
             'js/wirecloud/constants.js',
             'js/StyledElements/Event.js',
+            'js/StyledElements/ObjectWithEvents.js',
             'js/wirecloud/core.js',
             'js/wirecloud/UserInterfaceManager.js',
             'js/wirecloud/io.js',

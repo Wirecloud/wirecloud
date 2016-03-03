@@ -53,7 +53,7 @@ var LayoutManagerFactory = function () {
             this.header._notifyViewChange();
         }.bind(this));
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
-            this.header._notifyViewChange(new_alternative);
+            setTimeout(this.header._notifyViewChange.bind(this.header, new_alternative), 0);
         }.bind(this));
 
         this.viewsByName = {
