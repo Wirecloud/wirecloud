@@ -864,17 +864,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Check navigation history has been filled correctly
         self.driver.back()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'New Name'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, 'New Name'))
 
         self.driver.back()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, initial_workspace))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, initial_workspace))
 
         # Navigation history should be replayable
         self.driver.forward()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'New Name'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, 'New Name'))
 
         self.driver.forward()
-        WebDriverWait(self.driver, 5).until(WEC.workspace_name(self, 'ExistingWorkspace'))
+        WebDriverWait(self.driver, timeout=10).until(WEC.workspace_name(self, 'ExistingWorkspace'))
 
     def test_browser_navigation_to_deleted_workspace(self):
 
