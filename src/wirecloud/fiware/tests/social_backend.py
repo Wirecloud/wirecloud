@@ -147,6 +147,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
 
         self.assertIn('Authorization', headers)
         self.assertIn('Basic ', headers['Authorization'])
+        self.assertEqual(headers['Authorization'], 'Basic Y2xpZW50OnNlY3JldA==')
 
     def test_get_user_details_old_version(self):
 
