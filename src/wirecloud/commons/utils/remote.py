@@ -1038,9 +1038,17 @@ class RemoteTestCase(object):
         if id is not None and not isinstance(id, six.string_types):
             id = "%s" % id
 
-        for iwidget in self.find_iwidgets():
-            if (id is not None and id == iwidget.id) or (title is not None and title == iwidget.title):
-                return iwidget
+        if id is not None:
+            try:
+                element = self.driver.find_element_by_css_selector('.workspace .iwidget[data-id="%s"]' % id)
+            except NoSuchElementException:
+                return None
+
+            return IWidgetTester(self, element)
+        else:
+            for iwidget in self.find_iwidgets():
+                if title == iwidget.title:
+                    return iwidget
         return None
 
     def find_iwidgets(self, tab=None):

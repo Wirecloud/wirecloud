@@ -338,32 +338,23 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.change_current_workspace('Pending Events')
 
-        iwidgets = self.find_iwidgets()
-        source_iwidget = iwidgets[0]
-        target_iwidget = iwidgets[1]
-        self.assertIsNotNone(source_iwidget.element)
-        self.assertIsNone(target_iwidget.element)
+        # Check iwidget 4 is not painted yet (as it is not in the initial tab)
+        source_iwidget = self.find_iwidget(id='3')
+        target_iwidget = self.find_iwidget(id='4')
+        self.assertIsNotNone(source_iwidget)
+        self.assertIsNone(target_iwidget)
+
+        # Force loading iwidget 4 by sending it a wiring event
         self.send_basic_event(source_iwidget)
 
-        time.sleep(0.5)
-
-        iwidgets = self.find_iwidgets()
-        source_iwidget = iwidgets[0]
-        target_iwidget = iwidgets[1]
-        self.assertIsNotNone(source_iwidget.element)
-        self.assertIsNotNone(target_iwidget.element)
+        # Wait until iwidget 4 gets painted
+        target_iwidget = WebDriverWait(self.driver, timeout=5).until(lambda driver: self.find_iwidget(id='4'))
 
         tab = self.get_workspace_tab_by_name('Tab 2')
         tab.element.click()
 
         with target_iwidget:
-            try:
-                WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
-            except:
-                pass
-
-            text_div = self.driver.find_element_by_id('wiringOut')
-            self.assertEqual(text_div.text, 'hello world!!')
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
 
     def test_http_cache(self):
 
