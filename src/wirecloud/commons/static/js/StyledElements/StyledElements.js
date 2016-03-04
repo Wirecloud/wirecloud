@@ -120,16 +120,21 @@
             },
 
             /**
-             * Inserts this StyledElement to the end of the targetElement
+             * Inserts this StyledElement either to the end of the `parentElement`
+             * or after the `refElement` given.
              * @since 0.6
              *
-             * @param {StyledElements.StyledElement|HTMLElement} targetElement
-             *      An element to insert the wrapperElement.
+             * @param {(StyledElements.StyledElement|Node)} parentElement
+             *     An element to be the parent of this StyledElement.
+             * @param {(StyledElements.StyledElement|Node)} [refElement]
+             *     Optional. An element after which this StyledElement is inserted.
+             *
              * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
-            appendTo: function appendTo(targetElement) {
-                return this.insertInto(targetElement);
+            appendTo: function appendTo(parentElement, refElement) {
+                utils.appendChild(parentElement, this, refElement);
+                return this;
             },
 
             /**
@@ -204,18 +209,21 @@
             },
 
             /**
-             * Insert the wrapperElement to the beginning of the targetElement children.
-             * @param {StyledElements.StyledElement|HTMLElement} targetElement
-             *      An element to insert the wrapperElement.
+             * Inserts this StyledElement either to the beginning of the `parentElement`
+             * or before the `refElement` given.
+             * @since 0.7
+             *
+             * @param {(StyledElements.StyledElement|Node)} parentElement
+             *     An element to be the parent of this StyledElement.
+             * @param {(StyledElements.StyledElement|Node)} [refElement]
+             *     Optional. An element before which this StyledElement is inserted.
+             *
              * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
-            prependTo: function prependTo(targetElement) {
-                if (targetElement instanceof se.StyledElement) {
-                    return targetElement.prependChild(this);
-                } else {
-                    return this.insertInto(targetElement, targetElement.firstChild);
-                }
+            prependTo: function prependTo(parentElement, refElement) {
+                utils.prependChild(parentElement, this, refElement);
+                return this;
             },
 
             /**
@@ -405,34 +413,19 @@
             },
 
             /**
-             * Inserts this StyledElement at the end of the given element. If
-             * the refElement parameter is used, then this StyledElement will be
-             * inserted before refElement.
+             * Inserts this StyledElement either at the end of the `parentElement` or
+             * before the `refElement` given.
              *
-             * @param {Container|HTMLElement} element
-             *      An element where this StyledElement will be inserted.
-             * @param {StyledElements.StyledElement|HTMLElement} [refElement]
-             *      Optional. An element after which newElement is going to be
-             *      inserted.
+             * @param {(StyledElements.StyledElement|Node)} parentElement
+             *     An element to be the parent of this StyledElement.
+             * @param {(StyledElements.StyledElement|Node)} [refElement]
+             *     Optional. An element before which this StyledElement is inserted.
+             *
              * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
              */
-            insertInto: function insertInto(element, refElement) {
-                if (element instanceof StyledElements.StyledElement) {
-                    element = element.wrapperElement;
-                }
-
-                if (refElement instanceof StyledElements.StyledElement) {
-                    refElement = refElement.wrapperElement;
-                }
-
-                if (refElement) {
-                    element.insertBefore(this.wrapperElement, refElement);
-                } else {
-                    element.appendChild(this.wrapperElement);
-                }
-
-                return this;
+            insertInto: function insertInto(parentElement, refElement) {
+                return refElement != null ? this.prependTo(parentElement, refElement) : this.appendTo(parentElement);
             },
 
             /**
