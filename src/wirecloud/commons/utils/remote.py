@@ -554,6 +554,17 @@ class FieldTester(WebElementTester):
         return self
 
 
+class ChoiceFieldTester(WebElementTester):
+
+    @property
+    def options(self):
+        return Select(self.element).options
+
+    def set_value(self, value):
+        Select(self.element).select_by_value(value)
+        return self
+
+
 class ModalTester(WebElementTester):
 
     @property
@@ -570,12 +581,12 @@ class ModalTester(WebElementTester):
 
     def accept(self):
         self.btn_accept.click()
-
+        WebDriverWait(self.testcase.driver, timeout=5).until(EC.staleness_of(self.element))
         return self
 
     def cancel(self):
         self.btn_cancel.click()
-
+        WebDriverWait(self.testcase.driver, timeout=5).until(EC.staleness_of(self.element))
         return self
 
     def find_button(self, title):
@@ -585,20 +596,32 @@ class ModalTester(WebElementTester):
         return None
 
 
+class AlertTester(WebElementTester):
+
+    @property
+    def title(self):
+        return self.find_element(".wc-log-title").text
+
+
 class AlertModalTester(ModalTester):
 
     @property
     def count(self):
         return len(self.find_alerts())
 
-    def find_alerts(self, state=None):
-        return self.body.find_elements_by_css_selector(".alert" if state is None else ".alert-%s" % (state,))
+    def find_alerts(self, title=None, state=None):
+        css_selector = ".alert" if state is None else ".alert.alert-%s" % (state,)
+        elements = [AlertTester(self.testcase, e) for e in self.body.find_elements_by_css_selector(css_selector)]
+        return elements if title is None else [e for e in elements if e.title == title]
 
 
 class FormModalTester(ModalTester):
 
     def get_field(self, name):
-        return FieldTester(self.testcase, self.body.find_element_by_css_selector("[name='%s']" % (name,)))
+        field = self.body.find_element_by_css_selector("[name='%s']" % (name,))
+        if field.tag_name == 'select':
+            return ChoiceFieldTester(self.testcase, field)
+        return FieldTester(self.testcase, field)
 
 
 class BaseComponentTester(WebElementTester):
@@ -628,7 +651,7 @@ class BaseComponentTester(WebElementTester):
 
     def show_logs(self):
         self.show_preferences().click_entry("Logs")
-        return AlertModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".logwindowmenu"))
+        return AlertModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-logs-dialog"))
 
     def show_preferences(self):
         button = self.btn_preferences.click()
@@ -638,6 +661,13 @@ class BaseComponentTester(WebElementTester):
         self.show_preferences().click_entry("Settings")
         return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
 
+    def change_version(self, version):
+        self.show_preferences().click_entry("Upgrade/Downgrade")
+        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-upgrade-component-dialog"))
+        modal.get_field('version').set_value(version)
+        modal.accept()
+        return self
+
 
 class WiringComponentTester(BaseComponentTester):
 
@@ -645,6 +675,10 @@ class WiringComponentTester(BaseComponentTester):
     def state(self):
         label_element = self.find_element(".label")
         return "" if label_element is None else label_element.text
+
+    @property
+    def version(self):
+        return self.find_element(".component-version").text
 
     def drag_and_drop(self, condition, target_element, x, y):
         ActionChains(self.testcase.driver).click_and_hold(self.element).perform()
@@ -685,6 +719,9 @@ class WiringComponentGroupTester(WebElementTester):
         return self.find_components()[-1]
 
     def find_component(self, id=None, title=None):
+        if id is not None and not isinstance(id, six.string_types):
+            id = "%s" % id
+
         for component in self.find_components():
             if (id is not None and id == component.id) or (title is not None and title == component.title):
                 return component
