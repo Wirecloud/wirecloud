@@ -111,7 +111,7 @@ class IWidgetTester(object):
     def __init__(self, testcase, element):
 
         self.testcase = testcase
-        self.id = int(element.get_attribute('data-id'))
+        self.id = element.get_attribute('data-id')
         self.element = element
 
     def __getitem__(self, key):
@@ -614,7 +614,7 @@ class BaseComponentTester(WebElementTester):
     def __init__(self, testcase, element, type):
         super(BaseComponentTester, self).__init__(testcase, element)
         self.type = type
-        self.id = int(self.get_attribute('data-id'))
+        self.id = self.get_attribute('data-id')
 
     @property
     def btn_preferences(self):
@@ -1043,19 +1043,28 @@ class RemoteTestCase(object):
         return WebDriverWait(self.driver, timeout).until(condition)
 
     def find_iwidget(self, id=None, title=None):
+        if id is not None and not isinstance(id, six.string_types):
+            id = "%s" % id
+
         for iwidget in self.find_iwidgets():
             if (id is not None and id == iwidget.id) or (title is not None and title == iwidget.title):
                 return iwidget
         return None
 
-    def find_iwidgets(self, tab=None):
+    def _find_iwidgets(self, tab):
 
         if tab is None:
             iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
         else:
             iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.element;});', tab)
 
-        return [IWidgetTester(self, element) for element in iwidget_elements]
+        return [IWidgetTester(self, element) if element is not None else None for element in iwidget_elements]
+
+    def find_iwidgets(self, tab=None):
+        try:
+            return self._find_iwidgets(tab)
+        except StaleElementReferenceException:
+            return self.find_iwidgets(tab)
 
     def send_basic_event(self, widget, event='hello world!!'):
         with widget:
@@ -1668,6 +1677,9 @@ class BaseWiringViewTester(object):
         return [c for c in self.find_connections() if c.has_class(extra_class)]
 
     def find_draggable_component(self, type, id=None, title=None):
+        if id is not None and not isinstance(id, six.string_types):
+            id = "%s" % id
+
         for component in self.find_draggable_components(type):
             if (id is not None and id == component.id) or (title is not None and title == component.title):
                 return component
