@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,66 +19,124 @@
  *
  */
 
+
 /*globals StyledElements */
 
-(function () {
+
+(function (se, utils) {
 
     "use strict";
 
+    // ==================================================================================
+    // CLASS DEFINITION
+    // ==================================================================================
+
     /**
+     * Creates a new instance of Fragment.
+     * @name StyledElements.Fragment
+     * @since 0.5
      *
+     * @constructor
+     * @extends {StyledElements.StyledElement}
+     *
+     * @param {(Array|String|Node|StyledElement)} newElement
+     *     An element or list of elements.
+     * 
      */
-    var Fragment = function Fragment(elements) {
-        var tmp_element;
+    se.Fragment = function Fragment(newElement) {
+        this.superClass();
 
-        if (Array.isArray(elements)) {
-            this.elements = elements;
-        } else if (typeof elements === 'string') {
-            tmp_element = document.createElement('div');
-            tmp_element.innerHTML = elements;
-            this.elements = Array.prototype.slice.call(tmp_element.childNodes);
+        /**
+         * The list of elements stored.
+         * @since 0.7
+         *
+         * @memberof StyledElements.Fragment#
+         * @type {Array.<(Node|StyledElements.StyledElement)>}
+         */
+        this.children = [];
+
+        if (Array.isArray(newElement)) {
+            newElement.forEach(function (childElement) {
+                this.appendChild(childElement);
+            }.bind(this));
         } else {
-            this.elements = [];
+            this.appendChild(newElement);
         }
+
+        Object.defineProperties(this, {
+            elements: {
+                get: function get() {return this.children;}
+            }
+        });
     };
-    Fragment.prototype = new StyledElements.StyledElement();
 
-    /*
-     * @override
-     */
-    Fragment.prototype.insertInto = function insertInto(element, refElement) {
-        var i, currentElement;
+    // ==================================================================================
+    // PUBLIC MEMBERS
+    // ==================================================================================
 
-        if (refElement instanceof StyledElements.StyledElement) {
-            refElement = refElement.wrapperElement;
-        }
+    utils.inherit(se.Fragment, se.StyledElement, /** @lends StyledElements.Fragment.prototype */{
 
-        for (i = 0; i < this.elements.length; i += 1) {
-            currentElement = this.elements[i];
-            if (currentElement instanceof StyledElements.StyledElement) {
-                currentElement.insertInto(element, refElement);
+        /**
+         * Insert the `newElement` to the end of this Fragment.
+         * @since 0.5
+         *
+         * @param {(Node|String|StyledElements.StyledElement)} newElement
+         *     An element to insert into this Fragment.
+         *
+         * @returns {StyledElements.Fragment}
+         *     The instance on which the member is called.
+         */
+        appendChild: function appendChild(newElement) {
+
+            if (newElement == null) {
+                return this;
+            }
+
+            if (typeof newElement === 'string') {
+                this.children = this.children.concat(getChildrenFromText(newElement));
+            } else if (newElement instanceof se.Fragment) {
+                this.children = this.children.concat(newElement.children);
             } else {
-                element.insertBefore(currentElement, refElement);
+                this.children.push(newElement);
             }
+
+            return this;
+        },
+
+        /*
+         * @override
+         */
+        appendTo: function appendTo(parentElement, refElement) {
+            this.children.forEach(function (childElement) {
+                utils.appendChild(parentElement, childElement, refElement);
+            });
+            return this;
+        },
+
+        /*
+         * @override
+         */
+        repaint: function repaint() {
+            this.children.forEach(function (childElement) {
+                if (typeof childElement.repaint === 'function') {
+                    childElement.repaint();
+                }
+            })
+            return this;
         }
-    };
 
-    Fragment.prototype.repaint = function repaint() {
-        var i;
+    });
 
-        for (i = 0; i < this.elements.length; i++) {
-            if (typeof this.elements[i].repaint === 'function') {
-                this.elements[i].repaint();
-            }
+    var getChildrenFromText = function getChildrenFromText(text) {
+        var targetElement, children = [];
+
+        if (text.length) {
+            targetElement = document.createElement('div');
+            targetElement.innerHTML = text;
+            children = Array.prototype.slice.call(targetElement.childNodes);
         }
-        return this;
+
+        return children;
     };
 
-    Fragment.prototype.appendChild = function appendChild(element) {
-        this.elements.push(element);
-
-        return this;
-    };
-
-    StyledElements.Fragment = Fragment;
-})();
+})(StyledElements, StyledElements.Utils);
