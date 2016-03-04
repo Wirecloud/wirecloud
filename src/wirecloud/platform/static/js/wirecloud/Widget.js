@@ -59,14 +59,8 @@
         msg = interpolate(msg, {title: this.title}, true);
         this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
-        this.events.removed.dispatch(this);
-
-        if (options.onSuccess === 'function') {
-            try {
-                options.onSuccess();
-            } catch (e) {}
-        }
-
+        this.trigger('removed');
+        Wirecloud.Utils.callCallback(options.onSuccess);
         this.destroy();
     };
 
