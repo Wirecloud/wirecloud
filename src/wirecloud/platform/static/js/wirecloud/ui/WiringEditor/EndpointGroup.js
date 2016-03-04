@@ -103,7 +103,7 @@
              *      [TODO: description]
              */
             canBeOrdered: function canBeOrdered() {
-                return this.children.length > ns.EndpointGroup.MIN_LENGTH;
+                return this.children.length > ns.EndpointGroup.MIN_LENGTH && !hasMissingEndpoints.call(this);
             },
 
             /**
@@ -256,6 +256,12 @@
         }
 
         return list1.join() === list2.join();
+    };
+
+    var hasMissingEndpoints = function hasMissingEndpoints() {
+        return this.children.some(function (endpoint) {
+            return endpoint.missing;
+        });
     };
 
     var makeEndpointDraggable = function makeEndpointDraggable(endpoint) {
