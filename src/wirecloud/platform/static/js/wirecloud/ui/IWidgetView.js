@@ -147,6 +147,7 @@
 
         this.element = ui_fragment.elements[1];
         this.element.classList.add('iwidget');
+        this.element.setAttribute('data-id', this.widget.id);
         this.tmp = tmp;
 
         iwidget.addEventListener('title_changed', function (title) {

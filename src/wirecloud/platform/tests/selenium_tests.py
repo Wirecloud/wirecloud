@@ -257,13 +257,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.driver.execute_script('arguments[0].click()',
                 self.driver.find_element_by_css_selector('#update_prop_button'))
 
-        self.driver.refresh()
-        self.wait_wirecloud_ready()
+        # TODO manual wait until the property value is stored in the server
         time.sleep(1)
 
-        api_test_iwidget = self.find_iwidget(title='Wirecloud API test')
+        self.reload()
+        self.wait_wirecloud_ready()
 
-        with api_test_iwidget:
+        # Refresh api_test_iwidget as we have reloaded the browser
+        api_test_iwidget = self.find_iwidget(id=api_test_iwidget.id)
+
+        with api_test_iwidget.wait_loaded():
             WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('#update_prop_input').get_attribute('value') == "new value")
 
             self.assertEqual(api_test_iwidget.error_count, 0)
@@ -369,7 +372,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Create a new workspace
         self.create_workspace(name='Test')
 
-        self.driver.refresh()
+        self.reload()
         self.wait_wirecloud_ready()
 
         self.assertEqual(self.get_current_workspace_name(), 'Test')
@@ -377,7 +380,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Add a new tab
         self.add_tab()
 
-        self.driver.refresh()
+        self.reload()
         self.wait_wirecloud_ready()
 
         tabs = self.count_workspace_tabs()
@@ -388,7 +391,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Rename the created tab
         tab.rename('Other Name')
 
-        self.driver.refresh()
+        self.reload()
         self.wait_wirecloud_ready()
 
         self.assertEqual(self.count_workspace_tabs(), 2)
@@ -404,7 +407,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             resource.instantiate()
             resource.instantiate()
 
-        self.driver.refresh()
+        self.reload()
         self.wait_wirecloud_ready()
 
         self.assertEqual(self.count_iwidgets(), 2)
@@ -414,7 +417,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget = self.find_iwidgets()[1]
         iwidget.rename('Other Test')
 
-        self.driver.refresh()
+        self.reload()
         self.wait_wirecloud_ready()
 
         iwidget = self.find_iwidgets()[0]
@@ -426,7 +429,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Remove a widget
         iwidget.remove()
 
-        self.driver.refresh()
+        self.reload()
         self.wait_wirecloud_ready()
 
         self.assertEqual(self.count_iwidgets(), 1)
@@ -434,7 +437,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Rename the workspace
         self.rename_workspace('test2')
 
-        self.driver.refresh()
+        self.reload()
         self.wait_wirecloud_ready()
 
         self.assertEqual(self.get_current_workspace_name(), 'test2')
@@ -445,7 +448,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
         self.wait_wirecloud_ready()
 
-        self.driver.refresh()
+        self.reload()
         self.wait_wirecloud_ready()
 
         self.assertEqual(self.count_workspace_tabs(), 1)

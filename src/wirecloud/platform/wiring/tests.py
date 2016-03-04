@@ -726,9 +726,8 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         self.login()
 
         iwidget = self.find_iwidget(title="Wirecloud API test")
-        iwidget_id = iwidget.id
 
-        with iwidget:
+        with iwidget.wait_loaded():
             text_div = self.driver.find_element_by_id('wiring_hasinputconnections_test')
             self.assertEqual(text_div.text, 'true')
             text_div = self.driver.find_element_by_id('wiring_hasoutputconnections_test')
@@ -738,14 +737,14 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             for connection in wiring.find_connections():
                 connection.remove()
 
-            widget = wiring.find_draggable_component('widget', id=iwidget_id)
+            widget = wiring.find_draggable_component('widget', id=iwidget.id)
             operator = wiring.find_draggable_component('operator', id=1)
 
             target = operator.find_endpoint('target', "input")
             source = widget.find_endpoint('source', "outputendpoint")
             source.create_connection(target)
 
-        with self.find_iwidget(id=iwidget_id):
+        with iwidget:
             text_div = self.driver.find_element_by_id('wiring_hasinputconnections_test')
             self.assertEqual(text_div.text, 'false')
             text_div = self.driver.find_element_by_id('wiring_hasoutputconnections_test')
@@ -845,14 +844,9 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
     def test_widget_preferences_in_wiring_editor(self):
 
         self.login(username='user_with_workspaces')
-        iwidget = self.find_iwidget(title="Test 1")
+        iwidget = self.find_iwidget(title="Test 1").wait_loaded()
 
-        with iwidget:
-            self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
-            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
-            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
-            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
-
+        # Update widget preferences using the wiring editor interface
         with self.wiring_view as wiring:
             widget = wiring.find_draggable_component('widget', id=iwidget.id)
 
@@ -863,6 +857,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             modal.get_field('password').set_value("password")
             modal.accept()
 
+        # Check the widget has received an event with the new values
         with iwidget:
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
@@ -873,6 +868,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces')
 
+        # Update operator preferences using the wiring editor interface
         with self.wiring_view as wiring:
             operator = wiring.find_draggable_component('operator', id=0)
             operator.wait_to_be_loaded()
@@ -883,26 +879,18 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.find_iwidgets()
 
+        # Check the operator has received the new preference value
+        # The operator sends a event through the wiring to notify it
         with iwidgets[0]:
-            try:
-                WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text != '')
-            except:  # pragma: no cover
-                pass
+            WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'preferences changed: prefix')
 
-            text_div = self.driver.find_element_by_id('wiringOut')
-            self.assertEqual(text_div.text, 'preferences changed: prefix')
-
+        # Check the operator reads the correct value when using the
+        # MashupPlatform API
         self.send_basic_event(iwidgets[1])
         time.sleep(0.2)
 
         with iwidgets[0]:
-            try:
-                WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text != 'preferences changed: prefix')
-            except:  # pragma: no cover
-                pass
-
-            text_div = self.driver.find_element_by_id('wiringOut')
-            self.assertEqual(text_div.text, 'prefix: hello world!!')
+            WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'prefix: hello world!!')
 
     def test_operator_logging_support(self):
 
@@ -1269,10 +1257,10 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
     def test_operator_can_be_used_after_being_reinstalled(self):
         self._reupload_and_use_operator()
 
-    def test_operator_can_be_used_after_being_reinstalled_and_browser_is_refreshed(self):
-        self._reupload_and_use_operator(refresh=True)
+    def test_operator_can_be_used_after_being_reinstalled_and_browser_is_reloaded(self):
+        self._reupload_and_use_operator(reload=True)
 
-    def _reupload_and_use_operator(self, refresh=False):
+    def _reupload_and_use_operator(self, reload=False):
         workspace = Workspace.objects.get(id=3)
         workspace.wiringStatus['operators']['0']['preferences'] = {
             'prefix': {"readonly": False, "hidden": False, "value": 'test_'},
@@ -1291,8 +1279,8 @@ class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             myresources.uninstall_resource('TestOperator')
 
-        if refresh is True:
-            self.driver.refresh()
+        if reload is True:
+            self.reload()
 
         # Reinstall the operator
         with self.myresources_view as myresources:
@@ -1655,7 +1643,7 @@ class BehaviourManagementTestCase(WirecloudSeleniumTestCase):
                 sidebar.active_behaviour.check_info("New behaviour", "No description provided.")
 
         # Check the change is correctly persisted
-        self.driver.refresh()
+        self.reload()
         self.wait_wirecloud_ready()
 
         with self.wiring_view as wiring:

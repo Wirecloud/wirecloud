@@ -108,10 +108,10 @@ class PopupMenuTester(object):
 
 class IWidgetTester(object):
 
-    def __init__(self, testcase, iwidget_id, element):
+    def __init__(self, testcase, element):
 
         self.testcase = testcase
-        self.id = iwidget_id
+        self.id = int(element.get_attribute('data-id'))
         self.element = element
 
     def __getitem__(self, key):
@@ -218,18 +218,13 @@ class IWidgetTester(object):
     def wait_loaded(self, timeout=10):
 
         def iwidget_loaded(driver):
-            iwidget_element = driver.execute_script('''
-                var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
-                return iwidget.internal_iwidget.loaded ? iwidget.element : null;
+            return driver.execute_script('''
+                return !!Wirecloud.activeWorkspace.getIWidget(%s).internal_iwidget.loaded;
             ''' % self.id)
 
-            if iwidget_element is not None:
-                self.element = iwidget_element
-                return True
-
-            return False
-
         WebDriverWait(self.testcase.driver, timeout).until(iwidget_loaded)
+
+        return self
 
     def remove(self, timeout=30):
 
@@ -264,7 +259,7 @@ class WidgetWalletResourceTester(object):
             'new_iwidget': None,
         }
 
-        def iwidget_loaded(driver):
+        def iwidget_added(driver):
             if tmp['new_iwidget'] is not None and tmp['new_iwidget'].element is not None:
                 return tmp['new_iwidget'].element.is_displayed()
 
@@ -279,7 +274,7 @@ class WidgetWalletResourceTester(object):
 
             return tmp['new_iwidget']['element'] is not None and tmp['new_iwidget']['element'].is_displayed()
 
-        WebDriverWait(self.testcase.driver, 10).until(iwidget_loaded)
+        WebDriverWait(self.testcase.driver, 10).until(iwidget_added)
         # TODO firefox
         time.sleep(0.1)
         return tmp['new_iwidget']
@@ -619,14 +614,11 @@ class BaseComponentTester(WebElementTester):
     def __init__(self, testcase, element, type):
         super(BaseComponentTester, self).__init__(testcase, element)
         self.type = type
+        self.id = int(self.get_attribute('data-id'))
 
     @property
     def btn_preferences(self):
         return ButtonTester(self.testcase, self.find_element(".we-prefs-btn"))
-
-    @property
-    def id(self):
-        return int(self.get_attribute('data-id'))
 
     @property
     def title(self):
@@ -1059,18 +1051,11 @@ class RemoteTestCase(object):
     def find_iwidgets(self, tab=None):
 
         if tab is None:
-            iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});')
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
         else:
-            iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.id;});', tab)
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});', tab)
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.element;});', tab)
 
-        # Work around race condition reading iwidget ids and elements
-        if len(iwidget_ids) != len(iwidget_elements):
-            time.sleep(0.1)
-            return self.find_iwidgets(tab)
-
-        return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
+        return [IWidgetTester(self, element) for element in iwidget_elements]
 
     def send_basic_event(self, widget, event='hello world!!'):
         with widget:
@@ -1128,6 +1113,15 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         except:
             pass
         ActionChains(self.driver).click(element).perform()
+
+    def reload(self):
+        """
+        Reloads the current page
+
+        This method differs from self.driver.refresh() in that the later purges
+        the cache before reloading the browser
+        """
+        self.driver.execute_script("location.reload()")
 
     def wait_wirecloud_ready(self, start_timeout=10, timeout=10):
 
