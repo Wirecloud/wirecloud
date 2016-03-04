@@ -176,6 +176,18 @@
                 return this;
             },
 
+            removeChild: function removeChild(endpoint) {
+                var index = this.originalOrder.indexOf(endpoint.name);
+
+                if (index !== -1) {
+                    this.originalOrder.splice(index, 1);
+                    this.superMember(se.Container, 'removeChild', endpoint);
+                    delete this.endpoints[endpoint.name];
+                }
+
+                return this;
+            },
+
             /**
              * [TODO: startOrdering description]
              *

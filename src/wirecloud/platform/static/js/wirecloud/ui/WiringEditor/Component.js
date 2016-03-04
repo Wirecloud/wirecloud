@@ -81,6 +81,11 @@
             if (wiringComponent.volatile || !wiringComponent.hasEndpoints()) {
                 this.disable();
             }
+
+            wiringComponent.on('upgraded', function (componentUpdated) {
+                this.setTitle(componentUpdated.title);
+                this.setSubtitle("v" + componentUpdated.meta.version.text);
+            }.bind(this));
         },
 
         inherit: se.Panel,

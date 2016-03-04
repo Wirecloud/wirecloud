@@ -80,6 +80,10 @@
                             this.startOrderingEndpoints();
                         }
                     }.bind(this.component), canOrderEndpoints),
+                    this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "retweet", function () {
+                        var dialog = new Wirecloud.ui.UpgradeWindowMenu(this._component);
+                        dialog.show();
+                    }.bind(this.component), canUpgrade),
                     this._createMenuItem(gettext("Logs"), "tags", function () {
                         this.showLogs();
                     }.bind(this.component)),
@@ -107,6 +111,10 @@
 
     var canRename = function canRename() {
         return this.type == 'widget' && this._component.isAllowed('rename');
+    };
+
+    var canUpgrade = function canUpgrade() {
+        return !this.background && this._component.isAllowed('upgrade') && Wirecloud.LocalCatalogue.hasAlternativeVersion(this._component.meta);
     };
 
     var canCollapseEndpoints = function canCollapseEndpoints() {

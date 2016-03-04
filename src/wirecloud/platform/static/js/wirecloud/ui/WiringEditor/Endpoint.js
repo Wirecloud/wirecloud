@@ -167,9 +167,13 @@
              * @returns {Endpoint}
              *      The instance on which the member is called.
              */
-            appendConnection: function appendConnection(connection) {
+            appendConnection: function appendConnection(connection, updateEndpoint) {
 
                 this.connections.push(connection);
+
+                if (!!updateEndpoint) {
+                    connection.refreshEndpoint(this);
+                }
 
                 return this.trigger('connectionadded', connection);
             },

@@ -118,8 +118,16 @@
                     get: function get() {return this.endpoints.source.orderable || this.endpoints.target.orderable;}
                 },
 
+                sources: {
+                    get: function get() {return this.endpoints.source.endpoints;}
+                },
+
                 sourceList: {
                     get: function get() {return this.endpoints.source.children;}
+                },
+
+                targets: {
+                    get: function get() {return this.endpoints.target.endpoints;}
                 },
 
                 targetList: {
@@ -180,12 +188,17 @@
 
             this.position(options.position);
 
+            this._component_onupgrade_bound = component_onupgrade.bind(this);
+            this._component_onrename_bound = component_onrename.bind(this);
+
             if (this.type == 'widget') {
-                wiringComponent.on('title_changed', component_onrename.bind(this));
+                wiringComponent.on('title_changed', this._component_onrename_bound);
             }
 
             notifyErrors.call(this);
             makeDraggable.call(this);
+
+            wiringComponent.on('upgraded', this._component_onupgrade_bound);
         },
 
         inherit: se.Panel,
@@ -302,10 +315,11 @@
                 return this;
             },
 
-            appendEndpoint: function appendEndpoint(type, wiringEndpoint, options) {
+            appendEndpoint: function appendEndpoint(type, wiringEndpoint) {
                 var endpoint = this.endpoints[type].appendEndpoint(wiringEndpoint);
 
                 endpoint.on('connectionadded', endpoint_onconnectionadded.bind(this));
+                this.trigger('endpointadded', endpoint);
 
                 return this;
             },
@@ -504,6 +518,11 @@
             remove: function remove(childElement) {
 
                 if (!arguments.length && !this.hasClassName('cloned')) {
+                    this._component.off('upgraded', this._component_onupgrade_bound);
+
+                    if (this.type == 'widget') {
+                        this._component.off('title_changed', this._component_onrename_bound);
+                    }
                     this.trigger('remove');
                 }
 
@@ -545,7 +564,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['change', 'dragstart', 'drag', 'dragend', 'optremove', 'optremovecascade', 'optshare', 'remove', 'orderstart', 'orderend'];
+    var events = ['change', 'dragstart', 'drag', 'dragend', 'endpointadded', 'endpointremoved', 'optremove', 'optremovecascade', 'optshare', 'remove', 'orderstart', 'orderend'];
 
     var updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
         return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();
@@ -555,6 +574,13 @@
 
         endpoints.forEach(function (endpoint) {
             this.appendEndpoint(type, endpoint);
+
+            if (this._missingEndpoints != null && endpoint.name in this._missingEndpoints[type]) {
+                this._missingEndpoints[type][endpoint.name].forEachConnection(function (connection) {
+                    this.endpoints[type].endpoints[endpoint.name].appendConnection(connection, true);
+                }.bind(this));
+                delete this._missingEndpoints[type][endpoint.name];
+            }
         }, this);
 
         return this;
@@ -702,8 +728,66 @@
         }
     };
 
+    var cleanEndpoints = function cleanEndpoints() {
+        /* jshint validthis: true */
+        var id;
+
+        for (id in this.targets) {
+            cleanEndpoint.call(this, this.targets[id]);
+        }
+        this.endpoints.target.modified = false;
+
+        for (id in this.sources) {
+            cleanEndpoint.call(this, this.sources[id]);
+        }
+        this.endpoints.source.modified = false;
+    };
+
+    var cleanEndpoint = function cleanEndpoint(endpoint) {
+        /* jshint validthis: true */
+
+        if (endpoint.hasConnections()) {
+            this._missingEndpoints[endpoint.type][endpoint.name] = endpoint;
+        }
+
+        this.endpoints[endpoint.type].removeChild(endpoint);
+        this.trigger('endpointremoved', endpoint);
+    };
+
     var component_onrename = function component_onrename(title) {
         this.setTitle(title).refresh();
+    };
+
+    var component_onupgrade = function component_onupgrade(componentUpdated) {
+        /* jshint validthis: true */
+
+        this.setTitle(componentUpdated.title);
+
+        this._missingEndpoints = {source: {}, target: {}};
+        cleanEndpoints.call(this);
+
+        appendEndpoints.call(this, 'source', componentUpdated.meta.outputList.map(function (data) {return componentUpdated.outputs[data.name];}));
+        appendEndpoints.call(this, 'target', componentUpdated.meta.inputList.map(function (data) {return componentUpdated.inputs[data.name];}));
+
+        appendMissingEndpoints.call(this, componentUpdated, 'source', 'outputs');
+        appendMissingEndpoints.call(this, componentUpdated, 'target', 'inputs');
+
+        delete this._missingEndpoints;
+        this.refresh();
+    };
+
+    var appendMissingEndpoints = function appendMissingEndpoints(componentUpdated, type, namespace) {
+        /* jshint validthis: true */
+        var name;
+
+        for (name in componentUpdated[namespace]) {
+            if (name in this._missingEndpoints[type]) {
+                this.appendEndpoint(type, componentUpdated[namespace][name]);
+                this._missingEndpoints[type][name].forEachConnection(function (connection) {
+                    this.endpoints[type].endpoints[name].appendConnection(connection, true);
+                }.bind(this));
+            }
+        }
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);
