@@ -1037,6 +1037,56 @@ if (window.StyledElements == null) {
         return key;
     };
 
+    // ==================================================================================
+    // Node helpers
+    // ==================================================================================
+
+    /**
+     * Insert the `newElement` either to the end of `parentElement` or after
+     * the `refElement` given.
+     * @since 0.7
+     *
+     * @param {(StyledElements.StyledElement|Node)} parentElement
+     *     An element to be the parent of the `newElement`.
+     * @param {(StyledElements.StyledElement|Node|String)} newElement
+     *     An element to insert into the `parentElement`.
+     * @param {(StyledElements.StyledElement|Node)} [refElement]
+     *     Optional. An element after which `newElement` is inserted.
+     *
+     * @returns {Array.<(StyledElements.StyledElement|Node)>}
+     *     The new elements that were inserted.
+     */
+    Utils.appendChild = function appendChild(parentElement, newElement, refElement) {
+        var parentNode = getNode(parentElement);
+        var refNode = getNode(refElement);
+
+        if (refNode != null) {
+            refNode = refNode.nextSibling;
+        }
+
+        if (typeof newElement === 'string') {
+            newElement = document.createTextNode(newElement);
+        }
+
+        return getNodes(newElement).map(function (childElement) {
+            parentNode.insertBefore(getNode(childElement), refNode);
+
+            if (parentElement instanceof StyledElements.StyledElement && childElement instanceof StyledElements.StyledElement) {
+                childElement.parentElement = parentElement;
+            }
+
+            return childElement;
+        });
+    };
+
+    var getNode = function getNode(value) {
+        return value instanceof StyledElements.StyledElement ? value.get() : value;
+    };
+
+    var getNodes = function getNodes(value) {
+        return (value instanceof StyledElements.StyledElement && value.get() == null) ? value.children : [value];
+    };
+
     StyledElements.Utils = Utils;
 
 })();
