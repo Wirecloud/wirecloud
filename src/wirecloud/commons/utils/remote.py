@@ -249,35 +249,27 @@ class WidgetWalletResourceTester(object):
 
     def instantiate(self):
 
-        old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
+        old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return "" + iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
 
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_still(self.element))
         self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
 
-        tmp = {
-            'new_iwidget': None,
-        }
-
         def iwidget_added(driver):
-            if tmp['new_iwidget'] is not None and tmp['new_iwidget'].element is not None:
-                return tmp['new_iwidget'].element.is_displayed()
-
-            iwidgets = self.testcase.find_iwidgets()
-            iwidget_count = len(iwidgets)
+            new_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return "" + iwidget.id;});')
+            iwidget_count = len(new_iwidget_ids)
             if iwidget_count != old_iwidget_count + 1:
                 return False
 
-            for iwidget in iwidgets:
-                if iwidget['id'] not in old_iwidget_ids:
-                    tmp['new_iwidget'] = iwidget
+            for new_iwidget_id in new_iwidget_ids:
+                if new_iwidget_id not in old_iwidget_ids:
+                    return new_iwidget_id
 
-            return tmp['new_iwidget']['element'] is not None and tmp['new_iwidget']['element'].is_displayed()
+            return False
 
-        WebDriverWait(self.testcase.driver, 10).until(iwidget_added)
-        # TODO firefox
-        time.sleep(0.1)
-        return tmp['new_iwidget']
+        new_iwidget_id = WebDriverWait(self.testcase.driver, 10).until(iwidget_added)
+        element = self.testcase.wait_element_visible_by_css_selector('.iwidget[data-id="%s"]' % new_iwidget_id)
+        return IWidgetTester(self.testcase, element)
 
 
 class CatalogueEntryTester(object):
@@ -1051,20 +1043,11 @@ class RemoteTestCase(object):
                 return iwidget
         return None
 
-    def _find_iwidgets(self, tab):
-
-        if tab is None:
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
-        else:
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.element;});', tab)
-
-        return [IWidgetTester(self, element) if element is not None else None for element in iwidget_elements]
-
     def find_iwidgets(self, tab=None):
-        try:
-            return self._find_iwidgets(tab)
-        except StaleElementReferenceException:
-            return self.find_iwidgets(tab)
+        root_selector = '.workspace' if tab is None else '.workspace .wc-workspace-tab[data-id="%s"]' % tab
+        root_element = self.driver.find_element_by_css_selector(root_selector)
+
+        return [IWidgetTester(self, element) for element in root_element.find_elements_by_css_selector('.iwidget')]
 
     def send_basic_event(self, widget, event='hello world!!'):
         with widget:
@@ -1907,3 +1890,19 @@ class MobileWirecloudRemoteTestCase(RemoteTestCase):
     def wait_wirecloud_ready(self):
 
         self.wait_element_visible_by_css_selector('.wirecloud_tab')
+
+    def _find_iwidgets(self, tab):
+
+        if tab is None:
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
+        else:
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.element;});', tab)
+
+        return [IWidgetTester(self, element) if element is not None else None for element in iwidget_elements]
+
+    def find_iwidgets(self, tab=None):
+        try:
+            return self._find_iwidgets(tab)
+        except StaleElementReferenceException:
+            time.sleep(0.2)
+            return self.find_iwidgets(tab)

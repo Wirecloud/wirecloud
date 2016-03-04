@@ -715,11 +715,12 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
             myresources.uninstall_resource('Test')
 
         # The workspace should contain two missig widgets
-        self.assertEqual(self.count_iwidgets(), 2)
+        iwidgets = self.find_iwidgets()
+        self.assertEqual(len(iwidgets), 2)
         # One Test v1.0
-        self.assertEqual(self.find_iwidgets()[0].error_count, 1)
+        self.assertEqual(iwidgets[0].error_count, 1)
         # And a Test v2.0
-        self.assertEqual(self.find_iwidgets()[1].error_count, 1)
+        self.assertEqual(iwidgets[1].error_count, 1)
 
     @uses_extra_resources(('Wirecloud_Test_2.0.wgt',), shared=True, public=False, users=('user_with_workspaces',))
     def test_resource_uninstall_version(self):
