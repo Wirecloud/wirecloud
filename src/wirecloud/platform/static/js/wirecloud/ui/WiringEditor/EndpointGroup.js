@@ -54,9 +54,14 @@
             this.EndpointClass = EndpointClass;
             this.originalOrder = [];
 
-            this.modified = false;
-
             Object.defineProperties(this, {
+                modified: {
+                    get: function get() {
+                        return this.canBeOrdered() && !equalsLists(this.originalOrder, this.children.map(function (endpoint) {
+                            return endpoint.name;
+                        }));
+                    }
+                },
                 orderable: {
                     get: function get() {return this.hasClassName('orderable');},
                     set: function set(value) {this.toggleClassName('orderable', value);}
@@ -85,13 +90,24 @@
              */
             appendEndpoint: function appendEndpoint(wiringEndpoint) {
                 var endpoint = new this.EndpointClass(wiringEndpoint, this.component);
+                var missingEndpoint = findFirstMissingEndpoint.call(this);
+                var i;
 
-                endpoint.index = this.children.length;
+                if (!wiringEndpoint.missing) {
+                    this.originalOrder.push(endpoint.name);
+                }
+
+                if (!wiringEndpoint.missing && missingEndpoint != null) {
+                    this.prependChild(endpoint, missingEndpoint);
+                } else {
+                    this.appendChild(endpoint);
+                }
 
                 this.endpoints[endpoint.name] = endpoint;
-                this.appendChild(endpoint);
 
-                this.originalOrder.push(endpoint.name);
+                for (i = 0; i < this.children.length; i++) {
+                    this.children[i].index = i;
+                }
 
                 return endpoint;
             },
@@ -125,17 +141,7 @@
              *      The instance on which the member is called.
              */
             refresh: function refresh() {
-                var currentOrder, name;
-
-                if (!this.canBeOrdered()) {
-                    return this;
-                }
-
-                currentOrder = this.children.map(function (endpoint) {
-                    return endpoint.name;
-                });
-
-                this.modified = !equalsLists(this.originalOrder, currentOrder);
+                var name;
 
                 for (name in this.endpoints) {
                     this.endpoints[name].refresh();
@@ -171,18 +177,22 @@
                     this.removeChild(endpoint).appendChild(endpoint);
                 }, this);
 
-                this.modified = true;
-
                 return this;
             },
 
             removeChild: function removeChild(endpoint) {
                 var index = this.originalOrder.indexOf(endpoint.name);
+                var i;
 
                 if (index !== -1) {
                     this.originalOrder.splice(index, 1);
-                    this.superMember(se.Container, 'removeChild', endpoint);
-                    delete this.endpoints[endpoint.name];
+                }
+
+                this.superMember(se.Container, 'removeChild', endpoint);
+                delete this.endpoints[endpoint.name];
+
+                for (i = 0; i < this.children.length; i++) {
+                    this.children[i].index = i;
                 }
 
                 return this;
@@ -274,6 +284,18 @@
         return this.children.some(function (endpoint) {
             return endpoint.missing;
         });
+    };
+
+    var findFirstMissingEndpoint = function findFirstMissingEndpoint() {
+        var i, endpoint = null;
+
+        for (i = 0; i < this.children.length && endpoint == null; i++) {
+            if (this.children[i].missing) {
+                endpoint = this.children[i];
+            }
+        }
+
+        return endpoint;
     };
 
     var makeEndpointDraggable = function makeEndpointDraggable(endpoint) {

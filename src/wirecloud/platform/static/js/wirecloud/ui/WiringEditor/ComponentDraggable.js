@@ -735,12 +735,10 @@
         for (id in this.targets) {
             cleanEndpoint.call(this, this.targets[id]);
         }
-        this.endpoints.target.modified = false;
 
         for (id in this.sources) {
             cleanEndpoint.call(this, this.sources[id]);
         }
-        this.endpoints.source.modified = false;
     };
 
     var cleanEndpoint = function cleanEndpoint(endpoint) {

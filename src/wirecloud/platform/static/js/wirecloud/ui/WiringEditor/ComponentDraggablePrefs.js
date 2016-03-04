@@ -75,7 +75,7 @@
                     }.bind(this.component), canCollapseEndpoints),
                     this._createMenuItem(item2.title, item2.icon, function () {
                         if (this.orderingEndpoints) {
-                            this.StopOrderingEndpoints();
+                            this.stopOrderingEndpoints();
                         } else {
                             this.startOrderingEndpoints();
                         }
