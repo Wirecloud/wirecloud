@@ -170,6 +170,10 @@
                     }
                 });
             }
+
+            this._endpoint_onconnectionadded_bound = endpoint_onconnectionadded.bind(this);
+            this._endpoint_onconnectionremoved_bound = endpoint_onconnectionremoved.bind(this);
+
             appendEndpoints.call(this, 'source', wiringComponent.meta.outputList.map(function (data) {return wiringComponent.outputs[data.name];}));
             appendEndpoints.call(this, 'target', wiringComponent.meta.inputList.map(function (data) {return wiringComponent.inputs[data.name];}));
 
@@ -319,6 +323,7 @@
                 var endpoint = this.endpoints[type].appendEndpoint(wiringEndpoint);
 
                 endpoint.on('connectionadded', endpoint_onconnectionadded.bind(this));
+                endpoint.on('connectionremoved', endpoint_onconnectionremoved.bind(this));
                 this.trigger('endpointadded', endpoint);
 
                 return this;
@@ -624,6 +629,15 @@
 
     };
 
+    var endpoint_onconnectionremoved = function endpoint_onconnectionremoved(endpoint, connection) {
+        /* jshint validthis: true */
+        if (endpoint.missing && !endpoint.hasConnections()) {
+            this.endpoints[endpoint.type].removeChild(endpoint);
+            this.trigger('endpointremoved', endpoint);
+            this.refresh();
+        }
+    };
+
     var expandEndpoints = function expandEndpoints(collapsedWidth) {
         var offsetWidth;
 
@@ -747,6 +761,9 @@
         if (endpoint.hasConnections()) {
             this._missingEndpoints[endpoint.type][endpoint.name] = endpoint;
         }
+
+        endpoint.off('connectionadded', this._endpoint_onconnectionadded_bound);
+        endpoint.off('connectionremoved', this._endpoint_onconnectionremoved_bound);
 
         this.endpoints[endpoint.type].removeChild(endpoint);
         this.trigger('endpointremoved', endpoint);
