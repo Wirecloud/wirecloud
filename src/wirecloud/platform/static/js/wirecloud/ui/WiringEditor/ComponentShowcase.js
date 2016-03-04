@@ -192,7 +192,7 @@
 
             removeComponent: function removeComponent(type, element) {
 
-                this.components[type].container.remove(element);
+                this.components[type].container.removeChild(element);
                 delete this.components[type].elements[element.getId()];
 
                 return this;

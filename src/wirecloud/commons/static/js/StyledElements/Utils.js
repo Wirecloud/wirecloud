@@ -1113,6 +1113,23 @@ if (window.StyledElements == null) {
         });
     };
 
+    /**
+     * Remove the `childElement` from the `parentElement`.
+     * @since 0.7
+     *
+     * @param {(StyledElements.StyledElement|Node)} parentElement
+     *     An element that is parent of `childElement`.
+     * @param {(StyledElements.StyledElement|Node)} childElement
+     *     An element to remove from the `parentElement`.
+     */
+    Utils.removeChild = function removeChild(parentElement, childElement) {
+        getNode(parentElement).removeChild(getNode(childElement));
+
+        if (parentElement instanceof StyledElements.StyledElement && childElement instanceof StyledElements.StyledElement) {
+            childElement.parentElement = null;
+        }
+    };
+
     var getNode = function getNode(value) {
         return value instanceof StyledElements.StyledElement ? value.get() : value;
     };

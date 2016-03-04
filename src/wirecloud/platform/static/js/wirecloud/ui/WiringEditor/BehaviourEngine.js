@@ -123,7 +123,7 @@
                         .setTitle(gettext("Disable"))
                         .replaceIconClass('icon-lock', 'icon-unlock');
                     this.btnCreate.show();
-                    this.body.remove(this.disabledAlert);
+                    this.body.removeChild(this.disabledAlert);
                     this.wrapperElement.appendChild(this.btnGroupElement);
                 } else {
                     this.btnEnable
@@ -439,7 +439,7 @@
 
                 this.emptyBehaviour(behaviour).activate(_behaviour);
 
-                this.body.remove(behaviour);
+                this.body.removeChild(behaviour);
                 this.behaviours.splice(this.behaviours.indexOf(behaviour), 1);
 
                 enableToRemoveBehaviour.call(this);
@@ -763,7 +763,7 @@
             dialog.setMsg(message);
             dialog.acceptHandler = function () {
                 for (var i = this.behaviours.length - 1; i >= 0; i--) {
-                    this.body.remove(this.behaviours[i]);
+                    this.body.removeChild(this.behaviours[i]);
                 }
 
                 this.behaviours.length = 0;

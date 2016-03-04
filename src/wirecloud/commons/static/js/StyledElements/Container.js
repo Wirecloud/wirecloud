@@ -83,34 +83,6 @@
             },
 
             /**
-             */
-            remove: function remove(childElement) {
-                var index;
-
-                if (childElement == null) {
-                    return this.superMember(se.StyledElement, 'remove', childElement);
-                }
-
-                if (childElement instanceof se.StyledElement) {
-                    if ((index = this.children.indexOf(childElement)) === -1) {
-                        return this;
-                    }
-
-                    this.children.splice(index, 1);
-                    childElement.parentElement = null;
-
-                    // Get the DOM element
-                    childElement = childElement.get();
-                }
-
-                if (childElement.parentElement === this.get()) {
-                    this.get().removeChild(childElement);
-                }
-
-                return this;
-            },
-
-            /**
              * Insert the `newElement` either to the end of this Container
              * or after the `refElement` given.
              * @since 0.5
@@ -146,12 +118,24 @@
                 return this;
             },
 
-            removeChild: function removeChild(element) {
-                if (element == null) {
-                    throw new TypeError('missing element parameter');
+            /**
+             * Removes the `childElement` from this Container.
+             * @since 0.5
+             *
+             * @param {(StyledElements.StyledElement|Node)} childElement
+             *     An element to remove from this Container.
+             *
+             * @returns {StyledElements.Container}
+             *      The instance on which the member is called.
+             */
+            removeChild: function removeChild(childElement) {
+                utils.removeChild(this, childElement);
+
+                if (childElement instanceof se.StyledElement) {
+                    this.children.splice(this.children.indexOf(childElement), 1);
                 }
 
-                return this.remove(element);
+                return this;
             },
 
             repaint: function repaint(temporal) {

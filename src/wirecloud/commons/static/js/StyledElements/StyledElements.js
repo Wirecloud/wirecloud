@@ -235,12 +235,10 @@
              */
             remove: function remove() {
 
-                if (this.parentElement != null) {
-                    this.parentElement.remove(this);
+                if (this.parentElement instanceof se.StyledElement && typeof this.parentElement.removeChild === 'function') {
+                    this.parentElement.removeChild(this);
                 } else {
-                    if (this.get().parentElement != null) {
-                        this.get().parentElement.removeChild(this.get());
-                    }
+                    this.get().remove();
                 }
 
                 return this;
