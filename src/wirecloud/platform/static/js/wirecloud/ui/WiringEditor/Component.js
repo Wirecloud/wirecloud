@@ -45,7 +45,7 @@
             this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
 
             this.btnPrefs = new se.PopupButton({
-                extraClass: "btn-show-prefs",
+                extraClass: "we-prefs-btn",
                 title: gettext("Preferences"),
                 iconClass: "icon-reorder"
             });

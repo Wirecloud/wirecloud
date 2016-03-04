@@ -95,8 +95,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
-        src_tab_iwidgets = self.get_current_iwidgets(tab=102)
-        dst_tab_iwidgets = self.get_current_iwidgets(tab=103)
+        src_tab_iwidgets = self.find_iwidgets(tab=102)
+        dst_tab_iwidgets = self.find_iwidgets(tab=103)
         src_iwidget_count = len(src_tab_iwidgets)
         dst_iwidget_count = len(dst_tab_iwidgets)
 
@@ -106,8 +106,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab = self.get_workspace_tab_by_name('Tab 2')
         ActionChains(self.driver).click_and_hold(handle).move_to_element(tab.element).release().perform()
 
-        src_tab_iwidgets = self.get_current_iwidgets(tab=102)
-        dst_tab_iwidgets = self.get_current_iwidgets(tab=103)
+        src_tab_iwidgets = self.find_iwidgets(tab=102)
+        dst_tab_iwidgets = self.find_iwidgets(tab=103)
         self.assertEqual(len(src_tab_iwidgets), src_iwidget_count - 1)
         self.assertEqual(len(dst_tab_iwidgets), dst_iwidget_count + 1)
     test_move_iwidget_between_tabs.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
@@ -121,7 +121,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces')
 
-        iwidget = self.get_current_iwidgets()[0]
+        iwidget = self.find_iwidgets()[0]
         iwidget.remove()
 
     def test_remove_tab_from_workspace(self):
@@ -134,7 +134,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
         with self.wiring_view as wiring:
-            self.assertIsNone(wiring.find_component_by_title('widget', "Test 1"))
+            self.assertIsNone(wiring.find_draggable_component('widget', title="Test 1"))
 
     def test_read_only_widgets_cannot_be_removed(self):
 
@@ -143,7 +143,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab = self.get_workspace_tab_by_name('Tab 2')
         tab.element.click()
 
-        iwidget = self.get_current_iwidgets()[1]
+        iwidget = self.find_iwidgets()[1]
         iwidget.wait_loaded()
         close_button = iwidget.element.find_element_by_css_selector('.icon-remove')
         self.assertTrue('disabled' in close_button.get_attribute('class'))
@@ -160,7 +160,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces')
 
-        iwidget = self.get_current_iwidgets()[0]
+        iwidget = self.find_iwidgets()[0]
 
         with iwidget:
 
@@ -177,34 +177,29 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_basic_widget_functionalities(self):
 
         self.login(username='user_with_workspaces')
-        iwidget = self.get_current_iwidgets()[0]
+        iwidget = self.find_iwidgets()[0]
 
         with iwidget:
             check_default_settings_values(self)
 
         # Open widget settings
-        iwidget.open_menu().click_entry('Settings')
+        modal = iwidget.show_settings()
 
         # Check dialog shows correct values
-        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="list"]').get_attribute('value'), 'default')
-        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="text"]').get_attribute('value'), 'initial text')
-        self.assertFalse(self.driver.find_element_by_css_selector('.window_menu [name="boolean"]').is_selected())
-        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="number"]').get_attribute('value'), '2')
-        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="password"]').get_attribute('value'), 'default')
+        self.assertEqual(modal.get_field('list').value, "default")
+        self.assertEqual(modal.get_field('text').value, "initial text")
+        self.assertFalse(modal.get_field('boolean').is_selected)
+        self.assertEqual(modal.get_field('number').value, "2")
+        self.assertEqual(modal.get_field('password').value, "default")
 
         # Change widget settings
-        list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
-        self.fill_form_input(list_input, '1')  # value1
-        text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
-        self.fill_form_input(text_input, 'test')
-        boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="boolean"]')
-        boolean_input.click()
-        number_input = self.driver.find_element_by_css_selector('.window_menu [name="number"]')
-        self.fill_form_input(number_input, '0')
-        password_input = self.driver.find_element_by_css_selector('.window_menu [name="password"]')
-        self.fill_form_input(password_input, 'password')
+        modal.get_field('list').set_value("1") # value1
+        modal.get_field('text').set_value("test")
+        modal.get_field('boolean').click()
+        modal.get_field('number').set_value("0")
+        modal.get_field('password').set_value("password")
 
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        modal.accept()
 
         with iwidget:
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
@@ -214,22 +209,20 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
 
         # Open widget settings again
-        iwidget.open_menu().click_entry('Settings')
+        modal = iwidget.show_settings()
 
         # Check dialog shows correct values
-        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="list"]').get_attribute('value'), '1')
-        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="text"]').get_attribute('value'), 'test')
-        self.assertTrue(self.driver.find_element_by_css_selector('.window_menu [name="boolean"]').is_selected())
-        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="number"]').get_attribute('value'), '0')
-        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="password"]').get_attribute('value'), 'password')
+        self.assertEqual(modal.get_field('list').value, "1")
+        self.assertEqual(modal.get_field('text').value, "test")
+        self.assertTrue(modal.get_field('boolean').is_selected)
+        self.assertEqual(modal.get_field('number').value, "0")
+        self.assertEqual(modal.get_field('password').value, "password")
 
         # Change widget settings
-        text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
-        self.fill_form_input(text_input, '')
-        password_input = self.driver.find_element_by_css_selector('.window_menu [name="password"]')
-        self.fill_form_input(password_input, '')
+        modal.get_field('text').set_value("")
+        modal.get_field('password').set_value("")
 
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        modal.accept()
 
         with iwidget:
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
@@ -239,9 +232,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
 
         # Restore default widget settings
-        iwidget.open_menu().click_entry('Settings')
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Set Defaults']").click()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        modal = iwidget.show_settings()
+        modal.find_button("Set Defaults").click()
+        modal.accept()
 
         with iwidget:
             check_default_settings_values(self)
@@ -251,12 +244,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         api_test_iwidget = self.add_widget_to_mashup('Wirecloud API test')
 
         # Open widget settings again
-        api_test_iwidget.open_menu().click_entry('Settings')
-
-        text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
-        self.fill_form_input(text_input, 'Success!!')
-
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        modal = api_test_iwidget.show_settings()
+        modal.get_field('text').set_value("Success!!")
+        modal.accept()
 
         with api_test_iwidget:
             self.assertEqual(self.driver.find_element_by_id('pref_registercallback_test').text, 'Success!!')
@@ -271,9 +261,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.wait_wirecloud_ready()
         time.sleep(1)
 
+        api_test_iwidget = self.find_iwidget(title='Wirecloud API test')
+
         with api_test_iwidget:
-            prop_input = self.driver.find_element_by_css_selector('#update_prop_input')
-            self.assertEqual(prop_input.get_attribute('value'), 'new value')
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('#update_prop_input').get_attribute('value') == "new value")
 
             self.assertEqual(api_test_iwidget.error_count, 0)
             old_log_entries = len(api_test_iwidget.log_entries)
@@ -312,7 +303,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_widget_navigation_to_doc(self):
 
         self.login(username='user_with_workspaces')
-        iwidget = self.get_current_iwidgets()[0]
+        iwidget = self.find_iwidgets()[0]
 
         iwidget.open_menu().click_entry("User's Manual")
 
@@ -344,7 +335,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.change_current_workspace('Pending Events')
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
         source_iwidget = iwidgets[0]
         target_iwidget = iwidgets[1]
         self.assertIsNotNone(source_iwidget.element)
@@ -353,7 +344,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         time.sleep(0.5)
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
         source_iwidget = iwidgets[0]
         target_iwidget = iwidgets[1]
         self.assertIsNotNone(source_iwidget.element)
@@ -420,16 +411,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Rename a widget
 
-        iwidget = self.get_current_iwidgets()[1]
+        iwidget = self.find_iwidgets()[1]
         iwidget.rename('Other Test')
 
         self.driver.refresh()
         self.wait_wirecloud_ready()
 
-        iwidget = self.get_current_iwidgets()[0]
+        iwidget = self.find_iwidgets()[0]
         self.assertEqual(iwidget.name, 'Test')
 
-        iwidget = self.get_current_iwidgets()[1]
+        iwidget = self.find_iwidgets()[1]
         self.assertEqual(iwidget.name, 'Other Test')
 
         # Remove a widget
@@ -474,7 +465,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab2.element.click()
         tab.element.click()
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
 
         # Send wiring event
         self.send_basic_event(iwidgets[0])
@@ -500,7 +491,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             'password_param': 'parameterized password',
         })
 
-        iwidget = self.get_current_iwidgets()[0]
+        iwidget = self.find_iwidgets()[0]
 
         iwidget.open_menu().click_entry('Settings')
 
@@ -522,10 +513,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'parameterized password')
 
         with self.wiring_view as wiring:
-            operator = wiring.find_component_by_title('operator', "TestOperator")
+            operator = wiring.find_draggable_component('operator', title="TestOperator")
 
-            modal = operator.show_settings_modal()
-            prefix_field = modal.get_field("prefix")
+            modal = operator.show_settings()
+            prefix_field = modal.get_field('prefix')
             self.assertEqual(prefix_field.get_attribute('disabled'), 'true')
             self.assertEqual(prefix_field.get_attribute('value'), 'parameterized value: ')
             modal.accept()
@@ -613,15 +604,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             'readOnlyConnectables': True,
         })
         self.create_workspace(mashup='Published Workspace')
-        iwidget = self.get_current_iwidgets()[0]
+        iwidget = self.find_iwidgets()[0]
         close_button = iwidget.element.find_element_by_css_selector('.icon-remove')
         self.assertTrue('disabled' in close_button.get_attribute('class'))
         close_button.click()
 
         with self.wiring_view as wiring:
-            self.assertEqual(len(wiring.filter_connections_by_properties("readonly")), 3)
+            self.assertEqual(len(wiring.find_connections(extra_class="readonly")), 3)
 
-        self.assertEqual(len(self.get_current_iwidgets()), 2)
+        self.assertEqual(len(self.find_iwidgets()), 2)
 
     def test_public_workspaces(self):
 
@@ -709,7 +700,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def check_public_workspace(self, frame_id=None):
         # Check iwidget are loaded correctly
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         source_iwidget = iwidgets[1]
         target_iwidget = iwidgets[0]
@@ -972,7 +963,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="user_with_workspaces")
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
 
         self.assertEqual(iwidgets[0].layout_position, (0, 0))
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
@@ -992,7 +983,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="user_with_workspaces")
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
 
         self.assertEqual(iwidgets[0].layout_position, (0, 0))
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
@@ -1117,7 +1108,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="user_with_workspaces")
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
 
         self.assertEqual(iwidgets[0].layout_position, (0, 0))
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
@@ -1223,7 +1214,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="admin", next="/admin/GridLayoutTests")
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
         old_size_from_context1, old_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0])
         old_size_from_context2, old_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
 
@@ -1290,7 +1281,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username="admin", next="/admin/GridLayoutTests")
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
         old_size_from_context1, old_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0])
         old_size_from_context2, old_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
 
@@ -1321,7 +1312,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        initial_iwidgets = self.get_current_iwidgets()
+        initial_iwidgets = self.find_iwidgets()
         initial_iwidget_count = len(initial_iwidgets)
 
         with initial_iwidgets[1]:
@@ -1333,9 +1324,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             # operator
             self.driver.execute_script("document.getElementById('wiring_pushevent_button').click();")
 
-        WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.get_current_iwidgets()) == (initial_iwidget_count + 2))
+        WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.find_iwidgets()) == (initial_iwidget_count + 2))
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
         with iwidgets[3]:
             text_div = self.driver.find_element_by_id('registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
@@ -1350,7 +1341,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        initial_iwidgets = self.get_current_iwidgets()
+        initial_iwidgets = self.find_iwidgets()
         initial_iwidget_count = len(initial_iwidgets)
 
         self.send_basic_event(initial_iwidgets[2], 'dashboard_management_test')
@@ -1358,9 +1349,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # event, one of them is connected directly to the initial TestOperator,
         # the other is connected through and new TestOperator instance
 
-        WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.get_current_iwidgets()) == (initial_iwidget_count + 2))
+        WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.find_iwidgets()) == (initial_iwidget_count + 2))
 
-        iwidgets = self.get_current_iwidgets()
+        iwidgets = self.find_iwidgets()
         with iwidgets[3]:
             text_div = self.driver.find_element_by_id('registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
@@ -1374,7 +1365,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces')
 
-        widget, other_widget = self.get_current_iwidgets()
+        widget, other_widget = self.find_iwidgets()
 
         # Upgrade to version 3.0
         widget.open_menu().click_entry('Upgrade/Downgrade')
@@ -1385,12 +1376,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         widget.open_menu().click_entry('Settings')
 
         form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
-        self.assertRaises(NoSuchElementException, form.get_field, 'list', tagname="select")
-        self.assertEqual(form.get_field_value("text"), 'initial text')
+        self.assertRaises(NoSuchElementException, form.get_field, 'list')
+        self.assertEqual(form.get_field('text').value, 'initial text')
         self.assertRaises(NoSuchElementException, form.get_field, 'boolean')
         self.assertRaises(NoSuchElementException, form.get_field, 'number')
         self.assertRaises(NoSuchElementException, form.get_field, 'password')
-        self.assertEqual(form.get_field_value("new"), 'initial value')
+        self.assertEqual(form.get_field('new').value, 'initial value')
         form.accept()
 
         # Check wiring
@@ -1417,8 +1408,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         widget.open_menu().click_entry('Settings')
 
         form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
-        self.assertEqual(form.get_field_value("list", tagname="select"), 'default')
-        self.assertEqual(form.get_field_value("text"), 'initial text')
+        self.assertEqual(form.get_field('list').value, 'default')
+        self.assertEqual(form.get_field('text').value, 'initial text')
         self.assertRaises(NoSuchElementException, form.get_field, 'new')
         form.accept()
 
@@ -1436,7 +1427,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world 2!!')
 
 
-
 @wirecloud_selenium_test_case
 class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
 
@@ -1449,7 +1439,7 @@ class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
 
         # Send event from Test 2 as it is the one connected to the test operator
         iwidget_icons[1].click()
-        source_iwidget = self.get_current_iwidgets()[1]
+        source_iwidget = self.find_iwidgets()[1]
 
         with source_iwidget:
             check_default_settings_values(self)
@@ -1460,7 +1450,7 @@ class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
         time.sleep(0.2)
 
         iwidget_icons[0].click()
-        target_iwidget = self.get_current_iwidgets()[0]
+        target_iwidget = self.find_iwidgets()[0]
 
         with target_iwidget:
 

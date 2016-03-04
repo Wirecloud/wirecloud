@@ -49,7 +49,7 @@
             this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
             this.btnPrefs = new se.PopupButton({
                 title: utils.gettext("Preferences"),
-                extraClass: "btn-show-prefs",
+                extraClass: "we-prefs-btn",
                 iconClass: "icon-reorder"
             });
             this.btnPrefs.popup_menu.append(new ns.ComponentDraggablePrefs(this));

@@ -71,7 +71,7 @@
             'menubutton': function () {
                 var button = new StyledElements.Button({
                     'plain': true,
-                    'class': 'icon-cogs',
+                    'class': 'wc-menu-btn icon-cogs',
                     'title': utils.gettext('Menu')
                 });
                 button.addEventListener("click",
