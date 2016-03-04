@@ -97,6 +97,7 @@
              */
             appendChild: function appendChild(newElement, refElement) {
                 utils.appendChild(this, newElement, refElement).forEach(addChild.bind(this));
+                orderbyIndex.call(this);
                 return this;
             },
 
@@ -115,6 +116,7 @@
              */
             prependChild: function prependChild(newElement, refElement) {
                 utils.prependChild(this, newElement, refElement).forEach(addChild.bind(this));
+                orderbyIndex.call(this);
                 return this;
             },
 
@@ -237,6 +239,24 @@
                 this.children.push(newElement);
             }
         }
+    };
+
+    var orderbyIndex = function orderbyIndex() {
+        /* jshint validthis: true */
+        var children = [];
+
+        Array.prototype.forEach.call(this.get().childNodes, function (childNode) {
+            var i, elementFound = false;
+
+            for (i = 0; i < this.children.length && !elementFound; i++) {
+                if (this.children[i].get() === childNode) {
+                    children.push(this.children.splice(i, 1)[0]);
+                    elementFound = true;
+                }
+            }
+        }.bind(this));
+
+        this.children = children;
     };
 
 })(StyledElements, StyledElements.Utils);
