@@ -111,56 +111,39 @@
             },
 
             /**
-             * Insert an element at the end of this container or before the
-             * refElement if provided.
-             *
+             * Insert the `newElement` either to the end of this Container
+             * or after the `refElement` given.
              * @since 0.5
-             * @param {StyledElements.StyledElement|HTMLElement|String} newElement
-             *      An element to insert into the wrapperElement.
-             * @param {StyledElements.StyledElement|HTMLElement} [refElement]
-             *      Optional. An element after which newElement is inserted.
+             *
+             * @param {(StyledElements.StyledElement|Node|String)} newElement
+             *     An element to insert into this Container.
+             * @param {(StyledElements.StyledElement|Node)} [refElement]
+             *     Optional. An element after which `newElement` is inserted.
+             *
              * @returns {StyledElements.Container}
-             *      The instance on which the member is called.
+             *     The instance on which the member is called.
              */
-            appendChild: function appendChild(element, refElement) {
-                if (element instanceof StyledElements.StyledElement) {
-                    element.insertInto(this.wrapperElement, refElement);
-                    element.parentElement = this;
-                    this.children.push(element);
-
-                    return this;
-                }
-
-                if (typeof element === "string") {
-                    element = document.createTextNode(element);
-                }
-
-                if (refElement instanceof StyledElements.StyledElement) {
-                    refElement = refElement.get();
-                }
-
-                if (refElement != null) {
-                    this.wrapperElement.insertBefore(element, refElement);
-                } else {
-                    this.wrapperElement.appendChild(element);
-                }
-
+            appendChild: function appendChild(newElement, refElement) {
+                utils.appendChild(this, newElement, refElement).forEach(addChild.bind(this));
                 return this;
             },
 
             /**
-             * Inserts a new element to the beginning of this Container
-             * @since 0.6
+             * Inserts the `newElement` to the beginning of this Container
+             * or before the `refElement` given.
+             * @since 0.7
              *
-             * @param {StyledElement|HTMLElement|String} newElement
-             *      An element to insert into the wrapperElement.
-             * @param {StyledElement|HTMLElement} [refElement]
-             *      Optional. An element before which newElement is inserted.
-             * @returns {StyledElement}
+             * @param {(StyledElements.StyledElement|Node|String)} newElement
+             *     An element to insert into this Container.
+             * @param {(StyledElements.StyledElement|Node)} [refElement]
+             *     Optional. An element before which `newElement` is inserted.
+             *
+             * @returns {StyledElements.Container}
              *      The instance on which the member is called.
              */
             prependChild: function prependChild(newElement, refElement) {
-                return this.appendChild(newElement, this.get().firstChild);
+                utils.prependChild(this, newElement, refElement).forEach(addChild.bind(this));
+                return this;
             },
 
             removeChild: function removeChild(element) {
@@ -258,6 +241,18 @@
         extraClass: "",
         tagname: 'div',
         useFullHeight: false
+    };
+
+    var addChild = function addChild(newElement) {
+        /* jshint validthis: true */
+
+        if (newElement instanceof se.StyledElement) {
+            var index = this.children.indexOf(newElement);
+
+            if (index === -1) {
+                this.children.push(newElement);
+            }
+        }
     };
 
 })(StyledElements, StyledElements.Utils);
