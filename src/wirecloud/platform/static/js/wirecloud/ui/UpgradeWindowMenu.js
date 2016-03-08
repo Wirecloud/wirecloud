@@ -122,6 +122,7 @@
         this.acceptButton.addEventListener("click", function () {
             this.acceptButton.disable();
             var new_version = this.version_selector.getValue();
+            var old_version = this.component.meta.version;
             var new_component_id = [this.component.meta.vendor, this.component.meta.name, new_version].join('/');
             var new_component = Wirecloud.LocalCatalogue.getResourceId(new_component_id);
 
@@ -130,13 +131,13 @@
                 component.removeEventListener('upgradeerror', _onfailure_listener);
 
                 var msg;
-                if (new_version.compareTo(this.component.meta.version) > 0) {
+                if (new_version.compareTo(old_version) > 0) {
                     msg = utils.gettext('Upgrading to version %(version)s');
                 } else {
                     msg = utils.gettext('Downgrading to version %(version)s');
                 }
                 msg = utils.interpolate(msg, {version: new_version});
-                component.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MS);
+                component.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
                 this._closeListener();
             }.bind(this);
