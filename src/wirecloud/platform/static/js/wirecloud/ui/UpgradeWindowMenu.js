@@ -104,7 +104,7 @@
             return -version1.compareTo(version2);
         });
 
-        this.version_selector = new StyledElements.Select();
+        this.version_selector = new StyledElements.Select({'name': "version"});
         this.version_selector.addEventListener('change', request_version.bind(this));
         this.version_selector.addEntries(versions);
 
