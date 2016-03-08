@@ -141,8 +141,6 @@
                     .appendTo(this.connectionsElement);
 
                 appendConnection.call(this, connection);
-                this.trigger('establish', connection);
-                connection.logManager.log(gettext("The connection was loaded successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
 
                 return this;
             },
@@ -271,7 +269,7 @@
         target: 'source'
     };
 
-    var appendConnection = function appendConnection(connection) {
+    var appendConnection = function appendConnection(connection, backupConnection) {
 
         this.connections.push(connection);
         connection.options.appendTo(this.optionsElement);
@@ -281,7 +279,7 @@
             .on('customizestart', connection_oncustomizestart.bind(this))
             .on('remove', connection_onremove.bind(this));
 
-        return this.trigger('establish', connection);
+        return this.trigger('establish', connection, backupConnection);
     };
 
     var connection_onclick = function connection_onclick(connection) {
@@ -396,9 +394,7 @@
             this.temporalConnection
                 .stickEndpoint(finalEndpoint)
                 .createAndBind(false, this.wiringEngine);
-            appendConnection.call(this, this.temporalConnection);
-            this.trigger('establish', this.temporalConnection, this._connectionBackup);
-            this.temporalConnection.logManager.log(gettext("The connection was established successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
+            appendConnection.call(this, this.temporalConnection, this._connectionBackup);
             break;
         case ns.ConnectionEngine.CONNECTION_DUPLICATE:
             this.trigger('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint));
