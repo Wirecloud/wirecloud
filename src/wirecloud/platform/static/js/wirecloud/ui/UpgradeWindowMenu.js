@@ -155,7 +155,7 @@
         // Cancel button
         this.cancelButton = new StyledElements.Button({
             text: utils.gettext('Cancel'),
-            'class': 'btn-primary'
+            'class': 'btn-primary btn-cancel'
         });
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);
