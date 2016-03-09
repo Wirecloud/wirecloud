@@ -103,7 +103,7 @@
         options.closable = false;
         StyledElements.Tab.call(this, id, notebook, options);
         this.wrapperElement.classList.add('wc-workspace-tab');
-        this.wrapperElement.setAttribute('data-id', id);
+        this.wrapperElement.setAttribute('data-id', tabInfo.id);
 
         Object.defineProperty(this, 'id', {value: tabInfo.id});
         Object.defineProperty(this, 'workspace', {value: options.workspace});

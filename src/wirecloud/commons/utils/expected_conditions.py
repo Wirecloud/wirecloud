@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,6 +20,9 @@
 import time
 
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 
 class element_be_clickable(object):
@@ -32,7 +35,9 @@ class element_be_clickable(object):
     def __call__(self, driver):
 
         try:
-            if self.base_element is not None:
+            if not isinstance(self.locator, tuple):
+                element = self.locator
+            elif self.base_element is not None:
                 element = self.base_element.find_element(*self.locator)
             else:
                 element = driver.find_element(*self.locator)
@@ -57,9 +62,15 @@ class element_be_clickable(object):
                 return False
 
             while top_element.tag_name != 'html':
-                if element == top_element:
+                if top_element == element:
                     return element
+                elif 'popover' in top_element.get_attribute('class').split():
+                    # Dismiss this popover/tooltip
+                    ActionChains(driver).move_to_element(element).perform()
+                    return False
+
                 top_element = top_element.find_element_by_xpath('..')
+
             return False
         except (NoSuchElementException, StaleElementReferenceException):
             return False
@@ -173,5 +184,20 @@ class marketplace_name(object):
     def __call__(self, driver):
         try:
             return self.marketplace_tester.get_current_marketplace_name() == self.expected_name
+        except StaleElementReferenceException:
+            return False
+
+class component_instantiable(object):
+    """An expectation for checking that a component is instantiable from the
+    dashboard wallet.
+    returns the instantiate button if the component is instantiable, false otherwise."""
+    def __init__(self, wallet_tester, component_name):
+        self.wallet_tester = wallet_tester
+        self.component_name = component_name
+
+    def __call__(self, driver):
+        try:
+            resource = self.wallet_tester.search_in_results(self.component_name)
+            return resource is not None and element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
         except StaleElementReferenceException:
             return False

@@ -95,21 +95,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/Pending Events')
 
-        src_tab_iwidgets = self.find_iwidgets(tab=102)
-        dst_tab_iwidgets = self.find_iwidgets(tab=103)
-        src_iwidget_count = len(src_tab_iwidgets)
-        dst_iwidget_count = len(dst_tab_iwidgets)
+        src_iwidget_count = self.count_iwidgets(tab=102)
+        dst_iwidget_count = self.count_iwidgets(tab=103)
 
-        iwidget = src_tab_iwidgets[0]
+        iwidget = self.find_iwidgets(tab=102)[0]
 
         handle = iwidget.element.find_element_by_css_selector('.widget_menu')
         tab = self.get_workspace_tab_by_name('Tab 2')
         ActionChains(self.driver).click_and_hold(handle).move_to_element(tab.element).release().perform()
 
-        src_tab_iwidgets = self.find_iwidgets(tab=102)
-        dst_tab_iwidgets = self.find_iwidgets(tab=103)
-        self.assertEqual(len(src_tab_iwidgets), src_iwidget_count - 1)
-        self.assertEqual(len(dst_tab_iwidgets), dst_iwidget_count + 1)
+        self.assertEqual(self.count_iwidgets(tab=102), src_iwidget_count - 1)
+        self.assertEqual(self.count_iwidgets(tab=103), dst_iwidget_count + 1)
     test_move_iwidget_between_tabs.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
 
     def test_add_widget_from_catalogue(self):
@@ -925,27 +921,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .wc-toolbar .icon-plus')))
         with self.wallet as wallet:
-            time.sleep(1)
 
             # Add the youtube browser widget
-            def youtube_instantiable(driver):
-                resource = wallet.search_in_results('YouTube Browser')
-                return resource is not None and WEC.element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
-            WebDriverWait(self.driver, 10).until(youtube_instantiable).click()
+            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(wallet, 'YouTube Browser')).click()
 
+            # Next tutorial step
             next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
             self.assertElementHasFocus(next_button)
             next_button.click()
 
             # Add the input box widget
-            time.sleep(1)
-
-            def input_box_instantiable(driver):
-                resource = wallet.search_in_results('Input Box')
-                return resource is not None and WEC.element_be_clickable((By.CSS_SELECTOR, '.mainbutton'), base_element=resource.element)(driver)
-            WebDriverWait(self.driver, 10).until(input_box_instantiable).click()
-
-            WebDriverWait(self.driver, 10).until(WEC.element_be_clickable((By.CSS_SELECTOR, '.widget_wallet .icon-remove')))
+            WebDriverWait(self.driver, timeout=15).until(WEC.component_instantiable(wallet, 'Input Box')).click()
 
         # cancel current tutorial
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()

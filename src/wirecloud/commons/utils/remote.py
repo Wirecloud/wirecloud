@@ -489,7 +489,7 @@ class WebElementTester(object):
         return self.element.is_displayed()
 
     def click(self):
-        self.element.click()
+        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_clickable(self.element)).click()
         return self
 
     def find_element(self, css_selector):
@@ -1239,8 +1239,11 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         else:
             self.assertTrue(self.get_current_workspace_name().startswith(mashup), 'Invalid workspace name after creating workspace from catalogue')
 
-    def count_iwidgets(self):
-        return len(self.driver.find_elements_by_css_selector('div.iwidget'))
+    def count_iwidgets(self, tab=None):
+        if tab is None:
+            return self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().length;', tab)
+        else:
+            return self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().length;', tab)
 
     def get_current_workspace_name(self):
 

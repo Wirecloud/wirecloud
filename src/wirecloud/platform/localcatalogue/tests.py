@@ -572,11 +572,11 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             myresources.delete_resource('Test')
 
-        # Check current workspace has no widgets
+        # Check current workspace has only a missing widget
         self.assertEqual(self.count_iwidgets(), 1)
         self.assertEqual(self.find_iwidgets()[0].error_count, 1)
 
-        # Check initial workspace has no widgets
+        # Check initial workspace has only a missing widget
         self.change_current_workspace('Workspace')
         self.assertEqual(self.count_iwidgets(), 1)
         self.assertEqual(self.find_iwidgets()[0].error_count, 1)
