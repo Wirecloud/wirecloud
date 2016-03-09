@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
 (function () {
 
@@ -105,6 +105,7 @@
 
         Wirecloud.UserInterfaceManager._registerPopup(this);
         if (this.visible) {
+            this.element.classList.add('in');
             this.repaint();
             return;
         }
@@ -116,6 +117,7 @@
         this.element = builder.parse(template, {
             content: this.options.content
         }).elements[0];
+        this.element.addEventListener('transitionend', _hide.bind(this));
         document.body.appendChild(this.element);
         searchBestPosition.call(this, refPosition, this.options.placement);
         this.element.classList.add('in');
@@ -136,8 +138,7 @@
         Object.defineProperties(this, {
             visible: {get: function () {
                 return this.element != null;
-            }},
-            _show: {value: _show.bind(this), enumerable: false}
+            }}
         });
     };
     Tooltip.prototype = new StyledElements.StyledElement();
@@ -154,16 +155,16 @@
         if (this.visible) {
             return this.hide();
         } else {
-            return this._show(refElement);
+            return _show.call(this, refElement);
         }
     };
 
     Tooltip.prototype.show = function show(refElement) {
-        return this._show(refElement);
+        return _show.call(this, refElement);
     };
 
     var _hide = function _hide() {
-        if (this.element != null) {
+        if (this.element != null && !this.element.classList.contains('in')) {
             document.body.removeChild(this.element);
             this.element = null;
             Wirecloud.UserInterfaceManager._unregisterPopup(this);
@@ -171,14 +172,15 @@
     };
 
     Tooltip.prototype.hide = function hide() {
+        var force;
+
         if (!this.visible) {
             return this;
         }
 
-        if (this.element.classList.contains('in')) {
-            this.element.addEventListener('transitionend', _hide.bind(this));
-            this.element.classList.remove('in');
-        } else {
+        force = !this.element.classList.contains('in') || getComputedStyle(this.element).getPropertyValue('opacity') === "0";
+        this.element.classList.remove('in');
+        if (force) {
             _hide.call(this);
         }
 

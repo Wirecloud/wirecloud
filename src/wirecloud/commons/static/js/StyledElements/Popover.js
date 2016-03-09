@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
 (function () {
 
@@ -114,6 +114,7 @@
 
         Wirecloud.UserInterfaceManager._registerPopup(this);
         if (this.visible) {
+            this.element.classList.add('in');
             this.repaint();
             return;
         }
@@ -126,6 +127,7 @@
             title: this.options.title,
             content: this.options.content
         }).elements[0];
+        this.element.addEventListener('transitionend', _hide.bind(this));
         document.body.appendChild(this.element);
 
         document.addEventListener("click", this._disableCallback, true);
@@ -151,8 +153,7 @@
             visible: {get: function () {
                 return this.element != null;
             }},
-            _disableCallback: {value: disableCallback.bind(this), enumerable: false},
-            _show: {value: _show.bind(this), enumerable: false}
+            _disableCallback: {value: disableCallback.bind(this), enumerable: false}
         });
     };
     Popover.prototype = new StyledElements.StyledElement();
@@ -178,33 +179,33 @@
         if (this.visible) {
             this.hide();
         } else {
-            this._show(refElement);
+            _show.call(this, refElement);
         }
     };
 
     Popover.prototype.show = function show(refElement) {
-        this._show(refElement);
+        _show.call(this, refElement);
     };
 
     var _hide = function _hide() {
-        if (this.element != null) {
+        if (this.element != null && !this.element.classList.contains('in')) {
             document.body.removeChild(this.element);
             this.element = null;
             Wirecloud.UserInterfaceManager._unregisterPopup(this);
+            document.removeEventListener('click', this._disableCallback, true);
             this.trigger('hide');
         }
     };
 
     Popover.prototype.hide = function hide() {
+        var force;
         if (!this.visible) {
             return;
         }
 
-        document.removeEventListener('click', this._disableCallback, true);
-        if (this.element.classList.contains('in')) {
-            this.element.addEventListener('transitionend', _hide.bind(this));
-            this.element.classList.remove('in');
-        } else {
+        force = !this.element.classList.contains('in') || getComputedStyle(this.element).getPropertyValue('opacity') === "0";
+        this.element.classList.remove('in');
+        if (force) {
             _hide.call(this);
         }
     };
