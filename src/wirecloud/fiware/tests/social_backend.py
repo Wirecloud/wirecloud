@@ -176,7 +176,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
 
         with patch('wirecloud.fiware.social_auth_backend.requests') as requests_mock:
             response = MagicMock()
-            response.content = '{"test": true}'
+            response.json.return_value = {"test": True}
             requests_mock.get.return_value = response
             self.assertEqual(self.instance._request_user_info('token'), {"test": True})
 
