@@ -553,14 +553,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             mashup.merge()
 
         self.assertEqual(self.count_workspace_tabs(), 3)
-        tab = self.get_workspace_tab_by_name('Tab')
-        self.assertIsNotNone(tab)
-        tab = self.get_workspace_tab_by_name('Tab 2')
-        self.assertIsNotNone(tab)
-        tab = self.get_workspace_tab_by_name('Tab 2 2')
-        self.assertIsNotNone(tab)
+        tab1 = self.get_workspace_tab_by_name('Tab')
+        self.assertIsNotNone(tab1)
+        tab2 = self.get_workspace_tab_by_name('Tab 2')
+        self.assertIsNotNone(tab2)
+        tab3 = self.get_workspace_tab_by_name('Tab 2 2')
+        self.assertIsNotNone(tab3)
 
-        self.assertEqual(self.count_iwidgets(), 0)
+        self.assertEqual(self.count_iwidgets(tab1.id), 0)
+        self.assertEqual(self.count_iwidgets(tab2.id), 1)
+        self.assertEqual(self.count_iwidgets(tab3.id), 1)
 
         self.driver.back()
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.driver.current_url == self.live_server_url + '/login')

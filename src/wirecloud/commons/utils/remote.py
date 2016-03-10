@@ -993,6 +993,7 @@ class WorkspaceTabTester(object):
 
         self.testcase = testcase
         self.element = element
+        self.id = element.get_attribute('data-id')
 
     @property
     def name(self):
