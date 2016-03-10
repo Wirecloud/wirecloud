@@ -115,6 +115,7 @@ class TestSocialAuthBackend(WirecloudTestCase):
     def tearDown(self):
 
         self.module_patcher.stop()
+        super(TestSocialAuthBackend, self).tearDown()
 
     def test_get_user_data_old_version(self):
 
