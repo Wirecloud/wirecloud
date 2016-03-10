@@ -307,11 +307,8 @@
         }
 
         this.wrapperElement.classList.remove('hidden');
-        try {
-            window.parent.document.body.appendChild(this.wrapperElement);
-        } catch (e) {
-            document.body.appendChild(this.wrapperElement);
-        }
+
+        document.body.appendChild(this.wrapperElement);
         Wirecloud.UserInterfaceManager._registerPopup(this);
         this.events.visibilityChange.dispatch(this);
 

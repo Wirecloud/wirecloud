@@ -677,8 +677,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_embedded_view(self):
 
         mashup_url = self.live_server_url + '/user_with_workspaces/Public Workspace?mode=embedded'
-        iframe_test_path = os.path.join(self.shared_test_data_dir, 'iframe_test.html')
-        iframe_test_url = urljoin('file:', pathname2url(iframe_test_path))
+        from django.conf import settings
+        iframe_test_url = urljoin(self.live_server_url, settings.STATIC_URL) + 'tests/embedded_iframe.html'
         self.driver.get(iframe_test_url)
 
         # Load Wirecloud using the iframe element
