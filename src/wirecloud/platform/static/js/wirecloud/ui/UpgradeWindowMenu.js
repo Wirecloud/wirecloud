@@ -132,11 +132,11 @@
 
                 var msg;
                 if (new_version.compareTo(old_version) > 0) {
-                    msg = utils.gettext('Upgrading to version %(version)s');
+                    msg = utils.gettext("The %(type)s was upgraded to v%(version)s successfully.");
                 } else {
-                    msg = utils.gettext('Downgrading to version %(version)s');
+                    msg = utils.gettext("The %(type)s was downgraded to v%(version)s successfully.");
                 }
-                msg = utils.interpolate(msg, {version: new_version});
+                msg = utils.interpolate(msg, {type: component.meta.type, version: new_version});
                 component.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
                 this._closeListener();
