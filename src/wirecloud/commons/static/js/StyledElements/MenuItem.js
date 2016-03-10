@@ -302,7 +302,7 @@
 
     var property_title_get = function property_title_get() {
         return this.titleElement.textContent;
-    }
+    };
 
     var element_onclick = function element_onclick(event) {
         event.stopPropagation();

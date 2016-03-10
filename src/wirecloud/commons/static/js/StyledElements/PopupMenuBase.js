@@ -146,7 +146,7 @@
             hidden: {get: property_hidden_get},
             lastEnabledItem: {get: property_lastEnabledItem_get},
             oneActiveAtLeast: {value: options.oneActiveAtLeast},
-            useRefElementWidth: {value:options.useRefElementWidth}
+            useRefElementWidth: {value: options.useRefElementWidth}
         });
 
         this._items = [];

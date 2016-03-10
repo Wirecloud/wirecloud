@@ -258,6 +258,7 @@
             break;
         default:
             // Quit when this doesn't handle the key event.
+            break;
         }
     };
 

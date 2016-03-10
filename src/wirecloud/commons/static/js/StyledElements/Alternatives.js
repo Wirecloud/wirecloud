@@ -142,7 +142,7 @@
                 } else {
                     context.inAlternative.wrapperElement.style.left = -context.width + "px";
                 }
-            // TODO
+                // TODO
                 break;
             //case Alternatives.NONE:
             default:

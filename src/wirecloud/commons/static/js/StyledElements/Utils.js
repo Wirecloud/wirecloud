@@ -977,19 +977,19 @@ if (window.StyledElements == null) {
     /**
      * Extracts modifier keys information from keyboard events.
      *
-     * @sinze 0.7.0
+     * @since 0.7.0
      *
      * @param {KeyboardEvent} event keyboard event
      * @returns {Object} modifier keys information
      */
-     Utils.extractModifiers = function extractModifiers(event) {
+    Utils.extractModifiers = function extractModifiers(event) {
         return {
             altKey: event.altKey,
             ctrlKey: event.ctrlKey,
             metaKey: event.metaKey,
             shiftKey: event.shiftKey
         };
-     };
+    };
 
     /**
      * Stops the propagation of keydown events based on a common rules.
@@ -997,11 +997,11 @@ if (window.StyledElements == null) {
      * if the user is not pressing a modifier key (without taking into account
      * the shift key) or if the if the pressed key is the Backspace.
      *
-     * @sinze 0.7.0
+     * @since 0.7.0
      *
      * @param {KeyboardEvent} event keyboard event
      */
-     Utils.stopInputKeydownPropagationListener = function stopInputKeydownPropagationListener(event) {
+    Utils.stopInputKeydownPropagationListener = function stopInputKeydownPropagationListener(event) {
         var modifiers, key;
 
         modifiers = Utils.extractModifiers(event);
@@ -1010,7 +1010,7 @@ if (window.StyledElements == null) {
         if (!modifiers.altKey && !modifiers.metaKey && !modifiers.ctrlKey || key === 'Backspace') {
             event.stopPropagation();
         }
-     };
+    };
 
     /**
      * Normalizes the key code info from keyboard events

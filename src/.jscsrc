@@ -2,7 +2,7 @@
     "validateIndentation": 4,
     "validateLineBreaks": "LF",
     "validateParameterSeparator": ", ",
-    "disallowEmptyBlocks": true,
+    "disallowEmptyBlocks": {"allExcept": ["comments"]},
     "disallowKeywordsOnNewLine": ["else"],
     "disallowTrailingWhitespace": true,
     "disallowMixedSpacesAndTabs": true,

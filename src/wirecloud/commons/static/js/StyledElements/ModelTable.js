@@ -86,7 +86,7 @@
 
     var paintTable = function paintTable(items) {
         var i, j, item, row, cell, callback, today, cellContent,
-            column, msg, state;
+            column, state;
 
         this.pClearTable();
 
@@ -224,7 +224,7 @@
         var selection = [];
         Object.defineProperty(this, 'selection', {
             get: function () {
-                 return selection;
+                return selection;
             },
             set: function (value) {
                 if (!Array.isArray(value)) {
@@ -341,7 +341,7 @@
         if (typeof options.stateFunc === 'function') {
             this._stateFunc = options.stateFunc;
         } else {
-            this._stateFunc = function () {}
+            this._stateFunc = function () {};
         }
     };
     ModelTable.prototype = new StyledElements.StyledElement();

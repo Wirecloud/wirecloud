@@ -59,7 +59,7 @@
                 this.handlers[i].apply(this.context, arguments);
             } catch (e) {
                 if (window.console != null && typeof window.console.error === 'function') {
-                    console.error(e);
+                    window.console.error(e);
                 }
             }
         }
