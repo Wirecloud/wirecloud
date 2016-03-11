@@ -560,6 +560,10 @@ class ChoiceFieldTester(WebElementTester):
     def options(self):
         return Select(self.element).options
 
+    @property
+    def value(self):
+        return self.get_attribute('value')
+
     def set_value(self, value):
         Select(self.element).select_by_value(value)
         return self
