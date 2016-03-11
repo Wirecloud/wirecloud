@@ -41,7 +41,6 @@
      *
      * @param {(Array|String|Node|StyledElement)} newElement
      *     An element or list of elements.
-     * 
      */
     se.Fragment = function Fragment(newElement) {
         this.superClass();
@@ -121,7 +120,7 @@
                 if (typeof childElement.repaint === 'function') {
                     childElement.repaint();
                 }
-            })
+            });
             return this;
         }
 

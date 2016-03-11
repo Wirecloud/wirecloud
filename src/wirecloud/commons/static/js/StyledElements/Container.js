@@ -96,7 +96,7 @@
              *     The instance on which the member is called.
              */
             appendChild: function appendChild(newElement, refElement) {
-                utils.appendChild(this, newElement, refElement).forEach(addChild.bind(this));
+                utils.appendChild(this, newElement, refElement).forEach(addChild, this);
                 orderbyIndex.call(this);
                 return this;
             },
@@ -115,7 +115,7 @@
              *      The instance on which the member is called.
              */
             prependChild: function prependChild(newElement, refElement) {
-                utils.prependChild(this, newElement, refElement).forEach(addChild.bind(this));
+                utils.prependChild(this, newElement, refElement).forEach(addChild, this);
                 orderbyIndex.call(this);
                 return this;
             },

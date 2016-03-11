@@ -101,7 +101,7 @@ module.exports = function (grunt) {
             test: {
                 src: styledElementsFiles,
                 options: {
-                    specs: 'js_tests/StyledElementsSpec.js'
+                    specs: ['js_tests/*Spec.js']
                 }
             },
 
@@ -157,7 +157,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'jshint',
         'jscs',
-        'jasmine:test'
+        'jasmine:coverage'
     ]);
 
     grunt.registerTask('default', [

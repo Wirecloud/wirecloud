@@ -133,7 +133,11 @@
              *      The instance on which the member is called.
              */
             appendTo: function appendTo(parentElement, refElement) {
-                utils.appendChild(parentElement, this, refElement);
+                if (parentElement instanceof se.StyledElement && typeof parentElement.appendChild === 'function') {
+                    parentElement.appendChild(this, refElement);
+                } else {
+                    utils.appendChild(parentElement, this, refElement);
+                }
                 return this;
             },
 

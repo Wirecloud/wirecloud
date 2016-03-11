@@ -27,12 +27,64 @@
 
         });
 
+        it("should allow to add elements to containers using the appendTo method (duplicated)", function () {
+
+            var container = new StyledElements.Container();
+            var element = new StyledElements.Button();
+            element.appendTo(container);
+            element.appendTo(container);
+            // Container should contain only a copy of element
+            expect(container.children).toEqual([element]);
+
+        });
+
         it("should allow to add elements to containers using the appendChild method", function () {
 
             var container = new StyledElements.Container();
             var element = new StyledElements.Button();
+            expect(container.appendChild(element).children).toEqual([element]);
+
+        });
+
+        it("should allow to add string nodes to containers using the appendChild method", function () {
+
+            var container = new StyledElements.Container();
+            expect(container.appendChild("hello ").appendChild("world!!").children).toEqual([]);
+            expect(container.wrapperElement.textContent, "hello world!!")
+
+        });
+
+        it("should allow to add elements to containers using the appendChild method (duplicated)", function () {
+
+            var container = new StyledElements.Container();
+            var element = new StyledElements.Button();
             container.appendChild(element);
-            expect(container.children).toEqual([element]);
+            expect(container.appendChild(element).children).toEqual([element]);
+
+        });
+
+        it("should allow to add elements to containers using the prependChild method", function () {
+
+            var container = new StyledElements.Container();
+            var element = new StyledElements.Button();
+            expect(container.prependChild(element).children).toEqual([element]);
+
+        });
+
+        it("should allow to add string nodes to containers using the prependChild method", function () {
+
+            var container = new StyledElements.Container();
+            expect(container.prependChild("world!!").prependChild("hello ").children).toEqual([]);
+            expect(container.wrapperElement.textContent, "hello world!!")
+
+        });
+
+        it("should allow to add elements to containers using the prependChild method (duplicated)", function () {
+
+            var container = new StyledElements.Container();
+            var element = new StyledElements.Button();
+            container.appendChild(element);
+            expect(container.prependChild(element).children).toEqual([element]);
 
         });
 

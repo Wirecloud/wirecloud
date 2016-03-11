@@ -166,7 +166,7 @@
              */
             depth: {
                 get: function get() {
-                    return prop_depth_get.call(this, depth);
+                    return depth;
                 },
                 set: function set(newDepth) {
                     depth = prop_depth_set.call(this, depth, newDepth);
@@ -382,7 +382,7 @@
         plain: false,
         usedInForm: false,
         text: "",
-        depth: -1,
+        depth: null,
         'title': '',
         'iconHeight': 24,
         'iconWidth': 24,
@@ -412,19 +412,15 @@
             if (state) {
                 this.removeClassName('btn-' + state);
             }
-            state = null;
+            state = "";
         }
 
         return state;
     };
 
-    var prop_depth_get = function prop_depth_get(depth) {
-        return depth > 0 ? depth : 0;
-    };
-
     var prop_depth_set = function prop_depth_set(depth, newDepth) {
 
-        if (newDepth >= 0 && newDepth <= 5) {
+        if (typeof newDepth === 'number' && newDepth >= 0 && newDepth <= 5) {
             if (newDepth !== depth) {
                 if (depth >= 0) {
                     this.removeClassName('z-depth-' + depth);
@@ -433,10 +429,10 @@
                 this.addClassName('z-depth-' + depth);
             }
         } else {
-            if (depth >= 0) {
+            if (depth != null) {
                 this.removeClassName('z-depth-' + depth);
             }
-            depth = -1;
+            depth = null;
         }
 
         return depth;
