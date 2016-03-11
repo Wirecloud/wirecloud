@@ -71,8 +71,7 @@
             }
 
             if (options.subtitle) {
-                this.subtitle = new se.Container({extraClass: "panel-subtitle"});
-                this.heading.appendChild(this.subtitle.appendChild(options.subtitle));
+                this.setSubtitle(options.subtitle);
             }
 
             if (!options.noBody) {
@@ -140,6 +139,18 @@
                 }
 
                 this.heading.title.clear().appendChild(title);
+
+                return this;
+            },
+
+            setSubtitle: function setSubtitle(subtitle) {
+
+                if (this.heading.subtitle == null) {
+                    this.heading.subtitle = new se.Container({extraClass: "panel-subtitle"});
+                    this.heading.appendChild(this.heading.subtitle);
+                }
+
+                this.heading.subtitle.clear().appendChild(subtitle);
 
                 return this;
             }

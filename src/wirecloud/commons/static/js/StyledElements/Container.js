@@ -83,92 +83,61 @@
             },
 
             /**
+             * Insert the `newElement` either to the end of this Container
+             * or after the `refElement` given.
+             * @since 0.5
+             *
+             * @param {(StyledElements.StyledElement|Node|String)} newElement
+             *     An element to insert into this Container.
+             * @param {(StyledElements.StyledElement|Node)} [refElement]
+             *     Optional. An element after which `newElement` is inserted.
+             *
+             * @returns {StyledElements.Container}
+             *     The instance on which the member is called.
              */
-            remove: function remove(childElement) {
-                var index;
-
-                if (childElement == null) {
-                    return this.superMember(se.StyledElement, 'remove', childElement);
-                }
-
-                if (childElement instanceof se.StyledElement) {
-                    if ((index = this.children.indexOf(childElement)) === -1) {
-                        return this;
-                    }
-
-                    this.children.splice(index, 1);
-                    childElement.parentElement = null;
-
-                    // Get the DOM element
-                    childElement = childElement.get();
-                }
-
-                if (childElement.parentElement === this.get()) {
-                    this.get().removeChild(childElement);
-                }
-
+            appendChild: function appendChild(newElement, refElement) {
+                utils.appendChild(this, newElement, refElement).forEach(addChild.bind(this));
+                orderbyIndex.call(this);
                 return this;
             },
 
             /**
-             * Insert an element at the end of this container or before the
-             * refElement if provided.
+             * Inserts the `newElement` to the beginning of this Container
+             * or before the `refElement` given.
+             * @since 0.7
              *
-             * @since 0.5
-             * @param {StyledElements.StyledElement|HTMLElement|String} newElement
-             *      An element to insert into the wrapperElement.
-             * @param {StyledElements.StyledElement|HTMLElement} [refElement]
-             *      Optional. An element after which newElement is inserted.
+             * @param {(StyledElements.StyledElement|Node|String)} newElement
+             *     An element to insert into this Container.
+             * @param {(StyledElements.StyledElement|Node)} [refElement]
+             *     Optional. An element before which `newElement` is inserted.
+             *
              * @returns {StyledElements.Container}
              *      The instance on which the member is called.
              */
-            appendChild: function appendChild(element, refElement) {
-                if (element instanceof StyledElements.StyledElement) {
-                    element.insertInto(this.wrapperElement, refElement);
-                    element.parentElement = this;
-                    this.children.push(element);
-
-                    return this;
-                }
-
-                if (typeof element === "string") {
-                    element = document.createTextNode(element);
-                }
-
-                if (refElement instanceof StyledElements.StyledElement) {
-                    refElement = refElement.get();
-                }
-
-                if (refElement != null) {
-                    this.wrapperElement.insertBefore(element, refElement);
-                } else {
-                    this.wrapperElement.appendChild(element);
-                }
-
+            prependChild: function prependChild(newElement, refElement) {
+                utils.prependChild(this, newElement, refElement).forEach(addChild.bind(this));
+                orderbyIndex.call(this);
                 return this;
             },
 
             /**
-             * Inserts a new element to the beginning of this Container
-             * @since 0.6
+             * Removes the `childElement` from this Container.
+             * @since 0.5
              *
-             * @param {StyledElement|HTMLElement|String} newElement
-             *      An element to insert into the wrapperElement.
-             * @param {StyledElement|HTMLElement} [refElement]
-             *      Optional. An element before which newElement is inserted.
-             * @returns {StyledElement}
+             * @param {(StyledElements.StyledElement|Node)} childElement
+             *     An element to remove from this Container.
+             *
+             * @returns {StyledElements.Container}
              *      The instance on which the member is called.
              */
-            prependChild: function prependChild(newElement, refElement) {
-                return this.appendChild(newElement, this.get().firstChild);
-            },
+            removeChild: function removeChild(childElement) {
+                utils.removeChild(this, childElement);
 
-            removeChild: function removeChild(element) {
-                if (element == null) {
-                    throw new TypeError('missing element parameter');
+                if (childElement instanceof se.StyledElement) {
+                    this.children.splice(this.children.indexOf(childElement), 1);
                 }
 
-                return this.remove(element);
+                return this;
             },
 
             repaint: function repaint(temporal) {
@@ -258,6 +227,36 @@
         extraClass: "",
         tagname: 'div',
         useFullHeight: false
+    };
+
+    var addChild = function addChild(newElement) {
+        /* jshint validthis: true */
+
+        if (newElement instanceof se.StyledElement) {
+            var index = this.children.indexOf(newElement);
+
+            if (index === -1) {
+                this.children.push(newElement);
+            }
+        }
+    };
+
+    var orderbyIndex = function orderbyIndex() {
+        /* jshint validthis: true */
+        var children = [];
+
+        Array.prototype.forEach.call(this.get().childNodes, function (childNode) {
+            var i, elementFound = false;
+
+            for (i = 0; i < this.children.length && !elementFound; i++) {
+                if (this.children[i].get() === childNode) {
+                    children.push(this.children.splice(i, 1)[0]);
+                    elementFound = true;
+                }
+            }
+        }.bind(this));
+
+        this.children = children;
     };
 
 })(StyledElements, StyledElements.Utils);

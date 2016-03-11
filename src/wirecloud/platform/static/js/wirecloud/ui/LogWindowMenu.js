@@ -40,16 +40,21 @@
     };
 
     var print_entry = function print_entry(entry) {
-        var entry_element, dateElement, expander;
+        var entry_element, dateElement, expander, titleElement;
 
         entry_element = document.createElement('div');
         entry_element.className = 'fade alert ' + LEVEL_CLASS[entry.level - 1];
 
         dateElement = document.createElement('strong');
+        dateElement.className = "wc-log-date";
         dateElement.textContent = entry.date.strftime('%x %X');//_('short_date')));
         entry_element.appendChild(dateElement);
 
-        entry_element.appendChild(document.createTextNode(entry.msg));
+        titleElement = document.createElement('span');
+        titleElement.className = "wc-log-title";
+        titleElement.appendChild(document.createTextNode(entry.msg));
+
+        entry_element.appendChild(titleElement);
 
         if (entry.details != null) {
             expander = new StyledElements.Expander({title: gettext('Details')});

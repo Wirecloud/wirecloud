@@ -380,6 +380,16 @@
                 return this;
             },
 
+            refreshEndpoint: function refreshEndpoint(endpoint) {
+
+                if (this.established) {
+                    this[endpoint.type].endpoint = endpoint;
+                    this[endpoint.type].handle.endpoint = endpoint;
+                }
+
+                return this;
+            },
+
             /**
              * @override
              */

@@ -167,9 +167,13 @@
              * @returns {Endpoint}
              *      The instance on which the member is called.
              */
-            appendConnection: function appendConnection(connection) {
+            appendConnection: function appendConnection(connection, updateEndpoint) {
 
                 this.connections.push(connection);
+
+                if (!!updateEndpoint) {
+                    connection.refreshEndpoint(this);
+                }
 
                 return this.trigger('connectionadded', connection);
             },
@@ -341,6 +345,7 @@
 
                 if (index !== -1) {
                     this.connections.splice(index, 1);
+                    this.trigger('connectionremoved', connection);
                 }
 
                 return this;
@@ -380,7 +385,7 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var events = ['click', 'connectionadded', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup'];
+    var events = ['click', 'connectionadded', 'connectionremoved', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup'];
 
     var endpoint_onmousedown = function endpoint_onmousedown(event) {
 

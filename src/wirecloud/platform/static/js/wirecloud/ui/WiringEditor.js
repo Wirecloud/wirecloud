@@ -103,7 +103,8 @@ Wirecloud.ui = Wirecloud.ui || {};
 
                 component = new ns.WiringEditor.ComponentDraggable(wiringComponent, options);
                 component
-                    // TODO: .on('endpointadded', component_onendpointadded.bind(this))
+                    .on('endpointadded', component_onendpointadded.bind(this))
+                    .on('endpointremoved', component_onendpointremoved.bind(this))
                     .on('change', function () {
                         this.behaviourEngine.updateComponent(component, component.toJSON());
                     }.bind(this))
@@ -592,6 +593,17 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
 
         return this;
+    };
+
+    var component_onendpointadded = function component_onendpointadded(component, endpoint) {
+        /*jshint validthis:true */
+        bindEndpoint.call(this, endpoint);
+    };
+
+    var component_onendpointremoved = function component_onendpointremoved(component, endpoint) {
+        /*jshint validthis:true */
+        this.connectionEngine.removeEndpoint(endpoint);
+        this.suggestionManager.removeEndpoint(endpoint);
     };
 
     var findEndpoint = function findEndpoint(type, bInfo, wiringEndpoint) {

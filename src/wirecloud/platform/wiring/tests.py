@@ -32,9 +32,7 @@ from django.contrib.auth.models import User
 from django.test import Client
 from mock import Mock, patch
 import selenium
-from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.commons.utils.remote import FormModalTester
@@ -901,7 +899,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             operator.wait_to_be_loaded()
 
             modal = operator.show_logs()
-            self.assertEqual(len(modal.find_alerts('error')), 0)
+            self.assertEqual(len(modal.find_alerts(state='error')), 0)
             modal.accept()
 
             # Make test operator log some errors
@@ -911,7 +909,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
             # Check operator registered correctly the errors raised by the operator
             modal = operator.show_logs()
-            self.assertEqual(len(modal.find_alerts('error')), 2)
+            self.assertEqual(len(modal.find_alerts(state='error')), 2)
             modal.accept()
 
         with self.find_iwidget(title="Test 1"):
@@ -925,7 +923,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
     def _check_connection_errors(self, connection, count):
         modal = connection.show_logs()
-        self.assertEqual(len(modal.find_alerts('error')), count)
+        self.assertEqual(len(modal.find_alerts(state='error')), count)
         modal.accept()
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
@@ -1116,6 +1114,103 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             self.assertIsNone(wiring.find_draggable_component('widget', title="Test 2"))
             self.assertTrue(wiring.find_draggable_component('operator', id=1).has_class('background'))
             self.assertTrue(wiring.find_draggable_component('widget', title="Test 1").has_class('background'))
+
+    @uses_extra_resources(('Wirecloud_TestOperator_2.0.zip',), shared=True)
+    def test_upgrade_operator(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                operator = sidebar.find_component('operator', "Wirecloud/TestOperator", id=0)
+                operator.change_version("2.0")
+                self.assertEqual(operator.version, "v2.0")
+                modal = operator.show_logs()
+                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The operator was upgraded to v2.0 successfully.")) == 1)
+                modal.accept()
+            draggable_operator = wiring.find_draggable_component('operator', id=operator.id)
+
+            self.assertEqual(len(draggable_operator.find_endpoints('target')), 2)
+            target = draggable_operator.find_endpoint('target', "input")
+            self.assertFalse(target.has_class('missing'))
+            self.assertTrue(len(target.find_connections()), 1)
+
+            self.assertEqual(len(draggable_operator.find_endpoints('source')), 2)
+            source = draggable_operator.find_endpoint('source', "output")
+            self.assertTrue(source.has_class('missing'))
+            self.assertTrue(len(source.find_connections()), 1)
+
+            self.assertEqual(len(wiring.find_connections(extra_class="missing")), 1)
+            connection = wiring.find_connections(extra_class="missing")[0]
+            self.assertEqual(connection.source_id, source.id)
+
+    @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
+    def test_upgrade_widget(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                widget = sidebar.find_component('widget', "Wirecloud/Test", title="Test 1")
+                widget.change_version("3.0")
+                self.assertEqual(widget.version, "v3.0")
+                modal = widget.show_logs()
+                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was upgraded to v3.0 successfully.")) == 1)
+                modal.accept()
+            draggable_widget = wiring.find_draggable_component('widget', id=widget.id)
+
+            self.assertEqual(len(draggable_widget.find_endpoints('target')), 2)
+            target = draggable_widget.find_endpoint('target', "inputendpoint")
+            self.assertTrue(target.has_class('missing'))
+            self.assertTrue(len(target.find_connections()), 1)
+
+            self.assertEqual(len(wiring.find_connections(extra_class="missing")), 1)
+            connection = wiring.find_connections(extra_class="missing")[0]
+            self.assertEqual(connection.target_id, target.id)
+
+            self.assertEqual(len(draggable_widget.find_endpoints('source')), 1)
+            source = draggable_widget.find_endpoint('source', "outputendpoint")
+            self.assertFalse(source.has_class('missing'))
+            self.assertTrue(len(source.find_connections()), 1)
+
+    @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
+    def test_upgrade_and_downgrade_widget(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
+            draggable_widget.change_version("3.0")
+            draggable_widget.change_version("1.0")
+            modal = draggable_widget.show_logs()
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was upgraded to v1.0 successfully.")) == 1)
+            modal.accept()
+
+            self.assertEqual(len(draggable_widget.find_endpoints('target')), 2)
+            target = draggable_widget.find_endpoint('target', "inputendpoint")
+            self.assertFalse(target.has_class('missing'))
+            self.assertTrue(len(target.find_connections()), 1)
+
+            self.assertEqual(len(wiring.find_connections(extra_class="missing")), 0)
+
+    @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
+    def test_remove_missing_endpoint_with_no_connections(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
+            draggable_widget.change_version("3.0")
+
+            connection = wiring.find_connections(extra_class="missing")[0]
+            connection.remove()
+
+            self.assertIsNone(draggable_widget.find_endpoint('target', "inputendpoint"))
+
+    @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
+    def test_missing_endpoints_cannot_be_ordered(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            draggable_widget = wiring.find_draggable_component('widget', title="Test 1")
+            draggable_widget.change_version("3.0")
+            draggable_widget.show_preferences().check(must_be_disabled=("Order endpoints",))
 
 
 @wirecloud_selenium_test_case
@@ -1539,7 +1634,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
                 operators = sidebar.find_components('operator', 'Wirecloud/TestOperator', state='in use')
             operator = wiring.find_draggable_component('operator', id=operators[0].id)
             modal = operator.show_logs()
-            self.assertEqual(len(modal.find_alerts('error')), 1)
+            self.assertEqual(len(modal.find_alerts(state='error')), 1)
             modal.accept()
 
     def test_input_endpoint_exceptions(self):

@@ -55,7 +55,7 @@
                 throw new TypeError('wiringEngine must be an instance of Wirecloud.Wiring');
             }
 
-            this.superClass(['load', 'remove', 'unload', 'upgraded']);
+            this.superClass(['load', 'remove', 'unload', 'upgraded', 'upgradeerror']);
 
             businessInfo = utils.merge(ns.Operator.JSON_TEMPLATE, businessInfo);
 
@@ -66,7 +66,8 @@
             this.permissions = Wirecloud.Utils.merge({
                 'close': true,
                 'configure': true,
-                'rename': true
+                'rename': true,
+                'upgrade': true
             }, businessInfo.permissions);
 
             upgrade = function upgrade(new_meta) {

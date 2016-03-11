@@ -67,6 +67,10 @@
                     this._createMenuItem(gettext("Rename"), "pencil", function () {
                         showRenameModal.call(this);
                     }.bind(this), canRename),
+                    this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "retweet", function () {
+                        var dialog = new Wirecloud.ui.UpgradeWindowMenu(this.component._component);
+                        dialog.show();
+                    }.bind(this), canUpgrade),
                     this._createMenuItem(gettext("Logs"), "tags", function () {
                         this.component.showLogs();
                     }.bind(this)),
@@ -86,6 +90,10 @@
 
     var canRename = function canRename() {
         return !this.component._component.volatile && this.component.type == 'widget';
+    };
+
+    var canUpgrade = function canUpgrade() {
+        return this.component._component.isAllowed('upgrade') && Wirecloud.LocalCatalogue.hasAlternativeVersion(this.component._component.meta);
     };
 
     var canShowSettings = function canShowSettings() {

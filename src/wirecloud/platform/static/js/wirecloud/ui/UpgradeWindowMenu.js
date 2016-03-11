@@ -104,7 +104,7 @@
             return -version1.compareTo(version2);
         });
 
-        this.version_selector = new StyledElements.Select();
+        this.version_selector = new StyledElements.Select({'name': "version"});
         this.version_selector.addEventListener('change', request_version.bind(this));
         this.version_selector.addEntries(versions);
 
@@ -122,6 +122,7 @@
         this.acceptButton.addEventListener("click", function () {
             this.acceptButton.disable();
             var new_version = this.version_selector.getValue();
+            var old_version = this.component.meta.version;
             var new_component_id = [this.component.meta.vendor, this.component.meta.name, new_version].join('/');
             var new_component = Wirecloud.LocalCatalogue.getResourceId(new_component_id);
 
@@ -130,13 +131,13 @@
                 component.removeEventListener('upgradeerror', _onfailure_listener);
 
                 var msg;
-                if (new_version.compareTo(this.component.meta.version) > 0) {
-                    msg = utils.gettext('Upgrading to version %(version)s');
+                if (new_version.compareTo(old_version) > 0) {
+                    msg = utils.gettext("The %(type)s was upgraded to v%(version)s successfully.");
                 } else {
-                    msg = utils.gettext('Downgrading to version %(version)s');
+                    msg = utils.gettext("The %(type)s was downgraded to v%(version)s successfully.");
                 }
-                msg = utils.interpolate(msg, {version: new_version});
-                component.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MS);
+                msg = utils.interpolate(msg, {type: component.meta.type, version: new_version});
+                component.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
                 this._closeListener();
             }.bind(this);
@@ -154,7 +155,7 @@
         // Cancel button
         this.cancelButton = new StyledElements.Button({
             text: utils.gettext('Cancel'),
-            'class': 'btn-primary'
+            'class': 'btn-primary btn-cancel'
         });
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);
