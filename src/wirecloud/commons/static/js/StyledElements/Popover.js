@@ -112,7 +112,10 @@
 
     var _show = function _show(refPosition) {
 
-        Wirecloud.UserInterfaceManager._registerPopup(this);
+        if ('Wirecloud' in window) {
+            Wirecloud.UserInterfaceManager._registerPopup(this);
+        }
+
         if (this.visible) {
             this.element.classList.add('in');
             this.repaint();
@@ -135,6 +138,8 @@
         searchBestPosition.call(this, refPosition, this.options.placement);
         this.element.classList.add('in');
         this.trigger('show');
+
+        return this;
     };
 
     var Popover = function Popover(options) {
@@ -150,6 +155,7 @@
         StyledElements.StyledElement.call(this, []);
 
         Object.defineProperties(this, {
+            element: {value: null, writable: true},
             visible: {get: function () {
                 return this.element != null;
             }},
@@ -177,21 +183,23 @@
 
     Popover.prototype.toggle = function toggle(refElement) {
         if (this.visible) {
-            this.hide();
+            return this.hide();
         } else {
-            _show.call(this, refElement);
+            return _show.call(this, refElement);
         }
     };
 
     Popover.prototype.show = function show(refElement) {
-        _show.call(this, refElement);
+        return _show.call(this, refElement);
     };
 
     var _hide = function _hide() {
         if (this.element != null && !this.element.classList.contains('in')) {
             document.body.removeChild(this.element);
             this.element = null;
-            Wirecloud.UserInterfaceManager._unregisterPopup(this);
+            if ('Wirecloud' in window) {
+                Wirecloud.UserInterfaceManager._unregisterPopup(this);
+            }
             document.removeEventListener('click', this._disableCallback, true);
             this.trigger('hide');
         }
@@ -200,7 +208,7 @@
     Popover.prototype.hide = function hide() {
         var force;
         if (!this.visible) {
-            return;
+            return this;
         }
 
         force = !this.element.classList.contains('in') || getComputedStyle(this.element).getPropertyValue('opacity') === "0";
@@ -208,6 +216,8 @@
         if (force) {
             _hide.call(this);
         }
+
+        return this;
     };
 
     StyledElements.Popover = Popover;
