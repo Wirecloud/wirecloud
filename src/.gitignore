@@ -1,8 +1,9 @@
-/index/
-/static/
-/screens/
 /catalogue/
 /deployment/
+/index/
+/node_modules/
+/static/
+/screens/
 *.pyc
 *.mo
 *.db
