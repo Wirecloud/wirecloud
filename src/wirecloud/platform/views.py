@@ -25,7 +25,7 @@ from django.contrib.auth.views import redirect_to_login as django_redirect_to_lo
 from django.core import urlresolvers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.template import TemplateDoesNotExist
+from django.template import RequestContext, TemplateDoesNotExist
 from django.template.loader import get_template
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
@@ -213,5 +213,5 @@ def render_wirecloud(request, view_type=None):
         'VIEW_MODE': view_type,
         'WIRECLOUD_VERSION_HASH': get_version_hash()
     }
-    content = template.render(context, request)
+    content = template.render(RequestContext(request, context))
     return HttpResponse(content, content_type="application/xhtml+xml; charset=UTF-8")

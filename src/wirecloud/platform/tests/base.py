@@ -129,7 +129,7 @@ class BasicViewsAPI(WirecloudTestCase):
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
-        with patch('wirecloud.platform.views.get_template', return_value=Mock(render=Mock(side_effect=TemplateDoesNotExist(msg='test')))):
+        with patch('wirecloud.platform.views.get_template', return_value=Mock(render=Mock(side_effect=TemplateDoesNotExist('test')))):
             self.assertRaises(TemplateDoesNotExist, self.client.get, url, HTTP_ACCEPT='application/xhtml+xml')
 
     def test_workspace_view_handles_bad_mode_value(self):
