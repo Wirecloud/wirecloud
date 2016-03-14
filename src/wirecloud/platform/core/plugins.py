@@ -552,6 +552,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_templates(self, view):
         if view == 'classic':
             return {
+                "embed_code_dialog": "wirecloud/ui/embed_code_dialog.html",
                 "exception_log_details": "wirecloud/ui/exception_log_details.html",
                 "iwidget": "wirecloud/ui/iwidget.html",
                 "iwidget_smartphone": "wirecloud/ui/iwidget_smartphone.html",

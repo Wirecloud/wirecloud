@@ -52,12 +52,15 @@ def get_active_theme_name():
     return getattr(settings, "THEME_ACTIVE", DEFAULT_THEME)
 
 
-def get_available_themes():
-    themes = ['wirecloud.defaulttheme', 'wirecloud.fiwarelabtheme']
+def get_available_themes(metadata=False):
+    themes = ['wirecloud.defaulttheme', 'wirecloud.fiwaretheme', 'wirecloud.fiwarelabtheme']
     for ep in pkg_resources.iter_entry_points(group='wirecloud.themes'):
         themes.append(ep.load().__name__)
 
-    return themes
+    if metadata:
+        return [get_theme_metadata(theme) for theme in themes]
+    else:
+        return themes
 
 
 def active_theme_context_processor(request):
@@ -69,6 +72,20 @@ def get_theme_dir(theme, dir_type):
     return safe_join(active_theme_dir, dir_type)
 
 
+def get_theme_metadata(theme_name):
+
+    try:
+        theme = import_module(theme_name)
+    except ImportError:
+        raise ValueError("%s is not a valid WireCloud theme" % theme_name)
+
+    theme.name = theme_name
+    theme.parent = getattr(theme, "parent", DEFAULT_THEME)
+    theme.label = getattr(theme, "label", theme_name.split('.')[-1])
+
+    return theme
+
+
 def get_theme_chain(theme_name=None):
 
     if theme_name is None:
@@ -76,15 +93,12 @@ def get_theme_chain(theme_name=None):
 
     theme_chain = []
     while theme_name is not None:
-        try:
-            theme = import_module(theme_name)
-        except ImportError:
-            raise ValueError("%s is not a valid WireCloud theme" % theme_name)
 
+        theme = get_theme_metadata(theme_name)
         theme_chain.append(theme)
 
         # Next theme: theme parent
-        theme_name = getattr(theme, "parent", DEFAULT_THEME)
+        theme_name = theme.parent
 
     return theme_chain
 

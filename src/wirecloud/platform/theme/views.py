@@ -19,16 +19,20 @@
 
 import json
 
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.template import RequestContext, TemplateDoesNotExist
 from django.template.loader import get_template
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
 from wirecloud.commons.baseviews.resource import Resource
+from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.platform.plugins import get_plugins
+from wirecloud.platform.themes import get_theme_metadata
+
 
 _wirecloud_templates = {}
+
 
 def get_templates(view):
 
@@ -52,13 +56,23 @@ class ThemeEntry(Resource):
     def read(self, request, name):
 
         context = RequestContext(request)
-        templates = {}
+        try:
+            theme_info = get_theme_metadata(name)
+        except ValueError:
+            raise Http404
+
+        desc = {
+            "name": name,
+            "label": theme_info.label,
+            "templates": {}
+        }
+
         template_descriptions = get_templates('classic')
         for template_id in template_descriptions:
             try:
                 template = get_template("%s:%s" % (name, template_descriptions[template_id]))
             except TemplateDoesNotExist:
                 template = get_template(template_descriptions[template_id])
-            templates[template_id] = template.render(context)
+            desc["templates"][template_id] = template.render(context)
 
-        return HttpResponse(json.dumps(templates), 'application/json')
+        return HttpResponse(json.dumps(desc, cls=LazyEncoder), 'application/json')

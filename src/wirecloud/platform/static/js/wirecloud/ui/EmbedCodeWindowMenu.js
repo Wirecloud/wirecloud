@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,35 +19,41 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud*/
+/* globals StyledElements, Wirecloud */
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
-    var EmbedCodeWindowMenu = function EmbedCodeWindowMenu(title, msg) {
+    var builder = new StyledElements.GUIBuilder();
+
+    var EmbedCodeWindowMenu = function EmbedCodeWindowMenu(title, workspace) {
         Wirecloud.ui.WindowMenu.call(this, title, 'wc-embed-code-dialog');
 
+        this.workspace = workspace;
+
+        this.theme = new se.Select({initialEntries: Wirecloud.constants.AVAILABLE_THEMES});
+        this.theme.setValue(Wirecloud.currentTheme.name);
         this.code = new StyledElements.TextArea();
-        this.code.insertInto(this.windowContent);
+
+        var contents = builder.parse(Wirecloud.currentTheme.templates.embed_code_dialog, {
+            'themeselect': this.theme,
+            'code': this.code
+        });
+        contents.appendTo(this.windowContent);
+
+        this.theme.addEventListener('change', build_embed_code.bind(this));
+        build_embed_code.call(this);
 
         // Accept button
         this.button = new StyledElements.Button({
-            text: gettext('Accept'),
-            'class': 'btn-primary'
+            text: utils.gettext('Accept'),
+            class: 'btn-primary btn-accept btn-cancel'
         });
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);
-
-        this.setMsg(msg);
     };
     EmbedCodeWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
-
-    EmbedCodeWindowMenu.prototype.setMsg = function setMsg(msg) {
-        this.code.setValue(msg);
-
-        this.calculatePosition();
-    };
 
     EmbedCodeWindowMenu.prototype.setFocus = function setFocus() {
         this.code.select();
@@ -55,4 +61,11 @@
 
     Wirecloud.ui.EmbedCodeWindowMenu = EmbedCodeWindowMenu;
 
-})();
+    var build_embed_code = function build_embed_code() {
+        var workspace_url = this.workspace.url + '?mode=embedded&theme=' + encodeURIComponent(this.theme.getValue());
+        var code = '<iframe src="' + workspace_url + '" frameborder="0" allowfullscreen></iframe>';
+        this.code.setValue(code);
+        this.calculatePosition();
+    };
+
+})(StyledElements, Wirecloud.Utils);

@@ -32,7 +32,6 @@ BASE_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'wirecloud.commons',
-    'wirecloud.defaulttheme',
     'compressor',
 )
 

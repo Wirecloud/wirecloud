@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -24,7 +24,12 @@
     "use strict";
 
     var Theme = function Theme(desc) {
-        Object.defineProperty(this, 'templates', {value: desc});
+        Object.defineProperties(this, {
+            name: {value: desc.name},
+            label: {value: desc.label},
+            templates: {value: desc.templates}
+        });
+        Object.freeze();
     };
 
     Wirecloud.ui.Theme = Theme;

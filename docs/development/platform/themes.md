@@ -186,6 +186,9 @@ sections.
   will extend `wirecloud.defaulttheme` by default if you don't provide a value
   for this setting. Use `parent = None` for creating new root themes.
 
+- `label` (***New in WireCloud 0.9.0***): Human-readable name for the theme. It
+  defaults to the last component of the python module.
+
 
 ### Available templates
 

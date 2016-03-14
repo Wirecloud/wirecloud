@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django import template
 from django.contrib.staticfiles import finders
 from django.template import TemplateSyntaxError
@@ -24,8 +26,9 @@ from django.template.loader_tags import do_extends as django_do_extends, do_incl
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
+from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.platform.plugins import get_constants, get_extra_javascripts, get_platform_css, get_wirecloud_ajax_endpoints
-from wirecloud.platform.themes import get_active_theme_name
+from wirecloud.platform.themes import get_active_theme_name, get_available_themes
 
 
 register = template.Library()
@@ -109,7 +112,8 @@ def platform_css(context, view):
 @register.inclusion_tag('wirecloud/bootstrap.html', takes_context=True)
 def wirecloud_bootstrap(context, view):
 
-    theme = context.get('THEME', get_active_theme_name())
+    current_theme = context.get('THEME', get_active_theme_name())
+    available_themes = [{"value": theme.name, "label": theme.label} for theme in get_available_themes(metadata=True)]
 
     endpoints = get_wirecloud_ajax_endpoints(view)
     script = 'Wirecloud.URLs = {\n'
@@ -127,7 +131,8 @@ def wirecloud_bootstrap(context, view):
     for constant in constants_def:
         constants.append({'key': constant['key'], 'value': mark_safe(constant['value'])})
     constants.append({'key': 'CURRENT_MODE', 'value': mark_safe('"' + view + '"')})
-    constants.append({'key': 'CURRENT_THEME', 'value': mark_safe('"' + theme + '"')})
+    constants.append({'key': 'CURRENT_THEME', 'value': mark_safe('"' + current_theme + '"')})
+    constants.append({'key': 'AVAILABLE_THEMES', 'value': mark_safe(json.dumps(available_themes, cls=LazyEncoder))})
 
     return {
         'script': mark_safe(script),

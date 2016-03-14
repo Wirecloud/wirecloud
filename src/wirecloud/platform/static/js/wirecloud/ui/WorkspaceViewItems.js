@@ -69,8 +69,7 @@
 
         item = new StyledElements.MenuItem(utils.gettext('Embed'), function () {
             var title = utils.gettext('Embed Code');
-            var workspace_url = current_workspace.url + '?mode=embedded';
-            var dialog = new Wirecloud.ui.EmbedCodeWindowMenu(title, '<iframe src="' + workspace_url + '" frameborder="0" allowfullscreen></iframe>');
+            var dialog = new Wirecloud.ui.EmbedCodeWindowMenu(title, current_workspace);
             dialog.show();
         });
         items.push(item);
