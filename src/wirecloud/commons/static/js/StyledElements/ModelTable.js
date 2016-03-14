@@ -139,7 +139,8 @@
                     cellContent = this.pGetFieldValue(item, column.field);
                 }
 
-                if (!cellContent) {
+                // If the cellContent is number 0 it should not be replaced.
+                if (!cellContent && !(column.type === "number" && cellContent === 0)) {
                     cellContent = '';
                 }
 
