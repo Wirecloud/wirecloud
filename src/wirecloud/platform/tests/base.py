@@ -29,6 +29,7 @@ from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test.client import RequestFactory
 from django.test.utils import override_settings
+from django.template import TemplateDoesNotExist
 from mock import Mock, patch
 
 from wirecloud.commons.authentication import logout
@@ -121,7 +122,17 @@ class BasicViewsAPI(WirecloudTestCase):
         parser = etree.XMLParser(encoding='utf-8')
         etree.parse(BytesIO(response.content), parser)
 
-    def test_workspace_view_handles_bad_view_value(self):
+    def test_workspace_view_handles_missing_templates(self):
+
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'ExistingWorkspace'})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        with patch('wirecloud.platform.views.get_template', return_value=Mock(render=Mock(side_effect=TemplateDoesNotExist(msg='test')))):
+            self.assertRaises(TemplateDoesNotExist, self.client.get, url, HTTP_ACCEPT='application/xhtml+xml')
+
+    def test_workspace_view_handles_bad_mode_value(self):
 
         url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'ExistingWorkspace'}) + '?mode=noexistent&a=b'
 

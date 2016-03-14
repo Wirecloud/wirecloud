@@ -26,6 +26,7 @@ from django.core import urlresolvers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import TemplateDoesNotExist
+from django.template.loader import get_template
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
 from django.utils.http import urlencode
@@ -191,20 +192,26 @@ def render_wirecloud(request, view_type=None):
         else:
             view_type = get_default_view(request)
 
-    try:
-        theme = request.GET.get('theme', get_active_theme_name())
-        if theme not in get_available_themes():
-            return remove_query_parameter(request, 'theme')
+    theme = request.GET.get('theme', get_active_theme_name())
+    if theme not in get_available_themes():
+        return remove_query_parameter(request, 'theme')
 
-        context = {
-            'THEME': theme,
-            'VIEW_MODE': view_type,
-            'WIRECLOUD_VERSION_HASH': get_version_hash()
-        }
-        return render(request, theme + ':wirecloud/views/%s.html' % view_type, context, content_type="application/xhtml+xml; charset=UTF-8")
+    try:
+
+        template = get_template(theme + ':wirecloud/views/%s.html' % view_type)
+
     except TemplateDoesNotExist:
+
         if 'mode' in request.GET:
             return remove_query_parameter(request, 'mode')
         else:
             view_type = get_default_view(request)
             return render_wirecloud(request, view_type)
+
+    context = {
+        'THEME': theme,
+        'VIEW_MODE': view_type,
+        'WIRECLOUD_VERSION_HASH': get_version_hash()
+    }
+    content = template.render(context, request)
+    return HttpResponse(content, content_type="application/xhtml+xml; charset=UTF-8")
