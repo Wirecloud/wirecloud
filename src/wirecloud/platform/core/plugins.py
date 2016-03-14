@@ -517,9 +517,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/UserTypeahead.js',
             ) + WIRING_EDITOR_FILES + TUTORIAL_FILES
 
-            if view == 'embedded':
-                scripts += ('js/wirecloud/ui/EmbeddedWirecloudHeader.js',)
-            else:
+            if view != 'embedded':
                 scripts += ('js/wirecloud/ui/WirecloudHeader.js',)
 
             return scripts

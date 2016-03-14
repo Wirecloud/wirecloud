@@ -48,13 +48,15 @@ var LayoutManagerFactory = function () {
         this.mainLayout.insertInto(document.body);
 
         /* TODO| FIXME */
-        this.header = new Wirecloud.ui.WirecloudHeader(this);
-        this.alternatives.addEventListener('preTransition', function (alternatives, old_alternative, new_alternative) {
-            this.header._notifyViewChange();
-        }.bind(this));
-        this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
-            setTimeout(this.header._notifyViewChange.bind(this.header, new_alternative), 0);
-        }.bind(this));
+        if ('WirecloudHeader' in Wirecloud.ui) {
+            this.header = new Wirecloud.ui.WirecloudHeader(this);
+            this.alternatives.addEventListener('preTransition', function (alternatives, old_alternative, new_alternative) {
+                this.header._notifyViewChange();
+            }.bind(this));
+            this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
+                setTimeout(this.header._notifyViewChange.bind(this.header, new_alternative), 0);
+            }.bind(this));
+        }
 
         this.viewsByName = {
             'initial': this.alternatives.createAlternative(),

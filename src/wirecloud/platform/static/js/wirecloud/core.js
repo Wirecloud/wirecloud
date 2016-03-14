@@ -41,6 +41,7 @@
         }
     });
     Object.freeze(Wirecloud.events);
+    Wirecloud.addEventListener = StyledElements.ObjectWithEvents.prototype.addEventListener;
     Wirecloud.trigger = StyledElements.ObjectWithEvents.prototype.trigger;
 
     var onCreateWorkspaceSuccess = function onCreateWorkspaceSuccess(options, response) {
@@ -192,7 +193,7 @@
                 options.monitor.nextSubtask(gettext('Processing initial context data'));
                 Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, JSON.parse(response.responseText));
                 Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
-                Wirecloud.events.contextloaded.trigger();
+                Wirecloud.trigger('contextloaded');
 
                 // Init theme
                 url =  Wirecloud.URLs.THEME_ENTRY.evaluate({name: Wirecloud.contextManager.get('theme')}) + "?v=" + Wirecloud.contextManager.get('version_hash');
@@ -365,9 +366,8 @@
                         }.bind(this));
 
                         LayoutManagerFactory.getInstance()._notifyPlatformReady();
-                        LayoutManagerFactory.getInstance().header.refresh(); // FIXME
-
-                        this.events.activeworkspacechanged.dispatch(this.activeWorkspace);
+                        Wirecloud.trigger('activeworkspacechanged', this.activeWorkspace);
+                        Wirecloud.trigger('viewcontextchanged');
 
                         if (typeof options.onSuccess === "function") {
                             try {

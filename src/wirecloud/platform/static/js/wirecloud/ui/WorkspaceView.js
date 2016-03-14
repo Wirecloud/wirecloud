@@ -65,7 +65,7 @@
         });
 
         // Init wiring error badge
-        Wirecloud.events.activeworkspacechanged.addEventListener(function (workspace) {
+        Wirecloud.addEventListener('activeworkspacechanged', function (Wirecloud, workspace) {
             this.wallet.hide(true);
 
             this._updateWiringErrors = function () {

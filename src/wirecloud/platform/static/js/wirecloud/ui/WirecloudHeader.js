@@ -221,9 +221,6 @@
         }
     };
 
-    WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {
-    };
-
     WirecloudHeader.prototype.refresh = function refresh() {
         this._paintBreadcrum(this.currentView);
         this._refreshTitle(this.currentView);
