@@ -40,7 +40,7 @@ from wirecloud.commons.utils.http import build_error_response
 from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.plugins import get_active_features_info, get_plugins
 from wirecloud.platform.models import Workspace
-from wirecloud.platform.themes import get_active_theme_name
+from wirecloud.platform.themes import get_active_theme_name, get_available_themes
 from wirecloud.platform.workspace.utils import get_workspace_list
 
 
@@ -158,7 +158,7 @@ def render_workspace_view(request, owner, name):
 def get_default_view(request):
 
     if 'default_mode' not in request.session:
-        user_agent = ua_parse(request.META['HTTP_USER_AGENT'])
+        user_agent = ua_parse(request.META.get('HTTP_USER_AGENT', ''))
         if user_agent.is_mobile:
             mode = 'smartphone'
         else:
@@ -167,6 +167,20 @@ def get_default_view(request):
         request.session['default_mode'] = mode
 
     return request.session['default_mode']
+
+
+def remove_query_parameter(request, parameter):
+    url = urlparse(request.build_absolute_uri())
+    query_params = parse_qs(url.query, True)
+    del query_params[parameter]
+    return HttpResponseRedirect(urlunparse((
+        url.scheme,
+        url.netloc,
+        url.path,
+        url.params,
+        urlencode(query_params, True),
+        url.fragment
+    )))
 
 
 def render_wirecloud(request, view_type=None):
@@ -179,6 +193,9 @@ def render_wirecloud(request, view_type=None):
 
     try:
         theme = request.GET.get('theme', get_active_theme_name())
+        if theme not in get_available_themes():
+            return remove_query_parameter(request, 'theme')
+
         context = {
             'THEME': theme,
             'VIEW_MODE': view_type,
@@ -187,17 +204,7 @@ def render_wirecloud(request, view_type=None):
         return render(request, theme + ':wirecloud/views/%s.html' % view_type, context, content_type="application/xhtml+xml; charset=UTF-8")
     except TemplateDoesNotExist:
         if 'mode' in request.GET:
-            url = urlparse(request.build_absolute_uri())
-            query_params = parse_qs(url.query, True)
-            del query_params['mode']
-            return HttpResponseRedirect(urlunparse((
-                url.scheme,
-                url.netloc,
-                url.path,
-                url.params,
-                urlencode(query_params, True),
-                url.fragment
-            )))
+            return remove_query_parameter(request, 'mode')
         else:
             view_type = get_default_view(request)
             return render_wirecloud(request, view_type)

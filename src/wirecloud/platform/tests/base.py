@@ -133,6 +133,18 @@ class BasicViewsAPI(WirecloudTestCase):
         self.assertIn('Location', response)
         self.assertTrue(response['Location'].endswith('?a=b'))
 
+    def test_workspace_view_handles_bad_theme_value(self):
+
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'ExistingWorkspace'}) + '?theme=noexistent&a=b'
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('Location', response)
+        self.assertTrue(response['Location'].endswith('?a=b'))
+
     @override_settings(ALLOW_ANONYMOUS_ACCESS=True)
     def test_workspace_view_public_anonymous_allowed(self):
 
