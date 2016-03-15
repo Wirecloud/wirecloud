@@ -153,7 +153,7 @@
 
         });
 
-        it("Model table should be able to get resetted", function () {
+        it("Model table should be able to get reset", function () {
             var columns = [
                 {field: "test", "label": "TestName", sortable: false, type: "number"}
             ];
