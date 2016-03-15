@@ -16,6 +16,7 @@
     "disallowSpaceAfterObjectKeys": true,
     "requireCapitalizedConstructors": true,
     "requireDotNotation": true,
+    "requireSpaceAfterLineComment": true,
     "requireSpacesInConditionalExpression": true,
     "requireSpaceBeforeObjectValues": true,
     "requireSpaceBeforeBlockStatements": true,

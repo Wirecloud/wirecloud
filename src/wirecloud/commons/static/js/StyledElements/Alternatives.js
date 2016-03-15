@@ -144,7 +144,7 @@
                 }
                 // TODO
                 break;
-            //case Alternatives.NONE:
+            // case Alternatives.NONE:
             default:
                 context.steps = 1;
                 stepTimes[0] = baseTime;

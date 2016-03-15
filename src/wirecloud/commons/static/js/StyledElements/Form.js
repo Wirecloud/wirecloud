@@ -383,7 +383,7 @@
      * @param {Hash} fields Hash with the current fields
      */
     Form.prototype.extraValidation = function (fields) {
-        //Parent implementation, allways true if no redefined by child class!
+        // Parent implementation, allways true if no redefined by child class!
         return [];
     };
 

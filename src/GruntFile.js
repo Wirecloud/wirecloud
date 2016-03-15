@@ -128,8 +128,14 @@ module.exports = function (grunt) {
         },
 
         jscs: {
-            all: {
+            lib: {
                 src: styledElementsFiles,
+                options: {
+                    config: true
+                }
+            },
+            specs: {
+                src: 'js_tests/*Spec.js',
                 options: {
                     config: true
                 }
@@ -140,11 +146,16 @@ module.exports = function (grunt) {
             options: {
                 jshintrc: true
             },
-            all: {
+            lib: {
                 files: {
                     src: styledElementsFiles
                 }
             },
+            specs: {
+                files: {
+                    src: 'js_tests/*Spec.js'
+                }
+            }
         }
 
     });

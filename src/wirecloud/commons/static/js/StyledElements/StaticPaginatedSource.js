@@ -139,7 +139,7 @@
                     return value1 - value2;
                 }.bind({field: column.field});
                 break;
-            //case "text":
+            // case "text":
             default:
                 sortFunc = function (value1, value2) {
                     value1 = getFieldValue(value1, this.field);
