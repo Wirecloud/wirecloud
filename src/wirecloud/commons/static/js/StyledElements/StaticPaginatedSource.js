@@ -143,10 +143,10 @@
             default:
                 sortFunc = function (value1, value2) {
                     value1 = getFieldValue(value1, this.field);
-                    value1 = value1 !== null ? value1 : '';
+                    value1 = value1 != null ? value1.toString() : '';
 
                     value2 = getFieldValue(value2, this.field);
-                    value2 = value2 !== null ? value2 : '';
+                    value2 = value2 != null ? value2.toString() : '';
 
                     return value1.localeCompare(value2);
                 }.bind({field: column.field});

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,11 +32,7 @@
         for (i = 0; i < this.columns.length; i += 1) {
             column = this.columns[i];
 
-            if (column.label == null) {
-                label = column.field;
-            } else {
-                label = column.label;
-            }
+            label = column.label != null ? column.label : column.field;
 
             cell = document.createElement('div');
             cell.className = 'se-model-table-cell';
@@ -132,15 +128,14 @@
                 } else if (column.type === 'number') {
                     cellContent = this.pGetFieldValue(item, column.field);
 
-                    if (column.unit) {
+                    if (cellContent !== '' && column.unit) {
                         cellContent = cellContent + " " + column.unit;
                     }
                 } else {
                     cellContent = this.pGetFieldValue(item, column.field);
                 }
 
-                // If the cellContent is number 0 it should not be replaced.
-                if (!cellContent && !(column.type === "number" && cellContent === 0)) {
+                if (cellContent == null) {
                     cellContent = '';
                 }
 
@@ -367,6 +362,8 @@
         } else {
             this.selection = [];
         }
+
+        return this;
     };
 
     ModelTable.prototype.resizeColumns = function resizeColumns() {
@@ -452,11 +449,11 @@
         }
 
         currentNode = item;
-        while (currentNode !== null && fieldPath.length > 0) {
+        while (currentNode != null && fieldPath.length > 0) {
             currentField = fieldPath.splice(0, 1)[0];
             currentNode = currentNode[currentField];
         }
-        if (currentNode === null || fieldPath.length > 0) {
+        if (currentNode == null || fieldPath.length > 0) {
             return "";
         }
 

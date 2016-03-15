@@ -28,7 +28,48 @@
 
     describe("Styled ModelTable", function () {
 
-        var dom = null;
+        var dom = null, table = null;
+
+        var create_basic_field_test = function create_basic_field_test(label, value, expected) {
+            it(label, function () {
+                // Create and push the data
+                var data = [
+                    {test: value}
+                ];
+                table.source.changeElements(data);
+
+                expect(table.columnsCells[0][0].innerHTML).toBe(expected);
+            });
+        };
+
+        var create_sort_test = function create_sort_test(label, values, expected) {
+
+            if (values.length !== expected.length) {
+                throw new TypeError();
+            }
+
+            it(label, function () {
+
+                var data, observed;
+
+                // Create and push the data
+                data = values.map(function (value) {return {test: value};});
+                table.source.changeElements(data);
+
+                // Check if data was sorted correctly
+                observed = table.columnsCells[0].map(function (cell) {return cell.innerHTML;});
+                expect(observed).toEqual(expected);
+
+                // Change the sort order
+                table.pSortByColumn(0, true);
+                expected.reverse();
+
+                // Check if data was sorted correctly
+                observed = table.columnsCells[0].map(function (cell) {return cell.innerHTML;});
+                expect(observed).toEqual(expected);
+
+            });
+        };
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -40,37 +81,99 @@
                 dom.remove();
                 dom = null;
             }
+            table = null;
         });
 
-        it("ModelTable should be created", function () {
+        it("can be created using the minimal required info", function () {
             var columns = [
-                {field: "test", "label": "TestName", type: "string"}
+                {field: "test", type: "string"}
             ];
-            // Default options
-            var options = {};
-            // Create the table
-            var table = new StyledElements.ModelTable(columns, options);
+
+            // Create a new table using the default options
+            table = new StyledElements.ModelTable(columns);
 
             expect(table).not.toBe(null);
         });
 
-        it("data should be added to the model tables", function () {
+        it("can be created providing exta CSS classes", function () {
+            var columns = [
+                {field: "test", type: "string"}
+            ];
+
+            var options = {
+                class: "my-css-class"
+            };
+
+            // Create a new table
+            table = new StyledElements.ModelTable(columns, options);
+
+            expect(table.wrapperElement.classList.contains('my-css-class')).toBeTruthy();
+        });
+
+        it("can be created providing exta CSS classes for the columns", function () {
+            var columns = [
+                {field: "test", type: "string", class: "my-css-class"}
+            ];
+
+            var options = {
+                class: "my-css-class"
+            };
+
+            // Create a new table
+            table = new StyledElements.ModelTable(columns, options);
+
+            // Create and push the data
+            var data = [
+                {test: "Hello"},
+                {test: "world"}
+            ];
+            table.source.changeElements(data);
+            table.columnsCells[0].forEach(function (cell) {
+                expect(cell.classList.contains('my-css-class')).toBeTruthy();
+            });
+        });
+
+        it("can be created using the initialSortColumn option", function () {
+
+            var columns = [
+                {field: "test", type: "string", sortable: true},
+                {field: "test2", type: "string", sortable: true}
+            ];
+
+            var options = {
+                initialSortColumn: "test2"
+            };
+
+            // Create a new table
+            table = new StyledElements.ModelTable(columns, options);
+
+            // Create and push the data
+            var data = [
+                {test: "a", test2: "b"},
+                {test: "b", test2: "a"}
+            ];
+            table.source.changeElements(data);
+
+            // Check if data was sorted correctly
+            var observed = table.columnsCells[0].map(function (cell) {return cell.innerHTML;});
+            expect(observed).toEqual(["b", "a"]);
+        });
+
+        it("should handle data added to the data source", function () {
             var columns = [
                 {field: "test", "label": "TestName", sortable: false, type: "string"},
                 {field: "test2", "label": "TestName", sortable: false, type: "string"}
             ];
-            // Default options
-            var options = {};
-            // Create the table
-            var table = new StyledElements.ModelTable(columns, options);
+            // Create a new table using the default options
+            table = new StyledElements.ModelTable(columns);
 
             // Create and push the data
             var data = [
-                {test: "Hello", test2: "world"},
-                {test: "Bye", test2: "5"}
+                {test: "Hello", test2: "world"}
             ];
             var keys = Object.keys(data[0]);
             table.source.changeElements(data);
+            table.source.addElement({test: "Bye", test2: "5"});
 
             var cols = table.columnsCells;
 
@@ -82,98 +185,137 @@
             }
         });
 
-        it("Test 0 number gets added", function () {
+        describe("should handle number fields", function () {
             var columns = [
-                {field: "test", "label": "TestName", sortable: false, type: "number"}
+                {field: "test", sortable: true, type: "number"}
             ];
-            // Default options
-            var options = {};
-            // Create the table
-            var table = new StyledElements.ModelTable(columns, options);
 
-            // Create and push the data
-            var data = [
-                {test: 0}
-            ];
-            table.source.changeElements(data);
+            beforeEach(function () {
+                // Create a new table using the defaults options
+                table = new StyledElements.ModelTable(columns);
+            });
 
-            expect(table.columnsCells[0][0].innerHTML).toBe("0");
+            create_basic_field_test('null values should be handled correctly', null, "");
+            create_basic_field_test('undefined values should be handled correctly', undefined, "");
+            create_basic_field_test('integer values should be handled correctly', 3, "3");
+            create_basic_field_test('float values should be handled correctly', 3.3, "3.3");
+            create_basic_field_test('string values should be handled correctly', "5", "5");
+            create_basic_field_test('number 0 should not be treated as no value', 0, "0");
+            create_sort_test('should be sortable', [1, "3", null, 2], ["", "1", "2", "3"]);
         });
 
-        it("Data should be able to be sorted", function () {
+        describe("should handle number fields using the unit option", function () {
             var columns = [
-                {field: "test", "label": "TestName", sortable: true, type: "number"},
-                {field: "test2", "label": "TestName", sortable: true, type: "number"}
+                {field: "test", sortable: true, type: "number", unit: "ºC"}
             ];
-            // Default options
-            var options = {
-                initialSortColumn: 0
-            };
-            // Create the table
-            var table = new StyledElements.ModelTable(columns, options);
 
-            // Create and push the data
-            var data = [
-                {test: 2, test2: 1},
-                {test: 1, test2: 2}
-            ];
-            table.source.changeElements(data);
+            beforeEach(function () {
+                // Create a new table using the defaults options
+                table = new StyledElements.ModelTable(columns);
+            });
 
-            // Check if data was sorted by default
-            expect(table.columnsCells[0][0].innerHTML).toBe("1");
-            expect(table.columnsCells[1][0].innerHTML).toBe("2");
-            expect(table.columnsCells[0][1].innerHTML).toBe("2");
-            expect(table.columnsCells[1][1].innerHTML).toBe("1");
-
-            // Change the sort order
-            table.pSortByColumn(0, true);
-
-            expect(table.columnsCells[0][0].innerHTML).toBe("2");
-            expect(table.columnsCells[1][0].innerHTML).toBe("1");
-            expect(table.columnsCells[0][1].innerHTML).toBe("1");
-            expect(table.columnsCells[1][1].innerHTML).toBe("2");
-
+            create_basic_field_test('null values should be handled correctly', null, "");
+            create_basic_field_test('undefined values should be handled correctly', undefined, "");
+            create_basic_field_test('integer values should be handled correctly', 3, "3 ºC");
+            create_basic_field_test('float values should be handled correctly', 3.3, "3.3 ºC");
+            create_basic_field_test('string values should be handled correctly', "5", "5 ºC");
+            create_basic_field_test('number 0 should not be treated as no value', 0, "0 ºC");
+            create_sort_test('should be sortable', [1, "3", null, 2], ["", "1 ºC", "2 ºC", "3 ºC"]);
         });
 
-        it("Test selecting", function () {
+        describe("should handle string fields", function () {
             var columns = [
-                {field: "test", "label": "TestName", sortable: false, type: "number"}
+                {field: "test", sortable: true, type: "string"}
             ];
-            // Default options
-            var options = {};
-            // Create the table
-            var table = new StyledElements.ModelTable(columns, options);
 
-            // Create and push the data
-            var data = [
-                {test: "hello world"},
-                {test: "bye world"},
+            beforeEach(function () {
+                // Create a new table using the defaults options
+                table = new StyledElements.ModelTable(columns);
+            });
 
+            create_basic_field_test('null values should be handled correctly', null, "");
+            create_basic_field_test('undefined values should be handled correctly', undefined, "");
+            create_basic_field_test('integer values should be handled correctly', 5, "5");
+            create_basic_field_test('float values should be handled correctly', 5.5, "5.5");
+            create_basic_field_test('string values should be handled correctly', "hello world!!", "hello world!!");
+            create_sort_test('should be sortable', ["a", 5, null, "c", "b"], ["", "5", "a", "b", "c"]);
+        });
+
+        describe("should handle date fields", function () {
+            var columns = [
+                {field: "test", sortable: true, type: "date"}
             ];
-            table.source.changeElements(data);
 
-            // Select first row
-            table.select(0);
+            beforeEach(function () {
+                // Create a new table using the defaults options
+                table = new StyledElements.ModelTable(columns);
+            });
 
-            expect(table.selection.length).toBe(1);
-            expect(table.selection[0]).toBe(0);
+            create_basic_field_test('null values should be handled correctly', null, "");
+            create_basic_field_test('undefined values should be handled correctly', undefined, "");
+            /*create_basic_field_test('date instances should be handled correctly', new Date(), "hello world!!");
+            create_basic_field_test('date instances should be handled correctly', new Date(), "hello world!!");
+            create_sort_test('should be sortable', ["a", "c", "b"], ["a", "b", "c"]);*/
+        });
 
-            // Select second row
-            table.select(1);
+        describe("should handle element selection", function () {
 
-            expect(table.selection.length).toBe(1);
-            expect(table.selection[0]).toBe(1);
+            beforeEach(function () {
+                var columns = [
+                    {field: "id", type: "number"},
+                    {field: "test", type: "number"}
+                ];
 
-            // Select both rows
-            table.select([0, 1]);
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {id: 'id'});
 
-            expect(table.selection.length).toBe(2);
-            expect(table.selection[0]).toBe(0);
-            expect(table.selection[1]).toBe(1);
+                // Create and push the data
+                var data = [
+                    {id: 0, test: "hello world"},
+                    {id: 1, test: "bye world"},
+                    {id: 2, test: "other world"}
+                ];
+                table.source.changeElements(data);
+            });
 
-            // Deselect all
-            table.select(null);
-            expect(table.selection.length).toBe(0);
+            it ("should allow simple selections", function () {
+                expect(table.select(1)).toBe(table);
+                expect(table.selection).toEqual([1]);
+                // Check model table highlited the correct row
+                for (var key in table._current_elements) {
+                    var highlited = table._current_elements[key].row.classList.contains('highlight');
+                    expect(highlited).toBe(key === "1");
+                }
+            });
+
+            it ("should allow multiple selections", function () {
+                expect(table.select([1, 2])).toBe(table);
+                expect(table.selection).toEqual([1, 2]);
+                // Check model table highlited the correct rows
+                for (var key in table._current_elements) {
+                    var highlited = table._current_elements[key].row.classList.contains('highlight');
+                    expect(highlited).toBe(["1", "2"].indexOf(key) !== -1);
+                }
+            });
+
+            it ("should allow cleaning selections", function () {
+                expect(table.select(1)).toBe(table);
+                expect(table.select()).toBe(table);
+                expect(table.selection).toEqual([]);
+                // Check model table unhighlight the previously selected rows
+                for (var key in table._current_elements) {
+                    expect(table._current_elements[key].row.classList.contains('highlight')).toBeFalsy();
+                }
+            });
+
+            it ("should ignore not matching ids", function () {
+                expect(table.select(4)).toBe(table);
+                expect(table.selection).toEqual([4]);
+                // Check model table doesn't highlight any row
+                for (var key in table._current_elements) {
+                    expect(table._current_elements[key].row.classList.contains('highlight')).toBeFalsy();
+                }
+            });
 
         });
 
@@ -181,10 +323,9 @@
             var columns = [
                 {field: "test", "label": "TestName", sortable: false, type: "number"}
             ];
-            // Default options
-            var options = {};
-            // Create the table
-            var table = new StyledElements.ModelTable(columns, options);
+
+            // Create a new table using the default options
+            table = new StyledElements.ModelTable(columns);
 
             // Create and push the data
             var data = [
@@ -195,7 +336,7 @@
             expect(table.columnsCells[0][0].innerHTML).toBe("hello world");
 
             // Wipe the data
-            table.sourche.changeElements([]);
+            table.source.changeElements();
 
             expect(table.columnsCells[0].length).toBe(0);
         });
@@ -207,7 +348,7 @@
             // Default options
             var options = {};
             // Create the table
-            var table = new StyledElements.ModelTable(columns, options);
+            table = new StyledElements.ModelTable(columns, options);
 
             // Create and push the data
             var data = [
@@ -225,4 +366,5 @@
             expect(table.source).toBe(null);
         });
     });
+
 })();
