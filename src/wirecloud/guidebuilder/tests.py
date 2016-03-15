@@ -876,8 +876,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
         crop_down(imgp, popup_menu.element, 80)
         m_menu.click()
-        dialog = get_first_displayed(
-            self.driver, '.window_menu.embed-code-window-menu')
+        dialog = get_first_displayed(self.driver, '.wc-embed-code-dialog')
         imgp = take_capture(self.driver, extra='Embed_Dialog')
         crop_image(imgp, *create_box(dialog))
         dialog.find_element_by_css_selector('.btn-primary').click()

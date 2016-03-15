@@ -26,7 +26,7 @@
     "use strict";
 
     var EmbedCodeWindowMenu = function EmbedCodeWindowMenu(title, msg) {
-        Wirecloud.ui.WindowMenu.call(this, title, 'embed-code-window-menu');
+        Wirecloud.ui.WindowMenu.call(this, title, 'wc-embed-code-dialog');
 
         this.code = new StyledElements.TextArea();
         this.code.insertInto(this.windowContent);
