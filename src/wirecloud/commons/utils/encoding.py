@@ -32,33 +32,16 @@ class LazyEncoder(JSONEncoder):
             return super(LazyEncoder, self).default(o)
 
 
-if sys.version_info >= (2, 7):
+class LazyEncoderXHTML(LazyEncoder):
 
-    class LazyEncoderXHTML(LazyEncoder):
+    def encode(self, o):
+        chunks = self.iterencode(o, True)
+        return ''.join(chunks)
 
-        def encode(self, o):
-            chunks = self.iterencode(o, True)
-            return ''.join(chunks)
-
-        def iterencode(self, o, _one_shot=False):
-            chunks = super(LazyEncoderXHTML, self).iterencode(o, _one_shot)
-            for chunk in chunks:
-                chunk = chunk.replace('&', '\\u0026')
-                chunk = chunk.replace('<', '\\u003c')
-                chunk = chunk.replace('>', '\\u003e')
-                yield chunk
-else:
-
-    class LazyEncoderXHTML(LazyEncoder):
-
-        def encode(self, o):
-            chunks = self.iterencode(o)
-            return ''.join(chunks)
-
-        def iterencode(self, o):
-            chunks = super(LazyEncoderXHTML, self).iterencode(o)
-            for chunk in chunks:
-                chunk = chunk.replace('&', '\\u0026')
-                chunk = chunk.replace('<', '\\u003c')
-                chunk = chunk.replace('>', '\\u003e')
-                yield chunk
+    def iterencode(self, o, _one_shot=False):
+        chunks = super(LazyEncoderXHTML, self).iterencode(o, _one_shot)
+        for chunk in chunks:
+            chunk = chunk.replace('&', '\\u0026')
+            chunk = chunk.replace('<', '\\u003c')
+            chunk = chunk.replace('>', '\\u003e')
+            yield chunk
