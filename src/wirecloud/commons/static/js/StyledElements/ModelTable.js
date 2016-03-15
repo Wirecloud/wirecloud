@@ -88,7 +88,7 @@
         var i, j, item, row, cell, callback, today, cellContent,
             column, state;
 
-        this.pClearTable();
+        clearTable.call(this);
 
         for (i = 0; i < items.length; i += 1) {
             item = items[i];
@@ -187,7 +187,7 @@
         if (error == null) {
             this.reload();
         } else {
-            this.pClearTable();
+            clearTable.call(this);
             var message = document.createElement('div');
             message.className = "alert alert-danger";
             message.textContent = error;
@@ -501,7 +501,7 @@
         this.control.events.click.dispatch(this.item);
     };
 
-    ModelTable.prototype.pClearTable = function pClearTable() {
+    var clearTable = function clearTable() {
         var i, entry;
 
         for (i = 0; i < this.pListeners.length; i += 1) {
@@ -537,7 +537,7 @@
                 cell.callback = null;
             }
         }
-        this.pClearTable();
+        clearTable.call(this);
 
         this.layout.destroy();
         this.layout = null;

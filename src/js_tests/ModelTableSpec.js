@@ -195,7 +195,7 @@
             expect(table.columnsCells[0][0].innerHTML).toBe("hello world");
 
             // Wipe the data
-            table.pClearTable();
+            table.sourche.changeElements([]);
 
             expect(table.columnsCells[0].length).toBe(0);
         });
