@@ -123,6 +123,8 @@ class IWidgetTester(object):
         return isinstance(other, IWidgetTester) and other.id == self.id
 
     def __enter__(self):
+        self.wait_loaded()
+
         self.content_element = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidget("%s").content;' % self.id)
 
         self.testcase.driver.switch_to.frame(self.content_element)
@@ -226,7 +228,17 @@ class IWidgetTester(object):
 
         return self
 
-    def remove(self, timeout=30):
+    def maximize(self, timeout=10):
+
+        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-plus"), base_element=self.element)).click()
+        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
+
+    def minimize(self, timeout=10):
+
+        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-minus"), base_element=self.element)).click()
+        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
+
+    def remove(self, timeout=10):
 
         old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)

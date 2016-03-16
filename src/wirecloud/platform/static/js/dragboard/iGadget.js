@@ -519,23 +519,19 @@ IWidget.prototype.setContentSize = function (newWidth, newHeight, persist) {
     this.contentHeight = newHeight;
 
     this._recomputeSize(true);
-
-    if (persist) {
-        this.internal_iwidget.contextManager.modify({
-            'height': this.height,
-            'width': this.contentWidth,
-            'heightInPixels': this.content.offsetHeight,
-            'widthInPixels': this.content.offsetWidth
-        });
-    } else {
-        this.internal_iwidget.contextManager.modify({
-            'heightInPixels': this.content.offsetHeight,
-            'widthInPixels': this.content.offsetWidth
-        });
-    }
+    notify_widget_sizes.call(this);
 
     // Notify resize event
     this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false, persist);
+};
+
+var notify_widget_sizes = function notify_widget_sizes() {
+    this.internal_iwidget.contextManager.modify({
+        'height': this.minimized ? 0 : this.height,
+        'width': this.contentWidth,
+        'heightInPixels': this.minimized ? 0 : this.content.offsetHeight,
+        'widthInPixels': this.content.offsetWidth
+    });
 };
 
 /**
@@ -554,13 +550,7 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
 
     // Recompute size
     this._recomputeSize(false);
-
-    this.internal_iwidget.contextManager.modify({
-        'height': this.height,
-        'width': this.contentWidth,
-        'heightInPixels': this.content.offsetHeight,
-        'widthInPixels': this.content.offsetWidth
-    });
+    notify_widget_sizes.call(this);
 };
 
 /**
@@ -672,7 +662,6 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
         this._recomputeWrapper();
         contentHeight = this.element.offsetHeight;
         this.content.style.height = "0px";
-        this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
     }
 };
 
@@ -721,20 +710,7 @@ IWidget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persi
 
     // Recompute sizes
     this._recomputeSize(false);
-
-    if (persist) {
-        this.internal_iwidget.contextManager.modify({
-            'height': this.height,
-            'width': this.contentWidth,
-            'heightInPixels': this.content.offsetHeight,
-            'widthInPixels': this.content.offsetWidth
-        });
-    } else {
-        this.internal_iwidget.contextManager.modify({
-            'heightInPixels': this.content.offsetHeight,
-            'widthInPixels': this.content.offsetWidth
-        });
-    }
+    notify_widget_sizes.call(this);
 
     // Notify resize event
     this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.contentWidth, this.height, resizeLeftSide, persist);
@@ -798,18 +774,13 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     var oldHeight = this.getHeight();
     this._recomputeHeight(false);
 
-    this.internal_iwidget.contextManager.modify({
-        'height': this.height,
-        'width': this.contentWidth,
-        'heightInPixels': this.content.offsetHeight,
-        'widthInPixels': this.content.offsetWidth
-    });
-
     // Notify resize event
     reserveSpace = reserveSpace != null ? reserveSpace : true;
     if (reserveSpace) {
         var persist = persistence != null ? persistence : true;
         this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
+    } else {
+        notify_widget_sizes.call(this);
     }
 };
 
@@ -909,9 +880,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
     }
 
     // ##### TODO Review this
-    var contentWidth = this.element.offsetWidth;
-    var fullWidth = contentWidth;
-    contentWidth -= this._computeExtraWidthPixels();
+    var fullWidth = this.element.offsetWidth;
 
     var contentHeight = this.content.offsetHeight;
     var fullHeight = contentHeight;
@@ -949,7 +918,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         this.height = this.previousHeight;
     } else {
         //console.debug("prev width: " + this.contentWidth);
-        var newWidth = newLayout.adaptWidth(contentWidth + 'px');
+        var newWidth = newLayout.adaptWidth(fullWidth + 'px');
         this.contentWidth = newWidth.inLU;
         //console.debug("new width: " + this.contentWidth);
 

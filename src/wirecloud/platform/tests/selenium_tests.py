@@ -262,7 +262,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Refresh api_test_iwidget as we have reloaded the browser
         api_test_iwidget = self.find_iwidget(id=api_test_iwidget.id)
 
-        with api_test_iwidget.wait_loaded():
+        with api_test_iwidget:
             WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('#update_prop_input').get_attribute('value') == "new value")
 
             self.assertEqual(api_test_iwidget.error_count, 0)
@@ -1120,11 +1120,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     test_move_widget_interchange.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    @uses_extra_workspace('admin', 'Wirecloud_GridLayoutTests_1.0.wgt', shared=True)
     def test_extract_widget_from_grid(self):
 
-        self.login(username="admin")
+        self.login(username="admin", next="/admin/GridLayoutTests")
 
-        iwidget = self.add_widget_to_mashup('Context Inspector')
+        iwidget = self.find_iwidgets()[0]
         _, old_size = self.get_widget_sizes_from_context(iwidget)
 
         iwidget.open_menu().click_entry('Extract from grid')
@@ -1132,6 +1133,24 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(old_size, new_size)
     test_extract_widget_from_grid.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
+
+    @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    def test_minimize_widget(self):
+
+        self.login(username="admin")
+
+        iwidget = self.add_widget_to_mashup('Context Inspector')
+        _, old_size = self.get_widget_sizes_from_context(iwidget)
+
+        iwidget.minimize()
+        _, minimized_size = self.get_widget_sizes_from_context(iwidget)
+        self.assertEqual(minimized_size, (old_size[0], 0))
+
+        iwidget.maximize()
+        _, new_size = self.get_widget_sizes_from_context(iwidget)
+
+        self.assertEqual(old_size, new_size)
+    test_minimize_widget.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_basic_layout_parameter_change(self):
@@ -1180,12 +1199,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Check initial sizes
         with widget:
             size_from_context = (
-                int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text),
-                int(self.driver.find_element_by_css_selector('[data-name="height"] .content').text),
+                int(self.driver.find_element_by_css_selector('[data-name="width"] .content').get_attribute('textContent')),
+                int(self.driver.find_element_by_css_selector('[data-name="height"] .content').get_attribute('textContent')),
             )
             size_in_pixels_from_context = (
-                int(self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .content').text),
-                int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .content').text),
+                int(self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .content').get_attribute('textContent')),
+                int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .content').get_attribute('textContent')),
             )
 
         return size_from_context, size_in_pixels_from_context
