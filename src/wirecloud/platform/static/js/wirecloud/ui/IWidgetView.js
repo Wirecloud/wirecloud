@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -158,9 +158,27 @@
             this.unhighlight();
         }.bind(this));
 
-        iwidget.addEventListener('upgraded', this.reload.bind(this));
+        iwidget.addEventListener('upgraded', function () {
+            this.updateCSSClasses();
+            this.reload();
+        }.bind(this));
+        this.updateCSSClasses();
     };
     IWidgetView.prototype = new StyledElements.ObjectWithEvents();
+
+    IWidgetView.prototype.updateCSSClasses = function updateCSSClasses() {
+        if (this.widget.missing) {
+            this.element.classList.add('wc-missing-widget');
+        } else {
+            this.element.classList.remove('wc-missing-widget');
+        }
+
+        if (this.widget.layout instanceof Wirecloud.ui.FreeLayout) {
+            this.element.classList.add('wc-floating-widget');
+        } else {
+            this.element.classList.remove('wc-floating-widget');
+        }
+    };
 
     IWidgetView.prototype.reload = function reload() {
         var prev = this.content.src;
@@ -172,6 +190,8 @@
     };
 
     IWidgetView.prototype.highlight = function highlight() {
+        this.element.classList.add('panel-success');
+        this.element.classList.remove('panel-default');
         if (!this.element.classList.contains('wc-widget-highlight')) {
             this.element.classList.add('wc-widget-highlight');
             this.trigger('highlight');
@@ -185,6 +205,8 @@
     };
 
     IWidgetView.prototype.unhighlight = function unhighlight() {
+        this.element.classList.remove('panel-success');
+        this.element.classList.add('panel-default');
         if (this.element.classList.contains('wc-widget-highlight')) {
             this.element.classList.remove('wc-widget-highlight');
             this.trigger('unhighlight');

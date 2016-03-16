@@ -25,15 +25,6 @@
     border-top-left-radius: ($panel-border-radius - 1);
     border-top-right-radius: ($panel-border-radius - 1);
 
-    .panel-title {
-        position: relative;
-        display: block;
-        font-weight: "bold";
-        overflow: hidden;
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-
     .panel-subtitle {
         clear: both;
         display: block;
@@ -72,6 +63,15 @@
         display: block;
         clear: both;
     }
+}
+
+.panel-title {
+    position: relative;
+    display: block;
+    font-weight: "bold";
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .panel-body {

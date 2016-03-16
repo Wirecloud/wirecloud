@@ -140,7 +140,7 @@ class IWidgetTester(object):
 
     @property
     def title_element(self):
-        return self.element.find_element_by_css_selector('.widget_menu > span')
+        return self.element.find_element_by_css_selector('.widget_menu span')
 
     @property
     def name(self):
