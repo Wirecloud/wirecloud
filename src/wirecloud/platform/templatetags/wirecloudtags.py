@@ -21,6 +21,7 @@ import json
 
 from django import template
 from django.contrib.staticfiles import finders
+from django.contrib.staticfiles.templatetags.staticfiles import do_static as django_do_static
 from django.template import TemplateSyntaxError
 from django.template.loader_tags import do_extends as django_do_extends, do_include as django_do_include
 from django.utils.html import conditional_escape
@@ -83,6 +84,34 @@ def do_include(parser, token):
     return django_do_include(parser, token)
 
 
+@register.tag
+def theme_static(parser, token):
+    """
+    A template tag that returns the URL to a theme file
+
+    Usage::
+
+        {% theme_static path [as varname] %}
+
+    Examples::
+
+        {% theme_static "myapp/css/base.css" %}
+        {% theme_static variable_with_path %}
+        {% theme_static "myapp/css/base.css" as admin_base_css %}
+        {% theme_static variable_with_path as varname %}
+    """
+    bits = token.split_contents()
+    if len(bits) < 2:
+        raise TemplateSyntaxError(
+            "%r tag takes at least one argument: the name of the file to "
+            "be included." % bits[0]
+        )
+
+    bits[1] = bits[1] + "|theme_path:THEME"
+    token.contents = " ".join(bits)
+    return django_do_static(parser, token)
+
+
 @register.inclusion_tag('wirecloud/js_includes.html', takes_context=True)
 def extra_javascripts(context, view):
 
@@ -138,6 +167,11 @@ def wirecloud_bootstrap(context, view):
         'script': mark_safe(script),
         'constants': constants,
     }
+
+
+@register.filter
+def theme_path(filename, theme):
+    return "theme/%s/%s" % (theme, filename)
 
 
 @register.filter

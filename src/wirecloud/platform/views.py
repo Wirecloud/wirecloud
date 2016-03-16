@@ -133,7 +133,12 @@ def auto_select_workspace(request, mode=None):
     elif request.user.is_authenticated():
         return render_wirecloud(request, mode)
     else:
-        return render(request, 'wirecloud/landing_page.html', content_type="application/xhtml+xml; charset=UTF-8")
+        context = {
+            'THEME': get_active_theme_name(),
+            'VIEW_MODE': 'classic',
+            'WIRECLOUD_VERSION_HASH': get_version_hash()
+        }
+        return render(request, 'wirecloud/landing_page.html', context=context, content_type="application/xhtml+xml; charset=UTF-8")
 
 
 def render_workspace_view(request, owner, name):
