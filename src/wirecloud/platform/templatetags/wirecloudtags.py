@@ -35,6 +35,17 @@ from wirecloud.platform.themes import get_active_theme_name, get_available_theme
 register = template.Library()
 
 
+class ThemeNode(template.Node):
+
+    def __init__(self, node):
+        self.node = node
+
+    def render(self, context):
+        if 'THEME' not in context:
+            context['THEME'] = context['THEME_ACTIVE']
+        return self.node.render(context)
+
+
 @register.tag('extends')
 def do_extends(parser, token):
     """
@@ -52,7 +63,7 @@ def do_extends(parser, token):
     bits = token.split_contents()
     bits[1] = bits[1] + "|_wirecloud_theme_template:THEME"
     token.contents = " ".join(bits)
-    return django_do_extends(parser, token)
+    return ThemeNode(django_do_extends(parser, token))
 
 
 @register.tag('include')
@@ -81,7 +92,7 @@ def do_include(parser, token):
 
     bits[1] = bits[1] + "|_wirecloud_theme_template:THEME"
     token.contents = " ".join(bits)
-    return django_do_include(parser, token)
+    return ThemeNode(django_do_include(parser, token))
 
 
 @register.tag
@@ -109,7 +120,7 @@ def theme_static(parser, token):
 
     bits[1] = bits[1] + "|theme_path:THEME"
     token.contents = " ".join(bits)
-    return django_do_static(parser, token)
+    return ThemeNode(django_do_static(parser, token))
 
 
 @register.inclusion_tag('wirecloud/js_includes.html', takes_context=True)

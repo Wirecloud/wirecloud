@@ -193,7 +193,6 @@
                 options.monitor.nextSubtask(gettext('Processing initial context data'));
                 Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, JSON.parse(response.responseText));
                 Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
-                Wirecloud.trigger('contextloaded');
 
                 // Init theme
                 url =  Wirecloud.URLs.THEME_ENTRY.evaluate({name: Wirecloud.contextManager.get('theme')}) + "?v=" + Wirecloud.contextManager.get('version_hash');
@@ -203,6 +202,7 @@
                     onSuccess: function (response) {
                         Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(response.responseText));
                         LayoutManagerFactory.getInstance()._init();
+                        Wirecloud.trigger('contextloaded');
                         checkPlatformReady();
                     }
                 });

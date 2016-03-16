@@ -27,9 +27,14 @@
         Object.defineProperties(this, {
             name: {value: desc.name},
             label: {value: desc.label},
+            baseurl: {value: desc.baseurl},
             templates: {value: desc.templates}
         });
         Object.freeze();
+    };
+
+    Theme.prototype.get_static_url = function get_static_url(path) {
+        return this.baseurl + path;
     };
 
     Wirecloud.ui.Theme = Theme;

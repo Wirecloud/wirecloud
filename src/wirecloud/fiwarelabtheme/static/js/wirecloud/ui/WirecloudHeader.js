@@ -72,7 +72,7 @@
         anchor.setAttribute('target', '_blank');
         wrapper.appendChild(anchor);
         var img = document.createElement('img');
-        img.setAttribute('src', '/static/images/user.png');
+        img.setAttribute('src', Wirecloud.currentTheme.get_static_url('images/user.png'));
         anchor.appendChild(img);
         anchor.appendChild(document.createTextNode(' '));
         var username_element = document.createElement('span');

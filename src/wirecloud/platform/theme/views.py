@@ -27,6 +27,7 @@ from django.views.decorators.cache import cache_page
 
 from wirecloud.commons.baseviews.resource import Resource
 from wirecloud.commons.utils.encoding import LazyEncoder
+from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.platform.plugins import get_plugins
 from wirecloud.platform.themes import get_theme_metadata
 
@@ -64,6 +65,7 @@ class ThemeEntry(Resource):
         desc = {
             "name": name,
             "label": theme_info.label,
+            "baseurl": get_absolute_static_url("theme/%s/" % name, request),
             "templates": {}
         }
 
