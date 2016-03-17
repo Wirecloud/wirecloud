@@ -27,14 +27,14 @@ from django.template import TemplateDoesNotExist
 from django.test.utils import override_settings
 from mock import MagicMock, Mock, patch
 
-from wirecloud.platform.themes import DEFAULT_THEME, get_active_theme_name, get_theme_chain, TemplateLoader
+from wirecloud.platform.themes import ActiveThemeFinder, DEFAULT_THEME, get_active_theme_name, get_theme_chain, TemplateLoader
 
 
 class Theme(object):
 
     def __init__(self, id, **kwargs):
         self.id = id
-        self.__file__ = "/%s/__init__.py" % id.replace('.', '/')
+        self.__file__ = "/fs/%s/__init__.py" % id.replace('.', '/')
         if 'parent' in kwargs:
             self.parent = kwargs['parent']
 
@@ -98,15 +98,29 @@ class ThemesTestCase(unittest.TestCase):
     def test_get_template_sources_basic(self):
         loader = TemplateLoader(Mock())
 
-        expected_paths = ['/customtheme/templates/a.html', '/wirecloud/defaulttheme/templates/a.html']
+        expected_paths = ['/fs/customtheme/templates/a.html', '/fs/wirecloud/defaulttheme/templates/a.html']
         self.assertEqual([origin.name for origin in loader.get_template_sources("a.html")], expected_paths)
 
     @override_settings(THEME_ACTIVE="customtheme")
     def test_get_template_sources_abs_template_name(self):
         loader = TemplateLoader(Mock())
 
-        expected_paths = ['/customtheme/templates/a.html']
-        self.assertEqual([origin.name for origin in loader.get_template_sources("/customtheme/templates/a.html")], expected_paths)
+        expected_paths = ['/fs/customtheme/templates/a.html']
+        self.assertEqual([origin.name for origin in loader.get_template_sources("/fs/customtheme/templates/a.html")], expected_paths)
+
+    @override_settings(THEME_ACTIVE="customtheme")
+    def test_get_template_sources_force_theme(self):
+        loader = TemplateLoader(Mock())
+
+        expected_paths = ['/fs/customroottheme/templates/a.html']
+        self.assertEqual([origin.name for origin in loader.get_template_sources("customroottheme:a.html")], expected_paths)
+
+    @override_settings(THEME_ACTIVE="customtheme")
+    def test_get_template_sources_invalid_theme(self):
+        loader = TemplateLoader(Mock())
+
+        expected_paths = []
+        self.assertEqual([origin.name for origin in loader.get_template_sources("invalid:a.html")], expected_paths)
 
     @override_settings(THEME_ACTIVE="customtheme")
     @patch('wirecloud.platform.themes.io.open')
@@ -138,7 +152,7 @@ class ThemesTestCase(unittest.TestCase):
         open_mock().__enter__().read.return_value = 'file_content'
 
         loader = TemplateLoader(Mock())
-        self.assertEqual(loader.load_template_source("a.html"), ('file_content', '/customtheme/templates/a.html'))
+        self.assertEqual(loader.load_template_source("a.html"), ('file_content', '/fs/customtheme/templates/a.html'))
 
     @override_settings(THEME_ACTIVE="customtheme")
     @patch('wirecloud.platform.themes.io.open')
@@ -148,7 +162,7 @@ class ThemesTestCase(unittest.TestCase):
         open_mock.side_effect = (IOError(errno.ENOENT, 'No such file or directory'), file_mock)
 
         loader = TemplateLoader(Mock())
-        self.assertEqual(loader.load_template_source("a.html"), ('file_content', '/wirecloud/defaulttheme/templates/a.html'))
+        self.assertEqual(loader.load_template_source("a.html"), ('file_content', '/fs/wirecloud/defaulttheme/templates/a.html'))
 
     @override_settings(THEME_ACTIVE="customtheme")
     @patch('wirecloud.platform.themes.io.open')
@@ -157,3 +171,11 @@ class ThemesTestCase(unittest.TestCase):
 
         loader = TemplateLoader(Mock())
         self.assertRaises(TemplateDoesNotExist, loader.load_template_source, "a.html")
+
+    @override_settings(THEME_ACTIVE="customtheme")
+    @patch('wirecloud.platform.themes.get_available_themes', return_value=[DEFAULT_THEME, 'customtheme'])
+    def test_staticfiles_finder_support_missing_static_folder(self, get_available_themes_mock):
+        with patch('wirecloud.platform.themes.utils') as utils_mock:
+            finder = ActiveThemeFinder()
+            self.assertEqual(tuple(finder.list()), ())
+            self.assertFalse(utils_mock.get_files.called)

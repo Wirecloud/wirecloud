@@ -172,8 +172,13 @@ class ActiveThemeFinder(BaseFinder):
         self.themes = {}
 
         for theme in get_available_themes():
+            prefix = 'theme%s%s' % (os.sep, theme)
+            self.themes[theme] = []
             theme_chain = get_theme_chain(theme)
-            self.themes[theme] = [get_theme_dir(theme_module, 'static') for theme_module in theme_chain]
+            for theme_module in theme_chain:
+                storage = FileSystemStorage(get_theme_dir(theme_module, 'static'))
+                storage.prefix = prefix
+                self.themes[theme].append(storage)
 
     def find(self, path, all=False):
         matches = []
@@ -185,7 +190,7 @@ class ActiveThemeFinder(BaseFinder):
 
             relpath = path[len(prefix):]
             for staticfiles_dir in self.themes[theme]:
-                filename = safe_join(staticfiles_dir, relpath)
+                filename = staticfiles_dir.path(relpath)
                 if os.path.exists(filename):
                     if not all:
                         return filename
@@ -193,14 +198,13 @@ class ActiveThemeFinder(BaseFinder):
 
         return matches
 
-    def _list(self, dirs, prefix='', ignore_patterns=[]):
-        for location in dirs:
-            storage = FileSystemStorage(location=location)
-            storage.prefix = prefix
-            for path in utils.get_files(storage, ignore_patterns):
-                yield path, storage
+    def _list(self, storages, ignore_patterns=[]):
+        for storage in storages:
+            if storage.exists('.'):
+                for path in utils.get_files(storage, ignore_patterns):
+                    yield path, storage
 
     def list(self, ignore_patterns=[]):
         for theme in self.themes:
-            for result in self._list(self.themes[theme], prefix='theme%s%s' % (os.sep, theme), ignore_patterns=ignore_patterns):
+            for result in self._list(self.themes[theme], ignore_patterns=ignore_patterns):
                 yield result
