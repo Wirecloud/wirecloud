@@ -197,7 +197,7 @@ class IWidgetTester(object):
     def rename(self, new_name, timeout=30):
 
         self.open_menu().click_entry('Rename')
-        name_input = self.element.find_element_by_css_selector('.widget_menu > span')
+        name_input = self.element.find_element_by_css_selector('.widget_menu span')
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: name_input.get_attribute('contenteditable') == 'true')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
@@ -221,8 +221,10 @@ class IWidgetTester(object):
 
         def iwidget_loaded(driver):
             return driver.execute_script('''
-                return !!Wirecloud.activeWorkspace.getIWidget(%s).internal_iwidget.loaded;
-            ''' % self.id)
+                try {
+                    return !!Wirecloud.activeWorkspace.getIWidget(arguments[0]).internal_iwidget.loaded;
+                } catch (e) {return false;}
+            ''', self.id)
 
         WebDriverWait(self.testcase.driver, timeout).until(iwidget_loaded)
 

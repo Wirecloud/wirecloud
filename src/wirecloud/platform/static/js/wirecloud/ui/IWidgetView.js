@@ -173,7 +173,7 @@
             this.element.classList.remove('wc-missing-widget');
         }
 
-        if (this.widget.layout instanceof Wirecloud.ui.FreeLayout) {
+        if (this.widget.layout != null && this.widget.layout instanceof Wirecloud.ui.FreeLayout) {
             this.element.classList.add('wc-floating-widget');
         } else {
             this.element.classList.remove('wc-floating-widget');
