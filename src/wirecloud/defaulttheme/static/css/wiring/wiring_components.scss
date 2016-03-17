@@ -144,7 +144,7 @@
 
     }
 
-    .component-widget:hover {
+    .component-widget {
 
         @include component-variant(rgba($component-widget-bg, 1), rgba($component-widget-border-color, 1));
 

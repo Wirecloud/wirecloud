@@ -61,7 +61,7 @@
                 buttons: [this.btnPrefs]
             });
 
-            this.heading.title.addClassName('text-truncate');
+            this.heading.title.addClassName('component-title text-truncate');
             this.heading.subtitle.addClassName("component-version");
 
             this.label = document.createElement('span');

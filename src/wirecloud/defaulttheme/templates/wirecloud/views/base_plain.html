@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="google" value="notranslate" />
-    <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico" %}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{% theme_static "images/favicon.ico" %}" />
     {% endblock %}
 
     {% block basecss %}
@@ -49,7 +49,7 @@
 
 <body>
     <header id="wirecloud_header">
-        <div class="wirecloud_app_bar"><img src="{% static "images/logos/header.png" %}" alt="WireCloud" /><div class="btn-group btn-group-lg wirecloud_header_nav"><span id="wirecloud_breadcrum" class="breadcrum add-on">{% block path %}{% endblock %}</span></div></div>
+        <div class="wirecloud_app_bar"><img src="{% theme_static "images/logos/header.png" %}" alt="WireCloud" /><div class="btn-group btn-group-lg wirecloud_header_nav"><span id="wirecloud_breadcrum" class="breadcrum add-on">{% block path %}{% endblock %}</span></div></div>
     </header>
     <div class="plain_content">
     {% block content %}
