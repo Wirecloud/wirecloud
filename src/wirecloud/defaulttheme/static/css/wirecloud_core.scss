@@ -74,8 +74,8 @@ body {
 .wirecloud_app_bar img {
     vertical-align: bottom;
     margin: 0 5px;
-    width: adapt-image-size(image-width('logos/header.png'));
-    height: adapt-image-size(image-height('logos/header.png'));
+    width: adapt-image-size(image-width('theme/' + $theme + '/images/logos/header.png'));
+    height: adapt-image-size(image-height('theme/' + $theme + '/images/logos/header.png'));
 }
 
 #wrapper {

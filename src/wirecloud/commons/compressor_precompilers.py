@@ -29,10 +29,13 @@ import scss
 
 
 def django_finder(glob):
-    glob = 'images/' + glob
     for finder in finders.get_finders():
         for path, storage in finder.list([]):
-            if fnmatch.fnmatchcase(path, glob):
+            if storage.prefix is not None:
+                fullpath = "%s%s%s" % (storage.prefix, os.sep, path)
+            else:
+                fullpath = path
+            if fnmatch.fnmatchcase(fullpath, glob):
                 yield path, storage
 
 scss.config.IMAGES_ROOT = django_finder
@@ -40,6 +43,7 @@ scss.config.IMAGES_ROOT = django_finder
 
 def get_scss_compiler(namespace, relpath):
 
+    namespace.set_variable('$theme', scss.types.String.unquoted(relpath.split('/')[1]))
     compiler = scss.compiler.Compiler(
         namespace=namespace,
         extensions=(scss.extension.core.CoreExtension, scss.extension.compass.CompassExtension, DjangoSCSSExtension)
