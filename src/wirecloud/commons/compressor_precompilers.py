@@ -31,7 +31,7 @@ import scss
 def django_finder(glob):
     for finder in finders.get_finders():
         for path, storage in finder.list([]):
-            if storage.prefix is not None:
+            if getattr(storage, 'prefix', None) is not None:
                 fullpath = "%s%s%s" % (storage.prefix, os.sep, path)
             else:
                 fullpath = path
