@@ -463,7 +463,7 @@
         this._menuItemCallback = null;
         this._context = null;
 
-        StyledElements.StyledElement.prototype.destroy.call(this);
+        StyledElements.ObjectWithEvents.prototype.destroy.call(this);
     };
 
     /**

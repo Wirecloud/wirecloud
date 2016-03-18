@@ -146,7 +146,7 @@
              */
             destroy: function destroy() {
                 this.remove();
-                se.ObjectWithEvents.destroy.call(this);
+                se.ObjectWithEvents.prototype.destroy.call(this);
             },
 
             /**
