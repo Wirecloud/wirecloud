@@ -574,7 +574,14 @@ Create a new Application using the IdM server to use (for example: `https://acco
         - Remove: `url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),`
         - Add: `url(r'^login/?$', 'wirecloud.fiware.views.login', name="login"),`
     - Add `python-social-auth` url endpoints at the end of the pattern list: `url('', include('social.apps.django_app.urls', namespace='social')),`
-5. Run `python manage.py migrate; python manage.py collectstatic --noinput`
+
+5. [Optional]: Change the `THEME_ACTIVE` setting to `wirecloud.fiwarelabtheme`.
+   This theme is the one used by the FIWARE Lab's Mashup portal.
+6. [Optional]: Provide a `FIWARE_PORTALS` setting. This setting is used for
+   signing out from other portals at the same time the user sign out from
+   Wirecloud, providing a single sign out experience. This setting is also used
+   for building the navigation bar.
+7. Run `python manage.py migrate; python manage.py collectstatic --noinput`
 
 
 [KeyRock's User and Programmers Guide]: https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application

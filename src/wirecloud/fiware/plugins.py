@@ -210,7 +210,7 @@ class FiWarePlugin(WirecloudPlugin):
 
         constants = {
             "FIWARE_HOME": getattr(settings, "FIWARE_HOME", wirecloud.fiware.DEFAULT_FIWARE_HOME),
-            'FIWARE_PORTALS': getattr(settings, "FIWARE_PORTALS", wirecloud.fiware.DEFAULT_FIWARE_PORTALS)
+            'FIWARE_PORTALS': getattr(settings, "FIWARE_PORTALS", ())
         }
 
         if IDM_SUPPORT_ENABLED:
@@ -278,7 +278,7 @@ class FiWarePlugin(WirecloudPlugin):
         context = {
             "FIWARE_HOME": getattr(settings, "FIWARE_HOME", wirecloud.fiware.DEFAULT_FIWARE_HOME),
             "FIWARE_OFFICIAL_PORTAL": getattr(settings, "FIWARE_OFFICIAL_PORTAL", False),
-            "FIWARE_PORTALS": getattr(settings, "FIWARE_PORTALS", wirecloud.fiware.DEFAULT_FIWARE_PORTALS),
+            "FIWARE_PORTALS": getattr(settings, "FIWARE_PORTALS", ()),
         }
 
         if IDM_SUPPORT_ENABLED:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,9 +27,8 @@ from django.views.decorators.http import require_GET
 
 from wirecloud.commons.authentication import logout as wirecloud_logout
 from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url
-from wirecloud.fiware import DEFAULT_FIWARE_PORTALS
 
-ALLOWED_ORIGINS = [portal['url'] for portal in getattr(settings, 'FIWARE_PORTALS', DEFAULT_FIWARE_PORTALS)]
+ALLOWED_ORIGINS = [portal['url'] for portal in getattr(settings, 'FIWARE_PORTALS', ())]
 
 
 @require_GET

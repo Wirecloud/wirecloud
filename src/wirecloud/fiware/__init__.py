@@ -20,10 +20,10 @@
 __version_info__ = (5, 2, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
-DEFAULT_FIWARE_PORTALS = (
+FIWARE_LAB_PORTALS = (
     {'name': 'Cloud', 'url': 'https://cloud.lab.fiware.org', "logout_path": "/logout"},
     {'name': 'Store', 'url': 'https://store.lab.fiware.org', "logout_path": "/logout"},
-    {'name': 'Mashup', 'url': 'https://mashup.lab.fiware.org', "logout_path": "/logout", "active": True},
+    {'name': 'Mashup', 'url': 'https://mashup.lab.fiware.org', "logout_path": "/logout"},
     {'name': 'Data', 'url': 'https://data.lab.fiware.org', "logout_path": "/user/logout"},
     {'name': 'Account', 'url': 'https://account.lab.fiware.org', "logout_path": "/auth/logout/"},
     {'name': 'Help&info', 'url': 'http://help.lab.fiware.org'},
