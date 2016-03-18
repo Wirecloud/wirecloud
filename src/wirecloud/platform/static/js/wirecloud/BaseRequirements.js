@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -69,6 +69,10 @@
 
         if (!('pointerEvents' in document.documentElement.style)) {
             throw new Error('Missing pointer-events support for HTML elements');
+        }
+
+        if (!('Promise' in window)) {
+            throw new Error('Missing Promise support');
         }
     };
 

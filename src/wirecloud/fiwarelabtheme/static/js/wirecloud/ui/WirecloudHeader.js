@@ -137,30 +137,7 @@
                 window.location = Wirecloud.URLs.LOGIN_VIEW + '?next=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
             }));
         } else {
-            user_menu.append(new StyledElements.MenuItem(utils.gettext('Sign out'), function () {
-                var portal_logout_urls, i, portal;
-
-                portal_logout_urls = [];
-                for (i = 0; i < Wirecloud.constants.FIWARE_PORTALS.length; i++) {
-                    portal = Wirecloud.constants.FIWARE_PORTALS[i];
-                    if ('logout_path' in portal) {
-                        portal_logout_urls.push(portal.url + portal.logout_path);
-                    }
-                };
-                for (i = 0; i < portal_logout_urls.length; i += 1) {
-                    try {
-                        Wirecloud.io.makeRequest(portal_logout_urls[i], {
-                            method: 'GET',
-                            supportsAccessControl: true,
-                            withCredentials: true,
-                            requestHeaders: {
-                                'X-Requested-With': null
-                            }
-                        });
-                    } catch (error) {}
-                }
-                setTimeout(Wirecloud.logout, 1000);
-            }));
+            user_menu.append(new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout));
         }
     };
 

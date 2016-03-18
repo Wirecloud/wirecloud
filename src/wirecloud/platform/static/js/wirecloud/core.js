@@ -278,7 +278,36 @@
     };
 
     Wirecloud.logout = function logout() {
-        window.location = Wirecloud.URLs.LOGOUT_VIEW;
+        var promises, i, portal;
+
+        if (Wirecloud.constants.FIWARE_PORTALS) {
+
+            promises = [];
+            for (i = 0; i < Wirecloud.constants.FIWARE_PORTALS.length; i++) {
+                portal = Wirecloud.constants.FIWARE_PORTALS[i];
+                if (!('logout_path' in portal)) {
+                    continue;
+                }
+                try {
+                    promises.push(new Promise(function (resolve, reject) {
+                        Wirecloud.io.makeRequest(portal.url + portal.logout_path, {
+                            method: 'GET',
+                            supportsAccessControl: true,
+                            withCredentials: true,
+                            requestHeaders: {
+                                'X-Requested-With': null
+                            },
+                            onComplete: resolve
+                        });
+                    }));
+                } catch (error) {}
+            }
+            Promise.all(promises).then(function () {window.location = Wirecloud.URLs.LOGOUT_VIEW;}, 1000);
+
+        } else {
+            window.location = Wirecloud.URLs.LOGOUT_VIEW;
+        }
+
     };
 
     Wirecloud.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab, options) {
