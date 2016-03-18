@@ -1,0 +1,216 @@
+/*
+ *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* jshint jasmine:true */
+/* globals StyledElements */
+
+(function () {
+
+    "use strict";
+
+    describe("Styled Selects", function () {
+
+        var dom = null;
+        var object1 = {
+            attr: 'value',
+            toString: function () { return 'object1'; }
+        };
+        var object2 = {
+            attr: 'other value',
+            toString: function () { return 'object2'; }
+        };
+
+        beforeEach(function () {
+            dom = document.createElement('div');
+            document.body.appendChild(dom);
+        });
+
+        afterEach(function () {
+            if (dom != null) {
+                dom.remove();
+                dom = null;
+            }
+        });
+
+        it("can be created without passing any option", function () {
+
+            var element = new StyledElements.Select();
+            expect(element.wrapperElement.className).toBe("se-select");
+            expect(element.value).toBe(undefined);
+            expect(element.getLabel()).toBe('');
+
+        });
+
+        it("can be created using the name option", function () {
+
+            var element = new StyledElements.Select({name: 'formname'});
+            expect(element.wrapperElement.querySelector('select').getAttribute('name')).toBe("formname");
+
+        });
+
+        it("should handle initial entries", function () {
+
+            // Use string values as they are the values handled by default
+            var element = new StyledElements.Select({
+                initialEntries: [
+                    {label: 'Label', value: "1"},
+                    {label: 'other value', value: "2"},
+                    {label: 'another value', value: "3"}
+                ]
+            });
+            expect(element.value).toBe("1");
+            expect(element.getLabel()).toBe('Label');
+
+        });
+
+        it("should handle objects with a valid toString method", function () {
+
+            // Use string values as they are the values handled by default
+            var element = new StyledElements.Select({
+                initialEntries: [
+                    object1,
+                    object2
+                ]
+            });
+            expect(element.value).toBe(object1);
+            expect(element.getLabel()).toBe(object1.toString());
+
+        });
+
+        it("should handle initial entries with an initial value", function () {
+
+            var element = new StyledElements.Select({
+                initialEntries: [
+                    {label: 'Label', value: 1},
+                    {label: 'other value', value: 2},
+                    {label: 'another value', value: 3}
+                ],
+                initialValue: 2
+            });
+            expect(element.value).toBe(2);
+            expect(element.getLabel()).toBe('other value');
+
+        });
+
+        it("should support changing the value using the setValue method", function () {
+
+            var element = new StyledElements.Select({
+                initialEntries: [
+                    {label: 'Label', value: 1},
+                    {label: 'other value', value: 2},
+                    {label: 'another value', value: 3}
+                ]
+            });
+            element.setValue(2);
+            expect(element.value).toBe(2);
+            expect(element.getLabel()).toBe('other value');
+
+        });
+
+        it("should support changing the value using the setValue method to the first value if there is not a default value", function () {
+
+            var element = new StyledElements.Select({
+                initialEntries: [
+                    {label: 'Label', value: 1},
+                    {label: 'other value', value: 2},
+                    {label: 'another value', value: 3}
+                ]
+            });
+            element.setValue(null);
+            expect(element.value).toBe(1);
+            expect(element.getLabel()).toBe('Label');
+
+        });
+
+        it("should support changing the value using the setValue method to the default value", function () {
+
+            var element = new StyledElements.Select({
+                initialEntries: [
+                    {label: 'Label', value: 1},
+                    {label: 'other value', value: 2},
+                    {label: 'another value', value: 3}
+                ]
+            });
+            element.defaultValue = 3;
+            element.setValue(null);
+            expect(element.value).toBe(3);
+            expect(element.getLabel()).toBe('another value');
+
+        });
+
+        it("should handle calls to the setValue method when there is not available options", function () {
+
+            var element = new StyledElements.Select();
+            element.setValue(5);
+            expect(element.value).toBe(undefined);
+            expect(element.getLabel()).toBe('');
+
+        });
+
+        it("should support cleaning the available options", function () {
+
+            var element = new StyledElements.Select({
+                initialEntries: [
+                    {label: 'Label', value: 1},
+                    {label: 'other value', value: 2},
+                    {label: 'another value', value: 3}
+                ]
+            });
+            element.clear();
+            expect(element.value).toBe(undefined);
+            expect(element.getLabel()).toBe('');
+
+        });
+
+        it("should support the focus method", function (done) {
+
+            var element = new StyledElements.Select();
+            // Focus event is not triggered if the select is not attached to the DOM
+            element.appendTo(dom);
+            element.addEventListener('focus', function (select) {
+                expect(select).toBe(element);
+                expect(element.hasClassName('focus')).toBe(true);
+                done();
+            });
+            element.focus();
+
+        });
+
+        it("should trigger blur events", function (done) {
+
+            var element = new StyledElements.Select();
+            var element2 = new StyledElements.Select();
+            // Blur event is not triggered if the select is not attached to the DOM
+            element.appendTo(dom);
+            element2.appendTo(dom);
+            element.addEventListener('blur', function (select) {
+                expect(select).toBe(element);
+                expect(element.hasClassName('focus')).toBe(false);
+                done();
+            });
+            element.focus();
+            element2.focus();
+
+        });
+
+    });
+
+})();
