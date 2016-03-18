@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -443,7 +443,7 @@
         this.wrapperElement.style.bottom = "";
         hideContent.call(this);
 
-        utils.removeFromParent(this.wrapperElement);
+        this.wrapperElement.remove();
         Wirecloud.UserInterfaceManager._unregisterPopup(this);
 
         return this.trigger('visibilityChange');

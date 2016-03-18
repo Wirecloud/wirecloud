@@ -142,6 +142,14 @@
             },
 
             /**
+             * Removes any circular reference to this element
+             */
+            destroy: function destroy() {
+                this.remove();
+                se.ObjectWithEvents.destroy.call(this);
+            },
+
+            /**
              * Disables this StyledElement
              * @since 0.5
              *

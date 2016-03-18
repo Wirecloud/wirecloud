@@ -661,17 +661,6 @@ if (window.StyledElements == null) {
     };
 
     /**
-     * Elimina un nodo DOM de su elemento padre. Esta funcion no comprueba que el
-     * nodo DOM tenga un padre, por lo que en caso de no ser así el código lanzaría
-     * una excepción.
-     */
-    Utils.removeFromParent = function removeFromParent(domNode) {
-        if (domNode.parentNode != null) {
-            domNode.parentNode.removeChild(domNode);
-        }
-    };
-
-    /**
      * Permite obtener un objeto a partir de la mezcla de los atributos de dos
      * objetos. Para ello, se pasarán los dos objetos que se usarán de fuente,
      * siendo el primero de los objetos sobreescrito con el resultado. En caso de

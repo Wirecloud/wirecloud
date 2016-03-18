@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -131,7 +131,7 @@
         entry = this.entriesByValue[value];
         delete this.entriesByValue[value];
         this.entries.slice(this.entries.indexOf(entry), 1);
-        StyledElements.Utils.removeFromParent(entry.element);
+        entry.element.remove();
 
         if (index !== -1) {
             this.currentSelection.splice(index, 1);

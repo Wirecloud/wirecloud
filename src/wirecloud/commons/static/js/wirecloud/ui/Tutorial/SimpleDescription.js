@@ -139,7 +139,7 @@
      */
     SimpleDescription.prototype.setLast = function setLast(buttonLabel, optionalHandler) {
         this.last = true;
-        Wirecloud.Utils.removeFromParent(this.nextButton.wrapperElement);
+        this.nextButton.remove();
         if (buttonLabel == null) {
             buttonLabel = gettext('Close');
         }

@@ -139,7 +139,7 @@
     Tab.prototype.setIcon = function setIcon(iconURL) {
         if (iconURL == null) {
             if (this.tabIcon != null) {
-                StyledElements.Utils.removeFromParent(this.tabIcon);
+                this.tabIcon.remove();
                 this.tabIcon = null;
             }
             return;

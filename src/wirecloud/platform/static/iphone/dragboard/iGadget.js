@@ -91,7 +91,7 @@ IWidget.prototype.load = IWidget.prototype.paint;
  */
 IWidget.prototype.destroy = function () {
     if (this.element) {
-        Wirecloud.Utils.removeFromParent(this.element);
+        this.element.remove();
         this.element = null;
         this.content = null;
     }
