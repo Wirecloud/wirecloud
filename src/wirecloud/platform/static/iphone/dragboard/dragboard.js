@@ -69,7 +69,7 @@
             curIWidget = this.iwidgets[i];
 
             // Get widget model
-            widget = this.workspace.resources.getResourceId(curIWidget.widget);
+            widget = this.workspace.resources.getOrCreateMissing(curIWidget.widget, 'widget');
 
             // Create instance model
             container = opManager.globalDragboard.newIWidgetContainer();
