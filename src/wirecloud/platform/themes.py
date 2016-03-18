@@ -57,6 +57,10 @@ def get_available_themes(metadata=False):
     for ep in pkg_resources.iter_entry_points(group='wirecloud.themes'):
         themes.append(ep.load().__name__)
 
+    # Make sure the active theme is listed as available
+    if get_active_theme_name() not in themes:
+        themes.append(get_active_theme_name())
+
     if metadata:
         return [get_theme_metadata(theme) for theme in themes]
     else:
