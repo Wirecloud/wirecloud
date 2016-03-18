@@ -37,14 +37,14 @@ class BasicClass(object):
         return {
             "access_token": "access_token",
             "refresh_token": "refresh_token",
-            "expires_in": 3600
+            "expires": 3600
         }
 
     def refresh_token(self, token, *args, **kwargs):
         return {
             "access_token": "new_access_token",
             "refresh_token": "new_refresh_token",
-            "expires_in": 3600
+            "expires": 3600
         }
 
     @classmethod
@@ -180,8 +180,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.assertEqual(data, {
             "access_token": "access_token",
             "refresh_token": "refresh_token",
-            "expires_in": 3600,
-            "expires_on": 13600
+            "expires": 3600,
         })
 
     def test_get_user_details_old_version(self):
@@ -233,8 +232,7 @@ class TestSocialAuthBackend(WirecloudTestCase, TestCase):
         self.assertEqual(data, {
             "access_token": "new_access_token",
             "refresh_token": "new_refresh_token",
-            "expires_in": 3600,
-            "expires_on": 13600,
+            "expires": 3600,
             "openstack_token": None
         })
 
