@@ -365,6 +365,71 @@ One of the main features of debug mode is the display of detailed error pages. I
 Language code to use by default (e.g. "en"). This setting also support other values: "browser", meaning "use the language detected from browser" and "default" for using the value of the `LANGUAGE_CODE` setting.
 
 
+### FIWARE_PORTALS
+> (TUPLE, DEFAULT: `()`[Empty tuple])
+
+List of associated portals. This setting is used for signing out from other
+portals at the same time the user sign out from Wirecloud, providing a single
+sign out experience. This setting is also used for building the navigation bar
+when using the `wirecloud.fiwarelabtheme` and `wirecloud.fiwarelabdarktheme`
+themes.
+
+As example, this is the configuration used in FIWARE Lab:
+
+```python
+FIWARE_PORTALS = (
+    {
+        "name": "Cloud",
+        "url": "https://cloud.lab.fiware.org",
+        "logout_path": "/logout"
+    },
+    {
+        "name": "Store",
+        "url": "https://store.lab.fiware.org",
+        "logout_path": "/logout"
+    },
+    {
+        "name": "Mashup",
+        "url": "https://mashup.lab.fiware.org",
+        "logout_path": "/logout"
+    },
+    {
+        "name": "Data",
+        "url": "https://data.lab.fiware.org",
+        "logout_path": "/user/logout"
+    },
+    {
+        "name": "Account",
+        "url": "https://account.lab.fiware.org",
+        "logout_path": "/auth/logout/"
+    },
+    {
+        "name": "Help&info",
+        "url": "http://help.lab.fiware.org"
+    },
+)
+```
+
+If you want to add a portal into this list, but not in the navigation bar, you
+only have to use the display attribute:
+
+```python
+FIWARE_IDM_SERVER = "https://account.mydomain.com"
+FIWARE_PORTALS = (
+    {
+        "name": "Mashup",
+        "url": "https://mashup.mydomain.com",
+        "logout_path": "/logout"
+    },
+    {
+        "name": "Account",
+        "url": FIWARE_IDM_SERVER,
+        "logout_path": "/auth/logout/",
+        "display": False
+    },
+)
+```
+
 ### FORCE_DOMAIN
 > (String, default: `None`)
 
@@ -577,7 +642,7 @@ Create a new Application using the IdM server to use (for example: `https://acco
 
 5. [Optional]: Change the `THEME_ACTIVE` setting to `wirecloud.fiwarelabtheme`.
    This theme is the one used by the FIWARE Lab's Mashup portal.
-6. [Optional]: Provide a `FIWARE_PORTALS` setting. This setting is used for
+6. [Optional]: Provide a [`FIWARE_PORTALS` setting]. This setting is used for
    signing out from other portals at the same time the user sign out from
    Wirecloud, providing a single sign out experience. This setting is also used
    for building the navigation bar.
@@ -585,6 +650,9 @@ Create a new Application using the IdM server to use (for example: `https://acco
 
 
 [KeyRock's User and Programmers Guide]: https://fi-ware-idm.readthedocs.org/en/latest/user_guide/#registering-an-application
+[`FIWARE_PORTALS` setting]: #fiware_portals
+
+
 ## Running WireCloud
 
 We recommend running WireCloud based on an Apache Web Server. However, it is

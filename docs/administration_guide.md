@@ -157,12 +157,32 @@ $ wirecloud-admin --version
 
 ## From 0.8.x to 0.9.x
 
-Follow the normal procedure for upgrading WireCloud except if you want to
-upgrade to use Django 1.7+. In that case, you will need to migrate your database
-using Django 1.5-1.6 and South before upgrading to the new version of Django.
+### IdM integration changes
+
+- `FIWARE_PORTALS` has been change to be empty by default. You can add the
+  following code into your `settings.py` file for obtaining the previous
+  behaviour:
+
+    ```python
+    from wirecloud.fiware import FIWARE_LAB_PORTALS
+    FIWARE_PORTALS = FIWARE_LAB_PORTALS
+    ```
+
+  See the [`FIWARE_PORTALS` documentation](installation_guide#fiware_portals) for more info.
+
+### Upgrading to Django 1.7+
+
+Wirecloud 0.9.0+ adds support for Django 1.7-1.9 and next version of WireCloud
+will drop support for Django 1.5 and 1.6. Moreover, at the time of releasing
+WireCloud 0.9.0, Django 1.5, 1.6 and 1.7 were unsupported by the Django
+community.
+
+The only thing to take into account when upgrading your WireCloud installation
+to use Django 1.7+ is that you need to migrate your db to Wirecloud 0.9.0 using
+Django 1.5-1.6 and South before upgrading to the new version of Django.
 
 Once migrated the database and installed the new version of Django, run
-the following command:
+the following command for initializing the Django db migration framework:
 
     $ python manage.py migrate --fake
 
