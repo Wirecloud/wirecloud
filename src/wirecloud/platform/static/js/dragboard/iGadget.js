@@ -78,8 +78,20 @@ function IWidget(widget, layout, description) {
     this.internal_iwidget.addEventListener('removed', this._iwidget_removed);
     this._updateErrorInfo = this._updateErrorInfo.bind(this);
     this.internal_iwidget.logManager.addEventListener('newentry', this._updateErrorInfo);
+    var _layout = null;
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},
+        'layout': {
+            get: function () {
+                return _layout;
+            },
+            set: function (layout) {
+                _layout = layout;
+                if (this.internal_view != null) {
+                    this.internal_view.layout = layout;
+                }
+            }
+        },
         'widget': {get: function () {return this.internal_iwidget.widget;}},
         'title': {get: function () {return this.internal_iwidget.title;}}
     });

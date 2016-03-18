@@ -30,9 +30,20 @@
     /* TODO remove view parameter */
     var IWidgetView = function IWidgetView(iwidget, template, view) {
 
+        var layout;
+
         StyledElements.ObjectWithEvents.call(this, ['highlight', 'unhighlight']);
         Object.defineProperties(this, {
-            widget: {value: iwidget}
+            widget: {value: iwidget},
+            layout: {
+                get: function () {
+                    return layout;
+                },
+                set: function (new_layout) {
+                    layout = new_layout;
+                    this.updateCSSClasses();
+                }
+            }
         });
 
         var tmp = {};
@@ -173,7 +184,7 @@
             this.element.classList.remove('wc-missing-widget');
         }
 
-        if (this.widget.layout != null && this.widget.layout instanceof Wirecloud.ui.FreeLayout) {
+        if (this.layout != null && this.layout instanceof Wirecloud.ui.FreeLayout) {
             this.element.classList.add('wc-floating-widget');
         } else {
             this.element.classList.remove('wc-floating-widget');
