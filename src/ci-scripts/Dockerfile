@@ -21,5 +21,5 @@ RUN pip install virtualenv
 EXPOSE 28081
 
 # COPY ../../../wirecloud /home/wirecloud
-ENV WORKSPACE=/home/wirecloud PATH=/usr/local/bin:$PATH DB_HOST=127.0.0.1 DB_PORT=5432
-CMD git clone https://github.com/bgrana/wirecloud.git && /home/wirecloud/src/ci-scripts/virtenv-test.sh /usr/bin/python2.7 sqlite3 django1.9
+ENV WORKSPACE=/wirecloud PATH=/usr/local/bin:$PATH DB_HOST=127.0.0.1 DB_PORT=5432
+CMD git clone https://github.com/bgrana/wirecloud.git && /wirecloud/src/ci-scripts/virtenv-test.sh /usr/bin/python2.7 sqlite3 django1.9
