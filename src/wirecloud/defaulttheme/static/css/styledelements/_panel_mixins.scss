@@ -7,18 +7,13 @@
 
     & > .panel-heading {
         background-color: $background-color;
-        color: $text-color;
-        text-shadow: $text-shadow-conf-base rgba(contrast-color($background-color, #FFF, #000, $text-color-threshold), 0.8);
 
-        & > .panel-title, & > .panel-subtitle {
+        &, & > .panel-title, & > .panel-subtitle, & > .panel-options > .se-btn {
             color: $text-color;
             text-shadow: $text-shadow-conf-base rgba(contrast-color($background-color, #FFF, #000, $text-color-threshold), 0.8);
         }
 
         & > .panel-options > .se-btn {
-            color: $text-color;
-            text-shadow: $text-shadow-conf-base rgba(contrast-color($background-color, #FFF, #000, $text-color-threshold), 0.8);
-
             &:hover,
             &:focus {
                 color: $text-hover-color;

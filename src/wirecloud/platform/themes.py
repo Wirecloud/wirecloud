@@ -53,7 +53,7 @@ def get_active_theme_name():
 
 
 def get_available_themes(metadata=False):
-    themes = ['wirecloud.defaulttheme', 'wirecloud.fiwaretheme', 'wirecloud.fiwarelabtheme']
+    themes = ['wirecloud.defaulttheme', 'wirecloud.fiwaretheme', 'wirecloud.fiwarelabtheme', 'wirecloud.fiwarelabdarktheme']
     for ep in pkg_resources.iter_entry_points(group='wirecloud.themes'):
         themes.append(ep.load().__name__)
 

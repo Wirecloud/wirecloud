@@ -25,11 +25,6 @@
     border-top-left-radius: ($panel-border-radius - 1);
     border-top-right-radius: ($panel-border-radius - 1);
 
-    .panel-subtitle {
-        clear: both;
-        display: block;
-    }
-
     .panel-options {
         position: relative;
         display: block;
@@ -72,6 +67,11 @@
     overflow: hidden;
     margin-top: 0;
     margin-bottom: 0;
+}
+
+.panel-subtitle {
+    clear: both;
+    display: block;
 }
 
 .panel-body {
