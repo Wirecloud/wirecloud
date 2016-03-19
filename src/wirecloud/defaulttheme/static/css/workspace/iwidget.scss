@@ -190,6 +190,21 @@
     }
 }
 
+.wc-minimized-widget {
+    .widget_menu {
+        border-bottom-left-radius: ($panel-border-radius - 1);
+        border-bottom-right-radius: ($panel-border-radius - 1);
+    }
+
+    .widget_wrapper {
+        visibility: hidden;
+    }
+
+    .statusBar {
+        display: none;
+    }
+}
+
 .wc-missing-widget {
     @include z-depth(0);
 }

@@ -759,27 +759,21 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
             this.iconElement.style.display = "block";
         } else {
             // Linked to the grid
-            this.contentWrapper.style.visibility = "hidden";
-            this.contentWrapper.style.border = "0px";
-            this.statusBar.style.display = "none";
             this.minimizeButton.setTitle(gettext("Maximize"));
             this.minimizeButton.removeClassName("icon-minus");
             this.minimizeButton.addClassName("icon-plus");
         }
+        this.element.classList.add('wc-minimized-widget');
     } else {
         this.minimizeButton.setTitle(gettext("Minimize"));
         this.minimizeButton.removeClassName("icon-plus");
         this.minimizeButton.addClassName("icon-minus");
-        this.contentWrapper.style.visibility = "";
-        this.contentWrapper.style.border = "";
+        this.element.classList.remove('wc-minimized-widget');
 
         if (this.onFreeLayout()) {
             // Floating widget
             this.element.style.visibility = "";
             this.iconElement.style.display = "none";
-        } else {
-            //Linked to the grid
-            this.statusBar.style.display = "";
         }
     }
 
