@@ -172,7 +172,6 @@
                     var new_status = this.buildStateData();
                     Wirecloud.HistoryManager.pushState(new_status);
                     Wirecloud.trigger('viewcontextchanged');
-                    Wirecloud.Utils.callCallback(old_oncomplete, alternatives, out_alternative);
                 }.bind(this)
             };
         }
