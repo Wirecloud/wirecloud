@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of ngsijs.
  *
@@ -113,7 +113,9 @@
                 var error;
 
                 if (typeof callbacks.onFailure === 'function') {
-                    if ([0, 502, 504].indexOf(response.status) !== -1) {
+                    if (response instanceof NGSI.ConnectionError) {
+                        error = response;
+                    } else if ([0, 502, 504].indexOf(response.status) !== -1) {
                         error = new NGSI.ConnectionError('Connection Error');
                     } else {
                         error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
@@ -1244,7 +1246,7 @@
                 options.onFailure = function () {
                     this.ngsi_proxy.close_callback(proxy_callback.callback_id);
                     if (typeof oldOnFailure === 'function') {
-                        oldOnFailure();
+                        oldOnFailure.apply(this, arguments);
                     }
                 }.bind(this);
 
@@ -1410,7 +1412,7 @@
                 options.onFailure = function () {
                     this.ngsi_proxy.close_callback(proxy_callback.callback_id);
                     if (typeof oldOnFailure === 'function') {
-                        oldOnFailure();
+                        oldOnFailure.apply(this, arguments);
                     }
                 }.bind(this);
 
