@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013-2014 Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,19 +19,24 @@
  *
  */
 
-/*global NGSI, Wirecloud*/
+/* globals NGSI, Wirecloud */
 
-(function (NGSI) {
+(function (NGSI, utils) {
 
     "use strict";
 
     var register_widget_proxy, register_operator_proxy, unload_widget, unload_operator,
-        proxiesByWidget, proxiesByOperator, proxy_connections, Manager;
+        proxiesByWidget, proxiesByOperator, proxy_connections, make_request, Manager,
+        proxy_base_url;
 
     proxiesByWidget = {};
     proxiesByOperator = {};
     proxy_connections = {};
     Manager = {};
+
+    proxy_base_url = Wirecloud.location.domain + Wirecloud.URLs.PROXY.evaluate({protocol: 'x', domain: 'x', path: 'x'});
+    // TODO
+    proxy_base_url = proxy_base_url.slice(0, -"/x/xx".length);
 
     register_widget_proxy = function register_widget_proxy(id, proxy) {
         var iwidget;
@@ -88,6 +93,38 @@
         delete proxiesByOperator[ioperator.id];
     };
 
+    make_request = function make_request(url, options) {
+        var onFailure = options.onFailure;
+        options.onFailure = function (response) {
+            var error_details, details, via_header;
+
+            error_details = response;
+            if (utils.startsWith(response.request.url, proxy_base_url)) {
+                via_header = response.getHeader('Via');
+                if (response.status === 0) {
+                    error_details = new NGSI.ConnectionError(utils.gettext("Error connecting to the WireCloud's proxy"));
+                } else if (via_header == null) {
+                    // Error coming directly from WireCloud's proxy
+                    switch (response.status) {
+                    case 403:
+                        error_details = new NGSI.ConnectionError(utils.gettext("You aren't allowed to use the WireCloud's proxy. Have you signed off from WireCloud?"));
+                        break;
+                    case 502:
+                    case 504:
+                        details = JSON.parse(response.responseText);
+                        error_details = new NGSI.ConnectionError(details.description);
+                        break;
+                    default:
+                        error_details = new NGSI.ConnectionError(utils.gettext("Unexpected response from WireCloud's proxy"));
+                    }
+                }
+            }
+            onFailure(error_details);
+        };
+
+        return Wirecloud.io.makeRequest(url, options);
+    };
+
     // Overload NGSI connection constructor
     Manager.Connection = function Connection(type, id, url, options) {
         var wrapped_proxy;
@@ -97,7 +134,7 @@
         }
 
         if (typeof options.requestFunction !== 'function') {
-            options.requestFunction = Wirecloud.io.makeRequest;
+            options.requestFunction = make_request;
         }
 
         if (options.ngsi_proxy_url != null) {
@@ -214,6 +251,6 @@
     Manager.NGSI = NGSI;
     window.NGSIManager = Manager;
 
-})(NGSI);
+})(NGSI, Wirecloud.Utils);
 
 delete window.NGSI;
