@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
+/* globals gettext, LayoutManagerFactory, StyledElements, Wirecloud */
 
 (function () {
 
@@ -113,7 +113,7 @@
         Wirecloud.ui.WindowMenu.call(this, gettext("Upload mashable application components"), 'wc-upload-mac-dialog');
 
         var builder = new StyledElements.GUIBuilder();
-        var contents = builder.parse(Wirecloud.currentTheme.templates.wirecloud_catalogue_publish_interface, {
+        var contents = builder.parse(Wirecloud.currentTheme.templates.wirecloud_catalogue_upload_dialog, {
             'upload_wgt_button': function () {
                 var button = new StyledElements.FileButton({text: gettext('Select files from your computer')});
                 button.addEventListener('fileselect', function (button, files) {

@@ -566,7 +566,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "visibility_option": "wirecloud/workspace/visibility_option.html",
                 "wallet": "wirecloud/workspace/wallet/wallet.html",
                 "wallet_widget": "wirecloud/workspace/wallet/widget.html",
-                "wirecloud_catalogue_publish_interface": "wirecloud/catalogue/developers.html",
+                "wirecloud_catalogue_upload_dialog": "wirecloud/catalogue/upload_dialog.html",
                 "upgrade_window_menu": "wirecloud/ui/upgrade_window_menu.html",
             }
         else:
