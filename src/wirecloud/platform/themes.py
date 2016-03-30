@@ -68,7 +68,10 @@ def get_available_themes(metadata=False):
 
 
 def active_theme_context_processor(request):
-    return {'THEME_ACTIVE': get_active_theme_name()}
+    from wirecloud.platform.context_processors import active_theme
+    import warnings
+    warnings.warn('wirecloud.platform.themes.active_theme_context_processor has been deprecated. Please, use wirecloud.commons.context_processors.active_theme instead.', DeprecationWarning)
+    return active_theme(request)
 
 
 def get_theme_dir(theme, dir_type):

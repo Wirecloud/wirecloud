@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -18,6 +18,11 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from wirecloud.platform.plugins import get_plugins
+from wirecloud.platform.themes import get_active_theme_name
+
+
+def active_theme(request):
+    return {'THEME_ACTIVE': get_active_theme_name()}
 
 
 def plugins(request):

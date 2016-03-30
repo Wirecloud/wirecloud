@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -147,7 +147,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         'django.core.context_processors.tz',
         'django.contrib.messages.context_processors.messages',
         'wirecloud.platform.context_processors.plugins',
-        'wirecloud.platform.themes.active_theme_context_processor',
+        'wirecloud.platform.context_processors.active_theme',
     )
 
     settings['LOGGING'] = {
