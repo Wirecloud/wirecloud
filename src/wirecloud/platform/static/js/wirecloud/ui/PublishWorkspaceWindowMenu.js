@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -181,7 +181,7 @@
         };
 
         for (key in data) {
-            if (Wirecloud.Utils.startsWith(key, 'tab-')) {
+            if (key.startsWith('tab-')) {
                 Wirecloud.Utils.merge(data.parametrization.iwidgets, data[key]);
                 delete data[key];
             }

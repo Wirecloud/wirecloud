@@ -95,6 +95,11 @@ TUTORIAL_FILES = (
     'js/wirecloud/Tutorials/BehaviourOrientedWiring.js',
 )
 
+SHIM_FILES = (
+    'js/wirecloud/shims/string.js',
+    'js/wirecloud/shims/classList.js',
+)
+
 STYLED_ELEMENTS_FILES = (
     # 'js/StyledElements/Utils.js', Added on bootstrap.html
     # 'js/StyledElements/ObjectWithEvents.js', Added as common file
@@ -388,8 +393,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         return tab_preferences
 
     def get_scripts(self, view):
-        common = (
-            'js/wirecloud/shims/classList.js',
+        common = SHIM_FILES + (
             'js/wirecloud/BaseRequirements.js',
             'js/common/ComputedStyle.js',
             'js/wirecloud/constants.js',

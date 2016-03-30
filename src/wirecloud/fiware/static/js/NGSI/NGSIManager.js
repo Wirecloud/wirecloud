@@ -99,7 +99,7 @@
             var error_details, details, via_header;
 
             error_details = response;
-            if (utils.startsWith(response.request.url, proxy_base_url)) {
+            if (response.request.url.startsWith(proxy_base_url)) {
                 via_header = response.getHeader('Via');
                 if (response.status === 0) {
                     error_details = new NGSI.ConnectionError(utils.gettext("Error connecting to the WireCloud's proxy"));
