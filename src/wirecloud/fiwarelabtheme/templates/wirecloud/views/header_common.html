@@ -18,7 +18,7 @@
             {% endif %}
         </div><nav class="collapse">
             <ul class="nav navbar-nav">
-                {% for portal in FIWARE_PORTALS %}{% if portal.display != False %}<li {% if portal.active %}class="active"{% endif %}>
+                {% for portal in FIWARE_PORTALS %}{% if portal.display != False %}<li {% ifinternalurl portal.url %}class="active"{% endifinternalurl %}>
                 <a href="{{ portal.url }}">{{ portal.name }}</a>
                 </li>{% endif %}{% endfor %}
             </ul>

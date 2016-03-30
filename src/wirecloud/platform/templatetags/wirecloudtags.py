@@ -28,6 +28,7 @@ from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
 from wirecloud.commons.utils.encoding import LazyEncoder
+from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.platform.plugins import get_constants, get_extra_javascripts, get_platform_css, get_wirecloud_ajax_endpoints
 from wirecloud.platform.themes import get_active_theme_name, get_available_themes
 
@@ -178,6 +179,44 @@ def wirecloud_bootstrap(context, view):
         'script': mark_safe(script),
         'constants': constants,
     }
+
+
+@register.tag('ifinternalurl')
+def do_ifinternalurl(parser, token):
+    """
+    The ``{% ifinternalurl %}`` tag evaluates a variable, and if that variable
+    contains an internal url, the contents of the block are output::
+
+        {% ifinternalurl url %} class="internal"{% endifinternalurl %}
+
+    """
+    bits = token.split_contents()
+    if len(bits) < 2:
+        raise TemplateSyntaxError(
+            "%r tag takes one argument: the value to check if contains an internal url"
+        )
+
+    nodelist = parser.parse(('endifinternalurl',))
+    parser.delete_first_token()
+    return IfInternalURLNode(nodelist, parser.compile_filter(bits[1]))
+
+
+class IfInternalURLNode(template.Node):
+
+    def __init__(self, nodelist, condition):
+        self.nodelist = nodelist
+        self.condition = condition
+
+    def render(self, context):
+        base_url = get_absolute_reverse_url('wirecloud.root', context['request'])
+        if base_url.endswith('/'):
+            base_url = base_url[:-1]
+
+        value = self.condition.resolve(context)
+        if value.startswith(base_url + '/') or value == base_url:
+            return self.nodelist.render(context)
+        else:
+            return ''
 
 
 @register.filter
