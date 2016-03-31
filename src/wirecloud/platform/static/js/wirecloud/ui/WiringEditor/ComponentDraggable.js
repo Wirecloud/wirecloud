@@ -286,7 +286,7 @@
             _showButtonAdd: function _showButtonAdd() {
 
                 this.btnRemove
-                    .replaceClassName('btn-remove', 'btn-share')
+                    .replaceClassName('btn-remove', 'btn-add')
                     .removeIconClassName('icon-trash')
                     .removeIconClassName('icon-remove-sign')
                     .addIconClassName('icon-plus-sign')
@@ -298,7 +298,7 @@
             _showButtonDelete: function _showButtonDelete() {
 
                 this.btnRemove
-                    .replaceClassName('btn-share', 'btn-remove')
+                    .replaceClassName('btn-add', 'btn-remove')
                     .removeIconClassName('icon-plus-sign')
                     .removeIconClassName('icon-trash')
                     .addIconClassName('icon-remove-sign')
@@ -310,7 +310,7 @@
             _showButtonRemove: function _showButtonRemove() {
 
                 this.btnRemove
-                    .replaceClassName('btn-share', 'btn-remove')
+                    .replaceClassName('btn-add', 'btn-remove')
                     .removeIconClassName('icon-plus-sign')
                     .removeIconClassName('icon-remove-sign')
                     .addIconClassName('icon-trash')
