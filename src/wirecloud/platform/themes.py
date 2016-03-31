@@ -75,8 +75,8 @@ def active_theme_context_processor(request):
 
 
 def get_theme_dir(theme, dir_type):
-    active_theme_dir = os.path.dirname(os.path.abspath(theme.__file__))
-    return safe_join(active_theme_dir, dir_type)
+    theme_dir = os.path.dirname(os.path.abspath(theme.__file__))
+    return safe_join(theme_dir, dir_type)
 
 
 def get_theme_metadata(theme_name):
