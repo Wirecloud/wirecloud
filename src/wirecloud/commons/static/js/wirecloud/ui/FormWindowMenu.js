@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2015 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2016 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -46,6 +46,7 @@
         this.form = new StyledElements.Form(fields, options);
         this.form.insertInto(this.windowContent);
         this.form.acceptButton.addClassName('btn-accept');
+        this.form.cancelButton.addClassName('btn-cancel');
         this.form.addEventListener('submit', function (form, data) {
             this.form.acceptButton.disable();
             this.form.cancelButton.disable();
