@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-15 11:48+0100\n"
+"POT-Creation-Date: 2016-03-31 13:00+0200\n"
 "PO-Revision-Date: 2016-01-15 11:51+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -46,51 +46,51 @@ msgstr "Seguimiento de incidencias"
 msgid "License details"
 msgstr "Detalles de la licencia"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:214
+#: static/js/wirecloud/ui/ResourcePainter.js:216
 msgid "Download"
 msgstr "Descargar"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:223
+#: static/js/wirecloud/ui/ResourcePainter.js:225
 msgid "Add to workspace"
 msgstr "Añadir al entorno de trabajo"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:235
+#: static/js/wirecloud/ui/ResourcePainter.js:237
 msgid "Publish"
 msgstr "Publicar"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:245
+#: static/js/wirecloud/ui/ResourcePainter.js:247
 msgid "Uninstall"
 msgstr "Desinstalar"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:254
+#: static/js/wirecloud/ui/ResourcePainter.js:256
 msgid "Uninstall all versions"
 msgstr "Desinstalar todas las versiones"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:263
+#: static/js/wirecloud/ui/ResourcePainter.js:265
 msgid "Delete"
 msgstr "Borrar"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:272
+#: static/js/wirecloud/ui/ResourcePainter.js:274
 msgid "Delete all versions"
 msgstr "Borrar todas las versiones"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:324
+#: static/js/wirecloud/ui/ResourcePainter.js:333
 msgid "N/A"
 msgstr "N/A"
 
-#: static/js/wirecloud/ui/ResourcePainter.js:381
+#: static/js/wirecloud/ui/ResourcePainter.js:390
 msgid "No image available"
 msgstr "Imagen no disponible"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:74
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:73
 msgid "Main Info"
 msgstr "General"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:78
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:77
 msgid "Documentation"
 msgstr "Documentación"
 
-#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:99
+#: static/js/wirecloud/ui/WirecloudCatalogue/ResourceDetailsView.js:98
 msgid "Change Log"
 msgstr "Registro de cambios"
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 13:11+0100\n"
-"PO-Revision-Date: 2015-11-25 13:31+0100\n"
+"POT-Creation-Date: 2016-03-31 13:04+0200\n"
+"PO-Revision-Date: 2016-03-15 12:00+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,13 +16,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.8.7\n"
+
+#: __init__.py:23
+msgid "Basic"
+msgstr "Básico"
 
 #: templates/400.html:3
 msgid "error400"
 msgstr "error400"
 
-#: templates/400.html:5 templates/wirecloud/widget_error.html:6
+#: templates/400.html:5 templates/wirecloud/widget_error.html.py:6
 msgid "Error 400 - Bad request"
 msgstr "Error 400 - Solicitud incorrecta"
 
@@ -80,11 +84,11 @@ msgstr "Error 500 - Error interno del servidor"
 msgid "WireCloud Platform - Sign in"
 msgstr "Plataforma WireCloud - Iniciar sesión"
 
-#: templates/registration/login.html:30 templates/wirecloud/views/base.html:55
+#: templates/registration/login.html:30 templates/wirecloud/views/base.html:47
 msgid "Your browser seems to lack some required features"
 msgstr "Parece que tu navegador no soporta ciertas funcionalidades necesarias"
 
-#: templates/registration/login.html:31 templates/wirecloud/views/base.html:56
+#: templates/registration/login.html:31 templates/wirecloud/views/base.html:48
 msgid ""
 "We recommend you to upgrade your browser to the newest version of either <a "
 "href=\"https://www.mozilla.org/firefox\">Firefox</a> or <a href=\"www.google."
@@ -114,107 +118,6 @@ msgstr "Contraseña"
 #: templates/registration/login.html:48
 msgid "Log in"
 msgstr "Iniciar sesión"
-
-#: templates/wirecloud/landing_page.html:3
-msgid "WireCloud · Build application mashups"
-msgstr "WireCloud · Construye aplicaciones composicionales"
-
-#: templates/wirecloud/landing_page.html:4
-msgid "Welcome to WireCloud!"
-msgstr "¡Bienvenido a WireCloud!"
-
-#: templates/wirecloud/landing_page.html:10
-msgid ""
-"Welcome to the next-generation application mashup platform aimed at "
-"leveraging the long tail of the Internet of Services."
-msgstr ""
-"Bienvenido a la plataforma de creación de aplicaciones mashups de última "
-"generación destinada a impulsar la larga cola de la Internet de los "
-"Servicios."
-
-#: templates/wirecloud/landing_page.html:16
-msgid "Innovation"
-msgstr "Innovación"
-
-#: templates/wirecloud/landing_page.html:17
-msgid ""
-"Innovate through experimentation by choosing the best suited widgets and "
-"prefab mashup-lets for your devised mashup from a vast, ever-growing "
-"distributed catalogue"
-msgstr ""
-"Innova a través de la experimentación eligiendo los widgets y mashups "
-"prefabricados más adecuados de un extenso, y siempre creciente, catálogo "
-"distribuido"
-
-#: templates/wirecloud/landing_page.html:24
-msgid "Generic Features"
-msgstr "Funcionalidades Genéricas"
-
-#: templates/wirecloud/landing_page.html:26
-msgid "JavaScript pub/sub API for event-driven widgets"
-msgstr "API pub/sub JavaScript para crear widgets dirigidos por eventos"
-
-#: templates/wirecloud/landing_page.html:27
-msgid "NGSI API compatible with FIWARE's Orion Context Broker Generic Enabler"
-msgstr "API NGSI compatible con el Orion Context Broker de FIWARE"
-
-#: templates/wirecloud/landing_page.html:28
-msgid "Server-side state persistence for widgets and mashups"
-msgstr "Soporte para guardar el estado de los widgets y mashups en el servidor"
-
-#: templates/wirecloud/landing_page.html:36
-msgid "Wiring &amp; Piping"
-msgstr "Wiring &amp; Piping"
-
-#: templates/wirecloud/landing_page.html:37
-msgid ""
-"Wiring allows you to easily connect widgets in a mashup to create a full-"
-"fledged dashboard with RIA functionality."
-msgstr ""
-"Mediante el wiring, podrás conectar fácilmente los widgets de un mashup para "
-"crear un panel en toda regla con funcionalidades RIA"
-
-#: templates/wirecloud/landing_page.html:38
-msgid ""
-"Piping links your widgets to back-end services or data sources through an "
-"extendable set of operators, including filters, aggregators, adapters, etc."
-msgstr ""
-"Piping permite enlazar widgets a los servicios de backend y fuentes de datos "
-"a través de un conjunto ampliable de operadores, incluyendo filtros, "
-"agregadores, adaptadores, etcétera."
-
-#: templates/wirecloud/landing_page.html:45
-#, python-format
-msgid "100%% FIWARE"
-msgstr "100%% FIWARE"
-
-#: templates/wirecloud/landing_page.html:47
-msgid "1st OSS reference implementation of the Application Mashup GE"
-msgstr "Primera implementación OSS de referencia del Application Mashup GE"
-
-#: templates/wirecloud/landing_page.html:48
-msgid "Support for linked-USDL"
-msgstr "Soporte para Linked-USDL"
-
-#: templates/wirecloud/landing_page.html:49
-msgid "Full integration with FIWARE's:"
-msgstr "Integración con FIWARE's:"
-
-#: templates/wirecloud/catalogue/developers.html:6
-msgid ""
-"Do you have a widget, operator or mashup stored in a wgt file? Then you can "
-"upload it to the catalogue by means of this dialog."
-msgstr ""
-"¿Tienes un widget, un operador o un mashap empaquetado en un fichero wgt? "
-"Entonces puedes subirlo al catalogo haciendo uso de esta ventana."
-
-#: templates/wirecloud/catalogue/developers.html:8
-msgid "Drag files here"
-msgstr "Arrastra los ficheros aquí"
-
-#: templates/wirecloud/catalogue/developers.html:9
-msgid "- or -"
-msgstr "- ó -"
 
 #: templates/wirecloud/catalogue/main_resource_details.html:3
 msgid "Description"
@@ -285,6 +188,111 @@ msgstr "Términos:"
 msgid "Type:"
 msgstr "Tipo:"
 
+#: templates/wirecloud/catalogue/upload_dialog.html:6
+msgid ""
+"Do you have a widget, operator or mashup stored in a wgt file? Then you can "
+"upload it to the catalogue by means of this dialog."
+msgstr ""
+"¿Tienes un widget, un operador o un mashap empaquetado en un fichero wgt? "
+"Entonces puedes subirlo al catalogo haciendo uso de esta ventana."
+
+#: templates/wirecloud/catalogue/upload_dialog.html:8
+msgid "Drag files here"
+msgstr "Arrastra los ficheros aquí"
+
+#: templates/wirecloud/catalogue/upload_dialog.html:9
+msgid "- or -"
+msgstr "- ó -"
+
+#: templates/wirecloud/landing_page.html:3
+msgid "WireCloud · Build application mashups"
+msgstr "WireCloud · Construye aplicaciones composicionales"
+
+#: templates/wirecloud/landing_page.html:4
+msgid "Welcome to WireCloud!"
+msgstr "¡Bienvenido a WireCloud!"
+
+#: templates/wirecloud/landing_page.html:13
+msgid ""
+"Welcome to the next-generation application mashup platform aimed at "
+"leveraging the long tail of the Internet of Services."
+msgstr ""
+"Bienvenido a la plataforma de creación de aplicaciones mashups de última "
+"generación destinada a impulsar la larga cola de la Internet de los "
+"Servicios."
+
+#: templates/wirecloud/landing_page.html:19
+msgid "Innovation"
+msgstr "Innovación"
+
+#: templates/wirecloud/landing_page.html:20
+msgid ""
+"Innovate through experimentation by choosing the best suited widgets and "
+"prefab mashup-lets for your devised mashup from a vast, ever-growing "
+"distributed catalogue"
+msgstr ""
+"Innova a través de la experimentación eligiendo los widgets y mashups "
+"prefabricados más adecuados de un extenso, y siempre creciente, catálogo "
+"distribuido"
+
+#: templates/wirecloud/landing_page.html:27
+msgid "Generic Features"
+msgstr "Funcionalidades Genéricas"
+
+#: templates/wirecloud/landing_page.html:29
+msgid "JavaScript pub/sub API for event-driven widgets"
+msgstr "API pub/sub JavaScript para crear widgets dirigidos por eventos"
+
+#: templates/wirecloud/landing_page.html:30
+msgid "NGSI API compatible with FIWARE's Orion Context Broker Generic Enabler"
+msgstr "API NGSI compatible con el Orion Context Broker de FIWARE"
+
+#: templates/wirecloud/landing_page.html:31
+msgid "Server-side state persistence for widgets and mashups"
+msgstr "Soporte para guardar el estado de los widgets y mashups en el servidor"
+
+#: templates/wirecloud/landing_page.html:39
+msgid "Wiring &amp; Piping"
+msgstr "Wiring &amp; Piping"
+
+#: templates/wirecloud/landing_page.html:40
+msgid ""
+"Wiring allows you to easily connect widgets in a mashup to create a full-"
+"fledged dashboard with RIA functionality."
+msgstr ""
+"Mediante el wiring, podrás conectar fácilmente los widgets de un mashup para "
+"crear un panel en toda regla con funcionalidades RIA"
+
+#: templates/wirecloud/landing_page.html:41
+msgid ""
+"Piping links your widgets to back-end services or data sources through an "
+"extendable set of operators, including filters, aggregators, adapters, etc."
+msgstr ""
+"Piping permite enlazar widgets a los servicios de backend y fuentes de datos "
+"a través de un conjunto ampliable de operadores, incluyendo filtros, "
+"agregadores, adaptadores, etcétera."
+
+#: templates/wirecloud/landing_page.html:48
+#, python-format
+msgid "100%% FIWARE"
+msgstr "100%% FIWARE"
+
+#: templates/wirecloud/landing_page.html:50
+msgid "1st OSS reference implementation of the Application Mashup GE"
+msgstr "Primera implementación OSS de referencia del Application Mashup GE"
+
+#: templates/wirecloud/landing_page.html:51
+msgid "Support for linked-USDL"
+msgstr "Soporte para Linked-USDL"
+
+#: templates/wirecloud/landing_page.html:52
+msgid "Full integration with FIWARE's:"
+msgstr "Integración con FIWARE's:"
+
+#: templates/wirecloud/ui/embed_code_dialog.html:2
+msgid "Theme"
+msgstr "Estilo"
+
 #: templates/wirecloud/ui/upgrade_window_menu.html:3
 msgid "Current version"
 msgstr "Versión actual"
@@ -305,11 +313,11 @@ msgstr "Registro de cambios"
 msgid "WireCloud Platform"
 msgstr "Plataforma WireCloud"
 
-#: templates/wirecloud/views/base.html:41
+#: templates/wirecloud/views/base.html:33
 msgid "Loading WireCloud"
 msgstr "Iniciando WireCloud"
 
-#: templates/wirecloud/views/base.html:45
+#: templates/wirecloud/views/base.html:37
 msgid "Retrieving WireCloud code"
 msgstr "Obteniendo el código de WireCloud"
 
@@ -320,3 +328,33 @@ msgstr "Catálogo"
 #: templates/wirecloud/views/smartphone.html:47
 msgid "Mashup Info"
 msgstr "Información del Mashup"
+
+#: templates/wirecloud/workspace/missing_widget.html:10
+msgid "Missing widget"
+msgstr "Widget ausente"
+
+#: templates/wirecloud/workspace/missing_widget.html:11
+msgid ""
+"This widget is currently not available. Probably you or an administrator "
+"uninstalled it."
+msgstr ""
+"Este widget no está actualmente disponible. Probablemente lo has "
+"desinstalado (o un administrador)."
+
+#: templates/wirecloud/workspace/missing_widget.html:12
+msgid ""
+"<h5>Suggestions:</h5>\n"
+"            <ul>\n"
+"                <li>Remove this widget from the dashboard</li>\n"
+"                <li>Reinstall the appropiated version of the widget</li>\n"
+"                <li>Install another version of the widget and use the "
+"<em>Upgrade/Downgrade</em> option</li>\n"
+"            </ul>"
+msgstr ""
+"<h5>Sugerencias:</h5>\n"
+"            <ul>\n"
+"                <li>Eliminar el widget del panel</li>\n"
+"                <li>Reinstalar una versión adecuada del widget</li>\n"
+"                <li>Instalar otra versión del widget y usar la opción "
+"<em>Actualizar/Desactualizar</em></li>\n"
+"            </ul>"

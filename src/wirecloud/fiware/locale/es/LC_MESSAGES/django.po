@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 13:27+0100\n"
-"PO-Revision-Date: 2015-03-30 18:00+0100\n"
+"POT-Creation-Date: 2016-03-31 13:04+0200\n"
+"PO-Revision-Date: 2016-03-31 13:09+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -16,7 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.7\n"
+
+#: marketAdaptor/usdlParser.py:77
+msgid "Error the document has not a valid rdf format"
+msgstr "Error - El documento no tiene un formato RDF válido"
+
+#: marketAdaptor/usdlParser.py:83
+#, python-format
+msgid "Error parsing rdf document: %s"
+msgstr "Error pareando el documento RDF: %s"
+
+#: marketAdaptor/usdlParser.py:92
+msgid "Error the document is not a valid usdl document"
+msgstr "Error - el documento no es un documento USDL válido"
 
 #: plugins.py:188
 msgid "FIWARE version"
@@ -62,25 +75,44 @@ msgstr "El dueño del entorno de trabajo no tiene un perfil de FIWARE activo"
 msgid "Invalid FIWARE OAuth token source"
 msgstr "Token OAuth de FIWARE inválido"
 
-#: marketAdaptor/usdlParser.py:77
-msgid "Error the document has not a valid rdf format"
-msgstr "Error - El documento no tiene un formato RDF válido"
+#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:2
+msgid "Legal Conditions"
+msgstr "Condiciones legales"
 
-#: marketAdaptor/usdlParser.py:83
-#, python-format
-msgid "Error parsing rdf document: %s"
-msgstr "Error pareando el documento RDF: %s"
-
-#: marketAdaptor/usdlParser.py:92
-msgid "Error the document is not a valid usdl document"
-msgstr "Error - el documento no es un documento USDL válido"
+#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:6
+msgid "Clauses:"
+msgstr "Clausulas:"
 
 #: templates/wirecloud/fiware/marketplace/main_resource_details.html:3
-#: templates/wirecloud/fiware/marketplace/resource.html:14
 msgid "Description"
 msgstr "Descripción"
 
-#: templates/wirecloud/fiware/marketplace/resource.html:12
+#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:4
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:5
+#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:6
+msgid "Description:"
+msgstr "Descripción"
+
+#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:5
+msgid "Value:"
+msgstr "Valor:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:2
+msgid "Price plan:"
+msgstr "Plan de precios:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:4
+msgid "Title:"
+msgstr "Titulo:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:6
+msgid "Components:"
+msgstr "Componentes:"
+
+#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:7
+msgid "Taxes:"
+msgstr "Tasas:"
+
 #: templates/wirecloud/fiware/marketplace/resource_details.html:13
 msgid "Store"
 msgstr "Tienda"
@@ -97,18 +129,6 @@ msgstr "Versión"
 msgid "Publication date"
 msgstr "Fecha de publicación"
 
-#: templates/wirecloud/fiware/marketplace/resource_parts.html:4
-msgid "Part:"
-msgstr "Parte:"
-
-#: templates/wirecloud/fiware/marketplace/resource_parts.html:5
-msgid "Name:"
-msgstr "Nombre:"
-
-#: templates/wirecloud/fiware/marketplace/resource_parts.html:7
-msgid "URI:"
-msgstr "URI:"
-
 #: templates/wirecloud/fiware/marketplace/search_interface.html:8
 msgid "Filtering"
 msgstr "Filtrado"
@@ -121,58 +141,17 @@ msgstr "Palabras clave:"
 msgid "Store:"
 msgstr "Tienda:"
 
-#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:3
-msgid "Legal Conditions"
-msgstr "Condiciones legales"
-
-#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:5
-#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:6
-#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:6
-#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:7
-#: templates/wirecloud/fiware/marketplace/sla/sla_expresion_template.html:4
-msgid "Description:"
-msgstr "Descripción"
-
-#: templates/wirecloud/fiware/marketplace/legal/legal_template.html:8
-msgid "Clauses:"
-msgstr "Clausulas:"
-
-#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:3
-msgid "Price element:"
-msgstr "Precio:"
-
-#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:4
-#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:4
-msgid "Title:"
-msgstr "Titulo:"
-
-#: templates/wirecloud/fiware/marketplace/pricing/price_component_template.html:8
-msgid "Value:"
-msgstr "Valor:"
-
-#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:3
-msgid "Price plan:"
-msgstr "Plan de precios:"
-
-#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:8
-msgid "Price components:"
-msgstr "Componentes del precio:"
-
-#: templates/wirecloud/fiware/marketplace/pricing/pricing_template.html:10
-msgid "Taxes:"
-msgstr "Tasas:"
-
-#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:3
+#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:2
 msgid "Service level:"
 msgstr "Nivel de servicio:"
 
-#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:5
+#: templates/wirecloud/fiware/marketplace/sla/service_level_template.html:4
 msgid "Obligated party:"
 msgstr "Parte obligada:"
 
-#: templates/wirecloud/fiware/marketplace/sla/sla_variable_template.html:5
-msgid "value:"
-msgstr "Valor:"
+#: templates/wirecloud/fiware/marketplace/sla/sla_expresion_template.html:3
+msgid "Expresion variables"
+msgstr "Expresiones variables"
 
 #: templates/wirecloud/fiware/store/buy_success.html:4
 msgid ""
@@ -181,3 +160,18 @@ msgid ""
 msgstr ""
 "El proceso de compra ha terminado correctamente. El control del proceso "
 "debería volver automáticamente a WireCloud. Puedes cerrar esta ventana."
+
+#~ msgid "Part:"
+#~ msgstr "Parte:"
+
+#~ msgid "Name:"
+#~ msgstr "Nombre:"
+
+#~ msgid "URI:"
+#~ msgstr "URI:"
+
+#~ msgid "Price element:"
+#~ msgstr "Precio:"
+
+#~ msgid "value:"
+#~ msgstr "Valor:"

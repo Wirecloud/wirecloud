@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 13:06+0100\n"
+"POT-Creation-Date: 2016-03-31 13:03+0200\n"
 "PO-Revision-Date: 2015-11-25 13:18+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -18,45 +18,26 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.6\n"
 
-#: authentication.py:36
+#: authentication.py:45
 msgid "Logged out"
 msgstr "Sesión cerrada"
 
-#: middleware.py:150 middleware.py:159
-msgid "Bad credentials"
-msgstr "Credenciales inválidos"
-
-#: views.py:59
-msgid "Missing namespace GET parameter providing a search namespace"
-msgstr ""
-"Falta el parámetro GET namespace indicando el espacio de nombres en el que "
-"buscar"
-
-#: views.py:63
-#, python-format
-msgid "Invalid search namespace: %s"
-msgstr "Espacio de nombres para la búsqueda inválido: %s"
-
-#: views.py:78
-msgid "You don't have permission to switch current session user"
-msgstr "No tienes permisos para cambiar el usuario de la sesión actual"
-
-#: management/commands/resetsearchindexes.py:46
+#: management/commands/resetsearchindexes.py:51
 #, python-format
 msgid "Reseting \"%s\" index"
 msgstr "Reconstruyendo el índice \"%s\""
 
-#: management/commands/resetsearchindexes.py:47
+#: management/commands/resetsearchindexes.py:52
 #, python-format
 msgid "The \"%s\" index was updated successfully"
 msgstr "El índice \"%s\" ha sido actualizado correctamente"
 
-#: management/commands/resetsearchindexes.py:48
+#: management/commands/resetsearchindexes.py:53
 #, python-format
 msgid "The following indexes are not available: %s"
 msgstr "Los siguientes índices no están disponibles: %s"
 
-#: management/commands/resetsearchindexes.py:74
+#: management/commands/resetsearchindexes.py:79
 #, python-format
 msgid ""
 "You have requested to reset indexes found in the location\n"
@@ -71,11 +52,11 @@ msgstr ""
 "  %s\n"
 "\n"
 
-#: management/commands/resetsearchindexes.py:78
+#: management/commands/resetsearchindexes.py:83
 msgid "This will DELETE EXISTING FILES!\n"
 msgstr "Esta acción BORRARÁ LOS FICHEROS ACTUALES!\n"
 
-#: management/commands/resetsearchindexes.py:80
+#: management/commands/resetsearchindexes.py:85
 msgid ""
 "Are you sure you want to do this?\n"
 "\n"
@@ -85,14 +66,18 @@ msgstr ""
 "\n"
 "Escribe ‘yes’ para continuar o ‘no’ para cancelar:"
 
-#: management/commands/resetsearchindexes.py:85
+#: management/commands/resetsearchindexes.py:90
 msgid "Reset search indexes cancelled."
 msgstr "Se ha cancelado el reinicio de los indices de búsqueda."
 
-#: management/commands/resetsearchindexes.py:98
+#: management/commands/resetsearchindexes.py:103
 #, python-format
 msgid "Adding %s\n"
 msgstr "Añadiendo %s\n"
+
+#: middleware.py:151 middleware.py:160
+msgid "Bad credentials"
+msgstr "Credenciales inválidos"
 
 #: templates/wirecloud/oauth2/default_redirect_uri.html:6
 msgid "Application authorized successfully"
@@ -120,7 +105,7 @@ msgstr ""
 "Error autorizando a la aplicación para que pueda acceder a WireCloud en tu "
 "nombre (%(username)s)."
 
-#: utils/downloader.py:49 utils/http.py:364
+#: utils/downloader.py:49 utils/http.py:368
 #, python-format
 msgid "Invalid schema: %(schema)s"
 msgstr "Esquema inválido: %(schema)s"
@@ -137,32 +122,32 @@ msgstr ""
 msgid "Unsupported request media type"
 msgstr "Tipo de contenido de la petición no soportado"
 
-#: utils/http.py:356 utils/http.py:367
+#: utils/http.py:360 utils/http.py:371
 #, python-format
 msgid "Missing required parameter: %(parameter)s"
 msgstr "Falta un campo obligatorio: %(parameter)s"
 
-#: utils/http.py:361
+#: utils/http.py:365
 #, python-format
 msgid "%(parameter)s must be an absolute URL"
 msgstr "%(parameter)s tiene que ser una URL absoluta"
 
-#: utils/http.py:370 utils/http.py:383
+#: utils/http.py:374 utils/http.py:387
 #, python-format
 msgid "Invalid %(parameter)s type"
 msgstr "Tipo inválido para el parámetro %(parameter)s"
 
-#: utils/http.py:379
+#: utils/http.py:383
 #, python-format
 msgid "Invalid %(parameter)s value"
 msgstr "Valor inválido para el parámetro %(parameter)s"
 
-#: utils/http.py:405
+#: utils/http.py:409
 #, python-format
 msgid "\"%(path)s\" does not exist"
 msgstr "\"%(path)s\" no existe"
 
-#: utils/http.py:428
+#: utils/http.py:432
 #, python-format
 msgid "malformed json data: %s"
 msgstr "JSON malformado: %s"
@@ -301,3 +286,18 @@ msgstr "Falta la opción %s"
 #, python-format
 msgid "Unsupported resource type: %s"
 msgstr "Tipo de recurso no soportado: %s"
+
+#: views.py:59
+msgid "Missing namespace GET parameter providing a search namespace"
+msgstr ""
+"Falta el parámetro GET namespace indicando el espacio de nombres en el que "
+"buscar"
+
+#: views.py:63
+#, python-format
+msgid "Invalid search namespace: %s"
+msgstr "Espacio de nombres para la búsqueda inválido: %s"
+
+#: views.py:78
+msgid "You don't have permission to switch current session user"
+msgstr "No tienes permisos para cambiar el usuario de la sesión actual"

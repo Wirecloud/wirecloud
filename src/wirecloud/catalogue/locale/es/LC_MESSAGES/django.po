@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 12:51+0100\n"
+"POT-Creation-Date: 2016-03-31 13:00+0200\n"
 "PO-Revision-Date: 2015-10-13 11:17+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -17,6 +17,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.5\n"
+
+#: management/commands/addtocatalogue.py:65
+msgid "Wrong number of arguments"
+msgstr "Número de argumentos incorrecto"
+
+#: management/commands/addtocatalogue.py:77
+msgid ""
+"You must use at least one of the following flags: --redeploy, --users, --"
+"groups or --public "
+msgstr ""
+"Al menos una de las siguientes opciones tiene que ser usada: --redeploy, --"
+"users, --groups ó --public"
+
+#: management/commands/addtocatalogue.py:94
+#, python-format
+msgid "Failed to read from %(file_name)s"
+msgstr "Error al leer desde el fichero %(file_name)s"
+
+#: management/commands/addtocatalogue.py:114
+#, python-format
+msgid "Successfully imported \"%(name)s\" from \"%(file_name)s\""
+msgstr "Importado \"%(name)s\" desde \"%(file_name)s\" de forma correcta"
+
+#: management/commands/addtocatalogue.py:116
+#, python-format
+msgid "Failed to import the mashable application component from %(file_name)s"
+msgstr ""
+"Fallo la importación del componente de aplicación mashable desde "
+"%(file_name)s"
 
 #: models.py:60
 msgid "Vendor"
@@ -72,12 +101,7 @@ msgstr ""
 "El fichero %(file_name)s no está codificado usando el conjunto de caracteres "
 "indicado (%(charset)s según el fichero de descripción del widget)."
 
-#: utils.py:233
-#, python-format
-msgid "user %(username)s is not the owner of the resource %(resource_id)s"
-msgstr "el usuario %(username)s no es el dueño del recurso %(resource_id)s"
-
-#: views.py:87 views.py:221
+#: views.py:87 views.py:233
 msgid "Missing parameter: template_uri or file"
 msgstr "Faltan el parámetro template_uri o file"
 
@@ -99,20 +123,25 @@ msgstr "Valor para el parámetro scope no soportado: %s"
 msgid "Forbidden"
 msgstr "Prohibido"
 
-#: views.py:177
+#: views.py:158
+#, python-format
+msgid "user %(username)s is not the owner of the resource %(resource_id)s"
+msgstr "el usuario %(username)s no es el dueño del recurso %(resource_id)s"
+
+#: views.py:189
 msgid "Invalid prefix value (it cannot contain spaces)"
 msgstr "Valor inválido para el parámetro limit (no puede contener espacios)"
 
-#: views.py:184
+#: views.py:196
 msgid "Invalid limit value (it must be positive integer)"
 msgstr ""
 "Valor inválido para el parámetro limit (tiene que ser un entero positivo)"
 
-#: views.py:241
+#: views.py:253
 msgid "Error opening the changelog file"
 msgstr "Error abriendo el fichero de registro de cambios"
 
-#: views.py:267
+#: views.py:279
 #, python-format
 msgid ""
 "You can find the userguide of this component in this external <a target="
@@ -121,38 +150,9 @@ msgstr ""
 "Puedes encontrar la documentación de este recurso in este <a target=\"_blank"
 "\" href=\"%s\">enlace externo</a>"
 
-#: views.py:283
+#: views.py:295
 msgid "Error opening the userguide file"
 msgstr "Error abriendo el fichero de la guía de usuario"
-
-#: management/commands/addtocatalogue.py:65
-msgid "Wrong number of arguments"
-msgstr "Número de argumentos incorrecto"
-
-#: management/commands/addtocatalogue.py:77
-msgid ""
-"You must use at least one of the following flags: --redeploy, --users, --"
-"groups or --public "
-msgstr ""
-"Al menos una de las siguientes opciones tiene que ser usada: --redeploy, --"
-"users, --groups ó --public"
-
-#: management/commands/addtocatalogue.py:94
-#, python-format
-msgid "Failed to read from %(file_name)s"
-msgstr "Error al leer desde el fichero %(file_name)s"
-
-#: management/commands/addtocatalogue.py:114
-#, python-format
-msgid "Successfully imported \"%(name)s\" from \"%(file_name)s\""
-msgstr "Importado \"%(name)s\" desde \"%(file_name)s\" de forma correcta"
-
-#: management/commands/addtocatalogue.py:116
-#, python-format
-msgid "Failed to import the mashable application component from %(file_name)s"
-msgstr ""
-"Fallo la importación del componente de aplicación mashable desde "
-"%(file_name)s"
 
 #~ msgid "malformed json data: %s"
 #~ msgstr "datos json malformados: %s"
