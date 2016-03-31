@@ -783,9 +783,9 @@ class WiringComponentDraggableTester(BaseComponentTester):
         self.testcase.assertFalse(self.has_class('collapsed'))
         return self
 
-    def find_endpoint(self, type, name):
+    def find_endpoint(self, type, name=None, title=None):
         for endpoint in self.find_endpoints(type):
-            if endpoint.name == name:
+            if title is not None and endpoint.title == title or name is not None and endpoint.name == name:
                 return endpoint
 
         return None
