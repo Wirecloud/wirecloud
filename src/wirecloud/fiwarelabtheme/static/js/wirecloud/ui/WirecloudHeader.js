@@ -68,7 +68,7 @@
         this.oil_header.insertBefore(wrapper, this.oil_header.firstChild);
 
         var anchor = document.createElement('a');
-        anchor.setAttribute('href', Wirecloud.constants.FIWARE_IDM_SERVER + '/users/' + username);
+        anchor.setAttribute('href', Wirecloud.constants.FIWARE_IDM_SERVER + '/user/edit/' + username);
         anchor.setAttribute('target', '_blank');
         wrapper.appendChild(anchor);
         var img = document.createElement('img');
