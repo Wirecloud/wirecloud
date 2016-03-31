@@ -671,7 +671,7 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
                 widget1 = sidebar.add_component('widget', "Wirecloud/Test", id=iwidget1.id)
-                widget2 = sidebar.add_component('widget', "Wirecloud/Test", id=iwidget2.id, x=2)
+                widget2 = sidebar.add_component('widget', "Wirecloud/Test", id=iwidget2.id, x=450)
 
             source = widget1.find_endpoint('source', "outputendpoint")
             target = widget2.find_endpoint('target', "inputendpoint")
@@ -780,8 +780,8 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
 
             with wiring.component_sidebar as sidebar:
                 widget1 = sidebar.add_component('widget', "Wirecloud/Test", title="Test (1)")
-                widget2 = sidebar.add_component('widget', "Wirecloud/Test", title="Test (2)", x=2)
-                widget3 = sidebar.add_component('widget', "Wirecloud/Test", title="Test (3)", x=2, y=3)
+                widget2 = sidebar.add_component('widget', "Wirecloud/Test", title="Test (2)", x=450)
+                widget3 = sidebar.add_component('widget', "Wirecloud/Test", title="Test (3)", x=450, y=200)
 
             source = widget1.find_endpoint('source', "outputendpoint")
             target = widget2.find_endpoint('target', "inputendpoint")
@@ -1016,8 +1016,8 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
 
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
-                sidebar.add_component('operator', "Wirecloud/TestOperator", y=-4)
-                sidebar.add_component('widget', "Wirecloud/Test", title="Test (1)", x=-4)
+                self.assertIsNotNone(sidebar.add_component('operator', "Wirecloud/TestOperator", y=-250))
+                self.assertIsNotNone(sidebar.add_component('widget', "Wirecloud/Test", title="Test (1)", x=-450))
 
     def test_rename_widget_from_component_preferences(self):
         new_title = "New title"
@@ -1524,8 +1524,8 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             with wiring.component_sidebar as sidebar:
                 widgets = sidebar.find_components('widget', 'Wirecloud/Test')
                 widget1 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[0].id)
-                widget2 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[1].id, x=2)
-                widget3 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[2].id, x=2, y=3)
+                widget2 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[1].id, x=450)
+                widget3 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[2].id, x=450, y=200)
 
             target1 = widget1.find_endpoint('target', 'inputendpoint')
             source2 = widget2.find_endpoint('source', 'outputendpoint')
@@ -1542,8 +1542,8 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             with wiring.component_sidebar as sidebar:
                 widgets = sidebar.find_components('widget', 'Wirecloud/Test')
                 widget1 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[0].id)
-                widget2 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[1].id, x=2)
-                widget3 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[2].id, x=2, y=3)
+                widget2 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[1].id, x=450)
+                widget3 = sidebar.add_component('widget', 'Wirecloud/Test', id=widgets[2].id, x=450, y=200)
 
             target1 = widget1.find_endpoint('target', 'inputendpoint')
             source2 = widget2.find_endpoint('source', 'outputendpoint')
@@ -1696,7 +1696,7 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
                 operator = sidebar.add_component('operator', "Wirecloud/TestOperator")
-                widget = sidebar.add_component('widget', "Wirecloud/Test_Multiendpoint", id=iwidget.id, x=2)
+                widget = sidebar.add_component('widget', "Wirecloud/Test_Multiendpoint", id=iwidget.id, x=450)
 
             source = widget.find_endpoint('source', "output1")
             target = operator.find_endpoint('target', 'input')

@@ -1838,8 +1838,8 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         component = component_group.create_component() if id is None and title is None else component_group.find_component(id=id, title=title)
         return self.create_component_draggable(component, x, y)
 
-    def create_component_draggable(self, component, x=0, y=0):
-        component.drag_and_drop(WEC.element_be_still(self.panel), self.body, (x * 150) + 150, (y * 50) + 50)
+    def create_component_draggable(self, component, x=150, y=50):
+        component.drag_and_drop(WEC.element_be_still(self.panel), self.body, x, y)
         WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.panel))
         return self.find_draggable_component(component.type, id=component.id)
 
