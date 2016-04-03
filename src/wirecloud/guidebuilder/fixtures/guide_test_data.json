@@ -9,6 +9,15 @@
         }
     },
     {
+        "pk": 102,
+        "model": "platform.market",
+        "fields": {
+            "name": "CoNWeT",
+            "options": "{\"url\": \"http://marketplace.example.com/\", \"type\":\"wirecloud\", \"label\":\"CoNWeT\"}",
+            "user": 1
+        }
+    },
+    {
         "pk": 101,
         "model": "platform.marketuserdata",
         "fields": {

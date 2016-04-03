@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <collection>
-  <resource name="FIWARE">
+  <resource name="CoNWeT">
       <creator username="User 2">
       <company>Company 2</company>
       <email>user2@company2.example.com</email>
@@ -15,7 +15,7 @@
       <registrationDate>2012-08-10T12:25:57+02:00</registrationDate>
       <url>http://store2.example.com/mystore</url>
       </resource>
-  <resource name="FIWARE Lab">
+  <resource name="WStore FIWARE Lab">
     <creator username="User 1">
       <company>Company 1</company>
       <email>user1@company1.example.com</email>
@@ -30,7 +30,7 @@
     <registrationDate>2012-08-10T12:25:57+02:00</registrationDate>
     <url>http://store.example.com</url>
   </resource>
-  <!--    <resource name="Another Store">
+  <resource name="Another Store">
        <creator username="User 3">
        <company>Company 3</company>
        <email>user3@company3.example.com</email>
@@ -44,5 +44,5 @@
        </lasteditor>
        <registrationDate>2012-08-10T12:25:57+02:00</registrationDate>
        <url>http://store3.example.com</url>
-       </resource>-->
+   </resource>
 </collection>

@@ -699,6 +699,9 @@ class WiringComponentTester(BaseComponentTester):
         return self.find_element(".component-version").text
 
     def drag_and_drop(self, condition, target_element, x, y):
+        # scroll into view the component panel to be able to drag and dop it
+        self.testcase.driver.execute_script("return arguments[0].scrollIntoView();", self.element)
+
         ActionChains(self.testcase.driver).click_and_hold(self.element).perform()
         WebDriverWait(self.testcase.driver, timeout=5).until(condition)
         ActionChains(self.testcase.driver).move_to_element_with_offset(target_element, x, y).release().perform()
@@ -732,6 +735,8 @@ class WiringComponentGroupTester(WebElementTester):
 
     def create_component(self):
         new_length = len(self.find_components()) + 1
+        # scroll into view the component_group panel to be able to click the create button
+        self.testcase.driver.execute_script("return arguments[0].scrollIntoView();", self.element)
         self.btn_create.click()
         WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: new_length == len(self.find_components()))
         return self.find_components()[-1]
@@ -973,7 +978,10 @@ class WiringBehaviourTester(WebElementTester):
         return self.heading.text
 
     def activate(self):
-        self.heading.click()
+        # scroll into view the component panel to be able to drag and dop it
+        self.testcase.driver.execute_script("return arguments[0].scrollIntoView();", self.element)
+
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable(self.heading)).click()
         return self
 
     def change_position(self, behaviour):
