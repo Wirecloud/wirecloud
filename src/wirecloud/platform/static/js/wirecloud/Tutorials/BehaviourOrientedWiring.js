@@ -216,7 +216,7 @@
         {type: 'userAction', msg: utils.gettext("Click <em>Create behaviour</em>"), elem: BS.wiringView.create_behaviour_button(), pos: 'topRight'},
         {type: 'autoAction', msg: utils.gettext("We fill the <strong>title</strong> ..."), elem: BS.form_field("title"), pos: 'downRight', action: BA.input(utils.gettext("Display technician profiles"), {step: 100})},
         {type: 'autoAction', msg: utils.gettext("... and the <strong>description</strong>."), elem: BS.form_field("description"), pos: 'downRight', action: BA.input(utils.gettext("Display technician profiles when they are selected in other widgets, e.g. in the technician list widget."), {step: 100})},
-        {type: 'userAction', msg: utils.gettext("Click <em>Accept</em>"), elem: wiringView.accept_form(".behaviour-create-form"), pos: 'topRight'},
+        {type: 'userAction', msg: utils.gettext("Click <em>Accept</em>"), elem: wiringView.accept_form(".we-new-behaviour-dialog"), pos: 'topRight'},
         {type: 'userAction', msg: utils.gettext("Active the second behaviour"), elem: wiringView.behaviour_title_by_id(1), pos: 'topRight'},
         {type: 'simpleDescription', title: utils.gettext("Step 2: Design the behaviours"), msg: utils.gettext("<p>Now, we are going to add the components and the connections needed for implementing this behaviour taking them from the behaviour created by default.</p>")},
         {type: 'userAction', msg: utils.gettext("Click <em>Add</em>"), elem: wiringView.connection_button_by_id({type: "operator", title: "Technical Service", endpoint: "technician"}, {type: "widget", title: "Technician List", endpoint: "technician"}, "share"), pos: 'topRight'},

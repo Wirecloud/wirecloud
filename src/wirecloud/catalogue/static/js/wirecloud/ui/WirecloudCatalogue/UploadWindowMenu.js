@@ -165,7 +165,7 @@
 
         this.acceptButton = new StyledElements.Button({
             text: gettext("Upload"),
-            'class': 'btn-primary'
+            'class': 'btn-primary btn-accept'
         });
         this.acceptButton.addEventListener("click", acceptListener.bind(this));
         this.acceptButton.insertInto(this.windowBottom);
@@ -179,7 +179,7 @@
         // Cancel button
         this.cancelButton = new StyledElements.Button({
             text: gettext("Cancel"),
-            'class': 'btn-default'
+            'class': 'btn-default btn-cancel'
         });
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);

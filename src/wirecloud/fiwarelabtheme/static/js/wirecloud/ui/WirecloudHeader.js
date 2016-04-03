@@ -51,10 +51,6 @@
 
         Wirecloud.events.contextloaded.addEventListener(this._initUserMenu.bind(this));
         Wirecloud.events.viewcontextchanged.addEventListener(this.refresh.bind(this));
-
-        if (Wirecloud.constants.FIWARE_OFFICIAL_PORTAL) {
-            this._notifyWorkspaceLoaded();
-        }
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
@@ -138,6 +134,10 @@
             }));
         } else {
             user_menu.append(new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout));
+        }
+
+        if (Wirecloud.constants.FIWARE_OFFICIAL_PORTAL) {
+            this._notifyWorkspaceLoaded();
         }
     };
 

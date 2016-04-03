@@ -1788,7 +1788,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
         new_length = len(self.find_behaviours()) + 1
         self.btn_create.click()
 
-        modal = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".behaviour-create-form"))
+        modal = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-new-behaviour-dialog"))
 
         if title is not None:
             modal.get_field('title').set_value(title)
