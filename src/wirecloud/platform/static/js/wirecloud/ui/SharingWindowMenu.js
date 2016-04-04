@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -78,11 +78,11 @@
 
         // windowmenu - footer
 
-        this.btnAccept = new se.Button({text: utils.gettext("Save"), state: "primary"});
+        this.btnAccept = new se.Button({text: utils.gettext("Save"), state: "primary", class: 'btn-accept'});
         this.btnAccept.appendTo(this.windowBottom);
         this.btnAccept.on('click', accept.bind(this));
 
-        this.btnCancel = new se.Button({text: utils.gettext("Cancel")});
+        this.btnCancel = new se.Button({text: utils.gettext("Cancel"), class: 'btn-cancel'});
         this.btnCancel.appendTo(this.windowBottom);
         this.btnCancel.on('click', this._closeListener);
 

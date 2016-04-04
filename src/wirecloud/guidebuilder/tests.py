@@ -847,7 +847,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         lg_path = take_capture(self.driver, 'linear_graph_zoom2')
         crop_image(lg_path, *create_box(linear_graph_widget))
 
-        # Public workspace!
+        # Share entry
         popup_menu = self.open_menu()
         m_menu = popup_menu.get_entry('Share')
         ActionChains(self.driver).move_to_element(m_menu).perform()
@@ -856,15 +856,18 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
         crop_down(imgp, popup_menu, 80)
         m_menu.click()
-        dialog = get_first_displayed(self.driver, '.wc-dashboard-share-dialog')
-        public_b = dialog.find_element_by_css_selector('input[value="public"]')
+
+        # Share workspace dialog
+        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-dashboard-share-dialog"))
+        time.sleep(0.2)
+        public_b = dialog.element.find_element_by_css_selector('input[value="public"]')
         public_b.click()
         imgp = take_capture(self.driver, 'share_workspace_dialog')
         add_pointer(imgp, get_position(public_b, 0.5, 0.5))
         crop_image(imgp, *create_box(dialog))
-        dialog.find_element_by_css_selector('.btn-primary').click()
+        dialog.cancel()
 
-        # Embed mashup!
+        # Embed mashup entry
         popup_menu = self.open_menu()
         m_menu = popup_menu.get_entry('Embed')
         ActionChains(self.driver).move_to_element(m_menu).perform()
@@ -873,10 +876,13 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         add_pointer(imgp, get_position(m_menu, 0.8, 0.5))
         crop_down(imgp, popup_menu.element, 80)
         m_menu.click()
-        dialog = get_first_displayed(self.driver, '.wc-embed-code-dialog')
+
+        # Embed mashup dialog
+        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-embed-code-dialog"))
+        time.sleep(0.2)
         imgp = take_capture(self.driver, 'embed_workspace_dialog')
         crop_image(imgp, *create_box(dialog))
-        dialog.find_element_by_css_selector('.btn-primary').click()
+        dialog.cancel()
 
     test_building_mashup.tags = ('wirecloud-guide', 'ui-build-mashup')
 
