@@ -77,7 +77,7 @@ class compiletranslations(Command):
             from django.core.management import call_command
         except:
             import pip
-            pip.main(['install', 'Django>=1.5,<1.10'])
+            pip.main(['install', 'Django>=1.6,<1.10'])
 
             from django.core.management import call_command
 
@@ -133,7 +133,7 @@ setup(
     },
     include_package_data=True,
     install_requires=(
-        'Django>=1.5,<1.10',
+        'Django>=1.6,<1.10',
         'south>=1.0,<2.0',
         'lxml>=2.3',
         'django-appconf>=1.0.1,<2.0',

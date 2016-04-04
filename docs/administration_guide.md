@@ -173,13 +173,12 @@ $ wirecloud-admin --version
 ### Upgrading to Django 1.7+
 
 Wirecloud 0.9.0+ adds support for Django 1.7-1.9 and next version of WireCloud
-will drop support for Django 1.5 and 1.6. Moreover, at the time of releasing
-WireCloud 0.9.0, Django 1.5, 1.6 and 1.7 were unsupported by the Django
-community.
+will drop support for Django 1.6. Moreover, at the time of releasing WireCloud
+0.9.0, Django 1.6 and 1.7 were unsupported by the Django community.
 
 The only thing to take into account when upgrading your WireCloud installation
 to use Django 1.7+ is that you need to migrate your db to Wirecloud 0.9.0 using
-Django 1.5-1.6 and South before upgrading to the new version of Django.
+Django 1.6 and South before upgrading to the new version of Django.
 
 Once migrated the database and installed the new version of Django, run
 the following command for initializing the Django db migration framework:

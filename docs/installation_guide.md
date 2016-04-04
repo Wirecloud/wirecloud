@@ -14,11 +14,11 @@ This section describes all the requirements of a basic WireCloud installation. *
 
 - A Database Manager (MySQL, PostgreSQL, SQLite3...)
 - Python 2.7 or python 3.4+. In any case, the following python packages must be installed:
-    - Django 1.5-1.9
+    - Django 1.6-1.9
     - South 1.0+
     - lxml 2.3.0+
     - django-appconf 1.0.1+
-    - django-compressor 1.4-1.6 when using Django 1.5-1.7, django_compressor 2.0+ when using Django 1.8-1.9
+    - django-compressor 1.4-1.6 when using Django 1.6-1.7, django_compressor 2.0+ when using Django 1.8-1.9
     - rdflib 3.2.0+
     - requests 2.1.0+
     - futures 2.1.3+ (only on python 2.7)
@@ -137,7 +137,7 @@ You can always install the latest stable version of WireCloud using pip:
 
 > **NOTE**: python distribution tools doesn't support conditional dependencies.
 > We cannot force the use of `django_compressor` < 2.0 when installing `Django`
-> 1.5-1.6 and `django_compressor` >= 2.0 when using `Django` 1.8-1.9, you must
+> 1.6-1.7 and `django_compressor` >= 2.0 when using `Django` 1.8-1.9, you must
 > manually ensure the correct version of `django_compressor` is installed in
 > your environment.
 
@@ -308,7 +308,7 @@ achieved by using this command:
 
     $ python manage.py migrate
 
-> **NOTE**: use the following command if you are using Django 1.5-1.6:
+> **NOTE**: use the following command if you are using Django 1.6:
 >
 >       $ python manage.py syncdb --migrate
 
