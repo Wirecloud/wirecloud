@@ -55,7 +55,7 @@ class ResourceCollection(Resource):
         process_urls = process_urls=request.GET.get('process_urls', 'true') == 'true'
         resources = {}
         if request.user.is_authenticated():
-            for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups=request.user.groups.all())):
+            for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all())):
                 options = resource.get_processed_info(request, process_urls=process_urls)
                 resources[resource.local_uri_part] = options
 

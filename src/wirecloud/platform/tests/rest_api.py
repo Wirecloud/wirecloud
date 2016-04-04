@@ -2244,6 +2244,23 @@ class ResourceManagementAPI(WirecloudTestCase):
             elif resource['type'] == 'widget':
                 self.assertTrue(resource['contents']['src'].startswith('http'))
 
+    def test_resource_collection_get_multiple_groups(self):
+
+        user_with_workspaces = User.objects.get(username='user_with_workspaces')
+        user_with_workspaces.groups.create(name='test1')
+        user_with_workspaces.groups.create(name='test2')
+
+        url = reverse('wirecloud.resource_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+
     def test_resource_collection_get_no_process_urls(self):
 
         url = reverse('wirecloud.resource_collection') + '?process_urls=false'
