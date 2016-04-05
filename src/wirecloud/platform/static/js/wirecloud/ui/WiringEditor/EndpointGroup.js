@@ -174,7 +174,8 @@
                     var endpoint = this.endpoints[name];
 
                     endpoint.index = index;
-                    this.removeChild(endpoint).appendChild(endpoint);
+                    this.superMember(se.Container, 'removeChild', endpoint);
+                    this.appendChild(endpoint);
                 }, this);
 
                 return this;
