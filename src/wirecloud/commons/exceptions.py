@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -18,10 +18,6 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.encoding import python_2_unicode_compatible
-
-
-class Http403(Exception):
-    pass
 
 
 @python_2_unicode_compatible

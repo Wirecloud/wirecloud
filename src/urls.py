@@ -29,5 +29,7 @@ urlpatterns = patterns('',
 urlpatterns += wirecloud.platform.urls.urlpatterns
 urlpatterns += staticfiles_urlpatterns()
 
+handler400 = "wirecloud.commons.views.bad_request"
+handler403 = "wirecloud.commons.views.permission_denied"
 handler404 = "wirecloud.commons.views.page_not_found"
 handler500 = "wirecloud.commons.views.server_error"

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -18,8 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 
-from wirecloud.commons.exceptions import Http403, HttpBadCredentials, ErrorResponse
+from wirecloud.commons.exceptions import HttpBadCredentials, ErrorResponse
 from wirecloud.commons.utils.http import build_auth_error_response
 
 
@@ -49,10 +50,8 @@ class Resource(object):
 
         try:
             return getattr(self, METHOD_MAPPING[request_method])(request, *args, **kwargs)
-        except Http404:
+        except (Http404, PermissionDenied):
             raise
-        except Http403:
-            return HttpResponseForbidden()
         except HttpBadCredentials as e:
             return build_auth_error_response(request, e.message, e.error_info)
         except ErrorResponse as e:

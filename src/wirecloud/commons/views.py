@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -35,6 +35,16 @@ extra_formatters = {
     'text/html; charset=utf-8': get_html_basic_error_response,
     'application/xhtml+xml; charset=utf-8': get_html_basic_error_response,
 }
+
+
+def bad_request(request, exception=None):
+
+    return build_error_response(request, 400, 'Bad Request', extra_formatters, context={'request_path': request.path})
+
+
+def permission_denied(request, exception=None):
+
+    return build_error_response(request, 403, 'Forbidden', extra_formatters, context={'request_path': request.path})
 
 
 def page_not_found(request):

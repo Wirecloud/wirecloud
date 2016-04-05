@@ -43,7 +43,7 @@ class ThemeNode(template.Node):
 
     def render(self, context):
         if 'THEME' not in context:
-            context['THEME'] = context['THEME_ACTIVE']
+            context['THEME'] = get_active_theme_name()
         return self.node.render(context)
 
 

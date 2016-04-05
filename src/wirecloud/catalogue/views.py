@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -26,6 +26,7 @@ from six.moves.urllib.parse import urljoin
 from six.moves.urllib.request import pathname2url, url2pathname
 
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.db.models import Q
@@ -157,7 +158,7 @@ class ResourceEntry(Resource):
             if not resource.is_removable_by(request.user):
                 msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': request.user.username, 'resource_id': resource.id}
 
-                raise Http403(msg)
+                raise PermissionDenied(msg)
 
             resources = (resource,)
         else:
