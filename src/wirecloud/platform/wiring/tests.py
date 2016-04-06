@@ -1684,9 +1684,22 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             with wiring.component_sidebar as sidebar:
                 operator = sidebar.add_component('operator', "Wirecloud/TestOperatorMultiendpoint")
+                operator_id = operator.id
+
+            targets_count = len(operator.find_endpoints('target'))
+            sources_count = len(operator.find_endpoints('target'))
+
             with operator.order_endpoints as component_editable:
                 component_editable.move_endpoint('source', "output1", "output2")
                 component_editable.move_endpoint('target', "input1", "input3")
+
+            self.assertEqual(targets_count, len(operator.find_endpoints('target')))
+            self.assertEqual(sources_count, len(operator.find_endpoints('source')))
+
+        with self.wiring_view as wiring:
+            operator = wiring.find_draggable_component('operator', id=operator_id)
+            self.assertEqual(targets_count, len(operator.find_endpoints('target')))
+            self.assertEqual(sources_count, len(operator.find_endpoints('source')))
 
     @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
     def test_ordering_widget_endpoints(self):
@@ -1702,9 +1715,20 @@ class EndpointManagementTestCase(WirecloudSeleniumTestCase):
             target = operator.find_endpoint('target', 'input')
             connection = source.create_connection(target)
 
+            targets_count = len(widget.find_endpoints('target'))
+            sources_count = len(widget.find_endpoints('target'))
+
             with widget.order_endpoints as component_editable:
                 component_editable.move_endpoint('source', "output1", "output2", must_change=(connection,))
                 component_editable.move_endpoint('target', "input1", "input3")
+
+            self.assertEqual(targets_count, len(widget.find_endpoints('target')))
+            self.assertEqual(sources_count, len(widget.find_endpoints('source')))
+
+        with self.wiring_view as wiring:
+            widget = wiring.find_draggable_component('widget', id=iwidget.id)
+            self.assertEqual(targets_count, len(widget.find_endpoints('target')))
+            self.assertEqual(sources_count, len(widget.find_endpoints('source')))
 
 
 @wirecloud_selenium_test_case
