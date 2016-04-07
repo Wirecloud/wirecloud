@@ -633,21 +633,21 @@
     </xs:complexType>
 
     <xs:complexType name="Resource">
-        <xs:attribute name="vendor" type="macd:VendorType">
+        <xs:attribute name="vendor" use="required" type="macd:VendorType">
             <xs:annotation>
                 <xs:documentation>
                     The distributor of the resource.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="name" type="macd:NameType">
+        <xs:attribute name="name" use="required" type="macd:NameType">
             <xs:annotation>
                 <xs:documentation>
                     Name of the resource.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="version" type="macd:VersionType">
+        <xs:attribute name="version" use="required" type="macd:VersionType">
             <xs:annotation>
                 <xs:documentation>
                     Current version of the resource. It must
