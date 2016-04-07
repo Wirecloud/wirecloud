@@ -960,7 +960,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_move_widget_and_restore_touch(self):
 
-        if self.driver.capabilities['browserName'] != 'chrome':  # pragma: no cover
+        import selenium.webdriver.remote.webdriver as Remote
+        if self.driver.capabilities['browserName'] != 'chrome' or isinstance(self.driver, Remote.WebDriver):  # pragma: no cover
             raise unittest.SkipTest('Touch events are supported only by chrome/chromium')
 
         self.login(username="user_with_workspaces")

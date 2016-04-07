@@ -1,0 +1,17 @@
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': path.join(BASEDIR, 'virtenv_test.db'),
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+    }
+}
+
+INSTALLED_APPS = list(INSTALLED_APPS)
+INSTALLED_APPS.remove('wirecloud.oauth2provider')
+INSTALLED_APPS.append('social.apps.django_app.default')
+INSTALLED_APPS = tuple(INSTALLED_APPS)
+
+THEME_ACTIVE = "wirecloud.oiltheme"
