@@ -33,10 +33,12 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 # Avoid nose to repeat these tests (they are run through wirecloud/commons/tests/__init__.py)
 __test__ = False
 
-@override_settings(ROOT_URLCONF='wirecloud.commons.tests.basic_views_urls')
+# The @override_settings decorator fails on Django 1.6
+#@override_settings(ROOT_URLCONF='wirecloud.commons.tests.basic_views_urls')
 class BasicViewTestCase(WirecloudTestCase):
 
-    tags = ('wirecloud-noselenium', 'current')
+    tags = ('wirecloud-noselenium', 'wirecloud-error-handlers')
+    urls = 'wirecloud.commons.tests.basic_views_urls'
 
     def setUp(self):
         super(BasicViewTestCase, self).setUp()
