@@ -921,6 +921,23 @@ In Mac OS, remember to install XCode and its Command Line Tools. If this doesn't
 You can set the `DEBUG` setting to `True`
 
 
+### I don't want to receive Django's invalid HTTP_HOST mails
+
+Django will send mails for any raised `SuspiciousOperation` exception by
+default. You can disable those mails by adding the following snipet into your
+`settings.py` file:
+
+```python
+LOGGING['loggers']['django.security.DisallowedHost'] = {
+    'handlers': ['null'],
+    'propagate': False,
+}
+```
+
+This method can be used also for disabling other `SuspiciousOperation` error mails.
+See the [Django documentation](https://docs.djangoproject.com/es/1.9/topics/logging/#django-security)
+for more info.
+
 ### I don't remember the admin credentials. How can I recover it?
 
 You have two options:
