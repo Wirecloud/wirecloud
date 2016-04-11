@@ -33,7 +33,7 @@ from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html, filter_changelog
 from wirecloud.commons.utils.http import build_downloadfile_response, build_sendfile_response, get_current_domain, get_current_scheme, get_content_type, normalize_boolean_param, produces, validate_url_param
 from wirecloud.commons.utils.log import SkipUnreadablePosts
-from wirecloud.commons.utils.mimeparser import best_match, parse_mime_type
+from wirecloud.commons.utils.mimeparser import best_match, InvalidMimeType, parse_mime_type
 from wirecloud.commons.utils.version import Version
 from wirecloud.commons.utils.wgt import WgtFile
 
@@ -171,6 +171,14 @@ class GeneralUtilsTestCase(TestCase):
 
         self.assertEqual(parse_mime_type('application/xhtml;q=0.5', split_type=True), ('application', 'xhtml', {'q': '0.5'}))
 
+    def test_mimeparser_parse_mime_type_invalid_too_few_slashes(self):
+
+        self.assertRaises(InvalidMimeType, parse_mime_type, 'application;q=0.5')
+
+    def test_mimeparser_parse_mime_type_invalid_too_many_slashes(self):
+
+        self.assertRaises(InvalidMimeType, parse_mime_type, 'application/xhtml/x;q=0.5')
+
     def test_mimeparser_best_match_should_ignore_blank_media_ranges(self):
 
         self.assertEqual(best_match(['application/xbel+xml', 'text/xml'], 'text/*;q=0.5, , */*; q=0.1'), 'text/xml')
@@ -178,6 +186,10 @@ class GeneralUtilsTestCase(TestCase):
     def test_mimeparser_best_match_should_ignore_blank_media_ranges_params(self):
 
         self.assertEqual(best_match(['application/xbel+xml; a=1; b=2', 'application/xml'], 'application/*, application/xbel+xml; a=1; b=2'), 'application/xbel+xml; a=1; b=2')
+
+    def test_mimeparser_best_match_should_ignore_invalid_mime_types(self):
+
+        self.assertEqual(best_match(['application/xbel+xml', 'text/xml'], 'text/*;q=0.5, application, application/xbel+xml/2, */*; q=0.1'), 'text/xml')
 
     def test_version_order(self):
 
@@ -527,6 +539,11 @@ class HTTPUtilsTestCase(TestCase):
 
     def test_get_content_type_no_provided(self):
         request = self._prepare_request_mock()
+        self.assertEqual(get_content_type(request), ('', {}))
+
+    def test_get_content_type_invalid_mime_type(self):
+        request = self._prepare_request_mock()
+        request.META['CONTENT_TYPE'] = 'application/json/ji'
         self.assertEqual(get_content_type(request), ('', {}))
 
     @override_settings(FORCE_PROTO=None)

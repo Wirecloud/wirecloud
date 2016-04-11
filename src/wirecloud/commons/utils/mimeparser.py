@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -38,6 +38,10 @@ import six
 from six.moves import reduce
 
 
+class InvalidMimeType(Exception):
+    pass
+
+
 def parse_mime_type(mime_type, split_type=False):
     """Parses a mime-type into its component parts.
 
@@ -70,7 +74,10 @@ def parse_mime_type(mime_type, split_type=False):
     if full_type == '*':
         full_type = '*/*'
 
-    (type, subtype) = full_type.split('/')
+    try:
+        (type, subtype) = full_type.split('/')
+    except ValueError:
+        raise InvalidMimeType(full_type)
 
     if split_type:
         return (type.strip(), subtype.strip(), params)
@@ -144,8 +151,14 @@ def best_match(supported, header):
                    'text/*;q=0.5,*/*; q=0.1')
     'text/xml'
     """
-    split_header = _filter_blank(header.split(','))
-    parsed_header = [parse_media_range(r) for r in split_header]
+    parsed_header = []
+    for range in header.split(','):
+        try:
+            parsed_header.append(parse_media_range(range))
+        except InvalidMimeType:
+            # Ingore invalid media range
+            pass
+
     weighted_matches = []
     for mime_type in supported:
         (score, quality) = fitness_and_quality_parsed(mime_type, parsed_header)
@@ -154,9 +167,3 @@ def best_match(supported, header):
     weighted_matches.sort()
 
     return weighted_matches and weighted_matches[-1][2] or ''
-
-
-def _filter_blank(i):
-    for s in i:
-        if s.strip():
-            yield s

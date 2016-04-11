@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -206,10 +206,13 @@ def build_error_response(request, status_code, error_msg, extra_formats=None, he
 
 def get_content_type(request):
     content_type_header = request.META.get('CONTENT_TYPE')
-    if content_type_header is None:
-        return '', {}
-    else:
-        return mimeparser.parse_mime_type(content_type_header)
+    if content_type_header is not None:
+        try:
+            return mimeparser.parse_mime_type(content_type_header)
+        except mimeparser.InvalidMimeType:
+            pass
+
+    return '', {}
 
 
 def build_auth_error_response(request, message='Authentication required', error_info=None):
