@@ -65,7 +65,7 @@ before installing software in Debian/Ubuntu:
 
 It's also recommended to install the following packages:
 
-    $ apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev libpcre3-dev libcurl4-openssl-dev
+    $ apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev libpcre3-dev libcurl4-openssl-dev libjpeg-dev
 
 
 ### CentOS/RedHat
@@ -81,7 +81,7 @@ Whereas pip and other packages should be installed from 3rd party repositories. 
 
 It's also recommended to install the following packages:
 
-    $ yum install gcc python-devel libxslt-devel zlib-devel pcre-devel libcurl-devel
+    $ yum install gcc python-devel libxslt-devel zlib-devel pcre-devel libcurl-devel libjpeg-devel
 
 
 ### Mac OS
