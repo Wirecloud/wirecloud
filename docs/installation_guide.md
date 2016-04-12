@@ -395,13 +395,33 @@ achieved by using this command:
 
     $ python manage.py migrate
 
-> **NOTE**: use the following command if you are using Django 1.6:
->
->       $ python manage.py syncdb --migrate
+This command is used for migrating the database between different versions of
+WireCloud, but when executed the first time, it will serve for creating the
+initial database structure. Once create, we have to create a superuser to be
+able to login into WireCloud and to be able to perform administrative tasks from
+the web interface. Use the `createsuperuser` command for creating such a user.
+An example of the command output, where `user`/`password` are `admin`/`admin`,
+is the following:
 
-This command creates some tables and asks you if you want to create a Django
-superuser. This user is required to login into WireCloud and to be able to
-perform administrative tasks; please respond yes. An example of the command
+
+    $ python manage.py createsuperuser
+    Username (leave blank to use 'wirecloud'): admin
+    Email address: admin@myemaildomain.com
+    Password: ***** (admin)
+    Password (again): ***** (admin)
+    Superuser created successfully.
+
+
+### Django 1.6
+
+If you are using Django 1.6 you have to use a different approach, you have to
+run the following command:
+
+    $ python manage.py syncdb --migrate
+
+This command creates some tables and also asks you if you want to create a
+Django superuser. This user is required to login into WireCloud and to be able
+to perform administrative tasks; please respond yes. An example of the command
 output, where `user`/`password` are `admin`/`admin`, is the following:
 
     ...
@@ -409,7 +429,7 @@ output, where `user`/`password` are `admin`/`admin`, is the following:
     You just installed Django's auth system, which means you don't have any superusers defined.
     Would you like to create one now? (yes/no): yes
     Username (leave blank to use 'wirecloud'): admin
-    E-mail address: admin@c.com
+    E-mail address: admin@myemaildomain.com
     Password: ***** (admin)
     Password (again): ***** (admin)
 
