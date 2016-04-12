@@ -1133,47 +1133,71 @@ Remove `MIDDLEWARE` configuration from your `settings.py` file.
 
 ## Sanity check procedures
 
-The Sanity Check Procedures are the steps that a System Administrator will take to verify that an installation is ready to be tested. This is therefore a preliminary set of tests to ensure that obvious or basic malfunctioning is fixed before proceeding to unit tests, integration tests and user validation.
+The Sanity Check Procedures are the steps that a System Administrator will take
+to verify that an installation is ready to be tested. This is therefore a
+preliminary set of tests to ensure that obvious or basic malfunctioning is fixed
+before proceeding to unit tests, integration tests and user validation.
 
 ### End to End testing
 
-Please note that the following information is required before carrying out this procedure:
+Please note that the following information is required before carrying out this
+procedure:
 
-- computer_name_or_IP_address is the name or IP address of the computer on which WireCloud has been installed.
-- Valid credentials for the WireCloud instance to test (e.g. user: `admin` / password: `admin`, as stated in the [Database population](#database-population) section of this guide).
+- computer_name_or_IP_address is the name or IP address of the computer on which
+  WireCloud has been installed.
+- Valid credentials for the WireCloud instance to test (e.g. user: `admin` /
+  password: `admin`, as stated in the [Database population](#database-population)
+  section of this guide).
 
-The following files:
+The following file:
 
-- https://conwet.fi.upm.es/docs/download/attachments/1278018/CoNWeT_weather-example_1.0.3.wgt
-- https://conwet.fi.upm.es/docs/download/attachments/1278018/CoNWeT_wms-viewer-geowidget_0.5.2.2.wgt
-- https://conwet.fi.upm.es/docs/download/attachments/1278018/CoNWeT_weather-mashup-example_2.0.wgt
+- [CoNWeT_weather-mashup-example_1.0.2.wgt](attachments/CoNWeT_weather-mashup-example_1.0.2.wgt)
 
 To quickly check if the application is running, follow these steps:
 
 1. Open a browser and type `http://${computer_name_or_IP_address}/login` in the address bar.
 2. The following user login form should appear:
 
+    <img src="../images/installation_guide/login.png" srcset="../images/installation_guide/login.png 2x" alt="Login form">
+
 3. Enter the credentials and click on the *Log in* button.
-4. Click on the *Marketplace* button.
-5. Open the local catalogue uploader view using the path selector as depicted in the following figure:
+4. Click on the *My Resources* button:
 
-6. Upload CoNWeT_weather-example_1.0.3.wgt file using the "Adding widgets from packages" form.
+    <img src="../images/installation_guide/my_resources_button.png" srcset="../images/installation_guide/my_resources_button.png 2x" alt="Click *My Resources*">
 
-7. The new widget should be now available on the local catalogue.
+5. Click on the *Upload* button:
 
-8. Repeat steps 6 and 7 using the `CoNWeT_wms-viewer-geowidget_0.5.2.2.wgt` and `CoNWeT_weather-mashup-example_2.0.wgt` files.
-All the widgets and mashups should be now available on the local catalogue.
+    <img src="../images/installation_guide/upload_button.png" srcset="../images/installation_guide/upload_button.png 2x" alt="Click *Upload*">
 
-Click on the "Add to Workspace" button of the "Weather Example Mashup".
-Click on the "New workspace" button.
+6. Add the `CoNWeT_weather-mashup-example_1.0.2.wgt` file to the upload form and click *Upload*.
+7. You should see two widgets (*Web Map Service* and *Weather Widget Example*) and one mashup (*Weather Mashup Example*) components:
 
-The view should automatically change to the "Weather Example Mashup" view and widgets should appear in it.
+    <img src="../images/installation_guide/used_resources.png" srcset="../images/installation_guide/used_resources.png 2x" alt="Click *Upload*">
 
-Select the pin tool in the "Web Map Service" widget clicking the appropriated button as shown in the image.
+8. Go back to the editor view:
 
-And click the desired location. The "Weather Widget Example" should update the forecast info.
+    <img src="../images/installation_guide/back_button.png" srcset="../images/installation_guide/back_button.png 2x" alt="Click *Back*">
 
-By performing this sequence of steps, you will check that the WireCloud Mashup platform is running and correctly deployed, and its database has been properly set up and populated.
+9. Click on the "New workspace" option:
+
+    <img src="../images/installation_guide/new_workspace_entry.png" srcset="../images/installation_guide/new_workspace_entry.png 2x" alt="Click *New workspace*">
+
+10. And use the *Weather Mashup Example* as template:
+
+    <img src="../images/installation_guide/new_workspace_dialog.png" srcset="../images/installation_guide/new_workspace_dialog.png 2x" alt="Create a new workspace using the *Weather Mashup Example* template">
+
+11. The view should automatically change to the *Weather Example Mashup* workspace and widgets should appear in it:
+
+    <img src="../images/installation_guide/weather_dashboard.png" srcset="../images/installation_guide/weather_dashboard.png 2x" alt="Final weather dashboard">
+
+12. Select the pin tool in the *Web Map Service* widget clicking the appropriated button as shown in the image.
+13. And click the desired location. The *Weather Widget Example* should update the forecast info:
+
+    <img src="../images/installation_guide/usage_example.png" srcset="../images/installation_guide/usage_example.png 2x" alt="Usage example">
+
+By performing this sequence of steps, you will check that the WireCloud Mashup
+platform is running and correctly deployed, and its database has been properly
+set up and populated.
 
 ### List of Running Processes
 
