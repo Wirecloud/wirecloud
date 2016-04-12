@@ -571,6 +571,23 @@ http as the scheme for the internal URLs.
 A string representing the language code to use as fallback when no translation exist for a given literal to the user’s preferred language. For example, U.S. English is "en-us".
 
 
+### LOGGING
+> (Dictionary; default: A logging configuration dictionary)
+
+A data structure containing configuration information. The contents of this data
+structure will be passed as the argument to the configuration method described
+in [LOGGING_CONFIG].
+
+Among other things, the default logging configuration passes HTTP 500 server
+errors to an email log handler when `DEBUG` is `False`.
+
+You can see the default logging configuration by looking in
+wirecloud/commons/utils/conf.py (or view the [online
+source](https://github.com/Wirecloud/wirecloud/blob/0.9.x/src/wirecloud/commons/utils/conf.py)).
+
+[LOGGING_CONFIG]: https://docs.djangoproject.com/es/1.9/ref/settings/#logging-config
+
+
 ### SERVER_EMAIL
 > (String; default: 'root@localhost')
 
@@ -995,6 +1012,21 @@ https security parameters.
 
 ## FAQ
 
+### I'm getting strange errors (e.g. Internal Server Errors). Is there any way to get better info about the problem?
+
+The best option without compromising the security of your server is to provide
+the adecuate values for the [`ADMINS`](#admins),
+[`SERVER_EMAIL`](#server_email), [`LOGGING`](#logging), ... settings. This way
+you will receive a detailed email for each error detected in WireCloud.
+
+If you don't receive those emails or if you are just creating the instance, you
+can set the [`DEBUG` setting](#debug) to `True`, making WireCloud provide a more
+verbose and detailed web page when an error occurs.
+
+> **NOTE**: Remember to restore the `DEBUG` setting to its previous value:
+> `False`.
+
+
 ### pip has problems installing lxml. What I have to do?
 
 See http://lxml.de/installation.html#installation for more detailed info.
@@ -1007,11 +1039,6 @@ In Mac OS, remember to install XCode and its Command Line Tools. If this doesn't
 
     $ brew install libxml2
     $ pip install lxml
-
-
-### I'm getting strange errors. Is there any way to get better info about the problem?
-
-You can set the `DEBUG` setting to `True`
 
 
 ### I don't want to receive Django's invalid HTTP_HOST mails
