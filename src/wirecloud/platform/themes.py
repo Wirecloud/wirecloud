@@ -26,6 +26,7 @@ import django
 from django.conf import settings
 from django.contrib.staticfiles.finders import BaseFinder
 from django.contrib.staticfiles import utils
+from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.storage import FileSystemStorage
 from django.template import TemplateDoesNotExist
 from django.template.base import Origin
@@ -37,12 +38,6 @@ try:
 except:
     # Django 1.7 and below
     from django.template.loader import BaseLoader as Loader
-try:
-    # Django 1.6+
-    from django.core.exceptions import SuspiciousFileOperation
-except:
-    # Django 1.5 and below
-    SuspiciousFileOperation = ValueError
 
 
 DEFAULT_THEME = 'wirecloud.defaulttheme'
