@@ -1119,7 +1119,11 @@ class RemoteTestCase(object):
         root_selector = '.workspace' if tab is None else '.workspace .wc-workspace-tab[data-id="%s"]' % tab
         root_element = self.driver.find_element_by_css_selector(root_selector)
 
-        return [IWidgetTester(self, element) for element in root_element.find_elements_by_css_selector('.iwidget')]
+        try:
+            return [IWidgetTester(self, element) for element in root_element.find_elements_by_css_selector('.iwidget')]
+        except StaleElementReferenceException:
+            time.sleep(0.2)
+            return self.find_iwidgets(tab)
 
     def send_basic_event(self, widget, event='hello world!!'):
         with widget:
