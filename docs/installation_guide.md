@@ -68,21 +68,70 @@ It's also recommended to install the following packages:
     $ apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev libpcre3-dev libcurl4-openssl-dev libjpeg-dev
 
 
-### CentOS/RedHat
+### CentOS & Red Hat Enterprise Linux
 
-Python itself can be found in the official CentOS/RedHat repositories:
 
-    $ yum install python
+#### CentOS/RHEL 6
 
-Whereas pip and other packages should be installed from 3rd party repositories. The most common one is the EPEL repository (see http://fedoraproject.org/wiki/EPEL for instructions about how to add it). If you has such a repository, you will be able to install pip using the following command:
+CentOS/RHEL 6 only ships python 2.6, so you have to install python 2.7 from a
+different repository. We recommend you to use the Software Collection
+respository:
 
-    $ yum install python-pip
+```
+# 1. Install a package with repository for your system:
+# On CentOS, install package centos-release-scl available in CentOS repository:
+$ sudo yum install centos-release-scl
 
+# On RHEL, enable RHSCL repository for you system:
+$ sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
+
+# 2. Install the collection:
+$ sudo yum install python27
+
+# 3. Start using software collections:
+$ scl enable python27 bash
+```
+
+After installing python 2.7 from Software Collections, you have to manually
+install pip using `easy_install`:
+
+$ easy_install pip
 
 It's also recommended to install the following packages:
 
-    $ yum install gcc python-devel libxslt-devel zlib-devel pcre-devel libcurl-devel libjpeg-devel
+    $ yum install gcc libxslt-devel zlib-devel pcre-devel libcurl-devel libjpeg-devel libffi-devel openssl-devel
 
+and the following pip packages:
+
+    $ pip install pyOpenSSL ndg-httpsclient pyasn1
+
+
+> **NOTE**: installing python2.7 using SCL automatically installs
+> `python27-python-devel`, if you install python using another source, you
+> should ensure the equivalent package is also installed.
+
+#### CentOS/RHEL 7
+
+The python package shiped by default by CentOS/RHEL 7 is enough for using
+WireCloud, so you can install it directly from their repositories:
+
+    $ yum install python
+
+Whereas pip and other packages should be installed from 3rd party repositories.
+The most common one is the EPEL repository (see
+http://fedoraproject.org/wiki/EPEL for instructions about how to add it). If you
+has such a repository, you will be able to install pip using the following
+command:
+
+    $ yum install python-pip
+
+It's also recommended to install the following packages:
+
+    $ yum install gcc python-devel libxslt-devel zlib-devel pcre-devel libcurl-devel libjpeg-devel libffi-devel openssl-devel
+
+and the following pip packages:
+
+    $ pip install pyOpenSSL ndg-httpsclient pyasn1
 
 ### Mac OS
 
@@ -186,28 +235,66 @@ WireCloud can also be deployed using [Docker](https://www.docker.com/), the imag
 
 ## Creating a new instance of WireCloud
 
-Once installed WireCloud, you will have access to the `wirecloud-admin` script. This script is, among other things, used for deploy new instances of WireCloud. Before creating the instance, we recommend you to create a special user for managing and running WireCloud. For example, in Debian/Ubuntu:
+Once installed WireCloud, you will have access to the `wirecloud-admin` script.
+This script is, among other things, used for deploy new instances of WireCloud.
+Before creating the instance, we recommend you to create a special user for
+managing and running WireCloud. Through the use of this user, WireCloud will be
+able to limit the potential effects of a security breach.
+
+For example, you can create such a user using the following commands in
+Debian/Ubuntu:
 
     $ adduser --system --group --shell /bin/bash wirecloud
 
-Then, create a new instance directory using the `startproject` command. This will create a new directory containing the `manage.py` script, the configuration files, ... related to the new instance. Moreover, you can add new python modules into this directory to customise your instance.
+Remember to use this user for creating new instances, for running the
+`manage.py` script and for running the wirecloud instance (e.g. when using
+Apache).
+
+New instances of WireCloud can be created using the `wirecloud-admin`'s
+`startproject` command. This will create a new directory containing the
+`manage.py` script, the configuration files, ... related to the new instance.
+Moreover, you can add new python modules into this directory to customise your
+instance.
 
     $ cd /opt
     $ wirecloud-admin startproject wirecloud_instance
 
-After creating the new instance, you have to configure it choosing a database, populating it and performing final DJango configurations. These steps can be skipped using the `--quick-start` option. This will configure the instance to use SQLite3 with a default admin user (password:admin). This method is very useful for creating a WireCloud instance for testing:
+> **NOTE**: This guide assumes that the WireCloud instances are created in
+> `/opt`, although you can create them in any place on the filesystem. Anyway,
+> if you decide to install into `/opt` and you chose to create a user for
+> WireCloud, take into account that this user might not have enough permissions
+> for writing inside `/opt`.
+>
+> One option is to create the instance using a user with enough permissions
+> (e.g. `root`) and then changing the owner of the instance (e.g.
+> `chown wirecloud:wirecloud -R /opt/wirecloud_instance`).
+
+After creating the new instance, you have to configure it choosing a database,
+populating it and performing final Django configurations. These steps can be
+skipped using the `--quick-start` option. This will configure the instance to
+use SQLite3 with a default `admin` user (**password**: `admin`). This method is
+very useful for creating a WireCloud instance for testing:
 
     $ cd /opt
     $ wirecloud-admin startproject wirecloud_instance --quick-start
 
-If you make use of the `--quick-start` option, you should be able to go directly to the [Running WireCloud](#running-wirecloud) section.
+> **NOTE**: Remember to change the default `admin` credentials as soon as
+> possible, especially if the instance is publicly accessible.
+
+If you make use of the `--quick-start` option, you should be able to go directly
+to the [Running WireCloud](#running-wirecloud) section.
 
 
 ## Database installation and configuration
 
-To set up the database engine, it is necessary to modify the `DATABASE` configuration setting in the instance `settings.py` file (e.g. `/opt/wirecloud_instance/wirecloud_instance/settings.py`). You can use any of the [database engines supported by Django](https://docs.djangoproject.com/en/1.4/ref/settings/#databases).
+To set up the database engine, it is necessary to modify the `DATABASE`
+configuration setting in the instance `settings.py` file (e.g.
+`/opt/wirecloud_instance/wirecloud_instance/settings.py`). You can use any of
+the [database engines supported by Django].
 
 The following examples show you how to configure SQLite and PostgreSQL databases.
+
+[database engines supported by Django]: https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 
 ### SQLite
@@ -436,9 +523,15 @@ FIWARE_PORTALS = (
 Set `FORCE_DOMAIN` using an string if you want to force WireCloud to use a
 concrete domain name (without including the port) when building internal URLs.
 If this setting is `None` (the default), WireCloud will try to use the [Django's
-sites framework](https://docs.djangoproject.com/en/1.4/ref/contrib/sites/) for
+sites framework](https://docs.djangoproject.com/en/1.7/ref/contrib/sites/) for
 obtaining the domain info. If the sites framework is not used, the domain is
 extracted from the request.
+
+**Example Usage**:
+
+```python
+FORCE_DOMAIN = "mashup.lab.fiware.org"
+```
 
 > This setting is mainly useful when WireCloud is behind a web server acting as
 > proxy.
@@ -946,7 +1039,7 @@ You have two options:
 - create a new admin user: see `python manage.py help createsuperuser`
 
 
-### I get errors while running the manage.py script or when running the startproject command
+### I get errors while running the `manage.py` script or when running the `startproject` command
 
 If the error is similar to the following one:
 
