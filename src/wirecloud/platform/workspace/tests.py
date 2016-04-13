@@ -1064,12 +1064,6 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(len(data['tabs']), 4)
         self.assertNotEqual(data['tabs'][2]['name'], data['tabs'][3]['name'])
 
-    def test_build_workspace_from_old_template(self):
-        template = self.read_template('wt1.old.xml')
-        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
-
-        self.check_basic_workspace_structure(workspace)
-
     def test_build_workspace_from_template(self):
         template = self.read_template('wt1.xml')
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
@@ -1097,7 +1091,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.check_workspace_structure_with_old_mashup_wiring(workspace)
 
     def test_read_only_widgets_rdf(self):
-        template = self.read_template('wt6.old.xml')
+        template = self.read_template('wt6.rdf')
 
         workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
@@ -1113,13 +1107,6 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         self.assertEqual(len(data['tabs'][0]['iwidgets']), 3)
         self.assertEqual(data['tabs'][0]['iwidgets'][0]['readonly'], True)
-
-    def test_blocked_connections_old(self):
-        template = self.read_template('wt2.old.xml')
-        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
-
-        self.assertEqual(len(workspace.wiringStatus['connections']), 1)
-        self.assertEqual(workspace.wiringStatus['connections'][0]['readonly'], True)
 
     def test_blocked_connections(self):
         template = self.read_template('wt2.xml')
@@ -1165,14 +1152,6 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(wiring_status['connections'][0]['target']['type'], 'widget')
         self.assertEqual(wiring_status['connections'][0]['target']['endpoint'], 'slot')
 
-    def test_complex_workspaces_old(self):
-        template3 = self.read_template('wt3.old.xml')
-
-        workspace, _junk = buildWorkspaceFromTemplate(template3, self.user)
-        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
-
-        self.check_complex_workspace_data(data)
-
     def test_complex_workspaces(self):
         template3 = self.read_template('wt3.xml')
 
@@ -1188,12 +1167,6 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         self.check_complex_workspace_data(data)
-
-    def test_workspace_with_params_old(self):
-        template = self.read_template('wt5.old.xml')
-
-        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
-        self.check_workspace_with_params(workspace)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_workspace_with_params(self):

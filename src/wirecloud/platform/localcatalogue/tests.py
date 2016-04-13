@@ -432,8 +432,8 @@ class PackagedResourcesTestCase(WirecloudTestCase):
     def test_basic_packaged_widget_deployment(self):
 
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'basic_widget.wgt'))
-        catalogue_deployment_path = catalogue.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
-        deployment_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        catalogue_deployment_path = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'Test', '0.1')
+        deployment_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Wirecloud', 'Test', '0.1')
 
         added, resource = install_resource_to_user(self.user, file_contents=wgt_file)
         resource.widget
@@ -443,18 +443,18 @@ class PackagedResourcesTestCase(WirecloudTestCase):
         self.assertTrue(resource.is_available_for(self.user))
 
         resource.delete()
-        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Morfeo', short_name='Test', version='0.1')
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='Test', version='0.1')
         self.assertFalse(os.path.exists(deployment_path))
         self.assertFalse(os.path.exists(catalogue_deployment_path))
 
     def test_invalid_packaged_widget_deployment(self):
 
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'invalid_widget.wgt'))
-        catalogue_deployment_path = catalogue.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
-        deployment_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        catalogue_deployment_path = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'Test', '0.1')
+        deployment_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Wirecloud', 'Test', '0.1')
 
         self.assertRaises(TemplateParseException, install_resource, wgt_file, self.user)
-        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Morfeo', short_name='Test', version='0.1')
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='Test', version='0.1')
         self.assertFalse(os.path.exists(deployment_path))
         self.assertFalse(os.path.exists(catalogue_deployment_path))
 

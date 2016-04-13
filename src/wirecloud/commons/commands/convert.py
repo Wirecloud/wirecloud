@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -26,7 +26,7 @@ from django.core.management.base import CommandError
 
 from wirecloud.commons.utils.commands import BaseCommand
 from wirecloud.commons.utils.template.parsers import TemplateParser
-from wirecloud.commons.utils.template.writers import json, old_xml, rdf, xml
+from wirecloud.commons.utils.template.writers import json, rdf, xml
 
 
 class ConvertCommand(BaseCommand):
@@ -50,7 +50,7 @@ class ConvertCommand(BaseCommand):
         if len(args) < 1 or len(args) > 2:
             raise CommandError('Wrong number of arguments')
 
-        if options['dest_format'] not in ('json', 'rdf', 'xml', 'old_xml'):
+        if options['dest_format'] not in ('json', 'rdf', 'xml'):
             raise CommandError('Invalid dest format: %s' % options['dest_format'])
 
         try:
@@ -67,10 +67,8 @@ class ConvertCommand(BaseCommand):
             converted_template = rdf.write_rdf_description(template_info, format=options['rdf_format'])
         elif options['dest_format'] == 'json':
             converted_template = json.write_json_description(template_info)
-        elif options['dest_format'] == 'xml':
+        else:  # if options['dest_format'] == 'xml':
             converted_template = xml.write_xml_description(template_info)
-        else:  # if options['dest_format'] == 'old_xml':
-            converted_template = old_xml.write_xml_description(template_info)
 
         if len(args) == 2:
             with open(args[1], "wb") as output_file:

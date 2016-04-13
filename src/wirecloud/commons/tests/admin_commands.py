@@ -219,7 +219,7 @@ class ConvertCommandTestCase(TestCase):
 
     def test_minimal_info_conversion_stdout(self):
 
-        for format in ('json', 'xml', 'rdf', 'old_xml'):
+        for format in ('json', 'xml', 'rdf'):
             args = [os.path.join(self.test_data_dir, 'minimal_endpoint_info.json')]
             options = {"dest_format": format, "rdf_format": "n3", "stdout": io.StringIO(), "stderr": io.StringIO()}
             self.command.execute(*args, **options)

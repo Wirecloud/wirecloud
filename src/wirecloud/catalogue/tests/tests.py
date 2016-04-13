@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -645,7 +645,7 @@ class WGTDeploymentTestCase(WirecloudTestCase):
 
     def test_upload_of_basic_packaged_widget(self):
         User.objects.create_user('test', 'test@example.com', 'test')
-        widget_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        widget_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Wirecloud', 'Test', '0.1')
         c = Client()
 
         c.login(username='test', password='test')
@@ -659,13 +659,13 @@ class WGTDeploymentTestCase(WirecloudTestCase):
         self.assertTrue(os.path.exists(os.path.join(widget_path, 'documentation/images/image.png')))
         self.assertTrue(os.path.exists(os.path.join(widget_path, 'documentation/index.html')))
         self.assertFalse(os.path.exists(os.path.join(widget_path, 'test.html')))
-        widget = CatalogueResource.objects.get(vendor='Morfeo', short_name='Test', version='0.1')
+        widget = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='0.1')
         widget_info = json.loads(widget.json_description)
-        self.assertEqual(widget.template_uri, 'Morfeo_Test_0.1.wgt')
+        self.assertEqual(widget.template_uri, 'Wirecloud_Test_0.1.wgt')
         self.assertEqual(widget_info['image'], 'images/catalogue.png')
 
         resource_entry_url = reverse('wirecloud_catalogue.resource_entry', kwargs={
-            'vendor': 'Morfeo',
+            'vendor': 'Wirecloud',
             'name': 'Test',
             'version': '0.1',
         })

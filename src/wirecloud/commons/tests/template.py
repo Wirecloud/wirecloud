@@ -29,7 +29,6 @@ from wirecloud.commons.utils.template.parsers import TemplateParser, TemplatePar
 from wirecloud.commons.utils.template.parsers.xml import WIRECLOUD_TEMPLATE_NS
 from wirecloud.commons.utils.template.writers.json import write_json_description
 from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
-from wirecloud.commons.utils.template.writers.old_xml import write_xml_description as write_old_xml_description
 from wirecloud.commons.utils.template.writers.xml import write_xml_description
 
 WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
@@ -1701,54 +1700,6 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.minimal_property_info)
-
-    def test_old_xml_parser_writer_basic_mashup(self):
-
-        xml_description = write_old_xml_description(self.basic_mashup_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.assertEqual(processed_info, self.basic_mashup_info)
-
-    def test_old_xml_parser_writer_mashup(self):
-
-        xml_description = write_old_xml_description(self.mashup_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.check_full_mashup(processed_info, self.mashup_info)
-
-    def test_old_xml_parser_writer_mashup_with_translations(self):
-
-        xml_description = write_old_xml_description(self.mashup_with_translations_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.check_full_mashup(processed_info, self.mashup_with_translations_info)
-
-    def test_old_xml_parser_writer_mashup_with_params(self):
-
-        xml_description = write_old_xml_description(self.mashup_with_params)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.check_full_mashup(processed_info, self.mashup_with_params)
-
-    def test_old_xml_parser_writer_basic_widget(self):
-
-        xml_description = write_old_xml_description(self.basic_widget_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.assertEqual(processed_info, self.basic_widget_info)
-
-    def test_old_xml_parser_writer_widget(self):
-
-        xml_description = write_old_xml_description(self.widget_info)
-        template = TemplateParser(xml_description)
-        processed_info = template.get_resource_info()
-
-        self.assertEqual(processed_info, self.widget_info)
 
     def test_xml_parser_writer_basic_operator(self):
 
