@@ -2514,7 +2514,7 @@ msgstr "No se ha proporcionado una descripción."
 
 #: static/js/wirecloud/wiring/Operator.js:119
 msgid "The operator was created successfully."
-msgstr "El operador h"
+msgstr "El operador ha sido creado correctamente."
 
 #: static/js/wirecloud/wiring/Operator.js:360
 msgid "The operator (%(title)s) was loaded."
