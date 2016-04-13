@@ -855,17 +855,18 @@
         };
     };
 
-    var onInitFailure = function (response, error) {
+    var onInitFailure = function onInitFailure(error) {
         var i;
 
         this.connected = false;
         this.connecting = false;
 
-        if (error == null) {
-            if ([0, 502, 504].indexOf(response.status) !== -1) {
+        if (!(error instanceof Error)) {
+            // Error response
+            if ([0, 502, 504].indexOf(error.status) !== -1) {
                 error = new NGSI.ConnectionError();
             } else {
-                error = new NGSI.InvalidResponseError('Unexpected error code: ' + response.status);
+                error = new NGSI.InvalidResponseError('Unexpected error code: ' + error.status);
             }
         }
 
@@ -890,7 +891,7 @@
                 } else {
                     this.source_url = response.getHeader('Location');
                     if (this.source_url == null) {
-                        onInitFailure.call(this, response, new NGSI.InvalidResponseError('Missing Location Header'));
+                        onInitFailure.call(this, new NGSI.InvalidResponseError('Missing Location Header'));
                     } else {
                         connect_to_eventsource.call(this);
                     }
