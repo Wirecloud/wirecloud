@@ -117,7 +117,7 @@ def write_mashup_tree(doc, resources, options):
             etree.SubElement(resource, 'position', x=str(iwidget['position']['x']), y=str(iwidget['position']['y']), z=str(iwidget['position']['z']))
             rendering = etree.SubElement(resource, 'rendering')
             addAttributes(iwidget['rendering'], rendering, ('height', 'width', 'layout'), required=True)
-            addAttributes(iwidget['rendering'], rendering, ('minimized', 'fulldragboard'), type='boolean')
+            addAttributes(iwidget['rendering'], rendering, ('minimized', 'fulldragboard'), default='false', type='boolean')
 
             addPreferenceValues(resource, iwidget['preferences'])
 
