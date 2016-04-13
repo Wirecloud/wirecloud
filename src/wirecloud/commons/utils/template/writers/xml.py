@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -77,7 +77,7 @@ def addElements(options, element, attrs, **other_options):
 def addPreferenceValues(resource, preferences):
     for pref_name, pref in six.iteritems(preferences):
         element = etree.SubElement(resource, 'preferencevalue', name=pref_name)
-        addAttribute(pref, element, 'value', type='string', required=False)
+        addAttribute(pref, element, 'value', type='string', default=None, required=False)
         addAttributes(pref, element, ('readonly', 'hidden'), default='false', type='boolean')
 
 

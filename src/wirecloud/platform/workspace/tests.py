@@ -227,6 +227,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                         'pref_with_val': {'source': 'custom', 'status': 'normal', 'value': 'new_value1'},
                         'readonly_pref': {'source': 'custom', 'status': 'readonly', 'value': 'new_value2'},
                         'hidden_pref': {'source': 'custom', 'status': 'hidden', 'value': 'new_value3'},
+                        'empty_pref': {'source': 'custom', 'status': 'normal', 'value': ''},
                     },
                     '2': {
                         'pref_with_val': {'source': 'default', 'status': 'normal'},
@@ -293,7 +294,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]', 'vendor', 'Wirecloud')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]', 'name', 'TestOperator')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]', 'version', '1.0')
-        self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue', 3)
+        self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue', 4)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'value', 'value1')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="pref_with_val"]', 'hidden', 'false', optional=True)
@@ -303,11 +304,14 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'value', 'value3')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'value', 'value4')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'hidden', 'false', optional=True)
 
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]', 'vendor', 'Wirecloud')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]', 'name', 'TestOperator')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]', 'version', '1.0')
-        self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue', 3)
+        self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue', 4)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'value', 'value1')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 'hidden', 'false', optional=True)
@@ -317,6 +321,10 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'value', 'value3')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'value', '')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'hidden', 'false', optional=True)
+
 
     def get_rdf_element(self, graph, base, ns, predicate):
         element = None
@@ -363,8 +371,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasConnection', 0)
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasiOperator', 2)
         for ioperator in graph.objects(wiring, self.WIRE_M['hasiOperator']):
-            self.assertRDFCount(graph, ioperator, self.WIRE_M, 'hasiOperatorPreference', 3)
-            pref_with_val_found = readonly_pref_found = hidden_pref_found = False
+            self.assertRDFCount(graph, ioperator, self.WIRE_M, 'hasiOperatorPreference', 4)
+            pref_with_val_found = readonly_pref_found = hidden_pref_found = empty_pref_found = False
             for preference in graph.objects(ioperator, self.WIRE_M['hasiOperatorPreference']):
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
@@ -378,10 +386,14 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                 elif six.text_type(name) == 'hidden_pref':
                     hidden_pref_found = True
                     self.assertRDFElement(graph, preference, self.WIRE, 'value', 'value3')
+                elif six.text_type(name) == 'empty_pref':
+                    empty_pref_found = True
+                    content = six.text_type(self.get_rdf_element(graph, preference, self.WIRE, 'value'))
+                    self.assertIn(content, ('', 'value4'))
                 else:
                     self.fail()
 
-            self.assertTrue(pref_with_val_found and readonly_pref_found and hidden_pref_found)
+            self.assertTrue(pref_with_val_found and readonly_pref_found and hidden_pref_found and empty_pref_found)
 
     def test_build_xml_template_from_empty_workspace(self):
 
@@ -547,6 +559,9 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'value', 'new_value3')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'value', '')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="1"]/preferencevalue[@name="empty_pref"]', 'hidden', 'false', optional=True)
 
         self.assertXPathCount(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="pref_with_val"]', 0)
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="readonly_pref"]', 'value', 'value2')
@@ -555,7 +570,9 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathMissingAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'value')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="hidden_pref"]', 'hidden', 'true')
-
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'value', '')
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/wiring/operator[@id="2"]/preferencevalue[@name="empty_pref"]', 'hidden', 'false', optional=True)
 
     def test_build_rdf_template_from_workspace(self):
 

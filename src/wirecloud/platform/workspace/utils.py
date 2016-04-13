@@ -484,9 +484,26 @@ def _get_global_workspace_data(workspaceDAO, user):
         tab['iwidgets'] = iwidget_data
 
     data_ret['wiring'] = workspaceDAO.wiringStatus
-    for forced_operator_id, forced_preferences in six.iteritems(forced_values['ioperator']):
-        for forced_pref_name, forced_preference in six.iteritems(forced_preferences):
-            data_ret['wiring']['operators'][forced_operator_id]['preferences'][forced_pref_name]['value'] = forced_preference['value']
+    for operator_id, operator in six.iteritems(data_ret['wiring']['operators']):
+        try:
+            (vendor, name, version) = operator['name'].split('/')
+        except:
+            continue
+
+        resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+        if not resource.is_available_for(workspaceDAO.creator):
+            # The operator used by this instance is missing
+            continue
+
+        operator_info = resource.get_processed_info(process_variables=True)
+
+        operator_forced_values = forced_values['ioperator'].get(operator_id, {})
+        for preference_name, preference in six.iteritems(operator['preferences']):
+            vardef = operator_info['variables']['preferences'].get(preference_name)
+            if preference_name in operator_forced_values:
+                preference['value'] = operator_forced_values[preference_name]['value']
+            elif preference.get('value') is None and vardef is not None:
+                preference['value'] = parse_value_from_text(vardef, vardef['default'])
 
     return json.dumps(data_ret, cls=LazyEncoder)
 
