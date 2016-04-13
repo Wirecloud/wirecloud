@@ -169,8 +169,8 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
             'width': str(iwidget.positions['widget']['width']),
             'height': str(iwidget.positions['widget']['height']),
             'layout': str(iwidget.layout),
-            'fulldragboard': str(iwidget.positions['widget']['fulldragboard']),
-            'minimized': str(iwidget.positions['widget']['minimized']),
+            'fulldragboard': bool(iwidget.positions['widget']['fulldragboard']),
+            'minimized': bool(iwidget.positions['widget']['minimized']),
         },
     }
 

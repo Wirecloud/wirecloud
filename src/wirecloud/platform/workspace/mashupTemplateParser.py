@@ -215,6 +215,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
             widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), user)
 
             iwidget_data = {
+                "widget": widget.uri,
+                "title": resource.get('title'),
                 "left": int(position.get('x')),
                 "top": int(position.get('y')),
                 "icon_left": 0,
@@ -222,9 +224,9 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 "zIndex": int(position.get('z')),
                 "width": int(rendering.get('width')),
                 "height": int(rendering.get('height')),
-                "title": resource.get('title'),
                 "layout": int(rendering.get('layout')),
-                "widget": widget.uri,
+                "minimized": rendering['minimized'],
+                "fulldragboard": rendering['fulldragboard'],
             }
 
             iwidget = SaveIWidget(iwidget_data, user, tab, commit=False)

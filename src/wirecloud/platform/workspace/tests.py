@@ -330,11 +330,12 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         return element
 
-    def assertRDFElement(self, graph, element, ns, predicate, content, optional=False):
+    def assertRDFElement(self, graph, element, ns, predicate, content, optional=False, caseinsensitive=False):
         element = self.get_rdf_element(graph, element, ns, predicate)
         if optional and element is None:
             return
-        self.assertEqual(six.text_type(element), content)
+        element_content = six.text_type(element).lower() if caseinsensitive else six.text_type(element)
+        self.assertEqual(element_content, content)
 
     def assertRDFCount(self, graph, element, ns, predicate, count):
         num = 0
@@ -382,7 +383,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
             self.assertTrue(pref_with_val_found and readonly_pref_found and hidden_pref_found)
 
-    def test_build_xml_template_from_workspace(self):
+    def test_build_xml_template_from_empty_workspace(self):
 
         options = {
             'vendor': 'Wirecloud Test Suite',
@@ -401,6 +402,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathCount(template, '/mashup/structure/tab', 1)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'Tab')
         self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 0)
+
+    def test_build_xml_template_from_basic_workspace(self):
 
         # Workspace with iwidgets
         options = {
@@ -421,7 +424,51 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 2)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'fulldragboard', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'fulldragboard', 'false', optional=True)
+
+        self.check_workspace_xml_wiring(template)
+
+    def test_build_xml_template_from_workspace_minimized_and_fulldragboard(self):
+
+        # Workspace with iwidgets
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'authors': 'test',
+            'email': 'a@b.com',
+            'doc': 'http://example.com/test-mashup/docs/index.html',
+            'readOnlyWidgets': False,
+        }
+
+        # Minimize the first iwidget
+        iwidget = IWidget.objects.get(pk=1)
+        iwidget.positions['widget']['minimized'] = True
+        iwidget.save()
+
+        # Set the fulldragboard flag on the second iwidget
+        iwidget = IWidget.objects.get(pk=2)
+        iwidget.positions['widget']['fulldragboard'] = True
+        iwidget.save()
+
+        template = build_xml_template_from_workspace(options, self.workspace_with_iwidgets, self.user, raw=True)
+
+        self.check_basic_xml_workspace_template_info(template)
+
+        # IWidgets
+        self.assertXPathCount(template, '/mashup/structure/tab', 1)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
+        self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 2)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'minimized', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'fulldragboard', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'fulldragboard', 'true')
 
         self.check_workspace_xml_wiring(template)
 
@@ -446,7 +493,11 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 2)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'fulldragboard', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'fulldragboard', 'false', optional=True)
 
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'hidden', 'false', optional=True)
@@ -596,6 +647,10 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             self.assertRDFElement(graph, iwidget, self.WIRE_M, 'readonly', 'true')
             self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 4)
             username_found = password_found = False
+            for rendering in graph.objects(iwidget, self.WIRE_M['hasiWidgetRendering']):
+                self.assertRDFElement(graph, rendering, self.WIRE_M, 'minimized', 'false', optional=True, caseinsensitive=True)
+                self.assertRDFElement(graph, rendering, self.WIRE_M, 'fulldragboard', 'false', optional=True, caseinsensitive=True)
+
             for preference in graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference']):
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', 'false', optional=True)
                 self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', 'false', optional=True)
