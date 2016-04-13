@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -64,6 +64,16 @@ def update_title_value(iwidget, data):
             iwidget.name = data['title']
 
 
+def update_boolean_value(model, data, field):
+    if field in data:
+        value = data[field]
+
+        if type(value) is not bool:
+            raise TypeError(_('Field %(field)s must contain a boolean value') % {"field": field})
+
+        model[field] = value
+
+
 def update_position_value(model, data, field, data_field=None):
     data_field = data_field if data_field is not None else field
     if data_field in data:
@@ -112,6 +122,8 @@ def update_position(iwidget, key, data):
     update_position_value(position, data, 'top')
     update_position_value(position, data, 'left')
     update_position_value(position, data, 'zIndex')
+    update_boolean_value(position, data, 'minimized')
+    update_boolean_value(position, data, 'fulldragboard')
 
 
 def update_widget_value(iwidget, data, user, required=False):
