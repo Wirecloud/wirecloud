@@ -141,6 +141,8 @@
         }
 
         if (this.enabled) {
+            modifiers.preventDefault = event.preventDefault.bind(event);
+            modifiers.key = key;
             this.trigger('keydown', modifiers, key);
         }
     };
