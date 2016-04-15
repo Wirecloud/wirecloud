@@ -485,6 +485,11 @@
         });
         tooltip.bind(element);
 
+        // Update the realite date
+        setInterval(function () {
+            element.textContent = m.fromNow();
+        }, 1000);
+
         return element;
     };
 
