@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,8 +32,7 @@
         StyledElements.StyledElement.call(this, []);
 
         this.options = StyledElements.Utils.merge({
-            'class': '',
-            'autoHeight': true
+            'class': ''
         }, options);
 
         this.wrapperElement = document.createElement('div');
@@ -49,34 +48,7 @@
     };
     HorizontalLayout.prototype = new StyledElements.StyledElement();
 
-    HorizontalLayout.prototype.insertInto = function insertInto(element, refElement) {
-        StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
-        this.repaint();
-    };
-
     HorizontalLayout.prototype.repaint = function repaint(temporal) {
-        var usableWidth = this.wrapperElement.offsetWidth;
-
-        var v1 = this.west.wrapperElement.offsetWidth;
-        var v2 = usableWidth - this.east.wrapperElement.offsetWidth;
-        var centerWidth = v2 - v1;
-        if (centerWidth < 0) {
-            centerWidth = 0;
-        }
-
-        var height = Math.max(
-            this.west.wrapperElement.offsetHeight,
-            this.center.wrapperElement.offsetHeight,
-            this.east.wrapperElement.offsetHeight
-        );
-
-        this.center.wrapperElement.style.width = centerWidth + 'px';
-        this.center.wrapperElement.style.left = v1 + 'px';
-        this.east.wrapperElement.style.left = v2 + 'px';
-        if (this.options.autoHeight) {
-            this.wrapperElement.style.height = height + 'px';
-        }
-
         this.west.repaint(temporal);
         this.center.repaint(temporal);
         this.east.repaint(temporal);

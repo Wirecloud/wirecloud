@@ -63,6 +63,7 @@ var styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/Alternative.js',
     'wirecloud/commons/static/js/StyledElements/Alternatives.js',
     'wirecloud/commons/static/js/StyledElements/HorizontalLayout.js',
+    'wirecloud/commons/static/js/StyledElements/VerticalLayout.js',
     'wirecloud/commons/static/js/StyledElements/BorderLayout.js',
     'wirecloud/commons/static/js/StyledElements/ModelTable.js',
     'wirecloud/commons/static/js/StyledElements/EditableElement.js',

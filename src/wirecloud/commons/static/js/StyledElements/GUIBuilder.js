@@ -19,13 +19,13 @@
  *
  */
 
-/*global Document, StyledElements*/
+/* globals Document, StyledElements */
 
 (function () {
 
     "use strict";
 
-    var GUIBuilder, processTComponent, processTree, processRoot, extractOptions, NAMESPACE, TEMPLATE_NAMESPACE;
+    var GUIBuilder, processTComponent, processTree, processRoot, extractOptions, populateContainer, NAMESPACE, TEMPLATE_NAMESPACE;
 
     NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/StyledElements';
     TEMPLATE_NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/Template';
@@ -124,32 +124,32 @@
         return options;
     };
 
+    populateContainer = function populateContainer(builder, element, xpath, container, tcomponents, context) {
+        var container_element, fragment, options;
+
+        container_element = StyledElements.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', xpath);
+
+        if (container_element != null) {
+            options = extractOptions(container_element);
+            if (options != null && 'class' in options) {
+                container.addClassName(options['class']);
+            }
+
+            fragment = processRoot(builder, container_element, tcomponents, context);
+            container.appendChild(fragment);
+        }
+    };
+
     GUIBuilder = function GUIBuilder() {
         var mapping = {
             'borderlayout': function (builder, element, options, tcomponents, context) {
                 var layout = new StyledElements.BorderLayout(options);
 
-                var populateContainer = function populateContainer(element, xpath, container) {
-                    var container_element, fragment;
-
-                    container_element = StyledElements.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', xpath);
-
-                    if (container_element != null) {
-                        options = extractOptions(container_element);
-                        if (options != null && 'class' in options) {
-                            container.addClassName(options['class']);
-                        }
-
-                        fragment = processRoot(builder, container_element, tcomponents, context);
-                        container.appendChild(fragment);
-                    }
-                };
-
-                populateContainer(element, 'northcontainer', layout.north);
-                populateContainer(element, 'westcontainer', layout.west);
-                populateContainer(element, 'centercontainer', layout.center);
-                populateContainer(element, 'eastcontainer', layout.east);
-                populateContainer(element, 'southcontainer', layout.south);
+                populateContainer(builder, element, 'northcontainer', layout.north, tcomponents, context);
+                populateContainer(builder, element, 'westcontainer', layout.west, tcomponents, context);
+                populateContainer(builder, element, 'centercontainer', layout.center, tcomponents, context);
+                populateContainer(builder, element, 'eastcontainer', layout.east, tcomponents, context);
+                populateContainer(builder, element, 'southcontainer', layout.south, tcomponents, context);
 
                 return layout;
             },
@@ -158,8 +158,26 @@
                 options.text = element.textContent;
                 return new StyledElements.Button(options);
             },
+            'horizontallayout': function (builder, element, options, tcomponents, context) {
+                var layout = new StyledElements.HorizontalLayout(options);
+
+                populateContainer(builder, element, 'westcontainer', layout.west, tcomponents, context);
+                populateContainer(builder, element, 'centercontainer', layout.center, tcomponents, context);
+                populateContainer(builder, element, 'eastcontainer', layout.east, tcomponents, context);
+
+                return layout;
+            },
             'select': function (builder, element, options) {
                 return new StyledElements.Select(options);
+            },
+            'verticallayout': function (builder, element, options, tcomponents, context) {
+                var layout = new StyledElements.VerticalLayout(options);
+
+                populateContainer(builder, element, 'northcontainer', layout.north, tcomponents, context);
+                populateContainer(builder, element, 'centercontainer', layout.center, tcomponents, context);
+                populateContainer(builder, element, 'southcontainer', layout.south, tcomponents, context);
+
+                return layout;
             }
         };
 

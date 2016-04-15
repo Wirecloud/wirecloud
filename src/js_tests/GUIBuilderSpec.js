@@ -189,6 +189,24 @@
             expect(result.elements[0].north.hasClassName('my-class')).toBeTruthy();
         });
 
+        it("should allow to create horizontallayout elements", function () {
+            var builder = new StyledElements.GUIBuilder();
+            var template = '<s:horizontallayout><s:westcontainer><s:options>{"class": "my-class"}</s:options></s:westcontainer></s:horizontallayout>';
+            var result = builder.parse(builder.DEFAULT_OPENING + template + builder.DEFAULT_CLOSING);
+            expect(result.elements.length).toBe(1);
+            expect(result.elements[0]).toEqual(jasmine.any(StyledElements.HorizontalLayout));
+            expect(result.elements[0].west.hasClassName('my-class')).toBeTruthy();
+        });
+
+        it("should allow to create verticallayout elements", function () {
+            var builder = new StyledElements.GUIBuilder();
+            var template = '<s:verticallayout><s:southcontainer><s:options>{"class": "my-class"}</s:options></s:southcontainer></s:verticallayout>';
+            var result = builder.parse(builder.DEFAULT_OPENING + template + builder.DEFAULT_CLOSING);
+            expect(result.elements.length).toBe(1);
+            expect(result.elements[0]).toEqual(jasmine.any(StyledElements.VerticalLayout));
+            expect(result.elements[0].south.hasClassName('my-class')).toBeTruthy();
+        });
+
         it("should allow to create button elements", function () {
             var builder = new StyledElements.GUIBuilder();
             var template = '<s:button>Save</s:button>';

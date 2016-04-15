@@ -1,0 +1,50 @@
+.se-horizontal-layout, .se-vertical-layout {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    box-sizing: border-box;
+}
+
+.se-horizontal-layout {
+    flex-direction: row;
+    width: 100%;
+
+    &.full {
+        height: 100%;
+    }
+}
+
+.se-vertical-layout {
+    flex-direction: column;
+    height: 100%;
+
+    &.full {
+        width: 100%;
+    }
+}
+
+.se-hl-west-container, .se-vl-north-container {
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.se-hl-center-container, .se-vl-center-container {
+    overflow: auto;
+    box-sizing: border-box;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.se-hl-east-container, .se-vl-south-container {
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.se-horizontal-layout.input, .set-horizontal-layout.btn-group {
+    margin: 3px;
+    overflow: visible;
+}
+
+.input > .se-hl-west-container, .input > .se-hl-center-container, .input > .se-hl-east-container {
+    overflow: visible;
+}
