@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, StyledElements*/
+/* globals CSSPrimitiveValue, moment, StyledElements */
 
 (function (utils) {
 
@@ -323,6 +323,7 @@
                 options.initialSortColumn = null;
             }
         }
+
         this.pSortByColumn(options.initialSortColumn, options.initialDescendingOrder);
 
         this._current_elements = {};
@@ -461,27 +462,20 @@
     };
 
     ModelTable.prototype.pFormatDate = function pFormatDate(item, field, today, dateparser) {
-        var date, formatedDate, sameDay, shortVersion, fullVersion, element, tooltip;
+        var date, m, shortVersion, fullVersion, element, tooltip;
 
         date = this.pGetFieldValue(item, field);
 
+        // Convert the input to a Date object
         if (typeof dateparser === 'function') {
-            formatedDate = dateparser(date);
-        } else {
-            formatedDate = new Date(date);
+            date = dateparser(date);
+        } else if (!(date instanceof Date)) {
+            date = new Date(date);
         }
-        formatedDate.locale = 'es';
 
-        sameDay = (formatedDate.getDate() === today.getDate()) &&
-            (formatedDate.getMonth() === today.getMonth()) &&
-            (formatedDate.getFullYear() === today.getFullYear());
-
-        if (sameDay) {
-            shortVersion = formatedDate.strftime('%R');
-        } else {
-            shortVersion = formatedDate.strftime('%x');
-        }
-        fullVersion = formatedDate.strftime('%c');
+        m = moment(date);
+        shortVersion = m.fromNow(); // Relative date
+        fullVersion = m.format('LLLL'); // Complete date
 
         element = document.createElement('span');
         element.textContent = shortVersion;

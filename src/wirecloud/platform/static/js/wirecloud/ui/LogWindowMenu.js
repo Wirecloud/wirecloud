@@ -47,7 +47,7 @@
 
         dateElement = document.createElement('strong');
         dateElement.className = "wc-log-date";
-        dateElement.textContent = entry.date.strftime('%x %X');//_('short_date')));
+        dateElement.textContent = moment(entry.date).fromNow();
         entry_element.appendChild(dateElement);
 
         titleElement = document.createElement('span');
