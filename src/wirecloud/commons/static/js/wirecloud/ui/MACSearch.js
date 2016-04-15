@@ -41,7 +41,7 @@
                 if (search_info.total_count !== 0) {
                     if ('corrected_query' in search_info) {
                         msg = gettext("<p>Showing results for <b><t:corrected_query/></b></p>");
-                        this._list.appendChild(this.resource_painter.paintInfo(msg, {
+                        this._list.appendChild(this.paintInfo(msg, {
                             corrected_query: search_info.corrected_query
                         }));
                     }
@@ -59,7 +59,7 @@
                     } else {
                         msg = gettext("<p>Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button on the My Resources view.</p>");
                     }
-                    this._list.appendChild(this.resource_painter.paintError(new StyledElements.Fragment(msg)));
+                    this._list.appendChild(this.paintError(new StyledElements.Fragment(msg)));
                 }
             }.bind(this),
             onFailure: function () {
@@ -67,7 +67,7 @@
 
                 _load_resource_painter.call(this);
                 this._list.clear();
-                this._list.appendChild(this.resource_painter.paintError(msg));
+                this._list.appendChild(this.paintError(msg));
             }.bind(this),
             onComplete: function () {
                 this._request = null;
@@ -130,12 +130,16 @@
         options = Wirecloud.Utils.merge({
             'extra_template_context': null,
             'scope': '',
-            'template': 'macsearch'
+            'template': 'macsearch',
+            resource_painter: null
         }, options);
 
         StyledElements.StyledElement.call(this, []);
 
+        this.info_template = builder.DEFAULT_OPENING + '<div class="alert alert-info"><t:message/></div>' + builder.DEFAULT_CLOSING;
+        this.error_template = builder.DEFAULT_OPENING + '<div class="alert alert-error"><t:message/></div>' + builder.DEFAULT_CLOSING;
         this._list = new StyledElements.Container({'class': 'widget_wallet_list loading'});
+        this.resource_painter = options.resource_painter;
 
         var input;
 
@@ -162,6 +166,22 @@
         _search.call(this, '');
     };
     MACSearch.prototype = new StyledElements.StyledElement();
+
+    MACSearch.prototype.paintInfo = function paintInfo(message, context) {
+        if (context != null) {
+            message = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, context);
+        }
+
+        return builder.parse(this.info_template, {
+            'message': message
+        });
+    };
+
+    MACSearch.prototype.paintError = function paintError(message) {
+        return builder.parse(this.error_template, {
+            'message': message
+        });
+    };
 
     MACSearch.prototype.repaint = function repaint() {
         this._list.repaint();
