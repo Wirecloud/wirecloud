@@ -69,7 +69,6 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/EndpointGroup.js',
     'js/wirecloud/ui/WiringEditor/Component.js',
     'js/wirecloud/ui/WiringEditor/ComponentPrefs.js',
-    'js/wirecloud/ui/WiringEditor/ComponentMeta.js',
     'js/wirecloud/ui/WiringEditor/ComponentGroup.js',
     'js/wirecloud/ui/WiringEditor/ComponentShowcase.js',
     'js/wirecloud/ui/WiringEditor/ComponentDraggable.js',
