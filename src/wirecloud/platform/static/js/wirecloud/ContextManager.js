@@ -105,7 +105,7 @@
                     }
                 }
 
-                if (!Wirecloud.Utils.isEmptyObject(updated_values)) {
+                if (!Wirecloud.Utils.isEmpty(updated_values)) {
                     for (i = 0; i < handlers.length; i += 1) {
                         try {
                             handlers[i](updated_values);
