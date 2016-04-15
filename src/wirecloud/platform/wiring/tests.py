@@ -1212,6 +1212,40 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             draggable_widget.change_version("3.0")
             draggable_widget.show_preferences().check(must_be_disabled=("Order endpoints",))
 
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    def test_search_components_by_keywords(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                groups = sidebar.find_component_groups('widget', keywords="api")
+                self.assertEqual(len(groups), 1)
+                group = groups[0]
+                self.assertEqual(group.id, "Wirecloud/api-test")
+
+    def test_search_components_by_keywords_no_results(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                groups = sidebar.find_component_groups('widget', keywords="api")
+                self.assertEqual(len(groups), 0)
+                alert = sidebar.alert
+                self.assertIsNotNone(alert)
+                self.assertTrue(alert.has_class('alert-error'))
+
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    def test_search_components_by_keywords_suggestions(self):
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                groups = sidebar.find_component_groups('widget', keywords="aip")
+                self.assertEqual(len(groups), 1)
+                alert = sidebar.alert
+                self.assertIsNotNone(alert)
+                self.assertTrue(alert.has_class('alert-info'))
+
 
 @wirecloud_selenium_test_case
 class ComponentMissingTestCase(WirecloudSeleniumTestCase):

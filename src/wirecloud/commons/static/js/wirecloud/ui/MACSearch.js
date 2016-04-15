@@ -30,6 +30,7 @@
             this._request.abort();
         }
         this._list.disable();
+        this.trigger('search');
         this._request = Wirecloud.LocalCatalogue.search({
             scope: this.search_scope,
             search_criteria: keywords,
@@ -134,7 +135,7 @@
             resource_painter: null
         }, options);
 
-        StyledElements.StyledElement.call(this, []);
+        StyledElements.StyledElement.call(this, ['search']);
 
         this.info_template = builder.DEFAULT_OPENING + '<div class="alert alert-info"><t:message/></div>' + builder.DEFAULT_CLOSING;
         this.error_template = builder.DEFAULT_OPENING + '<div class="alert alert-error"><t:message/></div>' + builder.DEFAULT_CLOSING;

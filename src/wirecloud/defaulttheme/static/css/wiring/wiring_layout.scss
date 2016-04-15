@@ -1,6 +1,6 @@
 @import 'wiring/defaults';
 @import 'utils';
-
+@import "variables";
 
 // ============================================================================
 // WIRING-VIEW - DIAGRAM
@@ -65,10 +65,26 @@
     }
 }
 
-.wiring-sidebar > .panel-components {
+.we-panel-components {
 
-    & > .panel-body {
-        top: 80px;
+    .se-text-field {
+        margin: 0 0 $margin-vertical-base;
+        width: 100%;
+    }
+
+    .widget_wallet_list {
+        top: 128px;
+        bottom: $margin-vertical-base;
+        left: $panel-padding-horizontal;
+        right: $panel-padding-horizontal;
+        padding: ($panel-padding-horizontal / 2);
+        background-color: #FFF;
+        border: 1px solid $panel-default-border-color;
+        border-radius: ($panel-border-radius / 2);
+
+        .alert {
+            margin: 0 0 $margin-vertical-base;
+        }
     }
 }
 

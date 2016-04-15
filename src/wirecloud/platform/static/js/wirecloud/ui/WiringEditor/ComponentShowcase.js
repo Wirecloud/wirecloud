@@ -19,7 +19,7 @@
  *
  */
 
-/* global gettext, StyledElements, Wirecloud */
+/* global StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -30,204 +30,204 @@
     // CLASS DEFINITION
     // ==================================================================================
 
-    /**
-     * Create a new instance of class ComponentShowcase.
-     * @extends {Panel}
-     *
-     * @constructor
-     */
-    ns.ComponentShowcase = utils.defineClass({
+    ns.ComponentShowcase = function ComponentShowcase() {
 
-        constructor: function ComponentShowcase(layout, options) {
-            var btnGroupElement;
+        this.superClass(['add', 'create']);
 
-            this.componentOptions = options;
+        this.components = {operator: {}, widget: {}};
+        this.groups = {};
 
-            this.superClass({
-                extraClass: "panel-components",
-                title: gettext("Components")
-            });
+        this.operatorButton = new se.ToggleButton({
+            class: 'btn-list-operator-group',
+            state: 'primary',
+            text: utils.gettext('Operators')
+        });
+        this.operatorButton
+            .on('click', function () {
+                this.operatorButton.active = true;
+                this.widgetButton.active = false;
+                this.searchComponents.search_scope = 'operator';
+                this.searchComponents.refresh();
+            }.bind(this));
 
-            this.components = {
-                operator: {elements: {}, canCreate: true},
-                widget: {elements: {}, canCreate: false}
-            };
+        this.widgetButton = new se.ToggleButton({
+            class: 'btn-list-widget-group',
+            state: 'primary',
+            text: utils.gettext('Widgets')
+        });
+        this.widgetButton
+            .on('click', function () {
+                this.operatorButton.active = false;
+                this.widgetButton.active = true;
+                this.searchComponents.search_scope = 'widget';
+                this.searchComponents.refresh();
+            }.bind(this));
 
-            this.layout = layout;
+        var resource_painter = {
+            paint: function paint(group) {
+                var group = new ns.ComponentGroup(group);
 
-            btnGroupElement = document.createElement('div');
-            btnGroupElement.className = "btn-group btn-group-justified";
-            this.wrapperElement.appendChild(btnGroupElement);
+                group.addEventListener('btncreate.click', createcomponent_onclick.bind(this));
 
-            this.components.operator.button = new se.ToggleButton({
-                state: 'primary',
-                extraClass: "btn-list-operator-group",
-                text: gettext("Operators")
-            });
-            this.components.operator.button
-                .appendTo(btnGroupElement)
-                .on('click', function () {
-                    this.show('operator');
-                }.bind(this));
-
-            this.components.operator.container = new se.Container({
-                extraClass: "section operator-group"
-            });
-            this.body.appendChild(this.components.operator.container);
-
-            this.components.operator.alert = new se.Alert({
-                state: 'info',
-                title: gettext("No operators"),
-                message: gettext("No operator in your current account. Go to the Marketplace view or the My Resources view to install or uploading at least one operator.")
-            });
-            this.components.operator.container
-                .appendChild(this.components.operator.alert);
-
-            this.components.widget.button = new se.ToggleButton({
-                state: "primary",
-                extraClass: "btn-list-widget-group",
-                text: gettext("Widgets")
-            });
-            this.components.widget.button
-                .appendTo(btnGroupElement)
-                .on('click', function () {
-                    this.show('widget');
-                }.bind(this));
-
-            this.components.widget.container = new se.Container({
-                extraClass: "section widget-group"
-            });
-            this.body.appendChild(this.components.widget.container);
-
-            this.components.widget.alert = new se.Alert({
-                state: 'info',
-                title: gettext("No widgets"),
-                message: gettext("No widget in your current workspace. Go to the Editor view for adding at least one view.")
-            });
-            this.components.widget.container
-                .appendChild(this.components.widget.alert);
-
-            this.setUp();
-        },
-
-        inherit: se.Panel,
-
-        members: {
-
-            addMeta: function addMeta(meta) {
-                var component,
-                    id = getMetaId(meta);
-
-                if (id in this.components[meta.type].elements) {
-                    component = this.components[meta.type].elements[id];
-                } else {
-                    component = new ns.ComponentGroup(meta, this.layout, utils.updateObject({canCreate: this.components[meta.type].canCreate}, this.componentOptions));
-
-                    this.components[meta.type].elements[component.id] = component;
-                    this.components[meta.type].container.appendChild(component);
-                }
-
-                component.appendVersion(meta);
-
-                if (Object.keys(this.components[meta.type].elements).length) {
-                    this.components[meta.type].alert.hide();
-                }
-
-                return this;
-            },
-
-            addWiringComponent: function addWiringComponent(wiringComponent) {
-                var id = getMetaId(wiringComponent.meta);
-
-                if (id in this.components[wiringComponent.meta.type].elements) {
-                    this.components[wiringComponent.meta.type].elements[id].appendWiringComponent(wiringComponent);
-                }
-
-                return this;
-            },
-
-            /**
-             * @override
-             */
-            clear: function clear() {
-
-                Object.keys(this.components).forEach(function (type) {
-                    this.components[type].container
-                        .clear()
-                        .appendChild(this.components[type].alert);
-                    this.components[type].elements = {};
-                }, this);
-
-                return this;
-            },
-
-            forEachComponent: function forEachComponent(callback) {
-                var components, group_id, id, type;
-
-                for (type in this.components) {
-                    for (group_id in this.components[type].elements) {
-                        components = this.components[type].elements[group_id].children;
-                        for (id in components) {
-                            callback(components[id]);
-                        }
+                if (utils.isObject(this.components.operator[group.id])) {
+                    for (var id in this.components.operator[group.id]) {
+                        group.addComponent(this.components.operator[group.id][id]);
                     }
                 }
 
-                return this;
-            },
-
-            getComponent: function getComponent(type, id) {
-                var id1, id2;
-
-                for (id1 in this.components[type].elements) {
-                    for (id2 in this.components[type].elements[id1].children) {
-                        if (id2 == id) {
-                            return this.components[type].elements[id1].children[id2];
-                        }
+                if (utils.isObject(this.components.widget[group.id])) {
+                    for (var id in this.components.widget[group.id]) {
+                        group.addComponent(this.components.widget[group.id][id]);
                     }
                 }
 
-                return null;
+                this.groups[group.id] = group;
+                return group;
+            }.bind(this)
+        };
+
+        this.searchComponents = new Wirecloud.ui.MACSearch({
+            template: 'component_sidebar',
+            extra_template_context: {
+                buttons: new se.Fragment([this.operatorButton, this.widgetButton])
             },
+            scope: 'widget',
+            resource_painter: resource_painter
+        });
+        this.searchComponents.addEventListener('search', clearAll.bind(this));
+        this.widgetButton.active = true;
+        this.wrapperElement = this.searchComponents.get();
+    };
 
-            removeComponent: function removeComponent(type, element) {
+    utils.inherit(ns.ComponentShowcase, se.StyledElement, {
 
-                this.components[type].container.removeChild(element);
-                delete this.components[type].elements[element.getId()];
+        addComponent: function addComponent(wiringComponent) {
+            var group_id = wiringComponent.meta.group_id,
+                type = wiringComponent.meta.type;
 
-                return this;
-            },
-
-            setUp: function setUp() {
-                return this.show('operator');
-            },
-
-            show: function show(type) {
-                type = typeof type !== 'string' ? "" : type;
-
-                if (arguments.length && type) {
-                    Object.keys(this.components).forEach(function (existingType) {
-                        if (existingType === type) {
-                            this.components[existingType].button.active = true;
-                            this.components[existingType].container.show();
-                        } else {
-                            this.components[existingType].button.active = false;
-                            this.components[existingType].container.hide();
-                        }
-                    }, this);
-
-                    return this;
-                }
-
-                return this.superMember(se.Panel, 'show');
+            if (!(group_id in this.components[type])) {
+                this.components[type][group_id] = {};
             }
 
+            var component = new ns.Component(wiringComponent);
+
+            component.draggable = new Wirecloud.ui.Draggable(component.get(), {component: component},
+                component_ondragstart.bind(this),
+                component_ondrag.bind(this),
+                component_ondragend.bind(this),
+                function canDrag() {return component.enabled;}
+            );
+
+            this.components[type][group_id][component.id] = component;
+
+            if (group_id in this.groups) {
+                this.groups[group_id].addComponent(component);
+            }
+
+            return component;
+        },
+
+        clear: function clear() {
+            this.components = {};
+            return this;
+        },
+
+        findComponent: function findComponent(type, id) {
+            var group_id;
+
+            for (group_id in this.components[type]) {
+                if (id in this.components[type][group_id]) {
+                    return this.components[type][group_id][id];
+                }
+            }
+
+            return null;
+        },
+
+        forEachComponent: function forEachComponent(callback) {
+            var type, id, group_id;
+
+            for (type in this.components) {
+                for (group_id in this.components[type]) {
+                    for (id in this.components[type][group_id]) {
+                        callback(this.components[type][group_id][id]);
+                    }
+                }
+            }
+
+            return this;
+        },
+
+        removeComponent: function removeComponent(type, component) {
+            var group_id = component.meta.group_id;
+
+            this.components[type][group_id][component.id].remove();
+            delete this.components[type][group_id][component.id];
+
+            return this;
         }
 
     });
 
-    var getMetaId = function getMetaId(meta) {
-        return meta.vendor + '/' + meta.name;
+    var clearAll = function clearAll() {
+        this.groups = {};
+    };
+
+
+    var component_ondragstart = function component_ondragstart(draggable, context, event) {
+        this.trigger('add', context);
+
+        var bcr = context.layout.getBoundingClientRect();
+
+        context.element.appendTo(context.layout.slideOut().get());
+
+        context.x = event.clientX - bcr.left - (context.element.wrapperElement.offsetWidth / 2);
+        context.y = event.clientY - bcr.top - (context.element.heading.wrapperElement.offsetHeight / 2);
+
+        context.component.disable();
+
+        context.element
+            .addClassName("cloned dragging")
+            .position({
+                x: context.x,
+                y: context.y
+            });
+    };
+
+    var createcomponent_onclick = function createcomponent_onclick(group, button) {
+        this.trigger('create', group, button);
+    };
+
+    var component_ondrag = function component_ondrag(event, draggable, context, xDelta, yDelta) {
+        var layout;
+
+        if (!context.layout.content.has(context.element)) {
+            layout = context.layout.content.get();
+
+            context.x += layout.scrollLeft;
+            context.y += layout.scrollTop;
+
+            context.element.remove();
+            context.layout.content.appendChild(context.element);
+        }
+
+        context.element.position({
+            x: context.x + xDelta,
+            y: context.y + yDelta
+        });
+    };
+
+    var component_ondragend = function component_ondragend(draggable, context) {
+
+        if (!context.layout.content.has(context.element)) {
+            context.element.remove();
+            context.layout.content.appendChild(context.element);
+        }
+
+        context.element.removeClassName("cloned dragging");
+        context.element.trigger('change', context.element.toJSON());
+
+        context.layout.slideIn(1);
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);
