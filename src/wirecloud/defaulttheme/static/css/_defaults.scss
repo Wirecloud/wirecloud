@@ -248,15 +248,8 @@ $panel-danger-btn-hover-text-color:     darken($state-danger-text, 5%) !default;
 // COMPONENT - THUMBNAIL
 // ======================================================================================
 
-$thumbnail-height: 140px !default;
-$thumbnail-margin-vertical: 10px !default;
-$thumbnail-bg: rgb(255, 255, 255) !default;
-
-$thumbnail-rounded-padding: 3px !default;
-$thumbnail-rounded-border-color: rgb(210, 210, 210) !default;
-$thumbnail-rounded-border-radius: 4px !default;
-
-$thumbnail-sm-height: 80px !default;
+$thumbnail-height-base:  180px !default;
+$thumbnail-height-small: 100px !default;
 
 /* Popovers */
 

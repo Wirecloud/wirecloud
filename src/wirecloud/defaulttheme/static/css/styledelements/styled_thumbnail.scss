@@ -1,48 +1,37 @@
-@import 'variables';
-
-
-// ======================================================================================
-// COMPONENT - THUMBNAIL
-// ======================================================================================
+@import "compass/css3/transform";
+@import "variables";
 
 .se-thumbnail {
     position: relative;
     display: block;
-    height: $thumbnail-height;
-    line-height: $thumbnail-height;
-    margin: 0 0 $thumbnail-margin-vertical;
+    height: $thumbnail-height-base;
+    line-height: $thumbnail-height-base;
+    margin: 0 0 $margin-vertical-base;
     text-align: center;
-    background-color: $thumbnail-bg;
+    border: 1px solid $state-default-border;
+    border-radius: $border-radius-base;
 
-    & > img {
+    img {
         position: relative;
         display: inline-block;
         max-height: 100%;
         max-width: 100%;
-    }
-
-}
-
-.se-thumbnail-rounded {
-    padding: $thumbnail-rounded-padding;
-    border: solid 1px $thumbnail-rounded-border-color;
-    border-radius: $thumbnail-rounded-border-radius;
-
-    & > img {
-        border-radius: ($thumbnail-rounded-border-radius - 1);
+        border-radius: ($border-radius-base - 1);
+        top: 50%;
+        @include transform(translateY(-50%));
     }
 }
 
 .se-thumbnail-sm {
-    height: $thumbnail-sm-height;
-    line-height: $thumbnail-sm-height;
+    height: $thumbnail-height-small;
+    line-height: $thumbnail-height-small;
 }
 
 .se-thumbnail-missing {
     color: $brand-info;
     font-weight: bold;
 
-    & > .image {
+    img {
         display: none;
     }
 }
