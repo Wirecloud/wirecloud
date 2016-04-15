@@ -160,12 +160,13 @@
         for (var i = 0; i < newEntries.length; i++) {
             newEntry = newEntries[i];
             var option = document.createElement("option");
-            if ('value' in newEntry) {
-                optionValue = newEntry.value;
-                optionLabel = newEntry.label;
-            } else if (Array.isArray(newEntry)) {
+
+            if (Array.isArray(newEntry)) {
                 optionValue = newEntry[0];
                 optionLabel = newEntry[1];
+            } else if (newEntry.value != null) {
+                optionValue = newEntry.value;
+                optionLabel = newEntry.label;
             } else {
                 optionValue = newEntry;
                 optionLabel = newEntry;
