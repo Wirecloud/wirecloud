@@ -731,7 +731,7 @@ class WiringComponentGroupTester(WebElementTester):
 
     @property
     def title(self):
-        return self.find_element(".panel-title").text
+        return self.find_element(".we-component-meta .panel-title").text
 
     def create_component(self):
         new_length = len(self.find_components()) + 1
@@ -752,7 +752,7 @@ class WiringComponentGroupTester(WebElementTester):
 
     def find_components(self, state=None):
         if state is None:
-            return [WiringComponentTester(self.testcase, e, self.type) for e in self.find_elements(".component")]
+            return [WiringComponentTester(self.testcase, e, self.type) for e in self.find_elements(".we-component")]
         return [c for c in self.find_components() if c.has_state(state)]
 
     def has_components(self):
@@ -1843,7 +1843,19 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     @property
     def panel(self):
-        return self.testcase.driver.find_element_by_css_selector(".panel-components")
+        return self.testcase.driver.find_element_by_css_selector(".we-panel-components")
+
+    @property
+    def search_field(self):
+        return FieldTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components > .se-text-field"))
+
+    @property
+    def alert(self):
+        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .widget_wallet_list > .alert"))
+
+    @property
+    def result_container(self):
+        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .widget_wallet_list"))
 
     def add_component(self, type, group_id, id=None, title=None, x=0, y=0):
         component_group = self.find_component_group(type, group_id)
@@ -1867,9 +1879,12 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
                 return component_group
         return None
 
-    def find_component_groups(self, type):
+    def find_component_groups(self, type, keywords=None):
+        if keywords is not None:
+            self.search_field.set_value(keywords)
+
         self.show_component_groups(type)
-        return [WiringComponentGroupTester(self.testcase, e, type) for e in self.panel.find_elements_by_css_selector(".section.%s-group .component-group" % (type,))]
+        return [WiringComponentGroupTester(self.testcase, e, type) for e in self.panel.find_elements_by_css_selector(".we-component-group")]
 
     def has_components(self, type=None):
         if type is None:
@@ -1882,6 +1897,8 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
     def show_component_groups(self, type):
         WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.panel))
         ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-list-%s-group" % (type,))).click()
+        time.sleep(0.2)
+        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: not self.result_container.is_disabled)
         return self
 
 

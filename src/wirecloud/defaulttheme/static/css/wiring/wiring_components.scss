@@ -3,48 +3,30 @@
 @import 'compass/css3/user-interface';
 @import 'utils';
 @import 'styledelements/panel_mixins';
+@import "variables";
 
 
 // ============================================================================
 // WIRING SIDEBAR - COMPONENT
 // ============================================================================
 
-.wiring-sidebar .component-group {
-    margin: 0 0 10px;
+.we-component-group {
+    margin: 0 0 $margin-vertical-base;
+}
 
-    .component-meta {
-        margin: 0;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
+.we-component-meta {
+    margin: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 
-        .panel-title {
-            width: 100%;
-            float: left;
-            white-space: nowrap;
-        }
-
-        .panel-body {
-            @include user-select(none);
-        }
-
-        .component-version-list {
-            margin: 0 0 5px;
-        }
-
-        .component-vendor {
-            font-weight: 700;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .component-description {
-            max-height: 40px;
-            font-size: $font-size-small;
-            overflow: hidden;
-        }
+    .panel-body {
+        @include user-select(none);
     }
+}
 
-    .component {
+.we-component-group {
+
+    .we-component {
         border-radius: 0;
         margin: 0;
         @include user-select(none);
@@ -72,10 +54,6 @@
         .component-version {
             float: left;
         }
-    }
-
-    .component {
-        margin-top: -1px;
     }
 
     &:last-child {
@@ -159,7 +137,7 @@
 // WIRING VIEW - COMPONENT-ITEM - DISABLED
 // ============================================================================
 
-.wiring-sidebar .component {
+.we-component {
 
     &.disabled,
     &.disabled:hover {

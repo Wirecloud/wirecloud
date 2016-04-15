@@ -53,7 +53,7 @@
 
             this.superClass({
                 state: null,
-                extraClass: "component component-" + wiringComponent.meta.type,
+                extraClass: "we-component component-" + wiringComponent.meta.type,
                 title: wiringComponent.title,
                 subtitle: "v" + wiringComponent.meta.version.text,
                 selectable: true,

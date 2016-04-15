@@ -30,108 +30,58 @@
     // CLASS DEFINITION
     // ==================================================================================
 
-    /**
-     * Create a new instance of class ComponentGroup.
-     * @extends {StyledElement}
-     *
-     * @constructor
-     * @param {StyledElement} layout
-     *      [TODO: description]
-     * @param {PlainObject} [options]
-     *      [TODO: description]
-     */
-    ns.ComponentGroup = utils.defineClass({
+    ns.ComponentGroup = function ComponentGroup(resource) {
+        this.superClass(events);
 
-        constructor: function ComponentGroup(meta, layout, options) {
+        this.titleElement = document.createElement('span');
+        this.tooltip = new se.Tooltip();
+        this.tooltip.bind(this.titleElement);
 
-            options = utils.updateObject(defaults, options);
-            this.superClass();
+        this.imageElement = document.createElement('img');
+        this.imageElement.onerror = image_onerror.bind(this);
 
-            this.wrapperElement = document.createElement('div');
-            this.wrapperElement.className = "component-group";
+        var version = new se.Select();
+        version.addEventListener('change', version_onchange.bind(this));
+        version.addEntries([resource.version].concat(resource.others));
 
-            this.meta = new ns.ComponentMeta(meta);
-            this.meta.version.on('change', version_onchange.bind(this));
-            this.meta.appendTo(this.wrapperElement);
+        var button = new se.Button({
+            class: 'btn-create',
+            title: utils.gettext("New component"),
+            iconClass: 'icon-plus'
+        });
+        button.addEventListener('click', function () {
+            this.trigger('btncreate.click', button);
+        }.bind(this));
 
-            this.layout = layout;
-            this.createWiringComponent = options.createWiringComponent;
-            this.getComponentDraggable = options.getComponentDraggable;
+        this.descriptionElement = document.createElement('div');
+        this.descriptionElement.className = "text-muted";
 
-            this.versions = {};
-            this.children = {};
+        this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.component_group, {
+            title: this.titleElement,
+            image: this.imageElement,
+            version: version,
+            buttons: new se.Fragment([version, button]),
+            vendor: resource.vendor,
+            description: this.descriptionElement
+        }).children[1];
 
-            this.currentVersion = null;
-            this.latestVersion = null;
+        this.components = {};
 
-            this.meta.btnAdd.on('click', btncreate_onclick.bind(this));
+        Object.defineProperties(this, {
+            id: {value: resource.vendor + "/" + resource.name}
+        });
 
-            Object.defineProperties(this, {
-                id: {value: meta.group_id},
-                type: {value: meta.type}
-            });
-            this.get().setAttribute('data-id', this.id);
-        },
+        this.wrapperElement.setAttribute('data-id', this.id);
+        version_onchange.call(this, version);
+    };
 
-        inherit: se.StyledElement,
+    utils.inherit(ns.ComponentGroup, se.StyledElement, {
 
-        members: {
-
-            /**
-             * [TODO: _oncomponentadded description]
-             * @protected
-             *
-             * @param {Component} component
-             *      [TODO: description]
-             * @returns {ComponentGroup}
-             *      The instance on which the member is called.
-             */
-            _oncomponentadded: function _oncomponentadded(component) {
-
-                component.draggable = new Wirecloud.ui.Draggable(component.get(), {component: component},
-                    component_ondragstart.bind(this),
-                    component_ondrag.bind(this),
-                    component_ondragend.bind(this),
-                    function canDrag() {return component.enabled;}
-                );
-
-                return this;
-            },
-
-            /**
-             * [TODO: appendVersion description]
-             *
-             * @param {OperatorMeta|WidgetMeta} meta
-             *      [TODO: description]
-             * @returns {ComponentGroup}
-             *      The instance on which the member is called.
-             */
-            appendVersion: function appendVersion(meta) {
-                this.versions[meta.version] = meta;
-                this.meta.version.addEntries([{label: 'v' + meta.version.text, value: meta.version.text}]);
-
-                if (this.latestVersion == null || this.latestVersion.version.compareTo(meta.version) < 0) {
-                    showLatestVersion.call(this, meta);
-                }
-
-                return this;
-            },
-
-            /**
-             * [TODO: appendWiringComponent description]
-             * @param {Operator|Widget} wiringComponent
-             *      [TODO: description]
-             * @returns {ComponentGroup}
-             *      The instance on which the member is called.
-             */
-            appendWiringComponent: function appendWiringComponent(wiringComponent) {
-                var component = new ns.Component(wiringComponent);
-
-                this.children[component.id] = component.appendTo(this.wrapperElement);
-
-                return this._oncomponentadded(component);
+        addComponent: function addComponent(component) {
+            if (!(component.id in this.components)) {
+                this.components[component.id] = component.appendTo(this.wrapperElement);
             }
-
+            return this;
         }
 
     });
@@ -140,81 +90,41 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var defaults = {
-        createWiringComponent: null,
-        getComponentDraggable: null,
+    var events = ['btncreate.click'];
+
+    var version_onchange = function version_onchange(element) {
+        /* jshint validthis: true */
+        var version = element.getValue();
+
+        this.meta = Wirecloud.LocalCatalogue.getResourceId(this.id + "/" + version);
+
+        this.titleElement.textContent = this.meta.title;
+        this.tooltip.options.content = this.meta.title;
+        this.descriptionElement.textContent = this.meta.description;
+        setImage.call(this, this.meta.image);
     };
 
-    var btncreate_onclick = function btncreate_onclick() {
-        this.createWiringComponent(this.currentVersion, {
-            onSuccess: function (wiringComponent) {
-                this.appendWiringComponent(wiringComponent);
-            }.bind(this)
-        });
-    };
+    var setImage = function setImage(imageURL) {
+        /* jshint validthis: true */
+        var thumbnailElement = this.imageElement.parentElement;
 
-    var component_ondragstart = function component_ondragstart(draggable, context, event) {
-        var bcr = this.layout.getBoundingClientRect();
+        thumbnailElement.classList.remove('se-thumbnail-missing');
+        thumbnailElement.innerHTML = "";
+        thumbnailElement.appendChild(this.imageElement);
 
-        context.element = this.getComponentDraggable(context.component._component);
-        context.element.appendTo(this.layout.slideOut().get());
+        this.imageElement.removeAttribute('src');
 
-        context.x = event.clientX - bcr.left - (context.element.wrapperElement.offsetWidth / 2);
-        context.y = event.clientY - bcr.top - (context.element.heading.wrapperElement.offsetHeight / 2);
-
-        context.component.disable();
-
-        context.element
-            .addClassName("cloned dragging")
-            .position({
-                x: context.x,
-                y: context.y
-            });
-    };
-
-    var component_ondrag = function component_ondrag(event, draggable, context, xDelta, yDelta) {
-        var layout;
-
-        if (!this.layout.content.has(context.element)) {
-            layout = this.layout.content.get();
-
-            context.x += layout.scrollLeft;
-            context.y += layout.scrollTop;
-
-            context.element.remove();
-            this.layout.content.appendChild(context.element);
+        if (imageURL) {
+            this.imageElement.src = imageURL;
+        } else {
+            image_onerror.call(this);
         }
-
-        context.element.position({
-            x: context.x + xDelta,
-            y: context.y + yDelta
-        });
     };
 
-    var component_ondragend = function component_ondragend(draggable, context) {
-
-        if (!this.layout.content.has(context.element)) {
-            context.element.remove();
-            this.layout.content.appendChild(context.element);
-        }
-
-        context.element.removeClassName("cloned dragging");
-        context.element.trigger('change', context.element.toJSON());
-
-        this.layout.slideIn(0);
-    };
-
-    var version_onchange = function version_onchange(select) {
-        this.currentVersion = this.versions[select.getValue()];
-        this.meta.showVersion(this.currentVersion);
-    };
-
-    var showLatestVersion = function showLatestVersion(meta) {
-        this.latestVersion = meta;
-        this.currentVersion = meta;
-        this.meta.version.setValue(meta.version);
-
-        return this;
+    var image_onerror = function image_onerror() {
+        /* jshint validthis: true */
+        this.imageElement.parentElement.classList.add('se-thumbnail-missing');
+        this.imageElement.parentElement.appendChild(document.createTextNode(utils.gettext("No image available")));
     };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

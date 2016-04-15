@@ -155,6 +155,7 @@
                 var state = Wirecloud.HistoryManager.getCurrentState();
                 LayoutManagerFactory.getInstance().changeCurrentView('workspace', true);
 
+                this.trigger('loaded');
                 if (state.workspace_name !== '') {
                     var workspace = this.workspacesByUserAndName[state.workspace_owner][state.workspace_name];
                     this.changeActiveWorkspace(workspace, state.tab, {replaceNavigationState: true});

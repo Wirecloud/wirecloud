@@ -52,7 +52,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
             createAndSetUpLayout.call(this);
 
-            createAndSetUpComponentManager.call(this);
+            Wirecloud.addEventListener('loaded', createAndSetUpComponentManager.bind(this));
             createAndSetUpBehaviourEngine.call(this);
             createAndSetUpConnectionEngine.call(this);
 
@@ -263,15 +263,22 @@ Wirecloud.ui = Wirecloud.ui || {};
     var createAndSetUpComponentManager = function createAndSetUpComponentManager() {
         /*jshint validthis:true */
 
-        this.componentManager =  new ns.WiringEditor.ComponentShowcase(this.layout, {
-            getComponentDraggable: function (component) {
-                return this.createComponent(component, {commit: false});
-            }.bind(this),
-            createWiringComponent: function (meta, options) {
-                this.workspace.wiring.createComponent(meta, options);
-            }.bind(this)
-        });
-
+        this.componentManager =  new ns.WiringEditor.ComponentShowcase();
+        this.componentManager.addEventListener('create', function (showcase, group, button) {
+            button.disable();
+            this.workspace.wiring.createComponent(group.meta, {
+                onSuccess: function (wiringComponent) {
+                    button.enable();
+                    showcase.addComponent(wiringComponent);
+                }
+            });
+        }.bind(this));
+        this.componentManager.addEventListener('add', function (showcase, context) {
+            context.layout = this.layout;
+            context.element = this.createComponent(context.component._component, {
+                commit: false
+            });
+        }.bind(this));
         this.layout.addPanel(this.componentManager);
 
         return this;
@@ -316,7 +323,7 @@ Wirecloud.ui = Wirecloud.ui || {};
                 this.behaviourEngine.stopOrdering();
             }.bind(this))
             .on('slideIn', function (offcanvas, panel) {
-                this.btnFindComponents.active = panel.hasClassName("panel-components");
+                this.btnFindComponents.active = panel.hasClassName("we-panel-components");
                 this.btnListBehaviours.active = panel.hasClassName("panel-behaviours");
 
                 if (this.btnFindComponents.active) {
@@ -388,8 +395,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             stackedIconClass: "icon-plus-sign"
         });
         this.btnFindComponents.on('click', function (button) {
-            this.componentManager.setUp();
-            showSelectedPanel.call(this, button, 0);
+            showSelectedPanel.call(this, button, 1);
         }.bind(this));
 
         this.btnListBehaviours = new se.ToggleButton({
@@ -398,7 +404,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             iconClass: "icon-sitemap"
         });
         this.btnListBehaviours.on('click', function (button) {
-            showSelectedPanel.call(this, button, 1);
+            showSelectedPanel.call(this, button, 0);
         }.bind(this));
 
         return this;
@@ -406,7 +412,7 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     var disableComponent = function disableComponent(component) {
         /*jshint validthis:true */
-        var item = this.componentManager.getComponent(component.type, component.id);
+        var item = this.componentManager.findComponent(component.type, component.id);
 
         if (item != null) {
             item.disable();
@@ -432,8 +438,6 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.layout.slideOut();
 
         this.behaviourEngine.clear().disable();
-
-        this.componentManager.clear().setUp();
 
         this.suggestionManager.enable();
 
@@ -552,15 +556,11 @@ Wirecloud.ui = Wirecloud.ui || {};
         var metaOperators = Wirecloud.LocalCatalogue.getAvailableResourcesByType('operator');
         var id, operator;
 
-        for (id in metaOperators) {
-            this.componentManager.addMeta(metaOperators[id]);
-        }
-
         for (id in wiringOperators) {
             operator = wiringOperators[id];
 
             if (!operator.missing) {
-                this.componentManager.addWiringComponent(operator);
+                this.componentManager.addComponent(operator);
             }
 
             if (!operator.volatile) {
@@ -576,15 +576,11 @@ Wirecloud.ui = Wirecloud.ui || {};
         var metaWidgets = Wirecloud.LocalCatalogue.getAvailableResourcesByType('widget');
         var id, widget;
 
-        for (id in metaWidgets) {
-            this.componentManager.addMeta(metaWidgets[id]);
-        }
-
         for (id in wiringWidgets) {
             widget = wiringWidgets[id];
 
             if (!widget.missing) {
-                this.componentManager.addWiringComponent(widget);
+                this.componentManager.addComponent(widget);
             }
 
             if (widget.id in visualWidgets) {
@@ -613,7 +609,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         component = this.behaviourEngine.components[bInfo.type][bInfo.id];
 
         if (!component) {
-            component = this.componentManager.getComponent(bInfo.type, bInfo.id);
+            component = this.componentManager.findComponent(bInfo.type, bInfo.id);
 
             if (!component) {
                 throw new Error("A missing component could not recover.");
@@ -804,7 +800,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
 
         if (!component.missing) {
-            this.componentManager.getComponent(component.type, component.id).enable();
+            this.componentManager.findComponent(component.type, component.id).enable();
         }
 
         if (!this.behaviourEngine.hasComponents()) {

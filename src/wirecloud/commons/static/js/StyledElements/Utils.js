@@ -546,16 +546,6 @@ if (window.StyledElements == null) {
         };
     }
 
-    Utils.values = function values(object) {
-        var result = [];
-
-        for (var key in object) {
-            result.push(object[key]);
-        }
-
-        return result;
-    };
-
     /**
      * @experimental
      */
@@ -611,15 +601,6 @@ if (window.StyledElements == null) {
         return sourceValue;
     };
 
-    Utils.isEmptyObject = function isEmptyObject(obj) {
-        var name;
-
-        for (name in obj) {
-            return false;
-        }
-        return true;
-    };
-
     // ==================================================================================
     // DOCUMENT - HELPERS
     // ==================================================================================
@@ -634,30 +615,6 @@ if (window.StyledElements == null) {
      */
     Utils.hasFocus = function hasFocus(element) {
         return document.activeElement === element;
-    };
-
-    /**
-     * Permite obtener un objeto a partir de la mezcla de los atributos de dos
-     * objetos. Para ello, se pasarán los dos objetos que se usarán de fuente,
-     * siendo el primero de los objetos sobreescrito con el resultado. En caso de
-     * que exista un mismo atributo en los dos objetos, el valor final será el del
-     * segundo objeto, perdiendose el valor del primer objeto.
-     *
-     * @param {Object} obj1 objeto base.
-     * @param {Object} obj2 objeto modificador. En caso de que este argumento sea
-     * null, esta función no hará nada.
-     *
-     * @return obj1 modificado
-     */
-    Utils.merge = function merge(obj1, obj2) {
-        if (obj2 != null) {
-
-            for (var key in obj2) {
-                obj1[key] = obj2[key];
-            }
-        }
-
-        return obj1;
     };
 
     /**
@@ -1101,6 +1058,118 @@ if (window.StyledElements == null) {
 
     var getNodes = function getNodes(value) {
         return (value instanceof StyledElements.StyledElement && value.get() == null) ? value.children : [value];
+    };
+
+    // ==================================================================================
+    // OBJECT HELPERS
+    // ==================================================================================
+
+    /**
+     * Checks if `value` is an empty object. Objects are considered empty if they have no
+     * own enumerable properties. Arrays or strings are considered empty if they have a
+     * `length` of `0`.
+     * @since 0.5
+     *
+     * @param {*} value Reference to check.
+     * @returns {Boolean} True if `value` is empty.
+     *
+     * @example
+     *
+     * isEmpty(null);
+     * => true
+     *
+     * isEmpty(true);
+     * => true
+     *
+     * isEmpty(1);
+     * => true
+     *
+     * isEmpty("hello world");
+     * => false
+     *
+     * isEmpty([1, 2, 3]);
+     * => false
+     *
+     * isEmpty({'a': 1});
+     * => false
+     */
+    Utils.isEmpty = function isEmpty(value) {
+        return value == null || Object.keys(value).length === 0;
+    };
+
+    /**
+     * Merges own enumerable properties of source objects `sources` into the destination
+     * object `object`. Source objects are applied from left to right. Source objects
+     * that resolve to `undefined` or `null` are skipped. Subsequent sources overwrite
+     * property assignments of previous sources.
+     * @since 0.5
+     *
+     * @param {Object} object The destination object.
+     * @param {...Object} [sources] The source object(s).
+     * @returns {Object} The reference to `object`.
+     *
+     * @example
+     *
+     * var defaults = {
+     *   depth: 0,
+     *   state: "default",
+     *   events: ["click", "focus"]
+     * };
+     *
+     * var options = {
+     *   state: "primary",
+     *   events: ["mouseover"]
+     * };
+     *
+     * merge({}, defaults, options);
+     * => {depth: 0, state: "primary", events: ["mouseover"]}
+     *
+     * defaults;
+     * => {depth: 0, state: "default", events: ["click", "focus"]}
+     *
+     * merge(defaults, options);
+     * => {depth: 0, state: "primary", events: ["mouseover"]}
+     *
+     * defaults;
+     * => {depth: 0, state: "primary", events: ["mouseover"]}
+     */
+    Utils.merge = function merge(object) {
+
+        if (object == null) {
+            throw new TypeError("The argument `object` must be an `Object`.");
+        }
+
+        Array.prototype.slice.call(arguments, 1).forEach(function (source) {
+            if (source != null) {
+                Object.keys(source).forEach(function (key) {
+                    object[key] = source[key];
+                });
+            }
+        });
+
+        return object;
+    };
+
+    /**
+     * Creates an array of the `object` own enumerable property values.
+     * @since 0.5
+     *
+     * @param {Object} object The object to query.
+     * @returns {Array} The array of property values.
+     *
+     * @example
+     *
+     * values({one: 1, two: 2, three: 3});
+     * => [1, 2, 3]
+     */
+    Utils.values = function values(object) {
+        var values = [];
+
+        for (var key in object) {
+            values.push(object[key]);
+        }
+
+        return values;
     };
 
     StyledElements.Utils = Utils;

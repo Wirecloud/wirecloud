@@ -110,6 +110,22 @@
 
         });
 
+        it("should handle string entries", function () {
+            var element = new StyledElements.Select();
+
+            element.addEntries(["a", "b", "c"]);
+            expect(element.value).toBe("a");
+            expect(element.getLabel()).toBe("a");
+        });
+
+        it("should handle number entries", function () {
+            var element = new StyledElements.Select();
+
+            element.addEntries([1, 2, 3]);
+            expect(element.value).toBe(1);
+            expect(element.getLabel()).toBe("1");
+        });
+
         it("should support changing the value using the setValue method", function () {
 
             var element = new StyledElements.Select({
