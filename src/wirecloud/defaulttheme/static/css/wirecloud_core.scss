@@ -252,36 +252,6 @@ body {
     display: inline-block;
 }
 
-.parametrizable_input > .readOnlyIcon, .parametrizable_input > .visibilityIcon {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    margin: 3px;
-    vertical-align: bottom;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: 0px 0px;
-}
-
-.parametrizable_input > .readOnlyIcon {
-    background-image: url(../images/icons-sprite.png);
-    background-position: -48px -552px;
-}
-
-.parametrizable_input > .readOnlyIcon.readOnly {
-    background-image: url(../images/icons-sprite.png);
-    background-position: -24px -552px;
-}
-
-.parametrizable_input > .visibilityIcon {
-    background-image: none;
-}
-
-.parametrizable_input > .visibilityIcon.visible {
-    background-image: url(../images/icons-sprite.png);
-    background-position: -48px -384px;
-}
-
 .clearfloats {
     clear: both;
 }
