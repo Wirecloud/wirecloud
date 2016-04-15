@@ -244,17 +244,17 @@
 
 
         if (options['class'] != null) {
-            className = utils.appendWord('se-model-table', options['class']);
+            className = utils.appendWord('se-model-table full', options['class']);
         } else {
-            className = 'se-model-table';
+            className = 'se-model-table full';
         }
-        this.layout = new StyledElements.BorderLayout({'class': className});
+        this.layout = new StyledElements.VerticalLayout({'class': className});
         this.wrapperElement = this.layout.wrapperElement;
 
         /*
          * Header
          */
-        this.header = this.layout.getNorthContainer();
+        this.header = this.layout.north;
         this.header.addClassName('se-model-table-headrow');
 
         buildHeader.call(this);
@@ -264,13 +264,13 @@
          */
         this.pComponents = [];
         this.pListeners = [];
-        this.tableBody = this.layout.getCenterContainer();
+        this.tableBody = this.layout.center;
         this.tableBody.addClassName('se-model-table-body');
 
         /*
          * Status bar
          */
-        this.statusBar = this.layout.getSouthContainer();
+        this.statusBar = this.layout.south;
         this.statusBar.addClassName('se-model-table-statusrow');
 
         this.sortColumn = null;
