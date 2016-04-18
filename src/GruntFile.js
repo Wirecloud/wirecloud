@@ -24,6 +24,10 @@
  * version and passing the tests for this framework
  */
 
+var dependencies = [
+    'wirecloud/commons/static/js/lib/moment-with-locales.min.js'
+];
+
 var styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/Utils.js',
     'wirecloud/commons/static/js/StyledElements/Event.js',
@@ -102,6 +106,7 @@ module.exports = function (grunt) {
             test: {
                 src: styledElementsFiles,
                 options: {
+                    vendor: dependencies,
                     specs: ['js_tests/*Spec.js']
                 }
             },

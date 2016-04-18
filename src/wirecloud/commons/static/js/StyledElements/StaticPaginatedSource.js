@@ -114,6 +114,9 @@
                     value1 = getFieldValue(value1, this.field);
                     try {
                         value1 = parseDate(value1);
+                        if (isNaN(value1.getTime())) {
+                            throw new Error();
+                        }
                     } catch (e) {
                         value1 = new Date(0);
                     }
@@ -121,6 +124,9 @@
                     value2 = getFieldValue(value2, this.field);
                     try {
                         value2 = parseDate(value2);
+                        if (isNaN(value2.getTime())) {
+                            throw new Error();
+                        }
                     } catch (e2) {
                         value2 = new Date(0);
                     }

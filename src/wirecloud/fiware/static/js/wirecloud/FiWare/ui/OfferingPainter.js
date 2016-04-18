@@ -149,7 +149,7 @@
             },
             'publicationdate': function () {
                 if (offering.publicationdate != null) {
-                    return offering.publicationdate.strftime('%x');
+                    return moment(offering.publicationdate).fromNow();
                 } else {
                     return utils.gettext('N/A');
                 }

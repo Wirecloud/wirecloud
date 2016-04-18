@@ -112,7 +112,7 @@
 
                 return label;
             },
-            'lastupdate': function () { return resource.date.strftime('%x'); },
+            'lastupdate': function () { return moment(resource.date).fromNow(); },
             'home': function () {
                 var button;
 
