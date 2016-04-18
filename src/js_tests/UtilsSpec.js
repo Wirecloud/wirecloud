@@ -27,6 +27,12 @@
 
     "use strict";
 
+    var check_simple_call = function check_simple_call(label, method, args, expected_result) {
+        it(label, function () {
+            expect(method.apply(StyledElements.Utils, args)).toBe(expected_result);
+        });
+    };
+
     describe("Styled Element Utils - Object helpers", function () {
 
         describe("isEmpty(value)", function () {
@@ -121,6 +127,25 @@
             it("returns array of object property values", function () {
                 expect(values({one: 1, two: 2, tree: 3})).toEqual([1, 2, 3]);
             });
+        });
+
+        describe("formatSize(size)", function () {
+            var formatSize = StyledElements.Utils.formatSize;
+
+            check_simple_call("should format work without passing arguments", formatSize, [], 'N/A');
+            check_simple_call("should format `null` correctly", formatSize, [null], 'N/A');
+            check_simple_call("should format 0 as 0 bytes", formatSize, [0], '0 bytes');
+            check_simple_call("should format 1023 as 1023 bytes", formatSize, [1023], '1023 bytes');
+            check_simple_call("should format 1536 as 1.5 KB", formatSize, [1536], '1.5 KB');
+            check_simple_call("should format 1024 as 1 KB", formatSize, [1024], '1 KB');
+            check_simple_call("should format 1047552 as 1023 KB", formatSize, [1047552], '1023 KB');
+            check_simple_call("should format 1048576 as 1 MB", formatSize, [1048576], '1 MB');
+            check_simple_call("should format 1488978 as 1.42 MB", formatSize, [1488978], '1.42 MB');
+            check_simple_call("should format 1488978 as 1 MB when using 3 decimals", formatSize, [1488978, 3], '1.42 MB');
+            check_simple_call("should format 1072693248 as 1023 MB", formatSize, [1072693248], '1023 MB');
+            check_simple_call("should format 1073741824 as 1 GB", formatSize, [1073741824], '1 GB');
+            check_simple_call("should format 1098437885952 as 1023 GB", formatSize, [1098437885952], '1023 GB');
+            check_simple_call("should format 1099511627776 as 1 TB", formatSize, [1099511627776], '1 TB');
         });
     });
 

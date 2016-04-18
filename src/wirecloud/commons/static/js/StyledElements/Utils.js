@@ -842,7 +842,8 @@ if (window.StyledElements == null) {
             size = size / 1024;
         }
 
-        return size.toFixed(2) + ' ' + SIZE_UNITS[i];
+        size = Math.round(size * 100) / 100;
+        return size + ' ' + SIZE_UNITS[i];
     };
 
     // ==================================================================================
