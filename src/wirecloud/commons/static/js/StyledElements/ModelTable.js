@@ -486,7 +486,12 @@
         tooltip.bind(element);
 
         // Update the realite date
-        setInterval(function () {
+        var timer = setInterval(function () {
+            // Clear timer if deleted.
+            if (!element.ownerDocument.body.contains(element)) {
+                clearInterval(timer);
+            }
+
             var newTime = m.fromNow();
             if (element.textContent !== newTime) {
                 element.textContent = newTime;
