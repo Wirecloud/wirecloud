@@ -69,13 +69,13 @@
 
                 group.addEventListener('btncreate.click', createcomponent_onclick.bind(this));
 
-                if (utils.isObject(this.components.operator[group.id])) {
+                if (this.components.operator[group.id] != null) {
                     for (var id in this.components.operator[group.id]) {
                         group.addComponent(this.components.operator[group.id][id]);
                     }
                 }
 
-                if (utils.isObject(this.components.widget[group.id])) {
+                if (this.components.widget[group.id] != null) {
                     for (var id in this.components.widget[group.id]) {
                         group.addComponent(this.components.widget[group.id][id]);
                     }
