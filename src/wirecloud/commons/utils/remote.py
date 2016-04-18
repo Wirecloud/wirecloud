@@ -1847,7 +1847,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     @property
     def search_field(self):
-        return FieldTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components > .se-text-field"))
+        return FieldTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-panel-components .se-text-field"))
 
     @property
     def alert(self):
