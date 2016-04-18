@@ -21,6 +21,7 @@
 
 /* jshint jasmine:true */
 /* globals StyledElements */
+/* jshint -W053 */
 
 (function () {
 
