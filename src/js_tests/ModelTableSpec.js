@@ -30,8 +30,13 @@
 
         var dom = null, table = null;
 
-        var create_basic_field_test = function create_basic_field_test(label, value, expected) {
+        var create_basic_field_test = function create_basic_field_test(label, value, expected, custom_conf) {
             it(label, function () {
+
+                if (custom_conf) {
+                    table = new StyledElements.ModelTable(custom_conf);
+                }
+
                 // Create and push the data
                 var data = [
                     {test: value}
@@ -246,19 +251,32 @@
                 {field: "test", sortable: true, type: "date"}
             ];
 
+            var dateParser = function dateParser (date) {
+                return new Date(date);
+            };
+
+            var dateparser_columns = [
+                {field: "test", sortable: true, type: "date", dateparser: dateParser}
+            ];
+
             beforeEach(function () {
                 // Create a new table using the defaults options
                 table = new StyledElements.ModelTable(columns);
 
-                var baseTime = new Date(2016, 4, 14);
+                var baseTime = new Date(1463184000000); // new Date(2016, 4, 14);
+                jasmine.clock().install();
                 jasmine.clock().mockDate(baseTime);
+            });
+
+            afterEach(function () {
+                jasmine.clock().uninstall();
             });
 
             var date3 = 1359590400000;
             var date3_rendered = "<span>3 years ago</span>";
             var date2 = new Date(1330387200000);
             var date2_rendered = "<span>4 years ago</span>";
-            var date1 = "2011-02-20T00:00:00.000Z";
+            var date1 = "2011-02-20T00:00:05.000Z";
             var date1_rendered = "<span>5 years ago</span>";
 
             create_basic_field_test('null values should be handled correctly', null, "");
@@ -266,30 +284,27 @@
             create_basic_field_test('timestamps should be handled correctly', date1, date1_rendered);
             create_basic_field_test('date instances should be handled correctly', date2, date2_rendered);
             create_basic_field_test('string should be handled correctly', date2, date2_rendered);
+            create_basic_field_test('should accept custom date parsing functions', date1, date1_rendered, dateparser_columns);
             create_sort_test('should be sortable', [date2, null, date1, date3], ["", date1_rendered, date2_rendered, date3_rendered]);
-        });
 
-        describe("", function () {
+            it("should update date columns", function () {
 
-            var dateParser = function dateParser (date) {
-                return new Date(date);
-            };
+                var date_base = "2016-05-14T00:00:00.000Z";
+                var initial_expected = "<span>a few seconds ago</span>";
+                var expected = "<span>a minute ago</span>";
+                var data = [
+                    {test: date_base}
+                ];
 
-            var columns = [
-                {field: "test", sortable: true, type: "date", dateparser: dateParser}
-            ];
+                table.source.changeElements(data);
 
-            beforeEach(function () {
-                // Create a new table using the defaults options
-                table = new StyledElements.ModelTable(columns);
-                var baseTime = new Date(2016, 4, 14);
-                jasmine.clock().mockDate(baseTime);
+                expect(table.columnsCells[0][0].innerHTML).toBe(initial_expected);
+
+                jasmine.clock().tick(61000);
+
+                expect(table.columnsCells[0][0].innerHTML).toBe(expected);
+
             });
-
-            var date1 = "2011-02-20T00:00:00.000Z";
-            var date1_rendered = "<span>5 years ago</span>";
-
-            create_basic_field_test('should accept custom date parsing functions', date1, date1_rendered);
         });
 
         describe("should handle element selection", function () {
