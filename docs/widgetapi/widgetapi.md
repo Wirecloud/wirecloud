@@ -155,6 +155,10 @@ var request = MashupPlatform.http.makeRequest('http://api.example.com', {
   Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)
   headers, and thus, you want to make a request without using the cross-domain
   proxy if possible.
+- `withCredentials` (*boolean; default `false`*): Indicates whether or not
+  cross-site `Access-Control` requests should be made using credentials such as
+  cookies or authorization headers. In addition, this flag is also used to
+  indicate when cookies are to be ignored in the response.
 - `forceProxy` (*boolean; default `false`*): Sends the request through the proxy
   regardless of the other options passed.
 - `context` (*object; default `null`*): The value to be passed as
