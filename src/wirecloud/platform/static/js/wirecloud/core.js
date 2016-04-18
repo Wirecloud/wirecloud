@@ -202,6 +202,7 @@
                     onSuccess: function (response) {
                         Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(response.responseText));
                         LayoutManagerFactory.getInstance()._init();
+                        moment.locale(Wirecloud.contextManager.get('language'));
                         Wirecloud.trigger('contextloaded');
                         checkPlatformReady();
                     }
