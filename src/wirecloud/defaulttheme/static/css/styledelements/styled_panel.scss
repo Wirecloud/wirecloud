@@ -60,10 +60,13 @@
     }
 }
 
+.panel-heading > :last-child {
+    margin-bottom: 0;
+}
+
 .panel-title {
     position: relative;
     display: block;
-    font-weight: "bold";
     overflow: hidden;
     margin-top: 0;
     margin-bottom: 0;

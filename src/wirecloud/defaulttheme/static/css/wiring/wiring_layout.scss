@@ -26,57 +26,15 @@
 // WIRING SIDEBAR - PANEL
 // ============================================================================
 
-.wiring-sidebar > .panel {
-    @include positioned-element(0, 0, 0, 0);
-    margin-bottom: 0px;
-    background-color: $panel-default-heading-bg;
-    border-radius: 0px;
-    padding: $panel-padding-vertical $panel-padding-horizontal;
-    box-shadow: $panel-box-shadow;
-
-    & > .panel-heading {
-        padding: 0px 0px $panel-padding-vertical;
-        border-radius: 0px;
-    }
-
-    & > .panel-body {
-        @include positioned-element(40px, $panel-padding-horizontal, $panel-padding-vertical, $panel-padding-horizontal);
-        border: solid 1px $panel-default-border-color;
-        box-shadow: $panel-box-shadow-inset;
-        background-color: $panel-bg;
-        overflow-y: scroll;
-
-        .section {
-            position: relative;
-            display: block;
-        }
-    }
-}
-
-.wiring-sidebar > .panel-behaviours {
-
-    & > .panel-heading .panel-title {
-        float: left;
-        width: 90%;
-    }
-
-    &.disabled {
-        opacity: 1;
-    }
-}
-
 .we-panel-components {
 
     .se-text-field {
-        margin: 0 0 $margin-vertical-base;
+        margin: $margin-vertical-base 0;
         width: 100%;
     }
 
     .widget_wallet_list {
-        padding: ($panel-padding-horizontal / 2);
-        background-color: #FFF;
-        border: 1px solid $panel-default-border-color;
-        border-radius: ($panel-border-radius / 2);
+        position: relative;
 
         .alert {
             margin: 0 0 $margin-vertical-base;
@@ -84,10 +42,14 @@
     }
 }
 
-.wiring-sidebar > .panel-behaviours:not(.disabled) {
+.we-panel-behaviours {
 
-    & > .panel-body {
-        top: 80px;
+    .panel-heading .btn-group {
+        margin-top: $margin-vertical-base;
+    }
+
+    &.disabled {
+        opacity: 1;
     }
 }
 

@@ -39,6 +39,7 @@
     ns.BehaviourEngine = utils.defineClass({
 
         constructor: function BehaviourEngine() {
+            this.superClass(events);
             var note;
 
             this.btnEnable = new se.Button({
@@ -48,16 +49,7 @@
             });
             this.btnEnable.on('click', btnenable_onclick.bind(this));
 
-            this.superClass({
-                events: events,
-                extraClass: "panel-behaviours",
-                title: gettext("Behaviours"),
-                buttons: [this.btnEnable]
-            });
-
-            this.btnGroupElement = document.createElement('div');
-            this.btnGroupElement.className = "btn-group pull-right";
-            this.wrapperElement.appendChild(this.btnGroupElement);
+            this.body = new se.Container({class: "panel-body se-vl-center-container"});
 
             this.btnCreate = new se.Button({
                 title: gettext("Create behaviour"),
@@ -65,7 +57,6 @@
                 iconClass: "icon-plus"
             });
             this.btnCreate.on('click', btncreate_onclick.bind(this));
-            this.btnCreate.appendTo(this.btnGroupElement);
 
             this.btnOrder = new se.ToggleButton({
                 title: gettext("Order behaviours"),
@@ -73,8 +64,13 @@
                 iconClass: "icon-sort"
             });
             this.btnOrder.on('click', btnorder_onclick.bind(this));
-            this.btnOrder.appendTo(this.btnGroupElement);
             this.btnOrder.disable();
+
+            this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.behaviour_sidebar, {
+                btnenable: this.btnEnable,
+                buttons: new se.Fragment([this.btnCreate, this.btnOrder]),
+                panelbody: this.body
+            }).children[1];
 
             Object.defineProperties(this, {
                 orderingEnabled: {
@@ -101,7 +97,7 @@
             this.components = {operator: {}, widget: {}};
         },
 
-        inherit: se.Panel,
+        inherit: se.StyledElement,
 
         statics: {
 
@@ -124,14 +120,14 @@
                         .replaceIconClass('icon-lock', 'icon-unlock');
                     this.btnCreate.show();
                     this.body.removeChild(this.disabledAlert);
-                    this.wrapperElement.appendChild(this.btnGroupElement);
+                    this.btnCreate.get().parentElement.classList.remove('hidden');
                 } else {
                     this.btnEnable
                         .setTitle(gettext("Enable"))
                         .replaceIconClass('icon-unlock', 'icon-lock');
                     this.btnCreate.hide();
                     this.body.appendChild(this.disabledAlert);
-                    this.wrapperElement.removeChild(this.btnGroupElement);
+                    this.btnCreate.get().parentElement.classList.add('hidden');
                     this.stopOrdering();
                 }
 
