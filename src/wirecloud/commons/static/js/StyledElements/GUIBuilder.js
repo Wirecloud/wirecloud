@@ -113,7 +113,7 @@
         var options, options_element;
 
         options = null;
-        options_element = StyledElements.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', 'options');
+        options_element = element.getElementsByTagNameNS(NAMESPACE, 'options')[0];
         if (options_element != null) {
             options_element.parentNode.removeChild(options_element);
             try {
@@ -124,10 +124,10 @@
         return options;
     };
 
-    populateContainer = function populateContainer(builder, element, xpath, container, tcomponents, context) {
+    populateContainer = function populateContainer(builder, element, tag_name, container, tcomponents, context) {
         var container_element, fragment, options;
 
-        container_element = StyledElements.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', xpath);
+        container_element = element.getElementsByTagNameNS(NAMESPACE, tag_name)[0];
 
         if (container_element != null) {
             options = extractOptions(container_element);

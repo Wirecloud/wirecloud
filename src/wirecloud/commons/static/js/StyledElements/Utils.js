@@ -527,25 +527,6 @@ if (window.StyledElements == null) {
 
     }
 
-    if (document.evaluate) {
-        Utils.XML.getChildElementByTagNameNS = function getChildElementByTagNameNS(element, ns, tagName) {
-            var xpathResult = element.ownerDocument.evaluate('s:' + tagName, element, function (namespace) { return namespace === 's' ? ns : null; }, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-            return xpathResult.singleNodeValue;
-        };
-    } else {
-        Utils.XML.getChildElementByTagNameNS = function getChildElementByTagNameNS(element, ns, tagName) {
-            var i, currentChild;
-
-            for (i = 0; i < element.childNodes.length; i++) {
-                currentChild = element.childNodes[i];
-                if (currentChild.namespaceURI === ns && currentChild.localName === tagName) {
-                    return currentChild;
-                }
-            }
-            return null;
-        };
-    }
-
     /**
      * @experimental
      */

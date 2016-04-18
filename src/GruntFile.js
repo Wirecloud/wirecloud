@@ -106,7 +106,7 @@ module.exports = function (grunt) {
             test: {
                 src: styledElementsFiles,
                 options: {
-                    vendor: dependencies,
+                    vendor: dependencies.concat(['js_tests/vendor/*.js']),
                     specs: ['js_tests/*Spec.js']
                 }
             },
