@@ -43,8 +43,8 @@
 
 .widget_wallet_list {
     position: absolute;
-    top: ($input-height-base + (2 * $nav-link-padding-vertical) + $line-height-base + (3 * 6));
-    bottom: ((2 * $padding-vertical-base) + $line-height-base + 14);
+    top: 0px;
+    bottom: 0px;
     left: 0px;
     right: 0px;
     overflow-x: hidden;
@@ -56,10 +56,6 @@
 }
 
 .widget_wallet_addmore {
-    position: absolute;
-    bottom: 0px;
-    left: 1px;
-    right: 1px;
     text-align: right;
     white-space: nowrap;
 }

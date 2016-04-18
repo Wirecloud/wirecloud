@@ -154,6 +154,9 @@
             }.bind(this),
             list: this._list
         }, options.extra_template_context)).elements[1];
+        if (this.wrapperElement instanceof StyledElements.StyledElement) {
+            this.wrapperElement = this.wrapperElement.get();
+        }
 
         Object.defineProperties(this, {
             'inputField': {value: input},

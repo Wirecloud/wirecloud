@@ -1,9 +1,24 @@
 <s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
-    <div class="widget_wallet">
+    <s:verticallayout>
 
-        <div class="widget_wallet_header"><div class="top"><t:closebutton/><t:scope/></div><t:searchinput/></div>
-        <t:list/>
-        <t:addmore/>
+        <s:options>{"class": "widget_wallet"}</s:options>
 
-    </div>
+        <s:northcontainer>
+
+            <s:options>{"class": "widget_wallet_header"}</s:options>
+
+            <div class="top"><t:closebutton/><t:scope/></div>
+            <t:searchinput/>
+
+        </s:northcontainer>
+
+        <s:centercontainer>
+            <t:list/>
+        </s:centercontainer>
+
+        <s:southcontainer>
+            <t:addmore/>
+        </s:southcontainer>
+
+    </s:verticallayout>
 </s:styledgui>
