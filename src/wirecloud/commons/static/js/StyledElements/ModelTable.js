@@ -487,7 +487,10 @@
 
         // Update the realite date
         setInterval(function () {
-            element.textContent = m.fromNow();
+            var newTime = m.fromNow();
+            if (element.textContent !== newTime) {
+                element.textContent = newTime;
+            }
         }, 1000);
 
         return element;
