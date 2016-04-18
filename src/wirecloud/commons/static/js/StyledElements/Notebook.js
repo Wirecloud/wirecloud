@@ -353,7 +353,7 @@
         this.tabsById[tabId] = tab;
 
         var tabElement = tab.getTabElement();
-        this.tabArea.appendChild(tabElement, this.new_tab_button_tabs);
+        this.tabArea.prependChild(tabElement, this.new_tab_button_tabs);
         tab.insertInto(this.contentArea);
         if (this.maxTabElementWidth == null) {
             this._computeMaxTabElementWidth();
