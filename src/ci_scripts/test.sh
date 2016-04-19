@@ -58,8 +58,8 @@ python manage.py collectstatic -v 0 --noinput
 
 # Pass the tests
 # pip install ipdb
-cat ${WORKSPACE}/src/ci_scripts/test_settings3_short.py >> virtenv_test/settings.py
-${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/fp74caast/*,*/wirecloud/semanticwiring/*,*/tests/*,*/tests.py" manage.py test --liveserver=172.17.0.3:28081 --noinput --with-xunit --nologcapture -v 2 #-a tags="docker"
+cat ${WORKSPACE}/src/ci_scripts/base_settings.py >> virtenv_test/settings.py
+${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/fp74caast/*,*/wirecloud/semanticwiring/*,*/tests/*,*/tests.py" manage.py test --liveserver=${IP_ADDR}:28081 --noinput --with-xunit --nologcapture -v 2 #-a tags="docker"
 
 mv .coverage ../virtenv/lib/python${PY_VERSION}/site-packages; cd ../virtenv/lib/python${PY_VERSION}/site-packages; ${WORKSPACE}/virtenv/bin/coverage xml; mv coverage.xml ${WORKSPACE}; cd ${WORKSPACE}
 sed -i 's/<source>.*<\/source>/<source>src<\/source>/' coverage.xml
