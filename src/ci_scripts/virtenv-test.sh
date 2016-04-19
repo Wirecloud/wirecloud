@@ -15,7 +15,7 @@ RADON_CMD=${WORKSPACE}/virtenv/bin/radon
 # Prepip scripts
 for conf in $*
 do
-    file="${WORKSPACE}/src/ci-scripts/db/${conf}-prepip.sh"
+    file="${WORKSPACE}/src/ci_scripts/db/${conf}-prepip.sh"
     if [[ -x "$file" ]]
     then
     	$file
@@ -41,7 +41,7 @@ cd virtenv_test
 # And configure it
 for conf in $*
 do
-file="${WORKSPACE}/src/ci-scripts/db/${conf}-prepare.sh"
+file="${WORKSPACE}/src/ci_scripts/db/${conf}-prepare.sh"
 if [[ -x "$file" ]]
 then
     $file virtenv_test
@@ -58,7 +58,7 @@ python manage.py collectstatic -v 0 --noinput
 
 # Pass the tests
 # pip install ipdb
-cat ${WORKSPACE}/src/ci-scripts/test_settings3_short.py >> virtenv_test/settings.py
+cat ${WORKSPACE}/src/ci_scripts/test_settings3_short.py >> virtenv_test/settings.py
 ${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/fp74caast/*,*/wirecloud/semanticwiring/*,*/tests/*,*/tests.py" manage.py test --liveserver=172.17.0.3:28081 --noinput --with-xunit --nologcapture -v 2 #-a tags="docker"
 
 mv .coverage ../virtenv/lib/python${PY_VERSION}/site-packages; cd ../virtenv/lib/python${PY_VERSION}/site-packages; ${WORKSPACE}/virtenv/bin/coverage xml; mv coverage.xml ${WORKSPACE}; cd ${WORKSPACE}

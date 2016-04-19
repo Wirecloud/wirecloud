@@ -6,4 +6,4 @@ pip install psycopg2
 dropdb -U ${DB_USER} ${DB_USER} --if-exist
 createdb -U ${DB_USER} ${DB_USER}
 
-cat ${WORKSPACE}/src/ci-scripts/db/postgres-conf.template >> $1/settings.py
+cat ${WORKSPACE}/src/ci_scripts/db/postgres-conf.template >> $1/settings.py
