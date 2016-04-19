@@ -23,7 +23,7 @@ do
 done
 
 # Build and install WireCloud
-pip install wheel
+pip install -U setuptools wheel
 cd ${WORKSPACE}/src; ./setup.py bdist_wheel; cd ..
 pip install ${WORKSPACE}/src/dist/wirecloud*-py2.py3-none-any.whl
 
