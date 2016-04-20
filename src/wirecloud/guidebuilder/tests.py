@@ -19,16 +19,16 @@
 
 import os
 import time
-import shutil
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.utils.remote import ButtonTester, FormModalTester
+from wirecloud.commons.utils.remote import ButtonTester, FormModalTester, MACFieldTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case, DynamicWebServer, LocalFileSystemServer, RealWebServer, uses_extra_workspace
 from wirecloud.catalogue.models import CatalogueResource
 
@@ -50,10 +50,7 @@ DENSITY_FACTOR = 2 if RETINA_IMAGES else 1
 # Common functions
 
 
-def image_path(name='Wirecloud_UG.png', extra=None, resource=False, prepath=None):
-    if extra is not None:
-        name = name if not name.endswith('.png') else name[:-4]
-        name = '{}_{}.png'.format(name, extra) if name != "" else "{}.png".format(extra)
+def image_path(name, resource=False, prepath=None):
     name = name if name.endswith('.png') else "{}.png".format(name)
     if not resource:
         basepath = os.path.join(settings.BASEDIR, USER_GUIDE_IMAGES_PATH)
@@ -66,8 +63,8 @@ def image_path(name='Wirecloud_UG.png', extra=None, resource=False, prepath=None
     return os.path.join(basepath, name)
 
 
-def take_capture(driver, name='Wirecloud_UG.png', extra=None, prepath=None):
-    path = image_path(name, extra, prepath=prepath)
+def take_capture(driver, name, prepath=None):
+    path = image_path(name, prepath=prepath)
     driver.save_screenshot(path)
     return path
 
@@ -201,7 +198,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             'static.example.com': LocalFileSystemServer(market_path_base('responses', 'static')),
             'store.example.com': DynamicWebServer(fallback=LocalFileSystemServer(market_path_base('responses', 'store'))),
             'store2.example.com': DynamicWebServer(fallback=LocalFileSystemServer(market_path_base('responses', 'store2'))),
-            'orion.lab.fiware.org:1026': RealWebServer()
+            'orion.lab.fiware.org:1026': RealWebServer(),
+            'api.wunderground.com': RealWebServer(),
         },
         'https': {
             'ngsiproxy.lab.fiware.org': RealWebServer()
@@ -393,7 +391,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "upload_button")
             add_pointer(imgp, get_position(btn, 0.5, 0.5))
-            crop_down(imgp, myresources.search_in_results('Map Viewer').element, 80)
+            crop_down(imgp, myresources.search_in_results('Map Viewer'), 80)
 
             # Upload dialog
             btn.click()
@@ -1015,3 +1013,95 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 crop_image(imgp, left=panelheads[0], upper=panelheads[1], right=get_position(tooltip, 1.0, 1.0)[0] + 10, lower=get_position(tooltip, 1.0, 1.0)[1] + 10)
 
     test_behaviour_mashup.tags = ('wirecloud-guide', 'ui-behaviour')
+
+    def test_sanity_check(self):
+
+        def take_capture(*args, **kargs):
+            return midd_take_capture(*args, prepath="../installation_guide", **kargs)
+
+        # Intitialization
+        self.driver.set_window_size(1024, 768)
+
+        # Login screen
+        url = self.live_server_url
+        url += reverse('login')
+        self.driver.get(url)
+        self.wait_element_visible_by_css_selector('#id_username')
+
+        time.sleep(0.3)
+        imgp = take_capture(self.driver, "login")
+        crop_down(imgp, self.driver.find_element_by_css_selector('body'), 80)
+
+        # Log into WireCloud
+        self.login()
+
+        # My Resources button
+        btn = self.driver.find_element_by_css_selector(
+            '.wc-toolbar .icon-archive')
+        ActionChains(self.driver).move_to_element(btn).perform()
+        time.sleep(0.3)  # wait tooltip animation
+        imgp = take_capture(self.driver, "my_resources_button")
+        add_pointer(imgp, get_position(btn, 0.8, 0.5))
+        crop_down(imgp, self.driver.find_element_by_css_selector('.emptyWorkspaceInfoBox'))
+
+        with self.myresources_view as myresources:
+
+            # Upload button
+            btn = self.driver.find_element_by_css_selector('.wc-toolbar .icon-cloud-upload')
+            ActionChains(self.driver).move_to_element(btn).perform()
+            time.sleep(0.3)  # wait tooltip animation
+            imgp = take_capture(self.driver, "upload_button")
+            add_pointer(imgp, get_position(btn, 0.5, 0.5))
+            crop_down(imgp, self.driver.find_element_by_css_selector('.catalogueEmptyBox'))
+
+            myresources.upload_resource('CoNWeT_weather-mashup-example_1.0.2.wgt', 'Weather Mashup Example')
+
+            # Used resources
+            myresources.search('')
+            time.sleep(0.3)
+            imgp = take_capture(self.driver, "used_resources")
+            crop_down(imgp, myresources.search_in_results('Weather Mashup Example'))
+
+            # Back button
+            catalogue_base_element = myresources.wait_catalogue_ready()
+            btn = self.driver.find_element_by_css_selector('.wirecloud_header_nav .btn-back')
+            ActionChains(self.driver).move_to_element(btn).perform()
+            time.sleep(0.3)  # wait tooltip animation
+            imgp = take_capture(self.driver, "back_button")
+            add_pointer(imgp, get_position(btn, 0.5, 0.5))
+            crop_down(imgp, catalogue_base_element.find_element_by_css_selector('.simple_search_text'), 80)
+
+        # Capture new workspace entry
+        menu = self.open_menu()
+        newworkspace_menu = menu.get_entry('New workspace')
+        ActionChains(self.driver).move_to_element(newworkspace_menu).perform()
+        time.sleep(0.2) # Wait hover effect
+        imgp = take_capture(self.driver, 'new_workspace_entry')
+        add_pointer(imgp, get_position(newworkspace_menu, 0.8, 0.5))
+        crop_down(imgp, menu)  # Crop down the Image
+
+        # New workspace dialog
+        newworkspace_menu.click()
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector('.window_menu.new_workspace'))
+
+        with MACFieldTester(self, form.element.find_element_by_css_selector('.se-mac-field')) as select_dialog:
+            resource = select_dialog.search_in_results('Weather Mashup Example')
+            resource.select()
+
+        time.sleep(0.3)
+        imgp = take_capture(self.driver, 'new_workspace_dialog')
+        crop_image(imgp, *create_box(form))
+
+        form.accept()
+
+        # Final weather dashboard
+        self.wait_wirecloud_ready()
+        for iwidget in self.find_iwidgets():
+            iwidget.wait_loaded()
+
+        time.sleep(3)
+        imgp = take_capture(self.driver, "weather_dashboard")
+
+        import ipdb; ipdb.set_trace()
+        imgp = take_capture(self.driver, "example usage")
+    test_sanity_check.tags = ('wirecloud-guide', 'wirecloud-guide-sanity-check')
