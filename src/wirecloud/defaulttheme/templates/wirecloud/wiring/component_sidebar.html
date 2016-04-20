@@ -5,14 +5,16 @@
     <s:options>{"class": "panel panel-default we-panel-components"}</s:options>
 
     <s:northcontainer>
-        <div class="panel-heading">
-            <div class="panel-title">{% trans "Components" %}</div>
+        <s:options>{"class": "panel-heading"}</s:options>
+        <div class="panel-title">
+            <strong>{% trans "Components" %}</strong>
         </div>
         <t:searchinput/>
         <div class="btn-group btn-group-justified"><t:buttons/></div>
     </s:northcontainer>
 
     <s:centercontainer>
+        <s:options>{"class": "panel-body"}</s:options>
         <t:list/>
     </s:centercontainer>
 

@@ -1794,7 +1794,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
     @property
     def panel(self):
-        return self.testcase.driver.find_element_by_css_selector(".panel-behaviours")
+        return self.testcase.driver.find_element_by_css_selector(".we-panel-behaviours")
 
     def create_behaviour(self, title=None, description=None):
         new_length = len(self.find_behaviours()) + 1

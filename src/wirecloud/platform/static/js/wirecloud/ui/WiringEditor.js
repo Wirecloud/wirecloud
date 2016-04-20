@@ -52,8 +52,8 @@ Wirecloud.ui = Wirecloud.ui || {};
 
             createAndSetUpLayout.call(this);
 
+            Wirecloud.addEventListener('loaded', createAndSetUpBehaviourEngine.bind(this));
             Wirecloud.addEventListener('loaded', createAndSetUpComponentManager.bind(this));
-            createAndSetUpBehaviourEngine.call(this);
             createAndSetUpConnectionEngine.call(this);
 
             this.suggestionManager = new ns.WiringEditor.KeywordSuggestion();
