@@ -353,7 +353,13 @@
         this.tabsById[tabId] = tab;
 
         var tabElement = tab.getTabElement();
-        this.tabArea.prependChild(tabElement, this.new_tab_button_tabs);
+
+        if (this.new_tab_button_tabs != null) {
+            this.tabArea.prependChild(tabElement, this.new_tab_button_tabs);
+        } else {
+            this.tabArea.appendChild(tabElement);
+        }
+
         tab.insertInto(this.contentArea);
         if (this.maxTabElementWidth == null) {
             this._computeMaxTabElementWidth();
