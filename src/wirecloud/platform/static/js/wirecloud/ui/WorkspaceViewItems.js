@@ -40,12 +40,14 @@
             (new Wirecloud.ui.RenameWindowMenu(current_workspace, 'rename')).show();
         }.bind(this));
         items.push(item);
+        item.addIconClass('fa fa-pencil');
         item.setDisabled(current_workspace == null || !current_workspace.isAllowed('rename'));
 
         item = new StyledElements.MenuItem(utils.gettext('Settings'), function () {
             current_workspace.getPreferencesWindow().show();
         });
         items.push(item);
+        item.addIconClass('fa fa-gear');
         item.setDisabled(current_workspace == null || !current_workspace.isAllowed('update_preferences'));
 
         item = new StyledElements.MenuItem(utils.gettext("Remove"), function () {
@@ -58,13 +60,15 @@
                 });
             dialog.show();
         }.bind(this));
-        items.push(item);
+        item.addIconClass('fa fa-trash');
         item.setDisabled(current_workspace == null || !current_workspace.isAllowed('remove'));
+        items.push(item);
 
         item = new StyledElements.MenuItem(utils.gettext('New workspace'), function () {
             var dialog = new Wirecloud.ui.NewWorkspaceWindowMenu();
             dialog.show();
         }.bind(this));
+        item.addIconClass('fa fa-plus');
         items.push(item);
 
         item = new StyledElements.MenuItem(utils.gettext('Embed'), function () {
@@ -72,12 +76,14 @@
             var dialog = new Wirecloud.ui.EmbedCodeWindowMenu(title, current_workspace);
             dialog.show();
         });
+        item.addIconClass('fa fa-share');
         items.push(item);
 
         item = new StyledElements.MenuItem(utils.gettext("Share"), function () {
             var dialog = new Wirecloud.ui.SharingWindowMenu(current_workspace);
             dialog.show();
         });
+        item.addIconClass('fa fa-link');
         item.setDisabled(current_workspace == null || !current_workspace.isAllowed('update_preferences'));
         items.push(item);
 
@@ -90,6 +96,7 @@
             });
         }.bind(this));
         items.push(item);
+        item.addIconClass('fa fa-archive');
         item.setDisabled(current_workspace == null);
 
         return items;

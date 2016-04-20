@@ -19,7 +19,7 @@
  *
  */
 
-/* global LayoutManagerFactory, StyledElements, Wirecloud */
+/* globals LayoutManagerFactory, StyledElements, Wirecloud */
 
 (function (utils) {
 
@@ -36,7 +36,7 @@
     IWidgetMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
     IWidgetMenuItems.prototype.build = function () {
-        var items, item, fulldragboard_label, layout_label;
+        var items, item, fulldragboard_label, fulldragboard_icon, layout_label, layout_icon;
 
         items = [];
 
@@ -46,7 +46,7 @@
                 this.titleelement.enableEdition();
             }.bind(this.view)
         );
-        item.setDisabled(!this.model.isAllowed('rename'));
+        item.addIconClass('fa fa-pencil').setDisabled(!this.model.isAllowed('rename'));
         items.push(item);
 
         item = new StyledElements.MenuItem(
@@ -57,15 +57,18 @@
             }.bind(this.model)
         );
         item.setDisabled(!this.has_prefs || !this.model.isAllowed('configure'));
+        item.addIconClass('fa fa-gear');
         items.push(item);
 
-        items.push(new StyledElements.MenuItem(
+        item = new StyledElements.MenuItem(
             utils.gettext("Logs"),
             function () {
                 var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
                 dialog.show();
             }.bind(this.model)
-        ));
+        );
+        item.addIconClass('fa fa-tags');
+        items.push(item);
 
         item = new StyledElements.MenuItem(
             utils.gettext("Upgrade/Downgrade"),
@@ -74,10 +77,12 @@
                 dialog.show();
             }.bind(this.model)
         );
+        item.addIconClass('fa fa-retweet');
         item.setDisabled(!this.model.isAllowed('upgrade') || !Wirecloud.LocalCatalogue.hasAlternativeVersion(this.model.meta));
         items.push(item);
 
         item = new StyledElements.MenuItem(utils.gettext("Reload"), this.view.reload.bind(this.view))
+        item.addIconClass('fa fa-refresh');
         item.setDisabled(this.model.meta.missing);
         items.push(item);
 
@@ -91,13 +96,16 @@
                     })();
             }.bind(this.model)
         );
+        item.addIconClass('fa fa-book');
         item.setDisabled(this.model.meta.doc === '');
         items.push(item);
 
         if (this.iWidget.isInFullDragboardMode()) {
             fulldragboard_label = utils.gettext("Exit Full Dragboard");
+            fulldragboard_icon = 'fa fa-compress';
         } else {
             fulldragboard_label = utils.gettext("Full Dragboard");
+            fulldragboard_icon = 'fa fa-expand';
         }
         item = new StyledElements.MenuItem(
             fulldragboard_label,
@@ -105,19 +113,23 @@
                 this.setFullDragboardMode(!this.isInFullDragboardMode());
             }.bind(this.iWidget)
         );
+        item.addIconClass(fulldragboard_icon);
         item.setDisabled(!this.model.isAllowed('move'));
         items.push(item);
 
         if (!this.iWidget.isInFullDragboardMode()) {
             if (this.iWidget.onFreeLayout()) {
                 layout_label = utils.gettext("Snap to grid");
+                layout_icon = 'fa fa-sign-in';
             } else {
                 layout_label = utils.gettext("Extract from grid");
+                layout_icon = 'fa fa-sign-out';
             }
             item = new StyledElements.MenuItem(
                 layout_label,
                 this.iWidget.toggleLayout.bind(this.iWidget)
             );
+            item.addIconClass(layout_icon);
             item.setDisabled(!this.model.isAllowed('move'));
             items.push(item);
         }

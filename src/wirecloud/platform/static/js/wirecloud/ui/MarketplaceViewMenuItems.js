@@ -64,7 +64,7 @@
         }
 
         if (!this.loading && !this.error) {
-            items.push(new StyledElements.MenuItem(utils.gettext('Add new marketplace'), function () {
+            item = new StyledElements.MenuItem(utils.gettext('Add new marketplace'), function () {
                 var menu, fields;
 
                 fields = {
@@ -113,7 +113,9 @@
                 }.bind(this);
 
                 menu.show();
-            }.bind(this)));
+            }.bind(this));
+            item.addIconClass('fa fa-plus');
+            items.push(item);
 
             item = new StyledElements.MenuItem(utils.gettext('Delete marketplace'), function () {
                 //First ask if the user really wants to remove the marketplace
@@ -144,6 +146,7 @@
                     }.bind(this));
                 dialog.show();
             }.bind(this));
+            item.addIconClass('fa fa-trash');
             item.setDisabled(current_catalogue == null || !current_catalogue.catalogue || !current_catalogue.catalogue.isAllow('delete'));
             items.push(item);
         }

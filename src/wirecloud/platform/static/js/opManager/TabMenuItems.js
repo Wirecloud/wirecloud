@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -50,33 +50,40 @@
 
         items = [];
 
-        items.push(new StyledElements.MenuItem(
+        item = new StyledElements.MenuItem(
             gettext("Rename"),
             function () {
                 (new Wirecloud.ui.RenameWindowMenu(this, 'updateInfo')).show();
             }.bind(this.tab)
-        ));
+        );
+        item.addIconClass('fa fa-pencil');
+        items.push(item);
 
         if (!this.tab.tabInfo.visible) {
-            items.push(new StyledElements.MenuItem(
+            item = new StyledElements.MenuItem(
                 gettext("Mark as Visible"),
                 this.tab.markAsVisible.bind(this.tab)
-            ));
+            );
+            item.addIconClass('fa fa-bullseye');
+            items.push(item);
         }
 
         item = new StyledElements.MenuItem(
             gettext("Remove"),
             onTabRemove.bind(null, this.tab)
         );
+        item.addIconClass('fa fa-trash');
         items.push(item);
         item.setDisabled(!this.tab.isAllowed('remove'));
 
-        items.push(new StyledElements.MenuItem(
+        item = new StyledElements.MenuItem(
             gettext("Settings"),
             function () {
                 this.getPreferencesWindow().show();
             }.bind(this.tab)
-        ));
+        );
+        item.addIconClass('fa fa-gear');
+        items.push(item);
 
         return items;
     };

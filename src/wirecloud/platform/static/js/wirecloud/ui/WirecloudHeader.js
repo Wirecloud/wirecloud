@@ -63,7 +63,7 @@
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
-        var user_name, user_menu, wrapper, login_button;
+        var user_name, user_menu, wrapper, login_button, item;
 
         user_name = Wirecloud.contextManager.get('username');
         if (user_name === 'anonymous') {
@@ -94,19 +94,23 @@
 
 
             user_menu = this.user_button.getPopupMenu();
-            user_menu.append(new StyledElements.MenuItem(utils.gettext('Settings'), function () {
+            item = new StyledElements.MenuItem(utils.gettext('Settings'), function () {
                 var dialog = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
                 dialog.show();
-            }));
+            });
+            item.addIconClass('fa fa-gear');
+            user_menu.append(item);
 
             if (Wirecloud.contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
-                user_menu.append(new StyledElements.MenuItem(utils.gettext('DJango Admin panel'), function () {
+                item = new StyledElements.MenuItem(utils.gettext('Django Admin panel'), function () {
                     window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
-                }));
+                });
+                item.addIconClass('fa fa-tasks');
+                user_menu.append(item);
             }
 
             if (Wirecloud.contextManager.get('issuperuser') === true) {
-                user_menu.append(new StyledElements.MenuItem(utils.gettext('Switch User'), function () {
+                item = new StyledElements.MenuItem(utils.gettext('Switch User'), function () {
                     var dialog = new Wirecloud.ui.FormWindowMenu([{name: 'username', label: utils.gettext('User'), type: 'text', required: true}], utils.gettext('Switch User'), 'wc-switch-user');
 
                     var typeahead = new Wirecloud.ui.UserTypeahead({autocomplete: true});
@@ -124,11 +128,16 @@
                     }.bind(this);
 
                     dialog.show();
-                }));
+                });
+                item.addIconClass('fa fa-exchange');
+                user_menu.append(item);
             }
-            user_menu.append(new Wirecloud.ui.TutorialSubMenu());
+            item = new Wirecloud.ui.TutorialSubMenu();
+            user_menu.append(item);
 
-            user_menu.append(new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout));
+            item = new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout);
+            item.addIconClass('fa fa-sign-out');
+            user_menu.append(item);
         }
     };
 
