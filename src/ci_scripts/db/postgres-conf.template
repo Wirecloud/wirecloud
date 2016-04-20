@@ -3,8 +3,8 @@ import os
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ['DB_USER'],
-        'USER': os.environ['DB_NAME'],
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
         'PASSWORD': '',
         'HOST': os.environ.get('DB_HOST', ''),
         'PORT': os.environ.get('DB_PORT', ''),
