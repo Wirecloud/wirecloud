@@ -80,7 +80,7 @@
         anchor.appendChild(username_element);
 
         this.user_button = new StyledElements.PopupButton({
-            'class': 'arrow-down-settings fa fa-double-angle-down',
+            'class': 'arrow-down-settings fa fa-angle-double-down',
             'plain': true,
             'menuOptions': {
                 'position': ['bottom-right']
@@ -138,7 +138,7 @@
                 window.location = Wirecloud.URLs.LOGIN_VIEW + '?next=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
             });
             item.addIconClass('fa fa-sign-in');
-            user_menu.append();
+            user_menu.append(item);
         } else {
             item = new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout);
             item.addIconClass('fa fa-sign-out');
