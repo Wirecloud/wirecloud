@@ -43,6 +43,16 @@
 
         it("should add a new tab", function () {
             var element = new StyledElements.Notebook();
+            var tab1 = element.createTab();
+            var tab2 = element.createTab();
+
+            expect(element.tabs).toEqual([tab1, tab2]);
+            expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
+            expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
+        });
+
+        it("should add a new tab when add button exists", function () {
+            var element = new StyledElements.Notebook();
 
             element.addEventListener('newTab', function () {});
 
