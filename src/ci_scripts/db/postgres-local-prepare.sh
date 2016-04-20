@@ -1,9 +1,9 @@
-DB_USER=wirecloud-pip-develop-python2.7-postgres
-export PGPASSWORD=wirecloud
+export DB_USER=wirecloud_ci
+export DB_NAME=${DB_USER}
 
 pip install psycopg2
 
-dropdb -U ${DB_USER} ${DB_USER} --if-exist
-createdb -U ${DB_USER} ${DB_USER}
+createdb -U ${DB_USER} ${DB_NAME}
+createdb -U ${DB_USER} test_${DB_NAME}
 
 cat ${WORKSPACE}/src/ci_scripts/db/postgres-conf.template >> $1/settings.py
