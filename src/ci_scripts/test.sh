@@ -18,7 +18,7 @@ do
     file="${WORKSPACE}/src/ci_scripts/db/${conf}-prepip.sh"
     if [[ -x "$file" ]]
     then
-    	$file
+       . $file
     fi
 done
 
@@ -44,7 +44,7 @@ do
 file="${WORKSPACE}/src/ci_scripts/db/${conf}-prepare.sh"
 if [[ -x "$file" ]]
 then
-    $file virtenv_test
+    . $file virtenv_test
 fi
 done
 
