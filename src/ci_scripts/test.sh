@@ -7,7 +7,6 @@ virtualenv -p $1 ${WORKSPACE}/virtenv
 shift
 
 source ${WORKSPACE}/virtenv/bin/activate
-export PIP_DOWNLOAD_CACHE=~/.pip_cache
 PY_VERSION=`python -c "import sys; print('%s.%s' % sys.version_info[:2])"`
 COVERAGE_CMD=${WORKSPACE}/virtenv/bin/coverage
 RADON_CMD=${WORKSPACE}/virtenv/bin/radon
@@ -15,7 +14,7 @@ RADON_CMD=${WORKSPACE}/virtenv/bin/radon
 # Prepip scripts
 for conf in $*
 do
-    file="${WORKSPACE}/src/ci_scripts/db/${conf}-prepip.sh"
+    file="${WORKSPACE}/src/ci_scripts/conf_scripts/${conf}-prepip.sh"
     if [[ -x "$file" ]]
     then
        . $file
@@ -41,7 +40,7 @@ cd virtenv_test
 # And configure it
 for conf in $*
 do
-file="${WORKSPACE}/src/ci_scripts/db/${conf}-prepare.sh"
+file="${WORKSPACE}/src/ci_scripts/conf_scripts/${conf}-prepare.sh"
 if [[ -x "$file" ]]
 then
     . $file virtenv_test
