@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -62,10 +62,8 @@ function IWidget(widget, layout, description) {
         this.position.y = 0;
 
         layout = layout.dragboard.fulldragboardLayout;
-    } else if (!this.minimized) {
-        this.height = this.contentHeight;
     } else {
-        this.height = layout.getMenubarSize().inLU;
+        this.height = this.contentHeight;
     }
 
     var widget_class = description.volatile ? Wirecloud.VolatileWidget : Wirecloud.Widget;
@@ -272,7 +270,7 @@ IWidget.prototype.getWidth = function () {
  * @see Wirecloud.ui.DragboardLayout
  */
 IWidget.prototype.getHeight = function () {
-    return this.height;
+    return this.minimized ? this.minimizedHeight : this.height;
 };
 
 /**
@@ -316,12 +314,7 @@ IWidget.prototype.build = function () {
     this.element.addEventListener('transitionend', function (e) {
         if (this.layout.iwidgetToMove == null && ['width', 'height', 'top', 'left'].indexOf(e.propertyName) !== -1) {
             this._notifyWindowResizeEvent();
-            this.internal_iwidget.contextManager.modify({
-                'height': this.height,
-                'width': this.contentWidth,
-                'heightInPixels': this.content.offsetHeight,
-                'widthInPixels': this.content.offsetWidth
-            });
+            notify_widget_sizes.call(this);
         }
     }.bind(this), true);
 
@@ -396,10 +389,8 @@ IWidget.prototype.paint = function (onInit) {
 
     // Select the correct representation for this iWidget (iconified, minimized or normal)
     var minimizedStatusBackup = this.minimized;
-    this.minimized = false;
-    this._recomputeSize(false);
-
     this.minimized = null;
+    this._recomputeWidth();
     this.setMinimizeStatus(minimizedStatusBackup, false, false);
 
     // Time to show the iwidget (we need to take into account the widget can be iconified)
@@ -539,7 +530,7 @@ IWidget.prototype.setContentSize = function (newWidth, newHeight, persist) {
 
 var notify_widget_sizes = function notify_widget_sizes() {
     this.internal_iwidget.contextManager.modify({
-        'height': this.minimized ? 0 : this.height,
+        'height': this.minimized ? this.minimizedHeight : this.height,
         'width': this.contentWidth,
         'heightInPixels': this.minimized ? 0 : this.content.offsetHeight,
         'widthInPixels': this.content.offsetWidth
@@ -639,7 +630,7 @@ IWidget.prototype._computeExtraHeightPixels = function () {
  * @private
  */
 IWidget.prototype._recomputeHeight = function (basedOnContent) {
-    var contentHeight;
+    var contentHeight, processedSize;
 
     if (!this.minimized) {
         if (basedOnContent) {
@@ -651,7 +642,7 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
                         this.statusBar.offsetHeight;
             fullSize += this._computeExtraHeightPixels();
 
-            var processedSize = this.layout.adaptHeight(fullSize + 'px');
+            processedSize = this.layout.adaptHeight(fullSize + 'px');
             contentHeight = processedSize.inPixels;
             this.height = processedSize.inLU;
             this.content.style.height = contentHeight + "px";
@@ -673,7 +664,8 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
     } else { // minimized
         this._recomputeWrapper();
         contentHeight = this.element.offsetHeight;
-        this.content.style.height = "0px";
+        processedSize = this.layout.adaptHeight(contentHeight + 'px');
+        this.minimizedHeight = processedSize.inLU;
     }
 };
 
@@ -747,7 +739,7 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
         return; // Nothing to do
     }
 
-    // TODO add effects?
+    var oldHeight = this.getHeight();
 
     // New Status
     this.minimized = newStatus;
@@ -777,7 +769,6 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
         }
     }
 
-    var oldHeight = this.getHeight();
     this._recomputeHeight(false);
 
     // Notify resize event

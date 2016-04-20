@@ -1136,22 +1136,29 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     test_extract_widget_from_grid.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_ColumnLayoutTests_1.0.wgt', shared=True)
     def test_minimize_widget(self):
 
-        self.login(username="admin")
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/ColumnLayoutTests")
 
-        iwidget = self.add_widget_to_mashup('Context Inspector')
-        _, old_size = self.get_widget_sizes_from_context(iwidget)
+        iwidget = self.find_iwidgets()[0]
+        affected_iwidget = self.find_iwidgets()[2]
+        old_size, old_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
+        old_affected_iwidget_position = affected_iwidget.layout_position
 
         iwidget.minimize()
-        _, minimized_size = self.get_widget_sizes_from_context(iwidget)
-        self.assertEqual(minimized_size, (old_size[0], 0))
+        minimized_size, minimized_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
+        self.assertEqual(minimized_size[0], old_size[0])
+        self.assertLess(minimized_size[1], old_size[1])
+        self.assertEqual(minimized_size_in_pixels, (old_size_in_pixels[0], 0))
+        self.assertEqual(affected_iwidget.layout_position, (0, minimized_size[1]))
 
         iwidget.maximize()
-        _, new_size = self.get_widget_sizes_from_context(iwidget)
+        new_size, new_size_in_pixels = self.get_widget_sizes_from_context(iwidget)
 
         self.assertEqual(old_size, new_size)
-    test_minimize_widget.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
+        self.assertEqual(old_size_in_pixels, new_size_in_pixels)
+        self.assertEqual(old_affected_iwidget_position, affected_iwidget.layout_position)
 
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_basic_layout_parameter_change(self):
