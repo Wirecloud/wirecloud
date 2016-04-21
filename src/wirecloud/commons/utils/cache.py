@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import hashlib
 import time
 
 from django.http import HttpResponse
@@ -24,33 +25,30 @@ from django.utils.cache import patch_cache_control
 from django.utils.http import http_date
 
 
-def no_cache(func):
+def patch_cache_headers(response, timestamp=None, cache_timeout=None, etag=None):
 
-    def _no_cache(*args, **kwargs):
-        response = func(*args, **kwargs)
-        patch_cache_control(response, no_cache=True, no_store=True, must_revalidate=True, max_age=0)
-        return response
-
-    return _no_cache
-
-
-def patch_cache_headers(response, timestamp=None, cache_timeout=None):
-
-    current_timestamp = time.time() * 1000
+    current_timestamp = int(time.time() * 1000)
 
     if timestamp is None:
         timestamp = current_timestamp
     else:
         timestamp = int(timestamp)
 
-    response['Last-Modified'] = http_date(timestamp / 1000)
-    response['ETag'] = '"%s"' % timestamp
+    if not response.has_header('Last-Modified'):
+        response['Last-Modified'] = http_date(timestamp / 1000)
+
+    if etag is not None:
+        response['ETag'] = etag
+    elif not response.streaming and not response.has_header('ETag'):
+        response['ETag'] = '"%s"' % hashlib.sha1(response.content).hexdigest()
 
     if cache_timeout is not None and timestamp + cache_timeout > current_timestamp:
         response['Cache-Control'] = 'private, max-age=%s' % (timestamp + cache_timeout - current_timestamp)
         response['Expires'] = http_date((timestamp / 1000) + cache_timeout)
     else:
         response['Cache-Control'] = 'private, max-age=0'
+
+    return response
 
 
 class CacheableData(object):

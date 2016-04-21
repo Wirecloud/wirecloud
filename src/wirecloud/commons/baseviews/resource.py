@@ -17,10 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.http import Http404, HttpResponseNotAllowed, HttpResponseForbidden
+from django.http import Http404, HttpResponseNotAllowed
 from django.core.exceptions import PermissionDenied
 
 from wirecloud.commons.exceptions import HttpBadCredentials, ErrorResponse
+from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.http import build_auth_error_response
 
 
@@ -53,13 +54,18 @@ class Resource(object):
             return HttpResponseNotAllowed(self.permitted_methods)
 
         try:
-            return getattr(self, METHOD_MAPPING[request_method])(request, *args, **kwargs)
+            response = getattr(self, METHOD_MAPPING[request_method])(request, *args, **kwargs)
         except (Http404, PermissionDenied):
             raise
         except HttpBadCredentials as e:
             return build_auth_error_response(request, e.message, e.error_info)
         except ErrorResponse as e:
             return e.response
+
+        if request_method in ('HEAD', 'GET'):
+            patch_cache_headers(response)
+
+        return response
 
     def head(self, request, *args, **kwargs):
         return self.read(request, *args, **kwargs)

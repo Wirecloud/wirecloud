@@ -46,6 +46,18 @@ class UserSearcherTestCase(WirecloudTestCase):
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(result_json['results']), 3)
 
+    def test_searches_are_cached(self):
+
+        response = self.client.get(self.url + '?namespace=user&q=li', HTTP_ACCEPT="application/json")
+        self.assertIn('ETag', response)
+        initial_etag = response['ETag']
+
+        self.assertEqual(response.status_code, 200)
+
+        # New request without changing nothing in the server side
+        response = self.client.get(self.url + '?namespace=user&q=li', HTTP_ACCEPT="application/json", HTTP_IF_NONE_MATCH=initial_etag)
+        self.assertEqual(response.status_code, 304)
+
     def test_missing_namespace_parameters(self):
         response = self.client.get(self.url, HTTP_ACCEPT="application/json")
 

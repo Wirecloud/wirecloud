@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.searchers import get_search_engine, is_available
-from wirecloud.commons.utils.cache import no_cache
+from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_html_basic_error_response, consumes, parse_json_request, produces
 
 
@@ -59,9 +59,9 @@ def server_error(request):
 
 class ResourceSearch(Resource):
 
-    @no_cache
     @produces(('application/json',))
     def read(self, request):
+
         querytext = request.GET.get('q', '')
         indexname = request.GET.get('namespace', '').strip()
 

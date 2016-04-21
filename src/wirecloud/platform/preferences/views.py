@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2008-2015 Universidad Politécnica de Madrid
+# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -29,7 +29,6 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, parse_json_request
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.plugins import get_tab_preferences, get_workspace_preferences
@@ -189,7 +188,6 @@ def update_workspace_preferences(workspace, preferences_json, invalidate_cache=T
 
 class PlatformPreferencesCollection(Resource):
 
-    @no_cache
     def read(self, request):
         if request.user.is_authenticated():
             result = parseValues(PlatformPreference.objects.filter(user=request.user))
@@ -215,7 +213,6 @@ class PlatformPreferencesCollection(Resource):
 class WorkspacePreferencesCollection(Resource):
 
     @authentication_required
-    @no_cache
     def read(self, request, workspace_id):
 
         # Check Workspace existance and owned by this user
@@ -269,7 +266,6 @@ class WorkspacePreferencesCollection(Resource):
 class TabPreferencesCollection(Resource):
 
     @authentication_required
-    @no_cache
     def read(self, request, workspace_id, tab_id):
 
         # Check Tab existance and owned by this user

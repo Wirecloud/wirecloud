@@ -44,7 +44,6 @@ from wirecloud.catalogue.utils import get_latest_resource_version, get_resource_
 from wirecloud.catalogue.utils import add_packaged_resource
 from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.html import clean_html, filter_changelog
 from wirecloud.commons.utils.http import authentication_required, build_error_response, build_downloadfile_response, consumes, force_trailing_slash, parse_json_request, produces
 from wirecloud.commons.utils.template import TemplateParseException
@@ -98,7 +97,6 @@ class ResourceCollection(Resource):
         resource.users.add(request.user)
         return HttpResponse(resource.json_description, content_type='application/json; charset=UTF-8')
 
-    @no_cache
     def read(self, request):
 
         querytext = request.GET.get('q', '')

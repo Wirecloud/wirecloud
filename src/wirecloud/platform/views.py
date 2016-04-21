@@ -41,6 +41,7 @@ from django.views.i18n import render_javascript_catalog
 from user_agents import parse as ua_parse
 import six
 
+from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.http import build_error_response
 from wirecloud.platform.core.plugins import get_version_hash
 from wirecloud.platform.plugins import get_active_features_info, get_plugins
@@ -56,7 +57,8 @@ LANGUAGE_QUERY_PARAMETER = 'language'
 def feature_collection(request):
     features = get_active_features_info()
 
-    return HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
+    response = HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
+    return patch_cache_headers(response)
 
 
 def resolve_url(to, *args, **kwargs):  # pragma: no cover

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -25,7 +25,6 @@ from django.shortcuts import get_object_or_404
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import authentication_required, build_error_response, consumes, parse_json_request
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget
@@ -36,7 +35,6 @@ from wirecloud.platform.workspace.utils import VariableValueCacheManager, get_iw
 class IWidgetCollection(Resource):
 
     @authentication_required
-    @no_cache
     def read(self, request, workspace_id, tab_id):
 
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
@@ -104,7 +102,6 @@ class IWidgetCollection(Resource):
 class IWidgetEntry(Resource):
 
     @authentication_required
-    @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)

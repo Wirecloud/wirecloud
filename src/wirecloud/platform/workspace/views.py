@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -33,7 +33,6 @@ from six import string_types
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource, Service
-from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, normalize_boolean_param, consumes, parse_json_request, produces
 from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
@@ -79,7 +78,6 @@ class WorkspaceCollection(Resource):
 
     @produces(('application/json',))
     @commit_on_http_success
-    @no_cache
     def read(self, request):
 
         workspaces, _junk = get_workspace_list(request.user)
