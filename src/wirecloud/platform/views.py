@@ -36,7 +36,7 @@ from django.utils.functional import Promise
 from django.utils.http import urlencode
 from django.utils.translation import check_for_language, get_language, to_locale
 from django.views.decorators.cache import cache_page
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_safe
 from django.views.i18n import render_javascript_catalog
 from user_agents import parse as ua_parse
 import six
@@ -52,7 +52,7 @@ LANGUAGE_QUERY_PARAMETER = 'language'
 
 
 @cache_page(60 * 60 * 24, key_prefix='wirecloud-features-%s' % get_version_hash())
-@require_GET
+@require_safe
 def feature_collection(request):
     features = get_active_features_info()
 

@@ -29,6 +29,7 @@ METHOD_MAPPING = {
     'POST': 'create',
     'PUT': 'update',
     'DELETE': 'delete',
+    'HEAD': 'head',
 }
 
 
@@ -36,7 +37,10 @@ class Resource(object):
 
     def __init__(self, authentication=None, permitted_methods=None):
 
-        self.permitted_methods = tuple([m.upper() for m in permitted_methods])
+        self.permitted_methods = [m.upper() for m in permitted_methods]
+        if 'GET' in self.permitted_methods and 'HEAD' not in self.permitted_methods:
+            self.permitted_methods.append('HEAD')
+        self.permitted_methods = tuple(self.permitted_methods)
 
         for method in self.permitted_methods:
             if method not in METHOD_MAPPING or not callable(getattr(self, METHOD_MAPPING[method], None)):
@@ -56,3 +60,6 @@ class Resource(object):
             return build_auth_error_response(request, e.message, e.error_info)
         except ErrorResponse as e:
             return e.response
+
+    def head(self, request, *args, **kwargs):
+        return self.read(request, *args, **kwargs)
