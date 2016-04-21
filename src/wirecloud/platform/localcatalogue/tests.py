@@ -855,4 +855,4 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
         WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
-        self.assertEqual(self.myresources_view.get_current_resource(), 'Test Mashup')
+        WebDriverWait(self.driver, timeout=1).until(lambda driver: self.myresources_view.get_current_resource(), 'Test Mashup')

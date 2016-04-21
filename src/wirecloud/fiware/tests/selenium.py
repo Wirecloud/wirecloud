@@ -23,6 +23,7 @@ import os
 
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
+from wirecloud.commons.utils.remote import FormModalTester
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, uses_extra_resources, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
@@ -115,20 +116,16 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         widget = self.add_widget_to_mashup('Wirecloud NGSI API test widget')
 
-        # Open widget settings
-        widget.open_menu().click_entry('Settings')
-
         # Change widget settings
-        text_input = self.driver.find_element_by_css_selector('.window_menu [name="ngsi_server"]')
-        self.fill_form_input(text_input, 'http://orion.example.com:1026')
-        boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="use_user_fiware_token"]')
-        boolean_input.click()
+        widget.open_menu().click_entry('Settings')
+        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+        dialog.get_field("ngsi_server").set_value('http://orion.example.com:1026')
+        dialog.get_field("use_user_fiware_token").click()
+        dialog.accept()
 
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-
+        # Check the widget raises an error
         with widget:
-            api_element = self.driver.find_element_by_id('api_available')
-            self.assertEqual(api_element.text, 'Yes')
+            WebDriverWait(self.driver, 2).until(lambda driver: driver.find_element_by_id('api_available').text == 'Yes')
             self.driver.find_element_by_css_selector('.btn-primary').click()
             alert = self.wait_element_visible_by_css_selector('.alert-error p')
             self.assertEqual(alert.text, 'Unexpected error code: 404')
