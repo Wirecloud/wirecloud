@@ -287,7 +287,7 @@
             document.cookie = fiware_cookie_policy_cookie + "=on; expires=" + expiration_date.toGMTString() + "; path=/";
         }
 
-        LayoutManagerFactory.getInstance().mainLayout.getSouthContainer().appendChild(this.footer);
+        LayoutManagerFactory.getInstance().mainLayout.south.appendChild(this.footer);
         LayoutManagerFactory.getInstance().mainLayout.repaint();
     };
 

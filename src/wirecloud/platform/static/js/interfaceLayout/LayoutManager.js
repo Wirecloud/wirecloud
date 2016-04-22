@@ -40,11 +40,11 @@ var LayoutManagerFactory = function () {
         // PRIVATE VARIABLES
         // *********************************
 
-        this.mainLayout = new StyledElements.BorderLayout();
-        this.mainLayout.getNorthContainer().appendChild(document.getElementById('wirecloud_header'));
+        this.mainLayout = new StyledElements.VerticalLayout();
+        this.mainLayout.north.appendChild(document.getElementById('wirecloud_header'));
 
         this.alternatives = new StyledElements.Alternatives();
-        this.mainLayout.getCenterContainer().appendChild(this.alternatives);
+        this.mainLayout.center.appendChild(this.alternatives);
         this.mainLayout.insertInto(document.body);
 
         /* TODO| FIXME */
