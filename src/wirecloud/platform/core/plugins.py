@@ -575,6 +575,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "wallet": "wirecloud/workspace/wallet/wallet.html",
                 "wallet_widget": "wirecloud/workspace/wallet/widget.html",
                 "wirecloud_catalogue_upload_dialog": "wirecloud/catalogue/upload_dialog.html",
+                "wiring_footer": "wirecloud/wiring/wiring_footer.html",
                 "upgrade_window_menu": "wirecloud/ui/upgrade_window_menu.html",
             }
         else:

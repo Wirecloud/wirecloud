@@ -1,5 +1,6 @@
 @import 'wiring/defaults';
 @import 'utils';
+@import "compass/css3/user-interface";
 @import "variables";
 
 // ============================================================================
@@ -64,87 +65,30 @@
     box-shadow: $panel-box-shadow;
     color: $panel-default-heading-text-color;
     text-shadow: $text-shadow-conf-base rgba(contrast-color($panel-default-heading-bg, #FFF, #000, $text-color-threshold), 0.8);
+    @include user-select(none);
+    padding: 0 $panel-padding-horizontal;
 
-    .wiring-logger {
-        @include positioned-element($top: 0, $bottom: 0, $left: 0);
-        height: 20px;
-        margin: auto $panel-padding-horizontal;
-
-        span {
-            display: block;
-            white-space: nowrap;
-            overflow: hidden;
-            max-width: 250px;
-        }
-    }
-
-    .wiring-legend {
-        @include positioned-element($top: 0, $bottom: 0, $right: 0);
-        height: 20px;
-        margin: auto $panel-padding-horizontal;
+    .se-horizontal-layout {
+        height: 100%;
+        align-items: center;
     }
 }
 
 // ============================================================================
-// WIRING-FOOTER - LEGEND ELEMENTS
+// WIRING LEGEND - LABELS
 // ============================================================================
 
-.wiring-footer .wiring-element {
-    display: inline-block;
-    font-weight: "bold";
-    vertical-align: middle;
-    margin: 0px ($panel-padding-horizontal * 2) 0px 0px;
-
-    &:last-child {
-        margin-right: 0px;
-    }
-
-    .color {
-        padding: 0px $panel-padding-horizontal;
-        color: rgb(255, 255, 255);
-        border: solid 1px transparent;
-        border-radius: $panel-border-radius;
-        box-sizing: border-box;
-        text-shadow: none;
-    }
-
-    .title {
-        margin-left: ($panel-padding-horizontal / 2);
-    }
+.label-connection {
+    color: $text-color-dark;
+    background-color: $connection-bg;
 }
 
-// ============================================================================
-// WIRING-FOOTER - LEGEND CONNECTIONS
-// ============================================================================
-
-.wiring-footer .element-connection {
-
-    .color {
-        background-color: $connection-bg;
-        border-color: $connection-bg;
-    }
+.label-operator {
+    color: $text-color-dark;
+    background-color: $component-operator-bg;
 }
 
-// ============================================================================
-// WIRING-FOOTER - LEGEND OPERATORS
-// ============================================================================
-
-.wiring-footer .element-operator {
-
-    .color {
-        background-color: $component-operator-bg;
-        border-color: $component-operator-border-color;
-    }
-}
-
-// ============================================================================
-// WIRING-FOOTER - LEGEND WIDGETS
-// ============================================================================
-
-.wiring-footer .element-widget {
-
-    .color {
-        background-color: $component-widget-bg;
-        border-color: $component-widget-border-color;
-    }
+.label-widget {
+    color: $text-color-dark;
+    background-color: $component-widget-bg;
 }
