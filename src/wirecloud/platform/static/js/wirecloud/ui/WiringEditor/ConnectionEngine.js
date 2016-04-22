@@ -337,9 +337,14 @@
         }
 
         if (endpoint.hasConnection(this.activeConnection)) {
-            this.activeConnection.addClassName('temporal');
-            initialEndpoint = this.activeConnection[opposites[endpoint.type]].endpoint;
-            this._connectionBackup = this.activeConnection;
+            if (this.activeConnection.background) {
+                this.activeConnection.click();
+                initialEndpoint = endpoint;
+            } else {
+                this.activeConnection.addClassName('temporal');
+                initialEndpoint = this.activeConnection[opposites[endpoint.type]].endpoint;
+                this._connectionBackup = this.activeConnection;
+            }
         } else {
             initialEndpoint = endpoint;
         }

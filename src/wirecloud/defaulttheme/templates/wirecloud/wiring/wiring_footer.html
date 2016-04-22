@@ -1,0 +1,17 @@
+{% load i18n %}
+<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+<s:horizontallayout>
+    <s:centercontainer><t:title/></s:centercontainer>
+    <s:eastcontainer>
+        <span class="label label-connection">
+            <t:connections/> {% trans "Connections" %}
+        </span>
+        <span class="label label-operator">
+            <t:operators/> {% trans "Operators" %}
+        </span>
+        <span class="label label-widget">
+            <t:widgets/> {% trans "Widgets" %}
+        </span>
+    </s:eastcontainer>
+</s:horizontallayout>
+</s:styledgui>

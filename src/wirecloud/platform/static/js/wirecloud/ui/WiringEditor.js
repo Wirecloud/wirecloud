@@ -331,41 +331,24 @@ Wirecloud.ui = Wirecloud.ui || {};
                 }
             }.bind(this));
 
-        var wiringLegend = document.createElement('div');
-
-        wiringLegend.className = "wiring-legend";
-        wiringLegend.innerHTML =
-            '<span class="wiring-element element-connection">' +
-                '<span class="color"></span>' +
-                '<span class="title">' + utils.gettext("Connections") + '</span>' +
-            '</span>' +
-            '<span class="wiring-element element-operator">' +
-                '<span class="color"></span>' +
-                '<span class="title">' + utils.gettext("Operators") + '</span>' +
-            '</span>' +
-            '<span class="wiring-element element-widget">' +
-                '<span class="color"></span>' +
-                '<span class="title">' + utils.gettext("Widgets") + '</span>' +
-            '</span>';
-
-        var wiringLogger = document.createElement('div');
-        var currentBehaviour = document.createElement('span');
-
-        wiringLogger.className = 'wiring-logger';
-        wiringLogger.appendChild(currentBehaviour);
-
         this.legend = {
-            title: currentBehaviour,
-            connections: wiringLegend.querySelector('.element-connection .color'),
-            operators: wiringLegend.querySelector('.element-operator .color'),
-            widgets: wiringLegend.querySelector('.element-widget .color')
+            title: document.createElement('span'),
+            connections: document.createElement('span'),
+            operators: document.createElement('span'),
+            widgets: document.createElement('span')
         };
 
-        this.layout.footer
-            .appendChild(wiringLogger)
-            .appendChild(wiringLegend);
+        Wirecloud.addEventListener('loaded', function () {
+            this.layout.footer.appendChild((new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.wiring_footer, {
+                title: this.legend.title,
+                connections: this.legend.connections,
+                operators: this.legend.operators,
+                widgets: this.legend.widgets
+            }).children[1]);
+        }.bind(this));
 
         this.layout.content.get().addEventListener('click', layout_onclick.bind(this));
+        this.layout.content.get().addEventListener('dblclick', layout_ondblclick.bind(this));
         this.appendChild(this.layout);
 
         return this;
@@ -811,7 +794,6 @@ Wirecloud.ui = Wirecloud.ui || {};
     var connection_onclick = function connection_onclick(connectionEngine, connectionClicked) {
         /*jshint validthis:true */
 
-        this.layout.slideOut();
         clearComponentSelection.call(this);
 
         if (this.orderableComponent != null) {
@@ -872,10 +854,6 @@ Wirecloud.ui = Wirecloud.ui || {};
     var layout_onclick = function layout_onclick() {
         /*jshint validthis:true */
 
-        var type, id;
-
-        this.layout.slideOut();
-
         clearComponentSelection.call(this);
 
         if (this.orderableComponent != null) {
@@ -884,6 +862,11 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
 
         this.connectionEngine.setUp();
+    };
+
+    var layout_ondblclick = function layout_ondblclick() {
+        /*jshint validthis:true */
+        this.layout.slideOut();
     };
 
     var showSelectedPanel = function showSelectedPanel(button, panelIndex) {

@@ -202,6 +202,8 @@
             notifyErrors.call(this);
             makeDraggable.call(this);
 
+            this.wrapperElement.addEventListener('dblclick', utils.stopPropagationListener);
+
             wiringComponent.on('upgraded', this._component_onupgrade_bound);
         },
 

@@ -1536,6 +1536,25 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             self.assertTrue(wiring.find_connection('widget/11/outputendpoint', 'operator/0/input').has_class('background'))
             self.assertIsNotNone(wiring.find_connection('widget/11/outputendpoint', 'operator/0/nothandled'))
 
+    def test_modify_connection_on_background_is_not_allowed(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
+
+        with self.wiring_view as wiring:
+            operator = wiring.find_draggable_component('operator', id=0)
+            source = operator.find_endpoint('source', 'output')
+
+            widget = wiring.find_draggable_component('widget', title="Test 1")
+            target = widget.find_endpoint('target', 'nothandled')
+
+            connection1 = wiring.find_connection('operator/0/output', 'widget/10/inputendpoint')
+            connection1.click()
+
+            connection2 = source.create_connection(target)
+
+            self.assertTrue(connection1.has_class('background'))
+            self.assertFalse(connection1.has_class('active'))
+            self.assertIsNotNone(connection2)
+
 
 @wirecloud_selenium_test_case
 class EndpointManagementTestCase(WirecloudSeleniumTestCase):
