@@ -18,6 +18,7 @@
         max-width: 100%;
         border-radius: ($border-radius-base - 1);
         top: 50%;
+        vertical-align: baseline;
         @include transform(translateY(-50%));
     }
 }
