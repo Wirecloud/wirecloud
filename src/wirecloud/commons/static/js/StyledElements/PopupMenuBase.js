@@ -333,8 +333,6 @@
         if (this.useRefElementWidth) {
             this.wrapperElement.style.width = refPosition.width + "px";
         }
-
-        this.wrapperElement.style.display = 'block';
     };
 
     PopupMenuBase.prototype.moveCursorDown = function moveCursorDown() {

@@ -66,23 +66,20 @@
 
 .se-popup-menu-item {
     position: relative;
-    display: block;
+    display: flex;
+    align-items: center;
     padding: $popup-menu-padding-vertical $popup-menu-item-padding-horizontal;
     cursor: pointer;
     @include font-styled("base", "normal");
     color: contrast-text-color($popup-menu-bg);
 
     .se-popup-menu-item-thumbnail {
-        display: table-cell;
-        vertical-align: middle;
         padding-right: ($popup-menu-item-padding-horizontal / 2);
         width: $line-height-base;
         text-align: center;
     }
 
     .se-popup-menu-item-body {
-        display: table-cell;
-        vertical-align: middle;
 
         .se-popup-menu-item-title {
             white-space: nowrap;
