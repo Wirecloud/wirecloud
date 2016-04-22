@@ -76,14 +76,14 @@
             var dialog = new Wirecloud.ui.EmbedCodeWindowMenu(title, current_workspace);
             dialog.show();
         });
-        item.addIconClass('fa fa-share');
+        item.addIconClass('fa fa-code');
         items.push(item);
 
         item = new StyledElements.MenuItem(utils.gettext("Share"), function () {
             var dialog = new Wirecloud.ui.SharingWindowMenu(current_workspace);
             dialog.show();
         });
-        item.addIconClass('fa fa-link');
+        item.addIconClass('fa fa-share');
         item.setDisabled(current_workspace == null || !current_workspace.isAllowed('update_preferences'));
         items.push(item);
 
