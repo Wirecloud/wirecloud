@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -87,7 +87,7 @@ class ServiceCollection(Resource):
         except (ConnectionError, ConnectTimeout):
             return build_error_response(request, 504, "Connection Error")
 
-        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; charset=UTF-8')
 
 
 class ServiceSearchCollection(Resource):
@@ -106,7 +106,7 @@ class ServiceSearchCollection(Resource):
         except (ConnectionError, ConnectTimeout):
             return build_error_response(request, 504, "Connection Error")
 
-        return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; chaset=UTF-8')
 
 
 class ServiceEntry(Resource):
@@ -125,7 +125,7 @@ class ServiceEntry(Resource):
         except (ConnectionError, ConnectTimeout):
             return build_error_response(request, 504, "Connection Error")
 
-        return HttpResponse(json.dumps(offering_info), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(offering_info, sort_keys=True), content_type='application/json; charset=UTF-8')
 
 
 class AllStoresServiceCollection(Resource):
@@ -148,7 +148,7 @@ class AllStoresServiceCollection(Resource):
         except (ConnectionError, ConnectTimeout):
             return build_error_response(request, 504, "Connection Error")
 
-        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; charset=UTF-8')
 
 
 class StoreCollection(Resource):
@@ -166,7 +166,7 @@ class StoreCollection(Resource):
         except (ConnectionError, ConnectTimeout):
             return build_error_response(request, 504, "Connection Error")
 
-        return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; chaset=UTF-8')
 
 
 class StartPurchaseService(Service):
@@ -190,4 +190,4 @@ class StartPurchaseService(Service):
         except (ConnectionError, ConnectTimeout):
             return build_error_response(request, 504, "Connection Error")
 
-        return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; chaset=UTF-8')

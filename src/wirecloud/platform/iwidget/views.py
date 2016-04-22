@@ -45,7 +45,7 @@ class IWidgetCollection(Resource):
         iwidgets = tab.iwidget_set.all()
         data = [get_iwidget_data(iwidget, tab.workspace, cache_manager) for iwidget in iwidgets]
 
-        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data, sort_keys=True), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @consumes(('application/json',))
@@ -109,7 +109,7 @@ class IWidgetEntry(Resource):
         iwidget = get_object_or_404(IWidget, tab__workspace__users=request.user, tab__workspace=workspace, tab__pk=tab_id, pk=iwidget_id)
         iwidget_data = get_iwidget_data(iwidget, workspace, user=request.user)
 
-        return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(iwidget_data, sort_keys=True), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @consumes(('application/json',))

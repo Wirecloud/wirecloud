@@ -123,7 +123,7 @@ class ResourceCollection(Resource):
 
         response_json = search(querytext, request, **filters)
 
-        return HttpResponse(json.dumps(response_json), content_type='application/json')
+        return HttpResponse(json.dumps(response_json, sort_keys=True), content_type='application/json')
 
 
 class ResourceEntry(Resource):
@@ -139,7 +139,7 @@ class ResourceEntry(Resource):
                 resources = get_list_or_404(CatalogueResource.objects.filter(Q(vendor=vendor) & Q(short_name=name) & Q(public=True)))
             data = get_resource_group_data(resources, request.user, request)
 
-        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data, sort_keys=True), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @commit_on_http_success
@@ -196,7 +196,7 @@ class ResourceSuggestion(Resource):
 
         response = {'terms': suggest(request, prefix, limit)}
 
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return HttpResponse(json.dumps(response, sort_keys=True), content_type='application/json')
 
 
 class ResourceVersionCollection(Resource):

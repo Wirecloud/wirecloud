@@ -57,7 +57,7 @@ LANGUAGE_QUERY_PARAMETER = 'language'
 def feature_collection(request):
     features = get_active_features_info()
 
-    response = HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
+    response = HttpResponse(json.dumps(features, sort_keys=True), content_type='application/json; charset=UTF-8')
     return patch_cache_headers(response)
 
 

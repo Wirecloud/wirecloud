@@ -59,7 +59,7 @@ class ResourceCollection(Resource):
                 options = resource.get_processed_info(request, process_urls=process_urls)
                 resources[resource.local_uri_part] = options
 
-        return HttpResponse(json.dumps(resources), content_type='application/json; chatset=UTF-8')
+        return HttpResponse(json.dumps(resources, sort_keys=True), content_type='application/json; chatset=UTF-8')
 
     @authentication_required
     @consumes(('application/json', 'multipart/form-data', 'application/octet-stream'))
@@ -183,11 +183,11 @@ class ResourceCollection(Resource):
                     if extra_resource_added:
                         info['extra_resources'].append(extra_resource.get_processed_info(request))
 
-            return HttpResponse(json.dumps(info), status=status_code, content_type='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(info, sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
 
         else:
 
-            return HttpResponse(json.dumps(resource.get_processed_info(request)), status=status_code, content_type='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(resource.get_processed_info(request), sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):
@@ -250,7 +250,7 @@ class ResourceDescriptionEntry(Resource):
             resource_info['wgt_files'] = [filename for filename in wgt_file.namelist() if filename[-1] != '/']
             wgt_file.close()
 
-        return HttpResponse(json.dumps(resource_info), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(resource_info, sort_keys=True), content_type='application/json; charset=UTF-8')
 
 
 class WorkspaceResourceCollection(Resource):
@@ -284,4 +284,4 @@ class WorkspaceResourceCollection(Resource):
                 options = resource.get_processed_info(request, process_urls=process_urls)
                 result[resource.local_uri_part] = options
 
-        return HttpResponse(json.dumps(result), content_type='application/json; chatset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; chatset=UTF-8')

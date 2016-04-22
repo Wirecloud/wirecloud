@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -45,7 +45,7 @@ def oauth_discovery(request):
         'version': '2.0',
     }
 
-    return HttpResponse(json.dumps(endpoints), content_type='application/json; charset=UTF-8')
+    return HttpResponse(json.dumps(endpoints, sort_keys=True), content_type='application/json; charset=UTF-8')
 
 
 @require_http_methods(["GET", "POST"])

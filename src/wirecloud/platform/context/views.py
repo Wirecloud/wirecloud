@@ -34,4 +34,4 @@ class PlatformContextCollection(Resource):
         if 'theme' in request.GET:
             context['theme']['value'] = request.GET['theme']
 
-        return HttpResponse(json.dumps(context, cls=LazyEncoder), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(context, cls=LazyEncoder, sort_keys=True), content_type='application/json; charset=UTF-8')

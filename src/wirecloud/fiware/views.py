@@ -46,7 +46,7 @@ def oauth_discovery(request):
         'version': '2.0',
     }
 
-    return HttpResponse(json.dumps(endpoints), content_type='application/json; charset=UTF-8')
+    return HttpResponse(json.dumps(endpoints, sort_keys=True), content_type='application/json; charset=UTF-8')
 
 
 @require_GET

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -59,7 +59,7 @@ class MarketCollection(Resource):
 
             result.append(market_data)
 
-        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @consumes(('application/json'))

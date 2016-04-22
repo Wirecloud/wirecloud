@@ -194,7 +194,7 @@ class PlatformPreferencesCollection(Resource):
         else:
             result = {}
 
-        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @consumes(('application/json',))
@@ -222,7 +222,7 @@ class WorkspacePreferencesCollection(Resource):
 
         result = get_workspace_preference_values(workspace)
 
-        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @consumes(('application/json',))
@@ -275,7 +275,7 @@ class TabPreferencesCollection(Resource):
 
         result = get_tab_preference_values(tab)
 
-        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @consumes(('application/json',))

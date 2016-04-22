@@ -146,7 +146,7 @@ def get_json_error_response(request, mimetype, status_code, context):
     if context.get('details') is not None:
         body['details'] = context['details']
 
-    return json.dumps(body, ensure_ascii=False)
+    return json.dumps(body, ensure_ascii=False, sort_keys=True)
 
 
 def get_plain_text_error_response(request, mimetype, status_code, context):

@@ -83,7 +83,7 @@ class WorkspaceCollection(Resource):
         workspaces, _junk = get_workspace_list(request.user)
         data_list = [get_workspace_data(workspace, request.user) for workspace in workspaces]
 
-        return HttpResponse(json.dumps(data_list), content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data_list, sort_keys=True), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @consumes(('application/json',))

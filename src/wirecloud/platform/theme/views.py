@@ -77,4 +77,4 @@ class ThemeEntry(Resource):
                 template = get_template(template_descriptions[template_id])
             desc["templates"][template_id] = template.render(context)
 
-        return HttpResponse(json.dumps(desc, cls=LazyEncoder), 'application/json')
+        return HttpResponse(json.dumps(desc, cls=LazyEncoder, sort_keys=True), 'application/json')
