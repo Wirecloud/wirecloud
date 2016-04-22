@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 from io import BytesIO
 import json
 import os.path
+import time
 import zipfile
 
 from django.contrib.auth.models import User, Group
@@ -531,27 +532,37 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='normuser')
 
         with self.myresources_view as myresources:
+            # Test widget is publicly visible by default
             myresources.search('Test')
             widget = myresources.search_in_results('Test')
             self.assertIsNotNone(widget)
 
+            # Make Test widget unavailable
             test_widget.public = False
             test_widget.users.clear()
             test_widget.save()
+            time.sleep(1)
 
+            # Check normuser hasn't access the Test widget
             myresources.search('Test')
             widget = myresources.search_in_results('Test')
             self.assertIsNone(widget)
 
+            # Make Test widget directly available to normuser
             test_widget.users.add(norm_user)
+            time.sleep(1)
 
+            # Check normuser has access to the Test widget
             myresources.search('Test')
             widget = myresources.search_in_results('Test')
             self.assertIsNotNone(widget)
 
+            # Make Test widget available to normuser through the normusers group
             test_widget.users.remove(norm_user)
             test_widget.groups.add(normusers_group)
+            time.sleep(1)
 
+            # Check normuser has access to the Test widget
             myresources.search('Test')
             widget = myresources.search_in_results('Test')
             self.assertIsNotNone(widget)
