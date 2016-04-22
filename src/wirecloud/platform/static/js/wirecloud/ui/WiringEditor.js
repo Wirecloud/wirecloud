@@ -794,7 +794,6 @@ Wirecloud.ui = Wirecloud.ui || {};
     var connection_onclick = function connection_onclick(connectionEngine, connectionClicked) {
         /*jshint validthis:true */
 
-        this.layout.slideOut();
         clearComponentSelection.call(this);
 
         if (this.orderableComponent != null) {
@@ -855,10 +854,6 @@ Wirecloud.ui = Wirecloud.ui || {};
     var layout_onclick = function layout_onclick() {
         /*jshint validthis:true */
 
-        var type, id;
-
-        this.layout.slideOut();
-
         clearComponentSelection.call(this);
 
         if (this.orderableComponent != null) {
@@ -867,6 +862,11 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
 
         this.connectionEngine.setUp();
+    };
+
+    var layout_ondblclick = function layout_ondblclick() {
+        /*jshint validthis:true */
+        this.layout.slideOut();
     };
 
     var showSelectedPanel = function showSelectedPanel(button, panelIndex) {
