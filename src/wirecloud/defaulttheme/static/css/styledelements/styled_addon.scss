@@ -32,6 +32,8 @@
     background-color: $box-bg;
 }
 
+/* Deprecated */
+
 .input-prepend > .se-hl-west-container > .add-on:first-child {
     border-radius: $border-radius-base 0 0 $border-radius-base;
 }
@@ -47,6 +49,8 @@
 .input-append > .se-hl-east-container > .add-on:last-child {
     border-radius: 0 $border-radius-base $border-radius-base 0;
 }
+
+/* End dreprecation */
 
 .btn-group .add-on:not(:first-child), .btn-group .box:not(:first-child),
 .pagination .add-on:not(:first-child), .pagination .box:not(:first-child) {

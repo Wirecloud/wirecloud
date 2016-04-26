@@ -167,7 +167,9 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     vertical-align: middle;
 }
 
-.se-btn.btn-large, .se-btn.btn-lg, .btn-group-lg .se-btn {
+/* Grouped buttons */
+
+.se-btn.btn-large, .se-btn.btn-lg, .btn-group-lg .se-btn, .se-input-group-lg .se-btn {
     font-size: $font-size-large;
     padding: $padding-vertical-large $padding-horizontal-large;
     border-radius: $border-radius-large;
@@ -185,7 +187,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     }
 }
 
-.se-btn.btn-small, .se-btn.btn-sm, .btn-group-sm .se-btn {
+.se-btn.btn-small, .se-btn.btn-sm, .btn-group-sm .se-btn, .se-input-group-sm .se-btn {
     font-size: $font-size-small;
     padding: $padding-vertical-small $padding-horizontal-small;
     border-radius: $border-radius-small;
@@ -205,7 +207,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     }
 }
 
-.se-btn.btn-mini, .se-btn.btn-xs, .btn-group-xs .se-btn {
+.se-btn.btn-mini, .se-btn.btn-xs, .btn-group-xs .se-btn, .se-inputgroup-xs .se-btn {
     font-size: $font-size-xs;
     padding: $padding-vertical-xs $padding-horizontal-xs;
     border-radius: $border-radius-xs;

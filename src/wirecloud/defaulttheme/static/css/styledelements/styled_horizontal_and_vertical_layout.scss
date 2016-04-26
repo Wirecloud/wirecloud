@@ -45,6 +45,36 @@
     overflow: visible;
 }
 
+/* Deprecated */
 .input > .se-hl-west-container, .input > .se-hl-center-container, .input > .se-hl-east-container {
     overflow: visible;
+}
+/* End deprecation */
+
+.se-input-group {
+    display: flex;
+    width: auto;
+    margin: 3px;
+}
+
+.se-input-group > * {
+    margin: 0px;
+}
+
+.se-input-group > *:not(:first-child) {
+    margin-left: -1px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.se-input-group > *:not(:last-child) {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.se-input-group > .se-select,
+.se-input-group > .se-text-field,
+.se-input-group > .se-password-field {
+    flex-grow: 1;
+    flex-shrink: 1;
 }

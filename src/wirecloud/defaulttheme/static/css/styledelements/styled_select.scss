@@ -89,27 +89,36 @@
     border-bottom-right-radius: $border-radius-base;
 }
 
-.se-select.se-select-sm, .btn-group-sm .se-select {
+/******************************************************************************
+ *  Size variants
+ ******************************************************************************/
+
+.se-select.se-select-lg, .btn-group-lg .se-select, .se-input-group-lg .se-select {
+    font-size: $font-size-large;
+    height:    $input-height-large;
+    padding:   $padding-vertical-large $padding-horizontal-large;
+
+    .se-select-arrow {
+        top:   $padding-vertical-large;
+    }
+}
+
+.se-select.se-select-sm, .btn-group-sm .se-select, .se-input-group-sm .se-select {
     font-size: $font-size-small;
-    height:  $input-height-small;
-    padding: $padding-vertical-small $padding-horizontal-small;
+    height:    $input-height-small;
+    padding:   $padding-vertical-small $padding-horizontal-small;
 
     .se-select-arrow {
-        top:      $padding-vertical-small;
+        top:   $padding-vertical-small;
     }
 }
 
-.se-select.se-select-xs, .btn-group-xs .se-select {
+.se-select.se-select-xs, .btn-group-xs .se-select, .se-input-group-xs .se-select {
     font-size: $font-size-xs;
-    height:  $input-height-xs;
-    padding: $padding-vertical-xs $padding-horizontal-xs;
+    height:    $input-height-xs;
+    padding:   $padding-vertical-xs $padding-horizontal-xs;
 
     .se-select-arrow {
-        top:      $padding-vertical-xs;
+        top:   $padding-vertical-xs;
     }
-}
-
-.btn-group .se-select:not(:last-child) {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
 }
