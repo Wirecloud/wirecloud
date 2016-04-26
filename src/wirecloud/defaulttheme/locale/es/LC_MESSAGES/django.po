@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-31 13:04+0200\n"
-"PO-Revision-Date: 2016-03-15 12:00+0100\n"
+"POT-Creation-Date: 2016-04-26 18:53+0200\n"
+"PO-Revision-Date: 2016-04-26 18:59+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -26,7 +26,7 @@ msgstr "Básico"
 msgid "error400"
 msgstr "error400"
 
-#: templates/400.html:5 templates/wirecloud/widget_error.html.py:6
+#: templates/400.html:5 templates/wirecloud/widget_error.html:6
 msgid "Error 400 - Bad request"
 msgstr "Error 400 - Solicitud incorrecta"
 
@@ -164,19 +164,19 @@ msgid "Short name"
 msgstr "Nombre"
 
 #: templates/wirecloud/catalogue/order_by_template.html:6
-#: templates/wirecloud/catalogue/resource_details.html:22
+#: templates/wirecloud/catalogue/resource_details.html:18
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: templates/wirecloud/catalogue/resource_details.html:24
+#: templates/wirecloud/catalogue/resource_details.html:20
 msgid "Version"
 msgstr "Versión"
 
-#: templates/wirecloud/catalogue/resource_details.html:26
+#: templates/wirecloud/catalogue/resource_details.html:22
 msgid "License"
 msgstr "Licencia"
 
-#: templates/wirecloud/catalogue/resource_details.html:28
+#: templates/wirecloud/catalogue/resource_details.html:24
 msgid "Last Updated"
 msgstr "Última actualización"
 
@@ -328,6 +328,26 @@ msgstr "Catálogo"
 #: templates/wirecloud/views/smartphone.html:47
 msgid "Mashup Info"
 msgstr "Información del Mashup"
+
+#: templates/wirecloud/wiring/behaviour_sidebar.html:6
+msgid "Behaviours"
+msgstr "Comportamientos"
+
+#: templates/wirecloud/wiring/component_sidebar.html:10
+msgid "Components"
+msgstr "Componentes"
+
+#: templates/wirecloud/wiring/wiring_footer.html:7
+msgid "Connections"
+msgstr "Conexiones"
+
+#: templates/wirecloud/wiring/wiring_footer.html:10
+msgid "Operators"
+msgstr "Operadores"
+
+#: templates/wirecloud/wiring/wiring_footer.html:13
+msgid "Widgets"
+msgstr "Widgets"
 
 #: templates/wirecloud/workspace/missing_widget.html:10
 msgid "Missing widget"

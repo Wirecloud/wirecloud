@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-31 13:11+0200\n"
-"PO-Revision-Date: 2016-03-31 13:20+0200\n"
+"POT-Creation-Date: 2016-04-26 18:54+0200\n"
+"PO-Revision-Date: 2016-04-26 19:05+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: Poedit 1.8.7\n"
 
 #: static/iphone/opManager/Workspace.js:48
-#: static/js/wirecloud/ui/WirecloudHeader.js:131
+#: static/js/wirecloud/ui/WirecloudHeader.js:138
 msgid "Sign out"
 msgstr "Salir"
 
@@ -96,7 +96,7 @@ msgstr "Fecha de creación"
 #: static/js/catalogue/CatalogueSearchView.js:133
 #: static/js/wirecloud/WidgetBase.js:165
 #: static/js/wirecloud/ui/WiringEditor/Behaviour.js:407
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:741
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:737
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:154
 #: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:105
 msgid "Title"
@@ -112,8 +112,7 @@ msgid "All"
 msgstr "Todo"
 
 #: static/js/catalogue/CatalogueSearchView.js:147
-#: static/js/wirecloud/ui/WiringEditor.js:341
-#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:89
+#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:56
 msgid "Widgets"
 msgstr "Widgets"
 
@@ -122,8 +121,7 @@ msgid "Mashups"
 msgstr "Mashups"
 
 #: static/js/catalogue/CatalogueSearchView.js:149
-#: static/js/wirecloud/ui/WiringEditor.js:337
-#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:65
+#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:43
 msgid "Operators"
 msgstr "Operadores"
 
@@ -188,21 +186,21 @@ msgstr "La pestaña de destino (%(tabName)s) es de sólo lectura."
 msgid "Error adding iwidget to persistence: %(errorMsg)s."
 msgstr "Error añadiendo el iwidget en el servidor: %(errorMsg)s."
 
-#: static/js/dragboard/iGadget.js:762
+#: static/js/dragboard/iGadget.js:754
 msgid "Maximize"
 msgstr "Maximizar"
 
-#: static/js/dragboard/iGadget.js:768
+#: static/js/dragboard/iGadget.js:760
 msgid "Minimize"
 msgstr "Minimizar"
 
-#: static/js/dragboard/iGadget.js:831
+#: static/js/dragboard/iGadget.js:822
 msgid "%(errorCount)s error"
 msgid_plural "%(errorCount)s errors"
 msgstr[0] "%(errorCount)s error"
 msgstr[1] "%(errorCount)s errores"
 
-#: static/js/dragboard/iGadget.js:965
+#: static/js/dragboard/iGadget.js:956
 msgid "Error saving changes to persistence: %(errorMsg)s."
 msgstr "Error guardando los cambios en el servidor: %(errorMsg)s."
 
@@ -226,7 +224,7 @@ msgstr "Error renombrando la pestaña: %(errorMsg)s."
 msgid "Tab deleted successfully"
 msgstr "Pestaña eliminada correctamente"
 
-#: static/js/opManager/Tab.js:75 static/js/opManager/Workspace.js.c:495
+#: static/js/opManager/Tab.js:75 static/js/opManager/Workspace.js:495
 #: static/js/opManager/Workspace.js:500
 msgid "Error removing tab: %(errorMsg)s."
 msgstr "Error elimnando la pestaña: %(errorMsg)s."
@@ -279,31 +277,31 @@ msgstr "¿Realmente quieres borrar la pestaña \"%(tabName)s\"?"
 msgid "Rename"
 msgstr "Renombrar"
 
-#: static/js/opManager/TabMenuItems.js:62
+#: static/js/opManager/TabMenuItems.js:64
 msgid "Mark as Visible"
 msgstr "Marcar como Visible"
 
-#: static/js/opManager/TabMenuItems.js:68
+#: static/js/opManager/TabMenuItems.js:72
 #: static/js/wirecloud/ui/SharingWindowMenu.js:178
 #: static/js/wirecloud/ui/WiringEditor/Behaviour.js:66
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:58
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:305
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:317
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:69
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:275
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:288
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:51
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:307
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:319
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:71
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:277
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:290
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:53
 msgid "Remove"
 msgstr "Eliminar"
 
-#: static/js/opManager/TabMenuItems.js:75
+#: static/js/opManager/TabMenuItems.js:80
 #: static/js/wirecloud/Tutorials/BasicConcepts.js:109
 #: static/js/wirecloud/Tutorials/BehaviourOrientedWiring.js:236
 #: static/js/wirecloud/ui/IWidgetMenuItems.js:53
 #: static/js/wirecloud/ui/WirecloudHeader.js:97
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:90
 #: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:77
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:45
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:46
 msgid "Settings"
 msgstr "Configurar"
 
@@ -1480,41 +1478,41 @@ msgstr "Obteniendo el código de WireCloud"
 msgid "Retrieving initial data"
 msgstr "Obteniendo datos iniciales"
 
-#: static/js/wirecloud/core.js:163
+#: static/js/wirecloud/core.js:164
 msgid "Workspace"
 msgstr "Entorno de trabajo"
 
-#: static/js/wirecloud/core.js:193
+#: static/js/wirecloud/core.js:194
 msgid "Processing initial context data"
 msgstr "Procesando los datos contexto iniciales"
 
-#: static/js/wirecloud/core.js:214
+#: static/js/wirecloud/core.js:216
 msgid "Error retrieving available resources: %(errorMsg)s."
 msgstr "Error obteniendo los recursos disponibles: %(errorMsg)s."
 
-#: static/js/wirecloud/core.js:232
+#: static/js/wirecloud/core.js:234
 msgid "Error retrieving platform preferences data: %(errorMsg)s"
 msgstr ""
 "Error obteniendo los datos de las preferencias de la plataforma: "
 "%(errorMsg)s."
 
-#: static/js/wirecloud/core.js:261
+#: static/js/wirecloud/core.js:263
 msgid "Error retrieving workspace list"
 msgstr "Error obteniendo la lista de entornos de trabajo"
 
-#: static/js/wirecloud/core.js:272
+#: static/js/wirecloud/core.js:274
 msgid "Unloading WireCloud"
 msgstr "Cerrando WireCloud"
 
-#: static/js/wirecloud/core.js:321
+#: static/js/wirecloud/core.js:323
 msgid "Changing current workspace"
 msgstr "Cambiando el entorno de trabajo actual"
 
-#: static/js/wirecloud/core.js:344
+#: static/js/wirecloud/core.js:346
 msgid "Downloading workspace (%(name)s) data"
 msgstr "Descargando los datos del entorno de trabajo (%(name)s)"
 
-#: static/js/wirecloud/core.js:454
+#: static/js/wirecloud/core.js:456
 msgid "Merging mashup"
 msgstr "Mezclando el mashup"
 
@@ -1544,40 +1542,40 @@ msgstr ""
 msgid "Accept"
 msgstr "Aceptar"
 
-#: static/js/wirecloud/ui/IWidgetMenuItems.js:63
+#: static/js/wirecloud/ui/IWidgetMenuItems.js:64
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:87
 #: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:74
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:59
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:61
 msgid "Logs"
 msgstr "Registros"
 
-#: static/js/wirecloud/ui/IWidgetMenuItems.js:71
+#: static/js/wirecloud/ui/IWidgetMenuItems.js:74
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:83
 #: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:70
 msgid "Upgrade/Downgrade"
 msgstr "Actualizar/Desactualizar"
 
-#: static/js/wirecloud/ui/IWidgetMenuItems.js:80
+#: static/js/wirecloud/ui/IWidgetMenuItems.js:84
 msgid "Reload"
 msgstr "Recargar"
 
-#: static/js/wirecloud/ui/IWidgetMenuItems.js:85
+#: static/js/wirecloud/ui/IWidgetMenuItems.js:90
 msgid "User's Manual"
 msgstr "Manual de usuario"
 
-#: static/js/wirecloud/ui/IWidgetMenuItems.js:98
+#: static/js/wirecloud/ui/IWidgetMenuItems.js:104
 msgid "Exit Full Dragboard"
 msgstr "Salir de panel completo"
 
-#: static/js/wirecloud/ui/IWidgetMenuItems.js:100
+#: static/js/wirecloud/ui/IWidgetMenuItems.js:107
 msgid "Full Dragboard"
 msgstr "Panel completo"
 
-#: static/js/wirecloud/ui/IWidgetMenuItems.js:113
+#: static/js/wirecloud/ui/IWidgetMenuItems.js:122
 msgid "Snap to grid"
 msgstr "Ajustar a la rejilla"
 
-#: static/js/wirecloud/ui/IWidgetMenuItems.js:115
+#: static/js/wirecloud/ui/IWidgetMenuItems.js:125
 msgid "Extract from grid"
 msgstr "Extraer de la rejilla"
 
@@ -1746,20 +1744,20 @@ msgstr "Público"
 msgid "Add marketplace"
 msgstr "Añadir marketplace"
 
-#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:118
+#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:120
 msgid "Delete marketplace"
 msgstr "Borrar marketplace"
 
-#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:120
+#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:122
 msgid "Do you really want to remove the marketplace \"%(marketName)s\"?"
 msgstr "¿Realmente quieres eliminar el marketplace \"%(marketName)s\"?"
 
-#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:125
-#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:126
+#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:127
+#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:128
 msgid "Deleting marketplace"
 msgstr "Borrando marketplace"
 
-#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:130
+#: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:132
 msgid "Marketplace deleted successfully"
 msgstr "Marketplace borrado correctamente"
 
@@ -1786,7 +1784,7 @@ msgstr "Podrás continuar una vez todas las dependencias sean satisfechas."
 
 #: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:57
 #: static/js/wirecloud/ui/WiringEditor/Behaviour.js:394
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:760
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:757
 msgid "Continue"
 msgstr "Continuar"
 
@@ -1794,7 +1792,7 @@ msgstr "Continuar"
 #: static/js/wirecloud/ui/PreferencesWindowMenu.js:221
 #: static/js/wirecloud/ui/SharingWindowMenu.js:85
 #: static/js/wirecloud/ui/UpgradeWindowMenu.js:157
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:761
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:758
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -1937,13 +1935,13 @@ msgid "Use current value"
 msgstr "Usar el valor actual"
 
 #: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:74
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:293
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:262
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:295
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:264
 msgid "Add"
 msgstr "Añadir"
 
 #: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:145
-#: static/js/wirecloud/ui/WirecloudHeader.js:110
+#: static/js/wirecloud/ui/WirecloudHeader.js:114
 msgid "User"
 msgstr "Usuario"
 
@@ -2066,7 +2064,7 @@ msgstr ""
 #: static/js/wirecloud/ui/WiringEditor/Behaviour.js:59
 #: static/js/wirecloud/ui/WiringEditor/Component.js:49
 #: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:51
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:79
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:81
 msgid "Preferences"
 msgstr "Preferencias"
 
@@ -2160,12 +2158,12 @@ msgstr ""
 msgid "Sign in"
 msgstr "Entrar"
 
-#: static/js/wirecloud/ui/WirecloudHeader.js:103
-msgid "DJango Admin panel"
-msgstr "Panel de administración de DJango"
+#: static/js/wirecloud/ui/WirecloudHeader.js:105
+msgid "Django Admin panel"
+msgstr "Panel de administración de Django"
 
-#: static/js/wirecloud/ui/WirecloudHeader.js:109
-#: static/js/wirecloud/ui/WirecloudHeader.js:110
+#: static/js/wirecloud/ui/WirecloudHeader.js:113
+#: static/js/wirecloud/ui/WirecloudHeader.js:114
 msgid "Switch User"
 msgstr "Cambiar usuario"
 
@@ -2173,15 +2171,11 @@ msgstr "Cambiar usuario"
 msgid "%(workspace_title)s - Wiring"
 msgstr "%(workspace_title)s - Wiring"
 
-#: static/js/wirecloud/ui/WiringEditor.js:333
-msgid "Connections"
-msgstr "Conexiones"
-
-#: static/js/wirecloud/ui/WiringEditor.js:369
+#: static/js/wirecloud/ui/WiringEditor.js:359
 msgid "Hello, welcome to the Wiring Editor view!"
 msgstr "Hola, ¡Bienvenido al Editor del Wiring!"
 
-#: static/js/wirecloud/ui/WiringEditor.js:370
+#: static/js/wirecloud/ui/WiringEditor.js:360
 msgid ""
 "In this view you can connect all the components of your dashboard in a "
 "visual way."
@@ -2189,7 +2183,7 @@ msgstr ""
 "En esta vista puedes conectar todos los componentes del panel de una forma "
 "visual."
 
-#: static/js/wirecloud/ui/WiringEditor.js:376
+#: static/js/wirecloud/ui/WiringEditor.js:366
 msgid ""
 "Open the sidebar using the <em>Find components</em> button and drag &amp; "
 "drop components (operators/widgets) from the sidebar for being able to "
@@ -2199,15 +2193,15 @@ msgstr ""
 "arrastrar y soltar componentes (operadores/widgets) desde el panel lateral y "
 "poder conectarlos como quieras."
 
-#: static/js/wirecloud/ui/WiringEditor.js:385
+#: static/js/wirecloud/ui/WiringEditor.js:375
 msgid "Find components"
 msgstr "Buscar componentes"
 
-#: static/js/wirecloud/ui/WiringEditor.js:396
+#: static/js/wirecloud/ui/WiringEditor.js:385
 msgid "List behaviours"
 msgstr "Listar comportamientos"
 
-#: static/js/wirecloud/ui/WiringEditor.js:783
+#: static/js/wirecloud/ui/WiringEditor.js:762
 msgid ""
 "The connection will also be modified for the rest of behaviours, would you "
 "like to continue?"
@@ -2215,12 +2209,12 @@ msgstr ""
 "La conexión será modificada también en el resto de comportamientos. ¿Desea "
 "continuar?"
 
-#: static/js/wirecloud/ui/WiringEditor.js:865
+#: static/js/wirecloud/ui/WiringEditor.js:843
 msgid "Behaviour"
 msgstr "Comportamiento"
 
 #: static/js/wirecloud/ui/WiringEditor/Behaviour.js:119
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:744
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:740
 msgid "New behaviour"
 msgstr "Nuevo comportamiento"
 
@@ -2245,7 +2239,7 @@ msgid "No, thank you"
 msgstr "No, gracias"
 
 #: static/js/wirecloud/ui/WiringEditor/Behaviour.js:408
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:742
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:738
 msgid "Description"
 msgstr "Descripción"
 
@@ -2253,49 +2247,45 @@ msgstr "Descripción"
 msgid "Behaviour settings"
 msgstr "Configuración del comportamiento"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:45
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:130
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:46
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:126
 msgid "Enable"
 msgstr "Activar"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:54
-msgid "Behaviours"
-msgstr "Comportamientos"
-
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:63
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:55
 msgid "Create behaviour"
 msgstr "Crear comportamiento"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:71
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:62
 msgid "Order behaviours"
 msgstr "Ordenar los comportamientos"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:89
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:85
 msgid "New feature"
 msgstr "Nueva funcionalidad"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:90
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:86
 msgid "Enable the behaviours to enjoy with a new way to handle connections."
 msgstr ""
 "Activa los comportamientos para disfrutar de una nueva forma de manejar las "
 "conexiones."
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:93
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:89
 msgid ""
 "<a>Click here</a> for a quick guide/tutorial on how to use this new feature."
 msgstr ""
 "Haz <a>click aquí</a> para una guía rápida/tutorial sobre como usar esta "
 "nueva funcionalidad."
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:123
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:119
 msgid "Disable"
 msgstr "Desactivar"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:399
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:395
 msgid "The behaviour (%(title)s) was loaded."
 msgstr "El comportamiento (%(title)s) ha sido cargado correctamente."
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:757
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:754
 msgid ""
 "The behaviours will be removed but the components and connections will still "
 "exist, would you like to continue?"
@@ -2303,18 +2293,18 @@ msgstr ""
 "Los comportamientos serán eliminados pero los componentes y las conexiones "
 "seguirán existiendo. ¿Desea continuar?"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:838
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:835
 msgid ""
 "The <strong><t:title/></strong> <t:type/> will be removed, would you like to "
 "continue?"
 msgstr ""
 "El <t:type/> <strong><t:title/></strong> será borrado. ¿Desea continuar?"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:859
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:856
 msgid "<li>The <strong><t:title/></strong> <t:type/>.</li>"
 msgstr "<li>El <t:type/> <strong><t:title/></strong>.</li>"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:865
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:862
 msgid ""
 "<p>These components only exist within the current behaviour <strong><t:title/"
 "></strong>:</p><ul><t:components/></ul><p>Would you like to continue?</p>"
@@ -2323,7 +2313,7 @@ msgstr ""
 "<strong><t:title/></strong>:</p><ul><t:components/></ul><p>¿Desea continuar?"
 "</p>"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:888
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:885
 msgid ""
 "The <strong><t:title/></strong> <t:type/> will be <strong>definitely</"
 "strong> removed, would you like to continue?"
@@ -2347,11 +2337,11 @@ msgstr "sin conectores"
 msgid "in use"
 msgstr "en uso"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:733
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:735
 msgid "Missing"
 msgstr "Ausente"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:735
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:737
 msgid "%(count)s error"
 msgid_plural "%(count)s errors"
 msgstr[0] "%(count)s error"
@@ -2382,41 +2372,13 @@ msgstr "Ordenar conectores"
 msgid "Rename %(type)s"
 msgstr "Renombrar %(type)s"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentMeta.js:47
-msgid "Create"
-msgstr "Crear"
+#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:49
+msgid "New component"
+msgstr "Nuevo componente"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentMeta.js:142
+#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:127
 msgid "No image available"
 msgstr "Imagen no disponible"
-
-#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:48
-msgid "Components"
-msgstr "Componentes"
-
-#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:80
-msgid "No operators"
-msgstr "No hay operadores"
-
-#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:81
-msgid ""
-"No operator in your current account. Go to the Marketplace view or the My "
-"Resources view to install or uploading at least one operator."
-msgstr ""
-"No hay ningún operador en tu cuenta. Ve a la vista de Marketplace o a la "
-"vista de Mis Recursos para instalar o subir al menos un operador."
-
-#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:104
-msgid "No widgets"
-msgstr "No hay widgets"
-
-#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:105
-msgid ""
-"No widget in your current workspace. Go to the Editor view for adding at "
-"least one view."
-msgstr ""
-"No hay ningún widget en el espacio de trabajo actual. Ve a la vista del "
-"Editor para añadir al menos uno."
 
 #: static/js/wirecloud/ui/WiringEditor/ConnectionHandle.js:74
 msgid "Drag & Drop"
@@ -2456,28 +2418,28 @@ msgid "The requested workspace is no longer available (it was deleted)."
 msgstr ""
 "El entorno de trabajo solicitado ya no está disponible (ha sido borrado)."
 
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:52
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:54
 msgid "Do you really want to remove the \"%(workspaceName)s\" workspace?"
 msgstr ""
 "¿Realmente quieres eliminar el entorno de trabajo \"%(workspaceName)s\"?"
 
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:64
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:67
 msgid "New workspace"
 msgstr "Nuevo entorno de trabajo"
 
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:70
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:74
 msgid "Embed"
 msgstr "Incrustar"
 
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:71
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:75
 msgid "Embed Code"
 msgstr "Código a incrustar"
 
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:77
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:82
 msgid "Share"
 msgstr "Compartir"
 
-#: static/js/wirecloud/ui/WorkspaceViewItems.js:84
+#: static/js/wirecloud/ui/WorkspaceViewItems.js:90
 msgid "Upload to my resources"
 msgstr "Subir a mis recursos"
 
@@ -2551,30 +2513,3 @@ msgstr "El operador no ha registrado un callback para este punto de entrada"
 #: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:99
 msgid "Widget has not registered a callback for this input endpoint"
 msgstr "El widget no ha registrado un callback para este endpoint de entrada"
-
-#~ msgid "iWidget loaded"
-#~ msgstr "iWidget cargado"
-
-#~ msgid "Operator %(id)s (%(uri)s) couldn't be loaded."
-#~ msgstr "El operador %(id)s (%(uri)s) no pudo ser cargado."
-
-#~ msgid "Operator %(id)s couldn't be loaded as %(uri)s does not exist."
-#~ msgstr "El operador %(id)s no pudo ser cargado dado que %(uri)s no existe."
-
-#~ msgid "Upgrading to version %(version)s"
-#~ msgstr "Actualizando a la versión %(version)s"
-
-#~ msgid "Downgrading to version %(version)s"
-#~ msgstr "Desactualizando a la versión %(version)s"
-
-#~ msgid "The widget %(id)s (%(uri)s) does not exist."
-#~ msgstr "El widget %(id)s (%(uri)s) no existe."
-
-#~ msgid "Delete"
-#~ msgstr "Borrar"
-
-#~ msgid "The connection was established successfully."
-#~ msgstr "La conexión fue establecida satisfactoriamente."
-
-#~ msgid "%(component_type)s's logs"
-#~ msgstr "Registros de %(component_type)s"

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-31 13:11+0200\n"
-"PO-Revision-Date: 2016-03-31 13:13+0200\n"
+"POT-Creation-Date: 2016-04-26 18:54+0200\n"
+"PO-Revision-Date: 2016-04-26 19:05+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
 "Language: es\n"
@@ -52,63 +52,63 @@ msgstr "equipo"
 msgid "teams"
 msgstr "equipos"
 
-#: core/plugins.py:246
+#: core/plugins.py:247
 msgid "Language"
 msgstr "Idioma"
 
-#: core/plugins.py:247
+#: core/plugins.py:248
 msgid "Current language used in the platform"
 msgstr "Idioma actualmente utilizado en la plataforma"
 
-#: core/plugins.py:250
+#: core/plugins.py:251
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: core/plugins.py:251
+#: core/plugins.py:252
 msgid "User name of the current logged user"
 msgstr "Nombre de usuario del usuario actual"
 
-#: core/plugins.py:254
+#: core/plugins.py:255
 msgid "Full name"
 msgstr "Nombre completo"
 
-#: core/plugins.py:255
+#: core/plugins.py:256
 msgid "Full name of the logged user"
 msgstr "Nombre completo del usuario actual"
 
-#: core/plugins.py:258
+#: core/plugins.py:259
 msgid "Is Anonymous"
 msgstr "Es anónimo"
 
-#: core/plugins.py:259
+#: core/plugins.py:260
 msgid "Boolean. Designates whether current user is logged in the system."
 msgstr ""
 "Boleano. Indica cuando hay un usuario registrado actualmente en el sistema."
 
-#: core/plugins.py:262
+#: core/plugins.py:263
 msgid "Is Staff"
 msgstr "Es personal"
 
-#: core/plugins.py:263
+#: core/plugins.py:264
 msgid "Boolean. Designates whether current user can access the admin site."
 msgstr ""
 "Boleano. Indica cuando el usuario actual puede acceder al panel de "
 "administración."
 
-#: core/plugins.py:266
+#: core/plugins.py:267
 msgid "Is Superuser"
 msgstr "Es superusuario"
 
-#: core/plugins.py:267
+#: core/plugins.py:268
 msgid "Boolean. Designates whether current user is a super user."
 msgstr ""
 "Booleano. Indica cuando el usuario actualmente registrado es un super usuario"
 
-#: core/plugins.py:270
+#: core/plugins.py:271
 msgid "Mode"
 msgstr "Modo"
 
-#: core/plugins.py:271
+#: core/plugins.py:272
 msgid ""
 "Rendering mode used by the platform (available modes: classic, smartphone "
 "and embedded)"
@@ -116,35 +116,35 @@ msgstr ""
 "Modo de funcionamiento usado por la plataforma (modos disponibles: classic, "
 "smartphone y embedded)"
 
-#: core/plugins.py:274
+#: core/plugins.py:275
 msgid "Orientation"
 msgstr "Orientación"
 
-#: core/plugins.py:275
+#: core/plugins.py:276
 msgid "Current screen orientation"
 msgstr "Orientación actual de la plataforma"
 
-#: core/plugins.py:278
+#: core/plugins.py:279
 msgid "Theme"
 msgstr "Estilo"
 
-#: core/plugins.py:279
+#: core/plugins.py:280
 msgid "Name of the theme used by the platform"
 msgstr "Nombre del estilo usado por la plataforma"
 
-#: core/plugins.py:282 core/plugins.py:286
+#: core/plugins.py:283 core/plugins.py:287
 msgid "Version"
 msgstr "Versión"
 
-#: core/plugins.py:283 core/plugins.py:287
+#: core/plugins.py:284 core/plugins.py:288
 msgid "Version of the platform"
 msgstr "Versión de la plataforma"
 
-#: core/plugins.py:290
+#: core/plugins.py:291
 msgid "Version Hash"
 msgstr "Hash de la versión"
 
-#: core/plugins.py:291
+#: core/plugins.py:292
 msgid ""
 "Hash for the current version of the platform. This hash changes when the "
 "platform is updated or when an addon is added or removed"
@@ -152,33 +152,33 @@ msgstr ""
 "Hash asignado a la versión actual de la plataforma. Este bash cambia cuando "
 "la plataforma se actualiza o cuando un adán es activado o desactivado."
 
-#: core/plugins.py:303
+#: core/plugins.py:304
 msgid "Anonymous"
 msgstr "Anónimo"
 
-#: core/plugins.py:322 iwidget/models.py:33 markets/models.py:31
+#: core/plugins.py:323 iwidget/models.py:33 markets/models.py:31
 #: markets/models.py:51 preferences/models.py:39 preferences/models.py:54
 #: preferences/models.py:70 workspace/models.py:41 workspace/models.py:106
 msgid "Name"
 msgstr "Nombre"
 
-#: core/plugins.py:323
+#: core/plugins.py:324
 msgid "Current name of the workspace"
 msgstr "Nombre actual del entorno de trabajo"
 
-#: core/plugins.py:326
+#: core/plugins.py:327
 msgid "Owner"
 msgstr "Dueño"
 
-#: core/plugins.py:327
+#: core/plugins.py:328
 msgid "Workspace's owner username"
 msgstr "Nombre de usuario del dueño del entorno de trabajo"
 
-#: core/plugins.py:342
+#: core/plugins.py:343
 msgid "Public"
 msgstr "Público"
 
-#: core/plugins.py:345
+#: core/plugins.py:346
 msgid ""
 "Allow any user to open this workspace (in read-only mode). (default: "
 "disabled)"
@@ -186,33 +186,33 @@ msgstr ""
 "Permite a cualquier usuario acceder a este entorno de trabajo (en modo de "
 "solo lectura). (valor por defecto: deshabilitado) "
 
-#: core/plugins.py:350
+#: core/plugins.py:351
 msgid "Share list"
 msgstr "Lista de compartidos"
 
-#: core/plugins.py:353
+#: core/plugins.py:354
 msgid "List of users with access to this workspace. (default: [])"
 msgstr ""
 "Lista de usuarios con acceso a este entorno de trabajo. (valor por defecto: "
 "[])"
 
-#: core/plugins.py:358
+#: core/plugins.py:359
 msgid "Default layout"
 msgstr "Esquema por defecto"
 
-#: core/plugins.py:361
+#: core/plugins.py:362
 msgid "Base"
 msgstr "Base"
 
-#: core/plugins.py:362
+#: core/plugins.py:363
 msgid "Free"
 msgstr "Libre"
 
-#: core/plugins.py:364
+#: core/plugins.py:365
 msgid "Default layout for the new widgets."
 msgstr "Distribución por defecto para los nuevos widgets."
 
-#: core/plugins.py:376
+#: core/plugins.py:377
 msgid "Base layout"
 msgstr "Distribución base"
 
@@ -224,7 +224,7 @@ msgstr "Widget"
 msgid "Widget URI"
 msgstr "Widget URI"
 
-#: iwidget/models.py:34 workspace/utils.py:470 workspace/views.py:67
+#: iwidget/models.py:34 workspace/utils.py:470 workspace/views.py:66
 msgid "Tab"
 msgstr "Pestaña"
 
@@ -240,77 +240,82 @@ msgstr "Versión rechazada"
 msgid "Read Only"
 msgstr "Sólo lectura"
 
-#: iwidget/utils.py:73 iwidget/utils.py:86
+#: iwidget/utils.py:72
+#, python-format
+msgid "Field %(field)s must contain a boolean value"
+msgstr "El campo %(field)s tiene que contener un valor booleado"
+
+#: iwidget/utils.py:83 iwidget/utils.py:96
 #, python-format
 msgid "Field %(field)s must contain a number value"
 msgstr "El campo %(field)s tiene que contener un valor númerico"
 
-#: iwidget/utils.py:76 iwidget/utils.py:89
+#: iwidget/utils.py:86 iwidget/utils.py:99
 #, python-format
 msgid "Invalid value for %(field)s"
 msgstr "Valor inválido para el campo %(field)s"
 
-#: iwidget/utils.py:126
+#: iwidget/utils.py:138
 #, python-format
 msgid "%(uri)s is not a widget"
 msgstr "%(uri)s no es un widget"
 
-#: iwidget/views.py:44 workspace/views.py:196
+#: iwidget/views.py:42 workspace/views.py:194
 msgid "You don't have permission to access this workspace"
 msgstr "No tienes permisos para acceder a este entorno de trabajo"
 
-#: iwidget/views.py:63
+#: iwidget/views.py:61
 msgid "You have not enough permission for adding iwidgets to the workspace"
 msgstr ""
 "No tienes permisos suficientes para añadir nuevos widgets en el workspace"
 
-#: iwidget/views.py:72 iwidget/views.py:133
+#: iwidget/views.py:70 iwidget/views.py:130
 #, python-format
 msgid "refered widget %(widget_uri)s does not exist."
 msgstr "el widget referenciado %(widget_uri)s no existe."
 
-#: iwidget/views.py:88
+#: iwidget/views.py:86
 msgid ""
 "You have not enough permission for updating the iwidgets of this workspace"
 msgstr ""
 "No tienes suficientes permisos para actualizar las instancias de los widgets "
 "de este entorno de trabajo"
 
-#: iwidget/views.py:95
+#: iwidget/views.py:93
 msgid "Widget {id} does not exist"
 msgstr "El widget {id} no existe"
 
-#: iwidget/views.py:126
+#: iwidget/views.py:123
 msgid "You have not enough permission for updating the iwidget"
 msgstr ""
 "No tienes suficientes permisos para actualizar está instancia de widget"
 
-#: iwidget/views.py:151
+#: iwidget/views.py:148
 msgid "You have not enough permission for removing iwidgets from the workspace"
 msgstr ""
 "No tienes suficientes permisos para eliminar widgets del entorno de trabajo"
 
-#: iwidget/views.py:155
+#: iwidget/views.py:152
 msgid "IWidget cannot be deleted"
 msgstr "El Widget no puede ser borrado"
 
-#: iwidget/views.py:172
+#: iwidget/views.py:169
 msgid ""
 "You have not enough permission for updating the preferences of the iwidget"
 msgstr ""
 "No tienes suficientes permisos para actualizar las preferencias del widget"
 
-#: iwidget/views.py:187
+#: iwidget/views.py:184
 #, python-format
 msgid "Invalid preference: \"%s\""
 msgstr "Preferencia inválida: \"%s\""
 
-#: iwidget/views.py:191
+#: iwidget/views.py:188
 #, python-format
 msgid "\"%s\" preference is read only."
 msgstr "La preferencia \"%s\" es de sólo lectura."
 
-#: iwidget/views.py:209
+#: iwidget/views.py:206
 msgid ""
 "You have not enough permission for updating the persistent variables of this "
 "widget"
@@ -318,7 +323,7 @@ msgstr ""
 "No tienes permisos suficientes para actualizar la variable persistente del "
 "widget"
 
-#: iwidget/views.py:222
+#: iwidget/views.py:219
 #, python-format
 msgid "Invalid persistent variable: \"%s\""
 msgstr "Variable persistente inválida: \"%s\""
@@ -404,13 +409,13 @@ msgstr "Algo ha ido mal (mira los detalles para más información)"
 msgid "Inherit"
 msgstr "Heredar"
 
-#: preferences/views.py:224 preferences/views.py:278
+#: preferences/views.py:221 preferences/views.py:274
 msgid "You are not allowed to read this workspace"
 msgstr "No tienes permisos para leer este entorno de trabajo"
 
-#: preferences/views.py:238 preferences/views.py:292 wiring/views.py:44
-#: workspace/views.py:211 workspace/views.py:315 workspace/views.py:319
-#: workspace/views.py:390
+#: preferences/views.py:235 preferences/views.py:288 wiring/views.py:44
+#: workspace/views.py:209 workspace/views.py:313 workspace/views.py:317
+#: workspace/views.py:388
 msgid "You are not allowed to update this workspace"
 msgstr "No tienes permisos para actualizar este entorno de trabajo"
 
@@ -486,19 +491,19 @@ msgstr "Las preferencias de solo lectura no se pueden actualizar"
 msgid "Missing dependencies"
 msgstr "Dependencias incumplidas"
 
-#: workspace/mashupTemplateParser.py:333
+#: workspace/mashupTemplateParser.py:335
 msgid "Original wiring"
 msgstr "Wiring original"
 
-#: workspace/mashupTemplateParser.py:333
+#: workspace/mashupTemplateParser.py:335
 msgid "This is the wiring description of the original workspace"
 msgstr "Esta es la descripción del wiring del espacio de trabajo original"
 
-#: workspace/mashupTemplateParser.py:336
+#: workspace/mashupTemplateParser.py:338
 msgid "Merged wiring"
 msgstr "Wiring mezclado"
 
-#: workspace/mashupTemplateParser.py:336
+#: workspace/mashupTemplateParser.py:338
 msgid "This is the wiring description of the merged mashup."
 msgstr ""
 "Esta es la descripción del comportamiento creado para el mashup mezclado."
@@ -563,96 +568,96 @@ msgstr "Visible"
 msgid "Workspace"
 msgstr "Entorno de trabajo"
 
-#: workspace/views.py:106
+#: workspace/views.py:104
 msgid "Missing name parameter"
 msgstr "Falta el parámetro name"
 
-#: workspace/views.py:108 workspace/views.py:400
+#: workspace/views.py:106 workspace/views.py:398
 msgid "Workspace and mashup parameters cannot be used at the same time"
 msgstr "No se pueden usar los parámetros workspace y mashup al mismo tiempo"
 
-#: workspace/views.py:113
+#: workspace/views.py:111
 msgid "invalid workspace name"
 msgstr "nombre de entorno de trabajo inválido"
 
-#: workspace/views.py:121 workspace/views.py:176
+#: workspace/views.py:119 workspace/views.py:174
 msgid "A workspace with the given name already exists"
 msgstr "Ya existe un entorno de trabajo con el nombre indicado."
 
-#: workspace/views.py:128 workspace/views.py:405
+#: workspace/views.py:126 workspace/views.py:403
 msgid "invalid mashup id"
 msgstr "identificador de mashup inválido"
 
-#: workspace/views.py:136 workspace/views.py:413
+#: workspace/views.py:134 workspace/views.py:411
 #, python-format
 msgid "Mashup not found: %(mashup_id)s"
 msgstr "Mashup no encontrado: %(mashup_id)s"
 
-#: workspace/views.py:146 workspace/views.py:423
+#: workspace/views.py:144 workspace/views.py:421
 #, python-format
 msgid "You are not allowed to read from workspace %s"
 msgstr "No tienes permisos para leer desde el entorno de trabajo %s"
 
-#: workspace/views.py:240
+#: workspace/views.py:238
 msgid "You are not allowed to delete this workspace"
 msgstr "No tienes permisos para borrar este entorno de trabajo"
 
-#: workspace/views.py:266
+#: workspace/views.py:264
 msgid "Malformed tab JSON: expecting tab name."
 msgstr "JSON mal formado: se esperaba el nombre de la pestaña."
 
-#: workspace/views.py:270 workspace/views.py:293
+#: workspace/views.py:268 workspace/views.py:291
 msgid "You are not allowed to create new tabs for this workspace"
 msgstr ""
 "No tienes permisos para crear nuevas pestañas para este entorno de trabajo"
 
-#: workspace/views.py:275
+#: workspace/views.py:273
 msgid "A tab with the given name already exists for the workspace"
 msgstr ""
 "Una pestaña con el nombre indicado ya existe para el entorno de trabajo"
 
-#: workspace/views.py:328 workspace/views.py:331
+#: workspace/views.py:326 workspace/views.py:329
 msgid "Invalid visible value"
 msgstr "Valor de visibilidad inválido"
 
-#: workspace/views.py:353
+#: workspace/views.py:351
 msgid "You are not allowed to remove this tab"
 msgstr "No tienes permiso para eliminar esta pestaña"
 
-#: workspace/views.py:357
+#: workspace/views.py:355
 msgid "Tab cannot be deleted as workspaces need at least one tab"
 msgstr ""
 "La pestaña no se puede borra dado que el entorno de trabajo necesita como "
 "mínimo una pestaña"
 
-#: workspace/views.py:361
+#: workspace/views.py:359
 msgid "Tab cannot be deleted as it contains widgets that cannot be deleted"
 msgstr ""
 "La pestaña no se puede borrar ya que contiene widgets que no pueden ser "
 "borrados"
 
-#: workspace/views.py:398
+#: workspace/views.py:396
 msgid "Missing workspace or mashup parameter"
 msgstr "Falta o el parámetro workspace o el parámetro mashup"
 
-#: workspace/views.py:482
+#: workspace/views.py:480
 #, python-format
 msgid "malformed json data: %s"
 msgstr "datos json malformados: %s"
 
-#: workspace/views.py:487
+#: workspace/views.py:485
 #, python-format
 msgid "Malformed JSON. The following field(s) are missing: %(fields)s."
 msgstr "JSON mal formado. Faltan los siguientes campos: %(fields)s."
 
-#: workspace/views.py:490
+#: workspace/views.py:488
 msgid "Invalid vendor"
 msgstr "Distribuidor inválido"
 
-#: workspace/views.py:493
+#: workspace/views.py:491
 msgid "Invalid name"
 msgstr "Nombre inválido"
 
-#: workspace/views.py:496
+#: workspace/views.py:494
 msgid "Invalid version number"
 msgstr "Número de versión inválido"

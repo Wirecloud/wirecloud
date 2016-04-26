@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-31 13:03+0200\n"
+"POT-Creation-Date: 2016-04-26 18:50+0200\n"
 "PO-Revision-Date: 2015-11-25 13:18+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@fi.upm.es>\n"
 "Language-Team: Español/España\n"
@@ -105,12 +105,12 @@ msgstr ""
 "Error autorizando a la aplicación para que pueda acceder a WireCloud en tu "
 "nombre (%(username)s)."
 
-#: utils/downloader.py:49 utils/http.py:368
+#: utils/downloader.py:49 utils/http.py:371
 #, python-format
 msgid "Invalid schema: %(schema)s"
 msgstr "Esquema inválido: %(schema)s"
 
-#: utils/http.py:260
+#: utils/http.py:263
 msgid ""
 "The requested resource is only capable of generating content not acceptable "
 "according to the Accept headers sent in the request"
@@ -118,36 +118,36 @@ msgstr ""
 "El recurso consultado solo es capaz de generar contenido en un formato no "
 "aceptable según lo negociado con la cabecera Accept de la petición"
 
-#: utils/http.py:275
+#: utils/http.py:278
 msgid "Unsupported request media type"
 msgstr "Tipo de contenido de la petición no soportado"
 
-#: utils/http.py:360 utils/http.py:371
+#: utils/http.py:363 utils/http.py:374
 #, python-format
 msgid "Missing required parameter: %(parameter)s"
 msgstr "Falta un campo obligatorio: %(parameter)s"
 
-#: utils/http.py:365
+#: utils/http.py:368
 #, python-format
 msgid "%(parameter)s must be an absolute URL"
 msgstr "%(parameter)s tiene que ser una URL absoluta"
 
-#: utils/http.py:374 utils/http.py:387
+#: utils/http.py:377 utils/http.py:390
 #, python-format
 msgid "Invalid %(parameter)s type"
 msgstr "Tipo inválido para el parámetro %(parameter)s"
 
-#: utils/http.py:383
+#: utils/http.py:386
 #, python-format
 msgid "Invalid %(parameter)s value"
 msgstr "Valor inválido para el parámetro %(parameter)s"
 
-#: utils/http.py:409
+#: utils/http.py:412
 #, python-format
 msgid "\"%(path)s\" does not exist"
 msgstr "\"%(path)s\" no existe"
 
-#: utils/http.py:432
+#: utils/http.py:435
 #, python-format
 msgid "malformed json data: %s"
 msgstr "JSON malformado: %s"
@@ -161,13 +161,11 @@ msgstr "Falta el tipo de recurso."
 msgid "Invalid resource type: %s"
 msgstr "Tipo de recurso inválido: %s"
 
-#: utils/template/parsers/json.py:312 utils/template/parsers/old_xml.py:176
-#: utils/template/parsers/rdf.py:229
+#: utils/template/parsers/json.py:312 utils/template/parsers/rdf.py:229
 msgid "The format of the vendor is invalid."
 msgstr "El formato del distribuidor es inválido."
 
-#: utils/template/parsers/json.py:315 utils/template/parsers/old_xml.py:180
-#: utils/template/parsers/rdf.py:233
+#: utils/template/parsers/json.py:315 utils/template/parsers/rdf.py:233
 msgid "The format of the name is invalid."
 msgstr "El formato del nombre es inválido."
 
@@ -181,60 +179,16 @@ msgstr ""
 "número entero. Ejemplos: “0.1”, “1.11”. Nota: “1.01” debe escribirse como "
 "“1.0.1” o “1.1”"
 
-#: utils/template/parsers/old_xml.py:169 utils/template/parsers/rdf.py:151
-#: utils/template/parsers/rdf.py:174 utils/template/parsers/xml.py:185
-#, python-format
-msgid "missing required field: %(field)s"
-msgstr "falta el parámetro obligatorio: %(field)s"
-
-#: utils/template/parsers/old_xml.py:184
-msgid ""
-"ERROR: the format of the version number is invalid. Format: X.X.X where X is "
-"an integer. Ex. \"0.1\", \"1.11\" NOTE: \"1.01\" should be changed to "
-"\"1.0.1\" or \"1.1\""
-msgstr ""
-"ERROR: el formato del número de versión es inválido. Formato: X.X.X donde X "
-"es un número entero. Ejemplos: “0.1”, “1.11”. Nota: “1.01” debe escribirse "
-"como “1.0.1” o “1.1”"
-
-#: utils/template/parsers/old_xml.py:274
-msgid "Missing required field: source"
-msgstr "Falta un campo obligatorio: source"
-
-#: utils/template/parsers/old_xml.py:279
-msgid "Missing required field: target"
-msgstr "Falta un campo obligatorio: target"
-
-#: utils/template/parsers/old_xml.py:370
-msgid "missing required attribute in Platform.Link: href"
-msgstr "Falta el atributo obligatorio href en el elemento Platform.Link"
-
-#: utils/template/parsers/old_xml.py:507
-#, python-format
-msgid ""
-"ERROR: There isn't a Translation element with the default language "
-"(%(default_lang)s) translations"
-msgstr ""
-"ERROR: No hay un elemento Translation para las traducciones por defecto "
-"(%(default_lang)s)."
-
-#: utils/template/parsers/old_xml.py:514
-#, python-format
-msgid ""
-"ERROR: the following translation indexes need a default value: %(indexes)s."
-msgstr ""
-"Los siguientes indices de traducción requieren un valor por defecto: "
-"%(indexes)s."
-
-#: utils/template/parsers/old_xml.py:518
-#, python-format
-msgid "ERROR: the following translation indexes are not used: %(indexes)s."
-msgstr "los siguientes indices de traducción no están en uso: %(indexes)s."
-
 #: utils/template/parsers/rdf.py:126
 #, python-format
 msgid "invalid content for field: %(field)s"
 msgstr "contenido inválido para el campo: %(field)s"
+
+#: utils/template/parsers/rdf.py:151 utils/template/parsers/rdf.py:174
+#: utils/template/parsers/xml.py:185
+#, python-format
+msgid "missing required field: %(field)s"
+msgstr "falta el parámetro obligatorio: %(field)s"
 
 #: utils/template/parsers/rdf.py:357
 msgid "missing required field: source"
@@ -287,17 +241,17 @@ msgstr "Falta la opción %s"
 msgid "Unsupported resource type: %s"
 msgstr "Tipo de recurso no soportado: %s"
 
-#: views.py:59
+#: views.py:69
 msgid "Missing namespace GET parameter providing a search namespace"
 msgstr ""
 "Falta el parámetro GET namespace indicando el espacio de nombres en el que "
 "buscar"
 
-#: views.py:63
+#: views.py:73
 #, python-format
 msgid "Invalid search namespace: %s"
 msgstr "Espacio de nombres para la búsqueda inválido: %s"
 
-#: views.py:78
+#: views.py:88
 msgid "You don't have permission to switch current session user"
 msgstr "No tienes permisos para cambiar el usuario de la sesión actual"
