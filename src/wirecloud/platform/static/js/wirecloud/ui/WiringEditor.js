@@ -421,7 +421,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.layout.slideOut();
 
         this.behaviourEngine.clear().disable();
-
+        this.componentManager.clear();
         this.suggestionManager.enable();
 
         this.orderableComponent = null;
