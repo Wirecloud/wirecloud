@@ -93,6 +93,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     display: inline-block;
     margin: 3px;
     vertical-align: middle;
+    text-align: center;
     @include user-select(none);
     position: relative;
     cursor: pointer;
@@ -359,7 +360,6 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 .se-btn.btn-circle,
 .btn-group-circle > .se-btn {
     padding: 0;
-    text-align: center;
     background-image: none;
     border-radius: 50%;
     text-shadow: none;
