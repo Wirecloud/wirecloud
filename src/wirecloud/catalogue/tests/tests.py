@@ -97,26 +97,26 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='emptyuser', password='admin')
 
-        response = self.client.get(self.base_url+'?staff=true')
+        response = self.client.get(self.base_url + '?staff=true')
         self.assertEqual(response.status_code, 403)
 
-        response = self.client.get(self.base_url+'?scope=application')
+        response = self.client.get(self.base_url + '?scope=application')
         self.assertEqual(response.status_code, 400)
 
-        response = self.client.get(self.base_url+'?orderby=type')
+        response = self.client.get(self.base_url + '?orderby=type')
         self.assertEqual(response.status_code, 400)
 
     def test_basic_search_with_orderby(self):
 
         self.client.login(username='emptyuser', password='admin')
 
-        response = self.client.get(self.base_url+'?orderby=-creation_date')
+        response = self.client.get(self.base_url + '?orderby=-creation_date')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['pagelen'], 8)
 
-        response = self.client.get(self.base_url+'?orderby=creation_date')
+        response = self.client.get(self.base_url + '?orderby=creation_date')
         self.assertEqual(response.status_code, 200)
         result2_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result2_json['pagelen'], 8)
@@ -186,7 +186,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='myuser', password='admin')
 
-        result = self.client.get(self.base_url+'?q=term+mashable')
+        result = self.client.get(self.base_url + '?q=term+mashable')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 1)
@@ -194,7 +194,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 2)
 
-        result = self.client.get(self.base_url+'?q=mashable+application')
+        result = self.client.get(self.base_url + '?q=mashable+application')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 2)
@@ -202,7 +202,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.0")
         self.assertEqual(len(result_json['results'][0]['others']), 1)
 
-        result = self.client.get(self.base_url+'?q=mashable')
+        result = self.client.get(self.base_url + '?q=mashable')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 3)
@@ -212,7 +212,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][1]['version'], "1.0")
         self.assertEqual(len(result_json['results'][1]['others']), 1)
 
-        result = self.client.get(self.base_url+'?q=output+digit')
+        result = self.client.get(self.base_url + '?q=output+digit')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 1)
@@ -223,7 +223,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.client.logout()
         self.client.login(username='MyUser', password='admin')
 
-        result = self.client.get(self.base_url+'?q=test+mashup+dependencies')
+        result = self.client.get(self.base_url + '?q=test+mashup+dependencies')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 1)
@@ -236,7 +236,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.client.login(username='myuser', password='admin')
 
         # Empty query
-        result = self.client.get(self.base_url+'?q=totally+uncorrectable+search+giving+an+empty+resultset')
+        result = self.client.get(self.base_url + '?q=totally+uncorrectable+search+giving+an+empty+resultset')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagenum'], 1)
@@ -272,7 +272,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.client.login(username='myuser', password='admin')
 
         # Empty query
-        result = self.client.get(self.base_url+'?q=totally+uncorrectable+search+giving+an+empty+resultset')
+        result = self.client.get(self.base_url + '?q=totally+uncorrectable+search+giving+an+empty+resultset')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagenum'], 1)
@@ -292,7 +292,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         n = result_json['pagelen'] + sum([len(i['others']) for i in result_json['results']])
         self.assertEqual(n, 13)
 
-        response = self.client.get(self.base_url+'?staff=true')
+        response = self.client.get(self.base_url + '?staff=true')
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result_json['pagenum'], 1)
@@ -306,18 +306,22 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='admin', password='admin')
 
-        response = self.client.get(self.base_url + '?q=mashable+application+component', HTTP_HOST="wirecloud.example.com")
+        response = self.client.get(self.base_url, HTTP_HOST="wirecloud.example.com")
         self.assertEqual(response.status_code, 200)
         result_json = json.loads(response.content.decode('utf-8'))
         for result in result_json['results']:
-            self.assertTrue(result['image'].startswith('http://wirecloud.example.com/'))
-            self.assertTrue(result['smartphoneimage'].startswith('http://wirecloud.example.com/'))
+            if result['name'] == 'sky_weather':
+                self.assertTrue(result['image'].startswith('http://wirecloud.example.com/'))
+                self.assertTrue(result['smartphoneimage'].startswith('http://wirecloud.example.com/'))
+            else:
+                self.assertEqual(result['image'], '')
+                self.assertEqual(result['smartphoneimage'], '')
 
     def test_basic_search_with_query_correction(self):
 
         self.client.login(username='myuser', password='admin')
 
-        result = self.client.get(self.base_url+'?q=wercloud')
+        result = self.client.get(self.base_url + '?q=wercloud')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['corrected_q'], 'wirecloud')
@@ -326,7 +330,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
-        result = self.client.get(self.base_url+'?q=mashble')
+        result = self.client.get(self.base_url + '?q=mashble')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['corrected_q'], 'mashable')
@@ -338,7 +342,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
 
         self.client.login(username='myuser', password='admin')
 
-        result = self.client.get(self.base_url+'?q=wire')
+        result = self.client.get(self.base_url + '?q=wire')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 4)
@@ -347,7 +351,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "1.5")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
-        result = self.client.get(self.base_url+'?q=shu')
+        result = self.client.get(self.base_url + '?q=shu')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 3)
@@ -356,7 +360,7 @@ class CatalogueSearchTestCase(WirecloudTestCase):
         self.assertEqual(result_json['results'][0]['version'], "3.0")
         self.assertEqual(len(result_json['results'][0]['others']), 0)
 
-        result = self.client.get(self.base_url+'?q=weather+inter')
+        result = self.client.get(self.base_url + '?q=weather+inter')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['pagelen'], 1)

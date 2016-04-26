@@ -275,8 +275,8 @@ def add_absolute_urls(results, request=None):
     for hit in results:
         base_url = get_template_url(hit['vendor'], hit['name'], hit['version'], hit['template_uri'], request=request)
         hit['uri'] = "/".join((hit['vendor'], hit['name'], hit['version']))
-        hit['image'] = urljoin(base_url, hit['image'])
-        hit['smartphoneimage'] = urljoin(base_url, hit['smartphoneimage'])
+        hit['image'] = "" if hit['image'] == '' else urljoin(base_url, hit['image'])
+        hit['smartphoneimage'] = "" if hit['image'] == '' else urljoin(base_url, hit['smartphoneimage'])
 
 
 def add_other_versions(searcher, hits, user, staff):

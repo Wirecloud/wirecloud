@@ -173,8 +173,13 @@
             'image': function () {
                 var image = document.createElement('img');
                 image.className = 'wc-resource-img';
-                image.onerror = onImageError;
-                image.src = resource.image;
+
+                if (resource.image) {
+                    image.onerror = onImageError;
+                    image.src = resource.image;
+                } else {
+                    setTimeout(onImageError.bind(null, {target: image}), 0);
+                }
 
                 return image;
             },

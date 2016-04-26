@@ -239,7 +239,7 @@
             "popularity": "0",
             "vendor": "Store",
             "short_name": "sky_weather",
-            "json_description": "{\"name\": \"sky_weather\", \"vendor\": \"Store\", \"version\": \"3.0\", \"type\": \"mashup\", \"title\": \"Mashup Sky Weather\", \"description\": \"This mashup contains keywords car news time.\"}",
+            "json_description": "{\"name\": \"sky_weather\", \"vendor\": \"Store\", \"version\": \"3.0\", \"type\": \"mashup\", \"title\": \"Mashup Sky Weather\", \"description\": \"This mashup contains keywords car news time.\", \"image\": \"images/catalogue.png\", \"smartphoneimage\": \"images/smartphone.png\"}",
             "creator": 80,
             "creation_date": "2011-05-13T11:24:03Z",
             "version": "3.0",
