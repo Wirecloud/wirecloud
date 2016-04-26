@@ -130,18 +130,21 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
+    var propagate_keys = ['Escape', 'Enter'];
+
     var element_onkeydown = function element_onkeydown(event) {
         var modifiers, key;
 
         modifiers = utils.extractModifiers(event);
         key = utils.normalizeKey(event);
 
-        if (!modifiers.altKey && !modifiers.metaKey && !modifiers.ctrlKey || key === 'Backspace') {
+        if ((!modifiers.altKey && !modifiers.metaKey && !modifiers.ctrlKey && propagate_keys.indexOf(key) === -1) || key === 'Backspace') {
             event.stopPropagation();
         }
 
         if (this.enabled) {
             modifiers.preventDefault = event.preventDefault.bind(event);
+            modifiers.stopPropagation = event.stopPropagation.bind(event);
             modifiers.key = key;
             this.trigger('keydown', modifiers, key);
         }

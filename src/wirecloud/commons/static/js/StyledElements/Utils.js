@@ -895,6 +895,8 @@ if (window.StyledElements == null) {
         };
     };
 
+    var propagate_keys = ['Escape', 'Enter'];
+
     /**
      * Stops the propagation of keydown events based on a common rules.
      * Currently, this listener will stop the propagation of any keydown events
@@ -911,7 +913,7 @@ if (window.StyledElements == null) {
         modifiers = Utils.extractModifiers(event);
         key = Utils.normalizeKey(event);
 
-        if (!modifiers.altKey && !modifiers.metaKey && !modifiers.ctrlKey || key === 'Backspace') {
+        if ((!modifiers.altKey && !modifiers.metaKey && !modifiers.ctrlKey && propagate_keys.indexOf(key) === -1) || key === 'Backspace') {
             event.stopPropagation();
         }
     };
