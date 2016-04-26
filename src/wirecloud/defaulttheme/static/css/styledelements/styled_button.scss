@@ -280,16 +280,12 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 
 .btn-group-justified {
     position: relative;
-    display: table;
+    display: flex;
     width: 100%;
-    margin: 0px 0px 10px;
-    table-layout: fixed;
+    margin: 0px 0px $margin-vertical-base;
 
-    .se-btn {
-        display: table-cell;
-        float: none;
-        width: 1%;
-        text-align: center;
+    & > .se-btn {
+        flex-grow: 1;
     }
 }
 
