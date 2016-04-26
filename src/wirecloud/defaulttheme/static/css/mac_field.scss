@@ -10,50 +10,22 @@
     border-radius: $button-border-radius;
 }
 
-.se-mac-field > .se-hl-west-container > .preview {
-    display: block;
-    height: 20px;
-    width:  20px;
-    margin-right: 2px;
-}
-
-.se-mac-field > .se-hl-center-container > .add-on {
+.se-mac-field > .add-on {
     display: block;
     width:   auto;
-}
-
-.se-mac-field > .input_wrapper {
-    overflow: hidden;
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 0px;
-    bottom: 0px;
-    cursor: pointer;
-}
-
-.se-mac-field > .input_wrapper > input {
-    position: absolute;
-    top: -100px;
-    left: -100px;
-    display: block;
-    bottom: -2px;
-    right: -2px;
-    opacity: 0;
-    cursor: pointer;
+    flex-grow: 1;
+    flex-shrink: 1;
 }
 
 .se-mac-field.focus {
-    box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: 0 0 6px 2px rgba($input-border-color-focus, 0.6);
 }
 
-.se-mac-field.focus > .se-hl-center-container > .add-on {
-    border-color: rgba(82, 168, 236, 0.8);
+.se-mac-field.focus > .add-on {
+    border-color: rgba($input-border-color-focus, 0.8);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
 
-.se-mac-field.focus > .se-hl-east-container > .se-btn,
-.se-mac-field.focus > .se-hl-west-container > .se-btn
-{
-    border-color: rgba(82, 168, 236, 0.8);
+.se-mac-field.focus > .se-btn {
+    border-color: rgba($input-border-color-focus, 0.8);
 }

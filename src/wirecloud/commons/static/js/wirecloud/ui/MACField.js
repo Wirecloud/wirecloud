@@ -67,15 +67,14 @@
 
         StyledElements.InputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
-        this.layout = new StyledElements.HorizontalLayout({'class': 'se-mac-field input input-prepend input-append'});
-        this.wrapperElement = this.layout.wrapperElement;
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = 'se-mac-field se-input-group';
         if (options['class'] !== "") {
             this.wrapperElement.className += " " + options['class'];
         }
 
         this.inputElement = document.createElement("input");
         this.inputElement.setAttribute("type", "hidden");
-        this.wrapperElement.appendChild(this.inputElement);
         this.resource_details = null;
 
         if (options.name) {
@@ -86,19 +85,19 @@
             this.wrapperElement.setAttribute("id", options.id);
         }
 
-        this.name_preview = document.createElement('div');
-        this.name_preview.className = 'add-on';
-        this.layout.getCenterContainer().appendChild(this.name_preview);
-
         var close_button = new StyledElements.Button({iconClass: 'icon-remove', title: gettext('Clear current selection')});
-        this.layout.getWestContainer().appendChild(close_button);
-        close_button.disable();
-        close_button.addEventListener('click', function () {
+        close_button.appendTo(this.wrapperElement);
+        close_button.disable().addEventListener('click', function () {
             this.setValue('');
         }.bind(this));
 
+        this.name_preview = document.createElement('div');
+        this.name_preview.className = 'add-on';
+        this.wrapperElement.appendChild(this.name_preview);
+        this.wrapperElement.appendChild(this.inputElement);
+
         var button = new StyledElements.Button({iconClass: 'icon-search', title: gettext('Search')});
-        this.layout.getEastContainer().appendChild(button);
+        button.appendTo(this.wrapperElement);
 
         /* Public fields */
         Object.defineProperties(this, {
@@ -117,10 +116,6 @@
         button.addEventListener('blur', onblur.bind(this));
     };
     MACField.prototype = new StyledElements.InputElement();
-
-    MACField.prototype.repaint = function repaint() {
-        this.layout.repaint();
-    };
 
     MACField.prototype.insertInto = function insertInto(element, refElement) {
         StyledElements.InputElement.prototype.insertInto.call(this, element, refElement);
