@@ -448,17 +448,24 @@
 
     /**
      * Elimina del notebook la pestaña indicada mediante su identificador.
-     * @param id identificador de la pestaña que se quiere eliminar.
+     * @param tab identificador de la pestaña que se quiere eliminar.
      */
-    Notebook.prototype.removeTab = function removeTab(id) {
+    Notebook.prototype.removeTab = function removeTab(tab) {
         var index, tabToExtract, nextTab;
 
-        if (!this.tabsById[id]) {
+        if (tab instanceof StyledElements.Tab) {
+            if (this.tabsById[tab.tabId] !== tab) {
+                throw new TypeError('tab is not owned by this notebook');
+            }
+            tab = tab.getId();
+        }
+
+        if (!this.tabsById[tab]) {
             return;
         }
 
-        delete this.tabsById[id];
-        index = this.getTabIndex(id);
+        delete this.tabsById[tab];
+        index = this.getTabIndex(tab);
         tabToExtract = this.tabs.splice(index, 1)[0];
 
         this.tabArea.removeChild(tabToExtract.getTabElement());
@@ -473,6 +480,8 @@
                 nextTab = this.tabs[index - 1];
             }
             this.goToTab(nextTab.tabId);
+        } else if (this.visibleTab === tabToExtract) {
+            this.visibleTab = null;
         }
 
         // Send specific tab close event
