@@ -65,14 +65,13 @@
         tabWrapper.insertInto(this.wrapperElement);
 
         this.tabArea = new StyledElements.Container();
-        tabWrapper.getCenterContainer().appendChild(this.tabArea);
-        this.tabArea.addClassName('se-notebook-tab-area');
+        tabWrapper.center.appendChild(this.tabArea.addClassName('se-notebook-tab-area'));
 
         this.moveLeftButton = new this.Button({'class': 'move_left', 'iconClass': 'icon-caret-left'});
-        tabWrapper.getWestContainer().appendChild(this.moveLeftButton);
+        tabWrapper.west.appendChild(this.moveLeftButton);
 
         this.moveRightButton = new this.Button({'class': 'move_right', 'iconClass': 'icon-caret-right'});
-        tabWrapper.getEastContainer().appendChild(this.moveRightButton);
+        tabWrapper.east.appendChild(this.moveRightButton);
 
         this.contentArea = document.createElement("div");
         this.contentArea.className = "se-notebook-content-wrapper";
@@ -600,19 +599,8 @@
     };
 
     Notebook.prototype.repaint = function repaint(temporal) {
-        var i, height;
+        var i;
         temporal = temporal != null ? temporal : false;
-
-        if (this.wrapperElement.classList.contains('full') && this.fullscreen !== true) {
-            height = this._getUsableHeight();
-            if (height == null) {
-                return; // nothing to do
-            }
-
-            this.wrapperElement.style.height = (height + "px");
-        } else {
-            this.wrapperElement.style.height = '';
-        }
 
         this.tabWrapper.repaint();
 
@@ -691,10 +679,10 @@
 
         switch (position) {
         case 'left':
-            this.tabWrapper.getWestContainer().appendChild(button, this.moveLeftButton);
+            this.tabWrapper.west.prependChild(button, this.moveLeftButton);
             break;
         case 'right':
-            this.tabWrapper.getEastContainer().appendChild(button);
+            this.tabWrapper.east.appendChild(button);
             break;
         }
     };
