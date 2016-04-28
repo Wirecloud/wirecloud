@@ -391,7 +391,7 @@ Supported options:
   provided in the widget description will be used.
 - `permissions` (*object*): Object with the permissions to apply to the widget.
   Currently, the following permissions are available: `close`, `configure`,
-  `minimize`, `move`, `resize`.
+  `minimize`, `move`, `resize` and `upgrade`.
 - `preferences` (*object*): Object with the initial configuration for the
   preferences. If not provided, the default configuration of the widget is used.
 - `properties` (*object*): Object with the initial configuration for the
@@ -451,8 +451,23 @@ MashupPlatform.mashup.addOperator(operator_ref, options)
 
 Supported options:
 
+- `permissions` (*object*): Object with the permissions to apply to the operator.
+  Currently, the following permissions are available: `close`, `configure` and
+  `upgrade`.
 - `preferences` (*object*): Object with the initial configuration for the
   preferences. If not provided, the default configuration of the operator is used.
+
+**Example usage:**
+
+```javascript
+var operator = MashupPlatform.mashup.addOperator('CoNWeT/ngsientity2poi/3.0.3', {
+    "preferences": {
+        "coordinates_attr": {
+            "value": "current_position"
+        }
+    }
+});
+```
 
 
 #### `MashupPlatform.mashup.createWorkspace` method

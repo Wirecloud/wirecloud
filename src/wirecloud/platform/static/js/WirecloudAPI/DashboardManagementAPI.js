@@ -157,13 +157,21 @@
         return new Widget(widget.internal_iwidget);
     };
 
-    var addOperator = function addOperator(ref) {
+    var addOperator = function addOperator(ref, options) {
         var operator_def = Wirecloud.LocalCatalogue.getResourceId(ref);
         if (operator_def == null || operator_def.type !== 'operator') {
             throw new TypeError('invalid operator ref');
         }
-        var operator = resource_workspace.wiring._instantiate_operator(resource.id + '/' + counter++, operator_def, {volatile: true});
+        // Filter operator options
+        options = {
+            volatile: true,
+            permissions: options.permissions,
+            properties: options.properties,
+            preferences: options.preferences
+        };
+        var operator = resource_workspace.wiring._instantiate_operator(resource.id + '/' + counter++, operator_def, options);
         resource.addEventListener('unload', operator.destroy.bind(operator));
+        operator.load();
         return (new Operator(operator));
     };
 
