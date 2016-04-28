@@ -146,7 +146,7 @@
             switch (command.type) {
             case 'shiftLeft':
 
-                if (isTabVisible.call(context.control, 0)) {
+                if (context.control.tabs.length === 0 || isTabVisible.call(context.control, 0)) {
                     return false;
                 }
 
@@ -198,6 +198,7 @@
 
         Object.defineProperty(this, 'fullscreen', {
             get: function () {
+                /* istanbul ignore else */
                 if ('fullscreenElement' in document) {
                     return document.fullscreenElement === this.wrapperElement;
                 } else if ('msFullscreenElement' in document) {
@@ -295,17 +296,27 @@
     };
 
     /**
-     * Desplaza las pestañas a la izquierda.
+     * Shift the tab area to display the previous tab.
+     *
+     * @returns {StyledElements.Notebook}
+     *      The instance on which the member is called.
      */
     Notebook.prototype.shiftLeftTabs = function shiftLeftTabs() {
         this.transitionsQueue.addCommand({type: 'shiftLeft'});
+
+        return this;
     };
 
     /**
-     * Desplaza las pestañas a la derecha.
+     * Shift the tab area to display the next tab.
+     *
+     * @returns {StyledElements.Notebook}
+     *      The instance on which the member is called.
      */
     Notebook.prototype.shiftRightTabs = function shiftRightTabs() {
         this.transitionsQueue.addCommand({type: 'shiftRight'});
+
+        return this;
     };
 
     Notebook.prototype.insertInto = function insertInto(element, refElement) {
@@ -628,13 +639,8 @@
                 this.tabs[i].repaint(false);
             }
         }
-    };
 
-    /**
-     * Devuelve <code>true</code> si este Componente está deshabilitado.
-     */
-    Notebook.prototype.isDisabled = function isDisabled() {
-        return this.disabledLayer != null;
+        return this;
     };
 
     /**
@@ -677,6 +683,8 @@
 
         // Enable/Disable tab scrolling buttons
         enableDisableButtons.call(this);
+
+        return this;
     };
 
     Notebook.prototype.addButton = function addButton(button, position) {
@@ -696,7 +704,15 @@
         }
     };
 
+    /**
+     * Requests fullscreen mode. You must call this method from a user event
+     * handler, otherwise the browser will denie this request.
+     *
+     * @returns {StyledElements.Notebook}
+     *      The instance on which the member is called.
+     */
     Notebook.prototype.requestFullscreen = function requestFullscreen() {
+        /* istanbul ignore else */
         if ('requestFullscreen' in this.wrapperElement) {
             this.wrapperElement.requestFullscreen();
         } else if ('msRequestFullscreen' in this.wrapperElement) {
@@ -706,13 +722,22 @@
         } else if ('webkitRequestFullscreen' in this.wrapperElement) {
             this.wrapperElement.webkitRequestFullscreen();
         }
+
+        return this;
     };
 
+    /**
+     * Exists from fullscreen mode
+     *
+     * @returns {StyledElements.Notebook}
+     *      The instance on which the member is called.
+     */
     Notebook.prototype.exitFullscreen = function exitFullscreen() {
         if (this.fullscreen !== true) {
-            return;
+            return this;
         }
 
+        /* istanbul ignore else */
         if ('exitFullscreen' in document) {
             document.exitFullscreen();
         } else if ('msExitFullscreen' in document) {
@@ -722,6 +747,8 @@
         } else if ('webkitExitFullscreen' in document) {
             document.webkitExitFullscreen();
         }
+
+        return this;
     };
 
     Notebook.prototype.destroy = function destroy() {

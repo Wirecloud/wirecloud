@@ -41,17 +41,6 @@
             }
         });
 
-        it("should support adding new tabs programmatically (through the createTab method)", function () {
-            var element = new StyledElements.Notebook();
-            var tab1 = element.createTab();
-            var tab2 = element.createTab();
-
-            expect(element.visibleTab).toBe(tab1);
-            expect(element.tabs).toEqual([tab1, tab2]);
-            expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
-            expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
-        });
-
         it("should support adding new tabs through a user interface button", function () {
             var element, tab, btnCreate;
 
@@ -65,6 +54,60 @@
             expect(element.tabs).toEqual([tab]);
             expect(element.tabArea.wrapperElement.children[0]).toBe(tab.tabElement);
             expect(element.tabArea.wrapperElement.children[1]).toBe(btnCreate.wrapperElement);
+        });
+
+        it("should provide fullscreen status through the fullscreen property", function () {
+            var element = new StyledElements.Notebook();
+            expect(element.fullscreen).toBe(false);
+        });
+
+        it("should support the full option", function () {
+            var element = new StyledElements.Notebook({full: false});
+            expect(element.hasClassName('full')).toBe(false);
+        });
+
+        it("should support the id option", function () {
+            var element = new StyledElements.Notebook({id: 'myid'});
+            expect(element.wrapperElement.id).toBe('myid');
+        });
+
+        describe("createTab([options])", function () {
+
+            var element;
+
+            beforeEach(function () {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+            });
+
+            it("should support create new tabs without passing options", function () {
+                var tab1, tab2;
+
+                expect(element.visibleTab).toBe(null);
+                tab1 = element.createTab();
+                expect(element.visibleTab).toBe(tab1);
+                tab2 = element.createTab();
+
+                expect(element.visibleTab).toBe(tab1);
+                expect(element.tabs).toEqual([tab1, tab2]);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
+            });
+
+            it("should support create new tabs using the initiallyVisible option", function () {
+                var tab1, tab2;
+
+                expect(element.visibleTab).toBe(null);
+                tab1 = element.createTab({initiallyVisible: true});
+                expect(element.visibleTab).toBe(tab1);
+                tab2 = element.createTab({initiallyVisible: true});
+                expect(element.visibleTab).toBe(tab2);
+
+                expect(element.tabs).toEqual([tab1, tab2]);
+                expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
+                expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
+            });
+
         });
 
         describe("goToTab(tab)", function () {
@@ -207,6 +250,163 @@
                 var button = new StyledElements.Button();
                 element.addButton(button, 'left');
                 expect(element.tabWrapper.west.children).toEqual([button, element.moveLeftButton]);
+            });
+        });
+
+        describe("repaint(temporal)", function () {
+            var element, tab1, tab2, tab3;
+
+            beforeEach(function () {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                tab1 = element.createTab();
+                spyOn(tab1, 'repaint');
+                tab2 = element.createTab();
+                spyOn(tab2, 'repaint');
+                tab3 = element.createTab();
+                spyOn(tab3, 'repaint');
+            });
+
+            it("should no crash if there are no tabs", function () {
+                // Create an empty notebook for this tests
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                expect(element.repaint(true)).toBe(element);
+            });
+
+            it("should call to the repaint method of the visible tab when doing a temporal repaint", function () {
+                expect(element.repaint(true)).toBe(element);
+                expect(tab1.repaint).toHaveBeenCalledWith(true);
+                expect(tab2.repaint).not.toHaveBeenCalled();
+                expect(tab3.repaint).not.toHaveBeenCalled();
+            });
+
+            it("should call to the repaint method of the visible tab when doing a normal repaint", function () {
+                element.repaint();
+                expect(tab1.repaint).toHaveBeenCalledWith(false);
+                expect(tab2.repaint).toHaveBeenCalledWith(false);
+                expect(tab3.repaint).toHaveBeenCalledWith(false);
+            });
+        });
+
+        describe("clear()", function () {
+            var element, tab1, tab2;
+
+            beforeEach(function () {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                tab1 = element.createTab();
+                tab2 = element.createTab();
+            });
+
+            it("should remove all the tabs", function () {
+                expect(element.clear()).toBe(element);
+                expect(element.tabs).toEqual([]);
+            });
+
+        });
+
+        describe("requestFullscreen()", function () {
+            var element;
+
+            beforeEach(function () {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+            });
+
+            it("should make the notebook fullscreen", function () {
+                Element.prototype.requestFullscreen = jasmine.createSpy('requestFullscreen');
+                expect(element.requestFullscreen()).toBe(element);
+                expect(Element.prototype.requestFullscreen).toHaveBeenCalledWith();
+                delete Element.prototype.requestFullscreen;
+            });
+
+        });
+
+        describe("exitFullscreen()", function () {
+            var element;
+
+            beforeEach(function () {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+            });
+
+            it("should do nothing if the browser is in fullscreen mode but the notebook is not in fullscreen mode", function () {
+                document.fullscreenElement = document.createElement('div');
+                document.exitFullscreen = jasmine.createSpy('exitFullscreen');
+                expect(element.fullscreen).toBe(false);
+
+                expect(element.exitFullscreen()).toBe(element);
+
+                expect(document.exitFullscreen).not.toHaveBeenCalled();
+                delete document.fullscreenElement;
+                delete document.exitFullscreen;
+            });
+
+            it("should exit from fullscreen if the notebook is in fullscreen mode", function () {
+                document.fullscreenElement = element.wrapperElement;
+                document.exitFullscreen = jasmine.createSpy('exitFullscreen');
+                expect(element.fullscreen).toBe(true);
+
+                expect(element.exitFullscreen()).toBe(element);
+
+                expect(document.exitFullscreen).toHaveBeenCalled();
+                delete document.fullscreenElement;
+                delete document.exitFullscreen;
+            });
+
+        });
+
+        describe("getTabByLabel(label)", function () {
+            var element, tab1, tab2, tab3;
+
+            beforeEach(function () {
+                element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                tab1 = element.createTab({name: "Tab 1"});
+                tab2 = element.createTab({name: "mytab"});
+                tab3 = element.createTab({name: "mytab"});
+            });
+
+            it("returns null if the tab doesn't exist", function () {
+                expect(element.getTabByLabel("inexistent")).toBe(null);
+            });
+
+            it("returns the tab identified by the given label", function () {
+                expect(element.getTabByLabel("Tab 1")).toBe(tab1);
+            });
+
+            it("returns the first tab if there are more tabs with the same label", function () {
+                expect(element.getTabByLabel("mytab")).toBe(tab2);
+            });
+
+        });
+
+        describe("shiftLeftTabs()", function () {
+            it("should no crash if there are no tabs", function () {
+                var element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                expect(element.shiftLeftTabs()).toBe(element);
+            });
+
+            it("should no crash if there are only one tab", function () {
+                var element = new StyledElements.Notebook();
+                element.appendTo(dom).createTab();
+                expect(element.shiftLeftTabs()).toBe(element);
+            });
+        });
+
+        describe("shiftRightTabs()", function () {
+            it("should no crash if there are no tabs", function () {
+                var element = new StyledElements.Notebook();
+                element.appendTo(dom);
+                expect(element.shiftRightTabs()).toBe(element);
+            });
+
+            it("should no crash if there are only one tab", function () {
+                var element = new StyledElements.Notebook();
+                element.appendTo(dom).createTab();
+                expect(element.shiftRightTabs()).toBe(element);
             });
         });
 
