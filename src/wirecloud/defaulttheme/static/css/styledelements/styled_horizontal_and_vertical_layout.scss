@@ -10,7 +10,13 @@
     width: auto;
 
     &.full {
-        height: 100%;
+        position: absolute;
+        width: auto;
+        height: auto;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
     }
 }
 
@@ -19,7 +25,13 @@
     height: 100%;
 
     &.full {
-        width: 100%;
+        position: absolute;
+        width: auto;
+        height: auto;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
     }
 }
 
