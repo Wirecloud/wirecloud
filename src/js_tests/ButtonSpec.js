@@ -122,6 +122,37 @@
 
         });
 
+        describe("addIconClassName(classList)", function () {
+
+            var element;
+
+            beforeEach(function () {
+                // TODO addIconClassName should work also if the button is not
+                // initialized using the iconClass option
+                element = new StyledElements.Button({iconClass: 'a'});
+            });
+
+            it("should do nothing when passing a empty string", function () {
+                expect(element.addIconClassName('  ')).toBe(element);
+                expect(element.icon.className).toBe("se-icon a");
+            });
+
+            it("should support space separated classes", function () {
+                expect(element.addIconClassName('b c')).toBe(element);
+                expect(element.icon.className).toBe("se-icon a b c");
+            });
+
+            it("should support class list", function () {
+                expect(element.addIconClassName(['b', 'c'])).toBe(element);
+                expect(element.icon.className).toBe("se-icon a b c");
+            });
+
+            it("should ignore repeated classes", function () {
+                expect(element.addIconClassName('a')).toBe(element);
+                expect(element.icon.className).toBe("se-icon a");
+            });
+
+        });
 
     });
 

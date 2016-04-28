@@ -130,12 +130,9 @@
         if (options.iconClass != null && options.iconClass.trim() !== "") {
             this.icon = document.createElement('i');
             this.icon.classList.add('se-icon');
-            var classes = options.iconClass.trim().split(/\s+/);
-            for (var i = 0; i < classes.length; i++) {
-                this.icon.classList.add(classes[i]);
-            }
-            this.icon.classList.add(options.iconClass);
             this.wrapperElement.appendChild(this.icon);
+
+            this.addIconClassName(options.iconClass);
         }
 
         if (options.text) {
@@ -297,8 +294,18 @@
         return this;
     };
 
-    Button.prototype.addIconClassName = function addIconClassName(classname) {
-        this.icon.classList.add(classname);
+    Button.prototype.addIconClassName = function addIconClassName(classList) {
+        if (!Array.isArray(classList)) {
+            classList = classList == null ? "" : classList.toString().trim();
+            if (classList === "") {
+                return this;
+            }
+            classList = classList.split(/\s+/);
+        }
+
+        classList.forEach(function (classname) {
+            this.icon.classList.add(classname);
+        }, this);
 
         return this;
     };
