@@ -1246,6 +1246,28 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
                 self.assertIsNotNone(alert)
                 self.assertTrue(alert.has_class('alert-info'))
 
+    @uses_extra_workspace('user_with_workspaces', 'Wirecloud_mashup-with-behaviours_1.0.wgt', shared=True)
+    def test_check_component_sidebar(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
+        self._check_component_sidebar()
+        # Get back to dashboard
+        self._check_component_sidebar()
+
+    def _check_component_sidebar(self):
+        with self.wiring_view as wiring:
+            with wiring.component_sidebar as sidebar:
+                widgets = sidebar.find_components('widget', "Wirecloud/Test")
+                self.assertEqual(len(widgets), 2)
+                self.assertEqual(widgets[0].title, "Test 1")
+                self.assertEqual(widgets[0].state, "in use")
+                self.assertEqual(widgets[1].title, "Test 2")
+                self.assertEqual(widgets[1].state, "in use")
+
+                operators = sidebar.find_components('operator', "Wirecloud/TestOperator")
+                self.assertEqual(len(operators), 1)
+                self.assertEqual(operators[0].title, "TestOperator")
+                self.assertEqual(operators[0].state, "in use")
+
 
 @wirecloud_selenium_test_case
 class ComponentMissingTestCase(WirecloudSeleniumTestCase):
