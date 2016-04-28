@@ -67,7 +67,8 @@
         'StyledTextArea': window.parent.StyledElements.TextArea, // backward compatibility alias
         'StyledTextField': window.parent.StyledElements.TextField, // backward compatibility alias
         'TextArea': window.parent.StyledElements.TextArea,
-        'TextField': window.parent.StyledElements.TextField
+        'TextField': window.parent.StyledElements.TextField,
+        'VerticalLayout': window.parent.StyledElements.VerticalLayout
     };
 
     var extend = function (parent_class, extra, options) {
