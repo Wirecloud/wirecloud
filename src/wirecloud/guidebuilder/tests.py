@@ -159,11 +159,6 @@ def get_anchors(w1, w2, label1, label2):
     return (fromc, toc)
 
 
-def connect_anchors(driver, w1, w2, label1, label2):
-    fromc, toc = get_anchors(w1, w2, label1, label2)
-    ActionChains(driver).drag_and_drop(fromc, toc).perform()
-
-
 def move_elem(driver, elem, x, y):
     ActionChains(driver).click_and_hold(
         elem).move_by_offset(x, y).release().perform()
@@ -596,16 +591,16 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 add_pointer(imgp, get_position(btn, 0.5, 0.5))
                 crop_down(imgp, btn, 60)
 
-                ent_oper = component_group.create_component().element
+                ent_oper = component_group.create_component()
 
                 # Dragging the NGSI source operator
-                ActionChains(self.driver).move_to_element(ent_oper).perform()
+                ActionChains(self.driver).move_to_element(ent_oper.element).perform()
                 time.sleep(0.3)
                 imgp = take_capture(self.driver, "add_ngsisource_sidebar")
                 add_pointer(imgp, get_position(ent_oper, 0.8, 0.5))
                 crop_down(imgp, ent_oper, 60)
 
-                ActionChains(self.driver).click_and_hold(ent_oper).perform()
+                ActionChains(self.driver).click_and_hold(ent_oper.element).perform()
                 time.sleep(0.05) # Wait the operator is extracted from the side panel
                 imgp = take_capture(self.driver, "add_ngsisource_drag")
 
@@ -620,7 +615,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 # NGSI source added
                 entservc = wiring.find_draggable_component("operator", title="NGSI source")
                 imgp = take_capture(self.driver, "add_ngsisource_finish")
-                add_pointer(imgp, get_position(entservc.element, 0.5, 0.5))
+                add_pointer(imgp, get_position(entservc, 0.5, 0.5))
                 crop_down(imgp, entservc.element, 250)
 
                 ngsi_source_operator = sidebar.find_draggable_component("operator", title="NGSI source")
@@ -635,7 +630,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 ActionChains(self.driver).move_to_element(component.element).perform()
                 time.sleep(0.3)
                 imgp = take_capture(self.driver, "add_mapviewer_sidebar")
-                add_pointer(imgp, get_position(ent_oper, 0.8, 0.5))
+                add_pointer(imgp, get_position(component, 0.8, 0.5))
                 crop_down(imgp, component.element, 60)
 
                 # Create widget button
@@ -658,7 +653,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 ActionChains(self.driver).move_to_element(labelprovideent.element).perform()
                 time.sleep(0.6)  # wait for color transition
                 imgp = take_capture(self.driver, 'missing_connection_recommendations')
-                add_pointer(imgp, get_position(labelprovideent.element, 0.6, 0.5))
+                add_pointer(imgp, get_position(labelprovideent, 0.6, 0.5))
                 crop_down(imgp, mapservc, 10)
 
                 component_group = sidebar.find_component_group("operator", "CoNWeT/ngsientity2poi")
@@ -670,13 +665,13 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 self.configure_ngsi_entity(poi_oper_w)
 
             imgp = take_capture(self.driver, 'wiring_after_adding_ngsientity2poi')
-            add_pointer(imgp, get_position(poi_oper_w.element, 0.5, 0.45))
+            add_pointer(imgp, get_position(poi_oper_w, 0.5, 0.45))
             crop_down(imgp, mapservc, 10)
 
             ActionChains(self.driver).move_to_element(labelprovideent.element).perform()
             time.sleep(0.6)  # wait for color transition
             imgp = take_capture(self.driver, 'endpoint_recommendation')
-            add_pointer(imgp, get_position(labelprovideent.element, 0.6, 0.5))
+            add_pointer(imgp, get_position(labelprovideent, 0.6, 0.5))
             crop_down(imgp, mapservc, 10)
 
             # Connect NGSI source with the NGSI Entity 2 PoI operator
@@ -685,7 +680,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             ActionChains(self.driver).click_and_hold(labelprovideent.element).move_by_offset(-100, 100).perform()
             time.sleep(0.2)
             imgp = take_capture(self.driver, 'ngsientity2poi_connection_dragging')
-            pos = get_position(labelprovideent.element, 0.5, 0.5)
+            pos = get_position(labelprovideent, 0.5, 0.5)
             pos = (pos[0] - 100 * DENSITY_FACTOR, pos[1] + 100 * DENSITY_FACTOR)
             add_pointer(imgp, pos)
             crop_down(imgp, mapservc, 10)
@@ -693,7 +688,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             ActionChains(self.driver).move_to_element(labelentity.element).release().perform()
             time.sleep(0.2)
             imgp = take_capture(self.driver, 'ngsientity2poi_connection_created')
-            add_pointer(imgp, get_position(labelentity.element, 0.6, 0.5))
+            add_pointer(imgp, get_position(labelentity, 0.6, 0.5))
             crop_down(imgp, mapservc, 10)
 
             # Connect the NGSI Entity 2 PoI operator with the map viewer widget
@@ -701,7 +696,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             target_endpoint = mapsercvcomp.find_endpoint('target', title='Insert/Update PoI')
             source_endpoint.create_connection(target_endpoint)
             imgp = take_capture(self.driver, 'wiring_after_connecting_ngsientity2poin_and_mapviewer')
-            add_pointer(imgp, get_position(target_endpoint.element, 0.6, 0.5))
+            add_pointer(imgp, get_position(target_endpoint, 0.6, 0.5))
             crop_down(imgp, mapsercvcomp.element, 10)
 
         # Out wiring_view
@@ -718,14 +713,55 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         imgp = take_capture(self.driver, 'mapviewer_entity_details')
 
         with self.wiring_view as wiring:
-            cons = wiring.find_connections()
             mapservcw = wiring.find_draggable_component("widget", title="Map Viewer")
+
+            #
+            # Modify the PoI - insert/Update PoI connection
+            #
+            mycon = wiring.find_connections()[1]
+            mycon.click()
+
+            source_endpoint = mapservcw.find_endpoint('target', title='Insert/Update PoI')
+            target_endpoint = mapservcw.find_endpoint('target', title='Insert/Update Centered PoI')
+
+            ActionChains(self.driver).move_to_element(source_endpoint.element).perform()
+            time.sleep(0.2)
+            imgp = take_capture(self.driver, 'modify_connection1')
+            add_pointer(imgp, get_position(source_endpoint, 0.6, 0.5))
+            crop_down(imgp, mapservcw, 50)
+
+            ActionChains(self.driver).click_and_hold(source_endpoint.element).move_by_offset(-100, 25).perform()
+            time.sleep(0.2)
+            imgp = take_capture(self.driver, 'modify_connection2')
+            pos = get_position(source_endpoint, 0.5, 0.5)
+            pos = (pos[0] - 100 * DENSITY_FACTOR, pos[1] + 25 * DENSITY_FACTOR)
+            add_pointer(imgp, pos)
+            crop_down(imgp, mapservcw, 50)
+
+            ActionChains(self.driver).move_to_element(target_endpoint.element).perform()
+            time.sleep(0.2)
+            imgp = take_capture(self.driver, 'modify_connection3')
+            add_pointer(imgp, get_position(target_endpoint, 0.6, 0.5))
+            crop_down(imgp, mapservcw, 50)
+
+            ActionChains(self.driver).release().perform()
+            time.sleep(0.2)
+            imgp = take_capture(self.driver, 'modify_connection4')
+            add_pointer(imgp, get_position(target_endpoint, 0.6, 0.5))
+            crop_down(imgp, mapservcw, 50)
+
+            # Needed due bug #174
+            mycon = wiring.find_connections()[1]
+            mycon.click()
+
+            # Restore the connection
+            ActionChains(self.driver).drag_and_drop(target_endpoint.element, source_endpoint.element).perform()
 
             #
             # Reshape arrow screenshots
             #
 
-            mycon = cons[1]  # Can we know exactly if it's this?
+            mycon = wiring.find_connections()[1]
             cprefs = mycon.click().show_preferences()
 
             # Enable connection customize mode
@@ -764,13 +800,13 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             stopbutton.click()
 
             #
-            # Delete arrow screenshots
+            # Delete connection screenshots
             #
 
             ActionChains(self.driver).move_to_element(mycon.btn_remove.element).perform()
             time.sleep(0.2)
             imgp = take_capture(self.driver, 'delete_arrow1')
-            add_pointer(imgp, get_position(mycon.btn_remove.element, 0.5, 0.4))
+            add_pointer(imgp, get_position(mycon.btn_remove, 0.5, 0.4))
             crop_down(imgp, mapservcw, 50)
 
             # Deselect the connection
@@ -940,7 +976,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 ActionChains(self.driver).move_to_element(btncreate.element).perform()
                 time.sleep(0.2)
                 imgp = take_capture(self.driver, "create_behaviour_button")
-                add_pointer(imgp, get_position(btncreate.element, 0.5, 0.5))
+                add_pointer(imgp, get_position(btncreate, 0.5, 0.5))
                 btncreate.click()
 
                 dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".we-new-behaviour-dialog"))
@@ -962,14 +998,14 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 ActionChains(self.driver).move_to_element(btnrm.element).perform()
                 time.sleep(0.2)
                 imgp = take_capture(self.driver, "remove_behaviour_button")
-                add_pointer(imgp, get_position(btnrm.element, 0.5, 0.5))
+                add_pointer(imgp, get_position(btnrm, 0.5, 0.5))
 
             techniciancomponent = wiring.find_draggable_component("widget", title="Technician List")
             rmbtn = techniciancomponent.btn_remove
             ActionChains(self.driver).move_to_element(rmbtn.element).perform()
             time.sleep(0.2)
             imgp = take_capture(self.driver, "remove_component")
-            add_pointer(imgp, get_position(rmbtn.element, 0.5, 0.5))
+            add_pointer(imgp, get_position(rmbtn, 0.5, 0.5))
 
             targetend = techniciancomponent.find_endpoint("target", title="Technician")
             connection = [x for x in wiring.find_connections() if x.target_id == targetend.id][0]
@@ -977,7 +1013,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             ActionChains(self.driver).move_to_element(rmbtn.element).perform()
             time.sleep(0.2)
             imgp = take_capture(self.driver, "remove_connection")
-            add_pointer(imgp, get_position(rmbtn.element, 0.5, 0.5))
+            add_pointer(imgp, get_position(rmbtn, 0.5, 0.5))
 
             with wiring.behaviour_sidebar as sidebar:
                 lastbehav = sidebar.create_behaviour("Test", "Testing")
@@ -988,7 +1024,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             ActionChains(self.driver).move_to_element(addbtn.element).perform()
             time.sleep(0.2)
             imgp = take_capture(self.driver, "component_share_button")
-            add_pointer(imgp, get_position(addbtn.element, 0.5, 0.5))
+            add_pointer(imgp, get_position(addbtn, 0.5, 0.5))
 
             targetend = techniciancomponent.find_endpoint("target", title="Query")
             connection = [x for x in wiring.find_connections() if x.target_id == targetend.id][0]
@@ -996,7 +1032,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             ActionChains(self.driver).move_to_element(addbtn.element).perform()
             time.sleep(0.2)
             imgp = take_capture(self.driver, "connection_share_button")
-            add_pointer(imgp, get_position(addbtn.element, 0.5, 0.5))
+            add_pointer(imgp, get_position(addbtn, 0.5, 0.5))
 
         self.create_workspace('Enable Behaviour Work')
         with self.wiring_view as wiring:

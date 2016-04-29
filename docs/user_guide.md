@@ -450,10 +450,20 @@ going to give us a great flexibility.
 
 One of the most common operations is the task of getting the connections
 removed in the wiring. For example, when you make some mistake for some
-reason, you can fix it by clicking the *Remove* button that appears in the middle
-of the connection.
+reason, you can fix it by clicking the *Remove* button that appears in the
+middle a of the connection:
 
 <img src="../images/user_guide/wiring/delete_arrow1.png" srcset="../images/user_guide/wiring/delete_arrow1.png 2x" alt="*Remove* button"/>
+
+Sometimes what you want is to modify one of the connections. The Wiring Editor
+allows you to do this operation without having to remove the connection and
+having to create a new one. To do so, you only have to select the connection and
+drag the connection from the endpoint you want to modify:
+
+<img src="../images/user_guide/wiring/modify_connection1.png" srcset="../images/user_guide/wiring/modify_connection1.png 2x" alt="How to modify a connection"/>
+<img src="../images/user_guide/wiring/modify_connection2.png" srcset="../images/user_guide/wiring/modify_connection2.png 2x" alt="Dragging the new connection"/>
+<img src="../images/user_guide/wiring/modify_connection3.png" srcset="../images/user_guide/wiring/modify_connection3.png 2x" alt="Connection once modified"/>
+<img src="../images/user_guide/wiring/modify_connection4.png" srcset="../images/user_guide/wiring/modify_connection4.png 2x" alt="Connection once modified"/>
 
 Another common task is to change the shape of connections. To do so, you have to
 click on the *Customize* option of the connection:
