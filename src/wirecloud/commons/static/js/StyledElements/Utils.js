@@ -808,7 +808,7 @@ if (window.StyledElements == null) {
         return text.charAt(0).toUpperCase() + text.substring(1);
     };
 
-    var SIZE_UNITS = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+    var SIZE_UNITS = ['bytes', 'KiB', 'MiB', 'GiB', 'TiB'];
     Object.freeze(SIZE_UNITS);
 
     Utils.formatSize = function formatSize(size) {
