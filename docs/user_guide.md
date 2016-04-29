@@ -631,7 +631,7 @@ the preferences menu and click on the *Settings* option:
 
 <img src="../images/user_guide/behaviour_oriented_wiring/behaviour_settings_option.png" srcset="../images/user_guide/behaviour_oriented_wiring/behaviour_settings_option.png 2x" alt="Behaviour *Settings* option"/>
 
-### Removing behaviours
+#### Removing behaviours
 
 You can always remove a behaviour at any time, except when there is only one
 behaviour (at least one behaviour must be present in a wiring configuration when
@@ -644,7 +644,7 @@ behaviour you want to remove:
 > the wiring configuration. Also take into account that this operation cannot be
 > undone.
 
-### Removing components and connections
+#### Removing components and connections
 
 To remove a component from a behaviour, click on the *Delete* button:
 
@@ -660,6 +660,31 @@ using the *Delete* button:
 
 Again, connections are remove from the wiring configuration when the are removed
 from all the behaviours.
+
+#### Ordering behaviours
+
+The main purpose of the behaviour engine is to be able to document the wiring
+configuration and, in that sense, humans tend to expose the ideas using a particular
+order. Said that, the Wiring Editor allows you to change the order used in the
+behaviour list, but that order will not affet to the wiring engine.
+
+To change the behaviour order, you only have to click on the *Order behaviours*
+button:
+
+<img src="../images/user_guide/behaviour_oriented_wiring/order_behaviours_button.png" srcset="../images/user_guide/behaviour_oriented_wiring/order_behaviours_button.png 2x" alt="*Remove* connection button"/>
+
+Once activated the ordering mode, you will be able to drag and drop the behaviour
+boxes:
+
+<img src="../images/user_guide/behaviour_oriented_wiring/ordering_behaviours.png" srcset="../images/user_guide/behaviour_oriented_wiring/ordering_behaviours.png 2x" alt="Ordering behaviours"/>
+
+Finally, click again on the *Order behaviours* button to exit the ordering mode:
+
+<img src="../images/user_guide/behaviour_oriented_wiring/exit_behaviours_mode.png" srcset="../images/user_guide/behaviour_oriented_wiring/exit_order_behaviours_mode.png 2x" alt="Exit the ordering mode"/>
+
+> **Note:** Anyway, you can also exit from the behaviour ordering mode by
+> closing the sidebar or by opening the seach component form inside the sidebar.
+
 
 Sharing your mashups
 --------------------

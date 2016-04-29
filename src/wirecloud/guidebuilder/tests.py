@@ -949,17 +949,16 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             imgp = take_capture(self.driver, "santander_behaviour2")
             crop_image(imgp, *create_box(wc))
 
-            with wiring.behaviour_sidebar:
-                self.driver.execute_script("document.querySelector('.wiring-view .wiring-diagram').style.cssText = ''")
+            with wiring.behaviour_sidebar as sidebar:
+                self.driver.execute_script("arguments[0].style.cssText = ''", wiring.body)
 
                 # Lock
                 panelhead = self.driver.find_element_by_css_selector(".panel.panel-default.panel-behaviours .panel-heading")
-                bnenable = panelhead.find_element_by_css_selector(".btn-enable")
-                ActionChains(self.driver).move_to_element(bnenable).perform()
+                ActionChains(self.driver).move_to_element(sidebar.btn_enable).perform()
                 time.sleep(0.2)
                 tooltip = self.driver.find_element_by_css_selector(".tooltip.fade.bottom.in")
                 imgp = take_capture(self.driver, "disable_behaviours_button")
-                add_pointer(imgp, get_position(bnenable, 0.5, 0.5))
+                add_pointer(imgp, get_position(sidebar.btn_enable, 0.5, 0.5))
                 panelheads = create_box(panelhead, 7)
                 crop_image(imgp, left=panelheads[0], upper=panelheads[1], right=get_position(tooltip, 1.0, 1.0)[0] + 10, lower=get_position(tooltip, 1.0, 1.0)[1] + 10)
 
