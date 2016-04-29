@@ -162,6 +162,18 @@
         if (operator_def == null || operator_def.type !== 'operator') {
             throw new TypeError('invalid operator ref');
         }
+
+        // default options
+        options = Wirecloud.Utils.merge({
+            permissions: null,
+            preferences: {},
+            properties: {}
+        }, options);
+
+        options.permissions = Wirecloud.Utils.merge({
+            close: true
+        }, options.permissions);
+
         // Filter operator options
         options = {
             volatile: true,
