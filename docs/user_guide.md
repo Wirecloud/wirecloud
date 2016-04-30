@@ -680,7 +680,7 @@ boxes:
 
 Finally, click again on the *Order behaviours* button to exit the ordering mode:
 
-<img src="../images/user_guide/behaviour_oriented_wiring/exit_behaviours_mode.png" srcset="../images/user_guide/behaviour_oriented_wiring/exit_order_behaviours_mode.png 2x" alt="Exit the ordering mode"/>
+<img src="../images/user_guide/behaviour_oriented_wiring/exit_order_behaviours_mode.png" srcset="../images/user_guide/behaviour_oriented_wiring/exit_order_behaviours_mode.png 2x" alt="Exit the ordering mode"/>
 
 > **Note:** Anyway, you can also exit from the behaviour ordering mode by
 > closing the sidebar or by opening the seach component form inside the sidebar.

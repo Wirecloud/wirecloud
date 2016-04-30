@@ -953,8 +953,9 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 self.driver.execute_script("arguments[0].style.cssText = ''", wiring.body)
 
                 # Lock
-                panelhead = self.driver.find_element_by_css_selector(".panel.panel-default.panel-behaviours .panel-heading")
-                ActionChains(self.driver).move_to_element(sidebar.btn_enable).perform()
+                panelhead = sidebar.panel.find_element_by_css_selector('.panel-heading')
+
+                ActionChains(self.driver).move_to_element(sidebar.btn_enable.element).perform()
                 time.sleep(0.2)
                 tooltip = self.driver.find_element_by_css_selector(".tooltip.fade.bottom.in")
                 imgp = take_capture(self.driver, "disable_behaviours_button")
@@ -1015,8 +1016,50 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             add_pointer(imgp, get_position(rmbtn, 0.5, 0.5))
 
             with wiring.behaviour_sidebar as sidebar:
-                lastbehav = sidebar.create_behaviour("Test", "Testing")
-                lastbehav.activate()
+
+                # Enable behaviour list order mode button
+                ActionChains(self.driver).move_to_element(sidebar.btn_order.element).perform()
+                time.sleep(0.2)
+                tooltip = self.driver.find_element_by_css_selector(".tooltip.fade.bottom.in")
+                imgp = take_capture(self.driver, "order_behaviours_button")
+                add_pointer(imgp, get_position(sidebar.btn_order, 0.5, 0.5))
+                panelheads = create_box(panelhead, 7)
+                crop_image(imgp, left=panelheads[0], upper=panelheads[1], right=get_position(tooltip, 1.0, 1.0)[0] + 10, lower=get_position(tooltip, 1.0, 1.0)[1] + 80 * DENSITY_FACTOR)
+
+                # Target order:
+                # - Display technician profiles
+                # - Locate Technicians
+                # - Allow technician searches
+                behaviour1 = sidebar.find_behaviour("Allow technician searches")
+                behaviour2 = sidebar.find_behaviour("Display technician profiles")
+                behaviour3 = sidebar.find_behaviour("Locate technicians")
+
+                # Reorder the behaviours
+                sidebar.btn_order.click()
+                pos = get_position(behaviour3.element.find_element_by_css_selector('.panel-heading'), 0.5, 0.6)
+                ActionChains(self.driver).click_and_hold(behaviour3.element).move_by_offset(0, -50).perform()
+                time.sleep(0.2)
+                imgp = take_capture(self.driver, "ordering_behaviours")
+                pos = (pos[0], pos[1] - 50 * DENSITY_FACTOR)
+                add_pointer(imgp, pos)
+                crop_image(imgp, *create_box(sidebar.panel))
+
+                ActionChains(self.driver).move_by_offset(0, 50).release().perform()
+                behaviour1.change_position(behaviour3)
+
+                # Exit from the behaviour ordering mode
+                ActionChains(self.driver).move_to_element(sidebar.btn_order.element).perform()
+                time.sleep(0.2)
+                tooltip = self.driver.find_element_by_css_selector(".tooltip.fade.bottom.in")
+                imgp = take_capture(self.driver, "exit_order_behaviours_mode")
+                add_pointer(imgp, get_position(sidebar.btn_order, 0.5, 0.5))
+                panelheads = create_box(panelhead, 7)
+                crop_image(imgp, left=panelheads[0], upper=panelheads[1], right=get_position(tooltip, 1.0, 1.0)[0] + 10, lower=get_position(tooltip, 1.0, 1.0)[1] + 80 * DENSITY_FACTOR)
+
+                sidebar.btn_order.click()
+
+                # Create a new behaviour
+                sidebar.create_behaviour("Test", "Testing").activate()
 
             techniciancomponent = wiring.find_draggable_component("widget", title="Technician List")
             addbtn = techniciancomponent.btn_add
@@ -1037,13 +1080,13 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 # UnLock
-                panelhead = self.driver.find_element_by_css_selector(".panel.panel-default.panel-behaviours .panel-heading")
-                bnenable = panelhead.find_element_by_css_selector(".btn-enable")
-                ActionChains(self.driver).move_to_element(bnenable).perform()
+                panelhead = sidebar.panel.find_element_by_css_selector('.panel-heading')
+
+                ActionChains(self.driver).move_to_element(sidebar.btn_enable.element).perform()
                 time.sleep(0.2)
                 tooltip = self.driver.find_element_by_css_selector(".tooltip.fade.bottom.in")
                 imgp = take_capture(self.driver, "enable_behaviours_button")
-                add_pointer(imgp, get_position(bnenable, 0.5, 0.5))
+                add_pointer(imgp, get_position(sidebar.btn_enable, 0.5, 0.5))
                 panelheads = create_box(panelhead, 7)
                 crop_image(imgp, left=panelheads[0], upper=panelheads[1], right=get_position(tooltip, 1.0, 1.0)[0] + 10, lower=get_position(tooltip, 1.0, 1.0)[1] + 10)
 
