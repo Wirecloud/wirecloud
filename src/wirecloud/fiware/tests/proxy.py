@@ -20,6 +20,7 @@
 from __future__ import unicode_literals
 
 import json
+import six
 from six.moves.urllib.parse import parse_qsl
 
 from django.conf import settings
@@ -90,11 +91,9 @@ class ProxyTestCase(WirecloudTestCase):
         else:
             return response.content.decode('utf-8')
 
-    def prepare_request_mock(self, data, referer='http://localhost/user_with_workspaces/Public Workspace', user=None, extra_headers={}, GET=''):
-        data = data.encode('utf-8')
+    def prepare_request_mock(self, data=None, referer='http://localhost/user_with_workspaces/Public Workspace', user=None, extra_headers={}, GET='', use_deprecated_code=False):
 
         request = Mock()
-        request.method = 'POST'
         request.get_host.return_value = 'localhost'
         GET_PARAMETERS = parse_qsl(GET)
         request.GET = MagicMock()
@@ -108,14 +107,26 @@ class ProxyTestCase(WirecloudTestCase):
             'HTTP_ACCEPT': 'application/json',
             'SERVER_PROTOCOL': 'http',
             'REMOTE_ADDR': '127.0.0.1',
-            'content_type': 'application/json',
-            'content_length': len(data),
             'HTTP_HOST': 'localhost',
             'HTTP_REFERER': referer,
-            'HTTP_X_FI_WARE_OAUTH_TOKEN': 'true',
         }
+        if data is not None:
+            request.method = 'POST'
+            data = data.encode('utf-8')
+            request.META['content_type'] = 'application/json'
+            request.META['content_length'] = len(data)
+            request.read.return_value = data
+        else:
+            request.method = 'GET'
+
+
+        if use_deprecated_code:
+            request.META['HTTP_X_FI_WARE_OAUTH_TOKEN'] = 'true'
+            extra_headers = {self.deprecation_mapping[key]: value for key, value in six.iteritems(extra_headers)}
+        else:
+            request.META['HTTP_FIWARE_OAUTH_TOKEN'] = 'true'
+
         request.META.update(extra_headers)
-        request.read.return_value = data
         if user is None:
             request.user = self.admin_mock
         else:
@@ -123,31 +134,57 @@ class ProxyTestCase(WirecloudTestCase):
 
         return request
 
+    deprecation_mapping = {
+        "HTTP_FIWARE_OAUTH_BODY_PATTERN": "HTTP_X_FI_WARE_OAUTH_TOKEN_BODY_PATTERN",
+        "HTTP_FIWARE_OAUTH_GET_PARAMETER": "HTTP_X_FI_WARE_OAUTH_GET_PARAMETER",
+        "HTTP_FIWARE_OAUTH_HEADER_NAME": "HTTP_X_FI_WARE_OAUTH_HEADER_NAME",
+        "HTTP_FIWARE_OAUTH_SOURCE": "HTTP_X_FI_WARE_OAUTH_SOURCE",
+    }
+
+    def invalid_request_validator(self):
+        def validator(response):
+            self.assertEqual(response.status_code, 422)
+            json.loads(self.read_response(response))
+
+        return validator
+
+    def check_proxy_request(self, validator=lambda response: True, path='/path', **kwargs):
+        request = self.prepare_request_mock(use_deprecated_code=False, **kwargs)
+        response = proxy_request(request=request, protocol='http', domain='example.com', path=path)
+        validator(response)
+
+        request = self.prepare_request_mock(use_deprecated_code=True, **kwargs)
+        response = proxy_request(request=request, protocol='http', domain='example.com', path=path)
+        validator(response)
+
     def test_fiware_idm_processor_header(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
-        request = self.prepare_request_mock('{}', extra_headers={
-            "HTTP_X_FI_WARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
+        def validator(response):
+            self.assertEqual(response.status_code, 200)
+            headers = json.loads(self.read_response(response))
+            self.assertIn('X-Auth-Token', headers)
+            self.assertEqual(headers['X-Auth-Token'], TEST_TOKEN)
+
+        self.check_proxy_request(validator=validator, data='{}', extra_headers={
+            "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
         })
-        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 200)
-        headers = json.loads(self.read_response(response))
-        self.assertIn('X-Auth-Token', headers)
-        self.assertEqual(headers['X-Auth-Token'], TEST_TOKEN)
+
 
     def test_fiware_idm_processor_header_authorization(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
-        request = self.prepare_request_mock('{}', extra_headers={
-            "HTTP_X_FI_WARE_OAUTH_HEADER_NAME": 'Authorization',
+        def validator(response):
+            self.assertEqual(response.status_code, 200)
+            headers = json.loads(self.read_response(response))
+            self.assertIn('Authorization', headers)
+            self.assertEqual(headers['Authorization'], 'Bearer ' + TEST_TOKEN)
+
+        self.check_proxy_request(validator=validator, data='{}', extra_headers={
+            "HTTP_FIWARE_OAUTH_HEADER_NAME": 'Authorization',
         })
-        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 200)
-        headers = json.loads(self.read_response(response))
-        self.assertIn('Authorization', headers)
-        self.assertEqual(headers['Authorization'], 'Bearer ' + TEST_TOKEN)
 
     def test_fiware_idm_processor_body(self):
 
@@ -157,96 +194,104 @@ class ProxyTestCase(WirecloudTestCase):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
 
-        request = self.prepare_request_mock('{"token": "%token%"}', extra_headers={
-            'HTTP_X_FI_WARE_OAUTH_TOKEN_BODY_PATTERN': '%token%',
+        def validator(response):
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(self.read_response(response))
+            self.assertEqual(data['token'], TEST_TOKEN)
+
+        self.check_proxy_request(validator=validator, data='{"token": "%token%"}', extra_headers={
+            'HTTP_FIWARE_OAUTH_BODY_PATTERN': '%token%',
         })
-        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(self.read_response(response))
-        self.assertEqual(data['token'], TEST_TOKEN)
 
     def test_fiware_idm_processor_get_parameter(self):
 
         def echo_response(method, url, *args, **kwargs):
             return {'content': url}
 
-        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+        self.network._servers['http']['example.com'].add_response('GET', '/path', echo_response)
 
-        request = self.prepare_request_mock('body', extra_headers={
-            'HTTP_X_FI_WARE_OAUTH_GET_PARAMETER': 'access_token_id',
+        def validator(response):
+            self.assertEqual(response.status_code, 200)
+            new_url = self.read_response(response)
+            self.assertEqual(new_url, 'http://example.com/path?test=a&access_token_id=' + TEST_TOKEN)
+
+        self.check_proxy_request(validator=validator, extra_headers={
+            'HTTP_FIWARE_OAUTH_GET_PARAMETER': 'access_token_id',
         }, GET='test=a')
-        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 200)
-        new_url = self.read_response(response)
-        self.assertEqual(new_url, 'http://example.com/path?test=a&access_token_id=' + TEST_TOKEN)
 
-    def test_fiware_idm_processor_get_parameter_emtpy_query(self):
+    def test_fiware_idm_processor_get_parameter_post(self):
 
         def echo_response(method, url, *args, **kwargs):
             return {'content': url}
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
 
-        request = self.prepare_request_mock('body', extra_headers={
-            'HTTP_X_FI_WARE_OAUTH_GET_PARAMETER': 'access_token_id',
+        def validator(response):
+            self.assertEqual(response.status_code, 200)
+            new_url = self.read_response(response)
+            self.assertEqual(new_url, 'http://example.com/path?test=a&access_token_id=' + TEST_TOKEN)
+
+        self.check_proxy_request(validator=validator, data="body", extra_headers={
+            'HTTP_FIWARE_OAUTH_GET_PARAMETER': 'access_token_id',
+        }, GET='test=a')
+
+    def test_fiware_idm_processor_get_parameter_emtpy_query(self):
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'content': url}
+
+        self.network._servers['http']['example.com'].add_response('GET', '/path', echo_response)
+
+        def validator(response):
+            self.assertEqual(response.status_code, 200)
+            new_url = self.read_response(response)
+            self.assertEqual(new_url, 'http://example.com/path?access_token_id=' + TEST_TOKEN)
+
+        self.check_proxy_request(validator=validator, extra_headers={
+            'HTTP_FIWARE_OAUTH_GET_PARAMETER': 'access_token_id',
         })
-        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 200)
-        new_url = self.read_response(response)
-        self.assertEqual(new_url, 'http://example.com/path?access_token_id=' + TEST_TOKEN)
 
     def test_fiware_idm_anonymous_user(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
-        # Make the request
-        request = self.prepare_request_mock('{}', extra_headers={
-            "HTTP_X_FI_WARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
+        self.check_proxy_request(validator=self.invalid_request_validator(), extra_headers={
+            "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
         }, user=AnonymousUser())
-        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 422)
-        json.loads(self.read_response(response))
 
     def test_fiware_idm_processor_requires_valid_referer(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
         proxied_url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
 
-        request = self.prepare_request_mock('{}', extra_headers={
-            "HTTP_X_FI_WARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
+        self.check_proxy_request(validator=self.invalid_request_validator(), data='{}', extra_headers={
+            "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
             }, referer='http://localhost' + proxied_url, user=self.admin_mock)
-        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 422)
-        json.loads(self.read_response(response))
 
     def test_fiware_idm_no_token_available(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
-        # Make the request
-        request = self.prepare_request_mock('{}', extra_headers={
-            "HTTP_X_FI_WARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
+        self.check_proxy_request(validator=self.invalid_request_validator(), data='{}', extra_headers={
+            "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
             }, user=self.normuser_mock)
-        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 422)
-        json.loads(self.read_response(response))
 
     def test_fiware_idm_token_from_workspace_owner_header(self):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
-        # Make the request
-        request = self.prepare_request_mock('{}', extra_headers={
-            "HTTP_X_FI_WARE_OAUTH_SOURCE": 'workspaceowner',
-            "HTTP_X_FI_WARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
-        }, user=self.normuser_mock)
+        def validator(response):
+            self.assertEqual(response.status_code, 200)
+            request_headers = json.loads(self.read_response(response))
+            self.assertIn('X-Auth-Token', request_headers)
+            self.assertEqual(request_headers['X-Auth-Token'], TEST_WORKSPACE_TOKEN)
+
         with patch('wirecloud.proxy.views.Workspace') as Workspace_orm_mock:
             Workspace_orm_mock.objects.get().creator = self.user_with_workspaces_mock
-            response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 200)
-        request_headers = json.loads(self.read_response(response))
-        self.assertIn('X-Auth-Token', request_headers)
-        self.assertEqual(request_headers['X-Auth-Token'], TEST_WORKSPACE_TOKEN)
+            self.check_proxy_request(validator=validator, data='{}', extra_headers={
+                "HTTP_FIWARE_OAUTH_SOURCE": 'workspaceowner',
+                "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
+            }, user=self.normuser_mock)
 
     def test_fiware_idm_token_from_workspace_owner_no_token(self):
 
@@ -255,23 +300,16 @@ class ProxyTestCase(WirecloudTestCase):
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', self.echo_headers_response)
 
-        # Make the request
-        request = self.prepare_request_mock('{}', extra_headers={
-            "HTTP_X_FI_WARE_OAUTH_SOURCE": 'workspaceowner',
-            "HTTP_X_FI_WARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
-        }, user=self.normuser_mock)
         with patch('wirecloud.proxy.views.Workspace') as Workspace_orm_mock:
             Workspace_orm_mock.objects.get().creator = self.user_with_workspaces_mock
-            response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 422)
-        json.loads(self.read_response(response))
+            self.check_proxy_request(validator=self.invalid_request_validator(), data='{}', extra_headers={
+                "HTTP_FIWARE_OAUTH_SOURCE": 'workspaceowner',
+                "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
+            }, user=self.normuser_mock)
 
     def test_fiware_idm_token_invalid_source(self):
 
-        request = self.prepare_request_mock('{}', extra_headers={
-            "HTTP_X_FI_WARE_OAUTH_SOURCE": 'invalidsource',
-            "HTTP_X_FI_WARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
+        self.check_proxy_request(validator=self.invalid_request_validator(), data='{}', extra_headers={
+            "HTTP_FIWARE_OAUTH_SOURCE": 'invalidsource',
+            "HTTP_FIWARE_OAUTH_HEADER_NAME": 'X-Auth-Token',
         }, user=self.normuser_mock)
-        response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
-        self.assertEqual(response.status_code, 422)
-        json.loads(self.read_response(response))

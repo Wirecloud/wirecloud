@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -41,7 +41,11 @@ class IDMTokenProcessor(object):
 
     def process_request(self, request):
 
-        if 'x-fi-ware-oauth-token' not in request['headers']:
+        if 'fiware-oauth-token' in request['headers']:
+            del request['headers']['fiware-oauth-token']
+        elif 'x-fi-ware-oauth-token' in request['headers']:
+            del request['headers']['x-fi-ware-oauth-token']
+        else:
             return
 
         if not IDM_SUPPORT_ENABLED:
@@ -51,7 +55,10 @@ class IDMTokenProcessor(object):
 
         header_name = None
         source = 'user'
-        if 'x-fi-ware-oauth-source' in request['headers']:
+        if 'fiware-oauth-source' in request['headers']:
+            source = request['headers']['fiware-oauth-source']
+            del request['headers']['fiware-oauth-source']
+        elif 'x-fi-ware-oauth-source' in request['headers']:
             source = request['headers']['x-fi-ware-oauth-source']
             del request['headers']['x-fi-ware-oauth-source']
 
@@ -62,33 +69,45 @@ class IDMTokenProcessor(object):
         else:
             raise ValidationError(_('Invalid FIWARE OAuth token source'))
 
-        if 'x-fi-ware-oauth-get-parameter' in request['headers']:
-            header_name = request['headers']['x-fi-ware-oauth-get-parameter']
+        if 'fiware-oauth-get-parameter' in request['headers'] or 'x-fi-ware-oauth-get-parameter' in request['headers']:
+            if 'fiware-oauth-get-parameter' in request['headers']:
+                parameter_name = request['headers']['fiware-oauth-get-parameter']
+                del request['headers']['fiware-oauth-get-parameter']
+            else: # 'x-fi-ware-oauth-get-parameter'
+                parameter_name = request['headers']['x-fi-ware-oauth-get-parameter']
+                del request['headers']['x-fi-ware-oauth-get-parameter']
+
             url = request['url']
             if '?' in url:
                 url += '&'
             else:
                 url += '?'
 
-            url += urlquote_plus(request['headers']['x-fi-ware-oauth-get-parameter']) + '=' + urlquote_plus(token)
+            url += urlquote_plus(parameter_name) + '=' + urlquote_plus(token)
             request['url'] = url
-            del request['headers']['x-fi-ware-oauth-get-parameter']
 
-        if 'x-fi-ware-oauth-header-name' in request['headers']:
-            header_name = request['headers']['x-fi-ware-oauth-header-name']
+        if 'fiware-oauth-header-name' in request['headers'] or 'x-fi-ware-oauth-header-name' in request['headers']:
+            if 'fiware-oauth-header-name' in request['headers']:
+                header_name = request['headers']['fiware-oauth-header-name']
+                del request['headers']['fiware-oauth-header-name']
+            else: # 'x-fi-ware-oauth-header-name'
+                header_name = request['headers']['x-fi-ware-oauth-header-name']
+                del request['headers']['x-fi-ware-oauth-header-name']
 
             if header_name == "Authorization":
                 token_pattern = "Bearer {token}"
             else:
                 token_pattern = "{token}"
             request['headers'][header_name] = token_pattern.format(token=token)
-            del request['headers']['x-fi-ware-oauth-header-name']
 
-        if 'x-fi-ware-oauth-token-body-pattern' in request['headers']:
-            pattern = request['headers']['x-fi-ware-oauth-token-body-pattern']
+        if 'fiware-oauth-body-pattern' in request['headers'] or 'x-fi-ware-oauth-token-body-pattern' in request['headers']:
+            if 'fiware-oauth-body-pattern' in request['headers']:
+                pattern = request['headers']['fiware-oauth-body-pattern']
+                del request['headers']['fiware-oauth-body-pattern']
+            else: # 'x-fi-ware-oauth-token-body-patter'
+                pattern = request['headers']['x-fi-ware-oauth-token-body-pattern']
+                del request['headers']['x-fi-ware-oauth-token-body-pattern']
+
             new_body = request['data'].read().replace(pattern.encode('utf8'), token.encode('utf8'))
             request['headers']['content-length'] = "%s" % len(new_body)
             request['data'] = BytesIO(new_body)
-            del request['headers']['x-fi-ware-oauth-token-body-pattern']
-
-        del request['headers']['x-fi-ware-oauth-token']
