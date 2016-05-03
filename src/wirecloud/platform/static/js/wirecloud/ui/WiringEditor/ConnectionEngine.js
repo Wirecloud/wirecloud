@@ -400,6 +400,11 @@
                 .stickEndpoint(finalEndpoint)
                 .createAndBind(false, this.wiringEngine);
             appendConnection.call(this, this.temporalConnection, this._connectionBackup);
+
+            if (this._connectionBackup != null) {
+                this.temporalConnection.click();
+            }
+
             break;
         case ns.ConnectionEngine.CONNECTION_DUPLICATE:
             this.trigger('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint));
