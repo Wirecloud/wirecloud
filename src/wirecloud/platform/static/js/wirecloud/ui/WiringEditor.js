@@ -378,6 +378,9 @@ Wirecloud.ui = Wirecloud.ui || {};
             stackedIconClass: "icon-plus-sign"
         });
         this.btnFindComponents.on('click', function (button) {
+            if (button.active) {
+                this.componentManager.searchComponents.refresh();
+            }
             showSelectedPanel.call(this, button, 1);
         }.bind(this));
 
