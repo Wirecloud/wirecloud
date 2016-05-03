@@ -1523,7 +1523,7 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             self.assertIsNone(wiring.find_connection('widget/2/outputendpoint', 'operator/0/input'))
             connection = wiring.find_connection('widget/2/outputendpoint', 'widget/1/inputendpoint')
             self.assertIsNotNone(connection)
-            self.assertTrue(connection.has_class('active'))
+            WebDriverWait(self.driver, timeout=2).until(lambda driver: connection.has_class('active'))
 
     def test_modify_connection_on_several_behaviours(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
