@@ -281,11 +281,13 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 .btn-group-justified {
     position: relative;
     display: flex;
+    flex-wrap: nowrap;
     width: 100%;
     margin: 0px 0px $margin-vertical-base;
 
     & > .se-btn {
         flex-grow: 1;
+        width: 0px;
     }
 }
 
