@@ -1521,7 +1521,9 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             connection.change_endpoint(target1, target2)
 
             self.assertIsNone(wiring.find_connection('widget/2/outputendpoint', 'operator/0/input'))
-            self.assertIsNotNone(wiring.find_connection('widget/2/outputendpoint', 'widget/1/inputendpoint'))
+            connection = wiring.find_connection('widget/2/outputendpoint', 'widget/1/inputendpoint')
+            self.assertIsNotNone(connection)
+            self.assertTrue(connection.has_class('active'))
 
     def test_modify_connection_on_several_behaviours(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
@@ -1539,7 +1541,9 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             modal.accept()
 
             self.assertIsNone(wiring.find_connection('widget/11/outputendpoint', 'operator/0/input'))
-            self.assertIsNotNone(wiring.find_connection('widget/11/outputendpoint', 'operator/0/nothandled'))
+            connection = wiring.find_connection('widget/11/outputendpoint', 'operator/0/nothandled')
+            self.assertIsNotNone(connection)
+            self.assertTrue(connection.has_class('active'))
 
     def test_modify_connection_on_active_behaviours(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
@@ -1556,7 +1560,9 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             modal.cancel()
 
             self.assertTrue(wiring.find_connection('widget/11/outputendpoint', 'operator/0/input').has_class('background'))
-            self.assertIsNotNone(wiring.find_connection('widget/11/outputendpoint', 'operator/0/nothandled'))
+            connection = wiring.find_connection('widget/11/outputendpoint', 'operator/0/nothandled')
+            self.assertIsNotNone(connection)
+            self.assertTrue(connection.has_class('active'))
 
     def test_modify_connection_on_background_is_not_allowed(self):
         self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
