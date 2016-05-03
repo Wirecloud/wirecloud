@@ -1577,6 +1577,22 @@ class ConnectionManagementTestCase(WirecloudSeleniumTestCase):
             self.assertFalse(connection1.has_class('active'))
             self.assertIsNotNone(connection2)
 
+    def test_modify_connection_and_drop_over_connection_on_background(self):
+        self.login(username='user_with_workspaces', next='/user_with_workspaces/WorkspaceBehaviours')
+
+        with self.wiring_view as wiring:
+            operator = wiring.find_draggable_component('operator', id=0)
+            widget = wiring.find_draggable_component('widget', title="Test 1")
+
+            source1 = operator.find_endpoint('source', 'output')
+            target1 = widget.find_endpoint('target', 'inputendpoint')
+            target2 = widget.find_endpoint('target', 'nothandled')
+            connection = source1.create_connection(target2)
+            connection.change_endpoint(target2, target1)
+
+            self.assertIsNone(wiring.find_connection(source1.id, target2.id))
+            self.assertFalse(wiring.find_connection(source1.id, target1.id).has_class('background'))
+
 
 @wirecloud_selenium_test_case
 class EndpointManagementTestCase(WirecloudSeleniumTestCase):

@@ -721,11 +721,15 @@ Wirecloud.ui = Wirecloud.ui || {};
         behaviour_onchange.call(this, behaviourEngine, currentStatus, true);
     };
 
-    var connection_onduplicate = function connection_onduplicate(connectionEngine, connection) {
+    var connection_onduplicate = function connection_onduplicate(connectionEngine, connection, connectionBackup) {
         /*jshint validthis:true */
 
         if (connection.background) {
             this.behaviourEngine.updateConnection(connection, connection.toJSON(), true);
+
+            if (connectionBackup != null) {
+                removeBackupConnection.call(this, connectionBackup);
+            }
         }
     };
 
@@ -746,11 +750,15 @@ Wirecloud.ui = Wirecloud.ui || {};
             }.bind(this));
 
         if (connectionBackup != null) {
-            this.behaviourEngine.removeConnection(connectionBackup);
+            removeBackupConnection.call(this, connectionBackup);
+        }
+    };
 
-            if (this.behaviourEngine.hasConnection(connectionBackup)) {
-                showConnectionChangeModal.call(this, connectionBackup);
-            }
+    var removeBackupConnection = function removeBackupConnection(connection) {
+        this.behaviourEngine.removeConnection(connection);
+
+        if (this.behaviourEngine.hasConnection(connection)) {
+            showConnectionChangeModal.call(this, connection);
         }
     };
 
