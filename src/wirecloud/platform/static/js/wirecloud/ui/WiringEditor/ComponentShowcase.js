@@ -166,11 +166,6 @@
             delete this.components[type][group_id][component.id];
 
             return this;
-        },
-
-        show: function show() {
-            this.searchComponents.refresh();
-            return se.StyledElement.prototype.show.call(this);
         }
 
     });
