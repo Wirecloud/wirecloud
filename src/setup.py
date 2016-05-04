@@ -134,7 +134,6 @@ setup(
     include_package_data=True,
     install_requires=(
         'Django>=1.6,<1.10',
-        'south>=1.0,<2.0',
         'lxml>=2.3',
         'django-appconf>=1.0.1,<2.0',
         'django_compressor>=1.4,<3.0',

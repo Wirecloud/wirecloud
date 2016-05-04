@@ -29,7 +29,3 @@ from wirecloud.platform.wiring.tests import *
 from wirecloud.platform.widget.tests import CodeTransformationTestCase, WidgetModuleTestCase
 from wirecloud.platform.workspace.tests import WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase
 from wirecloud.proxy.tests import ProxyTests, ProxySecureDataTests
-
-import django
-if django.VERSION[1] < 7:
-    from wirecloud.platform.tests.south_migrations import PlatformSouthMigrationsTestCase

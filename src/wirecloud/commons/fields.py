@@ -65,13 +65,3 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
     def value_from_object(self, obj):
         """Return value dumped to string."""
         return self.get_prep_value(self._get_val_from_obj(obj))
-
-
-try:
-    from south.modelsinspector import add_introspection_rules
-    add_introspection_rules(
-        [],
-        ["^wirecloud\.commons\.fields\.JSONField"]
-    )
-except:
-    pass

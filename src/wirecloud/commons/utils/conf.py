@@ -85,9 +85,6 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
 
     settings['INSTALLED_APPS'] = BASE_APPS
 
-    if django.VERSION[1] < 7:
-        settings['INSTALLED_APPS'] += ('south',)
-
     if instance_type == 'catalogue':
         settings['INSTALLED_APPS'] += (
             'wirecloud.catalogue',
