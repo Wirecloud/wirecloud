@@ -55,6 +55,19 @@
             expect(element).not.toBe(null);
         });
 
+        it("can be created with field descriptions", function () {
+            var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+            expect(element).not.toBe(null);
+            expect(element.fieldInterfaces.field1).toEqual(jasmine.any(StyledElements.BooleanInputInterface));
+            expect(element.fieldInterfaces.field1._fieldId).toBe('field1');
+            expect(element.fieldInterfaces.field2).toEqual(jasmine.any(StyledElements.NumberInputInterface));
+            expect(element.fieldInterfaces.field2._fieldId).toBe('field2');
+            expect(element.fieldInterfaces.field3).toEqual(jasmine.any(StyledElements.TextInputInterface));
+            expect(element.fieldInterfaces.field3._fieldId).toBe('field3');
+            expect(element.fieldInterfaces.field4).toEqual(jasmine.any(StyledElements.LongTextInputInterface));
+            expect(element.fieldInterfaces.field4._fieldId).toBe('field4');
+        });
+
         describe("getData()", function () {
 
             it("returns an empty object if there are not fields", function () {

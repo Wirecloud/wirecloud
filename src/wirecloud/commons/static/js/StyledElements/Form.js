@@ -185,11 +185,17 @@
     };
 
     var norm_fields = function norm_fields(fields) {
-        var key, list = [];
+        var key, field, list = [];
 
         // backwards compatilibity
         for (key in fields) {
-            list.push(fields[key]);
+            field = fields[key];
+
+            if (!('name' in field)) {
+                field.name = key;
+            }
+
+            list.push(field);
         }
 
         return list;
@@ -243,7 +249,7 @@
     };
 
     Form.prototype.pBuildFieldTable = function (fields) {
-        var table, tbody, fieldId, field, row, cell;
+        var table, tbody;
 
         // TODO
         if (fields[0] && fields[0].type === 'group') {
@@ -256,34 +262,28 @@
         tbody = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
         table.appendChild(tbody);
 
-        for (fieldId in fields) {
-            if (fields.hasOwnProperty(fieldId)) {
-                field = fields[fieldId];
-                if ('name' in field) {
-                    fieldId = field.name;
-                }
+        fields.forEach(function (field) {
+            var row, cell, fieldId = field.name;
+            row = tbody.insertRow(-1);
 
-                row = tbody.insertRow(-1);
-
-                switch (field.type) {
-                case 'columnLayout':
-                    cell = row.insertCell(-1);
-                    cell.setAttribute('colspan', 2);
-                    insertColumnLayout.call(this, field, cell);
-                    break;
-                case 'lineLayout':
-                    cell = row.insertCell(-1);
-                    cell.setAttribute('colspan', 2);
-                    insertLineLayout.call(this, field, cell);
-                    break;
-                case 'hidden':
-                    row.className = "hidden";
-                    /* falls through */
-                default:
-                    insertField.call(this, fieldId, field, row);
-                }
+            switch (field.type) {
+            case 'columnLayout':
+                cell = row.insertCell(-1);
+                cell.setAttribute('colspan', 2);
+                insertColumnLayout.call(this, field, cell);
+                break;
+            case 'lineLayout':
+                cell = row.insertCell(-1);
+                cell.setAttribute('colspan', 2);
+                insertLineLayout.call(this, field, cell);
+                break;
+            case 'hidden':
+                row.className = "hidden";
+                /* falls through */
+            default:
+                insertField.call(this, fieldId, field, row);
             }
-        }
+        }, this);
 
         return table;
     };
@@ -306,32 +306,32 @@
     };
 
     var insertLineLayout = function insertLineLayout(desc, wrapper) {
-        var field, fieldId, inputInterface, wrapperElement;
 
-        for (fieldId in desc.fields) {
-            if (desc.fields.hasOwnProperty(fieldId)) {
-                field = desc.fields[fieldId];
+        var fields = norm_fields(desc.fields);
+        fields.forEach(function (field) {
+            var  fieldId, inputInterface, wrapperElement;
 
-                inputInterface = this.factory.createInterface(fieldId, field);
-                inputInterface.assignDefaultButton(this.acceptButton);
-                inputInterface.insertInto(wrapper);
-                // TODO
-                wrapperElement = null;
-                if (inputInterface.wrapperElement && inputInterface.wrapperElement.wrapperElement) {
-                    wrapperElement = inputInterface.wrapperElement.wrapperElement;
-                } else if (inputInterface.inputElement && inputInterface.inputElement.wrapperElement) {
-                    wrapperElement = inputInterface.inputElement.wrapperElement;
-                }
-                if (wrapperElement) {
-                    wrapperElement.style.display = 'inline-block';
-                    wrapperElement.style.verticalAlign = 'middle';
-                }
+            fieldId = field.name;
 
-                this.fieldInterfaces[fieldId] = inputInterface;
-
-                this.fields[fieldId] = field;
+            inputInterface = this.factory.createInterface(fieldId, field);
+            inputInterface.assignDefaultButton(this.acceptButton);
+            inputInterface.insertInto(wrapper);
+            // TODO
+            wrapperElement = null;
+            if (inputInterface.wrapperElement && inputInterface.wrapperElement.wrapperElement) {
+                wrapperElement = inputInterface.wrapperElement.wrapperElement;
+            } else if (inputInterface.inputElement && inputInterface.inputElement.wrapperElement) {
+                wrapperElement = inputInterface.inputElement.wrapperElement;
             }
-        }
+            if (wrapperElement) {
+                wrapperElement.style.display = 'inline-block';
+                wrapperElement.style.verticalAlign = 'middle';
+            }
+
+            this.fieldInterfaces[fieldId] = inputInterface;
+
+            this.fields[fieldId] = field;
+        }, this);
     };
 
     /**
