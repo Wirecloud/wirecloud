@@ -407,7 +407,7 @@
 
             break;
         case ns.ConnectionEngine.CONNECTION_DUPLICATE:
-            this.trigger('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint));
+            this.trigger('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint), this._connectionBackup);
             /* falls through */
         default:
             this.temporalConnection.remove();
