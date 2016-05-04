@@ -20,7 +20,6 @@
 import os
 import sys
 
-import django
 from django.core.urlresolvers import reverse_lazy
 
 
@@ -105,7 +104,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
     )
 
     settings['URL_MIDDLEWARE_CLASSES'] = {
-        'default': [
+        'default': (
             'django.middleware.security.SecurityMiddleware',
             'django.contrib.sessions.middleware.SessionMiddleware',
             'wirecloud.commons.middleware.ConditionalGetMiddleware',
@@ -115,8 +114,8 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             'django.contrib.auth.middleware.AuthenticationMiddleware',
             'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
             'django.contrib.messages.middleware.MessageMiddleware',
-        ],
-        'api': [
+        ),
+        'api': (
             'django.middleware.security.SecurityMiddleware',
             'django.contrib.sessions.middleware.SessionMiddleware',
             'wirecloud.commons.middleware.ConditionalGetMiddleware',
@@ -125,30 +124,14 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             'django.middleware.locale.LocaleMiddleware',
             'wirecloud.commons.middleware.AuthenticationMiddleware',
             'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-        ],
-        'proxy': [
+        ),
+        'proxy': (
             'django.middleware.security.SecurityMiddleware',
             'django.contrib.sessions.middleware.SessionMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
             'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-        ]
+        )
     }
-
-    if django.VERSION[:1] < (1, 7):
-        # Versions 1.6 of Django don't support the SessionAuthenticationMiddleware middleware
-        settings['URL_MIDDLEWARE_CLASSES']['default'].remove('django.contrib.auth.middleware.SessionAuthenticationMiddleware')
-        settings['URL_MIDDLEWARE_CLASSES']['api'].remove('django.contrib.auth.middleware.SessionAuthenticationMiddleware')
-        settings['URL_MIDDLEWARE_CLASSES']['proxy'].remove('django.contrib.auth.middleware.SessionAuthenticationMiddleware')
-
-    if django.VERSION[:1] < (1, 8):
-        # Versions 1.6 and 1.7 of Django don't support the SecurityMiddleware middleware
-        settings['URL_MIDDLEWARE_CLASSES']['default'].remove('django.middleware.security.SecurityMiddleware')
-        settings['URL_MIDDLEWARE_CLASSES']['api'].remove('django.middleware.security.SecurityMiddleware')
-        settings['URL_MIDDLEWARE_CLASSES']['proxy'].remove('django.middleware.security.SecurityMiddleware')
-
-    settings['URL_MIDDLEWARE_CLASSES']['default'] = tuple(settings['URL_MIDDLEWARE_CLASSES']['default'])
-    settings['URL_MIDDLEWARE_CLASSES']['api'] = tuple(settings['URL_MIDDLEWARE_CLASSES']['api'])
-    settings['URL_MIDDLEWARE_CLASSES']['proxy'] = tuple(settings['URL_MIDDLEWARE_CLASSES']['proxy'])
 
     settings['STATICFILES_FINDERS'] = (
         'wirecloud.platform.themes.ActiveThemeFinder',
