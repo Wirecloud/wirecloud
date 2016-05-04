@@ -236,7 +236,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     features = {
         'Wirecloud': wirecloud.platform.__version__,
         'ApplicationMashup': '1.0',
-        'StyledElements': '0.6.3',
+        'StyledElements': '0.7',
         'FullscreenWidget': '0.5',
         'DashboardManagement': '1.0',
     }
