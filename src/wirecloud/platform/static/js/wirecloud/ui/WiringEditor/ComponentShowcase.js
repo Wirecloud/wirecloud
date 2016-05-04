@@ -180,7 +180,7 @@
 
         var bcr = context.layout.getBoundingClientRect();
 
-        context.element.appendTo(context.layout.slideOut().get());
+        context.element.appendTo(context.layout.slideOut().parentElement);
 
         context.x = event.clientX - bcr.left - (context.element.wrapperElement.offsetWidth / 2);
         context.y = event.clientY - bcr.top - (context.element.heading.wrapperElement.offsetHeight / 2);

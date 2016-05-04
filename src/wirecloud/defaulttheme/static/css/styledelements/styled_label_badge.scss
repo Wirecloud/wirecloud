@@ -73,3 +73,19 @@
 .badge-inverse {
     @include label-badge-variant(#333);
 }
+
+
+.label-connection,
+.badge-connection {
+    @include label-badge-variant($brand-connection);
+}
+
+.label-operator,
+.badge-operator {
+    @include label-badge-variant($brand-operator);
+}
+
+.label-widget,
+.badge-widget {
+    @include label-badge-variant($brand-widget);
+}

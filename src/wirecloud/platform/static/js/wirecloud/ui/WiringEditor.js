@@ -255,7 +255,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             .on('change', behaviour_onchange.bind(this))
             .on('enable', behaviourengine_onenable.bind(this));
 
-        this.layout.addPanel(this.behaviourEngine);
+        this.layout.appendChild(this.behaviourEngine);
 
         return this;
     };
@@ -279,7 +279,7 @@ Wirecloud.ui = Wirecloud.ui || {};
                 commit: false
             });
         }.bind(this));
-        this.layout.addPanel(this.componentManager);
+        this.layout.appendChild(this.componentManager);
 
         return this;
     };
@@ -305,13 +305,18 @@ Wirecloud.ui = Wirecloud.ui || {};
 
     var createAndSetUpLayout = function createAndSetUpLayout() {
         /*jshint validthis:true */
+        var centerContainer = new se.Container({class: 'se-vl-center-container'});
+        var southContainer = new se.Container({class: 'se-vl-south-container'});
 
         this.layout = new se.OffCanvasLayout();
         this.layout.sidebar.addClassName("wiring-sidebar");
         this.layout.content.addClassName("wiring-diagram");
-        this.layout.footer.addClassName("wiring-footer");
 
         setUpNavbarView.call(this);
+
+        this.wrapperElement.classList.add('se-vertical-layout');
+        this.appendChild(centerContainer);
+        this.appendChild(southContainer);
 
         this.initialMessage = createInitialMessage();
         this.layout.content.appendChild(this.initialMessage);
@@ -339,7 +344,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         };
 
         Wirecloud.addEventListener('loaded', function () {
-            this.layout.footer.appendChild((new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.wiring_footer, {
+            southContainer.appendChild((new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.wiring_footer, {
                 title: this.legend.title,
                 connections: this.legend.connections,
                 operators: this.legend.operators,
@@ -351,7 +356,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         this._layout_onclick = layout_onclick.bind(this);
         this.layout.content.get().addEventListener('click', this._layout_onclick);
 
-        this.appendChild(this.layout);
+        centerContainer.appendChild(this.layout);
 
         return this;
     };
@@ -861,8 +866,9 @@ Wirecloud.ui = Wirecloud.ui || {};
         this.connectionEngine.setUp();
     };
 
-    var layout_ondblclick = function layout_ondblclick() {
+    var layout_ondblclick = function layout_ondblclick(event) {
         /*jshint validthis:true */
+        event.preventDefault();
         this.layout.slideOut();
     };
 
