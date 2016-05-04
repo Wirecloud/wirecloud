@@ -40,11 +40,11 @@ cd virtenv_test
 # And configure it
 for conf in $*
 do
-file="${WORKSPACE}/src/ci_scripts/conf_scripts/${conf}-prepare.sh"
-if [[ -x "$file" ]]
-then
-    . $file virtenv_test
-fi
+    file="${WORKSPACE}/src/ci_scripts/conf_scripts/${conf}-prepare.sh"
+    if [[ -x "$file" ]]
+    then
+        . $file
+    fi
 done
 
 if [ "${DJANGO_VERSION}" == '1.4' ] || [ "${DJANGO_VERSION}" == '1.5' ] || [ "${DJANGO_VERSION}" == '1.6' ];

@@ -10,7 +10,7 @@ WIRECLOUD_SELENIUM_TEST_BROWSERS = {
    'Remote': {
        'CLASS': 'selenium.webdriver.Remote',
        'ARGS': {
-           'command_executor': 'http://' + os.environ['BROWSER_HOST'] + ':' + os.environ['BROWSER_PORT'] + '/wd/hub',
+           'command_executor': 'http://' + os.environ.get('BROWSER_HOST', 'localhost') + ':' + os.environ.get('BROWSER_PORT', '4444') + '/wd/hub',
            'desired_capabilities': getattr(DesiredCapabilities, os.environ.get('BROWSER_TYPE', 'FIREFOX'))
        }
    },
