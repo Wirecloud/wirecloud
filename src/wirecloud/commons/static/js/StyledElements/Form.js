@@ -19,14 +19,21 @@
  *
  */
 
-/*global StyledElements*/
+/* globals StyledElements */
 
-(function () {
+(function (se, utils) {
 
     "use strict";
 
     /**
      * Form
+     *
+     * @constructor
+     * @extends StyledElements.StyledElement
+     * @name StyledElements.Form
+     * @since 0.5
+     * @param {Object[]} fields form field descriptions
+     * @param {Object.<String, *>} options form options
      */
     var Form = function Form(fields, options) {
         var div, buttonArea, defaultOptions;
@@ -47,7 +54,13 @@
             defaultOptions.acceptButton = false;
             defaultOptions.cancelButton = false;
         }
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
+
+        if (typeof fields !== "object") {
+            throw new TypeError();
+        } else if (!Array.isArray(fields)) {
+            fields = norm_fields(fields);
+        }
 
         // Parse setdefaultsButton
         this.setdefaultsButton = null;
@@ -56,7 +69,7 @@
         } else if (options.setdefaultsButton === true) {
             this.setdefaultsButton = new StyledElements.Button({
                 usedInForm: options.useHtmlForm,
-                text: StyledElements.Utils.gettext('Set Defaults')
+                text: utils.gettext('Set Defaults')
             });
         }
 
@@ -67,7 +80,7 @@
         } else if (options.resetButton === true) {
             this.resetButton = new StyledElements.Button({
                 usedInForm: options.useHtmlForm,
-                text: StyledElements.Utils.gettext('Reset')
+                text: utils.gettext('Reset')
             });
         }
 
@@ -79,7 +92,7 @@
             this.acceptButton = new StyledElements.Button({
                 'usedInForm': options.useHtmlForm,
                 'class': 'btn-primary',
-                'text': StyledElements.Utils.gettext('Accept')
+                'text': utils.gettext('Accept')
             });
         }
 
@@ -90,7 +103,7 @@
         } else if (options.cancelButton === true) {
             this.cancelButton = new StyledElements.Button({
                 usedInForm: options.useHtmlForm,
-                text: StyledElements.Utils.gettext('Cancel')
+                text: utils.gettext('Cancel')
             });
         }
 
@@ -99,7 +112,8 @@
         this.childComponents = [];
         this.readOnly = options.readOnly;
         this.fields = {};
-        this.focusField = Array.isArray(fields) ? fields[0].name : Object.keys(fields)[0];
+        this.fieldList = fields;
+        this.focusField = fields.length > 0 ? fields[0].name : null;
         this.fieldInterfaces = {};
         this.edition = options.edition;
         this.factory = options.factory;
@@ -168,6 +182,17 @@
         for (i in this.fieldInterfaces) {
             this.fieldInterfaces[i].repaint();
         }
+    };
+
+    var norm_fields = function norm_fields(fields) {
+        var key, list = [];
+
+        // backwards compatilibity
+        for (key in fields) {
+            list.push(fields[key]);
+        }
+
+        return list;
     };
 
     Form.prototype.pSetMsgs = function (msgs) {
@@ -244,19 +269,18 @@
                 case 'columnLayout':
                     cell = row.insertCell(-1);
                     cell.setAttribute('colspan', 2);
-                    this.pInsertColumnLayout(field, cell);
+                    insertColumnLayout.call(this, field, cell);
                     break;
                 case 'lineLayout':
                     cell = row.insertCell(-1);
                     cell.setAttribute('colspan', 2);
-                    this.pInsertLineLayout(field, cell);
+                    insertLineLayout.call(this, field, cell);
                     break;
                 case 'hidden':
                     row.className = "hidden";
-                    this.pInsertField(fieldId, field, row);
-                    break;
+                    /* falls through */
                 default:
-                    this.pInsertField(fieldId, field, row);
+                    insertField.call(this, fieldId, field, row);
                 }
             }
         }
@@ -264,7 +288,7 @@
         return table;
     };
 
-    Form.prototype.pInsertColumnLayout = function (desc, wrapper) {
+    var insertColumnLayout = function insertColumnLayout(desc, wrapper) {
         var table, tbody, row, cell, i;
 
         table = document.createElement('table');
@@ -281,7 +305,7 @@
         wrapper.appendChild(table);
     };
 
-    Form.prototype.pInsertLineLayout = function (desc, wrapper) {
+    var insertLineLayout = function insertLineLayout(desc, wrapper) {
         var field, fieldId, inputInterface, wrapperElement;
 
         for (fieldId in desc.fields) {
@@ -313,7 +337,7 @@
     /**
      * @private
      */
-    Form.prototype.pInsertField = function (fieldId, field, row) {
+    var insertField = function insertField(fieldId, field, row) {
         var separator, hr, labelRow, labelCell, label, requiredMark, inputCell, inputInterface, tooltip;
 
         if (field.type === 'separator') {
@@ -380,7 +404,7 @@
      * Does extra checks for testing field validity. This method must be overwriten
      * by child classes for providing these extra checks.
      *
-     * @param {Hash} fields Hash with the current fields
+     * @param {Object} fields Hash with the current fields
      */
     Form.prototype.extraValidation = function (fields) {
         // Parent implementation, allways true if no redefined by child class!
@@ -392,14 +416,20 @@
 
         data = {};
         for (fieldId in this.fieldInterfaces) {
-            if (this.fieldInterfaces.hasOwnProperty(fieldId)) {
-                field = this.fieldInterfaces[fieldId];
-                data[fieldId] = field.getValue();
-            }
+            field = this.fieldInterfaces[fieldId];
+            data[fieldId] = field.getValue();
         }
         return data;
     };
 
+    /**
+     * Sets the value for the fields of this form as a whole
+     *
+     * @since 0.5
+     *
+     * @returns {StyledElements.Form}
+     *      The instance on which the member is called.
+     */
     Form.prototype.setData = function setData(data) {
         var field, fieldId;
 
@@ -419,6 +449,8 @@
                 field.reset();
             }
         }
+
+        return this;
     };
 
     Form.prototype.is_valid = function () {
@@ -463,19 +495,27 @@
         this.events.cancel.dispatch(this);
     };
 
+    /**
+     * Resets form values using the initial values
+     *
+     * @since 0.5
+     */
     Form.prototype.reset = function reset() {
-        this.setData();
-
-        return this;
+        return this.setData();
     };
 
+    /**
+     * Resets form values using the default values
+     *
+     * @since 0.5
+     */
     Form.prototype.defaults = function defaults() {
         var field, fieldId;
 
         this.pSetMsgs([]);
         for (fieldId in this.fields) {
             field = this.fieldInterfaces[fieldId];
-            field.setValue(field._defaultValue);
+            field._setValue(field._defaultValue);
         }
 
         return this;
@@ -533,6 +573,7 @@
 
     /**
      * Enables/disables this Form
+     * @private
      */
     Form.prototype._onenabled = function _onenabled(enabled) {
         var fieldId, inputInterface;
@@ -573,4 +614,4 @@
 
     StyledElements.Form = Form;
 
-})();
+})(StyledElements, StyledElements.Utils);

@@ -190,7 +190,11 @@
     };
 
     NumberInputInterface.prototype._normalize = function _normalize(value) {
-        return Number(value);
+        if (value == null) {
+            return 0;
+        } else {
+            return Number(value);
+        }
     };
 
     NumberInputInterface.prototype._checkValue = function _checkValue(newValue) {
