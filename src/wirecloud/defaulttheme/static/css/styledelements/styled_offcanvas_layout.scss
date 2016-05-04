@@ -1,115 +1,57 @@
-/*
- *  This file is part of Wirecloud.
- *  Copyright (C) 2015  CoNWeT Lab., Universidad Politécnica de Madrid
- *
- *  Wirecloud is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  License, or (at your option) any later version.
- *
- *  Wirecloud is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
-$offcanvas-margin-all: 5px;
-$offcanvas-border-radius: 4px;
-
-$offcanvas-sidebar-width: 250px;
-$offcanvas-sidebar-close-zindex: 20;
-$offcanvas-sidebar-close-width: 15px;
-
-$offcanvas-footer-height: 40px;
+@import "variables";
 
 
 .se-offcanvas {
     position: absolute;
+    display: flex;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    overflow-x: hidden;
+    overflow: hidden;
+}
 
-    .se-offcanvas-sidebar {
-        position: absolute;
-        top: 0;
-        bottom: $offcanvas-footer-height + $offcanvas-margin-all;
-        width: $offcanvas-sidebar-width;
-        margin: 0px $offcanvas-margin-all $offcanvas-margin-all;
-        border: solid 0px transparent;
-        box-sizing: border-box;
-    }
+.se-offcanvas-sidebar {
+    position: relative;
+    width: $offcanvas-sidebar-width;
+    height: 100%;
+    margin: 0 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
 
-    .se-offcanvas-content {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: $offcanvas-footer-height + $offcanvas-margin-all;
-        left: 0;
-        margin: 0px $offcanvas-margin-all $offcanvas-margin-all;
-        overflow: auto;
-        border: solid 0px transparent;
-        box-sizing: border-box;
-    }
-
-    .se-offcanvas-footer {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        height: $offcanvas-footer-height;
-        margin: 0px $offcanvas-margin-all $offcanvas-margin-all;
-        border: solid 0px transparent;
-        box-sizing: border-box;
-    }
+.se-offcanvas-content {
+    position: relative;
+    height: 100%;
+    margin: 0 $margin-horizontal-small;
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: auto;
+    box-sizing: border-box;
 }
 
 .se-offcanvas.left-sideway {
-
-    .se-offcanvas-sidebar {
-        left: ($offcanvas-sidebar-width + $offcanvas-margin-all) * -1;
-    }
-
-    .se-offcanvas-sidebar,
-    .se-offcanvas-content {
-        transition: left .2s ease-out;
-    }
+    left: ($offcanvas-sidebar-width + $margin-horizontal-small) * -1;
+    transition: left .2s ease-out;
 
     &.slipped {
+        left: 0;
+    }
 
-        .se-offcanvas-sidebar {
-            left: 0px;
-        }
-
-        .se-offcanvas-content {
-            left: $offcanvas-sidebar-width + $offcanvas-margin-all;
-        }
+    .se-offcanvas-sidebar {
+        margin-left: $margin-horizontal-small;
     }
 }
 
 .se-offcanvas.right-sideway {
-
-    .se-offcanvas-sidebar {
-        right: ($offcanvas-sidebar-width + $offcanvas-margin-all) * -1;
-    }
-
-    .se-offcanvas-sidebar,
-    .se-offcanvas-content {
-        transition: right .2s ease-out;
-    }
+    right: ($offcanvas-sidebar-width + $margin-horizontal-small) * -1;
+    transition: right .2s ease-out;
 
     &.slipped {
+        right: 0;
+    }
 
-        .se-offcanvas-sidebar {
-            right: 0px;
-        }
-
-        .se-offcanvas-content {
-            right: $offcanvas-sidebar-width + $offcanvas-margin-all;
-        }
+    .se-offcanvas-sidebar {
+        margin-right: $margin-horizontal-small;
     }
 }

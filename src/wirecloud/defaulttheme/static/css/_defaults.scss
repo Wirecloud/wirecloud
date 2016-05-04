@@ -36,6 +36,7 @@ $line-height-small:        floor($font-size-small * $line-height-factor-small) !
 $line-height-xs:           floor($font-size-xs * $line-height-factor-xs) !default;       // ~16px
 
 $margin-vertical-base: 10px !default;
+$margin-horizontal-small: 5px !default;
 
 $padding-vertical-base:     6px !default;
 $padding-horizontal-base:  12px !default;
@@ -302,6 +303,11 @@ $popup-menu-item-padding-horizontal:     (2 * $popup-menu-padding-vertical) !def
 $popup-menu-item-description-text-color: $gray-light !default;
 $popup-menu-item-active-bg:              $brand-primary !default;
 
+// ======================================================================================
+// STYLED ELEMENT - OFFCANVAS-LAYOUT
+// ======================================================================================
+
+$offcanvas-sidebar-width: 300px !default;
 
 // ============================================================================
 // WIRING COMPONENT - CONNECTION

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -31,119 +31,95 @@
     // ==================================================================================
 
     /**
-     * Create a new instance of class OffCanvasLayout.
+     * Creates a new instance of class OffCanvasLayout.
+     * @since 0.6
      *
+     * @name StyledElements.OffCanvasLayout
      * @constructor
-     * @param {Object.<String, *>} [options] [description]
+     * @extends {StyledElements.StyledElement}
+     *
+     * @param {Object} [options]
+     * @param {String} [options.sideway='left']
      */
-    se.OffCanvasLayout = utils.defineClass({
+    se.OffCanvasLayout = function OffCanvasLayout(options) {
+        this.superClass(['slideIn', 'slideOut']);
 
-        constructor: function OffCanvasLayout(options) {
-            options = utils.merge(utils.clone(defaults), options);
-            this.superClass(['slideIn', 'slideOut']);
+        options = utils.merge({
+            sideway: 'left'
+        }, options);
 
-            this.wrapperElement = document.createElement('div');
-            this.addClassName("se-offcanvas " + options.sideway + "-sideway");
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.className = 'se-offcanvas ' + options.sideway + '-sideway';
 
-            Object.defineProperty(this, 'slipped', {
-                get: function get() {
-                    return this.hasClassName('slipped');
-                },
-                set: function set(value) {
-                    this.toggleClassName('slipped', value);
-                }
-            });
-
-            this.panels = [];
-            this.latestIndex = 0;
-
-            Object.defineProperties(this, {
-                sidebar: {value: new se.Container({extraClass: 'se-offcanvas-sidebar'})},
-                content: {value: new se.Container({extraClass: 'se-offcanvas-content'})},
-                footer: {value: new se.Container({extraClass: 'se-offcanvas-footer'})}
-            });
-
-            this.sidebar.insertInto(this.wrapperElement);
-            this.content.insertInto(this.wrapperElement);
-            this.footer.insertInto(this.wrapperElement);
-        },
-
-        inherit: se.StyledElement,
-
-        members: {
-
-            /**
-             * [addPanel description]
-             *
-             * @param {Panel} panel
-             *      [description]
-             * @returns {OffCanvasLayout}
-             *      The instance on which the member is called.
-             */
-            addPanel: function addPanel(panel) {
-                this.sidebar.appendChild(panel);
-                this.panels.push(panel);
-
-                return this;
+        Object.defineProperties(this, {
+            slipped: {
+                get: function get() {return this.hasClassName('slipped');}
             },
+            sidebar: {value: new se.Container({class: 'se-offcanvas-sidebar'})},
+            content: {value: new se.Container({class: 'se-offcanvas-content'})}
+        });
 
-            /**
-             * [slideOut description]
-             *
-             * @param {Number} [panelIndex]
-             *      [description]
-             * @returns {OffCanvasLayout}
-             *      The instance on which the member is called.
-             */
-            slideOut: function slideOut(panelIndex) {
+        this.index = -1;
 
-                if (panelIndex != null) {
-                    this.latestIndex = panelIndex;
-                }
+        this.sidebar.appendTo(this.wrapperElement);
+        this.content.appendTo(this.wrapperElement);
+    };
 
-                this.slipped = false;
+    utils.inherit(se.OffCanvasLayout, se.StyledElement, {
 
-                return this.trigger('slideOut');
-            },
+        /**
+         * @param {StyledElements.StyledElement} element
+         * @returns {StyledElements.OffCanvasLayout} The instance on which this member is called.
+         */
+        appendChild: function appendChild(element) {
+            this.sidebar.appendChild(element);
 
-            /**
-             * [slideIn description]
-             *
-             * @param {Number} [panelIndex]
-             *      [description]
-             * @returns {OffCanvasLayout}
-             *      The instance on which the member is called.
-             */
-            slideIn: function slideIn(panelIndex) {
-                var panel;
-
-                if (this.panels.length) {
-                    this.panels.forEach(function (panel) {
-                        panel.hide();
-                    });
-
-                    if (panelIndex != null) {
-                        this.latestIndex = panelIndex;
-                    }
-
-                    panel = this.panels[this.latestIndex].show();
-                }
-
-                this.slipped = true;
-
-                return this.trigger('slideIn', panel);
+            if (this.index < 0) {
+                this.index = this.sidebar.children.length - 1;
             }
 
+            return this;
+        },
+
+        /**
+         * @param {Number} [index]
+         * @returns {StyledElements.OffCanvasLayout} The instance on which this member is called.
+         */
+        slideIn: function slideIn(index) {
+            var element;
+
+            if (this.sidebar.children.length) {
+                this.sidebar.children.forEach(function (element) {
+                    element.hide();
+                });
+
+                if (typeof index === 'number') {
+                    this.index = index;
+                }
+
+                element = this.sidebar.children[this.index].show();
+            }
+
+            this.toggleClassName('slipped', true);
+
+            return this.trigger('slideIn', element);
+        },
+
+        /**
+         * @param {Number} [index]
+         * @returns {StyledElements.OffCanvasLayout} The instance on which this member is called.
+         */
+        slideOut: function slideOut(index) {
+
+            if (typeof index === 'number') {
+                this.index = index;
+            }
+
+            this.toggleClassName('slipped', false);
+
+            return this.trigger('slideOut');
         }
 
     });
-
-    // ==================================================================================
-    // PRIVATE MEMBERS
-    // ==================================================================================
-
-    var defaults = {
-        sideway: 'left'
-    };
 
 })(StyledElements, StyledElements.Utils);
