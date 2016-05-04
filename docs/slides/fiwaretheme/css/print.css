@@ -302,6 +302,30 @@ a {
   border-bottom: 2px solid #3f3f3f;
 }
 
+.contents table {
+    width: 100%;
+    border: 1px solid rgb(221, 221, 221);
+    border-radius: 3px;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
+
+.contents table tr td, .contents table tr th {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+}
+
+.contents table tr th {
+    border-top: 0px;
+    border: 1px solid rgb(221, 221, 221);
+    border-bottom-width: 2px;
+}
+.contents table tr td {
+    border: 1px solid rgb(221, 221, 221);
+}
+
 pre, code, tt {
     font-family: Consolas, 'Bitstream Vera Sans Mono', 'Lucida Console', FreeMono, Courier, monospace;
 }
