@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2015 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2016 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -135,7 +135,6 @@ class FiWareMarketManager(MarketManager):
 class FiWarePlugin(WirecloudPlugin):
 
     features = {
-        'FI-WARE': wirecloud.fiware.__version__,
         'FIWARE': wirecloud.fiware.__version__,
         'NGSI': '1.0.1',
         'ObjectStorage': '0.5',
