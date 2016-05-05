@@ -5,4 +5,4 @@ pip install psycopg2
 
 createdb -U postgres -h ${DB_HOST} -p ${DB_PORT} -O ${DB_USER} ${DB_NAME}
 
-cat ${WORKSPACE}/src/ci_scripts/templates/postgres-conf.template >> $1/settings.py
+cat ${WORKSPACE}/src/ci_scripts/templates/postgres-conf.template >> ${WC_INSTANCE_NAME}/settings.py

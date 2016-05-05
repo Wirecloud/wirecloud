@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export WC_INSTANCE_NAME=virtenv_test
+
 set -ex
 virtualenv -p $1 ${WORKSPACE}/virtenv
 
@@ -33,9 +35,9 @@ DJANGO_VERSION=`django-admin.py --version`
 DJANGO_VERSION="${DJANGO_VERSION%.*}"
 
 # Create a WireCloud instance
-${COVERAGE_CMD} run --branch --source=wirecloud ${WORKSPACE}/virtenv/bin/wirecloud-admin startproject virtenv_test
-mv .coverage virtenv_test
-cd virtenv_test
+${COVERAGE_CMD} run --branch --source=wirecloud ${WORKSPACE}/virtenv/bin/wirecloud-admin startproject ${WC_INSTANCE_NAME}
+mv .coverage ${WC_INSTANCE_NAME}
+cd ${WC_INSTANCE_NAME}
 
 # And configure it
 for conf in $*
@@ -57,7 +59,7 @@ python manage.py collectstatic -v 0 --noinput
 
 # Pass the tests
 # pip install ipdb
-cat ${WORKSPACE}/src/ci_scripts/base_settings.py >> virtenv_test/settings.py
+cat ${WORKSPACE}/src/ci_scripts/base_settings.py >> ${WC_INSTANCE_NAME}/settings.py
 ${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/fp74caast/*,*/wirecloud/semanticwiring/*,*/tests/*,*/tests.py" manage.py test --liveserver=${IP_ADDR}:28081 --noinput --with-xunit --nologcapture -v 2 ${TESTS}
 
 mv .coverage ../virtenv/lib/python${PY_VERSION}/site-packages; cd ../virtenv/lib/python${PY_VERSION}/site-packages; ${WORKSPACE}/virtenv/bin/coverage xml; mv coverage.xml ${WORKSPACE}; cd ${WORKSPACE}
