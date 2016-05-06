@@ -416,6 +416,7 @@
 
         if (this.enabled && event.button === 0) {
             event.stopPropagation();
+            event.preventDefault();  // Required for disabling text selection
             this.trigger('mouseup', event);
         }
     };

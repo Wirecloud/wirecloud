@@ -378,7 +378,9 @@
     };
 
     var connection_ondragend = function connection_ondragend(event) {
-        endpoint_ondragend.call(this, null);
+        event.preventDefault();
+        event.stopPropagation();
+        endpoint_ondragend.call(this);
     };
 
     var endpoint_ondragend = function endpoint_ondragend(finalEndpoint) {
@@ -407,9 +409,15 @@
 
             break;
         case ns.ConnectionEngine.CONNECTION_DUPLICATE:
-            this.trigger('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint), this._connectionBackup);
-            /* falls through */
+            this.temporalConnection.remove();
+            this.trigger('duplicate', this.temporalInitialEndpoint.getConnectionTo(finalEndpoint).click(), this._connectionBackup);
+            break;
         default:
+
+            if (this._connectionBackup != null) {
+                this._connectionBackup.click();
+            }
+
             this.temporalConnection.remove();
             this.trigger('cancel');
         }

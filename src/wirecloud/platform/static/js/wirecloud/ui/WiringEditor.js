@@ -347,8 +347,9 @@ Wirecloud.ui = Wirecloud.ui || {};
             }).children[1]);
         }.bind(this));
 
-        this.layout.content.get().addEventListener('click', layout_onclick.bind(this));
         this.layout.content.get().addEventListener('dblclick', layout_ondblclick.bind(this));
+        this.layout.content.get().addEventListener('mousedown', layout_onclick.bind(this));
+
         this.appendChild(this.layout);
 
         return this;
