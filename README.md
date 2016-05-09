@@ -39,13 +39,13 @@ This project is part of [FIWARE](http://www.fiware.org). Check it out in the [Ca
 
 ## Documentation
 
-You can find the User & Programmer's Manual and the Install & Administration Guide on [readthedocs.org](https://wirecloud.readthedocs.org)
+You can find the User & Programmer's Manual and the Install & Administration Guide on [Read the Docs](https://wirecloud.readthedocs.io)
 
 ## Install
 
     $ sudo pip install wirecloud
 
-See the [installation guide](https://wirecloud.readthedocs.org/en/latest/installation_guide/) for more info.
+See the [installation guide](https://wirecloud.readthedocs.io/en/stable/installation_guide/) for more info.
 
 ## Bugs and feature requests
 
