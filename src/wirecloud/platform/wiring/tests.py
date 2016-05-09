@@ -1125,7 +1125,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
                 operator.change_version("2.0")
                 self.assertEqual(operator.version, "v2.0")
                 modal = operator.show_logs()
-                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The operator was upgraded to v2.0 successfully.")) == 1)
+                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The operator's version was changed successfully.")) == 1)
                 modal.accept()
             draggable_operator = wiring.find_draggable_component('operator', id=operator.id)
 
@@ -1153,7 +1153,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
                 widget.change_version("3.0")
                 self.assertEqual(widget.version, "v3.0")
                 modal = widget.show_logs()
-                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was upgraded to v3.0 successfully.")) == 1)
+                WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget's version was changed successfully.")) == 1)
                 modal.accept()
             draggable_widget = wiring.find_draggable_component('widget', id=widget.id)
 
@@ -1180,7 +1180,7 @@ class ComponentDraggableTestCase(WirecloudSeleniumTestCase):
             draggable_widget.change_version("3.0")
             draggable_widget.change_version("1.0")
             modal = draggable_widget.show_logs()
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget was downgraded to v1.0 successfully.")) == 1)
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The widget's version was changed successfully.")) == 2)
             modal.accept()
 
             self.assertEqual(len(draggable_widget.find_endpoints('target')), 2)

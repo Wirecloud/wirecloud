@@ -357,8 +357,9 @@
         this.pending_events.forEach(send_pending_event, this);
         this.pending_events = [];
 
-        var msg = utils.interpolate(utils.gettext("The operator (%(title)s) was loaded."), this);
-        this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
+        this.logManager.log(utils.gettext("The operator was loaded successfully."), {
+            level: Wirecloud.constants.LOGGING.INFO_MSG
+        });
         this.trigger('load');
     };
 
@@ -366,8 +367,9 @@
 
         this.loaded = false;
 
-        var msg = utils.interpolate(utils.gettext("The operator (%(title)s) was unloaded."), this);
-        this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
+        this.logManager.log(utils.gettext("The operator was unloaded successfully."), {
+            level: Wirecloud.constants.LOGGING.INFO_MSG
+        });
         this.trigger('unload');
     };
 

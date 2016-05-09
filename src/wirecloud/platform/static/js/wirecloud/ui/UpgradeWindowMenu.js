@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -127,17 +127,18 @@
             var new_component = Wirecloud.LocalCatalogue.getResourceId(new_component_id);
 
             var _onsuccess_listener = function onsuccess_listener() {
+                var msg = utils.interpolate(utils.gettext("The %(type)s's version was changed successfully."), {type: component.meta.type});
+
                 component.removeEventListener('upgraded', _onsuccess_listener);
                 component.removeEventListener('upgradeerror', _onfailure_listener);
 
-                var msg;
-                if (new_version.compareTo(old_version) > 0) {
-                    msg = utils.gettext("The %(type)s was upgraded to v%(version)s successfully.");
-                } else {
-                    msg = utils.gettext("The %(type)s was downgraded to v%(version)s successfully.");
-                }
-                msg = utils.interpolate(msg, {type: component.meta.type, version: new_version});
-                component.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
+                component.logManager.log(msg, {
+                    level: Wirecloud.constants.LOGGING.INFO_MSG,
+                    details: new se.Fragment(utils.interpolate(utils.gettext("<p>Now the %(type)s's version is <strong>%(version)s</strong>.</p>"), {
+                        type: component.meta.type,
+                        version: new_version
+                    }))
+                });
 
                 this._closeListener();
             }.bind(this);
