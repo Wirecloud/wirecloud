@@ -1355,6 +1355,18 @@ class ComponentMissingTestCase(WirecloudSeleniumTestCase):
             self._check_operator_missing(wiring, 1, 1, 1)
             self.assertEqual(len(wiring.find_connections(extra_class="missing")), 3)
 
+    @uses_extra_resources(('Wirecloud_TestOperator_2.0.zip',), shared=True)
+    def test_upgrade_missing_operator(self):
+        CatalogueResource.objects.get(vendor="Wirecloud", short_name="TestOperator", version="1.0").delete()
+        self.login(username='user_with_workspaces')
+
+        with self.wiring_view as wiring:
+            operator = wiring.find_draggable_component('operator', id=0)
+            self.assertTrue(operator.has_class('missing'))
+
+            operator.change_version("2.0")
+            self.assertFalse(operator.has_class('missing'))
+
 
 @wirecloud_selenium_test_case
 class ComponentOperatorTestCase(WirecloudSeleniumTestCase):
