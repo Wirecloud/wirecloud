@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,13 +25,12 @@
 
     "use strict";
 
-    var Wirecloud, id, idx, tmp, i, current;
+    var Wirecloud, id, tmp, i, current;
 
     Wirecloud = window.parent.Wirecloud;
 
     // Get id from the URL
-    idx = document.URL.lastIndexOf('#');
-    tmp = document.URL.substr(idx + 1);
+    tmp = document.location.hash.substr(1);
     tmp = tmp.split("&");
     for (i = 0; i < tmp.length; i++) {
         current = tmp[i];
