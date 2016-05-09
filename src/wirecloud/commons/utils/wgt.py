@@ -22,6 +22,7 @@ import re
 from shutil import rmtree
 from six.moves.urllib.request import pathname2url
 import zipfile
+import tempfile
 
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -141,6 +142,29 @@ class WgtFile(object):
                 outfile = open(os.path.join(path, name.replace("/", os.sep)), 'wb')
                 outfile.write(self._zip.read(name))
                 outfile.close()
+
+    def update_config(self, _file, contents):
+        # generate a temp file
+        tmpfd, tmpname = tempfile.mkstemp(dir=".")
+        os.close(tmpfd)
+
+        f = open(tmpname, "wb")
+        _file.seek(0)
+        f.write(_file.read())
+        f.close()
+
+        filename = 'config.xml'
+        with zipfile.ZipFile(tmpname, 'a') as zin:
+            with zipfile.ZipFile(self._zip.fp, 'a') as zout:
+                zout.comment = self._zip.comment # preserve the comment
+                for item in self._zip.infolist():
+                    if item.filename == filename:
+                        zout.writestr(item, contents)
+                    else:
+                        zout.writestr(item, zin.read(item.filename))
+
+        self._zip = zipfile.ZipFile(self._zip.fp)
+        os.remove(tmpname)
 
     def close(self):
         self._zip.close()

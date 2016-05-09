@@ -30,7 +30,7 @@ def cmp(a, b):
 
 class Version(object):
 
-    version_re = regex.compile(r'^([1-9]\d*|0)((?:\.(?:[1-9]\d*|0))*)(?:(a|b|rc)([1-9]\d*))?$')
+    version_re = regex.compile(r'^([1-9]\d*|0)((?:\.(?:[1-9]\d*|0))*)(?:(a|b|rc)([1-9]\d*))?(-dev)?.*$')
 
     def __init__(self, vstring, reverse=False):
 

@@ -2355,6 +2355,30 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('version', response_data)
         self.assertEqual(response_data['version'], '1.0')
 
+    @uses_extra_resources(('Wirecloud_Test_Selenium_1.0-dev.wgt',), users=["admin"], shared=True, deploy_only=True)
+    def test_resource_collection_post_dev_widget(self):
+
+        url = reverse('wirecloud.resource_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0-dev.wgt'), 'rb') as f:
+            response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertIn('type', response_data)
+        self.assertEqual(response_data['type'], 'widget')
+        self.assertIn('vendor', response_data)
+        self.assertEqual(response_data['vendor'], 'Wirecloud')
+        self.assertIn('name', response_data)
+        self.assertEqual(response_data['name'], 'Test_Selenium')
+        self.assertIn('version', response_data)
+        self.assertEqual(response_data['version'], '1.0-dev')
+
     def test_resource_collection_post_widget_without_enough_filesystem_permissions(self):
 
         url = reverse('wirecloud.resource_collection')

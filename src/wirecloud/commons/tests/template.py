@@ -1809,6 +1809,11 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.minimal_property_info)
 
+    def test_xml_parser_invalid_version(self):
+
+        xml_description = read_template('invalid_version_.xml')
+        self.assertRaise(TemplateParseException, TemplateParser, xml_description)
+
     def test_get_resource_processed_info(self):
 
         json_description = json.dumps(self.widget_info)
