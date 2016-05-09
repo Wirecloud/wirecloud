@@ -106,16 +106,16 @@ class CatalogueResource(models.Model):
     def is_removable_by(self, user):
         return user.is_superuser or self.creator == user
 
-    def get_template_url(self, request=None, for_base=False):
-        return get_template_url(self.vendor, self.short_name, self.version, '' if for_base else self.template_uri, request=request)
+    def get_template_url(self, request=None, for_base=False, url_pattern_name='wirecloud_catalogue.media'):
+        return get_template_url(self.vendor, self.short_name, self.version, '' if for_base else self.template_uri, request=request, url_pattern_name=url_pattern_name)
 
-    def get_template(self, request=None):
+    def get_template(self, request=None, url_pattern_name='wirecloud_catalogue.media'):
 
-        template_uri = self.get_template_url(request=request)
+        template_uri = self.get_template_url(request=request, url_pattern_name=url_pattern_name)
         parser = TemplateParser(self.json_description, base=template_uri)
         return parser
 
-    def get_processed_info(self, request=None, lang=None, process_urls=True, translate=True, process_variables=False):
+    def get_processed_info(self, request=None, lang=None, process_urls=True, translate=True, process_variables=False, url_pattern_name='wirecloud_catalogue.media'):
 
         if translate and lang is None:
             from django.utils import translation
@@ -123,7 +123,7 @@ class CatalogueResource(models.Model):
         else:
             lang = None
 
-        parser = self.get_template(request)
+        parser = self.get_template(request, url_pattern_name=url_pattern_name)
         return parser.get_resource_processed_info(lang=lang, process_urls=process_urls, translate=True, process_variables=process_variables)
 
     def delete(self, *args, **kwargs):
@@ -238,10 +238,10 @@ class CatalogueResourceSearcher(BaseSearcher):
         return fields
 
 
-def get_template_url(vendor, name, version, url, request=None):
+def get_template_url(vendor, name, version, url, request=None, url_pattern_name='wirecloud_catalogue.media'):
 
     if urlparse(url).scheme == '':
-        template_url = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
+        template_url = get_absolute_reverse_url(url_pattern_name, kwargs={
             'vendor': vendor,
             'name': name,
             'version': version,

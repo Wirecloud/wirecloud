@@ -191,7 +191,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         client = Client()
         client.login(username='test', password='test')
-        widget_id = {'vendor': 'Wirecloud', 'name': 'test', 'version': '0.1'}
+        widget_code_path = {'vendor': 'Wirecloud', 'name': 'test', 'version': '0.1', 'file_path': 'index.html'}
 
         file_contents = self.build_simple_wgt('template1.xml', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
         added, resource = install_resource_to_user(self.user, file_contents=file_contents)
@@ -200,7 +200,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         xhtml_pk = resource.widget.pk
 
         # Cache widget code
-        response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
+        response = client.get(reverse('wirecloud.showcase_media', kwargs=widget_code_path) + '?entrypoint=true')
         self.assertEqual(response.status_code, 200)
         old_code = response.content
 
@@ -213,7 +213,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         file_contents = self.build_simple_wgt('template1.xml', b'code', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
         resource = install_resource_to_user(self.user, file_contents=file_contents)
 
-        response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
+        response = client.get(reverse('wirecloud.showcase_media', kwargs=widget_code_path) + '?entrypoint=true')
         self.assertEqual(response.status_code, 200)
         new_code = response.content
 

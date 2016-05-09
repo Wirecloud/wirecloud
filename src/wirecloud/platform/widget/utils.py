@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -133,7 +133,7 @@ def get_widget_platform_style(theme):
     return _widget_platform_style[theme]
 
 
-def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_platform_style, requirements, force_base, mode, theme):
+def fix_widget_code(widget_code, content_type, request, encoding, use_platform_style, requirements, mode, theme):
 
     # This line is here for raising UnicodeDecodeError in case the widget_code is not encoded using the expecified encoding
     widget_code.decode(encoding)
@@ -171,11 +171,6 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
     base_elements = xpath(xmltree, '/xhtml:html/xhtml:head/xhtml:base', xmlns)
     for base_element in base_elements[1:]:
         base_element.getparent().remove(base_element)
-
-    if len(base_elements) >= 1 and force_base:
-        base_elements[0].set('href', base_url)
-    elif len(base_elements) == 0:
-        head_element.insert(0, etree.Element('base', href=base_url))
 
     # Fix scripts
     scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)

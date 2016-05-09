@@ -43,14 +43,10 @@
                 this.codeurl = Wirecloud.URLs.MISSING_WIDGET_CODE_ENTRY;
                 this.codecontenttype = "application/xhtml+xml";
             } else {
-                this.codeurl = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
-                    vendor: this.vendor,
-                    name: this.name,
-                    version: this.version.text
-                });
+                this.codeurl = data.contents.src;
                 this.codecontenttype = data.contents.contenttype;
             }
-            this.codeurl += "?v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
+            this.codeurl += "?entrypoint=true&v=" + Wirecloud.contextManager.get('version_hash') + "&theme=" + Wirecloud.contextManager.get('theme');
 
             // Properties
             this.properties = {}

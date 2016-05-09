@@ -56,7 +56,7 @@ class ResourceCollection(Resource):
         resources = {}
         if request.user.is_authenticated():
             for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups__in=request.user.groups.all())):
-                options = resource.get_processed_info(request, process_urls=process_urls)
+                options = resource.get_processed_info(request, process_urls=process_urls, url_pattern_name="wirecloud.showcase_media")
                 resources[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(resources, sort_keys=True), content_type='application/json; chatset=UTF-8')
@@ -170,7 +170,7 @@ class ResourceCollection(Resource):
         if install_embedded_resources:
 
             info = {
-                'resource_details': resource.get_processed_info(request),
+                'resource_details': resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"),
                 'extra_resources': []
             }
             if resource.resource_type() == 'mashup':
@@ -181,13 +181,13 @@ class ResourceCollection(Resource):
                     extra_resource_contents = WgtFile(resource_file)
                     extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
                     if extra_resource_added:
-                        info['extra_resources'].append(extra_resource.get_processed_info(request))
+                        info['extra_resources'].append(extra_resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"))
 
             return HttpResponse(json.dumps(info, sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
 
         else:
 
-            return HttpResponse(json.dumps(resource.get_processed_info(request), sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"), sort_keys=True), status=status_code, content_type='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):
@@ -281,7 +281,7 @@ class WorkspaceResourceCollection(Resource):
         process_urls = process_urls=request.GET.get('process_urls', 'true') == 'true'
         for resource in resources:
             if resource.is_available_for(workspace.creator):
-                options = resource.get_processed_info(request, process_urls=process_urls)
+                options = resource.get_processed_info(request, process_urls=process_urls, url_pattern_name="wirecloud.showcase_media")
                 result[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(result, sort_keys=True), content_type='application/json; chatset=UTF-8')

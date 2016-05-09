@@ -1568,8 +1568,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
     def test_widget_code_entry_get_operator(self):
 
-        widget_id = {'vendor': 'Wirecloud', 'name': 'TestOperator', 'version': '1.0'}
-        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+        widget_id = {'vendor': 'Wirecloud', 'name': 'TestOperator', 'version': '1.0', 'file_path': '/test.html'}
+        url = reverse('wirecloud.showcase_media', kwargs=widget_id) + '?entrypoint=true'
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1579,8 +1579,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
     def test_widget_code_entry_get_cached(self):
 
-        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
-        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0', 'file_path': '/test.html'}
+        url = reverse('wirecloud.showcase_media', kwargs=widget_id) + '?entrypoint=true'
 
         CACHED_CODE = "<html><head></head><body>cached hello world!</body></html>"
         xhtml = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0').widget.xhtml
@@ -1597,8 +1597,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
     def test_widget_code_entry_get_html_in_folder(self):
 
-        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
-        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0', 'file_path': 'Wirecloud/Test/1.0/html/index.html'}
+        url = reverse('wirecloud.showcase_media', kwargs=widget_id) + '?entrypoint=true'
 
         HTML_CODE = b"<html><head></head><body>infolder test!</body></html>"
         xhtml = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0').widget.xhtml
@@ -1613,30 +1613,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("infolder test!", response.content.decode('utf-8'))
 
-    def test_widget_code_entry_get_absolute_url(self):
-
-        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
-        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
-
-        HTML_CODE = "<html><head></head><body>absolute hello world!</body></html>"
-        self.network._servers['http']['example.com'].add_response('GET', '/html', {'content': HTML_CODE})
-        xhtml = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0').widget.xhtml
-        xhtml.url = "http://example.com/html"
-        xhtml.cacheable = True
-        xhtml.code = ""
-        xhtml.save()
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("absolute hello world!", response.content.decode('utf-8'))
-
     def test_widget_code_entry_get_bad_encoding(self):
 
         widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
-        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+        url_args = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0', 'file_path': '/test.html'}
+        url = reverse('wirecloud.showcase_media', kwargs=url_args) + '?entrypoint=true'
 
         # Prepare invalid widget code
         base_dir = localcatalogue.wgt_deployer.get_base_dir(**widget_id)
@@ -1659,7 +1640,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_widget_code_entry_get_bad_encoding_noncacheable(self):
 
         widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
-        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+        url_args = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0', 'file_path': '/test.html'}
+        url = reverse('wirecloud.showcase_media', kwargs=url_args) + '?entrypoint=true'
 
         # Prepare invalid widget code
         base_dir = localcatalogue.wgt_deployer.get_base_dir(**widget_id)
@@ -1686,20 +1668,33 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
     def test_widget_code_entry_get_html_missing(self):
 
-        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
-        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0', 'file_path': '/test.html'}
+        url = reverse('wirecloud.showcase_media', kwargs=widget_id) + '?entrypoint=true'
 
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
-        self.assertEqual(response.status_code, 502)
-        self.assertIn('HTML code is not accessible', response.content.decode('utf-8'))
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('Widget code not found', response.content.decode('utf-8'))
+
+    def test_widget_code_entry_get_ioerror(self):
+
+        widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0', 'file_path': '/test.html'}
+        url = reverse('wirecloud.showcase_media', kwargs=widget_id) + '?entrypoint=true'
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        with patch('wirecloud.platform.widget.views.download_local_file', side_effect=IOError):
+            response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+            self.assertEqual(response.status_code, 500)
 
     def test_widget_code_entry_get_invalid_html(self):
 
         widget_id = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'}
-        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+        url_args = {'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0', 'file_path': '/test.html'}
+        url = reverse('wirecloud.showcase_media', kwargs=url_args) + '?entrypoint=true'
 
         # Prepare invalid widget code
         base_dir = localcatalogue.wgt_deployer.get_base_dir(**widget_id)
@@ -1721,8 +1716,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
     def test_widget_code_entry_get_widget_not_found(self):
 
-        widget_id = {'vendor': 'Wirecloud', 'name': 'inexistent', 'version': '1.0'}
-        url = reverse('wirecloud.widget_code_entry', kwargs=widget_id)
+        widget_id = {'vendor': 'Wirecloud', 'name': 'inexistent', 'version': '1.0', 'file_path': '/index.html'}
+        url = reverse('wirecloud.showcase_media', kwargs=widget_id) + '?entrypoint=true'
 
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
