@@ -185,7 +185,7 @@
         context.x = event.clientX - bcr.left - (context.element.wrapperElement.offsetWidth / 2);
         context.y = event.clientY - bcr.top - (context.element.heading.wrapperElement.offsetHeight / 2);
 
-        context.component.disable();
+        context.component.used = true;
 
         context.element
             .addClassName("cloned dragging")

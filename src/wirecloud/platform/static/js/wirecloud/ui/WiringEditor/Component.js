@@ -41,6 +41,7 @@
     ns.Component = utils.defineClass({
 
         constructor: function Component(wiringComponent) {
+            var used = false;
 
             this.title_tooltip = new se.Tooltip({content: wiringComponent.title, placement: ["top", "bottom", "right", "left"]});
 
@@ -71,6 +72,16 @@
             Object.defineProperties(this, {
                 id: {value: wiringComponent.id},
                 type: {value: wiringComponent.meta.type},
+                used: {
+                    get: function () {
+                        return used;
+                    },
+                    set: function (value) {
+                        used = value;
+                        update_enable_status.call(this);
+                        update_component_label.call(this);
+                    }
+                }
             });
             this.get().setAttribute('data-id', this.id);
 
@@ -78,34 +89,20 @@
                 wiringComponent.on('title_changed', component_onrename.bind(this));
             }
 
-            if (wiringComponent.volatile || !wiringComponent.hasEndpoints()) {
-                this.disable();
-            }
+            wiringComponent.on('upgraded', function (component) {
+                this.setTitle(component.title);
+                this.setSubtitle("v" + component.meta.version.text);
 
-            wiringComponent.on('upgraded', function (componentUpdated) {
-                this.setTitle(componentUpdated.title);
-                this.setSubtitle("v" + componentUpdated.meta.version.text);
+                update_enable_status.call(this);
+                update_component_label.call(this);
             }.bind(this));
+            update_enable_status.call(this);
+            update_component_label.call(this);
         },
 
         inherit: se.Panel,
 
         members: {
-
-            /**
-             * @override
-             */
-            _onenabled: function _onenabled(enabled) {
-
-                if (!enabled) {
-                    formatDisabledMessage.call(this);
-                    this.heading.appendChild(this.label);
-                } else {
-                    this.heading.removeChild(this.label);
-                }
-
-                return this.superMember(se.Panel, '_onenabled', enabled);
-            },
 
             hasSettings: function hasSettings() {
                 return this._component.meta.preferenceList.length > 0;
@@ -147,25 +144,34 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var formatDisabledMessage = function formatDisabledMessage() {
+    var update_component_label = function update_component_label() {
         /*jshint validthis:true */
 
         if (this._component.volatile) {
             this.label.textContent = utils.gettext("volatile");
             this.label.className = "label label-info";
-            return this;
-        }
-
-        if (!this._component.hasEndpoints()) {
+        } else if (this._component.missing) {
+            this.label.textContent = utils.gettext("missing");
+            this.label.className = "label label-danger";
+        } else if (this.used) {
+            this.label.textContent = utils.gettext("in use");
+            this.label.className = "label label-success";
+        } else if (!this._component.hasEndpoints()) {
             this.label.textContent = utils.gettext("no endpoints");
             this.label.className = "label label-warning";
+        } else {
+            if (this.label.parentElement) {
+                this.heading.removeChild(this.label);
+            }
             return this;
         }
-
-        this.label.textContent = utils.gettext("in use");
-        this.label.className = "label label-success";
+        this.heading.appendChild(this.label);
 
         return this;
+    };
+
+    var update_enable_status = function update_enable_status() {
+        this.enabled = !(this.used || this._component.volatile || this._component.missing || !this._component.hasEndpoints());
     };
 
     var component_onrename = function component_onrename(title) {

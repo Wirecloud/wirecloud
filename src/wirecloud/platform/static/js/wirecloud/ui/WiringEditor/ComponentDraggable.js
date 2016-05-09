@@ -95,7 +95,9 @@
                     set: function set(value) {this._oncollapsed(value);}
                 },
 
-                missing: {value: wiringComponent.missing},
+                missing: {
+                    get: function get() {return this._component.missing;}
+                },
 
                 readonly: {
                     get: function get() {return this.hasClassName('readonly');},
@@ -177,13 +179,11 @@
             appendEndpoints.call(this, 'source', wiringComponent.meta.outputList.map(function (data) {return wiringComponent.outputs[data.name];}));
             appendEndpoints.call(this, 'target', wiringComponent.meta.inputList.map(function (data) {return wiringComponent.inputs[data.name];}));
 
-            if (!this.missing) {
-                wiringComponent.logManager.addEventListener('newentry', notifyErrors.bind(this));
+            wiringComponent.logManager.addEventListener('newentry', notifyErrors.bind(this));
 
+            if (!this.missing) {
                 this.endpoints.source.orderEndpoints(options.endpoints.source);
                 this.endpoints.target.orderEndpoints(options.endpoints.target);
-            } else {
-                this.addClassName("missing");
             }
 
             if (options.collapsed) {
@@ -514,6 +514,7 @@
             },
 
             refresh: function refresh() {
+                notifyErrors.call(this);
                 return this.forEachEndpoint(function (endpoint) {
                     endpoint.refresh();
                 });
@@ -725,11 +726,13 @@
         var title, label, count;
 
         count = this._component.logManager.getErrorCount();
-        if (count || this.missing) {
+        this.toggleClassName('missing', this.missing);
 
-            if (!this.heading.has(this.heading.notice)) {
-                this.heading.appendChild(this.heading.notice);
-            }
+        if (this.heading.has(this.heading.notice)) {
+            this.heading.removeChild(this.heading.notice);
+        }
+
+        if (count || this.missing) {
 
             if (this.missing) {
                 title = utils.gettext("Missing");
@@ -741,6 +744,7 @@
             }
 
             this.heading.noticeTitle.textContent = title;
+            this.heading.appendChild(this.heading.notice);
         }
     };
 

@@ -403,7 +403,7 @@ Wirecloud.ui = Wirecloud.ui || {};
         var item = this.componentManager.findComponent(component.type, component.id);
 
         if (item != null) {
-            item.disable();
+            item.used = true;
         }
 
         return this;
@@ -456,12 +456,12 @@ Wirecloud.ui = Wirecloud.ui || {};
         wiringEngine = this.workspace.wiring;
         visualStatus = wiringEngine.status.visualdescription;
 
-        // Loading the widgets used in the workspace...
-        loadWidgets.call(this, wiringEngine.widgets, visualStatus.components.widget);
+        // Loading the widgets used in this workspace...
+        loadComponents.call(this, wiringEngine.widgets, visualStatus.components.widget);
         // ...completed.
 
-        // Loading the operators uploaded in this account...
-        loadOperators.call(this, wiringEngine.operators, visualStatus.components.operator);
+        // Loading the operators used in this workspace...
+        loadComponents.call(this, wiringEngine.operators, visualStatus.components.operator);
         // ...completed.
 
         // Loading the connections established in the workspace...
@@ -539,40 +539,16 @@ Wirecloud.ui = Wirecloud.ui || {};
         return this;
     };
 
-    var loadOperators = function loadOperators(wiringOperators, visualOperators) {
+    var loadComponents = function loadComponents(components, visualInfo) {
         /*jshint validthis:true */
-        var metaOperators = Wirecloud.LocalCatalogue.getAvailableResourcesByType('operator');
-        var id, operator;
+        var id, component;
 
-        for (id in wiringOperators) {
-            operator = wiringOperators[id];
+        for (id in components) {
+            component = components[id];
+            this.componentManager.addComponent(component);
 
-            if (!operator.missing) {
-                this.componentManager.addComponent(operator);
-            }
-
-            if (!operator.volatile) {
-                this.createComponent(operator, visualOperators[operator.id]);
-            }
-        }
-
-        return this;
-    };
-
-    var loadWidgets = function loadWidgets(wiringWidgets, visualWidgets) {
-        /*jshint validthis:true */
-        var metaWidgets = Wirecloud.LocalCatalogue.getAvailableResourcesByType('widget');
-        var id, widget;
-
-        for (id in wiringWidgets) {
-            widget = wiringWidgets[id];
-
-            if (!widget.missing) {
-                this.componentManager.addComponent(widget);
-            }
-
-            if (widget.id in visualWidgets) {
-                this.createComponent(widget, visualWidgets[widget.id]);
+            if (component.id in visualInfo) {
+                this.createComponent(component, visualInfo[component.id]);
             }
         }
 
@@ -795,8 +771,10 @@ Wirecloud.ui = Wirecloud.ui || {};
             this.selectedCount--;
         }
 
-        if (!component.missing) {
-            this.componentManager.findComponent(component.type, component.id).enable();
+        if (component.missing) {
+            this.componentManager.removeComponent(component.type, component._component);
+        } else {
+            this.componentManager.findComponent(component.type, component.id).used = false;
         }
 
         if (!this.behaviourEngine.hasComponents()) {

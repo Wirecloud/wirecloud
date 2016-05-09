@@ -189,10 +189,6 @@
                         delete old_operators[id];
                     }
 
-                    if (operator.missing) {
-                        this.logManager.log(operator.reason);
-                    }
-
                     operator
                         .on('upgraded', component_onupgraded.bind(this))
                         .on('unload', component_onunload)

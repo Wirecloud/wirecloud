@@ -357,8 +357,17 @@
         this.pending_events.forEach(send_pending_event, this);
         this.pending_events = [];
 
-        var msg = utils.interpolate(utils.gettext("The operator (%(title)s) was loaded."), this);
-        this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
+        if (this.missing) {
+            this.logManager.log(utils.gettext("Failed to load operator."), {
+                level: Wirecloud.constants.LOGGING.ERROR_MSG,
+                details: new se.Fragment(utils.gettext("<p>This operator is currently not available. You or an administrator probably uninstalled it.</p><h5>Suggestions:</h5><ul><li>Remove the operator.</li><li>Reinstall the same version of the operator.</li><li>Or install another version of the operator and then use the <em>Upgrade/Downgrade</em> option.</li></ul>"))
+            });
+        } else {
+            this.logManager.log(utils.gettext("Operator loaded successfully."), {
+                level: Wirecloud.constants.LOGGING.INFO_MSG
+            });
+        }
+
         this.trigger('load');
     };
 
@@ -366,8 +375,10 @@
 
         this.loaded = false;
 
-        var msg = utils.interpolate(utils.gettext("The operator (%(title)s) was unloaded."), this);
-        this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
+        this.logManager.log(utils.gettext("Operator unloaded successfully."), {
+            level: Wirecloud.constants.LOGGING.INFO_MSG
+        });
+        this.logManager.newCycle();
         this.trigger('unload');
     };
 
