@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from io import BytesIO
+import time
 
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
@@ -26,12 +27,30 @@ from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 from wirecloud.proxy.utils import ValidationError
 
 
+if IDM_SUPPORT_ENABLED:
+
+    from social.apps.django_app.utils import load_strategy
+
+    STRATEGY = load_strategy(backend='fiware')
+
+else:
+
+    STRATEGY = None
+
+
 def get_access_token(user, error_msg):
     "Gets the access_token of a user using python-social-auth"
+
     try:
         oauth_info = user.social_auth.get(provider='fiware')
         if oauth_info.access_token is None:
             raise Exception
+
+        # Refresh the token if the token has been expired or the token expires
+        # in less than 30 seconds
+        if time.time() > oauth_info.extra_data['expires_on'] - 30:
+            oauth_info.refresh_token(STRATEGY)
+
         return oauth_info.access_token
     except:
         raise ValidationError(error_msg)

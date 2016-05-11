@@ -63,13 +63,17 @@ class ProxyTestCase(WirecloudTestCase):
         cls.echo_headers_response = echo_headers_response
 
     def setUp(self):
-        admin_tokens_mock = Mock()
-        admin_tokens_mock.access_token = TEST_TOKEN
+        admin_tokens_mock = Mock(
+            access_token=TEST_TOKEN,
+            extra_data={"access_token": TEST_TOKEN, "refresh_token": "refresh_token", "expires_on": float("inf")}
+        )
         self.admin_mock = Mock()
         self.admin_mock.social_auth.get.return_value = admin_tokens_mock
 
-        user_with_workspaces_tokens_mock = Mock()
-        user_with_workspaces_tokens_mock.access_token = TEST_WORKSPACE_TOKEN
+        user_with_workspaces_tokens_mock = Mock(
+            access_token=TEST_WORKSPACE_TOKEN,
+            extra_data={"access_token": TEST_TOKEN, "refresh_token": "refresh_token", "expires_on": float("inf")}
+        )
         self.user_with_workspaces_mock = Mock()
         self.user_with_workspaces_mock.social_auth.get.return_value = user_with_workspaces_tokens_mock
 
@@ -156,6 +160,14 @@ class ProxyTestCase(WirecloudTestCase):
         request = self.prepare_request_mock(use_deprecated_code=True, **kwargs)
         response = proxy_request(request=request, protocol='http', domain='example.com', path=path)
         validator(response)
+
+    def test_normal_request(self):
+        request = self.prepare_request_mock()
+        del request.META['HTTP_FIWARE_OAUTH_TOKEN']
+
+        with patch('wirecloud.fiware.proxy.get_access_token') as get_access_token_mock:
+            response = proxy_request(request=request, protocol='http', domain='example.com', path='/path')
+            self.assertEqual(get_access_token_mock.call_count, 0)
 
     def test_fiware_idm_processor_header(self):
 

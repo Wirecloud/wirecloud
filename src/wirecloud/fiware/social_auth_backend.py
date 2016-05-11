@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013-2015 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2016 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -33,6 +33,7 @@ field, check OAuthBackend class for details on how to extend it.
 
 import base64
 import requests
+import time
 from six.moves.urllib.parse import urljoin
 
 from django.conf import settings
@@ -84,11 +85,25 @@ class FIWAREOAuth2(BaseOAuth2):
         ('expires_in', 'expires_in'),
     ]
 
+    def extra_data(self, user, uid, response, details=None, *args, **kwargs):
+        """Return access_token and extra defined names to store in
+        extra_data field"""
+        data = super(FIWAREOAuth2, self).extra_data(user, uid, response, details, *args, **kwargs)
+        # Save the expiration time
+        data['expires_on'] = time.time() + data['expires_in']
+        return data
+
     def auth_headers(self):
         token = base64.urlsafe_b64encode(('{0}:{1}'.format(*self.get_key_and_secret()).encode())).decode()
         return {
             'Authorization': 'Basic {0}'.format(token)
         }
+
+    def refresh_token(self, token, *args, **kwargs):
+        data = super(FIWAREOAuth2, self).refresh_token(token, *args, **kwargs)
+        # Save the expiration time
+        data['expires_on'] = time.time() + data['expires_in']
+        return data
 
     def get_user_details(self, response):
         """Return user details from FIWARE account"""
