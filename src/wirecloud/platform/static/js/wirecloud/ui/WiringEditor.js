@@ -324,7 +324,7 @@ Wirecloud.ui = Wirecloud.ui || {};
             }.bind(this))
             .on('slideIn', function (offcanvas, panel) {
                 this.btnFindComponents.active = panel.hasClassName("we-panel-components");
-                this.btnListBehaviours.active = panel.hasClassName("panel-behaviours");
+                this.btnListBehaviours.active = panel.hasClassName("we-panel-behaviours");
 
                 if (this.btnFindComponents.active) {
                     this.behaviourEngine.stopOrdering();
@@ -347,8 +347,9 @@ Wirecloud.ui = Wirecloud.ui || {};
             }).children[1]);
         }.bind(this));
 
-        this.layout.content.get().addEventListener('click', layout_onclick.bind(this));
         this.layout.content.get().addEventListener('dblclick', layout_ondblclick.bind(this));
+        this.layout.content.get().addEventListener('mousedown', layout_onclick.bind(this));
+
         this.appendChild(this.layout);
 
         return this;

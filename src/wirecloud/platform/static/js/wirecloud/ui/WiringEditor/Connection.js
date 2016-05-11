@@ -45,7 +45,8 @@
             this.wrapperElement = document.createElementNS(ns.Connection.SVG_NS, 'g');
             this.wrapperElement.setAttribute('class', "connection");
             this.wrapperElement.addEventListener('click', connection_onclick.bind(this));
-            this.wrapperElement.addEventListener('dblclick', utils.stopPropagationListener);
+            this.wrapperElement.addEventListener('dblclick', utils.stopPropagationListener, true);
+            this.wrapperElement.addEventListener('mousedown', utils.stopPropagationListener, true);
 
             this.wrapperElement.addEventListener('mouseenter', connection_onmouseenter.bind(this));
             this.wrapperElement.addEventListener('mouseleave', connection_onmouseleave.bind(this));
