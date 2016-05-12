@@ -73,7 +73,7 @@ class IDMTokenProcessor(object):
             if 'fiware-oauth-get-parameter' in request['headers']:
                 parameter_name = request['headers']['fiware-oauth-get-parameter']
                 del request['headers']['fiware-oauth-get-parameter']
-            else: # 'x-fi-ware-oauth-get-parameter'
+            else:  # 'x-fi-ware-oauth-get-parameter'
                 parameter_name = request['headers']['x-fi-ware-oauth-get-parameter']
                 del request['headers']['x-fi-ware-oauth-get-parameter']
 
@@ -90,7 +90,7 @@ class IDMTokenProcessor(object):
             if 'fiware-oauth-header-name' in request['headers']:
                 header_name = request['headers']['fiware-oauth-header-name']
                 del request['headers']['fiware-oauth-header-name']
-            else: # 'x-fi-ware-oauth-header-name'
+            else:  # 'x-fi-ware-oauth-header-name'
                 header_name = request['headers']['x-fi-ware-oauth-header-name']
                 del request['headers']['x-fi-ware-oauth-header-name']
 
@@ -104,7 +104,7 @@ class IDMTokenProcessor(object):
             if 'fiware-oauth-body-pattern' in request['headers']:
                 pattern = request['headers']['fiware-oauth-body-pattern']
                 del request['headers']['fiware-oauth-body-pattern']
-            else: # 'x-fi-ware-oauth-token-body-patter'
+            else:  # 'x-fi-ware-oauth-token-body-patter'
                 pattern = request['headers']['x-fi-ware-oauth-token-body-pattern']
                 del request['headers']['x-fi-ware-oauth-token-body-pattern']
 

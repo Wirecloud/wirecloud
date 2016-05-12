@@ -32,7 +32,6 @@ field, check OAuthBackend class for details on how to extend it.
 """
 
 import base64
-import json
 import requests
 from six.moves.urllib.parse import urljoin
 
@@ -59,7 +58,7 @@ def create_organizations(strategy, backend, user, response, *args, **kwargs):
         try:
             social = UserSocialAuth.objects.select_related('user').get(provider='fiware', uid=organization['id'])
         except UserSocialAuth.DoesNotExist:
-            social =  None
+            social = None
 
         if social is None:
             org_name = Organization.objects.search_available_name(organization['displayName'])
