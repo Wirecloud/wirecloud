@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,7 +20,7 @@
 from wirecloud.commons.utils.http import build_error_response
 
 
-# hop-by-hop headers(http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1)
+# Remove hop-by-hop headers (http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1)
 BLACKLISTED_HEADERS = {
     'connection': 1, 'keep-alive': 1, 'proxy-authenticate': 1,
     'proxy-authorization': 1, 'te': 1, 'trailers': 1, 'transfer-encoding': 1,

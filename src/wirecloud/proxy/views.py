@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -59,7 +59,9 @@ class Proxy():
     protocolRE = re.compile('HTTP/(.*)')
 
     blacklisted_http_headers = [
-        'http_host',
+        'http_host', 'http_forwarded', 'http_x_forwarded_by',
+        'http_x_forwarded_host', 'http_x_forwarded_port',
+        'http_x_forwarded_proto', 'http_x_forwarded_server'
     ]
 
     # set the timeout to 60 seconds
@@ -133,10 +135,6 @@ class Proxy():
             request_data['headers']['x-forwarded-for'] += ', ' + request.META['REMOTE_ADDR']
         else:
             request_data['headers']['x-forwarded-for'] = request.META['REMOTE_ADDR']
-
-        request_data['headers']['x-forwarded-host'] = host
-        if 'x-forwarded-server' in request_data['headers']:
-            del request_data['headers']['x-forwarded-server']
 
         # Pass proxy processors to the new request
         try:
