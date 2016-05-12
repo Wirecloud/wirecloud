@@ -200,7 +200,6 @@ class ProxyTests(ProxyTestsBase):
             'referer': referer,
             'via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
             'x-forwarded-for': '127.0.0.1',
-            'x-forwarded-host': 'example.com'
         }
 
         expected_response_headers = {
@@ -225,7 +224,6 @@ class ProxyTests(ProxyTestsBase):
             'referer': referer,
             'via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
             'x-forwarded-for': '127.0.0.1',
-            'x-forwarded-host': 'example.com'
         }
 
         expected_response_headers = {
@@ -351,6 +349,83 @@ class ProxyTests(ProxyTestsBase):
         self.assertEqual(response.cookies[str('newcookie3')].value, 'c')
         cookie_path = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
         self.assertEqual(response.cookies[str('newcookie3')]['path'], cookie_path)
+
+    def test_request_headers(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        def headers_response(method, url, *args, **kwargs):
+            return {'content': json.dumps(kwargs['headers'])}
+
+        self.network._servers['http']['example.com'].add_response('GET', '/path', headers_response)
+        response = client.get(
+            self.basic_url,
+            HTTP_HOST='localhost',
+            HTTP_REFERER='http://localhost/test/workspace',
+            HTTP_FORWARDED='www.google.es',
+            HTTP_X_FORWARDED_BY='127.0.0.1',
+            HTTP_X_FORWARDED_HOST='www.google.es',
+            HTTP_X_FORWARDED_PORT='8080',
+            HTTP_X_FORWARDED_PROTO='http',
+            HTTP_X_FORWARDED_SERVER='test',
+            HTTP_MY_HEADER='test'
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(self.read_response(response).decode('utf-8'))
+        # Check the proxy removed the blacklisted headers
+        self.assertEqual(response_data, {
+            "referer": "http://localhost/test/workspace",
+            "my-header": "test",
+            "via": "1.1 localhost (Wirecloud-python-Proxy/1.1)",
+            "x-forwarded-for": "127.0.0.1"
+        })
+
+    def test_via_header(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        def headers_response(method, url, *args, **kwargs):
+            return {'content': json.dumps(kwargs['headers'])}
+
+        self.network._servers['http']['example.com'].add_response('GET', '/path', headers_response)
+        response = client.get(
+            self.basic_url,
+            HTTP_HOST='localhost',
+            HTTP_REFERER='http://localhost/test/workspace',
+            HTTP_VIA='1.0 fred',
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(self.read_response(response).decode('utf-8'))
+        self.assertEqual(response_data, {
+            "referer": "http://localhost/test/workspace",
+            "via": "1.0 fred, 1.1 localhost (Wirecloud-python-Proxy/1.1)",
+            "x-forwarded-for": "127.0.0.1"
+        })
+
+    def test_x_forwarded_for_header(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        def headers_response(method, url, *args, **kwargs):
+            return {'content': json.dumps(kwargs['headers'])}
+
+        self.network._servers['http']['example.com'].add_response('GET', '/path', headers_response)
+        response = client.get(
+            self.basic_url,
+            HTTP_HOST='localhost',
+            HTTP_REFERER='http://localhost/test/workspace',
+            HTTP_X_FORWARDED_FOR='client',
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(self.read_response(response).decode('utf-8'))
+        self.assertEqual(response_data, {
+            "referer": "http://localhost/test/workspace",
+            "via": "1.1 localhost (Wirecloud-python-Proxy/1.1)",
+            "x-forwarded-for": "client, 127.0.0.1"
+        })
 
 
 class ProxySecureDataTests(ProxyTestsBase):
