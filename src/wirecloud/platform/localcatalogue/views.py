@@ -40,7 +40,7 @@ from wirecloud.commons.utils.template import TemplateParseException, Unsupported
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_all_users
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget, Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
@@ -75,6 +75,7 @@ class ResourceCollection(Resource):
         content_type = get_content_type(request)[0]
         if content_type == 'multipart/form-data':
             force_create = request.POST.get('force_create', 'false').strip().lower() == 'true'
+            public = request.POST.get('public', 'false').strip().lower() == 'true'
             install_embedded_resources = request.POST.get('install_embedded_resources', 'false').strip().lower() == 'true'
             if not 'file' in request.FILES:
                 return build_error_response(request, 400, _('Missing component file in the request'))
@@ -94,6 +95,7 @@ class ResourceCollection(Resource):
                 return build_error_response(request, 400, _('The uploaded file is not a zip file'))
 
             force_create = request.GET.get('force_create', 'false').strip().lower() == 'true'
+            public = request.GET.get('public', 'false').strip().lower() == 'true'
             install_embedded_resources = request.GET.get('install_embedded_resources', 'false').strip().lower() == 'true'
         else:  # if content_type == 'application/json'
 
@@ -103,6 +105,7 @@ class ResourceCollection(Resource):
 
             install_embedded_resources = normalize_boolean_param(request, 'install_embedded_resources', data.get('install_embedded_resources', False))
             force_create = data.get('force_create', False)
+            public = request.GET.get('public', 'false').strip().lower() == 'true'
             templateURL = data.get('url')
             market_endpoint = data.get('market_endpoint', None)
 
@@ -136,8 +139,10 @@ class ResourceCollection(Resource):
                 return build_error_response(request, 400, _('The file downloaded from the marketplace is not a zip file'))
 
         try:
-
-            added, resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL)
+            if public:
+                added, resource = install_resource_to_all_users(executor_user=request.user, file_contents=file_contents)
+            else:
+                added, resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL)
 
             if not added and force_create:
                 return build_error_response(request, 409, _('Resource already exists'))
@@ -179,7 +184,10 @@ class ResourceCollection(Resource):
                     resource_file = BytesIO(file_contents.read(embedded_resource['src']))
 
                     extra_resource_contents = WgtFile(resource_file)
-                    extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
+                    if public:
+                        extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
+                    else:
+                        extra_resource_added, extra_resource = install_resource_to_user(request.user, file_contents=extra_resource_contents, raise_conflicts=False)
                     if extra_resource_added:
                         info['extra_resources'].append(extra_resource.get_processed_info(request, url_pattern_name="wirecloud.showcase_media"))
 
