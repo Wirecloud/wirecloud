@@ -348,7 +348,8 @@ Wirecloud.ui = Wirecloud.ui || {};
         }.bind(this));
 
         this.layout.content.get().addEventListener('dblclick', layout_ondblclick.bind(this));
-        this.layout.content.get().addEventListener('mousedown', layout_onclick.bind(this));
+        this._layout_onclick = layout_onclick.bind(this);
+        this.layout.content.get().addEventListener('click', this._layout_onclick);
 
         this.appendChild(this.layout);
 
@@ -831,6 +832,8 @@ Wirecloud.ui = Wirecloud.ui || {};
             this.suggestionManager.hideSuggestions(realEndpoint);
             this.suggestionManager.showSuggestions(initialEndpoint);
         }
+
+        this.layout.content.get().removeEventListener('click', this._layout_onclick);
     };
 
     var connection_ondragend = function connection_ondragend(connectionEngine, connection, initialEndpoint) {
@@ -846,6 +849,10 @@ Wirecloud.ui = Wirecloud.ui || {};
         }
 
         this.suggestionManager.hideSuggestions(initialEndpoint);
+
+        setTimeout(function () {
+            this.layout.content.get().addEventListener('click', this._layout_onclick);
+        }.bind(this), 0);
     };
 
     var behaviour_onchange = function behaviour_onchange(behaviourEngine, currentStatus, enabled) {
