@@ -40,7 +40,7 @@ __test__ = False
 class ProxyTestsBase(WirecloudTestCase):
 
     fixtures = ('test_data.json',)
-    tags = ('wirecloud-proxy',)
+    tags = ('wirecloud-proxy', 'wirecloud-noselenium')
 
     servers = {
         'http': {
@@ -430,7 +430,7 @@ class ProxyTests(ProxyTestsBase):
 
 class ProxySecureDataTests(ProxyTestsBase):
 
-    tags = ('wirecloud-proxy', 'wirecloud-proxy-secure-data')
+    tags = ('wirecloud-proxy', 'wirecloud-proxy-secure-data', 'wirecloud-noselenium')
 
     def setUp(self):
         super(ProxySecureDataTests, self).setUp()
