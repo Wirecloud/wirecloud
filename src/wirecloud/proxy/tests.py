@@ -150,7 +150,7 @@ class ProxyTests(ProxyTestsBase):
         client = Client()
         client.login(username='test', password='test')
 
-        widget_url = reverse('wirecloud.widget_code_entry', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0"})
+        widget_url = reverse('wirecloud.showcase_media', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0", "file_path": "/index.html"})
         self.check_basic_requests(client, 'http://localhost' + widget_url)
 
     def test_basic_proxy_requests_from_widget_restricted_to_get_post(self):
@@ -159,7 +159,7 @@ class ProxyTests(ProxyTestsBase):
         client.login(username='test', password='test')
 
         self.network._servers['http']['example.com'].add_response('PUT', '/path', {'content': 'data'})
-        widget_url = reverse('wirecloud.widget_code_entry', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0"})
+        widget_url = reverse('wirecloud.showcase_media', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0", "file_path": "/index.html"})
         response = client.put(self.basic_url, "{}", content_type="application/json", HTTP_HOST='localhost', HTTP_REFERER=widget_url)
         self.assertEqual(response.status_code, 403)
 

@@ -213,7 +213,7 @@ def proxy_request(request, protocol, domain, path):
             if not workspace.is_available_for(request.user):
                 raise Exception()
 
-        elif referer_view_info.url_name == 'wirecloud.widget_code_entry' or referer_view_info.url_name == 'wirecloud|proxy':
+        elif referer_view_info.url_name == 'wirecloud.showcase_media' or referer_view_info.url_name == 'wirecloud|proxy':
 
             if request_method not in ('GET', 'POST'):
                 raise Exception()
