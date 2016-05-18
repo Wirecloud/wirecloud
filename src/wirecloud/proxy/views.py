@@ -87,7 +87,7 @@ class Proxy():
 
         # Extract headers from META
         if 'HTTP_TRANSFER_ENCODING' in request.META:
-            return build_error_response(request, 422, "Wirecloud doesn't support requests using the Transfer-Encoding header")
+            return build_error_response(request, 422, "WireCloud doesn't support requests using the Transfer-Encoding header")
 
         for header in request.META.items():
             header_name = header[0].lower()

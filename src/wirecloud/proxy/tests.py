@@ -160,9 +160,17 @@ class ProxyTests(ProxyTestsBase):
 
         self.network._servers['http']['example.com'].add_response('PUT', '/path', {'content': 'data'})
         widget_url = reverse('wirecloud.showcase_media', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0", "file_path": "/index.html"})
-        response = client.put(self.basic_url, "{}", content_type="application/json", HTTP_HOST='localhost', HTTP_REFERER=widget_url)
+        response = client.put(self.basic_url, "{}", content_type="application/json", HTTP_HOST='localhost', HTTP_REFERER='http://localhost' + widget_url)
         self.assertEqual(response.status_code, 403)
 
+    def test_basic_proxy_requests_invalid_referer(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        self.network._servers['http']['example.com'].add_response('PUT', '/path', {'content': 'data'})
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/')
+        self.assertEqual(response.status_code, 403)
 
     def test_basic_proxy_requests_from_proxied_content(self):
 
@@ -316,6 +324,19 @@ class ProxyTests(ProxyTestsBase):
         response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'data')
+
+    def test_transfer_encoding(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        response = client.get(
+            self.basic_url,
+            HTTP_HOST='localhost',
+            HTTP_REFERER='http://localhost/test/workspace',
+            HTTP_TRANSFER_ENCODING='chunked',
+        )
+        self.assertEqual(response.status_code, 422)
 
     def test_cookies(self):
 
