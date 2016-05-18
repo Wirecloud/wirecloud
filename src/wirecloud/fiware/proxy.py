@@ -48,7 +48,8 @@ def get_access_token(user, error_msg):
 
         # Refresh the token if the token has been expired or the token expires
         # in less than 30 seconds
-        if time.time() > oauth_info.extra_data['expires_on'] - 30:
+        # Also refresh the token if expires_on information does not exist yet
+        if time.time() > oauth_info.extra_data.get('expires_on', 0) - 30:
             oauth_info.refresh_token(STRATEGY)
 
         return oauth_info.access_token
