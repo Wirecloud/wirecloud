@@ -65,20 +65,20 @@ There are two options for using your themes:
 
 1.  If you don't want to distribute or share it with other WireCloud instances
     you can simply drop the theme folder inside your WireCloud instance folder.
-    Then you can configure your WireCloud instance for using your them by
+    Then you can configure your WireCloud instance for using your theme by
     editing the `settings.py` file and modifying the [`THEME_ACTIVE`
     setting](../../installation_guide/#theme_active).
 
-    For example, if you created the `mytheme` folder, you can move it into the
-    folder of your WireCloud instance and use `THEME_ACTIVE = 'mytheme'` in the
-    `settings.py` file.
+    For example, if you created your WireCloud instance at
+    `/opt/wirecloud_instance`, the `mytheme` folder should be placed at
+    `/opt/wirecloud_instance/mytheme`. Once deployed the theme, you should be
+    able to use `THEME_ACTIVE = 'mytheme'` in your `settings.py` file for using
+    your custom theme.
 
 2.  You can package and distribute your theme using the standard tools used in
     python for that purpose, e.g. using [setuptools] for building your packages
     and [[pypi]](the official repository for distributing software for the Python
     programming language) for distributing your theme.
-
-    
 
     Once installed the theme package into the system, virtual env, ... used by
     the WireCloud instance, you will be able to use it through the `THEME_ACTIVE`
