@@ -26,10 +26,9 @@ import re
 import time
 import unittest
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django.test import Client
+from django.test import Client, override_settings
 from mock import Mock, patch
 import selenium
 from selenium.webdriver.common.keys import Keys
@@ -579,41 +578,21 @@ class WiringTestCase(WirecloudTestCase):
 
 
 @patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
+@override_settings(FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=())
 class OperatorCodeEntryTestCase(WirecloudTestCase):
 
     XML_NORMALIZATION_RE = re.compile(b'>\\s+<')
     fixtures = ('selenium_test_data',)
-    tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium')
+    tags = ('wirecloud-wiring', 'wirecloud-noselenium', 'wirecloud-wiring-noselenium', 'wirecloud-operator-code-transformation')
 
     @classmethod
     def setUpClass(cls):
-        if hasattr(settings, 'FORCE_DOMAIN'):
-            cls.old_FORCE_DOMAIN = settings.FORCE_DOMAIN
-        if hasattr(settings, 'FORCE_PROTO'):
-            cls.old_FORCE_PROTO = settings.FORCE_PROTO
-
-        settings.FORCE_DOMAIN = 'example.com'
-        settings.FORCE_PROTO = 'http'
-        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', None)
-
-        settings.WIRECLOUD_PLUGINS = ()
         plugins.clear_cache()
 
         super(OperatorCodeEntryTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
-        if hasattr(cls, 'old_FORCE_DOMAIN'):
-            settings.FORCE_DOMAIN = cls.old_FORCE_DOMAIN
-        else:
-            del settings.FORCE_DOMAIN
-
-        if hasattr(cls, 'old_FORCE_PROTO'):
-            settings.FORCE_PROTO = cls.old_FORCE_PROTO
-        else:
-            del settings.FORCE_PROTO
-
-        settings.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
         plugins.clear_cache()
 
         super(OperatorCodeEntryTestCase, cls).tearDownClass()

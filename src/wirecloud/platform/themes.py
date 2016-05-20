@@ -32,12 +32,7 @@ from django.template import TemplateDoesNotExist
 from django.template.base import Origin
 from django.utils._os import safe_join
 import pkg_resources
-try:
-    # Django 1.8+
-    from django.template.loaders.base import Loader
-except:
-    # Django 1.7 and below
-    from django.template.loader import BaseLoader as Loader
+from django.template.loaders.base import Loader
 
 
 DEFAULT_THEME = 'wirecloud.defaulttheme'
