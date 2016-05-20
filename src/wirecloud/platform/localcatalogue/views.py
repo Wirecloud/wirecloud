@@ -138,16 +138,19 @@ class ResourceCollection(Resource):
 
                 return build_error_response(request, 400, _('The file downloaded from the marketplace is not a zip file'))
 
+        if public and not request.user.is_superuser:
+            return build_error_response(request, 403, _('You are not allowed to make resources publicly available to all users'))
+
         try:
-            if public:
-                added, resource = install_resource_to_all_users(executor_user=request.user, file_contents=file_contents)
-            else:
-                added, resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL)
+            added, resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL)
 
             if not added and force_create:
                 return build_error_response(request, 409, _('Resource already exists'))
             elif not added:
                 status_code = 200
+
+            if public:
+                install_resource_to_all_users(executor_user=request.user, file_contents=file_contents)
 
         except zipfile.BadZipfile as e:
 

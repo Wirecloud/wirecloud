@@ -2669,8 +2669,27 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.client.login(username='admin', password='admin')
 
         # Make the request
-        response = self.client.post(url, 'invalid content', content_type="application/octet-stream", HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
+        self.assertTrue(resource.public)
+        self.assertEqual(list(resource.users.values_list('username', flat=True)), ['admin'])
+
+    def test_resource_collection_post_public_normuser(self):
+
+        url = reverse('wirecloud.resource_collection') + '?public=true'
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, f.read(), content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor= 'Wirecloud', short_name= 'Test_Selenium', version= '1.0')
 
     def test_resource_entry_get_requires_authentication(self):
 
