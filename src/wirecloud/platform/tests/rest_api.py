@@ -2661,6 +2661,17 @@ class ResourceManagementAPI(WirecloudTestCase):
         response = self.client.post(url, 'invalid content', content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 400)
 
+    def test_resource_collection_post_public(self):
+
+        url = reverse('wirecloud.resource_collection') + '?public=true'
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        response = self.client.post(url, 'invalid content', content_type="application/octet-stream", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+
     def test_resource_entry_get_requires_authentication(self):
 
         url = reverse('wirecloud.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
