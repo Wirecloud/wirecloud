@@ -33,8 +33,10 @@ from django.template.base import Origin
 from django.utils._os import safe_join
 import pkg_resources
 from django.template.loaders.base import Loader
+import six
 
 
+CORE_THEMES = ('wirecloud.defaulttheme', 'wirecloud.fiwaretheme', 'wirecloud.fiwarelabtheme', 'wirecloud.fiwarelabdarktheme')
 DEFAULT_THEME = 'wirecloud.defaulttheme'
 
 
@@ -43,7 +45,7 @@ def get_active_theme_name():
 
 
 def get_available_themes(metadata=False):
-    themes = ['wirecloud.defaulttheme', 'wirecloud.fiwaretheme', 'wirecloud.fiwarelabtheme', 'wirecloud.fiwarelabdarktheme']
+    themes = list(CORE_THEMES)
     for ep in pkg_resources.iter_entry_points(group='wirecloud.themes'):
         themes.append(ep.load().__name__)
 
@@ -57,7 +59,7 @@ def get_available_themes(metadata=False):
         return themes
 
 
-def active_theme_context_processor(request):
+def active_theme_context_processor(request):  # pragma no cover
     from wirecloud.platform.context_processors import active_theme
     import warnings
     warnings.warn('wirecloud.platform.themes.active_theme_context_processor has been deprecated. Please, use wirecloud.commons.context_processors.active_theme instead.', DeprecationWarning)
@@ -73,12 +75,14 @@ def get_theme_metadata(theme_name):
 
     try:
         theme = import_module(theme_name)
-    except ImportError:
-        raise ValueError("%s is not a valid WireCloud theme" % theme_name)
+    except (NameError, SyntaxError) as exc:
+        raise ValueError("Error loading {theme} theme: {desc}".format(theme=theme_name, desc=exc))
+    except ImportError as exc:
+        raise ValueError("{theme} theme, or a dependency, couldn't be found in PYTHONPATH: {desc}".format(theme=theme_name, desc=exc))
 
     theme.name = theme_name
     theme.parent = getattr(theme, "parent", DEFAULT_THEME)
-    theme.label = getattr(theme, "label", theme_name.split('.')[-1])
+    theme.label = getattr(theme, "label", theme_name.rsplit('.', 1)[-1])
 
     return theme
 
@@ -183,7 +187,7 @@ class ActiveThemeFinder(BaseFinder):
         for theme in self.themes:
             prefix = 'theme%s%s%s' % (os.sep, theme, os.sep)
             if not path.startswith(prefix):
-                continue 
+                continue
 
             relpath = path[len(prefix):]
             for staticfiles_dir in self.themes[theme]:

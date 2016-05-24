@@ -26,8 +26,9 @@ from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.test.utils import override_settings
 from mock import MagicMock, Mock, patch
+import six
 
-from wirecloud.platform.themes import ActiveThemeFinder, DEFAULT_THEME, get_active_theme_name, get_theme_chain, TemplateLoader
+from wirecloud.platform.themes import ActiveThemeFinder, CORE_THEMES, DEFAULT_THEME, get_active_theme_name, get_available_themes as real_get_available_themes, get_theme_chain, get_theme_metadata, TemplateLoader
 
 
 class Theme(object):
@@ -37,6 +38,8 @@ class Theme(object):
         self.__file__ = "/fs/%s/__init__.py" % id.replace('.', '/')
         if 'parent' in kwargs:
             self.parent = kwargs['parent']
+        if 'label' in kwargs:
+            self.label = kwargs['label']
 
     def __repr__(self):
         return self.id
@@ -44,7 +47,7 @@ class Theme(object):
 
 DEFAULT_THEME_MODULE = Theme(DEFAULT_THEME, parent=None)
 CUSTOM_THEME_MODULE = Theme("customtheme")
-CUSTOMMOD_THEME_MODULE = Theme("custommodtheme", parent="customtheme")
+CUSTOMMOD_THEME_MODULE = Theme("custommodtheme", parent="customtheme", label="My Custom Theme")
 CUSTOM_ROOT_THEME_MODULE = Theme("customroottheme", parent=None)
 
 
@@ -57,9 +60,20 @@ def import_module_tester(module):
         return CUSTOMMOD_THEME_MODULE
     elif module == "customroottheme":
         return CUSTOM_ROOT_THEME_MODULE
+    elif module == "syntaxerrortheme":
+        raise IndentationError('unexpected indent')
+    elif module == "nameerrortheme":
+        raise NameError("global name 'p' is not defined")
+    elif module == "importerrortheme":
+        raise ImportError("No module named wirecloud.missing")
+    elif module == "missingmodule.themepython27":
+        raise ImportError("No module named missingmodule.themepython27")
+    elif module == "missingmodule.themepypy":
+        raise ImportError("No module named themepypy")
+    elif module in CORE_THEMES:
+        return Theme(module)
     else:
-        raise ImportError
-
+        raise ImportError("No module named '%s'" % module.split('.', 1)[0])
 
 get_available_themes_mock = Mock(return_value = (DEFAULT_THEME, "customtheme", "custommodtheme", "customroottheme"))
 
@@ -69,8 +83,72 @@ class ThemesTestCase(unittest.TestCase):
 
     tags = ('wirecloud-noselenium', 'wirecloud-themes')
 
+    def test_get_theme_metadata(self):
+        metadata = get_theme_metadata('custommodtheme')
+        self.assertEqual(metadata.name, 'custommodtheme')
+        self.assertEqual(metadata.parent, 'customtheme')
+        self.assertEqual(metadata.label, 'My Custom Theme')
+
+    def test_get_theme_metadata_default(self):
+        metadata = get_theme_metadata(DEFAULT_THEME)
+        self.assertEqual(metadata.name, DEFAULT_THEME)
+        self.assertIsNone(metadata.parent)
+
+    def test_get_theme_metadata_syntax_error(self):
+        six.assertRaisesRegex(self, ValueError, "Error loading syntaxerrortheme theme: ", get_theme_metadata, 'syntaxerrortheme')
+
+    def test_get_theme_metadata_name_error(self):
+        six.assertRaisesRegex(self, ValueError, "Error loading nameerrortheme theme: ", get_theme_metadata, 'nameerrortheme')
+
+    def test_get_theme_metadata_import_error(self):
+        six.assertRaisesRegex(self, ValueError, "No module named wirecloud.missing$", get_theme_metadata, 'importerrortheme')
+
+    def test_get_theme_metadata_missing_python27(self):
+        six.assertRaisesRegex(self, ValueError, "No module named missingmodule.themepython27$", get_theme_metadata, 'missingmodule.themepython27')
+
+    def test_get_theme_metadata_missing_pypy(self):
+        six.assertRaisesRegex(self, ValueError, "No module named themepypy$", get_theme_metadata, 'missingmodule.themepypy')
+
+    def test_get_theme_metadata_missing(self):
+        six.assertRaisesRegex(self, ValueError, "No module named 'missingmodule'$", get_theme_metadata, 'missingmodule.theme')
+
+    @patch('wirecloud.platform.themes.pkg_resources')
+    @override_settings(THEME_ACTIVE=DEFAULT_THEME)
+    def test_get_available_themes(self, pkg_resources_mock):
+        pkg_resources_mock.iter_entry_points.return_value = ()
+        self.assertEqual(real_get_available_themes(), list(CORE_THEMES))
+
+    @patch('wirecloud.platform.themes.get_theme_metadata')
+    @patch('wirecloud.platform.themes.pkg_resources')
+    @override_settings(THEME_ACTIVE=DEFAULT_THEME)
+    def test_get_available_themes_metadata(self, pkg_resources_mock, get_theme_metadata_mock):
+        pkg_resources_mock.iter_entry_points.return_value = ()
+
+        result = real_get_available_themes(metadata=True)
+
+        self.assertEqual(len(result), len(CORE_THEMES))
+        self.assertEqual(get_theme_metadata_mock.call_count, len(CORE_THEMES))
+
+    @patch('wirecloud.platform.themes.pkg_resources')
+    @override_settings(THEME_ACTIVE="customtheme")
+    def test_get_available_themes_customtheme(self, pkg_resources_mock):
+        pkg_resources_mock.iter_entry_points.return_value = ()
+        self.assertEqual(real_get_available_themes(), list(CORE_THEMES) + ["customtheme"])
+
+    @patch('wirecloud.platform.themes.pkg_resources')
+    @override_settings(THEME_ACTIVE=DEFAULT_THEME)
+    def test_get_available_themes_third_party_themes(self, pkg_resources_mock):
+        ep1_mock = Mock()
+        ep1_mock.load.return_value = Mock(__name__="thridpartytheme")
+        ep2_mock = Mock()
+        ep2_mock.load.return_value = Mock(__name__="thridpartytheme2")
+
+        pkg_resources_mock.iter_entry_points.return_value = (ep1_mock, ep2_mock)
+        self.assertEqual(real_get_available_themes(), list(CORE_THEMES) + ["thridpartytheme", "thridpartytheme2"])
+
     @override_settings(THEME_ACTIVE=None)
     def test_get_active_theme_name_default(self):
+        # Emulate the user didn't define a THEME_ACTIVE setting
         del settings.THEME_ACTIVE
         self.assertEqual(get_active_theme_name(), "wirecloud.defaulttheme")
 
