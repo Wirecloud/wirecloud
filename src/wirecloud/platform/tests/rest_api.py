@@ -1147,23 +1147,23 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
         check_post_bad_request_syntax(self, url)
 
-    def test_tab_entry_put_requires_authentication(self):
+    def test_tab_entry_post_requires_authentication(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
         data = {
             'name': 'new tab name'
         }
-        check_put_requires_authentication(self, url, data)
+        check_post_requires_authentication(self, url, data)
 
-    def test_tab_entry_put_requires_permission(self):
+    def test_tab_entry_post_requires_permission(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
         data = {
             'name': 'new tab name'
         }
-        check_put_requires_permission(self, url, json.dumps(data))
+        check_post_requires_permission(self, url, json.dumps(data))
 
-    def test_tab_entry_put(self):
+    def test_tab_entry_post(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 3, 'tab_id': 103})
 
@@ -1175,7 +1175,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             data = {
                 'name': 'new tab name'
             }
-            response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
 
             # Tab should be renamed
@@ -1189,7 +1189,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             data = {
                 'visible': True
             }
-            response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
             self.assertEqual(response.status_code, 204)
 
             # Tab should be marked as the default one
@@ -1205,7 +1205,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'visible': 'true'
         }
-        response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         # Tab should be marked as the default one
@@ -1214,28 +1214,28 @@ class ApplicationMashupAPI(WirecloudTestCase):
         tab1 = Tab.objects.get(pk=102)
         self.assertTrue(tab1.visible)
 
-    def test_tab_entry_put_workspace_not_found(self):
+    def test_tab_entry_post_workspace_not_found(self):
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 404, 'tab_id': 103})
 
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
         data = {'name': 'new tab name'}
-        check_not_found_response(self, 'put', url, json.dumps(data))
+        check_not_found_response(self, 'post', url, json.dumps(data))
 
-    def test_tab_entry_put_tab_not_found(self):
+    def test_tab_entry_post_tab_not_found(self):
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 3, 'tab_id': 404})
 
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
         data = {'name': 'new tab name'}
-        check_not_found_response(self, 'put', url, json.dumps(data))
+        check_not_found_response(self, 'post', url, json.dumps(data))
 
-    def test_tab_entry_put_bad_request_syntax(self):
+    def test_tab_entry_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
-        check_put_bad_request_syntax(self, url)
+        check_post_bad_request_syntax(self, url)
 
     def test_tab_entry_delete_requires_authentication(self):
 

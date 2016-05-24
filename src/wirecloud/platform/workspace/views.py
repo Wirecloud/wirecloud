@@ -102,7 +102,7 @@ class WorkspaceCollection(Resource):
 
         if mashup_id == '' and workspace_id == '' and workspace_name == '':
             return build_error_response(request, 422, _('Missing name parameter'))
-        elif  mashup_id != '' and workspace_id != '':
+        elif mashup_id != '' and workspace_id != '':
             return build_error_response(request, 422, _('Workspace and mashup parameters cannot be used at the same time'))
 
         if mashup_id == '' and workspace_id == '':
@@ -306,7 +306,7 @@ class TabEntry(Resource):
     @authentication_required
     @consumes(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id, tab_id):
+    def create(self, request, workspace_id, tab_id):
 
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
         if tab.workspace.creator != request.user:
@@ -329,7 +329,7 @@ class TabEntry(Resource):
                 return build_error_response(request, 422, _('Invalid visible value'))
 
             if visible:
-                #Only one visible tab
+                # Only one visible tab
                 setVisibleTab(request.user, workspace_id, tab)
             else:
                 tab.visible = False
@@ -394,7 +394,7 @@ class MashupMergeService(Service):
 
         if mashup_id == '' and workspace_id == '':
             return build_error_response(request, 422, _('Missing workspace or mashup parameter'))
-        elif  mashup_id != '' and workspace_id != '':
+        elif mashup_id != '' and workspace_id != '':
             return build_error_response(request, 422, _('Workspace and mashup parameters cannot be used at the same time'))
 
         if mashup_id != '':
@@ -447,7 +447,7 @@ def check_json_fields(json, fields):
     missing_fields = []
 
     for field in fields:
-        if not field in json:
+        if field not in json:
             missing_fields.append(field)
 
     return missing_fields

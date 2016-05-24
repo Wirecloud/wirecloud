@@ -209,7 +209,7 @@
 
         tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.id});
         Wirecloud.io.makeRequest(tabUrl, {
-            method: 'PUT',
+            method: 'POST',
             contentType: 'application/json',
             requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify({'name': tabName}),
