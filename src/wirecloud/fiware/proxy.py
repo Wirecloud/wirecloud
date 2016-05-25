@@ -31,7 +31,7 @@ if IDM_SUPPORT_ENABLED:
 
     from social.apps.django_app.utils import load_strategy
 
-    STRATEGY = load_strategy(backend='fiware')
+    STRATEGY = load_strategy()
 
 else:
 
