@@ -200,7 +200,7 @@ class ProxyTests(ProxyTestsBase):
                     'Content-Length': len(body),
                 },
                 'content': body,
-                'reason_phrase': 'CUSTOM REASON',
+                'reason': 'CUSTOM REASON',
             }
 
         # Basic GET request

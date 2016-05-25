@@ -159,7 +159,7 @@ class Proxy():
             return build_error_response(request, 504, _('Connection Error'), details=six.text_type(e))
 
         # Build a Django response
-        response = StreamingHttpResponse(res.raw.stream(4096, decode_content=False), status=res.status_code, reason=res.reason_phrase)
+        response = StreamingHttpResponse(res.raw.stream(4096, decode_content=False), status=res.status_code, reason=res.reason)
 
         # Add all the headers received from the response
         for header in res.headers:
