@@ -278,7 +278,6 @@ function Workspace(workspaceState, resources) {
 
     Object.defineProperty(this, 'id', {value: workspaceState.id});
     Object.defineProperty(this, 'resources', {value: resources});
-    Object.defineProperty(this, 'owned', {value: workspaceState.owned});
     this.workspaceState = workspaceState;
     this.tabInstances = [];
     this.wiring = null;

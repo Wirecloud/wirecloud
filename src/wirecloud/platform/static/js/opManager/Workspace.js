@@ -92,7 +92,7 @@ function Workspace(workspaceState, resources) {
             preferenceValues = this.workspaceState.preferences;
             this.preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, this, params);
 
-            this.restricted = !this.owned /* TODO */ || Wirecloud.contextManager.get('mode') === 'embedded';
+            this.restricted = this.workspaceState.owner != Wirecloud.contextManager.get('username') || Wirecloud.contextManager.get('mode') === 'embedded';
             this.removable = !this.restricted && this.workspaceState.removable;
 
             // Load workspace tabs
@@ -677,7 +677,6 @@ function Workspace(workspaceState, resources) {
 
     Object.defineProperty(this, 'id', {value: workspaceState.id});
     Object.defineProperty(this, 'resources', {value: resources});
-    Object.defineProperty(this, 'owned', {value: workspaceState.owned});
     Object.defineProperty(this, '_iwidget_removed', {value: iwidget_removed.bind(this)});
     Object.defineProperties(this, {
         'owner': {get: function () {return this.contextManager.get('owner');}},
