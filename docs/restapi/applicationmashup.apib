@@ -35,7 +35,7 @@ Aitor Magan and Francisco de la Vega
 ## Status
 
 This is a work in progress and is changing on a daily basis. You can check the latest
-available version on: https://github.com/Wirecloud/wirecloud/tree/develop. 
+available version on: https://github.com/Wirecloud/wirecloud/tree/develop.
 Please send your comments to wirecloud@conwet.com
 
 This specification is licensed under the [FIWARE Open Specification License (implicit patents license)](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29).
@@ -150,13 +150,13 @@ Any API endpoint supporting the `GET` method must also support the `HEAD` method
 + Request
 
     + Headers
-    
+
             Accept: application/json
 
 + Response 200
 
     + Body
-    
+
             {
                 "FIWARE": "5.2.1",
                 "Wirecloud": "0.9.0",
@@ -183,7 +183,7 @@ Any API endpoint supporting the `GET` method must also support the `HEAD` method
 + Response 200 (application/json)
 
     + Body
-    
+
             {
                 "language": {
                     "value": "en-gb",
@@ -203,7 +203,7 @@ Any API endpoint supporting the `GET` method must also support the `HEAD` method
             Authorization: Bearer YOUR_OAUTH2_TOKEN
 
     + Body
-    
+
             {
                 "language": {
                     "value": "browser"
@@ -221,6 +221,9 @@ Any API endpoint supporting the `GET` method must also support the `HEAD` method
 List all the workspaces available to the user. If the request is made without
 including user credentials, this action will return all the public workspaces.
 
+This action will return a subset of the fields returned by the [Get workspace details](#reference/managing-workspaces/workspace/get-workspace-details) action. More specifically, this API will return the following fields: `description`,
+`id`, `lastmodified`, `longdescription`, `name`, `owner`, `removable` and `shared`.
+
 **Used status codes**: 200, 304, 401, 406
 
 + Request List available workspaces
@@ -234,18 +237,26 @@ including user credentials, this action will return all the public workspaces.
 
             [
                 {
+                    "description": "My dashboard",
+                    "id": 1,
+                    "lastmodified": 1464187437041,
+                    "longdescription": "",
+                    "longdescription_html": "",
                     "name": "workspace",
-                    "creator": "user",
+                    "owner": "user",
                     "removable": true,
-                    "shared": false,
-                    "id": 1
+                    "shared": false
                 },
                 {
+                    "description": "A public dashboard",
+                    "id": 20,
+                    "lastmodified": 1461673370860,
+                    "longdescription": "A dashboard description using **Markdown** _Syntax_",
+                    "longdescription_html": "<p>A dashboard description using <b>Markdown</b> <em>Syntax</em></p>",
                     "name": "public-workspace",
-                    "creator": "otheruser",
+                    "owner": "otheruser",
                     "removable": false,
-                    "shared": true,
-                    "id": 20
+                    "shared": true
                 }
             ]
 
@@ -265,11 +276,15 @@ including user credentials, this action will return all the public workspaces.
 
             [
                 {
+                    "description": "A public dashboard",
+                    "id": 20,
+                    "lastmodified": 1461673370860,
+                    "longdescription": "A dashboard description using **Markdown** _Syntax_",
+                    "longdescription": "<p>A dashboard description using <b>Markdown</b> <em>Syntax</em></p>",
                     "name": "public-workspace",
-                    "creator": "otheruser",
+                    "owner": "otheruser",
                     "removable": false,
-                    "shared": true,
-                    "id": 20
+                    "shared": true
                 }
             ]
 
@@ -277,7 +292,7 @@ including user credentials, this action will return all the public workspaces.
 
 Creates a new workspace. This workspace will be empty, created from a template or created by duplicating an existing workspace depending on the used parameters.
 
-Those parameters should be send in the body of the request using the selected representation format (e.g. JSON):
+Those parameters should be sent in the body of the request using the selected representation format (e.g. `JSON`):
 
 + `mashup` (string): Id of the mashup to use as base for creating the workspace.
   This option cannot be used along `workspace`.
@@ -291,6 +306,8 @@ Those parameters should be send in the body of the request using the selected re
   code). If this parameter is `true` and the name is already in use, a new name
   will be computed using the indicated name as base.
 
+If everything goes well and the workspace is created, this action will return the initial workspace details using the same format used in the [Get workspace details](#reference/managing-workspaces/workspace/get-workspace-details) action.
+
 **Used status codes**: 201, 400, 401, 403, 406, 409, 413, 415, 422
 
 + Request Empty workspace (application/json)
@@ -299,9 +316,9 @@ Those parameters should be send in the body of the request using the selected re
 
             Accept: application/json
             Authorization: Bearer YOUR_OAUTH2_TOKEN
-            
+
     + Body
-    
+
             {
                 "name": "test"
             }
@@ -311,11 +328,13 @@ Those parameters should be send in the body of the request using the selected re
     + Body
 
             {
+                "description": "",
                 "name": "test",
-                "creator": "admin",
+                "owner": "admin",
+                "lastmodified": 1464187437041,
+                "longdescription": "",
                 "wiring": {"operators": {}, "connections": []},
                 "empty_params": [],
-                "active": false,
                 "shared": false,
                 "tabs": [
                     {
@@ -333,78 +352,125 @@ Those parameters should be send in the body of the request using the selected re
                 }
             }
 
+
 + Request Workspace from mashup (application/json)
 
     + Headers
 
             Accept: application/json
             Authorization: Bearer YOUR_OAUTH2_TOKEN
-            
+
     + Body
-    
+
             {
                 "mashup": "UPM/Mashup/1.0"
             }
-            
-+ Response 201 (application/mashup)
+
++ Response 201 (application/json)
 
     + Body
 
             {
-               "name": "example",
-               "creator": "admin",
-               "wiring": {"operators": {}, "connections": []},
-               "empty_params": [],
-               "active": false,
-               "shared": false,
-               "tabs": [
-                  {
-                     "visible": true,
-                     "iwidgets": [
-                           {
-                              "widget": "UPM/Widget1/0.1",
-                              "layout": 0,
-                              "title": "Widget1",
-                              "icon_top": -1,
-                              "variables": {},
-                              "minimized": false,
-                              "id": 311,
-                              "height": 28,
-                              "zIndex": 0,
-                              "width": 6,
-                              "readOnly": false,
-                              "icon_left": -1,
-                              "top": 0,
-                              "fulldragboard": false,
-                              "left": 0
-                           },
-                           {
-                              "widget": "UPM/Widget2/0.1",
-                              "layout": 0,
-                              "title": "Widget2",
-                              "icon_top": -1,
-                              "variables": {},
-                              "minimized": false,
-                              "id": 312,
-                              "height": 28,
-                              "zIndex": 0,
-                              "width": 6,
-                              "readOnly": false,
-                              "icon_left": -1,
-                              "top": 0,
-                              "fulldragboard": false,
-                              "left": 7
-                           }
-                     ],
-                     "id": 100,
-                     "name": "Tab",
-                     "preferences": {}
-                  }
-               ],
-               "id": 50,
-               "extra_prefs": {},
-               "preferences": {}
+                "description": "",
+                "name": "example",
+                "owner": "admin",
+                "lastmodified": 1464187437041,
+                "wiring": {"operators": {}, "connections": []},
+                "empty_params": [],
+                "shared": false,
+                "tabs": [
+                    {
+                        "visible": true,
+                        "iwidgets": [
+                            {
+                                "widget": "UPM/Widget1/0.1",
+                                "layout": 0,
+                                "title": "Widget1",
+                                "icon_top": -1,
+                                "variables": {},
+                                "minimized": false,
+                                "id": 311,
+                                "height": 28,
+                                "zIndex": 0,
+                                "width": 6,
+                                "readOnly": false,
+                                "icon_left": -1,
+                                "top": 0,
+                                "fulldragboard": false,
+                                "left": 0
+                            },
+                            {
+                                "widget": "UPM/Widget2/0.1",
+                                "layout": 0,
+                                "title": "Widget2",
+                                "icon_top": -1,
+                                "variables": {},
+                                "minimized": false,
+                                "id": 312,
+                                "height": 28,
+                                "zIndex": 0,
+                                "width": 6,
+                                "readOnly": false,
+                                "icon_left": -1,
+                                "top": 0,
+                                "fulldragboard": false,
+                                "left": 7
+                            }
+                        ],
+                        "id": 100,
+                        "name": "Tab",
+                        "preferences": {}
+                    }
+                ],
+                "id": 50,
+                "extra_prefs": {},
+                "preferences": {}
             }
+
+
++ Request Workspace from inexistent mashup (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+
+            {
+                "mashup": "UPM/inexistent-mashup/1.0"
+            }
+
++ Response 422 (application/json)
+
+    + Body
+
+            {
+                "description": "Mashup not found: UPM/inexistent-mashup/1.0"
+            }
+
+
++ Request Workspace using an invalid mashup id (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+    + Body
+
+            {
+                "mashup": "invalid id"
+            }
+
++ Response 422 (application/json)
+
+    + Body
+
+            {
+                "description": "invalid mashup id"
+            }
+
 
 + Request Duplicating a workspace (application/json)
 
@@ -412,9 +478,9 @@ Those parameters should be send in the body of the request using the selected re
 
             Accept: application/json
             Authorization: Bearer YOUR_OAUTH2_TOKEN
-            
+
     + Body
-    
+
             {
                 "workspace": "81"
             }
@@ -424,59 +490,61 @@ Those parameters should be send in the body of the request using the selected re
     + Body
 
             {
-               "name": "example",
-               "creator": "admin",
-               "wiring": {"operators": {}, "connections": []},
-               "empty_params": [],
-               "active": false,
-               "shared": false,
-               "tabs": [
-                  {
-                     "visible": true,
-                     "iwidgets": [
-                           {
-                              "widget": "UPM/Widget1/0.1",
-                              "layout": 0,
-                              "title": "Widget1",
-                              "icon_top": -1,
-                              "variables": {},
-                              "minimized": false,
-                              "id": 313,
-                              "height": 28,
-                              "zIndex": 0,
-                              "width": 6,
-                              "readOnly": false,
-                              "icon_left": -1,
-                              "top": 0,
-                              "fulldragboard": false,
-                              "left": 0
-                           },
-                           {
-                              "widget": "UPM/Widget2/0.1",
-                              "layout": 0,
-                              "title": "Widget2",
-                              "icon_top": -1,
-                              "variables": {},
-                              "minimized": false,
-                              "id": 314,
-                              "height": 28,
-                              "zIndex": 0,
-                              "width": 6,
-                              "readOnly": false,
-                              "icon_left": -1,
-                              "top": 0,
-                              "fulldragboard": false,
-                              "left": 7
-                           }
-                     ],
-                     "id": 101,
-                     "name": "Tab",
-                     "preferences": {}
-                  }
-               ],
-               "id": 51,
-               "extra_prefs": {},
-               "preferences": {}
+                "description": "",
+                "empty_params": [],
+                "extra_prefs": {},
+                "id": 51,
+                "lastmodified": 1464207200516,
+                "longdescription": "",
+                "name": "example",
+                "owner": "admin",
+                "preferences": {},
+                "shared": false,
+                "tabs": [
+                    {
+                        "visible": true,
+                        "iwidgets": [
+                            {
+                                "widget": "UPM/Widget1/0.1",
+                                "layout": 0,
+                                "title": "Widget1",
+                                "icon_top": -1,
+                                "variables": {},
+                                "minimized": false,
+                                "id": 313,
+                                "height": 28,
+                                "zIndex": 0,
+                                "width": 6,
+                                "readOnly": false,
+                                "icon_left": -1,
+                                "top": 0,
+                                "fulldragboard": false,
+                                "left": 0
+                            },
+                            {
+                                "widget": "UPM/Widget2/0.1",
+                                "layout": 0,
+                                "title": "Widget2",
+                                "icon_top": -1,
+                                "variables": {},
+                                "minimized": false,
+                                "id": 314,
+                                "height": 28,
+                                "zIndex": 0,
+                                "width": 6,
+                                "readOnly": false,
+                                "icon_left": -1,
+                                "top": 0,
+                                "fulldragboard": false,
+                                "left": 7
+                            }
+                        ],
+                        "id": 101,
+                        "name": "Tab",
+                        "preferences": {}
+                    }
+                ],
+                "wiring": {"operators": {}, "connections": []}
             }
 
 ## Workspace [/api/workspace/{workspace_id}]
@@ -487,60 +555,75 @@ Those parameters should be send in the body of the request using the selected re
 
 ### Get workspace details [GET]
 
+- `id`: Id of the workspace.
+- `name` (string): Name of the workspace.
+- `owner` (string): Username of the workspace's owner.
+- `description` (string): Short description in plain text describing the workspace.
+- `longdescription` (string): Text describing this workspace. This field can be formatted using Markdown.
+- `preferences` (object): Values.
+- `shared` (boolean): Indicates whether this workspace has been shared with
+  other users or groups.
+- `tabs` (array): Visual description of the workspace.
+- `wiring` (object): Wiring configuration of the workspace.
+
 **Used status codes**: 200, 401, 403, 404, 406
 
 + Request
 
     + Headers
-    
+
             Accept: application/json
             Authorization: Bearer YOUR_OAUTH2_TOKEN
- 
-    
+
+
 + Response 200
 
     + Body
-    
+
             {
-               "name": "test",
-               "creator": "admin",
-               "wiring": "{\"operators\": {}, \"connections\": []}",
-               "empty_params": [],
-               "active": false,
-               "shared": false,
-               "tabs": [
-                  {
-                     "visible": true,
-                     "iwidgets": [],
-                     "id": 84,
-                     "name": "Tab",
-                     "preferences": {}
-                  }
-               ],
-               "id": 81,
-               "extra_prefs": {},
-               "preferences": {}
+                "description": "",
+                "empty_params": [],
+                "extra_prefs": {},
+                "id": 81,
+                "lastmodified": 1464207200516,
+                "name": "test",
+                "owner": "admin",
+                "preferences": {},
+                "shared": false,
+                "tabs": [
+                    {
+                        "visible": true,
+                        "iwidgets": [],
+                        "id": 84,
+                        "name": "Tab",
+                        "preferences": {}
+                    }
+                ],
+                "wiring": {"operators": {}, "connections": []}
             }
 
 ### Update workspace details [POST]
 
 Workspace attributes that can be modified:
 
-- `name`: Name of the workspace
+- `name` (string): Name of the workspace.
+- `description` (string, available in WireCloud 1.0+): Short description in plain text describing the workspace.
+- `longdescription` (string, available in WireCloud 1.0+): Text describing this workspace. This field can be formatted using Markdown.
 
 **Used status codes**: 204, 400, 401, 403, 404, 415
 
 + Request (application/json)
 
     + Headers
-    
+
             Accept: application/json
             Authorization: Bearer YOUR_OAUTH2_TOKEN
 
     + Body
-    
+
             {
-                "name": "New name"
+                "name": "New name",
+                "longdescription": "A dashboard description using **Markdown** _Syntax_"
             }
 
 + Response 204
@@ -566,7 +649,7 @@ Workspace attributes that can be modified:
 + Request (application/json)
 
     + Headers
-    
+
             Accept: application/json
             Authorization: Bearer YOUR_OAUTH2_TOKEN
 
@@ -589,7 +672,7 @@ Workspace attributes that can be modified:
 + Request (application/json)
 
     + Headers
-    
+
             Accept: application/json
             Authorization: Bearer YOUR_OAUTH2_TOKEN
 
@@ -659,17 +742,17 @@ representation format (e.g. JSON).
 
             Accept: application/json
             Authorization: Bearer YOUR_OAUTH2_TOKEN
-            
+
     + Body
-    
+
             {
                 "name": "Tab 2"
             }
-            
+
 + Response 201 (application/json)
 
     + Body
-    
+
             {
                "id": 3,
                "name": "Tab 2"
@@ -686,8 +769,8 @@ representation format (e.g. JSON).
 
 Tab attributes that can be modified:
 
-- `name` (String): Label to display in the user interface.
-- `visible` (Boolean): `true` to make this the initial/default tab of the workspace.
+- `name` (string): Label to display in the user interface.
+- `visible` (boolean): `true` to make this the initial/default tab of the workspace.
 
 **Used status codes**: 204, 400, 401, 403, 404, 413, 415, 422
 
@@ -701,11 +784,11 @@ Tab attributes that can be modified:
             Authorization: Bearer YOUR_OAUTH2_TOKEN
 
     + Body
-    
+
             {
                 "name": "New name"
             }
-        
+
 + Response 204
 
 ### Update tab preferences [POST /api/workspace/{workspace_id}/tab/{tab_id}/preferences]
@@ -727,7 +810,7 @@ Tab attributes that can be modified:
             Authorization: Bearer YOUR_OAUTH2_TOKEN
 
     + Body
-    
+
             {
                 "baselayout": {
                     "inherit": false,
@@ -775,7 +858,7 @@ representation format, e.g. JSON):
             Authorization: Bearer YOUR_OAUTH2_TOKEN
 
     + Body
-    
+
             {
                 "widget": "UPM/Widget/1.0"
             }
@@ -891,7 +974,7 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
 + Response 200 (application/json)
 
     + Body
-    
+
             {
                "CoNWeT/multimedia-viewer/0.5": {
                     "type": "widget",
@@ -946,7 +1029,7 @@ following extra `Content-Types` for the request itself:
             Authorization: Bearer YOUR_OAUTH2_TOKEN
 
     + Body
-    
+
             ‹Binary data (Not supported on APIary)›
 
 + Response 201 (application/json)
@@ -1089,15 +1172,15 @@ following extra `Content-Types` for the request itself:
 + Response 400 (application/json)
 
     + Body
-    
+
             {
                 "description": "The uploaded file is not a zip file"
-            }  
+            }
 
 + Request Multipart (multipart/form-data; boundary=----WebKitFormBoundaryHPwaOXLATyUcGQp8)
 
     + Body
-    
+
             ------WebKitFormBoundaryHPwaOXLATyUcGQp8
             Content-Disposition: form-data; name="file"; filename="Wirecloud_Test_1.0.wgt"
             Content-Type: application/octet-stream
@@ -1109,7 +1192,7 @@ following extra `Content-Types` for the request itself:
 + Response 201 (application/json)
 
     + Body
-    
+
             {
                 "contributors": [],
                 "image": "https://mashup.lab.fiware.org/catalogue/media/Wirecloud/Test/1.0/images/catalogue.png",
@@ -1267,7 +1350,7 @@ following extra `Content-Types` for the request itself:
 + Response 200 (application/octet-stream)
 
     + Body
-    
+
             ‹Binary data (Not supported on APIary)›
 
 
