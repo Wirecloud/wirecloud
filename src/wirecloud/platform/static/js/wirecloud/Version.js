@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var VERSION_RE = /^((?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0))((?:a|b|rc)[1-9]\d*)?$/;
+    var VERSION_RE = /^((?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0))((?:a|b|rc)[1-9]\d*)?(-dev)?.*$/; // Hangs the server if it doesn't match the RE
 
     var Version = function Version(version, source) {
         var groups;
