@@ -102,8 +102,8 @@
         }
     };
 
-    var loadSuccessCallback = function loadFailureCallback(context, transport) {
-        var resources, resource_id;
+    var loadSuccessCallback = function loadSuccessCallback(context, transport) {
+        var resources, resource_id, msg;
 
         resources = JSON.parse(transport.responseText);
 
@@ -112,7 +112,15 @@
         this.resourcesByType = {};
 
         for (resource_id in resources) {
-            this._includeResource.call(this, resources[resource_id]);
+            try {
+                this._includeResource.call(this, resources[resource_id]);
+            } catch (e) {
+                msg = utils.gettext("Error loading %(resource)s metadata");
+                Wirecloud.GlobalLogManager.log(
+                    utils.interpolate(msg, {resource: resource_id}),
+                    {details: e}
+                );
+            }
         }
 
         if (typeof context.onSuccess === 'function') {

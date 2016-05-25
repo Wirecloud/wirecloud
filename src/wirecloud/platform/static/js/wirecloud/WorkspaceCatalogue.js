@@ -21,7 +21,7 @@
 
 /*global Wirecloud*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -65,8 +65,8 @@
         _addComponent.call(this, resource);
     };
 
-    var loadSuccessCallback = function loadFailureCallback(context, transport) {
-        var resources, resource_id;
+    var loadSuccessCallback = function loadSuccessCallback(context, transport) {
+        var resources, resource_id, msg;
 
         resources = JSON.parse(transport.responseText);
 
@@ -76,7 +76,15 @@
         this.missingComponents = {};
 
         for (resource_id in resources) {
-            loadResource.call(this, resources[resource_id]);
+            try {
+                loadResource.call(this, resources[resource_id]);
+            } catch (e) {
+                msg = utils.gettext("Error loading %(resource)s metadata");
+                Wirecloud.GlobalLogManager.log(
+                    utils.interpolate(msg, {resource: resource_id}),
+                    {details: e}
+                );
+            }
         }
 
         if (typeof context.onSuccess === 'function') {
@@ -206,4 +214,5 @@
     };
 
     Wirecloud.WorkspaceCatalogue = WorkspaceCatalogue;
-})();
+
+})(Wirecloud.Utils);

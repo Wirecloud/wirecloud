@@ -48,7 +48,11 @@
                     }
 
                     for (i = 0; i < widgets.length; i += 1) {
-                        this._list.appendChild(this.resource_painter.paint(widgets[i]));
+                        try {
+                            this._list.appendChild(this.resource_painter.paint(widgets[i]));
+                        } catch (e) {
+                            //
+                        }
                     }
                 } else {
                     if (keywords != "") {
