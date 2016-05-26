@@ -245,8 +245,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         modal.accept()
 
         with api_test_iwidget:
-            self.assertEqual(self.driver.find_element_by_id('pref_registercallback_test').text, 'Success!!')
+            # Check the widget can make local requests
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('makerequest_local_test').text, 'Success!!')
+            # Check the widget can make external requests
             WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('makerequest_test').text, 'Success!!')
+            # Check MashupPlatform.wiring.registerCallback works as expected
+            self.assertEqual(self.driver.find_element_by_id('pref_registercallback_test').text, 'Success!!')
+            # Check the property API works
             prop_input = self.driver.find_element_by_css_selector('#update_prop_input')
             self.fill_form_input(prop_input, 'new value')
             # Work around Firefox driver bugs

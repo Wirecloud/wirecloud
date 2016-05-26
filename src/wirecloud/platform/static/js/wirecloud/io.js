@@ -177,11 +177,15 @@ Wirecloud.location = {
         }
 
         Object.defineProperties(this, {
-            url: {value: url},
-            abort: {value: function () {
-                this.transport.aborted = true;
-                this.transport.abort();
-            }}
+            url: {
+                value: url
+            },
+            abort: {
+                value: function () {
+                    this.transport.aborted = true;
+                    this.transport.abort();
+                }
+            }
         });
 
         this.transport = new XMLHttpRequest();
@@ -204,8 +208,7 @@ Wirecloud.location = {
     var io = {};
 
     io.buildProxyURL = function buildProxyURL(url, options) {
-        var final_url, protocolEnd, link, forceProxy, hostStart, pathStart, protocol,
-            host, rest;
+        var forceProxy;
 
         if (options == null) {
             options = {};
@@ -213,43 +216,16 @@ Wirecloud.location = {
 
         forceProxy = !!options.forceProxy;
 
-        if (url.length > 4 && url.indexOf('www.') === 0) {
-            url = 'http://' + url;
+        if (!(url instanceof URL)) {
+            url = new URL(url, Wirecloud.location.domain + Wirecloud.URLs.ROOT_URL);
         }
 
-        protocol = Wirecloud.location.protocol;
-        host = Wirecloud.location.host;
-
-        protocolEnd = url.indexOf('://');
-        if (protocolEnd !== -1) {
-            hostStart = protocolEnd + 3;
-            pathStart = url.indexOf('/', hostStart);
-            if (pathStart === -1) {
-                pathStart = url.length;
-            }
-
-            protocol = url.substr(0, protocolEnd);
-            host = url.substr(hostStart, pathStart - hostStart);
-            rest = url.substring(pathStart);
-            final_url = url;
+        if (forceProxy || (options.supportsAccessControl !== true && url.origin !== Wirecloud.location.domain)) {
+            return Wirecloud.location.domain +
+                Wirecloud.URLs.PROXY.evaluate({protocol: url.protocol.slice(0, -1), domain: url.host, path: url.pathname});
         } else {
-            if (url.charAt(0) === '/') {
-                rest = url;
-            } else {
-                rest = '/' + url;
-            }
-
-            if (!forceProxy) {
-                final_url = Wirecloud.location.domain + rest;
-            }
+            return url.toString();
         }
-
-        if (forceProxy || (options.supportsAccessControl !== true && (protocol !== Wirecloud.location.protocol || host !== Wirecloud.location.host))) {
-            final_url = Wirecloud.location.domain +
-                Wirecloud.URLs.PROXY.evaluate({protocol: protocol, domain: host, path: rest});
-        }
-
-        return final_url;
     };
 
     io.makeRequest = function makeRequest(url, options) {

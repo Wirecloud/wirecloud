@@ -33,7 +33,12 @@
     // HTTP module
     Object.defineProperty(window.MashupPlatform, 'http', {value: {}});
     Object.defineProperty(window.MashupPlatform.http, 'buildProxyURL', {value: Wirecloud.io.buildProxyURL});
-    Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {value: Wirecloud.io.makeRequest});
+    Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {
+        value: function makeRequest(url, options) {
+            url = new platform.URL(url, window.location);
+            return Wirecloud.io.makeRequest(url, options);
+        }
+    });
     Object.preventExtensions(window.MashupPlatform.http);
 
     // Platform context module
