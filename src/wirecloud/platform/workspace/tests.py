@@ -93,8 +93,8 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(workspace_tabs.count(), 1)
 
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
-        self.assertEqual(data['owned'], True)
-        self.assertEqual(data['shared'], False)
+        self.assertEqual(data['owner'], self.user.username)
+        self.assertFalse(data['shared'], False)
 
 
 class WorkspaceCacheTestCase(CacheTestCase):
