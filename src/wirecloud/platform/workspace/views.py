@@ -225,6 +225,12 @@ class WorkspaceEntry(Resource):
         if 'name' in ts:
             workspace.name = ts['name']
 
+        if 'description' in ts:
+            workspace.description = ts['description']
+
+        if 'longdescription' in ts:
+            workspace.longdescription = ts['longdescription']
+
         workspace.save()
 
         return HttpResponse(status=204)

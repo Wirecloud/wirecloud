@@ -3329,6 +3329,20 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             self.assertEqual(user_workspace.active, True)
         check_cache_is_purged(self, 2, mark_workspace_active)
 
+        # Update workspace descriptions
+        def update_workspace_descriptions():
+            data = {
+                "description": "My dashboard",
+                "longdescription": "A dashboard description using **Markdown** _Syntax_"
+            }
+            response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+            self.assertEqual(response.status_code, 204)
+
+            user_workspace = UserWorkspace.objects.get(pk=2)
+            self.assertEqual(user_workspace.workspace.description, data['description'])
+            self.assertEqual(user_workspace.longdescription, data['longdescription'])
+        check_cache_is_purged(self, 2, mark_workspace_active)
+
     def test_workspace_entry_post_workspace_not_found(self):
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 404})
 
