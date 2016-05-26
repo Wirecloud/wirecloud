@@ -19,14 +19,8 @@
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import LANGUAGE_SESSION_KEY, ugettext as _
 from django.conf import settings
-
-try:
-    # Django 1.7+
-    from django.utils.translation import LANGUAGE_SESSION_KEY
-except:
-    LANGUAGE_SESSION_KEY = 'django_language'
 
 
 def logout(request, next_page=getattr(settings, 'LOGOUT_REDIRECT_URL', None), template_name='registration/logged_out.html'):
