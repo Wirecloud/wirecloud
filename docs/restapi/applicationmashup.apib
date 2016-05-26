@@ -42,7 +42,7 @@ This specification is licensed under the [FIWARE Open Specification License (imp
 
 ## Copyright
 
-Copyright © 2012-2015 by Universidad Politécnica de Madrid
+Copyright © 2012-2016 by Universidad Politécnica de Madrid
 
 ## Authentication
 
@@ -98,6 +98,24 @@ XML Example:
            </missingDependencies>
        </details>
     </error>
+
+## HTTP Verbs
+
+Where possible, this API strives to use appropriate HTTP verbs for each action.
+
+| Verb      | Description                                                          |
+|-----------|----------------------------------------------------------------------|
+| `HEAD`    | Can be issued against any resource to get just the HTTP header info associated with the GET response. |
+| `GET`     | Used for retrieving resources.                                       |
+| `POST`    | Used for creating resources.                                         |
+| `PUT`     | Used for replacing resources.                                        |
+| `DELETE`  | Used for deleting resources.                                         |
+
+<!--
+| `PATCH`   | Used for updating resources with partial JSON data (using the `application/json-patch+json` mimetype). For instance, a Workspace resource has several attributes. A `PATCH` request may accept one or more of the attributes to update the resource. `PATCH` is a relatively new and uncommon HTTP verb, so resource endpoints also accept `POST` requests. |
+-->
+
+Any API endpoint supporting the `GET` method must also support the `HEAD` method.
 
 ## Used HTTP Status Codes
 
