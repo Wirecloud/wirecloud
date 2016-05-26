@@ -45,19 +45,7 @@ from wirecloud.platform.workspace.views import createEmptyWorkspace
 __test__ = False
 
 
-class CacheTestCase(WirecloudTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        super(CacheTestCase, cls).setUpClass()
-        cache.clear()
-
-    def tearDown(self):
-        super(CacheTestCase, self).tearDown()
-        cache.clear()
-
-
-class WorkspaceTestCase(CacheTestCase):
+class WorkspaceTestCase(WirecloudTestCase):
 
     fixtures = ('test_data',)
     tags = ('wirecloud-noselenium', 'wirecloud-workspace')
@@ -97,7 +85,7 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertFalse(data['shared'], False)
 
 
-class WorkspaceCacheTestCase(CacheTestCase):
+class WorkspaceCacheTestCase(WirecloudTestCase):
 
     fixtures = ('test_data',)
     tags = ('wirecloud-workspace', 'wirecloud-noselenium')
@@ -903,7 +891,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertEqual(template['tabs'][0]['resources'][1]['properties'], {'prop': {'readonly': False, 'value': 'test_data'}, 'prop2': {'readonly': True, 'value': None}})
 
 
-class ParameterizedWorkspaceParseTestCase(CacheTestCase):
+class ParameterizedWorkspaceParseTestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-workspace', 'wirecloud-template', 'wirecloud-workspace-parse', 'wirecloud-noselenium')
