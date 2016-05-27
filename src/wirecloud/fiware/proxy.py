@@ -146,6 +146,6 @@ class IDMTokenProcessor(object):
             replace_body_pattern(request, ["fiware-oauth-body-pattern", "x-fi-ware-oauth-body-pattern"], token)
 
         if 'fiware-openstack-token' in filtered:
-            # replace_get_parameter(request, ["openstack-oauth-get-parameter"], token)
-            replace_header_name(request, ["openstack-oauth-header-name"], openstacktoken)
-            replace_body_pattern(request, ["openstack-oauth-body-pattern"], openstacktoken)
+            replace_get_parameter(request, ["fiware-openstack-get-parameter"], token)
+            replace_header_name(request, ["fiware-openstack-header-name"], openstacktoken)
+            replace_body_pattern(request, ["fiware-openstack-body-pattern"], openstacktoken)
