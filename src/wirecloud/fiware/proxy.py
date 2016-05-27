@@ -20,10 +20,14 @@
 from io import BytesIO
 import time
 
+from openstack_token_manager import OpenstackTokenManager
+
+from django.conf import settings
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
 
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
+from wirecloud.fiware.social_auth_backend import FIWARE_LAB_CLOUD_SERVER
 from wirecloud.proxy.utils import ValidationError
 
 
@@ -57,23 +61,66 @@ def get_access_token(user, error_msg):
         raise ValidationError(error_msg)
 
 
+def replace_get_parameter(request, gets, token):
+    for get in gets:
+        if get in request['headers']:
+            parameter_name = request['headers'][get]
+            del request['headers'][get]
+
+        url = request['url']
+        if '?' in url:
+            url += "&"
+        else:
+            url += "?"
+
+        url += "{}={}".format(urlquote_plus(parameter_name), urlquote_plus(token))
+        request['url'] = url
+
+
+def replace_header_name(request, headers, token):
+    for header in headers:
+        if header in request['headers']:
+            header_name = request['headers'][header]
+            del request['headers'][header]
+
+            if header_name == "Authorization":
+                token_pattern = "Bearer {token}"
+            else:
+                token_pattern = "{token}"
+
+            request['headers'][header_name] = token_pattern.format(token=token)
+
+
+def replace_body_pattern(request, bodys, token):
+    for body in bodys:
+        if body in request['headers']:
+            pattern = request['headers'][body]
+            del request['headers'][body]
+
+            new_body = request['data'].read().replace(pattern.encode('utf8'), token.encode('utf8'))
+            request['headers']['content-length'] = "{}".format(len(new_body))
+            request['data'] = BytesIO(new_body)
+
+
 class IDMTokenProcessor(object):
+    def __init__(self):
+        self.openstack_manager = OpenstackTokenManager(getattr(settings, 'FIWARE_CLOUD_SERVER', FIWARE_LAB_CLOUD_SERVER))
 
     def process_request(self, request):
+        headers = ['fiware-oauth-token', 'x-fi-ware-oauth-token', 'fiware-openstack-token']
+        filtered = [header for header in headers if header in request['headers']]
 
-        if 'fiware-oauth-token' in request['headers']:
-            del request['headers']['fiware-oauth-token']
-        elif 'x-fi-ware-oauth-token' in request['headers']:
-            del request['headers']['x-fi-ware-oauth-token']
-        else:
+        if len(filtered) == 0:
             return
+
+        for header in filtered:
+            del request['headers'][header]
 
         if not IDM_SUPPORT_ENABLED:
             raise ValidationError(_('IdM support not enabled'))
         elif request['workspace'] is None:
             raise ValidationError(_('IdM tokens can only be inyected on Ajax requests coming from authorized widgets'))
 
-        header_name = None
         source = 'user'
         if 'fiware-oauth-source' in request['headers']:
             source = request['headers']['fiware-oauth-source']
@@ -84,50 +131,21 @@ class IDMTokenProcessor(object):
 
         if source == 'user':
             token = get_access_token(request['user'], _('Current user has not an active FIWARE profile'))
+            if 'fiware-openstack-token' in filtered:
+                openstacktoken = self.openstack_manager.get_token(request['user'])
         elif source == 'workspaceowner':
             token = get_access_token(request['workspace'].creator, _('Workspace owner has not an active FIWARE profile'))
+            if 'fiware-openstack-token' in filtered:
+                openstacktoken = self.openstack_manager.get_token(request['workspace'].creator)
         else:
             raise ValidationError(_('Invalid FIWARE OAuth token source'))
 
-        if 'fiware-oauth-get-parameter' in request['headers'] or 'x-fi-ware-oauth-get-parameter' in request['headers']:
-            if 'fiware-oauth-get-parameter' in request['headers']:
-                parameter_name = request['headers']['fiware-oauth-get-parameter']
-                del request['headers']['fiware-oauth-get-parameter']
-            else:  # 'x-fi-ware-oauth-get-parameter'
-                parameter_name = request['headers']['x-fi-ware-oauth-get-parameter']
-                del request['headers']['x-fi-ware-oauth-get-parameter']
+        if 'fiware-oauth-token' in filtered or 'x-fi-ware-oauth-token' in filtered:
+            replace_get_parameter(request, ["fiware-oauth-get-parameter", "x-fi-ware-oauth-get-parameter"], token)
+            replace_header_name(request, ["fiware-oauth-header-name", "x-fi-ware-oauth-header-name"], token)
+            replace_body_pattern(request, ["fiware-oauth-body-pattern", "x-fi-ware-oauth-body-pattern"], token)
 
-            url = request['url']
-            if '?' in url:
-                url += '&'
-            else:
-                url += '?'
-
-            url += urlquote_plus(parameter_name) + '=' + urlquote_plus(token)
-            request['url'] = url
-
-        if 'fiware-oauth-header-name' in request['headers'] or 'x-fi-ware-oauth-header-name' in request['headers']:
-            if 'fiware-oauth-header-name' in request['headers']:
-                header_name = request['headers']['fiware-oauth-header-name']
-                del request['headers']['fiware-oauth-header-name']
-            else:  # 'x-fi-ware-oauth-header-name'
-                header_name = request['headers']['x-fi-ware-oauth-header-name']
-                del request['headers']['x-fi-ware-oauth-header-name']
-
-            if header_name == "Authorization":
-                token_pattern = "Bearer {token}"
-            else:
-                token_pattern = "{token}"
-            request['headers'][header_name] = token_pattern.format(token=token)
-
-        if 'fiware-oauth-body-pattern' in request['headers'] or 'x-fi-ware-oauth-token-body-pattern' in request['headers']:
-            if 'fiware-oauth-body-pattern' in request['headers']:
-                pattern = request['headers']['fiware-oauth-body-pattern']
-                del request['headers']['fiware-oauth-body-pattern']
-            else:  # 'x-fi-ware-oauth-token-body-patter'
-                pattern = request['headers']['x-fi-ware-oauth-token-body-pattern']
-                del request['headers']['x-fi-ware-oauth-token-body-pattern']
-
-            new_body = request['data'].read().replace(pattern.encode('utf8'), token.encode('utf8'))
-            request['headers']['content-length'] = "%s" % len(new_body)
-            request['data'] = BytesIO(new_body)
+        if 'fiware-openstack-token' in filtered:
+            replace_get_parameter(request, ["fiware-openstack-get-parameter"], token)
+            replace_header_name(request, ["fiware-openstack-header-name"], openstacktoken)
+            replace_body_pattern(request, ["fiware-openstack-body-pattern"], openstacktoken)

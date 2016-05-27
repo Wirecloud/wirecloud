@@ -44,6 +44,7 @@ from wirecloud.platform.models import Organization
 
 
 FIWARE_LAB_IDM_SERVER = 'https://account.lab.fiware.org'
+FIWARE_LAB_CLOUD_SERVER = 'https://cloud.lab.fiware.org'
 
 FIWARE_AUTHORIZATION_ENDPOINT = 'oauth2/authorize'
 FIWARE_ACCESS_TOKEN_ENDPOINT = 'oauth2/token'
@@ -103,6 +104,7 @@ class FIWAREOAuth2(BaseOAuth2):
         data = super(FIWAREOAuth2, self).refresh_token(token, *args, **kwargs)
         # Save the expiration time
         data['expires_on'] = time.time() + data['expires_in']
+        data['openstack_token'] = None
         return data
 
     def get_user_details(self, response):
