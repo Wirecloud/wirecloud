@@ -44,7 +44,7 @@ from wirecloud.platform.models import Organization
 
 
 FIWARE_LAB_IDM_SERVER = 'https://account.lab.fiware.org'
-FIWARE_CLOUD_SERVER = 'https://cloud.lab.fiware.org'
+FIWARE_LAB_CLOUD_SERVER = 'https://cloud.lab.fiware.org'
 
 FIWARE_AUTHORIZATION_ENDPOINT = 'oauth2/authorize'
 FIWARE_ACCESS_TOKEN_ENDPOINT = 'oauth2/token'

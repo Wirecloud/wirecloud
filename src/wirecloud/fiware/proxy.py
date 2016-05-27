@@ -27,7 +27,7 @@ from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
 
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
-from wirecloud.fiware.social_auth_backend import FIWARE_CLOUD_SERVER
+from wirecloud.fiware.social_auth_backend import FIWARE_LAB_CLOUD_SERVER
 from wirecloud.proxy.utils import ValidationError
 
 
@@ -104,7 +104,7 @@ def replace_body_pattern(request, bodys, token):
 
 class IDMTokenProcessor(object):
     def __init__(self):
-        self.openstack_manager = OpenstackTokenManager(getattr(settings, 'FIWARE_CLOUD_SERVER', FIWARE_CLOUD_SERVER))
+        self.openstack_manager = OpenstackTokenManager(getattr(settings, 'FIWARE_CLOUD_SERVER', FIWARE_LAB_CLOUD_SERVER))
 
     def process_request(self, request):
         headers = ['fiware-oauth-token', 'x-fi-ware-oauth-token', 'fiware-openstack-token']
