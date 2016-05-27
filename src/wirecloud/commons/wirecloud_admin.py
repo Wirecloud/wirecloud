@@ -72,6 +72,8 @@ class CommandLineUtility(object):
 
     def execute(self, argv=None, stdout=None, stderr=None):
 
+        from django.core.management.base import CommandParser
+
         if argv is None:
             argv = sys.argv
 
@@ -81,31 +83,16 @@ class CommandLineUtility(object):
         if stderr is None:
             stderr = sys.stderr
 
-        if django.VERSION >= (1, 8):
-            from django.core.management.base import CommandParser
-            parser = CommandParser(None,
-                usage="%(prog)s subcommand [options] [args]",
-                add_help=False)
-            parser.add_argument('--version', action='store_true', help="show program's version number and exit")
-            parser.add_argument('-h', '--help', action='store_true', help="show this help message and exit")
+        parser = CommandParser(None,
+            usage="%(prog)s subcommand [options] [args]",
+            add_help=False)
+        parser.add_argument('--version', action='store_true', help="show program's version number and exit")
+        parser.add_argument('-h', '--help', action='store_true', help="show this help message and exit")
 
-            try:
-                options, argv = parser.parse_known_args(argv)
-            except:
-                pass  # Ignore any option errors at this point.
-        else:
-            from django.core.management import LaxOptionParser
-
-            parser = LaxOptionParser(usage="%prog subcommand [options] [args]",
-                option_list=(),
-                add_help_option=False)
-            parser.add_option('--version', action='store_true', help="show program's version number and exit")
-            parser.add_option('-h', '--help', action='store_true', help="show this help message and exit")
-
-            try:
-                options, argv = parser.parse_args(argv)
-            except:
-                pass  # Ignore any option errors at this point.
+        try:
+            options, argv = parser.parse_known_args(argv)
+        except:
+            pass  # Ignore any option errors at this point.
 
         if len(argv) > 1:
             subcommand = argv[1]
@@ -116,10 +103,7 @@ class CommandLineUtility(object):
         if options.help:
 
             if subcommand == 'help':
-                if hasattr(parser, 'print_lax_help'):
-                    parser.print_lax_help()
-                else:
-                    parser.print_help(stdout)
+                parser.print_help(stdout)
                 stdout.write(self.main_help_text() + '\n')
             else:
                 command = self.fetch_command(subcommand)
@@ -135,10 +119,7 @@ class CommandLineUtility(object):
         elif subcommand == 'help':
 
             if len(argv) <= 2:
-                if hasattr(parser, 'print_lax_help'):
-                    parser.print_lax_help()
-                else:
-                    parser.print_help(stdout)
+                parser.print_help(stdout)
                 stdout.write(self.main_help_text() + '\n')
             elif argv[2] == '--commands':
                 stdout.write(self.main_help_text(commands_only=True) + '\n')
