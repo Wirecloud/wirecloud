@@ -26,8 +26,8 @@ from django.conf import settings
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
 
+from wirecloud.fiware import FIWARE_LAB_CLOUD_SERVER
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
-from wirecloud.fiware.social_auth_backend import FIWARE_LAB_CLOUD_SERVER
 from wirecloud.proxy.utils import ValidationError
 
 
@@ -63,9 +63,11 @@ def get_access_token(user, error_msg):
 
 def replace_get_parameter(request, gets, token):
     for get in gets:
-        if get in request['headers']:
-            parameter_name = request['headers'][get]
-            del request['headers'][get]
+        if get not in request['headers']:
+            continue
+
+        parameter_name = request['headers'][get]
+        del request['headers'][get]
 
         url = request['url']
         if '?' in url:
@@ -75,6 +77,8 @@ def replace_get_parameter(request, gets, token):
 
         url += "{}={}".format(urlquote_plus(parameter_name), urlquote_plus(token))
         request['url'] = url
+
+        return
 
 
 def replace_header_name(request, headers, token):
@@ -91,20 +95,25 @@ def replace_header_name(request, headers, token):
             request['headers'][header_name] = token_pattern.format(token=token)
 
 
-def replace_body_pattern(request, bodys, token):
-    for body in bodys:
-        if body in request['headers']:
-            pattern = request['headers'][body]
-            del request['headers'][body]
+def replace_body_pattern(request, bodies, token):
+    for body in bodies:
+        if body not in request['headers']:
+            continue
 
-            new_body = request['data'].read().replace(pattern.encode('utf8'), token.encode('utf8'))
-            request['headers']['content-length'] = "{}".format(len(new_body))
-            request['data'] = BytesIO(new_body)
+        pattern = request['headers'][body]
+        del request['headers'][body]
+
+        new_body = request['data'].read().replace(pattern.encode('utf8'), token.encode('utf8'))
+        request['headers']['content-length'] = "{}".format(len(new_body))
+        request['data'] = BytesIO(new_body)
+
+        return
 
 
 class IDMTokenProcessor(object):
     def __init__(self):
-        self.openstack_manager = OpenstackTokenManager(getattr(settings, 'FIWARE_CLOUD_SERVER', FIWARE_LAB_CLOUD_SERVER))
+        if IDM_SUPPORT_ENABLED:
+            self.openstack_manager = OpenstackTokenManager(getattr(settings, 'FIWARE_CLOUD_SERVER', FIWARE_LAB_CLOUD_SERVER))
 
     def process_request(self, request):
         headers = ['fiware-oauth-token', 'x-fi-ware-oauth-token', 'fiware-openstack-token']
@@ -143,7 +152,7 @@ class IDMTokenProcessor(object):
         if 'fiware-oauth-token' in filtered or 'x-fi-ware-oauth-token' in filtered:
             replace_get_parameter(request, ["fiware-oauth-get-parameter", "x-fi-ware-oauth-get-parameter"], token)
             replace_header_name(request, ["fiware-oauth-header-name", "x-fi-ware-oauth-header-name"], token)
-            replace_body_pattern(request, ["fiware-oauth-body-pattern", "x-fi-ware-oauth-body-pattern"], token)
+            replace_body_pattern(request, ["fiware-oauth-body-pattern", "x-fi-ware-oauth-token-body-pattern"], token)
 
         if 'fiware-openstack-token' in filtered:
             replace_get_parameter(request, ["fiware-openstack-get-parameter"], token)

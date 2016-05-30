@@ -29,4 +29,7 @@ FIWARE_LAB_PORTALS = (
     {'name': 'Help&info', 'url': 'http://help.lab.fiware.org'},
 )
 
+FIWARE_LAB_IDM_SERVER = 'https://account.lab.fiware.org'
+FIWARE_LAB_CLOUD_SERVER = 'https://cloud.lab.fiware.org'
+
 DEFAULT_FIWARE_HOME = 'https://lab.fiware.org'

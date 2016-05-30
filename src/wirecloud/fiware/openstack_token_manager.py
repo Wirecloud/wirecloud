@@ -20,7 +20,6 @@
 import json
 
 import requests
-# from django.conf import settings
 
 from wirecloud.proxy.utils import ValidationError
 
