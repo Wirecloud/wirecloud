@@ -241,7 +241,6 @@ This action will return a subset of the fields returned by the [Get workspace de
                     "id": 1,
                     "lastmodified": 1464187437041,
                     "longdescription": "",
-                    "longdescription_html": "",
                     "name": "workspace",
                     "owner": "user",
                     "removable": true,
@@ -252,7 +251,6 @@ This action will return a subset of the fields returned by the [Get workspace de
                     "id": 20,
                     "lastmodified": 1461673370860,
                     "longdescription": "A dashboard description using **Markdown** _Syntax_",
-                    "longdescription_html": "<p>A dashboard description using <b>Markdown</b> <em>Syntax</em></p>",
                     "name": "public-workspace",
                     "owner": "otheruser",
                     "removable": false,
@@ -280,7 +278,6 @@ This action will return a subset of the fields returned by the [Get workspace de
                     "id": 20,
                     "lastmodified": 1461673370860,
                     "longdescription": "A dashboard description using **Markdown** _Syntax_",
-                    "longdescription": "<p>A dashboard description using <b>Markdown</b> <em>Syntax</em></p>",
                     "name": "public-workspace",
                     "owner": "otheruser",
                     "removable": false,
@@ -329,12 +326,17 @@ If everything goes well and the workspace is created, this action will return th
 
             {
                 "description": "",
-                "name": "test",
-                "owner": "admin",
+                "empty_params": [],
+                "extra_prefs": {},
+                "id": 81,
                 "lastmodified": 1464187437041,
                 "longdescription": "",
-                "wiring": {"operators": {}, "connections": []},
-                "empty_params": [],
+                "name": "test",
+                "owner": "admin",
+                "preferences": {
+                    "public": {"value": "true", "inherit": false}
+                },
+                "removable": true,
                 "shared": false,
                 "tabs": [
                     {
@@ -345,11 +347,8 @@ If everything goes well and the workspace is created, this action will return th
                         "preferences": {}
                     }
                 ],
-                "id": 81,
-                "extra_prefs": {},
-                "preferences": {
-                    "public": {"value": "true", "inherit": false}
-                }
+                "users": [],
+                "wiring": {"operators": {}, "connections": []}
             }
 
 
@@ -372,11 +371,15 @@ If everything goes well and the workspace is created, this action will return th
 
             {
                 "description": "",
+                "empty_params": [],
+                "extra_prefs": {},
+                "id": 50,
+                "lastmodified": 1464187437041,
+                "longdescription": "",
                 "name": "example",
                 "owner": "admin",
-                "lastmodified": 1464187437041,
-                "wiring": {"operators": {}, "connections": []},
-                "empty_params": [],
+                "preferences": {},
+                "removable": true,
                 "shared": false,
                 "tabs": [
                     {
@@ -422,9 +425,8 @@ If everything goes well and the workspace is created, this action will return th
                         "preferences": {}
                     }
                 ],
-                "id": 50,
-                "extra_prefs": {},
-                "preferences": {}
+                "users": [],
+                "wiring": {"operators": {}, "connections": []},
             }
 
 
@@ -493,12 +495,13 @@ If everything goes well and the workspace is created, this action will return th
                 "description": "",
                 "empty_params": [],
                 "extra_prefs": {},
-                "id": 51,
+                "id": 200,
                 "lastmodified": 1464207200516,
                 "longdescription": "",
                 "name": "example",
                 "owner": "admin",
                 "preferences": {},
+                "removable": true,
                 "shared": false,
                 "tabs": [
                     {
@@ -544,6 +547,7 @@ If everything goes well and the workspace is created, this action will return th
                         "preferences": {}
                     }
                 ],
+                "users": [],
                 "wiring": {"operators": {}, "connections": []}
             }
 
@@ -555,16 +559,21 @@ If everything goes well and the workspace is created, this action will return th
 
 ### Get workspace details [GET]
 
+Returned fields:
+
 - `id`: Id of the workspace.
 - `name` (string): Name of the workspace.
 - `owner` (string): Username of the workspace's owner.
 - `description` (string): Short description in plain text describing the workspace.
 - `longdescription` (string): Text describing this workspace. This field can be formatted using Markdown.
-- `preferences` (object): Values.
+- `preferences` (object): Preference values.
+- `lastmodified` (number): Unix timestamp indicating the last time this workspace was updated.
+- `tabs` (array): Visual description of the workspace.
+- `wiring` (object): Wiring configuration of the workspace. See the [Update workspace wiring configuration](reference/managing-workspaces/workspace/update-workspace-wiring-configuration) action documentation for more details about the structure of this field.
+- `removable` (object): Indicates wheter this workspace can be removed by the current user.
+- `users` (object): List of users and groups with access to this workspace.
 - `shared` (boolean): Indicates whether this workspace has been shared with
   other users or groups.
-- `tabs` (array): Visual description of the workspace.
-- `wiring` (object): Wiring configuration of the workspace.
 
 **Used status codes**: 200, 401, 403, 404, 406
 
@@ -586,9 +595,11 @@ If everything goes well and the workspace is created, this action will return th
                 "extra_prefs": {},
                 "id": 81,
                 "lastmodified": 1464207200516,
+                "longdescription": "A dashboard description using **Markdown** _Syntax_",
                 "name": "test",
                 "owner": "admin",
                 "preferences": {},
+                "removable": true,
                 "shared": false,
                 "tabs": [
                     {
@@ -597,6 +608,20 @@ If everything goes well and the workspace is created, this action will return th
                         "id": 84,
                         "name": "Tab",
                         "preferences": {}
+                    }
+                ],
+                "users": [
+                    {
+                        "accesslevel": "read",
+                        "fullname": "Full Name"
+                        "organization": false,
+                        "username": "test"
+                    },
+                    {
+                        "accesslevel": "read",
+                        "fullname": "WireCloud"
+                        "organization": true,
+                        "username": "wirecloud"
                     }
                 ],
                 "wiring": {"operators": {}, "connections": []}
@@ -662,6 +687,11 @@ Workspace attributes that can be modified:
 + Response 204
 
 ### Update workspace wiring configuration [PUT /api/workspace/{workspace_id}/wiring]
+
+- `version` (string): Format version used in this wiring configuration. At present, the only available version is "2.0".
+- `operators` (object): Description of the operators used in this wiring description.
+- `connections` (array): Connections stablished between widgets and operators.
+- `visualdescription` (object): Visual description. Used for displaying this wiring configuration in the user interface.
 
 **Used status codes**: 204, 400, 401, 403, 404, 413, 422
 
