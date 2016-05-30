@@ -1,33 +1,6 @@
 [
     {
         "pk": 1,
-        "model": "platform.platformpreference",
-        "fields": {
-            "user": 1,
-            "name": "tip-0",
-            "value": "False"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "platform.platformpreference",
-        "fields": {
-            "user": 1,
-            "name": "tip-1",
-            "value": "False"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "platform.platformpreference",
-        "fields": {
-            "user": 1,
-            "name": "tip-2",
-            "value": "False"
-        }
-    },
-    {
-        "pk": 1,
         "model": "platform.xhtml",
         "fields": {
             "cacheable": true,

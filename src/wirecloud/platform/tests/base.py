@@ -25,6 +25,7 @@ import json
 from lxml import etree
 
 import django
+from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test.client import RequestFactory
@@ -38,8 +39,9 @@ from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.remote import PopupMenuTester
 from wirecloud.commons.utils.testcases import WirecloudTestCase, wirecloud_selenium_test_case, WirecloudSeleniumTestCase
 from wirecloud.commons.exceptions import HttpBadCredentials
-from wirecloud.platform.views import get_default_view, render_wirecloud
+from wirecloud.platform.models import Workspace
 from wirecloud.platform.preferences.models import update_session_lang
+from wirecloud.platform.views import get_default_view, render_wirecloud
 
 try:
     # Django 1.7+
@@ -172,6 +174,34 @@ class BasicViewsAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml', HTTP_USER_AGENT='')
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response['Location'].startswith(self.login_url))
+
+    def test_workspace_view_shared_with_org(self):
+
+        # Add access permissions for the org organization
+        workspace = Workspace.objects.get(name="Workspace")
+        workspace.groups.add(Group.objects.get(name="org"))
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Workspace'})
+
+        # Authenticate
+        self.client.login(username='orguser', password='admin')
+
+        # orguser belongs to org, which is allowed to access the dashboard
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml', HTTP_USER_AGENT='')
+        self.assertEqual(response.status_code, 200)
+
+    def test_workspace_view_shared_with_user(self):
+
+        # Add access permissions for the normuser user
+        workspace = Workspace.objects.get(name="Workspace")
+        workspace.userworkspace_set.create(user=User.objects.get(username="normuser"))
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'Workspace'})
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # normuser should be allowed to access the dashboard
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml', HTTP_USER_AGENT='')
+        self.assertEqual(response.status_code, 200)
 
     def test_render_wirecloud_invalid_view_type(self):
         request = Mock(GET={}, META={})
