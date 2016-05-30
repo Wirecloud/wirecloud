@@ -37,7 +37,7 @@ from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.html import clean_html
-from wirecloud.platform.context.utils import get_workspace_context, get_context_values
+from wirecloud.platform.context.utils import get_context_values
 from wirecloud.platform.iwidget.utils import parse_value_from_text
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
@@ -421,9 +421,6 @@ def process_forced_values(workspace, user, concept_values, preferences):
 
 def _get_global_workspace_data(workspaceDAO, user):
     data_ret = get_workspace_data(workspaceDAO, user)
-
-    # Context information
-    data_ret['context'] = get_workspace_context(workspaceDAO, user)
 
     # Workspace preferences
     preferences = get_workspace_preference_values(workspaceDAO)

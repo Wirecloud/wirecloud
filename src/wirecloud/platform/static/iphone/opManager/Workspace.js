@@ -164,7 +164,9 @@ function Workspace(workspaceState, resources) {
         //set the visible tab. It will be displayed as current tab afterwards
         this.visibleTab = this.tabInstances[this.visibleTabIndex];
 
-        this.contextManager = new Wirecloud.ContextManager(this, this.workspaceState.context);
+        this.contextManager = new Wirecloud.ContextManager(this, Wirecloud.constants.WORKSPACE_CONTEXT);
+        this.contextManager.modify({name: this.workspaceState.name, owner: this.workspaceState.owner});
+
         this.wiring = new Wirecloud.Wiring(this);
         iwidgets = this.getIWidgets();
         for (i = 0; i < iwidgets.length; i += 1) {

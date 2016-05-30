@@ -23,15 +23,19 @@ from django.http import HttpResponse
 
 from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.baseviews import Resource
-from wirecloud.platform.context.utils import get_platform_context
+from wirecloud.platform.context.utils import get_platform_context, get_workspace_context_definitions
 
 
 class PlatformContextCollection(Resource):
 
     def read(self, request):
 
-        context = get_platform_context(request.user)
+        context = {
+            'platform': get_platform_context(request.user),
+            'workspace': get_workspace_context_definitions()
+        }
+
         if 'theme' in request.GET:
-            context['theme']['value'] = request.GET['theme']
+            context['platform']['theme']['value'] = request.GET['theme']
 
         return HttpResponse(json.dumps(context, cls=LazyEncoder, sort_keys=True), content_type='application/json; charset=UTF-8')

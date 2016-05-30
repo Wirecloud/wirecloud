@@ -189,10 +189,13 @@
             parameters: {theme: Wirecloud.constants.CURRENT_THEME},
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: function (response) {
-                var url;
+                var url, context_info;
 
                 options.monitor.nextSubtask(gettext('Processing initial context data'));
-                Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, JSON.parse(response.responseText));
+
+                context_info = JSON.parse(response.responseText);
+                Wirecloud.constants.WORKSPACE_CONTEXT = context_info.workspace;
+                Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, context_info.platform);
                 Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
 
                 // Init theme

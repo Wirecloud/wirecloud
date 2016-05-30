@@ -92,16 +92,6 @@ def get_workspace_context_current_values(workspace, user):
     return values
 
 
-def get_workspace_context(workspace, user):
-
-    context = copy.deepcopy(get_workspace_context_definitions())
-    values = get_workspace_context_current_values(workspace, user)
-    for key in values:
-        context[key]['value'] = values[key]
-
-    return context
-
-
 def get_constant_context_values():
     res = {}
 

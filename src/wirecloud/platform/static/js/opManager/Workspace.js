@@ -115,7 +115,9 @@ function Workspace(workspaceState, resources) {
                 }
             }
 
-            this.contextManager = new Wirecloud.ContextManager(this, this.workspaceState.context);
+            this.contextManager = new Wirecloud.ContextManager(this, Wirecloud.constants.WORKSPACE_CONTEXT);
+            this.contextManager.modify({name: this.workspaceState.name, owner: this.workspaceState.owner});
+
             this.wiring = new Wirecloud.Wiring(this);
             iwidgets = this.getIWidgets();
             for (i = 0; i < iwidgets.length; i += 1) {
