@@ -78,13 +78,22 @@
                 wiringComponent.on('title_changed', component_onrename.bind(this));
             }
 
-            if (wiringComponent.volatile || !wiringComponent.hasEndpoints()) {
+            if (wiringComponent.volatile || wiringComponent.missing) {
                 this.disable();
             }
 
             wiringComponent.on('upgraded', function (componentUpdated) {
                 this.setTitle(componentUpdated.title);
                 this.setSubtitle("v" + componentUpdated.meta.version.text);
+
+                if (this._missing) {
+                    this._missing = false;
+                    if (this._used) {
+                        formatDisabledMessage.call(this);
+                    } else {
+                        this.enable();
+                    }
+                }
             }.bind(this));
         },
 
@@ -101,6 +110,7 @@
                     formatDisabledMessage.call(this);
                     this.heading.appendChild(this.label);
                 } else {
+                    this._used = false;
                     this.heading.removeChild(this.label);
                 }
 
@@ -153,17 +163,15 @@
         if (this._component.volatile) {
             this.label.textContent = utils.gettext("volatile");
             this.label.className = "label label-info";
-            return this;
+        } else if (this._component.missing) {
+            this._missing = true;
+            this.label.textContent = utils.gettext("missing");
+            this.label.className = "label label-danger";
+        } else {
+            this._used = true;
+            this.label.textContent = utils.gettext("in use");
+            this.label.className = "label label-success";
         }
-
-        if (!this._component.hasEndpoints()) {
-            this.label.textContent = utils.gettext("no endpoints");
-            this.label.className = "label label-warning";
-            return this;
-        }
-
-        this.label.textContent = utils.gettext("in use");
-        this.label.className = "label label-success";
 
         return this;
     };

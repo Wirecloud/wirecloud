@@ -250,9 +250,14 @@
         }
 
         if (this.meta.missing) {
-            this.logManager.log(utils.gettext('Missing widget: This widget is currently not available. Probably you or an administrator uninstalled it.'), {details: new se.Fragment("<h5>Suggestions:</h5><ul><li>Remove this widget from the dashboard</li><li>Reinstall the appropiated version of the widget</li><li>Install another version of the widget and use the <em>Upgrade/Downgrade</em> option</li></ul>")});
+            this.logManager.log(utils.gettext("Failed to load widget."), {
+                level: Wirecloud.constants.LOGGING.ERROR_MSG,
+                details: new se.Fragment(utils.gettext("<p>The widget is currently not available. You or an administrator probably uninstalled or delete it.</p><h5>Suggestions:</h5><ul><li>Remove the widget.</li><li>Upload the same version of the widget.</li><li>Or upload another version of the widget and then use the <em>Upgrade/Downgrade</em> option.</li></ul>"))
+            });
         } else {
-            this.logManager.log(utils.gettext('Widget loaded successfully'), Wirecloud.constants.LOGGING.INFO_MSG);
+            this.logManager.log(utils.gettext("The widget was loaded successfully."), {
+                level: Wirecloud.constants.LOGGING.INFO_MSG
+            });
         }
 
         this.loaded = true;
@@ -288,7 +293,9 @@
             return;
         }
 
-        this.logManager.log(utils.gettext('Widget unloaded'), Wirecloud.constants.LOGGING.INFO_MSG);
+        this.logManager.log(utils.gettext("The widget was unloaded successfully."), {
+            level: Wirecloud.constants.LOGGING.INFO_MSG
+        });
         this.logManager.newCycle();
 
         // Remove context callbacks
