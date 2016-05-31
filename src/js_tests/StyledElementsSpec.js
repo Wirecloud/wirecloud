@@ -112,13 +112,26 @@
 
         });
 
+        it("should not crash when calling the remove method and the element has no parent element", function () {
+
+            var element = new StyledElements.Button();
+            expect(element.wrapperElement.parentElement).toBe(null);
+            expect(element.parentElement).toBe(null);
+            element.remove();
+            expect(element.wrapperElement.parentElement).toBe(null);
+            expect(element.parentElement).toBe(null);
+
+        });
+
         it("should allow to remove elements from the DOM", function () {
 
             var element = new StyledElements.Button();
             element.appendTo(dom);
             expect(element.wrapperElement.parentElement).not.toBe(null);
+            expect(element.parentElement).toBe(null);
             element.remove();
             expect(element.wrapperElement.parentElement).toBe(null);
+            expect(element.parentElement).toBe(null);
 
         });
 
@@ -127,8 +140,10 @@
             var container = new StyledElements.Container();
             var element = new StyledElements.Button();
             container.appendChild(element);
+            expect(element.wrapperElement.parentElement).not.toBe(null);
             expect(element.parentElement).not.toBe(null);
             element.remove();
+            expect(element.wrapperElement.parentElement).toBe(null);
             expect(element.parentElement).toBe(null);
 
         });
