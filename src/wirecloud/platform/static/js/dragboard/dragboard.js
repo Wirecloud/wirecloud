@@ -568,8 +568,7 @@
 var EzWebEffectBase = {};
 EzWebEffectBase.findDragboardElement = function (element) {
     var tmp = element.parentNode;
-    while (Wirecloud.Utils.XML.isElement(tmp)) {
-        //var position = tmp.getStyle("position");
+    while (tmp != null) {
         var position = document.defaultView.getComputedStyle(tmp, null).getPropertyValue("position");
         switch (position) {
         case "relative":
@@ -578,7 +577,7 @@ EzWebEffectBase.findDragboardElement = function (element) {
             return tmp;
         }
 
-        tmp = tmp.parentNode;
+        tmp = tmp.parentElement;
     }
     return null; // Not found
 };

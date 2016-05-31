@@ -829,7 +829,7 @@ IWidget.prototype._updateErrorInfo = function _updateErrorInfo() {
  */
 IWidget.prototype._iwidget_removed = function _iwidget_removed() {
     var dragboard = this.layout.dragboard;
-    if (Wirecloud.Utils.XML.isElement(this.element.parentNode)) {
+    if (this.element.parentElement != null) {
         this.layout.removeIWidget(this, true);
     }
 

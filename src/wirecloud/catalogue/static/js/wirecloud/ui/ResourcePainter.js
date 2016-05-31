@@ -198,7 +198,7 @@
 
         // TODO "Show details" & tooltip
         for (i = 0; i < resource_element.elements.length; i += 1) {
-            if (!utils.XML.isElement(resource_element.elements[i])) {
+            if (!(resource_element.elements[i] instanceof Element)) {
                 continue;
             }
             if (this.catalogue_view) {

@@ -94,7 +94,7 @@
 
         for (i = 0; i < ui_fragment.elements.length; i += 1) {
             element = ui_fragment.elements[i];
-            if (Wirecloud.Utils.XML.isElement(element)) {
+            if (element instanceof Element) {
                 this.htmlElement = element;
                 break;
             }
@@ -213,7 +213,7 @@
      */
     WindowMenu.prototype.hide = function hide() {
 
-        if (!Wirecloud.Utils.XML.isElement(this.htmlElement.parentNode)) {
+        if (this.htmlElement.parentElement == null) {
             // This windowmenu is currently hidden => Nothing to do
             return;
         }

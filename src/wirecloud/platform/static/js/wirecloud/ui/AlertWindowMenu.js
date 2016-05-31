@@ -1,6 +1,27 @@
-/*global gettext, StyledElements, Wirecloud*/
+/*
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
 
-(function () {
+/* globals StyledElements, Wirecloud*/
+
+(function (utils) {
 
     "use strict";
 
@@ -9,15 +30,15 @@
      */
     var AlertWindowMenu = function AlertWindowMenu(options) {
 
-        Wirecloud.ui.WindowMenu.call(this, gettext('Warning'), 'wc-alert-dialog');
+        Wirecloud.ui.WindowMenu.call(this, utils.gettext('Warning'), 'wc-alert-dialog');
 
         this.msgElement = document.createElement('div');
         this.msgElement.className = "msg";
         this.windowContent.appendChild(this.msgElement);
 
-        options = Wirecloud.Utils.merge({
-            acceptLabel: gettext('Yes'),
-            cancelLabel: gettext('No')
+        options = utils.merge({
+            acceptLabel: utils.gettext('Yes'),
+            cancelLabel: utils.gettext('No')
         }, options);
 
         this.acceptButton = new StyledElements.Button({
@@ -63,7 +84,7 @@
     AlertWindowMenu.prototype.setHTMLMsg = function setHTMLMsg(msg) {
         this.msgElement.innerHTML = msg;
 
-        if (Wirecloud.Utils.XML.isElement(this.htmlElement.parentNode)) {
+        if (this.htmlElement.parentElement != null) {
             this.calculatePosition();
         }
     };
@@ -90,4 +111,5 @@
     };
 
     Wirecloud.ui.AlertWindowMenu = AlertWindowMenu;
-})();
+
+})(StyledElements.Utils);

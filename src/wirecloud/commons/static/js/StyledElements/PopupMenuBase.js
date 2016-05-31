@@ -494,7 +494,7 @@
     };
 
     var property_hidden_get = function property_hidden_get() {
-        return !utils.XML.isElement(this.wrapperElement.parentNode);
+        return this.wrapperElement.parentElement == null;
     };
 
     var activateMenuItem = function activateMenuItem(menuItem) {

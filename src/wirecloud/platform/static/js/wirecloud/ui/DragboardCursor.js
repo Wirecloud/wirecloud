@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -79,10 +79,7 @@
      * references.
      */
     DragboardCursor.prototype.destroy = function destroy() {
-        if (Wirecloud.Utils.XML.isElement(this.element)) {
-            this.element.parentNode.removeChild(this.element);
-            this.element = null;
-        }
+        this.element.remove();
     };
 
     DragboardCursor.prototype.getPosition = IWidget.prototype.getPosition;

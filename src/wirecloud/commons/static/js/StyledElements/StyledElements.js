@@ -360,8 +360,8 @@
             },
 
             _getUsableHeight: function _getUsableHeight() {
-                var parentElement = this.wrapperElement.parentNode;
-                if (!StyledElements.Utils.XML.isElement(parentElement)) {
+                var parentElement = this.wrapperElement.parentElement;
+                if (parentElement == null) {
                     return null;
                 }
 
@@ -385,8 +385,8 @@
             },
 
             _getUsableWidth: function _getUsableWidth() {
-                var parentElement = this.wrapperElement.parentNode;
-                if (!StyledElements.Utils.XML.isElement(parentElement)) {
+                var parentElement = this.wrapperElement.parentElement;
+                if (parentElement == null) {
                     return null;
                 }
 

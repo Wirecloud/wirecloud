@@ -92,7 +92,7 @@
 
         for (i = 0; i < children.length; i += 1) {
             child = children[i];
-            if (!StyledElements.Utils.XML.isElement(child)) {
+            if (!(child instanceof Element)) {
                 continue;
             }
 
@@ -194,8 +194,11 @@
     GUIBuilder.prototype.DEFAULT_CLOSING = '</s:styledgui>';
 
     GUIBuilder.prototype.parse = function parse(document, tcomponents, context) {
+        var parser;
+
         if (typeof document === 'string') {
-            document = StyledElements.Utils.XML.parseFromString(document, 'application/xml');
+            parser = new DOMParser();
+            document = parser.parseFromString(document, 'application/xml');
         }
 
         if (!(document instanceof Document)) {
