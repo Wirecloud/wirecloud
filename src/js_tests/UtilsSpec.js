@@ -83,6 +83,58 @@
             });
         });
 
+        describe("clone(object, deep)", function () {
+            var clone = StyledElements.Utils.clone;
+
+            it("returns null if object is null", function () {
+                expect(clone(null)).toBe(null);
+            });
+
+            it("returns a shallow copy if object is an array", function () {
+                var original = ['a', 1, true, {'b': 'c'}, [1], null, undefined];
+                var result = clone(original);
+                expect(result).not.toBe(original);
+                expect(result).toEqual(original);
+
+                // Check clone returned a shallow copy
+                expect(result[3]).toBe(original[3]);
+                expect(result[4]).toBe(original[4]);
+            });
+
+            it("returns a shallow copy if object is an object", function () {
+                var original = {'a': 1, 'b': true, 'c': {'b': 'c'}, 'd': [1], 'e': null, 'f': undefined};
+                var result = clone(original);
+                expect(result).not.toBe(original);
+                expect(result).toEqual(original);
+
+                // Check clone returned a shallow copy
+                expect(result.c).toBe(original.c);
+                expect(result.d).toBe(original.d);
+            });
+
+            it("returns a depp copy if object is an array and deep is true", function () {
+                var original = ['a', 1, true, {'b': 'c'}, [1], null, undefined];
+                var result = clone(original, true);
+                expect(result).not.toBe(original);
+                expect(result).toEqual(original);
+
+                // Check deepcopy returned a deep copy
+                expect(result[3]).not.toBe(original[3]);
+                expect(result[4]).not.toBe(original[4]);
+            });
+
+            it("returns a deep copy if object is an object and deep is true", function () {
+                var original = {'a': 1, 'b': true, 'c': {'b': 'c'}, 'd': [1], 'e': null, 'f': undefined};
+                var result = clone(original, true);
+                expect(result).not.toBe(original);
+                expect(result).toEqual(original);
+
+                // Check deepcopy returned a deep copy
+                expect(result.c).not.toBe(original.c);
+                expect(result.d).not.toBe(original.d);
+            });
+        });
+
         describe("merge(object, ...sources)", function () {
             var merge;
 
@@ -90,10 +142,13 @@
                 merge = StyledElements.Utils.merge;
             });
 
-            it("throws exception if object is null or undefined", function () {
+            it("throws exception if object is null", function () {
                 expect(function () {
                     return merge();
                 }).toThrowError(TypeError, "The argument `object` must be an `Object`.");
+            });
+
+            it("throws exception if object is undefined", function () {
                 expect(function () {
                     return merge(null);
                 }).toThrowError(TypeError, "The argument `object` must be an `Object`.");

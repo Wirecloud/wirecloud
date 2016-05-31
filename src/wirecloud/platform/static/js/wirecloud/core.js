@@ -195,6 +195,7 @@
 
                 context_info = JSON.parse(response.responseText);
                 Wirecloud.constants.WORKSPACE_CONTEXT = context_info.workspace;
+                Object.freeze(Wirecloud.constants.WORKSPACE_CONTEXT);
                 Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, context_info.platform);
                 Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
 

@@ -530,19 +530,25 @@ if (window.StyledElements == null) {
     /**
      * @experimental
      */
-    Utils.clone = function clone(obj1) {
-        var result;
+    Utils.clone = function clone(object, deep) {
+        var result, key;
 
-        if (obj1 == null) {
-            return obj1;
-        } else if (Array.isArray(obj1)) {
+        if (object == null || typeof object !== 'object') {
+            return object;
+        } else if (Array.isArray(object)) {
             result = [];
         } else {
             result = {};
         }
 
-        for (var key in obj1) {
-            result[key] = obj1[key];
+        if (deep) {
+            for (key in object) {
+                result[key] = Utils.clone(object[key], true);
+            }
+        } else {
+            for (key in object) {
+                result[key] = object[key];
+            }
         }
 
         return result;

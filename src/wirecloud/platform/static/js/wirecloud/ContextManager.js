@@ -26,6 +26,12 @@
     "use strict";
 
     var ContextManager = function ContextManager(contextInstance, context_description) {
+
+        if (context_description == null || typeof context_description !== 'object') {
+            throw new TypeError('invalid context_description parameter');
+        }
+
+        context_description = Wirecloud.Utils.clone(context_description, true);
         Object.defineProperty(this, 'instance', {value: contextInstance});
 
         var context = {};
