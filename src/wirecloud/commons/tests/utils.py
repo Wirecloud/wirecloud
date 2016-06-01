@@ -201,10 +201,13 @@ class GeneralUtilsTestCase(TestCase):
         self.assertLess(Version('1.11'), Version('1.11.5.1'))
         self.assertLess(Version('1.11.5.1'), Version('1.11.5.4'))
         self.assertLess(Version('1.11.5.4'), Version('1.100'))
+        self.assertLess(Version('1.0.0-dev'), Version("1.0.1-dev"))
+        self.assertLess(Version('1.0.0-dev'), Version("1.0.0"))
 
         self.assertGreater(Version('1.0'), Version('1.0a1'))
         self.assertGreater(Version('1.0', reverse=True), Version('1.11a1', reverse=True))
         self.assertGreater(Version('1.11b1', reverse=True), Version('1.11rc1', reverse=True))
+        self.assertGreater(Version('1.0.0'), Version("1.0.0-dev"))
 
         self.assertEqual(Version('1'), '1.0.0')
         self.assertEqual(Version('1.0'), '1.0.0')
@@ -235,6 +238,7 @@ class GeneralUtilsTestCase(TestCase):
         self.assertNotEqual(Version('1'), Version('1.1'))
         self.assertNotEqual(Version('1'), '0.9')
         self.assertNotEqual(Version('1'), Version('0.9'))
+        self.assertNotEqual(Version('1.0.0'), Version('1.0.0-dev'))
 
         self.assertFalse(Version('1') != '1.0')
         self.assertFalse(Version('1') != Version('1'))

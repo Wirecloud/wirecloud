@@ -30,7 +30,7 @@ def cmp(a, b):
 
 class Version(object):
 
-    version_re = regex.compile(r'^([1-9]\d*|0)((?:\.(?:[1-9]\d*|0))*)(?:(a|b|rc)([1-9]\d*))?(-dev)?.*$')
+    version_re = regex.compile(r'^([1-9]\d*|0)((?:\.(?:[1-9]\d*|0))*)(?:(a|b|rc)([1-9]\d*))?(-dev.*)?$')
 
     def __init__(self, vstring, reverse=False):
 
@@ -40,7 +40,7 @@ class Version(object):
         if not match:
             raise ValueError("invalid version number '%s'" % vstring)
 
-        (major, patch, prerelease, prerelease_num) = match.group(1, 2, 3, 4)
+        (major, patch, prerelease, prerelease_num, dev) = match.group(1, 2, 3, 4, 5)
 
         if patch:
             self.version = tuple(map(int, [major] + patch[1:].split('.')))
@@ -51,6 +51,11 @@ class Version(object):
             self.prerelease = (prerelease, int(prerelease_num))
         else:
             self.prerelease = None
+
+        if dev:
+            self.dev = True
+        else:
+            self.dev = False
 
         self.reverse = reverse
 
@@ -67,8 +72,12 @@ class Version(object):
 
         if compare == 0:
 
+            # First check if only one of them is a development version
+            if self.dev != other.dev:
+                compare = 1 if other.dev else -1
+
             # case 1: neither has prerelease; they're equal
-            if not self.prerelease and not other.prerelease:
+            elif not self.prerelease and not other.prerelease:
                 compare = 0
 
             # case 2: self has prerelease, other doesn't; other is greater

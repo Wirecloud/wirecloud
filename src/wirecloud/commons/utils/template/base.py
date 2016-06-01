@@ -31,7 +31,7 @@ __all__ = ('is_valid_name', 'is_valid_vendor', 'is_valid_version')
 SEPARATOR_RE = regex.compile(r'\s*,\s*')
 NAME_RE = regex.compile(r'^[^/]+$')
 VENDOR_RE = regex.compile(r'^[^/]+$')
-VERSION_RE = regex.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)(?:(?:a|b|rc)[1-9]\d*)?(-dev)?.*$')
+VERSION_RE = regex.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)(?:(?:a|b|rc)[1-9]\d*)?(-dev.*)?$')
 CONTACT_RE = regex.compile(r'([^<(\s]+(?:\s+[^<()\s]+)*)(?:\s*<([^>]*)>)?(?:\s*\(([^)]*)\))?')
 
 
