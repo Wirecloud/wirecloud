@@ -42,12 +42,7 @@ from wirecloud.commons.exceptions import HttpBadCredentials
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.preferences.models import update_session_lang
 from wirecloud.platform.views import get_default_view, render_wirecloud
-
-try:
-    # Django 1.7+
-    from django.utils.translation import LANGUAGE_SESSION_KEY
-except:
-    LANGUAGE_SESSION_KEY = 'django_language'
+from django.utils.translation import LANGUAGE_SESSION_KEY
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
