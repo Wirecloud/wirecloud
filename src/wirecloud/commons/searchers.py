@@ -297,9 +297,9 @@ def get_available_search_engines():
     global _available_search_engines
 
     if _available_search_engines is None:
-        from wirecloud.catalogue.models import CatalogueResourceSearcher
+        from wirecloud.catalogue.searchers import CatalogueResourceSearcher
 
-        _available_search_engines = [GroupSearcher(), UserSearcher(), CatalogueResourceSearcher()]
+        _available_search_engines = [GroupSearcher(), UserSearcher(), CatalogueResourceSearcher(), WorkspaceSearcher()]
 
     return _available_search_engines
 
