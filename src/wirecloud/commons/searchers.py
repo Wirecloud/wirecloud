@@ -319,6 +319,7 @@ def get_available_search_engines():
 
     if _available_search_engines is None:
         from wirecloud.catalogue.searchers import CatalogueResourceSearcher
+        from wirecloud.platform.workspace.searchers import WorkspaceSearcher
 
         _available_search_engines = [GroupSearcher(), UserSearcher(), CatalogueResourceSearcher(), WorkspaceSearcher()]
 

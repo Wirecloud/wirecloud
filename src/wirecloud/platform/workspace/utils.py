@@ -327,6 +327,7 @@ def get_workspace_data(workspace, user):
     return {
         'id': "%s" % workspace.id,
         'name': workspace.name,
+        'public': workspace.public,
         'shared': workspace.is_shared(),
         'owner': workspace.creator.username,
         'removable': workspace.creator == user and (user_workspace is None or user_workspace.manager == ''),
