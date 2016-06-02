@@ -3181,7 +3181,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
-        self.assertEqual(response_data['username']['value'], 'user_with_workspaces')
+        self.assertEqual(response_data['platform']['username']['value'], 'user_with_workspaces')
 
     def test_platform_context_collection_get_allows_anonymous_requests(self):
 
@@ -3191,7 +3191,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
-        self.assertEqual(response_data['username']['value'], 'anonymous')
+        self.assertEqual(response_data['platform']['username']['value'], 'anonymous')
 
     def test_platform_preference_collection_get(self):
 
@@ -3974,7 +3974,7 @@ class AdministrationAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertTrue(isinstance(response_data, dict))
-        self.assertEqual(response_data['username']['value'], user)
+        self.assertEqual(response_data['platform']['username']['value'], user)
 
     def test_switch_user(self):
 

@@ -207,7 +207,7 @@ class BasicViewsAPI(WirecloudTestCase):
         response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response_data['username']['value'], 'user_with_workspaces')
+        self.assertEqual(response_data['platform']['username']['value'], 'user_with_workspaces')
 
         self.client.get(logout_url, HTTP_ACCEPT='application/xhtml+xml')
         for cookie in old_cookies.values():
@@ -219,7 +219,7 @@ class BasicViewsAPI(WirecloudTestCase):
         response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response_data['username']['value'], 'anonymous')
+        self.assertEqual(response_data['platform']['username']['value'], 'anonymous')
 
     def test_logout_maintains_language_setting(self):
 
@@ -241,7 +241,7 @@ class BasicViewsAPI(WirecloudTestCase):
         response = self.client.get(context_url, HTTP_ACCEPT='application/xhtml+xml')
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response_data['language']['value'], 'es')
+        self.assertEqual(response_data['platform']['language']['value'], 'es')
 
     def test_logout_obey_next_page_parameter(self):
 
