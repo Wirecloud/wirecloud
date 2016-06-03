@@ -167,19 +167,46 @@ if (window.StyledElements == null) {
     };
 
     /**
-     * Escapa los caracteres reservados en una expresión regular con el fin de que
-     * un trozo de texto se interprete literalmente, casando en la expresión regular
-     * exactamente con este y no con el patrón que representaría.
+     * Escapes a minimal set of characters (\, *, +, ?, |, {, [, (,), ^, $,.,
+     * #, and white space) by replacing them with their escape codes. This
+     * instructs the regular expression engine to interpret these characters
+     * literally rather than as metacharacters.
      *
-     * @param {String} text Texto que se quiere escapar.
+     * @param {String} text Text to be used as part of a regex
+     * @returns {String} Text to use in a regex
      *
-     * @return {String} Texto sin caracteres reservados
+     * @example
+     *
+     * var user_input = "Case inSensitive search";
+     * new RegExp(escapeRegExp(user_input), "i");
+     *
+     * var user_input = "RegExp with user input";
+     * new RegExp(escapeRegExp(user_input) + "... (OK|FAIL|ERROR)")
      */
     Utils.escapeRegExp = function escapeRegExp(text) {
         return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     };
 
+    // Temporal element used by escapeHTML
     var tmp_div = document.createElement('div');
+
+    /**
+     * Escapes a minimal set of characters (\, *, +, ?, |, {, [, (,), ^, $,.,
+     * #, and white space) by replacing them with their escape codes. this
+     * instructs the regular expression engine to interpret these characters
+     * literally rather than as metacharacters.
+     *
+     * @param {String} text Text to be used as part of a regex
+     * @returns {String} Text to use in a regex
+     *
+     * @example
+     *
+     * var user_input = "Case inSensitive search";
+     * new RegExp(escapeRegExp(user_input), "i");
+     *
+     * var user_input = "RegExp with user input";
+     * new RegExp(escapeRegExp(user_input) + "... (OK|FAIL|ERROR)")
+     */
     Utils.escapeHTML = function escapeHTML(text) {
         tmp_div.textContent = text;
         return tmp_div.innerHTML;

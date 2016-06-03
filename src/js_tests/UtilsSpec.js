@@ -90,12 +90,52 @@
         describe("escapeHTML(text)", function () {
             var escapeHTML = StyledElements.Utils.escapeHTML;
 
-            it("returns ", function () {
+            it("returns an unescaped string if the text parameter doesn't contain especial characters", function () {
                 expect(escapeHTML("hello world")).toBe("hello world");
             });
 
-            it("returns ", function () {
-                expect(escapeHTML("Copy & paste")).toBe("Copy &amp; paste");
+            it("returns an escaped string if the text parameter contains especial characters", function () {
+                expect(escapeHTML("<Copy & paste>")).toBe("&lt;Copy &amp; paste&gt;");
+            });
+        });
+
+        describe("escapeRegExp(text)", function () {
+            var escapeRegExp = StyledElements.Utils.escapeRegExp;
+
+            it("returns an unescaped string if the text parameter doesn't contain especial characters", function () {
+                expect(escapeRegExp("helloworld")).toBe("helloworld");
+            });
+
+            it("returns an escaped string if the text parameter contains especial characters", function () {
+                expect(escapeRegExp("[Copy] & paste+")).toBe("\\[Copy\\]\\ &\\ paste\\+");
+            });
+        });
+
+        describe("getRelativePosition(element1, element2)", function () {
+            var element1, element2, getRelativePosition = StyledElements.Utils.getRelativePosition;
+
+            beforeEach(function () {
+                element1 = document.createElement('div');
+                document.body.appendChild(element1);
+
+                element2 = document.createElement('div');
+                document.body.appendChild(element2);
+            });
+
+            afterEach(function () {
+                element1.remove();
+                element2.remove();
+            });
+
+            it("returns {x: 0, y: 0} when element1 and element2 are the same element", function () {
+                expect(getRelativePosition(element1, element1)).toEqual({x: 0, y: 0});
+            });
+
+            it ("returns the relative position when providing different values for element1 and element2", function () {
+                element2.style.marginTop = "20px";
+                element2.style.marginLeft = "10px";
+
+                expect(getRelativePosition(element2, element1)).toEqual({x: 10, y: 20});
             });
         });
 
