@@ -35,54 +35,6 @@
 
     describe("Styled Element Utils - Object helpers", function () {
 
-        describe("isEmpty(value)", function () {
-            var isEmpty;
-
-            beforeAll(function () {
-                isEmpty = StyledElements.Utils.isEmpty;
-            });
-
-            it("returns true if value is null or undefined", function () {
-                expect(isEmpty(null)).toBeTruthy();
-                expect(isEmpty()).toBeTruthy();
-            });
-
-            it("returns true if value is boolean", function () {
-                expect(isEmpty(new Boolean(true))).toBeTruthy();
-                expect(isEmpty(new Boolean(false))).toBeTruthy();
-            });
-
-            it("returns true if value is number", function () {
-                expect(isEmpty(new Number(-1))).toBeTruthy();
-                expect(isEmpty(new Number(0))).toBeTruthy();
-                expect(isEmpty(new Number(1))).toBeTruthy();
-            });
-
-            it("returns true if value is string and string.length is 0", function () {
-                expect(isEmpty(new String(""))).toBeTruthy();
-            });
-
-            it("returns false if value is string and string.length is greater than 0", function () {
-                expect(isEmpty(new String("hello world"))).toBeFalsy();
-            });
-
-            it("returns true if value is array and array.length is 0", function () {
-                expect(isEmpty([])).toBeTruthy();
-            });
-
-            it("returns false if value is array and array.length is greater than 0", function () {
-                expect(isEmpty([1, 2, 3])).toBeFalsy();
-            });
-
-            it("returns true if value is object and object.keys.length is 0", function () {
-                expect(isEmpty({})).toBeTruthy();
-            });
-
-            it("returns false if value is object and object.keys.length is greater than 0", function () {
-                expect(isEmpty({a: 1, b: 2})).toBeFalsy();
-            });
-        });
-
         describe("clone(object, deep)", function () {
             var clone = StyledElements.Utils.clone;
 
@@ -133,6 +85,87 @@
                 expect(result.c).not.toBe(original.c);
                 expect(result.d).not.toBe(original.d);
             });
+        });
+
+        describe("escapeHTML(text)", function () {
+            var escapeHTML = StyledElements.Utils.escapeHTML;
+
+            it("returns ", function () {
+                expect(escapeHTML("hello world")).toBe("hello world");
+            });
+
+            it("returns ", function () {
+                expect(escapeHTML("Copy & paste")).toBe("Copy &amp; paste");
+            });
+        });
+
+        describe("isEmpty(value)", function () {
+            var isEmpty;
+
+            beforeAll(function () {
+                isEmpty = StyledElements.Utils.isEmpty;
+            });
+
+            it("returns true if value is null or undefined", function () {
+                expect(isEmpty(null)).toBeTruthy();
+                expect(isEmpty()).toBeTruthy();
+            });
+
+            it("returns true if value is boolean", function () {
+                expect(isEmpty(new Boolean(true))).toBeTruthy();
+                expect(isEmpty(new Boolean(false))).toBeTruthy();
+            });
+
+            it("returns true if value is number", function () {
+                expect(isEmpty(new Number(-1))).toBeTruthy();
+                expect(isEmpty(new Number(0))).toBeTruthy();
+                expect(isEmpty(new Number(1))).toBeTruthy();
+            });
+
+            it("returns true if value is string and string.length is 0", function () {
+                expect(isEmpty(new String(""))).toBeTruthy();
+            });
+
+            it("returns false if value is string and string.length is greater than 0", function () {
+                expect(isEmpty(new String("hello world"))).toBeFalsy();
+            });
+
+            it("returns true if value is array and array.length is 0", function () {
+                expect(isEmpty([])).toBeTruthy();
+            });
+
+            it("returns false if value is array and array.length is greater than 0", function () {
+                expect(isEmpty([1, 2, 3])).toBeFalsy();
+            });
+
+            it("returns true if value is object and object.keys.length is 0", function () {
+                expect(isEmpty({})).toBeTruthy();
+            });
+
+            it("returns false if value is object and object.keys.length is greater than 0", function () {
+                expect(isEmpty({a: 1, b: 2})).toBeFalsy();
+            });
+        });
+
+        describe("normalizeKey(event)", function () {
+            var normalizeKey = StyledElements.Utils.normalizeKey;
+
+            it("returns Unidentified for unknown keyCodes", function () {
+                expect(normalizeKey({keyCode: 0})).toBe("Unidentified");
+            });
+
+            it("returns a translated value for known keyCodes", function () {
+                expect(normalizeKey({keyCode: 8})).toBe("Backspace");
+            });
+
+            it("returns key value if present", function () {
+                expect(normalizeKey({key: "Escape"})).toBe("Escape");
+            });
+
+            it("returns fixed key value if needed", function () {
+                expect(normalizeKey({key: "Left"})).toBe("ArrowLeft");
+            });
+
         });
 
         describe("merge(object, ...sources)", function () {
