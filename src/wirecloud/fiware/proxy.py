@@ -20,13 +20,12 @@
 from io import BytesIO
 import time
 
-from openstack_token_manager import OpenstackTokenManager
-
 from django.conf import settings
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
 
 from wirecloud.fiware import FIWARE_LAB_CLOUD_SERVER
+from wirecloud.fiware.openstack_token_manager import OpenstackTokenManager
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 from wirecloud.proxy.utils import ValidationError
 
