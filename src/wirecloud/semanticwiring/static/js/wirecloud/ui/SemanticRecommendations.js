@@ -101,16 +101,6 @@
     };
 
     /**
-     * is empty object?
-     */
-    var isEmpty = function isEmpty(obj) {
-        for(var key in obj) {
-            return false;
-        }
-        return true;
-    };
-
-    /**
      * Get Recommendations
      */
     var getRecommendations = function getRecommendations(anchor, widgetId, anchorId, isEmphasized) {
@@ -131,7 +121,7 @@
                         anchorListFiltered[i] = anchorList[i];
                     }
                 }
-                if (!isEmpty(anchorListFiltered) && (mainAnchorRef < keyValues[recTag])) {
+                if (!Wirecloud.Utils.isEmpty(anchorListFiltered) && (mainAnchorRef < keyValues[recTag])) {
                     mainAnchorRef = keyValues[recTag];
                     mainAnchorClass = recTag;
                 }
@@ -275,7 +265,7 @@
                         delete this.anchorsInvolved[mc][entity][endpoint];
                     }
                 }
-                if (isEmpty(this.anchorsInvolved[mc][entity])) {
+                if (Wirecloud.Utils.isEmpty(this.anchorsInvolved[mc][entity])) {
                     delete this.anchorsInvolved[mc][entity];
                 }
             }
