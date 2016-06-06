@@ -1381,7 +1381,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
                 'widget': 'Wirecloud/Test/1.0',
             }
             response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 201)
             response_data = json.loads(response.content.decode('utf-8'))
             self.assertTrue(isinstance(response_data, dict))
         check_cache_is_purged(self, 1, add_iwidget_to_workspace)

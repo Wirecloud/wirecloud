@@ -65,7 +65,7 @@ class IWidgetCollection(Resource):
             iwidget = SaveIWidget(iwidget, request.user, tab, initial_variable_values)
             iwidget_data = get_iwidget_data(iwidget, tab.workspace, user=request.user)
 
-            return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8', status=201)
         except (CatalogueResource.DoesNotExist, Widget.DoesNotExist) as e:
             msg = _('refered widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
             return build_error_response(request, 422, msg)
