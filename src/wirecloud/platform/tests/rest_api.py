@@ -1123,6 +1123,19 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {'name': 'rest_api_test'}
         check_not_found_response(self, 'post', url, json.dumps(data))
 
+    def test_tab_collection_post_missing_name(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {}
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(isinstance(response_data, dict))
+
     def test_tab_collection_post_conflict(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})

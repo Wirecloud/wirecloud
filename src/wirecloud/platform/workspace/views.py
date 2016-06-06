@@ -267,7 +267,7 @@ class TabCollection(Resource):
         data = parse_json_request(request)
 
         if 'name' not in data:
-            return build_error_response(request, 400, _('Malformed tab JSON: expecting tab name.'))
+            return build_error_response(request, 422, _('Malformed tab JSON: expecting tab name.'))
 
         tab_name = data['name']
         if not (request.user.is_superuser or workspace.creator == request.user):
