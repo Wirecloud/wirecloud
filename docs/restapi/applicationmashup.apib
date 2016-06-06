@@ -238,7 +238,7 @@ This action will return a subset of the fields returned by the [Get workspace de
             [
                 {
                     "description": "My dashboard",
-                    "id": 1,
+                    "id": "1",
                     "lastmodified": 1464187437041,
                     "longdescription": "",
                     "name": "workspace",
@@ -248,7 +248,7 @@ This action will return a subset of the fields returned by the [Get workspace de
                 },
                 {
                     "description": "A public dashboard",
-                    "id": 20,
+                    "id": "20",
                     "lastmodified": 1461673370860,
                     "longdescription": "A dashboard description using **Markdown** _Syntax_",
                     "name": "public-workspace",
@@ -275,7 +275,7 @@ This action will return a subset of the fields returned by the [Get workspace de
             [
                 {
                     "description": "A public dashboard",
-                    "id": 20,
+                    "id": "20",
                     "lastmodified": 1461673370860,
                     "longdescription": "A dashboard description using **Markdown** _Syntax_",
                     "name": "public-workspace",
@@ -328,7 +328,7 @@ If everything goes well and the workspace is created, this action will return th
                 "description": "",
                 "empty_params": [],
                 "extra_prefs": {},
-                "id": 81,
+                "id": "81",
                 "lastmodified": 1464187437041,
                 "longdescription": "",
                 "name": "test",
@@ -341,8 +341,8 @@ If everything goes well and the workspace is created, this action will return th
                 "tabs": [
                     {
                         "visible": true,
-                        "iwidgets":[],
-                        "id":84,
+                        "iwidgets": [],
+                        "id": "84",
                         "name": "Tab",
                         "preferences": {}
                     }
@@ -373,7 +373,7 @@ If everything goes well and the workspace is created, this action will return th
                 "description": "",
                 "empty_params": [],
                 "extra_prefs": {},
-                "id": 50,
+                "id": "50",
                 "lastmodified": 1464187437041,
                 "longdescription": "",
                 "name": "example",
@@ -392,7 +392,7 @@ If everything goes well and the workspace is created, this action will return th
                                 "icon_top": -1,
                                 "variables": {},
                                 "minimized": false,
-                                "id": 311,
+                                "id": "311",
                                 "height": 28,
                                 "zIndex": 0,
                                 "width": 6,
@@ -409,7 +409,7 @@ If everything goes well and the workspace is created, this action will return th
                                 "icon_top": -1,
                                 "variables": {},
                                 "minimized": false,
-                                "id": 312,
+                                "id": "312",
                                 "height": 28,
                                 "zIndex": 0,
                                 "width": 6,
@@ -420,7 +420,7 @@ If everything goes well and the workspace is created, this action will return th
                                 "left": 7
                             }
                         ],
-                        "id": 100,
+                        "id": "100",
                         "name": "Tab",
                         "preferences": {}
                     }
@@ -495,7 +495,7 @@ If everything goes well and the workspace is created, this action will return th
                 "description": "",
                 "empty_params": [],
                 "extra_prefs": {},
-                "id": 200,
+                "id": "200",
                 "lastmodified": 1464207200516,
                 "longdescription": "",
                 "name": "example",
@@ -514,7 +514,7 @@ If everything goes well and the workspace is created, this action will return th
                                 "icon_top": -1,
                                 "variables": {},
                                 "minimized": false,
-                                "id": 313,
+                                "id": "313",
                                 "height": 28,
                                 "zIndex": 0,
                                 "width": 6,
@@ -531,7 +531,7 @@ If everything goes well and the workspace is created, this action will return th
                                 "icon_top": -1,
                                 "variables": {},
                                 "minimized": false,
-                                "id": 314,
+                                "id": "314",
                                 "height": 28,
                                 "zIndex": 0,
                                 "width": 6,
@@ -542,7 +542,7 @@ If everything goes well and the workspace is created, this action will return th
                                 "left": 7
                             }
                         ],
-                        "id": 101,
+                        "id": "101",
                         "name": "Tab",
                         "preferences": {}
                     }
@@ -561,7 +561,7 @@ If everything goes well and the workspace is created, this action will return th
 
 Returned fields:
 
-- `id`: Id of the workspace.
+- `id` (string): Id of the workspace.
 - `name` (string): Name of the workspace.
 - `owner` (string): Username of the workspace's owner.
 - `description` (string): Short description in plain text describing the workspace.
@@ -710,12 +710,12 @@ Workspace attributes that can be modified:
 
             {
                "operators":{
-                    "0":{
+                    "0": {
                         "name": "UPM/Operator/0.1",
                         "id": "0"
                     }
                },
-               "connections":[
+               "connections": [
                     {
                         "source":{
                             "type": "iwidget",
@@ -784,7 +784,7 @@ representation format (e.g. JSON).
     + Body
 
             {
-               "id": 3,
+               "id": "3",
                "name": "Tab 2"
             }
 

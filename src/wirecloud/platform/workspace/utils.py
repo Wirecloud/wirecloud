@@ -325,7 +325,7 @@ def get_workspace_data(workspace, user):
         longdescription = workspace.description
 
     return {
-        'id': workspace.id,
+        'id': "%s" % workspace.id,
         'name': workspace.name,
         'shared': workspace.is_shared(),
         'owner': workspace.creator.username,
@@ -520,7 +520,7 @@ def get_global_workspace_data(workspace, user):
 
 def get_tab_data(tab):
     return {
-        'id': tab.id,
+        'id': "%s" % tab.id,
         'name': tab.name,
         'visible': tab.visible,
         'preferences': get_tab_preference_values(tab),
@@ -530,7 +530,7 @@ def get_tab_data(tab):
 def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
 
     data_ret = {
-        'id': iwidget.id,
+        'id': "%s" % iwidget.id,
         'title': iwidget.name,
         'tab': iwidget.tab.id,
         'layout': iwidget.layout,
