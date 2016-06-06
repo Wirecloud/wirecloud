@@ -29,7 +29,7 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 __test__ = False
 
 
-class UserSearcherTestCase(WirecloudTestCase):
+class SearchAPITestCase(WirecloudTestCase):
 
     fixtures = ('user_search_test_data',)
     tags = ('wirecloud-search-api', 'wirecloud-noselenium')

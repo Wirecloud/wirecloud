@@ -27,7 +27,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group, User
 from whoosh.fields import BOOLEAN, ID, NGRAM, SchemaClass, TEXT
 from whoosh.index import create_in, exists_in, LockError, open_dir
-from whoosh.qparser import QueryParser
+from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.reading import MultiReader
 from whoosh.writing import IndexWriter as WhooshIndexWriter
 
@@ -112,11 +112,11 @@ class IndexWriter(IndexManager):
         return self.model
 
 
-def build_fields_adapter(index):
+def build_fields_adapter(schema):
 
     bool_fields = []
-    for fieldname in index.schema.stored_names():
-        if isinstance(index.schema[fieldname], BOOLEAN):
+    for fieldname in schema.stored_names():
+        if isinstance(schema[fieldname], BOOLEAN):
             bool_fields.append(fieldname)
 
     def adapter(hit):
@@ -130,18 +130,39 @@ def build_fields_adapter(index):
 
 class BaseSearcher(IndexWriter):
 
-    fieldname = 'content'
+    default_search_fields = ('content',)
 
-    def search(self, querytext, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+
+        schema = self.schema_class()
+        self.result_adapter = build_fields_adapter(schema)
+        if len(self.default_search_fields) == 1:
+            self.parser = QueryParser(self.default_search_fields[0], schema)
+        elif len(self.default_search_fields) > 1:
+            self.parser = MultifieldParser(self.default_search_fields, schema)
+        else:
+            raise ValueError('invalid value for the default_search_fields attribute: %s' % self.default_search_fields)
+
+        super(BaseSearcher, self).__init__(*args, **kwargs)
+
+    def search(self, querytext):
         ix = self.open_index()
 
-        user_q = QueryParser(self.fieldname, ix.schema).parse(querytext)
+        user_q = self.parser.parse(querytext)
         result = {}
 
         with self.searcher() as searcher:
             hits = searcher.search(user_q)
-            fields_adapter = build_fields_adapter(ix)
-            result.update({'results': [fields_adapter(hit) for hit in hits]})
+
+            if querytext and hits.is_empty():
+                corrected = searcher.correct_query(user_q, querytext)
+
+                if corrected.query != user_q:
+                    querytext = corrected.string
+                    result['corrected_q'] = querytext
+                    hits = searcher.search(corrected.query)
+
+            result.update({'results': [self.result_adapter(hit) for hit in hits]})
 
         return result
 
