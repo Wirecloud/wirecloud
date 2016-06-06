@@ -37,16 +37,16 @@ class CatalogueResourceSchema(fields.SchemaClass):
 
     pk = fields.ID(stored=True, unique=True)
     vendor_name = fields.ID
-    name = fields.TEXT(stored=True)
+    name = fields.TEXT(stored=True, spelling=True)
     vendor = fields.TEXT(stored=True, spelling=True)
     version = fields.TEXT(stored=True)
     template_uri = fields.STORED
     type = fields.TEXT(stored=True)
     creation_date = fields.DATETIME
-    title = fields.TEXT(stored=True, spelling=True)
+    title = fields.TEXT(stored=True, phrase=True, spelling=True)
     image = fields.STORED
     smartphoneimage = fields.STORED
-    description = fields.TEXT(stored=True, spelling=True)
+    description = fields.TEXT(stored=True, phrase=True, spelling=True)
     wiring = fields.TEXT(spelling=True)
     public = fields.BOOLEAN
     users = fields.KEYWORD(commas=True)
@@ -59,6 +59,7 @@ class CatalogueResourceSearcher(BaseSearcher):
     indexname = 'resource'
     model = CatalogueResource
     schema_class = CatalogueResourceSchema
+    default_search_fields = ('vendor', 'name', 'version', 'type', 'title', 'description', 'wiring')
 
     def build_compatible_fields(self, resource):
 
@@ -71,12 +72,6 @@ class CatalogueResourceSearcher(BaseSearcher):
 
         for endpoint in resource_info['wiring']['outputs']:
             endpoint_descriptions += endpoint['description'] + ' '
-
-        content = ' '.join([resource_info['description'],
-                            resource_info['title'],
-                            resource.short_name,
-                            resource.vendor,
-                            endpoint_descriptions])
 
         fields = {
             'pk': '%s' % resource.pk,
@@ -95,7 +90,6 @@ class CatalogueResourceSearcher(BaseSearcher):
             'smartphoneimage': resource_info['smartphoneimage'],
             'users': ', '.join(resource.users.all().values_list('username', flat=True)),
             'groups': ', '.join(resource.groups.all().values_list('name', flat=True)),
-            'content': content,
         }
 
         return fields

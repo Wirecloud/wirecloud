@@ -28,7 +28,7 @@ This section describes all the requirements of a basic WireCloud installation. *
     - user-agents
     - regex
     - markdown
-    - whoosh 2.5.6+
+    - whoosh 2.7.2+
     - pycrypto
     - pyScss 1.3.4+
     - Pygments

@@ -47,6 +47,9 @@ class CatalogueSearchTestCase(WirecloudTestCase):
     fixtures = ('catalogue_search_data',)
     tags = ('wirecloud-catalogue', 'wirecloud-catalogue-search', 'wirecloud-noselenium', 'wirecloud-catalogue-noselenium')
 
+    WIRECLOUD_RESULTS = {'Wirecloud/TestOperator/2.0', 'Wirecloud/test-mashup/1.0.5', 'Wirecloud/Book-Reader/1.5', 'Wirecloud/Test/2.5', 'CoNWeT-Lab/Clock_Now/1.11'}
+    MASHABLE_RESULTS = {'Wirecloud/test-mashup/1.0', 'Wirecloud/Test/2.5', 'CoNWeT/test-mashup-dependencies/1.5.5'}
+
     @classmethod
     def setUpClass(cls):
 
@@ -317,52 +320,82 @@ class CatalogueSearchTestCase(WirecloudTestCase):
                 self.assertEqual(result['image'], '')
                 self.assertEqual(result['smartphoneimage'], '')
 
-    def test_basic_search_with_query_correction(self):
+    def test_basic_search_letter_typo_correction(self):
 
         self.client.login(username='myuser', password='admin')
 
+        # Search using a word with a incorrect letter: wercloud (full word: wirecloud)
         result = self.client.get(self.base_url + '?q=wercloud')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['corrected_q'], 'wirecloud')
-        self.assertEqual(result_json['pagelen'], 4)
+        self.assertEqual(result_json['pagelen'], len(self.WIRECLOUD_RESULTS))
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['results'][0]['version'], "1.5")
-        self.assertEqual(len(result_json['results'][0]['others']), 0)
+        self.assertEqual(set([component['uri'] for component in result_json['results']]), self.WIRECLOUD_RESULTS)
 
+    def test_basic_search_unicode_letter(self):
+
+        self.client.login(username='myuser', password='admin')
+
+        # Search using a word with a incorrect letter: wercloud (full word: wirecloud)
+        result = self.client.get(self.base_url + '?q=wírecloud')
+        result_json = json.loads(result.content.decode('utf-8'))
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result_json['corrected_q'], 'wirecloud')
+        self.assertEqual(result_json['pagelen'], len(self.WIRECLOUD_RESULTS))
+        self.assertEqual(result_json['pagelen'], len(result_json['results']))
+        self.assertEqual(set([component['uri'] for component in result_json['results']]), self.WIRECLOUD_RESULTS)
+
+    def test_basic_search_missing_letter_correction(self):
+
+        self.client.login(username='myuser', password='admin')
+
+        # Search using a word with a missing letter: mashble (full word: mashable)
         result = self.client.get(self.base_url + '?q=mashble')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result_json['corrected_q'], 'mashable')
-        self.assertEqual(result_json['pagelen'], 3)
+        self.assertEqual(result_json['pagelen'], len(self.MASHABLE_RESULTS))
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['results'][0]['version'], "1.5.5")
+        self.assertEqual(set([component['uri'] for component in result_json['results']]), self.MASHABLE_RESULTS)
 
-    def test_advanced_search_for_prefixes_and_suffixes(self):
+    def test_basic_search_partial_word_correction(self):
 
         self.client.login(username='myuser', password='admin')
 
-        result = self.client.get(self.base_url + '?q=wire')
+        # Search using a partial word: ashabl (full word: mashable)
+        # Whoosh uses maxdist = 2 by default
+        result = self.client.get(self.base_url + '?q=ashabl')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(result_json['pagelen'], 4)
+        self.assertEqual(result_json['corrected_q'], 'mashable')
+        self.assertEqual(result_json['pagelen'], len(self.MASHABLE_RESULTS))
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['results'][0]['vendor'], "Wirecloud")
-        self.assertEqual(result_json['results'][0]['version'], "1.5")
-        self.assertEqual(len(result_json['results'][0]['others']), 0)
+        self.assertEqual(set([component['uri'] for component in result_json['results']]), self.MASHABLE_RESULTS)
 
-        result = self.client.get(self.base_url + '?q=shu')
+    def test_advanced_search_prefix(self):
+
+        self.client.login(username='myuser', password='admin')
+
+        # Search using a prefix: wire (full word: wirecloud)
+        result = self.client.get(self.base_url + '?q=wire*')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(result_json['pagelen'], 3)
+        self.assertNotIn('corrected_q', result_json)
+        self.assertEqual(result_json['pagelen'], len(self.WIRECLOUD_RESULTS))
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
-        self.assertEqual(result_json['results'][0]['title'], "Mashup Sky Weather")
-        self.assertEqual(result_json['results'][0]['version'], "3.0")
-        self.assertEqual(len(result_json['results'][0]['others']), 0)
+        self.assertEqual(set([component['uri'] for component in result_json['results']]), self.WIRECLOUD_RESULTS)
 
-        result = self.client.get(self.base_url + '?q=weather+inter')
+    def test_advanced_search_phrase_with_prefix(self):
+
+        self.client.login(username='myuser', password='admin')
+
+        # Search a full word: weather
+        # Jointly with a prefix: inter (full word: interface)
+        result = self.client.get(self.base_url + '?q=weather+inter*')
         result_json = json.loads(result.content.decode('utf-8'))
         self.assertEqual(result.status_code, 200)
+        self.assertNotIn('corrected_q', result_json)
         self.assertEqual(result_json['pagelen'], 1)
         self.assertEqual(result_json['pagelen'], len(result_json['results']))
         self.assertEqual(result_json['results'][0]['version'], "1.5.5")

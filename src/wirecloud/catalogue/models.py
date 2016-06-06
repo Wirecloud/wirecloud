@@ -32,7 +32,7 @@ from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.query import And, Every, Or, Term
 from whoosh.sorting import FieldFacet, FunctionFacet
 
-from wirecloud.commons.searchers import get_search_engine, patch_expand_prefix
+from wirecloud.commons.searchers import get_search_engine
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
 from wirecloud.commons.utils.version import Version
@@ -235,26 +235,22 @@ def search(querytext, request, pagenum=1, maxresults=30, staff=False, scope=None
 
     with search_engine.searcher() as searcher:
 
-        fieldnames = ['description', 'vendor', 'title', 'wiring']
-        query_p = QueryParser('content', searcher.schema)
-        multif_p = MultifieldParser(fieldnames, searcher.schema)
+        parser = MultifieldParser(search_engine.default_search_fields, searcher.schema)
 
-        user_q = querytext and query_p.parse(querytext) or Every()
+        user_q = querytext and parser.parse(querytext) or Every()
         user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
         hits = searcher.search(user_q, limit=(pagenum * maxresults) + 1, **search_kwargs)
 
         if querytext and hits.is_empty():
 
-            patch_expand_prefix(searcher)
-            correction_q = multif_p.parse(querytext)
+            correction_q = parser.parse(querytext)
             corrected = searcher.correct_query(correction_q, querytext)
 
             if corrected.query != correction_q:
                 querytext = corrected.string
                 search_result['corrected_q'] = querytext
 
-                user_q = query_p.parse(querytext)
-                user_q, search_kwargs = build_search_kwargs(user_q, request, scope, staff, orderby)
+                user_q, search_kwargs = build_search_kwargs(corrected.query, request, scope, staff, orderby)
                 hits = searcher.search(user_q, limit=(pagenum * maxresults), **search_kwargs)
 
         search_engine.prepare_search_response(search_result, hits, pagenum, maxresults)

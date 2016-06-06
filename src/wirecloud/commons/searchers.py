@@ -316,16 +316,3 @@ def get_search_engine(indexname):
             return s
 
     return None
-
-
-def patch_expand_prefix(searcher):
-
-    def expand_prefix(self, fieldname, prefix):
-        prefix = self._text_to_bytes(fieldname, prefix)
-        for fn, text in self.terms_from(fieldname, prefix):
-            if fn != fieldname or not text.startswith(prefix):
-                return
-            yield text
-
-    if searcher.ixreader.__class__ == MultiReader:
-        searcher.ixreader.expand_prefix = types.MethodType(expand_prefix, searcher.ixreader)
