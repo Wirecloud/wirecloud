@@ -22,9 +22,8 @@ from __future__ import unicode_literals
 import os.path
 import re
 
-from django.conf import settings
 from django.http import Http404
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from mock import MagicMock, Mock, patch
 
 from wirecloud.platform import plugins
@@ -36,6 +35,7 @@ from wirecloud.platform.widget.views import serve_showcase_media
 __test__ = False
 
 
+@override_settings(FORCE_DOMAIN='example.com', FORCE_PROTO='http', WIRECLOUD_PLUGINS=())
 @patch('wirecloud.platform.core.plugins.get_version_hash', new=Mock(return_value='v1'))
 class CodeTransformationTestCase(TestCase):
 
@@ -45,33 +45,12 @@ class CodeTransformationTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        if hasattr(settings, 'FORCE_DOMAIN'):
-            cls.old_FORCE_DOMAIN = settings.FORCE_DOMAIN
-        if hasattr(settings, 'FORCE_PROTO'):
-            cls.old_FORCE_PROTO = settings.FORCE_PROTO
-
-        settings.FORCE_DOMAIN = 'example.com'
-        settings.FORCE_PROTO = 'http'
-        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', None)
-
-        settings.WIRECLOUD_PLUGINS = ()
         plugins.clear_cache()
 
         super(CodeTransformationTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
-        if hasattr(cls, 'old_FORCE_DOMAIN'):
-            settings.FORCE_DOMAIN = cls.old_FORCE_DOMAIN
-        else:
-            del settings.FORCE_DOMAIN
-
-        if hasattr(cls, 'old_FORCE_PROTO'):
-            settings.FORCE_PROTO = cls.old_FORCE_PROTO
-        else:
-            del settings.FORCE_PROTO
-
-        settings.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
         plugins.clear_cache()
 
         super(CodeTransformationTestCase, cls).tearDownClass()
@@ -205,6 +184,7 @@ class WidgetModuleTestCase(TestCase):
             self.assertRaises(Http404, serve_showcase_media, request, 'Wirecloud', 'Test', '1.0', 'notfound.js')
             self.assertEqual(build_downloadfile_response_mock.call_count, 1)
 
+    @override_settings(USE_XSENDFILE=False)
     def test_path_outside_widget_folder(self):
 
         request, get_object_or_404_mock, build_downloadfile_response_mock = self.build_mocks()
@@ -212,16 +192,18 @@ class WidgetModuleTestCase(TestCase):
         response_mock = MagicMock()
         response_mock.status_code = 302
         headers = {'Location': 'manage.py'}
+
         def set_header(key, value):
             headers[key] = value
+
         def get_header(key):
             return headers[key]
+
         response_mock.__setitem__.side_effect = set_header
         response_mock.__getitem__.side_effect = get_header
         build_downloadfile_response_mock.return_value = response_mock
 
-        with self.settings(USE_XSENDFILE=False):
-            with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock):
-                response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'test/../../../../../../manage.py')
-                self.assertEqual(response.status_code, 302)
-                self.assertNotIn('..', response['Location'])
+        with patch.multiple('wirecloud.platform.widget.views', get_object_or_404=get_object_or_404_mock, build_downloadfile_response=build_downloadfile_response_mock):
+            response = serve_showcase_media(request, 'Wirecloud', 'Test', '1.0', 'test/../../../../../../manage.py')
+            self.assertEqual(response.status_code, 302)
+            self.assertNotIn('..', response['Location'])
