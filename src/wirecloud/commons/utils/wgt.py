@@ -143,26 +143,36 @@ class WgtFile(object):
                 outfile.write(self._zip.read(name))
                 outfile.close()
 
-    def update_config(self, _file, contents):
+    def update_config(self, contents):
         # generate a temp file
         tmpfd, tmpname = tempfile.mkstemp(dir=".")
         os.close(tmpfd)
 
+        # Zip File
+        _file = self._zip.fp
+
+        # Write zip file contents to tempfile
         f = open(tmpname, "wb")
         _file.seek(0)
         f.write(_file.read())
         f.close()
 
+        # Copy every file from the original zipfile to the new one
+        # excect for the config.xml file
         filename = 'config.xml'
         with zipfile.ZipFile(tmpname, 'a') as zin:
             with zipfile.ZipFile(self._zip.fp, 'a') as zout:
                 zout.comment = self._zip.comment # preserve the comment
+
                 for item in self._zip.infolist():
+                    # Copy new config.xml contents
                     if item.filename == filename:
                         zout.writestr(item, contents)
+                    # Copy original files
                     else:
                         zout.writestr(item, zin.read(item.filename))
 
+        # Set tempfile as new ZipFile object
         self._zip = zipfile.ZipFile(self._zip.fp)
         os.remove(tmpname)
 

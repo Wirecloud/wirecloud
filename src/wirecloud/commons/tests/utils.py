@@ -27,7 +27,7 @@ import django
 from django.http import Http404, UnreadablePostError
 from django.test import TestCase
 from django.test.utils import override_settings
-from mock import DEFAULT, patch, Mock
+from mock import DEFAULT, patch, Mock, ANY
 
 from wirecloud.commons.exceptions import ErrorResponse
 from wirecloud.commons.utils.html import clean_html, filter_changelog
@@ -360,6 +360,22 @@ class WGTTestCase(TestCase):
 
         with self.assertRaises(ValueError):
             self.build_simple_wgt(other_files=('/invalid3.html',))
+
+    @patch('wirecloud.commons.utils.wgt.os', autospec = True)
+    @patch('wirecloud.commons.utils.wgt.open', create = True)
+    @patch('wirecloud.commons.utils.wgt.tempfile')
+    def test_update_config(self, temp_mock, open_mock, os_mock):
+        os_mock.path.normpath = os.path.normpath
+        os_mock.path.exists.return_value = False
+        os_mock.sep = '/'
+        wgt_file = self.build_simple_wgt()
+        tmp_file = wgt_file._zip.fp
+        with patch('wirecloud.commons.utils.wgt.zipfile.ZipFile.writestr', autospec = True) as zip_write_mock:
+            temp_mock.mkstemp.return_value = [1, tmp_file]
+            wgt_file.update_config(b'test')
+            self.assertEqual(zip_write_mock.called, True)
+            zip_write_mock.assert_any_call(ANY, ANY, 'test')
+            os_mock.remove.assert_called_once_with(tmp_file)
 
 
 class HTTPUtilsTestCase(TestCase):

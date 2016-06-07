@@ -190,7 +190,7 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
     if resource_info['version'].endswith('-dev'):
         resource_info['version'] += user.username
         template_string = write_json_description(resource_info)
-        wgt_file.update_config(file, template_string)
+        wgt_file.update_config(template_string)
 
     resource_id = (
         resource_info['vendor'],
