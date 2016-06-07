@@ -25,7 +25,9 @@
  */
 
 var dependencies = [
-    'wirecloud/commons/static/js/lib/moment-with-locales.min.js'
+    'wirecloud/commons/static/js/lib/moment-with-locales.min.js',
+    'js_tests/es6-promise.js',
+    'js_tests/es6-symbol.js'
 ];
 
 var styledElementsFiles = [

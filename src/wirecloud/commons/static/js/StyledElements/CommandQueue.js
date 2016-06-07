@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,80 +19,110 @@
  *
  */
 
-/* global StyledElements */
+/* globals Promise, StyledElements, Symbol */
 
 (function () {
 
     "use strict";
 
     /**
-     * @experimental
-     *
-     * Permite ejecutar secuencialmente distintos comandos. Dado que javascript no
-     * tiene un interfaz para manejo de hilos, esto realmente sólo es necesario en
-     * los casos en los que la concurrencia provenga a través de alguno de los
-     * mecanismos de señales soportados por javascript (de momento, estos son los
-     * eventos, los temporizadores y las peticiones asíncronas mediante el objeto
-     * XMLHttpRequest).
+     * Creates an asyncrhonous FIFO queue.
      */
-    var CommandQueue = function CommandQueue(context, initFunc, stepFunc) {
-        var running = false;
-        var elements = [];
-        var step = 0;
-        var stepTimes = null;
+    var CommandQueue = function CommandQueue(context, callback, stepFunc) {
+        this[_attrs.elements] = [];
+        this[_attrs.running] = false;
+        this[_attrs.step] = 0;
+        this[_attrs.stepTimes] = null;
 
-        var doStep = function doStep() {
-            if (stepFunc(step, context)) {
-                var timeDiff = stepTimes[step] - (new Date()).getTime();
-                if (timeDiff < 0) {
-                    timeDiff = 0;
-                }
-
-                step++;
-                setTimeout(doStep, timeDiff);
-            } else {
-                doInit();
+        Object.defineProperties(this, {
+            callback: {
+                value: callback
+            },
+            context: {
+                value: context
+            },
+            running: {
+                get: running_getter
+            },
+            stepFunc: {
+                value: stepFunc
             }
-        };
+        });
+    };
 
-        var doInit = function doInit() {
-            var command;
-            do {
-                command = elements.shift();
-            } while (command !== undefined && !(stepTimes = initFunc(context, command)));
+    /**
+     * Adds a new command into this queue
+     *
+     * @param command command to add into the queue
+     */
+    CommandQueue.prototype.addCommand = function addCommand(command) {
+        if (command === undefined) {
+            return;
+        }
 
-            if (command !== undefined) {
-                step = 0;
-                var timeDiff = stepTimes[step] - (new Date()).getTime();
-                if (timeDiff < 0) {
-                    timeDiff = 0;
-                }
-                setTimeout(doStep, timeDiff);
-            } else {
-                running = false;
+        this[_attrs.elements].push(command);
+
+        if (!this.running) {
+            this[_attrs.running] = true;
+            doInit.call(this);
+        }
+    };
+
+    var doStep = function doStep() {
+        var cont;
+
+        try {
+            cont = this.stepFunc(this[_attrs.step], this.context);
+        } catch (e) {
+            doInit.call(this);
+        }
+
+        if (cont) {
+            var timeDiff = this[_attrs.stepTimes][this[_attrs.step]] - (new Date()).getTime();
+            if (timeDiff < 0) {
+                timeDiff = 0;
             }
-        };
 
-        /**
-         * Añade un comando a la cola de procesamiento. El comando será procesado
-         * despues de que se procesen todos los comandos añadidos anteriormente.
-         *
-         * @param command comando a añadir a la cola de procesamiento. El tipo de
-         * este párametro tiene que ser compatible con las funciones initFunc y
-         * stepFunc pasadas en el constructor.
-         */
-        this.addCommand = function addCommand(command) {
-            if (command === undefined) {
-                return;
+            this[_attrs.step]++;
+            setTimeout(doStep.bind(this), timeDiff);
+        } else {
+            doInit.call(this);
+        }
+    };
+
+    var doInit = function doInit() {
+        var command, action, timeDiff;
+
+        do {
+            command = this[_attrs.elements].shift();
+        } while (command !== undefined && !(action = this.callback(this.context, command)));
+
+        if (command === undefined) {
+            this[_attrs.running] = false;
+        } else if (action instanceof Promise) {
+            action.then(doInit.bind(this), doInit.bind(this));
+        } else {
+            this[_attrs.step] = 0;
+            this[_attrs.stepTimes] = action;
+
+            timeDiff = this[_attrs.stepTimes][this[_attrs.step]] - (new Date()).getTime();
+            if (timeDiff < 0) {
+                timeDiff = 0;
             }
+            setTimeout(doStep.bind(this), timeDiff);
+        }
+    };
 
-            elements.push(command);
+    var running_getter = function running_getter() {
+        return this[_attrs.running];
+    };
 
-            if (!running) {
-                running = true;
-                doInit();
-            }
-        };
+    var _attrs = {
+        callback: Symbol("callback"),
+        elements: Symbol("elements"),
+        running: Symbol("running"),
+        step: Symbol("step"),
+        stepTimes: Symbol("stepTimes")
     };
 
     StyledElements.CommandQueue = CommandQueue;
