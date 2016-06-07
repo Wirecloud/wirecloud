@@ -1811,8 +1811,8 @@ class TemplateUtilsTestCase(TestCase):
 
     def test_xml_parser_invalid_version(self):
 
-        xml_description = read_template('invalid_version_.xml')
-        self.assertRaise(TemplateParseException, TemplateParser, xml_description)
+        xml_description = read_template('invalid_version.xml')
+        self.assertRaises(TemplateParseException, TemplateParser, xml_description)
 
     def test_get_resource_processed_info(self):
 
