@@ -1905,7 +1905,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 class WiringViewTester(BaseWiringViewTester):
 
     def __enter__(self):
-        self.testcase.wait_element_visible_by_css_selector(".wc-toolbar .btn-display-wiring-view").click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .btn-display-wiring-view"))).click()
         if self.expect_error is False:
             WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: self.testcase.get_current_view() == 'wiring' and not self.disabled)
         return self
