@@ -231,11 +231,11 @@ class CatalogueUtilsTestCase(TestCase):
             'contents': {
                 'src': 'index.html',
                 'charset': 'utf-8',
-            }
+            },
+            'version': '1.0',
+            'vendor': 'Wirecloud',
+            'name': 'Test'
         }
-        template.get_resource_vendor.return_value = 'Wirecloud'
-        template.get_resource_name.return_value = 'Test'
-        template.get_resource_version.return_value = '1.0'
 
         return f, user, wgt_file, template, file_mocks
 
