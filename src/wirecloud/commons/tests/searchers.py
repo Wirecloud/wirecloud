@@ -36,7 +36,7 @@ class SearchAPITestCase(WirecloudTestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(UserSearcherTestCase, cls).setUpClass()
+        super(SearchAPITestCase, cls).setUpClass()
         cls.url = reverse('wirecloud.search_service')
 
     def test_simple_search(self):
