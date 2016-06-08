@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -42,6 +42,9 @@
     var print_entry = function print_entry(entry) {
         var entry_element, dateElement, expander, titleElement;
 
+        if (entry.level === Wirecloud.constants.LOGGING.DEBUG_MSG) {
+            return;  // Ignore DEBUG messages
+        }
         entry_element = document.createElement('div');
         entry_element.className = 'fade alert ' + LEVEL_CLASS[entry.level - 1];
 

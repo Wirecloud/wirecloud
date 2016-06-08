@@ -94,6 +94,7 @@
                     console.warn(msg);
                 }
                 break;
+            case Wirecloud.constants.LOGGING.DEBUG_MSG:
             case Wirecloud.constants.LOGGING.INFO_MSG:
                 if ('console' in window && typeof console.info === 'function') {
                     console.info(msg);

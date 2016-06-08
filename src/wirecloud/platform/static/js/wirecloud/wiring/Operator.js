@@ -149,7 +149,7 @@
         build_endpoints.call(this);
         build_prefs.call(this, data.preferences);
 
-        this.logManager.log(utils.gettext("The operator was created successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
+        this.logManager.log(utils.gettext("Operator created successfully."), Wirecloud.constants.LOGGING.DEBUG_MSG);
     };
 
     ns.Operator.JSON_TEMPLATE = {

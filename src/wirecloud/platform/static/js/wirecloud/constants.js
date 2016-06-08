@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -28,7 +28,8 @@
     Wirecloud.constants.LOGGING = {
         ERROR_MSG: 1,
         WARN_MSG:  2,
-        INFO_MSG:  3
+        INFO_MSG:  3,
+        DEBUG_MSG: 4
     };
 
     Wirecloud.constants.HTTP_STATUS_DESCRIPTIONS = {

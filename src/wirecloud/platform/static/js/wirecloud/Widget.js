@@ -288,7 +288,7 @@
 
         this.tab.addEventListener('preremove', _private.get(this).on_preremovetab);
 
-        this.logManager.log(utils.gettext("The widget was created successfully."), Wirecloud.constants.LOGGING.INFO_MSG);
+        this.logManager.log(utils.gettext("Widget created successfully."), Wirecloud.constants.LOGGING.DEBUG_MSG);
     };
 
     // ==================================================================================
