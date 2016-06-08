@@ -439,7 +439,7 @@ class WirecloudTestCase(TransactionTestCase):
         translation.activate(new_language)
 
 
-def uses_extra_resources(resources, shared=False, public=True, users=(), groups=(), deploy_only=False, creator=None):
+def uses_extra_resources(resources, shared=False, public=True, users=(), groups=(), deploy_only=False, creator=None, is_dev=False):
 
     def wrap(test_func):
 
@@ -456,12 +456,20 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
             final_groups = tuple(Group.objects.get(name=group) for group in groups)
 
             for resource in resources:
-                wgt_file = open(os.path.join(base, resource), 'rb')
+                if is_dev:
+                    permissions = 'a+'
+                    shutil.copy(os.path.join(base, resource), os.path.join(base, resource + '.bak'))
+                else:
+                    permissions = 'rb'
+
+                wgt_file = open(os.path.join(base, resource), permissions)
                 wgt = WgtFile(wgt_file)
 
                 if deploy_only:
                     catalogue.add_packaged_resource(wgt_file, final_creator, wgt_file=wgt, deploy_only=True)
                     wgt_file.close()
+                    if is_dev:
+                        shutil.move(os.path.join(base, resource + '.bak'), os.path.join(base, resource))
                     continue
 
                 resource = install_resource(wgt, final_creator)
@@ -474,6 +482,8 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
                 resource.groups.add(*final_groups)
 
                 wgt_file.close()
+                if is_dev:
+                    shutil.move(os.path.join(base, resource + '.bak'), os.path.join(base, resource))
 
             return test_func(self, *args, **kwargs)
 

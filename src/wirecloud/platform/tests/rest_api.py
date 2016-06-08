@@ -2355,7 +2355,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('version', response_data)
         self.assertEqual(response_data['version'], '1.0')
 
-    @uses_extra_resources(('Wirecloud_Test_Selenium_1.0-dev.wgt',), users=["admin"], shared=True, deploy_only=True)
+    @uses_extra_resources(('Wirecloud_Test_Selenium_1.0-dev.wgt',), users=["admin"], shared=True, deploy_only=True, creator="admin", is_dev=True)
     def test_resource_collection_post_dev_widget(self):
 
         url = reverse('wirecloud.resource_collection')
@@ -2377,7 +2377,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('name', response_data)
         self.assertEqual(response_data['name'], 'Test_Selenium')
         self.assertIn('version', response_data)
-        self.assertEqual(response_data['version'], '1.0-dev')
+        self.assertEqual(response_data['version'], '1.0-devuser_with_workspaces')
 
     def test_resource_collection_post_widget_without_enough_filesystem_permissions(self):
 
