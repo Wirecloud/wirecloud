@@ -112,19 +112,19 @@
             'bottomresizehandle': function () {
                 var handle = new Wirecloud.ui.IWidgetResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
                 tmp.bottomresizehandle = handle;
-                handle.addClassName("bottomResizeHandle");
+                handle.addClassName("wc-bottom-resize-handle");
                 return handle;
             },
             'leftresizehandle': function () {
                 var handle = new Wirecloud.ui.IWidgetResizeHandle(view, {resizeLeftSide: true});
                 tmp.leftresizehandle = handle;
-                handle.addClassName("leftResizeHandle");
+                handle.addClassName("wc-bottom-left-resize-handle");
                 return handle;
             },
             'rightresizehandle': function () {
                 var handle = new Wirecloud.ui.IWidgetResizeHandle(view, {resizeLeftSide: false});
                 tmp.rightresizehandle = handle;
-                handle.addClassName("rightResizeHandle");
+                handle.addClassName("wc-bottom-right-resize-handle");
                 return handle;
             },
             'iframe': function (options, tcomponents, iwidget) {

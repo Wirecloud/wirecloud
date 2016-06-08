@@ -32,31 +32,6 @@ from wirecloud.platform.themes import get_active_theme_name
 from wirecloud.platform.plugins import build_url_template, get_active_features_info, WirecloudPlugin
 
 
-WORKSPACE_CSS = (
-    'css/workspace/wallet.scss',
-    'css/workspace/dragboard.scss',
-    'css/workspace/dragboard_cursor.scss',
-    'css/workspace/iwidget.scss',
-    'css/workspace/empty_workspace_message.css',
-    'css/workspace/share_window_menu.scss',
-    'css/upgrade_window_menu.scss',
-)
-
-CLASSIC_CORE_CSS = (
-    'css/mac_search.css',
-    'css/layout_field.css',
-    'css/mac_field.scss',
-    'css/mac_selection_dialog.css',
-)
-
-CATALOGUE_CSS = (
-    'css/catalogue/emptyCatalogueBox.css',
-    'css/catalogue/resource.scss',
-    'css/catalogue/resource_details.scss',
-    'css/catalogue/search_interface.scss',
-    'css/catalogue/upload_window_menu.scss',
-)
-
 WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor.js',
     'js/wirecloud/ui/WiringEditor/Behaviour.js',
@@ -164,12 +139,6 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Typeahead.js',
 )
 
-PLATFORM_CORE_CSS = (
-    'css/wirecloud_core.scss',
-    'css/icons.css',
-    'css/window_menu.scss',
-    'css/windowmenues/logwindowmenu.scss',
-)
 
 BASE_CSS = (
     'css/font-awesome.css',
@@ -182,12 +151,50 @@ BASE_CSS = (
     'css/workspace/ioperator.css',
 )
 
+
+CLASSIC_CORE_CSS = (
+    'css/mac_search.css',
+    'css/layout_field.css',
+    'css/mac_field.scss',
+    'css/mac_selection_dialog.css',
+)
+
+
+WORKSPACE_CSS = (
+    'css/workspace/wallet.scss',
+    'css/workspace/dragboard.scss',
+    'css/workspace/dragboard_cursor.scss',
+    'css/workspace/widget.scss',
+    'css/workspace/empty_workspace_message.css',
+    'css/workspace/share_window_menu.scss',
+    'css/modals/upgrade_downgrade_component.scss',
+)
+
+
+CATALOGUE_CSS = (
+    'css/catalogue/emptyCatalogueBox.css',
+    'css/catalogue/resource.scss',
+    'css/catalogue/resource_details.scss',
+    'css/catalogue/search_interface.scss',
+    'css/catalogue/upload_window_menu.scss',
+)
+
+
+PLATFORM_CORE_CSS = (
+    'css/wirecloud_core.scss',
+    'css/icons.css',
+    'css/modals/base.scss',
+    'css/modals/logs.scss',
+)
+
+
 WIRING_EDITOR_CSS = (
     'css/wiring/wiring_layout.scss',
     'css/wiring/wiring_components.scss',
     'css/wiring/wiring_connections.scss',
     'css/wiring/wiring_behaviours.scss',
 )
+
 
 TUTORIAL_CSS = (
     'css/tutorial.scss',
@@ -294,8 +301,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
         }
 
     def get_platform_context_current_values(self, user):
-        from django.conf import settings
-
         if user.is_authenticated():
             username = user.username
             fullname = user.get_full_name()
@@ -560,11 +565,11 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "behaviour_sidebar": "wirecloud/wiring/behaviour_sidebar.html",
                 "component_group": "wirecloud/wiring/component_group.html",
                 "component_sidebar": "wirecloud/wiring/component_sidebar.html",
-                "embed_code_dialog": "wirecloud/ui/embed_code_dialog.html",
+                "embed_code_dialog": "wirecloud/modals/embed_code.html",
                 "exception_log_details": "wirecloud/ui/exception_log_details.html",
-                "iwidget": "wirecloud/ui/iwidget.html",
+                "iwidget": "wirecloud/workspace/widget.html",
                 "iwidget_smartphone": "wirecloud/ui/iwidget_smartphone.html",
-                "window_menu": "wirecloud/ui/window_menu.html",
+                "window_menu": "wirecloud/modals/base.html",
                 "wirecloud_catalogue_search_interface": "wirecloud/catalogue/search_interface.html",
                 "catalogue_resource_template": "wirecloud/catalogue/resource.html",
                 "catalogue_main_resource_details_template": "wirecloud/catalogue/main_resource_details.html",
@@ -576,7 +581,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "wallet_widget": "wirecloud/workspace/wallet/widget.html",
                 "wirecloud_catalogue_upload_dialog": "wirecloud/catalogue/upload_dialog.html",
                 "wiring_footer": "wirecloud/wiring/wiring_footer.html",
-                "upgrade_window_menu": "wirecloud/ui/upgrade_window_menu.html",
+                "upgrade_window_menu": "wirecloud/modals/upgrade_downgrade_component.html",
             }
         else:
             return {}

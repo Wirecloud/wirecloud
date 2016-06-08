@@ -1,6 +1,6 @@
 This section describe how to create new themes for WireCloud.
 
-> This documentation is based in WireCloud 0.9+. Previous versions of WireCloud
+> This documentation is based in WireCloud 1.0+. Previous versions of WireCloud
 > works in a similiar way, but some details may differ.
 
 ## Basic themes
@@ -192,22 +192,115 @@ sections.
 
 ### Available templates
 
-- `workspace/iwidget.html`: HTML structure for the boxes where the widget
-  iframes are inserted on the workspaces.
-- `ui/window_menu.html`: HTML structure for the dialogs/modals displayed in
+- `wirecloud/workspace/widget.html`: HTML structure for the boxes where the
+  widget iframes are inserted on the dashboards.
+- `wirecloud/modals/base.html`: HTML structure for the dialogs/modals displayed
+  in WireCloud.
+- `wirecloud/modals/embed_code.html`: content of the embed code modal.
+- `wirecloud/modals/upgrade_downgrade_component.html`: content of the
+  upgrade/downgrade component modal used by the workspace view and the wiring
+  view.
+- `wirecloud/views/embedded.html`: HTML structure for the embedded version of
   WireCloud.
-- `views/embedded.html`: HTML structure for the embedded version of WireCloud.
 
+#### `wirecloud/workspace/widget.html`
+
+> Previously known as: `wirecloud/ui/iwidget.html`
+
+Available components:
+- `title`: injects a `spam` element with the title of the widget.
+- `errorbutton`: button that will be enabled if the widget has errors. This button will open the log manager window if clicked by the user.
+- `minimizebutton`: button used for maximizing and minimizing widgets.
+- `menubutton`: button used for opening the preferences menu.
+- `closebutton`: button used for removing the widget from the workspace.
+- `iframe` (required): iframe with the content of the widget.
+- `leftresizehandle`: `div` element using for resizing the widget from the
+  bottom-left square. This element will use the `wc-bottom-left-resize-handle`
+  class.
+- `bottomresizehandle`: `div` element using for resizing the widget from the
+  bottom side. This element will use the `wc-bottom-resize-handle` class.
+- `rightresizehandle`: `div` element using for resizing the widget from the
+  bottom-right square. This element will use the `wc-bottom-right-resize-handle`
+  class.
+
+Example usage:
+
+```xml
+<div class="fade panel panel-default">
+    <div class="panel-heading"><h4 class="panel-title"><t:title/></h4><div class="wc-iwidget-infobuttons"><t:errorbutton/></div><div class="wc-iwidget-buttons"><t:minimizebutton/><t:menubutton/><t:closebutton/></div></div>
+    <div class="panel-body">
+        <t:iframe/>
+    </div>
+    <div class="panel-footer"><t:leftresizehandle/><t:bottomresizehandle/><t:rightresizehandle/></div>
+</div>
+```
+
+#### `wirecloud/modals/base.html`
+
+> Previously known as: `wirecloud/ui/widget_menu.html`
+
+Available components:
+- `closebutton`: button for closing the modal.
+- `title`: `span` element with the name of the modal.
+- `body`: `div` where the body of the modal will be attached to.
+- `footer`: `div` used for adding the main buttons.
+
+Example usage:
+
+```xml
+<div>
+    <div class="window_top"><t:closebutton/><t:title/></div>
+    <t:body class="window_content"/>
+    <t:footer class="window_bottom"/>
+</div>
+```
+
+#### `wirecloud/modals/embed_code.html`
+
+> Previously known as: `wirecloud/ui/embed_code_dialog.html`
+
+Available components:
+- `themeselect`: provides a `select` element that the user can use for
+  controlling the theme used by the code provided for embedding the dashboard.
+- `code`: provides a `textarea` element with the embedding code.
+
+Example usage:
+
+```xml
+<div><b>{% trans "Theme" %}</b>: <t:themeselect/></div>
+<t:code/>
+```
+
+#### `wirecloud/modals/upgrade_downgrade_component.html`
+
+> Previously known as: `wirecloud/ui/embed_code_dialog.html`
+
+Available components:
+- `themeselect`: provides a `select` element that the user can use for
+  controlling the theme used by the code provided for embedding the dashboard.
+- `code`: provides a `textarea` element with the embedding code.
+
+Example usage:
+
+```xml
+<div><b>{% trans "Theme" %}</b>: <t:themeselect/></div>
+<t:code/>
+```
 
 ### Available SCSS files
 
 - `_variables.scss`: File defining the values of the constants used in the other
   SCSS files.
+- `modals/base.scss`: contains the style for the dialogs used in WireCloud.
+- `modals/logs.scss`: contains the style used for the log dialogs.
+- `modals/upgrade_downgrade_component.scss`: contains the style used by the
+  upgrade/downgrade modals used by the workspace view and the wiring editor view
+  for updating the version of widgets and by the wiring editor for updating the
+  version of operators.
 - `workspace/dragboard_cursor.scss`: contains the style for the cursor
   displayed when moving widgets inside a workspace.
-- `workspace/iwidget.scss`: contains the style for displaying widgets inside the
-  dashboard.
-- `window_menu.scss`: contains the style for the dialogs used in WireCloud.
+- `workspace/widget.scss`: contains the style for displaying widgets inside the
+  workspace/dashboard view.
 - `mac_field.scss`: contains the style for the mashable application component
   input fields.
 

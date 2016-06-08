@@ -91,7 +91,7 @@
     }
 }
 
-.iwidget .bottomResizeHandle {
+.iwidget .wc-bottom-resize-handle {
     position: absolute;
     height: 12px;
     bottom: -6px;
@@ -100,7 +100,7 @@
     cursor: s-resize;
 }
 
-.iwidget .leftResizeHandle {
+.iwidget .wc-bottom-left-resize-handle {
     position: absolute;
     width: 40px;
     height: 12px;
@@ -109,7 +109,7 @@
     cursor: sw-resize;
 }
 
-.iwidget .rightResizeHandle {
+.iwidget .wc-bottom-right-resize-handle {
     position: absolute;
     width: 40px;
     height: 12px;
@@ -123,14 +123,14 @@
     height: 200%;
 }
 
-.iwidget .leftResizeHandle.inUse {
+.iwidget .wc-bottom-left-resize-handle.inUse {
     right: 0px;
     top: 0px;
     bottom: auto;
     left: auto;
 }
 
-.iwidget .rightResizeHandle.inUse {
+.iwidget .wc-bottom-right-resize-handle.inUse {
     left: 0px;
     top: 0px;
     bottom: auto;
@@ -162,7 +162,7 @@
         cursor: default;
     }
 
-    .leftResizeHandle, .rightResizeHandle, .bottomResizeHandle {
+    .wc-bottom-left-resize-handle, .wc-bottom-right-resize-handle, .wc-bottom-resize-handle {
         display: none;
     }
 }
