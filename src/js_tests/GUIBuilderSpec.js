@@ -148,6 +148,34 @@
                     check_final_element(child, label, rendered_value_options);
 
                 });
+
+                it("should support " + label + " context (passing options as attributes)", function () {
+
+                    var builder = new StyledElements.GUIBuilder();
+                    var html = '<t:test class="my-class"/>';
+                    var context = {
+                        test: value
+                    };
+                    var result = builder.parse(builder.DEFAULT_OPENING + html + builder.DEFAULT_CLOSING, context);
+                    expect(result.elements.length).toBe(1);
+                    var child = result.elements[0];
+                    check_final_element(child, label, rendered_value_options);
+
+                });
+
+                it("should support " + label + " context (passing options as attributes and as body)", function () {
+
+                    var builder = new StyledElements.GUIBuilder();
+                    var html = '<t:test class="my-class">{"class": "other-class"}</t:test>';
+                    var context = {
+                        test: value
+                    };
+                    var result = builder.parse(builder.DEFAULT_OPENING + html + builder.DEFAULT_CLOSING, context);
+                    expect(result.elements.length).toBe(1);
+                    var child = result.elements[0];
+                    check_final_element(child, label, rendered_value_options);
+
+                });
             }
 
             if (label.indexOf('null') !== -1) {

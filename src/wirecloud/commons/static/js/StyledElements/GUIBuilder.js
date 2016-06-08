@@ -21,28 +21,33 @@
 
 /* globals Document, StyledElements */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
-    var GUIBuilder, processTComponent, processTree, processRoot, extractOptions, populateContainer, NAMESPACE, TEMPLATE_NAMESPACE;
+    var GUIBuilder, processTComponent, processTree, processRoot, extractOptions, extractOptionsFromAttributes, populateContainer, NAMESPACE, TEMPLATE_NAMESPACE;
 
     NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/StyledElements';
     TEMPLATE_NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/Template';
 
     processTComponent = function processTComponent(element, tcomponents, context) {
-        var options, parsed_options, tcomponent, new_component;
+        var options, tcomponent, new_component;
 
         tcomponent = tcomponents[element.localName];
         if (typeof tcomponent === 'function') {
             options = element.textContent.trim();
             if (options !== '') {
                 try {
-                    parsed_options = JSON.parse(options);
-                } catch (e) {}
+                    options = JSON.parse(options);
+                } catch (e) {
+                    options = {};
+                }
+            } else {
+                options = {};
             }
+            utils.merge(options, extractOptionsFromAttributes(element));
 
-            new_component = tcomponent(parsed_options, tcomponents, context);
+            new_component = tcomponent(options, tcomponents, context);
         } else {
             new_component = tcomponent;
         }
@@ -109,10 +114,21 @@
         return new StyledElements.Fragment(children);
     };
 
+    extractOptionsFromAttributes = function extractOptionsFromAttributes(element) {
+        var i, options = {};
+
+        // We cannot use forEach for walking an attribute list :(
+        for (i = 0; i < element.attributes.length; i++) {
+            options[element.attributes[i].localName] = element.attributes[i].nodeValue;
+        }
+
+        return options;
+    };
+
     extractOptions = function extractOptions(element) {
         var options, options_element;
 
-        options = null;
+        options = {};
         options_element = element.getElementsByTagNameNS(NAMESPACE, 'options')[0];
         if (options_element != null) {
             options_element.parentNode.removeChild(options_element);
@@ -120,6 +136,7 @@
                 options = JSON.parse(options_element.textContent);
             } catch (e) {}
         }
+
 
         return options;
     };
@@ -154,7 +171,7 @@
                 return layout;
             },
             'button': function (builder, element, options) {
-                options = StyledElements.Utils.merge({}, options);
+                options = utils.merge({}, options);
                 options.text = element.textContent;
                 return new StyledElements.Button(options);
             },
@@ -209,4 +226,5 @@
     };
 
     StyledElements.GUIBuilder = GUIBuilder;
-})();
+
+})(StyledElements.Utils);
