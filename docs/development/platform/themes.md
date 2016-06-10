@@ -143,10 +143,10 @@ mytheme
     - `wirecloud`: This folder contains the templates used directly by
         WireCloud. In general those templates are snippets for each of the
         components/pieces used inside WireCloud. For example, the
-        `wirecloud/workspace/iwidget.html` template is used for creating the
+        `wirecloud/workspace/widget.html` template is used for creating the
         HTML of the widgets as shown in the workspace area.
 
-        The exception are the templates provided in the `views` folder that
+        The main exception are the templates provided in the `views` folder that
         pretends to provide the templates for the master HTML documents used by
         WireCloud.
 
@@ -190,8 +190,12 @@ sections.
   defaults to the last component of the python module.
 
 
-### Available templates
+## Available templates
 
+- `wirecloud/catalogue/modals/upload.html`: content to be displayed inside the
+  upload component modal used in the *My Resources* view.
+- `wirecloud/workspace/missing_widget.html`: content to be displayed inside
+  missing widgets.
 - `wirecloud/workspace/widget.html`: HTML structure for the boxes where the
   widget iframes are inserted on the dashboards.
 - `wirecloud/modals/base.html`: HTML structure for the dialogs/modals displayed
@@ -200,16 +204,103 @@ sections.
 - `wirecloud/modals/upgrade_downgrade_component.html`: content of the
   upgrade/downgrade component modal used by the workspace view and the wiring
   view.
+- `wirecloud/wiring/behaviour_sidebar.html`: HTML structure for the behaviour
+  sidebar used in the Wiring Editor view.
+- `wirecloud/wiring/component_group.html`: HTML structure used for displaying
+  component groups inside the component sidebar used in the Wiring Editor view.
+- `wirecloud/wiring/component_sidebar.html`: HTML structure for the component
+  sidebar used in the Wiring Editor view.
 - `wirecloud/views/embedded.html`: HTML structure for the embedded version of
   WireCloud.
 
-#### `wirecloud/workspace/widget.html`
+
+### Template: `wirecloud/catalogue/modals/upload.html`
+
+This template is used for rendering the initial content of the upload modal used
+in the *My Resources* view for uploading new components.
+
+
+#### Related SCSS files
+
+- `catalogue/modals/upload.scss`
+
+
+#### Available components
+
+- `uploadfilebutton`: button for opening the upload dialog using the browser
+  interface.
+
+#### Example usage
+
+```html+django
+{% load i18n %}{% load wirecloudtags %}
+<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+    <div class="wc-upload-mac-message">
+        <div class="alert alert-info">
+            <img class="mac-package" src="{% theme_static "images/catalogue/mac_package.png" %}" />
+            <p>{% trans "Do you have a widget, operator or mashup stored in a wgt file? Then you can upload it to the catalogue by means of this dialog." %}</p>
+        </div>
+        <div class="wc-upload-mac-title">{% trans "Drag files here" %}</div>
+        <div class="wc-upload-mac-or">{% trans "- or -" %}</div>
+        <div class="wc-upload-mac-button"><t:upload_wgt_button/></div>
+    </div>
+</s:styledgui>
+```
+
+### Template: `wirecloud/workspace/missing_widget.html`
+
+This template allows to configure the content to be displayed inside missing
+widgets. This content is rendered inside the `iframe` element so this template
+should provide an HTML document.
+
+
+#### Available context
+
+This is the list of context variables provided to the Django template engine:
+
+- `style`: List of stylesheet files needed for applying the default style.
+
+
+#### Example usage
+
+```html+django
+{% load i18n %}<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        {% for file in style %}<link rel="stylesheet" type="text/css" href="{{ file }}" />
+        {% endfor %}
+    </head>
+
+    <body style="padding: 10px;">
+        <div class="alert alert-danger alert-block">
+            <h4>{% trans "Missing widget" %}</h4>
+            {% trans "This widget is currently not available. Probably you or an administrator uninstalled it." %}
+            {% blocktrans %}<h5>Suggestions:</h5>
+            <ul>
+                <li>Remove this widget from the dashboard</li>
+                <li>Reinstall the appropiated version of the widget</li>
+                <li>Install another version of the widget and use the <em>Upgrade/Downgrade</em> option</li>
+            </ul>{% endblocktrans %}
+        </div>
+    </body>
+</html>
+```
+
+### Template: `wirecloud/workspace/widget.html`
 
 > Previously known as: `wirecloud/ui/iwidget.html`
 
-Available components:
+
+#### Related SCSS files
+
+- `wirecloud/workspace/widget.scss`
+
+#### Available components
+
 - `title`: injects a `spam` element with the title of the widget.
-- `errorbutton`: button that will be enabled if the widget has errors. This button will open the log manager window if clicked by the user.
+- `errorbutton`: button that will be enabled if the widget has errors. This
+  button will open the log manager window if clicked by the user.
 - `minimizebutton`: button used for maximizing and minimizing widgets.
 - `menubutton`: button used for opening the preferences menu.
 - `closebutton`: button used for removing the widget from the workspace.
@@ -223,9 +314,14 @@ Available components:
   bottom-right square. This element will use the `wc-bottom-right-resize-handle`
   class.
 
-Example usage:
+#### Example usage
 
-```xml
+```html+django
+<s:styledgui
+    xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements"
+    xmlns:t="http://wirecloud.conwet.fi.upm.es/Template"
+    xmlns="http://www.w3.org/1999/xhtml">
+
 <div class="fade panel panel-default">
     <div class="panel-heading"><h4 class="panel-title"><t:title/></h4><div class="wc-iwidget-infobuttons"><t:errorbutton/></div><div class="wc-iwidget-buttons"><t:minimizebutton/><t:menubutton/><t:closebutton/></div></div>
     <div class="panel-body">
@@ -233,72 +329,283 @@ Example usage:
     </div>
     <div class="panel-footer"><t:leftresizehandle/><t:bottomresizehandle/><t:rightresizehandle/></div>
 </div>
+
+</s:styledgui>
 ```
 
-#### `wirecloud/modals/base.html`
+### Template: `wirecloud/modals/base.html`
 
-> Previously known as: `wirecloud/ui/widget_menu.html`
+> Previously known as: `wirecloud/ui/window_menu.html`
 
-Available components:
+#### Related SCSS files
+
+- `modals/base.scss`: Stylesheet with the custom style for this template.
+
+#### Available components
+
 - `closebutton`: button for closing the modal.
 - `title`: `span` element with the name of the modal.
 - `body`: `div` where the body of the modal will be attached to.
 - `footer`: `div` used for adding the main buttons.
 
-Example usage:
+#### Example usage
 
-```xml
+```html+django
+<s:styledgui
+    xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements"
+    xmlns:t="http://wirecloud.conwet.fi.upm.es/Template"
+    xmlns="http://www.w3.org/1999/xhtml">
+
 <div>
     <div class="window_top"><t:closebutton/><t:title/></div>
     <t:body class="window_content"/>
     <t:footer class="window_bottom"/>
 </div>
+
+</s:styledgui>
 ```
 
-#### `wirecloud/modals/embed_code.html`
+### Template: `wirecloud/modals/embed_code.html`
 
 > Previously known as: `wirecloud/ui/embed_code_dialog.html`
 
-Available components:
+#### Related SCSS files
+
+- `modals/embed_code.scss`: Stylesheet with the custom style for this template.
+
+#### Available components
+
 - `themeselect`: provides a `select` element that the user can use for
   controlling the theme used by the code provided for embedding the dashboard.
 - `code`: provides a `textarea` element with the embedding code.
 
-Example usage:
+#### Example usage
 
-```xml
+```html+django
+<s:styledgui
+    xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements"
+    xmlns:t="http://wirecloud.conwet.fi.upm.es/Template"
+    xmlns="http://www.w3.org/1999/xhtml">
+
 <div><b>{% trans "Theme" %}</b>: <t:themeselect/></div>
 <t:code/>
+
+</s:styledgui>
 ```
 
-#### `wirecloud/modals/upgrade_downgrade_component.html`
+
+### Template: `wirecloud/modals/upgrade_downgrade_component.html`
 
 > Previously known as: `wirecloud/ui/embed_code_dialog.html`
 
-Available components:
-- `themeselect`: provides a `select` element that the user can use for
-  controlling the theme used by the code provided for embedding the dashboard.
-- `code`: provides a `textarea` element with the embedding code.
 
-Example usage:
+#### Related SCSS files
 
-```xml
-<div><b>{% trans "Theme" %}</b>: <t:themeselect/></div>
-<t:code/>
+- `base/markdown.scss`: Used for styling changelogs.
+- `modals/upgrade_downgrade_component.scss`: Stylesheet with the custom style
+  for this template.
+
+
+#### Available components
+
+- `currentversion`: provides a text node with the current version of the
+  widget/operator.
+- `versionselect`: provides a select combo with the available version
+  alternatives.
+- `changelog`: provides a `div` element with the changelog between the current
+  version and the selected version. The content of this element will change each
+  time the user changes the selected version.
+
+
+#### Example usage
+
+```html+django
+{% load i18n %}
+<s:styledgui
+    xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements"
+    xmlns:t="http://wirecloud.conwet.fi.upm.es/Template"
+    xmlns="http://www.w3.org/1999/xhtml">
+
+<div class="wc-upgrade-component-info"><div><b>{% trans "Current version" %}</b>: <t:currentversion/></div><div><b>{% trans "New version" %}</b>: <t:versionselect/></div></div>
+<h3>{% trans "Change Log" %}</h3>
+<t:changelog/>
+
+</s:styledgui>
 ```
 
-### Available SCSS files
+
+### Template: `wirecloud/wiring/behaviour_sidebar.html`
+
+
+#### Related SCSS files
+
+- `wiring/behviours.scss`: Stylesheet with the wiring's behaviours style.
+
+
+#### Available components
+
+- `enablebutton`: provides a toggle button used for enabling and disabling the
+  behaviour engine for the current workspace.
+- `createbutton`: provides a button for creating new behaviours.
+- `orderbutton`: provides a toggle button for enabling and disabling the
+  behaviour ordering mode.
+- `behaviourlist`: provides a `div` element with the available behaviours. This
+  `div` element is also used for displaying an alert message with some tips if
+  the behaviour engine is currently disabled.
+
+
+#### Example usage
+
+```html+django
+{% load i18n %}
+<s:styledgui
+    xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements"
+    xmlns:t="http://wirecloud.conwet.fi.upm.es/Template"
+    xmlns="http://www.w3.org/1999/xhtml">
+
+<div class="panel panel-default se-vertical-layout we-panel-behaviours">
+    <div class="panel-heading se-vl-north-container">
+        <div class="panel-title">
+            <strong>{% trans "Behaviours" %}</strong>
+            <div class="panel-options"><t:enablebutton/></div>
+        </div>
+        <div class="btn-group pull-right"><t:createbutton/><t:orderbutton/></div>
+    </div>
+    <t:behaviourlist class="panel-body se-vl-center-container"/>
+</div>
+
+</s:styledgui>
+```
+
+
+### Template: `wirecloud/wiring/component_group.html`
+
+
+#### Related SCSS files
+
+- `wiring/components.scss`: Stylesheet with the style used for displaying
+  components in the wiring editor view.
+
+
+#### Available components
+
+- `createbutton`: Provides a button for creating new instances of the
+  component.
+- `description`: Provides a `div` element with the description of the
+  component.
+- `image`: Provides an `img` element with the component thumbnail.
+- `title`:  Provides a `span` element with the title of the component.
+- `vendor`: Provides a text node with the vendor name of the component.
+- `versionselect`: Provides a select component for switching between the
+  different available versions of the component.
+
+
+#### Example usage
+
+```html+django
+{% load i18n %}
+<s:styledgui
+    xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements"
+    xmlns:t="http://wirecloud.conwet.fi.upm.es/Template"
+    xmlns="http://www.w3.org/1999/xhtml">
+
+<div class="we-component-group">
+    <div class="panel panel-default we-component-meta">
+        <div class="panel-heading">
+            <div class="panel-title"><t:title/></div>
+        </div>
+        <div class="panel-body">
+            <div class="se-thumbnail se-thumbnail-sm"><t:image/></div>
+            <div class="se-input-group se-input-group-sm"><t:versionselect/><t:createbutton/></div>
+            <h5><t:vendor/></h5>
+            <t:description/>
+        </div>
+    </div>
+</div>
+
+</s:styledgui>
+```
+
+### Template: `wirecloud/wiring/component_sidebar.html`
+
+
+#### Related SCSS files
+
+- `wiring/components.scss`: Stylesheet with the style used for displaying
+  components in the wiring editor view.
+
+
+#### Available components
+
+- `searchinput`: provides an `input` element to be used by users for filtering
+  the available components.
+- `typebuttons`: provides two buttons for switching between searching widgets
+  and operators.
+- `list`: provides a `div` element that will display the available components.
+
+
+#### Example usage
+
+```html+django
+{% load i18n %}
+<s:styledgui
+    xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements"
+    xmlns:t="http://wirecloud.conwet.fi.upm.es/Template"
+    xmlns="http://www.w3.org/1999/xhtml">
+
+<s:verticallayout class="panel panel-default we-panel-components">
+
+    <s:northcontainer class="panel-heading">
+        <div class="panel-title">
+            <strong>{% trans "Components" %}</strong>
+        </div>
+        <t:searchinput/>
+        <div class="btn-group btn-group-justified"><t:typebuttons/></div>
+    </s:northcontainer>
+
+    <s:centercontainer class="panel-body">
+        <t:list/>
+    </s:centercontainer>
+
+</s:verticallayout>
+</s:styledgui>
+```
+
+### Template: `wirecloud/views/embedded.html`
+
+#### Example usage
+
+```html+django
+{% extends "wirecloud/views/base.html" %}{% load wirecloudtags %}
+
+{% load i18n %}
+
+{% block title %}{% trans "WireCloud Platform" %}{% endblock %}
+
+{% block header %}<div id="wirecloud_header"></div>{% endblock %}
+
+{% block core_scripts %}
+{% wirecloud_bootstrap "embedded" %}
+{% extra_javascripts "embedded" %}
+{% endblock %}
+```
+
+
+## Available SCSS files
 
 - `_variables.scss`: File defining the values of the constants used in the other
   SCSS files.
-- `modals/base.scss`: contains the style for the dialogs used in WireCloud.
-- `modals/logs.scss`: contains the style used for the log dialogs.
+- `modals/base.scss`: contains the style on the modals used in WireCloud.
+- `modals/logs.scss`: contains the style used on the log modals.
 - `modals/upgrade_downgrade_component.scss`: contains the style used by the
   upgrade/downgrade modals used by the workspace view and the wiring editor view
   for updating the version of widgets and by the wiring editor for updating the
   version of operators.
 - `workspace/dragboard_cursor.scss`: contains the style for the cursor
   displayed when moving widgets inside a workspace.
+- `wiring/behaviours.scss`:
+- `wiring/connection.scss`:
+- `wiring/layout.scss`:
 - `workspace/widget.scss`: contains the style for displaying widgets inside the
   workspace/dashboard view.
 - `mac_field.scss`: contains the style for the mashable application component

@@ -46,7 +46,7 @@
             this.superClass(events);
 
             this.wrapperElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'svg');
-            this.wrapperElement.setAttribute('class', "wiring-connections");
+            this.wrapperElement.setAttribute('class', "we-connections-layer");
 
             this.connections = [];
             this.connectionsElement = document.createElementNS(ns.ConnectionEngine.SVG_NS, 'g');

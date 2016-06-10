@@ -15,11 +15,17 @@
     .alert {
         width: 500px;
     }
+}
 
-    .wiring-connections {
-        position: absolute;
-        width: 100%;
-        height: 100%;
+.we-connections-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    &.dragging {
+        cursor: -webkit-grabbing;
+        cursor: -moz-grabbing;
+        cursor: grabbing;
     }
 }
 

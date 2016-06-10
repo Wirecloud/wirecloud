@@ -176,7 +176,7 @@ CATALOGUE_CSS = (
     'css/catalogue/resource.scss',
     'css/catalogue/resource_details.scss',
     'css/catalogue/search_interface.scss',
-    'css/catalogue/upload_window_menu.scss',
+    'css/catalogue/modals/upload.scss',
 )
 
 
@@ -189,10 +189,10 @@ PLATFORM_CORE_CSS = (
 
 
 WIRING_EDITOR_CSS = (
-    'css/wiring/wiring_layout.scss',
-    'css/wiring/wiring_components.scss',
-    'css/wiring/wiring_connections.scss',
-    'css/wiring/wiring_behaviours.scss',
+    'css/wiring/layout.scss',
+    'css/wiring/components.scss',
+    'css/wiring/connection.scss',
+    'css/wiring/behaviours.scss',
 )
 
 
@@ -579,8 +579,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "visibility_option": "wirecloud/workspace/visibility_option.html",
                 "wallet": "wirecloud/workspace/wallet/wallet.html",
                 "wallet_widget": "wirecloud/workspace/wallet/widget.html",
-                "wirecloud_catalogue_upload_dialog": "wirecloud/catalogue/upload_dialog.html",
-                "wiring_footer": "wirecloud/wiring/wiring_footer.html",
+                "wirecloud_catalogue_upload_dialog": "wirecloud/catalogue/modals/upload.html",
+                "wiring_footer": "wirecloud/wiring/footer.html",
                 "upgrade_window_menu": "wirecloud/modals/upgrade_downgrade_component.html",
             }
         else:

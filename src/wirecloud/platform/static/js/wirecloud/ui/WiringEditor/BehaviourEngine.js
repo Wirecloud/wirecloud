@@ -49,8 +49,6 @@
             });
             this.btnEnable.on('click', btnenable_onclick.bind(this));
 
-            this.body = new se.Container({class: "panel-body se-vl-center-container"});
-
             this.btnCreate = new se.Button({
                 title: gettext("Create behaviour"),
                 extraClass: "btn-create",
@@ -67,9 +65,10 @@
             this.btnOrder.disable();
 
             this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.behaviour_sidebar, {
-                btnenable: this.btnEnable,
-                buttons: new se.Fragment([this.btnCreate, this.btnOrder]),
-                panelbody: this.body
+                enablebutton: this.btnEnable,
+                createbutton: this.btnCreate,
+                orderbutton: this.btnOrder,
+                behaviourlist: behaviour_list_component.bind(this)
             }).children[1];
 
             Object.defineProperties(this, {
@@ -675,6 +674,12 @@
     var events = ['activate', 'change', 'enable'];
 
     var builder = new se.GUIBuilder();
+
+    var behaviour_list_component = function behaviour_list_component(options) {
+        /* jshint validthis:true */
+
+        return this.body = new se.Container({class: options.class});
+    };
 
     var _removeConnection = function _removeConnection(index, connection) {
         /*jshint validthis:true */

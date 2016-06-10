@@ -94,7 +94,7 @@ pre, .gist .gist-file .gist-data {
   margin: 0 0 12px;
 }
 
-.rst-content ul, .rst-content ol {
+.rst-content .section ul, .rst-content .section ol {
     margin-top: 0;
     margin-bottom: 12px;
     line-height: 24px;
@@ -129,6 +129,11 @@ ul ul, ol ul, ol ol, ul ol {
 
 .rst-content blockquote ol:last-child, .rst-content blockquote p:last-child, .rst-content blockquote ul:last-child {
     margin-bottom: 0px;
+}
+
+/* FIWARE CSS disables bolds, revert it */
+strong, b {
+    font-weight: bold !important;
 }
 
 /* Pygments default theme */

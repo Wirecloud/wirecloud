@@ -3,10 +3,6 @@
 @import 'variables';
 
 
-.wiring-connections.dragging {
-    cursor: -webkit-grabbing;
-}
-
 // ============================================================================
 // WIRING COMPONENT - CONNECTION
 // ============================================================================
@@ -77,6 +73,8 @@
 
     &.incomplete .connection-path {
         cursor: -webkit-grabbing;
+        cursor: -moz-grabbing;
+        cursor: grabbing;
     }
 }
 
@@ -84,32 +82,26 @@
 // WIRING COMPONENT - CONNECTION HANDLE
 // ============================================================================
 
-.connection-handle {
+.we-connection-handle-line {
+    cursor: default;
+    fill: none;
+    stroke: $gray-dark;
+    stroke-width: 1px;
+}
 
-    .handle-line {
-        cursor: default;
-        fill: none;
-        stroke: $gray-dark;
-        stroke-width: 1px;
+.we-connection-handle-ball {
+    cursor: pointer;
+    fill: $button-background-primary;
+    stroke: $button-border-primary;
+    stroke-width: 1px;
+
+    &:hover,
+    &.active {
+        fill: darken($button-background-primary, 10%);
+        stroke: darken($button-background-primary, 10%);
     }
+}
 
-    .handle-ball {
-        cursor: pointer;
-        fill: $button-background-primary;
-        stroke: $button-border-primary;
-        stroke-width: 1px;
-
-        &:hover,
-        &.active {
-            fill: darken($button-background-primary, 10%);
-            stroke: darken($button-background-primary, 10%);
-        }
-    }
-
-    &.auto {
-
-        .handle-line {
-            stroke-dasharray: 5;
-        }
-    }
+.we-connection-handle.auto .we-connection-handle-line {
+    stroke-dasharray: 5;
 }

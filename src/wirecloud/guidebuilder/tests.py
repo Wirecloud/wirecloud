@@ -937,7 +937,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_down(imgp, btnbehav, 30)
 
             self.driver.execute_script("document.querySelector('.wiring-view .wiring-diagram').style.cssText = 'box-shadow: none; border: none;'")
-            wc = self.driver.find_element_by_css_selector(".wiring-connections")
+            wc = self.driver.find_element_by_css_selector(".we-connections-layer")
 
             with wiring.behaviour_sidebar as sidebar:
                 sidebar.find_behaviour(title="Show lampposts on map").activate()

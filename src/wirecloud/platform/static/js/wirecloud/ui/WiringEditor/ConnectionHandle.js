@@ -48,16 +48,16 @@
             this.superClass(events.concat(options.events));
 
             this.wrapperElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'g');
-            this.wrapperElement.setAttribute('class', "connection-handle");
+            this.wrapperElement.setAttribute('class', "we-connection-handle");
             this.addClassName(endpoint.type + "-handle");
             this.addClassName(options.extraClass);
 
             this.lineElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'path');
-            this.lineElement.setAttribute('class', "handle-line");
+            this.lineElement.setAttribute('class', "we-connection-handle-line");
             this.wrapperElement.appendChild(this.lineElement);
 
             this.ballElement = document.createElementNS(ns.ConnectionHandle.SVG_NS, 'circle');
-            this.ballElement.setAttribute('class', "handle-ball");
+            this.ballElement.setAttribute('class', "we-connection-handle-ball");
             this.ballElement.setAttribute('r', options.radius);
             this.ballElement.addEventListener('click', utils.stopPropagationListener);
             this.wrapperElement.appendChild(this.ballElement);

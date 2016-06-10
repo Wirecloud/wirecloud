@@ -89,7 +89,7 @@
         this.searchComponents = new Wirecloud.ui.MACSearch({
             template: 'component_sidebar',
             extra_template_context: {
-                buttons: new se.Fragment([this.operatorButton, this.widgetButton])
+                typebuttons: new se.Fragment([this.operatorButton, this.widgetButton])
             },
             scope: 'widget',
             resource_painter: resource_painter

@@ -59,8 +59,8 @@
         this.wrapperElement = (new se.GUIBuilder()).parse(Wirecloud.currentTheme.templates.component_group, {
             title: this.titleElement,
             image: this.imageElement,
-            version: version,
-            buttons: new se.Fragment([version, button]),
+            versionselect: version,
+            createbutton: button,
             vendor: resource.vendor,
             description: this.descriptionElement
         }).children[1];
