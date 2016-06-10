@@ -149,6 +149,19 @@
 
                 });
 
+                it("should ignore malformed json options", function () {
+                    var builder = new StyledElements.GUIBuilder();
+                    var html = '<t:test>{"class" = "my-class"}</t:test>';
+                    var context = {
+                        test: value
+                    };
+                    var result = builder.parse(builder.DEFAULT_OPENING + html + builder.DEFAULT_CLOSING, context);
+                    expect(result.elements.length).toBe(1);
+                    var child = result.elements[0];
+                    check_final_element(child, label, rendered_value);
+                });
+
+
                 it("should support " + label + " context (passing options as attributes)", function () {
 
                     var builder = new StyledElements.GUIBuilder();
@@ -263,6 +276,15 @@
         it("should allow to create select elements passing options", function () {
             var builder = new StyledElements.GUIBuilder();
             var template = '<s:select><s:options>{"class": "my-class"}</s:options></s:select>';
+            var result = builder.parse(builder.DEFAULT_OPENING + template + builder.DEFAULT_CLOSING);
+            expect(result.elements.length).toBe(1);
+            expect(result.elements[0]).toEqual(jasmine.any(StyledElements.Select));
+            expect(result.elements[0].hasClassName('my-class')).toBeTruthy();
+        });
+
+        it("should allow to create select elements passing options as attributes", function () {
+            var builder = new StyledElements.GUIBuilder();
+            var template = '<s:select class="my-class"/>';
             var result = builder.parse(builder.DEFAULT_OPENING + template + builder.DEFAULT_CLOSING);
             expect(result.elements.length).toBe(1);
             expect(result.elements[0]).toEqual(jasmine.any(StyledElements.Select));

@@ -147,7 +147,7 @@
         container_element = element.getElementsByTagNameNS(NAMESPACE, tag_name)[0];
 
         if (container_element != null) {
-            options = extractOptions(container_element);
+            options = utils.merge(extractOptions(container_element), extractOptionsFromAttributes(container_element));
             if (options != null && 'class' in options) {
                 container.addClassName(options['class']);
             }
@@ -198,11 +198,11 @@
             }
         };
 
-        this.build = function (element, tcomponents, context) {
+        this.build = function build(element, tcomponents, context) {
             var builder, options;
 
             builder = mapping[element.localName];
-            options = extractOptions(element);
+            options = utils.merge(extractOptions(element), extractOptionsFromAttributes(element));
             return builder(this, element, options, tcomponents, context);
         };
     };
