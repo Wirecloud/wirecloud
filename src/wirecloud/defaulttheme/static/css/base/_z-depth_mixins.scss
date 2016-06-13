@@ -35,10 +35,10 @@
 /// @param {Number} $depth - depth level (between 1 and 5)
 @mixin z-depth($depth, $important: false, $color: black) {
     @if $depth < 1 {
-        box-shadow: none if($important, !important);
+        box-shadow: none if($important, !important, null);
     } @else if $depth > 5 {
         @warn "Invalid $depth `#{$depth}`.";
     } @else {
-        box-shadow: bottom-shadow($depth, $color: $color), top-shadow($depth, $color) if($important, !important);
+        box-shadow: bottom-shadow($depth, $color: $color), top-shadow($depth, $color) if($important, !important, null);
     }
 }
