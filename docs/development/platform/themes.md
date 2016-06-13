@@ -220,7 +220,7 @@ This template is used for rendering the initial content of the upload modal used
 in the *My Resources* view for uploading new components.
 
 
-#### Related SCSS files
+**Related SCSS files**:
 
 - `catalogue/modals/upload.scss`
 
@@ -230,7 +230,7 @@ in the *My Resources* view for uploading new components.
 - `uploadfilebutton`: button for opening the upload dialog using the browser
   interface.
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 {% load i18n %}{% load wirecloudtags %}
@@ -254,14 +254,14 @@ widgets. This content is rendered inside the `iframe` element so this template
 should provide an HTML document.
 
 
-#### Available context
+**Available context**:
 
 This is the list of context variables provided to the Django template engine:
 
 - `style`: List of stylesheet files needed for applying the default style.
 
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 {% load i18n %}<!DOCTYPE html>
@@ -292,11 +292,11 @@ This is the list of context variables provided to the Django template engine:
 > Previously known as: `wirecloud/ui/iwidget.html`
 
 
-#### Related SCSS files
+**Related SCSS files**:
 
 - `wirecloud/workspace/widget.scss`
 
-#### Available components
+**Available components**:
 
 - `title`: injects a `spam` element with the title of the widget.
 - `errorbutton`: button that will be enabled if the widget has errors. This
@@ -314,7 +314,7 @@ This is the list of context variables provided to the Django template engine:
   bottom-right square. This element will use the `wc-bottom-right-resize-handle`
   class.
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 <s:styledgui
@@ -337,18 +337,18 @@ This is the list of context variables provided to the Django template engine:
 
 > Previously known as: `wirecloud/ui/window_menu.html`
 
-#### Related SCSS files
+**Related SCSS files**:
 
 - `modals/base.scss`: Stylesheet with the custom style for this template.
 
-#### Available components
+**Available components**:
 
 - `closebutton`: button for closing the modal.
 - `title`: `span` element with the name of the modal.
 - `body`: `div` where the body of the modal will be attached to.
 - `footer`: `div` used for adding the main buttons.
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 <s:styledgui
@@ -369,17 +369,17 @@ This is the list of context variables provided to the Django template engine:
 
 > Previously known as: `wirecloud/ui/embed_code_dialog.html`
 
-#### Related SCSS files
+**Related SCSS files**:
 
 - `modals/embed_code.scss`: Stylesheet with the custom style for this template.
 
-#### Available components
+**Available components**:
 
 - `themeselect`: provides a `select` element that the user can use for
   controlling the theme used by the code provided for embedding the dashboard.
 - `code`: provides a `textarea` element with the embedding code.
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 <s:styledgui
@@ -399,14 +399,14 @@ This is the list of context variables provided to the Django template engine:
 > Previously known as: `wirecloud/ui/embed_code_dialog.html`
 
 
-#### Related SCSS files
+**Related SCSS files**:
 
 - `base/markdown.scss`: Used for styling changelogs.
 - `modals/upgrade_downgrade_component.scss`: Stylesheet with the custom style
   for this template.
 
 
-#### Available components
+**Available components**:
 
 - `currentversion`: provides a text node with the current version of the
   widget/operator.
@@ -417,7 +417,7 @@ This is the list of context variables provided to the Django template engine:
   time the user changes the selected version.
 
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 {% load i18n %}
@@ -437,12 +437,12 @@ This is the list of context variables provided to the Django template engine:
 ### Template: `wirecloud/wiring/behaviour_sidebar.html`
 
 
-#### Related SCSS files
+**Related SCSS files**:
 
 - `wiring/behviours.scss`: Stylesheet with the wiring's behaviours style.
 
 
-#### Available components
+**Available components**:
 
 - `enablebutton`: provides a toggle button used for enabling and disabling the
   behaviour engine for the current workspace.
@@ -454,7 +454,7 @@ This is the list of context variables provided to the Django template engine:
   the behaviour engine is currently disabled.
 
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 {% load i18n %}
@@ -481,13 +481,13 @@ This is the list of context variables provided to the Django template engine:
 ### Template: `wirecloud/wiring/component_group.html`
 
 
-#### Related SCSS files
+**Related SCSS files**:
 
 - `wiring/components.scss`: Stylesheet with the style used for displaying
   components in the wiring editor view.
 
 
-#### Available components
+**Available components**:
 
 - `createbutton`: Provides a button for creating new instances of the
   component.
@@ -500,7 +500,7 @@ This is the list of context variables provided to the Django template engine:
   different available versions of the component.
 
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 {% load i18n %}
@@ -529,13 +529,13 @@ This is the list of context variables provided to the Django template engine:
 ### Template: `wirecloud/wiring/component_sidebar.html`
 
 
-#### Related SCSS files
+**Related SCSS files**:
 
 - `wiring/components.scss`: Stylesheet with the style used for displaying
   components in the wiring editor view.
 
 
-#### Available components
+**Available components**:
 
 - `searchinput`: provides an `input` element to be used by users for filtering
   the available components.
@@ -544,7 +544,7 @@ This is the list of context variables provided to the Django template engine:
 - `list`: provides a `div` element that will display the available components.
 
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 {% load i18n %}
@@ -573,7 +573,7 @@ This is the list of context variables provided to the Django template engine:
 
 ### Template: `wirecloud/views/embedded.html`
 
-#### Example usage
+**Example usage**:
 
 ```html+django
 {% extends "wirecloud/views/base.html" %}{% load wirecloudtags %}
