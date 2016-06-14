@@ -37,12 +37,12 @@ def notify(data, affected_users):
 def get_affected_users(instance):
 
     if instance.public:
-        return '*'
+        return ('*',)
     else:
         affected_users = set(instance.users.values_list("username", flat=True))
         for group in instance.groups.all():
             affected_users.update(group.user_set.values_list("username", flat=True))
-        return ",".join(affected_users)
+        return affected_users
 
 
 @receiver(post_save, sender=Workspace)
