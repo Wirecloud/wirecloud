@@ -54,7 +54,7 @@
                 parent_dialog: this
             }
         };
-        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Create Workspace'), 'new_workspace');
+        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Create Workspace'), 'wc-new-workspace-modal');
     };
     NewWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 

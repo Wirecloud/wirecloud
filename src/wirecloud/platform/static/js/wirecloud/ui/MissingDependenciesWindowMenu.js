@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -34,7 +34,7 @@
     var MissingDependenciesWindowMenu = function MissingDependenciesWindowMenu(next, details) {
         var list, i, item;
 
-        Wirecloud.ui.WindowMenu.call(this, gettext('Missing dependencies'), 'missing_dependencies');
+        Wirecloud.ui.WindowMenu.call(this, gettext('Missing dependencies'), 'wc-missing-dependencies-modal');
 
         this.msg1Element = document.createElement('p');
         this.windowContent.appendChild(this.msg1Element);
@@ -54,6 +54,7 @@
 
         // New Workspace button
         this.continueButton = new StyledElements.Button({
+            class: 'btn-accept',
             text: gettext('Continue'),
         });
         this.continueButton.addEventListener("click", onContinue.bind(this, next));
@@ -62,7 +63,7 @@
 
         // Cancel button
         this.cancelButton = new StyledElements.Button({
-            'class': 'btn-primary',
+            class: 'btn-cancel btn-primary',
             text: gettext('Cancel')
         });
         this.cancelButton.addEventListener("click", this._closeListener);

@@ -192,7 +192,7 @@ class IWidgetTester(object):
 
     def show_settings(self):
         self.open_menu().click_entry("Settings")
-        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
 
     def rename(self, new_name, timeout=30):
 
@@ -660,7 +660,7 @@ class BaseComponentTester(WebElementTester):
     def rename(self, title):
         self.show_preferences().click_entry("Rename")
 
-        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-rename-dialog"))
+        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-rename-modal"))
         modal.get_field('title').set_value(title)
         modal.accept()
 
@@ -669,7 +669,7 @@ class BaseComponentTester(WebElementTester):
 
     def show_logs(self):
         self.show_preferences().click_entry("Logs")
-        return AlertModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-logs-dialog"))
+        return AlertModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-logs-modal"))
 
     def show_preferences(self):
         button = self.btn_preferences.click()
@@ -677,11 +677,11 @@ class BaseComponentTester(WebElementTester):
 
     def show_settings(self):
         self.show_preferences().click_entry("Settings")
-        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+        return FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
 
     def change_version(self, version):
         self.show_preferences().click_entry("Upgrade/Downgrade")
-        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-upgrade-component-dialog"))
+        modal = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector(".wc-upgrade-component-modal"))
         modal.get_field('version').set_value(version)
         modal.accept()
         return self
@@ -1254,7 +1254,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
         self.open_menu().click_entry('New workspace')
 
-        form = FormModalTester(self, self.wait_element_visible_by_css_selector('.window_menu.new_workspace'))
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-new-workspace-modal'))
 
         if name:
             form.get_field('name').set_value(name)
@@ -1269,36 +1269,32 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
         if expect_missing_dependencies is not None:
 
-            continue_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Continue']")
-            window_menu = self.driver.find_element_by_css_selector('.window_menu.missing_dependencies')
+            form = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-missing-dependencies-modal'))
 
-            missing_dependency_elements = window_menu.find_elements_by_tag_name('li')
+            missing_dependency_elements = form.body.find_elements_by_tag_name('li')
             missing_dependencies = [missing_dependency_element.text for missing_dependency_element in missing_dependency_elements]
 
             self.assertEqual(set(missing_dependencies), set(expect_missing_dependencies))
 
             if not install_dependencies:
-                cancel_button = window_menu.find_element_by_xpath("//*[text()='Cancel']")
-                cancel_button.click()
+                form.cancel()
                 return
 
-            continue_button.click()
+            form.accept()
 
         if parameters is not None:
 
-            save_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Save']")
-            window_menu = self.driver.find_element_by_css_selector('.window_menu.workspace_preferences')
+            form = FormModalTester(self, self.wait_element_visible_by_css_selector('.wc-workspace-preferences-modal'))
 
             for parameter_name, parameter_value in six.iteritems(parameters):
-                param_input = window_menu.find_element_by_css_selector('input[name="' + parameter_name + '"]')
-                self.fill_form_input(param_input, parameter_value)
+                form.get_field(parameter_name).set_value(parameter_value)
 
             # TODO Currently browsers only use the ETag/If-None-Match headers when using https
             # Last-Modified/If-Modified-Since headers have a resolution of 1 second
             time.sleep(1)
             # END TODO
 
-            save_button.click()
+            form.accept()
 
         self.wait_wirecloud_ready()
 
@@ -1498,7 +1494,7 @@ class MarketplaceViewTester(object):
 
         self.open_menu().click_entry("Add new marketplace")
 
-        form = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.wc-add-external-catalogue-dialog'))
+        form = FormModalTester(self.testcase, self.testcase.wait_element_visible_by_css_selector('.wc-add-external-catalogue-modal'))
         form.get_field('name').set_value(name)
         form.get_field('url').set_value(url)
         form.get_field('type').set_value(type_)
@@ -1624,7 +1620,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-cloud-upload"), parent=True)).click()
 
-        dialog = WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.wc-upload-mac-dialog')))
+        dialog = WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.wc-upload-mac-modal')))
         dialog.find_element_by_css_selector('input[type="file"]').send_keys(wgt_path)
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, '.btn-primary'), base_element=dialog)).click()
         self.testcase.wait_wirecloud_ready()
@@ -1800,7 +1796,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
         new_length = len(self.find_behaviours()) + 1
         self.btn_create.click()
 
-        modal = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-new-behaviour-dialog"))
+        modal = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-new-behaviour-modal"))
 
         if title is not None:
             modal.get_field('title').set_value(title)

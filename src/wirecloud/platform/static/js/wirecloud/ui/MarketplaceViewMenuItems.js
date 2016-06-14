@@ -92,7 +92,7 @@
                         'label': utils.gettext('Public')
                     };
                 }
-                menu = new Wirecloud.ui.FormWindowMenu(fields, utils.gettext('Add marketplace'), 'wc-add-external-catalogue-dialog');
+                menu = new Wirecloud.ui.FormWindowMenu(fields, utils.gettext('Add marketplace'), 'wc-add-external-catalogue-modal');
 
                 // Form data is sent to server
                 menu.executeOperation = function (data) {

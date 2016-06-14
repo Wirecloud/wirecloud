@@ -93,7 +93,7 @@
 
         this.component = component;
 
-        Wirecloud.ui.WindowMenu.call(this, title, 'wc-upgrade-component-dialog');
+        Wirecloud.ui.WindowMenu.call(this, title, 'wc-upgrade-component-modal');
 
         // Get all available versions
         versions = Wirecloud.LocalCatalogue.resourceVersions[this.component.meta.group_id].map(function (component) {return component.version});

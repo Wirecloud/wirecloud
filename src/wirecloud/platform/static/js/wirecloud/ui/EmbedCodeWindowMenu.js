@@ -28,7 +28,7 @@
     var builder = new StyledElements.GUIBuilder();
 
     var EmbedCodeWindowMenu = function EmbedCodeWindowMenu(title, workspace) {
-        Wirecloud.ui.WindowMenu.call(this, title, 'wc-embed-code-dialog');
+        Wirecloud.ui.WindowMenu.call(this, title, 'wc-embed-code-modal');
 
         this.workspace = workspace;
 

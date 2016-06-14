@@ -743,7 +743,7 @@
                 {name: 'description', label: gettext("Description"), type: 'longtext'}
             ],
             gettext("New behaviour"),
-            'we-new-behaviour-dialog'
+            'we-new-behaviour-modal'
         );
 
         dialog.executeOperation = this.createBehaviour.bind(this);

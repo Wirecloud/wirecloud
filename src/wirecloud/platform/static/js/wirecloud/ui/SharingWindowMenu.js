@@ -33,7 +33,7 @@
     ns.SharingWindowMenu = function SharingWindowMenu(workspace) {
         var builder, i, options, subtitle1, subtitle2, template;
 
-        ns.WindowMenu.call(this, utils.gettext("Sharing settings"), 'wc-dashboard-share-dialog');
+        ns.WindowMenu.call(this, utils.gettext("Sharing settings"), 'wc-dashboard-share-modal');
 
         this.workspace = workspace;
         builder = new se.GUIBuilder();

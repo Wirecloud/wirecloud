@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -185,7 +185,7 @@
      *
      */
     var PreferencesWindowMenu = function PreferencesWindowMenu(scope, manager) {
-        Wirecloud.ui.WindowMenu.call(this, '', scope + '_preferences');
+        Wirecloud.ui.WindowMenu.call(this, '', 'wc-' + scope + '-preferences-modal');
 
         Object.defineProperty(this, 'manager', {value: manager});
 
@@ -210,14 +210,15 @@
 
         // Accept button
         this.acceptButton = new StyledElements.Button({
-            text: utils.gettext('Save'),
-            'class': 'btn-primary'
+            class: 'btn-accept btn-primary',
+            text: utils.gettext('Save')
         });
         this.acceptButton.addEventListener("click", _executeOperation.bind(this));
         this.acceptButton.insertInto(this.windowBottom);
 
         // Cancel button
         this.cancelButton = new StyledElements.Button({
+            class: 'btn-cancel',
             text: utils.gettext('Cancel')
         });
 

@@ -30,7 +30,7 @@
      */
     var AlertWindowMenu = function AlertWindowMenu(options) {
 
-        Wirecloud.ui.WindowMenu.call(this, utils.gettext('Warning'), 'wc-alert-dialog');
+        Wirecloud.ui.WindowMenu.call(this, utils.gettext('Warning'), 'wc-alert-modal');
 
         this.msgElement = document.createElement('div');
         this.msgElement.className = "msg";

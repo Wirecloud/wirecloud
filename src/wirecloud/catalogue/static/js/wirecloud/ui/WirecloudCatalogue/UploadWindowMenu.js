@@ -95,10 +95,10 @@
         var empty = this.fileTable.source.elements.length === 0;
         this.acceptButton.setDisabled(empty);
         if (empty) {
-            this.htmlElement.classList.add('wc-upload-mac-dialog-empty');
+            this.htmlElement.classList.add('wc-upload-mac-modal-empty');
             this.fileButton.focus();
         } else {
-            this.htmlElement.classList.remove('wc-upload-mac-dialog-empty');
+            this.htmlElement.classList.remove('wc-upload-mac-modal-empty');
             this.acceptButton.focus();
         }
     };
@@ -110,7 +110,7 @@
     UploadWindowMenu = function UploadWindowMenu(options) {
         this.catalogue = options.catalogue;
         this.mainview = options.mainview;
-        Wirecloud.ui.WindowMenu.call(this, gettext("Upload mashable application components"), 'wc-upload-mac-dialog');
+        Wirecloud.ui.WindowMenu.call(this, gettext("Upload mashable application components"), 'wc-upload-mac-modal');
 
         var builder = new StyledElements.GUIBuilder();
         var contents = builder.parse(Wirecloud.currentTheme.templates.wirecloud_catalogue_upload_dialog, {
@@ -248,7 +248,7 @@
             file: file
         };
         this.fileTable.source.addElement(entry);
-        this.htmlElement.classList.remove('wc-upload-mac-dialog-empty');
+        this.htmlElement.classList.remove('wc-upload-mac-modal-empty');
         this.acceptButton.enable().focus();
     };
 

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,7 +26,7 @@
     "use strict";
 
     var PreferencesWindowMenu = function PreferencesWindowMenu() {
-        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Widget Settings'), 'wc-component-preferences-dialog');
+        Wirecloud.ui.WindowMenu.call(this, Wirecloud.Utils.gettext('Widget Settings'), 'wc-component-preferences-modal');
     };
     PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 

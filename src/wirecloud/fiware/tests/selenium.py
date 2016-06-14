@@ -118,7 +118,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         # Change widget settings
         widget.open_menu().click_entry('Settings')
-        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+        dialog = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
         dialog.get_field("ngsi_server").set_value('http://orion.example.com:1026')
         dialog.get_field("use_user_fiware_token").click()
         dialog.accept()

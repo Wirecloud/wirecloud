@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2014-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2014-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -165,7 +165,7 @@
         this.buttonElement = new StyledElements.Button({iconClass: 'icon-cogs'});
         this.buttonElement.addEventListener('click', function () {
             var fields = LAYOUT_FIELDS_MAPPING[this.layout.type];
-            var dialog = new Wirecloud.ui.FormWindowMenu(fields, gettext('Layout configuration'), 'layout_settings');
+            var dialog = new Wirecloud.ui.FormWindowMenu(fields, gettext('Layout configuration'), 'wc-layout-settings-modal');
 
             // Form data is sent to server
             dialog.executeOperation = function (data) {

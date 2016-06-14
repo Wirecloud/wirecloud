@@ -1181,13 +1181,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Change columns to 10
         self.open_menu().click_entry('Settings')
-        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.window_menu.workspace_preferences')
+        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.wc-workspace-preferences-modal')
 
         workspace_preferences_dialog.find_element_by_css_selector('.icon-cogs').click()
-        layout_settings_dialog = self.wait_element_visible_by_css_selector('.window_menu.layout_settings')
-        columns_input = layout_settings_dialog.find_element_by_css_selector('[name="columns"]')
-        self.fill_form_input(columns_input, '10')
-        layout_settings_dialog.find_element_by_xpath("//*[text()='Accept']").click()
+        layout_form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-layout-settings-modal"))
+        layout_form.get_field("columns").set_value('10')
+        layout_form.accept()
 
         workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
 
@@ -1234,13 +1233,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Change columns to 10
         self.open_menu().click_entry('Settings')
-        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.window_menu.workspace_preferences')
+        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.wc-workspace-preferences-modal')
 
         workspace_preferences_dialog.find_element_by_css_selector('.icon-cogs').click()
-        layout_settings_dialog = self.wait_element_visible_by_css_selector('.window_menu.layout_settings')
-        columns_input = layout_settings_dialog.find_element_by_css_selector('[name="columns"]')
-        self.fill_form_input(columns_input, '10')
-        layout_settings_dialog.find_element_by_xpath("//*[text()='Accept']").click()
+        layout_form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-layout-settings-modal"))
+        layout_form.get_field("columns").set_value('10')
+        layout_form.accept()
 
         workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
 
@@ -1276,10 +1274,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Change current layout to grid
         self.open_menu().click_entry('Settings')
-        workspace_preferences_dialog = self.wait_element_visible_by_css_selector('.window_menu.workspace_preferences')
-        layout_type_select = Select(workspace_preferences_dialog.find_element_by_css_selector('[name="baselayout-type"]'))
-        layout_type_select.select_by_value('gridlayout')
-        workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-workspace-preferences-modal"))
+        form.get_field("baselayout-type").set_value('gridlayout')
+        form.accept()
 
         # Check new sizes
         new_size_from_context, new_size_in_pixels_from_context = self.get_widget_sizes_from_context(widget)
@@ -1383,13 +1380,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Upgrade to version 3.0
         widget.open_menu().click_entry('Upgrade/Downgrade')
-        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-upgrade-component-dialog"))
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-upgrade-component-modal"))
         form.accept()
 
         # Check settings
         widget.open_menu().click_entry('Settings')
 
-        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
         self.assertRaises(NoSuchElementException, form.get_field, 'list')
         self.assertEqual(form.get_field('text').value, 'initial text')
         self.assertRaises(NoSuchElementException, form.get_field, 'boolean')
@@ -1415,13 +1412,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Downgrade to version 1.0
         widget.open_menu().click_entry('Upgrade/Downgrade')
-        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-upgrade-component-dialog"))
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-upgrade-component-modal"))
         form.accept()
 
         # Check settings
         widget.open_menu().click_entry('Settings')
 
-        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-dialog"))
+        form = FormModalTester(self, self.wait_element_visible_by_css_selector(".wc-component-preferences-modal"))
         self.assertEqual(form.get_field('list').value, 'default')
         self.assertEqual(form.get_field('text').value, 'initial text')
         self.assertRaises(NoSuchElementException, form.get_field, 'new')

@@ -349,7 +349,7 @@
 
     WidgetBase.prototype.showLogs = function showLogs() {
         var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
-        dialog.htmlElement.classList.add("wc-component-logs-dialog");
+        dialog.htmlElement.classList.add("wc-component-logs-modal");
         dialog.show();
 
         return this;

@@ -105,7 +105,7 @@
                 {name: 'title', label: utils.gettext("Title"), type: 'text', placeholder: this.component.title},
             ],
             utils.interpolate(utils.gettext("Rename %(type)s"), this.component),
-            "wc-component-rename-dialog");
+            "wc-component-rename-modal");
 
         dialog.executeOperation = function (data) {
             if (data.title) {
