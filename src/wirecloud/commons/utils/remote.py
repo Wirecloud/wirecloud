@@ -1311,7 +1311,10 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
     def get_current_workspace_name(self):
 
-        return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+        try:
+            return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+        except StaleElementReferenceException:
+            return self.get_current_workspace_name()
 
     def get_workspace_tab_by_name(self, tab_name):
 
