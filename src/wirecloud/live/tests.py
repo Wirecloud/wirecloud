@@ -23,17 +23,18 @@ import datetime
 import unittest
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from mock import patch
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.models import CatalogueResource, Workspace
 
+
 @unittest.skipIf('wirecloud.live' not in settings.INSTALLED_APPS, 'wirecloud.live not installed')
 @patch('wirecloud.live.signals.handlers.notify')
 class LiveNotificationsTestCase(WirecloudTestCase):
 
-    fixtures = ('selenium_test_data',)
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('wirecloud-noselenium', 'wirecloud-live')
 
     def setUp(self):
@@ -45,19 +46,64 @@ class LiveNotificationsTestCase(WirecloudTestCase):
         notify_mock.assert_called_once_with(
             {
                 "component": "Wirecloud/MyWidget/1.0",
-                "action": "installed"
+                "action": "install",
+                "category": "component"
             },
-            "normuser"
+            {"normuser"}
         )
 
     def test_workspace_updates_are_notified(self, notify_mock):
         instance = Workspace.objects.get(pk="2")
-        instance.description = "New description"
         instance.save()
         notify_mock.assert_called_once_with(
             {
-                "workspace": 2,
-                "action": "update"
+                "workspace": "2",
+                "action": "update",
+                "category": "workspace"
             },
-            "user_with_workspaces"
+            {"user_with_workspaces"}
+        )
+
+    def test_workspace_simple_updates_are_notified(self, notify_mock):
+        instance = Workspace.objects.get(pk="2")
+        instance.description = "New description"
+        instance.save(update_fields=("description",))
+        notify_mock.assert_called_once_with(
+            {
+                "workspace": "2",
+                "action": "update",
+                "category": "workspace",
+                "description": "New description",
+            },
+            {"user_with_workspaces"}
+        )
+
+    def test_workspace_simple_updates_are_notified_shared(self, notify_mock):
+        instance = Workspace.objects.get(pk="2")
+        instance.userworkspace_set.create(user=User.objects.get(username="normuser"))
+        instance.groups.add(Group.objects.get(name="org"))
+        instance.description = "New description"
+        instance.save(update_fields=("description",))
+        notify_mock.assert_called_once_with(
+            {
+                "workspace": "2",
+                "action": "update",
+                "category": "workspace",
+                "description": "New description",
+            },
+            {"user_with_workspaces", "org", "orguser", "normuser"}
+        )
+
+    def test_workspace_public_updates_are_notified(self, notify_mock):
+        instance = Workspace.objects.get(pk="4")
+        instance.description = "New description"
+        instance.save(update_fields=("description",))
+        notify_mock.assert_called_once_with(
+            {
+                "workspace": "4",
+                "action": "update",
+                "category": "workspace",
+                "description": "New description",
+            },
+            {"*"}
         )

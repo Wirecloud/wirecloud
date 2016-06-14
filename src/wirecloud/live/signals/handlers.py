@@ -24,20 +24,21 @@ import json
 from channels import Group
 from django.dispatch import receiver
 from django.db.models.signals import m2m_changed, post_save
-import requests
 
 from wirecloud.platform.models import CatalogueResource, Workspace
+from wirecloud.live.utils import build_group_name
 
 
 def notify(data, affected_users):
     for user in affected_users:
-        Group('wc-live-%s' % user).send({"text": json.dumps(data)})
+        group_name = build_group_name('live-%s' % user)
+        Group(group_name).send({"text": json.dumps(data)})
 
 
 def get_affected_users(instance):
 
     if instance.public:
-        return ('*',)
+        return {'*'}
     else:
         affected_users = set(instance.users.values_list("username", flat=True))
         for group in instance.groups.all():
@@ -46,18 +47,22 @@ def get_affected_users(instance):
 
 
 @receiver(post_save, sender=Workspace)
-def workspace_update(sender, instance, created, raw, **kwargs):
+def workspace_update(sender, instance, created, raw, using, update_fields, **kwargs):
 
     affected_users = get_affected_users(instance)
 
     if affected_users != '':
-        notify(
-            {
-                "workspace": instance.id,
-                "action": "update",
-            },
-            affected_users
-        )
+        data = {
+            "workspace": "%s" % instance.id,
+            "action": "update",
+            "category": "workspace"
+        }
+
+        if update_fields is not None:
+            for field in update_fields:
+                data[field] = getattr(instance, field)
+
+        notify(data, affected_users)
 
 
 @receiver(m2m_changed, sender=CatalogueResource.groups.through)
@@ -66,11 +71,12 @@ def update_users_or_groups(sender, instance, action, reverse, model, pk_set, usi
     if reverse or action.startswith('pre_') or (pk_set is not None and len(pk_set) == 0):
         return
 
-    affected_users = ",".join(model.objects.filter(pk__in=pk_set).values_list("username", flat=True))
+    affected_users = set(model.objects.filter(pk__in=pk_set).values_list("username", flat=True))
     notify(
         {
             "component": instance.local_uri_part,
-            "action": "installed" if action == "post_add" else "uninstalled"
+            "action": "install" if action == "post_add" else "uninstall",
+            "category": "component"
         },
         affected_users
     )
@@ -81,7 +87,7 @@ def mac_update(sender, instance, created, raw, **kwargs):
 
     affected_users = get_affected_users(instance)
 
-    if affected_users != '':
+    if len(affected_users) > 0:
         notify(
             {
                 "component": instance.local_uri_part,

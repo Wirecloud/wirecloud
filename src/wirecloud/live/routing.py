@@ -18,10 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from channels.routing import route
-from wirecloud.live.consumers import ws_connect, ws_message, ws_disconnect
+from wirecloud.live.consumers import ws_connect, ws_disconnect
 
 channel_routing = [
     route("websocket.connect", ws_connect, path="^/api/live"),
-    route("websocket.receive", ws_message),
     route("websocket.disconnect", ws_disconnect),
 ]

@@ -40,6 +40,8 @@
      * @param {Wirecloud.WorkspaceResourceManager} resources
      */
     ns.Workspace = function Workspace(data, resources) {
+        var priv;
+
         se.ObjectWithEvents.call(this, [
             'createoperator',
             'createtab',
@@ -52,13 +54,15 @@
             'removewidget'
         ]);
 
-        _private.set(this, {
+        priv = {
             tabs: [],
+            on_livemessage: on_livemessage.bind(this),
             on_changetab: on_changetab.bind(this),
             on_createwidget: on_createwidget.bind(this),
             on_removetab: on_removetab.bind(this),
             on_removewidget: on_removewidget.bind(this)
-        });
+        };
+        privates.set(this, priv);
 
         Object.defineProperties(this, {
             /**
@@ -138,7 +142,7 @@
              */
             tabs: {
                 get: function () {
-                    return _private.get(this).tabs.slice(0);
+                    return privates.get(this).tabs.slice(0);
                 }
             },
             /**
@@ -223,6 +227,10 @@
 
         this.wiring.addEventListener('createoperator', on_createoperator.bind(this));
         this.wiring.addEventListener('removeoperator', on_removeoperator.bind(this));
+
+        if (Wirecloud.live) {
+            Wirecloud.live.addEventListener('workspace', priv.on_livemessage);
+        }
     };
 
     // =========================================================================
@@ -449,8 +457,15 @@
         },
 
         unload: function unload() {
+            if (Wirecloud.live) {
+                Wirecloud.live.removeEventListener('workspace', priv.on_livemessage);
+            }
+            this.wiring.removeEventListener('createoperator', on_createoperator.bind(this));
+            this.wiring.removeEventListener('removeoperator', on_removeoperator.bind(this));
+
             Wirecloud.GlobalLogManager.log(utils.gettext('Workspace unloaded successfully'), Wirecloud.constants.LOGGING.INFO_MSG);
             Wirecloud.GlobalLogManager.newCycle();
+
             return this;
         }
 
@@ -460,13 +475,13 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var _private = new WeakMap();
+    var privates = new WeakMap();
 
     var get_tabs_by_id = function get_tabs_by_id() {
         /*jshint validthis:true */
         var tabs = {};
 
-        _private.get(this).tabs.forEach(function (tab) {
+        privates.get(this).tabs.forEach(function (tab) {
             tabs[tab.id] = tab;
         });
 
@@ -475,13 +490,14 @@
 
     var _create_tab = function _create_tab(data) {
         var tab = new Wirecloud.WorkspaceTab(this, data);
+        var priv = privates.get(this);
 
-        tab.addEventListener('change', _private.get(this).on_changetab);
-        tab.addEventListener('createwidget', _private.get(this).on_createwidget);
-        tab.addEventListener('remove', _private.get(this).on_removetab);
-        tab.addEventListener('removewidget', _private.get(this).on_removewidget);
+        tab.addEventListener('change', priv.on_changetab);
+        tab.addEventListener('createwidget', priv.on_createwidget);
+        tab.addEventListener('remove', priv.on_removetab);
+        tab.addEventListener('removewidget', priv.on_removewidget);
 
-        _private.get(this).tabs.push(tab);
+        priv.tabs.push(tab);
 
         this.trigger('createtab', tab);
 
@@ -498,15 +514,17 @@
     };
 
     var create_tabtitle = function create_tabtitle() {
-        var copy, title, titles;
+        var copy, title, titles, priv;
 
-        titles = _private.get(this).tabs.map(function (tab) {
+        priv = privates.get(this);
+
+        titles = priv.tabs.map(function (tab) {
             return tab.title;
         });
 
         copy = 1;
         title = utils.interpolate(utils.gettext("Tab %(index)s"), {
-            index: _private.get(this).tabs.length + 1
+            index: priv.tabs.length + 1
         });
 
         if (titles.indexOf(title) < 0) {
@@ -521,11 +539,13 @@
     };
 
     var find_initial_tab = function find_initial_tab() {
-        var i;
+        var i, priv;
 
-        for (i = 0; i < _private.get(this).tabs.length; i++) {
-            if (_private.get(this).tabs[i].initial) {
-                return _private.get(this).tabs[i];
+        priv = privates.get(this);
+
+        for (i = 0; i < priv.tabs.length; i++) {
+            if (priv.tabs[i].initial) {
+                return priv.tabs[i];
             }
         }
 
@@ -540,13 +560,13 @@
     };
 
     var get_widgets = function get_widgets() {
-        return Array.prototype.concat.apply([], _private.get(this).tabs.map(function (tab) {
+        return Array.prototype.concat.apply([], privates.get(this).tabs.map(function (tab) {
             return tab.widgets;
         }));
     };
 
     var get_widgets_by_id = function get_widgets_by_id() {
-        return utils.merge.apply(utils, _private.get(this).tabs.map(function (tab) {
+        return utils.merge.apply(utils, privates.get(this).tabs.map(function (tab) {
             return tab.widgetsById;
         }));
     };
@@ -573,13 +593,24 @@
         this.trigger('createwidget', widget);
     };
 
-    var on_removetab = function on_removetab(tab) {
-        _private.get(this).tabs.splice(_private.get(this).tabs.indexOf(tab), 1);
+    var on_livemessage = function on_livemessage(live, data) {
+        if (data.workspace === this.id) {
+            this.contextManager.modify({
+                name: data.name
+            });
+            this.trigger('change', ['name']);
+        }
+    };
 
-        tab.removeEventListener('change', _private.get(this).on_changetab);
-        tab.removeEventListener('createwidget', _private.get(this).on_createwidget);
-        tab.removeEventListener('remove', _private.get(this).on_removetab);
-        tab.removeEventListener('removewidget', _private.get(this).on_removewidget);
+    var on_removetab = function on_removetab(tab) {
+        var priv = privates.get(this);
+
+        priv.tabs.splice(priv.tabs.indexOf(tab), 1);
+
+        tab.removeEventListener('change', priv.on_changetab);
+        tab.removeEventListener('createwidget', priv.on_createwidget);
+        tab.removeEventListener('remove', priv.on_removetab);
+        tab.removeEventListener('removewidget', priv.on_removewidget);
 
         this.trigger('removetab', tab);
     };

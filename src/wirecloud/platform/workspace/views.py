@@ -191,6 +191,7 @@ class WorkspaceEntry(Resource):
     def create(self, request, workspace_id):
 
         ts = parse_json_request(request)
+        fields = []
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
         if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
@@ -198,14 +199,17 @@ class WorkspaceEntry(Resource):
 
         if 'name' in ts:
             workspace.name = ts['name']
+            fields.append('name')
 
         if 'description' in ts:
             workspace.description = ts['description']
+            fields.append('description')
 
         if 'longdescription' in ts:
             workspace.longdescription = ts['longdescription']
+            fields.append('longdescription')
 
-        workspace.save()
+        workspace.save(update_fields=fields)
 
         return HttpResponse(status=204)
 

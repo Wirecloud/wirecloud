@@ -224,9 +224,24 @@
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: function (response) {
-                var values = JSON.parse(response.responseText);
+                var url, values = JSON.parse(response.responseText);
 
                 Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', values);
+                if ('WEBSOCKET' in Wirecloud.URLs) {
+                    url = new URL(Wirecloud.URLs.WEBSOCKET, document.location);
+                    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+                    var livews = new WebSocket(url);
+                    livews.addEventListener('message', function (event) {
+                        var msg = JSON.parse(event.data);
+
+                        Wirecloud.live.trigger(msg.category, msg);
+                    });
+                    var LiveManager = function LiveManager() {
+                        StyledElements.ObjectWithEvents.call(this, ["workspace", "component"]);
+                    };
+                    utils.inherit(LiveManager, StyledElements.ObjectWithEvents);
+                    Wirecloud.live = new LiveManager();
+                }
             },
             onFailure: function (response) {
                 Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving platform preferences data: %(errorMsg)s"), response);

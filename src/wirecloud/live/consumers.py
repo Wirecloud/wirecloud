@@ -20,21 +20,18 @@
 from channels import Group
 from channels.auth import channel_session_user, channel_session_user_from_http
 
+from wirecloud.live.utils import build_group_name, WIRECLOUD_BROADCAST_GROUP
+
 
 @channel_session_user_from_http
 def ws_connect(message):
-    Group("wc-live-%s" % message.user.username).add(message.reply_channel)
-    Group("wc-live-*").add(message.reply_channel)
-
-
-@channel_session_user
-def ws_message(message):
-    Group("chat-%s" % message.channel_session['room']).send({
-        "text": message['text'],
-    })
+    user_group = build_group_name("live-%s" % message.user.username)
+    Group(user_group).add(message.reply_channel)
+    Group(WIRECLOUD_BROADCAST_GROUP).add(message.reply_channel)
 
 
 @channel_session_user
 def ws_disconnect(message):
-    Group("wc-live-%s" % message.user.username).discard(message.reply_channel)
-    Group("wc-live-*").discard(message.reply_channel)
+    user_group = build_group_name("live-%s" % message.user.username)
+    Group(user_group).discard(message.reply_channel)
+    Group(WIRECLOUD_BROADCAST_GROUP).discard(message.reply_channel)
