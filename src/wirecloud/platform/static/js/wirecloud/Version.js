@@ -99,7 +99,7 @@
     };
 
     Version.prototype.toString = function toString() {
-        return this.text;
+        return this.text.replace(/-dev.*$/, '-dev');
     };
 
     Wirecloud.Version = Version;

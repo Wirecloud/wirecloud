@@ -96,7 +96,7 @@
         /* jshint validthis: true */
         var version = element.getValue();
 
-        this.meta = Wirecloud.LocalCatalogue.getResourceId(this.id + "/" + version);
+        this.meta = Wirecloud.LocalCatalogue.getResourceId(this.id + "/" + version.text);
 
         this.titleElement.textContent = this.meta.title;
         this.tooltip.options.content = this.meta.title;

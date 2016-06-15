@@ -34,7 +34,7 @@
         this._request = Wirecloud.LocalCatalogue.search({
             scope: this.search_scope,
             search_criteria: keywords,
-            onSuccess: function (widgets, search_info) {
+            onSuccess: function (components, search_info) {
                 var i, msg;
 
                 _load_resource_painter.call(this);
@@ -47,13 +47,15 @@
                         }));
                     }
 
-                    for (i = 0; i < widgets.length; i += 1) {
+                    components.forEach(function (component) {
                         try {
-                            this._list.appendChild(this.resource_painter.paint(widgets[i]));
+                            component.version = new Wirecloud.Version(component.version);
+                            component.others = component.others.map(function (version) {return new Wirecloud.Version(version);});
+                            this._list.appendChild(this.resource_painter.paint(component));
                         } catch (e) {
                             //
                         }
-                    }
+                    }, this);
                 } else {
                     if (keywords != "") {
                         msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>");
