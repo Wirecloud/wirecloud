@@ -80,15 +80,12 @@
                 return button;
             }.bind(iwidget),
             'menubutton': function () {
-                var button = new StyledElements.Button({
-                    'plain': true,
-                    'class': 'wc-menu-btn icon-cogs',
-                    'title': utils.gettext('Menu')
+                var button = new StyledElements.PopupButton({
+                    class: 'wc-menu-btn icon-cogs',
+                    menu: view.menu,
+                    plain: true,
+                    title: utils.gettext('Menu')
                 });
-                button.addEventListener("click",
-                    function (button) {
-                        view.menu.show(button.getBoundingClientRect());
-                    });
                 tmp.menubutton = button;
                 return button;
             },

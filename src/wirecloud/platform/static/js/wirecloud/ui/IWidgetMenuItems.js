@@ -30,21 +30,21 @@
 
         this.iWidget = iwidget;
         this.model = iwidget.internal_iwidget;
-        this.view = iwidget.internal_view;
         this.has_prefs = iwidget.widget.preferenceList.length > 0;
     };
     IWidgetMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
     IWidgetMenuItems.prototype.build = function () {
-        var items, item, fulldragboard_label, fulldragboard_icon, layout_label, layout_icon;
+        var items, item, fulldragboard_label, fulldragboard_icon, layout_label, layout_icon, view;
 
+        view = this.iWidget.internal_view;
         items = [];
 
         item = new StyledElements.MenuItem(
             utils.gettext('Rename'),
             function () {
                 this.titleelement.enableEdition();
-            }.bind(this.view)
+            }.bind(view)
         );
         item.addIconClass('fa fa-pencil').setDisabled(!this.model.isAllowed('rename'));
         items.push(item);
@@ -81,7 +81,7 @@
         item.setDisabled(!this.model.isAllowed('upgrade') || !Wirecloud.LocalCatalogue.hasAlternativeVersion(this.model.meta));
         items.push(item);
 
-        item = new StyledElements.MenuItem(utils.gettext("Reload"), this.view.reload.bind(this.view))
+        item = new StyledElements.MenuItem(utils.gettext("Reload"), view.reload.bind(view))
         item.addIconClass('fa fa-refresh');
         item.setDisabled(this.model.meta.missing);
         items.push(item);
