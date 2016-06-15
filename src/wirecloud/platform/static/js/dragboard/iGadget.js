@@ -296,7 +296,15 @@ IWidget.prototype.onFreeLayout = function () {
  * Builds the structure of the widget
  */
 IWidget.prototype.build = function () {
-    var contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['iwidget'], this);
+
+    var contents;
+
+    // Initialize widget menu
+    this.menu = new StyledElements.PopupMenu();
+    this.menu.append(new Wirecloud.ui.IWidgetMenuItems(this));
+
+    // Initialize widget HTML structure
+    contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['iwidget'], this);
 
     this.internal_view = contents;
     this.element = contents.element;
@@ -370,10 +378,6 @@ IWidget.prototype.paint = function (onInit) {
     }
 
     this.visible = true;
-
-    // Initialize widget menu
-    this.menu = new StyledElements.PopupMenu();
-    this.menu.append(new Wirecloud.ui.IWidgetMenuItems(this));
 
     // Insert it into the dragboard (initially hidden)
     this.element.style.visibility = "hidden";
