@@ -187,8 +187,12 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
     resource_info = template.get_resource_info()
 
     # Add user name to the version if the component is in development
-    if resource_info['version'].endswith('-dev'):
-        resource_info['version'] += user.username
+    if '-dev' in resource_info['version']:
+
+        # User name added this way to prevent users to upload a version
+        # *.*-devAnotherUser that would be accepted but might collide with
+        # AnotherUser's development version
+        resource_info['version'] = re.sub('-dev.*$', '-dev' + user.username, resource_info['version'])
         template_string = write_json_description(resource_info)
         wgt_file.update_config(template_string)
 
