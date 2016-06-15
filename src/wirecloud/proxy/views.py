@@ -193,6 +193,9 @@ def proxy_request(request, protocol, domain, path):
 
     # TODO improve proxy security
     request_method = request.method.upper()
+    if protocol not in ('http', 'https'):
+        return build_error_response(request, 422, _("Invalid protocol: %s") % protocol)
+
     try:
         if settings.SESSION_COOKIE_NAME not in request.COOKIES:
             raise Exception()

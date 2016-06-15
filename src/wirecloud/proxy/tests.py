@@ -160,6 +160,22 @@ class ProxyTests(ProxyTestsBase):
         response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/')
         self.assertEqual(response.status_code, 403)
 
+    def test_basic_proxy_requests_invalid_schema(self):
+
+        self.client.login(username='test', password='test')
+
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'invalid', 'domain': 'example.com', 'path': '/path'})
+        response = self.client.get(url, HTTP_HOST='localhost', HTTP_REFERER=self.basic_referer)
+        self.assertEqual(response.status_code, 422)
+
+    def test_basic_proxy_requests_forbidden_schema(self):
+
+        self.client.login(username='test', password='test')
+
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'file', 'domain': 'dir', 'path': '/path'})
+        response = self.client.get(url, HTTP_HOST='localhost', HTTP_REFERER=self.basic_referer)
+        self.assertEqual(response.status_code, 422)
+
     def test_basic_proxy_requests_from_proxied_content(self):
 
         self.client.login(username='test', password='test')
