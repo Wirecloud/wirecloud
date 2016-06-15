@@ -38,7 +38,6 @@ from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.version import Version
 from wirecloud.commons.utils.wgt import InvalidContents, WgtDeployer, WgtFile
-from wirecloud.commons.utils.template.writers.json import write_json_description
 
 
 wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
@@ -185,16 +184,6 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
         template = TemplateParser(template_contents)
 
     resource_info = template.get_resource_info()
-
-    # Add user name to the version if the component is in development
-    if '-dev' in resource_info['version']:
-
-        # User name added this way to prevent users to upload a version
-        # *.*-devAnotherUser that would be accepted but might collide with
-        # AnotherUser's development version
-        resource_info['version'] = re.sub('-dev.*$', '-dev' + user.username, resource_info['version'])
-        template_string = write_json_description(resource_info)
-        wgt_file.update_config(template_string)
 
     resource_id = (
         resource_info['vendor'],

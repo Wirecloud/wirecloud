@@ -40,7 +40,7 @@ from wirecloud.commons.utils.template import TemplateParseException, Unsupported
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_all_users
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user, install_resource_to_all_users, fix_dev_version
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget, Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
@@ -142,6 +142,7 @@ class ResourceCollection(Resource):
             return build_error_response(request, 403, _('You are not allowed to make resources publicly available to all users'))
 
         try:
+            fix_dev_version(file_contents, request.user)
             added, resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL)
 
             if not added and force_create:
