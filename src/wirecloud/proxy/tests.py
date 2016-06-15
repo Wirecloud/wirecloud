@@ -26,7 +26,7 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
-from django.test import Client
+from django.test import Client, override_settings
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
 from wirecloud.platform.models import IWidget
@@ -37,6 +37,7 @@ from wirecloud.platform.plugins import clear_cache
 __test__ = False
 
 
+@override_settings(WIRECLOUD_PLUGINS=())
 class ProxyTestsBase(WirecloudTestCase):
 
     fixtures = ('test_data.json',)
@@ -53,13 +54,11 @@ class ProxyTestsBase(WirecloudTestCase):
 
         super(ProxyTestsBase, cls).setUpClass()
         cls.basic_url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
-        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', None)
+        cls.basic_referer = 'http://localhost/test/workspace'
         clear_cache()
-        settings.WIRECLOUD_PLUGINS = ()
 
     @classmethod
     def tearDownClass(cls):
-        settings.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
         clear_cache()
 
         super(ProxyTestsBase, cls).tearDownClass()
@@ -67,6 +66,7 @@ class ProxyTestsBase(WirecloudTestCase):
     def setUp(self):
         self.network._servers['http']['example.com'].clear()
         cache.clear()
+        self.client = Client()
 
         super(ProxyTestsBase, self).setUp()
 
@@ -88,99 +88,86 @@ class ProxyTests(ProxyTestsBase):
 
     def test_request_with_bad_referer_header(self):
 
-        client = Client()
-
         engine = import_module(settings.SESSION_ENGINE)
         cookie = engine.SessionStore()
         cookie.save()  # we need to make load() work, or the cookie is worthless
-        client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
-        client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
+        self.client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
+        self.client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
 
         # Missing header
-        response = client.get(self.basic_url, HTTP_HOST='localhost')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost')
         self.assertEqual(response.status_code, 403)
 
         # Bad (syntactically) referer header value
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='@a')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='@a')
         self.assertEqual(response.status_code, 403)
 
         # Invalid (but syntactically correct) header value
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://other.server.com')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://other.server.com')
         self.assertEqual(response.status_code, 403)
 
     def test_request_with_workspace_referer_requires_permission(self):
 
-        client = Client()
-
-        client.login(username='test', password='test')
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test2/workspace')
+        self.client.login(username='test', password='test')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test2/workspace')
         self.assertEqual(response.status_code, 403)
 
     def test_request_without_started_session_are_forbidden(self):
 
-        client = Client()
-
         # Basic GET request
         self.network._servers['http']['example.com'].add_response('GET', '/path', {'content': 'data'})
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 403)
 
     def test_basic_anonymous_proxy_requests(self):
-
-        client = Client()
 
         # Create an anonymous session
         engine = import_module(settings.SESSION_ENGINE)
         cookie = engine.SessionStore()
         cookie.save()  # we need to make load() work, or the cookie is worthless
-        client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
-        client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
+        self.client.cookies[str(settings.SESSION_COOKIE_NAME)] = cookie.session_key
+        self.client.cookies[str(settings.CSRF_COOKIE_NAME)] = 'TODO'
 
-        self.check_basic_requests(client, 'http://localhost/test/workspace')
+        self.check_basic_requests('http://localhost/test/workspace')
 
     def test_basic_proxy_requests(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
-        self.check_basic_requests(client, 'http://localhost/test/workspace')
+        self.check_basic_requests('http://localhost/test/workspace')
 
     def test_basic_proxy_requests_from_widget(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         widget_url = reverse('wirecloud.showcase_media', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0", "file_path": "/index.html"})
-        self.check_basic_requests(client, 'http://localhost' + widget_url)
+        self.check_basic_requests('http://localhost' + widget_url)
 
     def test_basic_proxy_requests_from_widget_restricted_to_get_post(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         self.network._servers['http']['example.com'].add_response('PUT', '/path', {'content': 'data'})
         widget_url = reverse('wirecloud.showcase_media', kwargs={"vendor": "Wirecloud", "name": "Test", "version": "1.0", "file_path": "/index.html"})
-        response = client.put(self.basic_url, "{}", content_type="application/json", HTTP_HOST='localhost', HTTP_REFERER='http://localhost' + widget_url)
+        response = self.client.put(self.basic_url, "{}", content_type="application/json", HTTP_HOST='localhost', HTTP_REFERER='http://localhost' + widget_url)
         self.assertEqual(response.status_code, 403)
 
     def test_basic_proxy_requests_invalid_referer(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         self.network._servers['http']['example.com'].add_response('PUT', '/path', {'content': 'data'})
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/')
         self.assertEqual(response.status_code, 403)
 
     def test_basic_proxy_requests_from_proxied_content(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         proxied_url = 'http://localhost' + reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
-        self.check_basic_requests(client, proxied_url)
+        self.check_basic_requests(proxied_url)
 
-    def check_basic_requests(self, client, referer):
+    def check_basic_requests(self, referer):
         def echo_headers_response(method, url, *args, **kwargs):
             data = kwargs['data'].read()
             if method == 'GET':
@@ -218,7 +205,7 @@ class ProxyTests(ProxyTestsBase):
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', echo_headers_response)
         # Using "request" to work around https://code.djangoproject.com/ticket/20596
-        response = client.request(PATH_INFO=self.basic_url, HTTP_HOST='localhost', HTTP_REFERER=referer)
+        response = self.client.request(PATH_INFO=self.basic_url, HTTP_HOST='localhost', HTTP_REFERER=referer)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.reason_phrase, 'CUSTOM REASON')
         self.assertEqual(self.get_response_headers(response), expected_response_headers)
@@ -240,97 +227,91 @@ class ProxyTests(ProxyTestsBase):
         }
 
         self.network._servers['http']['example.com'].add_response('POST', '/path', echo_headers_response)
-        response = client.post(self.basic_url, data='{}', content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER=referer)
+        response = self.client.post(self.basic_url, data='{}', content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER=referer)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.get_response_headers(response), expected_response_headers)
         self.assertEqual(json.loads(self.read_response(response).decode('utf8')), expected_response_body)
 
         # Http Error 404
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/non_existing_file.html'})
-        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER=referer)
+        response = self.client.get(url, HTTP_HOST='localhost', HTTP_REFERER=referer)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(self.read_response(response), b'')
 
     def test_connection_error(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         # Simulating an error connecting to the servers
         def refuse_connection(method, url, *args, **kwargs):
             raise requests.exceptions.ConnectionError()
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', refuse_connection)
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 504)
         self.assertIn('Connection Error', self.read_response(response).decode('utf-8'))
 
     def test_connection_timeout(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         # Simulating an error connecting to the servers
         def refuse_connection(method, url, *args, **kwargs):
             raise requests.exceptions.ConnectTimeout()
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', refuse_connection)
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 504)
         self.assertIn('Gateway Timeout', self.read_response(response).decode('utf-8'))
 
     def test_connection_badstatusline(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         # Simulating bad response from server
         def bad_response(method, url, *args, **kwargs):
             raise requests.exceptions.HTTPError()
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', bad_response)
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 504)
         self.assertIn('Connection Error', self.read_response(response).decode('utf-8'))
 
     def test_connection_refused_ssl_error(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         # Simulating an error connecting to the servers
         def refuse_connection(method, url, *args, **kwargs):
             raise requests.exceptions.SSLError()
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', refuse_connection)
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 502)
         self.assertIn('SSL Error', self.read_response(response).decode('utf-8'))
 
     def test_encoded_urls(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         self.network._servers['http']['example.com'].add_response('GET', '/ca%C3%B1on', {'content': 'data'})
 
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/ca%C3%B1on'})
-        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = self.client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'data')
 
         # We need to append the path because the reverse method encodes the url
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/'}) + 'cañon'
-        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = self.client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'data')
 
     def test_transfer_encoding(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
-        response = client.get(
+        response = self.client.get(
             self.basic_url,
             HTTP_HOST='localhost',
             HTTP_REFERER='http://localhost/test/workspace',
@@ -340,9 +321,8 @@ class ProxyTests(ProxyTestsBase):
 
     def test_cookies(self):
 
-        client = Client()
-        client.login(username='test', password='test')
-        client.cookies[str('test')] = 'test'
+        self.client.login(username='test', password='test')
+        self.client.cookies[str('test')] = 'test'
 
         def cookie_response(method, url, *args, **kwargs):
             if 'Cookie' in kwargs['headers']:
@@ -351,7 +331,7 @@ class ProxyTests(ProxyTestsBase):
                 return {'status_code': 404}
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', cookie_response)
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
+        response = self.client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost/test/workspace')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), b'test=test')
 
@@ -372,14 +352,13 @@ class ProxyTests(ProxyTestsBase):
 
     def test_request_headers(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         def headers_response(method, url, *args, **kwargs):
             return {'content': json.dumps(kwargs['headers'])}
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', headers_response)
-        response = client.get(
+        response = self.client.get(
             self.basic_url,
             HTTP_HOST='localhost',
             HTTP_REFERER='http://localhost/test/workspace',
@@ -403,14 +382,13 @@ class ProxyTests(ProxyTestsBase):
 
     def test_via_header(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         def headers_response(method, url, *args, **kwargs):
             return {'content': json.dumps(kwargs['headers'])}
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', headers_response)
-        response = client.get(
+        response = self.client.get(
             self.basic_url,
             HTTP_HOST='localhost',
             HTTP_REFERER='http://localhost/test/workspace',
@@ -426,14 +404,13 @@ class ProxyTests(ProxyTestsBase):
 
     def test_x_forwarded_for_header(self):
 
-        client = Client()
-        client.login(username='test', password='test')
+        self.client.login(username='test', password='test')
 
         def headers_response(method, url, *args, **kwargs):
             return {'content': json.dumps(kwargs['headers'])}
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', headers_response)
-        response = client.get(
+        response = self.client.get(
             self.basic_url,
             HTTP_HOST='localhost',
             HTTP_REFERER='http://localhost/test/workspace',
@@ -451,11 +428,6 @@ class ProxyTests(ProxyTestsBase):
 class ProxySecureDataTests(ProxyTestsBase):
 
     tags = ('wirecloud-proxy', 'wirecloud-proxy-secure-data', 'wirecloud-noselenium')
-
-    def setUp(self):
-        super(ProxySecureDataTests, self).setUp()
-
-        self.client = Client()
 
     def test_secure_data(self):
 
