@@ -40,7 +40,7 @@ from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.testcases import uses_extra_resources, DynamicWebServer, WirecloudSeleniumTestCase, WirecloudTestCase, wirecloud_selenium_test_case
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
-from wirecloud.platform.localcatalogue.utils import add_m2m, install_resource, install_resource_to_user, install_resource_to_group, install_resource_to_all_users
+from wirecloud.platform.localcatalogue.utils import add_m2m, install_resource, install_resource_to_user, install_resource_to_group, install_resource_to_all_users, fix_dev_version
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
 
@@ -269,6 +269,18 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertTrue(resource.public)
         self.assertTrue(resource.is_available_for(self.user))
         self.assertTrue(resource.is_available_for(self.user2))
+
+    def test_fix_dev_version(self):
+
+        wgt_file = self.build_simple_wgt('template11.xml', b'code', other_files=('images/catalogue.png', 'images/catalogue_iphone.png', 'doc/index.html'))
+        original_template = wgt_file.get_template()
+        original_version = TemplateParser(original_template).get_resource_info()['version']
+
+        fix_dev_version(wgt_file, self.user)
+        new_version = TemplateParser(wgt_file.get_template()).get_resource_info()['version']
+
+        self.assertNotEqual(original_template, wgt_file.get_template())
+        self.assertEqual(original_version + self.user.username, new_version)
 
     def test_install_resource_to_all_users_duplicated(self):
 

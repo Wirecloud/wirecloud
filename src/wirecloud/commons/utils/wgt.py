@@ -144,6 +144,10 @@ class WgtFile(object):
                 outfile.close()
 
     def update_config(self, contents):
+
+        # Encode contents
+        contents = contents.encode('utf-8')
+
         # generate a temp file
         tmpfd, tmpname = tempfile.mkstemp(dir=".")
         os.close(tmpfd)
