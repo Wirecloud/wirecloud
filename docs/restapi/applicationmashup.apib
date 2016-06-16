@@ -297,7 +297,7 @@ Those parameters should be sent in the body of the request using the selected re
   workspace. This option cannot be used along `mashup`.
 + `name` (string): Name for the new workspace. This parameter is optional if
   either `mashup` or `workspace` are used. In those cases, the name will be
-  obtained from the referenced mashup or workspace.
+  obtained from the referenced mashup or workspace when not provided.
 + `allow_renaming` (boolean; default: `false`): If `false`, any attempt to
   create a workspace using a currently used name will fail (with a `409` status
   code). If this parameter is `true` and the name is already in use, a new name
@@ -906,7 +906,7 @@ representation format, e.g. JSON):
                "zIndex": 2,
                "width": 6,
                "height": 28,
-               "name": "Widget",
+               "title": "Widget's Title",
                "layout": 0
             }
 
@@ -922,7 +922,7 @@ representation format, e.g. JSON):
 
 Updates the attributes of a instantiated widget. Only the attributes referenced in the request will be updated leaving the other attributes intact. The modificable attributes are:
 
-- `name` (string): Name given to the instance of Widget.
+- `title` (string): Title for the widget.
 - `tab` (string): Id of the tab where the widget is going to be hosted. Widgets can only be moved between tabs of the same workspace.
 - `width` (number): Width of the widget in layout columns.
 - `height` (number): Height of the widget in layout rows.
@@ -942,7 +942,7 @@ Updates the attributes of a instantiated widget. Only the attributes referenced 
     + Body
 
             {
-                "name": "new name"
+                "title": "new title"
             }
 
 + Response 204
