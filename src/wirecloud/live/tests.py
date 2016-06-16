@@ -20,14 +20,17 @@
 from __future__ import unicode_literals
 
 import datetime
+import unittest
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from mock import patch
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.models import CatalogueResource, Workspace
 
-@patch('wirecloud.live.models.notify')
+@unittest.skipIf('wirecloud.live' not in settings.INSTALLED_APPS, 'wirecloud.live not installed')
+@patch('wirecloud.live.signals.handlers.notify')
 class LiveNotificationsTestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
