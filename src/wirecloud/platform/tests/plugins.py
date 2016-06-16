@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
-
 import django
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -135,14 +133,6 @@ class WirecloudPluginTestCase(TestCase):
         )
 
         self.assertRaises(ImproperlyConfigured, get_plugins)
-
-    @unittest.skipIf(django.VERSION[1] >= 7, "Django 1.7+ already check for insexistent modules")
-    def test_find_wirecloud_plugins_inexistant_app(self):
-
-        with self.settings(INSTALLED_APPS=('inexistent_module',)):
-            with patch('wirecloud.platform.plugins.logger') as logger_mock:
-                find_wirecloud_plugins()
-                self.assertTrue(logger_mock.error.called)
 
     def test_find_wirecloud_plugins_app_with_extra_import_errors(self):
 
