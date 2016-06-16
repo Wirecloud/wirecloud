@@ -236,12 +236,56 @@
                 };
                 var options = {
                     state: "primary",
-                    events: ["mouseover"]
+                    events: ["mouseover"],
+                    other: true
                 };
                 expect(merge(src, defaults, options)).toBe(src);
                 expect(src.depth).toBe(0);
                 expect(src.state).toBe("primary");
                 expect(src.events).toEqual(["mouseover"]);
+                expect(src.other).toBe(true);
+                expect(defaults.state).toBe("default");
+            });
+        });
+
+        describe("update(object, ...sources)", function () {
+            var update;
+
+            beforeAll(function () {
+                update = StyledElements.Utils.update;
+            });
+
+            it("throws exception if object is null", function () {
+                expect(function () {
+                    return update();
+                }).toThrowError(TypeError, "The argument `object` must be an `Object`.");
+            });
+
+            it("throws exception if object is undefined", function () {
+                expect(function () {
+                    return update(null);
+                }).toThrowError(TypeError, "The argument `object` must be an `Object`.");
+            });
+
+            it("should update sources into object", function () {
+                var src = {
+                    depth: 0,
+                    state: "default",
+                    events: ["click", "focus"]
+                };
+                var source1 = {
+                    depth: 1,
+                    state: "danger",
+                    other: ["mouseover"]
+                };
+                var source2 = {
+                    state: "primary"
+                };
+                expect(update(src, source1, source2)).toBe(src);
+                expect(src.depth).toBe(1);
+                expect(src.state).toBe("primary");
+                expect(src.events).toEqual(["click", "focus"]);
+                expect('other' in src).toBeFalsy();
             });
         });
 

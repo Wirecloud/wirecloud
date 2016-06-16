@@ -844,6 +844,63 @@ if (window.StyledElements == null) {
     };
 
     /**
+     * Updates existing properties using the values obtained from a list of
+     * `source` objects. New values are obtained from the source objects
+     * looping them from left to right. `undefined` or `null` sources are
+     * skipped. Subsequent sources overwrite property assignments of previous
+     * sources.
+     *
+     * @since 0.8
+     *
+     * @param {Object} object The destination object.
+     * @param {...Object} [sources] The source object(s).
+     * @returns {Object} The reference to `object`.
+     *
+     * @example
+     *
+     * var defaults = {
+     *   depth: 0,
+     *   state: "default",
+     *   events: ["click", "focus"]
+     * };
+     *
+     * var options = {
+     *   state: "primary",
+     *   other: "ignored value"
+     * };
+     *
+     * update({}, defaults, options);
+     * => {}
+     *
+     * defaults;
+     * => {depth: 0, state: "default", events: ["click", "focus"]}
+     *
+     * update(defaults, options);
+     * => {depth: 0, state: "primary", events: ["click", "focus"]}
+     *
+     * defaults;
+     * => {depth: 0, state: "primary", events: ["click", "focus"]}
+     */
+    Utils.update = function update(object) {
+
+        if (object == null) {
+            throw new TypeError("The argument `object` must be an `Object`.");
+        }
+
+        Array.prototype.slice.call(arguments, 1).forEach(function (source) {
+            if (source != null) {
+                Object.keys(source).forEach(function (key) {
+                    if (key in object) {
+                        object[key] = source[key];
+                    }
+                });
+            }
+        });
+
+        return object;
+    };
+
+    /**
      * Creates an array of the `object` own enumerable property values.
      * @since 0.5
      *
