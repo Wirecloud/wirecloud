@@ -30,7 +30,7 @@
 
     var widget_title = function (index) {
         var widget = Wirecloud.activeWorkspace.getIWidgets()[index];
-        return widget.element.getElementsByClassName("widget_menu")[0].getElementsByTagName('span')[0];
+        return widget.element.getElementsByClassName("wc-widget-heading")[0].getElementsByTagName('span')[0];
     };
 
     var findElementByTextContent = function findElementByTextContent(nodes, text) {

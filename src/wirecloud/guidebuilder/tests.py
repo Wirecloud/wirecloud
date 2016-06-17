@@ -493,7 +493,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         imgp = take_capture(self.driver, "final_layout")
 
         # Widget menu button
-        widg_menu = map_viewer_widget.element.find_element_by_css_selector('.widget_menu')
+        widg_menu = map_viewer_widget.element.find_element_by_css_selector('.wc-widget-heading')
         setts_btn = widg_menu.find_element_by_css_selector(
             '.wc-iwidget-buttons .icon-cogs')
         ActionChains(self.driver).move_to_element(setts_btn).perform()

@@ -248,7 +248,7 @@
                         widgetList = document.querySelectorAll('.workspace .iwidget');
 
                         for (i = 0; i < widgetList.length; i++) {
-                            if (widgetList[i].querySelector('.widget_menu span').textContent === title) {
+                            if (widgetList[i].querySelector('.wc-widget-heading span').textContent === title) {
                                 return widgetList[i];
                             }
                         }

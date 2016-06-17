@@ -142,7 +142,7 @@ class IWidgetTester(object):
 
     @property
     def title_element(self):
-        return self.element.find_element_by_css_selector('.widget_menu span')
+        return self.element.find_element_by_css_selector('.wc-widget-heading span')
 
     @property
     def name(self):
@@ -197,7 +197,7 @@ class IWidgetTester(object):
     def rename(self, new_name, timeout=30):
 
         self.open_menu().click_entry('Rename')
-        name_input = self.element.find_element_by_css_selector('.widget_menu span')
+        name_input = self.element.find_element_by_css_selector('.wc-widget-heading span')
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: name_input.get_attribute('contenteditable') == 'true')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
@@ -282,7 +282,7 @@ class WidgetWalletResourceTester(object):
             return False
 
         new_iwidget_id = WebDriverWait(self.testcase.driver, 10).until(iwidget_added)
-        element = self.testcase.wait_element_visible_by_css_selector('.iwidget[data-id="%s"]' % new_iwidget_id)
+        element = self.testcase.wait_element_visible_by_css_selector('.wc-widget[data-id="%s"]' % new_iwidget_id)
         return IWidgetTester(self.testcase, element)
 
 
@@ -1104,7 +1104,7 @@ class RemoteTestCase(object):
 
         if id is not None:
             try:
-                element = self.driver.find_element_by_css_selector('.workspace .iwidget[data-id="%s"]' % id)
+                element = self.driver.find_element_by_css_selector('.workspace .wc-widget[data-id="%s"]' % id)
             except NoSuchElementException:
                 return None
 
@@ -1120,7 +1120,7 @@ class RemoteTestCase(object):
         root_element = self.driver.find_element_by_css_selector(root_selector)
 
         try:
-            return [IWidgetTester(self, element) for element in root_element.find_elements_by_css_selector('.iwidget')]
+            return [IWidgetTester(self, element) for element in root_element.find_elements_by_css_selector('.wc-widget')]
         except StaleElementReferenceException:
             time.sleep(0.2)
             return self.find_iwidgets(tab)

@@ -91,7 +91,8 @@
             },
             'minimizebutton': function () {
                 var button = new StyledElements.Button({
-                    'plain': true
+                    class: 'fa',
+                    plain: true
                 });
                 button.addEventListener("click",
                     function (button) {
@@ -154,7 +155,7 @@
         }
 
         this.element = ui_fragment.elements[1];
-        this.element.classList.add('iwidget');
+        this.element.classList.add('wc-widget');
         this.element.setAttribute('data-id', this.widget.id);
         this.tmp = tmp;
 

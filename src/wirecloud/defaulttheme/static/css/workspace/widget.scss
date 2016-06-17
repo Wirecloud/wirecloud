@@ -5,29 +5,46 @@
 @import 'compass/utilities/color/contrast';
 @import 'base/z-depth_mixins';
 
-.iwidget {
+.wc-widget {
     position: absolute;
     transition: opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in, box-shadow 0.7s ease-in;
     overflow: visible;
     @include z-depth(1);
     box-sizing: content-box;
+    display: flex;
+    flex-direction: column;
+
+    &.dragging {
+        transition: opacity 0.35s ease-in;
+        @include z-depth(3);
+
+        & > .wc-widget-heading {
+            cursor: -webkit-grabbing;
+            cursor: -moz-grabbing;
+            cursor: grabbing;
+        }
+    }
 }
 
-.iwidget.draganddrop {
-    transition: opacity 0.35s ease-in;
-    @include z-depth(3);
-}
-
-.iwidget > .widget_menu {
-    cursor: move;
+.wc-widget-heading {
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+    cursor: grab;
     position: relative;
+    flex-grow: 0;
+
+    & > span {
+        display: inline-block;
+    }
+
+    & .se-btn {
+        font-size: 75%;
+        color: rgb(136, 136, 136);
+        transition: color 1s ease-in;
+    }
 }
 
-.widget_menu > span {
-    display: inline-block;
-}
-
-.wc-iwidget-buttons {
+.wc-widget-buttons {
     display: block;
     position: absolute;
     top: $panel-padding-vertical;
@@ -40,19 +57,12 @@
     font-size: $font-size-h4;
     line-height: $headings-line-height;
 
-    .widget_menu:hover > & {
+    .wc-widget-heading:hover > & {
         opacity: 1;
     }
 }
 
-
-.iwidget > .widget_menu .se-btn {
-    font-size: 75%;
-    color: rgb(136, 136, 136);
-    transition: color 1s ease-in;
-}
-
-.wc-iwidget-infobuttons {
+.wc-widget-infobuttons {
     padding: 0px 38px 0px $panel-padding-horizontal;
     @include background-image(linear-gradient(to left, rgba($panel-default-heading-bg, 0), $panel-default-heading-bg 38px, $panel-default-heading-bg));
     position: absolute;
@@ -63,25 +73,29 @@
     line-height: $headings-line-height;
 }
 
-.iwidget > .widget_menu .errorbutton.disabled {
+.wc-widget-heading .errorbutton.disabled {
     display: none;
 }
 
-.iwidget > .widget_wrapper {
+.wc-widget-body {
     background: $widget-bg;
+    flex-grow: 1;
     overflow: hidden;
-    padding: 0px;
+    position: relative;
+
+    & > iframe {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 0px none;
+    }
 }
 
-.iwidget > .widget_wrapper > iframe {
-    width: 100%;
-    border: none;
-}
-
-.iwidget > .statusBar {
+.wc-widget-footer {
     height: 3px;
     padding: 0 32px;
     position: static;
+    flex-grow: 0;
 
     @if ($widget-footer-bg == 'transparent') {
         color: contrast-color($body-bg, $text-color-light, $text-color-dark, $text-color-threshold);
@@ -91,7 +105,7 @@
     }
 }
 
-.iwidget .wc-bottom-resize-handle {
+.wc-widget .wc-bottom-resize-handle {
     position: absolute;
     height: 12px;
     bottom: -6px;
@@ -100,41 +114,41 @@
     cursor: s-resize;
 }
 
-.iwidget .wc-bottom-left-resize-handle {
+.wc-widget .wc-bottom-left-resize-handle {
     position: absolute;
     width: 40px;
     height: 12px;
     bottom: -6px;
     left: -6px;
     cursor: sw-resize;
+
+    &.inUse {
+        right: 0px;
+        top: 0px;
+        bottom: auto;
+        left: auto;
+    }
 }
 
-.iwidget .wc-bottom-right-resize-handle {
+.wc-widget .wc-bottom-right-resize-handle {
     position: absolute;
     width: 40px;
     height: 12px;
     bottom: -6px;
     right: -6px;
     cursor: se-resize;
+
+    &.inUse {
+        left: 0px;
+        top: 0px;
+        bottom: auto;
+        right: auto;
+    }
 }
 
-.iwidget .inUse {
+.wc-widget .inUse {
     width: 200%;
     height: 200%;
-}
-
-.iwidget .wc-bottom-left-resize-handle.inUse {
-    right: 0px;
-    top: 0px;
-    bottom: auto;
-    left: auto;
-}
-
-.iwidget .wc-bottom-right-resize-handle.inUse {
-    left: 0px;
-    top: 0px;
-    bottom: auto;
-    right: auto;
 }
 
 .wc-widget-fulldragboard {
@@ -142,11 +156,11 @@
     position: fixed;
     border: 0px none;
 
-    & > .statusBar {
-      display: none;
+    & > .wc-widget-footer {
+        display: none;
     }
 
-    & > .widget_menu {
+    & > .wc-widget-heading {
         cursor: default;
         & > .icon-minus {
             display: none;
@@ -156,9 +170,9 @@
 }
 
 /*div.dragboard.fixed*/
-.fixed .iwidget {
+.fixed .wc-widget {
 
-    & > .widget_menu {
+    & > .wc-widget-heading {
         cursor: default;
     }
 
@@ -191,16 +205,17 @@
 }
 
 .wc-minimized-widget {
-    .widget_menu {
+    .wc-widget-heading {
         border-bottom-left-radius: ($panel-border-radius - 1);
         border-bottom-right-radius: ($panel-border-radius - 1);
     }
 
-    .widget_wrapper {
+    .wc-widget-body {
         visibility: hidden;
+        height: 0px;
     }
 
-    .statusBar {
+    .wc-widget-footer {
         display: none;
     }
 }
@@ -215,27 +230,4 @@
     &.wc-missing-widget {
         @include z-depth(2, $color: $state-danger-border);
     }
-}
-
-/***
- *
- */
-.floating_widget_icon {
-	position: absolute;
-	width: 75px;
-	text-align: center;
-	display: none;
-}
-
-.floating_widget_icon img {
-	width: 60px;
-	height: 60px;
-	display: block;
-	padding: 0 5px 2px 5px;
-}
-
-.floating_widget_icon .floating_widget_title {
-	display: block;
-	cursor: default;
-	font-size:85%;
 }

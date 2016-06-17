@@ -100,7 +100,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidget = self.find_iwidgets(tab=102)[0]
 
-        handle = iwidget.element.find_element_by_css_selector('.widget_menu')
+        handle = iwidget.element.find_element_by_css_selector('.wc-widget-heading')
         tab = self.get_workspace_tab_by_name('Tab 2')
         ActionChains(self.driver).click_and_hold(handle).move_to_element(tab.element).release().perform()
 
@@ -955,10 +955,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(iwidgets[0].layout_position, (0, 0))
         self.assertEqual(iwidgets[1].layout_position, (6, 0))
 
-        ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(310, 0).release().perform()
+        offset = iwidgets[1].element.location['x'] - iwidgets[0].element.location['x']
+        ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(offset, 0).release().perform()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (6, 0) and iwidgets[1].layout_position == (6, 24))
 
-        ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(-310, 300).release().perform()
+        ActionChains(self.driver).click_and_hold(iwidgets[0].title_element).move_by_offset(-offset, 300).release().perform()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (0, 0) and iwidgets[1].layout_position == (6, 0))
 
     test_move_widget_and_restore.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
@@ -966,7 +967,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_move_widget_and_restore_touch(self):
 
         import selenium.webdriver.remote.webdriver as Remote
-        if self.driver.capabilities['browserName'] != 'chrome' or isinstance(self.driver, Remote.WebDriver):  # pragma: no cover
+        if self.driver.capabilities['browserName'] != 'chrome':  # pragma: no cover
             raise unittest.SkipTest('Touch events are supported only by chrome/chromium')
 
         self.login(username="user_with_workspaces")

@@ -99,14 +99,12 @@ function IWidget(widget, layout, description) {
     // Elements
     this.element = null;
     this.widgetMenu = null;
-    this.contentWrapper = null;
     this.content = null;
     this.closeButton = null;
     this.settingsButton = null;
     this.minimizeButton = null;
     this.errorButton = null;
     this.iwidgetInputHTMLElement = null;
-    this.statusBar = null;
 
     // Icon element for the iconified mode
     this.iconElement = null;
@@ -309,9 +307,7 @@ IWidget.prototype.build = function () {
     this.internal_view = contents;
     this.element = contents.element;
 
-    this.widgetMenu = this.element.getElementsByClassName('widget_menu')[0];
-    this.contentWrapper = this.element.getElementsByClassName('widget_wrapper')[0];
-    this.statusBar = this.element.getElementsByClassName('statusBar')[0];
+    this.widgetMenu = this.element.getElementsByClassName('wc-widget-heading')[0];
     this.content = contents.content;
     this.closeButton = contents.tmp.closebutton;
     this.errorButton = contents.tmp.errorbutton;
@@ -325,32 +321,6 @@ IWidget.prototype.build = function () {
             notify_widget_sizes.call(this);
         }
     }.bind(this), true);
-
-    // Icon Element
-    this.iconElement = document.createElement("div");
-    this.iconElement.classList.add("floating_widget_icon");
-
-    this.iconImg = document.createElement("img");
-    this.iconImg.classList.add("floating_widget_img");
-    this.iconImg.setAttribute("src", this.internal_iwidget.widget.getIcon());
-    this.iconElement.appendChild(this.iconImg);
-
-    // IE hack to allow drag & drop over images
-    this.iconImg.ondrag = function () {
-        return false;
-    };
-
-    this.iwidgetIconNameHTMLElement = document.createElement("a");
-    this.iwidgetIconNameHTMLElement.textContent = this.title;
-    this.iwidgetIconNameHTMLElement.classList.add("floating_widget_title");
-    this.iconElement.appendChild(this.iwidgetIconNameHTMLElement);
-
-    this.iwidgetIconNameHTMLElement.addEventListener("click",
-        function () {
-            this.toggleMinimizeStatus(false);
-            this.layout.dragboard.raiseToTop(this);
-        }.bind(this),
-        false);
 };
 
 IWidget.prototype.isAllowed = function isAllowed(action) {
@@ -391,16 +361,12 @@ IWidget.prototype.paint = function (onInit) {
     this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
     this.setZPosition(this.zPos);
 
-    // Select the correct representation for this iWidget (iconified, minimized or normal)
+    // Select the correct representation for this iWidget (minimized or normal)
     var minimizedStatusBackup = this.minimized;
     this.minimized = null;
-    this._recomputeWidth();
     this.setMinimizeStatus(minimizedStatusBackup, false, false);
 
-    // Time to show the iwidget (we need to take into account the widget can be iconified)
-    if (!this.onFreeLayout() || !minimizedStatusBackup) {
-        this.element.style.visibility = "";
-    }
+    this.element.style.visibility = "";
 
     // Mark as draggable
     this.draggable = new Wirecloud.ui.IWidgetDraggable(this);
@@ -416,20 +382,6 @@ IWidget.prototype.paint = function (onInit) {
     });
 
     this._updateButtons();
-
-    // Icon
-    this.layout.dragboard.dragboardElement.appendChild(this.iconElement);
-    this.iconDraggable = new IWidgetIconDraggable(this);
-    this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
-    this.iconElement.style.top = this.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
-
-    this.iconImg.addEventListener(
-        "click",
-        function () {
-            this.setMinimizeStatus(false);
-            this.layout.dragboard.raiseToTop(this);
-        }.bind(this),
-        true);
 
     this.content.setAttribute("src", this.internal_iwidget.codeurl);
     if (!onInit) {
@@ -525,7 +477,7 @@ IWidget.prototype.setContentSize = function (newWidth, newHeight, persist) {
     this.contentWidth = newWidth;
     this.contentHeight = newHeight;
 
-    this._recomputeSize(true);
+    this.repaint();
     notify_widget_sizes.call(this);
 
     // Notify resize event
@@ -556,129 +508,8 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
     this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
 
     // Recompute size
-    this._recomputeSize(false);
+    this.repaint();
     notify_widget_sizes.call(this);
-};
-
-/**
- * @private
- */
-IWidget.prototype._recomputeWidth = function () {
-    var width = this.layout.getWidthInPixels(this.contentWidth);
-
-    width -= this._computeExtraWidthPixels();
-
-    if (width < 0) {
-        width = 0;
-    }
-
-    this.element.style.width = width + "px";
-};
-
-/**
- * @private
- */
-IWidget.prototype._recomputeWrapper = function (contentHeight) {
-    var wrapperHeight;
-
-    if (!this.minimized) {
-        if (contentHeight) {
-            wrapperHeight = contentHeight;
-        } else {
-            wrapperHeight = parseInt(this.content.offsetHeight, 10);
-        }
-    } else {
-        wrapperHeight = 0;
-    }
-
-    this.contentWrapper.style.height = wrapperHeight + "px";
-};
-
-/**
- * @private
- */
-IWidget.prototype._computeExtraWidthPixels = function () {
-    var windowStyle, pixels;
-
-    windowStyle = document.defaultView.getComputedStyle(this.element, null);
-
-    pixels = windowStyle.getPropertyCSSValue("border-left-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-    pixels += windowStyle.getPropertyCSSValue("border-right-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-    return pixels;
-};
-
-/**
- * @private
- */
-IWidget.prototype._computeExtraHeightPixels = function () {
-    var windowStyle, menubarStyle, statusbarStyle, pixels;
-
-    windowStyle = document.defaultView.getComputedStyle(this.element, null);
-
-    pixels = windowStyle.getPropertyCSSValue("border-bottom-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-    pixels += windowStyle.getPropertyCSSValue("border-top-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-    menubarStyle = document.defaultView.getComputedStyle(this.widgetMenu, null);
-    pixels += menubarStyle.getPropertyCSSValue("border-bottom-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-    pixels += menubarStyle.getPropertyCSSValue("border-top-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-    statusbarStyle = document.defaultView.getComputedStyle(this.statusBar, null);
-    pixels += statusbarStyle.getPropertyCSSValue("border-bottom-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-    pixels += statusbarStyle.getPropertyCSSValue("border-top-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-    return pixels;
-};
-
-/**
- * @private
- */
-IWidget.prototype._recomputeHeight = function (basedOnContent) {
-    var contentHeight, processedSize;
-
-    if (!this.minimized) {
-        if (basedOnContent) {
-            // Based on content height
-
-            contentHeight = this.layout.fromVCellsToPixels(this.contentHeight);
-            var fullSize = contentHeight;
-            fullSize += this.widgetMenu.offsetHeight +
-                        this.statusBar.offsetHeight;
-            fullSize += this._computeExtraHeightPixels();
-
-            processedSize = this.layout.adaptHeight(fullSize + 'px');
-            contentHeight = processedSize.inPixels;
-            this.height = processedSize.inLU;
-            this.content.style.height = contentHeight + "px";
-        } else {
-            // Based on full widget height
-            contentHeight = this.layout.getHeightInPixels(this.height);
-            contentHeight -= this.widgetMenu.offsetHeight + this.statusBar.offsetHeight;
-            contentHeight -= this._computeExtraHeightPixels();
-
-            if (contentHeight < 0) {
-                contentHeight = 0;
-            }
-
-            this.content.style.height = contentHeight + "px";
-            this.contentHeight = Math.floor(this.layout.fromPixelsToVCells(contentHeight));
-        }
-
-        this._recomputeWrapper(contentHeight);
-    } else { // minimized
-        this._recomputeWrapper();
-        contentHeight = this.element.offsetHeight;
-        processedSize = this.layout.adaptHeight(contentHeight + 'px');
-        this.minimizedHeight = processedSize.inLU;
-    }
-};
-
-/**
- * @private
- */
-IWidget.prototype._recomputeSize = function (basedOnContent) {
-    this._recomputeWidth();
-    this._recomputeHeight(basedOnContent);
 };
 
 /**
@@ -717,7 +548,7 @@ IWidget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persi
     this.height = newHeight;
 
     // Recompute sizes
-    this._recomputeSize(false);
+    this.repaint();
     notify_widget_sizes.call(this);
 
     // Notify resize event
@@ -731,6 +562,16 @@ IWidget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persi
  */
 IWidget.prototype.isMinimized = function () {
     return this.minimized;
+};
+
+
+IWidget.prototype.repaint = function repaint() {
+    this.element.style.width = this.layout.getWidthInPixels(this.contentWidth) + 'px';
+    if (this.minimized) {
+        this.element.style.height = "";
+    } else {
+        this.element.style.height = this.layout.getHeightInPixels(this.height) + 'px';
+    }
 };
 
 /**
@@ -749,31 +590,20 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     this.minimized = newStatus;
 
     if (this.minimized) {
-        if (this.onFreeLayout()) {
-            // Floating widget
-            this.element.style.visibility = "hidden";
-            this.iconElement.style.display = "block";
-        } else {
-            // Linked to the grid
-            this.minimizeButton.setTitle(gettext("Maximize"));
-            this.minimizeButton.removeClassName("icon-minus");
-            this.minimizeButton.addClassName("icon-plus");
-        }
+        this.minimizeButton.setTitle(gettext("Maximize"));
+        this.minimizeButton.replaceClassName("fa-minus", "fa-plus");
         this.element.classList.add('wc-minimized-widget');
     } else {
         this.minimizeButton.setTitle(gettext("Minimize"));
-        this.minimizeButton.removeClassName("icon-plus");
-        this.minimizeButton.addClassName("icon-minus");
+        this.minimizeButton.replaceClassName("fa-plus", "fa-minus");
         this.element.classList.remove('wc-minimized-widget');
-
-        if (this.onFreeLayout()) {
-            // Floating widget
-            this.element.style.visibility = "";
-            this.iconElement.style.display = "none";
-        }
     }
 
-    this._recomputeHeight(false);
+    this.repaint();
+
+    if (this.minimized) {
+        this.minimizedHeight = this.layout.adaptHeight(this.element.offsetHeight + 'px').inLU;
+    }
 
     // Notify resize event
     reserveSpace = reserveSpace != null ? reserveSpace : true;
@@ -882,12 +712,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
 
     // ##### TODO Review this
     var fullWidth = this.element.offsetWidth;
-
-    var contentHeight = this.content.offsetHeight;
-    var fullHeight = contentHeight;
-    fullHeight += this.widgetMenu.offsetHeight +
-                  this.statusBar.offsetHeight;
-    fullHeight += this._computeExtraHeightPixels();
+    var fullHeight = this.element.offsetHeight;
     // ##### END TODO
 
     var dragboardChange = this.layout.dragboard !== newLayout.dragboard;

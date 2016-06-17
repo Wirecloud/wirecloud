@@ -78,7 +78,7 @@
         context.dragboard.raiseToTop(context.iWidget);
         context.layout.initializeMove(context.iWidget, draggable);
 
-        context.iWidget.element.classList.add('draganddrop');
+        context.iWidget.element.classList.add('dragging');
 
         context.currentTab = context.dragboard.tab;
         context.tabs = [];
@@ -91,8 +91,10 @@
         context.y = context.iWidget.element.style.top === "" ? 0 : parseInt(context.iWidget.element.style.top, 10);
         context.x = context.iWidget.element.style.left === "" ? 0 : parseInt(context.iWidget.element.style.left, 10);
 
+        context.dragboard = EzWebEffectBase.findDragboardElement(context.iWidget.element)
+        context.dragboard.classList.add('dragging');
         return {
-            dragboard: EzWebEffectBase.findDragboardElement(context.iWidget.element)
+            dragboard: context.dragboard
         };
     };
 
@@ -157,7 +159,8 @@
     IWidgetDraggable.prototype.finishFunc = function finishFunc(draggable, context) {
         var destDragboard, workspace, destLayout;
 
-        context.iWidget.element.classList.remove('draganddrop');
+        context.dragboard.classList.remove('dragging');
+        context.iWidget.element.classList.remove('dragging');
 
         if (context.selectedTab !== null) {
             context.layout.cancelMove();

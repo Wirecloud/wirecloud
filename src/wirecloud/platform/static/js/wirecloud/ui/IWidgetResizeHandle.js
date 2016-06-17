@@ -58,7 +58,7 @@
 
     IWidgetResizeHandle.prototype.startFunc = function startFunc(resizableElement, handleElement, data) {
         handleElement.classList.add("inUse");
-        data.iWidget.element.classList.add('draganddrop');
+        data.iWidget.element.classList.add('dragging');
 
         // TODO merge with iwidget minimum sizes
         data.minWidth = Math.ceil(data.iWidget.layout.fromPixelsToHCells(80));
@@ -113,7 +113,7 @@
 
     IWidgetResizeHandle.prototype.finishFunc = function finishFunc(resizableElement, handleElement, data) {
         var iWidget = data.iWidget;
-        data.iWidget.element.classList.remove('draganddrop');
+        data.iWidget.element.classList.remove('dragging');
         data.iWidget.setZPosition(data.oldZIndex);
         if (data.innitialWidth !== data.iWidget.getWidth() || data.innitialHeight !== data.iWidget.getHeight()) {
             iWidget.setSize(iWidget.getWidth(), iWidget.getHeight(), data.resizeLeftSide, true);

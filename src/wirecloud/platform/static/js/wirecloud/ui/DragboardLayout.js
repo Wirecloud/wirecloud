@@ -240,14 +240,13 @@
 
             if (iWidget.isVisible()) { // TODO
                 this.dragboard.dragboardElement.appendChild(iWidget.element);
-                this.dragboard.dragboardElement.appendChild(iWidget.iconElement);
             }
         }
 
         this.iWidgets[iWidget.code] = iWidget;
 
         if (iWidget.isVisible()) {
-            iWidget._recomputeSize();
+            iWidget.repaint();
         }
     };
 
@@ -305,9 +304,6 @@
 
             if (iWidget.element !== null) {
                 this.dragboard.dragboardElement.removeChild(iWidget.element);
-            }
-            if (iWidget.iconElement !== null) {
-                this.dragboard.dragboardElement.removeChild(iWidget.iconElement);
             }
         }
 

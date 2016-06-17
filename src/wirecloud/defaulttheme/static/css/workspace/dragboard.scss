@@ -12,14 +12,8 @@
     margin: 2ex 5ex;
 }
 
-/********************************************/
-
-.dragboard {
-  overflow: auto;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.dragboard.fixed {
-  background: transparent;
+.wc-workspace-tab.dragging {
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+    cursor: grabbing;
 }
