@@ -43,6 +43,7 @@
     font-weight: bold;
     border-bottom: 1px solid #DDD;
     white-space: nowrap;
+    display: flex;
 }
 
 .se-model-table-cell {
@@ -52,6 +53,8 @@
     display: inline-block;
     overflow: hidden;
     vertical-align: middle;
+    flex-grow: 1;
+    width: 0;
 }
 
 .se-model-table-headrow > .se-model-table-cell.sortable {
@@ -98,7 +101,7 @@
 .se-model-table-row {
     border-bottom: 1px solid #DDD;
     white-space: nowrap;
-
+    display: flex;
     &:hover {
         background-color: darken($body-bg, 12%);
     }

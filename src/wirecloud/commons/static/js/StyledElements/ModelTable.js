@@ -19,7 +19,7 @@
  *
  */
 
-/* globals CSSPrimitiveValue, moment, StyledElements */
+/* globals moment, StyledElements */
 
 (function (utils) {
 
@@ -41,6 +41,7 @@
             }
             if (column.width != null && column.width !== "css") {
                 cell.style.width = column.width;
+                cell.style.flexGrow = 0;
             }
             cell.textContent = label;
             if (column.sortable !== false) {
@@ -56,20 +57,6 @@
             this.header.appendChild(cell);
             this.pHeaderCells.push(cell);
         }
-    };
-
-    var applyWidth = function applyWidth(cell, width) {
-        var cellStyle, paddingLeft, paddingRight;
-
-        cellStyle = document.defaultView.getComputedStyle(cell, null);
-        if (cellStyle.getPropertyCSSValue('display') == null) {
-            cell.style.widht = '0';
-            return;
-        }
-        paddingLeft = cellStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-        paddingRight = cellStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-        cell.style.width = (width - paddingLeft - paddingRight) + 'px';
     };
 
     var highlight_selection = function highlight_selection() {
@@ -109,6 +96,7 @@
                 this.columnsCells[j].push(cell);
                 if (typeof column.width === 'string' && column.width !== "css") {
                     cell.style.width = column.width;
+                    cell.style.flexGrow = 0;
                 }
                 if (typeof column['class'] === 'string') {
                     cell.classList.add(column['class']);
@@ -174,8 +162,6 @@
         }
 
         highlight_selection.call(this);
-        this.resizeColumns();
-        this.resizeColumns();
     };
 
     var onRequestEnd = function onRequestEnd(source, error) {
@@ -347,7 +333,6 @@
 
     ModelTable.prototype.repaint = function repaint() {
         this.layout.repaint();
-        this.resizeColumns();
     };
 
     /**
@@ -365,34 +350,6 @@
         }
 
         return this;
-    };
-
-    ModelTable.prototype.resizeColumns = function resizeColumns() {
-        var i, j, autocells = [], extra_width, autowidth, columnCells;
-
-        extra_width = this.tableBody.wrapperElement.clientWidth;
-        for (i = 0; i < this.columns.length; i += 1) {
-            if (typeof this.columns[i].width !== 'string') {
-                autocells.push(i);
-            } else {
-                extra_width -= this.pHeaderCells[i].offsetWidth;
-            }
-        }
-
-        autowidth = extra_width / autocells.length;
-
-        for (i = 0; i < autocells.length; i += 1) {
-            columnCells = this.columnsCells[autocells[i]];
-
-            applyWidth(this.pHeaderCells[autocells[i]], autowidth);
-            for (j = 0; j < columnCells.length; j += 1) {
-                applyWidth(columnCells[j], autowidth);
-            }
-        }
-
-        for (i = 0; i < this.pComponents.length; i += 1) {
-            this.pComponents[i].repaint();
-        }
     };
 
     ModelTable.prototype.pSortByColumn = function pSortByColumn(column, descending) {
