@@ -109,7 +109,7 @@
                 if (!Array.isArray(classList)) {
                     classList = classList == null ? "" : classList.toString().trim();
                     if (classList === "") {
-                        return;
+                        return this;
                     }
                     classList = classList.split(/\s+/);
                 }
@@ -257,7 +257,9 @@
             },
 
             /**
-             * Replaces CSS classes with others.
+             * Replaces CSS classes with others. This method is a shortcut for
+             * calling `removeClassName` and `addClassName` at the same time.
+             *
              * @since 0.6
              *
              * @param {String|String[]} removeList
@@ -266,6 +268,23 @@
              *      classes to add
              * @returns {StyledElements.StyledElement}
              *      The instance on which the member is called.
+             *
+             * @ example
+             *
+             * element.className;
+             * => "fa fa-plus";
+             * element.replaceClassName("fa-plus", "fa-minus");
+             * => element
+             * element.className;
+             * => "fa fa-minus";
+             *
+             * element.className;
+             * => "icon icon-plus";
+             * element.replaceClassName("", "fa fa-plus");
+             * => element
+             * element.className;
+             * => "fa fa-plus";
+             *
              */
             replaceClassName: function replaceClassName(removeList, addList) {
                 this.removeClassName(removeList);
@@ -336,23 +355,20 @@
              *      The instance on which the member is called.
              */
             toggleClassName: function toggleClassName(classList, state) {
-                classList = typeof classList !== 'string' ? "" : classList.trim();
+                var method;
+
+                if (!Array.isArray(classList)) {
+                    classList = classList == null ? [] : classList.toString().trim();
+                    classList = classList !== "" ? classList.split(/\s+/) : [];
+                }
 
                 if (classList.length) {
                     if (typeof state !== 'boolean') {
-                        classList.split(/\s+/).forEach(function (className) {
-                            if (this.get().classList.contains(className)) {
-                                this.get().classList.remove(className);
-                            } else {
-                                this.get().classList.add(className);
-                            }
-                        }, this);
+                        classList.forEach(toggle_individual_class, this);
                     } else {
-                        var method = state ? "add" : "remove";
+                        method = state ? add_individual_class : remove_individual_class;
 
-                        classList.split(/\s+/).forEach(function (className) {
-                            this.get().classList[method](className);
-                        }, this);
+                        classList.forEach(method, this);
                     }
                 }
 
@@ -453,7 +469,8 @@
                 if (!Array.isArray(classList)) {
                     classList = classList == null ? "" : classList.toString().trim();
                     if (classList === "") {
-                        this.get().removeAttribute('class');
+                        this.get().className = "";
+                        return this;
                     }
                     classList = classList.split(/\s+/);
                 }
@@ -494,12 +511,20 @@
     // PRIVATE MEMBERS
     // ==================================================================================
 
-    var add_individual_class = function (className) {
+    var add_individual_class = function add_individual_class(className) {
         this.get().classList.add(className);
     };
 
-    var remove_individual_class = function (className) {
+    var remove_individual_class = function remove_individual_class(className) {
         this.get().classList.remove(className);
+    };
+
+    var toggle_individual_class = function toggle_individual_class(className) {
+        if (this.get().classList.contains(className)) {
+            this.get().classList.remove(className);
+        } else {
+            this.get().classList.add(className);
+        }
     };
 
 })(StyledElements, StyledElements.Utils);

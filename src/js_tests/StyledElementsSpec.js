@@ -112,42 +112,186 @@
 
         });
 
-        it("should not crash when calling the remove method and the element has no parent element", function () {
+        describe("addClassName(classList)", function () {
 
-            var element = new StyledElements.Button();
-            expect(element.wrapperElement.parentElement).toBe(null);
-            expect(element.parentElement).toBe(null);
-            element.remove();
-            expect(element.wrapperElement.parentElement).toBe(null);
-            expect(element.parentElement).toBe(null);
+            it("should do nothing when passing an empty string", function () {
+                var element = new StyledElements.Button();
+                expect(element.addClassName("")).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn");
+            });
 
-        });
+            it("should support class lists", function () {
 
-        it("should allow to remove elements from the DOM", function () {
+                var element = new StyledElements.Button();
+                expect(element.addClassName(["a", "b"])).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn a b");
 
-            var element = new StyledElements.Button();
-            element.appendTo(dom);
-            expect(element.wrapperElement.parentElement).not.toBe(null);
-            expect(element.parentElement).toBe(null);
-            element.remove();
-            expect(element.wrapperElement.parentElement).toBe(null);
-            expect(element.parentElement).toBe(null);
+            });
 
-        });
+            it("should support whitespace separated class lists", function () {
 
-        it("should allow to remove elements from containers", function () {
+                var element = new StyledElements.Button();
+                expect(element.addClassName("a b")).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn a b");
 
-            var container = new StyledElements.Container();
-            var element = new StyledElements.Button();
-            container.appendChild(element);
-            expect(element.wrapperElement.parentElement).not.toBe(null);
-            expect(element.parentElement).not.toBe(null);
-            element.remove();
-            expect(element.wrapperElement.parentElement).toBe(null);
-            expect(element.parentElement).toBe(null);
+            });
 
         });
 
+        describe("removeClassName(classList)", function () {
+
+            it("should clear all classes when passing null", function () {
+                var element = new StyledElements.Button();
+                element.wrapperElement.className += " a test b";
+                expect(element.removeClassName()).toBe(element);
+                expect(element.wrapperElement.className).toBe("");
+            });
+
+            it("should do nothing when removing an inexistent class name", function () {
+
+                var element = new StyledElements.Button();
+                expect(element.removeClassName("inexistent")).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn");
+
+            });
+
+            it("should support class lists", function () {
+
+                var element = new StyledElements.Button();
+                element.wrapperElement.className += " a test b";
+                expect(element.removeClassName(["a", "inexistent", "b"])).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn test");
+
+            });
+
+            it("should support whitespace separated class lists", function () {
+
+                var element = new StyledElements.Button();
+                element.wrapperElement.className += " a test b";
+                expect(element.removeClassName("a inexistent b")).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn test");
+
+            });
+
+        });
+
+        describe("replaceClassName(removeList, addList)", function () {
+
+            it("should call removeClassName and addClassName", function () {
+                var element, removeList, addList;
+
+                element = new StyledElements.Button();
+                removeList = [];
+                addList = [];
+                spyOn(element, "addClassName");
+                spyOn(element, "removeClassName");
+                expect(element.replaceClassName(removeList, addList)).toBe(element);
+                expect(element.addClassName.calls.count()).toEqual(1);
+                expect(element.addClassName.calls.argsFor(0)).toEqual([addList]);
+                expect(element.removeClassName.calls.count()).toEqual(1);
+                expect(element.removeClassName.calls.argsFor(0)).toEqual([removeList]);
+            });
+
+        });
+
+        describe("toggleClassName(classList, state)", function () {
+
+            it("should do nothing when passing an empty classList", function () {
+                var element = new StyledElements.Button();
+                expect(element.toggleClassName("")).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn");
+            });
+
+            it("should add class names if they are not present", function () {
+                var element = new StyledElements.Button();
+                expect(element.toggleClassName("a b")).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn a b");
+            });
+
+            it("should add class names if they are not present (using lists)", function () {
+                var element = new StyledElements.Button();
+                expect(element.toggleClassName(["a", "b"])).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn a b");
+            });
+
+            it("should add class names if state is true", function () {
+                var element = new StyledElements.Button();
+                element.wrapperElement.className += " a";
+                expect(element.toggleClassName("se-btn a b", true)).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn a b");
+            });
+
+            it("should remove class names if they are present", function () {
+                var element = new StyledElements.Button();
+                element.wrapperElement.className += " a test b";
+                expect(element.toggleClassName("a b")).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn test");
+            });
+
+            it("should remove class names if they are present (using lists)", function () {
+                var element = new StyledElements.Button();
+                element.wrapperElement.className += " a test b";
+                expect(element.toggleClassName(["a", "b"])).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn test");
+            });
+
+            it("should remove class names if state is false", function () {
+                var element = new StyledElements.Button();
+                element.wrapperElement.className += " a test b";
+                expect(element.toggleClassName("a b c", false)).toBe(element);
+                expect(element.wrapperElement.className).toBe("se-btn test");
+            });
+
+        });
+
+        describe("remove()", function () {
+
+            it("should not crash if the element has no parent", function () {
+
+                var element = new StyledElements.Button();
+                // Initial checks
+                expect(element.wrapperElement.parentElement).toBe(null);
+                expect(element.parentElement).toBe(null);
+                // Call the remove method
+                expect(element.remove()).toBe(element);
+                // Post-checks
+                expect(element.wrapperElement.parentElement).toBe(null);
+                expect(element.parentElement).toBe(null);
+
+            });
+
+            it("should allow to remove elements from the DOM", function () {
+
+                var element = new StyledElements.Button();
+                element.appendTo(dom);
+                // Initial checks
+                expect(element.wrapperElement.parentElement).not.toBe(null);
+                expect(element.parentElement).toBe(null);
+                // Call the remove method
+                expect(element.remove()).toBe(element);
+                // Post-checks
+                expect(element.wrapperElement.parentElement).toBe(null);
+                expect(element.parentElement).toBe(null);
+
+            });
+
+            it("should allow to remove elements from containers", function () {
+
+                var container = new StyledElements.Container();
+                var element = new StyledElements.Button();
+                container.appendChild(element);
+                // Initial checks
+                expect(element.wrapperElement.parentElement).not.toBe(null);
+                expect(element.parentElement).not.toBe(null);
+                // Call the remove method
+                expect(element.remove()).toBe(element);
+                // Post-checks
+                expect(element.wrapperElement.parentElement).toBe(null);
+                expect(element.parentElement).toBe(null);
+
+            });
+
+        });
 
     });
 
