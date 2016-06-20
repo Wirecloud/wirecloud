@@ -4,11 +4,11 @@ Date: 30th September 2015
 
 This version:
 
-https://github.com/Wirecloud/wirecloud/tree/0.8.x/docs/widgetapi/
+https://github.com/Wirecloud/wirecloud/tree/0.9.x/docs/widgetapi/
 
 Previous version:
 
-https://github.com/Wirecloud/wirecloud/tree/0.7.x/docs/widgetapi/
+https://github.com/Wirecloud/wirecloud/tree/0.8.x/docs/widgetapi/
 
 Latest version:
 
@@ -50,7 +50,7 @@ This specification is licensed under the [FIWARE Open Specification License (imp
 
 ## Copyright
 
-Copyright © 2012-2015 by Universidad Politécnica de Madrid
+Copyright © 2012-2016 by Universidad Politécnica de Madrid
 
 ## Widget API
 
