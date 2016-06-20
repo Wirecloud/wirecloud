@@ -1166,6 +1166,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(old_size_in_pixels, new_size_in_pixels)
         self.assertEqual(old_affected_iwidget_position, affected_iwidget.layout_position)
 
+    test_minimize_widget.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
+
     @uses_extra_resources(('Wirecloud_context-inspector_0.5.wgt',), shared=True)
     def test_basic_layout_parameter_change(self):
 
