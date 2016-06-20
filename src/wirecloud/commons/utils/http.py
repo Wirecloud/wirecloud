@@ -287,11 +287,7 @@ def consumes(mime_types):
 _servername = None
 def get_current_domain(request=None):
     from django.conf import settings
-    try:
-        # Django 1.7+
-        from django.contrib.sites.shortcuts import get_current_site
-    except:
-        from django.contrib.sites.models import get_current_site
+    from django.contrib.sites.shortcuts import get_current_site
 
     # Server name
     if getattr(settings, 'FORCE_DOMAIN', None) is not None:
