@@ -146,6 +146,7 @@ BASE_CSS = (
     'css/base/utils.scss',
     'css/base/body.scss',
     'css/base/fade.css',
+    'css/base/slide.scss',
     'css/base/code.scss',
     'css/base/z-depth.scss',
     'css/workspace/ioperator.css',

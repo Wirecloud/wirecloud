@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,9 +19,9 @@
  *
  */
 
-/*global StyledElements*/
+/* globals Promise, StyledElements*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -34,18 +34,14 @@
         var defaultOptions = {
             'class': '',
             'full': true,
-            'defaultEffect': 'None'
+            'defaultEffect': StyledElements.Alternatives.NONE
         };
 
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.merge(defaultOptions, options);
         StyledElements.StyledElement.call(this, ['preTransition', 'postTransition']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = StyledElements.Utils.prependWord(options['class'], "alternatives");
-
-        this.contentArea = document.createElement("div");
-        this.contentArea.className = "wrapper";
-        this.wrapperElement.appendChild(this.contentArea);
+        this.wrapperElement.className = utils.prependWord(options['class'], "alternatives");
 
         this.visibleAlt = null;
         this.alternatives = {};
@@ -64,131 +60,93 @@
         this.defaultEffect = options.defaultEffect;
 
         /* Transitions code */
-        var context = {
-            alternativesObject: this,
-            inAlternative: null,
-            outAlternative: null,
-            width: null,
-            steps: null,
-            step: null,
-            inc: null
-        };
-
-        var stepFunc = function stepFunc(step, context) {
-            var newLeftPosOut, newLeftPosIn, offset = Math.floor(step * context.inc);
-
-            if (context.inc < 0) {
-                newLeftPosOut = offset;
-                newLeftPosIn = context.width + offset;
-            } else {
-                newLeftPosOut = offset;
-                newLeftPosIn = -context.width + offset;
-            }
-
-            if ((context.inc < 0) && (newLeftPosIn > 0) ||
-                (context.inc > 0) && (newLeftPosOut < context.width)) {
-                context.outAlternative.wrapperElement.style.left = newLeftPosOut + "px";
-                context.inAlternative.wrapperElement.style.left = newLeftPosIn + "px";
-                return true;  // we need to do more iterations
-            } else {
-                // Finish current transition
-                context.outAlternative.setVisible(false);
-                context.outAlternative.wrapperElement.style.left = '';
-                context.outAlternative.wrapperElement.style.width = '';
-                context.inAlternative.wrapperElement.style.left = '';
-                context.inAlternative.wrapperElement.style.width = '';
-
-                context.alternativesObject.visibleAlt = context.inAlternative;
-                StyledElements.Utils.callCallback(context.onComplete, context.alternativesObject, context.outAlternative, context.inAlternative);
-                context.alternativesObject.events.postTransition.dispatch(context.alternativesObject, context.outAlternative, context.inAlternative);
-                return false; // we have finished here
-            }
-        };
-
         var initFunc = function initFunc(context, command) {
-            context.outAlternative = context.alternativesObject.visibleAlt;
-            context.inAlternative = command.id;
-            context.onComplete = command.onComplete;
-            if (context.inAlternative != null) {
-                context.inAlternative = context.alternativesObject.alternatives[context.inAlternative];
-            }
+            var inAlternative, outAlternative, p;
 
-            if (context.inAlternative == null || context.inAlternative == context.outAlternative) {
-                StyledElements.Utils.callCallback(context.onComplete, context.alternativesObject, context.outAlternative, context.inAlternative);
+            inAlternative = command.inAlternative;
+            outAlternative = command.outAlternative;
+            context.onComplete = command.onComplete;
+
+            if (inAlternative === outAlternative) {
+                utils.callCallback(context.onComplete, context, outAlternative, inAlternative);
                 return false; // we are not going to process this command
             }
 
-            context.alternativesObject.events.preTransition.dispatch(context.alternativesObject, context.outAlternative, context.inAlternative);
-            var baseTime = (new Date()).getTime() + 150;
+            context.events.preTransition.dispatch(context, outAlternative, inAlternative);
 
-            context.width = context.alternativesObject.wrapperElement.offsetWidth;
-            context.inAlternative.wrapperElement.style.width = context.width + "px";
-            context.outAlternative.wrapperElement.style.width = context.width + "px";
-            context.inAlternative.setVisible(true);
-
-            var stepTimes = [];
-            // TODO
-            switch (context.alternativesObject.defaultEffect) {
-            case Alternatives.HORIZONTAL_SLICE:
-                context.steps = 6;
-                for (var i = 0; i <= context.steps; i++) {
-                    stepTimes[i] = baseTime + (i * 150);
-                }
-
-                context.inc = Math.floor(context.width / context.steps);
-                if (context.inAlternative.getId() > context.outAlternative.getId()) {
-                    context.inAlternative.wrapperElement.style.left = context.width + "px";
-                    context.inc = -context.inc;
-                } else {
-                    context.inAlternative.wrapperElement.style.left = -context.width + "px";
-                }
-                // TODO
+            switch (command.effect) {
+            case StyledElements.Alternatives.HORIZONTAL_SLIDE:
+                outAlternative.addClassName('slide');
+                inAlternative.addClassName([
+                    'slide',
+                    inAlternative.getId() < outAlternative.getId() ? 'left' : 'right'
+                ]).show();
+                p = Promise.all([
+                    utils.waitTransition(inAlternative.get()),
+                    utils.waitTransition(outAlternative.get())
+                ]).then(function () {
+                    inAlternative.removeClassName('slide');
+                    outAlternative.removeClassName('slide left right').hide();
+                });
+                // Trigger slide effects
+                setTimeout(function () {
+                    outAlternative.addClassName(inAlternative.getId() < outAlternative.getId() ? 'right' : 'left');
+                    inAlternative.removeClassName('left right');
+                }, 10);
                 break;
-            // case Alternatives.NONE:
+            case StyledElements.Alternatives.CROSS_DISSOLVE:
+                inAlternative.addClassName('fade').show();
+                outAlternative.addClassName('fade in');
+                p = Promise.all([
+                    utils.waitTransition(inAlternative.get()),
+                    utils.waitTransition(outAlternative.get())
+                ]).then(function () {
+                    inAlternative.removeClassName('fade in');
+                    outAlternative.removeClassName('fade').hide();
+                });
+                // Trigger fade effects
+                setTimeout(function () {
+                    inAlternative.addClassName('in');
+                    outAlternative.removeClassName('in');
+                }, 0);
+                break;
             default:
-                context.steps = 1;
-                stepTimes[0] = baseTime;
-
-                context.inc = Math.floor(context.width / context.steps);
-                if (context.inAlternative.getId() > context.outAlternative.getId()) {
-                    context.inAlternative.wrapperElement.style.left = context.width + "px";
-                    context.inc = -context.inc;
-                } else {
-                    context.inAlternative.wrapperElement.style.left = -context.width + "px";
-                }
+            case StyledElements.Alternatives.NONE:
+                inAlternative.show();
+                outAlternative.hide();
+                p = new Promise(function (fullfile) {fullfile();});
             }
 
-            return stepTimes; // we have things to do
+            return p.then(function () {
+                utils.callCallback(context.onComplete, context, outAlternative, inAlternative);
+                context.events.postTransition.dispatch(context, outAlternative, inAlternative);
+            });
         };
 
-        this.transitionsQueue = new StyledElements.CommandQueue(context, initFunc, stepFunc);
+        this.transitionsQueue = new StyledElements.CommandQueue(this, initFunc);
     };
     Alternatives.prototype = new StyledElements.StyledElement();
-    Alternatives.HORIZONTAL_SLICE = "HorizontalSlice";
-    Alternatives.NONE = "HorizontalSlice";
+    Alternatives.HORIZONTAL_FLIP = "horizontalflip";
+    Alternatives.HORIZONTAL_SLIDE = "horizontalslide";
+    Alternatives.CROSS_DISSOLVE = "dissolve";
+    Alternatives.NONE = "none";
 
     Alternatives.prototype.repaint = function repaint(temporal) {
-        temporal = temporal != null ? temporal : false;
-
-        var height = this._getUsableHeight();
-        if (height == null) {
-            return; // nothing to do
-        }
-
-        this.wrapperElement.style.height = (height + "px");
-
         // Resize content
         if (this.visibleAlt != null) {
-            this.visibleAlt.repaint();
+            this.visibleAlt.repaint(!!temporal);  // Convert temporal to boolean
         }
+
+        return this;
     };
 
     Alternatives.prototype.createAlternative = function createAlternative(options) {
         var defaultOptions = {
-            'containerOptions': {},
-            'alternative_constructor': StyledElements.Alternative
+            alternative_constructor: StyledElements.Alternative,
+            containerOptions: {},
+            initiallyVisible: false
         };
-        options = StyledElements.Utils.merge(defaultOptions, options);
+        options = utils.update(defaultOptions, options);
 
         var altId = this.nextAltId++;
 
@@ -197,7 +155,7 @@
         }
         var alt = new options.alternative_constructor(altId, options.containerOptions);
 
-        alt.insertInto(this.contentArea);
+        alt.insertInto(this.wrapperElement);
 
         this.alternatives[altId] = alt;
         this.alternativeList.push(alt);
@@ -205,6 +163,8 @@
         if (!this.visibleAlt) {
             this.visibleAlt = alt;
             alt.setVisible(true);
+        } else if (options.initiallyVisible) {
+            this.showAlternative(alt);
         }
 
         /* Return the alternative container */
@@ -217,14 +177,15 @@
         if (alternative instanceof StyledElements.Alternative) {
             id = alternative.getId();
             if (this.alternatives[id] !== alternative) {
-                throw new TypeError('Invalid alternative');
+                throw new TypeError('alternative is not owner by this alternatives element');
             }
         } else {
             id = alternative;
-            if (this.alternatives[id] == null) {
-                throw new TypeError('Invalid alternative');
+            alternative = this.alternatives[alternative];
+            if (!alternative) {
+                // Do nothing
+                return this;
             }
-            alternative = this.alternatives[id];
         }
 
         delete this.alternatives[id];
@@ -232,7 +193,7 @@
         this.alternativeList.splice(index, 1);
 
         alternative.setVisible(false);
-        this.contentArea.removeChild(alternative.wrapperElement);
+        this.wrapperElement.removeChild(alternative.wrapperElement);
 
         if (this.visibleAlt === alternative) {
             if (this.alternativeList.length > 0) {
@@ -248,6 +209,8 @@
 
             this.events.postTransition.dispatch(this, alternative, nextAlternative);
         }
+
+        return this;
     };
 
     Alternatives.prototype.clear = function clear() {
@@ -255,7 +218,9 @@
         this.alternativeList = [];
         this.nextAltId = 0;
         this.visibleAlt = null;
-        this.contentArea.innerHTML = '';
+        this.wrapperElement.innerHTML = '';
+
+        return this;
     };
 
     Alternatives.prototype.getCurrentAlternative = function getCurrentAlternative() {
@@ -271,27 +236,33 @@
     Alternatives.prototype.showAlternative = function showAlternative(alternative, options) {
         var command = {};
 
-        if (options == null) {
-            options = {};
-        }
+        options = utils.update({
+            effect: this.defaultEffect,
+            onComplete: null
+        }, options);
 
         if (alternative instanceof StyledElements.Alternative) {
-            command.id = alternative.getId();
-            if (this.alternatives[command.id] !== alternative) {
-                throw new Error('Invalid alternative');
+            if (this.alternatives[alternative.getId()] !== alternative) {
+                throw new TypeError('Invalid alternative');
             }
+            command.inAlternative = alternative;
         } else {
-            command.id = alternative;
-            if (this.alternatives[command.id] == null) {
-                throw new Error('Invalid alternative');
+            if (this.alternatives[alternative] == null) {
+                throw new TypeError('Invalid alternative');
             }
+            command.inAlternative = this.alternatives[alternative];
         }
 
+        command.outAlternative = this.visibleAlt;
         command.onComplete = options.onComplete;
+        command.effect = options.effect;
 
         this.transitionsQueue.addCommand(command);
+        this.visibleAlt = command.inAlternative;
+
+        return this;
     };
 
     StyledElements.Alternatives = Alternatives;
 
-})();
+})(StyledElements.Utils);

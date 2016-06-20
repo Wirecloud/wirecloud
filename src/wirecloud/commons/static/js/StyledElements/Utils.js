@@ -19,7 +19,7 @@
  *
  */
 
-/* globals StyledElements */
+/* globals Promise, StyledElements */
 
 // TODO
 if (window.StyledElements == null) {
@@ -920,6 +920,17 @@ if (window.StyledElements == null) {
         }
 
         return values;
+    };
+
+    Utils.waitTransition = function waitTransition(element) {
+        return new Promise(function (fulfill) {
+            var listener = function listener(event) {
+                element.removeEventListener('transitionend', listener);
+                fulfill();
+            };
+
+            element.addEventListener('transitionend', listener);
+        });
     };
 
     StyledElements.Utils = Utils;
