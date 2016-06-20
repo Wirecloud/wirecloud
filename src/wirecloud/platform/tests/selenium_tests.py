@@ -1136,7 +1136,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         _, old_size = self.get_widget_sizes_from_context(iwidget)
 
         iwidget.open_menu().click_entry('Extract from grid')
-        _, new_size = self.get_widget_sizes_from_context(iwidget)
+        _, new_size = self.get_widget_sizes_from_context(iwidget.wait_still())
 
         self.assertEqual(old_size, new_size)
     test_extract_widget_from_grid.tags = ('wirecloud-selenium', 'wirecloud-dragboard')
@@ -1245,17 +1245,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         workspace_preferences_dialog.find_element_by_xpath("//*[text()='Save']").click()
 
-        WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(iwidgets[0].element))
-
         # Check new widget 1 sizes
-        new_size_from_context1, new_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0])
+        new_size_from_context1, new_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0].wait_still())
         self.assertNotEqual(new_size_from_context1[0], old_size_from_context1[0])
         self.assertEqual(new_size_from_context1[1], old_size_from_context1[1])
         self.assertNotEqual(new_size_in_pixels_from_context1[0], old_size_in_pixels_from_context1[0])
         #self.assertEqual(new_size_in_pixels_from_context1[1], old_size_in_pixels_from_context1[1])
 
-        # Check new widget 1 sizes
-        new_size_from_context2, new_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
+        # Check new widget 2 sizes
+        new_size_from_context2, new_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1].wait_still())
         self.assertNotEqual(new_size_from_context2[0], old_size_from_context2[0])
         self.assertEqual(new_size_from_context2[1], old_size_from_context2[1])
         self.assertNotEqual(new_size_in_pixels_from_context2[0], old_size_in_pixels_from_context2[0])
@@ -1304,11 +1302,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         try:
             self.driver.set_window_size(800, 400)
 
-            WebDriverWait(self.driver, timeout=5).until(WEC.element_be_still(iwidgets[0].element))
-
             # Check new widget sizes
-            new_size_from_context1, new_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0])
-            new_size_from_context2, new_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1])
+            new_size_from_context1, new_size_in_pixels_from_context1 = self.get_widget_sizes_from_context(iwidgets[0].wait_still())
+            new_size_from_context2, new_size_in_pixels_from_context2 = self.get_widget_sizes_from_context(iwidgets[1].wait_still())
             self.assertEqual(new_size_from_context1, old_size_from_context1)
             self.assertNotEqual(new_size_in_pixels_from_context1[0], old_size_in_pixels_from_context1[0])
             self.assertNotEqual(new_size_in_pixels_from_context1[1], old_size_in_pixels_from_context1[1])

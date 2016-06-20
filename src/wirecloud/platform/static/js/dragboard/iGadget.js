@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, gettext, ngettext, interpolate, Wirecloud, IWidgetIconDraggable*/
+/*global CSSPrimitiveValue, gettext, ngettext, interpolate, Wirecloud */
 
 /**
  * Creates an instance of a Widget.
@@ -710,10 +710,8 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         this.toggleMinimizeStatus();
     }
 
-    // ##### TODO Review this
-    var fullWidth = this.element.offsetWidth;
-    var fullHeight = this.element.offsetHeight;
-    // ##### END TODO
+    var previousWidth = this.element.offsetWidth;
+    var previousHeight = this.element.offsetHeight;
 
     var dragboardChange = this.layout.dragboard !== newLayout.dragboard;
     var oldLayout = this.layout;
@@ -738,22 +736,13 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         this.position.y = newLayout.adaptRowOffset(this.position.y + 'px').inLU;
     }
 
-    // ##### TODO Review this
     if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
         this.contentWidth = this.previousContentWidth;
         this.height = this.previousHeight;
     } else {
-        //console.debug("prev width: " + this.contentWidth);
-        var newWidth = newLayout.adaptWidth(fullWidth + 'px');
-        this.contentWidth = newWidth.inLU;
-        //console.debug("new width: " + this.contentWidth);
-
-        //console.debug("prev height: " + this.height);
-        var newHeight = newLayout.adaptHeight(fullHeight + 'px');
-        this.height = newHeight.inLU;
-        //console.debug("new height: " + this.height);
+        this.contentWidth = newLayout.adaptWidth(previousWidth + 'px').inLU;
+        this.height = newLayout.adaptHeight(previousHeight + 'px').inLU;
     }
-    // ##### END TODO
 
     affectedWidgetsAdding = newLayout.addIWidget(this, dragboardChange);
     this.internal_iwidget.contextManager.modify({

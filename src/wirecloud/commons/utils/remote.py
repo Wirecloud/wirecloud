@@ -230,6 +230,10 @@ class IWidgetTester(object):
 
         return self
 
+    def wait_still(self, timeout=2):
+        WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
+        return self
+
     def maximize(self, timeout=10):
 
         WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-plus"), base_element=self.element)).click()

@@ -10,7 +10,7 @@
     transition: opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in, box-shadow 0.7s ease-in;
     overflow: visible;
     @include z-depth(1);
-    box-sizing: content-box;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
 
