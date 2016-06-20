@@ -195,11 +195,11 @@
     @include z-depth(2, $color: $state-success-border);
     @include animation(highlight_iwidget 5s linear);
 
-    & .wc-iwidget-buttons {
+    & .wc-widget-buttons {
         @include background-image(linear-gradient(to right, rgba($panel-success-heading-bg, 0), $panel-success-heading-bg 38px, $panel-success-heading-bg));
     }
 
-    & .wc-iwidget-infobuttons{
+    & .wc-widget-infobuttons{
         @include background-image(linear-gradient(to left, rgba($panel-success-heading-bg, 0), $panel-success-heading-bg 38px, $panel-success-heading-bg));
     }
 }

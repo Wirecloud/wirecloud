@@ -495,7 +495,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Widget menu button
         widg_menu = map_viewer_widget.element.find_element_by_css_selector('.wc-widget-heading')
         setts_btn = widg_menu.find_element_by_css_selector(
-            '.wc-iwidget-buttons .icon-cogs')
+            '.wc-widget-buttons .icon-cogs')
         ActionChains(self.driver).move_to_element(setts_btn).perform()
         time.sleep(0.3)  # Wait menu button hover effect
         imgp = take_capture(self.driver, "widget_menu_button")

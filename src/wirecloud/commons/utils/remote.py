@@ -232,12 +232,12 @@ class IWidgetTester(object):
 
     def maximize(self, timeout=10):
 
-        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-plus"), base_element=self.element)).click()
+        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-plus"), base_element=self.element)).click()
         WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
 
     def minimize(self, timeout=10):
 
-        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-minus"), base_element=self.element)).click()
+        WebDriverWait(self.testcase.driver, 2).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".fa-minus"), base_element=self.element)).click()
         WebDriverWait(self.testcase.driver, timeout=timeout).until(WEC.element_be_still(self.element))
 
     def remove(self, timeout=10):
