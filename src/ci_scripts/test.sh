@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 export WC_INSTANCE_NAME=virtenv_test
+[ -n "${IP_ADDR}" ] || IP_ADDR="localhost"
 
 set -ex
 virtualenv -p $1 ${WORKSPACE}/virtenv
