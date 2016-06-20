@@ -21,25 +21,31 @@
 
 /*global Wirecloud*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
-    var VERSION_RE = /^((?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0))((?:a|b|rc)[1-9]\d*)?$/;
+    var VERSION_RE = /^((?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0))((?:a|b|rc)[1-9]\d*)?(-dev.*)?$/; // Hangs if it doesn't match the RE
 
     var Version = function Version(version, source) {
-        var groups;
+        var groups, msg;
         if (typeof version == 'string') {
             groups = version.match(VERSION_RE);
+            if (groups == null) {
+                msg = utils.gettext("%(version)s is not a valid version");
+                throw new TypeError(utils.interpolate(msg, {version:version}));
+            }
             this.array = groups[1].split('.').map(function (x) { return parseInt(x, 10); });
             this.pre_version = groups[2] != null ? groups[2] : null;
+            this.dev = groups[3] != null;
             this.text = version;
         } else if (version instanceof Array) {
             this.array = version;
             this.pre_version = null;
+            this.dev = false;
             this.text = version.join('.');
         } else {
-            throw new TypeError();
+            throw new TypeError(utils.gettext("missing or invalid version parameter"));
         }
         this.source = source;
         Object.freeze(this);
@@ -47,6 +53,15 @@
 
     Version.prototype.compareTo = function compareTo(version) {
         var len, value1, value2, pre_version1, pre_version2, i;
+
+        if (!(version instanceof Version)) {
+            // Try to parse version
+            try {
+                version = Version(version);
+            } catch (e) {
+                throw new TypeError(utils.gettext("invalid version parameter"));
+            }
+        }
 
         len = Math.max(this.array.length, version.array.length);
 
@@ -73,13 +88,20 @@
         } else if (pre_version1 > pre_version2) {
             return 1;
         } else {
-            return 0;
+            // If neither or both are dev return 0 (equals)
+            if (this.dev === version.dev) {
+                return 0;
+            } else {
+                // Development versions are lower
+                return this.dev ? -1 : 1;
+            }
         }
     };
 
     Version.prototype.toString = function toString() {
-        return this.text;
+        return this.text.replace(/-dev.*$/, '-dev');
     };
 
     Wirecloud.Version = Version;
-})();
+
+})(Wirecloud.Utils);

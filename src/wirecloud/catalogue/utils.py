@@ -184,14 +184,16 @@ def add_packaged_resource(file, user, wgt_file=None, template=None, deploy_only=
         template = TemplateParser(template_contents)
 
     resource_info = template.get_resource_info()
-    check_packaged_resource(wgt_file, resource_info)
 
     resource_id = (
-        template.get_resource_vendor(),
-        template.get_resource_name(),
-        template.get_resource_version(),
+        resource_info['vendor'],
+        resource_info['name'],
+        resource_info['version'],
     )
     file_name = '_'.join(resource_id) + '.wgt'
+
+    check_packaged_resource(wgt_file, resource_info)
+
     local_dir = wgt_deployer.get_base_dir(*resource_id)
     local_wgt = os.path.join(local_dir, file_name)
 

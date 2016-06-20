@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="Wirecloud" name="TemplateTest" version="1.0yyy">
+    <details>
+    </details>
+    <persistentvariables>
+        <variable name="prop1" type="text"/>
+        <variable name="prop2" type="text" label="" description="" default=""/>
+    </persistentvariables>
+    <contents src="http://example.com/code.html"/>
+    <rendering width="8" height="30"/>
+</widget>

@@ -56,7 +56,7 @@
                 state: null,
                 extraClass: "we-component component-" + wiringComponent.meta.type,
                 title: wiringComponent.title,
-                subtitle: "v" + wiringComponent.meta.version.text,
+                subtitle: "v" + wiringComponent.meta.version,
                 selectable: true,
                 noBody: true,
                 buttons: [this.btnPrefs]
@@ -91,7 +91,7 @@
 
             wiringComponent.on('upgraded', function (component) {
                 this.setTitle(component.title);
-                this.setSubtitle("v" + component.meta.version.text);
+                this.setSubtitle("v" + component.meta.version);
 
                 update_enable_status.call(this);
                 update_component_label.call(this);

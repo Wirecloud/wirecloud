@@ -84,7 +84,7 @@
             'name': resource.name,
             'internalname': resource.uri,
             'vendor': resource.vendor,
-            'version': resource.version.text,
+            'version': resource.version,
             'authors': this.get_people_list.bind(null, resource.authors),
             'contributors': this.get_people_list.bind(null, resource.contributors),
             'description': resource.description,

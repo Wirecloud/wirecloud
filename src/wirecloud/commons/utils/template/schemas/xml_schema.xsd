@@ -34,7 +34,7 @@
 
     <xs:simpleType name="VersionType">
         <xs:restriction base="xs:string">
-            <xs:pattern value="([1-9]\d*\.|0\.)*([1-9]\d*|0)((a|b|rc)[1-9]\d*)?"></xs:pattern>
+            <xs:pattern value="([1-9]\d*\.|0\.)*([1-9]\d*|0)((a|b|rc)[1-9]\d*)?(-dev.*)?"></xs:pattern>
         </xs:restriction>
     </xs:simpleType>
 

@@ -16,6 +16,7 @@
 
 # You should have received a copy of the GNU Affero General Public License
 
+import re
 import sys
 
 from django.db import IntegrityError
@@ -26,6 +27,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.platform.localcatalogue.signals import resource_installed
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.commons.utils.template.writers.json import write_json_description
 
 
 def add_m2m(field, item):
@@ -54,8 +56,12 @@ def install_resource(wgt_file, executor_user):
     template = TemplateParser(template_contents)
     resources = CatalogueResource.objects.filter(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())[:1]
 
-    # Create/recover catalogue resource
-    if len(resources) == 1:
+    # Create/recreate/recover catalogue resource
+    if '-dev' in template.get_resource_version() and len(resources) == 1:
+        # TODO: Update widget visually
+        resources[0].delete()
+        resource = add_packaged_resource(file_contents, executor_user, wgt_file=wgt_file)
+    elif len(resources) == 1:
         resource = resources[0]
     else:
         resource = add_packaged_resource(file_contents, executor_user, wgt_file=wgt_file)
@@ -104,3 +110,20 @@ def install_resource_to_all_users(**kwargs):
         resource_installed.send(sender=resource)
 
     return added, resource
+
+def fix_dev_version(wgt_file, user):
+
+    template_contents = wgt_file.get_template()
+    template = TemplateParser(template_contents)
+
+    resource_info = template.get_resource_info()
+
+    # Add user name to the version if the component is in development
+    if '-dev' in resource_info['version']:
+
+        # User name added this way to prevent users to upload a version
+        # *.*-devAnotherUser that would be accepted but might collide with
+        # AnotherUser's development version
+        resource_info['version'] = re.sub('-dev.*$', '-dev' + user.username, resource_info['version'])
+        template_string = write_json_description(resource_info)
+        wgt_file.update_config(template_string)
