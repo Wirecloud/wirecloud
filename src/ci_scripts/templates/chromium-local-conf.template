@@ -1,0 +1,13 @@
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+chromium_options = ChromeOptions()
+chromium_options.binary_location = "/usr/lib/chromium/chromium"
+
+WIRECLOUD_SELENIUM_TEST_BROWSERS.update({
+    'Chromium': {
+        'CLASS': 'selenium.webdriver.Chrome',
+        'ARGS': {
+            'executable_path': '/usr/lib/chromium/chromedriver',
+            'chrome_options': chromium_options,
+        },
+    },
+})
