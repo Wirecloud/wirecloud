@@ -55,11 +55,6 @@ def download_http_content(url, user=None):
         'Accept-Charset': 'utf-8;q=1,*;q=0.2',
     }
 
-    if user and not user.is_anonymous():
-        headers.update({
-            'Remote-User': user.username,
-        })
-
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.content
