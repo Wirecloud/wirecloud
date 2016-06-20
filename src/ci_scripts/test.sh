@@ -40,6 +40,7 @@ mv .coverage ${WC_INSTANCE_NAME}
 cd ${WC_INSTANCE_NAME}
 
 # And configure it
+cat ${WORKSPACE}/src/ci_scripts/base_settings.py >> ${WC_INSTANCE_NAME}/settings.py
 for conf in $*
 do
     file="${WORKSPACE}/src/ci_scripts/conf_scripts/${conf}-prepare.sh"
@@ -49,17 +50,10 @@ do
     fi
 done
 
-if [ "${DJANGO_VERSION}" == '1.4' ] || [ "${DJANGO_VERSION}" == '1.5' ] || [ "${DJANGO_VERSION}" == '1.6' ];
-then
-    python manage.py syncdb --migrate --noinput
-else
-    python manage.py migrate --noinput
-fi
+python manage.py migrate --noinput
 python manage.py collectstatic -v 0 --noinput
 
 # Pass the tests
-# pip install ipdb
-cat ${WORKSPACE}/src/ci_scripts/base_settings.py >> ${WC_INSTANCE_NAME}/settings.py
 ${COVERAGE_CMD} run -a --branch --source=wirecloud --omit="*/wirecloud/fp74caast/*,*/wirecloud/semanticwiring/*,*/tests/*,*/tests.py" manage.py test --liveserver=${IP_ADDR}:28081 --noinput --with-xunit --nologcapture -v 2 ${TESTS}
 
 mv .coverage ../virtenv/lib/python${PY_VERSION}/site-packages; cd ../virtenv/lib/python${PY_VERSION}/site-packages; ${WORKSPACE}/virtenv/bin/coverage xml; mv coverage.xml ${WORKSPACE}; cd ${WORKSPACE}
