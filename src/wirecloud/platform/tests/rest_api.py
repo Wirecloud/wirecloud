@@ -2355,7 +2355,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('version', response_data)
         self.assertEqual(response_data['version'], '1.0')
 
-    @uses_extra_resources(('Wirecloud_Test_Selenium_1.0-dev.wgt',), users=["admin"], shared=True, deploy_only=True, creator="admin", is_dev=True)
+    @uses_extra_resources(('Wirecloud_Test_Selenium_1.0-dev.wgt',), users=["admin"], shared=True, creator="admin")
     def test_resource_collection_post_dev_widget(self):
 
         url = reverse('wirecloud.resource_collection')

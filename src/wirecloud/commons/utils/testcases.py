@@ -38,7 +38,7 @@ from django.test.client import Client
 from django.utils import translation
 from six import text_type
 
-from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
+from wirecloud.platform.localcatalogue.utils import fix_dev_version, install_resource, install_resource_to_user
 from wirecloud.platform.widget import utils as showcase
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 from wirecloud.catalogue import utils as catalogue
@@ -113,6 +113,7 @@ class RealWebServer(object):
             'headers': response.headers,
             'content': response.content
         }
+
 
 class DynamicWebServer(object):
 
@@ -439,7 +440,7 @@ class WirecloudTestCase(TransactionTestCase):
         translation.activate(new_language)
 
 
-def uses_extra_resources(resources, shared=False, public=True, users=(), groups=(), deploy_only=False, creator=None, is_dev=False):
+def uses_extra_resources(resources, shared=False, public=True, users=(), groups=(), deploy_only=False, creator=None):
 
     def wrap(test_func):
 
@@ -456,20 +457,13 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
             final_groups = tuple(Group.objects.get(name=group) for group in groups)
 
             for resource in resources:
-                if is_dev:
-                    permissions = 'a+'
-                    shutil.copy(os.path.join(base, resource), os.path.join(base, resource + '.bak'))
-                else:
-                    permissions = 'rb'
-
-                wgt_file = open(os.path.join(base, resource), permissions)
+                wgt_file = open(os.path.join(base, resource), 'rb')
                 wgt = WgtFile(wgt_file)
 
+                fix_dev_version(wgt, final_creator)
                 if deploy_only:
-                    catalogue.add_packaged_resource(wgt_file, final_creator, wgt_file=wgt, deploy_only=True)
+                    catalogue.add_packaged_resource(wgt.get_underlying_file(), final_creator, wgt_file=wgt, deploy_only=True)
                     wgt_file.close()
-                    if is_dev:
-                        shutil.move(os.path.join(base, resource + '.bak'), os.path.join(base, resource))
                     continue
 
                 resource = install_resource(wgt, final_creator)
@@ -482,8 +476,6 @@ def uses_extra_resources(resources, shared=False, public=True, users=(), groups=
                 resource.groups.add(*final_groups)
 
                 wgt_file.close()
-                if is_dev:
-                    shutil.move(os.path.join(base, resource + '.bak'), os.path.join(base, resource))
 
             return test_func(self, *args, **kwargs)
 
