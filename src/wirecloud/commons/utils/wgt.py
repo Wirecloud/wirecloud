@@ -17,14 +17,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from io import BytesIO
 import os
 import re
 from shutil import rmtree
 from six.moves.urllib.request import pathname2url
 import zipfile
-import tempfile
 
 from django.utils.encoding import python_2_unicode_compatible
+import six
 
 from wirecloud.commons.utils.template import TemplateParser
 
@@ -145,40 +146,28 @@ class WgtFile(object):
 
     def update_config(self, contents):
 
-        # Encode contents
-        contents = contents.encode('utf-8')
+        # Encode contents if needed
+        if isinstance(contents, six.text_type):
+            contents = contents.encode('utf-8')
 
-        # generate a temp file
-        tmpfd, tmpname = tempfile.mkstemp(dir=".")
-        os.close(tmpfd)
-
-        # Zip File
-        _file = self._zip.fp
-
-        # Write zip file contents to tempfile
-        f = open(tmpname, "wb")
-        _file.seek(0)
-        f.write(_file.read())
-        f.close()
+        new_fp = BytesIO()
 
         # Copy every file from the original zipfile to the new one
-        # excect for the config.xml file
+        # excluding the config.xml file, that will be replaced
         filename = 'config.xml'
-        with zipfile.ZipFile(tmpname, 'a') as zin:
-            with zipfile.ZipFile(self._zip.fp, 'a') as zout:
-                zout.comment = self._zip.comment # preserve the comment
+        with zipfile.ZipFile(new_fp, 'w') as zout:
+            zout.comment = self._zip.comment  # preserve the comment
 
-                for item in self._zip.infolist():
-                    # Copy new config.xml contents
-                    if item.filename == filename:
-                        zout.writestr(item, contents)
-                    # Copy original files
-                    else:
-                        zout.writestr(item, zin.read(item.filename))
+            for item in self._zip.infolist():
+                # Copy new config.xml contents
+                if item.filename == filename:
+                    zout.writestr(item, contents)
+                # Copy original files
+                else:
+                    zout.writestr(item, self._zip.read(item.filename))
 
-        # Set tempfile as new ZipFile object
-        self._zip = zipfile.ZipFile(self._zip.fp)
-        os.remove(tmpname)
+        # Reopen in read only mode
+        self._zip = zipfile.ZipFile(new_fp)
 
     def close(self):
         self._zip.close()
