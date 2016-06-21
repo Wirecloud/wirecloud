@@ -154,7 +154,8 @@
             });
 
             it("does nothing if tab is null", function () {
-                element.removeTab(null);
+                expect(element.removeTab(null)).toBe(element);
+
                 expect(element.tabs).toEqual([tab1, tab2, tab3]);
                 expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
                 expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
@@ -162,7 +163,8 @@
             });
 
             it("does nothing if tab is not found", function () {
-                element.removeTab("mytab4");
+                expect(element.removeTab("mytab4")).toBe(element);
+
                 expect(element.tabs).toEqual([tab1, tab2, tab3]);
                 expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
                 expect(element.tabArea.wrapperElement.children[1]).toBe(tab2.tabElement);
@@ -170,14 +172,16 @@
             });
 
             it("should allow removing tabs by id", function () {
-                element.removeTab(tab2.getId());
+                expect(element.removeTab(tab2.getId())).toBe(element);
+
                 expect(element.tabs).toEqual([tab1, tab3]);
                 expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
                 expect(element.tabArea.wrapperElement.children[1]).toBe(tab3.tabElement);
             });
 
             it("should allow removing tabs using Tab instances", function () {
-                element.removeTab(tab2);
+                expect(element.removeTab(tab2)).toBe(element);
+
                 expect(element.tabs).toEqual([tab1, tab3]);
                 expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
                 expect(element.tabArea.wrapperElement.children[1]).toBe(tab3.tabElement);
@@ -195,7 +199,9 @@
 
             it("should allow removing the active tab", function () {
                 expect(element.visibleTab).toBe(tab1);
-                element.removeTab(tab1);
+
+                expect(element.removeTab(tab1)).toBe(element);
+
                 expect(element.visibleTab).toBe(tab2);
                 expect(element.tabs).toEqual([tab2, tab3]);
                 expect(element.tabArea.wrapperElement.children[0]).toBe(tab2.tabElement);
@@ -205,7 +211,9 @@
             it("should allow removing the active tab when the active tab is the right most tab", function () {
                 element.goToTab(tab3);
                 expect(element.visibleTab).toBe(tab3);
-                element.removeTab(tab3);
+
+                expect(element.removeTab(tab3)).toBe(element);
+
                 expect(element.visibleTab).toBe(tab2);
                 expect(element.tabs).toEqual([tab1, tab2]);
                 expect(element.tabArea.wrapperElement.children[0]).toBe(tab1.tabElement);
@@ -213,9 +221,10 @@
             });
 
             it("should allow removing the latest tab", function () {
-                element.removeTab(tab1);
-                element.removeTab(tab2);
-                element.removeTab(tab3);
+                expect(element.removeTab(tab1)).toBe(element);
+                expect(element.removeTab(tab2)).toBe(element);
+                expect(element.removeTab(tab3)).toBe(element);
+
                 expect(element.visibleTab).toEqual(null);
                 expect(element.tabs).toEqual([]);
                 expect(element.tabArea.wrapperElement.children.length).toBe(0);
@@ -281,8 +290,8 @@
                 expect(tab3.repaint).not.toHaveBeenCalled();
             });
 
-            it("should call to the repaint method of the visible tab when doing a normal repaint", function () {
-                element.repaint();
+            it("should call to the repaint method of the available tabs when doing a normal repaint", function () {
+                expect(element.repaint()).toBe(element);
                 expect(tab1.repaint).toHaveBeenCalledWith(false);
                 expect(tab2.repaint).toHaveBeenCalledWith(false);
                 expect(tab3.repaint).toHaveBeenCalledWith(false);

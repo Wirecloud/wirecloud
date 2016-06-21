@@ -165,6 +165,9 @@
                 context.finalScrollLeft = currentTab.offsetLeft - padding;
                 break;
             case 'focus':
+                if (context.control.tabsById[command.tabId]) {
+                    return false;
+                }
                 currentTab = context.control.tabsById[command.tabId].getTabElement();
 
                 if (isTabVisible.call(context.control, context.control.getTabIndex(command.tabId), true)) {
@@ -472,7 +475,7 @@
         }
 
         if (!this.tabsById[tab]) {
-            return;
+            return this;
         }
 
         delete this.tabsById[tab];
@@ -500,6 +503,8 @@
 
         // Event dispatch
         this.events.tabDeletion.dispatch(this, tabToExtract);
+
+        return this;
     };
 
     /**
