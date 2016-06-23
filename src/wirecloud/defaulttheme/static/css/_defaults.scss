@@ -36,6 +36,7 @@ $line-height-small:        floor($font-size-small * $line-height-factor-small) !
 $line-height-xs:           floor($font-size-xs * $line-height-factor-xs) !default;       // ~16px
 
 $margin-vertical-base: 10px !default;
+$margin-horizontal-small: 5px !default;
 
 $padding-vertical-base:     6px !default;
 $padding-horizontal-base:  12px !default;
@@ -302,12 +303,31 @@ $popup-menu-item-padding-horizontal:     (2 * $popup-menu-padding-vertical) !def
 $popup-menu-item-description-text-color: $gray-light !default;
 $popup-menu-item-active-bg:              $brand-primary !default;
 
+// ======================================================================================
+// STYLED ELEMENT - OFFCANVAS-LAYOUT
+// ======================================================================================
 
-// ============================================================================
-// WIRING COMPONENT - CONNECTION
-// ============================================================================
+$offcanvas-sidebar-width: 300px !default;
 
-$connection-bg:            transparentize(#3F51B5, 0.1) !default;
+// ======================================================================================
+// WIRING - ELEMENT BRANDS
+// ======================================================================================
+
+$brand-connection: #3F51B5 !default;
+$brand-operator:   #46AA5A !default;
+$brand-widget:     #F0AA46 !default;
+
+// ======================================================================================
+// WIRING - EDITOR VIEW
+// ======================================================================================
+
+$wiring-content-bg: darken($brand-default, 1%) !default;
+
+// ======================================================================================
+// WIRING - CONNECTIONS
+// ======================================================================================
+
+$connection-bg:            transparentize($brand-connection, 0.1) !default;
 $connection-active-bg:     transparentize(#81D4FA, 0.1) !default;
 $connection-background-bg: transparentize(#E8EAF6, 0.1) !default;
 $connection-temporal-bg:   transparentize(#C5CAE9, 0.1) !default;

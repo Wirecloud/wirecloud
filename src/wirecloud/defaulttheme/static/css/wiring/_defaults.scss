@@ -15,11 +15,11 @@ $component-text-color:        rgb(255, 255, 255) !default;
 $component-text-shadow:       0 -1px 0 rgba(0, 0, 0, 0.2) !default;
 $component-text-hover-shadow: 0 1px 0 rgba(0, 0, 0, 0.75) !default;
 
-$component-operator-bg:           rgba(70, 170, 90, 0.9) !default;
+$component-operator-bg:           transparentize($brand-operator, 0.1) !default;
 $component-operator-border-color: darken($component-operator-bg, 15%) !default;
 $component-operator-text-color:   darken($component-operator-bg, 25%) !default;
 
-$component-widget-bg:           rgba(240, 170, 70, 0.9) !default;
+$component-widget-bg:           transparentize($brand-widget, 0.1) !default;
 $component-widget-border-color: darken($component-widget-bg, 15%) !default;
 $component-widget-text-color:   darken($component-widget-bg, 25%) !default;
 
@@ -85,5 +85,3 @@ $endpoint-cloned-z-index: ($component-z-index / 2) * 4 !default;
 $behaviour-description-maxheight: ($line-height-base * 5) !default;
 $behaviour-description-font-color: rgb(70, 80, 90) !default;
 $behaviour-title-width: 75%;
-
-$wiring-diagram-bg-color: rgb(250, 250, 250);

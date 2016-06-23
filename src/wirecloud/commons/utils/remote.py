@@ -702,15 +702,6 @@ class WiringComponentTester(BaseComponentTester):
     def version(self):
         return self.find_element(".component-version").text
 
-    def drag_and_drop(self, condition, target_element, x, y):
-        # scroll into view the component panel to be able to drag and dop it
-        self.testcase.driver.execute_script("return arguments[0].scrollIntoView();", self.element)
-
-        ActionChains(self.testcase.driver).click_and_hold(self.element).perform()
-        WebDriverWait(self.testcase.driver, timeout=5).until(condition)
-        ActionChains(self.testcase.driver).move_to_element_with_offset(target_element, x, y).release().perform()
-        return self
-
     def has_state(self, state):
         return self.state == state
 
@@ -1719,6 +1710,10 @@ class BaseWiringViewTester(object):
         return self.testcase.driver.find_element_by_css_selector(".wiring-diagram")
 
     @property
+    def layout(self):
+        return self.testcase.driver.find_element_by_css_selector(".se-offcanvas")
+
+    @property
     def btn_back(self):
         return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .btn-back"))
 
@@ -1865,9 +1860,9 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
         component = component_group.create_component() if id is None and title is None else component_group.find_component(id=id, title=title)
         return self.create_component_draggable(component, x, y)
 
-    def create_component_draggable(self, component, x=150, y=50):
-        component.drag_and_drop(WEC.element_be_still(self.panel), self.body, x, y)
-        WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.panel))
+    def create_component_draggable(self, component, x=0, y=0):
+        self.testcase.driver.execute_script("return arguments[0].scrollIntoView();", component.element)
+        ActionChains(self.testcase.driver).drag_and_drop_by_offset(component.element, x, y).perform()
         return self.find_draggable_component(component.type, id=component.id)
 
     def find_component(self, type, group_id, id=None, title=None):

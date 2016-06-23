@@ -33,6 +33,7 @@ var styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/Event.js',
     'wirecloud/commons/static/js/StyledElements/ObjectWithEvents.js',
     'wirecloud/commons/static/js/StyledElements/StyledElements.js',
+    'wirecloud/commons/static/js/StyledElements/OffCanvasLayout.js',
     'wirecloud/commons/static/js/StyledElements/InputElement.js',
     'wirecloud/commons/static/js/StyledElements/CommandQueue.js',
     'wirecloud/commons/static/js/StyledElements/Container.js',
