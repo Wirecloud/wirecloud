@@ -410,7 +410,7 @@
     };
 
     var sortByColumnCallback = function sortByColumnCallback() {
-        var descending = this.widget.sortColumn === this.column ?
+        var descending = this.widget[_attrs.sortColumn] === this.column ?
             !this.widget.sortInverseOrder :
             false;
 
