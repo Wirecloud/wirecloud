@@ -441,7 +441,6 @@
             table.destroy();
 
             expect(table.columnsCells[0].length).toBe(0);
-            expect(table.source).toBe(null);
         });
     });
 

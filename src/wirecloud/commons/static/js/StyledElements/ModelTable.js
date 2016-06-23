@@ -411,7 +411,7 @@
 
     var sortByColumnCallback = function sortByColumnCallback() {
         var descending = this.widget[_attrs.sortColumn] === this.column ?
-            !this.widget.sortInverseOrder :
+            !this.widgetj[_attrs.sortInverseOrder] :
             false;
 
         this.widget.sortByColumn(this.column, descending);
@@ -503,10 +503,6 @@
         paintTable.call(this, this.source.getCurrentPage());
     };
 
-    ModelTable.prototype.insertInto = function insertInto() {
-        StyledElements.StyledElement.prototype.insertInto.apply(this, arguments);
-    };
-
     ModelTable.prototype.destroy = function destroy() {
         var i, cell;
 
@@ -528,7 +524,6 @@
         }
 
         this.source.destroy();
-        this.source = null;
     };
 
     var _attrs = {
