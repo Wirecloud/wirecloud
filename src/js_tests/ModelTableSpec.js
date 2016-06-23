@@ -66,7 +66,7 @@
                 expect(observed).toEqual(expected);
 
                 // Change the sort order
-                table.pSortByColumn(0, true);
+                table.sortByColumn(0, true);
                 expected.reverse();
 
                 // Check if data was sorted correctly
@@ -136,6 +136,30 @@
             table.columnsCells[0].forEach(function (cell) {
                 expect(cell.classList.contains('my-css-class')).toBeTruthy();
             });
+        });
+
+        it("can be created with custom cell width", function () {
+            var columns = [
+                {field: "test", type: "string", width: "100px"}
+            ];
+
+            var options = {
+                initialSortColumn: "test2"
+            };
+
+            table = new StyledElements.ModelTable(columns, options);
+
+            // Create and push the data
+            var data = [
+                {test: "Hello"},
+                {test: "world"}
+            ];
+            table.source.changeElements(data);
+
+            table.columnsCells[0].forEach(function (cell) {
+                expect(cell.style.width).toBe("100px");
+            });
+
         });
 
         it("can be created using the initialSortColumn option", function () {
@@ -308,8 +332,9 @@
         });
 
         describe("should handle element selection", function () {
-
+            var row;
             beforeEach(function () {
+
                 var columns = [
                     {field: "id", type: "number"},
                     {field: "test", type: "number"}
@@ -330,42 +355,47 @@
             it ("should allow simple selections", function () {
                 expect(table.select(1)).toBe(table);
                 expect(table.selection).toEqual([1]);
-                // Check model table highlited the correct row
-                for (var key in table._current_elements) {
-                    var highlited = table._current_elements[key].row.classList.contains('highlight');
-                    expect(highlited).toBe(key === "1");
-                }
+                // Check if css are applied properly
+                row = table.columnsCells[0][0].parentNode;
+                expect(row.classList.contains("highlight")).not.toBeTruthy();
+                row = table.columnsCells[0][1].parentNode;
+                expect(row.classList.contains("highlight")).toBeTruthy();
+                row = table.columnsCells[0][2].parentNode;
+                expect(row.classList.contains("highlight")).not.toBeTruthy();
             });
 
             it ("should allow multiple selections", function () {
                 expect(table.select([1, 2])).toBe(table);
                 expect(table.selection).toEqual([1, 2]);
-                // Check model table highlited the correct rows
-                for (var key in table._current_elements) {
-                    var highlited = table._current_elements[key].row.classList.contains('highlight');
-                    expect(highlited).toBe(["1", "2"].indexOf(key) !== -1);
-                }
+                // Check if css are applied properly
+                row = table.columnsCells[0][0].parentNode;
+                expect(row.classList.contains("highlight")).not.toBeTruthy();
+                row = table.columnsCells[0][1].parentNode;
+                expect(row.classList.contains("highlight")).toBeTruthy();
+                row = table.columnsCells[0][2].parentNode;
+                expect(row.classList.contains("highlight")).toBeTruthy();
             });
 
             it ("should allow cleaning selections", function () {
                 expect(table.select(1)).toBe(table);
                 expect(table.select()).toBe(table);
                 expect(table.selection).toEqual([]);
-                // Check model table unhighlight the previously selected rows
-                for (var key in table._current_elements) {
-                    expect(table._current_elements[key].row.classList.contains('highlight')).toBeFalsy();
-                }
+                // Check if css are applied properly
+                row = table.columnsCells[0][1].parentNode;
+                expect(row.classList.contains("highlight")).not.toBeTruthy();
             });
 
             it ("should ignore not matching ids", function () {
                 expect(table.select(4)).toBe(table);
                 expect(table.selection).toEqual([4]);
-                // Check model table doesn't highlight any row
-                for (var key in table._current_elements) {
-                    expect(table._current_elements[key].row.classList.contains('highlight')).toBeFalsy();
-                }
+                // Check if css are applied properly
+                row = table.columnsCells[0][0].parentNode;
+                expect(row.classList.contains("highlight")).not.toBeTruthy();
+                row = table.columnsCells[0][1].parentNode;
+                expect(row.classList.contains("highlight")).not.toBeTruthy();
+                row = table.columnsCells[0][2].parentNode;
+                expect(row.classList.contains("highlight")).not.toBeTruthy();
             });
-
         });
 
         it("Model table should be able to get reset", function () {
@@ -411,7 +441,6 @@
             table.destroy();
 
             expect(table.columnsCells[0].length).toBe(0);
-            expect(table.layout).toBe(null);
             expect(table.source).toBe(null);
         });
     });
