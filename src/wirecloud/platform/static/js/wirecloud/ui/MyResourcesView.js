@@ -313,7 +313,6 @@
                 this.viewsByName.details.paint(resource_details, {
                         tab: options.tab
                     });
-                this.viewsByName.details.repaint();
             };
             var viewChanged = false, dataLoaded = false;
             var onComplete = function onComplete() {

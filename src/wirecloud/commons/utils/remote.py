@@ -1450,7 +1450,7 @@ class MarketplaceViewTester(object):
 
     def get_current_catalogue_base_element(self):
 
-        catalogues = self.testcase.driver.find_elements_by_css_selector('#marketplace > .alternatives > .wrapper > .catalogue')
+        catalogues = self.testcase.driver.find_elements_by_css_selector('#marketplace > .se-alternatives > .catalogue')
         for catalogue_element in catalogues:
             if 'hidden' not in catalogue_element.get_attribute('class'):
                 return catalogue_element

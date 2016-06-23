@@ -41,7 +41,7 @@
         StyledElements.StyledElement.call(this, ['preTransition', 'postTransition']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = utils.prependWord(options['class'], "alternatives");
+        this.wrapperElement.className = utils.prependWord(options['class'], "se-alternatives");
 
         this.visibleAlt = null;
         this.alternatives = {};
@@ -72,6 +72,7 @@
                 return false; // we are not going to process this command
             }
 
+            // Throw an event notifying we are going to change the visible alternative
             context.events.preTransition.dispatch(context, outAlternative, inAlternative);
 
             switch (command.effect) {
@@ -118,8 +119,10 @@
             }
 
             return p.then(function () {
-                utils.callCallback(context.onComplete, context, outAlternative, inAlternative);
+                // Throw an event notifying we are going to change the visible alternative
                 context.events.postTransition.dispatch(context, outAlternative, inAlternative);
+                // Call the onComplete callback
+                utils.callCallback(context.onComplete, context, outAlternative, inAlternative);
             });
         };
 

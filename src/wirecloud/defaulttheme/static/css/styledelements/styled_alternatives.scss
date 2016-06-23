@@ -1,4 +1,4 @@
-.alternatives {
+.se-alternatives {
     min-width: 5em;
     min-height: 5em;
     position: relative;
@@ -7,7 +7,7 @@
     overflow: visible;
 }
 
-.alternatives.full {
+.se-alternatives.full {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -15,7 +15,7 @@
     right: 0;
 }
 
-.alternatives > div {
+.se-alternatives > div {
     background: transparent;
     top: 0;
     left: 0;
@@ -26,12 +26,12 @@
     visibility: inherit;
 }
 
-.alternatives > .fade {
+.se-alternatives > .fade {
     transition: opacity 0.6s linear;
 }
 
-.hidden > .alternatives > div,
-.alternatives > div.hidden {
+.hidden > .se-alternatives > div,
+.se-alternatives > div.hidden {
     visibility: hidden;
     height: 0;
     padding: 0;

@@ -151,6 +151,7 @@
                 context: {init: true}
             });
         }
+        Wirecloud.trigger('viewcontextchanged');
     };
 
     Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView = ResourceDetailsView;
