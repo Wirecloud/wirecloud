@@ -129,6 +129,8 @@ class IDMTokenProcessor(object):
         elif request['workspace'] is None:
             raise ValidationError(_('IdM tokens can only be inyected on Ajax requests coming from authorized widgets'))
 
+        tenantid = request['headers'].get("fiware-openstack-tenant-id")
+
         source = 'user'
         if 'fiware-oauth-source' in request['headers']:
             source = request['headers']['fiware-oauth-source']
@@ -140,11 +142,11 @@ class IDMTokenProcessor(object):
         if source == 'user':
             token = get_access_token(request['user'], _('Current user has not an active FIWARE profile'))
             if 'fiware-openstack-token' in filtered:
-                openstacktoken = self.openstack_manager.get_token(request['user'])
+                openstacktoken = self.openstack_manager.get_token(request['user'], tenantid)
         elif source == 'workspaceowner':
             token = get_access_token(request['workspace'].creator, _('Workspace owner has not an active FIWARE profile'))
             if 'fiware-openstack-token' in filtered:
-                openstacktoken = self.openstack_manager.get_token(request['workspace'].creator)
+                openstacktoken = self.openstack_manager.get_token(request['workspace'].creator, tenantid)
         else:
             raise ValidationError(_('Invalid FIWARE OAuth token source'))
 
@@ -154,6 +156,6 @@ class IDMTokenProcessor(object):
             replace_body_pattern(request, ["fiware-oauth-body-pattern", "x-fi-ware-oauth-token-body-pattern"], token)
 
         if 'fiware-openstack-token' in filtered:
-            replace_get_parameter(request, ["fiware-openstack-get-parameter"], token)
+            replace_get_parameter(request, ["fiware-openstack-get-parameter"], openstacktoken)
             replace_header_name(request, ["fiware-openstack-header-name"], openstacktoken)
             replace_body_pattern(request, ["fiware-openstack-body-pattern"], openstacktoken)
