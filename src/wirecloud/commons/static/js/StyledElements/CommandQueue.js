@@ -19,9 +19,9 @@
  *
  */
 
-/* globals Promise, StyledElements, Symbol */
+/* globals Promise, StyledElements */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -117,14 +117,8 @@
         return this[_attrs.running];
     };
 
-    var _attrs = {
-        callback: Symbol("callback"),
-        elements: Symbol("elements"),
-        running: Symbol("running"),
-        step: Symbol("step"),
-        stepTimes: Symbol("stepTimes")
-    };
+    var _attrs = utils.privateKeys("callback", "elements", "running", "step", "stepTimes");
 
     StyledElements.CommandQueue = CommandQueue;
 
-})();
+})(StyledElements.Utils);
