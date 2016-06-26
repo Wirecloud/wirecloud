@@ -248,6 +248,35 @@
             });
         });
 
+        describe("privateKeys(...keys)", function () {
+            var privateKeys = StyledElements.Utils.privateKeys;
+
+            it("returns an inmutable symbol dict", function () {
+                var result;
+
+                // Phantomjs does not support Symbols
+                spyOn(window, "Symbol");
+
+                result = privateKeys("key1", "key2");
+                expect(Object.keys(result)).toEqual(["key1", "key2"]);
+                expect(Object.isFrozen(result)).toBeTruthy();
+                expect(window.Symbol.calls.count()).toBe(2);
+            });
+
+            it("throws an exception when passing repeated keys", function () {
+                // Work around Phantomjs bug in defineProperty
+                spyOn(Object, "defineProperty").and.callFake(function (object, attr, options) {
+                    if (attr in object) {
+                        throw new TypeError();
+                    }
+                    object[attr] = 1;
+                });
+                expect(function () {
+                    privateKeys("key", "key");
+                }).toThrowError(TypeError);
+            });
+        });
+
         describe("update(object, ...sources)", function () {
             var update;
 

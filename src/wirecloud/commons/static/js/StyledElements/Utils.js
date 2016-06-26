@@ -19,7 +19,7 @@
  *
  */
 
-/* globals Promise, StyledElements */
+/* globals Promise, Symbol, StyledElements */
 
 // TODO
 if (window.StyledElements == null) {
@@ -931,6 +931,30 @@ if (window.StyledElements == null) {
 
             element.addEventListener('transitionend', listener);
         });
+    };
+
+    /**
+     * Creates a inmutable dictionary with a `Symbol` entry per each passed
+     * key. This kind of dictionaries are usually used for implementing private
+     * properties by using this dictionary in a closure.
+     * @since 0.8
+     *
+     * @param {...String} [keys] Key names.
+     * @returns {Object} An object with the Symbol entries
+     *
+     * @example
+     *
+     * privateKeys("enable", "hidden");
+     * => {"enable": Symbol("enable"), "hidden": Symbol("hidden")}
+     */
+    Utils.privateKeys = function privateKeys(/*...keys*/) {
+        var i, dict = {};
+
+        for (i = 0; i < arguments.length; i++) {
+            Object.defineProperty(dict, arguments[i], {enumerable: true, value: Symbol(arguments[i])});
+        }
+
+        return Object.freeze(dict);
     };
 
     StyledElements.Utils = Utils;
