@@ -204,7 +204,7 @@
 
         StyledElements.StyledElement.call(this, ['click']);
 
-        var selection = [];
+        this[_attrs.selection] = [];
         var source;
         if (options.source != null) {
             source = options.source;
@@ -239,7 +239,7 @@
             },
             selection: {
                 get: function () {
-                    return selection;
+                    return this[_attrs.selection];
                 },
                 set: function (value) {
                     if (!Array.isArray(value)) {
@@ -247,31 +247,26 @@
                     }
 
                     // Unhighlihgt previous selection
-                    if (selection != null) {
-                        selection.forEach(function (id) {
+                    if (this[_attrs.selection] != null) {
+                        this[_attrs.selection].forEach(function (id) {
                             if (id in this[_attrs.current_elements]) {
                                 this[_attrs.current_elements][id].row.classList.remove('highlight');
                             }
                         }, this);
                     }
-                    selection = value;
+                    this[_attrs.selection] = value;
 
                     // Highlight the new selection
                     highlight_selection.call(this);
                 }
             },
             source: {
-                writable: true,
+                writable: false,
                 value: source
             },
             statusBar: {
                 get: function () {
                     return this[_attrs.statusBar];
-                }
-            },
-            columnsCells: {
-                get: function () {
-                    return this[_attrs.columnsCells];
                 }
             }
 
@@ -334,7 +329,7 @@
             }
         }
 
-        this.sortByColumn(options.initialSortColumn, options.initialDescendingOrder);
+        sortByColumn.call(this, options.initialSortColumn, options.initialDescendingOrder);
 
         this[_attrs.current_elements] = {};
         if (typeof options.id === 'string') {
@@ -372,7 +367,7 @@
         return this;
     };
 
-    ModelTable.prototype.sortByColumn = function sortByColumn(column, descending) {
+    var sortByColumn = function sortByColumn(column, descending) {
         var sort_id, order, oldSortHeaderCell, sortHeaderCell;
 
         if (this[_attrs.sortColumn] != null) {
@@ -411,10 +406,10 @@
 
     var sortByColumnCallback = function sortByColumnCallback() {
         var descending = this.widget[_attrs.sortColumn] === this.column ?
-            !this.widgetj[_attrs.sortInverseOrder] :
+            !this.widget[_attrs.sortInverseOrder] :
             false;
 
-        this.widget.sortByColumn(this.column, descending);
+        sortByColumn.call(this.widget, this.column, descending);
     };
 
     var getFieldValue = function getFieldValue(item, field) {
@@ -540,7 +535,8 @@
         paginationInterface: Symbol("paginationInterface"),
         stateFunc: Symbol("stateFunc"),
         extractIdFunc: Symbol("extractIdFunc"),
-        columnsCells: Symbol("columnsCells")
+        columnsCells: Symbol("columnsCells"),
+        selection: Symbol("selection")
     };
 
     StyledElements.ModelTable = ModelTable;
