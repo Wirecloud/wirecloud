@@ -788,15 +788,14 @@ class WiringBasicOperationTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, '')
 
         with self.wiring_view as wiring:
-            widget1 = wiring.find_draggable_component('widget', title="Test (1)")
+            widget2 = wiring.find_draggable_component('widget', title="Test (2)")
             widget3 = wiring.find_draggable_component('widget', title="Test (3)")
 
-            source = widget1.find_endpoint('source', "outputendpoint")
-            target = widget3.find_endpoint('target', "inputendpoint")
+            old_target = widget2.find_endpoint('target', "inputendpoint")
+            new_target = widget3.find_endpoint('target', "inputendpoint")
 
             connection = wiring.find_connection("widget/7/outputendpoint", "widget/8/inputendpoint")
-            connection.remove()
-            source.create_connection(target)
+            connection.change_endpoint(old_target, new_target)
 
         self.send_basic_event(iwidgets[0], 'hello new world!!')
 
