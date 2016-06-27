@@ -44,7 +44,7 @@ from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.wiring.utils import get_wiring_skeleton
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_xml_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
-from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, get_workspace_data, get_global_workspace_data, setVisibleTab
+from wirecloud.platform.workspace.utils import deleteTab, createTab, get_tab_data, get_workspace_list, get_workspace_data, get_global_workspace_data, setVisibleTab
 from wirecloud.platform.markets.utils import get_local_catalogue
 
 
@@ -279,10 +279,7 @@ class TabCollection(Resource):
             msg = _('A tab with the given name already exists for the workspace')
             return build_error_response(request, 409, msg)
 
-        # Returning created Ids
-        ids = {'id': tab.id, 'name': tab.name}
-
-        return HttpResponse(json.dumps(ids), status=201, content_type='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(get_tab_data(tab, user=request.user)), status=201, content_type='application/json; charset=UTF-8')
 
 
 class TabOrderService(Service):
@@ -308,6 +305,17 @@ class TabOrderService(Service):
 
 
 class TabEntry(Resource):
+
+    @produces(('application/json',))
+    @commit_on_http_success
+    def read(self, request, workspace_id, tab_id):
+
+        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
+        if not tab.workspace.is_available_for(request.user):
+            return build_error_response(request, 403, _("You don't have permission to access this workspace"))
+
+        data = json.dumps(get_tab_data(tab, user=request.user), sort_keys=True)
+        return HttpResponse(data, status=200, content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @consumes(('application/json',))

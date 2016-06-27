@@ -466,20 +466,7 @@ def _get_global_workspace_data(workspaceDAO, user):
     else:
         tabs = [createTab(_('Tab'), workspaceDAO)]
 
-    tabs_data = [get_tab_data(tab) for tab in tabs]
-
-    data_ret['tabs'] = tabs_data
-
-    for tab in tabs_data:
-        tab_pk = tab['id']
-        iwidgets = IWidget.objects.filter(tab__id=tab_pk).order_by('id')
-
-        iwidget_data = []
-        for iwidget in iwidgets:
-            iwidget_data.append(get_iwidget_data(iwidget, workspaceDAO, cache_manager))
-
-        tab['iwidgets'] = iwidget_data
-
+    data_ret['tabs'] = [get_tab_data(tab, workspace=workspaceDAO, cache_manager=cache_manager) for tab in tabs]
     data_ret['wiring'] = workspaceDAO.wiringStatus
     for operator_id, operator in six.iteritems(data_ret['wiring'].get('operators', {})):
         try:
@@ -519,12 +506,20 @@ def get_global_workspace_data(workspace, user):
     return data
 
 
-def get_tab_data(tab):
+def get_tab_data(tab, workspace=None, cache_manager=None, user=None):
+
+    if workspace is None:
+        workspace = tab.workspace
+
+    if cache_manager is None:
+        cache_manager = VariableValueCacheManager(workspace, user)
+
     return {
         'id': "%s" % tab.id,
         'name': tab.name,
         'visible': tab.visible,
         'preferences': get_tab_preference_values(tab),
+        'iwidgets': [get_iwidget_data(widget, workspace, cache_manager) for widget in tab.iwidget_set.order_by('id')]
     }
 
 

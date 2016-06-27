@@ -159,7 +159,7 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.tab_order'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\w+)/?$',
-        workspace_views.TabEntry(permitted_methods=('POST', 'DELETE',)),
+        workspace_views.TabEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
         name='wirecloud.tab_entry'
     ),
 

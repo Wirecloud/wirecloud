@@ -785,7 +785,10 @@ representation format (e.g. JSON).
 
             {
                "id": "3",
-               "name": "Tab 2"
+               "iwidgets": [],
+               "name": "Tab 2",
+               "preferences": {},
+               "visible": false
             }
 
 ## Tab [/api/workspace/{workspace_id}/tab/{tab_id}]
@@ -794,6 +797,76 @@ representation format (e.g. JSON).
 
     + workspace_id: 81 (number) - ID of the workspace
     + tab_id: 100 (number) - ID of the tab
+
+### Get tab details [GET]
+
+Returned fields:
+
+- `id` (string): Id of the tab.
+- `name` (string): Name of the tab.
+- `visible` (boolean): Indicates if this is the tab to display by default when
+  loading the workspace.
+- `iwidgets` (array): List of widgets associated with this tab.
+- `preferences` (object): Preference values.
+
+**Used status codes**: 200, 401, 403, 404, 406, 413, 415, 422
+
+> *new in WireCloud 1.0*
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer YOUR_OAUTH2_TOKEN
+
+
++ Response 200
+
+    + Body
+
+            {
+                "id": "84",
+                "iwidgets": [
+                    {
+                        "widget": "UPM/Widget1/0.1",
+                        "layout": 0,
+                        "title": "Widget1",
+                        "icon_top": -1,
+                        "variables": {},
+                        "minimized": false,
+                        "id": "313",
+                        "height": 28,
+                        "zIndex": 0,
+                        "width": 6,
+                        "readOnly": false,
+                        "icon_left": -1,
+                        "top": 0,
+                        "fulldragboard": false,
+                        "left": 0
+                    },
+                    {
+                        "widget": "UPM/Widget2/0.1",
+                        "layout": 0,
+                        "title": "Widget2",
+                        "icon_top": -1,
+                        "variables": {},
+                        "minimized": false,
+                        "id": "314",
+                        "height": 28,
+                        "zIndex": 0,
+                        "width": 6,
+                        "readOnly": false,
+                        "icon_left": -1,
+                        "top": 0,
+                        "fulldragboard": false,
+                        "left": 7
+                    }
+                ],
+                "name": "Tab",
+                "preferences": {},
+                "visible": true
+            }
 
 ### Update tab details [POST]
 
