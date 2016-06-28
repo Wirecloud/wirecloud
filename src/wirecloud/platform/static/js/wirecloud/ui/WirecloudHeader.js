@@ -58,8 +58,8 @@
         this.wrapperElement.insertBefore(menu_wrapper, this.wrapperElement.firstChild);
 
         this.currentView = null;
-        Wirecloud.events.contextloaded.addEventListener(this._initUserMenu.bind(this));
-        Wirecloud.events.viewcontextchanged.addEventListener(this.refresh.bind(this));
+        Wirecloud.addEventListener("contextloaded", this._initUserMenu.bind(this));
+        Wirecloud.addEventListener("viewcontextchanged", this.refresh.bind(this));
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
@@ -182,12 +182,6 @@
         }
     };
 
-    WirecloudHeader.prototype._refreshTitle = function _refreshTitle(newView) {
-        if (newView != null) {
-            document.title = newView.getTitle();
-        }
-    };
-
     WirecloudHeader.prototype._paintToolbar = function _paintToolbar(newView) {
         var buttons, i;
 
@@ -232,7 +226,6 @@
 
     WirecloudHeader.prototype.refresh = function refresh() {
         this._paintBreadcrum(this.currentView);
-        this._refreshTitle(this.currentView);
         this._paintToolbar(this.currentView);
         this._replaceMenu(this.currentView);
         this.backButton.setDisabled(this.currentView == null || !('goUp' in this.currentView));

@@ -33,14 +33,22 @@
         }
 
         currentState = event.state;
+        document.title = currentState.title;
         LayoutManagerFactory.getInstance().onHashChange(event.state);
     };
 
     var prepareData = function prepareData(data) {
-        var key, default_data = {
+        var header, key, default_data = {
             view: "workspace"
         };
         data = Wirecloud.Utils.merge(default_data, data);
+
+        header = LayoutManagerFactory.getInstance().header;
+        if (header.currentView != null) {
+            data.title = header.currentView.getTitle();
+        } else {
+            data.title = document.title;
+        }
         for (key in data) {
             data[key] = "" + data[key];
         }
@@ -51,7 +59,7 @@
         var key, hash = '';
 
         for (key in data) {
-            if (key === 'workspace_name' || key === 'workspace_owner') {
+            if (['workspace_name', 'workspace_owner', 'title'].indexOf(key) !== -1) {
                 continue;
             }
             hash += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
@@ -129,7 +137,8 @@
         }
         url = buildURL(data);
 
-        history.pushState(data, document.title, url);
+        history.pushState(data, null, url);
+        document.title = data.title;
         currentState = data;
     };
 
@@ -149,7 +158,8 @@
         }
         url = buildURL(data);
 
-        history.replaceState(data, document.title, url);
+        history.replaceState(data, null, url);
+        document.title = data.title;
         currentState = data;
     };
 

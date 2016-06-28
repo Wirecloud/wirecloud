@@ -19,9 +19,9 @@
  *
  */
 
-/*global StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, Wirecloud*/
+/* globals StyledElements, LayoutManagerFactory, CatalogueSearchView, Wirecloud */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -37,7 +37,7 @@
         var i, entries = [];
 
         entries.push({
-            label: gettext('All stores'),
+            label: utils.gettext('All stores'),
             value: 'All stores'
         });
 
@@ -55,7 +55,7 @@
         var layoutManager, monitor;
 
         layoutManager = LayoutManagerFactory.getInstance();
-        monitor = layoutManager._startComplexTask(gettext("Importing offering resources into local repository"), 3);
+        monitor = layoutManager._startComplexTask(utils.gettext("Importing offering resources into local repository"), 3);
 
         this.catalogue.get_offering_info(offering.store, offering.id, {
             monitor: monitor,
@@ -123,7 +123,6 @@
         };
 
         this.viewsByName = {
-            'initial': this.alternatives.createAlternative(),
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: search_view_options}),
             'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.FiWare.ui.OfferingDetailsView, containerOptions: {catalogue: this}})
         };
@@ -137,17 +136,7 @@
             setTimeout(Wirecloud.trigger.bind(Wirecloud, 'viewcontextchanged'), 0);
         }.bind(this));
 
-        this.addEventListener('show', function () {
-            if (this.alternatives.getCurrentAlternative() === this.viewsByName.initial) {
-                this.changeCurrentView('search', {
-                    onComplete: function (alternatives, out_alternative) {
-                        var new_status = this.mainview.buildStateData();
-                        Wirecloud.HistoryManager.replaceState(new_status);
-                    }.bind(this)
-                });
-            }
-            this.refresh_if_needed();
-        }.bind(this));
+        this.addEventListener('show', this.refresh_if_needed.bind(this));
     };
     FiWareCatalogueView.prototype = new StyledElements.Alternative();
 
@@ -159,7 +148,7 @@
         var offering_info, parts, currentOffering;
 
         if (state.subview === 'search') {
-            this.changeCurrentView(state.subview, {});
+            this.changeCurrentView(state.subview);
         } else {
             parts = state.offering.split('/');
             offering_info = {
@@ -171,7 +160,7 @@
             if (currentOffering != null && currentOffering.store == offering_info.store && currentOffering.id == offering_info.id) {
                 currentOffering = currentOffering;
             }
-            this.createUserCommand('showDetails', offering_info, {tab: state.tab})();
+            this.createUserCommand('showDetails', offering_info, {history: "replace", tab: state.tab})();
         }
     };
 
@@ -194,7 +183,7 @@
         if (this.alternatives.getCurrentAlternative() === this.viewsByName.search) {
             return false;
         }
-        this.changeCurrentView('search');
+        this.changeCurrentView('search', {onComplete: push_nav_history.bind(this)});
         return true;
     };
 
@@ -262,7 +251,7 @@
         this.store_info = [];
         this.number_of_stores = 0;
         this.storeSelect.clear();
-        this.storeSelect.addEntries([{label: gettext('loading...'), value: ''}]);
+        this.storeSelect.addEntries([{label: utils.gettext('loading...'), value: ''}]);
         this.storeSelect.disable();
         this.catalogue.getStores({
             onSuccess: this.addStoreInfo.bind(this),
@@ -282,7 +271,7 @@
         this.loading = false;
         this.error = true;
         this.storeSelect.clear();
-        this.storeSelect.addEntries([{label: gettext('list not available'), value: ''}]);
+        this.storeSelect.addEntries([{label: utils.gettext('list not available'), value: ''}]);
     };
 
     FiWareCatalogueView.prototype.addStoreInfo = function addStoreInfo(store_info) {
@@ -304,20 +293,11 @@
             throw new TypeError();
         }
 
-        if (options == null) {
-            options = {
-                onComplete: function (alternatives, out_alternative) {
-                    var new_status = this.mainview.buildStateData();
-                    Wirecloud.HistoryManager.pushState(new_status);
-                }.bind(this)
-            };
-        }
-
         this.alternatives.showAlternative(this.viewsByName[view_name], options);
     };
 
     FiWareCatalogueView.prototype.home = function () {
-        this.changeCurrentView('search');
+        this.changeCurrentView('search', {onComplete: push_nav_history.bind(this)});
     };
 
     FiWareCatalogueView.prototype.createUserCommand = function (command/*, ...*/) {
@@ -327,9 +307,9 @@
     FiWareCatalogueView.prototype.ui_commands = {};
 
     FiWareCatalogueView.prototype.ui_commands.showDetails = function showDetails(offering, options) {
-        if (options == null) {
-            options = {};
-        }
+        options = utils.merge({
+            history: "push"
+        }, options);
 
         return function () {
             var onSuccess = function onSuccess(offering) {
@@ -340,21 +320,30 @@
             };
             var onComplete = function onComplete() {
                 this.viewsByName.details.enable();
-                Wirecloud.Utils.callCallback(options.onComplete);
+                if (options.history === "push") {
+                    push_nav_history.call(this);
+                } else if (options.history === "replace") {
+                    replace_nav_history.call(this);
+                }
+
+                utils.callCallback(options.onComplete);
             };
 
             this.viewsByName.details.disable();
-            this.changeCurrentView('details');
+            this.changeCurrentView('details', {
+                onComplete: function () {
 
-            if (offering instanceof Wirecloud.FiWare.Offering) {
-                onSuccess.call(this, offering);
-                onComplete.call(this);
-            } else {
-                this.catalogue.get_offering_info(offering.store, offering.id, {
-                    onSuccess: onSuccess.bind(this),
-                    onComplete: onComplete.bind(this)
-                });
-            }
+                    if (offering instanceof Wirecloud.FiWare.Offering) {
+                        onSuccess.call(this, offering);
+                        onComplete.call(this);
+                    } else {
+                        this.catalogue.get_offering_info(offering.store, offering.id, {
+                            onSuccess: onSuccess.bind(this),
+                            onComplete: onComplete.bind(this)
+                        });
+                    }
+                }.bind(this)
+            });
         }.bind(this);
     };
 
@@ -363,9 +352,9 @@
             this.catalogue.start_purchase(offering, {
                 onSuccess: function (data) {
                     var dialog = new Wirecloud.ui.ExternalProcessWindowMenu(
-                        interpolate(gettext('Buying %(offering)s'), {offering: offering.getDisplayName()}, true),
+                        utils.interpolate(utils.gettext('Buying %(offering)s'), {offering: offering.getDisplayName()}, true),
                         data.url,
-                        gettext('The buying process will continue in a separate window. This window will be controled by the store where the offering is hosted. After finishing the buying process, the control will return to WireCloud.'),
+                        utils.gettext('The buying process will continue in a separate window. This window will be controled by the store where the offering is hosted. After finishing the buying process, the control will return to WireCloud.'),
                         {
                             onSuccess: onBuySuccess.bind(this, offering, offering_entry)
                         }
@@ -386,8 +375,18 @@
         this.viewsByName.search.source.refresh();
     };
 
+    var replace_nav_history = function replace_nav_history() {
+        var new_status = this.mainview.buildStateData();
+        Wirecloud.HistoryManager.replaceState(new_status);
+    };
+
+    var push_nav_history = function push_nav_history() {
+        var new_status = this.mainview.buildStateData();
+        Wirecloud.HistoryManager.pushState(new_status);
+    };
 
     Wirecloud.FiWare.FiWareCatalogueView = FiWareCatalogueView;
 
     Wirecloud.MarketManager.addMarketType('fiware', 'FIWARE Marketplace', FiWareCatalogueView);
-})();
+
+})(Wirecloud.Utils);

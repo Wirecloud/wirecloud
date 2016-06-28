@@ -61,13 +61,7 @@
                     select.setValue(resource.version.text);
                     select.addEventListener('change', function (select) {
                         resource.changeVersion(select.getValue());
-                        this.mainview.createUserCommand('showDetails', resource, {
-                                onComplete: function () {
-                                    var new_status = this.mainview.buildStateData();
-                                    Wirecloud.HistoryManager.pushState(new_status);
-                                    Wirecloud.trigger('viewcontextchanged');
-                                }.bind(this)
-                            })();
+                        this.mainview.createUserCommand('showDetails', resource);
                     }.bind(this));
 
                     var main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});

@@ -98,6 +98,7 @@
         if (options.tab != null) {
             this.currentNotebook.goToTab(this.currentNotebook.getTabByLabel(options.tab));
         }
+        Wirecloud.trigger('viewcontextchanged');
     };
 
     if (!('ui' in Wirecloud.FiWare)) {

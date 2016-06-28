@@ -33,7 +33,7 @@
         StyledElements.DynamicMenuItems.call(this);
 
         this._click_callback = function _click_callback(menu_context, menu_item_context) {
-            marketplace_view.alternatives.showAlternative(menu_item_context);
+            marketplace_view.changeCurrentMarket(menu_item_context);
         };
     };
     MarketplaceViewMenuItems.prototype = new StyledElements.DynamicMenuItems();
@@ -50,7 +50,7 @@
                 catalogue = this.market.viewList[i];
                 items.push(new StyledElements.MenuItem(catalogue.getLabel(),
                     this._click_callback,
-                    catalogue
+                    catalogue.key
                 ));
             }
 

@@ -54,7 +54,7 @@ var LayoutManagerFactory = function () {
                 this.header._notifyViewChange();
             }.bind(this));
             this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
-                setTimeout(this.header._notifyViewChange.bind(this.header, new_alternative), 0);
+                this.header._notifyViewChange(new_alternative);
             }.bind(this));
         }
 
@@ -227,14 +227,13 @@ var LayoutManagerFactory = function () {
          * Handler for changes in the hash to navigate to other areas
          */
         LayoutManager.prototype.onHashChange = function(state) {
-            var nextView = this.viewsByName[state.view];
-            if (nextView !== this.alternatives.getCurrentAlternative()) {
-                this.changeCurrentView(state.view, true);
-            }
-
-            if ('onHistoryChange' in nextView) {
-                nextView.onHistoryChange(state);
-            }
+            this.changeCurrentView(state.view, {
+                onComplete: function (alternatives, oldView, nextView) {
+                    if ('onHistoryChange' in nextView) {
+                        nextView.onHistoryChange(state);
+                    }
+                }
+            });
         };
 
     // *********************************

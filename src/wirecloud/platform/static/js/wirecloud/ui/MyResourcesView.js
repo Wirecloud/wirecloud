@@ -19,9 +19,9 @@
  *
  */
 
-/*global CatalogueSearchView, gettext, interpolate, LayoutManagerFactory, Wirecloud, StyledElements*/
+/* globals CatalogueSearchView, LayoutManagerFactory, Wirecloud, StyledElements*/
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -39,8 +39,8 @@
             catalogue: this,
             resource_painter: Wirecloud.ui.ResourcePainter,
             resource_extra_context: resource_extra_context,
-            emptyTitle: gettext('Empty resource list'),
-            emptyMessage: gettext('Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button.')
+            emptyTitle: utils.gettext('Empty resource list'),
+            emptyMessage: utils.gettext('Currently, you do not have access to any component. You can get components using the Marketplace view or by uploading components manually using the Upload button.')
         };
         this.viewsByName = {
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: search_options}),
@@ -50,7 +50,7 @@
 
         this.uploadButton = new StyledElements.Button({
             'iconClass': 'icon-cloud-upload',
-            'title': gettext('Upload')
+            'title': utils.gettext('Upload')
         });
         var upload_dialog = new Wirecloud.ui.WirecloudCatalogue.UploadWindowMenu({catalogue: this.catalogue, mainview: this});
         this.uploadButton.addEventListener('click', function () {
@@ -59,7 +59,7 @@
 
         this.marketButton = new StyledElements.Button({
             'iconClass': 'icon-shopping-cart',
-            'title': gettext('Get more components')
+            'title': utils.gettext('Get more components')
         });
         this.marketButton.addEventListener('click', function () {
             LayoutManagerFactory.getInstance().changeCurrentView('marketplace');
@@ -67,7 +67,7 @@
 
         this.alternatives.addEventListener('preTransition', function (alternatives, old_alternative, new_alternative) {
             LayoutManagerFactory.getInstance().header._notifyViewChange();
-        }.bind(this));
+        });
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
             setTimeout(Wirecloud.trigger.bind(Wirecloud, 'viewcontextchanged'), 0);
         }.bind(this));
@@ -119,7 +119,7 @@
             if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
                 details = currentResource;
             }
-            this.createUserCommand('showDetails', details, {tab: state.tab, version: parts[2]})();
+            this.createUserCommand('showDetails', details, {history: "replace", tab: state.tab, version: parts[2]})();
         }
     };
 
@@ -131,7 +131,7 @@
     };
 
     MyResourcesView.prototype.getBreadcrum = function getBreadcrum() {
-        var breadcrum = [gettext('My Resources')];
+        var breadcrum = [utils.gettext('My Resources')];
 
         if (this.alternatives.getCurrentAlternative() === this.viewsByName.details && this.viewsByName.details.currentEntry != null) {
             breadcrum.push(this.viewsByName.details.currentEntry.title);
@@ -146,10 +146,10 @@
         if (this.alternatives.getCurrentAlternative() === this.viewsByName.details) {
             currentResource = this.viewsByName.details.currentEntry;
             if (currentResource != null) {
-                return Wirecloud.Utils.interpolate(gettext('My Resources - %(resource)s'), {resource: currentResource.uri});
+                return utils.interpolate(utils.gettext('My Resources - %(resource)s'), {resource: currentResource.uri});
             }
         }
-        return gettext('My Resources');
+        return utils.gettext('My Resources');
     };
 
     MyResourcesView.prototype.getToolbarButtons = function getToolbarButtons() {
@@ -194,12 +194,12 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
-            layoutManager.logSubTask(gettext('Uploading resource'));
+            layoutManager._startComplexTask(utils.gettext("Importing resource into local repository"), 3);
+            layoutManager.logSubTask(utils.gettext('Uploading resource'));
 
             this.catalogue.addResourceFromURL(resource.description_url, {
                 onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
+                    LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource installed successfully'));
                     LayoutManagerFactory.getInstance().logStep('');
 
                     this.refresh_search_results();
@@ -223,12 +223,12 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Uninstalling resource"), 3);
-            layoutManager.logSubTask(gettext('Uninstalling resource'));
+            layoutManager._startComplexTask(utils.gettext("Uninstalling resource"), 3);
+            layoutManager.logSubTask(utils.gettext('Uninstalling resource'));
 
             this.catalogue.uninstallResource(resource, {
                 onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uninstalled successfully'));
+                    LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource uninstalled successfully'));
                     LayoutManagerFactory.getInstance().logStep('');
 
                     this.refresh_search_results();
@@ -254,13 +254,13 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Uninstalling resource"), 3);
-            layoutManager.logSubTask(gettext('Uninstalling resource'));
+            layoutManager._startComplexTask(utils.gettext("Uninstalling resource"), 3);
+            layoutManager.logSubTask(utils.gettext('Uninstalling resource'));
 
             this.catalogue.uninstallResource(resource, {
                 allversions: true,
                 onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uninstalled successfully'));
+                    LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource uninstalled successfully'));
                     LayoutManagerFactory.getInstance().logStep('');
 
                     this.refresh_search_results();
@@ -291,7 +291,7 @@
                     if (marketplaceview.number_of_alternatives > 0) {
                         dialog = new Wirecloud.ui.PublishResourceWindowMenu(resource);
                     } else {
-                        msg = gettext("You have not configured any marketplace to upload this resource. Please, configure one on the Marketplace view.");
+                        msg = utils.gettext("You have not configured any marketplace to upload this resource. Please, configure one on the Marketplace view.");
                         dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.WARN_MSG);
                     }
                     dialog.show();
@@ -301,9 +301,9 @@
     };
 
     MyResourcesView.prototype.ui_commands.showDetails = function showDetails(resource, options) {
-        if (options == null) {
-            options = {};
-        }
+        options = utils.merge({
+            history: "push"
+        }, options);
 
         return function (e) {
             var onSuccess = function onSuccess(resource_details) {
@@ -317,8 +317,12 @@
             var viewChanged = false, dataLoaded = false;
             var onComplete = function onComplete() {
                 var new_status = this.buildStateData();
-                Wirecloud.HistoryManager.pushState(new_status);
-                Wirecloud.Utils.callCallback(options.onComplete);
+                if (options.history === "push") {
+                    Wirecloud.HistoryManager.pushState(new_status);
+                } else {
+                    Wirecloud.HistoryManager.replaceState(new_status);
+                }
+                utils.callCallback(options.onComplete);
             };
             var onCompleteRequest = function onCompleteRequest() {
                 this.viewsByName.details.enable();
@@ -372,8 +376,8 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Deleting resource from catalogue"), 3);
-            layoutManager.logSubTask(gettext('Requesting server'));
+            layoutManager._startComplexTask(utils.gettext("Deleting resource from catalogue"), 3);
+            layoutManager.logSubTask(utils.gettext('Requesting server'));
 
             this.catalogue.deleteResource(resource, {
                 onSuccess: success_callback,
@@ -382,14 +386,14 @@
         };
 
         // First ask the user
-        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
+        msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
         context = {
             vendor: resource.vendor,
             name: resource.name,
             version: resource.version.text
         };
 
-        msg = interpolate(msg, context, true);
+        msg = utils.interpolate(msg, context, true);
         return function () {
             var dialog = new Wirecloud.ui.AlertWindowMenu();
             dialog.setMsg(msg);
@@ -416,8 +420,8 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Deleting all versions of the resource from catalogue"), 3);
-            layoutManager.logSubTask(gettext('Requesting server'));
+            layoutManager._startComplexTask(utils.gettext("Deleting all versions of the resource from catalogue"), 3);
+            layoutManager.logSubTask(utils.gettext('Requesting server'));
 
             this.catalogue.deleteResource(resource, {
                 allversions: true,
@@ -427,13 +431,13 @@
         };
 
         // First ask the user
-        msg = gettext('Do you really want to remove all versions of the (vendor: "%(vendor)s", name: "%(name)s") resource?');
+        msg = utils.gettext('Do you really want to remove all versions of the (vendor: "%(vendor)s", name: "%(name)s") resource?');
         context = {
             vendor: resource.vendor,
             name: resource.name
         };
 
-        msg = interpolate(msg, context, true);
+        msg = utils.interpolate(msg, context, true);
         return function () {
             var dialog = new Wirecloud.ui.AlertWindowMenu();
             dialog.setMsg(msg);
@@ -461,4 +465,4 @@
 
     Wirecloud.ui.MyResourcesView = MyResourcesView;
 
-})();
+})(Wirecloud.Utils);

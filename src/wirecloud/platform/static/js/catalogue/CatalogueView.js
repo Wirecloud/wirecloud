@@ -19,9 +19,9 @@
  *
  */
 
-/*global CatalogueSearchView, gettext, interpolate, LayoutManagerFactory, Wirecloud, StyledElements*/
+/* globals CatalogueSearchView, LayoutManagerFactory, Wirecloud, StyledElements */
 
-(function () {
+(function (utils) {
 
     "use strict";
 
@@ -37,6 +37,7 @@
         } else {
             this.market_id = this.desc.name;
         }
+        this.mainview = options.catalogue;
         this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);
         this.alternatives = new StyledElements.Alternatives();
         this.appendChild(this.alternatives);
@@ -49,13 +50,13 @@
                 if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
                     button = new StyledElements.Button({
                         'class': 'btn-danger',
-                        'text': gettext('Uninstall')
+                        'text': utils.gettext('Uninstall')
                     });
                     button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue));
                 } else {
                     button = new StyledElements.Button({
                         'class': 'btn-success',
-                        'text': gettext('Install')
+                        'text': utils.gettext('Install')
                     });
 
                     button.addEventListener('click', local_catalogue_view.createUserCommand('install', resource, this.catalogue));
@@ -66,30 +67,16 @@
         };
 
         this.viewsByName = {
-            'initial': this.alternatives.createAlternative(),
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter, resource_extra_context: resource_extra_context}}),
             'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.ResourceDetailsView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();
 
         this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative) {
-            var new_status = options.catalogue.buildStateData();
-
-            if (out_alternative === this.viewsByName.initial) {
-                Wirecloud.HistoryManager.replaceState(new_status);
-            } else {
-                Wirecloud.HistoryManager.pushState(new_status);
-            }
-
-            setTimeout(Wirecloud.trigger.bind(Wirecloud, 'viewcontextchanged'), 0);
+            Wirecloud.trigger('viewcontextchanged');
         }.bind(this));
 
-        this.addEventListener('show', function () {
-            if (this.alternatives.getCurrentAlternative() === this.viewsByName.initial) {
-                this.changeCurrentView('search');
-            }
-            this.refresh_if_needed();
-        }.bind(this));
+        this.addEventListener('show', this.refresh_if_needed.bind(this));
     };
     CatalogueView.prototype = new StyledElements.Alternative();
 
@@ -104,7 +91,7 @@
         var details, parts, currentResource;
 
         if (state.subview === 'search') {
-            this.changeCurrentView(state.subview);
+            this.changeCurrentView(state.subview, {onComplete: replace_nav_history.bind(this)});
         } else {
             parts = state.resource.split('/');
             details = {
@@ -117,7 +104,7 @@
             if (currentResource != null && currentResource.vendor == details.vendor && currentResource.name == details.name) {
                 details = currentResource.changeVersion(details.version);
             }
-            this.createUserCommand('showDetails', details)();
+            this.createUserCommand('showDetails', details, {history: "replace"})();
         }
     };
 
@@ -125,7 +112,7 @@
         if (this.alternatives.getCurrentAlternative() === this.viewsByName.search) {
             return false;
         }
-        this.changeCurrentView('search');
+        this.changeCurrentView('search', {onComplete: push_nav_history.bind(this)});
         return true;
     };
 
@@ -133,9 +120,7 @@
         if (typeof onComplete !== 'function') {
             throw new TypeError('missing onComplete callback');
         }
-        try {
-            onComplete();
-        } catch (e) {}
+        utils.callCallback(onComplete);
     };
 
     CatalogueView.prototype.search = function search(onSuccess, onError, options) {
@@ -146,16 +131,18 @@
         return null;
     };
 
-    CatalogueView.prototype.changeCurrentView = function changeCurrentView(view_name) {
+    CatalogueView.prototype.changeCurrentView = function changeCurrentView(view_name, options) {
         if (!(view_name in this.viewsByName)) {
             throw new TypeError();
         }
 
-        this.alternatives.showAlternative(this.viewsByName[view_name]);
+        this.alternatives.showAlternative(this.viewsByName[view_name], {
+            onComplete: options.onComplete
+        });
     };
 
     CatalogueView.prototype.home = function home() {
-        this.changeCurrentView('search');
+        this.changeCurrentView('search', {onComplete: push_nav_history.bind(this)});
     };
 
     CatalogueView.prototype.createUserCommand = function createUserCommand(command) {
@@ -169,12 +156,12 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
-            layoutManager.logSubTask(gettext('Uploading resource'));
+            layoutManager._startComplexTask(utils.gettext("Importing resource into local repository"), 3);
+            layoutManager.logSubTask(utils.gettext('Uploading resource'));
 
             this.catalogue.addResourceFromURL(resource.description_url, {
                 onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
+                    LayoutManagerFactory.getInstance().logSubTask(utils.gettext('Resource installed successfully'));
                     LayoutManagerFactory.getInstance().logStep('');
 
                     this.refresh_search_results();
@@ -194,9 +181,9 @@
     };
 
     CatalogueView.prototype.ui_commands.showDetails = function showDetails(resource, options) {
-        if (options == null) {
-            options = {};
-        }
+        options = utils.merge({
+            history: "push"
+        }, options);
 
         return function () {
             var onSuccess = function (resource_details) {
@@ -205,7 +192,12 @@
             };
             var onComplete = function onSuccess() {
                 this.viewsByName.details.enable();
-                options.onComplete();
+                if (options.history === "push") {
+                    push_nav_history.call(this);
+                } else if (options.history === "replace") {
+                    replace_nav_history.call(this);
+                }
+                utils.callCallback(options.onComplete);
             };
 
             this.viewsByName.details.disable();
@@ -241,8 +233,8 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Deleting resource from catalogue"), 3);
-            layoutManager.logSubTask(gettext('Requesting server'));
+            layoutManager._startComplexTask(utils.gettext("Deleting resource from catalogue"), 3);
+            layoutManager.logSubTask(utils.gettext('Requesting server'));
 
             this.catalogue.deleteResource(resource, {
                 onSuccess: success_callback,
@@ -251,14 +243,14 @@
         };
 
         // First ask the user
-        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
+        msg = utils.gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") resource?');
         context = {
             vendor: resource.vendor,
             name: resource.name,
             version: resource.version.text
         };
 
-        msg = interpolate(msg, context, true);
+        msg = utils.interpolate(msg, context, true);
         return function () {
             var dialog = new Wirecloud.ui.AlertWindowMenu();
             dialog.setMsg(msg);
@@ -277,5 +269,16 @@
         this.viewsByName.search.source.refresh();
     };
 
+    var push_nav_history = function push_nav_history() {
+        var new_status = this.mainview.buildStateData();
+        Wirecloud.HistoryManager.pushState(new_status);
+    };
+
+    var replace_nav_history = function replace_nav_history() {
+        var new_status = this.mainview.buildStateData();
+        Wirecloud.HistoryManager.replaceState(new_status);
+    };
+
     window.CatalogueView = CatalogueView;
-})();
+
+})(Wirecloud.Utils);
