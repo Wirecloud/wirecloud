@@ -10,3 +10,5 @@ WIRECLOUD_SELENIUM_TEST_BROWSERS = {
    },
 }
 
+import socket
+socket.setdefaulttimeout(120)
