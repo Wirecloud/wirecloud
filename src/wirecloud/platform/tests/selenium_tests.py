@@ -1329,13 +1329,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             # use execute_script as we are not testing if the button is visible
             # and directly clickable without scrolling the view
             self.driver.execute_script("document.getElementById('dashboard_management_button').click();")
-            # Two widgets are created when clicking the dashboard management button
-            # one of them is connected directly, the other is connected through and
-            # operator
-            self.driver.execute_script("document.getElementById('wiring_pushevent_button').click();")
+            # Wait until the test finish with a success message
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('dashboard_management_test').text == 'Success!!')
 
+        # Two widgets are created when clicking the dashboard management button
+        # one of them is connected directly, the other is connected through and
+        # operator
         WebDriverWait(self.driver, timeout=3).until(lambda driver: len(self.find_iwidgets()) == (initial_iwidget_count + 2))
 
+        # An event is sent from the widget using the pushEvent method
         iwidgets = self.find_iwidgets()
         with iwidgets[3]:
             text_div = self.driver.find_element_by_id('registercallback_test')
@@ -1369,6 +1371,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with iwidgets[4]:
             text_div = self.driver.find_element_by_id('registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
+
+        self.assertIsNone(self.find_navbar_button("display-wiring-view").badge)
 
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_upgrade_widget(self):

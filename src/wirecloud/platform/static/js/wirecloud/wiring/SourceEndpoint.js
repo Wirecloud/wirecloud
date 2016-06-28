@@ -40,7 +40,7 @@
         if (this.outputList.indexOf(out) === -1) {
             this.outputList.push(out);
             this.connections.push(connection);
-            out._addInput(this);
+            out._addInput(this, connection);
             connection._connect();
         }
     };
@@ -52,7 +52,7 @@
             this.outputList.splice(index, 1);
             connection = this.connections[index];
             this.connections.splice(index, 1);
-            out._removeInput(this);
+            out._removeInput(this, connection);
             connection._disconnect();
         }
     };
