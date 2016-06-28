@@ -61,7 +61,7 @@
                     select.setValue(resource.version.text);
                     select.addEventListener('change', function (select) {
                         resource.changeVersion(select.getValue());
-                        this.mainview.createUserCommand('showDetails', resource);
+                        this.mainview.createUserCommand('showDetails', resource)();
                     }.bind(this));
 
                     var main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
