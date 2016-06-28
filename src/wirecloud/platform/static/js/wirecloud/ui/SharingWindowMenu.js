@@ -72,8 +72,8 @@
         this.sharingUsers = [];
         template = Wirecloud.currentTheme.templates['sharing_user'];
 
-        for (i = 0; i < workspace.workspaceState.users.length; i++) {
-            appendUser.call(this, workspace.workspaceState.users[i], builder, template);
+        for (i = 0; i < workspace.model.users.length; i++) {
+            appendUser.call(this, workspace.model.users[i], builder, template);
         }
 
         // windowmenu - footer
@@ -86,7 +86,7 @@
         this.btnCancel.appendTo(this.windowBottom);
         this.btnCancel.addEventListener('click', this._closeListener);
 
-        this.visibilityOptions.setValue(workspace.preferences.get('public') ? 'public' : 'private');
+        this.visibilityOptions.setValue(workspace.model.preferences.get('public') ? 'public' : 'private');
         this.visibilityOptions.addEventListener('change', on_visibility_option_change.bind(this));
         on_visibility_option_change.call(this);
     };
@@ -110,15 +110,15 @@
         }
 
         this.btnAccept.disable();
-        this.workspace.preferences.set({
+        this.workspace.model.preferences.set({
             public: {value: this.visibilityOptions.value === "public"},
             sharelist: {value: sharelist}
         }, {
             onSuccess: function () {
-                this.workspace.workspaceState.users = [];
+                this.workspace.model.users.length = 0;
 
                 for (username in this.sharingUsers) {
-                    this.workspace.workspaceState.users.push(this.sharingUsers[username]);
+                    this.workspace.model.users.push(this.sharingUsers[username]);
                 }
 
                 this._closeListener();

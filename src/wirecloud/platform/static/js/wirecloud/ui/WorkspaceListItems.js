@@ -52,12 +52,15 @@
 
         for (workspace_name in user_workspaces) {
             workspace = user_workspaces[workspace_name];
-
-            items.push(new StyledElements.MenuItem(
+            let item = new StyledElements.MenuItem(
                 workspace_name,
                 this.handler,
                 workspace
-            ));
+            );
+
+            item.addClassName("wc-show-workspace");
+
+            items.push(item);
         }
 
         return items;

@@ -1,3 +1,6 @@
+@import "variables";
+
+
 #workspace {
     overflow: hidden;
 }
@@ -10,4 +13,16 @@
 
 #workspace > .alert {
     margin: 2ex 5ex;
+}
+
+.workspace {
+    .se-offcanvas {
+        margin-bottom: ($margin-vertical-base / 2);
+
+        .se-offcanvas-content {
+            background-color: $wiring-content-bg;
+            border: solid 1px $panel-default-border-color;
+            border-radius: $border-radius-base;
+        }
+    }
 }

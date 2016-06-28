@@ -318,7 +318,7 @@
             }
             break;
         case 'mashup':
-            resource = resource_data;
+            resource = new Wirecloud.MashableApplicationComponent(resource_data);
         }
         if (Wirecloud.activeWorkspace != null) {
             Wirecloud.activeWorkspace.resources.restore(resource);

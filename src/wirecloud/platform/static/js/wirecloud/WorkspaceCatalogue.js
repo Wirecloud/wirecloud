@@ -195,6 +195,20 @@
         return component;
     };
 
+    WorkspaceCatalogue.prototype.findResource = function findResource(type, id, newMissingResource) {
+        var component = this.resources[id];
+
+        if (component == null && !!newMissingResource) {
+            if (!(id in this.missingComponents)) {
+                var id_parts = id.split('/');
+                this.missingComponents[id] = createMissing(type, id_parts[0], id_parts[1], id_parts[2]);
+            }
+            component = this.missingComponents[id];
+        }
+
+        return component;
+    };
+
     WorkspaceCatalogue.prototype.getResourceId = function getResourceId(id) {
         return this.resources[id];
     };

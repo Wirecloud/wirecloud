@@ -59,6 +59,7 @@
 
         this.marketButton = new StyledElements.Button({
             'iconClass': 'icon-shopping-cart',
+            class: "wc-show-marketplace",
             'title': utils.gettext('Get more components')
         });
         this.marketButton.addEventListener('click', function () {
