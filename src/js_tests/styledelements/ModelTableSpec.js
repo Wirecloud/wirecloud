@@ -358,6 +358,7 @@
                     {id: 2, test: "other world"}
                 ];
                 table.source.changeElements(data);
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
             });
 
             it("should allow simple selections", function () {
@@ -366,7 +367,6 @@
 
                 // Check if css are applied properly
                 expected = [false, true, false];
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
 
                 expect(observed).toEqual(expected);
@@ -378,7 +378,6 @@
 
                 // Check if css are applied properly
                 expected = [false, true, true];
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
 
                 expect(observed).toEqual(expected);
@@ -391,7 +390,6 @@
 
                 // Check if css are applied properly
                 expected = [false, false, false];
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
                 expect(observed).toEqual(expected);
             });
@@ -402,12 +400,175 @@
 
                 // Check if css are applied properly
                 expected = [false, false, false];
-                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
                 observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
                 expect(observed).toEqual(expected);
             });
 
+            describe("Should handle mouse to select", function () {
+                var cell, event;
+
+                it("should allow click selections without modifiers", function () {
+                    cell = rows[0].querySelector(".se-model-table-cell");
+                    event = new Event("click");
+                    cell.dispatchEvent(event);
+
+                    // Check if css are applied properly
+                    expected = [true, false, false];
+                    observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                    expect(observed).toEqual(observed);
+                });
+
+                describe("should allow click selections with control key pressed", function () {
+                    it("should allow first selection", function () {
+                        cell = rows[0].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.ctrlKey = true;
+                        cell.dispatchEvent(event);
+
+                        // Check if css are applied properly
+                        expected = [true, false, false];
+                        observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                        expect(observed).toEqual(observed);
+                    });
+
+                    it("should allow multiple selection", function () {
+                        cell = rows[0].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        cell.dispatchEvent(event);
+
+                        cell = rows[2].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.ctrlKey = true;
+                        cell.dispatchEvent(event);
+
+                        // Check if css are applied properly
+                        expected = [true, false, true];
+                        observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                        expect(observed).toEqual(observed);
+                    });
+
+                    it("should allow diselect selected rows", function () {
+                        cell = rows[0].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        cell.dispatchEvent(event);
+
+                        event = new Event("click");
+                        event.ctrlKey = true;
+                        cell.dispatchEvent(event);
+
+                        // Check if css are applied properly
+                        expected = [false, false, false];
+                        observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                        expect(observed).toEqual(observed);
+                    });
+                });
+
+                describe("should allow click selections with shift key pressed", function () {
+                    it("should allow first selection", function () {
+                        cell = rows[0].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.shiftKey = true;
+                        cell.dispatchEvent(event);
+
+                        // Check if css are applied properly
+                        expected = [true, false, false];
+                        observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                        expect(observed).toEqual(observed);
+                    });
+
+                    it("should allow range selection", function () {
+                        cell = rows[0].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        cell.dispatchEvent(event);
+
+                        cell = rows[2].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.shiftKey = true;
+                        cell.dispatchEvent(event);
+
+                        // Check if css are applied properly
+                        expected = [true, true, true];
+                        observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                        expect(observed).toEqual(observed);
+                    });
+
+                    it("should overwrite previous selection", function () {
+                        cell = rows[0].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        cell.dispatchEvent(event);
+
+                        cell = rows[1].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.ctrlKey = true;
+                        cell.dispatchEvent(event);
+
+                        cell = rows[2].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.shiftKey = true;
+                        cell.dispatchEvent(event);
+
+                        // Check if css are applied properly
+                        expected = [false, true, true];
+                        observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                        expect(observed).toEqual(observed);
+                    });
+                });
+
+                describe("should allow click selections with shift and control keys pressed", function () {
+                    it("should allow first selection", function () {
+                        cell = rows[0].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.shiftKey = true;
+                        event.ctrlKey = true;
+                        cell.dispatchEvent(event);
+
+                        // Check if css are applied properly
+                        expected = [true, false, false];
+                        observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                        expect(observed).toEqual(observed);
+                    });
+
+                    it("should allow range selection", function () {
+                        cell = rows[0].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        cell.dispatchEvent(event);
+
+                        cell = rows[2].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.shiftKey = true;
+                        event.ctrlKey = true;
+                        cell.dispatchEvent(event);
+
+                        // Check if css are applied properly
+                        expected = [true, true, true];
+                        observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                        expect(observed).toEqual(observed);
+                    });
+
+                    it("should not overwrite previous selection", function () {
+                        cell = rows[0].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        cell.dispatchEvent(event);
+
+                        cell = rows[1].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.ctrlKey = true;
+                        cell.dispatchEvent(event);
+
+                        cell = rows[2].querySelector(".se-model-table-cell");
+                        event = new Event("click");
+                        event.shiftKey = true;
+                        cell.dispatchEvent(event);
+
+                        // Check if css are applied properly
+                        expected = [true, true, true];
+                        observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                        expect(observed).toEqual(observed);
+                    });
+                });
+            });
         });
+
 
         it("Should handle row's content builder", function () {
             var rows;

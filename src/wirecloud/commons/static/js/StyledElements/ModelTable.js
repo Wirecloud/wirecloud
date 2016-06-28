@@ -83,7 +83,7 @@
         for (i = 0; i < items.length; i += 1) {
             item = items[i];
 
-            callback = rowCallback.bind({control: this, item: item});
+            callback = rowCallback.bind({table: this, item: item, index: i});
 
             row = document.createElement('div');
             row.className = 'se-model-table-row';
@@ -216,8 +216,7 @@
         var priv = {};
         privates.set(this, priv);
 
-
-        StyledElements.StyledElement.call(this, ['click']);
+        StyledElements.StyledElement.call(this, ['click', 'select']);
 
         priv.selection = [];
         var source;
@@ -491,11 +490,90 @@
         return element;
     };
 
-    var rowCallback = function rowCallback() {
-        /*
-            FIXME: it is not replaced by this.control.dispatchEvent('click', this.item); because of API's behaviour
-         */
-        this.control.events.click.dispatch(this.item);
+    // Row clicked callback
+    var rowCallback = function rowCallback(evt) {
+        changeSelection.call(this.table, this.item, evt, this.index);
+        this.table.events.click.dispatch(this.item, evt);
+    };
+
+    // Row selection
+    var changeSelection = function changeSelection(row, event, index) {
+        var priv = privates.get(this);
+
+        var selected, data, lastSelectedIndex, lower, upper, j;
+        var id = priv.extractIdFunc(row);
+
+        if (event.ctrlKey && event.shiftKey) {
+            // Control + shift behaviour
+            data = this.source.getCurrentPage();
+            lastSelectedIndex = data.indexOf(priv.lastSelected);
+            if (lastSelectedIndex === -1) {
+                priv.lastSelected = row;
+                selected = [id];
+            } else {
+                selected = priv.savedSelection.slice();
+                selected.splice(selected.indexOf(priv.extractIdFunc(priv.lastSelected)), 1); // Remove pivot row from selection as it will be selected again
+
+                // Get the new selection group and append it
+                var aux = [];
+                lower = Math.min(index, lastSelectedIndex);
+                upper = Math.max(index, lastSelectedIndex);
+                for (j = lower; j <= upper; j++) {
+                    aux.push(priv.extractIdFunc(data[j]));
+                }
+                selected = selected.concat(aux);
+            }
+
+        } else if (event.shiftKey) {
+            // Shift behaviour
+            data = this.source.getCurrentPage();
+            lastSelectedIndex = data.indexOf(priv.lastSelected);
+            // Choose current
+            if (lastSelectedIndex === -1) {
+                priv.lastSelected = row;
+                selected = [id];
+            // Choose range
+            } else {
+                selected = [];
+
+                lower = Math.min(index, lastSelectedIndex);
+                upper = Math.max(index, lastSelectedIndex);
+                for (j = lower; j <= upper; j++) {
+                    selected.push(priv.extractIdFunc(data[j]));
+                }
+            }
+            // var idoc = this.wrapperElement.contentDocument || this.wrapperElement.contentWindow.document; // ie compatibility
+            // idoc.getSelection().removeAllRanges();
+            // window.getSelection().removeAllRanges();
+
+        } else if (event.ctrlKey) {
+            // control behaviour
+            priv.lastSelected = row;
+            selected = this.selection.slice();
+
+            var i = selected.indexOf(id);
+
+            // Remove from selection
+            if (i !== -1) {
+                priv.lastSelected = null;
+                selected.splice(i, 1);
+            // Add to selection
+            } else {
+                selected.push(id);
+            }
+            priv.savedSelection = selected;
+
+        } else {
+            // Normal behaviour
+            selected = [id];
+            priv.lastSelected = row;
+            priv.savedSelection = selected;
+        }
+
+        // Update the selection
+        this.select(selected);
+        // this.trigger("select", selected);
+        this.events.select.dispatch(selected);
     };
 
     var clearTable = function clearTable() {
@@ -545,6 +623,7 @@
     };
 
     var privates = new WeakMap();
+
 
     StyledElements.ModelTable = ModelTable;
 
