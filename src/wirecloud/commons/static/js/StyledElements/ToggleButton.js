@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*globals StyledElements */
+/* globals StyledElements */
 
 (function () {
 
@@ -38,27 +38,12 @@
 
         StyledElements.Button.call(this, options);
 
-        if (options.checkedIcon == null) {
-            options.checkedIcon = options.icon;
-        }
-
-        if (options.checkedText == null) {
-            options.checkedText = options.text;
-        }
-
-        this._icon = options.icon;
-        this._checkedIcon = options.checkedIcon;
-
-        this._text = options.text;
-        this._checkedText = options.checkedText;
-
         Object.defineProperty(this, 'active', {
             get: function get() {
                 return this.hasClassName('active');
             },
             set: function set(value) {
-                this.toggleClassName('active', value)
-                    ._onactive(value);
+                this.toggleClassName('active', value);
             }
         });
 
@@ -66,21 +51,6 @@
         this.active = options.initiallyChecked;
     };
     StyledElements.ToggleButton.prototype = new StyledElements.Button({extending: true});
-
-    StyledElements.ToggleButton.prototype._onactive = function _onactive(active) {
-
-        if (this.active !== active) {
-            if (this.icon) {
-                this.icon.src = active ? this._checkedIcon : this._icon;
-            }
-
-            if (this.label) {
-                this.label.textContent = active ? this._checkedText : this._text;
-            }
-        }
-
-        return this;
-    };
 
     StyledElements.ToggleButton.prototype._clickCallback = function _clickCallback(event) {
         event.stopPropagation();

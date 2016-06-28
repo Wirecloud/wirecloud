@@ -70,7 +70,7 @@
 
                 active: {
                     get: function get() {return this.hasClassName('active');},
-                    set: function set(value) {this._onactive(value);}
+                    set: function set(value) {this.toggleClassName('active', value);}
                 }
 
             });
@@ -88,10 +88,6 @@
         },
 
         members: {
-
-            _onactive: function _onactive(active) {
-                return this.active === active ? this : this.toggleClassName('active', active);
-            },
 
             iconClass: function iconClass(className) {
 
