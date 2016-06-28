@@ -183,7 +183,7 @@ Django 1.6 and South before upgrading to the new version of Django.
 Once migrated the database and installed the new version of Django, run
 the following command for initializing the Django db migration framework:
 
-    $ python manage.py migrate --fake
+    $ python manage.py migrate --fake-initial
 
 
 ## From 0.7.x to 0.8.x
