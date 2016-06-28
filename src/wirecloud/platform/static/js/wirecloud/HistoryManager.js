@@ -44,7 +44,7 @@
         data = Wirecloud.Utils.merge(default_data, data);
 
         header = LayoutManagerFactory.getInstance().header;
-        if (header.currentView != null) {
+        if (header != null && header.currentView != null) {
             data.title = header.currentView.getTitle();
         } else {
             data.title = document.title;

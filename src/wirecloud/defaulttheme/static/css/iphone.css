@@ -363,7 +363,7 @@ img {
     z-index: 2;
 }
 
-.iwidget {
+.wc-widget {
     overflow: hidden;
     display: block;
     position: absolute;
