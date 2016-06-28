@@ -522,6 +522,7 @@
                     aux.push(priv.extractIdFunc(data[j]));
                 }
                 selected = selected.concat(aux);
+                event.target.ownerDocument.defaultView.getSelection().removeAllRanges();
             }
 
         } else if (event.shiftKey) {
@@ -541,10 +542,8 @@
                 for (j = lower; j <= upper; j++) {
                     selected.push(priv.extractIdFunc(data[j]));
                 }
+                event.target.ownerDocument.defaultView.getSelection().removeAllRanges();
             }
-            // var idoc = this.wrapperElement.contentDocument || this.wrapperElement.contentWindow.document; // ie compatibility
-            // idoc.getSelection().removeAllRanges();
-            // window.getSelection().removeAllRanges();
 
         } else if (event.ctrlKey) {
             // control behaviour
