@@ -46,19 +46,28 @@
      */
     ns.Connection = utils.defineClass({
 
-        constructor: function Connection(readonly, source, target, wiringEngine) {
-            this.superClass(['detach', 'establish']);
+        constructor: function Connection(wiring, source, target, options) {
+            this.superClass(['detach', 'establish', 'remove']);
             this.established = false;
+
+            options = utils.merge({
+                readonly: false
+            }, options);
 
             Object.defineProperties(this, {
                 id : {
                     get: function get() {return this.source.id + "//" + this.target.id;}
                 },
-                logManager: {value: new ns.ConnectionLogManager(this, wiringEngine)},
-                readonly: {value: readonly},
+                logManager: {value: new ns.ConnectionLogManager(this, wiring)},
+                readonly: {
+                    value: options.readonly
+                },
                 source: {value: source, writable: true},
                 target: {value: target, writable: true},
-                volatile: {value: source.component.volatile || target.component.volatile}
+                volatile: {value: source.component.volatile || target.component.volatile},
+                wiring: {
+                    value: wiring
+                }
             });
         },
 
@@ -179,6 +188,11 @@
                 this.logManager.log(utils.interpolate(message, this), levelNumber);
 
                 return this;
+            },
+
+            remove: function remove() {
+                this.detach();
+                return this.trigger('remove');
             },
 
             showLogs: function showLogs() {

@@ -19,7 +19,7 @@
  *
  */
 
-/* global StyledElements, Wirecloud */
+/* globals StyledElements, Wirecloud */
 
 
 (function (ns, se, utils) {
@@ -33,288 +33,275 @@
     // ==================================================================================
 
     /**
-     * Create a new instance of class Wiring.
-     * @extends {ObjectWithEvents}
+     * @name Wirecloud.Wiring
      *
+     * @extends {StyledElements.ObjectWithEvents}
      * @constructor
-     * @param {Workspace} workspace
-     *      [TODO: description]
+     *
+     * @param {Wirecloud.Workspace} workspace
+     * @param {Object} data
+     * @param {Array.<Object>} data.connections
+     * @param {Object} data.operators
      */
-    ns.Wiring = utils.defineClass({
+    ns.Wiring = function Wiring(workspace, data) {
+        se.ObjectWithEvents.call(this, [
+            'createoperator',
+            'load',
+            'removeoperator'
+        ]);
 
-        constructor: function Wiring(workspace) {
-            this.superClass(['load', 'loaded', 'unload', 'unloaded']);
-            this.widgets = {};
+        _private.set(this, {
+            operatorId: 1,
+            operators: [],
+            connections: [],
+            on_changecomponent: on_changecomponent.bind(this),
+            on_createwidget: on_createwidget.bind(this),
+            on_removeconnection: on_removeconnection.bind(this),
+            on_removeoperator: on_removeoperator.bind(this),
+            on_removewidget: on_removewidget.bind(this)
+        });
 
-            Object.defineProperties(this, {
-                // TODO: remove this properties.
-                ioperators: {get: function get() {return this.operators;}},
-                iwidgets: {get: function get() {return this.widgets;}},
-                // TODO: remove this properties.
-                connections: {
-                    get: function get() {return this.status.connections;}
+        Object.defineProperties(this, /** @lends Wirecloud.Wiring# */{
+            /**
+             * @type {Array.<Wirecloud.Wiring.Connection>}
+             */
+            connections: {
+                get: function () {
+                    return _private.get(this).connections.slice(0);
+                }
+            },
+            /**
+             * @type {Wirecloud.LogManager}
+             */
+            logManager: {
+                value: new Wirecloud.wiring.LogManager(this)
+            },
+            /**
+             * @type {Array.<Wirecloud.Wiring.Operator>}
+             */
+            operators: {
+                get: function () {
+                    return _private.get(this).operators.slice(0);
+                }
+            },
+            /**
+             * @type {Object.<String, Wirecloud.Wiring.Operator>}
+             */
+            operatorsById: {
+                get: function () {
+                    return get_operators_by_id.call(this);
+                }
+            },
+            /**
+             * @type {Wirecloud.Workspace}
+             */
+            workspace: {
+                value: workspace
+            }
+        });
+
+        this.workspace.widgets.forEach(function (widget) {
+            on_createwidget.call(this, this.workspace, widget);
+        }, this);
+        this.workspace.addEventListener('createwidget', _private.get(this).on_createwidget);
+
+        unmarshall.call(this, data);
+    };
+
+    ns.Wiring.normalize = function normalize(status) {
+        var new_status = utils.update({
+            version: '2.0',
+            connections: [],
+            operators: {},
+            visualdescription: {
+                behaviours: [],
+                components: {
+                    operator: {},
+                    widget: {}
                 },
-                logManager: {value: new ns.wiring.LogManager(this)},
-                operators: {
-                    get: function get() {return this.status.operators;}
-                },
-                status: {value: ns.Wiring.normalize(), writable: true},
-                workspace: {value: workspace}
+                connections: []
+            }
+        }, status);
+
+        normalize_object(new_status.visualdescription.components.operator, normalize_visual_component);
+        normalize_object(new_status.visualdescription.components.widget, normalize_visual_component);
+
+        return new_status;
+    };
+
+    // ==================================================================================
+    // PUBLIC MEMBERS
+    // ==================================================================================
+
+    utils.inherit(ns.Wiring, se.ObjectWithEvents, /** @lends Wirecloud.Wiring.prototype */{
+
+        _notifyOperatorInstall: function _notifyOperatorInstall(resource) {
+            var id, current_operator, operator;
+
+            _private.get(this).operators.forEach(function (operator) {
+                if (operator.missing && operator.meta.uri === resource.uri) {
+                    operator.upgrade(resource);
+                }
+            });
+        },
+
+        /**
+         * @param {Wirecloud.Wiring.SourceEndpoint} source
+         * @param {Wirecloud.Wiring.TargetEndpoint} target
+         * @param {Object} [options]
+         * @param {Boolean} [options.readonly]
+         *
+         * @returns {Wirecloud.Wiring.Connection}
+         */
+        createConnection: function createConnection(source, target, options) {
+            options = utils.merge({
+                commit: false
+            }, options);
+
+            var connection = new Wirecloud.wiring.Connection(this, source, target, options);
+
+            if (options.commit) {
+                connection.addEventListener('remove', _private.get(this).on_removeconnection);
+                connection.establish();
+                _private.get(this).connections.push(connection);
+            }
+
+            return connection;
+        },
+
+        /**
+         * @param {Wirecloud.OperatorMeta} resource
+         * @param {Object} [data]
+         *
+         * @returns {Promise}
+         */
+        createOperator: function createOperator(resource, data) {
+            var data = utils.merge({
+                id: (_private.get(this).operatorId).toString(),
+                volatile: false
+            }, data);
+
+            if (data.volatile) {
+                return append_operator.call(this, create_operator.call(this, resource, data));
+            }
+
+            return new Promise(function (resolve, reject) {
+                resolve(create_operator.call(this, resource, data));
+            }.bind(this));
+        },
+
+        /**
+         * @param {String} id
+         *
+         * @returns {*}
+         */
+        findOperator: function findOperator(id) {
+            return this.operatorsById[id];
+        },
+
+        load: function load(status) {
+            var connection, i, id, old_operators, operator;
+
+            _private.get(this).connections.forEach(function (connection) {
+                connection.detach();
             });
 
-            this.autoOperatorId = 1;
-
-            this._widget_onadded = widget_onadded.bind(this);
-            this._widget_onremoved = widget_onremoved.bind(this);
-
-            this.workspace.addEventListener('iwidgetadded', this._widget_onadded);
-            this.workspace.addEventListener('iwidgetremoved', this._widget_onremoved);
-        },
-
-        inherit: se.ObjectWithEvents,
-
-        statics: {
-
-            normalize: function normalize(status) {
-                var new_status = utils.updateObject({
-                    version: '2.0',
-                    connections: [],
-                    operators: {},
-                    visualdescription: {
-                        behaviours: [],
-                        components: {
-                            operator: {},
-                            widget: {}
-                        },
-                        connections: []
-                    }
-                }, status);
-
-                normalize_object(new_status.visualdescription.components.operator, normalize_visual_component);
-                normalize_object(new_status.visualdescription.components.widget, normalize_visual_component);
-
-                return new_status;
+            for (i = _private.get(this).operators.length - 1; i >= 0; i--) {
+                operator = _private.get(this).operators[i];
+                if (!operator.volatile && !(operator.id in status.operators)) {
+                    operator.remove();
+                }
             }
 
+            for (i = _private.get(this).connections.length - 1; i >= 0; i--) {
+                connection = _private.get(this).connections[i];
+
+                if (!connection.volatile) {
+                    connection.removeEventListener('remove', _private.get(this).on_removeconnection);
+                    _private.get(this).connections.splice(i, 1);
+                }
+            }
+
+            this.logManager.newCycle();
+
+            for (id in status.operators) {
+                operator = status.operators[id];
+
+                if (this.findOperator(id) == null) {
+                    append_operator.call(this, operator);
+                }
+            }
+
+            _private.get(this).operatorId = 1;
+
+            _private.get(this).operators.forEach(function (operator) {
+
+                if (Number(operator.id) >= _private.get(this).operatorId) {
+                    _private.get(this).operatorId = Number(operator.id) + 1;
+                }
+            }, this);
+
+            status.connections.forEach(function (connection) {
+                connection.addEventListener('remove', _private.get(this).on_removeconnection);
+                _private.get(this).connections.push(connection);
+            }, this);
+
+            _private.get(this).connections.forEach(function (connection) {
+                connection.establish();
+            });
+
+            this.visualdescription = status.visualdescription;
+            this.trigger('load');
+            this.update();
+
+            return this;
         },
 
-        members: {
-
-            _notifyOperatorInstall: function _notifyOperatorInstall(operatorMeta) {
-                var id, current_operator, operator;
-
-                for (id in this.status.operators) {
-                    current_operator = this.status.operators[id];
-
-                    if (current_operator.missing && current_operator.meta.uri === operatorMeta.uri) {
-                        current_operator.meta = operatorMeta;
-                    }
-                }
-            },
-
-            _instantiate_operator: function _instantiate_operator(id, operatorMeta, businessInfo) {
-                var operator = operatorMeta.instantiate(id, this, businessInfo);
-
-                operator
-                    .addEventListener('upgraded', component_onupgraded.bind(this))
-                    .addEventListener('unload', component_onunload)
-                    .addEventListener('remove', operator_onremove.bind(this))
-                    .load();
-
-                this.status.operators[operator.id] = operator;
-
-                return operator;
-            },
-
-            /**
-             * Create a new instance of the given componentMeta.
-             *
-             * @param {(Wirecloud.wiring.OperatorMeta|Wirecloud.WidgetMeta)} componentMeta A valid component meta.
-             * @param {?Function} [next] A callback that receives the component created.
-             * @return {Wirecloud.Wiring} The instance on which this method is called.
-             */
-            createComponent: function createComponent(componentMeta, options) {
-                var newComponent;
-
-                if (componentMeta.type === 'operator') {
-                    newComponent = componentMeta.instantiate(this.autoOperatorId++, this);
-
-                    utils.callCallback(options.onSuccess, newComponent);
-                } else { // componentMeta.type === 'widget'
-                    componentMeta.instantiate(options);
-                }
-
-                return this;
-            },
-
-            createConnection: function createConnection(readonly, source, target) {
-                return new ns.wiring.Connection(readonly, source, target, this);
-            },
-
-            destroy: function destroy() {
-                var id;
-
-                for (id in this.widgets) {
-                    this.widgets[id].fullDisconnect();
-                }
-
-                for (id in this.status.operators) {
-                    this.status.operators[id].destroy();
-                }
-
-                this.workspace.removeEventListener('iwidgetadded', this._widget_onadded);
-                this.workspace.removeEventListener('iwidgetremoved', this._widget_onremoved);
-
-                return this;
-            },
-
-            load: function load(status) {
-                var connection, i, id, old_operators, operator;
-
-                wiring_onunload.call(this);
-                old_operators = this.status.operators;
-
-                this.trigger('load');
-
-                this.autoOperatorId = 1;
-
-                for (id in status.operators) {
-                    operator = status.operators[id];
-
-                    if (parseInt(id, 10) >= this.autoOperatorId) {
-                        this.autoOperatorId = parseInt(id, 10) + 1;
-                    }
-
-                    if (id in old_operators) {
-                        delete old_operators[id];
-                    }
-
-                    operator
-                        .addEventListener('upgraded', component_onupgraded.bind(this))
-                        .addEventListener('unload', component_onunload)
-                        .addEventListener('remove', operator_onremove.bind(this))
-                        .load();
-                }
-
-                for (id in old_operators) {
-                    operator = old_operators[id];
-                    if (operator.volatile) {
-                        status.operators[id] = operator;
-                    } else {
-                        operator.remove();
-                    }
-                }
-
-                for (i = this.status.connections.length - 1; i >= 0; i--) {
-                    connection = this.status.connections[i];
-
-                    if (connection.volatile) {
-                        status.connections.push(connection);
-                    }
-                }
-
-                this.status = status;
-                this.status.connections.forEach(function (connection) {
-                    connection.establish();
+        /**
+         * @returns {Promise}
+         */
+        update: function update() {
+            return new Promise(function (resolve, reject) {
+                var url = Wirecloud.URLs.WIRING_ENTRY.evaluate({
+                    workspace_id: this.workspace.id
                 });
 
-                return this.trigger('loaded');
-            },
-
-            save: function save() {
-
-                Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({workspace_id: this.workspace.id}), {
+                Wirecloud.io.makeRequest(url, {
                     method: 'PUT',
+                    requestHeaders: {'Accept': 'application/json'},
                     contentType: 'application/json',
-                    requestHeaders: {Accept: 'application/json'},
-                    postBody: JSON.stringify(this.toJSON())
+                    postBody: JSON.stringify(this.toJSON()),
+                    onComplete: function (response) {
+                        if (response.status === 204) {
+                            resolve(this);
+                        } else {
+                            reject(/* TODO */);
+                        }
+                    }.bind(this)
                 });
+            }.bind(this));
+        },
 
-                return this;
-            },
+        /**
+         * @returns {Object}
+         */
+        toJSON: function toJSON() {
+            var operators = {};
 
-            toJSON: function toJSON() {
-                var connection, i, id, operator, status;
-
-                status = ns.Wiring.normalize();
-
-                for (id in this.status.operators) {
-                    operator = this.status.operators[id];
-
-                    if (!operator.volatile) {
-                        status.operators[id] = operator;
-                    }
+            _private.get(this).operators.forEach(function (operator) {
+                if (!operator.volatile) {
+                    operators[operator.id] = operator;
                 }
+            });
 
-                for (i = this.status.connections.length - 1; i >= 0; i--) {
-                    connection = this.status.connections[i];
-
-                    if (!connection.volatile) {
-                        status.connections.push(connection);
-                    }
-                }
-
-                status.visualdescription = this.status.visualdescription;
-
-                return status;
-            },
-
-            unmarshall: function unmarshall(status) {
-                var connection_info, errorCount, i, id, operator_info,
-                    operator_visual_info, meta, source, target;
-
-                status = ns.Wiring.normalize(status);
-
-                // Convert operator into instances
-                for (id in status.operators) {
-                    operator_info = status.operators[id];
-
-                    meta = this.workspace.resources.getOrCreateMissing(operator_info.name, 'operator');
-                    status.operators[id] = meta.instantiate(id, this, operator_info);
-
-                    if (meta.missing && id in status.visualdescription.components.operator) {
-                        operator_visual_info = status.visualdescription.components.operator[id];
-
-                        operator_visual_info.endpoints.source.forEach(function (name) {
-                            addMissingEndpoint(this, 'outputs', name);
-                        }, status.operators[id]);
-
-                        operator_visual_info.endpoints.target.forEach(function (name) {
-                            addMissingEndpoint(this, 'inputs', name);
-                        }, status.operators[id]);
-                    }
-                }
-
-                // Convert connections into instances
-                for (i = status.connections.length - 1; i >= 0; i--) {
-                    connection_info = utils.updateObject(ns.wiring.Connection.JSON_TEMPLATE, status.connections[i]);
-                    errorCount = 0;
-
-                    try {
-                        source = getEndpoint.call(this, status.operators, this.widgets, 'outputs', connection_info.source);
-                    } catch (e) {
-                        this.logManager.log(e.toString());
-                        status.connections.splice(i, 1);
-                        errorCount++;
-                    }
-
-                    try {
-                        target = getEndpoint.call(this, status.operators, this.widgets, 'inputs', connection_info.target);
-                    } catch (e) {
-                        this.logManager.log(e.toString());
-                        errorCount++;
-                    }
-
-                    if (!errorCount) {
-                        status.connections[i] = new ns.wiring.Connection(connection_info.readonly, source, target, this);
-                    } else {
-                        status.connections.splice(i, 1);
-                    }
-                }
-
-                return status;
-            }
-
+            return {
+                version: '2.0',
+                connections: _private.get(this).connections.filter(function (connection) {
+                    return !connection.volatile;
+                }),
+                operators: operators,
+                visualdescription: this.visualdescription
+            };
         }
 
     });
@@ -322,6 +309,44 @@
     // ==================================================================================
     // PRIVATE MEMBERS
     // ==================================================================================
+
+    var _private = new WeakMap();
+
+    var unmarshall = function unmarshall(status) {
+        var connection_info, errorCount, i, id, operator_info,
+            operator_visual_info, meta, source, target;
+
+        status = ns.Wiring.normalize(status);
+
+        // Convert operator into instances
+        for (id in status.operators) {
+            operator_info = status.operators[id];
+
+            meta = this.workspace.resources.getOrCreateMissing(operator_info.name, 'operator');
+            operator_info.id = id;
+            status.operators[id] = new Wirecloud.wiring.Operator(this, meta, operator_info);
+            append_operator.call(this, status.operators[id]);
+        }
+
+        // Convert connections into instances
+        for (i = status.connections.length - 1; i >= 0; i--) {
+            connection_info = utils.merge({}, Wirecloud.wiring.Connection.JSON_TEMPLATE, status.connections[i]);
+
+            source = getEndpoint.call(this, 'outputs', connection_info.source);
+            target = getEndpoint.call(this, 'inputs', connection_info.target);
+
+            if (source != null && target != null) {
+                status.connections[i] = new Wirecloud.wiring.Connection(this, source, target, {
+                    readonly: connection_info.readonly
+                });
+                status.connections[i].establish();
+                status.connections[i].addEventListener('remove', _private.get(this).on_removeconnection);
+                _private.get(this).connections.push(status.connections[i]);
+            }
+        }
+
+        this.visualdescription = status.visualdescription;
+    };
 
     var normalize_visual_component = function normalize_visual_component(component) {
         return utils.updateObject({
@@ -356,18 +381,10 @@
         case 'inputs':
             endpoint = new ns.wiring.GhostTargetEndpoint(component, name);
             component.inputs[name] = endpoint;
-            if (component.meta.missing && !(name in component.meta.inputs)) {
-                component.meta.inputs[name] = info;
-                component.meta.inputList.push(info);
-            }
             break;
         case 'outputs':
             endpoint = new ns.wiring.GhostSourceEndpoint(component, name);
             component.outputs[name] = endpoint;
-            if (component.meta.missing && !(name in component.meta.outputs)) {
-                component.meta.outputs[name] = info;
-                component.meta.outputList.push(info);
-            }
             break;
         }
 
@@ -382,57 +399,34 @@
         }
     };
 
-    var getEndpoint = function getEndpoint(operators, widgets, endpointGroup, endpointInfo) {
+    var getEndpoint = function getEndpoint(endpointGroup, endpointInfo) {
         var component;
 
         switch (endpointInfo.type) {
         case 'widget':
-            component = widgets[endpointInfo.id];
+            component = this.workspace.findWidget(endpointInfo.id.toString());
             break;
         case 'operator':
-            component = operators[endpointInfo.id];
+            component = this.findOperator(endpointInfo.id.toString());
             break;
         }
 
         if (component == null) {
-            throw new Error(utils.interpolate(utils.gettext("The %(type)s (%(id)s) does not exist."), {
-                type: endpointInfo.type,
-                id: endpointInfo.id
-            }));
+            return null;
         }
 
         return getEndpointOrCreateMissing(component, endpointGroup, endpointInfo.endpoint);
     };
 
     var reconnect = function reconnect(component) {
-        this.status.connections.forEach(function (connection) {
+        this.logManager.newCycle();
+        _private.get(this).connections.forEach(function (connection) {
             if (connection.source.component.is(component)) {
                 connection.updateEndpoint(getEndpointOrCreateMissing(component, 'outputs', connection.source.name));
             } else if (connection.target.component.is(component)) {
                 connection.updateEndpoint(getEndpointOrCreateMissing(component, 'inputs', connection.target.name));
             }
         });
-        this.logManager.newCycle();
-    };
-
-    var disconnect = function disconnect() {
-        var i;
-
-        for (i = this.status.connections.length - 1; i >= 0; i--) {
-            this.status.connections[i].detach();
-        }
-
-        return this;
-    };
-
-    var wiring_onunload = function wiring_onunload() {
-
-        this.trigger('unload');
-
-        disconnect.call(this);
-        this.logManager.newCycle();
-
-        this.trigger('unloaded');
     };
 
     var getEndpointInfo = function getEndpointInfo(endpointName) {
@@ -456,23 +450,33 @@
         return false;
     };
 
+    var get_operators_by_id = function get_operators_by_id() {
+        /*jshint validthis:true */
+        var operators = {};
+
+        _private.get(this).operators.forEach(function (operator) {
+            operators[operator.id] = operator;
+        });
+
+        return operators;
+    };
+
     var removeComponent = function removeComponent(component) {
         var connection, i;
 
-        component.fullDisconnect();
-
-        for (i = this.status.connections.length - 1; i >= 0; i--) {
-            connection = this.status.connections[i];
+        for (i = _private.get(this).connections.length - 1; i >= 0; i--) {
+            connection = _private.get(this).connections[i];
 
             if (connection.source.component === component || connection.target.component === component) {
-                this.status.connections.splice(i, 1);
+                connection.detach();
+                _private.get(this).connections.splice(i, 1);
             }
         }
 
-        removeComponentInfo(component, this.status.visualdescription);
+        removeComponentInfo(component, this.visualdescription);
 
-        for (i = this.status.visualdescription.behaviours.length - 1; i >= 0; i--) {
-            removeComponentInfo(component, this.status.visualdescription.behaviours[i]);
+        for (i = this.visualdescription.behaviours.length - 1; i >= 0; i--) {
+            removeComponentInfo(component, this.visualdescription.behaviours[i]);
         }
 
         return this;
@@ -490,44 +494,65 @@
         delete status.components[component.meta.type][component.id];
     };
 
-    var operator_onremove = function operator_onremove(operator) {
-        delete this.status.operators[operator.id];
+    var append_operator = function append_operator(operator) {
+        /*jshint validthis:true */
+        _private.get(this).operators.push(operator);
+
+        operator.addEventListener('change', _private.get(this).on_changecomponent);
+        operator.addEventListener('remove', _private.get(this).on_removeoperator);
+        this.trigger('createoperator', operator.load());
+
+        return operator;
     };
 
-    var widget_onadded = function widget_onadded(workspace, widget) {
+    var create_operator = function create_operator(resource, data) {
+        var operator = new Wirecloud.wiring.Operator(this, resource, data);
 
-        if (widget.id in this.widgets) {
-            this.logManager.log(utils.interpolate(utils.gettext("The widget (%(title)s) already exist."), widget));
-        } else {
-            widget
-                .addEventListener('upgraded', component_onupgraded.bind(this))
-                .addEventListener('unload', component_onunload);
-            this.widgets[widget.id] = widget;
+        if (Number(operator.id) >= _private.get(this).operatorId) {
+            _private.get(this).operatorId = Number(operator.id) + 1;
+        }
+
+        return operator;
+    };
+
+    // ==================================================================================
+    // EVENT HANDLERS
+    // ==================================================================================
+
+    var on_changecomponent = function on_changecomponent(component, changes) {
+
+        if (changes.indexOf('meta') !== -1) {
+            component.fullDisconnect();
+            reconnect.call(this, component);
         }
     };
 
-    var component_onupgraded = function component_onupgraded(component, new_meta) {
-        component.fullDisconnect();
-        reconnect.call(this, component);
+    var on_createwidget = function on_createwidget(workspace, widget) {
+        widget.addEventListener('change', _private.get(this).on_changecomponent);
+        widget.addEventListener('remove', _private.get(this).on_removewidget);
     };
 
-    var widget_onremoved = function widget_onremoved(workspace, widget) {
-
-        if (widget.id in this.widgets) {
-            removeComponent.call(this, widget);
-            widget.removeEventListener('unload', component_onunload);
-            delete this.widgets[widget.id];
-        } else {
-            this.logManager.log(utils.interpolate(utils.gettext("The widget (%(title)s) to remove does not exist."), widget));
-        }
+    var on_removeconnection = function on_removeconnection(connection) {
+        connection.removeEventListener('remove', _private.get(this).on_removeconnection);
+        _private.get(this).connections.splice(_private.get(this).connections.indexOf(connection), 1);
     };
 
-    var component_onunload = function component_onunload(component) {
-        var name;
+    var on_removeoperator = function on_removeoperator(operator) {
+        /*jshint validthis:true */
+        _private.get(this).operators.splice(_private.get(this).operators.indexOf(operator), 1);
 
-        for (name in component.inputs) {
-            component.inputs[name].callback = null;
-        }
+        removeComponent.call(this, operator);
+
+        operator.removeEventListener('change', _private.get(this).on_changecomponent);
+        operator.removeEventListener('remove', _private.get(this).on_removeoperator);
+        this.trigger('removeoperator', operator);
+    };
+
+    var on_removewidget = function on_removewidget(widget) {
+        /*jshint validthis:true */
+        removeComponent.call(this, widget);
+        widget.removeEventListener('change', _private.get(this).on_changecomponent);
+        widget.removeEventListener('remove', _private.get(this).on_removewidget);
     };
 
 })(Wirecloud, StyledElements, StyledElements.Utils);

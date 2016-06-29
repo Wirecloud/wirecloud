@@ -114,8 +114,7 @@
                 }
             } else {
                 this.iwidget.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
-                // TODO
-                Wirecloud.activeWorkspace.getIWidget(this.iwidget.id).load();
+                Wirecloud.activeWorkspace.findWidget(this.iwidget.id).load();
             }
         }
     };
