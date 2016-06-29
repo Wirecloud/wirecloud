@@ -386,7 +386,7 @@ class WalletTester(object):
 
     def __enter__(self):
 
-        self.testcase.wait_element_visible_by_css_selector('.wc-toolbar .icon-plus').click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-plus"), parent=True)).click()
         self.element = self.testcase.driver.find_element_by_css_selector('#workspace .widget_wallet')
         return self
 
@@ -459,7 +459,7 @@ class MACFieldTester(WalletTester):
         self.field_element = field_element
 
     def __enter__(self):
-        self.field_element.find_element_by_css_selector('.icon-search').click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-search"), parent=True, base_element=self.field_element)).click()
         self.element = self.testcase.wait_element_visible_by_css_selector('.window_menu.mac_selection_dialog')
         return self
 
@@ -1060,7 +1060,7 @@ class WorkspaceTabTester(object):
 
     def open_menu(self):
 
-        tab_menu_button = self.testcase.wait_element_visible_by_css_selector('.icon-tab-menu', element=self.element)
+        tab_menu_button = WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".icon-tab-menu"), parent=True, base_element=self.element))
         tab_menu_button.click()
         popup_menu_element = self.testcase.wait_element_visible_by_css_selector('.se-popup-menu')
 
@@ -1236,7 +1236,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             return ""
 
     def open_menu(self):
-        button = self.wait_element_visible_by_css_selector('.wirecloud_header_nav .icon-reorder')
+        button = WebDriverWait(self.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wirecloud_header_nav .icon-reorder"), parent=True))
         button.click()
         popup_menu_element = self.wait_element_visible_by_css_selector('.se-popup-menu')
 
@@ -1430,7 +1430,7 @@ class MarketplaceViewTester(object):
         self.myresources = MyResourcesViewTester(testcase, self)
 
     def __enter__(self):
-        self.testcase.wait_element_visible_by_css_selector(".wc-toolbar .icon-shopping-cart").click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-shopping-cart"), parent=True)).click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
         WebDriverWait(self.testcase.driver, 10).until(marketplace_loaded)
         return self
@@ -1577,7 +1577,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
         self.marketplace_view = marketplace_view
 
     def __enter__(self):
-        self.testcase.wait_element_visible_by_css_selector(".wc-toolbar .icon-archive").click()
+        WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-archive"), parent=True)).click()
         WebDriverWait(self.testcase.driver, 10).until(lambda driver: self.testcase.get_current_view() == 'myresources')
         return self
 
@@ -1590,7 +1590,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'workspace')
         else:
-            self.testcase.wait_element_visible_by_css_selector(".wc-toolbar .icon-shopping-cart").click()
+            WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, ".wc-toolbar .icon-shopping-cart"), parent=True)).click()
 
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
 
