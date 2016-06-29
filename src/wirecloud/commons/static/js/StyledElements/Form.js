@@ -33,22 +33,20 @@
      * @name StyledElements.Form
      * @since 0.5
      * @param {Object[]} fields form field descriptions
-     * @param {Object.<String, *>} options form options
+     * @param {Object.<String, *>} [options] form options
      */
     var Form = function Form(fields, options) {
         var div, buttonArea, defaultOptions;
 
         defaultOptions = {
-            'readOnly': false,
-            'buttonArea': null,
-            'setdefaultsButton': false,
-            'resetButton': false,
-            'acceptButton': true,
-            'cancelButton': true,
-            'useHtmlForm': true,
-            'legend': 'auto',
-            'edition': false,
-            'factory': StyledElements.DefaultInputInterfaceFactory
+            readOnly: false,
+            buttonArea: null,
+            setdefaultsButton: false,
+            resetButton: false,
+            acceptButton: true,
+            cancelButton: true,
+            useHtmlForm: true,
+            factory: StyledElements.DefaultInputInterfaceFactory
         };
         if (options && options.readOnly) {
             defaultOptions.acceptButton = false;
@@ -56,8 +54,8 @@
         }
         options = utils.merge(defaultOptions, options);
 
-        if (typeof fields !== "object") {
-            throw new TypeError();
+        if (fields == null || typeof fields !== "object") {
+            throw new TypeError("invalid fields parameter");
         } else if (!Array.isArray(fields)) {
             fields = norm_fields(fields);
         }
@@ -115,7 +113,6 @@
         this.fieldList = fields;
         this.focusField = fields.length > 0 ? fields[0].name : null;
         this.fieldInterfaces = {};
-        this.edition = options.edition;
         this.factory = options.factory;
 
         // Build GUI
@@ -411,6 +408,14 @@
         return [];
     };
 
+    /**
+     * Gets the value for the fields of this form as a whole
+     *
+     * @since 0.5
+     *
+     * @returns {StyledElements.Form}
+     *      The instance on which the member is called.
+     */
     Form.prototype.getData = function getData() {
         var data, fieldId, field;
 
@@ -423,10 +428,14 @@
     };
 
     /**
-     * Sets the value for the fields of this form as a whole
+     * Sets the value for the fields of this form as a whole. If data is null
+     * all field inputs will be reset to their initial value.
      *
      * @since 0.5
      *
+     * @param {Object} [data]
+     *      New values. `null` or `undefined` for reseting all the fields to
+     *      their initial values.
      * @returns {StyledElements.Form}
      *      The instance on which the member is called.
      */
@@ -453,14 +462,40 @@
         return this;
     };
 
+    /**
+     * Updates the values of the fields managed by this form.
+     *
+     * @since 0.8
+     *
+     * @param {Object} data
+     *      New values.
+     * @returns {StyledElements.Form}
+     *      The instance on which the member is called.
+     */
+    Form.prototype.update = function update(data) {
+        var field, fieldId;
+
+        if (data == null || typeof data !== 'object') {
+            throw new TypeError("Invalid data value");
+        }
+
+        this.pSetMsgs([]);
+        for (fieldId in this.fieldInterfaces) {
+            if (fieldId in data) {
+                field = this.fieldInterfaces[fieldId];
+                field._setValue(data[fieldId]);
+            }
+        }
+
+        return this;
+    };
+
     Form.prototype.is_valid = function () {
         // Validate input fields
         var fieldId, extraErrorMsgs, errorMsgs,
             validationManager = new StyledElements.ValidationErrorManager();
         for (fieldId in this.fieldInterfaces) {
-            if (this.fieldInterfaces.hasOwnProperty(fieldId)) {
-                validationManager.validate(this.fieldInterfaces[fieldId]);
-            }
+            validationManager.validate(this.fieldInterfaces[fieldId]);
         }
 
         // Extra validations
@@ -492,7 +527,7 @@
      * @private
      */
     var cancelHandler = function cancelHandler() {
-        this.events.cancel.dispatch(this);
+        this.trigger("cancel");
     };
 
     /**
@@ -581,6 +616,12 @@
         for (fieldId in this.fieldInterfaces) {
             inputInterface = this.fieldInterfaces[fieldId];
             inputInterface.setDisabled(!enabled || this.readOnly || inputInterface._readOnly);
+        }
+        if (this.resetButton != null) {
+            this.resetButton.enabled = enabled;
+        }
+        if (this.setdefaultsButton != null) {
+            this.setdefaultsButton.enabled = enabled;
         }
         if (this.acceptButton != null) {
             this.acceptButton.enabled = enabled;
